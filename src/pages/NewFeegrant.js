@@ -3,10 +3,6 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import TextField from '@mui/material/TextField';
 import * as React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-    getGrants,
-} from './../features/feegrant/feegrantSlice';
 import { Paper } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -15,8 +11,8 @@ import Grid from '@mui/material/Grid';
 
 
 export default function NewFeegrant() {
-    const address = useSelector((state) => state.wallet.bech32Address);
-    const dispatch = useDispatch();
+    // const address = useSelector((state) => state.wallet.bech32Address);
+    // const dispatch = useDispatch();
 
     const [selected, setSelected] = React.useState('basic')
     const [expiration, setExpiration] = React.useState(new Date());
@@ -36,19 +32,19 @@ export default function NewFeegrant() {
             </Typography>
             <ButtonGroup variant="outlined" aria-label="outlined button group">
                 <Button
-                    variant={selected == 'basic' ? 'contained' : 'outlined'}
+                    variant={selected === 'basic' ? 'contained' : 'outlined'}
                     onClick={() => onChange('basic')}
                 >
                     Basic
                 </Button>
                 <Button
-                    variant={selected == 'periodic' ? 'contained' : 'outlined'}
+                    variant={selected === 'periodic' ? 'contained' : 'outlined'}
                     onClick={() => onChange('periodic')}
                 >
                     Periodic
                 </Button>
                 <Button
-                    variant={selected == 'filtered' ? 'contained' : 'outlined'}
+                    variant={selected === 'filtered' ? 'contained' : 'outlined'}
                     onClick={() => onChange('filtered')}
                 >
                     Filtered
@@ -61,7 +57,7 @@ export default function NewFeegrant() {
                     <Paper elevation={0} style={{ padding: 32 }}>
 
                         {
-                            selected == 'basic' ?
+                            selected === 'basic' ?
                                 <>
                                     <TextField
                                         fullWidth
@@ -93,7 +89,7 @@ export default function NewFeegrant() {
                         }
 
                         {
-                            selected == 'periodic' ?
+                            selected === 'periodic' ?
                             <>
                             <TextField
                                 fullWidth
@@ -125,7 +121,7 @@ export default function NewFeegrant() {
                         }
 
                         {
-                            selected == 'filtered' ?
+                            selected === 'filtered' ?
                                 <h1>Filtered</h1>
                                 :
                                 ''

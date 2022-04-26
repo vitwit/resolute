@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchValidators } from './stakingAPI';
+import { fetchdelegations, fetchValidators } from './stakingAPI';
 
 const initialState = {
   validators: {
     status: 'idle',
-    validators: [],
+    active: {},
+    inactive: {},
     errMsg: '',
     pagination: {},
   },
@@ -19,7 +20,7 @@ const initialState = {
 export const getValidators = createAsyncThunk(
   'stake/validators',
   async (data) => {
-    const response = await fetchValidators(data.baseURL, data.key, data.limit, data.status);
+    const response = await fetchValidators(data.baseURL, data.key, data.limit, data?.status);
     return response.data;
   }
 );
@@ -27,7 +28,7 @@ export const getValidators = createAsyncThunk(
 export const getDelegations = createAsyncThunk(
   'stake/delegations',
   async (data) => {
-    const response = await fetchValidators(data.baseURL,data.address, data.key, data.limit);
+    const response = await fetchdelegations(data.baseURL,data.address, data.key, data.limit);
     return response.data;
   }
 );
@@ -41,6 +42,10 @@ export const stakeSlice = createSlice({
     },
     delegations: (state, action) => {
       state.delegations = action.payload
+    },
+    resetState: (state, action) => {
+      state.validators = initialState.validators
+      state.delegations = initialState.delegations
     }
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -53,12 +58,20 @@ export const stakeSlice = createSlice({
 
       })
       .addCase(getValidators.fulfilled, (state, action) => {
+        state.validators.status = 'idle';
         let result = {}
-        result.status = 'idle';
         result.validators = action.payload.validators;
-        result.pagination = action.payload.pagination;
-        result.errMsg = ''
-        state.validators = result
+        const res = action.payload.validators
+        for (let index = 0; index < res.length; index++) {
+          const element = res[index];
+          if (element.status === 'BOND_STATUS_BONDED') {
+            state.validators.active[element.operator_address] = element
+          } else {
+            state.validators.inactive[element.operator_address] = element
+          }
+        }
+        state.validators.pagination = action.payload.pagination;
+        state.validators.errMsg = ''
       })
       .addCase(getValidators.rejected, (state, action) => {
         state.validators.status = 'rejected';
@@ -73,7 +86,7 @@ export const stakeSlice = createSlice({
       })
       .addCase(getDelegations.fulfilled, (state, action) => {
         state.delegations.status = 'idle';
-        state.delegations.delegations = action.payload.delegations
+        state.delegations.delegations = action.payload.delegation_responses
         state.delegations.pagination = action.payload.pagination
         state.delegations.errMsg = ''
       })
@@ -86,6 +99,6 @@ export const stakeSlice = createSlice({
   },
 });
 
-export const { validators, delegations } = stakeSlice.actions;
+export const { validators, delegations, resetState } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

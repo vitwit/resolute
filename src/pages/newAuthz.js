@@ -1,13 +1,14 @@
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import * as React from 'react';
 import { Paper } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import Grid from '@mui/material/Grid';
+import { authzMsgTypes } from '../utils/authorizations';
 
 
 export default function NewAuthz() {
@@ -24,12 +25,6 @@ export default function NewAuthz() {
 
     return (
         <>
-            <Typography
-                variant='h6'
-                fontSize={18}
-            >
-                Select Authz
-            </Typography>
             <ButtonGroup variant="outlined" aria-label="outlined button group">
                 <Button
                     variant={selected === 'send' ? 'contained' : 'outlined'}
@@ -86,20 +81,22 @@ export default function NewAuthz() {
 
                         {
                             selected === 'generic' ?
-                            <>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                placeholder="message type" />
-                            <br />
+                                <>
+                                    <Autocomplete
+                                        disablePortal
+                                        fullWidth
+                                        variant="outlined"
+                                        options={authzMsgTypes()}
+                                        renderInput={(params) => <TextField {...params} label="Type URL" />} />
+                                    <br />
 
-                            <Button
-                                style={{ marginTop: 32 }}
-                                variant="outlined"
-                            >
-                                Grant
-                            </Button>
-                        </>
+                                    <Button
+                                        style={{ marginTop: 32 }}
+                                        variant="outlined"
+                                    >
+                                        Grant
+                                    </Button>
+                                </>
                                 :
                                 ''
                         }

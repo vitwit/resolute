@@ -4,12 +4,14 @@ import { fetchGrantsByMe, fetchGrantsToMe } from './feegrantAPI';
 const initialState = {
   grantsToMe: {
     status: 'idle',
-    errMsg: '',
     grants: []
+  },
+  errState: {
+    message: '',
+    type: 'success',
   },
   grantsByMe: {
     status: 'idle',
-    errMsg: '',
     grants: []
   },
 };
@@ -38,33 +40,51 @@ export const feegrantSlice = createSlice({
     builder
       .addCase(getGrantsToMe.pending, (state) => {
         state.grantsToMe.status = 'loading';
-        state.grantsToMe.errMsg = ''
+        state.errState = {
+          message: '',
+          type: 'success',
+        }
 
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
         state.grantsToMe.status = 'idle';
         state.grantsToMe.grants = action.payload
-        state.grantsToMe.errMsg = ''
+        state.errState = {
+          message: '',
+          type: 'success',
+        }
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
         state.grantsToMe.status = 'rejected';
-        state.grantsToMe.errMsg = action.error.message
+        state.errState = {
+          message: action.error.message,
+          type: 'error',
+        }
       })
 
       builder
       .addCase(getGrantsByMe.pending, (state) => {
         state.grantsByMe.status = 'loading';
-        state.grantsByMe.errMsg = ''
+        state.errState = {
+          message: '',
+          type: 'error',
+        }
 
       })
       .addCase(getGrantsByMe.fulfilled, (state, action) => {
         state.grantsByMe.status = 'idle';
         state.grantsByMe.grants = action.payload
-        state.grantsByMe.errMsg = ''
+        state.errMsg = {
+          message: '',
+          type: 'success',
+        }
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
         state.grantsByMe.status = 'rejected';
-        state.grantsByMe.errMsg = action.error.message
+        state.errMsg = {
+          message: action.error.message,
+          type: 'error',
+        }
       })
   },
 });

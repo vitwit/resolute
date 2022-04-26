@@ -12,10 +12,12 @@ import {
 } from './../features/authz/authzSlice';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Chip from '@mui/material/Chip';
-import { getTypeURLName } from '../utils/util';
+import { getTypeURLName, shortenAddress } from '../utils/util';
 import { useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from './table';
 import { Typography } from '@mui/material';
+import { getLocalTime } from '../utils/datetime';
+import { AuthorizationInfo } from '../components/AuthorizationInfo';
 
 
 
@@ -23,6 +25,11 @@ export default function Authz() {
   const grantsToMe = useSelector((state) => state.authz.grantsToMe.grants);
   const grantsByMe = useSelector((state) => state.authz.grantsByMe.grants);
   const dispatch = useDispatch();
+
+  const [infoOpen, setInfoOpen] = React.useState(false);
+  const handleInfoClose = (value) => {
+    setInfoOpen(false);
+  };
 
   const [grantType, setGrantType] = React.useState('by-me');
 
@@ -59,7 +66,7 @@ export default function Authz() {
       <Paper elevation={0} style={{ padding: 12 }}>
         <ButtonGroup variant="outlined" aria-label="validators" style={{ display: 'flex', marginBottom: 12 }}>
           <Button
-            variant={grantType == 'by-me' ? 'contained' : 'outlined'}
+            variant={grantType === 'by-me' ? 'contained' : 'outlined'}
             onClick={() => {
               dispatch(getGrantsByMe({
                 baseURL: chainInfo.lcd,
@@ -69,7 +76,7 @@ export default function Authz() {
             }}
           >Granted by me</Button>
           <Button
-            variant={grantType == 'to-me' ? 'contained' : 'outlined'}
+            variant={grantType === 'to-me' ? 'contained' : 'outlined'}
             onClick={() => {
               dispatch(getGrantsToMe({
                 baseURL: chainInfo.lcd,
@@ -81,19 +88,19 @@ export default function Authz() {
           >Granted to me</Button>
         </ButtonGroup>
 
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} elevation={0}>
           <Table sx={{ minWidth: 700 }} aria-label="simple table">
             {
               grantType === 'by-me' ?
                 (
                   <>
                     {
-                      grantsByMe.length == 0 ?
+                      grantsByMe.length === 0 ?
                         <Typography
                           variant='h6'
                           color="text.primary"
                           style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
-                          No Authorizations found
+                          No Authorizations Found
                         </Typography>
                         :
                         <>
@@ -101,35 +108,57 @@ export default function Authz() {
                             <StyledTableRow>
                               <StyledTableCell>Grantee</StyledTableCell>
                               <StyledTableCell >Type</StyledTableCell>
-                              <StyledTableCell>SpendLimit</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
+                              <StyledTableCell>Details</StyledTableCell>
                               <StyledTableCell>Action</StyledTableCell>
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
                             {grantsByMe && grantsByMe && grantsByMe.map((row) => (
-                              <StyledTableRow
-                                key={row.index}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                              >
-                                <StyledTableCell component="th" scope="row">
-                                  {row.grantee}
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                  <Chip label={getTypeURLName(row.authorization['@type'])} variant="filled" size="medium" />
-                                </StyledTableCell>
-                                <StyledTableCell>{row.spend_limit?.length > 0 ? row.spend_limit : "-"}</StyledTableCell>
-                                <StyledTableCell>{row.expiration ? row.expiration : "-"}</StyledTableCell>
-                                <StyledTableCell>
-                                  <Button
-                                    variant="outlined"
-                                    size="small"
-                                    onClick={() => onRevoke(row.granter, row.grantee, row.authorization['@type'])}
-                                  >
-                                    Revoke
-                                  </Button>
-                                </StyledTableCell>
-                              </StyledTableRow>
+                              <>
+                                <StyledTableRow
+                                  key={row.index}
+                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                  <StyledTableCell component="th" scope="row">
+                                    {shortenAddress(row.grantee, 21)}
+                                  </StyledTableCell>
+                                  <StyledTableCell>
+                                    <Chip label={getTypeURLName(row.authorization['@type'])} variant="filled" size="medium" />
+                                  </StyledTableCell>
+                                  <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
+                                  <StyledTableCell>
+                                    <Button
+                                      size='small'
+                                      color='info'
+                                      textSizeSmall
+                                      onClick={() => {
+                                        setInfoOpen(true)
+                                      }}
+                                    >
+                                      Details
+                                    </Button>
+                                  </StyledTableCell>
+                                  <StyledTableCell>
+                                    <Button
+                                      variant="contained"
+                                      size="small"
+                                      textSizeSmall
+                                      disableElevation
+                                      color='primary'
+                                      onClick={() => onRevoke(row.granter, row.grantee, row.authorization['@type'])}
+                                    >
+                                      Revoke
+                                    </Button>
+                                  </StyledTableCell>
+                                </StyledTableRow>
+
+                                <AuthorizationInfo
+                                  authorization={row.authorization}
+                                  open={infoOpen}
+                                  onClose={handleInfoClose}
+                                />
+                              </>
                             ))}
                           </TableBody>
                         </>
@@ -140,13 +169,13 @@ export default function Authz() {
                 (
                   <>
                     {
-                      grantsToMe.length == 0 ?
+                      grantsToMe.length === 0 ?
 
                         <Typography
                           variant='h6'
                           color="text.primary"
                           style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
-                          No Authorizations found
+                          No Authorizations Found
                         </Typography>
                         :
 
@@ -155,24 +184,32 @@ export default function Authz() {
                             <StyledTableRow>
                               <StyledTableCell >Granter</StyledTableCell>
                               <StyledTableCell >Type</StyledTableCell>
-                              <StyledTableCell >Basic SpendLimit</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
+                              <StyledTableCell >Info</StyledTableCell>
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
-                            {grantsToMe && grantsToMe.map((row) => (
+                            {grantsToMe && grantsToMe.map((row, index) => (
                               <StyledTableRow
-                                key={row.index}
+                                key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                               >
                                 <StyledTableCell component="th" scope="row">
-                                  {row.granter}
+                                  {shortenAddress(row.granter, 21)}
                                 </StyledTableCell>
                                 <StyledTableCell>
                                   <Chip label={getTypeURLName(row.authorization['@type'])} variant="filled" size="medium" />
                                 </StyledTableCell>
-                                <StyledTableCell>{row.spend_limit?.length > 0 ? row.spend_limit : "-"}</StyledTableCell>
-                                <StyledTableCell>{row.expiration ? row.expiration : "-"}</StyledTableCell>
+                                <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
+                                <StyledTableCell>
+                                  <Button
+                                    size='small'
+                                    color='info'
+                                    textSizeSmall
+                                  >
+                                    Details
+                                  </Button>
+                                </StyledTableCell>
                               </StyledTableRow>
                             ))}
                           </TableBody>

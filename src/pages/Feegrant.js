@@ -10,6 +10,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   getGrantsToMe, getGrantsByMe
 } from './../features/feegrant/feegrantSlice';
+import {
+  setError
+} from './../features/common/commonSlice';
+
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Chip from '@mui/material/Chip';
 import { getTypeURLName } from '../utils/util';
@@ -26,6 +30,7 @@ export default function Feegrant() {
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const address = useSelector((state) => state.wallet.bech32Address);
+  const errState = useSelector((state) => state.feegrant.errState);
 
   useEffect(() => {
     dispatch(getGrantsByMe({
@@ -39,7 +44,11 @@ export default function Feegrant() {
     navigate(path);
   }
 
-
+  useEffect(() => {
+    if (errState.message !== '') {
+      dispatch(setError(errState))
+    }
+  }, [errState]);
 
   return (
     <>
