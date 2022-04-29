@@ -1,15 +1,23 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchdelegations, fetchValidators } from './stakingAPI';
+import { fetchdelegations, fetchUnbonding, fetchValidators } from './stakingAPI';
 
 const initialState = {
   validators: {
     status: 'idle',
     active: {},
     inactive: {},
+    activeSorted: {},
+    inactiveSorted: {},
     errMsg: '',
     pagination: {},
   },
   delegations: {
+    status: 'idle',
+    delegations: [],
+    errMsg: '',
+    pagination: {},
+  },
+  unbonding: {
     status: 'idle',
     delegations: [],
     errMsg: '',
@@ -33,6 +41,15 @@ export const getDelegations = createAsyncThunk(
   }
 );
 
+export const getUnbonding = createAsyncThunk(
+  'stake/unbonding',
+  async (data) => {
+    const response = await fetchUnbonding(data.baseURL,data.address, data.key, data.limit);
+    return response.data;
+  }
+);
+
+
 export const stakeSlice = createSlice({
   name: 'stake',
   initialState,
@@ -46,6 +63,17 @@ export const stakeSlice = createSlice({
     resetState: (state, action) => {
       state.validators = initialState.validators
       state.delegations = initialState.delegations
+    },
+    sortValidatorsByVotingPower: (state) => {
+      const activeSort =  Object.fromEntries( Object.entries(state.validators.active).sort(([,a],[,b]) => {
+        return b.tokens - a.tokens
+      }));
+      state.validators.active = activeSort
+
+      const inactiveSort =  Object.fromEntries( Object.entries(state.validators.inactive).sort(([,a],[,b]) => {
+        return b.tokens - a.tokens
+      }));
+      state.validators.inactive = inactiveSort
     }
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -95,10 +123,27 @@ export const stakeSlice = createSlice({
         state.delegations.errMsg = action.error.message
       })
 
+      builder
+      .addCase(getUnbonding.pending, (state) => {
+        state.unbonding.status = 'loading';
+        state.unbonding.errMsg = ''
+      })
+      .addCase(getUnbonding.fulfilled, (state, action) => {
+        state.unbonding.status = 'idle';
+        state.unbonding.delegations = action.payload.unbonding_responses
+        state.unbonding.pagination = action.payload.pagination
+        state.unbonding.errMsg = ''
+        
+      })
+      .addCase(getUnbonding.rejected, (state, action) => {
+        state.unbonding.status = 'rejected';
+        state.unbonding.errMsg = action.error.message
+      })
+
       
   },
 });
 
-export const { validators, delegations, resetState } = stakeSlice.actions;
+export const { validators, delegations, resetState, sortValidatorsByVotingPower } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

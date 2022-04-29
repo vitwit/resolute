@@ -26,13 +26,15 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setWallet, resetWallet } from './../features/wallet/walletSlice'
 import { useNavigate } from "react-router-dom";
 import NewFeegrant from './NewFeegrant';
-import NewAuthz from './newAuthz';
+import NewAuthz from './NewAuthz';
 import { shortenAddress } from '../utils/util';
 import { ListItem } from '@mui/material';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Overview from './Overview';
+import { Send } from './Send';
+import { WithdrawRewards } from './WithdrawRewards';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -44,6 +46,7 @@ const mdTheme = createTheme();
 
 function DashboardContent() {
     const [snackOpen, setSnackClose] = React.useState(false);
+    const [isLogin, setLogin] = React.useState(localStorage.getItem('IS_LOGIN'));
 
     const showSnack = (value) => {
         setSnackClose(value);
@@ -56,7 +59,7 @@ function DashboardContent() {
     };
 
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = React.useState(false);
     const menuOpen = anchorEl;
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -76,8 +79,16 @@ function DashboardContent() {
         }
     }, [errState]);
 
+    React.useEffect(() => {
+        if (!walletConnected) {
+            if (isLogin) {
+                connectWallet(selectedNetwork)
+            }
+        }
+    }, [walletConnected]);
+
     const handleNetworkChange = (network) => {
-        setAnchorEl(null);
+        setAnchorEl(false);
         changeNetwork(network)
         disconnectWallet()
         connectWallet(network)
@@ -88,6 +99,8 @@ function DashboardContent() {
     }
 
     function disconnectWallet() {
+        setLogin(false)
+        localStorage.setItem('IS_LOGIN', false);
         dispatch(resetWallet())
     }
 
@@ -103,12 +116,16 @@ function DashboardContent() {
             if (network.experimental) {
                 window.keplr.experimentalSuggestChain(network.config)
                     .then((v) => {
+                        setLogin(true);
+                        localStorage.setItem('IS_LOGIN', true);
                         enableConnection(network)
                     })
                     .catch((error) => {
                         console.log(error)
                     })
             } else {
+                setLogin(true);
+                localStorage.setItem('IS_LOGIN', true);
                 enableConnection(network)
             }
         }
@@ -118,18 +135,18 @@ function DashboardContent() {
     const enableConnection = (network) => {
         window.keplr?.enable(network.chainId)
             .then(() => {
-                window.keplr?.getKey(network.chainId)
-                    .then((value) => {
-                        dispatch(setWallet({
-                            ...value,
-                            chainInfo: network
-                        }))
-                    })
+                const offlineSigner = window.getOfflineSigner(network.chainId);
+                offlineSigner.getAccounts().then((accounts) => {
+                    dispatch(setWallet({
+                        ...accounts[0],
+                        chainInfo: network
+                    }))
+                })
                     .catch((err) => {
                         console.log(err)
                     })
-
             })
+
             .catch(() => {
                 alert("permission denied")
             })
@@ -155,7 +172,7 @@ function DashboardContent() {
                         <Button
                             id="demo-positioned-button"
                             color='inherit'
-                            endIcon={<ExpandMoreOutlinedIcon/>}
+                            endIcon={<ExpandMoreOutlinedIcon />}
                             aria-controls={menuOpen ? 'demo-positioned-menu' : undefined}
                             aria-haspopup="true"
                             aria-expanded={menuOpen ? 'true' : undefined}
@@ -168,7 +185,7 @@ function DashboardContent() {
                             aria-labelledby="demo-positioned-button"
                             anchorEl={anchorEl}
                             open={menuOpen}
-                            onClose={() => setAnchorEl(null)}
+                            onClose={() => setAnchorEl(false)}
                             anchorOrigin={{
                                 vertical: 'top',
                                 horizontal: 'left',
@@ -179,8 +196,9 @@ function DashboardContent() {
                             }}
                         >
                             {
-                                getNetworks().map((network) => (
+                                getNetworks().map((network, index) => (
                                     <MenuItem
+                                        key={index}
                                         onClick={() => handleNetworkChange(network)}
                                     >
                                         {network.displayName}
@@ -198,7 +216,7 @@ function DashboardContent() {
                     }}
                 >
                     <Toolbar />
-                    <List component="nav" style={{minHeight:120}}>
+                    <List component="nav" style={{ minHeight: 120 }}>
                         {
                             walletConnected ?
                                 <>
@@ -209,14 +227,14 @@ function DashboardContent() {
                                         </Typography>
                                     </ListItem>
                                     <ListItem>
-                                        <Chip label={shortenAddress(walletStatus.bech32Address, 21)} size="small" />
+                                        <Chip label={shortenAddress(walletStatus.address, 21)} size="small" />
                                     </ListItem>
                                     <ListItem style={{ justifyContent: 'center' }}>
                                         <Button
                                             endIcon={<LogoutOutlinedIcon />}
                                             size='small'
                                             variant='outlined'
-                                            style={{textTransform: 'capitalize'}}
+                                            style={{ textTransform: 'capitalize' }}
                                             disableElevation
                                             onClick={() => disconnectWallet()}
                                         >
@@ -226,21 +244,21 @@ function DashboardContent() {
                                 </>
                                 :
                                 <>
-                                <ListItem />
-                                <ListItem />
-                                <ListItem />
-                                <ListItem style={{ justifyContent: 'center' }}>
-                                    
-                                    <Button
-                                        startIcon={<AccountBalanceWalletOutlinedIcon />}
-                                        size='small'
-                                        variant='contained'
-                                        disableElevation
-                                        onClick={() => connectWallet(selectedNetwork)}
-                                    >
-                                        Connect Wallet
-                                    </Button>
-                                </ListItem>
+                                    <ListItem />
+                                    <ListItem />
+                                    <ListItem />
+                                    <ListItem style={{ justifyContent: 'center' }}>
+
+                                        <Button
+                                            startIcon={<AccountBalanceWalletOutlinedIcon />}
+                                            size='small'
+                                            variant='contained'
+                                            disableElevation
+                                            onClick={() => connectWallet(selectedNetwork)}
+                                        >
+                                            Connect Wallet
+                                        </Button>
+                                    </ListItem>
                                 </>
                         }
                     </List>
@@ -272,6 +290,8 @@ function DashboardContent() {
                             <Route path="/authz/new" element={<NewAuthz />}></Route>
                             <Route path="/validators" element={<Validators />}></Route>
                             <Route path="/proposals" element={<Proposals />}></Route>
+                            <Route path="/send" element={<Send />}></Route>
+                            <Route path="/withdraw-rewards" element={<WithdrawRewards />}></Route>
                         </Routes>
                     </Container>
                 </Box>
@@ -287,5 +307,5 @@ function DashboardContent() {
 }
 
 export default function Dashboard() {
-    return <DashboardContent />;
+    return <DashboardContent key={1} />;
 }

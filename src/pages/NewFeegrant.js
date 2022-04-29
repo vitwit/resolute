@@ -24,12 +24,7 @@ export default function NewFeegrant() {
 
     return (
         <>
-            <Typography
-                variant='h6'
-                fontSize={18}
-            >
-                Select FeeAllowance
-            </Typography>
+            <br />
             <ButtonGroup variant="outlined" aria-label="outlined button group">
                 <Button
                     variant={selected === 'basic' ? 'contained' : 'outlined'}
@@ -62,6 +57,12 @@ export default function NewFeegrant() {
                                     <TextField
                                         fullWidth
                                         variant="outlined"
+                                        placeholder="Grantee" />
+                                    <br />
+                                    <br/>
+                                    <TextField
+                                        fullWidth
+                                        variant="outlined"
                                         placeholder="Spend limit" inputMode='decimal' />
                                     <br />
                                     <LocalizationProvider
@@ -90,32 +91,32 @@ export default function NewFeegrant() {
 
                         {
                             selected === 'periodic' ?
-                            <>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                placeholder="Spend limit" inputMode='decimal' />
-                            <br />
-                            <LocalizationProvider
-                                dateAdapter={AdapterDateFns}>
-                                <DateTimePicker
-                                    renderInput={(props) => <TextField style={{ marginTop: 32 }} fullWidth {...props} />}
-                                    label="Expiration"
-                                    value={expiration}
-                                    onChange={(newValue) => {
-                                        setExpiration(newValue);
-                                    }}
-                                />
-                            </LocalizationProvider>
-                            <br />
+                                <>
+                                    <TextField
+                                        fullWidth
+                                        variant="outlined"
+                                        placeholder="Spend limit" inputMode='decimal' />
+                                    <br />
+                                    <LocalizationProvider
+                                        dateAdapter={AdapterDateFns}>
+                                        <DateTimePicker
+                                            renderInput={(props) => <TextField style={{ marginTop: 32 }} fullWidth {...props} />}
+                                            label="Expiration"
+                                            value={expiration}
+                                            onChange={(newValue) => {
+                                                setExpiration(newValue);
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+                                    <br />
 
-                            <Button
-                                style={{ marginTop: 32 }}
-                                variant="outlined"
-                            >
-                                Grant
-                            </Button>
-                        </>
+                                    <Button
+                                        style={{ marginTop: 32 }}
+                                        variant="outlined"
+                                    >
+                                        Grant
+                                    </Button>
+                                </>
                                 :
                                 ''
                         }

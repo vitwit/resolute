@@ -3,10 +3,11 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   name: '',
   algo: '',
-  bech32Address: '',
-  isNanoLedger: false,
   connected: false,
-  chainInfo: {},
+  address: '',
+  chainInfo: {
+    currencies: [],
+  },
 }
 
 export const walletSlice = createSlice({
@@ -14,19 +15,19 @@ export const walletSlice = createSlice({
   initialState,
   reducers: {
     setWallet: (state, action) => {
-      state.bech32Address = action.payload.bech32Address
+      console.log(action.payload)
+      state.address = action.payload.address
       state.algo = action.payload.algo
-      state.isNanoLedger = action.payload.isNanoLedger
       state.connected = true
-      state.name = action.payload.name
       state.chainInfo = action.payload.chainInfo
     },
     resetWallet: (state) => {
       state.connected = false
-      state.bech32Address = ''
+      state.address = ''
       state.algo = ''
-      state.isNanoLedger = false
-      state.chainInfo = {}
+      state.chainInfo = {
+        currencies: [],
+      }
       state.name = ''
     }
   },

@@ -68,7 +68,7 @@ export function computeVotePercentage(tally) {
 
 export function shortenAddress(bech32, maxCharacters) {
     if (maxCharacters >= bech32.length) {
-      return bech32;
+        return bech32;
     }
 
     const i = bech32.indexOf("1");
@@ -80,7 +80,7 @@ export function shortenAddress(bech32, maxCharacters) {
     maxCharacters -= 1; // For "1"
 
     if (maxCharacters <= 0) {
-      return "";
+        return "";
     }
 
     const mid = Math.floor(address.length / 2);
@@ -88,12 +88,63 @@ export function shortenAddress(bech32, maxCharacters) {
     let latter = address.slice(mid);
 
     while (maxCharacters < former.length + latter.length) {
-      if ((former.length + latter.length) % 2 === 1 && former.length > 0) {
-        former = former.slice(0, former.length - 1);
-      } else {
-        latter = latter.slice(1);
-      }
+        if ((former.length + latter.length) % 2 === 1 && former.length > 0) {
+            former = former.slice(0, former.length - 1);
+        } else {
+            latter = latter.slice(1);
+        }
     }
 
     return prefix + "1" + former + "..." + latter;
-  }
+}
+
+
+export function formatValidatorStatus(jailed, status) {
+    if (jailed) {
+        return <Chip label="Jailed" color='error' size='small' variant='contained' />
+    }
+
+    switch (status) {
+        case 'BOND_STATUS_BONDED':
+            return <Chip label="Bonded" color='primary' size='small' variant='outlined' />
+        case 'BOND_STATUS_UNBONDED':
+            return <Chip label="Unbonded" color='primary' size='small' variant='outlined' />
+        case 'BOND_STATUS_UNBONDING':
+            return <Chip label="Unbonding" color='primary' size='small' variant='outlined' />
+        default:
+            return 'Unknown'
+    }
+}
+
+
+export function totalDelegations(delegations, coinDecimals) {
+    let total = 0
+    for( let i=0;i<delegations.length;i++) {
+        total += parseInt(delegations[i].balance.amount)
+    }
+    const temp = total/(10.0 ** coinDecimals)
+    return `${parseFloat((temp.toFixed(6)))}`
+}
+
+export function totalRewards(rewards, coinDecimals) {
+    if (rewards.length === 0) { return 0}
+    let total = 0
+    for( let i=0;i<rewards.length;i++) {
+        total += parseInt(rewards[i].reward[0].amount)
+    }
+    const temp = total/(10.0 ** coinDecimals)
+    return `${parseFloat((temp.toFixed(6)))}`
+}
+
+
+export function totalUnbonding(unbonding, coinDecimals) {
+    if (unbonding.length === 0) { return 0}
+    let total = 0
+    for( let i=0;i<unbonding.length;i++) {
+        for (let j=0;j<unbonding[i].entries.length;j++) {
+            total += parseInt(unbonding[i].entries[j].balance)
+        }
+    }
+    const temp = total/(10.0 ** coinDecimals)
+    return `${parseFloat((temp.toFixed(6)))}`
+}

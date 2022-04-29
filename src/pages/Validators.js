@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    getValidators, resetState, getDelegations
-} from './../features/stake/stakeSlice';
+    getValidators, resetState, getDelegations, sortValidatorsByVotingPower
+} from '../features/staking/stakeSlice';
 import {
 
 } from './../features/wallet/walletSlice';
@@ -16,6 +16,7 @@ import Paper from '@mui/material/Paper';
 import { formatVotingPower } from '../utils/denom';
 import { StyledTableCell, StyledTableRow } from './table';
 import { Typography } from '@mui/material';
+import { formatValidatorStatus } from '../utils/util';
 
 export function Validators() {
     const [type, setType] = useState('delegations');
@@ -24,7 +25,7 @@ export function Validators() {
     const pagination = useSelector((state) => state.staking.validators.pagination);
     const delegations = useSelector((state) => state.staking.delegations);
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
-    const address = useSelector((state) => state.wallet.bech32Address);
+    const address = useSelector((state) => state.wallet.address);
     const walletConnected = useSelector((state) => state.wallet.connected);
     const dispatch = useDispatch();
 
@@ -50,12 +51,17 @@ export function Validators() {
 
     useEffect(() => {
         if (walletConnected) {
-            if (pagination?.next_key != undefined || pagination?.next_key != null)
+            if (pagination?.next_key !== undefined || pagination?.next_key !== null) {
                 dispatch(getValidators({
                     baseURL: chainInfo.lcd,
                     key: pagination.next_key
                 }))
-        }
+            } else {
+                console.log(pagination)
+                if(Object.keys(validators?.active).length > 0 && pagination?.next_key === null)
+                    dispatch(sortValidatorsByVotingPower())
+            }
+            }
     }, [pagination])
 
     return (
@@ -107,7 +113,7 @@ export function Validators() {
                                                         <StyledTableCell> {validators?.active[row.delegation.validator_address]?.description.moniker} </StyledTableCell>
                                                         <StyledTableCell> {(validators?.active[row.delegation.validator_address]?.commission.commission_rates.rate * 100).toFixed(2)}% </StyledTableCell>
                                                         <StyledTableCell>{parseFloat(row.delegation.shares) / 1000000}</StyledTableCell>
-                                                        <StyledTableCell>{validators?.active[row.delegation.validator_address]?.status}</StyledTableCell>
+                                                        <StyledTableCell> {validators.active[row.delegation.validator_address]?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validators.active[row.delegation.validator_address]?.status)} </StyledTableCell>
                                                         <StyledTableCell>
                                                             <Button variant="outlined" size="small">
                                                                 Unbond
@@ -189,6 +195,7 @@ export function Validators() {
                                                         <StyledTableCell>Validator</StyledTableCell>
                                                         <StyledTableCell>Voting Power</StyledTableCell>
                                                         <StyledTableCell>Commission</StyledTableCell>
+                                                        <StyledTableCell>Status</StyledTableCell>
                                                         <StyledTableCell>Action</StyledTableCell>
                                                     </StyledTableRow>
                                                 </TableHead>
@@ -204,6 +211,7 @@ export function Validators() {
                                                             <StyledTableCell>{validators.inactive[keyName]?.description.moniker}</StyledTableCell>
                                                             <StyledTableCell>{formatVotingPower(validators.inactive[keyName]?.tokens)}</StyledTableCell>
                                                             <StyledTableCell>{(validators.inactive[keyName]?.commission.commission_rates.rate * 100).toFixed(2)}%</StyledTableCell>
+                                                            <StyledTableCell>{validators.inactive[keyName]?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validators.inactive[keyName]?.status)}</StyledTableCell>
                                                             <StyledTableCell>
                                                                 -
                                                             </StyledTableCell>

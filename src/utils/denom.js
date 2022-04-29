@@ -14,3 +14,28 @@ export function parseSpendLimit (tokens) {
     return 0
 }
 
+export function parseTokens (tokens, displayName, coinDecimals) {
+    if (Array.isArray(tokens)) {
+        const token = tokens[0]
+        const temp = token.amount/(10.0 ** coinDecimals)
+        return `${parseFloat((temp.toFixed(6)))} ${displayName}`
+
+    } else {
+        const temp = tokens.amount/(10.0 ** coinDecimals)
+        return `${parseFloat((temp.toFixed(6)))} ${displayName}`
+    }
+}
+
+
+export function totalBalance (tokens, coinDecimals) {
+    if (tokens === undefined || tokens.length === 0) { return 0.0 }
+    if (Array.isArray(tokens)) {
+        const token = tokens[0]
+        const temp = token.amount/(10.0 ** coinDecimals)
+        return parseFloat((temp.toFixed(6)))
+
+    } else {
+        const temp = tokens.amount/(10.0 ** coinDecimals)
+        return parseFloat((temp.toFixed(6)))
+    }
+}

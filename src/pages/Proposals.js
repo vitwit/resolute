@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  getProposals
+  getProposals, getProposalTally
 } from './../features/proposals/proposalsSlice';
 import { setError } from './../features/common/commonSlice';
 import Grid from '@mui/material/Grid';
@@ -14,6 +14,8 @@ export function Proposals() {
   const proposals = useSelector((state) => state.gov.active.proposals);
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
+  const proposalTally = useSelector((state) => state.gov.tally.proposalTally);
+
   const dispatch = useDispatch();
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
@@ -34,7 +36,21 @@ export function Proposals() {
         message: errMsg
       }))
     }
-  }, [errMsg])
+  }, [errMsg]);
+
+  useEffect(() => {
+    if (proposals.length > 0) {
+      for (let i = 0; i < proposals.length; i++) {
+        const proposal = proposals[i]
+        if (proposal !== undefined) {
+          dispatch(getProposalTally({
+            baseURL: chainInfo.lcd,
+            proposalId: proposal?.proposal_id
+          }))
+        }
+      }
+    }
+  }, [proposals]);
 
 
   return (
@@ -42,7 +58,7 @@ export function Proposals() {
       <Grid container spacing={2}>
         {
           status === 'loading' ?
-            <CircularProgress  style={{display: 'flex', justifyContent: 'center'}}/>
+            <CircularProgress style={{ display: 'flex', justifyContent: 'center' }} />
             :
             proposals.length === 0 ?
               <Typography
@@ -57,10 +73,10 @@ export function Proposals() {
                 No Active Proposals Found
               </Typography>
               :
-              proposals.map((proposal) => (
-                <Grid item md={6} xs={12}>
+              proposals.map((proposal, index) => (
+                <Grid item md={6} xs={12} key={index}>
                   <Paper elevation={0} style={{ padding: 12 }}>
-                    <ProposalItem info={proposal} />
+                    <ProposalItem info={proposal} tally={proposalTally[proposal?.proposal_id]}/>
                   </Paper>
                 </Grid>
               ))

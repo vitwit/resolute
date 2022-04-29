@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
 const balancesURI = 'cosmos/bank/v1beta1/balances/';
-const balanceURI =  (address, denom) => { return `cosmos/bank/v1beta1/balances/${address}/by_denom/?${denom}`};
+const balanceURI =  (address, denom) => { return `/cosmos/bank/v1beta1/balances/${address}/by_denom?denom=${denom}`};
 
 export function fetchBalances(baseURL,address, key, limit) {
   let uri = `${baseURL}${balancesURI}${address}`

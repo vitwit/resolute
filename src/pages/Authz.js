@@ -34,7 +34,7 @@ export default function Authz() {
   const [grantType, setGrantType] = React.useState('by-me');
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
-  const address = useSelector((state) => state.wallet.bech32Address);
+  const address = useSelector((state) => state.wallet.address);
 
   useEffect(() => {
     dispatch(getGrantsByMe({

@@ -16,7 +16,8 @@ import {
 
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Chip from '@mui/material/Chip';
-import { getTypeURLName } from '../utils/util';
+import { getTypeURLName, shortenAddress } from '../utils/util';
+import { getLocalTime } from './../utils/datetime'
 import { useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from './table';
 import { Typography } from '@mui/material';
@@ -29,10 +30,12 @@ export default function Feegrant() {
   const [grantType, setGrantType] = React.useState('by-me');
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
-  const address = useSelector((state) => state.wallet.bech32Address);
+  const walletConnected = useSelector((state) => state.wallet.connected);
+  const address = useSelector((state) => state.wallet.address);
   const errState = useSelector((state) => state.feegrant.errState);
 
   useEffect(() => {
+    if (walletConnected)
     dispatch(getGrantsByMe({
       baseURL: chainInfo.lcd,
       granter: address
@@ -68,10 +71,6 @@ export default function Feegrant() {
           <Button
             variant={grantType === 'to-me' ? 'contained' : 'outlined'}
             onClick={() => {
-              dispatch(getGrantsToMe({
-                baseURL: chainInfo.lcd,
-                grantee: address
-              }))
               setGrantType('to-me')
             }
             }
@@ -98,22 +97,43 @@ export default function Feegrant() {
                             <StyledTableRow>
                               <StyledTableCell>Grantee</StyledTableCell>
                               <StyledTableCell >Type</StyledTableCell>
-                              <StyledTableCell>SpendLimit</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
+                              <StyledTableCell>Action</StyledTableCell>
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
-                            {grantsByMe && grantsByMe.allowances && grantsByMe.allowances.map((row) => (
+                            {grantsByMe && grantsByMe.allowances && grantsByMe.allowances.map((row, index) => (
                               <StyledTableRow
-                                key={row.index}
+                                key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                               >
                                 <StyledTableCell component="th" scope="row">
-                                  {JSON.stringify(row)}
+                                  {shortenAddress(row.grantee, 21)}
                                 </StyledTableCell>
-                                <StyledTableCell>{row.allowance['@type']}</StyledTableCell>
-                                <StyledTableCell>{row.allowance.spend_limit.length > 0 ? row.allowance.spend_limit : "-"}</StyledTableCell>
-                                <StyledTableCell>{row.allowance.expiration ? row.allowance.expiration : "-"}</StyledTableCell>
+                                <StyledTableCell>
+                                  <Chip label={getTypeURLName(row.allowance['@type'])} variant="filled" size="medium" />
+                                </StyledTableCell>
+                                <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
+                                <StyledTableCell>
+                                  <Button
+                                    variant='outlined'
+                                    color='primary'
+                                    size='small'
+                                    disableElevation
+                                  >
+                                    Info
+                                  </Button>
+                                  &nbsp;
+                                  &nbsp;
+                                  <Button
+                                    variant='outlined'
+                                    color='error'
+                                    size='small'
+                                    disableElevation
+                                  >
+                                    Revoke
+                                  </Button>
+                                </StyledTableCell>
                               </StyledTableRow>
                             ))}
                           </TableBody>
@@ -138,24 +158,33 @@ export default function Feegrant() {
                             <StyledTableRow>
                               <StyledTableCell >Granter</StyledTableCell>
                               <StyledTableCell >Type</StyledTableCell>
-                              <StyledTableCell >Basic SpendLimit</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
+                              <StyledTableCell >Action</StyledTableCell>
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
-                            {grantsToMe && grantsToMe.allowances && grantsToMe.allowances.map((row) => (
+                            {grantsToMe && grantsToMe.allowances && grantsToMe.allowances.map((row, index) => (
                               <StyledTableRow
-                                key={row.index}
+                                key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                               >
                                 <StyledTableCell component="th" scope="row">
-                                  {row.granter}
+                                  {shortenAddress(row.granter, 21)}
                                 </StyledTableCell>
                                 <StyledTableCell>
                                   <Chip label={getTypeURLName(row.allowance['@type'])} variant="filled" size="medium" />
                                 </StyledTableCell>
-                                <StyledTableCell>{row.allowance.spend_limit?.length > 0 ? row.allowance.spend_limit : "-"}</StyledTableCell>
-                                <StyledTableCell>{row.allowance.expiration ? row.allowance.expiration : "-"}</StyledTableCell>
+                                <StyledTableCell>{row.allowance.expiration ? getLocalTime(row.allowance.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
+                                <StyledTableCell>
+                                  <Button
+                                    variant='outlined'
+                                    color='primary'
+                                    size='small'
+                                    disableElevation
+                                  >
+                                    Info
+                                  </Button>
+                                </StyledTableCell>
                               </StyledTableRow>
                             ))}
                           </TableBody>

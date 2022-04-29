@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchBalances } from './bankAPI';
+import { fetchBalances, fetchBalance } from './bankAPI';
 
 const initialState = {
   balances: {
@@ -26,7 +26,7 @@ export const getBalances = createAsyncThunk(
 export const getBalance = createAsyncThunk(
   'bank/balance',
   async (data) => {
-    const response = await fetchBalances(data.baseURL, data.address, data.denom);
+    const response = await fetchBalance(data.baseURL, data.address, data.denom);
     return response.data;
   }
 );

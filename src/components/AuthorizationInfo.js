@@ -3,7 +3,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import PropTypes from 'prop-types';
 import { Typography, Chip, DialogContent } from '@mui/material';
-import { getLocalTime } from '../utils/datetime';
 import { getTypeURLName } from '../utils/util';
 import { parseSpendLimit } from '../utils/denom';
 
