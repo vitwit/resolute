@@ -53,9 +53,10 @@ const fetchUnbonding = (baseURL,address, pagination) => {
 })
 }
 
-
-export default {
+const result = {
   validtors: fetchValidators,
   delegations: fetchdelegations,
   unbonding: fetchUnbonding
 }
+
+export default result;

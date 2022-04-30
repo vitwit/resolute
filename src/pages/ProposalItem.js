@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState } from 'react';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
@@ -7,13 +6,29 @@ import Typography from '@mui/material/Typography';
 import { computeVotePercentage, getProposalComponent } from '../utils/util';
 import './common.css';
 import { getLocalTime } from '../utils/datetime';
+import VoteDialog from '../components/Vote';
 
 export const ProposalItem = (props) => {
+    const [open, setOpen] = useState(true);
+
     const {info, tally} = props;
-    const tallyInfo = computeVotePercentage(tally)
+    const tallyInfo = computeVotePercentage(tally);
+
+    const onVoteClick = () => {
+        setOpen(true);
+    }
+
+    const closeDialog = () => {
+        setOpen(false);
+    }
+
+    const onVoteSubmit = (option) => {
+        alert(option);
+    }
 
     return (
         <React.Fragment>
+            <VoteDialog open={open} closeDialog={closeDialog} onVote={onVoteSubmit}/>
             <CardContent>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
@@ -65,7 +80,7 @@ export const ProposalItem = (props) => {
 
             </CardContent>
             <CardActions style={{ justifyContent: 'end' }}>
-                <Button size="small" variant='contained' disableElevation>Vote</Button>
+                <Button size="small" variant='contained' disableElevation onClick={onVoteClick}>Vote</Button>
             </CardActions>
         </React.Fragment>
     );

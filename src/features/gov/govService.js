@@ -57,9 +57,10 @@ const fetchVoterVote = (baseURL, proposalId, voter, key, limit) => {
   })
 }
 
-
-export default {
+const result = {
   proposals: fetchProposals,
   tally: fetchProposalTally,
   votes: fetchVoterVote
 }
+
+export default result;
