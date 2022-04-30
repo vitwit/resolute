@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchBalances, fetchBalance } from './bankAPI';
+import bankService from './bankService';
 
 const initialState = {
   balances: {
@@ -18,7 +18,7 @@ const initialState = {
 export const getBalances = createAsyncThunk(
   'bank/balances',
   async (data) => {
-    const response = await fetchBalances(data.baseURL, data.address, data.key, data.limit);
+    const response = await bankService.balances(data.baseURL, data.address, data.pagination);
     return response.data;
   }
 );
@@ -26,7 +26,7 @@ export const getBalances = createAsyncThunk(
 export const getBalance = createAsyncThunk(
   'bank/balance',
   async (data) => {
-    const response = await fetchBalance(data.baseURL, data.address, data.denom);
+    const response = await bankService.balance(data.baseURL, data.address, data.denom);
     return response.data;
   }
 );
@@ -71,7 +71,5 @@ export const bankSlice = createSlice({
       
   },
 });
-
-export const { balances, balance } = bankSlice.actions;
 
 export default bankSlice.reducer;

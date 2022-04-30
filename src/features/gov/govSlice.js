@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchProposals, fetchProposalTally } from './proposalsAPI';
+import govService from './govService';
 
 const initialState = {
   active: {
@@ -12,12 +12,17 @@ const initialState = {
     errMsg: '',
     proposalTally: {},
   },
+  votes: {
+    status: 'idle',
+    errMsg: '',
+    proposals: {},
+  },
 };
 
 export const getProposals = createAsyncThunk(
   'gov/active-proposals',
   async (data) => {
-    const response = await fetchProposals(data.baseURL, data.key, data.limit, 2);
+    const response = await govService.proposals(data.baseURL, data.key, data.limit, 2);
     return response.data;
   }
 );
@@ -25,8 +30,17 @@ export const getProposals = createAsyncThunk(
 export const getProposalTally = createAsyncThunk(
   'gov/proposal-tally',
   async (data) => {
-    const response = await fetchProposalTally(data.baseURL, data.proposalId);
+    const response = await govService.tally(data.baseURL, data.proposalId);
     response.data.tally.proposal_id = data.proposalId
+    return response.data;
+  }
+);
+
+export const getVotes = createAsyncThunk(
+  'gov/voter-votes',
+  async (data) => {
+    const response = await govService.votes(data.baseURL,data.proposalId, data.voter, data.key, data.limit);
+    response.data.votes.proposal_id = data.proposalId
     return response.data;
   }
 );
@@ -44,7 +58,7 @@ export const proposalsSlice = createSlice({
       })
       .addCase(getProposals.fulfilled, (state, action) => {
         state.active.status = 'idle';
-        state.active.proposals = action.payload?.proposals // TODO: handle paginated
+        state.active.proposals = action.payload?.proposals
         state.active.pagination = action.payload?.pagination
         state.active.errMsg = ''
       })
@@ -69,9 +83,24 @@ export const proposalsSlice = createSlice({
         state.tally.errMsg = action.error.message
       })
 
+      // votes
+      builder
+      .addCase(getVotes.pending, (state) => {
+        state.votes.status = 'loading';
+        state.votes.errMsg = ''
+      })
+      .addCase(getVotes.fulfilled, (state, action) => {
+        state.votes.status = 'idle';
+        state.votes.proposals[action.payload?.votes?.proposal_id] = action.payload?.vote
+        state.votes.errMsg = ''
+        console.log("here", state.votes)
+      })
+      .addCase(getVotes.rejected, (state, action) => {
+        state.votes.status = 'rejected';
+        state.votes.errMsg = action.error.message
+      })
+
   },
 });
-
-export const { proposals } = proposalsSlice.actions;
 
 export default proposalsSlice.reducer;

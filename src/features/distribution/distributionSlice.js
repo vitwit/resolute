@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchDelegatorTotalRewards } from './distributionAPI';
+import distService from './distributionService';
 
 const initialState = {
   delegatorRewards: {
@@ -14,7 +14,7 @@ const initialState = {
 export const getDelegatorTotalRewards = createAsyncThunk(
   'distribution/totalRewards',
   async (data) => {
-    const response = await fetchDelegatorTotalRewards(data.baseURL, data.address, data.key, data.limit);
+    const response = await distService.delegatorRewards(data.baseURL, data.address, data.pagination);
     return response.data;
   }
 );
@@ -47,7 +47,5 @@ export const bankSlice = createSlice({
       
   },
 });
-
-export const { delegatorRewards } = bankSlice.actions;
 
 export default bankSlice.reducer;

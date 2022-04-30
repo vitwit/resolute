@@ -36,6 +36,7 @@ export function Validators() {
         if (walletConnected) {
             dispatch(getValidators({
                 baseURL: chainInfo.lcd,
+                status: null,
             }))
         }
     }, [chainInfo]);
@@ -51,13 +52,16 @@ export function Validators() {
 
     useEffect(() => {
         if (walletConnected) {
-            if (pagination?.next_key !== undefined || pagination?.next_key !== null) {
+            if (pagination?.next_key !== null) {
                 dispatch(getValidators({
                     baseURL: chainInfo.lcd,
-                    key: pagination.next_key
+                    status: null,
+                    pagination: {
+                        key: pagination.next_key,
+                        limit: null
+                    }
                 }))
             } else {
-                console.log(pagination)
                 if(Object.keys(validators?.active).length > 0 && pagination?.next_key === null)
                     dispatch(sortValidatorsByVotingPower())
             }

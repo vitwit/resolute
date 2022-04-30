@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import stakeReducer from '../features/staking/stakeSlice';
-import proposalsReducer from '../features/proposals/proposalsSlice';
+import proposalsReducer from '../features/gov/govSlice';
 import feegrantReducer from '../features/feegrant/feegrantSlice';
 import authzReducer from '../features/authz/authzSlice';
 import bankReducer from '../features/bank/bankSlice';

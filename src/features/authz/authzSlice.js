@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchGrantsByMe, fetchGrantsToMe } from './authzAPI';
+import authzService from './authzService';
 
 const initialState = {
   grantsToMe: {
@@ -19,7 +19,7 @@ const initialState = {
 export const getGrantsToMe = createAsyncThunk(
   'authz/grantsToMe',
   async (data) => {
-    const response = await fetchGrantsToMe(data.baseURL, data.grantee, data.key, data.limit, 2);
+    const response = await authzService.grantsToMe(data.baseURL, data.grantee, data.pagination);
     return response.data;
   }
 );
@@ -27,7 +27,7 @@ export const getGrantsToMe = createAsyncThunk(
 export const getGrantsByMe = createAsyncThunk(
   'authz/grantsByMe',
   async (data) => {
-    const response = await fetchGrantsByMe(data.baseURL, data.granter, data.key, data.limit, 2);
+    const response = await authzService.grantsByMe(data.baseURL, data.granter, data.pagination);
     return response.data;
   }
 );
@@ -73,7 +73,5 @@ export const authzSlice = createSlice({
       })
   },
 });
-
-export const { authz } = authzSlice.actions;
 
 export default authzSlice.reducer;

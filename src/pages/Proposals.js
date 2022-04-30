@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  getProposals, getProposalTally
-} from './../features/proposals/proposalsSlice';
+  getProposals, getProposalTally, getVotes
+} from './../features/gov/govSlice';
 import { setError } from './../features/common/commonSlice';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -15,6 +15,8 @@ export function Proposals() {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
   const proposalTally = useSelector((state) => state.gov.tally.proposalTally);
+  const votes = useSelector((state) => state.gov.votes.proposals);
+  const address = useSelector((state) => state.wallet.address);
 
   const dispatch = useDispatch();
 
@@ -29,7 +31,7 @@ export function Proposals() {
   }, [chainInfo]);
 
   useEffect(() => {
-    if (status === 'rejected' && errMsg == '') {
+    if (status === 'rejected' && errMsg === '') {
       dispatch(setError({
 
         type: 'error',
@@ -39,7 +41,7 @@ export function Proposals() {
   }, [errMsg]);
 
   useEffect(() => {
-    if (proposals.length > 0) {
+    if (proposals.length > 0 && address !== "") {
       for (let i = 0; i < proposals.length; i++) {
         const proposal = proposals[i]
         if (proposal !== undefined) {
@@ -47,10 +49,37 @@ export function Proposals() {
             baseURL: chainInfo.lcd,
             proposalId: proposal?.proposal_id
           }))
+
+          dispatch(getVotes({
+            baseURL: chainInfo.lcd,
+            proposalId: proposal?.proposal_id,
+            voter: address
+          }))
         }
       }
     }
   }, [proposals]);
+
+
+  // useEffect(() => {
+  //   if (proposals.length > 0) {
+  //     for (let i = 0; i < proposals.length; i++) {
+  //       const proposal = proposals[i]
+  //       if (proposal !== undefined) {
+  //         dispatch(getVotes({
+  //           baseURL: chainInfo.lcd,
+  //           proposalId: proposal?.proposal_id,
+  //           voter: address
+  //         }))
+  //       }
+  //     }
+  //   }
+  // }, [proposals]);
+
+
+  useEffect(() => {
+    console.log("votes", votes);
+  },[votes])
 
 
   return (

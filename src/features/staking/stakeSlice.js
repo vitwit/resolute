@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchdelegations, fetchUnbonding, fetchValidators } from './stakingAPI';
+import stakingService from './stakingService';
 
 const initialState = {
   validators: {
@@ -9,7 +9,9 @@ const initialState = {
     activeSorted: {},
     inactiveSorted: {},
     errMsg: '',
-    pagination: {},
+    pagination: {
+      next_key: null
+    },
   },
   delegations: {
     status: 'idle',
@@ -28,7 +30,7 @@ const initialState = {
 export const getValidators = createAsyncThunk(
   'stake/validators',
   async (data) => {
-    const response = await fetchValidators(data.baseURL, data.key, data.limit, data?.status);
+    const response = await stakingService.validtors(data.baseURL, data?.status, data.pagination);
     return response.data;
   }
 );
@@ -36,7 +38,7 @@ export const getValidators = createAsyncThunk(
 export const getDelegations = createAsyncThunk(
   'stake/delegations',
   async (data) => {
-    const response = await fetchdelegations(data.baseURL,data.address, data.key, data.limit);
+    const response = await stakingService.delegations(data.baseURL,data.address, data.pagination);
     return response.data;
   }
 );
@@ -44,7 +46,7 @@ export const getDelegations = createAsyncThunk(
 export const getUnbonding = createAsyncThunk(
   'stake/unbonding',
   async (data) => {
-    const response = await fetchUnbonding(data.baseURL,data.address, data.key, data.limit);
+    const response = await stakingService.unbonding(data.baseURL,data.address, data.pagination);
     return response.data;
   }
 );
@@ -144,6 +146,6 @@ export const stakeSlice = createSlice({
   },
 });
 
-export const { validators, delegations, resetState, sortValidatorsByVotingPower } = stakeSlice.actions;
+export const { resetState, sortValidatorsByVotingPower } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

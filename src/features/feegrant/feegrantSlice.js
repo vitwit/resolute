@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchGrantsByMe, fetchGrantsToMe } from './feegrantAPI';
+import feegrantService from './feegrantService';
 
 const initialState = {
   grantsToMe: {
@@ -19,7 +19,7 @@ const initialState = {
 export const getGrantsToMe = createAsyncThunk(
   'feegrant/grantsToMe',
   async (data) => {
-    const response = await fetchGrantsToMe(data.baseURL, data.grantee, data.key, data.limit, 2);
+    const response = await feegrantService.grantsToMe(data.baseURL, data.grantee, data.pagination);
     return response.data;
   }
 );
@@ -27,7 +27,7 @@ export const getGrantsToMe = createAsyncThunk(
 export const getGrantsByMe = createAsyncThunk(
   'feegrant/grantsByMe',
   async (data) => {
-    const response = await fetchGrantsByMe(data.baseURL, data.granter, data.key, data.limit, 2);
+    const response = await feegrantService.grantsByMe(data.baseURL, data.granter, data.pagination);
     return response.data;
   }
 );
@@ -88,7 +88,5 @@ export const feegrantSlice = createSlice({
       })
   },
 });
-
-export const { feegrant } = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;
