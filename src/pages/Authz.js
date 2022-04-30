@@ -49,6 +49,7 @@ export default function Authz() {
 
   let navigate = useNavigate();
   function navigateTo(path) {
+    console.log(path)
     navigate(path);
   }
 
