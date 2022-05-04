@@ -61,22 +61,6 @@ export function Proposals() {
   }, [proposals]);
 
 
-  // useEffect(() => {
-  //   if (proposals.length > 0) {
-  //     for (let i = 0; i < proposals.length; i++) {
-  //       const proposal = proposals[i]
-  //       if (proposal !== undefined) {
-  //         dispatch(getVotes({
-  //           baseURL: chainInfo.lcd,
-  //           proposalId: proposal?.proposal_id,
-  //           voter: address
-  //         }))
-  //       }
-  //     }
-  //   }
-  // }, [proposals]);
-
-
   useEffect(() => {
     console.log("votes", votes);
   },[votes])
@@ -87,7 +71,9 @@ export function Proposals() {
       <Grid container spacing={2}>
         {
           status === 'loading' ?
-            <CircularProgress style={{ display: 'flex', justifyContent: 'center' }} />
+          <div style={{ display: 'flex', justifyContent: 'center', width:"100%", marginTop: 22 }}>
+            <CircularProgress />
+            </div>
             :
             proposals.length === 0 ?
               <Typography
@@ -105,7 +91,7 @@ export function Proposals() {
               proposals.map((proposal, index) => (
                 <Grid item md={6} xs={12} key={index}>
                   <Paper elevation={0} style={{ padding: 12 }}>
-                    <ProposalItem info={proposal} tally={proposalTally[proposal?.proposal_id]}/>
+                    <ProposalItem info={proposal} tally={proposalTally[proposal?.proposal_id]} vote={votes[proposal?.proposal_id]}/>
                   </Paper>
                 </Grid>
               ))

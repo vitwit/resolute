@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 
-export default function BalanceInfo(props) {    
+export default function BalanceInfo(props) {
     let navigate = useNavigate();
     function navigateTo(path) {
       navigate(path);
@@ -13,8 +13,15 @@ export default function BalanceInfo(props) {
         <>
             <Paper elevation={0} spacing={2} style={{ padding: 24 }}>
                 <div style={{textAlign: 'right'}}>
-                <Button variant='contained' size ='small' disableElevation onClick={() => navigateTo("/send")}>Send</Button>&nbsp;&nbsp;&nbsp;
-                <Button variant='contained' size ='small' disableElevation onClick={() => navigateTo("/withdraw-rewards")}>Withdraw Rewards</Button>
+                <Button 
+                variant='contained'
+                size ='small'
+                disableElevation
+                onClick={() => navigateTo("/send")}
+                disabled={props.balance <= 0.0001}
+                >
+                    Send
+                </Button>
                 </div>
                 <br/>
                 <CssBaseline />
@@ -76,10 +83,10 @@ export default function BalanceInfo(props) {
 
 BalanceInfo.propTypes = {
     chainInfo: PropTypes.object.isRequired,
-    balance: PropTypes.number.isRequired,
-    delegations: PropTypes.number.isRequired,
-    rewards: PropTypes.number.isRequired,
-    unbonding: PropTypes.number.isRequired,
+    balance: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    delegations: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    rewards: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    unbonding: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
 };
 
 
@@ -112,6 +119,6 @@ function Balance(props) {
 }
 
 Balance.propTypes = {
-    balance: PropTypes.number.isRequired,
+    balance: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     title: PropTypes.string.isRequired,
 };

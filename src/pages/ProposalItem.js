@@ -9,9 +9,9 @@ import { getLocalTime } from '../utils/datetime';
 import VoteDialog from '../components/Vote';
 
 export const ProposalItem = (props) => {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
-    const {info, tally} = props;
+    const {info, tally, vote} = props;
     const tallyInfo = computeVotePercentage(tally);
 
     const onVoteClick = () => {
@@ -77,11 +77,41 @@ export const ProposalItem = (props) => {
                         {tallyInfo.abstain}%
                     </Typography>
                 </div>
+                <br/>
+                
 
             </CardContent>
-            <CardActions style={{ justifyContent: 'end' }}>
+            <CardActions style={{ display: 'flex', justifyContent: 'space-between' }}>
+            {
+                    vote?.proposal_id ?
+                <Typography
+                variant='body2'
+                color='text.primary'
+                        
+                >You voted {formatVoteOption(vote?.option)}</Typography>
+                :
+                <>
+                &nbsp;
+                </>
+
+                }   
                 <Button size="small" variant='contained' disableElevation onClick={onVoteClick}>Vote</Button>
             </CardActions>
         </React.Fragment>
     );
+}
+
+function formatVoteOption(option) {
+    switch(option) {
+        case 'VOTE_OPTION_YES':
+            return "Yes"
+        case 'VOTE_OPTION_NO':
+            return "No"
+        case 'VOTE_OPTION_ABSTAIN':
+            return "Abstain"
+        case 'VOTE_OPTION_NO_WITH_VETO':
+            return "NoWithVeto"
+        default:
+            return ""
+    }
 }

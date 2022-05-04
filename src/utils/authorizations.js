@@ -5,19 +5,19 @@ export function authzMsgTypes() {
             typeURL : '/cosmos.bank.v1beta1.Send'
         },
         {
-            label: 'Authz/Grant',
+            label: 'Authz-Grant',
             typeURL : '/cosmos.authz.v1beta1.Grant'
         },
         {
-            label: 'Authz/Revoke',
+            label: 'Authz-Revoke',
             typeURL : '/cosmos.authz.v1beta1.Revoke'
         },
         {
-            label: 'Feegrant/Grant',
+            label: 'Feegrant-Grant',
             typeURL : '/cosmos.feegrant.v1beta1.Grant'
         },
         {
-            label: 'Feegrant/Revoke',
+            label: 'Feegrant-Revoke',
             typeURL : '/cosmos.feegrant.v1beta1.Revoke'
         },
         {
@@ -37,11 +37,11 @@ export function authzMsgTypes() {
             typeURL : '/cosmos.gov.v1beta1.WithdrawAllRewards'
         },
         {
-            label: 'Re Delegate',
+            label: 'ReDelegate',
             typeURL : '/cosmos.staking.v1beta1.MsgReDelegate'
         },
         {
-            label: 'Un Delegate',
+            label: 'UnDelegate',
             typeURL : '/cosmos.staking.v1beta1.MsgUnDelegate'
         },
         {

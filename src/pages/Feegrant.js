@@ -40,6 +40,10 @@ export default function Feegrant() {
       baseURL: chainInfo.lcd,
       granter: address
     }))
+    dispatch(getGrantsToMe({
+      baseURL: chainInfo.lcd,
+      grantee: address
+    }))
   }, [chainInfo]);
 
   let navigate = useNavigate();
@@ -48,7 +52,7 @@ export default function Feegrant() {
   }
 
   useEffect(() => {
-    if (errState.message !== '') {
+    if (errState.message !== '' && errState.type === 'error') {
       dispatch(setError(errState))
     }
   }, [errState]);

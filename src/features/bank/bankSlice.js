@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { SendMsg } from '../../txns/proto';
 import bankService from './bankService';
+import { fee, signAndBroadcastAmino } from '../../txns/execute';
 
 const initialState = {
   balances: {
@@ -12,6 +14,13 @@ const initialState = {
     status: 'idle',
     errMsg: '',
   },
+  tx: {
+    send: {
+      status: 'idle',
+      txHash: '',
+      errMsg: '',
+    }
+  }
 
 };
 
@@ -28,6 +37,23 @@ export const getBalance = createAsyncThunk(
   async (data) => {
     const response = await bankService.balance(data.baseURL, data.address, data.denom);
     return response.data;
+  }
+);
+
+export const txAuthSend = createAsyncThunk(
+  'bank/tx-send',
+  async (data, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const msg = SendMsg(data.from, data.to, data.amount, data.denom)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), data.memo, data.chainId, data.rpc)
+      if (result?.code === 0) {
+      return fulfillWithValue({txHash: result?.transactionHash});
+      } else {
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      return rejectWithValue(error)
+    }
   }
 );
 
@@ -66,6 +92,24 @@ export const bankSlice = createSlice({
       .addCase(getBalance.rejected, (state, action) => {
         state.balance.status = 'rejected';
         state.balance.errMsg = action.error.message
+      })
+
+
+      builder
+      .addCase(txAuthSend.pending, (state) => {
+        state.tx.send.status = 'pending';
+        state.tx.send.errMsg = '';
+        state.tx.send.txHash = '';
+
+      })
+      .addCase(txAuthSend.fulfilled, (state, action) => {
+        state.tx.send.status = 'idle';
+        state.tx.send.errMsg = '';
+        state.tx.send.txHash = action.payload.txHash;
+      })
+      .addCase(txAuthSend.rejected, (state, action) => {
+        state.tx.send.status = 'rejected';
+        state.tx.send.errMsg = action.error.message;
       })
 
       

@@ -15,6 +15,7 @@ import Feegrant from './Feegrant'
 import { getNetworks, getSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
+import Link from '@mui/material/Link'
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
@@ -23,7 +24,7 @@ import { Routes, Route } from "react-router-dom";
 import { Validators } from './Validators';
 import { Proposals } from './Proposals';
 import { useSelector, useDispatch } from 'react-redux'
-import { setWallet, resetWallet } from './../features/wallet/walletSlice'
+import { setWallet, resetWallet, setKeplr } from './../features/wallet/walletSlice'
 import { useNavigate } from "react-router-dom";
 import NewFeegrant from './NewFeegrant';
 import NewAuthz from './NewAuthz';
@@ -35,6 +36,7 @@ import MuiAlert from '@mui/material/Alert';
 import Overview from './Overview';
 import { Send } from './Send';
 import { WithdrawRewards } from './WithdrawRewards';
+import { getKeplrWalletAmino, isKeplrInstalled } from '../txns/execute';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -52,11 +54,30 @@ function DashboardContent() {
         setSnackClose(value);
     }
 
+    const [snackTxOpen, setSnackTxClose] = React.useState(false);
+
+    const showTxSnack = (value) => {
+        setSnackTxClose(value);
+    }
+
     const [selectedNetwork, setNetwork] = React.useState(getSelectedNetwork());
     const changeNetwork = (network) => {
         saveSelectedNetwork(network.displayName)
         setNetwork(network);
     };
+
+    React.useEffect(() => {
+        window.addEventListener("keplr_keystorechange", () => {
+            if (!walletConnected) {
+                if (isLogin) {
+                    disconnectWallet()
+                    setTimeout(() => {
+                        connectWallet(selectedNetwork)
+                    },1000);
+                }
+            }
+      });
+      });
 
 
     const [anchorEl, setAnchorEl] = React.useState(false);
@@ -67,9 +88,11 @@ function DashboardContent() {
 
     const walletConnected = useSelector((state) => state.wallet.connected)
     const walletStatus = useSelector((state) => state.wallet)
+    const chainInfo = useSelector((state) => state.wallet.chainInfo)
     const dispatch = useDispatch()
 
     const errState = useSelector((state) => state.common.errState);
+    const txSuccess = useSelector((state) => state.common.txSuccess);
 
     React.useEffect(() => {
         if (errState.message === '') {
@@ -78,6 +101,14 @@ function DashboardContent() {
             showSnack(true)
         }
     }, [errState]);
+
+    React.useEffect(() => {
+        if (txSuccess.hash === '') {
+            showTxSnack(false)
+        } else {
+            showTxSnack(true)
+        }
+    }, [txSuccess]);
 
     React.useEffect(() => {
         if (!walletConnected) {
@@ -92,10 +123,6 @@ function DashboardContent() {
         changeNetwork(network)
         disconnectWallet()
         connectWallet(network)
-    }
-
-    function isKeplrInstalled() {
-        return window.keplr && window.getOfflineSigner == null ? false : true
     }
 
     function disconnectWallet() {
@@ -113,6 +140,13 @@ function DashboardContent() {
         if (!isKeplrInstalled()) {
             alert("keplr extension is not installed")
         } else {
+            window.keplr.defaultOptions = {
+                sign: {
+                  preferNoSetMemo: true,
+                  preferNoSetFee: true,
+                  disableBalanceCheck: true,
+                },
+            };
             if (network.experimental) {
                 window.keplr.experimentalSuggestChain(network.config)
                     .then((v) => {
@@ -133,23 +167,35 @@ function DashboardContent() {
     }
 
     const enableConnection = (network) => {
-        window.keplr?.enable(network.chainId)
-            .then(() => {
-                const offlineSigner = window.getOfflineSigner(network.chainId);
-                offlineSigner.getAccounts().then((accounts) => {
-                    dispatch(setWallet({
-                        ...accounts[0],
-                        chainInfo: network
-                    }))
-                })
-                    .catch((err) => {
-                        console.log(err)
-                    })
-            })
+        getKeplrWalletAmino(network.chainId)
+        .then((result) => {
+            dispatch(setWallet({
+                address: result[1].address,
+                chainInfo: network
+            }))
+        })
+        .catch((err) => {
+            alert(err);
+        })
+        
+        // window.keplr?.enable(network.chainId)
+        //     .then(() => {
+        //         const offlineSigner = window.getOfflineSigner(network.chainId);
+        //         offlineSigner.getAccounts().then((accounts) => {
+        //             dispatch(setKeplr(offlineSigner));
+        //             dispatch(setWallet({
+        //                 ...accounts[0],
+        //                 chainInfo: network
+        //             }))
+        //         })
+        //             .catch((err) => {
+        //                 console.log(err)
+        //             })
+        //     })
 
-            .catch(() => {
-                alert("permission denied")
-            })
+        //     .catch(() => {
+        //         alert("permission denied")
+        //     })
     }
 
 
@@ -297,9 +343,15 @@ function DashboardContent() {
                 </Box>
             </Box>
 
-            <Snackbar open={snackOpen} autoHideDuration={3000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+            <Snackbar open={snackOpen} autoHideDuration={2000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={() => { showSnack(false) }} severity={errState.type === 'success' ? 'success' : 'error'} sx={{ width: '100%' }}>
                     {errState.message}
+                </Alert>
+            </Snackbar>
+
+            <Snackbar open={snackTxOpen} autoHideDuration={3000} onClose={() => { showTxSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                <Alert onClose={() => { showTxSnack(false) }} severity='success' sx={{ width: '100%' }}>
+                <Link target="_blank" href={`${chainInfo?.txHashEndpoint}${txSuccess?.hash}`} color='inherit'>{txSuccess?.hash}</Link>
                 </Alert>
             </Snackbar>
         </ThemeProvider>

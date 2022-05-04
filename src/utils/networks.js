@@ -6,6 +6,9 @@ export function getNetworks() {
             displayName: "Cosmos Hub",
             experimental: false,
             lcd: "https://cosmos.api.ping.pub",
+            rpc: "https://rpc-cosmoshub.blockapsis.com:443",
+            txHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
+
             currencies: [
                 {
                     coinDenom: 'ATOM',
@@ -13,12 +16,17 @@ export function getNetworks() {
                     coinDecimals: 6,
                 },
             ],
+            config: {
+                gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 }
+            }
         },
         {
             chainId: "osmosis-1",
             displayName: "Osmosis",
             experimental: false,
             lcd: "https://osmo.api.ping.pub",
+            rpc: "https://osmo.api.ping.pub",
+            txHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
             currencies: [
                 {
                     coinDenom: 'OSMO',
@@ -26,12 +34,17 @@ export function getNetworks() {
                     coinDecimals: 6,
                 },
             ],
+            config: {
+                gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 }
+            }
         },
         {
             chainId: "testnet",
             displayName: "Simapp",
             experimental: true,
             lcd: 'http://localhost:1317',
+            rpc: 'http://localhost:26657',
+            txHashEndpoint: 'https://www.mintscan.io/simapp/txs/',
             currencies: [
                 {
                     coinDenom: 'STAKE',

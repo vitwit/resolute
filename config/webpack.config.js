@@ -293,6 +293,14 @@ module.exports = function (webpackEnv) {
       ],
     },
     resolve: {
+      fallback: {
+        buffer: false,
+        crypto: false,
+        events: false,
+        path: false,
+        stream: false,
+        string_decoder: false,
+      },
       // This allows you to set a fallback for where webpack should look for modules.
       // We placed these paths second because we want `node_modules` to "win"
       // if there are any conflicts. This matches Node resolution mechanism.
@@ -651,6 +659,9 @@ module.exports = function (webpackEnv) {
             entrypoints: entrypointFiles,
           };
         },
+      }),
+      new webpack.ProvidePlugin({
+        Buffer: ["buffer", "Buffer"],
       }),
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how webpack interprets its code. This is a practical

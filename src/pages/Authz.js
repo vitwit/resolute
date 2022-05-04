@@ -18,12 +18,13 @@ import { StyledTableCell, StyledTableRow } from './table';
 import { Typography } from '@mui/material';
 import { getLocalTime } from '../utils/datetime';
 import { AuthorizationInfo } from '../components/AuthorizationInfo';
+import { setError } from '../features/common/commonSlice';
 
 
 
 export default function Authz() {
-  const grantsToMe = useSelector((state) => state.authz.grantsToMe.grants);
-  const grantsByMe = useSelector((state) => state.authz.grantsByMe.grants);
+  const grantsToMe = useSelector((state) => state.authz.grantsToMe);
+  const grantsByMe = useSelector((state) => state.authz.grantsByMe);
   const dispatch = useDispatch();
 
   const [infoOpen, setInfoOpen] = React.useState(false);
@@ -43,16 +44,32 @@ export default function Authz() {
     }))
   }, [chainInfo]);
 
+  useEffect(() => {
+    if (grantsToMe?.errMsg !== '' && grantsToMe?.status === 'rejected') {
+      dispatch(setError({
+        type: 'error',
+        message: grantsToMe.errMsg
+      }))
+    }
+  }, [grantsToMe]);
+
+  useEffect(() => {
+    if (grantsByMe?.errMsg !== '' && grantsByMe?.status === 'rejected') {
+      dispatch(setError({
+        type: 'error',
+        message: grantsByMe.errMsg
+      }))
+    }
+  }, [grantsByMe]);
+
   const onRevoke = (granter, grantee, typeURL) => {
     console.log(granter, grantee, typeURL)
   }
 
   let navigate = useNavigate();
   function navigateTo(path) {
-    console.log(path)
     navigate(path);
   }
-
 
 
   return (
@@ -96,7 +113,7 @@ export default function Authz() {
                 (
                   <>
                     {
-                      grantsByMe.length === 0 ?
+                      grantsByMe.grants.length === 0 ?
                         <Typography
                           variant='h6'
                           color="text.primary"
@@ -115,10 +132,10 @@ export default function Authz() {
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
-                            {grantsByMe && grantsByMe && grantsByMe.map((row) => (
+                            {grantsByMe.grants && grantsByMe.grants.map((row, index) => (
                               <>
                                 <StyledTableRow
-                                  key={row.index}
+                                  key={index}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                   <StyledTableCell component="th" scope="row">
@@ -170,7 +187,7 @@ export default function Authz() {
                 (
                   <>
                     {
-                      grantsToMe.length === 0 ?
+                      grantsToMe.grants.length === 0 ?
 
                         <Typography
                           variant='h6'
@@ -190,7 +207,7 @@ export default function Authz() {
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
-                            {grantsToMe && grantsToMe.map((row, index) => (
+                            {grantsToMe.grants && grantsToMe.grants.map((row, index) => (
                               <StyledTableRow
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

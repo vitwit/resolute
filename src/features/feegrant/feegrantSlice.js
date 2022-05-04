@@ -1,5 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { FeegrantBasicMsg } from '../../txns/proto';
 import feegrantService from './feegrantService';
+import { fee, signAndBroadcastProto } from '../../txns/execute';
+import { AuthzSendGrantMsg, SendMsg, AuthzGenericGrantMsg } from '../../txns/proto';
 
 const initialState = {
   grantsToMe: {
@@ -8,7 +11,7 @@ const initialState = {
   },
   errState: {
     message: '',
-    type: 'success',
+    type: '',
   },
   grantsByMe: {
     status: 'idle',
@@ -32,6 +35,35 @@ export const getGrantsByMe = createAsyncThunk(
   }
 );
 
+
+export const txFeegrantBasic = createAsyncThunk(
+  'feegrant/tx-basic',
+  async (data, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const msg = FeegrantBasicMsg(data.granter, data.grantee, data.expiration)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.memo, data.rpc)
+      return fulfillWithValue({payload: result});
+    } catch (error) {
+      return rejectWithValue(error.response)
+    }
+  }
+);
+
+export const txAuthzGeneric = createAsyncThunk(
+  'feegrant/tx-generic',
+  async (data, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      console.log(data)
+      const msg = AuthzGenericGrantMsg(data.granter, data.grantee, data.typeUrl, data.expiration)
+      console.log(msg)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.memo, data.rpc)
+      return fulfillWithValue({payload: result});
+    } catch (error) {
+      return rejectWithValue(error.response)
+    }
+  }
+);
+
 export const feegrantSlice = createSlice({
   name: 'feegrant',
   initialState,
@@ -42,7 +74,7 @@ export const feegrantSlice = createSlice({
         state.grantsToMe.status = 'loading';
         state.errState = {
           message: '',
-          type: 'success',
+          type: '',
         }
 
       })
@@ -51,7 +83,7 @@ export const feegrantSlice = createSlice({
         state.grantsToMe.grants = action.payload
         state.errState = {
           message: '',
-          type: 'success',
+          type: '',
         }
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
@@ -67,21 +99,21 @@ export const feegrantSlice = createSlice({
         state.grantsByMe.status = 'loading';
         state.errState = {
           message: '',
-          type: 'error',
+          type: '',
         }
 
       })
       .addCase(getGrantsByMe.fulfilled, (state, action) => {
         state.grantsByMe.status = 'idle';
         state.grantsByMe.grants = action.payload
-        state.errMsg = {
+        state.errState = {
           message: '',
-          type: 'success',
+          type: '',
         }
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
         state.grantsByMe.status = 'rejected';
-        state.errMsg = {
+        state.errState = {
           message: action.error.message,
           type: 'error',
         }

@@ -40,7 +40,7 @@ export const getVotes = createAsyncThunk(
   'gov/voter-votes',
   async (data) => {
     const response = await govService.votes(data.baseURL,data.proposalId, data.voter, data.key, data.limit);
-    response.data.votes.proposal_id = data.proposalId
+    response.data.vote.proposal_id = data.proposalId
     return response.data;
   }
 );
@@ -91,9 +91,9 @@ export const proposalsSlice = createSlice({
       })
       .addCase(getVotes.fulfilled, (state, action) => {
         state.votes.status = 'idle';
-        state.votes.proposals[action.payload?.votes?.proposal_id] = action.payload?.vote
+        console.log(action.payload.vote)
+        state.votes.proposals[action.payload?.vote?.proposal_id] = action.payload?.vote
         state.votes.errMsg = ''
-        console.log("here", state.votes)
       })
       .addCase(getVotes.rejected, (state, action) => {
         state.votes.status = 'rejected';
