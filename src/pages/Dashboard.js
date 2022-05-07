@@ -3,40 +3,36 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
-import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import { mainListItems } from './listItems';
 import Authz from './Authz'
 import Feegrant from './Feegrant'
-import { getNetworks, getSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
+import { getSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Link from '@mui/material/Link'
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import { Routes, Route } from "react-router-dom";
 import { Validators } from './Validators';
 import { Proposals } from './Proposals';
 import { useSelector, useDispatch } from 'react-redux'
-import { setWallet, resetWallet, setKeplr } from './../features/wallet/walletSlice'
+import { setWallet, resetWallet } from './../features/wallet/walletSlice'
 import { useNavigate } from "react-router-dom";
 import NewFeegrant from './NewFeegrant';
 import NewAuthz from './NewAuthz';
 import { shortenAddress } from '../utils/util';
 import { ListItem } from '@mui/material';
-import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Overview from './Overview';
 import { Send } from './Send';
 import { WithdrawRewards } from './WithdrawRewards';
 import { getKeplrWalletAmino, isKeplrInstalled } from '../txns/execute';
+import { CustomAppBar } from '../components/CustomAppBar';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -79,13 +75,6 @@ function DashboardContent() {
       });
       });
 
-
-    const [anchorEl, setAnchorEl] = React.useState(false);
-    const menuOpen = anchorEl;
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
     const walletConnected = useSelector((state) => state.wallet.connected)
     const walletStatus = useSelector((state) => state.wallet)
     const chainInfo = useSelector((state) => state.wallet.chainInfo)
@@ -119,7 +108,6 @@ function DashboardContent() {
     }, [walletConnected]);
 
     const handleNetworkChange = (network) => {
-        setAnchorEl(false);
         changeNetwork(network)
         disconnectWallet()
         connectWallet(network)
@@ -155,7 +143,7 @@ function DashboardContent() {
                         enableConnection(network)
                     })
                     .catch((error) => {
-                        console.log(error)
+                        alert(error);
                     })
             } else {
                 setLogin(true);
@@ -177,25 +165,6 @@ function DashboardContent() {
         .catch((err) => {
             alert(err);
         })
-        
-        // window.keplr?.enable(network.chainId)
-        //     .then(() => {
-        //         const offlineSigner = window.getOfflineSigner(network.chainId);
-        //         offlineSigner.getAccounts().then((accounts) => {
-        //             dispatch(setKeplr(offlineSigner));
-        //             dispatch(setWallet({
-        //                 ...accounts[0],
-        //                 chainInfo: network
-        //             }))
-        //         })
-        //             .catch((err) => {
-        //                 console.log(err)
-        //             })
-        //     })
-
-        //     .catch(() => {
-        //         alert("permission denied")
-        //     })
     }
 
 
@@ -203,57 +172,7 @@ function DashboardContent() {
         <ThemeProvider theme={mdTheme}>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
-                <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                    <Toolbar>
-                        <Typography
-                            component="h1"
-                            variant="h6"
-                            color="inherit"
-                            noWrap
-                            sx={{ flexGrow: 1 }}
-                            align='left'
-                        >
-                            Staking UI
-                        </Typography>
-                        <Button
-                            id="demo-positioned-button"
-                            color='inherit'
-                            endIcon={<ExpandMoreOutlinedIcon />}
-                            aria-controls={menuOpen ? 'demo-positioned-menu' : undefined}
-                            aria-haspopup="true"
-                            aria-expanded={menuOpen ? 'true' : undefined}
-                            onClick={handleClick}
-                        >
-                            {selectedNetwork.displayName}
-                        </Button>
-                        <Menu
-                            id="demo-positioned-menu"
-                            aria-labelledby="demo-positioned-button"
-                            anchorEl={anchorEl}
-                            open={menuOpen}
-                            onClose={() => setAnchorEl(false)}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                        >
-                            {
-                                getNetworks().map((network, index) => (
-                                    <MenuItem
-                                        key={index}
-                                        onClick={() => handleNetworkChange(network)}
-                                    >
-                                        {network.displayName}
-                                    </MenuItem>
-                                ))
-                            }
-                        </Menu>
-                    </Toolbar>
-                </AppBar>
+                <CustomAppBar selectedNetwork={selectedNetwork} onNetworkChange={(network) => handleNetworkChange(network)}/>
                 <Drawer variant="permanent"
                     sx={{
                         width: drawerWidth,
@@ -266,12 +185,6 @@ function DashboardContent() {
                         {
                             walletConnected ?
                                 <>
-                                    <ListItem>
-                                        <Typography variant='h6'
-                                            color='text.primary' size={16} >
-                                            {walletStatus.name}
-                                        </Typography>
-                                    </ListItem>
                                     <ListItem>
                                         <Chip label={shortenAddress(walletStatus.address, 21)} size="small" />
                                     </ListItem>

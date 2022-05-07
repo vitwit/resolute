@@ -25,7 +25,7 @@ export function getNetworks() {
             displayName: "Osmosis",
             experimental: false,
             lcd: "https://osmo.api.ping.pub",
-            rpc: "https://osmo.api.ping.pub",
+            rpc: "https://rpc-osmosis.ecostake.com",
             txHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
             currencies: [
                 {

@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  getGrantsToMe, getGrantsByMe
+  getGrantsToMe, getGrantsByMe, txAuthzRevoke
 } from './../features/authz/authzSlice';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Chip from '@mui/material/Chip';
@@ -18,7 +18,7 @@ import { StyledTableCell, StyledTableRow } from './table';
 import { Typography } from '@mui/material';
 import { getLocalTime } from '../utils/datetime';
 import { AuthorizationInfo } from '../components/AuthorizationInfo';
-import { setError } from '../features/common/commonSlice';
+import { resetError, resetTxHash, setError, setTxHash } from '../features/common/commonSlice';
 
 
 
@@ -36,6 +36,8 @@ export default function Authz() {
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const address = useSelector((state) => state.wallet.address);
+  const revokeTx = useSelector((state) => state.authz.tx.revokeGrant);
+  const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
 
   useEffect(() => {
     dispatch(getGrantsByMe({
@@ -62,9 +64,39 @@ export default function Authz() {
     }
   }, [grantsByMe]);
 
+  useEffect(() => {
+    if (revokeTx?.txHash?.length > 0) {
+        dispatch(setTxHash({
+            hash: revokeTx?.txHash,
+        }))
+    }
+
+    if (revokeTx?.errMsg !== '') {
+        dispatch(setError({
+            type: 'error',
+            message: revokeTx.errMsg
+        }))
+    }
+}, [revokeTx])
+
   const onRevoke = (granter, grantee, typeURL) => {
-    console.log(granter, grantee, typeURL)
+    dispatch(txAuthzRevoke({
+      granter: granter, 
+      grantee: grantee,
+      typeURL: typeURL,
+      denom: currency.coinMinimalDenom,
+      memo: "",
+      chainId: chainInfo.chainId,
+      rpc: chainInfo.rpc,
+      feeAmount: 25000
+    }))
+
   }
+
+  useEffect(() => {
+    dispatch(resetError())
+    dispatch(resetTxHash())
+  }, [])
 
   let navigate = useNavigate();
   function navigateTo(path) {
@@ -164,6 +196,7 @@ export default function Authz() {
                                       textSizeSmall
                                       disableElevation
                                       color='primary'
+                                      disabled={revokeTx?.status === 'pending' ? true: false}
                                       onClick={() => onRevoke(row.granter, row.grantee, row.authorization['@type'])}
                                     >
                                       Revoke

@@ -9,9 +9,11 @@ import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import { useSelector } from 'react-redux';
 
 export default function VoteDialog(props) {
     const [option, setOption] = React.useState('')
+    const govTx = useSelector((state) => state.gov.tx.vote);
 
     const handleClose = () => {
         props.closeDialog(true);
@@ -68,7 +70,11 @@ export default function VoteDialog(props) {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleVote} variant='contained' disableElevation>Confirm</Button>
+                    <Button 
+                        disabled={govTx?.status === 'pending'}
+                        onClick={handleVote} variant='contained' disableElevation>
+                        {govTx?.status === 'pending'? 'Loading..' : 'Confirm'}
+                    </Button>
                 </DialogActions>
             </Dialog>
         </div>

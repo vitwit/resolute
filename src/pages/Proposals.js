@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  getProposals, getProposalTally, getVotes
+  getProposals, txVote
 } from './../features/gov/govSlice';
-import { setError } from './../features/common/commonSlice';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import CircularProgress from '@mui/material/CircularProgress';
 import { ProposalItem } from './ProposalItem';
+import {
+  setError, resetError, setTxHash, resetTxHash
+} from './../features/common/commonSlice';
 
 export function Proposals() {
   const proposals = useSelector((state) => state.gov.active.proposals);
@@ -17,6 +19,8 @@ export function Proposals() {
   const proposalTally = useSelector((state) => state.gov.tally.proposalTally);
   const votes = useSelector((state) => state.gov.votes.proposals);
   const address = useSelector((state) => state.wallet.address);
+  const govTx = useSelector((state) => state.gov.tx.vote);
+  const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
 
   const dispatch = useDispatch();
 
@@ -25,7 +29,8 @@ export function Proposals() {
   useEffect(() => {
     if (walletConnected)
       dispatch(getProposals({
-        baseURL: chainInfo.lcd
+        baseURL: chainInfo.lcd,
+        voter: address,
       })
       )
   }, [chainInfo]);
@@ -41,30 +46,37 @@ export function Proposals() {
   }, [errMsg]);
 
   useEffect(() => {
-    if (proposals.length > 0 && address !== "") {
-      for (let i = 0; i < proposals.length; i++) {
-        const proposal = proposals[i]
-        if (proposal !== undefined) {
-          dispatch(getProposalTally({
-            baseURL: chainInfo.lcd,
-            proposalId: proposal?.proposal_id
-          }))
-
-          dispatch(getVotes({
-            baseURL: chainInfo.lcd,
-            proposalId: proposal?.proposal_id,
-            voter: address
-          }))
-        }
-      }
+    if (govTx?.txHash !== '') {
+        dispatch(setTxHash({
+            hash: govTx?.txHash,
+        }))
     }
-  }, [proposals]);
 
+    if (govTx?.errMsg !== '') {
+        dispatch(setError({
+            type: 'error',
+            message: govTx.errMsg
+        }))
+    }
+}, [govTx]);
 
-  useEffect(() => {
-    console.log("votes", votes);
-  },[votes])
+useEffect(() => {
+  dispatch(resetError())
+  dispatch(resetTxHash())
+}, []);
 
+const onVoteSubmit = (proposalId, option) => {
+  dispatch(txVote({
+    voter: address,
+    proposalId: proposalId,
+    option: option,
+    denom: currency.coinMinimalDenom,
+    memo: "",
+    chainId: chainInfo.chainId,
+    rpc: chainInfo.rpc,
+    feeAmount: 25000
+  }))
+}
 
   return (
     <>
@@ -91,7 +103,13 @@ export function Proposals() {
               proposals.map((proposal, index) => (
                 <Grid item md={6} xs={12} key={index}>
                   <Paper elevation={0} style={{ padding: 12 }}>
-                    <ProposalItem info={proposal} tally={proposalTally[proposal?.proposal_id]} vote={votes[proposal?.proposal_id]}/>
+                    <ProposalItem 
+                    info={proposal} 
+                    tally={proposalTally[proposal?.proposal_id]} 
+                    vote={votes[proposal?.proposal_id]}
+                    txStatus={govTx}
+                    onVoteSubmit={onVoteSubmit}
+                    />
                   </Paper>
                 </Grid>
               ))

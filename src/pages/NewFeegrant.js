@@ -17,8 +17,8 @@ export default function NewFeegrant() {
     const address = useSelector((state) => state.wallet.address);
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
     const dispatch = useDispatch();
-
     const [selected, setSelected] = React.useState('basic')
+    const feegrantTx = useSelector((state) => state.feegrant.tx);
 
     let date = new Date()
     let expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));

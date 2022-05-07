@@ -30,21 +30,21 @@ export default function Feegrant() {
   const [grantType, setGrantType] = React.useState('by-me');
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
-  const walletConnected = useSelector((state) => state.wallet.connected);
   const address = useSelector((state) => state.wallet.address);
   const errState = useSelector((state) => state.feegrant.errState);
 
   useEffect(() => {
-    if (walletConnected)
-    dispatch(getGrantsByMe({
-      baseURL: chainInfo.lcd,
-      granter: address
-    }))
-    dispatch(getGrantsToMe({
-      baseURL: chainInfo.lcd,
-      grantee: address
-    }))
-  }, [chainInfo]);
+    if (address !== "") {
+      dispatch(getGrantsByMe({
+        baseURL: chainInfo.lcd,
+        granter: address
+      }))
+      dispatch(getGrantsToMe({
+        baseURL: chainInfo.lcd,
+        grantee: address
+      }))
+    }
+  }, [address]);
 
   let navigate = useNavigate();
   function navigateTo(path) {
@@ -82,21 +82,21 @@ export default function Feegrant() {
         </ButtonGroup>
 
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            {
-              grantType === 'by-me' ?
-                (
-                  <>
-                    {
-                      grantsByMe.length === 0 ?
-                        <Typography
-                          variant='h6'
-                          color="text.primary"
-                          style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
-                          No Authorizations found
-                        </Typography>
-                        :
-                        <>
+          {
+            grantType === 'by-me' ?
+              (
+                <>
+                  {
+                    grantsByMe.length === 0 ?
+                      <Typography
+                        variant='h6'
+                        color="text.primary"
+                        style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
+                        No Authorizations found
+                      </Typography>
+                      :
+                      <>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
                           <TableHead>
                             <StyledTableRow>
                               <StyledTableCell>Grantee</StyledTableCell>
@@ -141,23 +141,25 @@ export default function Feegrant() {
                               </StyledTableRow>
                             ))}
                           </TableBody>
-                        </>
-                    }
-                  </>
-                )
-                :
-                (
-                  <>
-                    {
-                      grantsToMe.length === 0 ?
-                        <Typography
-                          variant='h6'
-                          color="text.primary"
-                          style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
-                          No Authorizations found
-                        </Typography>
-                        :
-                        <>
+                        </Table>
+                      </>
+                  }
+                </>
+              )
+              :
+              (
+                <>
+                  {
+                    grantsToMe?.length === 0 ?
+                      <Typography
+                        variant='h6'
+                        color="text.primary"
+                        style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
+                        No Authorizations found
+                      </Typography>
+                      :
+                      <>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
                           <TableHead>
                             <StyledTableRow>
                               <StyledTableCell >Granter</StyledTableCell>
@@ -192,14 +194,14 @@ export default function Feegrant() {
                               </StyledTableRow>
                             ))}
                           </TableBody>
-                        </>
-                    }
-                  </>
-                )
-            }
-          </Table>
-        </TableContainer>
-      </Paper>
+                        </Table>
+                      </>
+                  }
+                </>
+              )
+          }
+      </TableContainer>
+    </Paper>
     </>
 
   );

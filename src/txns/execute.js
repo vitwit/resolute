@@ -30,6 +30,7 @@ export async function signAndBroadcastProto(msgs, fee, memo = "", rpcURL) {
             chainId: chainId,
             sequence: accountInfo.sequence,
         });
+
         return await client.broadcastTx(Uint8Array.from(TxRaw.encode(signed).finish()));
 }
 
@@ -52,5 +53,6 @@ export async function getKeplrWalletDirect(chainID) {
 }
 
 export function isKeplrInstalled() {
-    return window.keplr && window.getOfflineSigner == null ? false : true
+    if (window.keplr === undefined) {return false}
+    return window?.keplr && window?.getOfflineSigner == null ? false : true
 }

@@ -32,13 +32,13 @@ export function Validators() {
     }, [chainInfo]);
 
     useEffect(() => {
-        if (connected) {
+        if (connected && validators.pagination?.next_key === null) {
             dispatch(getDelegations({
                 baseURL: chainInfo.lcd,
                 address: address,
             }))
         }
-    }, [connected]);
+    }, [validators]);
 
     useEffect(() => {
         if (connected) {

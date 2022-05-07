@@ -1,7 +1,6 @@
 {
   "name": "key-management",
   "version": "0.1.0",
-  "homepage": "https://aleem1314.github.io/key-management",
   "private": true,
   "dependencies": {
     "@babel/core": "^7.16.0",
