@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  getGrantsToMe, getGrantsByMe
+  getGrantsToMe, getGrantsByMe, txAuthzRevoke
 } from './../features/authz/authzSlice';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Chip from '@mui/material/Chip';
@@ -18,12 +18,13 @@ import { StyledTableCell, StyledTableRow } from './table';
 import { Typography } from '@mui/material';
 import { getLocalTime } from '../utils/datetime';
 import { AuthorizationInfo } from '../components/AuthorizationInfo';
+import { resetError, resetTxHash, setError, setTxHash } from '../features/common/commonSlice';
 
 
 
 export default function Authz() {
-  const grantsToMe = useSelector((state) => state.authz.grantsToMe.grants);
-  const grantsByMe = useSelector((state) => state.authz.grantsByMe.grants);
+  const grantsToMe = useSelector((state) => state.authz.grantsToMe);
+  const grantsByMe = useSelector((state) => state.authz.grantsByMe);
   const dispatch = useDispatch();
 
   const [infoOpen, setInfoOpen] = React.useState(false);
@@ -35,6 +36,8 @@ export default function Authz() {
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const address = useSelector((state) => state.wallet.address);
+  const revokeTx = useSelector((state) => state.authz.tx.revokeGrant);
+  const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
 
   useEffect(() => {
     dispatch(getGrantsByMe({
@@ -43,16 +46,62 @@ export default function Authz() {
     }))
   }, [chainInfo]);
 
+  useEffect(() => {
+    if (grantsToMe?.errMsg !== '' && grantsToMe?.status === 'rejected') {
+      dispatch(setError({
+        type: 'error',
+        message: grantsToMe.errMsg
+      }))
+    }
+  }, [grantsToMe]);
+
+  useEffect(() => {
+    if (grantsByMe?.errMsg !== '' && grantsByMe?.status === 'rejected') {
+      dispatch(setError({
+        type: 'error',
+        message: grantsByMe.errMsg
+      }))
+    }
+  }, [grantsByMe]);
+
+  useEffect(() => {
+    if (revokeTx?.txHash?.length > 0) {
+        dispatch(setTxHash({
+            hash: revokeTx?.txHash,
+        }))
+    }
+
+    if (revokeTx?.errMsg !== '') {
+        dispatch(setError({
+            type: 'error',
+            message: revokeTx.errMsg
+        }))
+    }
+}, [revokeTx])
+
   const onRevoke = (granter, grantee, typeURL) => {
-    console.log(granter, grantee, typeURL)
+    dispatch(txAuthzRevoke({
+      granter: granter, 
+      grantee: grantee,
+      typeURL: typeURL,
+      denom: currency.coinMinimalDenom,
+      memo: "",
+      chainId: chainInfo.chainId,
+      rpc: chainInfo.rpc,
+      feeAmount: 25000
+    }))
+
   }
+
+  useEffect(() => {
+    dispatch(resetError())
+    dispatch(resetTxHash())
+  }, [])
 
   let navigate = useNavigate();
   function navigateTo(path) {
-    console.log(path)
     navigate(path);
   }
-
 
 
   return (
@@ -96,7 +145,7 @@ export default function Authz() {
                 (
                   <>
                     {
-                      grantsByMe.length === 0 ?
+                      grantsByMe.grants.length === 0 ?
                         <Typography
                           variant='h6'
                           color="text.primary"
@@ -115,10 +164,10 @@ export default function Authz() {
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
-                            {grantsByMe && grantsByMe && grantsByMe.map((row) => (
+                            {grantsByMe.grants && grantsByMe.grants.map((row, index) => (
                               <>
                                 <StyledTableRow
-                                  key={row.index}
+                                  key={index}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                   <StyledTableCell component="th" scope="row">
@@ -147,6 +196,7 @@ export default function Authz() {
                                       textSizeSmall
                                       disableElevation
                                       color='primary'
+                                      disabled={revokeTx?.status === 'pending' ? true: false}
                                       onClick={() => onRevoke(row.granter, row.grantee, row.authorization['@type'])}
                                     >
                                       Revoke
@@ -170,7 +220,7 @@ export default function Authz() {
                 (
                   <>
                     {
-                      grantsToMe.length === 0 ?
+                      grantsToMe.grants.length === 0 ?
 
                         <Typography
                           variant='h6'
@@ -190,7 +240,7 @@ export default function Authz() {
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
-                            {grantsToMe && grantsToMe.map((row, index) => (
+                            {grantsToMe.grants && grantsToMe.grants.map((row, index) => (
                               <StyledTableRow
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

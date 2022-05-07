@@ -1,8 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 const initialState = {
   name: '',
-  algo: '',
   connected: false,
   address: '',
   chainInfo: {
@@ -10,14 +9,13 @@ const initialState = {
   },
 }
 
+
 export const walletSlice = createSlice({
   name: 'wallet',
   initialState,
   reducers: {
     setWallet: (state, action) => {
-      console.log(action.payload)
       state.address = action.payload.address
-      state.algo = action.payload.algo
       state.connected = true
       state.chainInfo = action.payload.chainInfo
     },
@@ -29,9 +27,13 @@ export const walletSlice = createSlice({
         currencies: [],
       }
       state.name = ''
+    },
+    extraReducers: (builder) => {
     }
-  },
-})
+      
+  }
+
+});
 
 export const { setWallet, resetWallet } = walletSlice.actions
 

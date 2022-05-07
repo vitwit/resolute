@@ -148,3 +148,18 @@ export function totalUnbonding(unbonding, coinDecimals) {
     const temp = total/(10.0 ** coinDecimals)
     return `${parseFloat((temp.toFixed(6)))}`
 }
+
+
+export function mainValueToMinimum(amount, coinInfo) {
+    if (Number(amount) !== "NaN") {
+        return `${Number(amount) * (10** coinInfo.coinDecimals)}${coinInfo.coinMinimalDenom}`
+    } else {
+        return ""
+    }
+}
+
+
+
+export function amountToMinimalValue(amount, coinInfo) {
+        return Number(amount) * (10** coinInfo.coinDecimals)
+}

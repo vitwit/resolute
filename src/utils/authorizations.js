@@ -2,46 +2,46 @@ export function authzMsgTypes() {
     return [
         {
             label: 'Send',
-            typeURL : '/cosmos.bank.v1beta1.Send'
+            typeURL : '/cosmos.bank.v1beta1.MsgSend'
         },
         {
-            label: 'Authz/Grant',
-            typeURL : '/cosmos.authz.v1beta1.Grant'
+            label: 'Authz-Grant',
+            typeURL : '/cosmos.authz.v1beta1.MsgGrant'
         },
         {
-            label: 'Authz/Revoke',
-            typeURL : '/cosmos.authz.v1beta1.Revoke'
+            label: 'Authz-Revoke',
+            typeURL : '/cosmos.authz.v1beta1.MsgRevoke'
         },
         {
-            label: 'Feegrant/Grant',
-            typeURL : '/cosmos.feegrant.v1beta1.Grant'
+            label: 'Feegrant-Grant',
+            typeURL : '/cosmos.feegrant.v1beta1.MsgGrant'
         },
         {
-            label: 'Feegrant/Revoke',
-            typeURL : '/cosmos.feegrant.v1beta1.Revoke'
+            label: 'Feegrant-Revoke',
+            typeURL : '/cosmos.feegrant.v1beta1.MsgRevoke'
         },
         {
             label: 'Submit Proposal',
-            typeURL : '/cosmos.gov.v1beta1.SubmitProposal'
+            typeURL : '/cosmos.gov.v1beta1.MsgSubmitProposal'
         },
         {
             label: 'Vote',
-            typeURL : '/cosmos.gov.v1beta1.Vote'
+            typeURL : '/cosmos.gov.v1beta1.MsgVote'
         },
         {
             label: 'Withdraw Rewards',
-            typeURL : '/cosmos.gov.v1beta1.WithdrawRewards'
+            typeURL : '/cosmos.gov.v1beta1.MsgWithdrawRewards'
         },
         {
             label: 'Withdraw All Rewards',
-            typeURL : '/cosmos.gov.v1beta1.WithdrawAllRewards'
+            typeURL : '/cosmos.gov.v1beta1.MsgWithdrawAllRewards'
         },
         {
-            label: 'Re Delegate',
+            label: 'ReDelegate',
             typeURL : '/cosmos.staking.v1beta1.MsgReDelegate'
         },
         {
-            label: 'Un Delegate',
+            label: 'UnDelegate',
             typeURL : '/cosmos.staking.v1beta1.MsgUnDelegate'
         },
         {

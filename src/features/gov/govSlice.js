@@ -1,4 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { fee, signAndBroadcastAmino } from '../../txns/execute';
+import { GovVoteMsg } from '../../txns/proto';
 import govService from './govService';
 
 const initialState = {
@@ -17,12 +19,34 @@ const initialState = {
     errMsg: '',
     proposals: {},
   },
+  tx: {
+    vote: {
+      status: 'idle',
+      errMsg: '',
+      successMsg: ''
+    },
+  }
 };
 
 export const getProposals = createAsyncThunk(
   'gov/active-proposals',
-  async (data) => {
+  async (data, {dispatch}) => {
     const response = await govService.proposals(data.baseURL, data.key, data.limit, 2);
+    if (response?.data?.proposals?.length > 0) {
+      const proposals = response?.data?.proposals
+      for(let i = 0;i < proposals.length;i++) {
+        dispatch(getProposalTally({
+          baseURL: data.baseURL,
+          proposalId: proposals[i].proposal_id
+        }))
+
+        dispatch(getVotes({
+          baseURL: data.baseURL,
+          proposalId: proposals[i].proposal_id,
+          voter: data.voter
+        }))
+      }
+    }
     return response.data;
   }
 );
@@ -40,8 +64,25 @@ export const getVotes = createAsyncThunk(
   'gov/voter-votes',
   async (data) => {
     const response = await govService.votes(data.baseURL,data.proposalId, data.voter, data.key, data.limit);
-    response.data.votes.proposal_id = data.proposalId
+    response.data.vote.proposal_id = data.proposalId
     return response.data;
+  }
+);
+
+export const txVote = createAsyncThunk(
+  'gov/tx-vote',
+  async (data, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const msg = GovVoteMsg(data.proposalId, data.voter, data.option)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), data.memo,data.chainId, data.rpc)
+      if (result?.code === 0) {
+        return fulfillWithValue({txHash: result?.transactionHash});
+        } else {
+          return rejectWithValue(result?.rawLog);
+        }
+    } catch (error) {
+      return rejectWithValue(error)
+    }
   }
 );
 
@@ -91,13 +132,30 @@ export const proposalsSlice = createSlice({
       })
       .addCase(getVotes.fulfilled, (state, action) => {
         state.votes.status = 'idle';
-        state.votes.proposals[action.payload?.votes?.proposal_id] = action.payload?.vote
+        state.votes.proposals[action.payload?.vote?.proposal_id] = action.payload?.vote
         state.votes.errMsg = ''
-        console.log("here", state.votes)
       })
       .addCase(getVotes.rejected, (state, action) => {
         state.votes.status = 'rejected';
         state.votes.errMsg = action.error.message
+      })
+
+      // tx-vote
+      builder
+      .addCase(txVote.pending, (state) => {
+        state.tx.vote.status = 'pending';
+        state.tx.vote.errMsg = '';
+        state.tx.vote.txHash = '';
+
+      })
+      .addCase(txVote.fulfilled, (state, action) => {
+        state.tx.vote.status = 'idle';
+        state.tx.vote.errMsg = '';
+        state.tx.vote.txHash = action.payload.txHash;
+      })
+      .addCase(txVote.rejected, (state, action) => {
+        state.tx.vote.status = 'rejected';
+        state.tx.vote.errMsg = action.error.message;
       })
 
   },

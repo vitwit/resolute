@@ -15,6 +15,7 @@ export function parseSpendLimit (tokens) {
 }
 
 export function parseTokens (tokens, displayName, coinDecimals) {
+    if (tokens === null || tokens.length === 0) { return 0.0 }
     if (Array.isArray(tokens)) {
         const token = tokens[0]
         const temp = token.amount/(10.0 ** coinDecimals)
@@ -28,7 +29,7 @@ export function parseTokens (tokens, displayName, coinDecimals) {
 
 
 export function totalBalance (tokens, coinDecimals) {
-    if (tokens === undefined || tokens.length === 0) { return 0.0 }
+    if (tokens === null || Object.keys(tokens).length === 0) { return 0.0 }
     if (Array.isArray(tokens)) {
         const token = tokens[0]
         const temp = token.amount/(10.0 ** coinDecimals)

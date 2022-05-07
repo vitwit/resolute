@@ -4,7 +4,10 @@ const initialState = {
   errState: {
     message: '',
     type: '',
-  } 
+  },
+  txSuccess: {
+    hash: ''
+  }
 }
 
 export const commonSlice = createSlice({
@@ -17,15 +20,25 @@ export const commonSlice = createSlice({
         type: action.payload.type
       }
     },
+    setTxHash: (state, action) => {
+      state.txSuccess = {
+        hash: action.payload.hash,
+      }
+    },
+    resetTxHash: (state) => {
+      state.txSuccess = {
+        hash: '',
+      }
+    },
     resetError: (state) => {
       state.errState = {
         message: '',
-        type: ''
+        type: 'success'
       }
     }
   },
 })
 
-export const { setError, resetError } = commonSlice.actions
+export const { setError, resetError, setTxHash, resetTxHash } = commonSlice.actions
 
 export default commonSlice.reducer
