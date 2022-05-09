@@ -17,20 +17,15 @@ const initialState = {
     pagination: {}
   },
   tx: {
-    sendGrant: {
+    grant: {
       status: 'idle',
       errMsg: '',
-      successMsg: ''
+      txHash: '',
     },
-    genericGrant: {
+    revoke: {
       status: 'idle',
       errMsg: '',
-      successMsg: ''
-    },
-    revokeGrant: {
-      status: 'idle',
-      errMsg: '',
-      successMsg: ''
+      txHash: '',
     }
   }
 };
@@ -56,14 +51,14 @@ export const txAuthzSend = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue }) => {
     try {
       const msg = AuthzSendGrantMsg(data.granter, data.grantee, data.denom, data.spendLimit, data.expiration)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.memo, data.rpc)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc)
       if (result?.code === 0) {
-        return fulfillWithValue({txHash: result?.transactionHash});
-        } else {
-          return rejectWithValue(result?.rawLog);
-        }
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        return rejectWithValue(result?.rawLog);
+      }
     } catch (error) {
-      return rejectWithValue(error)
+      return rejectWithValue(error.message)
     }
   }
 );
@@ -73,14 +68,14 @@ export const txAuthzRevoke = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue }) => {
     try {
       const msg = AuthzRevokeMsg(data.granter, data.grantee, data.typeURL)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.memo, data.rpc);
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc);
       if (result?.code === 0) {
-        return fulfillWithValue({txHash: result?.transactionHash});
-        } else {
-          return rejectWithValue(result?.rawLog);
-        }
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        return rejectWithValue(result?.rawLog);
+      }
     } catch (error) {
-      return rejectWithValue(error)
+      return rejectWithValue(error.message)
     }
   }
 );
@@ -90,14 +85,14 @@ export const txAuthzGeneric = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue }) => {
     try {
       const msg = AuthzGenericGrantMsg(data.granter, data.grantee, data.typeUrl, data.expiration)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.memo, data.rpc)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc)
       if (result?.code === 0) {
-        return fulfillWithValue({txHash: result?.transactionHash});
-        } else {
-          return rejectWithValue(result?.rawLog);
-        }
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        return rejectWithValue(result?.rawLog);
+      }
     } catch (error) {
-      return rejectWithValue(error)
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -107,7 +102,22 @@ export const txAuthzGeneric = createAsyncThunk(
 export const authzSlice = createSlice({
   name: 'authz',
   initialState,
-  reducers: {},
+  reducers: {
+    resetAlerts: (state) => {
+      state.tx = {
+        grant: {
+          status: 'idle',
+          errMsg: '',
+          txHash: '',
+        },
+        revoke: {
+          status: 'idle',
+          errMsg: '',
+          txHash: '',
+        }
+      }
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getGrantsToMe.pending, (state) => {
@@ -144,60 +154,62 @@ export const authzSlice = createSlice({
         state.grantsByMe.errMsg = action.error.message
       })
 
-      builder
+    builder
       .addCase(txAuthzSend.pending, (state) => {
-        state.tx.sendGrant.status = `pending`
-        state.tx.sendGrant.errMsg = ``
-        state.tx.sendGrant.successMsg = ``
+        state.tx.grant.status = `pending`
+        state.tx.grant.errMsg = ``
+        state.tx.grant.txHash = ``
 
       })
       .addCase(txAuthzSend.fulfilled, (state, action) => {
-        state.tx.sendGrant.status = `idle`
-        state.tx.sendGrant.errMsg = ``
-        state.tx.sendGrant.successMsg =  action.payload.txHash;
+        state.tx.grant.status = `idle`
+        state.tx.grant.errMsg = ``
+        state.tx.grant.txHash = action.payload.txHash;
       })
       .addCase(txAuthzSend.rejected, (state, action) => {
-        state.tx.sendGrant.status = `rejected`
-        state.tx.sendGrant.errMsg = action.payload || action.error.message
-        state.tx.sendGrant.successMsg = ``
+        state.tx.grant.status = `rejected`
+        state.tx.grant.errMsg = action.payload || action.error.message
+        state.tx.grant.txHash = ``
       })
 
-      builder
+    builder
       .addCase(txAuthzGeneric.pending, (state) => {
-        state.tx.genericGrant.status = `pending`
-        state.tx.genericGrant.errMsg = ``
-        state.tx.genericGrant.successMsg = ``
+        state.tx.grant.status = `pending`
+        state.tx.grant.errMsg = ``
+        state.tx.grant.txHash = ``
 
       })
       .addCase(txAuthzGeneric.fulfilled, (state, action) => {
-        state.tx.genericGrant.status = `idle`
-        state.tx.genericGrant.errMsg = ``
-        state.tx.genericGrant.successMsg =  action.payload.txHash;
+        state.tx.grant.status = `idle`
+        state.tx.grant.errMsg = ``
+        state.tx.grant.txHash = action.payload.txHash;
       })
       .addCase(txAuthzGeneric.rejected, (state, action) => {
-        state.tx.genericGrant.status = `rejected`
-        state.tx.genericGrant.errMsg = action.payload || action.error.message
-        state.tx.genericGrant.successMsg = ``
+        state.tx.grant.status = `rejected`
+        state.tx.grant.errMsg = action.payload || action.error.message
+        state.tx.grant.txHash = ``
       })
 
-      builder
+    builder
       .addCase(txAuthzRevoke.pending, (state) => {
-        state.tx.revokeGrant.status = `pending`
-        state.tx.revokeGrant.errMsg = ``
-        state.tx.revokeGrant.successMsg = ``
+        state.tx.revoke.status = `pending`
+        state.tx.revoke.errMsg = ``
+        state.tx.revoke.txHash = ``
 
       })
       .addCase(txAuthzRevoke.fulfilled, (state, action) => {
-        state.tx.revokeGrant.status = `idle`
-        state.tx.revokeGrant.errMsg = ``
-        state.tx.revokeGrant.successMsg =  action.payload.txHash;
+        state.tx.revoke.status = `idle`
+        state.tx.revoke.errMsg = ``
+        state.tx.revoke.txHash = action.payload.txHash;
       })
       .addCase(txAuthzRevoke.rejected, (state, action) => {
-        state.tx.revokeGrant.status = `rejected`
-        state.tx.revokeGrant.errMsg = action.payload || action.error.message
-        state.tx.revokeGrant.successMsg = ``
+        state.tx.revoke.status = `rejected`
+        state.tx.revoke.errMsg = action.payload || action.error.message
+        state.tx.revoke.txHash = ``
       })
   },
 });
+
+export const {resetAlerts} = authzSlice.actions;
 
 export default authzSlice.reducer;

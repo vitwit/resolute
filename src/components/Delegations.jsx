@@ -19,7 +19,6 @@ export function MyDelegations(props) {
     const open = Boolean(anchorEl);
     const handleClick = (event, validator) => {
       setAnchorEl(event.currentTarget);
-      console.log(event.currentTarget, validator)
       onDelegationAction(event.currentTarget, validator);
       setAnchorEl(null);
     };

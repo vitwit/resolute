@@ -15,10 +15,11 @@ import Chip from '@mui/material/Chip';
 import { getTypeURLName, shortenAddress } from '../utils/util';
 import { useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from './table';
-import { Typography } from '@mui/material';
+import { Link, Typography } from '@mui/material';
 import { getLocalTime } from '../utils/datetime';
 import { AuthorizationInfo } from '../components/AuthorizationInfo';
 import { resetError, resetTxHash, setError, setTxHash } from '../features/common/commonSlice';
+import { getTypeURLFromAuthorization } from '../utils/authorizations';
 
 
 
@@ -28,6 +29,7 @@ export default function Authz() {
   const dispatch = useDispatch();
 
   const [infoOpen, setInfoOpen] = React.useState(false);
+  const [selected, setSelected] = React.useState({});
   const handleInfoClose = (value) => {
     setInfoOpen(false);
   };
@@ -36,14 +38,16 @@ export default function Authz() {
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const address = useSelector((state) => state.wallet.address);
-  const revokeTx = useSelector((state) => state.authz.tx.revokeGrant);
+  const revokeTx = useSelector((state) => state.authz.tx.revoke);
   const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
 
   useEffect(() => {
-    dispatch(getGrantsByMe({
-      baseURL: chainInfo.lcd,
-      granter: address
-    }))
+    if (address !== "") {
+      dispatch(getGrantsByMe({
+        baseURL: chainInfo.lcd,
+        granter: address
+      }))
+    }
   }, [chainInfo]);
 
   useEffect(() => {
@@ -66,22 +70,28 @@ export default function Authz() {
 
   useEffect(() => {
     if (revokeTx?.txHash?.length > 0) {
-        dispatch(setTxHash({
-            hash: revokeTx?.txHash,
-        }))
+      dispatch(setTxHash({
+        hash: revokeTx?.txHash,
+      }))
+
+      dispatch(getGrantsByMe({
+        baseURL: chainInfo.lcd,
+        granter: address
+      }))
+
     }
 
     if (revokeTx?.errMsg !== '') {
-        dispatch(setError({
-            type: 'error',
-            message: revokeTx.errMsg
-        }))
+      dispatch(setError({
+        type: 'error',
+        message: revokeTx.errMsg
+      }))
     }
-}, [revokeTx])
+  }, [revokeTx])
 
   const onRevoke = (granter, grantee, typeURL) => {
     dispatch(txAuthzRevoke({
-      granter: granter, 
+      granter: granter,
       grantee: grantee,
       typeURL: typeURL,
       denom: currency.coinMinimalDenom,
@@ -106,6 +116,17 @@ export default function Authz() {
 
   return (
     <>
+      {
+        selected?.authorization ?
+          <AuthorizationInfo
+            authorization={selected}
+            displayDenom={currency?.coinDenom}
+            open={infoOpen}
+            onClose={handleInfoClose}
+          />
+          :
+          <></>
+      }
       <div style={{ display: 'flex', marginBottom: 12, flexDirection: 'row-reverse' }}>
         <Button variant='contained' size='medium'
           onClick={() => navigateTo("/authz/new")}
@@ -139,21 +160,21 @@ export default function Authz() {
         </ButtonGroup>
 
         <TableContainer component={Paper} elevation={0}>
-          <Table sx={{ minWidth: 700 }} aria-label="simple table">
-            {
-              grantType === 'by-me' ?
-                (
-                  <>
-                    {
-                      grantsByMe.grants.length === 0 ?
-                        <Typography
-                          variant='h6'
-                          color="text.primary"
-                          style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
-                          No Authorizations Found
-                        </Typography>
-                        :
-                        <>
+          {
+            grantType === 'by-me' ?
+              (
+                <>
+                  {
+                    grantsByMe.grants.length === 0 ?
+                      <Typography
+                        variant='h6'
+                        color="text.primary"
+                        style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
+                        No Authorizations Found
+                      </Typography>
+                      :
+                      <>
+                        <Table sx={{ minWidth: 700 }} aria-label="simple table">
                           <TableHead>
                             <StyledTableRow>
                               <StyledTableCell>Grantee</StyledTableCell>
@@ -178,65 +199,56 @@ export default function Authz() {
                                   </StyledTableCell>
                                   <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
                                   <StyledTableCell>
-                                    <Button
-                                      size='small'
-                                      color='info'
-                                      textSizeSmall
-                                      onClick={() => {
-                                        setInfoOpen(true)
-                                      }}
-                                    >
-                                      Details
-                                    </Button>
+                                    <Link onClick={() => {
+                                      setSelected(row)
+                                      setInfoOpen(true)
+                                    }
+                                    }>Details</Link>
                                   </StyledTableCell>
                                   <StyledTableCell>
                                     <Button
                                       variant="contained"
                                       size="small"
-                                      textSizeSmall
                                       disableElevation
                                       color='primary'
-                                      disabled={revokeTx?.status === 'pending' ? true: false}
-                                      onClick={() => onRevoke(row.granter, row.grantee, row.authorization['@type'])}
+                                      disabled={revokeTx?.status === 'pending' ? true : false}
+                                      onClick={() => onRevoke(row.granter, row.grantee, getTypeURLFromAuthorization(row.authorization))}
                                     >
                                       Revoke
                                     </Button>
                                   </StyledTableCell>
                                 </StyledTableRow>
-
-                                <AuthorizationInfo
-                                  authorization={row.authorization}
-                                  open={infoOpen}
-                                  onClose={handleInfoClose}
-                                />
                               </>
                             ))}
                           </TableBody>
-                        </>
-                    }
-                  </>
-                )
-                :
-                (
-                  <>
-                    {
-                      grantsToMe.grants.length === 0 ?
+                        </Table>
+                      </>
+                  }
+                </>
+              )
+              :
+              (
+                <>
+                  {
+                    grantsToMe.grants.length === 0 ?
 
-                        <Typography
-                          variant='h6'
-                          color="text.primary"
-                          style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
-                          No Authorizations Found
-                        </Typography>
-                        :
+                      <Typography
+                        variant='h6'
+                        color="text.primary"
+                        style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
+                        No Authorizations Found
+                      </Typography>
+                      :
 
-                        <>
+                      <>
+                        <Table sx={{ minWidth: 700 }} aria-label="simple table">
                           <TableHead>
                             <StyledTableRow>
                               <StyledTableCell >Granter</StyledTableCell>
                               <StyledTableCell >Type</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
-                              <StyledTableCell >Info</StyledTableCell>
+                              <StyledTableCell >Details</StyledTableCell>
+                              <StyledTableCell >Actions</StyledTableCell>
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
@@ -253,23 +265,32 @@ export default function Authz() {
                                 </StyledTableCell>
                                 <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
                                 <StyledTableCell>
+                                  <Link onClick={() => {
+                                    setSelected(row)
+                                    setInfoOpen(true)
+                                  }}
+                                  >
+                                    Details
+                                  </Link>
+                                </StyledTableCell>
+                                <StyledTableCell>
                                   <Button
                                     size='small'
                                     color='info'
-                                    textSizeSmall
+                                    onClick={() => { alert("TODO://") }}
                                   >
-                                    Details
+                                    Use
                                   </Button>
                                 </StyledTableCell>
                               </StyledTableRow>
                             ))}
                           </TableBody>
-                        </>
-                    }
-                  </>
-                )
-            }
-          </Table>
+                        </Table>
+                      </>
+                  }
+                </>
+              )
+          }
         </TableContainer>
       </Paper>
     </>

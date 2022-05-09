@@ -8,7 +8,7 @@ export function formatVotingPower (tokens) {
 export function parseSpendLimit (tokens) {
     if (tokens.length > 0) {
     let temp = tokens[0].amount/1000000.0
-    return `${parseFloat((temp.toFixed(6)))}`
+        return parseFloat((temp.toFixed(6)))
     }
 
     return 0

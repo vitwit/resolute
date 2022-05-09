@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { FeegrantBasicMsg } from '../../txns/proto';
+import { FeegrantBasicMsg, FeegrantRevokeMsg } from '../../txns/proto';
 import feegrantService from './feegrantService';
 import { fee, signAndBroadcastProto } from '../../txns/execute';
-import { AuthzSendGrantMsg, SendMsg, AuthzGenericGrantMsg } from '../../txns/proto';
 
 const initialState = {
   grantsToMe: {
@@ -57,8 +56,8 @@ export const txFeegrantBasic = createAsyncThunk(
   'feegrant/tx-basic',
   async (data, { rejectWithValue, fulfillWithValue }) => {
     try {
-      const msg = FeegrantBasicMsg(data.granter, data.grantee, data.expiration)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.memo, data.rpc)
+      const msg = FeegrantBasicMsg(data.granter, data.grantee,data.denom, data.spendLimit, data.expiration)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc)
       if (result?.code === 0) {
         return fulfillWithValue({txHash: result?.transactionHash});
         } else {
@@ -75,7 +74,7 @@ export const txGrantPeriodic = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue }) => {
     try {
       const msg = FeegrantBasicMsg(data.granter, data.grantee, data.typeUrl, data.expiration)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.memo, data.rpc)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc)
       if (result?.code === 0) {
         return fulfillWithValue({txHash: result?.transactionHash});
         } else {
@@ -91,8 +90,8 @@ export const txRevoke = createAsyncThunk(
   'feegrant/tx-revoke',
   async (data, { rejectWithValue, fulfillWithValue }) => {
     try {
-      const msg = FeegrantBasicMsg(data.granter, data.grantee, data.typeUrl, data.expiration)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.memo, data.rpc)
+      const msg = FeegrantRevokeMsg(data.granter, data.grantee)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc)
       if (result?.code === 0) {
         return fulfillWithValue({txHash: result?.transactionHash});
         } else {

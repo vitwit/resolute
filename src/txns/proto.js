@@ -1,16 +1,19 @@
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { SendAuthorization } from "cosmjs-types/cosmos/bank/v1beta1/authz";
 import { MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx";
-import { MsgGrantAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
+import { MsgGrantAllowance, MsgRevokeAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
 import { MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
 import { BasicAllowance, PeriodicAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/feegrant";
 import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
 import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz";
+import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
+import Long from "long";
 
 const msgSendTypeUrl = "/cosmos.bank.v1beta1.MsgSend";
 const msgAuthzGrantTypeUrl = "/cosmos.authz.v1beta1.MsgGrant";
 const msgAuthzRevokeTypeUrl = "/cosmos.authz.v1beta1.MsgRevoke";
 const msgFeegrantGrantTypeUrl = "/cosmos.feegrant.v1beta1.MsgGrantAllowance";
+const msgFeegrantRevokeTypeUrl = "/cosmos.feegrant.v1beta1.MsgRevokeAllowance";
 
 // gov
 const msgVote = "/cosmos.gov.v1beta1.MsgVote";
@@ -31,6 +34,13 @@ export function SendMsg(from, to, amount, denom) {
 
 
 export function AuthzSendGrantMsg(granter, grantee, denom, spendLimit, expiration) {
+    let expSec = Math.floor(expiration.getTime() / 1000)
+    let expNano = (expiration.getTime() % 1000) * 1000000 + (expiration.nanoseconds ?? 0)
+    const exp = Timestamp.fromPartial({
+        nanos: Long.fromNumber(expNano),
+        seconds: Long.fromNumber(expSec)
+    })
+
     const sendAuthValue = SendAuthorization.encode(
         SendAuthorization.fromPartial({
             spendLimit: [
@@ -46,7 +56,7 @@ export function AuthzSendGrantMsg(granter, grantee, denom, spendLimit, expiratio
                 typeUrl: "/cosmos.bank.v1beta1.SendAuthorization",
                 value: sendAuthValue,
             },
-            expiration: expiration,
+            expiration: exp,
         },
         grantee: grantee,
         granter: granter,
@@ -60,6 +70,13 @@ export function AuthzSendGrantMsg(granter, grantee, denom, spendLimit, expiratio
 
 
 export function AuthzGenericGrantMsg(granter, grantee, typeURL, expiration) {
+    let expSec = Math.floor(expiration.getTime() / 1000)
+    let expNano = (expiration.getTime() % 1000) * 1000000 + (expiration.nanoseconds ?? 0)
+    const exp = Timestamp.fromPartial({
+        nanos: Long.fromNumber(expNano),
+        seconds: Long.fromNumber(expSec)
+    })
+
     return {
         typeUrl: msgAuthzGrantTypeUrl,
         value: {
@@ -72,7 +89,7 @@ export function AuthzGenericGrantMsg(granter, grantee, typeURL, expiration) {
                         }),
                     ).finish(),
                 },
-                expiration: expiration.toISOString(),
+                expiration: exp,
             },
             grantee: grantee,
             granter: granter,
@@ -106,15 +123,24 @@ export function GovVoteMsg(proposalId, voter, option) {
 
 
 export function FeegrantBasicMsg(granter, grantee, denom, spendLimit, expiration) {
+    let expSec = Math.floor(expiration.getTime() / 1000)
+    let expNano = (expiration.getTime() % 1000) * 1000000 + (expiration.nanoseconds ?? 0)
+    const exp = Timestamp.fromPartial(
+        {
+            nanos: Long.fromNumber(expNano),
+            seconds: Long.fromNumber(expSec)
+        }
+    )
+
     const basicValue = BasicAllowance.encode(
         BasicAllowance.fromPartial({
-            expiration: expiration,
-            spendLimit: [
+            spendLimit: spendLimit === null ? null : [
                 Coin.fromPartial({
                     amount: String(spendLimit),
                     denom: denom
                 })
-            ]
+            ],
+            expiration: exp
         })).finish()
 
     return {
@@ -123,7 +149,6 @@ export function FeegrantBasicMsg(granter, grantee, denom, spendLimit, expiration
             allowance: {
                 typeUrl: "/cosmos.feegrant.v1beta1.BasicAllowance",
                 value: basicValue,
-
             },
             grantee: grantee,
             granter: granter,
@@ -131,10 +156,17 @@ export function FeegrantBasicMsg(granter, grantee, denom, spendLimit, expiration
     }
 }
 
-export function FeegrantPeriodicMsg(granter, grantee,denom, spendLimit, expiration) {
+export function FeegrantPeriodicMsg(granter, grantee, denom, spendLimit, expiration) {
+    let expSec = Math.floor(expiration.getTime() / 1000)
+    let expNano = (expiration.getTime() % 1000) * 1000000 + (expiration.nanoseconds ?? 0)
+    const exp = Timestamp.encode({
+        nanos: Long.fromNumber(expNano),
+        seconds: Long.fromNumber(expSec)
+    }).finish()
+
     const basicValue = BasicAllowance.encode(
         BasicAllowance.fromPartial({
-            expiration: expiration,
+            expiration: exp,
             spendLimit: [
                 Coin.fromPartial({
                     amount: String(spendLimit),
@@ -156,6 +188,16 @@ export function FeegrantPeriodicMsg(granter, grantee,denom, spendLimit, expirati
                 value: periodicValue,
 
             },
+            grantee: grantee,
+            granter: granter,
+        }),
+    }
+}
+
+export function FeegrantRevokeMsg(granter, grantee) {
+    return {
+        typeUrl: msgFeegrantRevokeTypeUrl,
+        value: MsgRevokeAllowance.fromPartial({
             grantee: grantee,
             granter: granter,
         }),

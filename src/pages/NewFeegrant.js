@@ -1,8 +1,7 @@
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import TextField from '@mui/material/TextField';
-import * as React from 'react';
+import React, { useState } from 'react';
 import { Paper } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -17,7 +16,7 @@ export default function NewFeegrant() {
     const address = useSelector((state) => state.wallet.address);
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
     const dispatch = useDispatch();
-    const [selected, setSelected] = React.useState('basic')
+    const [selected, setSelected] = useState('basic')
     const feegrantTx = useSelector((state) => state.feegrant.tx);
 
     let date = new Date()
@@ -25,7 +24,7 @@ export default function NewFeegrant() {
     const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
 
 
-    const { handleSubmit, control, setValue } = useForm({
+    const { handleSubmit, control } = useForm({
         defaultValues: {
             grantee: '',
             spendLimit: 0,
@@ -41,18 +40,13 @@ export default function NewFeegrant() {
         dispatch(txFeegrantBasic({
             granter: address,
             grantee: data.grantee,
-            spendLimit: data.spendLimit,
+            spendLimit: Number(data.spendLimit) === 0 ? null : data.spendLimit,
             expiration: data.expiration,
             denom: currency.coinMinimalDenom,
-            memo: data.memo ? data.memo : "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
             feeAmount: 25000,
         }))
-    }
-
-    const onDateChange = (value) => {
-        setValue('expiration', value)
     }
 
     return (
@@ -87,68 +81,81 @@ export default function NewFeegrant() {
                         {
                             selected === 'basic' ?
                                 <>
-                                <form onSubmit={handleSubmit(onBasicSubmit)}>
-                                    <Controller
-                                        name="grantee"
-                                        control={control}
-                                        rules={{ required: 'Grantee is required' }}
-                                        render={({ field: { onChange, value }, fieldState: { error } }) =>
-                                            <TextField
-                                                label="Grantee"
-                                                value={value}
-                                                onChange={onChange}
-                                                error={!!error}
-                                                helperText={error ? error.message : null}
-                                                fullWidth
-                                            />}
-                                    />
-                                    <br />
-                                    <br />
-
-                                    <Controller
-                                        name="spendLimit"
-                                        control={control}
-                                        render={({ field: { onChange, value }, fieldState: { error } }) =>
-                                            <TextField
-                                                label="Spend Limit"
-                                                value={value}
-                                                onChange={onChange}
-                                                inputMode='decimal'
-                                                error={!!error}
-                                                helperText={error ? error.message : null}
-                                                fullWidth
-                                            />}
-                                    />
-                                    <br />
-                                    <Controller
-                                        name="expiration"
-                                        control={control}
-                                        render={({ field: { onChange, value }, fieldState: { error } }) =>
-                                            <LocalizationProvider
-                                                dateAdapter={AdapterDateFns}>
-                                                <DateTimePicker
-                                                    disablePast
-                                                    renderInput={(props) => <TextField
-                                                        style={{ marginTop: 32 }}
-                                                        fullWidth {...props} />}
-                                                    label="Expiration"
+                                    <form onSubmit={handleSubmit(onBasicSubmit)}>
+                                        <Controller
+                                            name="grantee"
+                                            control={control}
+                                            rules={{ required: 'Grantee is required' }}
+                                            render={({ field: { onChange, value }, fieldState: { error } }) =>
+                                                <TextField
+                                                    label="Grantee"
                                                     value={value}
+                                                    onChange={onChange}
                                                     error={!!error}
-                                                    onChange={onDateChange}
                                                     helperText={error ? error.message : null}
-                                                />
-                                            </LocalizationProvider>
-                                        }
-                                    />
-                                    <br />
+                                                    fullWidth
+                                                />}
+                                        />
+                                        <br />
+                                        <br />
+                                        <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                            <Controller
+                                                name="spendLimit"
+                                                control={control}
+                                                rules={{
+                                                    validate: (value) => {
+                                                        return Number(value) >= 0
+                                                    }
+                                                }}
+                                                render={({ field: { onChange, value }, fieldState: { error } }) =>
+                                                    <TextField
+                                                        label="Spend Limit"
+                                                        value={value}
+                                                        onChange={onChange}
+                                                        inputMode='decimal'
+                                                        error={!!error}
+                                                        helperText={error ? error.message.length === 0 ? 'Invalid spend limit' : error.message : null}
+                                                        fullWidth
+                                                    />}
+                                            />
+                                            <TextField
+                                                label="Token"
+                                                disabled
+                                                InputLabelProps={{ shrink: true }}
+                                                style={{ marginLeft: 12 }}
+                                                value={currency?.coinDenom || ''}
+                                                fullWidth
+                                            />
+                                        </div>
+                                        <Controller
+                                            name="expiration"
+                                            control={control}
+                                            render={({ field: { onChange, value }, fieldState: { error } }) =>
+                                                <LocalizationProvider
+                                                    dateAdapter={AdapterDateFns}>
+                                                    <DateTimePicker
+                                                        disablePast
+                                                        renderInput={(props) => <TextField
+                                                            style={{ marginTop: 32 }}
+                                                            fullWidth {...props} />}
+                                                        label="Expiration"
+                                                        value={value}
+                                                        error={!!error}
+                                                        onChange={onChange}
+                                                        helperText={error ? error.message : null}
+                                                    />
+                                                </LocalizationProvider>
+                                            }
+                                        />
+                                        <br />
 
-                                    <Button
-                                        style={{ marginTop: 32 }}
-                                        variant="outlined"
-                                        type='submit'
-                                    >
-                                        Grant
-                                    </Button>
+                                        <Button
+                                            style={{ marginTop: 32 }}
+                                            variant="outlined"
+                                            type='submit'
+                                        >
+                                            Grant
+                                        </Button>
                                     </form>
                                 </>
                                 :
@@ -166,12 +173,15 @@ export default function NewFeegrant() {
                                     <LocalizationProvider
                                         dateAdapter={AdapterDateFns}>
                                         <DateTimePicker
-                                            renderInput={(props) => <TextField style={{ marginTop: 32 }} fullWidth {...props} />}
+                                            renderInput={(props) =>
+                                                <TextField
+                                                    style={{ marginTop: 32 }}
+                                                    fullWidth
+                                                    {...props}
+                                                />
+                                            }
                                             label="Expiration"
                                             value={expiration}
-                                            onChange={(newValue) => {
-                                                // setExpiration(newValue);
-                                            }}
                                         />
                                     </LocalizationProvider>
                                     <br />

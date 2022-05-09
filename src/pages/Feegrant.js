@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  getGrantsToMe, getGrantsByMe
+  getGrantsToMe, getGrantsByMe, txRevoke
 } from './../features/feegrant/feegrantSlice';
 import {
   setError
@@ -20,7 +20,7 @@ import { getTypeURLName, shortenAddress } from '../utils/util';
 import { getLocalTime } from './../utils/datetime'
 import { useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from './table';
-import { Typography } from '@mui/material';
+import { Link, Typography } from '@mui/material';
 
 export default function Feegrant() {
   const grantsToMe = useSelector((state) => state.feegrant.grantsToMe.grants);
@@ -32,9 +32,10 @@ export default function Feegrant() {
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const address = useSelector((state) => state.wallet.address);
   const errState = useSelector((state) => state.feegrant.errState);
+  const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
 
   useEffect(() => {
-    if (address !== "") {
+    if (address && address.length > 0) {
       dispatch(getGrantsByMe({
         baseURL: chainInfo.lcd,
         granter: address
@@ -45,6 +46,17 @@ export default function Feegrant() {
       }))
     }
   }, [address]);
+
+  const revoke = (a) => {
+    dispatch(txRevoke({
+      granter: a.granter,
+      grantee: a.grantee,
+      denom: currency.coinMinimalDenom,
+      chainId: chainInfo.chainId,
+      rpc: chainInfo.rpc,
+      feeAmount: 25000,
+  }))
+  }
 
   let navigate = useNavigate();
   function navigateTo(path) {
@@ -81,7 +93,7 @@ export default function Feegrant() {
           >Granted To Me</Button>
         </ButtonGroup>
 
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} elevation={0}>
           {
             grantType === 'by-me' ?
               (
@@ -102,11 +114,12 @@ export default function Feegrant() {
                               <StyledTableCell>Grantee</StyledTableCell>
                               <StyledTableCell >Type</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
+                              <StyledTableCell>Details</StyledTableCell>
                               <StyledTableCell>Action</StyledTableCell>
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
-                            {grantsByMe && grantsByMe.allowances && grantsByMe.allowances.map((row, index) => (
+                            { grantsByMe.map((row, index) => (
                               <StyledTableRow
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -119,21 +132,19 @@ export default function Feegrant() {
                                 </StyledTableCell>
                                 <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
                                 <StyledTableCell>
-                                  <Button
-                                    variant='outlined'
-                                    color='primary'
-                                    size='small'
-                                    disableElevation
+                                  <Link
+                                  onClick={() => alert("TODO")}
                                   >
-                                    Info
-                                  </Button>
-                                  &nbsp;
-                                  &nbsp;
+                                  Details
+                                  </Link>
+                                </StyledTableCell>
+                                <StyledTableCell>
                                   <Button
                                     variant='outlined'
                                     color='error'
                                     size='small'
                                     disableElevation
+                                    onClick={() => revoke(row)}
                                   >
                                     Revoke
                                   </Button>
