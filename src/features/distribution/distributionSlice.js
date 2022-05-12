@@ -18,7 +18,6 @@ export const txWithdrawAllRewards = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue }) => {
     try {
       const msgs = []
-      console.log(data)
       for (let i=0;i<data.msgs.length;i++) {
         const msg = data.msgs[i]
         msgs.push(WithdrawAllRewardsMsg(msg.delegator,msg.validator))
