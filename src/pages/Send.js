@@ -9,6 +9,7 @@ import {
     resetError, setTxHash, resetTxHash, setError
 } from './../features/common/commonSlice';
 import { totalBalance } from '../utils/denom';
+import InputAdornment from '@mui/material/InputAdornment';
 
 export const Send = () => {
     const from = useSelector((state) => state.wallet?.address);
@@ -107,6 +108,7 @@ export const Send = () => {
                                         render={({ field }) =>
                                             <TextField
                                                 {...field}
+                                                required
                                                 label="Recipient"
                                                 fullWidth
                                             />}
@@ -119,17 +121,6 @@ export const Send = () => {
                                 >
                                     Availabel:&nbsp;{available}{currency?.coinDenom}
                                 </Typography>
-                                <Grid container>
-                                    <Grid item md={4} xs={12}>
-                                        <TextField
-                                            label="Token"
-                                            disabled
-                                            style={{ paddingRight: 12 }}
-                                            value={currency?.coinDenom}
-                                            fullWidth
-                                        />
-                                    </Grid>
-                                    <Grid item md={8} xs={12}>
                                         <Controller
                                             name="amount"
                                             control={control}
@@ -137,12 +128,14 @@ export const Send = () => {
                                             render={({ field }) =>
                                                 <TextField
                                                     {...field}
+                                                    required
                                                     label="Amount"
                                                     fullWidth
+                                                    InputProps={{
+                                                        endAdornment: <InputAdornment position="start">{currency?.coinDenom}</InputAdornment>,
+                                                      }}
                                                 />}
                                         />
-                                    </Grid>
-                                </Grid>
                                 <div>
                                     <br />
                                     <Button

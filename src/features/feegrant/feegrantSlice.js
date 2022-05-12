@@ -106,7 +106,31 @@ export const txRevoke = createAsyncThunk(
 export const feegrantSlice = createSlice({
   name: 'feegrant',
   initialState,
-  reducers: {},
+  reducers: {
+    resetAlerts: (state) => {
+      state.tx = {
+        errState: {
+          message: '',
+          type: '',
+        },
+        basicGrant: {
+          status: 'idle',
+          errMsg: '',
+          successMsg: ''
+        },
+        periodicGrant: {
+          status: 'idle',
+          errMsg: '',
+          successMsg: ''
+        },
+        revokeGrant: {
+          status: 'idle',
+          errMsg: '',
+          successMsg: ''
+        }
+      }
+  },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getGrantsToMe.pending, (state) => {
@@ -218,5 +242,7 @@ export const feegrantSlice = createSlice({
       })
   },
 });
+
+export const {resetAlerts} = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;

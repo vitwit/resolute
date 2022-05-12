@@ -2,6 +2,7 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { SendAuthorization } from "cosmjs-types/cosmos/bank/v1beta1/authz";
 import { MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 import { MsgGrantAllowance, MsgRevokeAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
+import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import { MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
 import { BasicAllowance, PeriodicAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/feegrant";
 import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
@@ -17,6 +18,10 @@ const msgFeegrantRevokeTypeUrl = "/cosmos.feegrant.v1beta1.MsgRevokeAllowance";
 
 // gov
 const msgVote = "/cosmos.gov.v1beta1.MsgVote";
+
+// distribution
+const msgWithdrawRewards = "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward";
+
 
 export function SendMsg(from, to, amount, denom) {
     return {
@@ -200,6 +205,16 @@ export function FeegrantRevokeMsg(granter, grantee) {
         value: MsgRevokeAllowance.fromPartial({
             grantee: grantee,
             granter: granter,
+        }),
+    }
+}
+
+export function WithdrawAllRewardsMsg(delegator, validator) {
+    return {
+        typeUrl: msgWithdrawRewards,
+        value: MsgWithdrawDelegatorReward.fromPartial({
+            delegatorAddress: delegator,
+            validatorAddress: validator,
         }),
     }
 }

@@ -9,15 +9,19 @@ import Paper from '@mui/material/Paper';
 import { ActiveValidators } from '../components/ActiveValidators';
 import { InActiveValidators } from '../components/InActiveValidators';
 import { MyDelegations } from '../components/Delegations';
+import { getDelegatorTotalRewards, txWithdrawAllRewards } from '../features/distribution/distributionSlice';
+import { WithdrawAllRewardsMsg } from '../txns/proto';
 
 export function Validators() {
     const [type, setType] = useState('delegations');
 
     const validators = useSelector((state) => state.staking.validators);
     const delegations = useSelector((state) => state.staking.delegations);
+    const rewards = useSelector((state) => state.distribution.delegatorRewards);
     const wallet = useSelector((state) => state.wallet);
     const { chainInfo, address, connected } = wallet;
     const dispatch = useDispatch();
+    const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
 
     const [selected, setSelected] = React.useState('active')
 
@@ -28,17 +32,19 @@ export function Validators() {
                 baseURL: chainInfo.lcd,
                 status: null,
             }))
-        }
-    }, [chainInfo]);
 
-    useEffect(() => {
-        if (connected && validators.pagination?.next_key === null) {
             dispatch(getDelegations({
                 baseURL: chainInfo.lcd,
                 address: address,
             }))
+
+            dispatch(getDelegatorTotalRewards({
+                baseURL: chainInfo.lcd,
+                address: address
+            }))
+
         }
-    }, [validators]);
+    }, [chainInfo]);
 
     useEffect(() => {
         if (connected) {
@@ -56,7 +62,26 @@ export function Validators() {
                     dispatch(sortValidatorsByVotingPower())
             }
         }
-    }, [validators.pagination])
+    }, [validators.pagination]);
+
+    const onWithdrawAllRewards = () => {
+        let delegationPairs = []
+        delegations.delegations.forEach((item) => {
+            delegationPairs.push({
+                validator: item.delegation.validator_address,
+                delegator: item.delegation.delegator_address,
+            })
+        });
+
+        dispatch(txWithdrawAllRewards({
+            msgs: delegationPairs,
+            denom: currency.coinMinimalDenom,
+            memo: "",
+            chainId: chainInfo.chainId,
+            rpc: chainInfo.rpc,
+            feeAmount: 25000
+        }))
+    }
 
     return (
         <>
@@ -76,7 +101,13 @@ export function Validators() {
             </ButtonGroup>
             {
                 type === 'delegations' ?
-                    <MyDelegations validators={validators} delegations={delegations} />
+                    <MyDelegations
+                        validators={validators}
+                        delegations={delegations}
+                        currency={currency}
+                        rewards={rewards.list}
+                        onWithdrawAllRewards={onWithdrawAllRewards}
+                    />
                     :
                     (
                         <Paper elevation={0} style={{ padding: 12 }}>

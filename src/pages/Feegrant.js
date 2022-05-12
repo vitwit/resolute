@@ -8,10 +8,11 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  getGrantsToMe, getGrantsByMe, txRevoke
+  getGrantsToMe, getGrantsByMe, txRevoke, resetAlerts
 } from './../features/feegrant/feegrantSlice';
 import {
-  setError
+  resetError, resetTxHash,
+  setError, setTxHash
 } from './../features/common/commonSlice';
 
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -21,10 +22,11 @@ import { getLocalTime } from './../utils/datetime'
 import { useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from './table';
 import { Link, Typography } from '@mui/material';
+import { FeegrantInfo } from '../components/FeegrantInfo';
 
 export default function Feegrant() {
-  const grantsToMe = useSelector((state) => state.feegrant.grantsToMe.grants);
-  const grantsByMe = useSelector((state) => state.feegrant.grantsByMe.grants);
+  const grantsToMe = useSelector((state) => state.feegrant.grantsToMe);
+  const grantsByMe = useSelector((state) => state.feegrant.grantsByMe);
   const dispatch = useDispatch();
 
   const [grantType, setGrantType] = React.useState('by-me');
@@ -33,6 +35,13 @@ export default function Feegrant() {
   const address = useSelector((state) => state.wallet.address);
   const errState = useSelector((state) => state.feegrant.errState);
   const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
+  const revokeTx = useSelector((state) => state.feegrant.tx.revokeGrant);
+  const [infoOpen, setInfoOpen] = React.useState(false);
+
+  const [selected, setSelected] = React.useState({});
+  const handleInfoClose = (value) => {
+    setInfoOpen(false);
+  };
 
   useEffect(() => {
     if (address && address.length > 0) {
@@ -47,6 +56,31 @@ export default function Feegrant() {
     }
   }, [address]);
 
+  useEffect(() => {
+    dispatch(resetAlerts())
+    dispatch(resetError())
+    dispatch(resetTxHash())
+  }, [])
+
+
+  useEffect(() => {
+    if (grantsToMe?.errMsg !== '' && grantsToMe?.status === 'rejected') {
+      dispatch(setError({
+        type: 'error',
+        message: grantsToMe.errMsg
+      }))
+    }
+  }, [grantsToMe]);
+
+  useEffect(() => {
+    if (grantsByMe?.errMsg !== '' && grantsByMe?.status === 'rejected') {
+      dispatch(setError({
+        type: 'error',
+        message: grantsByMe.errMsg
+      }))
+    }
+  }, [grantsByMe]);
+
   const revoke = (a) => {
     dispatch(txRevoke({
       granter: a.granter,
@@ -55,8 +89,29 @@ export default function Feegrant() {
       chainId: chainInfo.chainId,
       rpc: chainInfo.rpc,
       feeAmount: 25000,
-  }))
+    }))
   }
+
+  useEffect(() => {
+    if (revokeTx?.txHash?.length > 0) {
+      dispatch(setTxHash({
+        hash: revokeTx?.txHash,
+      }))
+
+      dispatch(getGrantsByMe({
+        baseURL: chainInfo.lcd,
+        granter: address
+      }))
+
+    }
+
+    if (revokeTx?.errMsg !== '') {
+      dispatch(setError({
+        type: 'error',
+        message: revokeTx.errMsg
+      }))
+    }
+  }, [revokeTx])
 
   let navigate = useNavigate();
   function navigateTo(path) {
@@ -71,6 +126,17 @@ export default function Feegrant() {
 
   return (
     <>
+      {
+        selected?.allowance ?
+          <FeegrantInfo
+            authorization={selected}
+            displayDenom={currency?.coinDenom}
+            open={infoOpen}
+            onClose={handleInfoClose}
+          />
+          :
+          <></>
+      }
       <div style={{ display: 'flex', marginBottom: 12, flexDirection: 'row-reverse' }}>
         <Button variant='contained' size='medium'
           onClick={() => navigateTo("/feegrant/new")}
@@ -99,7 +165,7 @@ export default function Feegrant() {
               (
                 <>
                   {
-                    grantsByMe.length === 0 ?
+                    grantsByMe && grantsByMe?.grants.length === 0 ?
                       <Typography
                         variant='h6'
                         color="text.primary"
@@ -119,7 +185,7 @@ export default function Feegrant() {
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
-                            { grantsByMe.map((row, index) => (
+                            {grantsByMe && grantsByMe?.grants.map((row, index) => (
                               <StyledTableRow
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -130,12 +196,15 @@ export default function Feegrant() {
                                 <StyledTableCell>
                                   <Chip label={getTypeURLName(row.allowance['@type'])} variant="filled" size="medium" />
                                 </StyledTableCell>
-                                <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
+                                <StyledTableCell>{row?.allowance?.expiration ? getLocalTime(row?.allowance?.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
                                 <StyledTableCell>
-                                  <Link
-                                  onClick={() => alert("TODO")}
+                                  <Link onClick={() => {
+                                    setSelected(row)
+                                    setInfoOpen(true)
+                                  }
+                                  }
                                   >
-                                  Details
+                                    Details
                                   </Link>
                                 </StyledTableCell>
                                 <StyledTableCell>
@@ -144,6 +213,7 @@ export default function Feegrant() {
                                     color='error'
                                     size='small'
                                     disableElevation
+                                    disabled={revokeTx?.status === 'pending' ? true : false}
                                     onClick={() => revoke(row)}
                                   >
                                     Revoke
@@ -161,7 +231,7 @@ export default function Feegrant() {
               (
                 <>
                   {
-                    grantsToMe?.length === 0 ?
+                    grantsToMe && grantsToMe.grants?.length === 0 ?
                       <Typography
                         variant='h6'
                         color="text.primary"
@@ -176,11 +246,12 @@ export default function Feegrant() {
                               <StyledTableCell >Granter</StyledTableCell>
                               <StyledTableCell >Type</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
+                              <StyledTableCell>Details</StyledTableCell>
                               <StyledTableCell >Action</StyledTableCell>
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
-                            {grantsToMe && grantsToMe.allowances && grantsToMe.allowances.map((row, index) => (
+                            {grantsToMe && grantsToMe.grants?.map((row, index) => (
                               <StyledTableRow
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -192,6 +263,16 @@ export default function Feegrant() {
                                   <Chip label={getTypeURLName(row.allowance['@type'])} variant="filled" size="medium" />
                                 </StyledTableCell>
                                 <StyledTableCell>{row.allowance.expiration ? getLocalTime(row.allowance.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
+                                <StyledTableCell>
+                                  <Link onClick={() => {
+                                    setSelected(row)
+                                    setInfoOpen(true)
+                                  }
+                                  }
+                                  >
+                                    Details
+                                  </Link>
+                                </StyledTableCell>
                                 <StyledTableCell>
                                   <Button
                                     variant='outlined'
@@ -211,8 +292,8 @@ export default function Feegrant() {
                 </>
               )
           }
-      </TableContainer>
-    </Paper>
+        </TableContainer>
+      </Paper>
     </>
 
   );

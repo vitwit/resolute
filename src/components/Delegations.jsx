@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -13,8 +13,29 @@ import { formatValidatorStatus } from '../utils/util';
 import Typography from '@mui/material/Typography';
 
 export function MyDelegations(props) {
-    const { delegations, validators, onDelegationAction } = props;
+    const { delegations, validators, onDelegationAction, currency, rewards } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [totalStaked, setTotalStaked] = React.useState(0);
+    const [totalRewards, setTotalRewards] = React.useState(0);
+
+    useEffect(() => {
+        let total = 0.0
+        if (delegations?.delegations.length > 0) {
+            for (let i = 0;i < delegations.delegations.length; i++)
+            total += parseFloat(delegations.delegations[i].delegation.shares) / (10 ** currency?.coinDecimals)
+        }
+        setTotalStaked(total.toFixed(3));
+
+        total = 0.0
+        if (rewards.length > 0) {
+            for (let i = 0;i < rewards.length; i++)
+            if (rewards[i].reward.length > 0) {
+                total += parseFloat(rewards[i].reward[0].amount) / (10 ** currency?.coinDecimals)
+            }
+        }
+
+        setTotalRewards(total.toFixed(3));
+    }, [delegations]);
 
     const open = Boolean(anchorEl);
     const handleClick = (event, validator) => {
@@ -29,6 +50,20 @@ export function MyDelegations(props) {
     return (
         <>
             <Paper elevation={0} style={{ padding: 12 }}>
+                <div className='inline-space-between' style={{marginBottom: 12}}>
+                <Typography>
+                    Total staked: {totalStaked} {currency?.coinDenom}
+                </Typography>
+
+                <Button
+                    variant='contained'
+                    size='small'
+                    style={{textTransform: 'none'}}
+                    onClick={() => props.onWithdrawAllRewards()}
+                >
+                    Claim Rewards: {totalRewards} {currency?.coinDenom}
+                </Button>
+                </div>
                 <TableContainer component={Paper} elevation={0}>
                     {
                         delegations?.delegations.length === 0 ?
@@ -54,7 +89,7 @@ export function MyDelegations(props) {
                                     {
                                         delegations?.delegations.map((row, index) => (
                                             <StyledTableRow
-                                                key={row.index + 1}
+                                                key={row.index}
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                             >
                                                 <StyledTableCell component="th" scope="row">
@@ -67,7 +102,7 @@ export function MyDelegations(props) {
                                                     {(validators?.active[row.delegation.validator_address]?.commission.commission_rates.rate * 100).toFixed(2)}% 
                                                     </StyledTableCell>
                                                 <StyledTableCell>
-                                                    {parseFloat(row.delegation.shares) / 1000000}
+                                                    {parseFloat(row.delegation.shares) / (10 ** currency.coinDecimals)}
                                                     </StyledTableCell>
                                                 <StyledTableCell>
                                                     {validators.active[row.delegation.validator_address]?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validators.active[row.delegation.validator_address]?.status)}

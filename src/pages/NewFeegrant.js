@@ -2,7 +2,8 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import TextField from '@mui/material/TextField';
 import React, { useState } from 'react';
-import { Paper } from '@mui/material';
+import Paper from '@mui/material/Paper';
+import InputAdornment from '@mui/material/InputAdornment';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -90,6 +91,7 @@ export default function NewFeegrant() {
                                                 <TextField
                                                     label="Grantee"
                                                     value={value}
+                                                    required
                                                     onChange={onChange}
                                                     error={!!error}
                                                     helperText={error ? error.message : null}
@@ -98,7 +100,7 @@ export default function NewFeegrant() {
                                         />
                                         <br />
                                         <br />
-                                        <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                        <div>
                                             <Controller
                                                 name="spendLimit"
                                                 control={control}
@@ -116,15 +118,10 @@ export default function NewFeegrant() {
                                                         error={!!error}
                                                         helperText={error ? error.message.length === 0 ? 'Invalid spend limit' : error.message : null}
                                                         fullWidth
+                                                        InputProps={{
+                                                            endAdornment: <InputAdornment position="start">{currency?.coinDenom}</InputAdornment>,
+                                                        }}
                                                     />}
-                                            />
-                                            <TextField
-                                                label="Token"
-                                                disabled
-                                                InputLabelProps={{ shrink: true }}
-                                                style={{ marginLeft: 12 }}
-                                                value={currency?.coinDenom || ''}
-                                                fullWidth
                                             />
                                         </div>
                                         <Controller
