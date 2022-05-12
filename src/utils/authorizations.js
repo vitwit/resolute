@@ -50,3 +50,15 @@ export function authzMsgTypes() {
         },
     ]
 }
+
+
+export function getTypeURLFromAuthorization(authorization) {
+    switch(authorization["@type"]) {
+        case "/cosmos.bank.v1beta1.SendAuthorization":
+            return "/cosmos.bank.v1beta1.MsgSend"
+        case "/cosmos.authz.v1beta1.GenericAuthorization":
+            return authorization.msg
+        default:
+            throw new Error("unsupported authorization")
+    }
+}

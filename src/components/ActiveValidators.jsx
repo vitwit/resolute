@@ -17,7 +17,6 @@ export function ActiveValidators(props) {
     const open = Boolean(anchorEl);
     const handleClick = (event, validator) => {
       setAnchorEl(event.currentTarget);
-      console.log(event.currentTarget, validator)
       onActiveAction(event.currentTarget, validator);
       setAnchorEl(null);
     };

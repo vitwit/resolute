@@ -2,8 +2,9 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import * as React from 'react';
-import { Paper } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import Paper from '@mui/material/Paper';
+import CircularProgress from '@mui/material/CircularProgress';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -12,32 +13,42 @@ import { authzMsgTypes } from '../utils/authorizations';
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
 import { amountToMinimalValue } from '../utils/util';
-import { txAuthzGeneric, txAuthzSend } from '../features/authz/authzSlice';
+import { txAuthzGeneric, txAuthzSend, resetAlerts } from '../features/authz/authzSlice';
+import {
+    resetError, setTxHash, resetTxHash, setError
+} from './../features/common/commonSlice';
+import InputAdornment from '@mui/material/InputAdornment';
 
 
 export default function NewAuthz() {
     const address = useSelector((state) => state.wallet.address);
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
-    const authzTx = useSelector((state) => state.authz.tx);
+    const authzTx = useSelector((state) => state.authz.tx.grant);
     const dispatch = useDispatch();
 
 
-    React.useEffect(() => {
-        if (address?.length === 0) {
-            // TODO: connect wallet component
+    useEffect(() => {
+        if (address && address.length === 0) {
+
         }
     }, [address]);
 
-    const [selected, setSelected] = React.useState('send')
+    useEffect(() => {
+        dispatch(resetAlerts());
+        dispatch(resetError());
+        dispatch(resetTxHash());
+    }, []);
+
+    const [selected, setSelected] = useState('send')
     let date = new Date()
     let expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
     const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
 
 
-    const { handleSubmit, control, setValue } = useForm({
+    const { handleSubmit, control } = useForm({
         defaultValues: {
             grantee: '',
-            spendLimit: 0,
+            spendLimit: 1,
             expiration: expiration,
             typeUrl: ''
         }
@@ -50,7 +61,6 @@ export default function NewAuthz() {
             spendLimit: amountToMinimalValue(data.spendLimit, chainInfo.currencies[0]),
             expiration: data.expiration,
             denom: currency.coinMinimalDenom,
-            memo: data.memo ? data.memo : "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
             feeAmount: 25000,
@@ -64,7 +74,6 @@ export default function NewAuthz() {
             typeUrl: data.typeURL?.typeURL,
             expiration: data.expiration,
             denom: currency.coinMinimalDenom,
-            memo: data.memo ? data.memo : "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
             feeAmount: 25000,
@@ -75,10 +84,20 @@ export default function NewAuthz() {
         setSelected(type);
     }
 
-    const onDateChange = (value) => {
-        setValue('expiration', value)
-    }
+    useEffect(() => {
+        if (authzTx?.txHash !== '') {
+            dispatch(setTxHash({
+                hash: authzTx?.txHash,
+            }))
+        }
 
+        if (authzTx?.errMsg !== '') {
+            dispatch(setError({
+                type: 'error',
+                message: authzTx?.errMsg
+            }))
+        }
+    }, [authzTx]);
 
     return (
         <>
@@ -115,6 +134,7 @@ export default function NewAuthz() {
                                             <TextField
                                                 label="Grantee"
                                                 value={value}
+                                                required
                                                 onChange={onChange}
                                                 error={!!error}
                                                 helperText={error ? error.message : null}
@@ -123,22 +143,32 @@ export default function NewAuthz() {
                                     />
                                     <br />
                                     <br />
-                                    <Controller
-                                        name="spendLimit"
-                                        control={control}
-                                        rules={{ required: 'Spend limit is required' }}
-                                        render={({ field: { onChange, value }, fieldState: { error } }) =>
-                                            <TextField
-                                                label="Spend Limit"
-                                                value={value}
-                                                onChange={onChange}
-                                                type='number'
-                                                error={!!error}
-                                                helperText={error ? error.message : null}
-                                                fullWidth
-                                            />}
-                                    />
-                                    <br />
+                                    <div >
+                                        <Controller
+                                            defaultValue={1}
+                                            name="spendLimit"
+                                            control={control}
+                                            rules={{
+                                                required: 'Spend limit is required', validate: (value) => {
+                                                    return Number(value) > 0
+                                                }
+                                            }}
+                                            render={({ field: { onChange, value }, fieldState: { error } }) =>
+                                                <TextField
+                                                    label="Spend Limit"
+                                                    value={value}
+                                                    required
+                                                    onChange={onChange}
+                                                    type='number'
+                                                    error={!!error}
+                                                    helperText={error ? error.message.length === 0 ? 'Invalid spend limit' : error.message : null}
+                                                    fullWidth
+                                                    InputProps={{
+                                                        endAdornment: <InputAdornment position="start">{currency?.coinDenom}</InputAdornment>,
+                                                    }}
+                                                />}
+                                        />
+                                    </div>
                                     <Controller
                                         name="expiration"
                                         control={control}
@@ -149,12 +179,13 @@ export default function NewAuthz() {
                                                 <DateTimePicker
                                                     disablePast
                                                     renderInput={(props) => <TextField
+                                                        required
                                                         style={{ marginTop: 32 }}
                                                         fullWidth {...props} />}
                                                     label="Expiration"
                                                     value={value}
                                                     error={!!error}
-                                                    onChange={onDateChange}
+                                                    onChange={onChange}
                                                     helperText={error ? error.message : null}
                                                 />
                                             </LocalizationProvider>
@@ -164,11 +195,15 @@ export default function NewAuthz() {
 
                                     <Button
                                         type='submit'
-                                        disabled={authzTx.sendGrant.status === 'pending'}
+                                        disabled={authzTx.status === 'pending'}
                                         style={{ marginTop: 32 }}
                                         variant="outlined"
                                     >
-                                        {authzTx.sendGrant.status === 'pending' ? 'Please Wait' : 'Grant'}
+                                        {authzTx.status === 'pending' ?
+                                            <CircularProgress
+                                                size={25}
+                                            />
+                                            : 'Grant'}
                                     </Button>
                                 </form>
                                 :
@@ -187,6 +222,7 @@ export default function NewAuthz() {
                                                 <TextField
                                                     label="Grantee"
                                                     value={value}
+                                                    required
                                                     onChange={onChange}
                                                     error={!!error}
                                                     helperText={error ? error.message : null}
@@ -198,6 +234,7 @@ export default function NewAuthz() {
                                         <Controller
                                             name="typeURL"
                                             control={control}
+                                            defaultValue={null}
                                             rules={{ required: 'Message type is required' }}
                                             render={({ field: { onChange, value }, fieldState: { error } }) =>
 
@@ -205,17 +242,19 @@ export default function NewAuthz() {
                                                     disablePortal
                                                     fullWidth
                                                     variant="outlined"
+                                                    required
                                                     options={authzMsgTypes()}
                                                     isOptionEqualToValue={(option, value) => option.typeUrl === value.typeUrl}
                                                     label="Type"
                                                     value={value}
                                                     onChange={(event, item) => {
                                                         onChange(item);
-                                                        console.log(item)
                                                     }}
                                                     renderInput={(params) =>
                                                         <TextField {...params}
                                                             error={!!error}
+                                                            required
+                                                            placeholder='Select msg type'
                                                             helperText={error ? error.message : null}
                                                         />} />
                                             } />
@@ -228,13 +267,16 @@ export default function NewAuthz() {
                                                     dateAdapter={AdapterDateFns}>
                                                     <DateTimePicker
                                                         disablePast
-                                                        renderInput={(props) => <TextField
-                                                            style={{ marginTop: 32 }}
-                                                            fullWidth {...props} />}
+                                                        renderInput={(props) =>
+                                                            <TextField
+                                                                required
+                                                                style={{ marginTop: 32 }}
+                                                                fullWidth {...props}
+                                                            />}
                                                         label="Expiration"
                                                         value={value}
                                                         error={!!error}
-                                                        onChange={onDateChange}
+                                                        onChange={onChange}
                                                         helperText={error ? error.message : null}
                                                     />
                                                 </LocalizationProvider>
@@ -245,9 +287,10 @@ export default function NewAuthz() {
                                         <Button
                                             type='submit'
                                             style={{ marginTop: 32 }}
+                                            disabled={authzTx.status === 'pending'}
                                             variant="outlined"
                                         >
-                                            Grant
+                                            {authzTx.status === 'pending' ? 'Please Wait' : 'Grant'}
                                         </Button>
                                     </form>
                                 </>

@@ -256,7 +256,7 @@ function DashboardContent() {
                 </Box>
             </Box>
 
-            <Snackbar open={snackOpen} autoHideDuration={2000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+            <Snackbar open={snackOpen} autoHideDuration={3000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={() => { showSnack(false) }} severity={errState.type === 'success' ? 'success' : 'error'} sx={{ width: '100%' }}>
                     {errState.message}
                 </Alert>

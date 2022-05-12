@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { signAndBroadcastAmino, fee } from '../../txns/execute';
 import distService from './distributionService';
+import { WithdrawAllRewardsMsg } from '../../txns/proto';
 
 const initialState = {
   delegatorRewards: {
@@ -10,6 +12,29 @@ const initialState = {
   }
 
 };
+
+export const txWithdrawAllRewards = createAsyncThunk(
+  'distribution/withdraw-all-rewards',
+  async (data, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const msgs = []
+      for (let i=0;i<data.msgs.length;i++) {
+        const msg = data.msgs[i]
+        msgs.push(WithdrawAllRewardsMsg(msg.delegator,msg.validator))
+      }      
+      const result = await signAndBroadcastAmino(msgs, fee(data.denom, data.feeAmount), "", data.chainId, data.rpc)
+      if (result?.code === 0) {
+        return fulfillWithValue({txHash: result?.transactionHash});
+        } else {
+          return rejectWithValue(result?.rawLog);
+        }
+    } catch (error) {
+      alert(error)
+      return rejectWithValue(error.response)
+    }
+  }
+);
+
 
 export const getDelegatorTotalRewards = createAsyncThunk(
   'distribution/totalRewards',

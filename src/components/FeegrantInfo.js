@@ -7,9 +7,9 @@ import { parseSpendLimit } from '../utils/denom';
 import { getLocalTime } from '../utils/datetime';
 
 const renderAuthorization = (authz, displayDenom) => {
-    const { authorization, granter, grantee, expiration } = authz;
-    switch (authorization["@type"]) {
-        case "/cosmos.bank.v1beta1.SendAuthorization":
+    const { allowance, granter, grantee } = authz;
+    switch (allowance["@type"]) {
+        case "/cosmos.feegrant.v1beta1.BasicAllowance":
             return (
                 <>
                     <ul>
@@ -17,7 +17,7 @@ const renderAuthorization = (authz, displayDenom) => {
                             <Typography>
                                 Type
                             </Typography>
-                            <Chip label={getTypeURLName(authorization['@type'])} variant="filled" size="medium" />
+                            <Chip label={getTypeURLName(allowance['@type'])} variant="filled" size="medium" />
                         </li>
                         <li className='inline-space-between'>
                             <Typography>
@@ -36,7 +36,7 @@ const renderAuthorization = (authz, displayDenom) => {
                                 SpendLimit
                             </Typography>
                             <Typography>
-                                {`${parseSpendLimit(authorization.spend_limit)}${displayDenom}`}
+                                {allowance.spend_limit.length === 0 ? <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} /> :`${parseSpendLimit(allowance.spend_limit)}${displayDenom}`}
                             </Typography>
                         </li>
                         <li className='inline-space-between'>
@@ -44,14 +44,14 @@ const renderAuthorization = (authz, displayDenom) => {
                                 Expiration
                             </Typography>
                             <Typography>
-                                {expiration ? getLocalTime(expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}
+                                {allowance.expiration ? getLocalTime(allowance.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}
                             </Typography>
                         </li>
                     </ul>
                 </>
             )
 
-        case "/cosmos.authz.v1beta1.GenericAuthorization":
+        case "/cosmos.feegrant.v1beta1.PeriodicAllowance":
             return (
                 <>
                     <ul>
@@ -59,7 +59,7 @@ const renderAuthorization = (authz, displayDenom) => {
                             <Typography>
                                 Type
                             </Typography>
-                            <Chip label={getTypeURLName(authorization['@type'])} variant="filled" size="medium" />
+                            <Chip label={getTypeURLName(allowance['@type'])} variant="filled" size="medium" />
                         </li>
                         <li className='inline-space-between'>
                             <Typography>
@@ -77,12 +77,12 @@ const renderAuthorization = (authz, displayDenom) => {
                             <Typography>
                                 Expiration
                             </Typography>
-                            {expiration ? <Typography>getLocalTime(expiration)</Typography> : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}
+                            {allowance.expiration ? <Typography>getLocalTime(allowance.expiration)</Typography> : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}
                         </li>
                     </ul>
                 </>
             )
-        case "/cosmos.staking.v1beta1.StakeAuthorization":
+        case "/cosmos.feegrant.v1beta1.FilteredAllowanceS":
             return (
                 <>
                     <ul>
@@ -107,7 +107,7 @@ const renderAuthorization = (authz, displayDenom) => {
 }
 
 
-export function AuthorizationInfo(props) {
+export function FeegrantInfo(props) {
     const { onClose, open, displayDenom } = props;
 
     const handleClose = () => {
@@ -130,7 +130,7 @@ export function AuthorizationInfo(props) {
 }
 
 
-AuthorizationInfo.propTypes = {
+FeegrantInfo.propTypes = {
     onClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     authorization: PropTypes.object.isRequired,
