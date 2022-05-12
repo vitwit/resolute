@@ -10,7 +10,6 @@ export async function signAndBroadcastAmino(msgs, fee, memo = "", chainID, rpcUR
         wallet,
     )
 
-    console.log(account)
 
     return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
 }
