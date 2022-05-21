@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { Delegate, UnDelegate } from '../../txns/proto';
 import stakingService from './stakingService';
+import { signAndBroadcastAmino, fee } from '../../txns/execute';
 
 const initialState = {
   validators: {
@@ -24,19 +26,67 @@ const initialState = {
     delegations: [],
     errMsg: '',
     pagination: {},
+  },
+  params:{},
+  tx: {
+    status: 'idle',
+    errMsg: '',
+    txHash: '',
   }
 };
 
+export const txDelegate = createAsyncThunk(
+  'staking/delegate',
+  async (data, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const msg = Delegate(data.delegator,data.validator, data.amount, data.denom)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), "", data.chainId, data.rpc)
+      if (result?.code === 0) {
+        return fulfillWithValue({txHash: result?.transactionHash});
+        } else {
+          return rejectWithValue(result?.rawLog);
+        }
+    } catch (error) {
+      return rejectWithValue(error.response)
+    }
+  }
+);
+
+export const txUnDelegate = createAsyncThunk(
+  'staking/undelegate',
+  async (data, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const msg = UnDelegate(data.delegator,data.validator, data.amount, data.denom)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), "", data.chainId, data.rpc)
+      if (result?.code === 0) {
+        return fulfillWithValue({txHash: result?.transactionHash});
+        } else {
+          return rejectWithValue(result?.rawLog);
+        }
+    } catch (error) {
+      return rejectWithValue(error.response)
+    }
+  }
+);
+
 export const getValidators = createAsyncThunk(
-  'stake/validators',
+  'staking/validators',
   async (data) => {
     const response = await stakingService.validtors(data.baseURL, data?.status, data.pagination);
     return response.data;
   }
 );
 
+export const getParams = createAsyncThunk(
+  'staking/params',
+  async (data) => {
+    const response = await stakingService.params(data.baseURL);
+    return response.data;
+  }
+);
+
 export const getDelegations = createAsyncThunk(
-  'stake/delegations',
+  'staking/delegations',
   async (data) => {
     const response = await stakingService.delegations(data.baseURL,data.address, data.pagination);
     return response.data;
@@ -44,7 +94,7 @@ export const getDelegations = createAsyncThunk(
 );
 
 export const getUnbonding = createAsyncThunk(
-  'stake/unbonding',
+  'staking/unbonding',
   async (data) => {
     const response = await stakingService.unbonding(data.baseURL,data.address, data.pagination);
     return response.data;
@@ -53,7 +103,7 @@ export const getUnbonding = createAsyncThunk(
 
 
 export const stakeSlice = createSlice({
-  name: 'stake',
+  name: 'staking',
   initialState,
   reducers: {
     validators: (state, action) => {
@@ -140,6 +190,50 @@ export const stakeSlice = createSlice({
       .addCase(getUnbonding.rejected, (state, action) => {
         state.unbonding.status = 'rejected';
         state.unbonding.errMsg = action.error.message
+      })
+
+
+      builder
+      .addCase(getParams.pending, (state) => {
+      })
+      .addCase(getParams.fulfilled, (state, action) => {
+        state.params = action.payload
+      })
+      .addCase(getParams.rejected, (state, action) => {})
+
+
+      builder
+      .addCase(txDelegate.pending, (state) => {
+        state.tx.status = 'pending';
+        state.tx.errMsg = '';
+        state.tx.txHash = '';
+
+      })
+      .addCase(txDelegate.fulfilled, (state, action) => {
+        state.tx.status = 'idle';
+        state.tx.errMsg = '';
+        state.tx.txHash = action.payload.txHash;
+      })
+      .addCase(txDelegate.rejected, (state, action) => {
+        state.tx.status = 'rejected';
+        state.tx.errMsg = action.error.message;
+      })
+
+      builder
+      .addCase(txUnDelegate.pending, (state) => {
+        state.tx.status = 'pending';
+        state.tx.errMsg = '';
+        state.tx.txHash = '';
+
+      })
+      .addCase(txUnDelegate.fulfilled, (state, action) => {
+        state.tx.status = 'idle';
+        state.tx.errMsg = '';
+        state.tx.txHash = action.payload.txHash;
+      })
+      .addCase(txUnDelegate.rejected, (state, action) => {
+        state.tx.status = 'rejected';
+        state.tx.errMsg = action.error.message;
       })
 
       

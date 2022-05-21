@@ -4,6 +4,7 @@ import { convertPaginationToParams } from '../utils';
 const validatorsURL = '/cosmos/staking/v1beta1/validators';
 const delegationsURL = '/cosmos/staking/v1beta1/delegations/';
 const unbondingDelegationsURL = (address) => `/cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`
+const paramsURL = '/cosmos/staking/v1beta1/params';
 
 const fetchValidators = (baseURL, status, pagination) => {
   let uri = `${baseURL}${validatorsURL}`
@@ -53,10 +54,22 @@ const fetchUnbonding = (baseURL,address, pagination) => {
 })
 }
 
+
+const fetchParams = (baseURL) => {
+  let uri = `${baseURL}${paramsURL}`
+  return Axios.get(uri, {
+    headers: {
+        Accept: 'application/json, text/plain, */*',
+        Connection: 'keep-alive',
+    },
+})
+}
+
 const result = {
   validtors: fetchValidators,
   delegations: fetchdelegations,
-  unbonding: fetchUnbonding
+  unbonding: fetchUnbonding,
+  params: fetchParams,
 }
 
 export default result;

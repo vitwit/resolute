@@ -1,7 +1,5 @@
 import React from 'react';
 import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import { StyledTableCell, StyledTableRow } from './../pages/table';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -11,18 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import { formatVotingPower } from '../utils/denom';
 
 export function ActiveValidators(props) {
-    const { validators, onActiveAction } = props;
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
-    const open = Boolean(anchorEl);
-    const handleClick = (event, validator) => {
-      setAnchorEl(event.currentTarget);
-      onActiveAction(event.currentTarget, validator);
-      setAnchorEl(null);
-    };
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
+    const { validators, onMenuAction } = props;
 
     return (
         <>
@@ -58,7 +45,7 @@ export function ActiveValidators(props) {
                                 <StyledTableCell>
                                     <Button
                                         variant="outlined"
-                                        size="small" onClick={(e) => handleClick(e, validators.active[keyName])}
+                                        size="small" onClick={(e) => onMenuAction(e, validators.active[keyName])}
                                     >
                                         Actions
                                     </Button>
@@ -70,19 +57,7 @@ export function ActiveValidators(props) {
                 </Table>
             </TableContainer>
 
-            <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                }}
-            >
-                <MenuItem onClick={handleClose}>Delegate</MenuItem>
-                <MenuItem onClick={handleClose}>Undelegate</MenuItem>
-                <MenuItem onClick={handleClose}>WithdrawRewards</MenuItem>
-            </Menu>
+
         </>
     );
 }

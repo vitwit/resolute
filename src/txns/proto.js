@@ -3,6 +3,7 @@ import { SendAuthorization } from "cosmjs-types/cosmos/bank/v1beta1/authz";
 import { MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 import { MsgGrantAllowance, MsgRevokeAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
+import { MsgDelegate, MsgBeginRedelegate, MsgUndelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import { MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
 import { BasicAllowance, PeriodicAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/feegrant";
 import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
@@ -21,6 +22,10 @@ const msgVote = "/cosmos.gov.v1beta1.MsgVote";
 
 // distribution
 const msgWithdrawRewards = "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward";
+
+// staking
+const msgDelegate = "/cosmos.staking.v1beta1.MsgDelegate";
+const msgUnDelegate = "/cosmos.staking.v1beta1.MsgUndelegate";
 
 
 export function SendMsg(from, to, amount, denom) {
@@ -215,6 +220,34 @@ export function WithdrawAllRewardsMsg(delegator, validator) {
         value: MsgWithdrawDelegatorReward.fromPartial({
             delegatorAddress: delegator,
             validatorAddress: validator,
+        }),
+    }
+}
+
+export function Delegate(delegator, validator, amount, denom) {
+    return {
+        typeUrl: msgDelegate,
+        value: MsgDelegate.fromPartial({
+            delegatorAddress: delegator,
+            validatorAddress: validator,
+            amount: Coin.fromPartial({
+                amount: String(amount),
+                denom: denom
+            })
+        }),
+    }
+}
+
+export function UnDelegate(delegator, validator, amount, denom) {
+    return {
+        typeUrl: msgDelegate,
+        value: MsgUndelegate.fromPartial({
+            delegatorAddress: delegator,
+            validatorAddress: validator,
+            amount: Coin.fromPartial({
+                amount: String(amount),
+                denom: denom
+            })
         }),
     }
 }

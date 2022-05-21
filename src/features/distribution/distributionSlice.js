@@ -29,7 +29,6 @@ export const txWithdrawAllRewards = createAsyncThunk(
           return rejectWithValue(result?.rawLog);
         }
     } catch (error) {
-      alert(error)
       return rejectWithValue(error.response)
     }
   }
