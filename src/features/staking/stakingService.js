@@ -22,7 +22,6 @@ const fetchValidators = (baseURL, status, pagination) => {
   return Axios.get(uri, {
     headers: {
         Accept: 'application/json, text/plain, */*',
-        Connection: 'keep-alive',
     },
 })
 }
@@ -35,7 +34,6 @@ const fetchdelegations = (baseURL,address, pagination) => {
   return Axios.get(uri, {
     headers: {
         Accept: 'application/json, text/plain, */*',
-        Connection: 'keep-alive',
     },
 })
 }
@@ -49,7 +47,6 @@ const fetchUnbonding = (baseURL,address, pagination) => {
   return Axios.get(uri, {
     headers: {
         Accept: 'application/json, text/plain, */*',
-        Connection: 'keep-alive',
     },
 })
 }
@@ -60,7 +57,6 @@ const fetchParams = (baseURL) => {
   return Axios.get(uri, {
     headers: {
         Accept: 'application/json, text/plain, */*',
-        Connection: 'keep-alive',
     },
 })
 }

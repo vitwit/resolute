@@ -146,7 +146,7 @@ DialogUndelegate.propTypes = {
     open: PropTypes.bool.isRequired,
     params: PropTypes.object.isRequired,
     validator: PropTypes.object.isRequired,
-    delegations: PropTypes.object.isRequired,
+    delegations: PropTypes.array.isRequired,
     currency: PropTypes.object.isRequired,
     loading: PropTypes.string.isRequired,
 };

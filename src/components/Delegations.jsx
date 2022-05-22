@@ -8,11 +8,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import { formatValidatorStatus } from '../utils/util';
 import Typography from '@mui/material/Typography';
+import { useSelector } from 'react-redux';
 
 export function MyDelegations(props) {
     const { delegations, validators, onDelegationAction, currency, rewards } = props;
     const [totalStaked, setTotalStaked] = React.useState(0);
     const [totalRewards, setTotalRewards] = React.useState(0);
+    const distTxStatus = useSelector((state) => state.distribution.tx);
     const [rewardsP, setRewardsP] = React.useState({});
 
     useEffect(() => {
@@ -23,19 +25,27 @@ export function MyDelegations(props) {
         }
         setTotalStaked(total?.toFixed(4));
 
-        total = 0.0
+    }, [delegations]);
+
+    useEffect(() => {
+        let total = 0.0
         if (rewards.length > 0) {
             for (let i = 0; i < rewards.length; i++)
                 if (rewards[i].reward.length > 0) {
-                    if (rewards[i]?.reward?.length > 0) {
-                        rewardsP[rewards[i].validator_address] = (parseFloat(rewards[i].reward[0].amount) / (10 ** currency?.coinDecimals))
-                        total += parseFloat(rewards[i].reward[0].amount) / (10 ** currency?.coinDecimals)
-                    }
+                        const reward = rewards[i]?.reward[0]
+                        let temp = rewardsP
+                        temp[rewards[i].validator_address] = (parseFloat(reward.amount) / (10 ** currency?.coinDecimals))
+                        setRewardsP(temp)
+                        total += parseFloat(reward.amount) / (10 ** currency?.coinDecimals)
+                }  else {
+                    let temp = rewardsP
+                    temp[rewards[i].validator_address] = 0.0
+                    setRewardsP(temp)
                 }
         }
 
-        setTotalRewards(total?.toFixed(5));
-    }, [delegations]);
+        setTotalRewards(total.toFixed(5));
+    }, [rewards]);
 
     const handleClick = (event, delegation) => {
         let val = {}
@@ -60,8 +70,9 @@ export function MyDelegations(props) {
                         size='small'
                         style={{ textTransform: 'none' }}
                         onClick={() => props.onWithdrawAllRewards()}
+                        disabled={distTxStatus?.status === 'pending'}
                     >
-                        Claim Rewards: {totalRewards} {currency?.coinDenom}
+                        {distTxStatus?.status === 'pending' ? 'Loading...' : `Claim Rewards: ${totalRewards} ${currency?.coinDenom}` }
                     </Button>
                 </div>
                 <TableContainer component={Paper} elevation={0}>

@@ -9,6 +9,11 @@ const initialState = {
     status: 'idle',
     errMsg: '',
     pagination: {},
+  },
+  tx: {
+    status: 'idle',
+    errMsg: '',
+    txHash: '',
   }
 
 };
@@ -66,6 +71,24 @@ export const bankSlice = createSlice({
       .addCase(getDelegatorTotalRewards.rejected, (state, action) => {
         state.delegatorRewards.status = 'rejected';
         state.delegatorRewards.errMsg = action.error.message
+      })
+
+
+      builder
+      .addCase(txWithdrawAllRewards.pending, (state) => {
+        state.tx.status = 'pending';
+        state.tx.errMsg = '';
+        state.tx.txHash = '';
+
+      })
+      .addCase(txWithdrawAllRewards.fulfilled, (state, action) => {
+        state.tx.status = 'idle';
+        state.tx.errMsg = '';
+        state.tx.txHash = action.payload.txHash;
+      })
+      .addCase(txWithdrawAllRewards.rejected, (state, action) => {
+        state.tx.status = 'rejected';
+        state.tx.errMsg = action.error.message;
       })
 
       

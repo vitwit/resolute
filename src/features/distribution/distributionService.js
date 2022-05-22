@@ -15,7 +15,6 @@ export function fetchDelegatorTotalRewards(baseURL,address, pagination) {
   return Axios.get(uri, {
     headers: {
         Accept: 'application/json, text/plain, */*',
-        Connection: 'keep-alive',
     },
 })
 }

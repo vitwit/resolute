@@ -13,8 +13,7 @@ const fetchBalances = (baseURL,address,pagination) => {
 
   return Axios.get(uri, {
     headers: {
-        Accept: 'application/json, text/plain, */*',
-        Connection: 'keep-alive',
+        Accept: 'application/json, text/plain, */*',        
     },
 })
 }
@@ -26,7 +25,6 @@ const fetchBalance = (baseURL,address, denom) => {
   return Axios.get(uri, {
     headers: {
         Accept: 'application/json, text/plain, */*',
-        Connection: 'keep-alive',
     },
 })
 }

@@ -28,6 +28,7 @@ export function Validators() {
     const stakingParams = useSelector((state) => state.staking.params);
     const delegations = useSelector((state) => state.staking.delegations);
     const txStatus = useSelector((state) => state.staking.tx);
+    const distTxStatus = useSelector((state) => state.distribution.tx);
     const rewards = useSelector((state) => state.distribution.delegatorRewards);
     const wallet = useSelector((state) => state.wallet);
     const balance = useSelector((state) => state.bank.balance);
@@ -46,7 +47,6 @@ export function Validators() {
         setStakingOpen(false);
         setUndelegateOpen(false);
         setRedelegateOpen(false);
-        // TODO: delegate tx
     };
 
 
@@ -155,9 +155,29 @@ export function Validators() {
 
     useEffect(() => {
         return () => {
-            dispatch(resetError())
+            dispatch(resetError());
+            dispatch(resetTxHash());
         }
     }, []);
+
+    useEffect(() => {
+        if (distTxStatus.txHash?.length > 0) {
+            dispatch(setTxHash({
+                hash: distTxStatus?.txHash,
+            }))
+
+            dispatch(getDelegatorTotalRewards({
+                baseURL: chainInfo.lcd,
+                address: address
+            }));
+
+        } else if (distTxStatus.status === 'rejected' && distTxStatus.errMsg.length > 0) {
+            dispatch(setError({
+                type: 'error',
+                message: distTxStatus.errMsg
+            }))
+        }
+    }, [distTxStatus]);
 
     const onWithdrawAllRewards = () => {
         let delegationPairs = []
@@ -192,7 +212,6 @@ export function Validators() {
     }
 
     const onUndelegateTx = (data) => {
-        console.log(data);
         dispatch(txUnDelegate({
             delegator: address,
             validator: data.validator,

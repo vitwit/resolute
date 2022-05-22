@@ -240,7 +240,7 @@ export function Delegate(delegator, validator, amount, denom) {
 
 export function UnDelegate(delegator, validator, amount, denom) {
     return {
-        typeUrl: msgDelegate,
+        typeUrl: msgUnDelegate,
         value: MsgUndelegate.fromPartial({
             delegatorAddress: delegator,
             validatorAddress: validator,

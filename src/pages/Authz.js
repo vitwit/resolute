@@ -186,7 +186,6 @@ export default function Authz() {
                           </TableHead>
                           <TableBody>
                             {grantsByMe.grants && grantsByMe.grants.map((row, index) => (
-                              <>
                                 <StyledTableRow
                                   key={index}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -218,7 +217,6 @@ export default function Authz() {
                                     </Button>
                                   </StyledTableCell>
                                 </StyledTableRow>
-                              </>
                             ))}
                           </TableBody>
                         </Table>

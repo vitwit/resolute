@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Delegate, UnDelegate } from '../../txns/proto';
 import stakingService from './stakingService';
 import { signAndBroadcastAmino, fee } from '../../txns/execute';
+import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
   validators: {
@@ -29,24 +30,33 @@ const initialState = {
   },
   params:{},
   tx: {
-    status: 'idle',
-    errMsg: '',
-    txHash: '',
+    status: 'idle'
   }
 };
 
 export const txDelegate = createAsyncThunk(
   'staking/delegate',
-  async (data, { rejectWithValue, fulfillWithValue }) => {
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = Delegate(data.delegator,data.validator, data.amount, data.denom)
       const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), "", data.chainId, data.rpc)
       if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
         return fulfillWithValue({txHash: result?.transactionHash});
         } else {
+          dispatch(setError({
+            type: 'error',
+            message: result?.rawLog
+          }))
           return rejectWithValue(result?.rawLog);
         }
     } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
       return rejectWithValue(error.response)
     }
   }
@@ -54,16 +64,27 @@ export const txDelegate = createAsyncThunk(
 
 export const txUnDelegate = createAsyncThunk(
   'staking/undelegate',
-  async (data, { rejectWithValue, fulfillWithValue }) => {
+  async (data, { rejectWithValue, fulfillWithValue,dispatch }) => {
     try {
       const msg = UnDelegate(data.delegator,data.validator, data.amount, data.denom)
       const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), "", data.chainId, data.rpc)
       if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
         return fulfillWithValue({txHash: result?.transactionHash});
         } else {
+          dispatch(setError({
+            type: 'error',
+            message: result?.rawLog
+          }))
           return rejectWithValue(result?.rawLog);
         }
     } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
       return rejectWithValue(error.response)
     }
   }
@@ -205,35 +226,25 @@ export const stakeSlice = createSlice({
       builder
       .addCase(txDelegate.pending, (state) => {
         state.tx.status = 'pending';
-        state.tx.errMsg = '';
-        state.tx.txHash = '';
 
       })
-      .addCase(txDelegate.fulfilled, (state, action) => {
+      .addCase(txDelegate.fulfilled, (state, _) => {
         state.tx.status = 'idle';
-        state.tx.errMsg = '';
-        state.tx.txHash = action.payload.txHash;
       })
-      .addCase(txDelegate.rejected, (state, action) => {
+      .addCase(txDelegate.rejected, (state, _) => {
         state.tx.status = 'rejected';
-        state.tx.errMsg = action.error.message;
       })
 
       builder
       .addCase(txUnDelegate.pending, (state) => {
         state.tx.status = 'pending';
-        state.tx.errMsg = '';
-        state.tx.txHash = '';
 
       })
-      .addCase(txUnDelegate.fulfilled, (state, action) => {
+      .addCase(txUnDelegate.fulfilled, (state, _) => {
         state.tx.status = 'idle';
-        state.tx.errMsg = '';
-        state.tx.txHash = action.payload.txHash;
       })
       .addCase(txUnDelegate.rejected, (state, action) => {
         state.tx.status = 'rejected';
-        state.tx.errMsg = action.error.message;
       })
 
       
