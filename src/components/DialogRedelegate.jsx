@@ -40,7 +40,7 @@ function parseDelegation(delegations, validator, currency) {
 
 
 export function DialogRedelegate(props) {
-    const { onClose, open, active, inactive, validator, delegations, currency } = props;
+    const { onClose, open, active, inactive, validator, delegations, currency, onRedelegate, loading } = props;
 
     const targetValidators = parseValidators(active, inactive, validator);
 
@@ -53,13 +53,17 @@ export function DialogRedelegate(props) {
     const { handleSubmit, control, setValue, formState: { errors } } = useForm({
         defaultValues: {
             amount: 0,
-            destination: {},
+            destination: null,
         }
     });
 
 
     const onSubmit = data => {
-        console.log(data)
+        onRedelegate({
+            amount: data.amount,
+            dest: data.destination.addr,
+            src: validator?.operator_address
+        })
     }
 
     return (
@@ -93,21 +97,20 @@ export function DialogRedelegate(props) {
 
                                     <Autocomplete
                                         disablePortal
-                                        isOptionEqualToValue={(option, value) => option.addr === value.addr}
                                         label="destination"
                                         value={value}
+                                        size='small'
+                                        isOptionEqualToValue={(option, value) => option.addr === value.addr}
+                                        options={targetValidators}
                                         onChange={(event, item) => {
                                             onChange(item);
                                         }}
-                                        id="combo-box-demo"
-                                        size='small'
-                                        options={targetValidators}
-                                        sx={{ width: 300 }}
                                         renderInput={(params) => <TextField
                                             {...params}
+                                            required
                                             placeholder='select validator'
                                             error={!!error}
-                                                helperText={error ? error.message : null}
+                                            helperText={error ? error.message : null}
                                             label="destination" />}
                                     />
                                 } />
@@ -122,6 +125,8 @@ export function DialogRedelegate(props) {
                         <Typography
                             color='text.primary'
                             variant='body1'
+                            className='hover-link'
+                            onClick={() => setValue("amount", delegationShare)}
                         >
                             {delegationShare}
                         </Typography>
@@ -169,8 +174,9 @@ export function DialogRedelegate(props) {
                             disableElevation
                             type='submit'
                             className='button-capitalize-title'
+                            disabled={loading === 'pending'}
                         >
-                            Redelegate
+                            {loading === 'pending' ? 'Loading...' : 'Redelegate'}
                         </Button>
                     </DialogActions>
                 </form>
@@ -181,7 +187,9 @@ export function DialogRedelegate(props) {
 
 DialogRedelegate.propTypes = {
     onClose: PropTypes.func.isRequired,
+    onRedelegate: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
+    loading: PropTypes.bool.isRequired,
     validator: PropTypes.object.isRequired,
     delegations: PropTypes.array.isRequired,
     active: PropTypes.object.isRequired,

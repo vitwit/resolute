@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { Delegate, UnDelegate } from '../../txns/proto';
+import { Delegate, Redelegate, UnDelegate } from '../../txns/proto';
 import stakingService from './stakingService';
 import { signAndBroadcastAmino, fee } from '../../txns/execute';
 import { setError, setTxHash } from '../common/commonSlice';
@@ -43,6 +43,39 @@ export const txDelegate = createAsyncThunk(
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
+        }))
+        return fulfillWithValue({txHash: result?.transactionHash});
+        } else {
+          dispatch(setError({
+            type: 'error',
+            message: result?.rawLog
+          }))
+          return rejectWithValue(result?.rawLog);
+        }
+    } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
+      return rejectWithValue(error.response)
+    }
+  }
+);
+
+export const txReDelegate = createAsyncThunk(
+  'staking/redelegate',
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    try {
+      const msg = Redelegate(data.delegator,data.srcVal, data.destVal, data.amount, data.denom)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), "", data.chainId, data.rpc)
+      if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
+        dispatch(resetDelegations())
+        dispatch(getDelegations({
+          baseURL: data.baseURL,
+          address: data.delegator
         }))
         return fulfillWithValue({txHash: result?.transactionHash});
         } else {
@@ -135,6 +168,9 @@ export const stakeSlice = createSlice({
     },
     resetState: (state, action) => {
       state.validators = initialState.validators
+      state.delegations = initialState.delegations
+    },
+    resetDelegations: (state) => {
       state.delegations = initialState.delegations
     },
     sortValidatorsByVotingPower: (state) => {
@@ -247,10 +283,22 @@ export const stakeSlice = createSlice({
         state.tx.status = 'rejected';
       })
 
+      builder
+      .addCase(txReDelegate.pending, (state) => {
+        state.tx.status = 'pending';
+
+      })
+      .addCase(txReDelegate.fulfilled, (state, _) => {
+        state.tx.status = 'idle';
+      })
+      .addCase(txReDelegate.rejected, (state, action) => {
+        state.tx.status = 'rejected';
+      })
+
       
   },
 });
 
-export const { resetState, sortValidatorsByVotingPower } = stakeSlice.actions;
+export const { resetState, sortValidatorsByVotingPower, resetDelegations } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

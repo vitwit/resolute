@@ -151,14 +151,14 @@ export const proposalsSlice = createSlice({
       // tx-vote
       builder
       .addCase(txVote.pending, (state) => {
-        state.tx.vote.status = 'pending';
+        state.tx.status = 'pending';
 
       })
       .addCase(txVote.fulfilled, (state, _) => {
-        state.tx.vote.status = 'idle';
+        state.tx.status = 'idle';
       })
       .addCase(txVote.rejected, (state, _) => {
-        state.tx.vote.status = 'rejected';
+        state.tx.status = 'rejected';
       })
 
   },

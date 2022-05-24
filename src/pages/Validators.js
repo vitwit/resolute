@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    getValidators, resetState, getDelegations, sortValidatorsByVotingPower, getParams, txDelegate, txUnDelegate
+    getValidators, resetState, getDelegations, sortValidatorsByVotingPower, getParams,
+     txDelegate, txUnDelegate, txReDelegate
 } from '../features/staking/stakeSlice';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -33,8 +34,8 @@ export function Validators() {
     const wallet = useSelector((state) => state.wallet);
     const balance = useSelector((state) => state.bank.balance);
     const { chainInfo, address, connected } = wallet;
-    const dispatch = useDispatch();
     const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
+    const dispatch = useDispatch();
 
     const [selected, setSelected] = React.useState('active');
 
@@ -224,6 +225,21 @@ export function Validators() {
         }))
     }
 
+    const onRedelegateTx = (data) => {
+        dispatch(txReDelegate({
+            baseURL: chainInfo?.lcd,
+            delegator: address,
+            srcVal: data.src,
+            destVal: data.dest,
+            amount: data.amount*(10**currency.coinDecimals),
+            denom: currency.coinMinimalDenom,
+            memo: "",
+            chainId: chainInfo.chainId,
+            rpc: chainInfo.rpc,
+            feeAmount: 25000
+        }))
+    }
+
     const [availableBalance, setAvailableBalance] = useState(0);
     useEffect(() => {
         if (connected && chainInfo?.currencies.length > 0) {
@@ -340,6 +356,7 @@ export function Validators() {
                             delegations={delegations?.delegations}
                             currency={chainInfo?.currencies[0]}
                             loading={txStatus.status}
+                            onRedelegate={onRedelegateTx}
                         />
 
                     </>

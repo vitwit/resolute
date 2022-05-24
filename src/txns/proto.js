@@ -26,6 +26,7 @@ const msgWithdrawRewards = "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorRew
 // staking
 const msgDelegate = "/cosmos.staking.v1beta1.MsgDelegate";
 const msgUnDelegate = "/cosmos.staking.v1beta1.MsgUndelegate";
+const msgReDelegate = "/cosmos.staking.v1beta1.MsgBeginRedelegate";
 
 
 export function SendMsg(from, to, amount, denom) {
@@ -244,6 +245,21 @@ export function UnDelegate(delegator, validator, amount, denom) {
         value: MsgUndelegate.fromPartial({
             delegatorAddress: delegator,
             validatorAddress: validator,
+            amount: Coin.fromPartial({
+                amount: String(amount),
+                denom: denom
+            })
+        }),
+    }
+}
+
+export function Redelegate(delegator, sourceAddr,destinationAddr,  amount, denom) {
+    return {
+        typeUrl: msgReDelegate,
+        value: MsgBeginRedelegate.fromPartial({
+            validatorDstAddress: destinationAddr,
+            validatorSrcAddress: sourceAddr, 
+            delegatorAddress: delegator,
             amount: Coin.fromPartial({
                 amount: String(amount),
                 denom: denom

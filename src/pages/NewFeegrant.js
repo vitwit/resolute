@@ -162,7 +162,8 @@ export default function NewFeegrant() {
                         {
                             selected === 'periodic' ?
                                 <>
-                                    <TextField
+                                <h1>Periodic</h1>
+                                    {/* <TextField
                                         fullWidth
                                         variant="outlined"
                                         placeholder="Spend limit" inputMode='decimal' />
@@ -189,7 +190,7 @@ export default function NewFeegrant() {
                                         onClick={onBasicSubmit}
                                     >
                                         Grant
-                                    </Button>
+                                    </Button> */}
                                 </>
                                 :
                                 ''
