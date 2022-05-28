@@ -25,7 +25,7 @@ import { useNavigate } from "react-router-dom";
 import NewFeegrant from './NewFeegrant';
 import NewAuthz from './NewAuthz';
 import { shortenAddress } from '../utils/util';
-import { ListItem } from '@mui/material';
+import { AlertTitle, ListItem } from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Overview from './Overview';
@@ -264,7 +264,8 @@ function DashboardContent() {
 
             <Snackbar open={snackTxOpen} autoHideDuration={3000} onClose={() => { showTxSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={() => { showTxSnack(false) }} severity='success' sx={{ width: '100%' }}>
-                <Link target="_blank" href={`${chainInfo?.txHashEndpoint}${txSuccess?.hash}`} color='inherit'>{txSuccess?.hash}</Link>
+                    <AlertTitle>Tx Successful</AlertTitle>
+                    View on explorer <Link target="_blank" href={`${chainInfo?.txHashEndpoint}${txSuccess?.hash}`} color='inherit'> {txSuccess?.hash?.toLowerCase().substring(0,5)}...</Link>
                 </Alert>
             </Snackbar>
         </ThemeProvider>

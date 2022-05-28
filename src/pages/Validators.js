@@ -39,7 +39,6 @@ export function Validators() {
 
     const [selected, setSelected] = React.useState('active');
 
-
     const [stakingOpen, setStakingOpen] = React.useState(false);
     const [undelegateOpen, setUndelegateOpen] = React.useState(false);
     const [redelegateOpen, setRedelegateOpen] = React.useState(false);
@@ -319,7 +318,6 @@ export function Validators() {
                 <MenuItem title='undelegate' onClick={handleStakingAction}>Undelegate</MenuItem>
                 <MenuItem title='redelegate' onClick={handleStakingAction}>Redelegate</MenuItem>
             </Menu>
-
             {
                 delegations?.delegations.length > 0 ?
                     <>

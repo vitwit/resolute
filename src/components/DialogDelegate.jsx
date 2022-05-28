@@ -8,6 +8,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useForm, Controller } from 'react-hook-form';
 
 
@@ -120,7 +121,7 @@ export function DialogDelegate(props) {
                             disabled={loading === 'pending'}
                             className='button-capitalize-title'
                         >
-                            {loading === 'pending' ? 'Loading...' : 'Delegate'}
+                            {loading === 'pending' ? <CircularProgress size={25}/> : 'Delegate'}
                         </Button>
                     </DialogActions>
                 </form>

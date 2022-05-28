@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { SendMsg } from '../../txns/proto';
 import bankService from './bankService';
 import { fee, signAndBroadcastAmino } from '../../txns/execute';
+import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
   balances: {
@@ -15,11 +16,7 @@ const initialState = {
     errMsg: '',
   },
   tx: {
-    send: {
       status: 'idle',
-      txHash: '',
-      errMsg: '',
-    }
   }
 
 };
@@ -40,19 +37,30 @@ export const getBalance = createAsyncThunk(
   }
 );
 
-export const txAuthSend = createAsyncThunk(
-  'bank/tx-send',
-  async (data, { rejectWithValue, fulfillWithValue }) => {
+export const txBankSend = createAsyncThunk(
+  'bank/tx-bank-send',
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = SendMsg(data.from, data.to, data.amount, data.denom)
-      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount, data.feePayer), data.memo, data.chainId, data.rpc)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), data.memo, data.chainId, data.rpc)
       if (result?.code === 0) {
-      return fulfillWithValue({txHash: result?.transactionHash});
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
+        return fulfillWithValue({txHash: result?.transactionHash});
       } else {
+        dispatch(setError({
+          type: 'error',
+          message: result?.rawLog
+        }))
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-      return rejectWithValue(error)
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -64,7 +72,7 @@ export const bankSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getBalances.pending, (state) => {
-        state.balances.status = 'loading';
+        state.balances.status = 'pending';
         state.balances.errMsg = ''
 
       })
@@ -80,7 +88,7 @@ export const bankSlice = createSlice({
 
       builder
       .addCase(getBalance.pending, (state) => {
-        state.balance.status = 'loading';
+        state.balance.status = 'pending';
         state.balance.errMsg = ''
 
       })
@@ -93,23 +101,14 @@ export const bankSlice = createSlice({
         state.balance.status = 'rejected';
         state.balance.errMsg = action.error.message
       })
-
-
-      builder
-      .addCase(txAuthSend.pending, (state) => {
-        state.tx.send.status = 'pending';
-        state.tx.send.errMsg = '';
-        state.tx.send.txHash = '';
-
+      .addCase(txBankSend.pending, (state) => {
+        state.tx.status = 'pending';
       })
-      .addCase(txAuthSend.fulfilled, (state, action) => {
-        state.tx.send.status = 'idle';
-        state.tx.send.errMsg = '';
-        state.tx.send.txHash = action.payload.txHash;
+      .addCase(txBankSend.fulfilled, (state, _) => {
+        state.tx.status = 'idle';
       })
-      .addCase(txAuthSend.rejected, (state, action) => {
-        state.tx.send.status = 'rejected';
-        state.tx.send.errMsg = action.error.message;
+      .addCase(txBankSend.rejected, (state, _) => {
+        state.tx.status = 'rejected';
       })
 
       

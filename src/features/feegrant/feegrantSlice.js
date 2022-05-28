@@ -141,7 +141,7 @@ export const feegrantSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getGrantsToMe.pending, (state) => {
-        state.grantsToMe.status = 'loading';
+        state.grantsToMe.status = 'pending';
         state.errState = {
           message: '',
           type: '',
@@ -167,7 +167,7 @@ export const feegrantSlice = createSlice({
 
     builder
       .addCase(getGrantsByMe.pending, (state) => {
-        state.grantsByMe.status = 'loading';
+        state.grantsByMe.status = 'pending';
         state.errState = {
           message: '',
           type: '',

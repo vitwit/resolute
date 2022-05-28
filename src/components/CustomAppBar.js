@@ -9,8 +9,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button'
 
 export function CustomAppBar(props) {
-    const [anchorEl, setAnchorEl] = React.useState(false);
-    const menuOpen = anchorEl;
+    const [anchorEl, setAnchorEl] = React.useState(null);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -32,9 +31,9 @@ export function CustomAppBar(props) {
                     id="demo-positioned-button"
                     color='inherit'
                     endIcon={<ExpandMoreOutlinedIcon />}
-                    aria-controls={menuOpen ? 'demo-positioned-menu' : undefined}
+                    aria-controls={anchorEl ? 'demo-positioned-menu' : undefined}
                     aria-haspopup="true"
-                    aria-expanded={menuOpen ? 'true' : undefined}
+                    aria-expanded={anchorEl ? 'true' : undefined}
                     onClick={handleClick}
                 >
                     {props.selectedNetwork.displayName}
@@ -43,8 +42,8 @@ export function CustomAppBar(props) {
                     id="demo-positioned-menu"
                     aria-labelledby="demo-positioned-button"
                     anchorEl={anchorEl}
-                    open={menuOpen}
-                    onClose={() => setAnchorEl(false)}
+                    open={Boolean(anchorEl)}
+                    onClose={() => setAnchorEl(null)}
                     anchorOrigin={{
                         vertical: 'top',
                         horizontal: 'left',
@@ -59,7 +58,7 @@ export function CustomAppBar(props) {
                             <MenuItem
                                 key={index}
                                 onClick={() => {
-                                    setAnchorEl(false);
+                                    setAnchorEl(null);
                                     props.onNetworkChange(network)}
                                 }
                             >
