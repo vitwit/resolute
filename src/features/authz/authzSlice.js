@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import authzService from './authzService';
 import { fee, signAndBroadcastProto } from '../../txns/execute';
 import { AuthzSendGrantMsg, AuthzGenericGrantMsg, AuthzRevokeMsg } from '../../txns/proto';
+import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
   grantsToMe: {
@@ -17,16 +18,7 @@ const initialState = {
     pagination: {}
   },
   tx: {
-    grant: {
       status: 'idle',
-      errMsg: '',
-      txHash: '',
-    },
-    revoke: {
-      status: 'idle',
-      errMsg: '',
-      txHash: '',
-    }
   }
 };
 
@@ -48,16 +40,27 @@ export const getGrantsByMe = createAsyncThunk(
 
 export const txAuthzSend = createAsyncThunk(
   'authz/tx-send',
-  async (data, { rejectWithValue, fulfillWithValue }) => {
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = AuthzSendGrantMsg(data.granter, data.grantee, data.denom, data.spendLimit, data.expiration)
       const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc)
       if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        dispatch(setError({
+          type: 'error',
+          message: result?.rawLog
+        }))
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
       return rejectWithValue(error.message)
     }
   }
@@ -65,16 +68,27 @@ export const txAuthzSend = createAsyncThunk(
 
 export const txAuthzRevoke = createAsyncThunk(
   'authz/tx-revoke',
-  async (data, { rejectWithValue, fulfillWithValue }) => {
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = AuthzRevokeMsg(data.granter, data.grantee, data.typeURL)
       const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc);
       if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        dispatch(setError({
+          type: 'error',
+          message: result?.rawLog
+        }))
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
       return rejectWithValue(error.message)
     }
   }
@@ -82,16 +96,27 @@ export const txAuthzRevoke = createAsyncThunk(
 
 export const txAuthzGeneric = createAsyncThunk(
   'authz/tx-generic',
-  async (data, { rejectWithValue, fulfillWithValue }) => {
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = AuthzGenericGrantMsg(data.granter, data.grantee, data.typeUrl, data.expiration)
       const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc)
       if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        dispatch(setError({
+          type: 'error',
+          message: result?.rawLog
+        }))
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
       return rejectWithValue(error.message);
     }
   }
@@ -156,56 +181,37 @@ export const authzSlice = createSlice({
 
     builder
       .addCase(txAuthzSend.pending, (state) => {
-        state.tx.grant.status = `pending`
-        state.tx.grant.errMsg = ``
-        state.tx.grant.txHash = ``
+        state.tx.status = `pending`
 
       })
-      .addCase(txAuthzSend.fulfilled, (state, action) => {
-        state.tx.grant.status = `idle`
-        state.tx.grant.errMsg = ``
-        state.tx.grant.txHash = action.payload.txHash;
+      .addCase(txAuthzSend.fulfilled, (state, _) => {
+        state.tx.status = `idle`
       })
-      .addCase(txAuthzSend.rejected, (state, action) => {
-        state.tx.grant.status = `rejected`
-        state.tx.grant.errMsg = action.payload || action.error.message
-        state.tx.grant.txHash = ``
+      .addCase(txAuthzSend.rejected, (state, _) => {
+        state.tx.status = `rejected`
       })
 
     builder
       .addCase(txAuthzGeneric.pending, (state) => {
-        state.tx.grant.status = `pending`
-        state.tx.grant.errMsg = ``
-        state.tx.grant.txHash = ``
-
+        state.tx.status = `pending`;
       })
-      .addCase(txAuthzGeneric.fulfilled, (state, action) => {
-        state.tx.grant.status = `idle`
-        state.tx.grant.errMsg = ``
-        state.tx.grant.txHash = action.payload.txHash;
+      .addCase(txAuthzGeneric.fulfilled, (state, _) => {
+        state.tx.status = `idle`
       })
-      .addCase(txAuthzGeneric.rejected, (state, action) => {
-        state.tx.grant.status = `rejected`
-        state.tx.grant.errMsg = action.payload || action.error.message
-        state.tx.grant.txHash = ``
+      .addCase(txAuthzGeneric.rejected, (state, _) => {
+        state.tx.status = `rejected`
       })
 
     builder
       .addCase(txAuthzRevoke.pending, (state) => {
-        state.tx.revoke.status = `pending`
-        state.tx.revoke.errMsg = ``
-        state.tx.revoke.txHash = ``
+        state.tx.status = `pending`
 
       })
-      .addCase(txAuthzRevoke.fulfilled, (state, action) => {
-        state.tx.revoke.status = `idle`
-        state.tx.revoke.errMsg = ``
-        state.tx.revoke.txHash = action.payload.txHash;
+      .addCase(txAuthzRevoke.fulfilled, (state, _) => {
+        state.tx.status = `idle`
       })
-      .addCase(txAuthzRevoke.rejected, (state, action) => {
-        state.tx.revoke.status = `rejected`
-        state.tx.revoke.errMsg = action.payload || action.error.message
-        state.tx.revoke.txHash = ``
+      .addCase(txAuthzRevoke.rejected, (state, _) => {
+        state.tx.status = `rejected`
       })
   },
 });

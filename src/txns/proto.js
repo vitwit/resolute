@@ -9,6 +9,7 @@ import { BasicAllowance, PeriodicAllowance } from "cosmjs-types/cosmos/feegrant/
 import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
 import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz";
 import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
+import { Duration } from "cosmjs-types/google/protobuf/duration";
 import Long from "long";
 
 const msgSendTypeUrl = "/cosmos.bank.v1beta1.MsgSend";
@@ -136,12 +137,11 @@ export function GovVoteMsg(proposalId, voter, option) {
 export function FeegrantBasicMsg(granter, grantee, denom, spendLimit, expiration) {
     let expSec = Math.floor(expiration.getTime() / 1000)
     let expNano = (expiration.getTime() % 1000) * 1000000 + (expiration.nanoseconds ?? 0)
-    const exp = Timestamp.fromPartial(
-        {
-            nanos: Long.fromNumber(expNano),
-            seconds: Long.fromNumber(expSec)
-        }
-    )
+    const exp = Timestamp.fromPartial({
+        nanos: Long.fromNumber(expNano),
+        seconds: Long.fromNumber(expSec)
+    })
+
 
     const basicValue = BasicAllowance.encode(
         BasicAllowance.fromPartial({
@@ -167,33 +167,53 @@ export function FeegrantBasicMsg(granter, grantee, denom, spendLimit, expiration
     }
 }
 
-export function FeegrantPeriodicMsg(granter, grantee, denom, spendLimit, expiration) {
+export function FeegrantPeriodicMsg(granter, grantee, denom, spendLimit, expiration, period, periodSpendLimit) {
+    const now = new Date()
     let expSec = Math.floor(expiration.getTime() / 1000)
     let expNano = (expiration.getTime() % 1000) * 1000000 + (expiration.nanoseconds ?? 0)
-    const exp = Timestamp.encode({
+    const exp = Timestamp.fromPartial({
         nanos: Long.fromNumber(expNano),
         seconds: Long.fromNumber(expSec)
-    }).finish()
+    })
 
-    const basicValue = BasicAllowance.encode(
-        BasicAllowance.fromPartial({
+    const periodDuration = Duration.fromPartial({
+        nanos: Long.fromNumber(period),
+        seconds: Long.fromNumber(period)
+    })
+
+    const basicValue = BasicAllowance.fromPartial({
             expiration: exp,
-            spendLimit: [
+            spendLimit: spendLimit === null ? null :[
                 Coin.fromPartial({
                     amount: String(spendLimit),
                     denom: denom
                 })
             ]
-        })).finish()
+        })
 
-    const periodicValue = PeriodicAllowance.encode(
-        PeriodicAllowance.fromPartial({
+    const periodicValue = PeriodicAllowance.encode({
             basic: basicValue,
-        })).finish()
+            period: periodDuration,
+            periodReset: Timestamp.fromPartial({
+                nanos: Long.fromNumber((now.getTime() % 1000) * 1000000 + (expiration.nanoseconds ?? 0)),
+                seconds: Long.fromNumber(Math.floor(expiration.getTime() / 1000))
+            }),
+            periodCanSpend: [
+                Coin.fromPartial({
+                amount: String(periodSpendLimit),
+                denom: denom
+            })],
+            periodSpendLimit: [
+                Coin.fromPartial({
+                amount: String(periodSpendLimit),
+                denom: denom
+            })
+        ]
+        }).finish()
 
     return {
         typeUrl: msgFeegrantGrantTypeUrl,
-        value: PeriodicAllowance.fromPartial({
+        value: MsgGrantAllowance.fromPartial({
             allowance: {
                 typeUrl: "/cosmos.feegrant.v1beta1.PeriodicAllowance",
                 value: periodicValue,

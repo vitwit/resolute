@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { FeegrantBasicMsg, FeegrantRevokeMsg } from '../../txns/proto';
+import { FeegrantBasicMsg, FeegrantPeriodicMsg, FeegrantRevokeMsg } from '../../txns/proto';
 import feegrantService from './feegrantService';
 import { fee, signAndBroadcastProto } from '../../txns/execute';
+import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
   grantsToMe: {
@@ -17,21 +18,8 @@ const initialState = {
     grants: []
   },
   tx: {
-    basicGrant: {
-      status: 'idle',
-      errMsg: '',
-      successMsg: ''
-    },
-    periodicGrant: {
-      status: 'idle',
-      errMsg: '',
-      successMsg: ''
-    },
-    revokeGrant: {
-      status: 'idle',
-      errMsg: '',
-      successMsg: ''
-    }
+    status: 'idle',
+    type: '',
   }
 };
 
@@ -54,16 +42,27 @@ export const getGrantsByMe = createAsyncThunk(
 
 export const txFeegrantBasic = createAsyncThunk(
   'feegrant/tx-basic',
-  async (data, { rejectWithValue, fulfillWithValue }) => {
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      const msg = FeegrantBasicMsg(data.granter, data.grantee,data.denom, data.spendLimit, data.expiration)
+      const msg = FeegrantBasicMsg(data.granter, data.grantee, data.denom, data.spendLimit, data.expiration)
       const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc)
       if (result?.code === 0) {
-        return fulfillWithValue({txHash: result?.transactionHash});
-        } else {
-          return rejectWithValue(result?.rawLog);
-        }
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(setError({
+          type: 'error',
+          message: result?.rawLog
+        }))
+        return rejectWithValue(result?.rawLog);
+      }
     } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
       return rejectWithValue(error.response)
     }
   }
@@ -71,16 +70,28 @@ export const txFeegrantBasic = createAsyncThunk(
 
 export const txGrantPeriodic = createAsyncThunk(
   'feegrant/tx-periodic',
-  async (data, { rejectWithValue, fulfillWithValue }) => {
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      const msg = FeegrantBasicMsg(data.granter, data.grantee, data.typeUrl, data.expiration)
+      const msg = FeegrantPeriodicMsg(data.granter, data.grantee, data.denom, data.spendLimit, data.expiration,
+        data.period, data.periodSpendLimit)
       const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc)
       if (result?.code === 0) {
-        return fulfillWithValue({txHash: result?.transactionHash});
-        } else {
-          return rejectWithValue(result?.rawLog);
-        }
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(setError({
+          type: 'error',
+          message: result?.rawLog
+        }))
+        return rejectWithValue(result?.rawLog);
+      }
     } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
       return rejectWithValue(error.response)
     }
   }
@@ -88,16 +99,28 @@ export const txGrantPeriodic = createAsyncThunk(
 
 export const txRevoke = createAsyncThunk(
   'feegrant/tx-revoke',
-  async (data, { rejectWithValue, fulfillWithValue }) => {
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = FeegrantRevokeMsg(data.granter, data.grantee)
       const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc)
       if (result?.code === 0) {
-        return fulfillWithValue({txHash: result?.transactionHash});
-        } else {
-          return rejectWithValue(result?.rawLog);
+        dispatch(getGrantsByMe({
+          baseURL: data.baseURL, granter: data.granter
         }
+        ))
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(setError({
+          type: 'error',
+          message: result?.rawLog
+        }))
+        return rejectWithValue(result?.rawLog);
+      }
     } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
       return rejectWithValue(error.response)
     }
   }
@@ -108,28 +131,12 @@ export const feegrantSlice = createSlice({
   initialState,
   reducers: {
     resetAlerts: (state) => {
-      state.tx = {
-        errState: {
-          message: '',
-          type: '',
-        },
-        basicGrant: {
-          status: 'idle',
-          errMsg: '',
-          successMsg: ''
-        },
-        periodicGrant: {
-          status: 'idle',
-          errMsg: '',
-          successMsg: ''
-        },
-        revokeGrant: {
-          status: 'idle',
-          errMsg: '',
-          successMsg: ''
-        }
+      state.errState = {
+        status: 'idle',
+        message: '',
+        type: ''
       }
-  },
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -158,7 +165,7 @@ export const feegrantSlice = createSlice({
         }
       })
 
-      builder
+    builder
       .addCase(getGrantsByMe.pending, (state) => {
         state.grantsByMe.status = 'loading';
         state.errState = {
@@ -185,64 +192,55 @@ export const feegrantSlice = createSlice({
       })
 
 
-      // txns
-      builder
+    // txns
+    builder
       .addCase(txFeegrantBasic.pending, (state) => {
-        state.tx.basicGrant.status = `pending`
-        state.tx.basicGrant.errMsg = ``
-        state.tx.basicGrant.successMsg = ``
+        state.tx.status = `pending`
+        state.tx.type = `basic`
 
       })
-      .addCase(txFeegrantBasic.fulfilled, (state, action) => {
-        state.tx.basicGrant.status = `idle`
-        state.tx.basicGrant.errMsg = ``
-        state.tx.basicGrant.successMsg =  action.payload.txHash;
+      .addCase(txFeegrantBasic.fulfilled, (state, _) => {
+        state.tx.status = `idle`
+        state.tx.type = `basic`
       })
-      .addCase(txFeegrantBasic.rejected, (state, action) => {
-        state.tx.basicGrant.status = `rejected`
-        state.tx.basicGrant.errMsg = action.payload || action.error.message
-        state.tx.basicGrant.successMsg = ``
+      .addCase(txFeegrantBasic.rejected, (state, _) => {
+        state.tx.status = `rejected`
+        state.tx.type = 'basic'
       })
 
-      builder
+    builder
       .addCase(txGrantPeriodic.pending, (state) => {
-        state.tx.periodicGrant.status = `pending`
-        state.tx.periodicGrant.errMsg = ``
-        state.tx.periodicGrant.successMsg = ``
+        state.tx.status = `pending`
+        state.tx.type = `periodic`
 
       })
-      .addCase(txGrantPeriodic.fulfilled, (state, action) => {
-        state.tx.periodicGrant.status = `idle`
-        state.tx.periodicGrant.errMsg = ``
-        state.tx.periodicGrant.successMsg =  action.payload.txHash;
+      .addCase(txGrantPeriodic.fulfilled, (state, _) => {
+        state.tx.status = `idle`
+        state.tx.type = `periodic`
       })
-      .addCase(txGrantPeriodic.rejected, (state, action) => {
-        state.tx.periodicGrant.status = `rejected`
-        state.tx.periodicGrant.errMsg = action.payload || action.error.message
-        state.tx.periodicGrant.successMsg = ``
+      .addCase(txGrantPeriodic.rejected, (state, _) => {
+        state.tx.status = `rejected`
+        state.tx.type = 'periodic'
       })
 
 
-      builder
+    builder
       .addCase(txRevoke.pending, (state) => {
-        state.tx.revokeGrant.status = `pending`
-        state.tx.revokeGrant.errMsg = ``
-        state.tx.revokeGrant.successMsg = ``
+        state.tx.status = `pending`
+        state.tx.type = `revoke`
 
       })
-      .addCase(txRevoke.fulfilled, (state, action) => {
-        state.tx.revokeGrant.status = `idle`
-        state.tx.revokeGrant.errMsg = ``
-        state.tx.revokeGrant.successMsg =  action.payload.txHash;
+      .addCase(txRevoke.fulfilled, (state, _) => {
+        state.tx.status = `idle`
+        state.tx.type = `revoke`
       })
-      .addCase(txRevoke.rejected, (state, action) => {
-        state.tx.revokeGrant.status = `rejected`
-        state.tx.revokeGrant.errMsg = action.payload || action.error.message
-        state.tx.revokeGrant.successMsg = ``
+      .addCase(txRevoke.rejected, (state, _) => {
+        state.tx.status = `rejected`
+        state.tx.type = 'revoke'
       })
   },
 });
 
-export const {resetAlerts} = feegrantSlice.actions;
+export const { resetAlerts } = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;

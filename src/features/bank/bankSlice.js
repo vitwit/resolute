@@ -45,7 +45,7 @@ export const txAuthSend = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue }) => {
     try {
       const msg = SendMsg(data.from, data.to, data.amount, data.denom)
-      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), data.memo, data.chainId, data.rpc)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount, data.feePayer), data.memo, data.chainId, data.rpc)
       if (result?.code === 0) {
       return fulfillWithValue({txHash: result?.transactionHash});
       } else {

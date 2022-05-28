@@ -12,7 +12,7 @@ import {
 } from './../features/feegrant/feegrantSlice';
 import {
   resetError, resetTxHash,
-  setError, setTxHash
+  setError
 } from './../features/common/commonSlice';
 
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -23,19 +23,28 @@ import { useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from './table';
 import { Link, Typography } from '@mui/material';
 import { FeegrantInfo } from '../components/FeegrantInfo';
+import Switch from '@mui/material/Switch';
+
 
 export default function Feegrant() {
   const grantsToMe = useSelector((state) => state.feegrant.grantsToMe);
   const grantsByMe = useSelector((state) => state.feegrant.grantsByMe);
   const dispatch = useDispatch();
 
+  const [useFeeChecked, setuseFeeChecked] = React.useState(localStorage.getItem("fee_payer"));
+  const handleOnFeeChecked = (event, feeInfo) => {
+    setuseFeeChecked(event.target.checked);
+    if (event.target.checked) localStorage.setItem("fee_payer", feeInfo?.granter);
+    else localStorage.removeItem("fee_payer");
+  };
+
   const [grantType, setGrantType] = React.useState('by-me');
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const address = useSelector((state) => state.wallet.address);
   const errState = useSelector((state) => state.feegrant.errState);
+  const txStatus = useSelector((state) => state.feegrant.tx);
   const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
-  const revokeTx = useSelector((state) => state.feegrant.tx.revokeGrant);
   const [infoOpen, setInfoOpen] = React.useState(false);
 
   const [selected, setSelected] = React.useState({});
@@ -60,7 +69,7 @@ export default function Feegrant() {
     dispatch(resetAlerts())
     dispatch(resetError())
     dispatch(resetTxHash())
-  }, [])
+  }, []);
 
 
   useEffect(() => {
@@ -89,29 +98,9 @@ export default function Feegrant() {
       chainId: chainInfo.chainId,
       rpc: chainInfo.rpc,
       feeAmount: 25000,
+      baseURL: chainInfo?.lcd,
     }))
   }
-
-  useEffect(() => {
-    if (revokeTx?.txHash?.length > 0) {
-      dispatch(setTxHash({
-        hash: revokeTx?.txHash,
-      }))
-
-      dispatch(getGrantsByMe({
-        baseURL: chainInfo.lcd,
-        granter: address
-      }))
-
-    }
-
-    if (revokeTx?.errMsg !== '') {
-      dispatch(setError({
-        type: 'error',
-        message: revokeTx.errMsg
-      }))
-    }
-  }, [revokeTx])
 
   let navigate = useNavigate();
   function navigateTo(path) {
@@ -213,7 +202,7 @@ export default function Feegrant() {
                                     color='error'
                                     size='small'
                                     disableElevation
-                                    disabled={revokeTx?.status === 'pending' ? true : false}
+                                    disabled={txStatus?.status === 'pending' ? true : false}
                                     onClick={() => revoke(row)}
                                   >
                                     Revoke
@@ -247,7 +236,7 @@ export default function Feegrant() {
                               <StyledTableCell >Type</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
                               <StyledTableCell>Details</StyledTableCell>
-                              <StyledTableCell >Action</StyledTableCell>
+                              <StyledTableCell >Use Feegrant</StyledTableCell>
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
@@ -274,14 +263,11 @@ export default function Feegrant() {
                                   </Link>
                                 </StyledTableCell>
                                 <StyledTableCell>
-                                  <Button
-                                    variant='outlined'
-                                    color='primary'
-                                    size='small'
-                                    disableElevation
-                                  >
-                                    Info
-                                  </Button>
+                                  <Switch checked={useFeeChecked}
+                                    onChange={(e) => handleOnFeeChecked(e, row)}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                    size="small" />
+
                                 </StyledTableCell>
                               </StyledTableRow>
                             ))}

@@ -8,9 +8,10 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import Grid from '@mui/material/Grid';
-import { txFeegrantBasic } from '../features/feegrant/feegrantSlice';
+import { txFeegrantBasic, txGrantPeriodic } from '../features/feegrant/feegrantSlice';
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
+import { PeriodicFeegrant } from '../components/PeriodicFeeGrant';
 
 
 export default function NewFeegrant() {
@@ -43,6 +44,21 @@ export default function NewFeegrant() {
             grantee: data.grantee,
             spendLimit: Number(data.spendLimit) === 0 ? null : data.spendLimit,
             expiration: data.expiration,
+            denom: currency.coinMinimalDenom,
+            chainId: chainInfo.chainId,
+            rpc: chainInfo.rpc,
+            feeAmount: 25000,
+        }))
+    }
+
+    const onPeriodicGrant = (data) => {
+        dispatch(txGrantPeriodic({
+            granter: address,
+            grantee: data.grantee,
+            spendLimit: Number(data.spendLimit) === 0 ? null : data.spendLimit,
+            expiration: data.expiration,
+            period: data.period,
+            periodSpendLimit: data.periodSpendLimit,
             denom: currency.coinMinimalDenom,
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
@@ -161,44 +177,17 @@ export default function NewFeegrant() {
 
                         {
                             selected === 'periodic' ?
-                                <>
-                                <h1>Periodic</h1>
-                                    {/* <TextField
-                                        fullWidth
-                                        variant="outlined"
-                                        placeholder="Spend limit" inputMode='decimal' />
-                                    <br />
-                                    <LocalizationProvider
-                                        dateAdapter={AdapterDateFns}>
-                                        <DateTimePicker
-                                            renderInput={(props) =>
-                                                <TextField
-                                                    style={{ marginTop: 32 }}
-                                                    fullWidth
-                                                    {...props}
-                                                />
-                                            }
-                                            label="Expiration"
-                                            value={expiration}
-                                        />
-                                    </LocalizationProvider>
-                                    <br />
-
-                                    <Button
-                                        style={{ marginTop: 32 }}
-                                        variant="outlined"
-                                        onClick={onBasicSubmit}
-                                    >
-                                        Grant
-                                    </Button> */}
-                                </>
+                                <PeriodicFeegrant 
+                                    loading= {feegrantTx.status}
+                                    onGrant={onPeriodicGrant}
+                                />
                                 :
                                 ''
                         }
 
                         {
                             selected === 'filtered' ?
-                                <h1>Filtered</h1>
+                                <h1>Coming Soon</h1>
                                 :
                                 ''
                         }
