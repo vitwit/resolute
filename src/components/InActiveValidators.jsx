@@ -10,7 +10,7 @@ import { formatValidatorStatus } from '../utils/util';
 import Button from '@mui/material/Button';
 
 export function InActiveValidators(props) {
-    const {validators, onInactiveDelegate} = props;
+    const {validators, onMenuAction} = props;
 
     return (
         <>
@@ -51,7 +51,7 @@ export function InActiveValidators(props) {
                                     <Button
                                     variant='outlined'
                                     size='small'
-                                    onClick={() => {onInactiveDelegate(validators.inactive)}}
+                                    onClick={(e) => {onMenuAction(e, validators.inactive)}}
                                     >
                                         Delegate
                                     </Button>

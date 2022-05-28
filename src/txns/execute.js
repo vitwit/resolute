@@ -10,7 +10,6 @@ export async function signAndBroadcastAmino(msgs, fee, memo = "", chainID, rpcUR
         wallet,
     )
 
-
     return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
 }
 
@@ -35,8 +34,8 @@ export async function signAndBroadcastProto(msgs, fee, memo = "", rpcURL) {
         return await client.broadcastTx(Uint8Array.from(TxRaw.encode(signed).finish()));
 }
 
-export function fee(coinMinimalDenom, amount, gas = 250000) {
-    return { amount: [{ amount: String(amount), denom: coinMinimalDenom }], gas: String(gas) };
+export function fee(coinMinimalDenom, amount, gas = 250000, feePayer = "") {
+    return { amount: [{ amount: String(amount), denom: coinMinimalDenom }], gas: String(gas), payer: feePayer };
 }
 
 export async function getKeplrWalletAmino(chainID) {

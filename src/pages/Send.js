@@ -1,4 +1,4 @@
-import { Button, Grid, Paper, Typography } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Grid, Paper, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
@@ -12,6 +12,7 @@ import { totalBalance } from '../utils/denom';
 import InputAdornment from '@mui/material/InputAdornment';
 
 export const Send = () => {
+    const feepayer = localStorage.getItem("fee_payer")
     const from = useSelector((state) => state.wallet?.address);
     const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
@@ -49,7 +50,17 @@ export const Send = () => {
                 message: sendTx?.errMsg
             }))
         }
-    }, [sendTx])
+    }, [sendTx]);
+
+    const [feePayerEnable, setFeePayerEnable] = useState(false);
+
+    const handleFeePayer = (e) => {
+        if (e.target.checked) {
+            setFeePayerEnable(true);
+        } else {
+            setFeePayerEnable(false);
+        }
+    }
 
     const onSubmit = data => {
         dispatch(resetError())
@@ -68,7 +79,8 @@ export const Send = () => {
                 memo: data.memo ? data.memo : "",
                 chainId: chainInfo.chainId,
                 rpc: chainInfo.rpc,
-                feeAmount: 25000
+                feeAmount: 25000,
+                feePayer: feePayerEnable ? feepayer : ""
             }))
         }
     };
@@ -136,8 +148,20 @@ export const Send = () => {
                                                       }}
                                                 />}
                                         />
+                                        <div
+                                            style={{textAlign: 'right'}}
+                                        >
+                                        <FormControlLabel
+                                        value="Use Feegrant"
+                                        control={<Checkbox 
+                                            onChange={handleFeePayer}
+                                        disabled // disabled={feepayer === null}
+                                        />}
+                                        label="Use Feegrant"
+                                        labelPlacement="right"
+                                        />
+                                        </div>
                                 <div>
-                                    <br />
                                     <Button
                                         type='submit'
                                         variant='outlined'

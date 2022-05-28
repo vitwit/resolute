@@ -21,7 +21,6 @@ const fetchProposals = (baseURL, key, limit) => {
   return Axios.get(uri, {
     headers: {
       Accept: 'application/json, text/plain, */*',
-      Connection: 'keep-alive',
     },
   })
 }
@@ -32,7 +31,6 @@ const fetchProposalTally = (baseURL, proposalId) => {
   return Axios.get(uri, {
     headers: {
       Accept: 'application/json, text/plain, */*',
-      Connection: 'keep-alive',
     },
   })
 }
@@ -52,7 +50,6 @@ const fetchVoterVote = (baseURL, proposalId, voter, key, limit) => {
   return Axios.get(uri, {
     headers: {
       Accept: 'application/json, text/plain, */*',
-      Connection: 'keep-alive',
     },
   })
 }

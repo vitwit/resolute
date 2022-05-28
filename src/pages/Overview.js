@@ -29,7 +29,7 @@ export default function Overview() {
         if (connected && chainInfo.currencies.length > 0 ) {
             setTotalBalance(totalBalance(balance.balance, chainInfo.currencies[0].coinDecimals))
             setTotalDelegations(totalDelegations(delegations.delegations, chainInfo.currencies[0].coinDecimals))
-            setTotalRewards(totalRewards(rewards.list, chainInfo.currencies[0].coinDecimals))
+            setTotalRewards(totalRewards(rewards?.list, chainInfo.currencies[0].coinDecimals))
             setTotalUnbonding(totalUnbonding(unbonding.delegations, chainInfo.currencies[0].coinDecimals))
         }
     }, [balance, delegations, rewards, unbonding]);

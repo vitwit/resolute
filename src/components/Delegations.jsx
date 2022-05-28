@@ -1,68 +1,79 @@
 import React, { useEffect } from 'react';
 import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import { StyledTableCell, StyledTableRow } from './../pages/table';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import { formatVotingPower } from '../utils/denom';
 import { formatValidatorStatus } from '../utils/util';
 import Typography from '@mui/material/Typography';
+import { useSelector } from 'react-redux';
 
 export function MyDelegations(props) {
     const { delegations, validators, onDelegationAction, currency, rewards } = props;
-    const [anchorEl, setAnchorEl] = React.useState(null);
     const [totalStaked, setTotalStaked] = React.useState(0);
     const [totalRewards, setTotalRewards] = React.useState(0);
+    const distTxStatus = useSelector((state) => state.distribution.tx);
+    const [rewardsP, setRewardsP] = React.useState({});
 
     useEffect(() => {
         let total = 0.0
         if (delegations?.delegations.length > 0) {
-            for (let i = 0;i < delegations.delegations.length; i++)
-            total += parseFloat(delegations.delegations[i].delegation.shares) / (10 ** currency?.coinDecimals)
+            for (let i = 0; i < delegations.delegations.length; i++)
+                total += parseFloat(delegations.delegations[i].delegation.shares) / (10 ** currency?.coinDecimals)
         }
-        setTotalStaked(total.toFixed(3));
+        setTotalStaked(total?.toFixed(4));
 
-        total = 0.0
-        if (rewards.length > 0) {
-            for (let i = 0;i < rewards.length; i++)
-            if (rewards[i].reward.length > 0) {
-                total += parseFloat(rewards[i].reward[0].amount) / (10 ** currency?.coinDecimals)
-            }
-        }
-
-        setTotalRewards(total.toFixed(3));
     }, [delegations]);
 
-    const open = Boolean(anchorEl);
-    const handleClick = (event, validator) => {
-      setAnchorEl(event.currentTarget);
-      onDelegationAction(event.currentTarget, validator);
-      setAnchorEl(null);
-    };
-    const handleClose = () => {
-      setAnchorEl(null);
+    useEffect(() => {
+        let total = 0.0
+        if (rewards.length > 0) {
+            for (let i = 0; i < rewards.length; i++)
+                if (rewards[i].reward.length > 0) {
+                        const reward = rewards[i]?.reward[0]
+                        let temp = rewardsP
+                        temp[rewards[i].validator_address] = (parseFloat(reward.amount) / (10 ** currency?.coinDecimals))
+                        setRewardsP(temp)
+                        total += parseFloat(reward.amount) / (10 ** currency?.coinDecimals)
+                }  else {
+                    let temp = rewardsP
+                    temp[rewards[i].validator_address] = 0.0
+                    setRewardsP(temp)
+                }
+        }
+
+        setTotalRewards(total.toFixed(5));
+    }, [rewards]);
+
+    const handleClick = (event, delegation) => {
+        let val = {}
+        if (delegation.validator_address in validators?.active) {
+            val = validators?.active[delegation.validator_address]
+        } else {
+            val = validators?.inactive[delegation.validator_address]
+        }
+        onDelegationAction(event, val);
     };
 
     return (
         <>
             <Paper elevation={0} style={{ padding: 12 }}>
-                <div className='inline-space-between' style={{marginBottom: 12}}>
-                <Typography>
-                    Total staked: {totalStaked} {currency?.coinDenom}
-                </Typography>
+                <div className='inline-space-between' style={{ marginBottom: 12 }}>
+                    <Typography>
+                        Total staked: {totalStaked} {currency?.coinDenom}
+                    </Typography>
 
-                <Button
-                    variant='contained'
-                    size='small'
-                    style={{textTransform: 'none'}}
-                    onClick={() => props.onWithdrawAllRewards()}
-                >
-                    Claim Rewards: {totalRewards} {currency?.coinDenom}
-                </Button>
+                    <Button
+                        variant='contained'
+                        size='small'
+                        style={{ textTransform: 'none' }}
+                        onClick={() => props.onWithdrawAllRewards()}
+                        disabled={distTxStatus?.status === 'pending'}
+                    >
+                        {distTxStatus?.status === 'pending' ? 'Loading...' : `Claim Rewards: ${totalRewards} ${currency?.coinDenom}` }
+                    </Button>
                 </div>
                 <TableContainer component={Paper} elevation={0}>
                     {
@@ -81,6 +92,7 @@ export function MyDelegations(props) {
                                         <StyledTableCell>Validator</StyledTableCell>
                                         <StyledTableCell>Comission</StyledTableCell>
                                         <StyledTableCell>Delegated</StyledTableCell>
+                                        <StyledTableCell>Rewards</StyledTableCell>
                                         <StyledTableCell>Status</StyledTableCell>
                                         <StyledTableCell>Action</StyledTableCell>
                                     </StyledTableRow>
@@ -89,7 +101,7 @@ export function MyDelegations(props) {
                                     {
                                         delegations?.delegations.map((row, index) => (
                                             <StyledTableRow
-                                                key={row.index}
+                                                key={index}
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                             >
                                                 <StyledTableCell component="th" scope="row">
@@ -97,22 +109,25 @@ export function MyDelegations(props) {
                                                 </StyledTableCell>
                                                 <StyledTableCell>
                                                     {validators?.active[row.delegation.validator_address]?.description.moniker}
-                                                    </StyledTableCell>
+                                                </StyledTableCell>
                                                 <StyledTableCell>
-                                                    {(validators?.active[row.delegation.validator_address]?.commission.commission_rates.rate * 100).toFixed(2)}% 
-                                                    </StyledTableCell>
+                                                    {(validators?.active[row.delegation.validator_address]?.commission.commission_rates.rate * 100).toFixed(2)}%
+                                                </StyledTableCell>
                                                 <StyledTableCell>
-                                                    {parseFloat(row.delegation.shares) / (10 ** currency.coinDecimals)}
-                                                    </StyledTableCell>
+                                                    {parseFloat(row.delegation.shares) / (10 ** currency?.coinDecimals)}
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                    {rewardsP[row.delegation.validator_address]?.toFixed(6)}
+                                                </StyledTableCell>
                                                 <StyledTableCell>
                                                     {validators.active[row.delegation.validator_address]?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validators.active[row.delegation.validator_address]?.status)}
-                                                    </StyledTableCell>
+                                                </StyledTableCell>
                                                 <StyledTableCell>
                                                     <Button
-                                                    variant="outlined"
-                                                     size="small"
-                                                     onClick={(e) => handleClick(row.delegation)}
-                                                     >
+                                                        variant="outlined"
+                                                        size="small"
+                                                        onClick={(e) => handleClick(e, row.delegation)}
+                                                    >
                                                         Actions
                                                     </Button>
                                                 </StyledTableCell>
@@ -124,22 +139,6 @@ export function MyDelegations(props) {
                     }
                 </TableContainer>
             </Paper>
-
-
-            <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                }}
-            >
-                <MenuItem onClick={handleClose}>Delegate</MenuItem>
-                <MenuItem onClick={handleClose}>Undelegate</MenuItem>
-                <MenuItem onClick={handleClose}>WithdrawRewards</MenuItem>
-                <MenuItem onClick={handleClose}>ReDelegate</MenuItem>
-            </Menu>
         </>
     );
 }

@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fee, signAndBroadcastAmino } from '../../txns/execute';
 import { GovVoteMsg } from '../../txns/proto';
+import { setError, setTxHash } from '../common/commonSlice';
 import govService from './govService';
 
 const initialState = {
@@ -20,11 +21,7 @@ const initialState = {
     proposals: {},
   },
   tx: {
-    vote: {
-      status: 'idle',
-      errMsg: '',
-      successMsg: ''
-    },
+    status: 'idle'
   }
 };
 
@@ -71,16 +68,27 @@ export const getVotes = createAsyncThunk(
 
 export const txVote = createAsyncThunk(
   'gov/tx-vote',
-  async (data, { rejectWithValue, fulfillWithValue }) => {
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = GovVoteMsg(data.proposalId, data.voter, data.option)
       const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), data.memo,data.chainId, data.rpc)
       if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
         return fulfillWithValue({txHash: result?.transactionHash});
         } else {
+          dispatch(setError({
+            type: 'error',
+            message: result?.rawLog
+          }))
           return rejectWithValue(result?.rawLog);
         }
     } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
       return rejectWithValue(error)
     }
   }
@@ -143,19 +151,14 @@ export const proposalsSlice = createSlice({
       // tx-vote
       builder
       .addCase(txVote.pending, (state) => {
-        state.tx.vote.status = 'pending';
-        state.tx.vote.errMsg = '';
-        state.tx.vote.txHash = '';
+        state.tx.status = 'pending';
 
       })
-      .addCase(txVote.fulfilled, (state, action) => {
-        state.tx.vote.status = 'idle';
-        state.tx.vote.errMsg = '';
-        state.tx.vote.txHash = action.payload.txHash;
+      .addCase(txVote.fulfilled, (state, _) => {
+        state.tx.status = 'idle';
       })
-      .addCase(txVote.rejected, (state, action) => {
-        state.tx.vote.status = 'rejected';
-        state.tx.vote.errMsg = action.error.message;
+      .addCase(txVote.rejected, (state, _) => {
+        state.tx.status = 'rejected';
       })
 
   },

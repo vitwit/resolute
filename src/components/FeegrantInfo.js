@@ -75,9 +75,43 @@ const renderAuthorization = (authz, displayDenom) => {
                         </li>
                         <li className='inline-space-between'>
                             <Typography>
+                                SpendLimit
+                            </Typography>
+                            <Typography>
+                                {allowance.basic.spend_limit.length === 0 ? <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} /> :`${parseSpendLimit(allowance.basic.spend_limit)}${displayDenom}`}
+                            </Typography>
+                        </li>
+                        <li className='inline-space-between'>
+                            <Typography>
                                 Expiration
                             </Typography>
-                            {allowance.expiration ? <Typography>getLocalTime(allowance.expiration)</Typography> : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}
+                            <Typography>
+                                {allowance.basic.expiration ? getLocalTime(allowance.basic.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}
+                            </Typography>
+                        </li>
+                        <li className='inline-space-between'>
+                            <Typography>
+                                Period
+                            </Typography>
+                            {allowance?.period}
+                        </li>
+                        <li className='inline-space-between'>
+                            <Typography>
+                                Period Spend Limit
+                            </Typography>
+                            {allowance.period_spend_limit.length === 0 ? <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} /> :`${parseSpendLimit(allowance.period_spend_limit)}${displayDenom}`}
+                        </li>
+                        <li className='inline-space-between'>
+                            <Typography>
+                                Period Can Spend
+                            </Typography>
+                            {allowance.period_can_spend.length === 0 ? <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} /> :`${parseSpendLimit(allowance.period_can_spend)}${displayDenom}`}
+                        </li>
+                        <li className='inline-space-between'>
+                            <Typography>
+                                Period Reset
+                            </Typography>
+                            {getLocalTime(allowance.period_reset)}
                         </li>
                     </ul>
                 </>

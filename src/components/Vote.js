@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux';
 
 export default function VoteDialog(props) {
     const [option, setOption] = React.useState('')
-    const govTx = useSelector((state) => state.gov.tx.vote);
+    const govTx = useSelector((state) => state.gov.tx);
 
     const handleClose = () => {
         props.closeDialog(true);

@@ -1,5 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { Delegate, Redelegate, UnDelegate } from '../../txns/proto';
 import stakingService from './stakingService';
+import { signAndBroadcastAmino, fee } from '../../txns/execute';
+import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
   validators: {
@@ -24,19 +27,120 @@ const initialState = {
     delegations: [],
     errMsg: '',
     pagination: {},
+  },
+  params:{},
+  tx: {
+    status: 'idle'
   }
 };
 
+export const txDelegate = createAsyncThunk(
+  'staking/delegate',
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    try {
+      const msg = Delegate(data.delegator,data.validator, data.amount, data.denom)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), "", data.chainId, data.rpc)
+      if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
+        return fulfillWithValue({txHash: result?.transactionHash});
+        } else {
+          dispatch(setError({
+            type: 'error',
+            message: result?.rawLog
+          }))
+          return rejectWithValue(result?.rawLog);
+        }
+    } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
+      return rejectWithValue(error.response)
+    }
+  }
+);
+
+export const txReDelegate = createAsyncThunk(
+  'staking/redelegate',
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    try {
+      const msg = Redelegate(data.delegator,data.srcVal, data.destVal, data.amount, data.denom)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), "", data.chainId, data.rpc)
+      if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
+        dispatch(resetDelegations())
+        dispatch(getDelegations({
+          baseURL: data.baseURL,
+          address: data.delegator
+        }))
+        return fulfillWithValue({txHash: result?.transactionHash});
+        } else {
+          dispatch(setError({
+            type: 'error',
+            message: result?.rawLog
+          }))
+          return rejectWithValue(result?.rawLog);
+        }
+    } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
+      return rejectWithValue(error.response)
+    }
+  }
+);
+
+export const txUnDelegate = createAsyncThunk(
+  'staking/undelegate',
+  async (data, { rejectWithValue, fulfillWithValue,dispatch }) => {
+    try {
+      const msg = UnDelegate(data.delegator,data.validator, data.amount, data.denom)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), "", data.chainId, data.rpc)
+      if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
+        return fulfillWithValue({txHash: result?.transactionHash});
+        } else {
+          dispatch(setError({
+            type: 'error',
+            message: result?.rawLog
+          }))
+          return rejectWithValue(result?.rawLog);
+        }
+    } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
+      return rejectWithValue(error.response)
+    }
+  }
+);
+
 export const getValidators = createAsyncThunk(
-  'stake/validators',
+  'staking/validators',
   async (data) => {
     const response = await stakingService.validtors(data.baseURL, data?.status, data.pagination);
     return response.data;
   }
 );
 
+export const getParams = createAsyncThunk(
+  'staking/params',
+  async (data) => {
+    const response = await stakingService.params(data.baseURL);
+    return response.data;
+  }
+);
+
 export const getDelegations = createAsyncThunk(
-  'stake/delegations',
+  'staking/delegations',
   async (data) => {
     const response = await stakingService.delegations(data.baseURL,data.address, data.pagination);
     return response.data;
@@ -44,7 +148,7 @@ export const getDelegations = createAsyncThunk(
 );
 
 export const getUnbonding = createAsyncThunk(
-  'stake/unbonding',
+  'staking/unbonding',
   async (data) => {
     const response = await stakingService.unbonding(data.baseURL,data.address, data.pagination);
     return response.data;
@@ -53,7 +157,7 @@ export const getUnbonding = createAsyncThunk(
 
 
 export const stakeSlice = createSlice({
-  name: 'stake',
+  name: 'staking',
   initialState,
   reducers: {
     validators: (state, action) => {
@@ -64,6 +168,9 @@ export const stakeSlice = createSlice({
     },
     resetState: (state, action) => {
       state.validators = initialState.validators
+      state.delegations = initialState.delegations
+    },
+    resetDelegations: (state) => {
       state.delegations = initialState.delegations
     },
     sortValidatorsByVotingPower: (state) => {
@@ -142,10 +249,56 @@ export const stakeSlice = createSlice({
         state.unbonding.errMsg = action.error.message
       })
 
+
+      builder
+      .addCase(getParams.pending, (state) => {
+      })
+      .addCase(getParams.fulfilled, (state, action) => {
+        state.params = action.payload
+      })
+      .addCase(getParams.rejected, (state, action) => {})
+
+
+      builder
+      .addCase(txDelegate.pending, (state) => {
+        state.tx.status = 'pending';
+
+      })
+      .addCase(txDelegate.fulfilled, (state, _) => {
+        state.tx.status = 'idle';
+      })
+      .addCase(txDelegate.rejected, (state, _) => {
+        state.tx.status = 'rejected';
+      })
+
+      builder
+      .addCase(txUnDelegate.pending, (state) => {
+        state.tx.status = 'pending';
+
+      })
+      .addCase(txUnDelegate.fulfilled, (state, _) => {
+        state.tx.status = 'idle';
+      })
+      .addCase(txUnDelegate.rejected, (state, action) => {
+        state.tx.status = 'rejected';
+      })
+
+      builder
+      .addCase(txReDelegate.pending, (state) => {
+        state.tx.status = 'pending';
+
+      })
+      .addCase(txReDelegate.fulfilled, (state, _) => {
+        state.tx.status = 'idle';
+      })
+      .addCase(txReDelegate.rejected, (state, action) => {
+        state.tx.status = 'rejected';
+      })
+
       
   },
 });
 
-export const { resetState, sortValidatorsByVotingPower } = stakeSlice.actions;
+export const { resetState, sortValidatorsByVotingPower, resetDelegations } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

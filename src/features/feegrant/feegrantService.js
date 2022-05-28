@@ -14,7 +14,6 @@ const fetchGrantsToMe = (baseURL, grantee, pagination) => {
   return Axios.get(uri, {
     headers: {
         Accept: 'application/json, text/plain, */*',
-        Connection: 'keep-alive',
     },
 })
 }
@@ -30,7 +29,6 @@ const fetchGrantsByMe = (baseURL, grantee,pagination) => {
   return Axios.get(uri, {
     headers: {
         Accept: 'application/json, text/plain, */*',
-        Connection: 'keep-alive',
     },
 })
 }

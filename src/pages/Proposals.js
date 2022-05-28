@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import CircularProgress from '@mui/material/CircularProgress';
 import { ProposalItem } from './ProposalItem';
 import {
-  setError, resetError, setTxHash, resetTxHash
+  setError, resetError, resetTxHash
 } from './../features/common/commonSlice';
 
 export function Proposals() {
@@ -19,7 +19,7 @@ export function Proposals() {
   const proposalTally = useSelector((state) => state.gov.tally.proposalTally);
   const votes = useSelector((state) => state.gov.votes.proposals);
   const address = useSelector((state) => state.wallet.address);
-  const govTx = useSelector((state) => state.gov.tx.vote);
+  const govTx = useSelector((state) => state.gov.tx);
   const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
 
   const dispatch = useDispatch();
@@ -46,23 +46,10 @@ export function Proposals() {
   }, [errMsg]);
 
   useEffect(() => {
-    if (govTx?.txHash !== '') {
-        dispatch(setTxHash({
-            hash: govTx?.txHash,
-        }))
+    return () => {
+        dispatch(resetError());
+        dispatch(resetTxHash());
     }
-
-    if (govTx?.errMsg !== '') {
-        dispatch(setError({
-            type: 'error',
-            message: govTx.errMsg
-        }))
-    }
-}, [govTx]);
-
-useEffect(() => {
-  dispatch(resetError())
-  dispatch(resetTxHash())
 }, []);
 
 const onVoteSubmit = (proposalId, option) => {

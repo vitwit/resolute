@@ -18,10 +18,8 @@ import { StyledTableCell, StyledTableRow } from './table';
 import { Link, Typography } from '@mui/material';
 import { getLocalTime } from '../utils/datetime';
 import { AuthorizationInfo } from '../components/AuthorizationInfo';
-import { resetError, resetTxHash, setError, setTxHash } from '../features/common/commonSlice';
+import { resetError, resetTxHash, setError } from '../features/common/commonSlice';
 import { getTypeURLFromAuthorization } from '../utils/authorizations';
-
-
 
 export default function Authz() {
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
@@ -38,7 +36,7 @@ export default function Authz() {
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const address = useSelector((state) => state.wallet.address);
-  const revokeTx = useSelector((state) => state.authz.tx.revoke);
+  const authzTx = useSelector((state) => state.authz.tx);
   const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
 
   useEffect(() => {
@@ -68,27 +66,6 @@ export default function Authz() {
     }
   }, [grantsByMe]);
 
-  useEffect(() => {
-    if (revokeTx?.txHash?.length > 0) {
-      dispatch(setTxHash({
-        hash: revokeTx?.txHash,
-      }))
-
-      dispatch(getGrantsByMe({
-        baseURL: chainInfo.lcd,
-        granter: address
-      }))
-
-    }
-
-    if (revokeTx?.errMsg !== '') {
-      dispatch(setError({
-        type: 'error',
-        message: revokeTx.errMsg
-      }))
-    }
-  }, [revokeTx])
-
   const onRevoke = (granter, grantee, typeURL) => {
     dispatch(txAuthzRevoke({
       granter: granter,
@@ -113,6 +90,9 @@ export default function Authz() {
     navigate(path);
   }
 
+  const onUseAuthz = (row) => {
+    console.log(row);
+  }
 
   return (
     <>
@@ -186,7 +166,6 @@ export default function Authz() {
                           </TableHead>
                           <TableBody>
                             {grantsByMe.grants && grantsByMe.grants.map((row, index) => (
-                              <>
                                 <StyledTableRow
                                   key={index}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -211,14 +190,13 @@ export default function Authz() {
                                       size="small"
                                       disableElevation
                                       color='primary'
-                                      disabled={revokeTx?.status === 'pending' ? true : false}
+                                      disabled={authzTx?.status === 'pending' ? true : false}
                                       onClick={() => onRevoke(row.granter, row.grantee, getTypeURLFromAuthorization(row.authorization))}
                                     >
                                       Revoke
                                     </Button>
                                   </StyledTableCell>
                                 </StyledTableRow>
-                              </>
                             ))}
                           </TableBody>
                         </Table>
@@ -277,7 +255,7 @@ export default function Authz() {
                                   <Button
                                     size='small'
                                     color='info'
-                                    onClick={() => { alert("TODO://") }}
+                                    onClick={() => onUseAuthz(row)}
                                   >
                                     Use
                                   </Button>

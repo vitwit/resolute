@@ -127,10 +127,14 @@ export function totalDelegations(delegations, coinDecimals) {
 }
 
 export function totalRewards(rewards, coinDecimals) {
+    if (rewards === undefined) return 0
     if (rewards.length === 0) { return 0}
     let total = 0
+
     for( let i=0;i<rewards.length;i++) {
-        total += parseInt(rewards[i].reward[0].amount)
+        const reward = rewards[i].reward
+        if (reward.length > 0)
+            total += parseInt(reward[0].amount)
     }
     const temp = total/(10.0 ** coinDecimals)
     return `${parseFloat((temp.toFixed(6)))}`

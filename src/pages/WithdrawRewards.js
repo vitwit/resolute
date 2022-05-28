@@ -6,7 +6,7 @@ import { authzMsgTypes } from '../utils/authorizations';
 import Autocomplete from '@mui/material/Autocomplete';
 
 export const WithdrawRewards = () => {
-    const { register, handleSubmit, control, formState: { errors }, setValue } = useForm({
+    const { handleSubmit, control } = useForm({
         defaultValues: {}
     });
 
@@ -54,8 +54,6 @@ export const WithdrawRewards = () => {
                                         options={authzMsgTypes()}
                                         renderInput={(params) => <TextField {...params}
                                             label="Validator"
-                                            // value={value}
-                                            // onChange={onChange}
                                             error={!!error}
                                             helperText={error ? error.message : null}
                                         />} />
