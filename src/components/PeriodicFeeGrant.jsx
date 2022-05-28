@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import TextField from '@mui/material/TextField';
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
+import { CircularProgress } from '@mui/material';
 
 export function PeriodicFeegrant(props) {
     const {loading, onGrant} = props;
@@ -163,7 +164,7 @@ export function PeriodicFeegrant(props) {
                     type='submit'
                     disabled={loading === 'pending'}
                 >
-                    {loading === 'pending' ? "Please wait..." : "Grant"}
+                    {loading === 'pending' ? <CircularProgress size={25} /> : "Grant"}
                 </Button>
             </form>
         </>

@@ -23,7 +23,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 export default function NewAuthz() {
     const address = useSelector((state) => state.wallet.address);
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
-    const authzTx = useSelector((state) => state.authz.tx.grant);
+    const authzTx = useSelector((state) => state.authz.tx);
     const dispatch = useDispatch();
 
 
@@ -195,11 +195,11 @@ export default function NewAuthz() {
 
                                     <Button
                                         type='submit'
-                                        disabled={authzTx.status === 'pending'}
+                                        disabled={authzTx?.status === 'pending'}
                                         style={{ marginTop: 32 }}
                                         variant="outlined"
                                     >
-                                        {authzTx.status === 'pending' ?
+                                        {authzTx?.status === 'pending' ?
                                             <CircularProgress
                                                 size={25}
                                             />
@@ -287,10 +287,10 @@ export default function NewAuthz() {
                                         <Button
                                             type='submit'
                                             style={{ marginTop: 32 }}
-                                            disabled={authzTx.status === 'pending'}
+                                            disabled={authzTx?.status === 'pending'}
                                             variant="outlined"
                                         >
-                                            {authzTx.status === 'pending' ? 'Please Wait' : 'Grant'}
+                                            {authzTx?.status === 'pending' ? <CircularProgress size={25}/> : 'Grant'}
                                         </Button>
                                     </form>
                                 </>

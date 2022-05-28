@@ -42,27 +42,21 @@ export default function Overview() {
                 denom: chainInfo?.currencies[0].coinMinimalDenom
             }))
         }
-    }, [chainInfo]);
-
-    useEffect(() => {
+        
         if (address !== null > 0 && connected) {
             dispatch(getDelegations({
                 baseURL: chainInfo.lcd,
                 address: address,
             }))
         }
-    }, [chainInfo]);
-
-    useEffect(() => {
+        
         if (address !== null > 0 && connected) {
             dispatch(getDelegatorTotalRewards({
                 baseURL: chainInfo.lcd,
                 address: address,
             }))
         }
-    }, [chainInfo]);
-
-    useEffect(() => {
+        
         if (address !== null > 0 && connected) {
             dispatch(getUnbonding({
                 baseURL: chainInfo.lcd,

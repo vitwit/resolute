@@ -146,7 +146,7 @@ export const authzSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getGrantsToMe.pending, (state) => {
-        state.grantsToMe.status = 'loading';
+        state.grantsToMe.status = 'pending';
         state.grantsToMe.errMsg = ''
 
       })
@@ -164,7 +164,7 @@ export const authzSlice = createSlice({
 
     builder
       .addCase(getGrantsByMe.pending, (state) => {
-        state.grantsByMe.status = 'loading';
+        state.grantsByMe.status = 'pending';
         state.grantsByMe.errMsg = ''
 
       })

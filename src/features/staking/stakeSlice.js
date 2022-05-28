@@ -190,7 +190,7 @@ export const stakeSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getValidators.pending, (state) => {
-        state.validators.status = 'loading';
+        state.validators.status = 'pending';
         state.validators.errMsg = ''
 
       })
@@ -218,7 +218,7 @@ export const stakeSlice = createSlice({
     
       builder
       .addCase(getDelegations.pending, (state) => {
-        state.delegations.status = 'loading';
+        state.delegations.status = 'pending';
         state.delegations.errMsg = ''
       })
       .addCase(getDelegations.fulfilled, (state, action) => {
@@ -234,7 +234,7 @@ export const stakeSlice = createSlice({
 
       builder
       .addCase(getUnbonding.pending, (state) => {
-        state.unbonding.status = 'loading';
+        state.unbonding.status = 'pending';
         state.unbonding.errMsg = ''
       })
       .addCase(getUnbonding.fulfilled, (state, action) => {

@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, Typography } from '@mui/material';
+import { Autocomplete, Button, CircularProgress, Dialog, DialogActions, DialogContent, Typography } from '@mui/material';
 import React from 'react';
 import PropTypes from 'prop-types';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -176,7 +176,7 @@ export function DialogRedelegate(props) {
                             className='button-capitalize-title'
                             disabled={loading === 'pending'}
                         >
-                            {loading === 'pending' ? 'Loading...' : 'Redelegate'}
+                            {loading === 'pending' ? <CircularProgress size={25}/> : 'Redelegate'}
                         </Button>
                     </DialogActions>
                 </form>
@@ -189,7 +189,7 @@ DialogRedelegate.propTypes = {
     onClose: PropTypes.func.isRequired,
     onRedelegate: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    loading: PropTypes.bool.isRequired,
+    loading: PropTypes.string.isRequired,
     validator: PropTypes.object.isRequired,
     delegations: PropTypes.array.isRequired,
     active: PropTypes.object.isRequired,

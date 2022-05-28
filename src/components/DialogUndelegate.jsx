@@ -1,4 +1,4 @@
-import { Alert, Button, Dialog, DialogActions, DialogContent, Typography } from '@mui/material';
+import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, Typography } from '@mui/material';
 import React from 'react';
 import PropTypes from 'prop-types';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -131,7 +131,7 @@ export function DialogUndelegate(props) {
                             className='button-capitalize-title'
                             disabled={loading === 'pending'}
                         >
-                            {loading === 'pending' ? 'Loading...' : 'Undelegate'}
+                            {loading === 'pending' ? <CircularProgress size={25}/> : 'Undelegate'}
                         </Button>
                     </DialogActions>
                 </form>

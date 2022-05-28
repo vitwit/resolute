@@ -69,7 +69,7 @@ const onVoteSubmit = (proposalId, option) => {
     <>
       <Grid container spacing={2}>
         {
-          status === 'loading' ?
+          status === 'pending' ?
           <div style={{ display: 'flex', justifyContent: 'center', width:"100%", marginTop: 22 }}>
             <CircularProgress />
             </div>

@@ -102,7 +102,7 @@ export const proposalsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getProposals.pending, (state) => {
-        state.active.status = 'loading';
+        state.active.status = 'pending';
         state.active.errMsg = ''
       })
       .addCase(getProposals.fulfilled, (state, action) => {
@@ -119,7 +119,7 @@ export const proposalsSlice = createSlice({
       // tally
       builder
       .addCase(getProposalTally.pending, (state) => {
-        state.tally.status = 'loading';
+        state.tally.status = 'pending';
         state.tally.errMsg = ''
       })
       .addCase(getProposalTally.fulfilled, (state, action) => {
@@ -135,7 +135,7 @@ export const proposalsSlice = createSlice({
       // votes
       builder
       .addCase(getVotes.pending, (state) => {
-        state.votes.status = 'loading';
+        state.votes.status = 'pending';
         state.votes.errMsg = ''
       })
       .addCase(getVotes.fulfilled, (state, action) => {

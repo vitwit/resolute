@@ -56,7 +56,7 @@ export const bankSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getDelegatorTotalRewards.pending, (state) => {
-        state.delegatorRewards.status = 'loading';
+        state.delegatorRewards.status = 'pending';
         state.delegatorRewards.errMsg = ''
         state.delegatorRewards.list = []
         state.delegatorRewards.pagination = {}
