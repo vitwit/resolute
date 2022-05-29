@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import authzService from './authzService';
 import { fee, signAndBroadcastProto } from '../../txns/execute';
-import { AuthzSendGrantMsg, AuthzGenericGrantMsg, AuthzRevokeMsg } from '../../txns/proto';
+import { AuthzSendGrantMsg, AuthzGenericGrantMsg, AuthzRevokeMsg, AuthzExecSendMsg } from '../../txns/proto';
 import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
@@ -19,6 +19,9 @@ const initialState = {
   },
   tx: {
       status: 'idle',
+  },
+  execTx: {
+    status: 'idle',
   }
 };
 
@@ -94,12 +97,56 @@ export const txAuthzRevoke = createAsyncThunk(
   }
 );
 
+
+export const authzExecHelper = (dispatch, data) => {
+  switch(data.type) {
+    case "send":
+      const msg = AuthzExecSendMsg(data.from, data.granter, data.recipient, data.amount, data.denom)
+      dispatch(txAuthzExec({
+        msg: msg,
+        denom: data.denom,
+        rpc: data.rpc,
+        feeAmount: data.feeAmount,
+      }))
+      break
+    default:
+      alert("not supported")
+  }
+}
+
 export const txAuthzGeneric = createAsyncThunk(
   'authz/tx-generic',
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = AuthzGenericGrantMsg(data.granter, data.grantee, data.typeUrl, data.expiration)
       const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), "", data.rpc)
+      if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(setError({
+          type: 'error',
+          message: result?.rawLog
+        }))
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const txAuthzExec = createAsyncThunk(
+  'authz/tx-exec',
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    try {
+      const result = await signAndBroadcastProto([data.msg], fee(data.denom, data.feeAmount), "", data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
@@ -212,6 +259,18 @@ export const authzSlice = createSlice({
       })
       .addCase(txAuthzRevoke.rejected, (state, _) => {
         state.tx.status = `rejected`
+      })
+
+      builder
+      .addCase(txAuthzExec.pending, (state) => {
+        state.execTx.status = `pending`
+
+      })
+      .addCase(txAuthzExec.fulfilled, (state, _) => {
+        state.execTx.status = `idle`
+      })
+      .addCase(txAuthzExec.rejected, (state, _) => {
+        state.execTx.status = `rejected`
       })
   },
 });

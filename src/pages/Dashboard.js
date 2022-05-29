@@ -40,14 +40,52 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const drawerWidth = 210;
 
-const mdTheme = createTheme();
+const mdTheme = (isDarkMode) => createTheme({
+    palette: {
+        mode: isDarkMode ? 'dark' : 'light',
+        primary: {
+            light: '#6573c3',
+            main: '#3f51b5',
+            dark: '#2c387e',
+            contrastText: '#fff',
+        },
+        secondary: {
+            light: '#1de9b6',
+            main: '#1de9b6',
+            dark: '#14a37f',
+            contrastText: '#000',
+        },
+    },
+    typography: {
+        fontFamily: [
+            'Roboto',
+            'Ubuntu',
+            'sans-serif',
+            '-apple-system',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            '"Helvetica Neue"',
+            'Arial',
+            '"Apple Color Emoji"',
+            '"Segoe UI Emoji"',
+            '"Segoe UI Symbol"',
+        ].join(','),
+    },
+
+});
 
 function DashboardContent() {
     const [snackOpen, setSnackClose] = React.useState(false);
     const [isLogin, setLogin] = React.useState(localStorage.getItem('IS_LOGIN'));
+    const [darkMode, setDarkMode] = React.useState(localStorage.getItem('DARK_MODE') == true ? true : false)
 
     const showSnack = (value) => {
         setSnackClose(value);
+    }
+
+    const onModeChange = () => {
+        localStorage.setItem('DARK_MODE', !darkMode);
+        setDarkMode(!darkMode);
     }
 
     const [snackTxOpen, setSnackTxClose] = React.useState(false);
@@ -69,11 +107,11 @@ function DashboardContent() {
                     disconnectWallet()
                     setTimeout(() => {
                         connectWallet(selectedNetwork)
-                    },1000);
+                    }, 1000);
                 }
             }
-      });
-      });
+        });
+    });
 
     const walletConnected = useSelector((state) => state.wallet.connected)
     const walletStatus = useSelector((state) => state.wallet)
@@ -82,6 +120,10 @@ function DashboardContent() {
 
     const errState = useSelector((state) => state.common.errState);
     const txSuccess = useSelector((state) => state.common.txSuccess);
+
+    React.useEffect(() => {
+        setDarkMode(darkMode);
+    }, []);
 
     React.useEffect(() => {
         if (errState.message === '') {
@@ -130,9 +172,9 @@ function DashboardContent() {
         } else {
             window.keplr.defaultOptions = {
                 sign: {
-                  preferNoSetMemo: true,
-                  preferNoSetFee: true,
-                  disableBalanceCheck: true,
+                    preferNoSetMemo: true,
+                    preferNoSetFee: true,
+                    disableBalanceCheck: true,
                 },
             };
             if (network.experimental) {
@@ -156,23 +198,28 @@ function DashboardContent() {
 
     const enableConnection = (network) => {
         getKeplrWalletAmino(network.chainId)
-        .then((result) => {
-            dispatch(setWallet({
-                address: result[1].address,
-                chainInfo: network
-            }))
-        })
-        .catch((err) => {
-            alert(err);
-        })
+            .then((result) => {
+                dispatch(setWallet({
+                    address: result[1].address,
+                    chainInfo: network
+                }))
+            })
+            .catch((err) => {
+                alert(err);
+            })
     }
 
 
     return (
-        <ThemeProvider theme={mdTheme}>
+        <ThemeProvider theme={mdTheme(darkMode)}>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
-                <CustomAppBar selectedNetwork={selectedNetwork} onNetworkChange={(network) => handleNetworkChange(network)}/>
+                <CustomAppBar
+                    selectedNetwork={selectedNetwork}
+                    onNetworkChange={(network) => handleNetworkChange(network)}
+                    darkMode={darkMode}
+                    onModeChange={() => onModeChange()}
+                />
                 <Drawer variant="permanent"
                     sx={{
                         width: drawerWidth,
@@ -265,7 +312,7 @@ function DashboardContent() {
             <Snackbar open={snackTxOpen} autoHideDuration={3000} onClose={() => { showTxSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={() => { showTxSnack(false) }} severity='success' sx={{ width: '100%' }}>
                     <AlertTitle>Tx Successful</AlertTitle>
-                    View on explorer <Link target="_blank" href={`${chainInfo?.txHashEndpoint}${txSuccess?.hash}`} color='inherit'> {txSuccess?.hash?.toLowerCase().substring(0,5)}...</Link>
+                    View on explorer <Link target="_blank" href={`${chainInfo?.txHashEndpoint}${txSuccess?.hash}`} color='inherit'> {txSuccess?.hash?.toLowerCase().substring(0, 5)}...</Link>
                 </Alert>
             </Snackbar>
         </ThemeProvider>

@@ -1,6 +1,6 @@
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { SendAuthorization } from "cosmjs-types/cosmos/bank/v1beta1/authz";
-import { MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx";
+import { MsgGrant, MsgRevoke, MsgExec } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 import { MsgGrantAllowance, MsgRevokeAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import { MsgDelegate, MsgBeginRedelegate, MsgUndelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
@@ -15,6 +15,7 @@ import Long from "long";
 const msgSendTypeUrl = "/cosmos.bank.v1beta1.MsgSend";
 const msgAuthzGrantTypeUrl = "/cosmos.authz.v1beta1.MsgGrant";
 const msgAuthzRevokeTypeUrl = "/cosmos.authz.v1beta1.MsgRevoke";
+const msgAuthzExecypeUrl = "/cosmos.authz.v1beta1.MsgExec";
 const msgFeegrantGrantTypeUrl = "/cosmos.feegrant.v1beta1.MsgGrantAllowance";
 const msgFeegrantRevokeTypeUrl = "/cosmos.feegrant.v1beta1.MsgRevokeAllowance";
 
@@ -117,6 +118,28 @@ export function AuthzRevokeMsg(granter, grantee, typeURL) {
             msgTypeUrl: typeURL,
             grantee: grantee,
             granter: granter,
+        }),
+    }
+}
+
+export function AuthzExecSendMsg(grantee, from, to, amount, denom) {
+    return {
+        typeUrl: msgAuthzExecypeUrl,
+        value: MsgExec.fromPartial({
+            grantee: grantee,
+            msgs: [
+                {
+                    typeUrl: msgSendTypeUrl,
+                    value: MsgSend.encode({
+                        fromAddress: from,
+                        toAddress: to,
+                        amount: [{
+                            denom: denom,
+                            amount: String(amount),
+                        }],
+                    }).finish()
+                }
+            ]
         }),
     }
 }

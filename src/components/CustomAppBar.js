@@ -7,6 +7,10 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button'
+import { IconButton } from '@mui/material';
+import BrightnessLowOutlined from '@mui/icons-material/BrightnessLowOutlined';
+import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
+import PropTypes from 'prop-types';
 
 export function CustomAppBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -27,6 +31,13 @@ export function CustomAppBar(props) {
                 >
                     Staking UI
                 </Typography>
+                <IconButton
+                    aria-label='mode'
+                    onClick={() => props.onModeChange()}
+                >
+                    {props.darkMode ? <BrightnessLowOutlined /> : <DarkModeOutlined />}
+
+                </IconButton>
                 <Button
                     id="demo-positioned-button"
                     color='inherit'
@@ -59,7 +70,8 @@ export function CustomAppBar(props) {
                                 key={index}
                                 onClick={() => {
                                     setAnchorEl(null);
-                                    props.onNetworkChange(network)}
+                                    props.onNetworkChange(network)
+                                }
                                 }
                             >
                                 {network.displayName}
@@ -72,3 +84,10 @@ export function CustomAppBar(props) {
     );
 
 }
+
+CustomAppBar.propTypes = {
+    darkMode: PropTypes.bool.isRequired,
+    onModeChange: PropTypes.func.isRequired,
+    selectedNetwork: PropTypes.object.isRequired,
+    onNetworkChange: PropTypes.func.isRequired,
+};
