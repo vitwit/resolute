@@ -1,36 +1,39 @@
-import { Grid, Paper, Typography, Button, CssBaseline } from '@mui/material';
 import React from 'react';
+import Grid from '@mui/material/Grid';
+import CssBaseline from '@mui/material/CssBaseline';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 
 export default function BalanceInfo(props) {
     let navigate = useNavigate();
     function navigateTo(path) {
-      navigate(path);
+        navigate(path);
     }
-  
+
     return (
         <>
             <Paper elevation={0} spacing={2} style={{ padding: 24 }}>
-                <div style={{textAlign: 'right'}}>
-                <Button 
-                variant='contained'
-                size ='small'
-                disableElevation
-                onClick={() => navigateTo("/send")}
-                disabled={props.balance <= 0.0001}
-                >
-                    Send
-                </Button>
+                <div style={{ textAlign: 'right' }}>
+                    <Button
+                        variant='contained'
+                        size='small'
+                        disableElevation
+                        onClick={() => navigateTo("/send")}
+                        disabled={props.balance <= 0.0001}
+                    >
+                        Send
+                    </Button>
                 </div>
-                <br/>
+                <br />
                 <CssBaseline />
                 <Grid container>
                     <Grid item xs={12} md={3}>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <Typography
                                 variant='h6'
-                                fontWeight={500}
                                 gutterBottom
                                 style={{ textAlign: 'left' }}
                                 color='text.secondary'
@@ -38,8 +41,8 @@ export default function BalanceInfo(props) {
                                 Total Balance
                             </Typography>
                             <Typography
-                                variant='h6'
-                                fontWeight={600}
+                                variant='h5'
+                                fontWeight={500}
                                 style={{ textAlign: 'left' }}
                                 color='text.primary'
                             >
@@ -51,7 +54,6 @@ export default function BalanceInfo(props) {
                         style={{
                             display: 'flex',
                             flexDirection: 'row',
-                            padding: 12,
                             justifyContent: 'space-between'
                         }
                         }
@@ -96,8 +98,7 @@ function Balance(props) {
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Typography
-                variant='body2'
-                fontWeight={500}
+                variant='h6'
                 color='text.secondary'
                 gutterBottom
                 style={{ textAlign: 'left' }}
@@ -105,15 +106,15 @@ function Balance(props) {
                 {props.title}
             </Typography>
             <Typography
-                variant='subtitle1'
-                fontWeight={600}
+                variant='h6'
+                fontWeight={500}
                 color='text.primary'
                 gutterBottom
                 style={{ textAlign: 'left' }}
             >
                 {props.balance}
             </Typography>
-           
+
         </div>
     );
 }

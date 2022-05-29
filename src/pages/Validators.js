@@ -254,7 +254,7 @@ export function Validators() {
                     variant={type === 'delegations' ? 'contained' : 'outlined'}
                     onClick={() => setType('delegations')}
                 >
-                    My Delegations
+                    Delegations
                 </Button>
                 <Button
                     variant={type === 'validators' ? 'contained' : 'outlined'}

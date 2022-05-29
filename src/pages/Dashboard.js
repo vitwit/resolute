@@ -40,18 +40,55 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const drawerWidth = 210;
 
-const mdTheme = createTheme();
+const mdTheme = (isDarkMode) => createTheme({
+    palette: {
+        mode: isDarkMode ? 'dark' : 'light',
+        primary: {
+            light: '#6573c3',
+            main: '#3f51b5',
+            dark: '#2c387e',
+            contrastText: '#fff',
+        },
+        secondary: {
+            light: '#1de9b6',
+            main: '#1de9b6',
+            dark: '#14a37f',
+            contrastText: '#000',
+        },
+    },
+    typography: {
+        fontFamily: [
+            'Roboto',
+            'Ubuntu',
+            'sans-serif',
+            '-apple-system',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            '"Helvetica Neue"',
+            'Arial',
+            '"Apple Color Emoji"',
+            '"Segoe UI Emoji"',
+            '"Segoe UI Symbol"',
+        ].join(','),
+    },
+
+});
 
 function DashboardContent() {
+    const [isConnected, setConnected] = React.useState(Boolean(localStorage.getItem('IS_LOGIN')) === true ? true: false)
+    
     const [snackOpen, setSnackClose] = React.useState(false);
-    const [isLogin, setLogin] = React.useState(localStorage.getItem('IS_LOGIN'));
-
     const showSnack = (value) => {
         setSnackClose(value);
     }
+    
+    const [darkMode, setDarkMode] = React.useState(Boolean(localStorage.getItem('DARK_MODE')) === true ? true : false);
+    const onModeChange = () => {
+        localStorage.setItem('DARK_MODE', !darkMode);
+        setDarkMode(!darkMode);
+    }
 
     const [snackTxOpen, setSnackTxClose] = React.useState(false);
-
     const showTxSnack = (value) => {
         setSnackTxClose(value);
     }
@@ -62,21 +99,24 @@ function DashboardContent() {
         setNetwork(network);
     };
 
+    const wallet = useSelector((state) => state.wallet)
     React.useEffect(() => {
-        window.addEventListener("keplr_keystorechange", () => {
-            if (!walletConnected) {
-                if (isLogin) {
-                    disconnectWallet()
-                    setTimeout(() => {
-                        connectWallet(selectedNetwork)
-                    },1000);
-                }
-            }
-      });
-      });
+        setDarkMode(darkMode);
 
-    const walletConnected = useSelector((state) => state.wallet.connected)
-    const walletStatus = useSelector((state) => state.wallet)
+        const listener = () => {
+            if (wallet.connected && isConnected) {
+                disconnectWallet();
+            }
+            setTimeout(() => {
+                if (isConnected) connectWallet(selectedNetwork)
+            }, 1000);
+        }
+        window.addEventListener("keplr_keystorechange", listener);
+        return () => {
+            window.removeEventListener("keplr_keystorechange", listener);
+        }
+    }, []);
+
     const chainInfo = useSelector((state) => state.wallet.chainInfo)
     const dispatch = useDispatch()
 
@@ -100,23 +140,18 @@ function DashboardContent() {
     }, [txSuccess]);
 
     React.useEffect(() => {
-        if (!walletConnected) {
-            if (isLogin) {
-                connectWallet(selectedNetwork)
-            }
-        }
-    }, [walletConnected]);
+        if (!wallet.connected && isConnected) connectWallet(selectedNetwork)
+    }, [wallet]);
 
     const handleNetworkChange = (network) => {
-        changeNetwork(network)
-        disconnectWallet()
-        connectWallet(network)
+        dispatch(resetWallet());
+        changeNetwork(network);
     }
 
     function disconnectWallet() {
-        setLogin(false)
-        localStorage.setItem('IS_LOGIN', false);
-        dispatch(resetWallet())
+        localStorage.removeItem('IS_LOGIN');
+        setConnected(false);
+        dispatch(resetWallet());
     }
 
     let navigate = useNavigate();
@@ -130,24 +165,20 @@ function DashboardContent() {
         } else {
             window.keplr.defaultOptions = {
                 sign: {
-                  preferNoSetMemo: true,
-                  preferNoSetFee: true,
-                  disableBalanceCheck: true,
+                    preferNoSetMemo: true,
+                    preferNoSetFee: true,
+                    disableBalanceCheck: true,
                 },
             };
             if (network.experimental) {
                 window.keplr.experimentalSuggestChain(network.config)
                     .then((v) => {
-                        setLogin(true);
-                        localStorage.setItem('IS_LOGIN', true);
                         enableConnection(network)
                     })
                     .catch((error) => {
                         alert(error);
                     })
             } else {
-                setLogin(true);
-                localStorage.setItem('IS_LOGIN', true);
                 enableConnection(network)
             }
         }
@@ -156,23 +187,30 @@ function DashboardContent() {
 
     const enableConnection = (network) => {
         getKeplrWalletAmino(network.chainId)
-        .then((result) => {
-            dispatch(setWallet({
-                address: result[1].address,
-                chainInfo: network
-            }))
-        })
-        .catch((err) => {
-            alert(err);
-        })
+            .then((result) => {
+                setConnected(true);
+                localStorage.setItem('IS_LOGIN', true);
+                dispatch(setWallet({
+                    address: result[1].address,
+                    chainInfo: network
+                }))
+            })
+            .catch((err) => {
+                alert(err);
+            })
     }
 
 
     return (
-        <ThemeProvider theme={mdTheme}>
+        <ThemeProvider theme={mdTheme(darkMode)}>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
-                <CustomAppBar selectedNetwork={selectedNetwork} onNetworkChange={(network) => handleNetworkChange(network)}/>
+                <CustomAppBar
+                    selectedNetwork={selectedNetwork}
+                    onNetworkChange={(network) => handleNetworkChange(network)}
+                    darkMode={darkMode}
+                    onModeChange={() => onModeChange()}
+                />
                 <Drawer variant="permanent"
                     sx={{
                         width: drawerWidth,
@@ -183,10 +221,10 @@ function DashboardContent() {
                     <Toolbar />
                     <List component="nav" style={{ minHeight: 120 }}>
                         {
-                            walletConnected ?
+                            wallet.connected ?
                                 <>
                                     <ListItem>
-                                        <Chip label={shortenAddress(walletStatus.address, 21)} size="small" />
+                                        <Chip label={shortenAddress(wallet.address, 21)} size="small" />
                                     </ListItem>
                                     <ListItem style={{ justifyContent: 'center' }}>
                                         <Button
@@ -265,7 +303,7 @@ function DashboardContent() {
             <Snackbar open={snackTxOpen} autoHideDuration={3000} onClose={() => { showTxSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={() => { showTxSnack(false) }} severity='success' sx={{ width: '100%' }}>
                     <AlertTitle>Tx Successful</AlertTitle>
-                    View on explorer <Link target="_blank" href={`${chainInfo?.txHashEndpoint}${txSuccess?.hash}`} color='inherit'> {txSuccess?.hash?.toLowerCase().substring(0,5)}...</Link>
+                    View on explorer <Link target="_blank" href={`${chainInfo?.txHashEndpoint}${txSuccess?.hash}`} color='inherit'> {txSuccess?.hash?.toLowerCase().substring(0, 5)}...</Link>
                 </Alert>
             </Snackbar>
         </ThemeProvider>

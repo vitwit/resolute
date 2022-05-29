@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import Button from '@mui/material/Button';
-import { StyledTableCell, StyledTableRow } from './../pages/table';
+import { StyledTableCell, StyledTableRow } from './CustomTable';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';

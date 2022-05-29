@@ -8,18 +8,19 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  getGrantsToMe, getGrantsByMe, txAuthzRevoke
+  getGrantsToMe, getGrantsByMe, txAuthzRevoke, authzExecHelper
 } from './../features/authz/authzSlice';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Chip from '@mui/material/Chip';
 import { getTypeURLName, shortenAddress } from '../utils/util';
 import { useNavigate } from "react-router-dom";
-import { StyledTableCell, StyledTableRow } from './table';
+import { StyledTableCell, StyledTableRow } from './../components/CustomTable';
 import { Link, Typography } from '@mui/material';
 import { getLocalTime } from '../utils/datetime';
 import { AuthorizationInfo } from '../components/AuthorizationInfo';
 import { resetError, resetTxHash, setError } from '../features/common/commonSlice';
 import { getTypeURLFromAuthorization } from '../utils/authorizations';
+import { AuthzSendDialog } from '../components/authz/AuthzSend';
 
 export default function Authz() {
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
@@ -37,7 +38,14 @@ export default function Authz() {
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const address = useSelector((state) => state.wallet.address);
   const authzTx = useSelector((state) => state.authz.tx);
+  const execTx = useSelector((state) => state.authz.execTx);
   const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
+
+  useEffect(() => {
+    if (execTx.status === 'idle') {
+      setSelectedGrant({});
+    }
+  }, [execTx]);
 
   useEffect(() => {
     if (address !== "") {
@@ -90,8 +98,23 @@ export default function Authz() {
     navigate(path);
   }
 
+  const [selectedGrant, setSelectedGrant] = React.useState({});
   const onUseAuthz = (row) => {
-    console.log(row);
+    setSelectedGrant(row);
+  }
+
+  const onExecSend = (data) => {
+    authzExecHelper(dispatch, {
+      type: "send",
+      from: address,
+      granter: data.from,
+      recipient: data.recipient,
+      amount: data.amount,
+      denom: currency.coinMinimalDenom,
+      chainId: chainInfo.chainId,
+      rpc: chainInfo.rpc,
+      feeAmount: 25000,
+    })
   }
 
   return (
@@ -166,37 +189,37 @@ export default function Authz() {
                           </TableHead>
                           <TableBody>
                             {grantsByMe.grants && grantsByMe.grants.map((row, index) => (
-                                <StyledTableRow
-                                  key={index}
-                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                  <StyledTableCell component="th" scope="row">
-                                    {shortenAddress(row.grantee, 21)}
-                                  </StyledTableCell>
-                                  <StyledTableCell>
-                                    <Chip label={getTypeURLName(row.authorization['@type'])} variant="filled" size="medium" />
-                                  </StyledTableCell>
-                                  <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
-                                  <StyledTableCell>
-                                    <Link onClick={() => {
-                                      setSelected(row)
-                                      setInfoOpen(true)
-                                    }
-                                    }>Details</Link>
-                                  </StyledTableCell>
-                                  <StyledTableCell>
-                                    <Button
-                                      variant="contained"
-                                      size="small"
-                                      disableElevation
-                                      color='primary'
-                                      disabled={authzTx?.status === 'pending' ? true : false}
-                                      onClick={() => onRevoke(row.granter, row.grantee, getTypeURLFromAuthorization(row.authorization))}
-                                    >
-                                      Revoke
-                                    </Button>
-                                  </StyledTableCell>
-                                </StyledTableRow>
+                              <StyledTableRow
+                                key={index}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                              >
+                                <StyledTableCell component="th" scope="row">
+                                  {shortenAddress(row.grantee, 21)}
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  <Chip label={getTypeURLName(row.authorization['@type'])} variant="filled" size="medium" />
+                                </StyledTableCell>
+                                <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
+                                <StyledTableCell>
+                                  <Link onClick={() => {
+                                    setSelected(row)
+                                    setInfoOpen(true)
+                                  }
+                                  }>Details</Link>
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  <Button
+                                    variant="contained"
+                                    size="small"
+                                    disableElevation
+                                    color='primary'
+                                    disabled={authzTx?.status === 'pending' ? true : false}
+                                    onClick={() => onRevoke(row.granter, row.grantee, getTypeURLFromAuthorization(row.authorization))}
+                                  >
+                                    Revoke
+                                  </Button>
+                                </StyledTableCell>
+                              </StyledTableRow>
                             ))}
                           </TableBody>
                         </Table>
@@ -271,6 +294,24 @@ export default function Authz() {
           }
         </TableContainer>
       </Paper>
+
+      {
+        selectedGrant?.authorization &&
+          (
+            selectedGrant?.authorization["@type"] === "/cosmos.bank.v1beta1.SendAuthorization" ||
+            selectedGrant?.authorization?.msg === "/cosmos.bank.v1beta1.MsgSend"
+          ) ?
+          <AuthzSendDialog
+            grant={selectedGrant}
+            currency={currency}
+            open={selectedGrant?.authorization["@type"] === "/cosmos.bank.v1beta1.SendAuthorization" || selectedGrant?.authorization?.msg === "/cosmos.bank.v1beta1.MsgSend"}
+            onClose={() => { setSelectedGrant({}) }}
+            onExecSend={(data) => onExecSend(data)}
+            execTx={execTx.status}
+          />
+          :
+          <></>
+      }
     </>
 
   );
