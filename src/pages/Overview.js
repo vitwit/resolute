@@ -35,29 +35,23 @@ export default function Overview() {
     }, [balance, delegations, rewards, unbonding]);
 
     useEffect(() => {
-        if (chainInfo.currencies.length > 0 && connected) {
+        if (chainInfo.currencies.length > 0 && connected && address !== "") {
             dispatch(getBalance({
                 baseURL: chainInfo.lcd,
                 address: address,
                 denom: chainInfo?.currencies[0].coinMinimalDenom
             }))
-        }
-        
-        if (address !== null > 0 && connected) {
+       
             dispatch(getDelegations({
                 baseURL: chainInfo.lcd,
                 address: address,
             }))
-        }
         
-        if (address !== null > 0 && connected) {
             dispatch(getDelegatorTotalRewards({
                 baseURL: chainInfo.lcd,
                 address: address,
             }))
-        }
         
-        if (address !== null > 0 && connected) {
             dispatch(getUnbonding({
                 baseURL: chainInfo.lcd,
                 address: address,

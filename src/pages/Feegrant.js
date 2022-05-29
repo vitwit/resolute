@@ -20,7 +20,7 @@ import Chip from '@mui/material/Chip';
 import { getTypeURLName, shortenAddress } from '../utils/util';
 import { getLocalTime } from './../utils/datetime'
 import { useNavigate } from "react-router-dom";
-import { StyledTableCell, StyledTableRow } from './table';
+import { StyledTableCell, StyledTableRow } from './../components/CustomTable';
 import { Link, Typography } from '@mui/material';
 import { FeegrantInfo } from '../components/FeegrantInfo';
 import Switch from '@mui/material/Switch';

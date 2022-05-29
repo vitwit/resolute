@@ -29,7 +29,7 @@ export function CustomAppBar(props) {
                     sx={{ flexGrow: 1 }}
                     align='left'
                 >
-                    Staking UI
+                    Staking
                 </Typography>
                 <IconButton
                     aria-label='mode'

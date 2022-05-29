@@ -75,21 +75,20 @@ const mdTheme = (isDarkMode) => createTheme({
 });
 
 function DashboardContent() {
+    const [isConnected, setConnected] = React.useState(Boolean(localStorage.getItem('IS_LOGIN')) === true ? true: false)
+    
     const [snackOpen, setSnackClose] = React.useState(false);
-    const [isLogin, setLogin] = React.useState(localStorage.getItem('IS_LOGIN'));
-    const [darkMode, setDarkMode] = React.useState(localStorage.getItem('DARK_MODE') == true ? true : false)
-
     const showSnack = (value) => {
         setSnackClose(value);
     }
-
+    
+    const [darkMode, setDarkMode] = React.useState(Boolean(localStorage.getItem('DARK_MODE')) === true ? true : false);
     const onModeChange = () => {
         localStorage.setItem('DARK_MODE', !darkMode);
         setDarkMode(!darkMode);
     }
 
     const [snackTxOpen, setSnackTxClose] = React.useState(false);
-
     const showTxSnack = (value) => {
         setSnackTxClose(value);
     }
@@ -100,30 +99,29 @@ function DashboardContent() {
         setNetwork(network);
     };
 
+    const wallet = useSelector((state) => state.wallet)
     React.useEffect(() => {
-        window.addEventListener("keplr_keystorechange", () => {
-            if (!walletConnected) {
-                if (isLogin) {
-                    disconnectWallet()
-                    setTimeout(() => {
-                        connectWallet(selectedNetwork)
-                    }, 1000);
-                }
-            }
-        });
-    });
+        setDarkMode(darkMode);
 
-    const walletConnected = useSelector((state) => state.wallet.connected)
-    const walletStatus = useSelector((state) => state.wallet)
+        const listener = () => {
+            if (wallet.connected && isConnected) {
+                disconnectWallet();
+            }
+            setTimeout(() => {
+                if (isConnected) connectWallet(selectedNetwork)
+            }, 1000);
+        }
+        window.addEventListener("keplr_keystorechange", listener);
+        return () => {
+            window.removeEventListener("keplr_keystorechange", listener);
+        }
+    }, []);
+
     const chainInfo = useSelector((state) => state.wallet.chainInfo)
     const dispatch = useDispatch()
 
     const errState = useSelector((state) => state.common.errState);
     const txSuccess = useSelector((state) => state.common.txSuccess);
-
-    React.useEffect(() => {
-        setDarkMode(darkMode);
-    }, []);
 
     React.useEffect(() => {
         if (errState.message === '') {
@@ -142,23 +140,18 @@ function DashboardContent() {
     }, [txSuccess]);
 
     React.useEffect(() => {
-        if (!walletConnected) {
-            if (isLogin) {
-                connectWallet(selectedNetwork)
-            }
-        }
-    }, [walletConnected]);
+        if (!wallet.connected && isConnected) connectWallet(selectedNetwork)
+    }, [wallet]);
 
     const handleNetworkChange = (network) => {
-        changeNetwork(network)
-        disconnectWallet()
-        connectWallet(network)
+        dispatch(resetWallet());
+        changeNetwork(network);
     }
 
     function disconnectWallet() {
-        setLogin(false)
-        localStorage.setItem('IS_LOGIN', false);
-        dispatch(resetWallet())
+        localStorage.removeItem('IS_LOGIN');
+        setConnected(false);
+        dispatch(resetWallet());
     }
 
     let navigate = useNavigate();
@@ -180,16 +173,12 @@ function DashboardContent() {
             if (network.experimental) {
                 window.keplr.experimentalSuggestChain(network.config)
                     .then((v) => {
-                        setLogin(true);
-                        localStorage.setItem('IS_LOGIN', true);
                         enableConnection(network)
                     })
                     .catch((error) => {
                         alert(error);
                     })
             } else {
-                setLogin(true);
-                localStorage.setItem('IS_LOGIN', true);
                 enableConnection(network)
             }
         }
@@ -199,6 +188,8 @@ function DashboardContent() {
     const enableConnection = (network) => {
         getKeplrWalletAmino(network.chainId)
             .then((result) => {
+                setConnected(true);
+                localStorage.setItem('IS_LOGIN', true);
                 dispatch(setWallet({
                     address: result[1].address,
                     chainInfo: network
@@ -230,10 +221,10 @@ function DashboardContent() {
                     <Toolbar />
                     <List component="nav" style={{ minHeight: 120 }}>
                         {
-                            walletConnected ?
+                            wallet.connected ?
                                 <>
                                     <ListItem>
-                                        <Chip label={shortenAddress(walletStatus.address, 21)} size="small" />
+                                        <Chip label={shortenAddress(wallet.address, 21)} size="small" />
                                     </ListItem>
                                     <ListItem style={{ justifyContent: 'center' }}>
                                         <Button
