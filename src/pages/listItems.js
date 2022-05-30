@@ -41,6 +41,13 @@ export function mainListItems(onNavigate) {
       </ListItemIcon>
       <ListItemText primary="Feegrant" />
     </ListItemButton>
+
+    <ListItemButton onClick={() => onNavigate("/airdrop-check")}>
+      <ListItemIcon>
+        <LayersIcon />
+      </ListItemIcon>
+      <ListItemText primary="Airdrop" />
+    </ListItemButton>
   </React.Fragment >
 );
 }

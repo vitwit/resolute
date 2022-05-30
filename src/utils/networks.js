@@ -98,6 +98,67 @@ export function getNetworks() {
                 },
                 walletUrlForStaking: 'http://localhost:1317/stake',
             }
+        },
+        {
+            chainId: "test-chain",
+            displayName: "Passage",
+            experimental: true,
+            lcd: 'http://192.168.1.20:1317',
+            rpc: 'http://192.168.1.20:26657',
+            txHashEndpoint: 'https://www.mintscan.io/passage/txs/',
+            currencies: [
+                {
+                    coinDenom: 'PASG',
+                    coinMinimalDenom: 'upasg',
+                    coinDecimals: 6,
+                },
+            ],
+            config: {
+                chainId: "test-chain",
+                chainName: "Passage-test",
+                rpc: 'http://192.168.1.20:26657',
+                rest: 'http://192.168.1.20:1317',
+                stakeCurrency: {
+                    coinDenom: 'PASG',
+                    coinMinimalDenom: 'upasg',
+                    coinDecimals: 6,
+                    coinGeckoId: 'passage3d',
+                },
+                bip44: {
+                    coinType: 118,
+                },
+                bech32Config: {
+                    bech32PrefixAccAddr: `pasg`,
+                    bech32PrefixAccPub: `pasgpub`,
+                    bech32PrefixValAddr: `pasgvaloper`,
+                    bech32PrefixValPub: `pasgvaloperpub`,
+                    bech32PrefixConsAddr: `pasgvalcons`,
+                    bech32PrefixConsPub: `pasgvalconspub`,
+                },
+                currencies: [
+                    {
+                        coinDenom: 'PASG',
+                        coinMinimalDenom: 'upasg',
+                        coinDecimals: 6,
+                        coinGeckoId: 'passage',
+                    },
+                ],
+                feeCurrencies: [
+                    {
+                        coinDenom: 'PASG',
+                        coinMinimalDenom: 'upasg',
+                        coinDecimals: 6,
+                        coinGeckoId: 'passage',
+                    },
+                ],
+                coinType: 118,
+                gasPriceStep: {
+                    low: 0.00,
+                    average: 0.0025,
+                    high: 0.004,
+                },
+                walletUrlForStaking: 'http://localhost:1317/stake',
+            }
         }
     ]
 

@@ -319,9 +319,8 @@ export function Validators() {
                 <MenuItem title='redelegate' onClick={handleStakingAction}>Redelegate</MenuItem>
             </Menu>
             {
-                delegations?.delegations.length > 0 ?
-                    <>
-                        <DialogDelegate
+                availableBalance > 0 ?
+                <DialogDelegate
                             open={stakingOpen}
                             onClose={handleDialogClose}
                             validator={selectedValidator}
@@ -330,6 +329,13 @@ export function Validators() {
                             onDelegate={onDelegateTx}
                             loading={txStatus.status}
                         />
+                        :
+                        <></>
+            }
+            {
+                delegations?.delegations.length > 0 ?
+                    <>
+                        
 
                         <DialogUndelegate
                             open={undelegateOpen}
