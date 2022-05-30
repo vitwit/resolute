@@ -32,10 +32,20 @@ import Overview from './Overview';
 import { Send } from './Send';
 import { getKeplrWalletAmino, isKeplrInstalled } from '../txns/execute';
 import { CustomAppBar } from '../components/CustomAppBar';
+import AirdropEligibility from './AirdropEligibility';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
+
+function isDarkMode() {
+    const mode = localStorage.getItem("DARK_MODE");
+     if (mode === "true") {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 const drawerWidth = 210;
 
@@ -74,14 +84,14 @@ const mdTheme = (isDarkMode) => createTheme({
 });
 
 function DashboardContent() {
-    const [isConnected, setConnected] = React.useState(Boolean(localStorage.getItem('IS_LOGIN')) === true ? true: false)
+    const [isConnected, setConnected] = React.useState(localStorage.getItem('IS_LOGIN') === "true" ? true: false)
     
     const [snackOpen, setSnackClose] = React.useState(false);
     const showSnack = (value) => {
         setSnackClose(value);
     }
     
-    const [darkMode, setDarkMode] = React.useState(Boolean(localStorage.getItem('DARK_MODE')) === true ? true : false);
+    const [darkMode, setDarkMode] = React.useState(isDarkMode());
     const onModeChange = () => {
         localStorage.setItem('DARK_MODE', !darkMode);
         setDarkMode(!darkMode);
@@ -288,6 +298,7 @@ function DashboardContent() {
                             <Route path="/validators" element={<Validators />}></Route>
                             <Route path="/proposals" element={<Proposals />}></Route>
                             <Route path="/send" element={<Send />}></Route>
+                            <Route path="/airdrop-check" element={<AirdropEligibility />}></Route>
                         </Routes>
                     </Container>
                 </Box>
