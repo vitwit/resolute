@@ -146,6 +146,7 @@ function DashboardContent() {
     const handleNetworkChange = (network) => {
         dispatch(resetWallet());
         changeNetwork(network);
+        enableConnection(network);
     }
 
     function disconnectWallet() {

@@ -206,6 +206,8 @@ export const authzSlice = createSlice({
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
         state.grantsToMe.status = 'rejected';
+        state.grantsToMe.grants = []
+        state.grantsToMe.pagination = {}
         state.grantsToMe.errMsg = action.error.message
       })
 
@@ -223,6 +225,8 @@ export const authzSlice = createSlice({
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
         state.grantsByMe.status = 'rejected';
+        state.grantsByMe.grants = []
+        state.grantsByMe.pagination = {}
         state.grantsByMe.errMsg = action.error.message
       })
 
