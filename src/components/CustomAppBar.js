@@ -8,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button'
 import { IconButton } from '@mui/material';
-import BrightnessLowOutlined from '@mui/icons-material/BrightnessLowOutlined';
+import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import PropTypes from 'prop-types';
 
@@ -35,7 +35,7 @@ export function CustomAppBar(props) {
                     aria-label='mode'
                     onClick={() => props.onModeChange()}
                 >
-                    {props.darkMode ? <BrightnessLowOutlined /> : <DarkModeOutlined />}
+                    {props.darkMode ? <LightModeOutlined /> : <DarkModeOutlined />}
 
                 </IconButton>
                 <Button

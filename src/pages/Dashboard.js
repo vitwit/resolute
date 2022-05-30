@@ -30,7 +30,6 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Overview from './Overview';
 import { Send } from './Send';
-import { WithdrawRewards } from './WithdrawRewards';
 import { getKeplrWalletAmino, isKeplrInstalled } from '../txns/execute';
 import { CustomAppBar } from '../components/CustomAppBar';
 
@@ -289,7 +288,6 @@ function DashboardContent() {
                             <Route path="/validators" element={<Validators />}></Route>
                             <Route path="/proposals" element={<Proposals />}></Route>
                             <Route path="/send" element={<Send />}></Route>
-                            <Route path="/withdraw-rewards" element={<WithdrawRewards />}></Route>
                         </Routes>
                     </Container>
                 </Box>

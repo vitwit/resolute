@@ -11,7 +11,6 @@ export const WithdrawRewards = () => {
     });
 
     const onSubmit = data => {
-        console.log(data);
     };
 
     return (

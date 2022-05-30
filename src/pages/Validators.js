@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     getValidators, resetState, getDelegations, sortValidatorsByVotingPower, getParams,
-     txDelegate, txUnDelegate, txReDelegate
+    txDelegate, txUnDelegate, txReDelegate
 } from '../features/staking/stakeSlice';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -21,6 +21,7 @@ import {
     resetError, setTxHash, resetTxHash, setError
 } from './../features/common/commonSlice';
 import { DialogRedelegate } from '../components/DialogRedelegate';
+import { WitvalValidator } from '../components/WitvalValidator';
 
 export function Validators() {
     const [type, setType] = useState('delegations');
@@ -202,7 +203,7 @@ export function Validators() {
         dispatch(txDelegate({
             delegator: address,
             validator: data.validator,
-            amount: data.amount*(10**currency.coinDecimals),
+            amount: data.amount * (10 ** currency.coinDecimals),
             denom: currency.coinMinimalDenom,
             memo: "",
             chainId: chainInfo.chainId,
@@ -215,7 +216,7 @@ export function Validators() {
         dispatch(txUnDelegate({
             delegator: address,
             validator: data.validator,
-            amount: data.amount*(10**currency.coinDecimals),
+            amount: data.amount * (10 ** currency.coinDecimals),
             denom: currency.coinMinimalDenom,
             memo: "",
             chainId: chainInfo.chainId,
@@ -230,7 +231,7 @@ export function Validators() {
             delegator: address,
             srcVal: data.src,
             destVal: data.dest,
-            amount: data.amount*(10**currency.coinDecimals),
+            amount: data.amount * (10 ** currency.coinDecimals),
             denom: currency.coinMinimalDenom,
             memo: "",
             chainId: chainInfo.chainId,
@@ -263,6 +264,11 @@ export function Validators() {
                     Validators
                 </Button>
             </ButtonGroup>
+            <WitvalValidator
+                validators={validators}
+                onMenuAction={onMenuAction}
+            />
+            <br/>
             {
                 type === 'delegations' ?
                     <MyDelegations

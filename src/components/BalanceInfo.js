@@ -3,7 +3,6 @@ import Grid from '@mui/material/Grid';
 import CssBaseline from '@mui/material/CssBaseline';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 
@@ -15,22 +14,11 @@ export default function BalanceInfo(props) {
 
     return (
         <>
-            <Paper elevation={0} spacing={2} style={{ padding: 24 }}>
-                <div style={{ textAlign: 'right' }}>
-                    <Button
-                        variant='contained'
-                        size='small'
-                        disableElevation
-                        onClick={() => navigateTo("/send")}
-                        disabled={props.balance <= 0.0001}
-                    >
-                        Send
-                    </Button>
-                </div>
-                <br />
-                <CssBaseline />
-                <Grid container>
-                    <Grid item xs={12} md={3}>
+            <br/><br/><br/>
+            <CssBaseline />
+            <Grid container spacing={3}>
+                <Grid item xs={6} md={3}>
+                    <Paper elevation={0} style={{ padding: 24 }}>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <Typography
                                 variant='h6'
@@ -43,42 +31,48 @@ export default function BalanceInfo(props) {
                             <Typography
                                 variant='h5'
                                 fontWeight={500}
+                                gutterBottom
                                 style={{ textAlign: 'left' }}
                                 color='text.primary'
                             >
                                 {(parseFloat(props.balance) + parseFloat(props.delegations) + parseFloat(props.rewards) + parseFloat(props.unbonding)).toFixed(5).toLocaleString()}
                             </Typography>
                         </div>
-                    </Grid>
-                    <Grid item xs={12} md={9}
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between'
-                        }
-                        }
-                    >
+                    </Paper>
+                </Grid>
+                <Grid item xs={6} md={2}>
+                    <Paper elevation={0} spacing={4} style={{ padding: 24 }}>
                         <Balance
                             balance={props.balance}
                             title="Available"
                         />
-
+                    </Paper>
+                </Grid>
+                <Grid item xs={6} md={2}>
+                    <Paper elevation={0} spacing={2} style={{ padding: 24 }}>
                         <Balance
                             balance={props.rewards}
                             title="Rewards"
                         />
+                    </Paper>
+                </Grid>
+                <Grid item xs={6} md={2}>
+                    <Paper elevation={0} spacing={2} style={{ padding: 24 }}>
                         <Balance
                             balance={props.delegations}
                             title="Delegated"
                         />
+                    </Paper>
+                </Grid>
+                <Grid item xs={6} md={2}>
+                    <Paper elevation={0} spacing={2} style={{ padding: 24 }}>
                         <Balance
                             balance={props.unbonding}
                             title="Unbonding"
                         />
-
-                    </Grid>
+                    </Paper>
                 </Grid>
-            </Paper>
+            </Grid>
         </>
     );
 }
@@ -90,9 +84,6 @@ BalanceInfo.propTypes = {
     rewards: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     unbonding: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
 };
-
-
-
 
 function Balance(props) {
     return (
@@ -114,7 +105,6 @@ function Balance(props) {
             >
                 {props.balance}
             </Typography>
-
         </div>
     );
 }

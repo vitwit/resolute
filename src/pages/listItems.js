@@ -17,6 +17,12 @@ export function mainListItems(onNavigate) {
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItemButton>
+    <ListItemButton onClick={() => onNavigate("/send")}>
+      <ListItemIcon>
+        <DashboardIcon />
+      </ListItemIcon>
+      <ListItemText primary="Send" />
+    </ListItemButton>
     <ListItemButton onClick={() => onNavigate("/validators")}>
       <ListItemIcon>
         <BarChartOutlinedIcon />
