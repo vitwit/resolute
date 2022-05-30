@@ -7,6 +7,7 @@ import bankReducer from '../features/bank/bankSlice';
 import walletSlice from '../features/wallet/walletSlice';
 import commonSlice from '../features/common/commonSlice';
 import distributionSlice from '../features/distribution/distributionSlice';
+import airdropSlice from '../features/airdrop/airdropSlice';
 
 export const store = configureStore({
   reducer: {
@@ -18,5 +19,6 @@ export const store = configureStore({
     authz: authzReducer,
     common: commonSlice,
     distribution: distributionSlice,
+    airdrop: airdropSlice,
   },
 });
