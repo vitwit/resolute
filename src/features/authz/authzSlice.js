@@ -177,16 +177,15 @@ export const authzSlice = createSlice({
   reducers: {
     resetAlerts: (state) => {
       state.tx = {
-        grant: {
           status: 'idle',
-          errMsg: '',
-          txHash: '',
-        },
-        revoke: {
-          status: 'idle',
-          errMsg: '',
-          txHash: '',
-        }
+      }
+      state.grantsToMe = {
+        status: 'idle',
+        errMsg: ''
+      }
+      state.grantsByMe = {
+        status: 'idle',
+        errMsg: ''
       }
     }
   },

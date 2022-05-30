@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { amountToMinimalValue } from '../utils/util';
 import { txAuthzGeneric, txAuthzSend, resetAlerts } from '../features/authz/authzSlice';
 import {
-    resetError, setTxHash, resetTxHash, setError
+    resetError, resetTxHash, setError
 } from './../features/common/commonSlice';
 import InputAdornment from '@mui/material/InputAdornment';
 
@@ -24,14 +24,26 @@ export default function NewAuthz() {
     const address = useSelector((state) => state.wallet.address);
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
     const authzTx = useSelector((state) => state.authz.tx);
+    const grantsToMe = useSelector((state) => state.authz.grantsToMe);
+    const grantsByMe = useSelector((state) => state.authz.grantsByMe);
     const dispatch = useDispatch();
 
 
     useEffect(() => {
-        if (address && address.length === 0) {
-
+        if (grantsToMe.errMsg !== "" && grantsToMe.status === "rejected") {
+            dispatch(setError({
+                type: "error",
+                message: grantsToMe.errMsg
+            }))
         }
-    }, [address]);
+
+        if (grantsByMe.errMsg !== "" && grantsByMe.status === "rejected") {
+            dispatch(setError({
+                type: "error",
+                message: grantsByMe.errMsg
+            }))
+        }
+    }, [grantsByMe.errMsg, grantsToMe.errMsg]);
 
     useEffect(() => {
         dispatch(resetAlerts());
@@ -83,21 +95,6 @@ export default function NewAuthz() {
     const onChange = (type) => {
         setSelected(type);
     }
-
-    useEffect(() => {
-        if (authzTx?.txHash !== '') {
-            dispatch(setTxHash({
-                hash: authzTx?.txHash,
-            }))
-        }
-
-        if (authzTx?.errMsg !== '') {
-            dispatch(setError({
-                type: 'error',
-                message: authzTx?.errMsg
-            }))
-        }
-    }, [authzTx]);
 
     return (
         <>

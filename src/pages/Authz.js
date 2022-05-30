@@ -168,7 +168,7 @@ export default function Authz() {
               (
                 <>
                   {
-                    grantsByMe.grants.length === 0 ?
+                    grantsByMe?.grants.length === 0 ?
                       <Typography
                         variant='h6'
                         color="text.primary"
@@ -231,7 +231,7 @@ export default function Authz() {
               (
                 <>
                   {
-                    grantsToMe.grants.length === 0 ?
+                    grantsToMe?.grants.length === 0 ?
 
                       <Typography
                         variant='h6'
