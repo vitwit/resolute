@@ -23,6 +23,7 @@ export function CustomAppBar(props) {
     return (
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Toolbar>
+                <img src="white-logo.png" />
                 <Typography
                     component="h1"
                     variant="h6"
@@ -31,7 +32,6 @@ export function CustomAppBar(props) {
                     sx={{ flexGrow: 1 }}
                     align='left'
                 >
-                    Staking
                 </Typography>
                 <IconButton
                     aria-label='mode'

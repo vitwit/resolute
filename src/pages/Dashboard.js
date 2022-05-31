@@ -155,7 +155,7 @@ function DashboardContent() {
     const handleNetworkChange = (network) => {
         dispatch(resetWallet());
         changeNetwork(network);
-        enableConnection(network);
+        if (isConnected)  enableConnection(network);
     }
 
     function disconnectWallet() {
@@ -271,7 +271,7 @@ function DashboardContent() {
                     </List>
                     <Divider />
                     <List component="nav">
-                        {mainListItems((path) => { navigateTo(path) })}
+                        {mainListItems((path) => { navigateTo(path) }, selectedNetwork?.showAirdrop)}
                     </List>
 
                 </Drawer>

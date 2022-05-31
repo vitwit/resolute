@@ -4,6 +4,7 @@ export function getMainNetworks() {
         {
             chainId: "cosmoshub-4",
             displayName: "Cosmos Hub",
+            showAirdrop: false,
             src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
             experimental: false,
             testnet: false,
@@ -25,6 +26,7 @@ export function getMainNetworks() {
         {
             chainId: "osmosis-1",
             displayName: "Osmosis",
+            showAirdrop: false,
             src: "https://www.mintscan.io/_next/static/image/assets/header/token_osmosis.4ea84e0bafc2ce3c619fc5c2290d6c29.svg",
             experimental: false,
             testnet: false,
@@ -115,6 +117,7 @@ export function getTestNetworks() {
             chainId: "passage-testnet-1",
             displayName: "Passage-Testnet",
             experimental: true,
+            showAirdrop: true,
             src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
             testnet: true,
             lcd: 'https://api.passage3d.vitwit.com/',
@@ -198,6 +201,7 @@ export function getSelectedNetwork() {
         }
     }
 
+    saveSelectedNetwork(testNets[0].displayName)
     return mainNets.length > 0 ? testNets[0] : null
 }
 

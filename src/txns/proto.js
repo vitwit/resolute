@@ -310,3 +310,14 @@ export function Redelegate(delegator, sourceAddr,destinationAddr,  amount, denom
         }),
     }
 }
+
+
+export function AirdropClaim(address) {
+    return {
+        typeUrl: '/passage3d.claim.v1beta1.MsgClaim',
+        value: {
+            sender: address,
+            claimAction: "ActionInitialClaim"
+        },
+    }
+}

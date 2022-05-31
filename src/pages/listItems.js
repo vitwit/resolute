@@ -8,7 +8,7 @@ import LayersIcon from '@mui/icons-material/Layers';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import DocumentScannerOutlinedIcon from '@mui/icons-material/DocumentScannerOutlined';
 
-export function mainListItems(onNavigate) {
+export function mainListItems(onNavigate, showAirdrop) {
   return (
   <React.Fragment>
     <ListItemButton onClick={() => onNavigate("/")}>
@@ -48,12 +48,17 @@ export function mainListItems(onNavigate) {
       <ListItemText primary="Feegrant" secondary="coming soon" />
     </ListItemButton>
 
+  { showAirdrop ?
     <ListItemButton onClick={() => onNavigate("/airdrop-check")}>
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>
       <ListItemText primary="Airdrop" />
     </ListItemButton>
+
+    :
+    <></>
+  }
   </React.Fragment >
 );
 }

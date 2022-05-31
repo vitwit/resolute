@@ -39,3 +39,13 @@
 .button-capitalize-title {
         text-transform: none !important;
 }
+
+
+.claim-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 16px;
+        margin-top: 8px;
+        box-shadow: 1px 1px 12px 0px rgb(0 0 0 / 3%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+}
