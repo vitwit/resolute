@@ -1,5 +1,5 @@
 import React from 'react';
-import { getNetworks } from '../utils/networks';
+import { getMainNetworks, getTestNetworks } from '../utils/networks';
 import AppBar from '@mui/material/AppBar';
 import Typography from '@mui/material/Typography';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
@@ -7,10 +7,12 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button'
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import PropTypes from 'prop-types';
+import DividerWithText from './DividerWithText';
+import { ListItemIcon, ListItemText } from '@mui/material';
 
 export function CustomAppBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -65,7 +67,7 @@ export function CustomAppBar(props) {
                     }}
                 >
                     {
-                        getNetworks().map((network, index) => (
+                        getMainNetworks().map((network, index) => (
                             <MenuItem
                                 key={index}
                                 onClick={() => {
@@ -74,10 +76,41 @@ export function CustomAppBar(props) {
                                 }
                                 }
                             >
-                                {network.displayName}
+                                <ListItemIcon>
+                                    <img src={network?.src} />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    {network.displayName}
+                                </ListItemText>
                             </MenuItem>
                         ))
                     }
+                    {
+                        getTestNetworks().length > 0 ?
+                            <DividerWithText > Testnets </DividerWithText>
+                            :
+                            <></>
+                    }
+                    {
+                        getTestNetworks().map((network, index) => (
+                            <MenuItem
+                                key={index}
+                                onClick={() => {
+                                    setAnchorEl(null);
+                                    props.onNetworkChange(network)
+                                }
+                                }
+                            >
+                                <ListItemIcon>
+                                    <img src={network?.src} />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    {network.displayName}
+                                </ListItemText>
+                            </MenuItem>
+                        ))
+                    }
+
                 </Menu>
             </Toolbar>
         </AppBar>

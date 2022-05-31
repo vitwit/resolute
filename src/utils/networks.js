@@ -1,14 +1,16 @@
 
-export function getNetworks() {
+export function getMainNetworks() {
     return [
         {
             chainId: "cosmoshub-4",
             displayName: "Cosmos Hub",
+            src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
             experimental: false,
+            testnet: false,
             lcd: "https://cosmos.api.ping.pub",
             rpc: "https://rpc-cosmoshub.blockapsis.com:443",
             txHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
-
+            
             currencies: [
                 {
                     coinDenom: 'ATOM',
@@ -23,7 +25,9 @@ export function getNetworks() {
         {
             chainId: "osmosis-1",
             displayName: "Osmosis",
+            src: "https://www.mintscan.io/_next/static/image/assets/header/token_osmosis.4ea84e0bafc2ce3c619fc5c2290d6c29.svg",
             experimental: false,
+            testnet: false,
             lcd: "https://osmo.api.ping.pub",
             rpc: "https://osmosis.validator.network",
             txHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
@@ -37,11 +41,19 @@ export function getNetworks() {
             config: {
                 gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 }
             }
-        },
+        }
+    ]
+
+}
+
+export function getTestNetworks() {
+    return [
         {
             chainId: "testnet",
             displayName: "Simapp",
             experimental: true,
+            src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
+            testnet: true,
             lcd: 'http://localhost:1317',
             rpc: 'http://localhost:26657',
             txHashEndpoint: 'https://www.mintscan.io/simapp/txs/',
@@ -103,6 +115,8 @@ export function getNetworks() {
             chainId: "test-chain",
             displayName: "Passage",
             experimental: true,
+            src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
+            testnet: true,
             lcd: 'http://192.168.1.20:1317',
             rpc: 'http://192.168.1.20:26657',
             txHashEndpoint: 'https://www.mintscan.io/passage/txs/',
@@ -161,22 +175,30 @@ export function getNetworks() {
             }
         }
     ]
-
 }
 
 export function getSelectedNetwork() {
     let name = localStorage.getItem('LAST_SELECTED')
-    let networks = getNetworks()
+    let mainNets = getMainNetworks()
 
     if (name != null) {
-        for (let i = 0; i < networks.length; i++) {
-            if (networks[i].displayName === name) {
-                return networks[i]
+        for (let i = 0; i < mainNets.length; i++) {
+            if (mainNets[i].displayName === name) {
+                return mainNets[i]
             }
         }
     }
 
-    return networks[0]
+    let testNets = getTestNetworks()
+    if (name != null) {
+        for (let i = 0; i < testNets.length; i++) {
+            if (testNets[i].displayName === name) {
+                return testNets[i]
+            }
+        }
+    }
+
+    return mainNets.length > 0 ? mainNets[0] : null
 }
 
 

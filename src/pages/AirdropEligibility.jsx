@@ -7,13 +7,20 @@ import TextField from '@mui/material/TextField';
 import { Typography, CircularProgress } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { getClaimRecords, resetState } from './../features/airdrop/airdropSlice';
-import { getNetworks } from '../utils/networks';
+import { getMainNetworks, getTestNetworks } from '../utils/networks';
 import { resetError, setError } from '../features/common/commonSlice';
 
 function getPasgNetwork() {
-    const networks = getNetworks();
-    for (let i=0;i<networks.length;i++) {
-        const network = networks[i];
+    const mainNetworks = getMainNetworks();
+    const testNetworks = getTestNetworks();
+    for (let i=0;i<mainNetworks.length;i++) {
+        const network = mainNetworks[i];
+        if (network.currencies[0].coinMinimalDenom === "upasg") {
+            return network;
+        }
+    }
+    for (let i=0;i<testNetworks.length;i++) {
+        const network = testNetworks[i];
         if (network.currencies[0].coinMinimalDenom === "upasg") {
             return network;
         }

@@ -25,7 +25,7 @@ export function WitvalValidator(props) {
 
     useEffect(() => {
         getWitvalValidator();
-    }, [])
+    }, [validators])
 
     return (
         <>
