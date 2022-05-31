@@ -17,17 +17,17 @@ export function mainListItems(onNavigate) {
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItemButton>
-    <ListItemButton onClick={() => onNavigate("/send")}>
+    {/* <ListItemButton onClick={() => onNavigate("/send")}>
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
       <ListItemText primary="Send" />
-    </ListItemButton>
+    </ListItemButton> */}
     <ListItemButton onClick={() => onNavigate("/validators")}>
       <ListItemIcon>
         <BarChartOutlinedIcon />
       </ListItemIcon>
-      <ListItemText primary="Validators" />
+      <ListItemText primary="Staking" />
     </ListItemButton>
     <ListItemButton onClick={() => onNavigate("/proposals")}>
       <ListItemIcon>
@@ -35,17 +35,17 @@ export function mainListItems(onNavigate) {
       </ListItemIcon>
       <ListItemText primary="Proposals" />
     </ListItemButton>
-    <ListItemButton onClick={() => onNavigate("/authz")}>
+    <ListItemButton onClick={() => {}} disabled>
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
-      <ListItemText primary="Authz" />
+      <ListItemText primary="Authz" secondary="coming soon" />
     </ListItemButton>
-    <ListItemButton onClick={() => onNavigate("/feegrant")}>
+    <ListItemButton onClick={() => {}} disabled>
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>
-      <ListItemText primary="Feegrant" />
+      <ListItemText primary="Feegrant" secondary="coming soon" />
     </ListItemButton>
 
     <ListItemButton onClick={() => onNavigate("/airdrop-check")}>

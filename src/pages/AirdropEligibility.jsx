@@ -135,7 +135,7 @@ export default function AirdropEligibility() {
                                             color='text.primary'
                                             fontWeight={600}
                                         >
-                                            Total tokens: {getClaimableAmount(claimRecords?.claimable_amount)}
+                                            Claimable tokens: {getClaimableAmount(claimRecords?.claimable_amount)}
                                         </Typography>
                                         :
                                         <Typography
