@@ -73,14 +73,14 @@ export default function AirdropEligibility() {
     }, []);
 
     useEffect(() => {
-        if (status === 'idle') {
+        if (txStatus === 'idle') {
             if (walletAddress.length > 0)
                 dispatch(getClaimRecords({
                     baseURL: lcd,
                     address: walletAddress,
                 }))
         }
-    }, [status]);
+    }, [txStatus]);
 
 
     useEffect(() => {
@@ -286,7 +286,7 @@ export default function AirdropEligibility() {
                                     variant='contained'
                                     disableElevation
                                     onClick={() => {
-                                        navigateTo("/staking")
+                                        navigateTo("/validators")
                                     }}
                                     disabled={(claimRecords?.action_completed?.length > 0 && claimRecords?.action_completed[0] === false) ||
                                         (claimRecords?.action_completed.length > 0 && claimRecords?.action_completed[1] === true)}
