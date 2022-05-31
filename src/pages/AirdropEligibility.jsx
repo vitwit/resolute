@@ -48,6 +48,7 @@ export default function AirdropEligibility() {
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
     const status = useSelector((state) => state.airdrop.claimStatus);
     const errMsg = useSelector((state) => state.airdrop.errMsg);
+    const txStatus = useSelector((state) => state.airdrop.tx.status);
     const walletAddress = useSelector((state) => state.wallet.address);
     const { lcd, currencies } = getPasgNetwork();
     const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
@@ -65,7 +66,21 @@ export default function AirdropEligibility() {
                 baseURL: lcd
             }));
         }
+        return () => {
+            dispatch(resetError());
+            dispatch(resetState());
+        }
     }, []);
+
+    useEffect(() => {
+        if (claimStatus === 'idle') {
+            if (walletAddress.length > 0)
+                dispatch(getClaimRecords({
+                    baseURL: lcd,
+                    address: walletAddress,
+                }))
+        }
+    }, [claimStatus]);
 
 
     useEffect(() => {
@@ -169,7 +184,7 @@ export default function AirdropEligibility() {
                         >
                             {
                                 status === 'idle' ?
-                                 claimRecords.address?.length > 0 ?
+                                    claimRecords.address?.length > 0 ?
                                         <Typography
                                             variant='body1'
                                             color='text.primary'
@@ -185,8 +200,8 @@ export default function AirdropEligibility() {
                                         >
                                             You are not eligible for the Airdrop
                                         </Typography>
-                                        :
-                                        <></>
+                                    :
+                                    <></>
                             }
                         </div>
                     </Paper>
@@ -240,9 +255,20 @@ export default function AirdropEligibility() {
                                     onClick={() => {
                                         txAction1()
                                     }}
-                                    disabled={params?.airdrop_enabled === false && new Date(params?.airdrop_start_time) >= new Date()}
+                                    disabled={(params?.airdrop_enabled === false && new Date(params?.airdrop_start_time) >= new Date())
+                                        || (claimRecords?.action_completed.length > 0 && claimRecords?.action_completed[0] === true)
+                                        || txStatus === 'pending'}
                                 >
-                                    Claim
+                                    {
+                                        claimRecords?.action_completed.length === 3 && claimRecords?.action_completed[0] === true ?
+                                            `Claimed`
+                                            :
+
+                                            txStatus === 'pending' ?
+                                                <CircularProgress size={25} />
+                                                :
+                                                `Claim`
+                                    }
                                 </Button>
                             </Paper>
                             <Paper
@@ -262,9 +288,15 @@ export default function AirdropEligibility() {
                                     onClick={() => {
                                         navigateTo("/staking")
                                     }}
-                                    disabled={claimRecords?.action_completed?.length > 0 && claimRecords?.action_completed[0] === false}
+                                    disabled={(claimRecords?.action_completed?.length > 0 && claimRecords?.action_completed[0] === false) ||
+                                        (claimRecords?.action_completed.length > 0 && claimRecords?.action_completed[1] === true)}
                                 >
-                                    Claim
+                                    {
+                                        claimRecords?.action_completed.length === 3 && claimRecords?.action_completed[1] === true ?
+                                            `Claimed`
+                                            :
+                                            `Claim`
+                                    }
                                 </Button>
                             </Paper>
                             <Paper
@@ -284,9 +316,15 @@ export default function AirdropEligibility() {
                                     onClick={() => {
                                         navigateTo("/proposals")
                                     }}
-                                    disabled={claimRecords?.action_completed?.length > 0 && claimRecords?.action_completed[0] === false}
+                                    disabled={(claimRecords?.action_completed?.length > 0 && claimRecords?.action_completed[0] === false) ||
+                                        (claimRecords?.action_completed.length > 0 && claimRecords?.action_completed[2] === true)}
                                 >
-                                    Claim
+                                    {
+                                        claimRecords?.action_completed.length === 3 && claimRecords?.action_completed[2] === true ?
+                                            `Claimed`
+                                            :
+                                            `Claim`
+                                    }
                                 </Button>
                             </Paper>
                         </Paper>

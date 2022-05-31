@@ -11,6 +11,7 @@ import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz";
 import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
 import { Duration } from "cosmjs-types/google/protobuf/duration";
 import Long from "long";
+import { MsgClaim } from "./msg_claim";
 
 const msgSendTypeUrl = "/cosmos.bank.v1beta1.MsgSend";
 const msgAuthzGrantTypeUrl = "/cosmos.authz.v1beta1.MsgGrant";
@@ -315,9 +316,9 @@ export function Redelegate(delegator, sourceAddr,destinationAddr,  amount, denom
 export function AirdropClaim(address) {
     return {
         typeUrl: '/passage3d.claim.v1beta1.MsgClaim',
-        value: {
+        value: MsgClaim.fromPartial({
             sender: address,
-            claimAction: "ActionInitialClaim"
-        },
+            claim_action:"ActionInitialClaim" 
+        }),
     }
 }
