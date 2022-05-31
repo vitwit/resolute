@@ -73,14 +73,14 @@ export default function AirdropEligibility() {
     }, []);
 
     useEffect(() => {
-        if (claimStatus === 'idle') {
+        if (status === 'idle') {
             if (walletAddress.length > 0)
                 dispatch(getClaimRecords({
                     baseURL: lcd,
                     address: walletAddress,
                 }))
         }
-    }, [claimStatus]);
+    }, [status]);
 
 
     useEffect(() => {
