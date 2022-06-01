@@ -7,7 +7,7 @@ import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import { formatVotingPower } from '../utils/denom';
-import { Typography } from '@mui/material';
+import Typography from '@mui/material/Typography';
 
 export function WitvalValidator(props) {
     const { validators, onMenuAction } = props;

@@ -9,7 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import { formatValidatorStatus } from '../utils/util';
 import Typography from '@mui/material/Typography';
 import { useSelector } from 'react-redux';
-import { CircularProgress } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export function MyDelegations(props) {
     const { delegations, validators, onDelegationAction, currency, rewards } = props;

@@ -8,8 +8,8 @@ import Button from '@mui/material/Button';
 import PropTypes from 'prop-types';
 import TextField from '@mui/material/TextField';
 import { useForm, Controller } from "react-hook-form";
-import { useDispatch, useSelector } from 'react-redux';
-import { CircularProgress } from '@mui/material';
+import { useSelector } from 'react-redux';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export function PeriodicFeegrant(props) {
     const {loading, onGrant} = props;
