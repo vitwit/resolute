@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     getValidators, resetState, getDelegations, sortValidatorsByVotingPower, getParams,
-    txDelegate, txUnDelegate, txReDelegate
+    txDelegate, txUnDelegate, txReDelegate, resetTxType
 } from '../features/staking/stakeSlice';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -12,8 +12,6 @@ import { InActiveValidators } from '../components/InActiveValidators';
 import { MyDelegations } from '../components/Delegations';
 import { getDelegatorTotalRewards, txWithdrawAllRewards, resetTx } from '../features/distribution/distributionSlice';
 import { totalBalance } from '../utils/denom';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import { DialogDelegate } from '../components/DialogDelegate';
 import { getBalance } from '../features/bank/bankSlice';
 import { DialogUndelegate } from '../components/DialogUndelegate';
@@ -50,26 +48,14 @@ export function Validators() {
         setRedelegateOpen(false);
     };
 
-
     const [selectedValidator, setSelectedValidator] = useState({});
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-    const handleClose = (e) => {
-        setAnchorEl(null);
-    };
-
-    const onMenuAction = (e, validator) => {
-        setAnchorEl(e.currentTarget);
+    const onMenuAction = (e, type, validator) => {
         setSelectedValidator(validator);
-    }
-
-    const handleStakingAction = (e) => {
-        setAnchorEl(null);
-        switch (e.target.title) {
-            case 'delegate':
-                setStakingOpen(true);
-                break;
-            case 'undelegate':
+        switch (type) {
+            case "delegate":
+            setStakingOpen(true);
+            break
+            case "undelegate":
                 if (delegations?.delegations.length > 0) {
                     setUndelegateOpen(true);
                 } else {
@@ -78,8 +64,8 @@ export function Validators() {
                         message: "no delegations"
                     }))
                 }
-                break;
-            case 'redelegate':
+            break
+            case "redelegate":
                 let isValidRedelegation = false;
                 if (delegations?.delegations.length > 0) {
                     for (let i = 0; i < delegations?.delegations.length; i++) {
@@ -103,9 +89,9 @@ export function Validators() {
                         message: "no delegations present"
                     }))
                 }
-                break;
+            break
             default:
-                throw new Error("unknown option")
+                console.log("unsupported type")
         }
     }
 
@@ -202,6 +188,7 @@ export function Validators() {
 
     const onDelegateTx = (data) => {
         dispatch(txDelegate({
+            baseURL: chainInfo?.lcd,
             delegator: address,
             validator: data.validator,
             amount: data.amount * (10 ** currency.coinDecimals),
@@ -209,7 +196,7 @@ export function Validators() {
             memo: "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
-            feeAmount: chainInfo.gasPriceStep.average,
+            feeAmount: chainInfo?.config.gasPriceStep.average,
         }))
     }
 
@@ -222,9 +209,43 @@ export function Validators() {
             memo: "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
-            feeAmount: chainInfo.gasPriceStep.average,
+            feeAmount: chainInfo?.config.gasPriceStep.average,
         }))
     }
+
+    useEffect(() => {
+        if (txStatus.type.length > 0 && address.length > 0) {
+            switch(txStatus.type) {
+                case "delegate":
+                    dispatch(getDelegations({
+                        baseURL: chainInfo.lcd,
+                        address: address,
+                    }))
+                    dispatch(getBalance({
+                        baseURL: chainInfo.lcd,
+                        address: address,
+                        denom: chainInfo?.currencies[0].coinMinimalDenom
+                    }))
+                break
+                case "undelegate":
+                    dispatch(getDelegations({
+                        baseURL: chainInfo.lcd,
+                        address: address,
+                    }))
+                break
+                case "redelegate":
+                    dispatch(getDelegations({
+                        baseURL: chainInfo.lcd,
+                        address: address,
+                    }))
+                break
+                default:
+                    console.log("invalid type")
+                }
+                dispatch(resetTxType())
+                handleDialogClose()
+        }
+    }, [txStatus]);
 
     const onRedelegateTx = (data) => {
         dispatch(txReDelegate({
@@ -237,7 +258,7 @@ export function Validators() {
             memo: "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
-            feeAmount: chainInfo.gasPriceStep.average,
+            feeAmount: chainInfo?.config.gasPriceStep.average,
         }))
     }
 
@@ -311,20 +332,6 @@ export function Validators() {
                     )
             }
 
-
-            <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                }}
-            >
-                <MenuItem title='delegate' onClick={handleStakingAction}>Delegate</MenuItem>
-                <MenuItem title='undelegate' onClick={handleStakingAction}>Undelegate</MenuItem>
-                <MenuItem title='redelegate' onClick={handleStakingAction}>Redelegate</MenuItem>
-            </Menu>
             {
                 availableBalance > 0 ?
                 <DialogDelegate

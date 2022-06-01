@@ -28,9 +28,10 @@ const initialState = {
     errMsg: '',
     pagination: {},
   },
-  params:{},
+  params: {},
   tx: {
-    status: 'idle'
+    status: 'idle',
+    type: ''
   }
 };
 
@@ -38,7 +39,7 @@ export const txDelegate = createAsyncThunk(
   'staking/delegate',
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      const msg = Delegate(data.delegator,data.validator, data.amount, data.denom)
+      const msg = Delegate(data.delegator, data.validator, data.amount, data.denom)
       const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), "", data.chainId, data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
@@ -49,14 +50,14 @@ export const txDelegate = createAsyncThunk(
           baseURL: data.baseURL,
           address: data.delegator
         }))
-        return fulfillWithValue({txHash: result?.transactionHash});
-        } else {
-          dispatch(setError({
-            type: 'error',
-            message: result?.rawLog
-          }))
-          return rejectWithValue(result?.rawLog);
-        }
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(setError({
+          type: 'error',
+          message: result?.rawLog
+        }))
+        return rejectWithValue(result?.rawLog);
+      }
     } catch (error) {
       dispatch(setError({
         type: 'error',
@@ -71,7 +72,7 @@ export const txReDelegate = createAsyncThunk(
   'staking/redelegate',
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      const msg = Redelegate(data.delegator,data.srcVal, data.destVal, data.amount, data.denom)
+      const msg = Redelegate(data.delegator, data.srcVal, data.destVal, data.amount, data.denom)
       const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), "", data.chainId, data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
@@ -82,14 +83,14 @@ export const txReDelegate = createAsyncThunk(
           baseURL: data.baseURL,
           address: data.delegator
         }))
-        return fulfillWithValue({txHash: result?.transactionHash});
-        } else {
-          dispatch(setError({
-            type: 'error',
-            message: result?.rawLog
-          }))
-          return rejectWithValue(result?.rawLog);
-        }
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(setError({
+          type: 'error',
+          message: result?.rawLog
+        }))
+        return rejectWithValue(result?.rawLog);
+      }
     } catch (error) {
       dispatch(setError({
         type: 'error',
@@ -102,22 +103,22 @@ export const txReDelegate = createAsyncThunk(
 
 export const txUnDelegate = createAsyncThunk(
   'staking/undelegate',
-  async (data, { rejectWithValue, fulfillWithValue,dispatch }) => {
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      const msg = UnDelegate(data.delegator,data.validator, data.amount, data.denom)
+      const msg = UnDelegate(data.delegator, data.validator, data.amount, data.denom)
       const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), "", data.chainId, data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
         }))
-        return fulfillWithValue({txHash: result?.transactionHash});
-        } else {
-          dispatch(setError({
-            type: 'error',
-            message: result?.rawLog
-          }))
-          return rejectWithValue(result?.rawLog);
-        }
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(setError({
+          type: 'error',
+          message: result?.rawLog
+        }))
+        return rejectWithValue(result?.rawLog);
+      }
     } catch (error) {
       dispatch(setError({
         type: 'error',
@@ -147,7 +148,7 @@ export const getParams = createAsyncThunk(
 export const getDelegations = createAsyncThunk(
   'staking/delegations',
   async (data) => {
-    const response = await stakingService.delegations(data.baseURL,data.address, data.pagination);
+    const response = await stakingService.delegations(data.baseURL, data.address, data.pagination);
     return response.data;
   }
 );
@@ -155,7 +156,7 @@ export const getDelegations = createAsyncThunk(
 export const getUnbonding = createAsyncThunk(
   'staking/unbonding',
   async (data) => {
-    const response = await stakingService.unbonding(data.baseURL,data.address, data.pagination);
+    const response = await stakingService.unbonding(data.baseURL, data.address, data.pagination);
     return response.data;
   }
 );
@@ -165,6 +166,9 @@ export const stakeSlice = createSlice({
   name: 'staking',
   initialState,
   reducers: {
+    resetTxType: (state, _) => {
+      state.tx.type = ''
+    },
     validators: (state, action) => {
       state.validators = action.payload
     },
@@ -179,12 +183,12 @@ export const stakeSlice = createSlice({
       state.delegations = initialState.delegations
     },
     sortValidatorsByVotingPower: (state) => {
-      const activeSort =  Object.fromEntries( Object.entries(state.validators.active).sort(([,a],[,b]) => {
+      const activeSort = Object.fromEntries(Object.entries(state.validators.active).sort(([, a], [, b]) => {
         return b.tokens - a.tokens
       }));
       state.validators.active = activeSort
 
-      const inactiveSort =  Object.fromEntries( Object.entries(state.validators.inactive).sort(([,a],[,b]) => {
+      const inactiveSort = Object.fromEntries(Object.entries(state.validators.inactive).sort(([, a], [, b]) => {
         return b.tokens - a.tokens
       }));
       state.validators.inactive = inactiveSort
@@ -220,8 +224,8 @@ export const stakeSlice = createSlice({
         state.validators.errMsg = action.error.message
       })
 
-    
-      builder
+
+    builder
       .addCase(getDelegations.pending, (state) => {
         state.delegations.status = 'pending';
         state.delegations.errMsg = ''
@@ -237,7 +241,7 @@ export const stakeSlice = createSlice({
         state.delegations.errMsg = action.error.message
       })
 
-      builder
+    builder
       .addCase(getUnbonding.pending, (state) => {
         state.unbonding.status = 'pending';
         state.unbonding.errMsg = ''
@@ -247,7 +251,7 @@ export const stakeSlice = createSlice({
         state.unbonding.delegations = action.payload.unbonding_responses
         state.unbonding.pagination = action.payload.pagination
         state.unbonding.errMsg = ''
-        
+
       })
       .addCase(getUnbonding.rejected, (state, action) => {
         state.unbonding.status = 'rejected';
@@ -255,55 +259,64 @@ export const stakeSlice = createSlice({
       })
 
 
-      builder
+    builder
       .addCase(getParams.pending, (state) => {
       })
       .addCase(getParams.fulfilled, (state, action) => {
         state.params = action.payload
       })
-      .addCase(getParams.rejected, (state, action) => {})
+      .addCase(getParams.rejected, (state, action) => { })
 
 
-      builder
+    builder
       .addCase(txDelegate.pending, (state) => {
         state.tx.status = 'pending';
+        state.tx.type = '';
 
       })
       .addCase(txDelegate.fulfilled, (state, _) => {
         state.tx.status = 'idle';
+        state.tx.type = 'delegate';
       })
       .addCase(txDelegate.rejected, (state, _) => {
         state.tx.status = 'rejected';
+        state.tx.type = '';
       })
 
-      builder
+    builder
       .addCase(txUnDelegate.pending, (state) => {
         state.tx.status = 'pending';
+        state.tx.type = '';
 
       })
       .addCase(txUnDelegate.fulfilled, (state, _) => {
         state.tx.status = 'idle';
+        state.tx.type = 'undelegate';
       })
-      .addCase(txUnDelegate.rejected, (state, action) => {
+      .addCase(txUnDelegate.rejected, (state, _) => {
         state.tx.status = 'rejected';
+        state.tx.type = '';
       })
 
-      builder
+    builder
       .addCase(txReDelegate.pending, (state) => {
         state.tx.status = 'pending';
+        state.tx.type = '';
 
       })
       .addCase(txReDelegate.fulfilled, (state, _) => {
         state.tx.status = 'idle';
+        state.tx.type = 'redelegate';
       })
-      .addCase(txReDelegate.rejected, (state, action) => {
+      .addCase(txReDelegate.rejected, (state, _) => {
         state.tx.status = 'rejected';
+        state.tx.type = '';
       })
 
-      
+
   },
 });
 
-export const { resetState, sortValidatorsByVotingPower, resetDelegations } = stakeSlice.actions;
+export const { resetState, sortValidatorsByVotingPower, resetDelegations, resetTxType } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

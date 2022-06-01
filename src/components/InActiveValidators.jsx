@@ -10,7 +10,7 @@ import { formatValidatorStatus } from '../utils/util';
 import Button from '@mui/material/Button';
 
 export function InActiveValidators(props) {
-    const {validators, onMenuAction} = props;
+    const { validators, onMenuAction } = props;
 
     return (
         <>
@@ -19,11 +19,10 @@ export function InActiveValidators(props) {
                     <TableHead>
                         <StyledTableRow>
                             <StyledTableCell>Rank</StyledTableCell>
-                            <StyledTableCell>Validator</StyledTableCell>
-                            <StyledTableCell>Voting Power</StyledTableCell>
-                            <StyledTableCell>Commission</StyledTableCell>
-                            <StyledTableCell>Status</StyledTableCell>
-                            <StyledTableCell>Action</StyledTableCell>
+                            <StyledTableCell align='center'>Validator</StyledTableCell>
+                            <StyledTableCell align='center'>Voting Power</StyledTableCell>
+                            <StyledTableCell align='center'>Commission</StyledTableCell>
+                            <StyledTableCell align='center'>Action</StyledTableCell>
                         </StyledTableRow>
                     </TableHead>
                     <TableBody>
@@ -32,28 +31,54 @@ export function InActiveValidators(props) {
                                 key={index + 1}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <StyledTableCell component="th" scope="row">
+                                <StyledTableCell component="th" scope="row"
+                                >
                                     {index + 1}
                                 </StyledTableCell>
-                                <StyledTableCell>
+                                <StyledTableCell
+                                    align='center'
+                                >
                                     {validators.inactive[keyName]?.description.moniker}
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    {formatVotingPower(validators.inactive[keyName]?.tokens)}
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    {(validators.inactive[keyName]?.commission.commission_rates.rate * 100).toFixed(2)}%
-                                </StyledTableCell>
-                                <StyledTableCell>
                                     {validators.inactive[keyName]?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validators.inactive[keyName]?.status)}
                                 </StyledTableCell>
-                                <StyledTableCell>
+                                <StyledTableCell
+                                    align='center'
+                                >
+                                    {formatVotingPower(validators.inactive[keyName]?.tokens)}
+                                </StyledTableCell>
+                                <StyledTableCell
+                                    align='center'
+                                >
+                                    {(validators.inactive[keyName]?.commission.commission_rates.rate * 100).toFixed(2)}%
+                                </StyledTableCell>
+                                {/* <StyledTableCell>
+                                    {validators.inactive[keyName]?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validators.inactive[keyName]?.status)}
+                                </StyledTableCell> */}
+                                <StyledTableCell
+                                    align='center'
+                                >
                                     <Button
-                                    variant='outlined'
-                                    size='small'
-                                    onClick={(e) => {onMenuAction(e, validators.inactive)}}
+                                        variant="outlined"
+                                        className='button-capitalize-title'
+                                        size="small" onClick={(e) => onMenuAction(e, "delegate", validators.active[keyName])}
                                     >
                                         Delegate
+                                    </Button>
+                                    <Button
+                                        style={{ marginLeft: 4 }}
+                                        variant="outlined"
+                                        className='button-capitalize-title'
+                                        size="small" onClick={(e) => onMenuAction(e, "undelegate", validators.active[keyName])}
+                                    >
+                                        Undelegate
+                                    </Button>
+                                    <Button
+                                        style={{ marginLeft: 4 }}
+                                        variant="outlined"
+                                        className='button-capitalize-title'
+                                        size="small" onClick={(e) => onMenuAction(e, "redelegate", validators.active[keyName])}
+                                    >
+                                        Redelegate
                                     </Button>
                                 </StyledTableCell>
                             </StyledTableRow>
