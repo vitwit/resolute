@@ -49,10 +49,14 @@ export const getDelegatorTotalRewards = createAsyncThunk(
 );
 
 
-export const bankSlice = createSlice({
+export const distSlice = createSlice({
   name: 'distribution',
   initialState,
-  reducers: {},
+  reducers: {
+    resetTx: (state) => {
+      state.tx = initialState.tx
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getDelegatorTotalRewards.pending, (state) => {
@@ -95,4 +99,5 @@ export const bankSlice = createSlice({
   },
 });
 
-export default bankSlice.reducer;
+export const { resetTx } = distSlice.actions;
+export default distSlice.reducer;

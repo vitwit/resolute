@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper';
 import { ActiveValidators } from '../components/ActiveValidators';
 import { InActiveValidators } from '../components/InActiveValidators';
 import { MyDelegations } from '../components/Delegations';
-import { getDelegatorTotalRewards, txWithdrawAllRewards } from '../features/distribution/distributionSlice';
+import { getDelegatorTotalRewards, txWithdrawAllRewards, resetTx } from '../features/distribution/distributionSlice';
 import { totalBalance } from '../utils/denom';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -158,6 +158,7 @@ export function Validators() {
         return () => {
             dispatch(resetError());
             dispatch(resetTxHash());
+            dispatch(resetTx());
         }
     }, []);
 

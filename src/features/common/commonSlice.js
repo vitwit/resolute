@@ -33,7 +33,7 @@ export const commonSlice = createSlice({
     resetError: (state) => {
       state.errState = {
         message: '',
-        type: 'success'
+        type: ''
       }
     }
   },
