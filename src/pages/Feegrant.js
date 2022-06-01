@@ -97,7 +97,7 @@ export default function Feegrant() {
       denom: currency.coinMinimalDenom,
       chainId: chainInfo.chainId,
       rpc: chainInfo.rpc,
-      feeAmount: 25000,
+      feeAmount: chainInfo?.config.gasPriceStep.average,
       baseURL: chainInfo?.lcd,
     }))
   }

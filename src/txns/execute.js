@@ -4,7 +4,6 @@ import { Registry } from '@cosmjs/proto-signing';
 import { MsgClaim } from "./msg_claim";
 
 export async function signAndBroadcastCustomMsg(signer, msgs, fee, memo = "", chainId, rpcURL) {
-    alert(chainId)
     await window.keplr.enable(chainId);
     const offlineSigner = window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
         let registry = new Registry()

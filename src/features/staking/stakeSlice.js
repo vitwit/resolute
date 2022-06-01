@@ -44,6 +44,11 @@ export const txDelegate = createAsyncThunk(
         dispatch(setTxHash({
           hash: result?.transactionHash
         }))
+        dispatch(resetDelegations())
+        dispatch(getDelegations({
+          baseURL: data.baseURL,
+          address: data.delegator
+        }))
         return fulfillWithValue({txHash: result?.transactionHash});
         } else {
           dispatch(setError({

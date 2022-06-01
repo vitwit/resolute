@@ -195,7 +195,7 @@ export function Validators() {
             memo: "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
-            feeAmount: 25000
+            feeAmount: chainInfo?.config.gasPriceStep.average,
         }))
     }
 
@@ -208,7 +208,7 @@ export function Validators() {
             memo: "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
-            feeAmount: 25000
+            feeAmount: chainInfo.gasPriceStep.average,
         }))
     }
 
@@ -221,7 +221,7 @@ export function Validators() {
             memo: "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
-            feeAmount: 25000
+            feeAmount: chainInfo.gasPriceStep.average,
         }))
     }
 
@@ -236,7 +236,7 @@ export function Validators() {
             memo: "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
-            feeAmount: 25000
+            feeAmount: chainInfo.gasPriceStep.average,
         }))
     }
 

@@ -126,10 +126,10 @@ export default function AirdropEligibility() {
         if (walletAddress.length > 0) {
             dispatch(txClaimAction({
                 address: walletAddress,
-                denom: currency.coinMinimalDenom,
+                denom: currency?.coinMinimalDenom,
                 chainId: chainInfo.chainId,
                 rpc: chainInfo.rpc,
-                feeAmount: 25000,
+                feeAmount: chainInfo?.config.gasPriceStep.average,
                 baseURL: chainInfo?.lcd,
             }))
         } else {

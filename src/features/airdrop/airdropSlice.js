@@ -36,7 +36,6 @@ export const txClaimAction = createAsyncThunk(
     async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
         try {
             const msg = AirdropClaim(data.address)
-            console.log(data)
             const result = await signAndBroadcastCustomMsg(data.address, [msg], fee(data.denom, data.feeAmount), "",data.chainId, data.rpc)
             if (result?.code === 0) {
                 dispatch(setTxHash({

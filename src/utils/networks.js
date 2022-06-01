@@ -122,7 +122,7 @@ export function getTestNetworks() {
             testnet: true,
             lcd: 'https://api.passage3d.vitwit.com/',
             rpc: 'https://rpc.passage3d.vitwit.com',
-            txHashEndpoint: 'https://www.mintscan.io/passage/txs/',
+            txHashEndpoint: 'https://passage3d.testaneka.com/txs/',
             currencies: [
                 {
                     coinDenom: 'PASG',
@@ -174,7 +174,7 @@ export function getTestNetworks() {
                     average: 0.0025,
                     high: 0.004,
                 },
-                walletUrlForStaking: 'http://localhost:1317/stake',
+                walletUrlForStaking: 'https://stake.vitwit.com/validators',
             }
         }
     ]

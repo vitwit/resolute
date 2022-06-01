@@ -83,7 +83,7 @@ export default function Authz() {
       memo: "",
       chainId: chainInfo.chainId,
       rpc: chainInfo.rpc,
-      feeAmount: 25000
+      feeAmount: chainInfo?.config.gasPriceStep.average,
     }))
 
   }
@@ -113,7 +113,7 @@ export default function Authz() {
       denom: currency.coinMinimalDenom,
       chainId: chainInfo.chainId,
       rpc: chainInfo.rpc,
-      feeAmount: 25000,
+      feeAmount: chainInfo?.config.gasPriceStep.average,
     })
   }
 

@@ -155,7 +155,6 @@ function DashboardContent() {
     const handleNetworkChange = (network) => {
         dispatch(resetWallet());
         changeNetwork(network);
-        enableConnection(network);
     }
 
     function disconnectWallet() {
@@ -175,7 +174,7 @@ function DashboardContent() {
             window.keplr.defaultOptions = {
                 sign: {
                     preferNoSetMemo: true,
-                    preferNoSetFee: true,
+                    // preferNoSetFee: true,
                     disableBalanceCheck: true,
                 },
             };
