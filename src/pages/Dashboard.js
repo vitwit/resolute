@@ -83,9 +83,7 @@ const mdTheme = (isDarkMode) => createTheme({
 
 });
 
-function DashboardContent() {
-    const [isConnected, setConnected] = React.useState(localStorage.getItem('IS_LOGIN') === "true" ? true: false)
-    
+function DashboardContent() {    
     const [snackOpen, setSnackClose] = React.useState(false);
     const showSnack = (value) => {
         setSnackClose(value);
@@ -102,6 +100,8 @@ function DashboardContent() {
         setSnackTxClose(value);
     }
 
+    const [logout, setLogout] = React.useState(false);
+
     const [selectedNetwork, setNetwork] = React.useState(getSelectedNetwork());
     const changeNetwork = (network) => {
         saveSelectedNetwork(network.displayName)
@@ -113,11 +113,11 @@ function DashboardContent() {
         setDarkMode(darkMode);
 
         const listener = () => {
-            if (wallet.connected && isConnected) {
+            if (wallet.connected) {
                 disconnectWallet();
             }
             setTimeout(() => {
-                if (isConnected) connectWallet(selectedNetwork)
+                connectWallet(selectedNetwork)
             }, 1000);
         }
         window.addEventListener("keplr_keystorechange", listener);
@@ -149,7 +149,7 @@ function DashboardContent() {
     }, [txSuccess]);
 
     React.useEffect(() => {
-        if (!wallet.connected && isConnected) connectWallet(selectedNetwork)
+        if (!wallet.connected && !logout) connectWallet(selectedNetwork)
     }, [wallet]);
 
     const handleNetworkChange = (network) => {
@@ -159,8 +159,7 @@ function DashboardContent() {
     }
 
     function disconnectWallet() {
-        localStorage.removeItem('IS_LOGIN');
-        setConnected(false);
+        setLogout(true);
         dispatch(resetWallet());
     }
 
@@ -198,8 +197,6 @@ function DashboardContent() {
     const enableConnection = (network) => {
         getKeplrWalletAmino(network.chainId)
             .then((result) => {
-                setConnected(true);
-                localStorage.setItem('IS_LOGIN', true);
                 dispatch(setWallet({
                     address: result[1].address,
                     chainInfo: network
@@ -271,7 +268,7 @@ function DashboardContent() {
                     </List>
                     <Divider />
                     <List component="nav">
-                        {mainListItems((path) => { navigateTo(path) })}
+                        {mainListItems((path) => { navigateTo(path) }, selectedNetwork?.showAirdrop)}
                     </List>
 
                 </Drawer>

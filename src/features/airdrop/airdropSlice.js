@@ -1,10 +1,18 @@
 import airdropService from './airdropService';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { fee, signAndBroadcastAmino, signAndBroadcastCustomMsg } from '../../txns/execute';
+import { AirdropClaim } from '../../txns/proto';
+import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
     claimRecords: {},
     status: '',
+    claimStatus: '',
     errMsg: '',
+    params: {},
+    tx: {
+        status: 'idle'
+    }
 }
 
 export const getClaimRecords = createAsyncThunk(
@@ -15,6 +23,43 @@ export const getClaimRecords = createAsyncThunk(
     }
 );
 
+export const getClaimParams = createAsyncThunk(
+    'airdrop/claim-params',
+    async (data) => {
+        const response = await airdropService.params(data.baseURL);
+        return response.data;
+    }
+);
+
+export const txClaimAction = createAsyncThunk(
+    'airdrop/claim-tx-1',
+    async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+        try {
+            const msg = AirdropClaim(data.address)
+            console.log(data)
+            const result = await signAndBroadcastCustomMsg(data.address, [msg], fee(data.denom, data.feeAmount), "",data.chainId, data.rpc)
+            if (result?.code === 0) {
+                dispatch(setTxHash({
+                    hash: result?.transactionHash
+                }))
+                return fulfillWithValue({ txHash: result?.transactionHash });
+            } else {
+                dispatch(setError({
+                    type: 'error',
+                    message: result?.rawLog
+                }))
+                return rejectWithValue(result?.rawLog);
+            }
+        } catch (error) {
+            dispatch(setError({
+                type: 'error',
+                message: error.message
+            }))
+            return rejectWithValue(error.message)
+        }
+    }
+)
+
 export const airdropSlice = createSlice({
     name: 'airdrop',
     initialState,
@@ -23,31 +68,59 @@ export const airdropSlice = createSlice({
             state.status = ''
             state.errMsg = ''
             state.claimRecords = {}
+            state.params = {}
+            state.claimStatus = ''
         }
     },
 
     extraReducers: (builder) => {
         builder
             .addCase(getClaimRecords.pending, (state) => {
-                state.status = 'pending';
+                state.claimStatus = 'pending';
                 state.errMsg = ''
 
             })
             .addCase(getClaimRecords.fulfilled, (state, action) => {
-                state.status = 'idle';
+                state.claimStatus = 'idle';
                 state.claimRecords = action.payload.claim_record
                 state.errMsg = ''
             })
             .addCase(getClaimRecords.rejected, (state, action) => {
-                state.status = 'rejected';
+                state.claimStatus = 'rejected';
                 state.claimRecords = {}
-                console.log(action)
                 state.errMsg = action.error.message
+            })
+
+            .addCase(getClaimParams.pending, (state) => {
+                state.status = 'pending';
+                state.errMsg = ''
+
+            })
+            .addCase(getClaimParams.fulfilled, (state, action) => {
+                state.status = 'idle';
+                state.params = action.payload.params
+                state.errMsg = ''
+            })
+            .addCase(getClaimParams.rejected, (state, action) => {
+                state.status = 'rejected';
+                state.params = {}
+                state.errMsg = action.error.message
+            })
+
+            .addCase(txClaimAction.pending, (state) => {
+                state.tx.status = `pending`
+
+            })
+            .addCase(txClaimAction.fulfilled, (state, _) => {
+                state.tx.status = `idle`
+            })
+            .addCase(txClaimAction.rejected, (state, _) => {
+                state.tx.status = `rejected`
             })
     }
 
 })
 
 
-export const {resetState} = airdropSlice.actions;
+export const { resetState } = airdropSlice.actions;
 export default airdropSlice.reducer;
