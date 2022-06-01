@@ -12,8 +12,6 @@ import { InActiveValidators } from '../components/InActiveValidators';
 import { MyDelegations } from '../components/Delegations';
 import { getDelegatorTotalRewards, txWithdrawAllRewards, resetTx } from '../features/distribution/distributionSlice';
 import { totalBalance } from '../utils/denom';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import { DialogDelegate } from '../components/DialogDelegate';
 import { getBalance } from '../features/bank/bankSlice';
 import { DialogUndelegate } from '../components/DialogUndelegate';
@@ -50,26 +48,14 @@ export function Validators() {
         setRedelegateOpen(false);
     };
 
-
     const [selectedValidator, setSelectedValidator] = useState({});
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-    const handleClose = (e) => {
-        setAnchorEl(null);
-    };
-
-    const onMenuAction = (e, validator) => {
-        setAnchorEl(e.currentTarget);
+    const onMenuAction = (e, type, validator) => {
         setSelectedValidator(validator);
-    }
-
-    const handleStakingAction = (e) => {
-        setAnchorEl(null);
-        switch (e.target.title) {
-            case 'delegate':
-                setStakingOpen(true);
-                break;
-            case 'undelegate':
+        switch (type) {
+            case "delegate":
+            setStakingOpen(true);
+            break
+            case "undelegate":
                 if (delegations?.delegations.length > 0) {
                     setUndelegateOpen(true);
                 } else {
@@ -78,8 +64,8 @@ export function Validators() {
                         message: "no delegations"
                     }))
                 }
-                break;
-            case 'redelegate':
+            break
+            case "redelegate":
                 let isValidRedelegation = false;
                 if (delegations?.delegations.length > 0) {
                     for (let i = 0; i < delegations?.delegations.length; i++) {
@@ -103,9 +89,9 @@ export function Validators() {
                         message: "no delegations present"
                     }))
                 }
-                break;
+            break
             default:
-                throw new Error("unknown option")
+                console.log("unsupported type")
         }
     }
 
@@ -202,6 +188,7 @@ export function Validators() {
 
     const onDelegateTx = (data) => {
         dispatch(txDelegate({
+            baseURL: chainInfo?.lcd,
             delegator: address,
             validator: data.validator,
             amount: data.amount * (10 ** currency.coinDecimals),
@@ -209,7 +196,7 @@ export function Validators() {
             memo: "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
-            feeAmount: chainInfo.gasPriceStep.average,
+            feeAmount: chainInfo?.config.gasPriceStep.average,
         }))
     }
 
@@ -222,7 +209,7 @@ export function Validators() {
             memo: "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
-            feeAmount: chainInfo.gasPriceStep.average,
+            feeAmount: chainInfo?.config.gasPriceStep.average,
         }))
     }
 
@@ -237,7 +224,7 @@ export function Validators() {
             memo: "",
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
-            feeAmount: chainInfo.gasPriceStep.average,
+            feeAmount: chainInfo?.config.gasPriceStep.average,
         }))
     }
 
@@ -312,7 +299,7 @@ export function Validators() {
             }
 
 
-            <Menu
+            {/* <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
                 open={open}
@@ -324,7 +311,7 @@ export function Validators() {
                 <MenuItem title='delegate' onClick={handleStakingAction}>Delegate</MenuItem>
                 <MenuItem title='undelegate' onClick={handleStakingAction}>Undelegate</MenuItem>
                 <MenuItem title='redelegate' onClick={handleStakingAction}>Redelegate</MenuItem>
-            </Menu>
+            </Menu> */}
             {
                 availableBalance > 0 ?
                 <DialogDelegate

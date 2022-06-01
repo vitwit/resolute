@@ -8,6 +8,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import { formatVotingPower } from '../utils/denom';
 import Typography from '@mui/material/Typography';
+import { formatValidatorStatus } from '../utils/util';
 
 export function WitvalValidator(props) {
     const { validators, onMenuAction } = props;
@@ -18,7 +19,13 @@ export function WitvalValidator(props) {
         for (let i = 0; i < keys.length; i++) {
             if (validators.active[keys[i]]?.description?.moniker === "Witval") {
                 setValidator(validators.active[keys[i]])
-                break
+                return
+            }
+        }
+        for (let i = 0; i < keys.length; i++) {
+            if (validators.inactive[keys[i]]?.description?.moniker === "Witval") {
+                setValidator(validators.inactive[keys[i]])
+                return
             }
         }
     }
@@ -44,10 +51,10 @@ export function WitvalValidator(props) {
                         <Table sx={{ minWidth: 500 }} aria-label="simple table">
                             <TableHead>
                                 <StyledTableRow>
-                                    <StyledTableCell>Validator</StyledTableCell>
-                                    <StyledTableCell>Voting Power</StyledTableCell>
-                                    <StyledTableCell>Comission</StyledTableCell>
-                                    <StyledTableCell></StyledTableCell>
+                                    <StyledTableCell align='center'>Validator</StyledTableCell>
+                                    <StyledTableCell align='center'>Voting Power</StyledTableCell>
+                                    <StyledTableCell align='center'>Comission</StyledTableCell>
+                                    <StyledTableCell align='center'>Actions</StyledTableCell>
                                 </StyledTableRow>
                             </TableHead>
                             <TableBody>
@@ -57,23 +64,41 @@ export function WitvalValidator(props) {
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
 
-                                    <StyledTableCell>
+                                    <StyledTableCell align='center'>
                                         {validator?.description.moniker}
+                                        <br />
+                                    {validator?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validator?.status)}
+                                
                                     </StyledTableCell>
-                                    <StyledTableCell>
+                                    <StyledTableCell align='center'>
                                         {formatVotingPower(validator.tokens)}
                                     </StyledTableCell>
-                                    <StyledTableCell>
+                                    <StyledTableCell align='center'>
                                         {(validator.commission.commission_rates.rate * 100).toFixed(2)}%
                                     </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Button
-                                            variant="outlined"
-                                            size="small" onClick={(e) => onMenuAction(e, validator)}
-                                        >
-                                            Actions
-                                        </Button>
-                                    </StyledTableCell>
+                                    <StyledTableCell align='center'>
+                                    <Button
+                                        variant="outlined"
+                                        className='button-capitalize-title'
+                                        size="small" onClick={(e) => onMenuAction(e, "delegate", validator)}
+                                    >
+                                        Delegate
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        style={{ marginLeft: 4 }}
+                                        className='button-capitalize-title'
+                                        size="small" onClick={(e) => onMenuAction(e, "undelegate", validator)}
+                                    >
+                                        Undelegate
+                                    </Button>
+                                    {/* <Button
+                                        variant="outlined"
+                                        size="small" onClick={(e) => onMenuAction(e, "redelegate", validators.active[keyName])}
+                                    >
+                                        Redelegate
+                                    </Button> */}
+                                </StyledTableCell>
                                 </StyledTableRow>
 
                             </TableBody>

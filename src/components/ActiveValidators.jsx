@@ -7,6 +7,7 @@ import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import { formatVotingPower } from '../utils/denom';
+import { formatValidatorStatus } from '../utils/util';
 
 export function ActiveValidators(props) {
     const { validators, onMenuAction } = props;
@@ -18,10 +19,18 @@ export function ActiveValidators(props) {
                     <TableHead>
                         <StyledTableRow>
                             <StyledTableCell>Rank</StyledTableCell>
-                            <StyledTableCell>Validator</StyledTableCell>
-                            <StyledTableCell>Voting Power</StyledTableCell>
-                            <StyledTableCell>Comission</StyledTableCell>
-                            <StyledTableCell></StyledTableCell>
+                            <StyledTableCell
+                                align='center'
+                            >Validator</StyledTableCell>
+                            <StyledTableCell
+                                align='center'
+                            >Voting Power</StyledTableCell>
+                            <StyledTableCell
+                                align='center'
+                            >Comission</StyledTableCell>
+                            <StyledTableCell
+                                align='center'
+                            >Actions</StyledTableCell>
                         </StyledTableRow>
                     </TableHead>
                     <TableBody>
@@ -33,21 +42,46 @@ export function ActiveValidators(props) {
                                 <StyledTableCell component="th" scope="row">
                                     {index + 1}
                                 </StyledTableCell>
-                                <StyledTableCell>
+                                <StyledTableCell
+                                    align='center'
+                                >
                                     {validators.active[keyName]?.description.moniker}
+                                    <br />
+                                    {validators.active[keyName]?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validators.active[keyName]?.status)}
                                 </StyledTableCell>
-                                <StyledTableCell>
+                                <StyledTableCell
+                                    align='center'
+                                >
                                     {formatVotingPower(validators.active[keyName].tokens)}
                                 </StyledTableCell>
-                                <StyledTableCell>
+                                <StyledTableCell
+                                    align='center'
+                                >
                                     {(validators.active[keyName].commission.commission_rates.rate * 100).toFixed(2)}%
                                 </StyledTableCell>
-                                <StyledTableCell>
+                                <StyledTableCell
+                                    align='center'
+                                >
                                     <Button
                                         variant="outlined"
-                                        size="small" onClick={(e) => onMenuAction(e, validators.active[keyName])}
+                                        className='button-capitalize-title'
+                                        size="small" onClick={(e) => onMenuAction(e, "delegate", validators.active[keyName])}
+                                    >Delegate</Button>
+                                    <Button
+                                        variant="outlined"
+                                        style={{ marginLeft: 4 }}
+                                        className='button-capitalize-title'
+                                        size="small" onClick={(e) => onMenuAction(e, "undelegate", validators.active[keyName])}
                                     >
-                                        Actions
+                                        Undelegate
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        className='button-capitalize-title'
+                                        style={{ marginLeft: 4 }}
+                                        size="small" onClick={(e) => onMenuAction(e, "redelegate", validators.active[keyName])}
+                                    >
+                                        Redelegate
                                     </Button>
                                 </StyledTableCell>
                             </StyledTableRow>
