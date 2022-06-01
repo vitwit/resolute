@@ -8,10 +8,10 @@ import LayersIcon from '@mui/icons-material/Layers';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import DocumentScannerOutlinedIcon from '@mui/icons-material/DocumentScannerOutlined';
 
-export function mainListItems(onNavigate, showAirdrop) {
+export function mainListItems(currentPath, onNavigate, showAirdrop) {
   return (
   <React.Fragment>
-    <ListItemButton onClick={() => onNavigate("/")}>
+    <ListItemButton  onClick={() => onNavigate("/")} selected={currentPath === "/"}>
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
@@ -23,13 +23,13 @@ export function mainListItems(onNavigate, showAirdrop) {
       </ListItemIcon>
       <ListItemText primary="Send" />
     </ListItemButton> */}
-    <ListItemButton onClick={() => onNavigate("/validators")}>
+    <ListItemButton onClick={() => onNavigate("/validators")} selected={currentPath === "/validators"}>
       <ListItemIcon>
         <BarChartOutlinedIcon />
       </ListItemIcon>
       <ListItemText primary="Staking" />
     </ListItemButton>
-    <ListItemButton onClick={() => onNavigate("/proposals")}>
+    <ListItemButton onClick={() => onNavigate("/proposals")} selected={currentPath === "/proposals"}>
       <ListItemIcon>
         <DocumentScannerOutlinedIcon />
       </ListItemIcon>
@@ -49,7 +49,7 @@ export function mainListItems(onNavigate, showAirdrop) {
     </ListItemButton>
 
   { showAirdrop ?
-    <ListItemButton onClick={() => onNavigate("/airdrop-check")}>
+    <ListItemButton onClick={() => onNavigate("/airdrop-check")} selected={currentPath === "/airdrop-check"}>
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>

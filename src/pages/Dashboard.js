@@ -17,7 +17,7 @@ import Link from '@mui/material/Link'
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import ContentCopyOutlined from '@mui/icons-material/ContentCopyOutlined';
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { Validators } from './Validators';
 import { Proposals } from './Proposals';
 import { useSelector, useDispatch } from 'react-redux'
@@ -96,6 +96,10 @@ function DashboardContent() {
         localStorage.setItem('DARK_MODE', !darkMode);
         setDarkMode(!darkMode);
     }
+
+
+
+    const location = useLocation();
 
     const [snackTxOpen, setSnackTxClose] = React.useState(false);
     const showTxSnack = (value) => {
@@ -216,7 +220,7 @@ function DashboardContent() {
     }
 
     const copyToClipboard = (text) => {
-        navigator.clipboard.writeText(text).then(function() {
+        navigator.clipboard.writeText(text).then(function () {
             dispatch(setError({
                 type: 'success',
                 message: 'Copied to clipboard'
@@ -225,7 +229,7 @@ function DashboardContent() {
                 showTxSnack(false);
                 dispatch(resetError());
             }, 1000);
-          }, function(err) {
+        }, function (err) {
             dispatch(setError({
                 type: 'error',
                 message: 'Failed to copy'
@@ -234,7 +238,7 @@ function DashboardContent() {
                 showTxSnack(false);
                 dispatch(resetError());
             }, 1000);
-          });
+        });
     }
 
 
@@ -274,11 +278,11 @@ function DashboardContent() {
                                     <ListItem
                                         style={{ justifyContent: 'center' }}
                                     >
-                                        <Chip 
-                                        label={shortenAddress(wallet.address, 21)} 
-                                        size="small"
-                                        deleteIcon={<ContentCopyOutlined/>}
-                                        onDelete={() => {copyToClipboard(wallet.address)}}
+                                        <Chip
+                                            label={shortenAddress(wallet.address, 21)}
+                                            size="small"
+                                            deleteIcon={<ContentCopyOutlined />}
+                                            onDelete={() => { copyToClipboard(wallet.address) }}
                                         />
                                     </ListItem>
                                     <ListItem style={{ justifyContent: 'center' }}>
@@ -316,7 +320,7 @@ function DashboardContent() {
                     </List>
                     <Divider />
                     <List component="nav">
-                        {mainListItems((path) => { navigateTo(path) }, selectedNetwork?.showAirdrop)}
+                        {mainListItems(location.pathname,(path) => {  navigateTo(path) }, selectedNetwork?.showAirdrop)}
                     </List>
 
                 </Drawer>
@@ -348,15 +352,15 @@ function DashboardContent() {
                     </Container>
                 </Box>
             </Box>
-            { errState.message.length > 0
-            ?
-            <Snackbar open={snackOpen && errState.message.length > 0 && errState.type.length > 0} autoHideDuration={3000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-                <Alert onClose={() => { showSnack(false) }} severity={errState.type === 'success' ? 'success' : 'error'} sx={{ width: '100%' }}>
-                    {errState.message}
-                </Alert>
-            </Snackbar>
-            :
-            <></>
+            {errState.message.length > 0
+                ?
+                <Snackbar open={snackOpen && errState.message.length > 0 && errState.type.length > 0} autoHideDuration={3000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                    <Alert onClose={() => { showSnack(false) }} severity={errState.type === 'success' ? 'success' : 'error'} sx={{ width: '100%' }}>
+                        {errState.message}
+                    </Alert>
+                </Snackbar>
+                :
+                <></>
             }
 
             <Snackbar open={snackTxOpen} autoHideDuration={3000} onClose={() => { showTxSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>

@@ -140,7 +140,6 @@ export default function AirdropEligibility() {
     return (
         <>
             <br />
-            <br />
             <Grid container>
                 <Grid item xs={2} md={3}></Grid>
                 <Grid item xs={8} md={6} >
