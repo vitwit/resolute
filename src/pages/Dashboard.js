@@ -40,7 +40,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 function isDarkMode() {
     const mode = localStorage.getItem("DARK_MODE");
-     if (mode === "true") {
+    if (mode === "true") {
         return true;
     } else {
         return false;
@@ -83,12 +83,12 @@ const mdTheme = (isDarkMode) => createTheme({
 
 });
 
-function DashboardContent() {    
+function DashboardContent() {
     const [snackOpen, setSnackClose] = React.useState(false);
     const showSnack = (value) => {
         setSnackClose(value);
     }
-    
+
     const [darkMode, setDarkMode] = React.useState(isDarkMode());
     const onModeChange = () => {
         localStorage.setItem('DARK_MODE', !darkMode);
@@ -112,10 +112,12 @@ function DashboardContent() {
     React.useEffect(() => {
         setDarkMode(darkMode);
 
+        // wait for keplr instance to available
+        setTimeout(() => {
+            connectWallet(selectedNetwork)
+        }, 200);
+
         const listener = () => {
-            if (wallet.connected) {
-                disconnectWallet();
-            }
             setTimeout(() => {
                 connectWallet(selectedNetwork)
             }, 1000);
@@ -147,10 +149,6 @@ function DashboardContent() {
             showTxSnack(true)
         }
     }, [txSuccess]);
-
-    React.useEffect(() => {
-        if (!wallet.connected && !logout) connectWallet(selectedNetwork)
-    }, [wallet]);
 
     const handleNetworkChange = (network) => {
         dispatch(resetWallet());
@@ -202,6 +200,7 @@ function DashboardContent() {
                 }))
             })
             .catch((err) => {
+                disconnectWallet();
                 alert(err);
             })
     }
