@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     getValidators, resetState, getDelegations, sortValidatorsByVotingPower, getParams,
-    txDelegate, txUnDelegate, txReDelegate
+    txDelegate, txUnDelegate, txReDelegate, resetTxType
 } from '../features/staking/stakeSlice';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -213,6 +213,40 @@ export function Validators() {
         }))
     }
 
+    useEffect(() => {
+        if (txStatus.type.length > 0 && address.length > 0) {
+            switch(txStatus.type) {
+                case "delegate":
+                    dispatch(getDelegations({
+                        baseURL: chainInfo.lcd,
+                        address: address,
+                    }))
+                    dispatch(getBalance({
+                        baseURL: chainInfo.lcd,
+                        address: address,
+                        denom: chainInfo?.currencies[0].coinMinimalDenom
+                    }))
+                break
+                case "undelegate":
+                    dispatch(getDelegations({
+                        baseURL: chainInfo.lcd,
+                        address: address,
+                    }))
+                break
+                case "redelegate":
+                    dispatch(getDelegations({
+                        baseURL: chainInfo.lcd,
+                        address: address,
+                    }))
+                break
+                default:
+                    console.log("invalid type")
+                }
+                dispatch(resetTxType())
+                handleDialogClose()
+        }
+    }, [txStatus]);
+
     const onRedelegateTx = (data) => {
         dispatch(txReDelegate({
             baseURL: chainInfo?.lcd,
@@ -298,20 +332,6 @@ export function Validators() {
                     )
             }
 
-
-            {/* <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                }}
-            >
-                <MenuItem title='delegate' onClick={handleStakingAction}>Delegate</MenuItem>
-                <MenuItem title='undelegate' onClick={handleStakingAction}>Undelegate</MenuItem>
-                <MenuItem title='redelegate' onClick={handleStakingAction}>Redelegate</MenuItem>
-            </Menu> */}
             {
                 availableBalance > 0 ?
                 <DialogDelegate

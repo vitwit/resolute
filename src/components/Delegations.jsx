@@ -48,14 +48,14 @@ export function MyDelegations(props) {
         setTotalRewards(total.toFixed(5));
     }, [rewards]);
 
-    const handleClick = (event, delegation) => {
+    const handleClick = (event, type, delegation) => {
         let val = {}
         if (delegation.validator_address in validators?.active) {
             val = validators?.active[delegation.validator_address]
         } else {
             val = validators?.inactive[delegation.validator_address]
         }
-        onDelegationAction(event, val);
+        onDelegationAction(event, type, val);
     };
 
     return (
@@ -73,7 +73,7 @@ export function MyDelegations(props) {
                         onClick={() => props.onWithdrawAllRewards()}
                         disabled={distTxStatus?.status === 'pending'}
                     >
-                        {distTxStatus?.status === 'pending' ? <CircularProgress size={25}/> : `Claim Rewards: ${totalRewards} ${currency?.coinDenom}`}
+                        {distTxStatus?.status === 'pending' ? <CircularProgress size={25} /> : `Claim Rewards: ${totalRewards} ${currency?.coinDenom}`}
                     </Button>
                 </div>
                 <TableContainer component={Paper} elevation={0}>
@@ -97,12 +97,25 @@ export function MyDelegations(props) {
                                     <TableHead>
                                         <StyledTableRow>
                                             <StyledTableCell>Rank</StyledTableCell>
-                                            <StyledTableCell>Validator</StyledTableCell>
-                                            <StyledTableCell>Comission</StyledTableCell>
-                                            <StyledTableCell>Delegated</StyledTableCell>
-                                            <StyledTableCell>Rewards</StyledTableCell>
-                                            <StyledTableCell>Status</StyledTableCell>
-                                            <StyledTableCell>Action</StyledTableCell>
+                                            <StyledTableCell
+                                                align='center'
+
+                                            >Validator</StyledTableCell>
+                                            <StyledTableCell
+                                                align='center'
+
+                                            >Comission</StyledTableCell>
+                                            <StyledTableCell
+                                                align='center'
+
+                                            >Delegated</StyledTableCell>
+                                            <StyledTableCell
+                                                align='center'
+
+                                            >Rewards</StyledTableCell>
+                                            <StyledTableCell
+                                                align='center'
+                                            >Action</StyledTableCell>
                                         </StyledTableRow>
                                     </TableHead>
                                     <TableBody>
@@ -115,28 +128,43 @@ export function MyDelegations(props) {
                                                     <StyledTableCell component="th" scope="row">
                                                         {index + 1}
                                                     </StyledTableCell>
-                                                    <StyledTableCell>
+                                                    <StyledTableCell align='center'>
                                                         {validators?.active[row.delegation.validator_address]?.description.moniker}
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        {(validators?.active[row.delegation.validator_address]?.commission.commission_rates.rate * 100).toFixed(2)}%
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        {parseFloat(row.delegation.shares) / (10 ** currency?.coinDecimals)}
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        {rewardsP[row.delegation.validator_address]?.toFixed(6)}
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
+                                                        <br />
                                                         {validators.active[row.delegation.validator_address]?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validators.active[row.delegation.validator_address]?.status)}
                                                     </StyledTableCell>
-                                                    <StyledTableCell>
+                                                    <StyledTableCell align='center'>
+                                                        {(validators?.active[row.delegation.validator_address]?.commission.commission_rates.rate * 100).toFixed(2)}%
+                                                    </StyledTableCell>
+                                                    <StyledTableCell align='center'>
+                                                        {parseFloat(row.delegation.shares) / (10 ** currency?.coinDecimals)}
+                                                    </StyledTableCell>
+                                                    <StyledTableCell align='center'>
+                                                        {rewardsP[row.delegation.validator_address]?.toFixed(6)}
+                                                    </StyledTableCell>
+                                                    <StyledTableCell
+                                                        align='center'
+                                                    >
                                                         <Button
                                                             variant="outlined"
-                                                            size="small"
-                                                            onClick={(e) => handleClick(e, row.delegation)}
+                                                            className='button-capitalize-title'
+                                                            size="small" onClick={(e) => handleClick(e, "delegate", row.delegation)}
+                                                        >Delegate</Button>
+                                                        <Button
+                                                            variant="outlined"
+                                                            style={{ marginLeft: 4 }}
+                                                            className='button-capitalize-title'
+                                                            size="small" onClick={(e) => handleClick(e, "undelegate", row.delegation)}
                                                         >
-                                                            Actions
+                                                            Undelegate
+                                                        </Button>
+                                                        <Button
+                                                            variant="outlined"
+                                                            className='button-capitalize-title'
+                                                            style={{ marginLeft: 4 }}
+                                                            size="small" onClick={(e) => handleClick(e, "redelegate", row.delegation)}
+                                                        >
+                                                            Redelegate
                                                         </Button>
                                                     </StyledTableCell>
                                                 </StyledTableRow>
