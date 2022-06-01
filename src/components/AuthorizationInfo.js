@@ -1,7 +1,11 @@
 import React from 'react';
 import Dialog from '@mui/material/Dialog';
 import PropTypes from 'prop-types';
-import { Typography, Chip, DialogContent, Button, DialogActions } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import DialogContent from '@mui/material/DialogContent';
+import Button from '@mui/material/Button';
+import DialogActions from '@mui/material/DialogActions';
 import { getTypeURLName, shortenAddress } from '../utils/util';
 import { parseSpendLimit } from '../utils/denom';
 import { getLocalTime } from '../utils/datetime';

@@ -10,7 +10,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { useSelector } from 'react-redux';
-import { CircularProgress } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function VoteDialog(props) {
     const [option, setOption] = React.useState('')

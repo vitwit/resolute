@@ -1,4 +1,7 @@
-import { Button, Grid, Paper, Typography } from '@mui/material';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
@@ -144,7 +147,7 @@ export const Send = () => {
                                         disabled={sendTx.status === 'pending'}
                                         size='medium'
                                     >
-                                        {sendTx.status === 'pending' ? <CircularProgress size={25}/> : 'Send'}
+                                        {sendTx.status === 'pending' ? <CircularProgress size={25} /> : 'Send'}
                                     </Button>
                                 </div>
                             </form>
