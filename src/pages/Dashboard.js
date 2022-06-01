@@ -16,6 +16,7 @@ import Chip from '@mui/material/Chip'
 import Link from '@mui/material/Link'
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import ContentCopyOutlined from '@mui/icons-material/ContentCopyOutlined';
 import { Routes, Route } from "react-router-dom";
 import { Validators } from './Validators';
 import { Proposals } from './Proposals';
@@ -25,7 +26,7 @@ import { useNavigate } from "react-router-dom";
 import NewFeegrant from './NewFeegrant';
 import NewAuthz from './NewAuthz';
 import { shortenAddress } from '../utils/util';
-import { AlertTitle, ListItem } from '@mui/material';
+import { AlertTitle, ListItem, Typography } from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Overview from './Overview';
@@ -33,6 +34,7 @@ import { Send } from './Send';
 import { getKeplrWalletAmino, isKeplrInstalled } from '../txns/execute';
 import { CustomAppBar } from '../components/CustomAppBar';
 import AirdropEligibility from './AirdropEligibility';
+import { resetError, setError } from '../features/common/commonSlice';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -84,9 +86,9 @@ const mdTheme = (isDarkMode) => createTheme({
 });
 
 function DashboardContent() {
-    const [snackOpen, setSnackClose] = React.useState(false);
+    const [snackOpen, setSnackOpen] = React.useState(false);
     const showSnack = (value) => {
-        setSnackClose(value);
+        setSnackOpen(value);
     }
 
     const [darkMode, setDarkMode] = React.useState(isDarkMode());
@@ -99,8 +101,6 @@ function DashboardContent() {
     const showTxSnack = (value) => {
         setSnackTxClose(value);
     }
-
-    const [logout, setLogout] = React.useState(false);
 
     const [selectedNetwork, setNetwork] = React.useState(getSelectedNetwork());
     const changeNetwork = (network) => {
@@ -135,18 +135,18 @@ function DashboardContent() {
     const txSuccess = useSelector((state) => state.common.txSuccess);
 
     React.useEffect(() => {
-        if (errState.message === '') {
-            showSnack(false)
-        } else {
+        if (errState.message.length > 0 && errState.type.length > 0) {
             showSnack(true)
+        } else {
+            showSnack(false)
         }
     }, [errState]);
 
     React.useEffect(() => {
-        if (txSuccess.hash === '') {
-            showTxSnack(false)
-        } else {
+        if (txSuccess.hash.length > 0) {
             showTxSnack(true)
+        } else {
+            showTxSnack(false)
         }
     }, [txSuccess]);
 
@@ -156,7 +156,6 @@ function DashboardContent() {
     }
 
     function disconnectWallet() {
-        setLogout(true);
         dispatch(resetWallet());
     }
 
@@ -191,6 +190,7 @@ function DashboardContent() {
 
     }
 
+    const [walletName, setWalletName] = React.useState("");
     const enableConnection = (network) => {
         getKeplrWalletAmino(network.chainId)
             .then((result) => {
@@ -203,6 +203,38 @@ function DashboardContent() {
                 disconnectWallet();
                 alert(err);
             })
+
+        if (window.keplr) {
+            window.keplr.getKey(network.chainId)
+                .then((result) => {
+                    setWalletName(result?.name);
+                })
+                .catch((error) => {
+                    setWalletName("");
+                })
+        }
+    }
+
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text).then(function() {
+            dispatch(setError({
+                type: 'success',
+                message: 'Copied to clipboard'
+            }))
+            setTimeout(() => {
+                showTxSnack(false);
+                dispatch(resetError());
+            }, 1000);
+          }, function(err) {
+            dispatch(setError({
+                type: 'error',
+                message: 'Failed to copy'
+            }))
+            setTimeout(() => {
+                showTxSnack(false);
+                dispatch(resetError());
+            }, 1000);
+          });
     }
 
 
@@ -228,8 +260,26 @@ function DashboardContent() {
                         {
                             wallet.connected ?
                                 <>
-                                    <ListItem>
-                                        <Chip label={shortenAddress(wallet.address, 21)} size="small" />
+                                    <ListItem
+                                        style={{ justifyContent: 'center' }}
+                                    >
+                                        <Typography
+                                            color='text.primary'
+                                            variant='body1'
+                                            fontWeight={600}
+                                        >
+                                            {walletName}
+                                        </Typography>
+                                    </ListItem>
+                                    <ListItem
+                                        style={{ justifyContent: 'center' }}
+                                    >
+                                        <Chip 
+                                        label={shortenAddress(wallet.address, 21)} 
+                                        size="small"
+                                        deleteIcon={<ContentCopyOutlined/>}
+                                        onDelete={() => {copyToClipboard(wallet.address)}}
+                                        />
                                     </ListItem>
                                     <ListItem style={{ justifyContent: 'center' }}>
                                         <Button
@@ -298,12 +348,16 @@ function DashboardContent() {
                     </Container>
                 </Box>
             </Box>
-
-            <Snackbar open={snackOpen && errState.message.length > 0} autoHideDuration={3000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+            { errState.message.length > 0
+            ?
+            <Snackbar open={snackOpen && errState.message.length > 0 && errState.type.length > 0} autoHideDuration={3000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={() => { showSnack(false) }} severity={errState.type === 'success' ? 'success' : 'error'} sx={{ width: '100%' }}>
                     {errState.message}
                 </Alert>
             </Snackbar>
+            :
+            <></>
+            }
 
             <Snackbar open={snackTxOpen} autoHideDuration={3000} onClose={() => { showTxSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={() => { showTxSnack(false) }} severity='success' sx={{ width: '100%' }}>

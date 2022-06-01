@@ -105,3 +105,5 @@ dist
 build
 # Local Netlify folder
 .netlify
+staking-dash.zip
+build.zip

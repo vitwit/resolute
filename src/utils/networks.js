@@ -171,7 +171,7 @@ export function getTestNetworks() {
                 coinType: 118,
                 gasPriceStep: {
                     low: 0.00,
-                    average: 0.0025,
+                    average: 0.00,
                     high: 0.004,
                 },
                 walletUrlForStaking: 'https://stake.vitwit.com/validators',
