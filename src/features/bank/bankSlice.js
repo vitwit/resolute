@@ -42,7 +42,7 @@ export const txBankSend = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = SendMsg(data.from, data.to, data.amount, data.denom)
-      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), data.memo, data.chainId, data.rpc)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), data.chainId, data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash

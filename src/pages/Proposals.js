@@ -23,7 +23,6 @@ export function Proposals() {
   const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
 
   const dispatch = useDispatch();
-
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const walletConnected = useSelector((state) => state.wallet.connected);
   useEffect(() => {
@@ -38,7 +37,6 @@ export function Proposals() {
   useEffect(() => {
     if (status === 'rejected' && errMsg === '') {
       dispatch(setError({
-
         type: 'error',
         message: errMsg
       }))

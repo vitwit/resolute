@@ -71,7 +71,7 @@ export function MyDelegations(props) {
                         size='small'
                         style={{ textTransform: 'none' }}
                         onClick={() => props.onWithdrawAllRewards()}
-                        disabled={distTxStatus?.status === 'pending'}
+                        disabled={distTxStatus?.status === 'pending' || Number(totalRewards) === 0}
                     >
                         {distTxStatus?.status === 'pending' ? <CircularProgress size={25} /> : `Claim Rewards: ${totalRewards} ${currency?.coinDenom}`}
                     </Button>
