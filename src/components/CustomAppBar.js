@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { getMainNetworks, getTestNetworks } from '../utils/networks';
 import AppBar from '@mui/material/AppBar';
 import Typography from '@mui/material/Typography';
@@ -20,10 +20,14 @@ export function CustomAppBar(props) {
         setAnchorEl(event.currentTarget);
     };
 
+    useEffect(() => {
+        document.getElementById("logo-chain-main").src = props.selectedNetwork.logoName
+    }, [props.selectedNetwork]);
+
     return (
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Toolbar>
-                <img src="white-logo.png" />
+                <img id='logo-chain-main' src="white-logo.png" />
                 <Typography
                     component="h1"
                     variant="h6"

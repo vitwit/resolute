@@ -10,7 +10,7 @@ import Container from '@mui/material/Container';
 import { mainListItems } from './listItems';
 import Authz from './Authz'
 import Feegrant from './Feegrant'
-import { getSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
+import { getLastSelectedNetwork, getSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Link from '@mui/material/Link'
@@ -35,6 +35,7 @@ import { getKeplrWalletAmino, isKeplrInstalled } from '../txns/execute';
 import { CustomAppBar } from '../components/CustomAppBar';
 import AirdropEligibility from './AirdropEligibility';
 import { resetError, setError } from '../features/common/commonSlice';
+import { getPalletByNetwork } from '../utils/pallet';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -49,23 +50,19 @@ function isDarkMode() {
     }
 }
 
+function getPallet() {
+    const network = localStorage.getItem("LAST_SELECTED");
+    const pallet = getPalletByNetwork(network);
+    return pallet
+}
+
 const drawerWidth = 210;
 
-const mdTheme = (isDarkMode) => createTheme({
+const mdTheme = (isDarkMode, primary, secondary) => createTheme({
     palette: {
         mode: isDarkMode ? 'dark' : 'light',
-        primary: {
-            light: '#6573c3',
-            main: '#3f51b5',
-            dark: '#2c387e',
-            contrastText: '#fff',
-        },
-        secondary: {
-            light: '#1de9b6',
-            main: '#1de9b6',
-            dark: '#14a37f',
-            contrastText: '#000',
-        },
+        primary: primary,
+        secondary: secondary,
     },
     typography: {
         fontFamily: [
@@ -97,6 +94,8 @@ function DashboardContent() {
         setDarkMode(!darkMode);
     }
 
+    const [pallet, setPallet] = React.useState(getPallet());
+
     const location = useLocation();
 
     const [snackTxOpen, setSnackTxClose] = React.useState(false);
@@ -108,6 +107,7 @@ function DashboardContent() {
     const changeNetwork = (network) => {
         saveSelectedNetwork(network.displayName)
         setNetwork(network);
+        setPallet(getPallet())
     };
 
     const wallet = useSelector((state) => state.wallet)
@@ -240,7 +240,7 @@ function DashboardContent() {
 
 
     return (
-        <ThemeProvider theme={mdTheme(darkMode)}>
+        <ThemeProvider theme={mdTheme(darkMode, pallet.primary, pallet.secondary)}>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
                 <CustomAppBar
