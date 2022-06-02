@@ -97,8 +97,6 @@ function DashboardContent() {
         setDarkMode(!darkMode);
     }
 
-
-
     const location = useLocation();
 
     const [snackTxOpen, setSnackTxClose] = React.useState(false);
@@ -114,8 +112,6 @@ function DashboardContent() {
 
     const wallet = useSelector((state) => state.wallet)
     React.useEffect(() => {
-        setDarkMode(darkMode);
-
         // wait for keplr instance to available
         setTimeout(() => {
             connectWallet(selectedNetwork)
@@ -155,8 +151,9 @@ function DashboardContent() {
     }, [txSuccess]);
 
     const handleNetworkChange = (network) => {
-        dispatch(resetWallet());
+        disconnectWallet();
         changeNetwork(network);
+        connectWallet(network);
     }
 
     function disconnectWallet() {

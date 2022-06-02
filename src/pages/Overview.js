@@ -26,7 +26,7 @@ export default function Overview() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (connected && chainInfo.currencies.length > 0 ) {
+        if (connected && chainInfo.currencies.length > 0) {
             setTotalBalance(totalBalance(balance.balance, chainInfo.currencies[0].coinDecimals))
             setTotalDelegations(totalDelegations(delegations.delegations, chainInfo.currencies[0].coinDecimals))
             setTotalRewards(totalRewards(rewards?.list, chainInfo.currencies[0].coinDecimals))
@@ -41,37 +41,37 @@ export default function Overview() {
                 address: address,
                 denom: chainInfo?.currencies[0].coinMinimalDenom
             }))
-       
+
             dispatch(getDelegations({
                 baseURL: chainInfo.lcd,
                 address: address,
             }))
-        
+
             dispatch(getDelegatorTotalRewards({
                 baseURL: chainInfo.lcd,
                 address: address,
             }))
-        
+
             dispatch(getUnbonding({
                 baseURL: chainInfo.lcd,
                 address: address,
             }))
         }
-    }, [chainInfo]);
+    }, [address]);
 
     return (
         <>
-        { connected ?
-            <BalanceInfo 
-            chainInfo={chainInfo} 
-            balance={available} 
-            delegations={delegated}
-            rewards = {pendingRewards}
-            unbonding={unbondingDel}
-            />
-            :
-            <></>
-        }
+            {connected ?
+                <BalanceInfo
+                    chainInfo={chainInfo}
+                    balance={available}
+                    delegations={delegated}
+                    rewards={pendingRewards}
+                    unbonding={unbondingDel}
+                />
+                :
+                <></>
+            }
         </>
     );
 }
