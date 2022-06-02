@@ -5,6 +5,7 @@ export function getMainNetworks() {
             chainId: "cosmoshub-4",
             displayName: "Cosmos Hub",
             showAirdrop: false,
+            logoName: "white-logo.png",
             src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
             experimental: false,
             testnet: false,
@@ -26,6 +27,7 @@ export function getMainNetworks() {
         {
             chainId: "osmosis-1",
             displayName: "Osmosis",
+            logoName: "white-logo.png",
             showAirdrop: false,
             src: "https://www.mintscan.io/_next/static/image/assets/header/token_osmosis.4ea84e0bafc2ce3c619fc5c2290d6c29.svg",
             experimental: false,
@@ -54,6 +56,25 @@ export function getTestNetworks() {
         //     chainId: "testnet",
         //     displayName: "Simapp",
         //     experimental: true,
+        //     logoName: "white-logo.png",
+        //     showAirdrop: true,
+        //     airdropActions: [
+        //    {
+        //        title: "#1 Initial Claim",
+        //        type: "action",
+        //     
+        //    },
+        //    {
+        //        title: "#2 Stake",
+        //        type: "redirect",
+        //        redirect: "/validators",
+        //    },
+        //    {
+        //        title: "#3 Vote on Proposal",
+        //        type: "redirect",
+        //        redirect: "/proposals",
+        //    }
+        //    ],
         //     src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
         //     testnet: true,
         //     lcd: 'http://localhost:1317',
@@ -118,6 +139,9 @@ export function getTestNetworks() {
             displayName: "Passage-Testnet",
             experimental: true,
             showAirdrop: true,
+            airdropActions: [],
+            logoName: "passage3d.png",
+            airdropMessage: "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
             src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
             testnet: true,
             lcd: 'https://api.passage3d.vitwit.com/',
@@ -172,7 +196,7 @@ export function getTestNetworks() {
                 gasPriceStep: {
                     low: 0.00,
                     average: 0.00,
-                    high: 0.004,
+                    high: 0.00,
                 },
                 walletUrlForStaking: 'https://stake.vitwit.com/validators',
             }
@@ -209,3 +233,8 @@ export function getSelectedNetwork() {
 export function saveSelectedNetwork(name) {
     localStorage.setItem('LAST_SELECTED', name)
 }
+
+export function getLastSelectedNetwork() {
+    return localStorage.getItem('LAST_SELECTED')
+}
+
