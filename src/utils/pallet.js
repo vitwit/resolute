@@ -3,9 +3,9 @@
 const networks = {
     "Passage-Testnet": {
         primary: {
-            light: '#6573c3',
-            main: '#000',
-            dark: '#2c387e',
+            light: '#b7abcf',
+            main: '#58467d',
+            dark: '#312941',
             contrastText: '#fff',
         },
         secondary: {
@@ -17,29 +17,29 @@ const networks = {
     },
     "Cosmos Hub": {
         primary: {
-            light: '#6573c3',
-            main: '#3f51b5',
-            dark: '#2c387e',
+            light: '#C5CAE9',
+            main: '#3F51B5',
+            dark: '#303F9F',
             contrastText: '#fff',
         },
         secondary: {
-            light: '#1de9b6',
-            main: '#1de9b6',
-            dark: '#14a37f',
+            light: '#b6a9db',
+            main: '#7c4dff',
+            dark: '#4a2d9c',
             contrastText: '#000',
         },
     },
     "Osmosis": {
         primary: {
-            light: '#6573c3',
-            main: '#3f51b5',
-            dark: '#2c387e',
+            light: '#D1C4E9',
+            main: '#673AB7',
+            dark: '#512DA8',
             contrastText: '#fff',
         },
         secondary: {
-            light: '#1de9b6',
-            main: '#1de9b6',
-            dark: '#14a37f',
+            light: '#8fc9c4',
+            main: '#009688',
+            dark: '#01786d',
             contrastText: '#000',
         },
     }
