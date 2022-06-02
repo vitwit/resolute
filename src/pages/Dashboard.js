@@ -314,12 +314,29 @@ function DashboardContent() {
                                     </ListItem>
                                 </>
                         }
+
+
                     </List>
                     <Divider />
                     <List component="nav">
-                        {mainListItems(location.pathname,(path) => {  navigateTo(path) }, selectedNetwork?.showAirdrop)}
+                        {mainListItems(location.pathname, (path) => { navigateTo(path) }, selectedNetwork?.showAirdrop)}
                     </List>
+                    <List style={{ marginTop: 'auto', flexDirection: 'row' }}>
+                        <ListItem style={{ justifyContent: 'center' }}>
+                            <Typography
+                                color='text.secondary'
+                                variant='caption'
+                            >
+                                Designed & Developed By
+                            </Typography>
+                        </ListItem>
+                        <ListItem style={{ justifyContent: 'center' }}>
+                            <Link style={{ textDecoration: 'none' }} target="_blank" href='https://vitwit.com'>
+                                Vitwit.com
+                            </Link>
 
+                        </ListItem>
+                    </List>
                 </Drawer>
                 <Box
                     component="main"
