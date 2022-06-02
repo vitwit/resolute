@@ -3,7 +3,7 @@ import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Registry } from '@cosmjs/proto-signing';
 import { MsgClaim } from "./msg_claim";
 
-export async function signAndBroadcastCustomMsg(signer, msgs, fee, memo = "", chainId, rpcURL) {
+export async function signAndBroadcastCustomMsg(signer, msgs, fee, chainId, rpcURL) {
     await window.keplr.enable(chainId);
     const offlineSigner = window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
         let registry = new Registry()
@@ -26,11 +26,11 @@ export async function signAndBroadcastCustomMsg(signer, msgs, fee, memo = "", ch
             signer,
             msgs,
             fee,
-            memo,
+            "",
         )
 }
 
-export async function signAndBroadcastAmino(msgs, fee, memo = "", chainID, rpcURL) {
+export async function signAndBroadcastAmino(msgs, fee, chainID, rpcURL) {
     let result = await getKeplrWalletAmino(chainID);
     var wallet = result[0]
     var account = result[1]
@@ -50,11 +50,11 @@ export async function signAndBroadcastAmino(msgs, fee, memo = "", chainID, rpcUR
         }
     )
 
-    return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
+    return await cosmJS.signAndBroadcast(account.address, msgs, fee, "");
 }
 
 
-export async function signAndBroadcastProto(msgs, fee, memo = "", rpcURL) {
+export async function signAndBroadcastProto(msgs, fee, rpcURL) {
     const client = await SigningStargateClient.connect(rpcURL)
 
     const chainId = await client.getChainId()
@@ -65,7 +65,7 @@ export async function signAndBroadcastProto(msgs, fee, memo = "", rpcURL) {
 
     const accountInfo = await client.getAccount(account.address)
 
-    const signed = await signingClient.sign(account.address, msgs, fee, memo, {
+    const signed = await signingClient.sign(account.address, msgs, fee, "", {
         accountNumber: accountInfo.accountNumber,
         chainId: chainId,
         sequence: accountInfo.sequence,
