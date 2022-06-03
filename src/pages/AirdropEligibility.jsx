@@ -11,6 +11,7 @@ import { getMainNetworks, getTestNetworks } from '../utils/networks';
 import { useNavigate } from "react-router-dom";
 import { resetError, setError } from '../features/common/commonSlice';
 import AirdropProgress from '../components/AirdropProgress';
+import {fromBech32, toHex, toBech32, fromHex} from "@cosmjs/encoding"
 
 function getPasgNetwork() {
     const mainNetworks = getMainNetworks();
@@ -40,6 +41,15 @@ function getClaimPercentage(claimRecords) {
         }
     }
     return Math.floor((claimed / 3) * 100)
+}
+
+function getPassageAddress(address) {
+    try {
+        const hexAddress = toHex(fromBech32(address).data)
+        return [toBech32("pasg", fromHex(hexAddress)), null]
+    } catch (err) {
+        return [null, err.message]
+    }
 }
 
 export default function AirdropEligibility() {
@@ -108,10 +118,18 @@ export default function AirdropEligibility() {
 
     const dispatch = useDispatch();
     const onSubmit = data => {
-        dispatch(getClaimRecords({
-            baseURL: lcd,
-            address: data.address,
-        }))
+        const [address, err] = getPassageAddress(data.address)
+        if (err) {
+            dispatch(setError({
+                type: 'error',
+                message: err
+            }))
+        } else {
+            dispatch(getClaimRecords({
+                baseURL: lcd,
+                address: address,
+            }))
+        }
     }
 
     const getClaimableAmount = (records) => {
