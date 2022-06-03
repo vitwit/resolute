@@ -142,7 +142,7 @@ export function getTestNetworks() {
             airdropActions: [],
             logoName: "passage3d.png",
             airdropMessage: "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
-            src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
+            src: "./passage-logo-only.png",
             testnet: true,
             lcd: 'https://api.passage3d.vitwit.com/',
             rpc: 'https://rpc.passage3d.vitwit.com',

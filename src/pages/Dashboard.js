@@ -10,7 +10,7 @@ import Container from '@mui/material/Container';
 import { mainListItems } from './listItems';
 import Authz from './Authz'
 import Feegrant from './Feegrant'
-import { getLastSelectedNetwork, getSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
+import { getSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Link from '@mui/material/Link'
@@ -36,6 +36,7 @@ import { CustomAppBar } from '../components/CustomAppBar';
 import AirdropEligibility from './AirdropEligibility';
 import { resetError, setError } from '../features/common/commonSlice';
 import { getPalletByNetwork } from '../utils/pallet';
+import Page404 from './Page404';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -43,10 +44,10 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 function isDarkMode() {
     const mode = localStorage.getItem("DARK_MODE");
-    if (mode === "true") {
-        return true;
-    } else {
+    if (mode === "false") {
         return false;
+    } else {
+        return true;
     }
 }
 
@@ -331,6 +332,7 @@ function DashboardContent() {
                             </Typography>
                         </ListItem>
                         <ListItem style={{ justifyContent: 'center' }}>
+                            <img src='./logo-only.png' width={25} height={18} />&nbsp;
                             <Link style={{ textDecoration: 'none' }} target="_blank" href='https://vitwit.com'>
                                 Vitwit.com
                             </Link>
@@ -361,7 +363,14 @@ function DashboardContent() {
                             <Route path="/validators" element={<Validators />}></Route>
                             <Route path="/proposals" element={<Proposals />}></Route>
                             <Route path="/send" element={<Send />}></Route>
-                            <Route path="/airdrop-check" element={<AirdropEligibility />}></Route>
+                            {
+                                selectedNetwork.showAirdrop ?
+                                    <Route path="/airdrop-check" element={<AirdropEligibility />}></Route>
+                                    :
+                                    <></>
+                            }
+                            <Route path="*" element={<Page404/>}>
+                            </Route>
                         </Routes>
                     </Container>
                 </Box>
