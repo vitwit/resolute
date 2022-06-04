@@ -21,4 +21,11 @@ export const store = configureStore({
     distribution: distributionSlice,
     airdrop: airdropSlice,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore these action types
+        ignoredActions: ['wallet/connect/fulfilled'],
+      },
+    }),
 });

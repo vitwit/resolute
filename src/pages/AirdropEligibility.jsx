@@ -4,7 +4,8 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import { useForm, Controller } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
-import { Typography, CircularProgress } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useDispatch, useSelector } from 'react-redux';
 import { getClaimRecords, resetState, getClaimParams, txClaimAction } from './../features/airdrop/airdropSlice';
 import { getMainNetworks, getTestNetworks } from '../utils/networks';
@@ -180,6 +181,7 @@ export default function AirdropEligibility() {
                                 render={({ field }) =>
                                     <TextField
                                         {...field}
+                                        placeholder="enter cosmos/juno address"
                                         required
                                         label="Address"
                                         fullWidth
