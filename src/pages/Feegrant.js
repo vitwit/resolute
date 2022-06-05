@@ -21,7 +21,8 @@ import { getTypeURLName, shortenAddress } from '../utils/util';
 import { getLocalTime } from './../utils/datetime'
 import { useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from './../components/CustomTable';
-import { Link, Typography } from '@mui/material';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 import { FeegrantInfo } from '../components/FeegrantInfo';
 import Switch from '@mui/material/Switch';
 

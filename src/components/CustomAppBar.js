@@ -12,7 +12,8 @@ import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import PropTypes from 'prop-types';
 import DividerWithText from './DividerWithText';
-import { ListItemIcon, ListItemText } from '@mui/material';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 
 export function CustomAppBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);

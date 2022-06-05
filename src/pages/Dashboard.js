@@ -21,17 +21,18 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { Validators } from './Validators';
 import { Proposals } from './Proposals';
 import { useSelector, useDispatch } from 'react-redux'
-import { setWallet, resetWallet } from './../features/wallet/walletSlice'
+import { resetWallet, connectKeplrWallet } from './../features/wallet/walletSlice'
 import { useNavigate } from "react-router-dom";
 import NewFeegrant from './NewFeegrant';
 import NewAuthz from './NewAuthz';
 import { shortenAddress } from '../utils/util';
-import { AlertTitle, ListItem, Typography } from '@mui/material';
+import AlertTitle from '@mui/material/AlertTitle';
+import ListItem from '@mui/material/ListItem';
+import Typography from '@mui/material/Typography';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Overview from './Overview';
 import { Send } from './Send';
-import { getKeplrWalletAmino, isKeplrInstalled } from '../txns/execute';
 import { CustomAppBar } from '../components/CustomAppBar';
 import AirdropEligibility from './AirdropEligibility';
 import { resetError, setError } from '../features/common/commonSlice';
@@ -115,12 +116,12 @@ function DashboardContent() {
     React.useEffect(() => {
         // wait for keplr instance to available
         setTimeout(() => {
-            connectWallet(selectedNetwork)
+            dispatch(connectKeplrWallet(selectedNetwork))
         }, 200);
 
         const listener = () => {
             setTimeout(() => {
-                connectWallet(selectedNetwork)
+                dispatch(connectKeplrWallet(selectedNetwork))
             }, 1000);
         }
         window.addEventListener("keplr_keystorechange", listener);
@@ -152,69 +153,21 @@ function DashboardContent() {
     }, [txSuccess]);
 
     const handleNetworkChange = (network) => {
-        disconnectWallet();
+        dispatch(connectKeplrWallet(network))
         changeNetwork(network);
-        connectWallet(network);
     }
 
     function disconnectWallet() {
         dispatch(resetWallet());
     }
 
+    const connectWallet = (network) => {
+        dispatch(connectKeplrWallet(network))
+    }
+
     let navigate = useNavigate();
     function navigateTo(path) {
         navigate(path);
-    }
-
-    const connectWallet = (network) => {
-        if (!isKeplrInstalled()) {
-            alert("keplr extension is not installed")
-        } else {
-            window.keplr.defaultOptions = {
-                sign: {
-                    preferNoSetMemo: true,
-                    // preferNoSetFee: true,
-                    disableBalanceCheck: true,
-                },
-            };
-            if (network.experimental) {
-                window.keplr.experimentalSuggestChain(network.config)
-                    .then((v) => {
-                        enableConnection(network)
-                    })
-                    .catch((error) => {
-                        alert(error);
-                    })
-            } else {
-                enableConnection(network)
-            }
-        }
-
-    }
-
-    const [walletName, setWalletName] = React.useState("");
-    const enableConnection = (network) => {
-        getKeplrWalletAmino(network.chainId)
-            .then((result) => {
-                dispatch(setWallet({
-                    address: result[1].address,
-                    chainInfo: network
-                }))
-            })
-            .catch((err) => {
-                disconnectWallet();
-                alert(err);
-            })
-
-        if (window.keplr) {
-            window.keplr.getKey(network.chainId)
-                .then((result) => {
-                    setWalletName(result?.name);
-                })
-                .catch((error) => {
-                    setWalletName("");
-                })
-        }
     }
 
     const copyToClipboard = (text) => {
@@ -270,7 +223,7 @@ function DashboardContent() {
                                             variant='body1'
                                             fontWeight={600}
                                         >
-                                            {walletName}
+                                            {wallet.name}
                                         </Typography>
                                     </ListItem>
                                     <ListItem
@@ -369,7 +322,7 @@ function DashboardContent() {
                                     :
                                     <></>
                             }
-                            <Route path="*" element={<Page404/>}>
+                            <Route path="*" element={<Page404 />}>
                             </Route>
                         </Routes>
                     </Container>
