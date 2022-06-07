@@ -15,5 +15,4 @@ jobs:
           node-version: 14.x
       - name: npm ci, build
         run: |
-          yarn ci
           yarn build --if-present
