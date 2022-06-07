@@ -4,6 +4,9 @@
 ## Install deps 
 ```bash
 # clone the repo with git and checkout to master
+$ git clone https://github.com/vitwit/Staking.git
+$ cd Staking
+$ git checkout master
 $ yarn
 ```
 
@@ -21,7 +24,7 @@ $ yarn test
 Launches the test runner in the interactive watch mode.<br />
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-## Productiton Build 
+## Production Build 
 ```bash
 $ yarn build
 ```
