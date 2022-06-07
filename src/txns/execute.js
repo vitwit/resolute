@@ -3,7 +3,7 @@ import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Registry } from '@cosmjs/proto-signing';
 import { MsgClaim } from "./msg_claim";
 
-export async function signAndBroadcastCustomMsg(signer, msgs, fee, chainId, rpcURL) {
+export async function signAndBroadcastCustomMsg(signer, msgs, fee, chainId, rpcURL, memo="") {
     await window.keplr.enable(chainId);
     const offlineSigner = window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
         let registry = new Registry()
@@ -26,11 +26,11 @@ export async function signAndBroadcastCustomMsg(signer, msgs, fee, chainId, rpcU
             signer,
             msgs,
             fee,
-            "",
+            memo,
         )
 }
 
-export async function signAndBroadcastAmino(msgs, fee, chainID, rpcURL) {
+export async function signAndBroadcastAmino(msgs, fee, chainID, rpcURL, memo="") {
     let result = await getKeplrWalletAmino(chainID);
     var wallet = result[0]
     var account = result[1]
@@ -50,7 +50,7 @@ export async function signAndBroadcastAmino(msgs, fee, chainID, rpcURL) {
         }
     )
 
-    return await cosmJS.signAndBroadcast(account.address, msgs, fee, "");
+    return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
 }
 
 

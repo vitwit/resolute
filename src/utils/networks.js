@@ -139,7 +139,13 @@ export function getTestNetworks() {
             displayName: "Passage-Testnet",
             experimental: true,
             showAirdrop: true,
-            airdropActions: [],
+            airdropActions: [
+                {
+                    title: "#1 Initial Claim",
+                    type: "action",
+
+                },
+            ],
             logoName: "passage3d.png",
             airdropMessage: "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
             src: "./passage-logo-only.png",

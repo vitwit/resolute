@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { signAndBroadcastAmino, fee } from '../../txns/execute';
 import distService from './distributionService';
 import { WithdrawAllRewardsMsg } from '../../txns/proto';
+import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
   delegatorRewards: {
@@ -12,7 +13,6 @@ const initialState = {
   },
   tx: {
     status: 'idle',
-    errMsg: '',
     txHash: '',
   }
 
@@ -20,7 +20,7 @@ const initialState = {
 
 export const txWithdrawAllRewards = createAsyncThunk(
   'distribution/withdraw-all-rewards',
-  async (data, { rejectWithValue, fulfillWithValue }) => {
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msgs = []
       for (let i=0;i<data.msgs.length;i++) {
@@ -29,11 +29,22 @@ export const txWithdrawAllRewards = createAsyncThunk(
       }      
       const result = await signAndBroadcastAmino(msgs, fee(data.denom, data.feeAmount), data.chainId, data.rpc)
       if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
         return fulfillWithValue({txHash: result?.transactionHash});
         } else {
+          dispatch(setError({
+            type: 'error',
+            message: result?.rawLog
+          }))
           return rejectWithValue(result?.rawLog);
         }
     } catch (error) {
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
       return rejectWithValue(error.response)
     }
   }
@@ -81,18 +92,16 @@ export const distSlice = createSlice({
       builder
       .addCase(txWithdrawAllRewards.pending, (state) => {
         state.tx.status = 'pending';
-        state.tx.errMsg = '';
         state.tx.txHash = '';
 
       })
       .addCase(txWithdrawAllRewards.fulfilled, (state, action) => {
         state.tx.status = 'idle';
-        state.tx.errMsg = '';
         state.tx.txHash = action.payload.txHash;
       })
       .addCase(txWithdrawAllRewards.rejected, (state, action) => {
         state.tx.status = 'rejected';
-        state.tx.errMsg = action.error.message;
+        state.txHash = "";
       })
 
       

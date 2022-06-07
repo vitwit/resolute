@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import { useForm, Controller } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useDispatch, useSelector } from 'react-redux';
 import { getClaimRecords, resetState, getClaimParams, txClaimAction } from './../features/airdrop/airdropSlice';
@@ -12,7 +13,8 @@ import { getMainNetworks, getTestNetworks } from '../utils/networks';
 import { useNavigate } from "react-router-dom";
 import { resetError, setError } from '../features/common/commonSlice';
 import AirdropProgress from '../components/AirdropProgress';
-import {fromBech32, toHex, toBech32, fromHex} from "@cosmjs/encoding"
+import { fromBech32, toHex, toBech32, fromHex } from "@cosmjs/encoding"
+import AlertTitle from '@mui/material/AlertTitle';
 
 function getPasgNetwork() {
     const mainNetworks = getMainNetworks();
@@ -56,7 +58,7 @@ function getPassageAddress(address) {
 export default function AirdropEligibility() {
     const claimRecords = useSelector((state) => state.airdrop.claimRecords);
     const params = useSelector((state) => state.airdrop.params);
-    const chainInfo = useSelector((state) => state.wallet.chainInfo);
+    const [chainInfo, setChainInfo] = useState(getPasgNetwork());
     const status = useSelector((state) => state.airdrop.claimStatus);
     const errMsg = useSelector((state) => state.airdrop.errMsg);
     const txStatus = useSelector((state) => state.airdrop.tx.status);
@@ -87,7 +89,7 @@ export default function AirdropEligibility() {
 
     useEffect(() => {
         if (txStatus === 'idle') {
-            if (walletAddress.length > 0)
+            if (walletAddress?.length > 0)
                 dispatch(getClaimRecords({
                     baseURL: lcd,
                     address: walletAddress,
@@ -97,7 +99,7 @@ export default function AirdropEligibility() {
 
 
     useEffect(() => {
-        if (walletAddress.startsWith("pasg")) {
+        if (walletAddress?.startsWith("pasg")) {
             dispatch(resetState())
             setValue("address", walletAddress)
         }
@@ -152,6 +154,7 @@ export default function AirdropEligibility() {
                 rpc: chainInfo.rpc,
                 feeAmount: chainInfo?.config.gasPriceStep.average,
                 baseURL: chainInfo?.lcd,
+                memo: "I confirm that I am not an US citizen"
             }))
         } else {
             alert("Wallet is not connected");
@@ -207,29 +210,37 @@ export default function AirdropEligibility() {
                                 status === 'idle' ?
                                     claimRecords.address?.length > 0 ?
                                         <>
-                                            <Typography
-                                                variant='body1'
-                                                color='text.primary'
-                                                fontWeight={600}
+                                            <Alert
+                                                style={{ textAlign: 'left' }}
+                                                severity='success'
                                             >
-                                                Claimable tokens: {getClaimableAmount(claimRecords?.claimable_amount)}
-                                            </Typography>
-                                            <Typography
-                                                variant='body1'
-                                                color='text.primary'
-                                                fontWeight={600}
+                                                <AlertTitle>
+                                                    Claimable tokens: {getClaimableAmount(claimRecords?.claimable_amount)}
+                                                </AlertTitle>
+                                                <Typography
+                                                    variant='body1'
+                                                    color='text.primary'
+                                                    fontWeight={500}
+                                                >
+                                                    {chainInfo.airdropMessage}
+                                                </Typography>
+                                            </Alert>
+                                            <Alert
+                                                style={{ textAlign: 'left', marginTop: 8 }}
+                                                severity='info'
                                             >
-                                                {chainInfo.airdropMessage}
-                                            </Typography>
+                                                <AlertTitle>Note</AlertTitle>
+                                                US citizens are being excluded from the airdrop.
+                                            </Alert>
                                         </>
                                         :
-                                        <Typography
-                                            variant='body1'
-                                            color='text.primary'
-                                            fontWeight={600}
+                                        <Alert
+                                            style={{ textAlign: 'left' }}
+                                            severity='error'
                                         >
+                                            <AlertTitle>Sorry</AlertTitle>
                                             You are not eligible for the Airdrop
-                                        </Typography>
+                                        </Alert>
                                     :
                                     <></>
                             }
@@ -239,106 +250,122 @@ export default function AirdropEligibility() {
                 <Grid item xs={2} md={3}></Grid>
             </Grid>
             {
-                claimRecords?.address === getValues().address && chainInfo.airdropActions.length > 0 ?
-                    <>
-                        <br />
-                        <Paper
-                            style={{ padding: 16, textAlign: 'left' }}
-                            elevation={0}
-                        >
-                            <Typography
-                                variant='h6'
-                                color='text.primary'
-                                style={{ marginBottom: 12 }}
+                walletAddress?.length > 0
+                    ?
+                    claimRecords?.address === getValues().address && chainInfo.airdropActions?.length > 0 ?
+                        <>
+                            <br />
+                            <Paper
+                                style={{ padding: 16, textAlign: 'left' }}
+                                elevation={0}
                             >
-                                My Progress
-                            </Typography>
-                            <AirdropProgress value={getClaimPercentage(claimRecords)} />
-                        </Paper>
-                        <br />
-                        <Paper
-                            elevation={0}
-                            style={{ padding: 16, textAlign: 'left' }}
-                        >
-                            <Typography
-                                color='text.primary'
-                                variant='h5'
-                                fontWeight={600}
-
+                                <Typography
+                                    variant='h6'
+                                    color='text.primary'
+                                    style={{ marginBottom: 12 }}
+                                >
+                                    My Progress
+                                </Typography>
+                                <AirdropProgress value={getClaimPercentage(claimRecords)} />
+                            </Paper>
+                            <br />
+                            <Paper
+                                elevation={0}
+                                style={{ padding: 16, textAlign: 'left' }}
                             >
-                                Missions
-                            </Typography>
-                            {
-                                chainInfo.airdropActions.map((item, index) => (
-                                    item.type === "action" ?
-                                        <Paper
-                                            elevation={1}
-                                            className='claim-item'
-                                        >
-                                            <Typography
-                                                color='text.primary'
-                                                variant='h6'
-                                                fontWeight={600}
-                                            >
-                                                {item.title}
-                                            </Typography>
-                                            <Button
-                                                variant='contained'
-                                                disableElevation
-                                                onClick={() => {
-                                                    txAction1()
-                                                }}
-                                                disabled={(params?.airdrop_enabled === false && new Date(params?.airdrop_start_time) >= new Date())
-                                                    || (claimRecords?.action_completed.length >= index && claimRecords?.action_completed[index] === true)
-                                                    || txStatus === 'pending'}
-                                            >
-                                                {
-                                                    claimRecords?.action_completed.length >= index && claimRecords?.action_completed[index] === true ?
-                                                        `Claimed`
-                                                        :
+                                <Typography
+                                    color='text.primary'
+                                    variant='h5'
+                                    fontWeight={600}
 
-                                                        txStatus === 'pending' ?
-                                                            <CircularProgress size={25} />
+                                >
+                                    Missions
+                                </Typography>
+                                {
+                                    chainInfo.airdropActions.map((item, index) => (
+                                        item.type === "action" ?
+                                            <Paper
+                                                key={index}
+                                                elevation={1}
+                                                className='claim-item'
+                                            >
+                                                <Typography
+                                                    color='text.primary'
+                                                    variant='h6'
+                                                    fontWeight={600}
+                                                >
+                                                    {item.title}
+                                                </Typography>
+                                                <Button
+                                                    variant='contained'
+                                                    disableElevation
+                                                    onClick={() => {
+                                                        txAction1()
+                                                    }}
+                                                    disabled={(params?.airdrop_enabled === false && new Date(params?.airdrop_start_time) >= new Date())
+                                                        || (claimRecords?.action_completed.length >= index && claimRecords?.action_completed[index] === true)
+                                                        || txStatus === 'pending'}
+                                                >
+                                                    {
+                                                        claimRecords?.action_completed.length >= index && claimRecords?.action_completed[index] === true ?
+                                                            `Claimed`
+                                                            :
+
+                                                            txStatus === 'pending' ?
+                                                                <CircularProgress size={25} />
+                                                                :
+                                                                `Claim`
+                                                    }
+                                                </Button>
+                                            </Paper>
+                                            :
+                                            <Paper
+                                                elevation={1}
+                                                className='claim-item'
+                                            >
+                                                <Typography
+                                                    color='text.primary'
+                                                    variant='h6'
+                                                    fontWeight={600}
+                                                >
+                                                    {item.title}
+                                                </Typography>
+                                                <Button
+                                                    variant='contained'
+                                                    disableElevation
+                                                    onClick={() => {
+                                                        navigateTo(item.redirect)
+                                                    }}
+                                                    disabled={(claimRecords?.action_completed.length >= index && claimRecords?.action_completed[index] === true)}
+                                                >
+                                                    {
+                                                        claimRecords?.action_completed.length >= index && claimRecords?.action_completed[index] === true ?
+                                                            `Claimed`
                                                             :
                                                             `Claim`
-                                                }
-                                            </Button>
-                                        </Paper>
-                                        :
-                                        <Paper
-                                            elevation={1}
-                                            className='claim-item'
-                                        >
-                                            <Typography
-                                                color='text.primary'
-                                                variant='h6'
-                                                fontWeight={600}
-                                            >
-                                                {item.title}
-                                            </Typography>
-                                            <Button
-                                                variant='contained'
-                                                disableElevation
-                                                onClick={() => {
-                                                    navigateTo(item.redirect)
-                                                }}
-                                                disabled={(claimRecords?.action_completed.length >= index && claimRecords?.action_completed[index] === true)}
-                                            >
-                                                {
-                                                    claimRecords?.action_completed.length >= index && claimRecords?.action_completed[index] === true ?
-                                                        `Claimed`
-                                                        :
-                                                        `Claim`
-                                                }
-                                            </Button>
-                                        </Paper>
-                                )
-                                )
-                            }
-                        </Paper>
-                    </>
+                                                    }
+                                                </Button>
+                                            </Paper>
+                                    )
+                                    )
+                                }
+                            </Paper>
+                        </>
+                        :
+                        <></>
                     :
-                    <></>
+                    claimRecords?.action_completed?.length > 0
+                        ?
+                        <Typography
+                            variant='h5'
+                            color='text.primary'
+                            fontWeight={800}
+                            style={{ marginTop: 36 }}
+                        >
+                            Connect Keplr wallet to claim airdrop
+                        </Typography>
+                        :
+                        <></>
             }
         </>
 
