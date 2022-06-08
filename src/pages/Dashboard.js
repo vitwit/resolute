@@ -273,7 +273,7 @@ function DashboardContent() {
                     </List>
                     <Divider />
                     <List component="nav">
-                        {mainListItems(location.pathname, (path) => { navigateTo(path) }, selectedNetwork?.showAirdrop)}
+                        {mainListItems(location.pathname, (path) => { navigateTo(path) }, selectedNetwork)}
                     </List>
                     <List style={{ marginTop: 'auto', flexDirection: 'row' }}>
                         <ListItem style={{ justifyContent: 'center' }}>

@@ -145,6 +145,26 @@ export function AuthzExecSendMsg(grantee, from, to, amount, denom) {
     }
 }
 
+export function AuthzExecVoteMsg(grantee, from, to, amount, denom) {
+    return {
+        typeUrl: msgAuthzExecypeUrl,
+        value: MsgExec.fromPartial({
+            grantee: grantee,
+            msgs: [
+                {
+                    typeUrl: msgVote,
+                    value: MsgVote.encode({
+                        option: option,
+                        proposalId: proposalId,
+                        voter: voter
+                        
+                    }).finish()
+                }
+            ]
+        }),
+    }
+}
+
 
 export function GovVoteMsg(proposalId, voter, option) {
     return {

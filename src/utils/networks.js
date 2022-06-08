@@ -9,7 +9,7 @@ export function getMainNetworks() {
             src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
             experimental: false,
             testnet: false,
-            lcd: "https://cosmos.api.ping.pub",
+            lcd: "https://lcd-cosmos.cosmostation.io",
             rpc: "https://rpc-cosmoshub.blockapsis.com:443",
             txHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
 

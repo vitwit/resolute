@@ -22,6 +22,7 @@ import { AuthorizationInfo } from '../components/AuthorizationInfo';
 import { resetError, resetTxHash, setError } from '../features/common/commonSlice';
 import { getTypeURLFromAuthorization } from '../utils/authorizations';
 import { AuthzSendDialog } from '../components/authz/AuthzSend';
+import { AuthzVoteDialog } from '../components/authz/AuthzVote';
 
 export default function Authz() {
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
@@ -41,6 +42,7 @@ export default function Authz() {
   const authzTx = useSelector((state) => state.authz.tx);
   const execTx = useSelector((state) => state.authz.execTx);
   const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
+  const proposals = useSelector((state) => state.gov.active.proposals);
 
   useEffect(() => {
     if (execTx.status === 'idle') {
@@ -101,6 +103,12 @@ export default function Authz() {
 
   const [selectedGrant, setSelectedGrant] = React.useState({});
   const onUseAuthz = (row) => {
+    if (row?.authorization?.msg === "/cosmos.gov.v1beta1.MsgVote") {
+      dispatch(getProposals({
+        baseURL: chainInfo?.lcd,
+        voter: row?.granter,
+      }))
+    }
     setSelectedGrant(row);
   }
 
@@ -111,6 +119,20 @@ export default function Authz() {
       granter: data.from,
       recipient: data.recipient,
       amount: data.amount,
+      denom: currency.coinMinimalDenom,
+      chainId: chainInfo.chainId,
+      rpc: chainInfo.rpc,
+      feeAmount: chainInfo?.config.gasPriceStep.average,
+    })
+  }
+
+  const onExecVote = (data) => {
+    authzExecHelper(dispatch, {
+      type: "vote",
+      from: address,
+      granter: data.voter,
+      proposalId: data.proposalId,
+      option: data.option,
       denom: currency.coinMinimalDenom,
       chainId: chainInfo.chainId,
       rpc: chainInfo.rpc,
@@ -169,7 +191,7 @@ export default function Authz() {
               (
                 <>
                   {
-                    grantsByMe?.grants.length === 0 ?
+                    grantsByMe?.grants?.length === 0 ?
                       <Typography
                         variant='h6'
                         color="text.primary"
@@ -189,7 +211,7 @@ export default function Authz() {
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
-                            {grantsByMe.grants && grantsByMe.grants.map((row, index) => (
+                            {grantsByMe.grants && grantsByMe.grants?.map((row, index) => (
                               <StyledTableRow
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -232,7 +254,7 @@ export default function Authz() {
               (
                 <>
                   {
-                    grantsToMe?.grants.length === 0 ?
+                    grantsToMe?.grants?.length === 0 ?
 
                       <Typography
                         variant='h6'
@@ -254,7 +276,7 @@ export default function Authz() {
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
-                            {grantsToMe.grants && grantsToMe.grants.map((row, index) => (
+                            {grantsToMe.grants && grantsToMe.grants?.map((row, index) => (
                               <StyledTableRow
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -309,6 +331,22 @@ export default function Authz() {
             onClose={() => { setSelectedGrant({}) }}
             onExecSend={(data) => onExecSend(data)}
             execTx={execTx.status}
+          />
+          :
+          <></>
+      }
+      {
+        selectedGrant?.authorization &&
+          (
+            selectedGrant?.authorization?.msg === "/cosmos.gov.v1beta1.MsgVote"
+          ) ?
+          <AuthzVoteDialog
+            grant={selectedGrant}
+            open={selectedGrant?.authorization?.msg === "/cosmos.gov.v1beta1.MsgVote"}
+            onClose={() => { setSelectedGrant({}) }}
+            onExecVote={(data) => onExecVote(data)}
+            execTx={execTx.status}
+            proposals={proposals}
           />
           :
           <></>
