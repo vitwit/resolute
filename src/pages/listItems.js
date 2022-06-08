@@ -23,6 +23,12 @@ export function mainListItems(currentPath, onNavigate, showAirdrop) {
       </ListItemIcon>
       <ListItemText primary="Send" />
     </ListItemButton> */}
+     <ListItemButton onClick={() => onNavigate("/multisig")} selected={currentPath === "/multisig"}>
+      <ListItemIcon>
+        <BarChartOutlinedIcon />
+      </ListItemIcon>
+      <ListItemText primary="Multisig" />
+    </ListItemButton>
     <ListItemButton onClick={() => onNavigate("/validators")} selected={currentPath === "/validators"}>
       <ListItemIcon>
         <BarChartOutlinedIcon />

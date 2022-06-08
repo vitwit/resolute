@@ -38,6 +38,8 @@ import AirdropEligibility from './AirdropEligibility';
 import { resetError, setError } from '../features/common/commonSlice';
 import { getPalletByNetwork } from '../utils/pallet';
 import Page404 from './Page404';
+import CreateMultisig from './multisig/CreateMultisig';
+import MultiSig from './multisig/Multisig';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -316,6 +318,7 @@ function DashboardContent() {
                             <Route path="/validators" element={<Validators />}></Route>
                             <Route path="/proposals" element={<Proposals />}></Route>
                             <Route path="/send" element={<Send />}></Route>
+                            <Route path="/multisig" element={<MultiSig />}></Route>
                             {
                                 selectedNetwork.showAirdrop ?
                                     <Route path="/airdrop-check" element={<AirdropEligibility />}></Route>
