@@ -62,7 +62,7 @@ export function getTestNetworks() {
         //    {
         //        title: "#1 Initial Claim",
         //        type: "action",
-        //     
+            
         //    },
         //    {
         //        title: "#2 Stake",

@@ -101,7 +101,14 @@ export default function Authz() {
 
   const [selectedGrant, setSelectedGrant] = React.useState({});
   const onUseAuthz = (row) => {
+    if (
+      row?.authorization["@type"] === "/cosmos.bank.v1beta1.SendAuthorization" ||
+            row?.authorization?.msg === "/cosmos.bank.v1beta1.MsgSend"
+    ){
     setSelectedGrant(row);
+    } else {
+      alert("TODO")
+    }
   }
 
   const onExecSend = (data) => {
@@ -169,7 +176,7 @@ export default function Authz() {
               (
                 <>
                   {
-                    grantsByMe?.grants.length === 0 ?
+                    grantsByMe?.grants?.length === 0 ?
                       <Typography
                         variant='h6'
                         color="text.primary"
@@ -232,7 +239,7 @@ export default function Authz() {
               (
                 <>
                   {
-                    grantsToMe?.grants.length === 0 ?
+                    grantsToMe?.grants?.length === 0 ?
 
                       <Typography
                         variant='h6'

@@ -35,11 +35,11 @@ export function mainListItems(currentPath, onNavigate, showAirdrop) {
       </ListItemIcon>
       <ListItemText primary="Proposals" />
     </ListItemButton>
-    <ListItemButton onClick={() => {}} disabled>
+    <ListItemButton onClick={() => onNavigate("/authz")} selected={currentPath === "/authz"}>
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
-      <ListItemText primary="Authz" secondary="coming soon" />
+      <ListItemText primary="Authz"/>
     </ListItemButton>
     <ListItemButton onClick={() => {}} disabled>
       <ListItemIcon>
