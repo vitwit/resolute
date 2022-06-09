@@ -81,7 +81,7 @@ const renderAuthorization = (authz, displayDenom) => {
                             <Typography>
                                 Expiration
                             </Typography>
-                            {expiration ? <Typography>getLocalTime(expiration)</Typography> : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}
+                            {expiration ? <Typography>{getLocalTime(expiration)}</Typography> : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}
                         </li>
                     </ul>
                 </>
