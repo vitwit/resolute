@@ -6,31 +6,18 @@ import Typography from '@mui/material/Typography';
 import { computeVotePercentage, getProposalComponent } from '../utils/util';
 import './common.css';
 import { getLocalTime } from '../utils/datetime';
-import VoteDialog from '../components/Vote';
 
 export const ProposalItem = (props) => {
-    const [open, setOpen] = useState(false);
-
     const { info, tally, vote } = props;
     const tallyInfo = computeVotePercentage(tally);
 
     const onVoteClick = () => {
-        setOpen(true);
-    }
-
-    const closeDialog = () => {
-        setOpen(false);
-    }
-
-    const onVoteSubmit = (option) => {
-        const vote = nameToOption(option);
-        const proposalId = info.proposal_id
-        props.onVoteSubmit(proposalId, vote);
+        props.onVote(info?.proposal_id)
+        props.setOpen(true);
     }
 
     return (
         <React.Fragment>
-            <VoteDialog open={open} closeDialog={closeDialog} onVote={onVoteSubmit} txstatus={props?.txStatus} />
             <CardContent>
                 <div
                     style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
@@ -143,7 +130,6 @@ export const ProposalItem = (props) => {
         </React.Fragment>
     );
 }
-
 function formatVoteOption(option) {
     switch (option) {
         case 'VOTE_OPTION_YES':
@@ -156,21 +142,5 @@ function formatVoteOption(option) {
             return "NoWithVeto"
         default:
             return ""
-    }
-}
-
-
-function nameToOption(name) {
-    switch (name) {
-        case 'yes':
-            return 1
-        case 'no':
-            return 2
-        case 'abstain':
-            return 3
-        case 'noWithVeto':
-            return 4
-        default:
-            return 0
     }
 }

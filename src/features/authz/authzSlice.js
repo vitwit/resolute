@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import authzService from './authzService';
 import { fee, signAndBroadcastProto } from '../../txns/execute';
-import { AuthzSendGrantMsg, AuthzGenericGrantMsg, AuthzRevokeMsg, AuthzExecSendMsg } from '../../txns/proto';
+import { AuthzSendGrantMsg, AuthzGenericGrantMsg, AuthzRevokeMsg, AuthzExecSendMsg, AuthzExecVoteMsg } from '../../txns/proto';
 import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
@@ -100,7 +100,7 @@ export const txAuthzRevoke = createAsyncThunk(
 
 export const authzExecHelper = (dispatch, data) => {
   switch(data.type) {
-    case "send":
+    case "send": {
       const msg = AuthzExecSendMsg(data.from, data.granter, data.recipient, data.amount, data.denom)
       dispatch(txAuthzExec({
         msg: msg,
@@ -109,6 +109,17 @@ export const authzExecHelper = (dispatch, data) => {
         feeAmount: data.feeAmount,
       }))
       break
+    }
+    case "vote": {
+      const msg = AuthzExecVoteMsg(data.from, data.proposalId, data.option, data.granter)
+      dispatch(txAuthzExec({
+        msg: msg,
+        denom: data.denom,
+        rpc: data.rpc,
+        feeAmount: data.feeAmount,
+      }))
+      break
+    }
     default:
       alert("not supported")
   }
