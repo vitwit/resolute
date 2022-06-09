@@ -4,6 +4,13 @@
 *.dll
 *.so
 *.dylib
+*.json
+.DS_Store
+build/
+
+# If anyone runs "go build .", ignore the resulting binary.
+resolute
+resolute.exe
 
 # Test binary, built with `go test -c`
 *.test
