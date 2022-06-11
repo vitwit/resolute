@@ -89,7 +89,7 @@ export const txVote = createAsyncThunk(
         type: 'error',
         message: error.message
       }))
-      return rejectWithValue(error)
+      return rejectWithValue(error.message)
     }
   }
 );
@@ -98,7 +98,13 @@ export const txVote = createAsyncThunk(
 export const proposalsSlice = createSlice({
   name: 'gov',
   initialState,
-  reducers: {},
+  reducers: {
+    resetTx: (state) => {
+      state.tx = {
+        status: '',
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getProposals.pending, (state) => {
@@ -164,4 +170,5 @@ export const proposalsSlice = createSlice({
   },
 });
 
+export const { resetTx } = proposalsSlice.actions;
 export default proposalsSlice.reducer;
