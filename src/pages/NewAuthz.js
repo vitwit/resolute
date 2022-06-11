@@ -18,6 +18,7 @@ import {
     resetError, resetTxHash, setError
 } from './../features/common/commonSlice';
 import InputAdornment from '@mui/material/InputAdornment';
+import { Typography } from '@mui/material';
 
 
 export default function NewAuthz() {
@@ -88,7 +89,7 @@ export default function NewAuthz() {
             denom: currency.coinMinimalDenom,
             chainId: chainInfo.chainId,
             rpc: chainInfo.rpc,
-            feeAmount: chainInfo.gasPriceStep.average,
+            feeAmount: chainInfo?.config.gasPriceStep.average,
         }))
     };
 
@@ -187,7 +188,14 @@ export default function NewAuthz() {
                                                 />
                                             </LocalizationProvider>
                                         }
-                                    />
+                                        />
+                                        <Typography
+                                            variant='caption'
+                                            color='text.secondary'
+                                            style={{justifyContent: 'left', display:'flex', marginTop: 8}}
+                                        >
+                                            &nbsp;Note:&nbsp;By default expiration is set to one year
+                                        </Typography>
                                     <br />
 
                                     <Button
@@ -279,6 +287,13 @@ export default function NewAuthz() {
                                                 </LocalizationProvider>
                                             }
                                         />
+                                        <Typography
+                                            variant='caption'
+                                            color='text.secondary'
+                                            style={{justifyContent: 'left', display:'flex', marginTop: 8}}
+                                        >
+                                            &nbsp;Note:&nbsp;By default expiration is set to one year
+                                        </Typography>
                                         <br />
 
                                         <Button
