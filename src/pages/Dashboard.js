@@ -32,12 +32,14 @@ import Typography from '@mui/material/Typography';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Overview from './Overview';
-import { Send } from './Send';
+import { Send } from '../components/Send';
 import { CustomAppBar } from '../components/CustomAppBar';
 import AirdropEligibility from './AirdropEligibility';
 import { resetError, setError } from '../features/common/commonSlice';
 import { getPalletByNetwork } from '../utils/pallet';
 import Page404 from './Page404';
+import SendPage from './SendPage';
+import { totalBalance } from '../utils/denom';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -97,6 +99,7 @@ function DashboardContent() {
     }
 
     const [pallet, setPallet] = React.useState(getPallet());
+    const balance = useSelector((state) => state.bank.balance);
 
     const location = useLocation();
 
@@ -216,25 +219,43 @@ function DashboardContent() {
                             wallet.connected ?
                                 <>
                                     <ListItem
-                                        style={{ justifyContent: 'center' }}
+                                        style={{ justifyContent: 'left' }}
                                     >
+                                        <AccountBalanceWalletOutlinedIcon />
+                                        &nbsp;
                                         <Typography
                                             color='text.primary'
                                             variant='body1'
-                                            fontWeight={600}
+                                            fontWeight={500}
                                         >
                                             {wallet.name}
                                         </Typography>
                                     </ListItem>
-                                    <ListItem
-                                        style={{ justifyContent: 'center' }}
-                                    >
+                                    <ListItem>
                                         <Chip
                                             label={shortenAddress(wallet.address, 21)}
                                             size="small"
                                             deleteIcon={<ContentCopyOutlined />}
                                             onDelete={() => { copyToClipboard(wallet.address) }}
                                         />
+                                    </ListItem>
+                                    <ListItem style={{paddingBottom: 0}}>
+                                        <Typography
+                                            color='text.secondary'
+                                            variant='caption'
+                                            fontWeight={400}
+                                        >
+                                            Available Balance
+                                        </Typography>
+                                    </ListItem>
+                                    <ListItem style={{paddingTop: 2 }}>
+                                        <Typography
+                                            color='text.primary'
+                                            variant='body2'
+                                        >
+                                            {totalBalance(balance.balance, chainInfo.currencies[0].coinDecimals)}
+                                            &nbsp;{chainInfo.currencies[0].coinDenom}
+                                        </Typography>
                                     </ListItem>
                                     <ListItem style={{ justifyContent: 'center' }}>
                                         <Button
@@ -313,9 +334,9 @@ function DashboardContent() {
                             <Route path="/feegrant" element={<Feegrant />}></Route>
                             <Route path="/feegrant/new" element={<NewFeegrant />}></Route>
                             <Route path="/authz/new" element={<NewAuthz />}></Route>
-                            <Route path="/validators" element={<Validators />}></Route>
-                            <Route path="/proposals" element={<Proposals />}></Route>
-                            <Route path="/send" element={<Send />}></Route>
+                            <Route path="/staking" element={<Validators />}></Route>
+                            <Route path="/governance" element={<Proposals />}></Route>
+                            <Route path="/send" element={<SendPage />}></Route>
                             {
                                 selectedNetwork.showAirdrop ?
                                     <Route path="/airdrop-check" element={<AirdropEligibility />}></Route>

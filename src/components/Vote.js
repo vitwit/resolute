@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
-import { Alert } from '@mui/material';
+import Alert from '@mui/material/Alert';
 import { shortenAddress } from '../utils/util';
 
 export default function VoteDialog(props) {

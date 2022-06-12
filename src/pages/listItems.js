@@ -23,17 +23,17 @@ export function mainListItems(currentPath, onNavigate, showAirdrop) {
       </ListItemIcon>
       <ListItemText primary="Send" />
     </ListItemButton> */}
-    <ListItemButton onClick={() => onNavigate("/validators")} selected={currentPath === "/validators"}>
+    <ListItemButton onClick={() => onNavigate("/staking")} selected={currentPath === "/staking"}>
       <ListItemIcon>
         <BarChartOutlinedIcon />
       </ListItemIcon>
       <ListItemText primary="Staking" />
     </ListItemButton>
-    <ListItemButton onClick={() => onNavigate("/proposals")} selected={currentPath === "/proposals"}>
+    <ListItemButton onClick={() => onNavigate("/governance")} selected={currentPath === "/governance"}>
       <ListItemIcon>
         <DocumentScannerOutlinedIcon />
       </ListItemIcon>
-      <ListItemText primary="Proposals" />
+      <ListItemText primary="Governance" />
     </ListItemButton>
     <ListItemButton onClick={() => onNavigate("/authz")} selected={currentPath === "/authz"}>
       <ListItemIcon>
