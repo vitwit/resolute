@@ -62,7 +62,7 @@ export default function MultiSig() {
                     </Box>
                 </React.Fragment>
             ) : (
-                <React.Fragment>
+                <Box sx={{ mt: 4 }}>
                     <Typography sx={{ mt: 2, mb: 1 }}>
                         {
                             activeStep === 0 ? <CreateMultisig handleNext={handleNext} /> : null
@@ -93,7 +93,7 @@ export default function MultiSig() {
                             {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                         </Button>
                     </Box>
-                </React.Fragment>
+                </Box>
             )}
         </Box>
     );

@@ -1,4 +1,4 @@
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, Paper, Typography, Grid, InputAdornment } from '@mui/material';
 import React, { useState } from 'react';
 import { calculateFee } from "@cosmjs/stargate";
 import { useSelector } from 'react-redux';
@@ -6,6 +6,7 @@ import { Decimal } from "@cosmjs/math";
 
 export default function CreateTxn({ handleNext }) {
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
+    const currency = chainInfo?.currencies[0];
 
     const [obj, setObj] = useState({});
 
@@ -56,43 +57,58 @@ export default function CreateTxn({ handleNext }) {
     }
 
     return (
-        <div>
-            <div><h5>Create Txn</h5></div>
-            <div>
-                <form onSubmit={handleSubmit}>
-                    <div className='m-20'>
+        <Grid container>
+            <Grid item xs={1} md={2}></Grid>
+            <Grid item xs={10} md={8}>
+                <Paper elevation={0} style={{ padding: 24 }}>
+                    <Typography
+                        variant='h6'
+                        fontWeight={600}
+                        color='text.primary'
+                    >
+                        Create Transaction
+                    </Typography>
+                    <form onSubmit={handleSubmit}>
                         <TextField
-                            name="toAddress" value={obj.toAddress} onChange={handleChange}
+                            name="toAddress"
+                            value={obj.toAddress}
+                            onChange={handleChange}
                             label="To Address"
                             fullWidth
+                            style={{ marginTop: 8, marginBottom: 8 }}
                         />
-                    </div>
-                    <div className='m-20'>
                         <TextField
                             name="amount" value={obj.amount} onChange={handleChange}
                             label="Amount"
                             fullWidth
+                            style={{ marginTop: 8, marginBottom: 8 }}
+                            InputProps={{
+                                endAdornment:
+                                    <InputAdornment position="start">{currency?.coinDenom}</InputAdornment>,
+                            }}
                         />
-                    </div>
-                    <div className='m-20'>
                         <TextField
                             name="gas" value={obj.gas} onChange={handleChange}
                             label="Gas"
                             fullWidth
+                            style={{ marginTop: 8, marginBottom: 8 }}
                         />
-                    </div>
-                    <div className='m-20'>
                         <TextField
                             name="memo" value={obj.memo} onChange={handleChange}
                             label="Memo"
                             fullWidth
+                            style={{ marginTop: 8, marginBottom: 8 }}
                         />
-                    </div>
-                    <div className='m-20'>
-                        <Button type="submit">Create Txn</Button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                        <Button type="submit" variant='contained' disableElevation
+                            style={{ marginTop: 16 }}
+                            className='button-capitalize-title'
+
+                        >Create Transaction</Button>
+                    </form>
+                </Paper>
+            </Grid>
+            <Grid item xs={1} md={2}></Grid>
+        </Grid>
+
     )
 }

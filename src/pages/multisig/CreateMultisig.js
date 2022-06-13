@@ -33,7 +33,8 @@ export default function CreateMultisig() {
         name: 'pubKey',
         value: '',
         label: 'Pubkey',
-        placeHolder: 'Add Pubkey'
+        placeHolder: 'Add Pubkey',
+        required: true,
     };
 
     const [pubKeyFields, setPubKeyFields] = useState([{ ...pubKeyObj }]);
@@ -85,10 +86,10 @@ export default function CreateMultisig() {
         <Grid container>
             <Grid item xs={1} md={2}></Grid>
             <Grid item xs={10} md={8}>
-                <Paper elevation={0} style={{ padding: 22, marginTop: 22 }}>
+                <Paper elevation={0} style={{ padding: 22 }}>
                     <Typography
                         variant='h6'
-                        fontWeight={500}
+                        fontWeight={600}
                         color='text.primary'
                         gutterBottom
                     >
@@ -137,6 +138,7 @@ export default function CreateMultisig() {
                             style={{ marginTop: 24 }}
                             variant='contained'
                             disableElevation
+                            className='button-capitalize-title'
                         >Create</Button>
                     </form>
                 </Paper>
