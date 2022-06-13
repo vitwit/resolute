@@ -5,8 +5,10 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
+import Button from '@mui/material/Button';
 
 export default function BalanceInfo(props) {
+    const currency = props.currencies[0];
     let navigate = useNavigate();
     function navigateTo(path) {
         navigate(path);
@@ -14,63 +16,90 @@ export default function BalanceInfo(props) {
 
     return (
         <>
-            <br/><br/><br/>
+            <br /><br /><br />
             <CssBaseline />
             <Grid container spacing={3}>
                 <Grid item xs={6} md={3}>
-                    <Paper elevation={0} style={{ padding: 24 }}>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <Typography
+                            variant='body1'
+                            gutterBottom
+                            fontWeight={500}
+                            color='text.secondary'
+                        >
+                            Total Balance
+                        </Typography>
+                        <Paper elevation={0} style={{ padding: 12 }}>
                             <Typography
-                                variant='h6'
-                                gutterBottom
-                                style={{ textAlign: 'left' }}
-                                color='text.secondary'
-                            >
-                                Total Balance
-                            </Typography>
-                            <Typography
-                                variant='h5'
+                                variant='body1'
                                 fontWeight={500}
                                 gutterBottom
-                                style={{ textAlign: 'left' }}
                                 color='text.primary'
                             >
-                                {(parseFloat(props.balance) + parseFloat(props.delegations) + parseFloat(props.rewards) + parseFloat(props.unbonding)).toFixed(5).toLocaleString()}
+                                {(parseFloat(props.balance) + parseFloat(props.delegations) +
+                                    parseFloat(props.rewards) + parseFloat(props.unbonding)).toFixed(5).toLocaleString()}
+                                &nbsp;{currency.coinDenom}
                             </Typography>
-                        </div>
-                    </Paper>
+                        </Paper>
+                    </div>
                 </Grid>
                 <Grid item xs={6} md={2}>
-                    <Paper elevation={0} spacing={4} style={{ padding: 24 }}>
-                        <Balance
-                            balance={props.balance}
-                            title="Available"
-                        />
-                    </Paper>
+                    <Balance
+                        balance={props.balance}
+                        title="Available"
+                        displayDenom={currency.coinDenom}
+                    />
+                    <Button
+                        style={{ marginTop: 8 }}
+                        variant='outlined'
+                        disableElevation
+                        fullWidth
+                        className='button-capitalize-title'
+                        onClick={() => navigateTo("/send")}
+                    >
+                        Send
+                    </Button>
                 </Grid>
                 <Grid item xs={6} md={2}>
-                    <Paper elevation={0} spacing={2} style={{ padding: 24 }}>
-                        <Balance
-                            balance={props.rewards}
-                            title="Rewards"
-                        />
-                    </Paper>
+                    <Balance
+                        balance={props.rewards}
+                        title="Rewards"
+                        displayDenom={currency.coinDenom}
+                    />
+                    <Button
+                        style={{ marginTop: 8 }}
+                        variant='outlined'
+                        disableElevation
+                        fullWidth
+                        className='button-capitalize-title'
+                        onClick={() => navigateTo("/staking")}
+                    >
+                        Claim
+                    </Button>
                 </Grid>
                 <Grid item xs={6} md={2}>
-                    <Paper elevation={0} spacing={2} style={{ padding: 24 }}>
-                        <Balance
-                            balance={props.delegations}
-                            title="Delegated"
-                        />
-                    </Paper>
+                    <Balance
+                        balance={props.delegations}
+                        title="Staked"
+                        displayDenom={currency.coinDenom}
+                    />
+                    <Button
+                        style={{ marginTop: 8 }}
+                        variant='outlined'
+                        disableElevation
+                        fullWidth
+                        className='button-capitalize-title'
+                        onClick={() => navigateTo("/staking")}
+                    >
+                        Delegate
+                    </Button>
                 </Grid>
                 <Grid item xs={6} md={2}>
-                    <Paper elevation={0} spacing={2} style={{ padding: 24 }}>
-                        <Balance
-                            balance={props.unbonding}
-                            title="Unbonding"
-                        />
-                    </Paper>
+                    <Balance
+                        balance={props.unbonding}
+                        title="Unbonding"
+                        displayDenom={currency.coinDenom}
+                    />
                 </Grid>
             </Grid>
         </>
@@ -83,28 +112,30 @@ BalanceInfo.propTypes = {
     delegations: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     rewards: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     unbonding: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    currencies: PropTypes.object.isRequired,
 };
 
 function Balance(props) {
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Typography
-                variant='h6'
+                variant='body1'
                 color='text.secondary'
+                fontWeight={500}
                 gutterBottom
-                style={{ textAlign: 'left' }}
             >
                 {props.title}
             </Typography>
-            <Typography
-                variant='h6'
-                fontWeight={500}
-                color='text.primary'
-                gutterBottom
-                style={{ textAlign: 'left' }}
-            >
-                {props.balance}
-            </Typography>
+            <Paper elevation={0} spacing={4} style={{ padding: 12 }}>
+                <Typography
+                    variant='body1'
+                    fontWeight={500}
+                    color='text.primary'
+                    gutterBottom
+                >
+                    {props.balance}&nbsp;{props.displayDenom}
+                </Typography>
+            </Paper>
         </div>
     );
 }
@@ -112,4 +143,5 @@ function Balance(props) {
 Balance.propTypes = {
     balance: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     title: PropTypes.string.isRequired,
+    displayDenom: PropTypes.string.isRequired,
 };

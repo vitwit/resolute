@@ -13,20 +13,7 @@ import {
 } from './../features/common/commonSlice';
 import { authzExecHelper, getGrantsToMe } from '../features/authz/authzSlice';
 import VoteDialog from '../components/Vote';
-
-const filterVotesFromAuthz = (grants) => {
-  if (!grants) {
-    return []
-  }
-  let proposals = [];
-  for (let i = 0; i < grants.length; i++) {
-    if (grants[i]?.authorization?.msg === "/cosmos.gov.v1beta1.MsgVote") {
-      proposals.push(grants[i])
-    }
-  }
-
-  return proposals;
-}
+import { filterVotesFromAuthz } from '../utils/authorizations';
 
 export function Proposals() {
   const proposals = useSelector((state) => state.gov.active.proposals);
