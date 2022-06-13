@@ -32,7 +32,7 @@ export default function Overview() {
             setTotalRewards(totalRewards(rewards?.list, chainInfo.currencies[0].coinDecimals))
             setTotalUnbonding(totalUnbonding(unbonding.delegations, chainInfo.currencies[0].coinDecimals))
         }
-    }, [balance, delegations, rewards, unbonding]);
+    }, [balance, delegations, rewards, unbonding, chainInfo, address]);
 
     useEffect(() => {
         if (chainInfo.currencies.length > 0 && connected && address !== "") {
@@ -68,6 +68,7 @@ export default function Overview() {
                     delegations={delegated}
                     rewards={pendingRewards}
                     unbonding={unbondingDel}
+                    currencies={chainInfo?.currencies}
                 />
                 :
                 <></>

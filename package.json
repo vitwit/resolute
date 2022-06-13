@@ -4,7 +4,7 @@
   "private": true,
   "author": "Vitwit Technologies Pvt Ltd",
   "dependencies": {
-    "@babel/core": "^7.16.0",
+    "@babel/core": "^7.18.2",
     "@cosmjs/amino": "^0.28.4",
     "@cosmjs/encoding": "^0.28.4",
     "@cosmjs/proto-signing": "^0.28.4",
