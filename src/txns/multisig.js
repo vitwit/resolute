@@ -18,5 +18,5 @@ export const createMultiSig = async (pubKeysArr, threshold, addressPrefix, chain
         chainId,
     };
 
-    localStorage.setItem('multisigAddr', JSON.stringify(multisig))
+    localStorage.setItem('multisig', JSON.stringify(multisig))
 }

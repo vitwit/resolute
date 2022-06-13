@@ -76,7 +76,7 @@ export default function CreateMultisig() {
 
     const [value, setValue] = React.useState(0);
 
-    const handleChange1 = (event: React.SyntheticEvent, newValue: number) => {
+    const handleChange1 = (event, newValue) => {
         setValue(newValue);
     };
 

@@ -5,21 +5,20 @@ import { useSelector } from 'react-redux';
 import { Decimal } from "@cosmjs/math";
 
 export default function CreateTxn({ handleNext }) {
-    const from = useSelector((state) => state.wallet.address);
-
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
-    console.log('cahin forrrrrrrrr', chainInfo)
 
     const [obj, setObj] = useState({});
 
     const createTransaction = ({ toAddress, amount, memo, gas }) => {
+        const multisig = localStorage.getItem('multisig') && JSON.parse(localStorage.getItem('multisig')) || {};
+
         const amountInAtomics = Decimal.fromUserInput(
             amount,
             Number(chainInfo.currencies[0].coinDecimals),
         ).atomics;
 
         const msgSend = {
-            fromAddress: from,
+            fromAddress: multisig.address,
             toAddress: toAddress,
             amount: [
                 {
@@ -34,7 +33,7 @@ export default function CreateTxn({ handleNext }) {
             value: msgSend,
         };
 
-        const fee = calculateFee(Number(200000), '0.03upasg');
+        const fee = calculateFee(Number(100000), '0.000001stake');
 
         return {
             chainId: chainInfo?.chainId,

@@ -17,25 +17,19 @@ export default function BroadcastTx() {
     const from = useSelector((state) => state.wallet.address);
     const signData =  JSON.parse(localStorage.getItem('sign')) || {};
     const txInfo = localStorage.getItem('un_signed_tx') && JSON.parse(localStorage.getItem('un_signed_tx')) || {};
-
+    const multisig = localStorage.getItem('multisig') && JSON.parse(localStorage.getItem('multisig')) || {};
     
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
     
     const broadcastTxn = async () => {
         const client = await SigningStargateClient.connect(chainInfo?.rpc)
         
-        const chainId = await client.getChainId()
         let result = await getKeplrWalletAmino(chainInfo?.chainId);
-        var wallet = result[0]
-        var account = result[1]
-
-        const base64 = toBase64(signData[from].bodyBytes)
-
-        const bodyBytes = fromBase64(base64);
+        const bodyBytes = fromBase64(signData[from].bodyBytes);
 
         let currentSignatures = []
         for (let s in signData) {
-            let obj = {
+        let obj = {
                 address: s,
                 signature: signData[s].signatures
             }
@@ -43,32 +37,24 @@ export default function BroadcastTx() {
             currentSignatures = [...currentSignatures, obj]
         }
 
-        console.log('crrent signareuessss', currentSignatures, account.pubkey)
+        const multisigAcc = await client.getAccount(multisig.address)
 
-        let multiSignatureAddr = localStorage.getItem('multisigAddr') && JSON.parse(localStorage.getItem('multisigAddr'))
-
-        console.log('ssssssssssssssssss',  multiSignatureAddr.pubkeyJSON)
-
-        let mapData = JSON.parse(multiSignatureAddr.pubkeyJSON)
-        console.log('s111111111',  mapData)
-
+        let mapData = JSON.parse(multisig.pubkeyJSON)
         const signedTx = makeMultisignedTx(
             mapData,
-            txInfo.sequence,
+            multisigAcc.sequence,
             txInfo.fee,
             bodyBytes,
             new Map(currentSignatures.map((s) => [s.address, fromBase64(s.signature)])),
         );
 
 
-        console.log('signed txxxxxxxxx', signedTx)
-
         const broadcaster = await StargateClient.connect(chainInfo?.rpc);
         const result1 = await broadcaster.broadcastTx(
           Uint8Array.from(TxRaw.encode(signedTx).finish()),
         );
+        console.log(result1);
 
-        console.log('signed tattttttttt', result1)
     }
 
     return (
