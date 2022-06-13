@@ -28,7 +28,7 @@ export function CustomAppBar(props) {
     return (
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Toolbar>
-                <img id='logo-chain-main' src="white-logo.png" />
+                <img id='logo-chain-main' src="white-logo.png" style={{maxWidth: 161, maxHeight: 45}}/>
                 <Typography
                     component="h1"
                     variant="h6"

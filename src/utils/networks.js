@@ -9,10 +9,9 @@ export function getMainNetworks() {
             src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
             experimental: false,
             testnet: false,
-            lcd: "https://cosmos.api.ping.pub",
+            lcd: "https://api.osmosis.interbloc.org",
             rpc: "https://rpc-cosmoshub.blockapsis.com:443",
             txHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
-
             currencies: [
                 {
                     coinDenom: 'ATOM',
@@ -22,6 +21,50 @@ export function getMainNetworks() {
             ],
             config: {
                 gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 }
+            }
+        },
+        {
+            chainId: "regen-1",
+            displayName: "Regen",
+            showAirdrop: false,
+            logoName: "regen-network.png",
+            src: "https://www.mintscan.io/_next/static/image/assets/header/token_regen.7637b0ebe1330c92b57c48fb5817cfff.svg",
+            experimental: false,
+            testnet: false,
+            lcd: "https://regen.api.ping.pub",
+            rpc: "https://rpc-regen.ecostake.com",
+            txHashEndpoint: 'https://www.mintscan.io/regen/txs/',
+            currencies: [
+                {
+                    coinDenom: 'REGEN',
+                    coinMinimalDenom: 'uregen',
+                    coinDecimals: 6,
+                },
+            ],
+            config: {
+                gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 }
+            }
+        },
+        {
+            chainId: "akashnet-2",
+            displayName: "Akash",
+            showAirdrop: false,
+            logoName: "akash-logo.svg",
+            src: "https://www.mintscan.io/_next/static/image/assets/header/token_akash.88ea4dceb678639c79ad5afed4a61efd.svg",
+            experimental: false,
+            testnet: false,
+            lcd: "https://akash.c29r3.xyz/api",
+            rpc: "https://rpc-akash.ecostake.com",
+            txHashEndpoint: 'https://www.mintscan.io/akash/txs/',
+            currencies: [
+                {
+                    coinDenom: 'AKT',
+                    coinMinimalDenom: 'uakt',
+                    coinDecimals: 6,
+                },
+            ],
+            config: {
+                gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 }
             }
         },
         {
@@ -52,88 +95,88 @@ export function getMainNetworks() {
 
 export function getTestNetworks() {
     return [
-        {
-            chainId: "testnet",
-            displayName: "Simapp",
-            experimental: true,
-            logoName: "white-logo.png",
-            showAirdrop: true,
-            airdropActions: [
-           {
-               title: "#1 Initial Claim",
-               type: "action",
+        // {
+        //     chainId: "testnet",
+        //     displayName: "Simapp",
+        //     experimental: true,
+        //     logoName: "white-logo.png",
+        //     showAirdrop: true,
+        //     airdropActions: [
+        //    {
+        //        title: "#1 Initial Claim",
+        //        type: "action",
             
-           },
-           {
-               title: "#2 Stake",
-               type: "redirect",
-               redirect: "/validators",
-           },
-           {
-               title: "#3 Vote on Proposal",
-               type: "redirect",
-               redirect: "/proposals",
-           }
-           ],
-            src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
-            testnet: true,
-            lcd: 'http://localhost:1317',
-            rpc: 'http://localhost:26657',
-            txHashEndpoint: 'https://www.mintscan.io/simapp/txs/',
-            currencies: [
-                {
-                    coinDenom: 'STAKE',
-                    coinMinimalDenom: 'stake',
-                    coinDecimals: 6,
-                },
-            ],
-            config: {
-                chainId: "testnet",
-                chainName: "Simapp",
-                rpc: 'http://localhost:26657',
-                rest: 'http://localhost:1317',
-                stakeCurrency: {
-                    coinDenom: 'STAKE',
-                    coinMinimalDenom: 'stake',
-                    coinDecimals: 6,
-                    coinGeckoId: 'simapp',
-                },
-                bip44: {
-                    coinType: 118,
-                },
-                bech32Config: {
-                    bech32PrefixAccAddr: `cosmos`,
-                    bech32PrefixAccPub: `cosmospub`,
-                    bech32PrefixValAddr: `cosmosvaloper`,
-                    bech32PrefixValPub: `cosmosvaloperpub`,
-                    bech32PrefixConsAddr: `cosmosvalcons`,
-                    bech32PrefixConsPub: `cosmosvalconspub`,
-                },
-                currencies: [
-                    {
-                        coinDenom: 'STAKE',
-                        coinMinimalDenom: 'stake',
-                        coinDecimals: 6,
-                        coinGeckoId: 'simapp',
-                    },
-                ],
-                feeCurrencies: [
-                    {
-                        coinDenom: 'STAKE',
-                        coinMinimalDenom: 'stake',
-                        coinDecimals: 6,
-                        coinGeckoId: 'simapp',
-                    },
-                ],
-                coinType: 118,
-                gasPriceStep: {
-                    low: 0.00,
-                    average: 0.0025,
-                    high: 0.004,
-                },
-                walletUrlForStaking: 'http://localhost:1317/stake',
-            }
-        },
+        //    },
+        //    {
+        //        title: "#2 Stake",
+        //        type: "redirect",
+        //        redirect: "/validators",
+        //    },
+        //    {
+        //        title: "#3 Vote on Proposal",
+        //        type: "redirect",
+        //        redirect: "/proposals",
+        //    }
+        //    ],
+        //     src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
+        //     testnet: true,
+        //     lcd: 'http://localhost:1317',
+        //     rpc: 'http://localhost:26657',
+        //     txHashEndpoint: 'https://www.mintscan.io/simapp/txs/',
+        //     currencies: [
+        //         {
+        //             coinDenom: 'STAKE',
+        //             coinMinimalDenom: 'stake',
+        //             coinDecimals: 6,
+        //         },
+        //     ],
+        //     config: {
+        //         chainId: "testnet",
+        //         chainName: "Simapp",
+        //         rpc: 'http://localhost:26657',
+        //         rest: 'http://localhost:1317',
+        //         stakeCurrency: {
+        //             coinDenom: 'STAKE',
+        //             coinMinimalDenom: 'stake',
+        //             coinDecimals: 6,
+        //             coinGeckoId: 'simapp',
+        //         },
+        //         bip44: {
+        //             coinType: 118,
+        //         },
+        //         bech32Config: {
+        //             bech32PrefixAccAddr: `cosmos`,
+        //             bech32PrefixAccPub: `cosmospub`,
+        //             bech32PrefixValAddr: `cosmosvaloper`,
+        //             bech32PrefixValPub: `cosmosvaloperpub`,
+        //             bech32PrefixConsAddr: `cosmosvalcons`,
+        //             bech32PrefixConsPub: `cosmosvalconspub`,
+        //         },
+        //         currencies: [
+        //             {
+        //                 coinDenom: 'STAKE',
+        //                 coinMinimalDenom: 'stake',
+        //                 coinDecimals: 6,
+        //                 coinGeckoId: 'simapp',
+        //             },
+        //         ],
+        //         feeCurrencies: [
+        //             {
+        //                 coinDenom: 'STAKE',
+        //                 coinMinimalDenom: 'stake',
+        //                 coinDecimals: 6,
+        //                 coinGeckoId: 'simapp',
+        //             },
+        //         ],
+        //         coinType: 118,
+        //         gasPriceStep: {
+        //             low: 0.00,
+        //             average: 0.0025,
+        //             high: 0.004,
+        //         },
+        //         walletUrlForStaking: 'http://localhost:1317/stake',
+        //     }
+        // },
         {
             chainId: "passage-testnet-1",
             displayName: "Passage-Testnet",

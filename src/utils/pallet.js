@@ -29,6 +29,34 @@ const networks = {
             contrastText: '#000',
         },
     },
+    "Regen": {
+        primary: {
+            light: '#80bf98',
+            main: '#43ad6b',
+            dark: '#2c7849',
+            contrastText: '#fff',
+        },
+        secondary: {
+            light: '#8fc9c4',
+            main: '#009688',
+            dark: '#01786d',
+            contrastText: '#000',
+        },
+    },
+    "Akash": {
+        primary: {
+            light: '#c26859',
+            main: '#cc3f33',
+            dark: '#ad352b',
+            contrastText: '#fff',
+        },
+        secondary: {
+            light: '#8fc9c4',
+            main: '#009688',
+            dark: '#01786d',
+            contrastText: '#000',
+        },
+    },
     "Osmosis": {
         primary: {
             light: '#D1C4E9',
