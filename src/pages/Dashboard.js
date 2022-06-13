@@ -38,8 +38,7 @@ import AirdropEligibility from './AirdropEligibility';
 import { resetError, setError } from '../features/common/commonSlice';
 import { getPalletByNetwork } from '../utils/pallet';
 import Page404 from './Page404';
-import CreateMultisig from './multisig/CreateMultisig';
-import MultiSig from './multisig/Multisig';
+import MultiSig from './Multisig';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;

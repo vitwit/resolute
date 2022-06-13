@@ -1,36 +1,28 @@
 import { Button, Paper, TextField } from '@mui/material'
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { createMultiSig } from '../../txns/multisig';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 const InputTextComponent = ({ field, index, handleChangeValue }) => {
+    console.log(field)
     return (
-        <div className='m-20'>
-            <TextField
-                onChange={(e) => {
-                    handleChangeValue(index, e)
-                }}
-                name={field.name}
-                value={field.value}
-                required={field?.required}
-                label={field.label}
-                fullWidth
-            />
-        </div>
+        <TextField
+            style={{ marginTop: 12, marginBotton: 16 }}
+            onChange={(e) => {
+                handleChangeValue(index, e)
+            }}
+            name={field.name}
+            value={field.value}
+            required={field?.required}
+            label={field.label}
+            placeholder={field.placeHolder}
+            fullWidth
+        />
     )
 }
-
-function a11yProps(index) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    };
-}
-
 
 export default function CreateMultisig() {
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
@@ -40,7 +32,8 @@ export default function CreateMultisig() {
     const pubKeyObj = {
         name: 'pubKey',
         value: '',
-        label: 'Pubkey'
+        label: 'Pubkey',
+        placeHolder: 'Add Pubkey'
     };
 
     const [pubKeyFields, setPubKeyFields] = useState([{ ...pubKeyObj }]);
@@ -89,40 +82,66 @@ export default function CreateMultisig() {
     }
 
     return (
-        <div>
-            <div>
-                <h3>Create Multisignature</h3>
-            </div>
-            <div className='m-20'>
-                <Paper elevation={0} className="pd-22">
+        <Grid container>
+            <Grid item xs={1} md={2}></Grid>
+            <Grid item xs={10} md={8}>
+                <Paper elevation={0} style={{ padding: 22, marginTop: 22 }}>
+                    <Typography
+                        variant='h6'
+                        fontWeight={500}
+                        color='text.primary'
+                        gutterBottom
+                    >
+                        Create Multisig Account
+                    </Typography>
                     <form onSubmit={handleSubmit}>
                         {pubKeyFields.map((field, index) => (
-                            <InputTextComponent handleChangeValue={handleChangeValue} index={index} field={field} />
+                            <InputTextComponent
+                                handleChangeValue={handleChangeValue} index={index} field={field} />
                         ))}
-
-                        <div className='f-right'>
-                            <Button onClick={handleAddPubKey}>Add +</Button>
+                        <div style={{ display: 'flex', justifyContent: 'right', marginTop: 12 }}>
+                            <Button onClick={handleAddPubKey}
+                                endIcon={<AddOutlinedIcon />}
+                                variant='contained'
+                                disableElevation
+                            >
+                                Add
+                            </Button>
                         </div>
 
-                        <div className='m-20'>
+                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
                             <TextField
-                                name="threshold" value={threshold} onChange={handleChange}
+                                name="threshold"
+                                value={threshold}
+                                onChange={handleChange}
                                 label="Threshold"
+                                style={{ maxWidth: 120 }}
                             />
-                            <span style={{ margin: 20, justifyContent: 'center', }}>  Of</span>
+                            <Typography
+                                variant='body1'
+                                color='text.primary'
+                                style={{ margin: 'auto 0px auto 0px' }}
+                            >
+                                &nbsp;&nbsp;Of&nbsp;&nbsp;
+                            </Typography>
                             <TextField
-                                name="threshold" value={pubKeyFields.length}
+                                name="threshold"
+                                value={pubKeyFields.length}
                                 label="Threshold"
                                 disabled
+                                style={{ maxWidth: 120 }}
                             />
                         </div>
-                        <div className='m-t-40'>
-                            <Button type="submit">Create</Button>
-                        </div>
+                        <Button
+                            type="submit"
+                            style={{ marginTop: 24 }}
+                            variant='contained'
+                            disableElevation
+                        >Create</Button>
                     </form>
                 </Paper>
-
-            </div>
-        </div>
+            </Grid>
+            <Grid item xs={1} md={2}></Grid>
+        </Grid>
     )
 }
