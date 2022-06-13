@@ -74,7 +74,7 @@ export async function signAndBroadcastProto(msgs, fee, rpcURL) {
     return await client.broadcastTx(Uint8Array.from(TxRaw.encode(signed).finish()));
 }
 
-export function fee(coinMinimalDenom, amount, gas = 250000) {
+export function fee(coinMinimalDenom, amount, gas = 450000) {
     return { amount: [{ amount: String(amount), denom: coinMinimalDenom }], gas: String(gas) };
 }
 

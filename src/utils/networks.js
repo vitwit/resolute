@@ -32,7 +32,7 @@ export function getMainNetworks() {
             experimental: false,
             testnet: false,
             lcd: "https://regen.api.ping.pub",
-            rpc: "https://rpc-regen.ecostake.com",
+            rpc: "http://rpc.regen.forbole.com:80",
             txHashEndpoint: 'https://www.mintscan.io/regen/txs/',
             currencies: [
                 {
@@ -54,7 +54,7 @@ export function getMainNetworks() {
             experimental: false,
             testnet: false,
             lcd: "https://akash.c29r3.xyz/api",
-            rpc: "https://rpc-akash.ecostake.com",
+            rpc: "https://rpc.akash.forbole.com:443",
             txHashEndpoint: 'https://www.mintscan.io/akash/txs/',
             currencies: [
                 {
