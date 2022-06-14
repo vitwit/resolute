@@ -43,7 +43,7 @@ export function WitvalValidator(props) {
                         style={{padding: 12, textAlign: 'left'}}
                         color='text.primary'
                         fontWeight={600}
-                        variant='h6'
+                        variant='body1'
                     >
                         Help Witval By Staking
                     </Typography>

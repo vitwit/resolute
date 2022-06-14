@@ -1,23 +1,14 @@
 import * as React from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
-import { mainListItems } from './listItems';
 import Authz from './Authz'
 import Feegrant from './Feegrant'
 import { getSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import Link from '@mui/material/Link'
-import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import ContentCopyOutlined from '@mui/icons-material/ContentCopyOutlined';
-import { Routes, Route, useLocation } from "react-router-dom";
+import Link from '@mui/material/Link';
+import { Routes, Route } from "react-router-dom";
 import { Validators } from './Validators';
 import { Proposals } from './Proposals';
 import { useSelector, useDispatch } from 'react-redux'
@@ -25,66 +16,18 @@ import { resetWallet, connectKeplrWallet } from './../features/wallet/walletSlic
 import { useNavigate } from "react-router-dom";
 import NewFeegrant from './NewFeegrant';
 import NewAuthz from './NewAuthz';
-import { shortenAddress } from '../utils/util';
 import AlertTitle from '@mui/material/AlertTitle';
-import ListItem from '@mui/material/ListItem';
-import Typography from '@mui/material/Typography';
 import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import Overview from './Overview';
-import { Send } from '../components/Send';
 import { CustomAppBar } from '../components/CustomAppBar';
 import AirdropEligibility from './AirdropEligibility';
 import { resetError, setError } from '../features/common/commonSlice';
-import { getPalletByNetwork } from '../utils/pallet';
 import Page404 from './Page404';
 import SendPage from './SendPage';
-import { totalBalance } from '../utils/denom';
+import AppDrawer from '../components/AppDrawer';
+import {Alert} from '../components/Alert';
+import { getPallet, isDarkMode, mdTheme } from '../utils/theme';
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
-function isDarkMode() {
-    const mode = localStorage.getItem("DARK_MODE");
-    if (mode === "false") {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-function getPallet() {
-    const network = localStorage.getItem("LAST_SELECTED");
-    const pallet = getPalletByNetwork(network);
-    return pallet
-}
-
-const drawerWidth = 210;
-
-const mdTheme = (isDarkMode, primary, secondary) => createTheme({
-    palette: {
-        mode: isDarkMode ? 'dark' : 'light',
-        primary: primary,
-        secondary: secondary,
-    },
-    typography: {
-        fontFamily: [
-            'Roboto',
-            'Ubuntu',
-            'sans-serif',
-            '-apple-system',
-            'BlinkMacSystemFont',
-            '"Segoe UI"',
-            '"Helvetica Neue"',
-            'Arial',
-            '"Apple Color Emoji"',
-            '"Segoe UI Emoji"',
-            '"Segoe UI Symbol"',
-        ].join(','),
-    },
-
-});
 
 function DashboardContent() {
     const [snackOpen, setSnackOpen] = React.useState(false);
@@ -100,8 +43,6 @@ function DashboardContent() {
 
     const [pallet, setPallet] = React.useState(getPallet());
     const balance = useSelector((state) => state.bank.balance);
-
-    const location = useLocation();
 
     const [snackTxOpen, setSnackTxClose] = React.useState(false);
     const showTxSnack = (value) => {
@@ -206,120 +147,22 @@ function DashboardContent() {
                     darkMode={darkMode}
                     onModeChange={() => onModeChange()}
                 />
-                <Drawer variant="permanent"
-                    sx={{
-                        width: drawerWidth,
-                        flexShrink: 0,
-                        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-                    }}
-                >
-                    <Toolbar />
-                    <List component="nav" style={{ minHeight: 120 }}>
-                        {
-                            wallet.connected ?
-                                <>
-                                    <ListItem
-                                        style={{ justifyContent: 'left' }}
-                                    >
-                                        <AccountBalanceWalletOutlinedIcon />
-                                        &nbsp;
-                                        <Typography
-                                            color='text.primary'
-                                            variant='body1'
-                                            fontWeight={500}
-                                        >
-                                            {wallet.name}
-                                        </Typography>
-                                    </ListItem>
-                                    <ListItem>
-                                        <Chip
-                                            label={shortenAddress(wallet.address, 21)}
-                                            size="small"
-                                            deleteIcon={<ContentCopyOutlined />}
-                                            onDelete={() => { copyToClipboard(wallet.address) }}
-                                        />
-                                    </ListItem>
-                                    <ListItem style={{paddingBottom: 0}}>
-                                        <Typography
-                                            color='text.secondary'
-                                            variant='caption'
-                                            fontWeight={400}
-                                        >
-                                            Available Balance
-                                        </Typography>
-                                    </ListItem>
-                                    <ListItem style={{paddingTop: 2 }}>
-                                        <Typography
-                                            color='text.primary'
-                                            variant='body2'
-                                        >
-                                            {totalBalance(balance.balance, chainInfo.currencies[0].coinDecimals)}
-                                            &nbsp;{chainInfo.currencies[0].coinDenom}
-                                        </Typography>
-                                    </ListItem>
-                                    <ListItem style={{ justifyContent: 'center' }}>
-                                        <Button
-                                            endIcon={<LogoutOutlinedIcon />}
-                                            size='small'
-                                            variant='outlined'
-                                            style={{ textTransform: 'capitalize' }}
-                                            disableElevation
-                                            onClick={() => disconnectWallet()}
-                                        >
-                                            Disconnect
-                                        </Button>
-                                    </ListItem>
-                                </>
-                                :
-                                <>
-                                    <ListItem />
-                                    <ListItem />
-                                    <ListItem />
-                                    <ListItem style={{ justifyContent: 'center' }}>
-
-                                        <Button
-                                            startIcon={<AccountBalanceWalletOutlinedIcon />}
-                                            size='small'
-                                            variant='contained'
-                                            disableElevation
-                                            onClick={() => connectWallet(selectedNetwork)}
-                                        >
-                                            Connect Wallet
-                                        </Button>
-                                    </ListItem>
-                                </>
-                        }
-
-
-                    </List>
-                    <Divider />
-                    <List component="nav">
-                        {mainListItems(location.pathname, (path) => { navigateTo(path) }, selectedNetwork?.showAirdrop)}
-                    </List>
-                    <List style={{ marginTop: 'auto', flexDirection: 'row' }}>
-                        <ListItem style={{ justifyContent: 'center' }}>
-                            <Typography
-                                color='text.secondary'
-                                variant='caption'
-                            >
-                                Designed & Developed By
-                            </Typography>
-                        </ListItem>
-                        <ListItem style={{ justifyContent: 'center' }}>
-                            <img src='./logo-only.png' width={25} height={18} />&nbsp;
-                            <Link style={{ textDecoration: 'none' }} target="_blank" href='https://vitwit.com'>
-                                Vitwit.com
-                            </Link>
-
-                        </ListItem>
-                    </List>
-                </Drawer>
+                <AppDrawer
+                    balance={balance}
+                    chainInfo={chainInfo}
+                    onConnectWallet={connectWallet}
+                    onDisconnectWallet={disconnectWallet}
+                    onNavigate={navigateTo}
+                    selectedNetwork={selectedNetwork}
+                    wallet={wallet}
+                    onCopy={copyToClipboard}
+                />
                 <Box
                     component="main"
                     sx={{
                         backgroundColor: (theme) =>
                             theme.palette.mode === 'light'
-                                ? theme.palette.grey[100]
+                                ? theme.palette.grey[200]
                                 : theme.palette.grey[900],
                         flexGrow: 1,
                         height: '100vh',
