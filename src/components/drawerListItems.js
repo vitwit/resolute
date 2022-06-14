@@ -8,7 +8,7 @@ import LayersIcon from '@mui/icons-material/Layers';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import DocumentScannerOutlinedIcon from '@mui/icons-material/DocumentScannerOutlined';
 
-export function mainListItems(currentPath, onNavigate, showAirdrop) {
+export function drawerListItems(currentPath, onNavigate, showAirdrop) {
   return (
   <React.Fragment>
     <ListItemButton  onClick={() => onNavigate("/")} selected={currentPath === "/"}>
