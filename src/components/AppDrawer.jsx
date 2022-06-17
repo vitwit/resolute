@@ -71,8 +71,8 @@ export default function AppDrawer(props) {
                                     color='text.primary'
                                     variant='body2'
                                 >
-                                    {totalBalance(balance.balance, chainInfo.currencies[0].coinDecimals)}
-                                    &nbsp;{chainInfo.currencies[0].coinDenom}
+                                    {totalBalance(balance.balance, chainInfo.config.currencies[0].coinDecimals)}
+                                    &nbsp;{chainInfo.config.currencies[0].coinDenom}
                                 </Typography>
                             </ListItem>
                             <ListItem style={{ justifyContent: 'center' }}>
