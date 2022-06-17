@@ -27,7 +27,7 @@ export const txWithdrawAllRewards = createAsyncThunk(
         const msg = data.msgs[i]
         msgs.push(WithdrawAllRewardsMsg(msg.delegator,msg.validator))
       }      
-      const result = await signAndBroadcastAmino(msgs, fee(data.denom, data.feeAmount), data.chainId, data.rpc)
+      const result = await signAndBroadcastAmino(msgs, fee(data.denom, data.feeAmount, 560000), data.chainId, data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash

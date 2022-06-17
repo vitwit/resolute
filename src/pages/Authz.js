@@ -40,7 +40,7 @@ export default function Authz() {
   const address = useSelector((state) => state.wallet.address);
   const authzTx = useSelector((state) => state.authz.tx);
   const execTx = useSelector((state) => state.authz.execTx);
-  const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
+  const currency = useSelector((state) => state.wallet.chainInfo?.config?.currencies[0]);
 
   useEffect(() => {
     if (execTx.status === 'idle') {
@@ -51,7 +51,7 @@ export default function Authz() {
   useEffect(() => {
     if (address !== "") {
       dispatch(getGrantsByMe({
-        baseURL: chainInfo.lcd,
+        baseURL: chainInfo.config.rest,
         granter: address
       }))
     }
@@ -82,9 +82,9 @@ export default function Authz() {
       typeURL: typeURL,
       denom: currency.coinMinimalDenom,
       memo: "",
-      chainId: chainInfo.chainId,
-      rpc: chainInfo.rpc,
-      feeAmount: chainInfo?.config.gasPriceStep.average,
+      chainId: chainInfo.config.chainId,
+      rpc: chainInfo.config.rpc,
+      feeAmount: chainInfo.config.gasPriceStep.average,
     }))
 
   }
@@ -119,9 +119,9 @@ export default function Authz() {
       recipient: data.recipient,
       amount: data.amount,
       denom: currency.coinMinimalDenom,
-      chainId: chainInfo.chainId,
-      rpc: chainInfo.rpc,
-      feeAmount: chainInfo?.config.gasPriceStep.average,
+      chainId: chainInfo.config.chainId,
+      rpc: chainInfo.config.rpc,
+      feeAmount: chainInfo.config.gasPriceStep.average,
     })
   }
 
@@ -151,7 +151,7 @@ export default function Authz() {
             variant={grantType === 'by-me' ? 'contained' : 'outlined'}
             onClick={() => {
               dispatch(getGrantsByMe({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 granter: address
               }))
               setGrantType('by-me')
@@ -161,7 +161,7 @@ export default function Authz() {
             variant={grantType === 'to-me' ? 'contained' : 'outlined'}
             onClick={() => {
               dispatch(getGrantsToMe({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 grantee: address
               }))
               setGrantType('to-me')

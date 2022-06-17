@@ -23,7 +23,7 @@ export default function NewFeegrant() {
 
     let date = new Date()
     let expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
-    const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
+    const currency = useSelector((state) => state.wallet.chainInfo.config.currencies[0]);
 
 
     const { handleSubmit, control } = useForm({
@@ -45,9 +45,9 @@ export default function NewFeegrant() {
             spendLimit: Number(data.spendLimit) === 0 ? null : data.spendLimit,
             expiration: data.expiration,
             denom: currency.coinMinimalDenom,
-            chainId: chainInfo.chainId,
-            rpc: chainInfo.rpc,
-            feeAmount: chainInfo?.config.gasPriceStep.average,
+            chainId: chainInfo.config.chainId,
+            rpc: chainInfo.config.rpc,
+            feeAmount: chainInfo.config.gasPriceStep.average,
         }))
     }
 
@@ -60,9 +60,9 @@ export default function NewFeegrant() {
             period: data.period,
             periodSpendLimit: data.periodSpendLimit,
             denom: currency.coinMinimalDenom,
-            chainId: chainInfo.chainId,
-            rpc: chainInfo.rpc,
-            feeAmount: chainInfo.gasPriceStep.average,
+            chainId: chainInfo.config.chainId,
+            rpc: chainInfo.config.rpc,
+            feeAmount: chainInfo.config.gasPriceStep.average,
         }))
     }
 
@@ -180,6 +180,7 @@ export default function NewFeegrant() {
                                 <PeriodicFeegrant 
                                     loading= {feegrantTx.status}
                                     onGrant={onPeriodicGrant}
+                                    currency={currency}
                                 />
                                 :
                                 ''

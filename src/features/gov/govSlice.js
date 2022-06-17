@@ -71,7 +71,7 @@ export const txVote = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = GovVoteMsg(data.proposalId, data.voter, data.option)
-      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount),data.chainId, data.rpc)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount, 260000),data.chainId, data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash

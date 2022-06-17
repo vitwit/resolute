@@ -12,12 +12,10 @@ import { useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export function PeriodicFeegrant(props) {
-    const {loading, onGrant} = props;
+    const {loading, onGrant, currency} = props;
 
     const date = new Date()
     const expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
-    const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
-
 
     const { handleSubmit, control, getValues } = useForm({
         defaultValues: {
@@ -175,4 +173,5 @@ export function PeriodicFeegrant(props) {
 PeriodicFeegrant.propTypes = {
     loading: PropTypes.string.isRequired,
     onGrant: PropTypes.func.isRequired,
+    currency: PropTypes.object.isRequired,
 };

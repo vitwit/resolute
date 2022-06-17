@@ -26,34 +26,34 @@ export default function Overview() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (connected && chainInfo.currencies.length > 0) {
-            setTotalBalance(totalBalance(balance.balance, chainInfo.currencies[0].coinDecimals))
-            setTotalDelegations(totalDelegations(delegations.delegations, chainInfo.currencies[0].coinDecimals))
-            setTotalRewards(totalRewards(rewards?.list, chainInfo.currencies[0].coinDecimals))
-            setTotalUnbonding(totalUnbonding(unbonding.delegations, chainInfo.currencies[0].coinDecimals))
+        if (connected && chainInfo.config.currencies.length > 0) {
+            setTotalBalance(totalBalance(balance.balance, chainInfo.config.currencies[0].coinDecimals))
+            setTotalDelegations(totalDelegations(delegations.delegations, chainInfo.config.currencies[0].coinDecimals))
+            setTotalRewards(totalRewards(rewards?.list, chainInfo.config.currencies[0].coinDecimals))
+            setTotalUnbonding(totalUnbonding(unbonding.delegations, chainInfo.config.currencies[0].coinDecimals))
         }
     }, [balance, delegations, rewards, unbonding, chainInfo, address]);
 
     useEffect(() => {
-        if (chainInfo.currencies.length > 0 && connected && address !== "") {
+        if (address.length > 0 && chainInfo.config.currencies.length > 0 && connected) {
             dispatch(getBalance({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 address: address,
-                denom: chainInfo?.currencies[0].coinMinimalDenom
+                denom: chainInfo.config.currencies[0].coinMinimalDenom
             }))
 
             dispatch(getDelegations({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 address: address,
             }))
 
             dispatch(getDelegatorTotalRewards({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 address: address,
             }))
 
             dispatch(getUnbonding({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 address: address,
             }))
         }
@@ -68,7 +68,7 @@ export default function Overview() {
                     delegations={delegated}
                     rewards={pendingRewards}
                     unbonding={unbondingDel}
-                    currencies={chainInfo?.currencies}
+                    currencies={chainInfo.config.currencies}
                 />
                 :
                 <></>
