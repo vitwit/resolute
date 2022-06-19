@@ -18,7 +18,7 @@ export default function SendPage() {
     const [available, setBalance] = useState(0);
 
     const from = useSelector((state) => state.wallet.address);
-    const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
+    const currency = useSelector((state) => state.wallet.chainInfo.config.currencies[0]);
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
     const address = useSelector((state) => state.wallet.address);
     const sendTx = useSelector((state) => state.bank.tx);
@@ -35,22 +35,22 @@ export default function SendPage() {
     }, []);
 
     useEffect(() => {
-        if (chainInfo.currencies.length > 0 && address.length > 0) {
+        if (chainInfo.config.currencies.length > 0 && address.length > 0) {
             dispatch(getBalance({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 address: address,
                 denom: currency.coinMinimalDenom
             }))
 
             dispatch(getGrantsToMe({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 grantee: address
             }))
         }
     }, [chainInfo]);
 
     useEffect(() => {
-        setBalance(totalBalance(balance.balance, chainInfo.currencies[0]?.coinDecimals));
+        setBalance(totalBalance(balance.balance, currency?.coinDecimals));
     }, [balance]);
 
     const onSendTx = (data) => {
@@ -66,9 +66,9 @@ export default function SendPage() {
                 to: data.to,
                 amount: amount,
                 denom: currency.coinMinimalDenom,
-                chainId: chainInfo.chainId,
-                rpc: chainInfo.rpc,
-                feeAmount: chainInfo?.config.gasPriceStep.average,
+                chainId: chainInfo.config.chainId,
+                rpc: chainInfo.config.rpc,
+                feeAmount: chainInfo.config.gasPriceStep.average,
             }))
         }
     }
@@ -82,9 +82,9 @@ export default function SendPage() {
             recipient: data.to,
             amount: amount,
             denom: currency.coinMinimalDenom,
-            chainId: chainInfo.chainId,
-            rpc: chainInfo.rpc,
-            feeAmount: chainInfo?.config.gasPriceStep.average,
+            chainId: chainInfo.config.chainId,
+            rpc: chainInfo.config.rpc,
+            feeAmount: chainInfo.config.gasPriceStep.average,
         })
 
     }

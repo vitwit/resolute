@@ -45,7 +45,7 @@ export const txFeegrantBasic = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = FeegrantBasicMsg(data.granter, data.grantee, data.denom, data.spendLimit, data.expiration)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.rpc)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
@@ -74,7 +74,7 @@ export const txGrantPeriodic = createAsyncThunk(
     try {
       const msg = FeegrantPeriodicMsg(data.granter, data.grantee, data.denom, data.spendLimit, data.expiration,
         data.period, data.periodSpendLimit)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.rpc)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
@@ -102,7 +102,7 @@ export const txRevoke = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = FeegrantRevokeMsg(data.granter, data.grantee)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.rpc)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc)
       if (result?.code === 0) {
         dispatch(getGrantsByMe({
           baseURL: data.baseURL, granter: data.granter

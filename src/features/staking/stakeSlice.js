@@ -40,7 +40,7 @@ export const txDelegate = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = Delegate(data.delegator, data.validator, data.amount, data.denom)
-      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), data.chainId, data.rpc)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount, 260000), data.chainId, data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
@@ -73,7 +73,7 @@ export const txReDelegate = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = Redelegate(data.delegator, data.srcVal, data.destVal, data.amount, data.denom)
-      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), data.chainId, data.rpc)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount, 280000), data.chainId, data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
@@ -106,7 +106,7 @@ export const txUnDelegate = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = UnDelegate(data.delegator, data.validator, data.amount, data.denom)
-      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount), data.chainId, data.rpc)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount, 260000), data.chainId, data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash

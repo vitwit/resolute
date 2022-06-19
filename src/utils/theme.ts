@@ -1,5 +1,6 @@
 import { getPalletByNetwork } from '../utils/pallet';
 import { createTheme } from '@mui/material/styles';
+import { getSelectedNetwork } from './networks';
 
 export function isDarkMode() : boolean{
     const mode = localStorage.getItem("DARK_MODE");
@@ -11,8 +12,8 @@ export function isDarkMode() : boolean{
 }
 
 export function getPallet() {
-    const network = localStorage.getItem("LAST_SELECTED");
-    const pallet = getPalletByNetwork(network);
+    const network = getSelectedNetwork();
+    const pallet = getPalletByNetwork(network?.config.chainName);
     return pallet
 }
 
