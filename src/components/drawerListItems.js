@@ -7,6 +7,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import DocumentScannerOutlinedIcon from '@mui/icons-material/DocumentScannerOutlined';
+import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 
 export function drawerListItems(currentPath, onNavigate, showAirdrop) {
   return (
@@ -46,6 +47,12 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         <LayersIcon />
       </ListItemIcon>
       <ListItemText primary="Feegrant" secondary="coming soon" />
+    </ListItemButton>
+    <ListItemButton onClick={() => onNavigate("/group")} selected={currentPath === "/group"}>
+      <ListItemIcon>
+        <GroupsOutlinedIcon />
+      </ListItemIcon>
+      <ListItemText primary="Group" />
     </ListItemButton>
 
   { showAirdrop ?

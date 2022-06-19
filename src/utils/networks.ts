@@ -315,6 +315,70 @@ export function getTestNetworks(): Network[] {
                 },
                 walletUrlForStaking: 'https://stake.vitwit.com/validators',
             }
+        },
+        {
+            experimental: true,
+            showAirdrop: false,
+            airdropActions: [
+                {
+                    title: "#1 Initial Claim",
+                    type: "action",
+
+                },
+            ],
+            airdropMessage: "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
+            logos: {
+                toolbar: "passage3d.png",
+                menu: "./passage-logo-only.png",
+            },
+            isTestnet: true,
+            explorerTxHashEndpoint: 'https://passage3d.testaneka.com/txs/',
+            config: {
+                chainId: "testnet",
+                chainName: "Simapp",
+                rest: 'http://localhost:1317/',
+                rpc: 'http://localhost:26657',
+                stakeCurrency: {
+                    coinDenom: 'STAKE',
+                    coinMinimalDenom: 'stake',
+                    coinDecimals: 6,
+                    coinGeckoId: 'simapp',
+                },
+                bip44: {
+                    coinType: 118,
+                },
+                bech32Config: {
+                    bech32PrefixAccAddr: `cosmos`,
+                    bech32PrefixAccPub: `cosmospub`,
+                    bech32PrefixValAddr: `cosmosvaloper`,
+                    bech32PrefixValPub: `cosmosvaloperpub`,
+                    bech32PrefixConsAddr: `cosmosvalcons`,
+                    bech32PrefixConsPub: `cosmosvalconspub`,
+                },
+                currencies: [
+                    {
+                        coinDenom: 'STAKE',
+                        coinMinimalDenom: 'stake',
+                        coinDecimals: 6,
+                        coinGeckoId: 'stake',
+                    },
+                ],
+                feeCurrencies: [
+                    {
+                        coinDenom: 'STAKE',
+                        coinMinimalDenom: 'stake',
+                        coinDecimals: 6,
+                        coinGeckoId: 'stake',
+                    },
+                ],
+                coinType: 118,
+                gasPriceStep: {
+                    low: 0.00,
+                    average: 0.00,
+                    high: 0.00,
+                },
+                walletUrlForStaking: 'https://stake.vitwit.com/validators',
+            }
         }
     ]
 }

@@ -28,6 +28,8 @@ import AppDrawer from '../components/AppDrawer';
 import { Alert } from '../components/Alert';
 import { getPallet, isDarkMode, mdTheme } from '../utils/theme';
 import { isConnected } from '../utils/localStorage';
+import GroupPage from './GroupPage';
+import CreateGroupPage from './group/CreateGroup';
 
 function DashboardContent() {
     const [snackOpen, setSnackOpen] = React.useState(false);
@@ -194,6 +196,8 @@ function DashboardContent() {
                                         <Route path="/staking" element={<Validators />}></Route>
                                         <Route path="/governance" element={<Proposals />}></Route>
                                         <Route path="/send" element={<SendPage />}></Route>
+                                        <Route path="/group" element={<GroupPage />}></Route>
+                                        <Route path="/group/create-group" element={<CreateGroupPage />}></Route>
                                         {
                                             selectedNetwork.showAirdrop ?
                                                 <Route path="/airdrop-check" element={<AirdropEligibility />}></Route>
