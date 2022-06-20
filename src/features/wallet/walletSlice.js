@@ -74,8 +74,8 @@ export const walletSlice = createSlice({
       state.algo = ''
       state.name = ''
     },
-    setNetwork: (state, payload) => {
-      state.chainInfo = payload.chainInfo
+    setNetwork: (state, action) => {
+      state.chainInfo = action.payload.chainInfo
     }
   },
   extraReducers: (builder) => {
