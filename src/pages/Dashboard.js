@@ -58,32 +58,31 @@ function DashboardContent() {
 
     const wallet = useSelector((state) => state.wallet)
     React.useEffect(() => {
-        const network = getSelectedNetwork();
-        dispatch(setNetwork({
-            chainInfo: network
-        }));
+            const network = getSelectedNetwork();
+            dispatch(setNetwork({
+                chainInfo: network
+            }));
 
-        // wait for keplr instance to available
-        setTimeout(() => {
-            if (isConnected()) {
-                dispatch(connectKeplrWallet(network))
-            }
-        }, 200);
-
-        const listener = () => {
+            // wait for keplr instance to available
             setTimeout(() => {
                 if (isConnected()) {
                     dispatch(connectKeplrWallet(network))
                 }
-            }, 1000);
-        }
-        window.addEventListener("keplr_keystorechange", listener);
+            }, 200);
 
-        setSelectedNetwork(network);
-        return () => {
-            window.removeEventListener("keplr_keystorechange", listener);
-        }
+            const listener = () => {
+                setTimeout(() => {
+                    if (isConnected()) {
+                        dispatch(connectKeplrWallet(network))
+                    }
+                }, 1000);
+            }
+            window.addEventListener("keplr_keystorechange", listener);
 
+            setSelectedNetwork(network);
+            return () => {
+                window.removeEventListener("keplr_keystorechange", listener);
+            }
     }, []);
 
     const chainInfo = useSelector((state) => state.wallet.chainInfo)
@@ -207,28 +206,29 @@ function DashboardContent() {
                                 </Container>
                             </Box>
                         </Box>
-                        {errState.message.length > 0
-                            ?
-                            <Snackbar open={snackOpen && errState.message.length > 0 && errState.type.length > 0} autoHideDuration={3000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-                                <Alert onClose={() => { showSnack(false) }} severity={errState.type === 'success' ? 'success' : 'error'} sx={{ width: '100%' }}>
-                                    {errState.message}
-                                </Alert>
-                            </Snackbar>
-                            :
-                            <></>
-                        }
-
-                        <Snackbar open={snackTxOpen} autoHideDuration={3000} onClose={() => { showTxSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-                            <Alert onClose={() => { showTxSnack(false) }} severity='success' sx={{ width: '100%' }}>
-                                <AlertTitle>Tx Successful</AlertTitle>
-                                View on explorer <Link target="_blank" href={`${chainInfo?.config?.txHashEndpoint}${txSuccess?.hash}`} color='inherit'> {txSuccess?.hash?.toLowerCase().substring(0, 5)}...</Link>
-                            </Alert>
-                        </Snackbar>
 
                     </>
-                        :
-                        <></>
+                    :
+                    <></>
             }
+            {errState.message.length > 0
+                ?
+                <Snackbar open={snackOpen && errState.message.length > 0 && errState.type.length > 0} autoHideDuration={3000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                    <Alert onClose={() => { showSnack(false) }} severity={errState.type === 'success' ? 'success' : 'error'} sx={{ width: '100%' }}>
+                        {errState.message}
+                    </Alert>
+                </Snackbar>
+                :
+                <></>
+            }
+
+            <Snackbar open={snackTxOpen} autoHideDuration={3000} onClose={() => { showTxSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                <Alert onClose={() => { showTxSnack(false) }} severity='success' sx={{ width: '100%' }}>
+                    <AlertTitle>Tx Successful</AlertTitle>
+                    View on explorer <Link target="_blank" href={`${chainInfo?.config?.txHashEndpoint}${txSuccess?.hash}`} color='inherit'> {txSuccess?.hash?.toLowerCase().substring(0, 5)}...</Link>
+                </Alert>
+            </Snackbar>
+
         </ThemeProvider>
     );
 }
