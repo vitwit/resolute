@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ThemeProvider from '@mui/material/styles/ThemeProvider';
+import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -225,7 +225,7 @@ function DashboardContent() {
             <Snackbar open={snackTxOpen} autoHideDuration={3000} onClose={() => { showTxSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={() => { showTxSnack(false) }} severity='success' sx={{ width: '100%' }}>
                     <AlertTitle>Tx Successful</AlertTitle>
-                    View on explorer <Link target="_blank" href={`${chainInfo?.config?.txHashEndpoint}${txSuccess?.hash}`} color='inherit'> {txSuccess?.hash?.toLowerCase().substring(0, 5)}...</Link>
+                    View on explorer <Link target="_blank" href={`${chainInfo?.config?.explorerTxHashEndpoint}${txSuccess?.hash}`} color='inherit'> {txSuccess?.hash?.toLowerCase().substring(0, 5)}...</Link>
                 </Alert>
             </Snackbar>
 

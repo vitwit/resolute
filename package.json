@@ -5,7 +5,6 @@
   "author": "Vitwit Technologies Pvt Ltd",
   "dependencies": {
     "@babel/core": "^7.18.2",
-    "@cosmjs/amino": "^0.28.4",
     "@cosmjs/encoding": "^0.28.4",
     "@cosmjs/proto-signing": "^0.28.7",
     "@cosmjs/stargate": "^0.28.4",
@@ -160,5 +159,10 @@
   },
   "devDependencies": {
     "webpack-bundle-analyzer": "^4.5.0"
+  },
+  "resolutions": {
+    "libsodium": "file:./etc/noop",
+    "libsodium-wrappers": "file:./etc/noop",
+    "node-sass": "file:./etc/noop"
   }
 }
