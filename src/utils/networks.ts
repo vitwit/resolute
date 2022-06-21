@@ -1,99 +1,174 @@
+type Currency = {
+    coinDenom: string,
+    coinMinimalDenom: string,
+    coinDecimals: number,
+    coinGeckoId?: string,
+}
 
-export function getMainNetworks() {
+type Logos = {
+    toolbar: string,
+    menu: string,
+}
+
+type StakeCurrency = {
+    coinDenom: string,
+    coinMinimalDenom: string,
+    coinDecimals: number,
+    coinGeckoId?: string,
+}
+
+type BIP44 = {
+    coinType: number,
+}
+
+type GasPrice = {
+    low: number,
+    average: number,
+    high: number
+}
+
+type Bech32Config = {
+    bech32PrefixAccAddr: string,
+    bech32PrefixAccPub: string,
+    bech32PrefixValAddr: string,
+    bech32PrefixValPub: string,
+    bech32PrefixConsAddr: string,
+    bech32PrefixConsPub: string,
+}
+
+interface NetworkConfig {
+    chainId: string,
+    chainName: string,
+    rest: string,
+    rpc: string,
+    stakeCurrency?: StakeCurrency,
+    bip44?: BIP44,
+    bech32Config?: Bech32Config,
+    currencies: Currency[],
+    feeCurrencies?: Currency[],
+    coinType?: number,
+    gasPriceStep: GasPrice,
+    walletUrlForStaking?: string,
+}
+
+interface AirdropAction {
+    type: string,
+    title: string, 
+}
+
+interface Network {
+    showAirdrop: boolean,
+    logos: Logos,
+    experimental: boolean,
+    isTestnet: boolean,
+    explorerTxHashEndpoint: string,
+    config: NetworkConfig,
+    airdropMessage?: string,
+    airdropActions?: AirdropAction[]
+}
+export function getMainNetworks(): Network[] {
     return [
         {
-            chainId: "cosmoshub-4",
-            displayName: "Cosmos Hub",
             showAirdrop: false,
-            logoName: "white-logo.png",
-            src: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
+            logos: {
+                menu: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
+                toolbar: "white-logo.png",
+            },
             experimental: false,
-            testnet: false,
-            lcd: "https://api.osmosis.interbloc.org",
-            rpc: "https://rpc-cosmoshub.blockapsis.com:443",
-            txHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
-            currencies: [
-                {
-                    coinDenom: 'ATOM',
-                    coinMinimalDenom: 'uatom',
-                    coinDecimals: 6,
-                },
-            ],
+            isTestnet: false,
+            explorerTxHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
             config: {
-                gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 }
+                chainId: "cosmoshub-4",
+                chainName: "Cosmos Hub",
+                rest: "https://api-cosmoshub-ia.notional.ventures/",
+                rpc: "https://rpc-cosmoshub.blockapsis.com",
+                gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
+                currencies: [
+                    {
+                        coinDenom: 'ATOM',
+                        coinMinimalDenom: 'uatom',
+                        coinDecimals: 6,
+                    },
+                ]
             }
         },
         {
-            chainId: "regen-1",
-            displayName: "Regen",
             showAirdrop: false,
-            logoName: "regen-network.png",
-            src: "https://www.mintscan.io/_next/static/image/assets/header/token_regen.7637b0ebe1330c92b57c48fb5817cfff.svg",
+            logos: {
+                toolbar: "regen-network.png",
+                menu: "https://www.mintscan.io/_next/static/image/assets/header/token_regen.7637b0ebe1330c92b57c48fb5817cfff.svg",
+            },
             experimental: false,
-            testnet: false,
-            lcd: "https://regen.api.ping.pub",
-            rpc: "http://rpc.regen.forbole.com:80",
-            txHashEndpoint: 'https://www.mintscan.io/regen/txs/',
-            currencies: [
-                {
-                    coinDenom: 'REGEN',
-                    coinMinimalDenom: 'uregen',
-                    coinDecimals: 6,
-                },
-            ],
+            isTestnet: false,
+            explorerTxHashEndpoint: 'https://www.mintscan.io/regen/txs/',
             config: {
-                gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 }
+                chainId: "regen-1",
+                chainName: "Regen",
+                rest: "https://regen.api.ping.pub",
+                rpc: "http://rpc.regen.forbole.com:80",
+                gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 },
+                currencies: [
+                    {
+                        coinDenom: 'REGEN',
+                        coinMinimalDenom: 'uregen',
+                        coinDecimals: 6,
+                    },
+                ],
             }
         },
         {
-            chainId: "akashnet-2",
-            displayName: "Akash",
+
             showAirdrop: false,
-            logoName: "akash-logo.svg",
-            src: "https://www.mintscan.io/_next/static/image/assets/header/token_akash.88ea4dceb678639c79ad5afed4a61efd.svg",
+            logos: {
+                toolbar: "akash-logo.svg",
+                menu: "https://www.mintscan.io/_next/static/image/assets/header/token_akash.88ea4dceb678639c79ad5afed4a61efd.svg",
+            },
             experimental: false,
-            testnet: false,
-            lcd: "https://akash.c29r3.xyz/api",
-            rpc: "https://rpc.akash.forbole.com:443",
-            txHashEndpoint: 'https://www.mintscan.io/akash/txs/',
-            currencies: [
-                {
-                    coinDenom: 'AKT',
-                    coinMinimalDenom: 'uakt',
-                    coinDecimals: 6,
-                },
-            ],
+            isTestnet: false,
+            explorerTxHashEndpoint: 'https://www.mintscan.io/akash/txs/',
             config: {
-                gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 }
-            }
+                chainId: "akashnet-2",
+                chainName: "Akash",
+                rest: "https://akash.c29r3.xyz/api",
+                rpc: "https://rpc.akash.forbole.com:443",
+                gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 },
+                currencies: [
+                    {
+                        coinDenom: 'AKT',
+                        coinMinimalDenom: 'uakt',
+                        coinDecimals: 6,
+                    },
+                ],
+            },
         },
         {
-            chainId: "osmosis-1",
-            displayName: "Osmosis",
-            logoName: "white-logo.png",
+            logos: {
+                toolbar: "white-logo.png",
+                menu: "https://www.mintscan.io/_next/static/image/assets/header/token_osmosis.4ea84e0bafc2ce3c619fc5c2290d6c29.svg",
+            },
             showAirdrop: false,
-            src: "https://www.mintscan.io/_next/static/image/assets/header/token_osmosis.4ea84e0bafc2ce3c619fc5c2290d6c29.svg",
             experimental: false,
-            testnet: false,
-            lcd: "https://osmo.api.ping.pub",
-            rpc: "https://osmosis.validator.network",
-            txHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
-            currencies: [
-                {
-                    coinDenom: 'OSMO',
-                    coinMinimalDenom: 'uosmo',
-                    coinDecimals: 6,
-                },
-            ],
+            isTestnet: false,
+            explorerTxHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
             config: {
+                chainId: "osmosis-1",
+                chainName: "Osmosis",
+                rest: "https://osmo.api.ping.pub",
+                rpc: "https://rpc-osmosis.blockapsis.com",
+                currencies: [
+                    {
+                        coinDenom: 'OSMO',
+                        coinMinimalDenom: 'uosmo',
+                        coinDecimals: 6,
+                    },
+                ],
                 gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 }
             }
         }
     ]
-
 }
 
-export function getTestNetworks() {
+export function getTestNetworks(): Network[] {
     return [
         // {
         //     chainId: "testnet",
@@ -105,7 +180,7 @@ export function getTestNetworks() {
         //    {
         //        title: "#1 Initial Claim",
         //        type: "action",
-            
+
         //    },
         //    {
         //        title: "#2 Stake",
@@ -178,8 +253,6 @@ export function getTestNetworks() {
         //     }
         // },
         {
-            chainId: "passage-testnet-1",
-            displayName: "Passage-Testnet",
             experimental: true,
             showAirdrop: true,
             airdropActions: [
@@ -189,20 +262,13 @@ export function getTestNetworks() {
 
                 },
             ],
-            logoName: "passage3d.png",
             airdropMessage: "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
-            src: "./passage-logo-only.png",
-            testnet: true,
-            lcd: 'https://api.passage3d.vitwit.com/',
-            rpc: 'https://rpc.passage3d.vitwit.com',
-            txHashEndpoint: 'https://passage3d.testaneka.com/txs/',
-            currencies: [
-                {
-                    coinDenom: 'PASG',
-                    coinMinimalDenom: 'upasg',
-                    coinDecimals: 6,
-                },
-            ],
+            logos: {
+                toolbar: "passage3d.png",
+                menu: "./passage-logo-only.png",
+            },
+            isTestnet: true,
+            explorerTxHashEndpoint: 'https://passage3d.testaneka.com/txs/',
             config: {
                 chainId: "passage-testnet-1",
                 chainName: "Passage-Testnet",
@@ -253,13 +319,13 @@ export function getTestNetworks() {
     ]
 }
 
-export function getSelectedNetwork() {
+export function getSelectedNetwork() :Network | null{
     let name = localStorage.getItem('LAST_SELECTED')
     let mainNets = getMainNetworks()
-
     if (name != null) {
         for (let i = 0; i < mainNets.length; i++) {
-            if (mainNets[i].displayName === name) {
+            if (mainNets[i].config.chainName === name) {
+                saveSelectedNetwork(mainNets[i].config.chainName)
                 return mainNets[i]
             }
         }
@@ -268,22 +334,30 @@ export function getSelectedNetwork() {
     let testNets = getTestNetworks()
     if (name != null) {
         for (let i = 0; i < testNets.length; i++) {
-            if (testNets[i].displayName === name) {
+            if (testNets[i].config.chainName === name) {
+                saveSelectedNetwork(testNets[i].config.chainName)
                 return testNets[i]
             }
         }
     }
 
-    saveSelectedNetwork(testNets[0].displayName)
-    return mainNets.length > 0 ? testNets[0] : null
+    // return passage network if provided network is not present
+    if (testNets.length > 0) {
+        saveSelectedNetwork(testNets[0].config.chainName)
+        return testNets[0]
+    }
+
+    if (mainNets.length > 0) {
+        saveSelectedNetwork(mainNets[0].config.chainName)
+        return mainNets[0]
+    }
+
+    return null
 }
 
 
-export function saveSelectedNetwork(name) {
+export function saveSelectedNetwork(name: string) {
     localStorage.setItem('LAST_SELECTED', name)
 }
 
-export function getLastSelectedNetwork() {
-    return localStorage.getItem('LAST_SELECTED')
-}
 

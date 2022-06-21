@@ -112,7 +112,7 @@ BalanceInfo.propTypes = {
     delegations: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     rewards: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     unbonding: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-    currencies: PropTypes.object.isRequired,
+    currencies: PropTypes.array.isRequired,
 };
 
 function Balance(props) {

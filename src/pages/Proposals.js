@@ -23,7 +23,7 @@ export function Proposals() {
   const votes = useSelector((state) => state.gov.votes.proposals);
   const address = useSelector((state) => state.wallet.address);
   const govTx = useSelector((state) => state.gov.tx);
-  const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
+  const currency = useSelector((state) => state.wallet.chainInfo?.config?.currencies[0]);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
 
   const dispatch = useDispatch();
@@ -32,16 +32,16 @@ export function Proposals() {
   useEffect(() => {
     if (walletConnected) {
       dispatch(getProposals({
-        baseURL: chainInfo.lcd,
+        baseURL: chainInfo.config.rest,
         voter: address,
       }))
 
       dispatch(getGrantsToMe({
-        baseURL: chainInfo.lcd,
+        baseURL: chainInfo.config.rest,
         grantee: address
       }))
     }
-  }, [chainInfo]);
+  }, [chainInfo, address, walletConnected]);
 
   const authzProposals = useMemo(() => filterVotesFromAuthz(grantsToMe.grants), [grantsToMe.grants]);
 
@@ -53,18 +53,18 @@ export function Proposals() {
         message: errMsg
       }))
     }
-  }, [errMsg]);
+  }, [errMsg, status]);
 
   useEffect(() => {
     if (govTx?.status === 'idle' && walletConnected) {
       dispatch(getProposals({
-        baseURL: chainInfo.lcd,
+        baseURL: chainInfo.config.rest,
         voter: address,
       }))
       dispatch(resetTx())
       setOpen(false);
     }
-  }, [govTx]);
+  }, [govTx, address, walletConnected]);
 
   useEffect(() => {
     return () => {
@@ -82,9 +82,9 @@ export function Proposals() {
         option: vote,
         denom: currency.coinMinimalDenom,
         memo: "",
-        chainId: chainInfo.chainId,
-        rpc: chainInfo.rpc,
-        feeAmount: chainInfo?.config.gasPriceStep.average,
+        chainId: chainInfo.config.chainId,
+        rpc: chainInfo.config.rpc,
+        feeAmount: chainInfo.config.gasPriceStep.average,
       }))
     } else {
       authzExecHelper(dispatch, {
@@ -94,9 +94,9 @@ export function Proposals() {
         option: vote,
         proposalId: selected,
         denom: currency.coinMinimalDenom,
-        chainId: chainInfo.chainId,
-        rpc: chainInfo.rpc,
-        feeAmount: chainInfo?.config.gasPriceStep.average,
+        chainId: chainInfo.config.chainId,
+        rpc: chainInfo.config.rpc,
+        feeAmount: chainInfo.config.gasPriceStep.average,
       })
     }
   }

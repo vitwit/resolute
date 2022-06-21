@@ -25,7 +25,7 @@ export default function AuthzSend(props) {
     const { chainInfo, authzTx, grants, onAuthzSend } = props;
 
     const [selected, setSelected] = useState({})
-    const currency = chainInfo.currencies[0];
+    const currency = chainInfo.config.currencies[0];
     const { handleSubmit, control } = useForm({
         defaultValues: {
             amount: 0,

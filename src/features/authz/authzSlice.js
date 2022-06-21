@@ -46,7 +46,7 @@ export const txAuthzSend = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = AuthzSendGrantMsg(data.granter, data.grantee, data.denom, data.spendLimit, data.expiration)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.rpc)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
@@ -74,7 +74,7 @@ export const txAuthzRevoke = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = AuthzRevokeMsg(data.granter, data.grantee, data.typeURL)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.rpc);
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc);
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
@@ -130,7 +130,7 @@ export const txAuthzGeneric = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = AuthzGenericGrantMsg(data.granter, data.grantee, data.typeUrl, data.expiration)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount), data.rpc)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
@@ -157,7 +157,7 @@ export const txAuthzExec = createAsyncThunk(
   'authz/tx-exec',
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      const result = await signAndBroadcastProto([data.msg], fee(data.denom, data.feeAmount), data.rpc)
+      const result = await signAndBroadcastProto([data.msg], fee(data.denom, data.feeAmount, 260000), data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash

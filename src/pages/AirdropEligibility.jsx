@@ -18,16 +18,17 @@ import AlertTitle from '@mui/material/AlertTitle';
 
 function getPasgNetwork() {
     const mainNetworks = getMainNetworks();
-    const testNetworks = getTestNetworks();
     for (let i = 0; i < mainNetworks.length; i++) {
         const network = mainNetworks[i];
-        if (network.currencies[0].coinMinimalDenom === "upasg") {
+        if (network.config.currencies[0].coinMinimalDenom === "upasg") {
             return network;
         }
     }
+
+    const testNetworks = getTestNetworks();
     for (let i = 0; i < testNetworks.length; i++) {
         const network = testNetworks[i];
-        if (network.currencies[0].coinMinimalDenom === "upasg") {
+        if (network.config.currencies[0].coinMinimalDenom === "upasg") {
             return network;
         }
     }
@@ -58,13 +59,13 @@ function getPassageAddress(address) {
 export default function AirdropEligibility() {
     const claimRecords = useSelector((state) => state.airdrop.claimRecords);
     const params = useSelector((state) => state.airdrop.params);
-    const [chainInfo, setChainInfo] = useState(getPasgNetwork());
+    const [chainInfo, _] = useState(getPasgNetwork());
     const status = useSelector((state) => state.airdrop.claimStatus);
     const errMsg = useSelector((state) => state.airdrop.errMsg);
     const txStatus = useSelector((state) => state.airdrop.tx.status);
     const walletAddress = useSelector((state) => state.wallet.address);
-    const { lcd, currencies } = getPasgNetwork();
-    const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
+    // const currency = useSelector((state) => state.wallet.chainInfo?.config?.currencies[0]);
+    const currency = chainInfo.config.currencies[0];
 
     const { handleSubmit, control, setValue, getValues } = useForm({
         defaultValues: {
@@ -75,9 +76,9 @@ export default function AirdropEligibility() {
     useEffect(() => {
         if (chainInfo.showAirdrop) {
             dispatch(resetError());
-            if (lcd !== "") {
+            if (chainInfo.config.rest !== "") {
                 dispatch(getClaimParams({
-                    baseURL: lcd
+                    baseURL: chainInfo.config.rest
                 }));
             }
             return () => {
@@ -91,7 +92,7 @@ export default function AirdropEligibility() {
         if (txStatus === 'idle') {
             if (walletAddress?.length > 0)
                 dispatch(getClaimRecords({
-                    baseURL: lcd,
+                    baseURL: chainInfo.config.rest,
                     address: walletAddress,
                 }))
         }
@@ -129,7 +130,7 @@ export default function AirdropEligibility() {
             }))
         } else {
             dispatch(getClaimRecords({
-                baseURL: lcd,
+                baseURL: chainInfo.config.rest,
                 address: address,
             }))
         }
@@ -139,21 +140,21 @@ export default function AirdropEligibility() {
         let total = 0.0
         for (let i = 0; i < records.length; i++) {
             const record = records[i]
-            total += parseFloat(record.amount / (10.0 ** currencies[0].coinDecimals))
+            total += parseFloat(record.amount / (10.0 ** currency.coinDecimals))
         }
 
-        return `${parseFloat(total.toFixed(6))} ${currencies[0].coinDenom}`
+        return `${parseFloat(total.toFixed(6))} ${currency.coinDenom}`
     }
 
     const txAction1 = () => {
         if (walletAddress.length > 0) {
             dispatch(txClaimAction({
                 address: walletAddress,
-                denom: currency?.coinMinimalDenom,
-                chainId: chainInfo.chainId,
-                rpc: chainInfo.rpc,
-                feeAmount: chainInfo?.config.gasPriceStep.average,
-                baseURL: chainInfo?.lcd,
+                denom: currency.coinMinimalDenom,
+                chainId: chainInfo.config.chainId,
+                rpc: chainInfo.config.rpc,
+                feeAmount: chainInfo.config.gasPriceStep.average,
+                baseURL: chainInfo.config.rest,
                 memo: "I confirm that I am not an US citizen"
             }))
         } else {

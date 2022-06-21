@@ -18,7 +18,7 @@ Send.propTypes = {
 
 export default function Send(props) {
     const { chainInfo, sendTx, available, onSend } = props;
-    const currency = chainInfo.currencies[0];
+    const currency = chainInfo.config.currencies[0];
     const { handleSubmit, control, setValue } = useForm({
         defaultValues: {
             amount: 0,
