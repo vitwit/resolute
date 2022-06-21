@@ -44,7 +44,8 @@ function getClaimPercentage(claimRecords) {
             claimed++
         }
     }
-    return Math.floor((claimed / 3) * 100)
+
+    return Math.floor((claimed / actions.length) * 100)
 }
 
 function getPassageAddress(address) {

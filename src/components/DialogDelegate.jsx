@@ -13,7 +13,7 @@ import { useForm, Controller } from 'react-hook-form';
 
 
 export function DialogDelegate(props) {
-    const { onClose, open, params, validator, balance, onDelegate, loading } = props;
+    const { onClose, open, params, validator, balance, onDelegate, loading, displayDenom } = props;
 
     const handleClose = () => {
         onClose();
@@ -96,7 +96,7 @@ export function DialogDelegate(props) {
                                         fullWidth
                                         size='small'
                                         InputProps={{
-                                            endAdornment: <InputAdornment position="start">STAKE</InputAdornment>,
+                                            endAdornment: <InputAdornment position="start">{displayDenom}</InputAdornment>,
                                         }}
                                         error={!!errors.amount}
                                         helperText={errors.amount?.type === 'validate' ? 'Insufficient balance' : errors.amount?.message}
@@ -137,4 +137,5 @@ DialogDelegate.propTypes = {
     params: PropTypes.object.isRequired,
     validator: PropTypes.object.isRequired,
     balance: PropTypes.number.isRequired,
+    displayDenom: PropTypes.string.isRequired,
 };

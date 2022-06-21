@@ -97,8 +97,8 @@ export function Validators() {
     }
 
     useEffect(() => {
-        dispatch(resetState())
         if (connected) {
+            dispatch(resetState())
             dispatch(getBalance({
                 baseURL: chainInfo.config.rest,
                 address: address,
@@ -121,7 +121,7 @@ export function Validators() {
             }));
 
         }
-    }, [chainInfo]);
+    }, [chainInfo, connected]);
 
     useEffect(() => {
         if (connected) {
@@ -339,6 +339,7 @@ export function Validators() {
                                             balance={availableBalance}
                                             onDelegate={onDelegateTx}
                                             loading={txStatus.status}
+                                            displayDenom={currency.coinDenom}
                                         />
                                         :
                                         <></>
