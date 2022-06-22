@@ -59,6 +59,23 @@ export default function AppDrawer(props) {
                             </ListItem>
                             <ListItem style={{ paddingBottom: 0 }}>
                                 <Typography
+                                    variant='body2'
+                                    color='text.secondary'
+                                >
+                                    PubKey
+                                </Typography>
+                                </ListItem>
+                                <ListItem
+                            >
+                            <Chip
+                                    label={shortenAddress(wallet.pubKey, 21)}
+                                    size="small"
+                                    deleteIcon={<ContentCopyOutlined />}
+                                    onDelete={() => { onCopy(wallet.pubKey) }}
+                                />
+                            </ListItem>
+                            <ListItem style={{ paddingBottom: 0 }}>
+                                <Typography
                                     color='text.secondary'
                                     variant='caption'
                                     fontWeight={400}
