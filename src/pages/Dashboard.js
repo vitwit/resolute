@@ -6,7 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import Authz from './Authz'
 import Feegrant from './Feegrant'
-import { getSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
+import { getSelectedNetwork, removeSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
 import Link from '@mui/material/Link';
 import { Routes, Route } from "react-router-dom";
 import { Validators } from './Validators';
@@ -58,31 +58,31 @@ function DashboardContent() {
 
     const wallet = useSelector((state) => state.wallet)
     React.useEffect(() => {
-            const network = getSelectedNetwork();
-            dispatch(setNetwork({
-                chainInfo: network
-            }));
+        const network = getSelectedNetwork();
+        dispatch(setNetwork({
+            chainInfo: network
+        }));
 
-            // wait for keplr instance to available
+        // wait for keplr instance to available
+        setTimeout(() => {
+            if (isConnected()) {
+                dispatch(connectKeplrWallet(network))
+            }
+        }, 200);
+
+        const listener = () => {
             setTimeout(() => {
                 if (isConnected()) {
                     dispatch(connectKeplrWallet(network))
                 }
-            }, 200);
+            }, 1000);
+        }
+        window.addEventListener("keplr_keystorechange", listener);
 
-            const listener = () => {
-                setTimeout(() => {
-                    if (isConnected()) {
-                        dispatch(connectKeplrWallet(network))
-                    }
-                }, 1000);
-            }
-            window.addEventListener("keplr_keystorechange", listener);
-
-            setSelectedNetwork(network);
-            return () => {
-                window.removeEventListener("keplr_keystorechange", listener);
-            }
+        setSelectedNetwork(network);
+        return () => {
+            window.removeEventListener("keplr_keystorechange", listener);
+        }
     }, []);
 
     const chainInfo = useSelector((state) => state.wallet.chainInfo)
@@ -113,6 +113,7 @@ function DashboardContent() {
     }
 
     function disconnectWallet() {
+        removeSelectedNetwork();
         dispatch(resetWallet());
     }
 

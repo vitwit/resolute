@@ -69,6 +69,9 @@ export const airdropSlice = createSlice({
             state.claimRecords = {}
             state.params = {}
             state.claimStatus = ''
+        },
+        resetClaimRecords: (state) => {
+            state.claimRecords = {}
         }
     },
 
@@ -121,5 +124,5 @@ export const airdropSlice = createSlice({
 })
 
 
-export const { resetState } = airdropSlice.actions;
+export const { resetState, resetClaimRecords } = airdropSlice.actions;
 export default airdropSlice.reducer;
