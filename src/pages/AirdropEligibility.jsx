@@ -47,7 +47,7 @@ function getClaimPercentage(claimRecords) {
         }
     }
 
-    return Math.floor((claimed / actions.length) * 100)
+    return Math.floor((claimed / (actions.length+1.5)) * 100)
 }
 
 function getPassageAddress(address) {
@@ -171,7 +171,7 @@ export default function AirdropEligibility() {
                 rpc: chainInfo.config.rpc,
                 feeAmount: chainInfo.config.gasPriceStep.average,
                 baseURL: chainInfo.config.rest,
-                memo: "I confirm that I am not an US citizen"
+                memo: "I agree to the passage airdrop terms and conditions"
             }))
         } else {
             alert("Wallet is not connected");
@@ -240,36 +240,34 @@ export default function AirdropEligibility() {
                                                 style={{ textAlign: 'left' }}
                                                 severity='info'
                                             >
-                                                <AlertTitle>
+                                                <AlertTitle
+                                                >
                                                     Total tokens claimable:&nbsp;&nbsp;&nbsp;{calculateBonus(claimRecords?.claimable_amount)}
                                                     <br/>
                                                     Initial tokens claimable:&nbsp;{getClaimableAmount(claimRecords?.claimable_amount)}
                                                 </AlertTitle>
                                                 <Typography
                                                     variant='body1'
-                                                    color='text.secondary'
-                                                    fontWeight={500}
+                                                    color='text.primary'
                                                     gutterBottom
                                                 >
-                                                    33.3% (or +50% of the initial claim) is recieved if the tokens are staked
+                                                    33.3% (or +50% of the initial claim) is received if the tokens are staked
                                                     conitinuously until 14 months from genesis. The airdrop needs to be staked
-                                                    within 2 weeks of airdrop start.
+                                                    within 3 weeks of airdrop start.
                                                     </Typography>
                                                     <div style={{display: 'flex', flexDirection: 'row'}}>
                                                     <Typography
                                                     variant='body1'
-                                                    color='text.secondary'
-                                                    fontWeight={500}
+                                                    color='text.primary'
                                                     gutterBottom
                                                 >
                                                     See more information on&nbsp;&nbsp;
                                                     </Typography>
-                                                    <Link variant='body1' href="https://medium.com/passage3d" target="_blank">medium.com/passage3d</Link>
+                                                    <Link variant='body1' href="https://medium.com/@passage3D" target="_blank">medium.com/passage3d</Link>
                                                     </div>
                                                     <Typography
                                                     variant='body1'
-                                                    color='text.secondary'
-                                                    fontWeight={500}
+                                                    color='text.primary'
                                                 >
                                                     Claim will be available shortly after the public token sale.
                                                     You can then go to the bottom of the page to claim.
@@ -305,9 +303,10 @@ export default function AirdropEligibility() {
                 for the account or benefit of a U.S. person.
                 </Typography>
                 <div style={{display: 'flex', flexDirection: 'row'}}>
-                <Typography>
-                The Passage platform is a smart contract based suite of technologies that relies on blockchain 
-                technology. By using this ...&nbsp;
+                <Typography
+                gutterBottom
+                >
+                The Passage platform is a smart contract based suite of technologies...&nbsp;
                 </Typography>
                 <Typography
                     className='read-more'
@@ -373,7 +372,7 @@ export default function AirdropEligibility() {
                                                     onClick={() => {
                                                         txAction1()
                                                     }}
-                                                    disabled={(params?.airdrop_enabled === false && new Date(params?.airdrop_start_time) >= new Date())
+                                                    disabled={(params?.airdrop_enabled === false) ||  (params?.airdrop_enabled === false && new Date(params?.airdrop_start_time) >= new Date())
                                                         || (claimRecords?.action_completed.length >= index && claimRecords?.action_completed[index] === true)
                                                         || txStatus === 'pending'}
                                                 >

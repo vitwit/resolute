@@ -6,7 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import Authz from './Authz'
 import Feegrant from './Feegrant'
-import { getSelectedNetwork, removeSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
+import { getSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
 import Link from '@mui/material/Link';
 import { Routes, Route } from "react-router-dom";
 import { Validators } from './Validators';
@@ -27,9 +27,9 @@ import SendPage from './SendPage';
 import AppDrawer from '../components/AppDrawer';
 import { Alert } from '../components/Alert';
 import { getPallet, isDarkMode, mdTheme } from '../utils/theme';
-import { isConnected } from '../utils/localStorage';
+import { isConnected, logout } from '../utils/localStorage';
 
-function DashboardContent() {
+function DashboardContent(props) {
     const [snackOpen, setSnackOpen] = React.useState(false);
     const showSnack = (value) => {
         setSnackOpen(value);
@@ -49,7 +49,7 @@ function DashboardContent() {
         setSnackTxClose(value);
     }
 
-    const [selectedNetwork, setSelectedNetwork] = React.useState({});
+    const [selectedNetwork, setSelectedNetwork] = React.useState(props.selectedNetwork);
     const changeNetwork = (network) => {
         saveSelectedNetwork(network.config.chainName);
         setSelectedNetwork(network);
@@ -113,7 +113,7 @@ function DashboardContent() {
     }
 
     function disconnectWallet() {
-        removeSelectedNetwork();
+        logout();
         dispatch(resetWallet());
     }
 
@@ -226,7 +226,7 @@ function DashboardContent() {
             <Snackbar open={snackTxOpen} autoHideDuration={3000} onClose={() => { showTxSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={() => { showTxSnack(false) }} severity='success' sx={{ width: '100%' }}>
                     <AlertTitle>Tx Successful</AlertTitle>
-                    View on explorer <Link target="_blank" href={`${chainInfo?.config?.explorerTxHashEndpoint}${txSuccess?.hash}`} color='inherit'> {txSuccess?.hash?.toLowerCase().substring(0, 5)}...</Link>
+                    View on explorer <Link target="_blank" href={`${chainInfo?.explorerTxHashEndpoint}${txSuccess?.hash}`} color='inherit'> {txSuccess?.hash?.toLowerCase().substring(0, 5)}...</Link>
                 </Alert>
             </Snackbar>
 
@@ -235,5 +235,40 @@ function DashboardContent() {
 }
 
 export default function Dashboard() {
-    return <DashboardContent key={1} />;
+    const dispatch = useDispatch();
+
+    const network = getSelectedNetwork();
+    React.useEffect(() => {
+        dispatch(setNetwork({
+            chainInfo: network
+        }));
+
+        // wait for keplr instance to available
+        setTimeout(() => {
+            if (isConnected()) {
+                dispatch(connectKeplrWallet(network))
+            }
+        }, 200);
+
+        const listener = () => {
+            setTimeout(() => {
+                if (isConnected()) {
+                    dispatch(connectKeplrWallet(network))
+                }
+            }, 1000);
+        }
+        window.addEventListener("keplr_keystorechange", listener);
+
+        return () => {
+            window.removeEventListener("keplr_keystorechange", listener);
+        }
+    }, []);
+    return (
+        (
+            network ?
+                <DashboardContent key={1} selectedNetwork={network} />
+                :
+                <></>
+        )
+    );
 }

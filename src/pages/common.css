@@ -55,7 +55,7 @@
 }
 
 .read-more {
-        text-decoration: "underline";
+        text-decoration: underline;
 }
 
 .read-more:hover {

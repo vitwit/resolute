@@ -10,3 +10,6 @@ export function isConnected() : boolean {
     }
     return false
 }
+export function logout() {
+    localStorage.removeItem("CONNECTED");
+}
