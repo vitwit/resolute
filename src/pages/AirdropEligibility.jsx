@@ -47,7 +47,7 @@ function getClaimPercentage(claimRecords) {
         }
     }
 
-    return Math.floor((claimed / (actions.length+1.5)) * 100)
+    return Math.floor((claimed / (actions.length + 1.5)) * 100)
 }
 
 function getPassageAddress(address) {
@@ -157,7 +157,7 @@ export default function AirdropEligibility() {
             total += parseFloat(record.amount / (10.0 ** currency.coinDecimals))
         }
 
-        const bonus = total + (total/2.0)
+        const bonus = total + (total / 2.0)
 
         return `${parseFloat(bonus.toFixed(6))} ${currency.coinDenom}`
     }
@@ -242,8 +242,8 @@ export default function AirdropEligibility() {
                                             >
                                                 <AlertTitle
                                                 >
-                                                    Total tokens claimable:&nbsp;&nbsp;&nbsp;{calculateBonus(claimRecords?.claimable_amount)}
-                                                    <br/>
+                                                    Total tokens claimable:&nbsp;&nbsp;{calculateBonus(claimRecords?.claimable_amount)}
+                                                    <br />
                                                     Initial tokens claimable:&nbsp;{getClaimableAmount(claimRecords?.claimable_amount)}
                                                 </AlertTitle>
                                                 <Typography
@@ -251,21 +251,21 @@ export default function AirdropEligibility() {
                                                     color='text.primary'
                                                     gutterBottom
                                                 >
-                                                    33.3% (or +50% of the initial claim) is received if the tokens are staked
+                                                    66.7% available for initial claim with 33.3% (or +50% of the initial claim) is received if the tokens are staked
                                                     conitinuously until 14 months from genesis. The airdrop needs to be staked
                                                     within 3 weeks of airdrop start.
-                                                    </Typography>
-                                                    <div style={{display: 'flex', flexDirection: 'row'}}>
+                                                </Typography>
+                                                <div style={{ display: 'flex', flexDirection: 'row' }}>
                                                     <Typography
-                                                    variant='body1'
-                                                    color='text.primary'
-                                                    gutterBottom
-                                                >
-                                                    See more information on&nbsp;&nbsp;
+                                                        variant='body1'
+                                                        color='text.primary'
+                                                        gutterBottom
+                                                    >
+                                                        See more information on&nbsp;&nbsp;
                                                     </Typography>
                                                     <Link variant='body1' href="https://medium.com/@passage3D" target="_blank">medium.com/passage3d</Link>
-                                                    </div>
-                                                    <Typography
+                                                </div>
+                                                <Typography
                                                     variant='body1'
                                                     color='text.primary'
                                                 >
@@ -291,33 +291,25 @@ export default function AirdropEligibility() {
                 <Grid item xs={2} md={2}></Grid>
             </Grid>
             {
-                claimRecords?.address && chainInfo.airdropActions?.length > 0 ? 
-            <Alert severity='info' style={{textAlign: 'left', marginTop: 8}}>
-                <AlertTitle>
-                    Legal Disclaimer
-                </AlertTitle>
-                <Typography
-                gutterBottom
-                >
-                By claiming these tokens, you confirm that you are not a U.S. person or claiming the tokens 
-                for the account or benefit of a U.S. person.
-                </Typography>
-                <div style={{display: 'flex', flexDirection: 'row'}}>
-                <Typography
-                gutterBottom
-                >
-                The Passage platform is a smart contract based suite of technologies...&nbsp;
-                </Typography>
-                <Typography
-                    className='read-more'
-                    onClick={() => setDisclaimerOpen(true)}
-                >
-                Read more
-                </Typography>
-                </div>
-            </Alert>
-            :
-            <></>
+                claimRecords?.address && chainInfo.airdropActions?.length > 0 ?
+                    <Alert severity='info' style={{ textAlign: 'left', marginTop: 8 }}>
+                        <AlertTitle>
+                            <Typography variant='body1' fontWeight={500}>
+                                Legal Disclaimer
+                            </Typography>
+                        </AlertTitle>
+                        <Typography gutterBottom variant='body2'>
+                            By claiming these tokens, you confirm that you are not a U.S. person or claiming the tokens for the account or benefit of a U.S. person.
+                        </Typography>
+                        <Typography gutterBottom variant='body2'>
+                            The Passage platform is a smart contract based suite of technologies that relies on blockchain technology. By using this product in any capacity, you recognize and assume all risks inherent in such technologies, including but not limited to the risk that the smart contracts underlying our product could fail, resulting in a total loss of user funds. Passage is not responsible for any such losses.
+                        </Typography>
+                        <Typography gutterBottom variant='body2'>
+                            Mentions of potential exchange listings are hypothetical and there is no guarantee that they will happen. All investments involve risk, and the forecasted performance of a security, utility token, financial product or individual investment does not guarantee actual results or returns. Investors are solely responsible for any investment decision that they make. Such decisions should be based solely on an evaluation of their financial circumstances, investment objectives, risk tolerance, and liquidity needs. We are not financial advisors or a registered broker dealer and bear no responsibility for any losses you may incur as a result of your decision to invest.
+                        </Typography>
+                    </Alert>
+                    :
+                    <></>
             }
             {
                 walletAddress?.length > 0
@@ -372,7 +364,7 @@ export default function AirdropEligibility() {
                                                     onClick={() => {
                                                         txAction1()
                                                     }}
-                                                    disabled={(params?.airdrop_enabled === false) ||  (params?.airdrop_enabled === false && new Date(params?.airdrop_start_time) >= new Date())
+                                                    disabled={(params?.airdrop_enabled === false) || (params?.airdrop_enabled === false && new Date(params?.airdrop_start_time) >= new Date())
                                                         || (claimRecords?.action_completed.length >= index && claimRecords?.action_completed[index] === true)
                                                         || txStatus === 'pending'}
                                                 >
@@ -417,28 +409,28 @@ export default function AirdropEligibility() {
                                                 </Button>
                                             </Paper>
                                     )
-                                    
+
                                     )
                                 }
                                 <Paper
-                                                elevation={1}
-                                                className='claim-item'
-                                            >
-                                                <Typography
-                                                    color='text.primary'
-                                                    variant='body1'
-                                                    fontWeight={600}
-                                                >
-                                                    #2 Stake your initial airdrop until 14 months from genesis and recieve +50% of your initial token claim
-                                                </Typography>
-                                                <Button
-                                                    variant='contained'
-                                                    disableElevation
-                                                    disabled
-                                                    >
-                                                    Automated
-                                                </Button>
-                                            </Paper>
+                                    elevation={1}
+                                    className='claim-item'
+                                >
+                                    <Typography
+                                        color='text.primary'
+                                        variant='body1'
+                                        fontWeight={600}
+                                    >
+                                        #2 Stake your initial airdrop until 14 months from genesis and recieve +50% of your initial token claim
+                                    </Typography>
+                                    <Button
+                                        variant='contained'
+                                        disableElevation
+                                        disabled
+                                    >
+                                        Automated
+                                    </Button>
+                                </Paper>
                             </Paper>
                         </>
                         :
