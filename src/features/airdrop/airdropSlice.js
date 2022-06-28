@@ -36,7 +36,7 @@ export const txClaimAction = createAsyncThunk(
     async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
         try {
             const msg = AirdropClaim(data.address)
-            const result = await signAndBroadcastCustomMsg(data.address, [msg], fee(data.denom, data.feeAmount, 0),data.chainId, data.rpc, data.memo)
+            const result = await signAndBroadcastCustomMsg(data.address, [msg], fee(data.denom, data.feeAmount, 200000),data.chainId, data.rpc, data.memo)
             if (result?.code === 0) {
                 dispatch(setTxHash({
                     hash: result?.transactionHash
@@ -69,6 +69,9 @@ export const airdropSlice = createSlice({
             state.claimRecords = {}
             state.params = {}
             state.claimStatus = ''
+        },
+        resetClaimRecords: (state) => {
+            state.claimRecords = {}
         }
     },
 
@@ -121,5 +124,5 @@ export const airdropSlice = createSlice({
 })
 
 
-export const { resetState } = airdropSlice.actions;
+export const { resetState, resetClaimRecords } = airdropSlice.actions;
 export default airdropSlice.reducer;

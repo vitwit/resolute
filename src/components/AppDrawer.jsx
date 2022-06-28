@@ -14,7 +14,7 @@ import Button from '@mui/material/Button'
 import PropTypes from 'prop-types';
 import { drawerListItems } from './drawerListItems';
 import { totalBalance } from '../utils/denom';
-import { shortenAddress } from '../utils/util';
+import { shortenAddress, shortenPubKey } from '../utils/util';
 import { useLocation } from 'react-router-dom';
 
 const drawerWidth = 210;
@@ -32,7 +32,7 @@ export default function AppDrawer(props) {
             }}
         >
             <Toolbar />
-            <List component="nav" style={{ minHeight: 120 }}>
+            <List>
                 {
                     wallet.connected ?
                         <>
@@ -55,6 +55,23 @@ export default function AppDrawer(props) {
                                     size="small"
                                     deleteIcon={<ContentCopyOutlined />}
                                     onDelete={() => { onCopy(wallet.address) }}
+                                />
+                            </ListItem>
+                            <ListItem style={{ paddingBottom: 0 }}>
+                                <Typography
+                                    variant='body2'
+                                    color='text.secondary'
+                                >
+                                    PubKey
+                                </Typography>
+                                </ListItem>
+                                <ListItem
+                            >
+                            <Chip
+                                    label={wallet.pubKey ? shortenPubKey(wallet.pubKey, 21) : ""}
+                                    size="small"
+                                    deleteIcon={<ContentCopyOutlined />}
+                                    onDelete={() => { onCopy(wallet.pubKey) }}
                                 />
                             </ListItem>
                             <ListItem style={{ paddingBottom: 0 }}>
@@ -111,7 +128,7 @@ export default function AppDrawer(props) {
 
             </List>
             <Divider />
-            <List component="nav">
+            <List>
                 {
                     drawerListItems(location.pathname,
                         (path) => { onNavigate(path) }, selectedNetwork?.showAirdrop)

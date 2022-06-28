@@ -53,3 +53,11 @@
 .route-selected {
         background-color: #1a0dab;
 }
+
+.read-more {
+        text-decoration: underline;
+}
+
+.read-more:hover {
+        cursor: pointer;
+}

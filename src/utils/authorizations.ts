@@ -1,23 +1,29 @@
-export function authzMsgTypes() {
+
+interface AuthzMenuItem {
+    label: string;
+    typeURL: string;
+}
+
+export function authzMsgTypes() :AuthzMenuItem[] {
     return [
         {
             label: 'Send',
             typeURL: '/cosmos.bank.v1beta1.MsgSend'
         },
         {
-            label: 'Authz-Grant',
+            label: 'Grant Authz',
             typeURL: '/cosmos.authz.v1beta1.MsgGrant'
         },
         {
-            label: 'Authz-Revoke',
+            label: 'Revoke Authz',
             typeURL: '/cosmos.authz.v1beta1.MsgRevoke'
         },
         {
-            label: 'Feegrant-Grant',
+            label: 'Grant Feegrant',
             typeURL: '/cosmos.feegrant.v1beta1.MsgGrant'
         },
         {
-            label: 'Feegrant-Revoke',
+            label: 'Revoke Feegrant',
             typeURL: '/cosmos.feegrant.v1beta1.MsgRevoke'
         },
         {
@@ -29,30 +35,30 @@ export function authzMsgTypes() {
             typeURL: '/cosmos.gov.v1beta1.MsgVote'
         },
         {
+            label: 'Deposit',
+            typeURL: "/cosmos.gov.v1beta1.MsgDeposit"
+        },
+        {
             label: 'Withdraw Rewards',
-            typeURL: '/cosmos.gov.v1beta1.MsgWithdrawRewards'
+            typeURL: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward'
         },
         {
-            label: 'Withdraw All Rewards',
-            typeURL: '/cosmos.gov.v1beta1.MsgWithdrawAllRewards'
-        },
-        {
-            label: 'ReDelegate',
+            label: 'Redelegate',
             typeURL: '/cosmos.staking.v1beta1.MsgReDelegate'
         },
         {
-            label: 'UnDelegate',
+            label: 'Undelegate',
             typeURL: '/cosmos.staking.v1beta1.MsgUnDelegate'
         },
         {
             label: 'Withdraw Commission',
-            typeURL: '/cosmos.staking.v1beta1.MsgWithdrawCommission'
+            typeURL: '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission'
         },
     ]
 }
 
 
-export function getTypeURLFromAuthorization(authorization) {
+export function getTypeURLFromAuthorization(authorization: any) : string{
     switch (authorization["@type"]) {
         case "/cosmos.bank.v1beta1.SendAuthorization":
             return "/cosmos.bank.v1beta1.MsgSend"
@@ -63,7 +69,7 @@ export function getTypeURLFromAuthorization(authorization) {
     }
 }
 
-export function filterVotesFromAuthz(grants) {
+export function filterVotesFromAuthz(grants: any): any {
     if (!grants) {
         return []
     }
@@ -78,7 +84,7 @@ export function filterVotesFromAuthz(grants) {
 }
 
 
-export function filterSendFromAuthz(grants) {
+export function filterSendFromAuthz(grants: any): any {
     if (!grants) {
         return []
     }

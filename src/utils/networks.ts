@@ -360,4 +360,8 @@ export function saveSelectedNetwork(name: string) {
     localStorage.setItem('LAST_SELECTED', name)
 }
 
+export function removeSelectedNetwork() {
+    localStorage.removeItem('LAST_SELECTED')
+}
+
 
