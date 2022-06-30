@@ -6,6 +6,8 @@ import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
+import Toolbar from '@mui/material/Toolbar';
+import Box from '@mui/material/Box';
 
 export default function BalanceInfo(props) {
     const currency = props.currencies[0];
@@ -15,10 +17,10 @@ export default function BalanceInfo(props) {
     }
 
     return (
-        <>
-            <br /><br /><br />
+        <Box>
+            <Toolbar/>
             <CssBaseline />
-            <Grid container spacing={3}>
+            <Grid container spacing={3} >
                 <Grid item xs={6} md={3}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <Typography
@@ -74,7 +76,7 @@ export default function BalanceInfo(props) {
                         className='button-capitalize-title'
                         onClick={() => navigateTo("/staking")}
                     >
-                        Claim
+                        Rewards
                     </Button>
                 </Grid>
                 <Grid item xs={6} md={2}>
@@ -102,7 +104,7 @@ export default function BalanceInfo(props) {
                     />
                 </Grid>
             </Grid>
-        </>
+            </Box>
     );
 }
 

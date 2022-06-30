@@ -53,7 +53,7 @@ interface NetworkConfig {
 
 interface AirdropAction {
     type: string,
-    title: string, 
+    title: string,
 }
 
 interface Network {
@@ -67,6 +67,35 @@ interface Network {
     airdropActions?: AirdropAction[]
 }
 export function getMainNetworks(): Network[] {
+    if (window.location.origin === 'https://airdrop.passage3d.com') {
+        return [
+            {
+                showAirdrop: false,
+                logos: {
+                    menu: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
+                    toolbar: "white-logo.png",
+                },
+                experimental: false,
+                isTestnet: false,
+                explorerTxHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
+                config: {
+                    chainId: "cosmoshub-4",
+                    chainName: "Cosmos Hub",
+                    rest: "https://api-cosmoshub-ia.notional.ventures/",
+                    rpc: "https://rpc-cosmoshub.blockapsis.com",
+                    gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
+                    currencies: [
+                        {
+                            coinDenom: 'ATOM',
+                            coinMinimalDenom: 'uatom',
+                            coinDecimals: 6,
+                        },
+                    ]
+                }
+            },
+        ]
+    }
+
     return [
         {
             showAirdrop: false,
@@ -319,7 +348,7 @@ export function getTestNetworks(): Network[] {
     ]
 }
 
-export function getSelectedNetwork() :Network | null{
+export function getSelectedNetwork(): Network | null {
     let name = localStorage.getItem('LAST_SELECTED')
     let mainNets = getMainNetworks()
     if (name != null) {
