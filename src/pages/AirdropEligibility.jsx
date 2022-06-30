@@ -242,7 +242,7 @@ export default function AirdropEligibility() {
                                             >
                                                 <AlertTitle
                                                 >
-                                                    Total tokens claimable:&nbsp;&nbsp;{calculateBonus(claimRecords?.claimable_amount)}
+                                                    Total tokens claimable:&nbsp;&nbsp;&nbsp;{calculateBonus(claimRecords?.claimable_amount)}
                                                     <br />
                                                     Initial tokens claimable:&nbsp;{getClaimableAmount(claimRecords?.claimable_amount)}
                                                 </AlertTitle>
