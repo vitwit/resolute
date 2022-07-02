@@ -1,11 +1,12 @@
-import * as React from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
+import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import Authz from './Authz'
-import Feegrant from './Feegrant'
+const Authz = lazy(() => import('./Authz'));
+const Feegrant = lazy(() => import('./Feegrant'));
 import { getSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
 import Link from '@mui/material/Link';
 import { Routes, Route } from "react-router-dom";
@@ -14,13 +15,13 @@ import { Proposals } from './Proposals';
 import { useSelector, useDispatch } from 'react-redux'
 import { resetWallet, connectKeplrWallet, setNetwork } from './../features/wallet/walletSlice'
 import { useNavigate } from "react-router-dom";
-import NewFeegrant from './NewFeegrant';
-import NewAuthz from './NewAuthz';
+const NewFeegrant = lazy(() => import('./NewFeegrant'));
+const NewAuthz = lazy(() => import("./NewAuthz"));
 import AlertTitle from '@mui/material/AlertTitle';
 import Snackbar from '@mui/material/Snackbar';
 import Overview from './Overview';
 import { CustomAppBar } from '../components/CustomAppBar';
-import AirdropEligibility from './AirdropEligibility';
+const AirdropEligibility = lazy(() => import('./AirdropEligibility'));
 import { resetError, setError } from '../features/common/commonSlice';
 import Page404 from './Page404';
 import SendPage from './SendPage';
@@ -30,26 +31,26 @@ import { getPallet, isDarkMode, mdTheme } from '../utils/theme';
 import { isConnected, logout } from '../utils/localStorage';
 
 function DashboardContent(props) {
-    const [snackOpen, setSnackOpen] = React.useState(false);
+    const [snackOpen, setSnackOpen] = useState(false);
     const showSnack = (value) => {
         setSnackOpen(value);
     }
 
-    const [darkMode, setDarkMode] = React.useState(isDarkMode());
+    const [darkMode, setDarkMode] = useState(isDarkMode());
     const onModeChange = () => {
         localStorage.setItem('DARK_MODE', !darkMode);
         setDarkMode(!darkMode);
     }
 
-    const [pallet, setPallet] = React.useState(getPallet());
+    const [pallet, setPallet] = useState(getPallet());
     const balance = useSelector((state) => state.bank.balance);
 
-    const [snackTxOpen, setSnackTxClose] = React.useState(false);
+    const [snackTxOpen, setSnackTxClose] = useState(false);
     const showTxSnack = (value) => {
         setSnackTxClose(value);
     }
 
-    const [selectedNetwork, setSelectedNetwork] = React.useState(props.selectedNetwork);
+    const [selectedNetwork, setSelectedNetwork] = useState(props.selectedNetwork);
     const changeNetwork = (network) => {
         saveSelectedNetwork(network.config.chainName);
         setSelectedNetwork(network);
@@ -57,7 +58,7 @@ function DashboardContent(props) {
     };
 
     const wallet = useSelector((state) => state.wallet)
-    React.useEffect(() => {
+    useEffect(() => {
         const network = getSelectedNetwork();
         dispatch(setNetwork({
             chainInfo: network
@@ -91,7 +92,7 @@ function DashboardContent(props) {
     const errState = useSelector((state) => state.common.errState);
     const txSuccess = useSelector((state) => state.common.txSuccess);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (errState.message.length > 0 && errState.type.length > 0) {
             showSnack(true)
         } else {
@@ -99,7 +100,7 @@ function DashboardContent(props) {
         }
     }, [errState]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (txSuccess.hash.length > 0) {
             showTxSnack(true)
         } else {
@@ -161,7 +162,7 @@ function DashboardContent(props) {
                                 onNetworkChange={(network) => handleNetworkChange(network)}
                                 darkMode={darkMode}
                                 onModeChange={() => onModeChange()}
-                            />
+                            />                
                             <AppDrawer
                                 balance={balance}
                                 chainInfo={chainInfo}
@@ -187,17 +188,39 @@ function DashboardContent(props) {
                                 <Toolbar />
                                 <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                                     <Routes>
-                                        <Route path="/" element={<Overview />} />
-                                        <Route path="/authz" element={<Authz />} />
-                                        <Route path="/feegrant" element={<Feegrant />}></Route>
-                                        <Route path="/feegrant/new" element={<NewFeegrant />}></Route>
-                                        <Route path="/authz/new" element={<NewAuthz />}></Route>
+                                        <Route path="/" element={
+                                            <Overview />
+
+                                        } />
+                                        <Route path="/authz" element={
+                                            <Suspense fallback={<CircularProgress />}>
+                                                <Authz />
+                                            </Suspense>
+                                        } />
+                                        <Route path="/feegrant" element={
+                                            <Suspense fallback={<CircularProgress />}>
+                                                <Feegrant />
+                                            </Suspense>
+                                        }></Route>
+                                        <Route path="/feegrant/new" element={
+                                            <Suspense fallback={<CircularProgress />}>
+                                                <NewFeegrant />
+                                            </Suspense>
+                                        }></Route>
+                                        <Route path="/authz/new" element={
+                                            <Suspense fallback={<CircularProgress />}>
+                                                <NewAuthz />
+                                            </Suspense>
+                                        }></Route>
                                         <Route path="/staking" element={<Validators />}></Route>
                                         <Route path="/governance" element={<Proposals />}></Route>
                                         <Route path="/send" element={<SendPage />}></Route>
                                         {
                                             selectedNetwork.showAirdrop ?
-                                                <Route path="/airdrop-check" element={<AirdropEligibility />}></Route>
+                                                <Route path="/airdrop-check" element={
+
+                                                    <Suspense fallback={<CircularProgress />}>
+                                                        <AirdropEligibility /></Suspense>}></Route>
                                                 :
                                                 <></>
                                         }
@@ -238,7 +261,7 @@ export default function Dashboard() {
     const dispatch = useDispatch();
 
     const network = getSelectedNetwork();
-    React.useEffect(() => {
+    useEffect(() => {
         dispatch(setNetwork({
             chainInfo: network
         }));
