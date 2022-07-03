@@ -84,16 +84,18 @@ export function filterVotesFromAuthz(grants: any): any {
 }
 
 
-export function filterSendFromAuthz(grants: any): any {
+export function getSendAuthz(grants: any, granter: string): null | any {
     if (!grants) {
-        return []
+        return null
     }
-    let sends = [];
+
     for (let i = 0; i < grants.length; i++) {
-        if (grants[i]?.authorization?.msg === "/cosmos.bank.v1beta1.MsgSend" || grants[i]?.authorization["@type"] === "/cosmos.bank.v1beta1.SendAuthorization") {
-            sends.push(grants[i])
+        if (
+            (grants[i]?.authorization?.msg === "/cosmos.bank.v1beta1.MsgSend" || grants[i]?.authorization["@type"] === "/cosmos.bank.v1beta1.SendAuthorization") && 
+            grants[i]?.granter === granter) {
+            return grants[i]
         }
     }
 
-    return sends;
+    return null;
 }

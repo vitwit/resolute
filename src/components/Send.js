@@ -14,10 +14,11 @@ Send.propTypes = {
     chainInfo: PropTypes.object.isRequired,
     sendTx: PropTypes.object.isRequired,
     available: PropTypes.number.isRequired,
+    authzTx: PropTypes.object.isRequired,
 }
 
 export default function Send(props) {
-    const { chainInfo, sendTx, available, onSend } = props;
+    const { chainInfo, sendTx, available, onSend, authzTx } = props;
     const currency = chainInfo.config.currencies[0];
     const { handleSubmit, control, setValue } = useForm({
         defaultValues: {
@@ -115,10 +116,10 @@ export default function Send(props) {
                             type='submit'
                             variant='outlined'
                             disableElevation
-                            disabled={sendTx.status === 'pending'}
+                            disabled={sendTx.status === 'pending' || authzTx.status === 'pending'}
                             size='medium'
                         >
-                            {sendTx.status === 'pending' ? <CircularProgress size={25} /> : 'Send'}
+                            {sendTx.status === 'pending' || authzTx.status === 'pending' ? <CircularProgress size={25} /> : 'Send'}
                         </Button>
                     </div>
                 </form>

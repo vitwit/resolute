@@ -49,6 +49,8 @@ function DashboardContent(props) {
     const showTxSnack = (value) => {
         setSnackTxClose(value);
     }
+    const selectedAuthz = useSelector((state) => state.authz.selected);
+
 
     const [selectedNetwork, setSelectedNetwork] = useState(props.selectedNetwork);
     const changeNetwork = (network) => {
@@ -187,6 +189,7 @@ function DashboardContent(props) {
                             >
                                 <Toolbar />
                                 <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+                                    {JSON.stringify(selectedAuthz)}
                                     <Routes>
                                         <Route path="/" element={
                                             <Overview />

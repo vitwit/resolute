@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  getGrantsToMe, getGrantsByMe, txAuthzRevoke, authzExecHelper
+  getGrantsToMe, getGrantsByMe, txAuthzRevoke, authzExecHelper, setSelectedGranter
 } from './../features/authz/authzSlice';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Chip from '@mui/material/Chip';
@@ -101,14 +101,9 @@ export default function Authz() {
 
   const [selectedGrant, setSelectedGrant] = React.useState({});
   const onUseAuthz = (row) => {
-    if (
-      row?.authorization["@type"] === "/cosmos.bank.v1beta1.SendAuthorization" ||
-            row?.authorization?.msg === "/cosmos.bank.v1beta1.MsgSend"
-    ){
-    setSelectedGrant(row);
-    } else {
-      alert("TODO")
-    }
+    dispatch(setSelectedGranter({
+      granter: row.granter
+    }))
   }
 
   const onExecSend = (data) => {
@@ -283,13 +278,13 @@ export default function Authz() {
                                   </Link>
                                 </StyledTableCell>
                                 <StyledTableCell>
-                                  {/* <Button
+                                  <Button
                                     size='small'
                                     color='info'
                                     onClick={() => onUseAuthz(row)}
                                   >
                                     Use
-                                  </Button> */}
+                                  </Button>
                                 </StyledTableCell>
                               </StyledTableRow>
                             ))}

@@ -18,10 +18,13 @@ const initialState = {
     pagination: {}
   },
   tx: {
-      status: 'idle',
+    status: 'idle',
   },
   execTx: {
     status: 'idle',
+  },
+  selected: {
+    granter: '',
   }
 };
 
@@ -99,7 +102,7 @@ export const txAuthzRevoke = createAsyncThunk(
 
 
 export const authzExecHelper = (dispatch, data) => {
-  switch(data.type) {
+  switch (data.type) {
     case "send": {
       const msg = AuthzExecSendMsg(data.from, data.granter, data.recipient, data.amount, data.denom)
       dispatch(txAuthzExec({
@@ -186,9 +189,12 @@ export const authzSlice = createSlice({
   name: 'authz',
   initialState,
   reducers: {
+    setSelectedGranter: (state, payload) => {
+      state.selected = payload.granter
+    },
     resetAlerts: (state) => {
       state.tx = {
-          status: 'idle',
+        status: 'idle',
       }
       state.grantsToMe = {
         status: 'idle',
@@ -275,7 +281,7 @@ export const authzSlice = createSlice({
         state.tx.status = `rejected`
       })
 
-      builder
+    builder
       .addCase(txAuthzExec.pending, (state) => {
         state.execTx.status = `pending`
 
@@ -289,6 +295,6 @@ export const authzSlice = createSlice({
   },
 });
 
-export const {resetAlerts} = authzSlice.actions;
+export const { resetAlerts, setSelectedGranter } = authzSlice.actions;
 
 export default authzSlice.reducer;
