@@ -17,7 +17,7 @@ import { totalBalance } from '../utils/denom';
 import { shortenAddress, shortenPubKey } from '../utils/util';
 import { useLocation } from 'react-router-dom';
 
-const drawerWidth = 210;
+const drawerWidth = 200;
 export default function AppDrawer(props) {
     const { wallet, onDisconnectWallet, onNavigate, onConnectWallet,
         selectedNetwork, balance, chainInfo, onCopy } = props;
@@ -45,6 +45,12 @@ export default function AppDrawer(props) {
                                     color='text.primary'
                                     variant='body1'
                                     fontWeight={500}
+                                    sx={{
+                                        display: '-webkit-box',
+                                        overflow: 'hidden',
+                                        WebkitBoxOrient: 'vertical',
+                                        WebkitLineClamp: 1,
+                                    }}
                                 >
                                     {wallet.name}
                                 </Typography>
@@ -149,6 +155,10 @@ export default function AppDrawer(props) {
                 </ListItem>
                 <ListItem
                     style={{ justifyContent: 'center' }}
+                    sx={{
+                        p: 0,
+                        pb:1,
+                    }}
                 >
                     <img
                         src='./logo-only.png'

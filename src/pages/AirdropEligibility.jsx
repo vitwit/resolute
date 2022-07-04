@@ -147,7 +147,7 @@ export default function AirdropEligibility() {
             total += parseFloat(record.amount / (10.0 ** currency.coinDecimals))
         }
 
-        return `${parseFloat(total.toFixed(6))} ${currency.coinDenom}`
+        return `${parseFloat(total.toFixed(6))?.toLocaleString()} ${currency.coinDenom}`
     }
 
     const calculateBonus = (records) => {
@@ -159,7 +159,7 @@ export default function AirdropEligibility() {
 
         const bonus = total + (total / 2.0)
 
-        return `${parseFloat(bonus.toFixed(6))} ${currency.coinDenom}`
+        return `${parseFloat(bonus.toFixed(6))?.toLocaleString()} ${currency.coinDenom}`
     }
 
     const txAction1 = () => {
@@ -191,8 +191,8 @@ export default function AirdropEligibility() {
             />
             <br />
             <Grid container>
-                <Grid item xs={2} md={2}></Grid>
-                <Grid item xs={8} md={8} >
+                <Grid item xs={1} md={2}></Grid>
+                <Grid item xs={10} md={8} >
                     <Paper elevation={0} style={{ padding: 24 }}>
                         <Typography
                             variant='h5'
@@ -238,11 +238,11 @@ export default function AirdropEligibility() {
                                         <>
                                             <Alert
                                                 style={{ textAlign: 'left' }}
-                                                severity='info'
+                                                severity='success'
                                             >
                                                 <AlertTitle
                                                 >
-                                                    Total tokens claimable:&nbsp;&nbsp;{calculateBonus(claimRecords?.claimable_amount)}
+                                                    Total tokens claimable:&nbsp;&nbsp;&nbsp;{calculateBonus(claimRecords?.claimable_amount)}
                                                     <br />
                                                     Initial tokens claimable:&nbsp;{getClaimableAmount(claimRecords?.claimable_amount)}
                                                 </AlertTitle>
@@ -251,8 +251,8 @@ export default function AirdropEligibility() {
                                                     color='text.primary'
                                                     gutterBottom
                                                 >
-                                                    66.7% available for initial claim with 33.3% (or +50% of the initial claim) is received if the tokens are staked
-                                                    conitinuously until 14 months from genesis. The airdrop needs to be staked
+                                                    66.7% available for initial claim with 33.3% (or +50% of the initial claim) receivable if the tokens are staked continuously until 
+                                                    14 months from genesis. The airdrop needs to be staked
                                                     within 3 weeks of airdrop start.
                                                 </Typography>
                                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -288,7 +288,7 @@ export default function AirdropEligibility() {
                         </div>
                     </Paper>
                 </Grid>
-                <Grid item xs={2} md={2}></Grid>
+                <Grid item xs={1} md={2}></Grid>
             </Grid>
             {
                 claimRecords?.address && chainInfo.airdropActions?.length > 0 ?

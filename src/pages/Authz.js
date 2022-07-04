@@ -283,13 +283,13 @@ export default function Authz() {
                                   </Link>
                                 </StyledTableCell>
                                 <StyledTableCell>
-                                  <Button
+                                  {/* <Button
                                     size='small'
                                     color='info'
                                     onClick={() => onUseAuthz(row)}
                                   >
                                     Use
-                                  </Button>
+                                  </Button> */}
                                 </StyledTableCell>
                               </StyledTableRow>
                             ))}

@@ -237,7 +237,7 @@ export default function Feegrant() {
                               <StyledTableCell >Type</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
                               <StyledTableCell>Details</StyledTableCell>
-                              <StyledTableCell >Use Feegrant</StyledTableCell>
+                              {/* <StyledTableCell >Use Feegrant</StyledTableCell> */}
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
@@ -263,13 +263,13 @@ export default function Feegrant() {
                                     Details
                                   </Link>
                                 </StyledTableCell>
-                                <StyledTableCell>
+                                {/* <StyledTableCell>
                                   <Switch checked={useFeeChecked}
                                     onChange={(e) => handleOnFeeChecked(e, row)}
                                     inputProps={{ 'aria-label': 'controlled' }}
                                     size="small" />
 
-                                </StyledTableCell>
+                                </StyledTableCell> */}
                               </StyledTableRow>
                             ))}
                           </TableBody>
