@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 import DividerWithText from './DividerWithText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import { useSelector } from 'react-redux';
 
 export function CustomAppBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -21,12 +22,18 @@ export function CustomAppBar(props) {
         setAnchorEl(event.currentTarget);
     };
 
+    const selectedAuthz = useSelector((state) => state.authz.selected);
+
     useEffect(() => {
         document.getElementById("logo-chain-main").src = props.selectedNetwork.logos?.toolbar
     }, [props.selectedNetwork]);
 
     return (
-        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <AppBar position="fixed" 
+        sx={{
+             zIndex: (theme) => theme.zIndex.drawer + 1, 
+            boxShadow: (theme) =>  selectedAuthz.granter.length > 0 ? 0 : theme.mixins.toolbar.boxShadow
+         }}>
             <Toolbar>
                 <img id='logo-chain-main' src="white-logo.png" style={{maxWidth: 161, maxHeight: 45}}/>
                 <Typography

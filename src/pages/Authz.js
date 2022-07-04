@@ -20,7 +20,7 @@ import Typography from '@mui/material/Typography';
 import { getLocalTime } from '../utils/datetime';
 import { AuthorizationInfo } from '../components/AuthorizationInfo';
 import { resetError, resetTxHash, setError } from '../features/common/commonSlice';
-import { getTypeURLFromAuthorization } from '../utils/authorizations';
+import { getMsgNameFromAuthz, getTypeURLFromAuthorization } from '../utils/authorizations';
 import { AuthzSendDialog } from '../components/authz/AuthzSend';
 
 export default function Authz() {
@@ -180,7 +180,7 @@ export default function Authz() {
                       </Typography>
                       :
                       <>
-                        <Table sx={{ minWidth: 700 }} aria-label="simple table">
+                        <Table sx={{ minWidth: 700 }} size="small" aria-label="simple table">
                           <TableHead>
                             <StyledTableRow>
                               <StyledTableCell>Grantee</StyledTableCell>
@@ -245,11 +245,12 @@ export default function Authz() {
                       :
 
                       <>
-                        <Table sx={{ minWidth: 700 }} aria-label="simple table">
+                        <Table sx={{ minWidth: 700 }} size="small" aria-label="simple table">
                           <TableHead>
                             <StyledTableRow>
                               <StyledTableCell >Granter</StyledTableCell>
                               <StyledTableCell >Type</StyledTableCell>
+                              <StyledTableCell >Message</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
                               <StyledTableCell >Details</StyledTableCell>
                               <StyledTableCell >Actions</StyledTableCell>
@@ -266,6 +267,9 @@ export default function Authz() {
                                 </StyledTableCell>
                                 <StyledTableCell>
                                   <Chip label={getTypeURLName(row.authorization['@type'])} variant="filled" size="medium" />
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  <Chip label={getMsgNameFromAuthz(row.authorization)} variant="filled" size="medium" />
                                 </StyledTableCell>
                                 <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
                                 <StyledTableCell>

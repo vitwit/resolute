@@ -20,7 +20,7 @@ const NewAuthz = lazy(() => import("./NewAuthz"));
 import AlertTitle from '@mui/material/AlertTitle';
 import Snackbar from '@mui/material/Snackbar';
 import Overview from './Overview';
-import { CustomAppBar } from '../components/CustomAppBar';
+import ProminentAppBar, { CustomAppBar } from '../components/CustomAppBar';
 const AirdropEligibility = lazy(() => import('./AirdropEligibility'));
 import { resetError, setError } from '../features/common/commonSlice';
 import Page404 from './Page404';
@@ -29,6 +29,10 @@ import AppDrawer from '../components/AppDrawer';
 import { Alert } from '../components/Alert';
 import { getPallet, isDarkMode, mdTheme } from '../utils/theme';
 import { isConnected, logout } from '../utils/localStorage';
+import { Button, Paper, SnackbarContent, Typography } from '@mui/material';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import { shortenAddress } from '../utils/util';
+import { exitAuthzMode } from '../features/authz/authzSlice';
 
 function DashboardContent(props) {
     const [snackOpen, setSnackOpen] = useState(false);
@@ -50,7 +54,6 @@ function DashboardContent(props) {
         setSnackTxClose(value);
     }
     const selectedAuthz = useSelector((state) => state.authz.selected);
-
 
     const [selectedNetwork, setSelectedNetwork] = useState(props.selectedNetwork);
     const changeNetwork = (network) => {
@@ -151,6 +154,8 @@ function DashboardContent(props) {
         });
     }
 
+    
+
 
     return (
         <ThemeProvider theme={mdTheme(darkMode, pallet.primary, pallet.secondary)}>
@@ -164,7 +169,7 @@ function DashboardContent(props) {
                                 onNetworkChange={(network) => handleNetworkChange(network)}
                                 darkMode={darkMode}
                                 onModeChange={() => onModeChange()}
-                            />                
+                            />
                             <AppDrawer
                                 balance={balance}
                                 chainInfo={chainInfo}
@@ -188,8 +193,44 @@ function DashboardContent(props) {
                                 }}
                             >
                                 <Toolbar />
+                                {
+                                    selectedAuthz.granter.length > 0
+                                    ?
+                                <Paper
+                                    square
+                                    elevation={4}
+                                    sx={{
+                                        bgcolor: (theme) => theme.palette.mode === 'light'? 'primary.main': '#121212',
+                                        borderRadius: 0,
+                                        fontWeight: 500,
+                                        display: 'flex',
+                                        pl: 2,
+                                        pr: 4,
+                                    }}
+                                    >
+                                        <Typography
+                                            variant='h6'
+                                            color='white'
+                                        sx={{flexGrow: 1, textAlign: 'start'}}
+                                        >
+                                            Signing as:&nbsp;{shortenAddress(selectedAuthz.granter, 21)}
+                                        </Typography>
+                                        <Button variant='text' 
+                                        sx={{
+                                            color: 'white',
+                                        }}
+                                        startIcon={<CloseOutlinedIcon/>}
+                                            onClick={() => {
+                                                dispatch(exitAuthzMode())
+                                            }}
+                                        >
+                                            Exit Authz
+                                        </Button>
+                                    </Paper>
+                                    :
+                                    <></>
+                                }
                                 <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                                    {JSON.stringify(selectedAuthz)}
                                     <Routes>
                                         <Route path="/" element={
                                             <Overview />

@@ -1,3 +1,4 @@
+import { getTypeURLName } from "./util";
 
 interface AuthzMenuItem {
     label: string;
@@ -69,18 +70,18 @@ export function getTypeURLFromAuthorization(authorization: any) : string{
     }
 }
 
-export function filterVotesFromAuthz(grants: any): any {
+export function getVoteAuthz(grants: any, granter: string): any | null {
     if (!grants) {
-        return []
+        return null
     }
-    let proposals = [];
+
     for (let i = 0; i < grants.length; i++) {
-        if (grants[i]?.authorization?.msg === "/cosmos.gov.v1beta1.MsgVote") {
-            proposals.push(grants[i])
+        if (grants[i]?.authorization?.msg === "/cosmos.gov.v1beta1.MsgVote" && grants[i]?.granter === granter) {
+            return grants[i];
         }
     }
 
-    return proposals;
+    return null;
 }
 
 
@@ -98,4 +99,16 @@ export function getSendAuthz(grants: any, granter: string): null | any {
     }
 
     return null;
+}
+
+
+export function getMsgNameFromAuthz(authorization: any) : string{
+    switch (authorization["@type"]) {
+        case "/cosmos.bank.v1beta1.SendAuthorization":
+            return "MsgSend"
+        case "/cosmos.authz.v1beta1.GenericAuthorization":
+            return getTypeURLName(authorization.msg)
+        default:
+            return "Unknown"
+    }
 }

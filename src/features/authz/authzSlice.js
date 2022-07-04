@@ -21,7 +21,7 @@ const initialState = {
     status: 'idle',
   },
   execTx: {
-    status: 'idle',
+    status: 'init',
   },
   selected: {
     granter: '',
@@ -189,8 +189,11 @@ export const authzSlice = createSlice({
   name: 'authz',
   initialState,
   reducers: {
-    setSelectedGranter: (state, payload) => {
-      state.selected = payload.granter
+    setSelectedGranter: (state, data) => {
+      state.selected.granter = data.payload.granter
+    },
+    exitAuthzMode: (state) => {
+      state.selected.granter = ''
     },
     resetAlerts: (state) => {
       state.tx = {
@@ -204,6 +207,10 @@ export const authzSlice = createSlice({
         status: 'idle',
         errMsg: ''
       }
+      state.execTx.status = 'init'
+    },
+    resetExecTx: (state) =>  {
+      state.execTx.status = 'init'
     }
   },
   extraReducers: (builder) => {
@@ -295,6 +302,6 @@ export const authzSlice = createSlice({
   },
 });
 
-export const { resetAlerts, setSelectedGranter } = authzSlice.actions;
+export const { resetAlerts, setSelectedGranter, resetExecTx, exitAuthzMode } = authzSlice.actions;
 
 export default authzSlice.reducer;

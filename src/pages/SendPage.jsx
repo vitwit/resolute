@@ -62,7 +62,7 @@ export default function SendPage() {
 
     const onSendTx = (data) => {
         const amount = Number(data.amount);
-        if (selectedAuthz.granter, length === 0) {
+        if (selectedAuthz.granter.length === 0) {
             if (Number(balance) < (amount + Number(25000 / (10 ** currency.coinDecimals)))) {
                 dispatch(setError({
                     type: 'error',
@@ -100,7 +100,11 @@ export default function SendPage() {
                 <Grid item xs={2} md={3}></Grid>
                 <Grid item xs={10} md={6}>
                     {
-                        selectedAuthz.granter.length > 0 && authzSend?.granter ?
+                        (selectedAuthz.granter.length > 0 && authzSend?.granter !== selectedAuthz.granter ) ?
+                            <Alert>
+                                You don't have permission to execute this transcation
+                            </Alert>
+                            :
                             <Send
                                 chainInfo={chainInfo}
                                 available={available}
@@ -108,10 +112,7 @@ export default function SendPage() {
                                 sendTx={sendTx}
                                 authzTx={authzExecTx}
                             />
-                            :
-                            <Alert>
-                                You don't have permission to execute this transcation
-                            </Alert>
+                            
                     }
                 </Grid>
 
