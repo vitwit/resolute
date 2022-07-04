@@ -170,9 +170,9 @@ function nameToOption(name) {
     case 'yes':
       return 1
     case 'no':
-      return 2
-    case 'abstain':
       return 3
+    case 'abstain':
+      return 2
     case 'noWithVeto':
       return 4
     default:
