@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import authzService from './authzService';
 import { fee, signAndBroadcastProto } from '../../txns/execute';
-import { AuthzSendGrantMsg, AuthzGenericGrantMsg, AuthzRevokeMsg, AuthzExecSendMsg, AuthzExecVoteMsg } from '../../txns/proto';
+import { AuthzSendGrantMsg, AuthzGenericGrantMsg, AuthzRevokeMsg, AuthzExecSendMsg, AuthzExecVoteMsg, AuthzExecWithdrawRewardsMsg } from '../../txns/proto';
 import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
@@ -115,6 +115,16 @@ export const authzExecHelper = (dispatch, data) => {
     }
     case "vote": {
       const msg = AuthzExecVoteMsg(data.from, data.proposalId, data.option, data.granter)
+      dispatch(txAuthzExec({
+        msg: msg,
+        denom: data.denom,
+        rpc: data.rpc,
+        feeAmount: data.feeAmount,
+      }))
+      break
+    }
+    case "withdraw": {
+      const msg = AuthzExecWithdrawRewardsMsg(data.from, data.payload)
       dispatch(txAuthzExec({
         msg: msg,
         denom: data.denom,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     getValidators, resetState, getDelegations, sortValidatorsByVotingPower, getParams,
@@ -22,6 +22,8 @@ import { DialogRedelegate } from '../components/DialogRedelegate';
 import { WitvalValidator } from '../components/WitvalValidator';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
+import { getWithdrawRewardsAuthz } from '../utils/authorizations';
+import { authzExecHelper } from '../features/authz/authzSlice';
 
 export function Validators() {
     const [type, setType] = useState('delegations');
@@ -96,32 +98,44 @@ export function Validators() {
         }
     }
 
+    const selectedAuthz = useSelector((state) => state.authz.selected);
+    const grantsToMe = useSelector((state) => state.authz.grantsToMe);
+    const authzRewards = useMemo(() => getWithdrawRewardsAuthz(grantsToMe.grants, selectedAuthz.granter), [grantsToMe.grants]);
+
     useEffect(() => {
         if (connected) {
             dispatch(resetState())
-            dispatch(getBalance({
-                baseURL: chainInfo.config.rest,
-                address: address,
-                denom: currency.coinMinimalDenom
-            }))
             dispatch(getParams({ baseURL: chainInfo.config.rest }))
             dispatch(getValidators({
                 baseURL: chainInfo.config.rest,
                 status: null,
             }))
 
-            dispatch(getDelegations({
-                baseURL: chainInfo.config.rest,
-                address: address,
-            }))
-
-            dispatch(getDelegatorTotalRewards({
-                baseURL: chainInfo.config.rest,
-                address: address
-            }));
-
+            if (selectedAuthz.granter.length > 0) {
+                fetchUserInfo(selectedAuthz.granter);
+            } else {
+                fetchUserInfo(address);
+            }
         }
-    }, [chainInfo, connected]);
+    }, [chainInfo, connected, selectedAuthz]);
+
+    function fetchUserInfo(address) {
+        dispatch(getBalance({
+            baseURL: chainInfo.config.rest,
+            address: address,
+            denom: currency.coinMinimalDenom
+        }))
+
+        dispatch(getDelegations({
+            baseURL: chainInfo.config.rest,
+            address: address,
+        }))
+
+        dispatch(getDelegatorTotalRewards({
+            baseURL: chainInfo.config.rest,
+            address: address
+        }));
+    }
 
     useEffect(() => {
         if (connected) {
@@ -160,6 +174,13 @@ export function Validators() {
     }, [distTxStatus]);
 
     const onWithdrawAllRewards = () => {
+        if (selectedAuthz.granter.length > 0 && authzRewards?.granter !== selectedAuthz.granter) {
+            dispatch(setError({
+                type: 'error',
+                message: 'You don\'t have permission to withdraw rewards'
+            }))
+            return
+        }
         let delegationPairs = []
         delegations.delegations.forEach((item) => {
             delegationPairs.push({
@@ -168,13 +189,25 @@ export function Validators() {
             })
         });
 
-        dispatch(txWithdrawAllRewards({
-            msgs: delegationPairs,
-            denom: currency.coinMinimalDenom,
-            chainId: chainInfo.config.chainId,
-            rpc: chainInfo.config.rpc,
-            feeAmount: chainInfo.config.gasPriceStep.average,
-        }))
+        if (selectedAuthz.granter.length > 0 && authzRewards?.granter === selectedAuthz.granter) {
+            authzExecHelper(dispatch, {
+                type: "withdraw",
+                from: address,
+                payload: delegationPairs,
+                denom: currency.coinMinimalDenom,
+                chainId: chainInfo.config.chainId,
+                rpc: chainInfo.config.rpc,
+                feeAmount: chainInfo.config.gasPriceStep.average,
+            })
+        } else {
+            dispatch(txWithdrawAllRewards({
+                msgs: delegationPairs,
+                denom: currency.coinMinimalDenom,
+                chainId: chainInfo.config.chainId,
+                rpc: chainInfo.config.rpc,
+                feeAmount: chainInfo.config.gasPriceStep.average,
+            }))
+        }
     }
 
     const onDelegateTx = (data) => {
@@ -267,129 +300,129 @@ export function Validators() {
                             <CircularProgress />
                             :
                             <></>
-                            :
-                            <>
-                                <ButtonGroup variant="outlined" aria-label="outlined button staking">
-                                    <Button
-                                        variant={type === 'delegations' ? 'contained' : 'outlined'}
-                                        onClick={() => setType('delegations')}
-                                    >
-                                        Delegations
-                                    </Button>
-                                    <Button
-                                        variant={type === 'validators' ? 'contained' : 'outlined'}
-                                        onClick={() => setType('validators')}
-                                    >
-                                        Validators
-                                    </Button>
-                                </ButtonGroup>
-                                <WitvalValidator
-                                    validators={validators}
-                                    onMenuAction={onMenuAction}
-                                />
-                                <br />
-                                {
-                                    type === 'delegations' ?
-                                        <MyDelegations
-                                            validators={validators}
-                                            delegations={delegations}
-                                            currency={currency}
-                                            rewards={rewards.list}
-                                            onDelegationAction={onMenuAction}
-                                            onWithdrawAllRewards={onWithdrawAllRewards}
-                                        />
-                                        :
-                                        (
-                                            <Paper elevation={0} style={{ padding: 12 }}>
-                                                <ButtonGroup
-                                                    variant="outlined"
-                                                    aria-label="validators"
-                                                    style={{ display: 'flex', marginBottom: 12 }}
+                        :
+                        <>
+                            <ButtonGroup variant="outlined" aria-label="outlined button staking">
+                                <Button
+                                    variant={type === 'delegations' ? 'contained' : 'outlined'}
+                                    onClick={() => setType('delegations')}
+                                >
+                                    Delegations
+                                </Button>
+                                <Button
+                                    variant={type === 'validators' ? 'contained' : 'outlined'}
+                                    onClick={() => setType('validators')}
+                                >
+                                    Validators
+                                </Button>
+                            </ButtonGroup>
+                            <WitvalValidator
+                                validators={validators}
+                                onMenuAction={onMenuAction}
+                            />
+                            <br />
+                            {
+                                type === 'delegations' ?
+                                    <MyDelegations
+                                        validators={validators}
+                                        delegations={delegations}
+                                        currency={currency}
+                                        rewards={rewards.list}
+                                        onDelegationAction={onMenuAction}
+                                        onWithdrawAllRewards={onWithdrawAllRewards}
+                                    />
+                                    :
+                                    (
+                                        <Paper elevation={0} style={{ padding: 12 }}>
+                                            <ButtonGroup
+                                                variant="outlined"
+                                                aria-label="validators"
+                                                style={{ display: 'flex', marginBottom: 12 }}
+                                            >
+                                                <Button
+                                                    variant={selected === 'active' ? 'contained' : 'outlined'}
+                                                    onClick={() => setSelected('active')}
                                                 >
-                                                    <Button
-                                                        variant={selected === 'active' ? 'contained' : 'outlined'}
-                                                        onClick={() => setSelected('active')}
-                                                    >
-                                                        Active
-                                                    </Button>
-                                                    <Button
-                                                        variant={selected === 'inactive' ? 'contained' : 'outlined'}
-                                                        onClick={() => setSelected('inactive')}
-                                                    >
-                                                        Inactive
-                                                    </Button>
-                                                </ButtonGroup>
-                                                {
-                                                    selected === 'active' ?
-                                                        <ActiveValidators onMenuAction={onMenuAction} validators={validators} />
-                                                        :
-                                                        <InActiveValidators onMenuAction={onMenuAction} validators={validators} />
-                                                }
-                                            </Paper>
-                                        )
-                                }
+                                                    Active
+                                                </Button>
+                                                <Button
+                                                    variant={selected === 'inactive' ? 'contained' : 'outlined'}
+                                                    onClick={() => setSelected('inactive')}
+                                                >
+                                                    Inactive
+                                                </Button>
+                                            </ButtonGroup>
+                                            {
+                                                selected === 'active' ?
+                                                    <ActiveValidators onMenuAction={onMenuAction} validators={validators} />
+                                                    :
+                                                    <InActiveValidators onMenuAction={onMenuAction} validators={validators} />
+                                            }
+                                        </Paper>
+                                    )
+                            }
 
-                                {
-                                    availableBalance > 0 ?
-                                        <DialogDelegate
-                                            open={stakingOpen}
+                            {
+                                availableBalance > 0 ?
+                                    <DialogDelegate
+                                        open={stakingOpen}
+                                        onClose={handleDialogClose}
+                                        validator={selectedValidator}
+                                        params={stakingParams}
+                                        balance={availableBalance}
+                                        onDelegate={onDelegateTx}
+                                        loading={txStatus.status}
+                                        displayDenom={currency.coinDenom}
+                                    />
+                                    :
+                                    <></>
+                            }
+                            {
+                                delegations?.delegations.length > 0 ?
+                                    <>
+
+
+                                        <DialogUndelegate
+                                            open={undelegateOpen}
                                             onClose={handleDialogClose}
                                             validator={selectedValidator}
                                             params={stakingParams}
                                             balance={availableBalance}
-                                            onDelegate={onDelegateTx}
+                                            delegations={delegations?.delegations}
+                                            currency={chainInfo?.config?.currencies[0]}
                                             loading={txStatus.status}
-                                            displayDenom={currency.coinDenom}
+                                            onUnDelegate={onUndelegateTx}
                                         />
-                                        :
-                                        <></>
-                                }
-                                {
-                                    delegations?.delegations.length > 0 ?
-                                        <>
 
+                                        <DialogRedelegate
+                                            open={redelegateOpen}
+                                            onClose={handleDialogClose}
+                                            validator={selectedValidator}
+                                            params={stakingParams}
+                                            balance={availableBalance}
+                                            active={validators?.active}
+                                            inactive={validators?.inactive}
+                                            delegations={delegations?.delegations}
+                                            currency={chainInfo?.config?.currencies[0]}
+                                            loading={txStatus.status}
+                                            onRedelegate={onRedelegateTx}
+                                        />
 
-                                            <DialogUndelegate
-                                                open={undelegateOpen}
-                                                onClose={handleDialogClose}
-                                                validator={selectedValidator}
-                                                params={stakingParams}
-                                                balance={availableBalance}
-                                                delegations={delegations?.delegations}
-                                                currency={chainInfo?.config?.currencies[0]}
-                                                loading={txStatus.status}
-                                                onUnDelegate={onUndelegateTx}
-                                            />
+                                    </>
+                                    :
+                                    <></>
+                            }
 
-                                            <DialogRedelegate
-                                                open={redelegateOpen}
-                                                onClose={handleDialogClose}
-                                                validator={selectedValidator}
-                                                params={stakingParams}
-                                                balance={availableBalance}
-                                                active={validators?.active}
-                                                inactive={validators?.inactive}
-                                                delegations={delegations?.delegations}
-                                                currency={chainInfo?.config?.currencies[0]}
-                                                loading={txStatus.status}
-                                                onRedelegate={onRedelegateTx}
-                                            />
-
-                                        </>
-                                        :
-                                        <></>
-                                }
-
-                            </>
-                        :
-                        <Typography
-                            variant='h5'
-                            color='text.primary'
-                            fontWeight={700}
-                            style={{ marginTop: 32 }}
-                        >
-                            Wallet is not connected
-                        </Typography>
+                        </>
+                    :
+                    <Typography
+                        variant='h5'
+                        color='text.primary'
+                        fontWeight={700}
+                        style={{ marginTop: 32 }}
+                    >
+                        Wallet is not connected
+                    </Typography>
             }
         </>
     );

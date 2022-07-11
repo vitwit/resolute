@@ -101,6 +101,20 @@ export function getSendAuthz(grants: any, granter: string): null | any {
     return null;
 }
 
+export function getWithdrawRewardsAuthz(grants: any, granter: string): null | any {
+    if (!grants) {
+        return null
+    }
+
+    for (let i = 0; i < grants.length; i++) {
+        if (grants[i]?.authorization?.msg === "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward" &&  grants[i]?.granter === granter) {
+            return grants[i]
+        }
+    }
+
+    return null;
+}
+
 
 export function getMsgNameFromAuthz(authorization: any) : string{
     switch (authorization["@type"]) {

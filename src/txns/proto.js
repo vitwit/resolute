@@ -12,6 +12,7 @@ import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
 import { Duration } from "cosmjs-types/google/protobuf/duration";
 import Long from "long";
 import { MsgClaim } from "./msg_claim";
+import { formatMuiErrorMessage } from "@mui/utils";
 
 const msgSendTypeUrl = "/cosmos.bank.v1beta1.MsgSend";
 const msgAuthzGrantTypeUrl = "/cosmos.authz.v1beta1.MsgGrant";
@@ -161,6 +162,26 @@ export function AuthzExecVoteMsg(grantee, proposalId, option, granter) {
                 }
             ]
         }),
+    }
+}
+
+export function AuthzExecWithdrawRewardsMsg(grantee, payload) {
+    let msgs = []
+    for (let i=0;i<payload.length;i++) {
+        msgs.push({
+            typeUrl: msgWithdrawRewards,
+            value: MsgWithdrawDelegatorReward.encode({
+                delegatorAddress: payload[i].delegator,
+                validatorAddress: payload[i].validator
+            }).finish()
+        })
+    }
+    return {
+        typeUrl: msgAuthzExecypeUrl,
+        value: MsgExec.encode({
+            grantee: grantee,
+            msgs: msgs,
+        }).finish(),
     }
 }
 

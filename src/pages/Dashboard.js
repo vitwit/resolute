@@ -213,7 +213,7 @@ function DashboardContent(props) {
                                             color='white'
                                         sx={{flexGrow: 1, textAlign: 'start'}}
                                         >
-                                            Signing as:&nbsp;{shortenAddress(selectedAuthz.granter, 21)}
+                                            Granter:&nbsp;{shortenAddress(selectedAuthz.granter, 21)}
                                         </Typography>
                                         <Button variant='text' 
                                         sx={{
@@ -222,6 +222,9 @@ function DashboardContent(props) {
                                         startIcon={<CloseOutlinedIcon/>}
                                             onClick={() => {
                                                 dispatch(exitAuthzMode())
+                                                setTimeout(() =>{
+                                                navigateTo("/")
+                                                },400)
                                             }}
                                         >
                                             Exit Authz

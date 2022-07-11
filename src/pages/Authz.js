@@ -104,6 +104,9 @@ export default function Authz() {
     dispatch(setSelectedGranter({
       granter: row.granter
     }))
+    setTimeout(() => {
+      navigateTo("/")
+    }, 200)
   }
 
   const onExecSend = (data) => {
