@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import authzService from './authzService';
 import { fee, signAndBroadcastProto } from '../../txns/execute';
-import { AuthzSendGrantMsg, AuthzGenericGrantMsg, AuthzRevokeMsg, AuthzExecSendMsg, AuthzExecVoteMsg, AuthzExecWithdrawRewardsMsg } from '../../txns/proto';
+import { AuthzSendGrantMsg, AuthzGenericGrantMsg, AuthzRevokeMsg, AuthzExecSendMsg, AuthzExecVoteMsg, AuthzExecWithdrawRewardsMsg, AuthzExecDelegateMsg, AuthzExecReDelegateMsg, AuthzExecUnDelegateMsg } from '../../txns/proto';
 import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
@@ -82,6 +82,10 @@ export const txAuthzRevoke = createAsyncThunk(
         dispatch(setTxHash({
           hash: result?.transactionHash
         }))
+        dispatch(getGrantsByMe({
+          baseURL: data.baseURL,
+          granter: data.granter,
+        }))
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         dispatch(setError({
@@ -125,6 +129,36 @@ export const authzExecHelper = (dispatch, data) => {
     }
     case "withdraw": {
       const msg = AuthzExecWithdrawRewardsMsg(data.from, data.payload)
+      dispatch(txAuthzExec({
+        msg: msg,
+        denom: data.denom,
+        rpc: data.rpc,
+        feeAmount: data.feeAmount,
+      }))
+      break
+    }
+    case "delegate": {
+      const msg = AuthzExecDelegateMsg(data.address,data.delegator,data.validator, data.amount, data.denom)
+      dispatch(txAuthzExec({
+        msg: msg,
+        denom: data.denom,
+        rpc: data.rpc,
+        feeAmount: data.feeAmount,
+      }))
+      break
+    }
+    case "redelegate": {
+      const msg = AuthzExecReDelegateMsg(data.address, data.delegator, data.srcVal, data.destVal, data.amount, data.denom)
+      dispatch(txAuthzExec({
+        msg: msg,
+        denom: data.denom,
+        rpc: data.rpc,
+        feeAmount: data.feeAmount,
+      }))
+      break
+    }
+    case "undelegate": {
+      const msg = AuthzExecUnDelegateMsg(data.address, data.delegator, data.validator, data.amount, data.denom)
       dispatch(txAuthzExec({
         msg: msg,
         denom: data.denom,

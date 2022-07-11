@@ -15,7 +15,7 @@ function parseValidators(active, inactive, validator) {
     let result = []
 
     for (const v in active) {
-        if (v !== validator?.operator_address)
+        // if (v !== validator?.operator_address)
             result.push({
                 addr: v,
                 label: active[v].description.moniker
@@ -46,7 +46,8 @@ function parseDelegation(delegations, validator, currency) {
 
 
 export function DialogRedelegate(props) {
-    const { onClose, open, active, inactive, validator, delegations, currency, onRedelegate, loading } = props;
+    const { onClose, open, active, inactive, validator, delegations,
+         currency, onRedelegate, loading, authzLoading } = props;
 
     const targetValidators = parseValidators(active, inactive, validator);
 
@@ -180,9 +181,9 @@ export function DialogRedelegate(props) {
                             disableElevation
                             type='submit'
                             className='button-capitalize-title'
-                            disabled={loading === 'pending'}
+                            disabled={loading === 'pending' || authzLoading === 'pending'}
                         >
-                            {loading === 'pending' ? <CircularProgress size={25}/> : 'Redelegate'}
+                            {(loading === 'pending' || authzLoading === 'pending') ? <CircularProgress size={25}/> : 'Redelegate'}
                         </Button>
                     </DialogActions>
                 </form>
@@ -201,4 +202,5 @@ DialogRedelegate.propTypes = {
     active: PropTypes.object.isRequired,
     inactive: PropTypes.object.isRequired,
     currency: PropTypes.object.isRequired,
+    authzLoading: PropTypes.string.isRequired,
 };

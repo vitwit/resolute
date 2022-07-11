@@ -45,11 +45,15 @@ export function authzMsgTypes() :AuthzMenuItem[] {
         },
         {
             label: 'Redelegate',
-            typeURL: '/cosmos.staking.v1beta1.MsgReDelegate'
+            typeURL: '/cosmos.staking.v1beta1.MsgBeginRedelegate'
+        },
+        {
+            label: 'Delegate',
+            typeURL: '/cosmos.staking.v1beta1.MsgDelegate'
         },
         {
             label: 'Undelegate',
-            typeURL: '/cosmos.staking.v1beta1.MsgUnDelegate'
+            typeURL: '/cosmos.staking.v1beta1.MsgUndelegate'
         },
         {
             label: 'Withdraw Commission',
@@ -108,6 +112,48 @@ export function getWithdrawRewardsAuthz(grants: any, granter: string): null | an
 
     for (let i = 0; i < grants.length; i++) {
         if (grants[i]?.authorization?.msg === "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward" &&  grants[i]?.granter === granter) {
+            return grants[i]
+        }
+    }
+
+    return null;
+}
+
+export function getDelegateAuthz(grants: any, granter: string): null | any {
+    if (!grants) {
+        return null
+    }
+
+    for (let i = 0; i < grants.length; i++) {
+        if (grants[i]?.authorization?.msg === "/cosmos.staking.v1beta1.MsgDelegate" &&  grants[i]?.granter === granter) {
+            return grants[i]
+        }
+    }
+
+    return null;
+}
+
+export function getUnDelegateAuthz(grants: any, granter: string): null | any {
+    if (!grants) {
+        return null
+    }
+
+    for (let i = 0; i < grants.length; i++) {
+        if (grants[i]?.authorization?.msg === "/cosmos.staking.v1beta1.MsgUndelegate" &&  grants[i]?.granter === granter) {
+            return grants[i]
+        }
+    }
+
+    return null;
+}
+
+export function getReDelegateAuthz(grants: any, granter: string): null | any {
+    if (!grants) {
+        return null
+    }
+
+    for (let i = 0; i < grants.length; i++) {
+        if (grants[i]?.authorization?.msg === "/cosmos.staking.v1beta1.MsgBeginRedelegate" &&  grants[i]?.granter === granter) {
             return grants[i]
         }
     }

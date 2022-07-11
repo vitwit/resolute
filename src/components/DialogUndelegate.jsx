@@ -24,7 +24,8 @@ function parseDelegation(delegations, validator, currency) {
 }
 
 export function DialogUndelegate(props) {
-    const { onClose, open, params, validator, delegations, currency, onUnDelegate, loading } = props;
+    const { onClose, open, params, validator, delegations, currency, 
+        onUnDelegate, loading, authzLoading } = props;
 
     const delegationShare = parseDelegation(delegations, validator, currency)
 
@@ -136,9 +137,9 @@ export function DialogUndelegate(props) {
                             disableElevation
                             type='submit'
                             className='button-capitalize-title'
-                            disabled={loading === 'pending'}
+                            disabled={loading === 'pending' || authzLoading === 'pending'}
                         >
-                            {loading === 'pending' ? <CircularProgress size={25}/> : 'Undelegate'}
+                            {loading === 'pending' || authzLoading === 'pending' ? <CircularProgress size={25}/> : 'Undelegate'}
                         </Button>
                     </DialogActions>
                 </form>
@@ -156,4 +157,5 @@ DialogUndelegate.propTypes = {
     delegations: PropTypes.array.isRequired,
     currency: PropTypes.object.isRequired,
     loading: PropTypes.string.isRequired,
+    authzLoading: PropTypes.string.isRequired,
 };

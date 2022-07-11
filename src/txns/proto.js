@@ -167,7 +167,7 @@ export function AuthzExecVoteMsg(grantee, proposalId, option, granter) {
 
 export function AuthzExecWithdrawRewardsMsg(grantee, payload) {
     let msgs = []
-    for (let i=0;i<payload.length;i++) {
+    for (let i = 0; i < payload.length; i++) {
         msgs.push({
             typeUrl: msgWithdrawRewards,
             value: MsgWithdrawDelegatorReward.encode({
@@ -182,6 +182,70 @@ export function AuthzExecWithdrawRewardsMsg(grantee, payload) {
             grantee: grantee,
             msgs: msgs,
         }).finish(),
+    }
+}
+
+export function AuthzExecDelegateMsg(grantee, granter, validator, amount, denom) {
+    return {
+        typeUrl: msgAuthzExecypeUrl,
+        value: MsgExec.fromPartial({
+            grantee: grantee,
+            msgs: [{
+                typeUrl: msgDelegate,
+                value: MsgDelegate.encode({
+                    delegatorAddress: granter,
+                    validatorAddress: validator,
+                    amount: Coin.fromPartial({
+                        amount: String(amount),
+                        denom: denom
+                    })
+                }).finish()
+            },
+            ],
+        })
+    }
+}
+
+export function AuthzExecReDelegateMsg(grantee,granter, src, dest, amount, denom) {
+    return {
+        typeUrl: msgAuthzExecypeUrl,
+        value: MsgExec.fromPartial({
+            grantee: grantee,
+            msgs: [{
+                typeUrl: msgReDelegate,
+                value: MsgBeginRedelegate.encode({
+                    validatorDstAddress: dest,
+                    delegatorAddress: granter,
+                    validatorSrcAddress: src,
+                    amount: Coin.fromPartial({
+                        amount: String(amount),
+                        denom: denom
+                    })
+                }).finish()
+            },
+            ],
+        })
+    }
+}
+
+export function AuthzExecUnDelegateMsg(grantee, granter, validator, amount, denom) {
+    return {
+        typeUrl: msgAuthzExecypeUrl,
+        value: MsgExec.fromPartial({
+            grantee: grantee,
+            msgs: [{
+                typeUrl: msgUnDelegate,
+                value: MsgUndelegate.encode({
+                    validatorAddress: validator,
+                    delegatorAddress: granter,
+                    amount: Coin.fromPartial({
+                        amount: String(amount),
+                        denom: denom
+                    })
+                }).finish()
+            },
+            ],
+        })
     }
 }
 
@@ -246,34 +310,34 @@ export function FeegrantPeriodicMsg(granter, grantee, denom, spendLimit, expirat
     })
 
     const basicValue = BasicAllowance.fromPartial({
-            expiration: exp,
-            spendLimit: spendLimit === null ? null :[
-                Coin.fromPartial({
-                    amount: String(spendLimit),
-                    denom: denom
-                })
-            ]
-        })
+        expiration: exp,
+        spendLimit: spendLimit === null ? null : [
+            Coin.fromPartial({
+                amount: String(spendLimit),
+                denom: denom
+            })
+        ]
+    })
 
     const periodicValue = PeriodicAllowance.encode({
-            basic: basicValue,
-            period: periodDuration,
-            periodReset: Timestamp.fromPartial({
-                nanos: Long.fromNumber((now.getTime() % 1000) * 1000000 + (expiration.nanoseconds ?? 0)),
-                seconds: Long.fromNumber(Math.floor(expiration.getTime() / 1000))
-            }),
-            periodCanSpend: [
-                Coin.fromPartial({
+        basic: basicValue,
+        period: periodDuration,
+        periodReset: Timestamp.fromPartial({
+            nanos: Long.fromNumber((now.getTime() % 1000) * 1000000 + (expiration.nanoseconds ?? 0)),
+            seconds: Long.fromNumber(Math.floor(expiration.getTime() / 1000))
+        }),
+        periodCanSpend: [
+            Coin.fromPartial({
                 amount: String(periodSpendLimit),
                 denom: denom
             })],
-            periodSpendLimit: [
-                Coin.fromPartial({
+        periodSpendLimit: [
+            Coin.fromPartial({
                 amount: String(periodSpendLimit),
                 denom: denom
             })
         ]
-        }).finish()
+    }).finish()
 
     return {
         typeUrl: msgFeegrantGrantTypeUrl,
@@ -337,12 +401,12 @@ export function UnDelegate(delegator, validator, amount, denom) {
     }
 }
 
-export function Redelegate(delegator, sourceAddr,destinationAddr,  amount, denom) {
+export function Redelegate(delegator, sourceAddr, destinationAddr, amount, denom) {
     return {
         typeUrl: msgReDelegate,
         value: MsgBeginRedelegate.fromPartial({
             validatorDstAddress: destinationAddr,
-            validatorSrcAddress: sourceAddr, 
+            validatorSrcAddress: sourceAddr,
             delegatorAddress: delegator,
             amount: Coin.fromPartial({
                 amount: String(amount),
@@ -358,7 +422,7 @@ export function AirdropClaim(address) {
         typeUrl: '/passage3d.claim.v1beta1.MsgClaim',
         value: MsgClaim.fromPartial({
             sender: address,
-            claim_action:"ActionInitialClaim" 
+            claim_action: "ActionInitialClaim"
         }),
     }
 }

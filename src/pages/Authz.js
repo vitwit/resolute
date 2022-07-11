@@ -78,15 +78,14 @@ export default function Authz() {
   const onRevoke = (granter, grantee, typeURL) => {
     dispatch(txAuthzRevoke({
       granter: granter,
+      baseURL: chainInfo.config.rest,
       grantee: grantee,
       typeURL: typeURL,
       denom: currency.coinMinimalDenom,
-      memo: "",
       chainId: chainInfo.config.chainId,
       rpc: chainInfo.config.rpc,
       feeAmount: chainInfo.config.gasPriceStep.average,
     }))
-
   }
 
   useEffect(() => {
@@ -188,6 +187,7 @@ export default function Authz() {
                             <StyledTableRow>
                               <StyledTableCell>Grantee</StyledTableCell>
                               <StyledTableCell >Type</StyledTableCell>
+                              <StyledTableCell >Message</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
                               <StyledTableCell>Details</StyledTableCell>
                               <StyledTableCell>Action</StyledTableCell>
@@ -204,6 +204,9 @@ export default function Authz() {
                                 </StyledTableCell>
                                 <StyledTableCell>
                                   <Chip label={getTypeURLName(row.authorization['@type'])} variant="filled" size="medium" />
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  <Chip label={getMsgNameFromAuthz(row.authorization)} variant="filled" size="medium" />
                                 </StyledTableCell>
                                 <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
                                 <StyledTableCell>

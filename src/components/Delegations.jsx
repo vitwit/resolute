@@ -93,7 +93,7 @@ export function MyDelegations(props) {
                                     No Deligations Found
                                 </Typography>
                                 :
-                                <Table sx={{ minWidth: 500 }} aria-label="simple table">
+                                <Table sx={{ minWidth: 500, p: 10 }} aria-label="simple table" size='small'>
                                     <TableHead>
                                         <StyledTableRow>
                                             <StyledTableCell>Rank</StyledTableCell>

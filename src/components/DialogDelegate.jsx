@@ -13,7 +13,7 @@ import { useForm, Controller } from 'react-hook-form';
 
 
 export function DialogDelegate(props) {
-    const { onClose, open, params, validator, balance, onDelegate, loading, displayDenom } = props;
+    const { onClose, open, params, validator, balance, onDelegate, loading, displayDenom, authzLoading } = props;
 
     const handleClose = () => {
         onClose();
@@ -118,10 +118,10 @@ export function DialogDelegate(props) {
                             variant='contained'
                             disableElevation
                             type='submit'
-                            disabled={loading === 'pending'}
+                            disabled={loading === 'pending' || authzLoading === 'pending'}
                             className='button-capitalize-title'
                         >
-                            {loading === 'pending' ? <CircularProgress size={25}/> : 'Delegate'}
+                            {loading === 'pending' || authzLoading === 'pending' ? <CircularProgress size={25}/> : 'Delegate'}
                         </Button>
                     </DialogActions>
                 </form>
@@ -138,4 +138,5 @@ DialogDelegate.propTypes = {
     validator: PropTypes.object.isRequired,
     balance: PropTypes.number.isRequired,
     displayDenom: PropTypes.string.isRequired,
+    authzLoading: PropTypes.string.isRequired,
 };

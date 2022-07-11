@@ -22,7 +22,7 @@ import { DialogRedelegate } from '../components/DialogRedelegate';
 import { WitvalValidator } from '../components/WitvalValidator';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import { getWithdrawRewardsAuthz } from '../utils/authorizations';
+import { getDelegateAuthz, getReDelegateAuthz, getUnDelegateAuthz, getWithdrawRewardsAuthz } from '../utils/authorizations';
 import { authzExecHelper } from '../features/authz/authzSlice';
 
 export function Validators() {
@@ -101,6 +101,16 @@ export function Validators() {
     const selectedAuthz = useSelector((state) => state.authz.selected);
     const grantsToMe = useSelector((state) => state.authz.grantsToMe);
     const authzRewards = useMemo(() => getWithdrawRewardsAuthz(grantsToMe.grants, selectedAuthz.granter), [grantsToMe.grants]);
+    const authzDelegate = useMemo(() => getDelegateAuthz(grantsToMe.grants, selectedAuthz.granter), [grantsToMe.grants]);
+    const authzUnDelegate = useMemo(() => getUnDelegateAuthz(grantsToMe.grants, selectedAuthz.granter), [grantsToMe.grants]);
+    const authzRedelegate = useMemo(() => getReDelegateAuthz(grantsToMe.grants, selectedAuthz.granter), [grantsToMe.grants]);
+    const authzExecTx = useSelector((state) => state.authz.execTx);
+
+    useEffect(() => {
+        if (authzExecTx.status === 'idle' && selectedAuthz.granter.length > 0) {
+            fetchUserInfo(selectedAuthz.granter);
+        }
+    }, [authzExecTx]);
 
     useEffect(() => {
         if (connected) {
@@ -177,7 +187,7 @@ export function Validators() {
         if (selectedAuthz.granter.length > 0 && authzRewards?.granter !== selectedAuthz.granter) {
             dispatch(setError({
                 type: 'error',
-                message: 'You don\'t have permission to withdraw rewards'
+                message: 'You don\'t have authz permission to withdraw rewards'
             }))
             return
         }
@@ -211,28 +221,71 @@ export function Validators() {
     }
 
     const onDelegateTx = (data) => {
-        dispatch(txDelegate({
-            baseURL: chainInfo.config.rest,
-            delegator: address,
-            validator: data.validator,
-            amount: data.amount * (10 ** currency.coinDecimals),
-            denom: currency.coinMinimalDenom,
-            chainId: chainInfo.config.chainId,
-            rpc: chainInfo.config.rpc,
-            feeAmount: chainInfo.config.gasPriceStep.average,
-        }))
+        if (selectedAuthz.granter.length > 0 && authzDelegate?.granter !== selectedAuthz.granter) {
+            dispatch(setError({
+                type: 'error',
+                message: 'You don\'t have authz permission to delegate'
+            }))
+            return
+        }
+        if (selectedAuthz.granter.length > 0 && authzDelegate?.granter === selectedAuthz.granter) {
+            authzExecHelper(dispatch, {
+                type: "delegate",
+                address: address,
+                baseURL: chainInfo.config.rest,
+                delegator: selectedAuthz.granter,
+                validator: data.validator,
+                amount: data.amount * (10 ** currency.coinDecimals),
+                denom: currency.coinMinimalDenom,
+                chainId: chainInfo.config.chainId,
+                rpc: chainInfo.config.rpc,
+                feeAmount: chainInfo.config.gasPriceStep.average,
+            })
+        } else { 
+            dispatch(txDelegate({
+                baseURL: chainInfo.config.rest,
+                delegator: address,
+                validator: data.validator,
+                amount: data.amount * (10 ** currency.coinDecimals),
+                denom: currency.coinMinimalDenom,
+                chainId: chainInfo.config.chainId,
+                rpc: chainInfo.config.rpc,
+                feeAmount: chainInfo.config.gasPriceStep.average,
+            }))
+        }
     }
 
     const onUndelegateTx = (data) => {
-        dispatch(txUnDelegate({
-            delegator: address,
-            validator: data.validator,
-            amount: data.amount * (10 ** currency.coinDecimals),
-            denom: currency.coinMinimalDenom,
-            chainId: chainInfo.config.chainId,
-            rpc: chainInfo.config.rpc,
-            feeAmount: chainInfo.config.gasPriceStep.average,
-        }))
+        if (selectedAuthz.granter.length > 0 && authzUnDelegate?.granter !== selectedAuthz.granter) {
+            dispatch(setError({
+                type: 'error',
+                message: 'You don\'t have authz permission to un-delegate'
+            }))
+            return
+        }
+        if (selectedAuthz.granter.length > 0 && authzUnDelegate?.granter === selectedAuthz.granter) {
+            authzExecHelper(dispatch, {
+                type: "undelegate",
+                address: address,
+                delegator: selectedAuthz.granter,
+                validator: data.validator,
+                amount: data.amount * (10 ** currency.coinDecimals),
+                denom: currency.coinMinimalDenom,
+                chainId: chainInfo.config.chainId,
+                rpc: chainInfo.config.rpc,
+                feeAmount: chainInfo.config.gasPriceStep.average,
+            })
+        } else {
+            dispatch(txUnDelegate({
+                delegator: address,
+                validator: data.validator,
+                amount: data.amount * (10 ** currency.coinDecimals),
+                denom: currency.coinMinimalDenom,
+                chainId: chainInfo.config.chainId,
+                rpc: chainInfo.config.rpc,
+                feeAmount: chainInfo.config.gasPriceStep.average,
+            }))
+        }
     }
 
     useEffect(() => {
@@ -270,17 +323,40 @@ export function Validators() {
     }, [txStatus]);
 
     const onRedelegateTx = (data) => {
-        dispatch(txReDelegate({
-            baseURL: chainInfo.config.rest,
-            delegator: address,
-            srcVal: data.src,
-            destVal: data.dest,
-            amount: data.amount * (10 ** currency.coinDecimals),
-            denom: currency.coinMinimalDenom,
-            chainId: chainInfo.config.chainId,
-            rpc: chainInfo.config.rpc,
-            feeAmount: chainInfo.config.gasPriceStep.average,
-        }))
+        if (selectedAuthz.granter.length > 0 && authzRedelegate?.granter !== selectedAuthz.granter) {
+            dispatch(setError({
+                type: 'error',
+                message: 'You don\'t have authz permission to redelegate'
+            }))
+            return
+        }
+        if (selectedAuthz.granter.length > 0 && authzRedelegate?.granter === selectedAuthz.granter) {
+            authzExecHelper(dispatch, {
+                type: "redelegate",
+                address: address,
+                baseURL: chainInfo.config.rest,
+                delegator: selectedAuthz.granter,
+                srcVal: data.src,
+                destVal: data.dest,
+                amount: data.amount * (10 ** currency.coinDecimals),
+                denom: currency.coinMinimalDenom,
+                chainId: chainInfo.config.chainId,
+                rpc: chainInfo.config.rpc,
+                feeAmount: chainInfo.config.gasPriceStep.average,
+            })
+        } else {
+            dispatch(txReDelegate({
+                baseURL: chainInfo.config.rest,
+                delegator: address,
+                srcVal: data.src,
+                destVal: data.dest,
+                amount: data.amount * (10 ** currency.coinDecimals),
+                denom: currency.coinMinimalDenom,
+                chainId: chainInfo.config.chainId,
+                rpc: chainInfo.config.rpc,
+                feeAmount: chainInfo.config.gasPriceStep.average,
+            }))
+        }
     }
 
     const [availableBalance, setAvailableBalance] = useState(0);
@@ -373,6 +449,7 @@ export function Validators() {
                                         onDelegate={onDelegateTx}
                                         loading={txStatus.status}
                                         displayDenom={currency.coinDenom}
+                                        authzLoading={authzExecTx?.status}
                                     />
                                     :
                                     <></>
@@ -392,6 +469,7 @@ export function Validators() {
                                             currency={chainInfo?.config?.currencies[0]}
                                             loading={txStatus.status}
                                             onUnDelegate={onUndelegateTx}
+                                            authzLoading={authzExecTx?.status}
                                         />
 
                                         <DialogRedelegate
@@ -406,6 +484,7 @@ export function Validators() {
                                             currency={chainInfo?.config?.currencies[0]}
                                             loading={txStatus.status}
                                             onRedelegate={onRedelegateTx}
+                                            authzLoading={authzExecTx?.status}
                                         />
 
                                     </>
