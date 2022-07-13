@@ -17,7 +17,7 @@ import { totalBalance } from '../utils/denom';
 import { shortenAddress, shortenPubKey } from '../utils/util';
 import { useLocation } from 'react-router-dom';
 
-const drawerWidth = 200;
+const drawerWidth = 210;
 export default function AppDrawer(props) {
     const { wallet, onDisconnectWallet, onNavigate, onConnectWallet,
         selectedNetwork, balance, chainInfo, onCopy } = props;
@@ -28,7 +28,10 @@ export default function AppDrawer(props) {
             sx={{
                 width: drawerWidth,
                 flexShrink: 0,
-                [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+                ['& .MuiDrawer-paper::-webkit-scrollbar']: {
+                    display: 'none',
+                },
+                [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', scrollbarWidth: 'none' },
             }}
         >
             <Toolbar />
@@ -38,6 +41,7 @@ export default function AppDrawer(props) {
                         <>
                             <ListItem
                                 style={{ justifyContent: 'left' }}
+                                sx={{ pb: 0.5, pt: 0.5 }}
                             >
                                 <AccountBalanceWalletOutlinedIcon />
                                 &nbsp;
@@ -55,7 +59,7 @@ export default function AppDrawer(props) {
                                     {wallet.name}
                                 </Typography>
                             </ListItem>
-                            <ListItem>
+                            <ListItem sx={{ pb: 0.5, pt: 0.5 }}>
                                 <Chip
                                     label={shortenAddress(wallet.address, 21)}
                                     size="small"
@@ -63,24 +67,25 @@ export default function AppDrawer(props) {
                                     onDelete={() => { onCopy(wallet.address) }}
                                 />
                             </ListItem>
-                            <ListItem style={{ paddingBottom: 0 }}>
+                            <ListItem sx={{ pb: 0.5, pt: 0.5 }}>
                                 <Typography
                                     variant='body2'
                                     color='text.secondary'
                                 >
                                     PubKey
                                 </Typography>
-                                </ListItem>
-                                <ListItem
+                            </ListItem>
+                            <ListItem
+                                sx={{ pt: 0.5 }}
                             >
-                            <Chip
+                                <Chip
                                     label={wallet.pubKey ? shortenPubKey(wallet.pubKey, 21) : ""}
                                     size="small"
                                     deleteIcon={<ContentCopyOutlined />}
                                     onDelete={() => { onCopy(wallet.pubKey) }}
                                 />
                             </ListItem>
-                            <ListItem style={{ paddingBottom: 0 }}>
+                            <ListItem sx={{ pb: 0, pt: 0.5 }}>
                                 <Typography
                                     color='text.secondary'
                                     variant='caption'
@@ -88,8 +93,8 @@ export default function AppDrawer(props) {
                                 >
                                     Available Balance
                                 </Typography>
-                            </ListItem>
-                            <ListItem style={{ paddingTop: 2 }}>
+                            </ListItem >
+                            <ListItem sx={{ pb: 0.5, pt: 0 }}>
                                 <Typography
                                     color='text.primary'
                                     variant='body2'
@@ -98,7 +103,7 @@ export default function AppDrawer(props) {
                                     &nbsp;{chainInfo.config.currencies[0].coinDenom}
                                 </Typography>
                             </ListItem>
-                            <ListItem style={{ justifyContent: 'center' }}>
+                            <ListItem style={{ justifyContent: 'center' }} sx={{ pb: 0.5, pt: 0 }}>
                                 <Button
                                     endIcon={<LogoutOutlinedIcon />}
                                     size='small'
@@ -113,10 +118,10 @@ export default function AppDrawer(props) {
                         </>
                         :
                         <>
-                            <ListItem />
-                            <ListItem />
-                            <ListItem />
-                            <ListItem style={{ justifyContent: 'center' }}>
+                            <ListItem sx={{ pb: 0.5, pt: 0.5 }} />
+                            <ListItem sx={{ pb: 0.5, pt: 0.5 }} />
+                            <ListItem sx={{ pb: 0.5, pt: 0.5 }} />
+                            <ListItem style={{ justifyContent: 'center' }} sx={{ pb: 0.5, pt: 0.5 }}>
 
                                 <Button
                                     startIcon={<AccountBalanceWalletOutlinedIcon />}
@@ -157,7 +162,7 @@ export default function AppDrawer(props) {
                     style={{ justifyContent: 'center' }}
                     sx={{
                         p: 0,
-                        pb:1,
+                        pb: 1,
                     }}
                 >
                     <img
