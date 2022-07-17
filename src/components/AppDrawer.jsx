@@ -27,7 +27,10 @@ export default function AppDrawer(props) {
             sx={{
                 width: drawerWidth,
                 flexShrink: 0,
-                [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+                ['& .MuiDrawer-paper::-webkit-scrollbar']: {
+                    display: 'none',
+                },
+                [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', scrollbarWidth: 'none' },
             }}
         >
             {
@@ -72,7 +75,7 @@ export default function AppDrawer(props) {
                                     onDelete={() => { onCopy(wallet.address) }}
                                 />
                             </ListItem>
-                            <ListItem sx={{ pb: 0, pt: 1 }}>
+                            <ListItem sx={{ pb: 0.5, pt: 0.5 }}>
                                 <Typography
                                     variant='body2'
                                     color='text.secondary'
@@ -98,7 +101,7 @@ export default function AppDrawer(props) {
                                 >
                                     Available Balance
                                 </Typography>
-                            </ListItem>
+                            </ListItem >
                             <ListItem sx={{ pb: 0.5, pt: 0 }}>
                                 <Typography
                                     color='text.primary'
@@ -108,7 +111,7 @@ export default function AppDrawer(props) {
                                     &nbsp;{chainInfo.config.currencies[0].coinDenom}
                                 </Typography>
                             </ListItem>
-                            <ListItem style={{ justifyContent: 'center' }} sx={{ pb: 0.5, pt: 0.5 }}>
+                            <ListItem style={{ justifyContent: 'center' }} sx={{ pb: 0.5, pt: 0 }}>
                                 <Button
                                     endIcon={<LogoutOutlinedIcon />}
                                     size='small'
