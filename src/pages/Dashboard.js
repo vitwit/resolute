@@ -20,7 +20,7 @@ const NewAuthz = lazy(() => import("./NewAuthz"));
 import AlertTitle from '@mui/material/AlertTitle';
 import Snackbar from '@mui/material/Snackbar';
 import Overview from './Overview';
-import ProminentAppBar, { CustomAppBar } from '../components/CustomAppBar';
+import { CustomAppBar } from '../components/CustomAppBar';
 const AirdropEligibility = lazy(() => import('./AirdropEligibility'));
 import { resetError, setError } from '../features/common/commonSlice';
 import Page404 from './Page404';
@@ -29,9 +29,7 @@ import AppDrawer from '../components/AppDrawer';
 import { Alert } from '../components/Alert';
 import { getPallet, isDarkMode, mdTheme } from '../utils/theme';
 import { isConnected, logout } from '../utils/localStorage';
-import { Button, Paper, SnackbarContent, Typography } from '@mui/material';
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import { shortenAddress } from '../utils/util';
+import { Paper, Typography } from '@mui/material';
 import { exitAuthzMode } from '../features/authz/authzSlice';
 
 function DashboardContent(props) {
@@ -120,6 +118,9 @@ function DashboardContent(props) {
 
     function disconnectWallet() {
         logout();
+        if (selectedAuthz.granter.length > 0) {
+            dispatch(exitAuthzMode());
+        }
         dispatch(resetWallet());
     }
 
@@ -154,7 +155,7 @@ function DashboardContent(props) {
         });
     }
 
-    
+
 
 
     return (
@@ -162,14 +163,19 @@ function DashboardContent(props) {
             {
                 chainInfo?.config ?
                     <>
+                        <CustomAppBar
+                            selectedNetwork={selectedNetwork}
+                            onNetworkChange={(network) => handleNetworkChange(network)}
+                            darkMode={darkMode}
+                            onModeChange={() => onModeChange()}
+                            onExit={() => {
+                                dispatch(exitAuthzMode())
+                                setTimeout(() => {
+                                    navigateTo("/")
+                                }, 400)
+                            }}
+                        />
                         <Box sx={{ display: 'flex' }}>
-                            <CssBaseline />
-                            <CustomAppBar
-                                selectedNetwork={selectedNetwork}
-                                onNetworkChange={(network) => handleNetworkChange(network)}
-                                darkMode={darkMode}
-                                onModeChange={() => onModeChange()}
-                            />
                             <AppDrawer
                                 balance={balance}
                                 chainInfo={chainInfo}
@@ -179,6 +185,7 @@ function DashboardContent(props) {
                                 selectedNetwork={selectedNetwork}
                                 wallet={wallet}
                                 onCopy={copyToClipboard}
+                                selectedAuthz={selectedAuthz}
                             />
                             <Box
                                 component="main"
@@ -192,46 +199,15 @@ function DashboardContent(props) {
                                     overflow: 'auto',
                                 }}
                             >
-                                <Toolbar />
                                 {
                                     selectedAuthz.granter.length > 0
-                                    ?
-                                <Paper
-                                    square
-                                    elevation={4}
-                                    sx={{
-                                        bgcolor: (theme) => theme.palette.mode === 'light'? 'primary.main': '#121212',
-                                        borderRadius: 0,
-                                        fontWeight: 500,
-                                        display: 'flex',
-                                        pl: 2,
-                                        pr: 4,
-                                    }}
-                                    >
-                                        <Typography
-                                            variant='h6'
-                                            color='white'
-                                        sx={{flexGrow: 1, textAlign: 'start'}}
-                                        >
-                                            Granter:&nbsp;{shortenAddress(selectedAuthz.granter, 21)}
-                                        </Typography>
-                                        <Button variant='text' 
-                                        sx={{
-                                            color: 'white',
-                                        }}
-                                        startIcon={<CloseOutlinedIcon/>}
-                                            onClick={() => {
-                                                dispatch(exitAuthzMode())
-                                                setTimeout(() =>{
-                                                navigateTo("/")
-                                                },400)
-                                            }}
-                                        >
-                                            Exit Authz
-                                        </Button>
-                                    </Paper>
-                                    :
-                                    <></>
+                                        ?
+                                        <>
+                                            <Toolbar />
+                                            <Toolbar />
+                                        </>
+                                        :
+                                        <Toolbar />
                                 }
                                 <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                                     <Routes>
@@ -277,6 +253,7 @@ function DashboardContent(props) {
                                 </Container>
                             </Box>
                         </Box>
+                        <Footer />
 
                     </>
                     :
@@ -340,5 +317,33 @@ export default function Dashboard() {
                 :
                 <></>
         )
+    );
+}
+
+
+const Footer = () => {
+    return (
+        <Paper elevation={0} className='footer'
+            sx={{
+                borderRadius: 0,
+                p: 1
+            }}
+        >
+            <Typography component='span' variant='body2' color='text.secondary'>
+                Designed & Developed By
+            </Typography>
+            <Typography
+                component='span'
+                variant='body2'
+                fontWeight={600}
+                color='text.primary'
+                className='footer-link'
+                onClick={() => {
+                    window.open('https://vitwit.com', '_blank')
+                }}
+            >
+                &nbsp;Vitwit
+            </Typography>
+        </Paper>
     );
 }

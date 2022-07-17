@@ -6,7 +6,6 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip'
-import Link from '@mui/material/Link'
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import ContentCopyOutlined from '@mui/icons-material/ContentCopyOutlined';
@@ -31,14 +30,23 @@ export default function AppDrawer(props) {
                 [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
             }}
         >
-            <Toolbar />
+            {
+                props.selectedAuthz.granter.length > 0 ?
+                    <>
+                        <Toolbar />
+                        <Toolbar />
+                    </>
+                    :
+                    <Toolbar />
+            }
+
             <List>
                 {
                     wallet.connected ?
                         <>
                             <ListItem
                                 style={{ justifyContent: 'left' }}
-                                sx={{pb: 0.5, pt:0.5}}
+                                sx={{ pb: 0.5, pt: 0.5 }}
                             >
                                 <AccountBalanceWalletOutlinedIcon />
                                 &nbsp;
@@ -56,7 +64,7 @@ export default function AppDrawer(props) {
                                     {wallet.name}
                                 </Typography>
                             </ListItem>
-                            <ListItem sx={{pb: 0.5, pt:0.5}}>
+                            <ListItem sx={{ pb: 0.5, pt: 0.5 }}>
                                 <Chip
                                     label={shortenAddress(wallet.address, 21)}
                                     size="small"
@@ -64,25 +72,25 @@ export default function AppDrawer(props) {
                                     onDelete={() => { onCopy(wallet.address) }}
                                 />
                             </ListItem>
-                            <ListItem sx={{pb: 0, pt:1}}>
+                            <ListItem sx={{ pb: 0, pt: 1 }}>
                                 <Typography
                                     variant='body2'
                                     color='text.secondary'
                                 >
                                     PubKey
                                 </Typography>
-                                </ListItem>
-                                <ListItem
-                                 sx={{pt:0.5}}
+                            </ListItem>
+                            <ListItem
+                                sx={{ pt: 0.5 }}
                             >
-                            <Chip
+                                <Chip
                                     label={wallet.pubKey ? shortenPubKey(wallet.pubKey, 21) : ""}
                                     size="small"
                                     deleteIcon={<ContentCopyOutlined />}
                                     onDelete={() => { onCopy(wallet.pubKey) }}
                                 />
                             </ListItem>
-                            <ListItem sx={{pb: 0, pt:0.5}}>
+                            <ListItem sx={{ pb: 0, pt: 0.5 }}>
                                 <Typography
                                     color='text.secondary'
                                     variant='caption'
@@ -91,7 +99,7 @@ export default function AppDrawer(props) {
                                     Available Balance
                                 </Typography>
                             </ListItem>
-                            <ListItem sx={{pb: 0.5, pt:0}}>
+                            <ListItem sx={{ pb: 0.5, pt: 0 }}>
                                 <Typography
                                     color='text.primary'
                                     variant='body2'
@@ -100,7 +108,7 @@ export default function AppDrawer(props) {
                                     &nbsp;{chainInfo.config.currencies[0].coinDenom}
                                 </Typography>
                             </ListItem>
-                            <ListItem style={{ justifyContent: 'center' }} sx={{pb: 0.5, pt:0.5}}>
+                            <ListItem style={{ justifyContent: 'center' }} sx={{ pb: 0.5, pt: 0.5 }}>
                                 <Button
                                     endIcon={<LogoutOutlinedIcon />}
                                     size='small'
@@ -115,10 +123,10 @@ export default function AppDrawer(props) {
                         </>
                         :
                         <>
-                            <ListItem sx={{pb: 0.5, pt:0.5}} />
-                            <ListItem sx={{pb: 0.5, pt:0.5}} />
-                            <ListItem sx={{pb: 0.5, pt:0.5}} />
-                            <ListItem style={{ justifyContent: 'center' }} sx={{pb: 0.5, pt:0.5}}>
+                            <ListItem sx={{ pb: 0.5, pt: 0.5 }} />
+                            <ListItem sx={{ pb: 0.5, pt: 0.5 }} />
+                            <ListItem sx={{ pb: 0.5, pt: 0.5 }} />
+                            <ListItem style={{ justifyContent: 'center' }} sx={{ pb: 0.5, pt: 0.5 }}>
 
                                 <Button
                                     startIcon={<AccountBalanceWalletOutlinedIcon />}
@@ -142,42 +150,6 @@ export default function AppDrawer(props) {
                         (path) => { onNavigate(path) }, selectedNetwork?.showAirdrop)
                 }
             </List>
-            <List
-                style={{ marginTop: 'auto', flexDirection: 'row' }}
-            >
-                <ListItem
-                    style={{ justifyContent: 'center' }}
-                >
-                    <Typography
-                        color='text.secondary'
-                        variant='caption'
-                    >
-                        Designed & Developed By
-                    </Typography>
-                </ListItem>
-                <ListItem
-                    style={{ justifyContent: 'center' }}
-                    sx={{
-                        p: 0,
-                        pb:1,
-                    }}
-                >
-                    <img
-                        src='./logo-only.png'
-                        width={25}
-                        height={18}
-                    />
-                    &nbsp;
-                    <Link
-                        style={{ textDecoration: 'none' }}
-                        target="_blank"
-                        href='https://vitwit.com'
-                    >
-                        Vitwit.com
-                    </Link>
-
-                </ListItem>
-            </List>
         </Drawer>
     );
 }
@@ -191,4 +163,5 @@ AppDrawer.propTypes = {
     balance: PropTypes.object.isRequired,
     chainInfo: PropTypes.object.isRequired,
     onCopy: PropTypes.func.isRequired,
+    selectedAuthz: PropTypes.object.isRequired,
 }

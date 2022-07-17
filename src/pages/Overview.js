@@ -37,8 +37,8 @@ export default function Overview() {
     }, [balance, delegations, rewards, unbonding, chainInfo, address]);
 
     useEffect(() => {
-        if (selectedAuthz.granter.length === 0) {
-            if (address.length > 0 && chainInfo.config.currencies.length > 0 && connected) {
+        if (connected && selectedAuthz.granter.length === 0) {
+            if (address.length > 0 && chainInfo.config.currencies.length > 0) {
                 fetchDetails(address);
             }
         }
@@ -47,6 +47,8 @@ export default function Overview() {
     useEffect(() => {
         if (selectedAuthz.granter.length > 0) {
             fetchDetails(selectedAuthz.granter);
+        } else {
+            fetchDetails(address);
         }
     }, [selectedAuthz]);
 

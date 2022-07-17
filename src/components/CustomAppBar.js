@@ -15,11 +15,17 @@ import DividerWithText from './DividerWithText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { useSelector } from 'react-redux';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import { shortenAddress } from '../utils/util';
 
 export function CustomAppBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const handleClick = (event) => {
+        if (selectedAuthz.granter.length === 0) {
         setAnchorEl(event.currentTarget);
+        } else {
+            alert("cannot switch to other network in authz mode")
+        }
     };
 
     const selectedAuthz = useSelector((state) => state.authz.selected);
@@ -29,13 +35,48 @@ export function CustomAppBar(props) {
     }, [props.selectedNetwork]);
 
     return (
-        <AppBar position="fixed" 
-        sx={{
-             zIndex: (theme) => theme.zIndex.drawer + 1, 
-            boxShadow: (theme) =>  selectedAuthz.granter.length > 0 ? 0 : theme.mixins.toolbar.boxShadow
-         }}>
+        <AppBar position="absolute"
+            sx={{
+                zIndex: (theme) => theme.zIndex.drawer + 1,
+                mt: 0
+            }}>
+            {
+                selectedAuthz.granter.length > 0 ?
+                    <Toolbar
+                    variant="dense"
+                    sx={{
+                        minHeight: 32
+                    }}
+                    >
+                        <Typography
+                            component="h1"
+                            variant="h6"
+                            color="inherit"
+                            noWrap
+                            sx={{ flexGrow: 1 }}
+                            align='left'
+                        >
+                            Granter mode: &nbsp;{shortenAddress(selectedAuthz.granter, 21)}
+                        </Typography>
+                        <Button
+                            variant='text'
+                            color='inherit'
+                            sx={{
+                                textTransform: 'none'
+                            }}
+                            startIcon={<CloseOutlinedIcon />}
+                            onClick={() => {
+                                props.onExit()
+                            }}
+                        >
+                            Exit Authz
+                        </Button>
+                    </Toolbar>
+                    :
+                    <></>
+            }
             <Toolbar>
-                <img id='logo-chain-main' src="white-logo.png" style={{maxWidth: 161, maxHeight: 45}}/>
+                <img id='logo-chain-main' src="white-logo.png" style={{ maxWidth: 161, maxHeight: 45 }} />
                 <Typography
                     component="h1"
                     variant="h6"
@@ -135,4 +176,5 @@ CustomAppBar.propTypes = {
     onModeChange: PropTypes.func.isRequired,
     selectedNetwork: PropTypes.object.isRequired,
     onNetworkChange: PropTypes.func.isRequired,
+    onExit: PropTypes.func.isRequired,
 };
