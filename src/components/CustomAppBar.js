@@ -49,9 +49,10 @@ export function CustomAppBar(props) {
                     }}
                     >
                         <Typography
-                            component="h1"
-                            variant="h6"
+                            component="h5"
+                            variant="body1"
                             color="inherit"
+                            fontWeight={500}
                             noWrap
                             sx={{ flexGrow: 1 }}
                             align='left'

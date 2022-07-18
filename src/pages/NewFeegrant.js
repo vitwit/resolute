@@ -12,7 +12,7 @@ import { txFeegrantBasic, txGrantPeriodic } from '../features/feegrant/feegrantS
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
 import { PeriodicFeegrant } from '../components/PeriodicFeeGrant';
-
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function NewFeegrant() {
     const address = useSelector((state) => state.wallet.address);
@@ -42,7 +42,7 @@ export default function NewFeegrant() {
         dispatch(txFeegrantBasic({
             granter: address,
             grantee: data.grantee,
-            spendLimit: Number(data.spendLimit) === 0 ? null : data.spendLimit,
+            spendLimit: Number(data.spendLimit) === 0 ? null : (Number(data.spendLimit) * (10 ** currency.coinDecimals)),
             expiration: data.expiration,
             denom: currency.coinMinimalDenom,
             chainId: chainInfo.config.chainId,
@@ -55,7 +55,7 @@ export default function NewFeegrant() {
         dispatch(txGrantPeriodic({
             granter: address,
             grantee: data.grantee,
-            spendLimit: Number(data.spendLimit) === 0 ? null : data.spendLimit,
+            spendLimit: Number(data.spendLimit) === 0 ? null : (Number(data.spendLimit) * (10 ** currency.coinDecimals)),
             expiration: data.expiration,
             period: data.period,
             periodSpendLimit: data.periodSpendLimit,
@@ -166,8 +166,13 @@ export default function NewFeegrant() {
                                             style={{ marginTop: 32 }}
                                             variant="outlined"
                                             type='submit'
+                                            disabled={feegrantTx?.status === 'pending'}
                                         >
-                                            Grant
+                                            {feegrantTx?.status === 'pending' ?
+                                            <CircularProgress
+                                                size={25}
+                                            />
+                                            : 'Grant'}
                                         </Button>
                                     </form>
                                 </>

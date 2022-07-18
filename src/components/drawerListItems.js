@@ -41,11 +41,11 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         </ListItemIcon>
         <ListItemText primary="Authz" />
       </ListItemButton>
-      <ListItemButton onClick={() => { }} disabled sx={{ pb: 0.5, pt: 0.5 }}>
+      <ListItemButton onClick={() => onNavigate("/feegrant")} sx={{ pb: 0.5, pt: 0.5 }} selected={currentPath === "/feegrant"}>
         <ListItemIcon>
           <LayersIcon />
         </ListItemIcon>
-        <ListItemText primary="Feegrant" secondary="coming soon" />
+        <ListItemText primary="Feegrant" />
       </ListItemButton>
 
       {showAirdrop ?

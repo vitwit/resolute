@@ -109,6 +109,9 @@ export function Validators() {
     useEffect(() => {
         if (authzExecTx.status === 'idle' && selectedAuthz.granter.length > 0) {
             fetchUserInfo(selectedAuthz.granter);
+            setUndelegateOpen(false);
+            setRedelegateOpen(false);
+            setStakingOpen(false);
         }
     }, [authzExecTx]);
 

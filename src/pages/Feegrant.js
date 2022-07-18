@@ -66,7 +66,12 @@ export default function Feegrant() {
     }
   }, [address]);
 
+  const selectedAuthz = useSelector((state) => state.authz.selected);
   useEffect(() => {
+    if (selectedAuthz.granter.length > 0) {
+      alert("Not allowed in Authz mode");
+      navigateTo("/")
+    }
     dispatch(resetAlerts())
     dispatch(resetError())
     dispatch(resetTxHash())

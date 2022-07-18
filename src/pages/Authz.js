@@ -88,11 +88,6 @@ export default function Authz() {
     }))
   }
 
-  useEffect(() => {
-    dispatch(resetError())
-    dispatch(resetTxHash())
-  }, [])
-
   let navigate = useNavigate();
   function navigateTo(path) {
     navigate(path);
@@ -107,6 +102,16 @@ export default function Authz() {
       navigateTo("/")
     }, 200)
   }
+
+  const selectedAuthz = useSelector((state) => state.authz.selected);
+  useEffect(() => {
+    if (selectedAuthz.granter.length > 0) {
+      alert("Not allowed in Authz mode");
+      navigateTo("/")
+    }
+    dispatch(resetError())
+    dispatch(resetTxHash())
+  }, []);
 
   const onExecSend = (data) => {
     authzExecHelper(dispatch, {

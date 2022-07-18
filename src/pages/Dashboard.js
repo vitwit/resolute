@@ -326,15 +326,15 @@ const Footer = () => {
         <Paper elevation={0} className='footer'
             sx={{
                 borderRadius: 0,
-                p: 1
+                p: 0.5
             }}
         >
-            <Typography component='span' variant='body2' color='text.secondary'>
+            <Typography component='span' variant='caption' color='text.secondary'>
                 Designed & Developed By
             </Typography>
             <Typography
                 component='span'
-                variant='body2'
+                variant='caption'
                 fontWeight={600}
                 color='text.primary'
                 className='footer-link'
