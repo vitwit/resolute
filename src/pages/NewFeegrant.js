@@ -1,7 +1,7 @@
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import TextField from '@mui/material/TextField';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import InputAdornment from '@mui/material/InputAdornment';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -13,6 +13,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
 import { PeriodicFeegrant } from '../components/PeriodicFeeGrant';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useNavigate } from 'react-router-dom';
 
 export default function NewFeegrant() {
     const address = useSelector((state) => state.wallet.address);
@@ -65,6 +66,18 @@ export default function NewFeegrant() {
             feeAmount: chainInfo.config.gasPriceStep.average,
         }))
     }
+
+    let navigate = useNavigate();
+    function navigateTo(path) {
+        navigate(path);
+    }
+    const selectedAuthz = useSelector((state) => state.authz.selected);
+    useEffect(() => {
+        if (selectedAuthz.granter.length > 0) {
+            alert("Not allowed in Authz mode");
+            navigateTo("/");
+        }
+    }, []);
 
     return (
         <>
@@ -169,10 +182,10 @@ export default function NewFeegrant() {
                                             disabled={feegrantTx?.status === 'pending'}
                                         >
                                             {feegrantTx?.status === 'pending' ?
-                                            <CircularProgress
-                                                size={25}
-                                            />
-                                            : 'Grant'}
+                                                <CircularProgress
+                                                    size={25}
+                                                />
+                                                : 'Grant'}
                                         </Button>
                                     </form>
                                 </>
@@ -182,8 +195,8 @@ export default function NewFeegrant() {
 
                         {
                             selected === 'periodic' ?
-                                <PeriodicFeegrant 
-                                    loading= {feegrantTx.status}
+                                <PeriodicFeegrant
+                                    loading={feegrantTx.status}
                                     onGrant={onPeriodicGrant}
                                     currency={currency}
                                 />

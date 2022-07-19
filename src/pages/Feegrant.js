@@ -70,11 +70,13 @@ export default function Feegrant() {
   useEffect(() => {
     if (selectedAuthz.granter.length > 0) {
       alert("Not allowed in Authz mode");
-      navigateTo("/")
+      navigateTo("/");
     }
-    dispatch(resetAlerts())
-    dispatch(resetError())
-    dispatch(resetTxHash())
+    return () => {
+      dispatch(resetAlerts())
+      dispatch(resetError())
+      dispatch(resetTxHash())
+    }
   }, []);
 
 

@@ -19,6 +19,7 @@ import {
 } from './../features/common/commonSlice';
 import InputAdornment from '@mui/material/InputAdornment';
 import { Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function NewAuthz() {
@@ -46,11 +47,24 @@ export default function NewAuthz() {
         }
     }, [grantsByMe.errMsg, grantsToMe.errMsg]);
 
+    const selectedAuthz = useSelector((state) => state.authz.selected);
     useEffect(() => {
-        dispatch(resetAlerts());
-        dispatch(resetError());
-        dispatch(resetTxHash());
+        if (selectedAuthz.granter.length > 0) {
+            alert("Not allowed in Authz mode");
+            navigateTo("/");
+        }
+        return () => {
+
+            dispatch(resetAlerts());
+            dispatch(resetError());
+            dispatch(resetTxHash());
+        }
     }, []);
+
+    let navigate = useNavigate();
+    function navigateTo(path) {
+        navigate(path);
+    }
 
     const [selected, setSelected] = useState('send')
     let date = new Date()
@@ -188,14 +202,14 @@ export default function NewAuthz() {
                                                 />
                                             </LocalizationProvider>
                                         }
-                                        />
-                                        <Typography
-                                            variant='caption'
-                                            color='text.secondary'
-                                            style={{justifyContent: 'left', display:'flex', marginTop: 8}}
-                                        >
-                                            &nbsp;Note:&nbsp;By default expiration is set to one year
-                                        </Typography>
+                                    />
+                                    <Typography
+                                        variant='caption'
+                                        color='text.secondary'
+                                        style={{ justifyContent: 'left', display: 'flex', marginTop: 8 }}
+                                    >
+                                        &nbsp;Note:&nbsp;By default expiration is set to one year
+                                    </Typography>
                                     <br />
 
                                     <Button
@@ -290,7 +304,7 @@ export default function NewAuthz() {
                                         <Typography
                                             variant='caption'
                                             color='text.secondary'
-                                            style={{justifyContent: 'left', display:'flex', marginTop: 8}}
+                                            style={{ justifyContent: 'left', display: 'flex', marginTop: 8 }}
                                         >
                                             &nbsp;Note:&nbsp;By default expiration is set to one year
                                         </Typography>
@@ -302,7 +316,7 @@ export default function NewAuthz() {
                                             disabled={authzTx?.status === 'pending'}
                                             variant="outlined"
                                         >
-                                            {authzTx?.status === 'pending' ? <CircularProgress size={25}/> : 'Grant'}
+                                            {authzTx?.status === 'pending' ? <CircularProgress size={25} /> : 'Grant'}
                                         </Button>
                                     </form>
                                 </>
