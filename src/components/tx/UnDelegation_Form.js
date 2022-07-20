@@ -5,6 +5,7 @@ import { calculateFee } from '@cosmjs/stargate'
 import { useDispatch, useSelector } from 'react-redux';
 import { createTxn, getDelegatorValidators } from '../../features/multisig/multisigSlice';
 import { Redelegate, UnDelegate } from '../../txns/proto';
+import { fee } from '../../txns/execute';
 
 const UnDelegation_Form = ({ chainInfo }) => {
     const dispatch = useDispatch();
@@ -54,7 +55,9 @@ const UnDelegation_Form = ({ chainInfo }) => {
             Number(chainInfo.config.currencies[0].coinDecimals),
         ).atomics;
 
-        const fee = calculateFee(Number(300000), '0.000003stake');
+        const feeObj = fee(chainInfo?.config.currencies[0].coinMinimalDenom,
+            chainInfo?.config?.gasPriceStep?.average,
+            300000)
 
         const msg = UnDelegate(multisigAddress?.address,
             obj?.fromValidator, amountInAtomics,
@@ -65,7 +68,7 @@ const UnDelegation_Form = ({ chainInfo }) => {
             address: multisigAddress?.address,
             chainId: chainInfo?.config?.chainId,
             msgs: [msg],
-            fee: fee,
+            fee: feeObj,
             memo: obj?.memo,
             gas: obj?.gas
         };

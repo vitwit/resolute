@@ -24,6 +24,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import SignTxn from './SignTxn';
 import BroadcastTx from './BroadcastTx';
+import { fee } from '../../txns/execute';
 
 const mapTxns = {
     '/cosmos.staking.v1beta1.MsgDelegate': 'Msg Delegate',
@@ -182,7 +183,7 @@ export default function CreateTxn({ handleNext }) {
 
     const createTransaction = ({ toAddress, amount, memo, gas }) => {
         const multisigAddress = localStorage.getItem('multisigAddress')
-            && JSON.parse(localStorage.getItem('multisigAddress')) || { }
+            && JSON.parse(localStorage.getItem('multisigAddress')) || {}
 
         const amountInAtomics = Decimal.fromUserInput(
             amount,
@@ -206,12 +207,15 @@ export default function CreateTxn({ handleNext }) {
                 value: msgSend,
             };
 
-            const fee = calculateFee(Number(100000), '0.000001stake');
+            const feeObj = fee(chainInfo?.config.currencies[0].coinMinimalDenom,
+                chainInfo?.config?.gasPriceStep?.average,
+                300000)
+            // const fee = calculateFee(Number(100000), '0.000001stake');
 
             return {
                 chainId: chainInfo?.chainId,
                 msgs: [msg],
-                fee: fee,
+                fee: feeObj,
                 memo: memo,
             };
         } else if (txType === 'delegate') {
@@ -229,12 +233,14 @@ export default function CreateTxn({ handleNext }) {
                 value: msgSend,
             };
 
-            const fee = calculateFee(Number(300000), '0.000003stake');
+            const feeObj = fee(chainInfo?.config.currencies[0].coinMinimalDenom,
+                chainInfo?.config?.gasPriceStep?.average,
+                300000)
 
             return {
                 chainId: chainInfo?.chainId,
                 msgs: [msg],
-                fee: fee,
+                fee: feeObj,
                 memo: memo,
                 gas: gas
             };
@@ -247,7 +253,7 @@ export default function CreateTxn({ handleNext }) {
         setObj({ ...obj });
     }
 
-    const handleSubmit = (e, obj={obj}) => {
+    const handleSubmit = (e, obj = { obj }) => {
         e.preventDefault();
         if (obj['validator_address']) {
             obj['toAddress'] = obj['validator_address']

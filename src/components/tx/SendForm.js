@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { connect, useDispatch, useSelector } from 'react-redux'
 import { Decimal } from "@cosmjs/math";
 import { createTxn } from '../../features/multisig/multisigSlice';
+import { fee } from '../../txns/execute';
 
 export const SendForm = ({ handleSubmit,
     chainInfo }) => {
@@ -38,13 +39,14 @@ export const SendForm = ({ handleSubmit,
             typeUrl: "/cosmos.bank.v1beta1.MsgSend",
             value: msgSend,
         };
-
-        const fee = calculateFee(Number(100000), '0.000001stake');
+        const feeObj = fee(chainInfo?.config.currencies[0].coinMinimalDenom,
+            chainInfo?.config?.gasPriceStep?.average,
+            300000)
 
         let obj = {
             chainId: chainInfo?.config?.chainId,
             msgs: [msg],
-            fee: fee,
+            fee: feeObj,
             memo: inputObj?.memo,
             address: multisigAddress?.address
         };

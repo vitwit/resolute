@@ -74,7 +74,7 @@ export function DialogCreateMultisig(props) {
         name: 'pubKey',
         value: '',
         label: 'Pubkey',
-        placeHolder: 'Add Pubkey',
+        placeHolder: 'Add Account Pubkey',
         required: true,
     };
 
@@ -170,6 +170,7 @@ export function DialogCreateMultisig(props) {
             <Dialog fullWidth maxWidth={'sm'} onClose={handleClose} open={open}>
                 <form onSubmit={handleSubmit}>
                     <DialogContent>
+                        <h3 style={{textAlign: 'center'}}>Create Mulitsig Address</h3>
                         <Grid xs={12}>
                             <TextField
                                 style={{ marginTop: 12, marginBotton: 16 }}
