@@ -3,6 +3,7 @@ import { Delegate, Redelegate, UnDelegate } from '../../txns/proto';
 import stakingService from './stakingService';
 import { signAndBroadcastAmino, fee } from '../../txns/execute';
 import { setError, setTxHash } from '../common/commonSlice';
+import { createMultisigAccount } from '../multisig/multisigService';
 
 const initialState = {
   validators: {
@@ -133,6 +134,14 @@ export const getValidators = createAsyncThunk(
   'staking/validators',
   async (data) => {
     const response = await stakingService.validtors(data.baseURL, data?.status, data.pagination);
+    return response.data;
+  }
+);
+
+export const createMultiAccount = createAsyncThunk(
+  'staking/createaMultiAccount',
+  async (data) => {
+    const response = await createMultisigAccount(data)
     return response.data;
   }
 );
@@ -314,6 +323,19 @@ export const stakeSlice = createSlice({
       })
 
 
+    builder
+      .addCase(createMultiAccount.pending, (state) => {
+        console.log('pending', state)
+        // state.createMultisigAccount.status = 'pending';
+        // state.validators.errMsg = ''
+
+      })
+      .addCase(createMultiAccount.fulfilled, (state, action) => {
+        console.log('fullfilled', state, action)
+      })
+      .addCase(createMultiAccount.rejected, (state, action) => {
+        console.log('rejecteddddddd', state, action)
+      })
   },
 });
 

@@ -10,8 +10,9 @@ import CreateTxn from './multisig/CreateTxn';
 import BroadcastTx from './multisig/BroadcastTx';
 import SignTxn from './multisig/SignTxn';
 import './common.css';
+import Tx_index from './multisig/tx/Tx_index';
 
-const steps = ['Create Multisig', 'Create Transaction', 'Sign', 'Broadcast'];
+const steps = ['Create/Select Multisig', 'Create/Sign/Broadcast Transaction'];
 
 export default function MultiSig() {
     const [activeStep, setActiveStep] = React.useState(0);
@@ -68,31 +69,9 @@ export default function MultiSig() {
                             activeStep === 0 ? <CreateMultisig handleNext={handleNext} /> : null
                         }
                         {
-                            activeStep === 1 ? <CreateTxn handleNext={handleNext} /> : null
+                            activeStep === 1 ? <Tx_index handleBack={handleBack} handleNext={handleNext} /> : null
                         }
-                        {
-                            activeStep === 2 ? <SignTxn handleNext={handleNext} /> : null
-                        }
-                        {
-                            activeStep === 3 ? <BroadcastTx handleNext={handleNext} /> : null
-                        }
-
                     </Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                        <Button
-                            color="inherit"
-                            disabled={activeStep === 0}
-                            onClick={handleBack}
-                            sx={{ mr: 1 }}
-                        >
-                            Back
-                        </Button>
-                        <Box sx={{ flex: '1 1 auto' }} />
-
-                        <Button onClick={handleNext}>
-                            {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                        </Button>
-                    </Box>
                 </Box>
             )}
         </Box>

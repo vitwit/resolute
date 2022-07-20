@@ -1,10 +1,12 @@
 import { fromBase64, toBase64 } from '@cosmjs/encoding';
 import { Button } from '@mui/material'
-import React from 'react'
+import React, {useState} from 'react'
 
 import { StargateClient, SigningStargateClient, makeMultisignedTx } from "@cosmjs/stargate";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
+import { setError } from '../../features/common/commonSlice';
+import { updateTxn } from '../../features/multisig/multisigSlice';
 
 async function getKeplrWalletAmino(chainID) {
     await window.keplr.enable(chainID);
@@ -13,58 +15,86 @@ async function getKeplrWalletAmino(chainID) {
     return [offlineSigner, accounts[0]];
 }
 
-export default function BroadcastTx() {
+export default function BroadcastTx({ tx, signatures, multisigAccount }) {
+    const dispatch = useDispatch();
+    const [load, setLoad] = useState(false);
+
     const from = useSelector((state) => state.wallet.address);
-    const signData =  JSON.parse(localStorage.getItem('sign')) || {};
-    const txInfo = localStorage.getItem('un_signed_tx') && JSON.parse(localStorage.getItem('un_signed_tx')) || {};
-    const multisig = localStorage.getItem('multisig') && JSON.parse(localStorage.getItem('multisig')) || {};
-    
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
-    
+
     const broadcastTxn = async () => {
-        const client = await SigningStargateClient.connect(chainInfo?.rpc)
+        setLoad(true);
+        const client = await SigningStargateClient.connect(chainInfo?.rpc);
         
+
         let result = await getKeplrWalletAmino(chainInfo?.chainId);
-        const bodyBytes = fromBase64(signData[from].bodyBytes);
+        const fromAccount = signatures.filter(s => s.address === from)
+
+        const bodyBytes = fromBase64(signatures[0].bodyBytes?signatures[0].bodyBytes: signatures[0].bodybytes);
 
         let currentSignatures = []
-        for (let s in signData) {
-        let obj = {
-                address: s,
-                signature: signData[s].signatures
+        signatures.map(s => {
+            let obj = {
+                address: s.address,
+                signature: s.signature
             }
 
             currentSignatures = [...currentSignatures, obj]
+        })
+
+        const multisigAcc = await client.getAccount(multisigAccount.address)
+
+        let mapData = multisigAccount.pubkeyJSON || {}
+
+        let newMapObj = {};
+        let pubkeys = [];
+
+        mapData?.value?.pubkeys.map(p => {
+            let obj = {
+                type: p?.type,
+                value: p?.value
+            }
+            pubkeys = [...pubkeys, obj];
+        })
+
+        newMapObj = {
+            type: mapData?.type,
+            value: {
+                threshold: mapData?.value?.threshold,
+                pubkeys: pubkeys
+            }
         }
 
-        const multisigAcc = await client.getAccount(multisig.address)
-
-        let mapData = JSON.parse(multisig.pubkeyJSON)
         const signedTx = makeMultisignedTx(
-            mapData,
+            newMapObj,
             multisigAcc.sequence,
-            txInfo.fee,
+            tx?.fee,
             bodyBytes,
             new Map(currentSignatures.map((s) => [s.address, fromBase64(s.signature)])),
         );
 
+        try {
+            const broadcaster = await StargateClient.connect(chainInfo?.rpc);
+            const result1 = await broadcaster.broadcastTx(
+                Uint8Array.from(TxRaw.encode(signedTx).finish()),
+            );
+            setLoad(false);
 
-        const broadcaster = await StargateClient.connect(chainInfo?.rpc);
-        const result1 = await broadcaster.broadcastTx(
-          Uint8Array.from(TxRaw.encode(signedTx).finish()),
-        );
-        console.log(result1);
+            dispatch(updateTxn(tx?._id))
 
+            console.log(result1);
+        } catch (err) {
+            setLoad(false);
+            dispatch(setError({
+                type: 'error',
+                message: err.message
+            }))
+        }
     }
 
     return (
-        <div>
-            <div><h4>BroadcastTx</h4></div>
-            <div>
-                <Button onClick={() => {
-                    broadcastTxn()
-                }}>BroadCast Txn</Button>
-            </div>
-        </div>
+        <Button variant="contained" className='pull-right' onClick={() => {
+            broadcastTxn()
+        }}>{load?'Loading...': 'BroadCast Txn'}</Button>
     )
 }

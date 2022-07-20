@@ -1,8 +1,10 @@
 import { Button } from '@mui/material'
-import React from 'react'
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { toBase64 } from '@cosmjs/encoding';
+import { createSign } from '../../features/multisig/multisigSlice';
+import { setError } from '../../features/common/commonSlice';
 
 async function getKeplrWalletAmino(chainID) {
     await window.keplr.enable(chainID);
@@ -11,63 +13,74 @@ async function getKeplrWalletAmino(chainID) {
     return [offlineSigner, accounts[0]];
 }
 
-export default function SignTxn() {
+export default function SignTxn({txId, tx: unSignedTxn, getAllSignatures }) {
+    const dispatch = useDispatch();
+    const [load, setLoad] = useState(false);
+
+    const multisigAddress = localStorage.getItem('multisigAddress') && JSON.parse(localStorage.getItem('multisigAddress'))
     const from = useSelector((state) => state.wallet.address);
+    const createSignRes = useSelector(state => state.multisig.createSignRes)
 
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
 
 
     const signTheTx = async () => {
+        setLoad(true);
         window.keplr.defaultOptions = {
             sign: {
-              preferNoSetMemo: true,
-              preferNoSetFee: true,
-              disableBalanceCheck: true,
+                preferNoSetMemo: true,
+                preferNoSetFee: true,
+                disableBalanceCheck: true,
             },
-};
+        };
         const client = await SigningStargateClient.connect(chainInfo?.rpc)
 
         let result = await getKeplrWalletAmino(chainInfo?.chainId);
         var wallet = result[0]
         const signingClient = await SigningStargateClient.offline(wallet);
 
-        let unSignedTxn = localStorage.getItem('un_signed_tx') && JSON.parse(localStorage.getItem('un_signed_tx')) || {};
-        let multisig = localStorage.getItem('multisig') && JSON.parse(localStorage.getItem('multisig')) || {};
-        const multisigAcc = await client.getAccount(multisig.address)
+        const multisigAcc = await client.getAccount(multisigAddress?.address)
 
         const signerData = {
-            accountNumber: multisigAcc.accountNumber,
+            accountNumber: multisigAcc?.accountNumber,
             sequence: multisigAcc.sequence,
             chainId: chainInfo?.chainId,
         };
 
-        const { bodyBytes, signatures } = await signingClient.sign(
-            from,
-            unSignedTxn.msgs,
-            unSignedTxn.fee,
-            unSignedTxn.memo,
-            signerData,
-        );
+        let msgs = unSignedTxn.msgs;
 
-        let obj = localStorage.getItem('sign') && JSON.parse(localStorage.getItem('sign')) || {};
-        obj[from] = {
-            bodyBytes: toBase64(bodyBytes),
-            signatures: toBase64(signatures[0])
+        try {
+            const { bodyBytes, signatures } = await signingClient.sign(
+                from,
+                msgs,
+                unSignedTxn.fee,
+                unSignedTxn.memo,
+                signerData,
+            );
+
+            let obj = {
+                address: from,
+                txId: txId,
+                multisigAddress: multisigAddress?.address,
+                bodyBytes: toBase64(bodyBytes),
+                signature: toBase64(signatures[0])
+            }
+
+            console.log('txIdddddddd', obj)
+
+            dispatch(createSign(obj))
+            setLoad(false);
+        } catch (error) {
+            setLoad(false)
+            dispatch(setError({ type: 'error', message: error.message }))
         }
-        localStorage.setItem('sign', JSON.stringify(obj));
-        console.log(signatures)
+
+
     }
 
     return (
-        <div>
-            <div>
-                <h5>Sign The Txn</h5>
-            </div>
-            <div>
-                <Button onClick={()=>{
-                    signTheTx()
-                }}>Sign the txn</Button>
-            </div>
-        </div>
+        <Button variant="contained" className='pull-right' onClick={() => {
+            signTheTx()
+        }}>{load ? 'Loading...' : 'Sign the txn'}</Button>
     )
 }

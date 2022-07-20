@@ -4,19 +4,24 @@ export const createMultiSig = async (pubKeysArr, threshold, addressPrefix, chain
     const pubkeys = pubKeysArr.map((compressedPubkey) => {
         return {
             type: "tendermint/PubKeySecp256k1",
-            value: compressedPubkey,
+            value: compressedPubkey
         };
     });
 
     const multisigPubkey = createMultisigThresholdPubkey(pubkeys, Number(threshold));
     const multisigAddress = pubkeyToAddress(multisigPubkey, addressPrefix);
 
+    multisigPubkey.value.pubkeys = multisigPubkey.value.pubkeys.map(pubkey=>{
+        pubkey.address = pubkeyToAddress(pubkey, addressPrefix)
+        return pubkey
+    }) 
+
     // save multisig to fauna
     const multisig = {
         address: multisigAddress,
-        pubkeyJSON: JSON.stringify(multisigPubkey),
+        pubkeyJSON: multisigPubkey,
         chainId,
     };
 
-    localStorage.setItem('multisig', JSON.stringify(multisig))
+    return multisig
 }

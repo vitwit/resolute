@@ -63,6 +63,10 @@
         float: right;       
 }
 
+.pull-right{
+        float: right;
+}
+
 .m-20 {
         margin: 20px;
 }
