@@ -47,7 +47,7 @@ export default function Overview() {
     useEffect(() => {
         if (selectedAuthz.granter.length > 0) {
             fetchDetails(selectedAuthz.granter);
-        } else {
+        } else if (address?.length > 0){
             fetchDetails(address);
         }
     }, [selectedAuthz]);
