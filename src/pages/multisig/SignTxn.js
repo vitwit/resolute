@@ -33,9 +33,9 @@ export default function SignTxn({txId, tx: unSignedTxn, getAllSignatures }) {
                 disableBalanceCheck: true,
             },
         };
-        const client = await SigningStargateClient.connect(chainInfo?.rpc)
+        const client = await SigningStargateClient.connect(chainInfo?.config?.rpc)
 
-        let result = await getKeplrWalletAmino(chainInfo?.chainId);
+        let result = await getKeplrWalletAmino(chainInfo?.config?.chainId);
         var wallet = result[0]
         const signingClient = await SigningStargateClient.offline(wallet);
 
@@ -44,7 +44,7 @@ export default function SignTxn({txId, tx: unSignedTxn, getAllSignatures }) {
         const signerData = {
             accountNumber: multisigAcc?.accountNumber,
             sequence: multisigAcc.sequence,
-            chainId: chainInfo?.chainId,
+            chainId: chainInfo?.config?.chainId,
         };
 
         let msgs = unSignedTxn.msgs;
@@ -79,8 +79,8 @@ export default function SignTxn({txId, tx: unSignedTxn, getAllSignatures }) {
     }
 
     return (
-        <Button variant="contained" className='pull-right' onClick={() => {
+        <Button variant="contained" disableElevation className='pull-right' onClick={() => {
             signTheTx()
-        }}>{load ? 'Loading...' : 'Sign the txn'}</Button>
+        }}>{load ? 'Loading...' : 'Sign'}</Button>
     )
 }

@@ -9,6 +9,8 @@ import { Redelegate, UnDelegate } from '../../txns/proto';
 const UnDelegation_Form = ({ chainInfo }) => {
     const dispatch = useDispatch();
 
+    const currency = chainInfo.config.currencies[0];
+
     const multisigAddress = localStorage.getItem('multisigAddress')
         && JSON.parse(localStorage.getItem('multisigAddress')) || {}
 
@@ -49,19 +51,19 @@ const UnDelegation_Form = ({ chainInfo }) => {
 
         const amountInAtomics = Decimal.fromUserInput(
             obj?.amount,
-            Number(chainInfo.currencies[0].coinDecimals),
+            Number(chainInfo.config.currencies[0].coinDecimals),
         ).atomics;
 
         const fee = calculateFee(Number(300000), '0.000003stake');
 
         const msg = UnDelegate(multisigAddress?.address,
             obj?.fromValidator, amountInAtomics,
-            chainInfo.currencies[0].coinMinimalDenom);
+            chainInfo.config.currencies[0].coinMinimalDenom);
 
 
         let delegationObj = {
             address: multisigAddress?.address,
-            chainId: chainInfo?.chainId,
+            chainId: chainInfo?.config?.chainId,
             msgs: [msg],
             fee: fee,
             memo: obj?.memo,
@@ -107,7 +109,7 @@ const UnDelegation_Form = ({ chainInfo }) => {
 
     useEffect(() => {
         let address = multisigAddress?.address;
-        let lcdUrl = chainInfo?.lcd;
+        let lcdUrl = chainInfo?.config?.rest;
         dispatch(getDelegatorValidators({ lcdUrl, delegatorAddress: address }))
     }, [])
 
@@ -139,6 +141,10 @@ const UnDelegation_Form = ({ chainInfo }) => {
                 label="Amount"
                 fullWidth
                 style={{ marginTop: 8, marginBottom: 8 }}
+                InputProps={{
+                    endAdornment:
+                        <InputAdornment position="start">{currency?.coinDenom}</InputAdornment>,
+                }}
             />
             <TextField
                 name="gas" value={obj.gas} onChange={handleChange}

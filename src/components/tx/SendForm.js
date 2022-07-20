@@ -13,13 +13,14 @@ export const SendForm = ({ handleSubmit,
         && JSON.parse(localStorage.getItem('multisigAddress')) || {}
 
     const [inputObj, setInputObj] = useState({});
+    const currency = chainInfo.config.currencies[0];
 
     const handleSubmit1 = (e) => {
         e.preventDefault();
 
         const amountInAtomics = Decimal.fromUserInput(
             inputObj?.amount,
-            Number(chainInfo.currencies[0].coinDecimals),
+            Number(chainInfo.config.currencies[0].coinDecimals),
         ).atomics;
 
         const msgSend = {
@@ -28,7 +29,7 @@ export const SendForm = ({ handleSubmit,
             amount: [
                 {
                     amount: amountInAtomics,
-                    denom: chainInfo.currencies[0].coinMinimalDenom,
+                    denom: chainInfo.config.currencies[0].coinMinimalDenom,
                 },
             ],
         };
@@ -41,7 +42,7 @@ export const SendForm = ({ handleSubmit,
         const fee = calculateFee(Number(100000), '0.000001stake');
 
         let obj = {
-            chainId: chainInfo?.chainId,
+            chainId: chainInfo?.config?.chainId,
             msgs: [msg],
             fee: fee,
             memo: inputObj?.memo,
@@ -71,6 +72,10 @@ export const SendForm = ({ handleSubmit,
                 label="Amount"
                 fullWidth
                 style={{ marginTop: 8, marginBottom: 8 }}
+                InputProps={{
+                    endAdornment:
+                        <InputAdornment position="start">{currency?.coinDenom}</InputAdornment>,
+                }}
             />
             <TextField
                 name="gas" value={inputObj.gas} onChange={handleChange}

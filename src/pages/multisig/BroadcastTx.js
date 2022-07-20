@@ -24,10 +24,10 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
 
     const broadcastTxn = async () => {
         setLoad(true);
-        const client = await SigningStargateClient.connect(chainInfo?.rpc);
+        const client = await SigningStargateClient.connect(chainInfo?.config?.rpc);
         
 
-        let result = await getKeplrWalletAmino(chainInfo?.chainId);
+        let result = await getKeplrWalletAmino(chainInfo?.config?.chainId);
         const fromAccount = signatures.filter(s => s.address === from)
 
         const bodyBytes = fromBase64(signatures[0].bodyBytes?signatures[0].bodyBytes: signatures[0].bodybytes);
@@ -74,7 +74,7 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
         );
 
         try {
-            const broadcaster = await StargateClient.connect(chainInfo?.rpc);
+            const broadcaster = await StargateClient.connect(chainInfo?.config?.rpc);
             const result1 = await broadcaster.broadcastTx(
                 Uint8Array.from(TxRaw.encode(signedTx).finish()),
             );
@@ -93,8 +93,8 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
     }
 
     return (
-        <Button variant="contained" className='pull-right' onClick={() => {
+        <Button variant="contained" disableElevation className='pull-right' onClick={() => {
             broadcastTxn()
-        }}>{load?'Loading...': 'BroadCast Txn'}</Button>
+        }}>{load?'Loading...': 'BroadCast'}</Button>
     )
 }

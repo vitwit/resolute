@@ -75,8 +75,8 @@ export const updateTxn = createAsyncThunk(
 
 export const getTxns = createAsyncThunk(
     'multisig/getTxns',
-    async (address) => {
-        const response = await fetchTransactins(address);
+    async ({address, status}) => {
+        const response = await fetchTransactins(address, status);
         return response.data;
     }
 );
@@ -218,6 +218,17 @@ export const multiSlice = createSlice({
             })
             .addCase(updateTxn.rejected, (state, action) => {
                 state.updateTxn.status = 'rejected'
+            })
+
+        builder
+            .addCase(createSign.pending, (state) => {
+                state.createSignRes.status = 'pending'
+            })
+            .addCase(createSign.fulfilled, (state, action) => {
+                state.createSignRes = action.payload;
+            })
+            .addCase(createSign.rejected, (state, action) => {
+                state.createSignRes.status = 'rejected'
             })
     }
 })

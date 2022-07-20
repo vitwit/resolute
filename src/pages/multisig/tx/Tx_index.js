@@ -30,18 +30,18 @@ export const Tx_index = ({ }) => {
     useEffect(() => {
         if (connected) {
             dispatch(getBalance({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 address: address,
-                denom: chainInfo?.currencies[0].coinMinimalDenom
+                denom: chainInfo?.config?.currencies[0].coinMinimalDenom
             }))
 
             dispatch(getValidators({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 status: null,
             }))
 
             dispatch(getDelegations({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 address: address,
             }))
         }

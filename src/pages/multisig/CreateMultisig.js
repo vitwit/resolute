@@ -30,7 +30,8 @@ export default function CreateMultisig({ handleNext }) {
     const accounts = multisigAccounts.data && multisigAccounts.data.data || []
     const walletAddress = useSelector((state) => state.wallet.address);
 
-    const { chainId, config } = chainInfo;
+    const { config } = chainInfo;
+    const { chainId } = config;
     const addressPrefix = config?.bech32Config?.bech32PrefixAccAddr;
 
     useEffect(() => {
@@ -108,11 +109,16 @@ export default function CreateMultisig({ handleNext }) {
                                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                 >
                                                     <TableCell>
-                                                        <a
+                                                        <a onClick={() => {
+                                                            localStorage.setItem('multisigAddress', JSON.stringify(row))
+                                                        }}
                                                             href={`/multisig/${row.address}/txs`}>{row?.name}</a>
                                                     </TableCell>
                                                     <TableCell component="th" scope="row">
                                                         <a
+                                                            onClick={() => {
+                                                                localStorage.setItem('multisigAddress', JSON.stringify(row))
+                                                            }}
                                                             href={`/multisig/${row.address}/txs`}> {row?.address}</a>
                                                     </TableCell>
                                                     <TableCell align="center">{row?.pubkeyjson?.value?.threshold || 0}</TableCell>

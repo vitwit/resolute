@@ -8,6 +8,7 @@ import { createTxn } from '../../features/multisig/multisigSlice';
 
 const Delegation_Form = ({chainInfo}) => {
     const dispatch = useDispatch();
+    const currency = chainInfo.config.currencies[0];
 
     const multisigAddress = localStorage.getItem('multisigAddress')
         && JSON.parse(localStorage.getItem('multisigAddress')) || {}
@@ -30,7 +31,7 @@ const Delegation_Form = ({chainInfo}) => {
 
         const amountInAtomics = Decimal.fromUserInput(
             obj?.amount,
-            Number(chainInfo.currencies[0].coinDecimals),
+            Number(chainInfo.config.currencies[0].coinDecimals),
         ).atomics;
 
         const msgSend = {
@@ -38,7 +39,7 @@ const Delegation_Form = ({chainInfo}) => {
             validatorAddress: obj?.validator_address,
             amount: {
                 amount: amountInAtomics,
-                denom: chainInfo.currencies[0].coinMinimalDenom,
+                denom: chainInfo.config.currencies[0].coinMinimalDenom,
             },
         };
 
@@ -51,7 +52,7 @@ const Delegation_Form = ({chainInfo}) => {
 
         let delegationObj =  {
             address: multisigAddress?.address,
-            chainId: chainInfo?.chainId,
+            chainId: chainInfo?.config?.chainId,
             msgs: [msg],
             fee: fee,
             memo: obj?.memo,
@@ -112,6 +113,10 @@ const Delegation_Form = ({chainInfo}) => {
                 label="Amount"
                 fullWidth
                 style={{ marginTop: 8, marginBottom: 8 }}
+                InputProps={{
+                    endAdornment:
+                        <InputAdornment position="start">{currency?.coinDenom}</InputAdornment>,
+                }}
             />
             <TextField
                 name="gas" value={obj.gas} onChange={handleChange}

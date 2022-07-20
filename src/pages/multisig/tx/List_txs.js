@@ -2,11 +2,12 @@ import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
     IconButton, Table, TableBody, Paper,
-    TableCell, TableContainer, TableRow, TableHead, CircularProgress
+    TableCell, TableContainer, TableRow, TableHead, CircularProgress, Button
 } from '@mui/material'
 import Collapse from '@mui/material/Collapse';
 import { Box } from '@mui/system';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import ButtonGroup from '@mui/material/ButtonGroup';
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchSingleMultiAccount, getSigns, getTxns } from '../../../features/multisig/multisigSlice';
 import BroadcastTx from '../BroadcastTx';
@@ -15,12 +16,14 @@ import InfoIcon from '@mui/icons-material/Info';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchMultisigAccount } from '../../../features/multisig/multisigService';
+import { shortenAddress } from '../../../utils/util';
+import { parseTokens } from '../../../utils/denom';
 
 const mapTxns = {
-    '/cosmos.staking.v1beta1.MsgDelegate': 'Msg Delegate',
-    '/cosmos.bank.v1beta1.MsgSend': 'Msg Send',
-    '/cosmos.staking.v1beta1.MsgBeginRedelegate': 'Msg Re-Delegate',
-    '/cosmos.staking.v1beta1.MsgUndelegate': 'Msg Un-Delegate',
+    '/cosmos.staking.v1beta1.MsgDelegate': 'Delegate',
+    '/cosmos.bank.v1beta1.MsgSend': 'Send',
+    '/cosmos.staking.v1beta1.MsgBeginRedelegate': 'Re-Delegate',
+    '/cosmos.staking.v1beta1.MsgUndelegate': 'Un-Delegate',
     'Msg': 'Tx Msg'
 }
 
@@ -65,6 +68,15 @@ const TableRowComponent = ({ tx }) => {
         else return false
     }
 
+
+    const wallet = useSelector((state) => state.wallet);
+    const { chainInfo } = wallet;
+
+    const displayDenom = (amountObj) => {
+        return parseTokens(amountObj, chainInfo?.config?.currencies[0].coinDenom,
+            chainInfo?.config?.currencies[0].coinDecimals)
+    }
+
     return (
         <>
             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
@@ -74,50 +86,85 @@ const TableRowComponent = ({ tx }) => {
                             <>
                                 {
                                     msg.typeUrl === '/cosmos.bank.v1beta1.MsgSend' ?
-                                        <span>
-                                            <p style={{ textAlign: 'center' }}>{mapTxns[msg?.typeUrl]}</p>
-                                            <p style={{ textAlign: 'center' }}>
+                                        <p>
+
+                                            <p>
+                                                {mapTxns[msg?.typeUrl]} &nbsp;
                                                 <strong>
-                                                    {msg?.value?.amount[0].amount + ' ' +
-                                                        msg?.value?.amount[0].denom
-                                                    }</strong>
+                                                    {
+                                                        displayDenom(msg?.value?.amount)
+                                                    }
+                                                </strong>
+
+                                                &nbsp;To&nbsp; <strong> {
+                                                    shortenAddress(msg?.value?.toAddress, 27)
+                                                }</strong>
                                             </p>
-                                            <p style={{ textAlign: 'center' }}>
-                                                {msg?.value?.fromAddress.substring(0, 10) + '....'}
-                                                {msg?.value?.fromAddress.substring(msg?.value?.fromAddress.length - 30, 5)}
-                                                <ArrowRightAltIcon style={{
-                                                    width: 100
-                                                }} />  {
-                                                    msg?.value?.toAddress.substring(0, 10) + '....'
-                                                }
-                                                {
-                                                    msg?.value?.toAddress.substring(msg?.value?.toAddress.length - 30, 5)
-                                                }
-                                            </p>
-                                        </span> : null
+                                        </p> : null
                                 }
 
                                 {
                                     msg.typeUrl === '/cosmos.staking.v1beta1.MsgDelegate' ?
                                         <span>
-                                            <p style={{ textAlign: 'center' }}>{mapTxns[msg?.typeUrl]}</p>
-                                            <p style={{ textAlign: 'center' }}>
+                                            <p >
+                                                {mapTxns[msg?.typeUrl]} <strong>
+                                                    {
+                                                        displayDenom(msg?.value?.amount)
+                                                    }
+                                                </strong>
+                                                &nbsp; To &nbsp;
                                                 <strong>
-                                                    {msg?.value?.amount?.amount + ' ' +
-                                                        msg?.value?.amount?.denom
-                                                    }</strong>
+                                                    {
+                                                        shortenAddress(msg?.value?.validatorAddress, 27)
+                                                    }
+                                                </strong>
+
                                             </p>
-                                            <p style={{ textAlign: 'center' }}>
-                                                {msg?.value?.delegatorAddress.substring(0, 10) + '....'}
-                                                {msg?.value?.delegatorAddress.substring(msg?.value?.delegatorAddress.length - 30, 5)}
-                                                <ArrowRightAltIcon style={{
-                                                    width: 100
-                                                }} />  {
-                                                    msg?.value?.validatorAddress.substring(0, 10) + '....'
-                                                }
-                                                {
-                                                    msg?.value?.validatorAddress.substring(msg?.value?.validatorAddress.length - 30, 5)
-                                                }
+                                        </span> : null
+                                }
+
+                                {
+                                    msg.typeUrl === '/cosmos.staking.v1beta1.MsgUndelegate' ?
+                                        <span>
+                                            <p >
+                                                {mapTxns[msg?.typeUrl]} <strong>
+                                                    {
+                                                        displayDenom(msg?.value?.amount)
+                                                    }</strong>
+                                                &nbsp; From &nbsp;
+                                                <strong>
+                                                    {
+                                                        shortenAddress(msg?.value?.validatorAddress, 27)
+                                                    }
+                                                </strong>
+                                            </p>
+                                        </span> : null
+                                }
+
+                                {
+                                    msg.typeUrl === '/cosmos.staking.v1beta1.MsgBeginRedelegate' ?
+                                        <span>
+                                            <p>
+                                                {mapTxns[msg?.typeUrl]} &nbsp;
+                                                <strong>
+                                                    {
+                                                        displayDenom(msg?.value?.amount)
+                                                    }</strong>
+                                                &nbsp;
+                                                <p>
+                                                    From &nbsp;
+                                                    <strong>
+                                                        {
+                                                            shortenAddress(msg?.value?.validatorSrcAddress, 27)
+                                                        }
+                                                    </strong>
+                                                    &nbsp; To &nbsp;
+                                                    <strong>
+                                                        {
+                                                            shortenAddress(msg?.value?.validatorDstAddress, 27)
+                                                        }
+                                                    </strong>
+                                                </p>
                                             </p>
                                         </span> : null
                                 }
@@ -127,8 +174,8 @@ const TableRowComponent = ({ tx }) => {
                 </TableCell>
                 <TableCell>
                     {
-                        tx?.signatures.length
-                    }
+                        tx?.signatures.length || 0
+                    }/{threshold}
                 </TableCell>
                 <TableCell align='right'>
                     {
@@ -191,23 +238,24 @@ function List_txs({ address }) {
     const dispatch = useDispatch();
     const txns = useSelector(state => state.multisig.txns?.data?.data || []);
     const walletAddress = useSelector((state) => state.wallet.address);
-    const createTxRes = useSelector(state => state.multisig.createTxnRes)
+    const createTxRes = useSelector(state => state.multisig.createTxnRes);
+    const [isHistory, setIsHistory] = useState(false);
 
     const createSignRes = useSelector(state => state.multisig.createSignRes)
     const updateTxnStatus = useSelector(state => state.multisig.updateTxn)
 
 
-    const getAllTxns = () => {
-        dispatch(getTxns(address))
+    const getAllTxns = (status) => {
+        dispatch(getTxns({ address, status }))
     }
 
     useEffect(() => {
-        dispatch(getTxns(address))
+        getAllTxns('current')
+        // dispatch(getTxns(address, status))
     }, [updateTxnStatus])
 
 
     useEffect(() => {
-        console.log('create sign ressssssssss', createSignRes)
         getAllTxns();
     }, [createSignRes])
 
@@ -237,6 +285,20 @@ function List_txs({ address }) {
                     txns?.status === 'pending' ?
                         <CircularProgress size={40} /> : null
                 }
+            </Box>
+
+            <Box style={{ display: 'flex' }}>
+                <ButtonGroup variant="outlined" aria-label="outlined button group">
+                    <Button variant={isHistory ? 'contained' : 'outlined'} onClick={() => {
+                        getAllTxns('history')
+                        setIsHistory(true)
+                    }}>History</Button>
+                    <Button variant={isHistory ? 'outlined' : 'contained'} onClick={() => {
+                        getAllTxns('current')
+                        setIsHistory(false)
+                    }}>Current</Button>
+                </ButtonGroup>
+
             </Box>
 
             <Table aria-label="collapsible table">
