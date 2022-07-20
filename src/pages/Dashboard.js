@@ -29,6 +29,8 @@ import AppDrawer from '../components/AppDrawer';
 import { Alert } from '../components/Alert';
 import { getPallet, isDarkMode, mdTheme } from '../utils/theme';
 import { isConnected, logout } from '../utils/localStorage';
+import { Paper, Typography } from '@mui/material';
+import { exitAuthzMode } from '../features/authz/authzSlice';
 
 function DashboardContent(props) {
     const [snackOpen, setSnackOpen] = useState(false);
@@ -49,6 +51,7 @@ function DashboardContent(props) {
     const showTxSnack = (value) => {
         setSnackTxClose(value);
     }
+    const selectedAuthz = useSelector((state) => state.authz.selected);
 
     const [selectedNetwork, setSelectedNetwork] = useState(props.selectedNetwork);
     const changeNetwork = (network) => {
@@ -115,6 +118,9 @@ function DashboardContent(props) {
 
     function disconnectWallet() {
         logout();
+        if (selectedAuthz.granter.length > 0) {
+            dispatch(exitAuthzMode());
+        }
         dispatch(resetWallet());
     }
 
@@ -150,19 +156,26 @@ function DashboardContent(props) {
     }
 
 
+
+
     return (
         <ThemeProvider theme={mdTheme(darkMode, pallet.primary, pallet.secondary)}>
             {
                 chainInfo?.config ?
                     <>
+                        <CustomAppBar
+                            selectedNetwork={selectedNetwork}
+                            onNetworkChange={(network) => handleNetworkChange(network)}
+                            darkMode={darkMode}
+                            onModeChange={() => onModeChange()}
+                            onExit={() => {
+                                dispatch(exitAuthzMode())
+                                setTimeout(() => {
+                                    navigateTo("/")
+                                }, 400)
+                            }}
+                        />
                         <Box sx={{ display: 'flex' }}>
-                            <CssBaseline />
-                            <CustomAppBar
-                                selectedNetwork={selectedNetwork}
-                                onNetworkChange={(network) => handleNetworkChange(network)}
-                                darkMode={darkMode}
-                                onModeChange={() => onModeChange()}
-                            />                
                             <AppDrawer
                                 balance={balance}
                                 chainInfo={chainInfo}
@@ -172,6 +185,7 @@ function DashboardContent(props) {
                                 selectedNetwork={selectedNetwork}
                                 wallet={wallet}
                                 onCopy={copyToClipboard}
+                                selectedAuthz={selectedAuthz}
                             />
                             <Box
                                 component="main"
@@ -185,7 +199,16 @@ function DashboardContent(props) {
                                     overflow: 'auto',
                                 }}
                             >
-                                <Toolbar />
+                                {
+                                    selectedAuthz.granter.length > 0
+                                        ?
+                                        <>
+                                            <Toolbar />
+                                            <Toolbar />
+                                        </>
+                                        :
+                                        <Toolbar />
+                                }
                                 <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                                     <Routes>
                                         <Route path="/" element={
@@ -230,6 +253,7 @@ function DashboardContent(props) {
                                 </Container>
                             </Box>
                         </Box>
+                        <Footer />
 
                     </>
                     :
@@ -293,5 +317,33 @@ export default function Dashboard() {
                 :
                 <></>
         )
+    );
+}
+
+
+const Footer = () => {
+    return (
+        <Paper elevation={0} className='footer'
+            sx={{
+                borderRadius: 0,
+                p: 0.5
+            }}
+        >
+            <Typography component='span' variant='caption' color='text.secondary'>
+                Designed & Developed By
+            </Typography>
+            <Typography
+                component='span'
+                variant='caption'
+                fontWeight={600}
+                color='text.primary'
+                className='footer-link'
+                onClick={() => {
+                    window.open('https://vitwit.com', '_blank')
+                }}
+            >
+                &nbsp;Vitwit
+            </Typography>
+        </Paper>
     );
 }

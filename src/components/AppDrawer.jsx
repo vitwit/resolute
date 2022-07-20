@@ -6,7 +6,6 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip'
-import Link from '@mui/material/Link'
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import ContentCopyOutlined from '@mui/icons-material/ContentCopyOutlined';
@@ -34,7 +33,16 @@ export default function AppDrawer(props) {
                 [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', scrollbarWidth: 'none' },
             }}
         >
-            <Toolbar />
+            {
+                props.selectedAuthz.granter.length > 0 ?
+                    <>
+                        <Toolbar />
+                        <Toolbar />
+                    </>
+                    :
+                    <Toolbar />
+            }
+
             <List>
                 {
                     wallet.connected ?
@@ -145,42 +153,6 @@ export default function AppDrawer(props) {
                         (path) => { onNavigate(path) }, selectedNetwork?.showAirdrop)
                 }
             </List>
-            <List
-                style={{ marginTop: 'auto', flexDirection: 'row' }}
-            >
-                <ListItem
-                    style={{ justifyContent: 'center' }}
-                >
-                    <Typography
-                        color='text.secondary'
-                        variant='caption'
-                    >
-                        Designed & Developed By
-                    </Typography>
-                </ListItem>
-                <ListItem
-                    style={{ justifyContent: 'center' }}
-                    sx={{
-                        p: 0,
-                        pb: 1,
-                    }}
-                >
-                    <img
-                        src='./logo-only.png'
-                        width={25}
-                        height={18}
-                    />
-                    &nbsp;
-                    <Link
-                        style={{ textDecoration: 'none' }}
-                        target="_blank"
-                        href='https://vitwit.com'
-                    >
-                        Vitwit.com
-                    </Link>
-
-                </ListItem>
-            </List>
         </Drawer>
     );
 }
@@ -194,4 +166,5 @@ AppDrawer.propTypes = {
     balance: PropTypes.object.isRequired,
     chainInfo: PropTypes.object.isRequired,
     onCopy: PropTypes.func.isRequired,
+    selectedAuthz: PropTypes.object.isRequired,
 }
