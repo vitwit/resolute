@@ -45,7 +45,8 @@ export function CustomAppBar(props) {
                     <Toolbar
                     variant="dense"
                     sx={{
-                        minHeight: 32
+                        minHeight: 32,
+                        backgroundImage: 'linear-gradient(to right, rgb(36 133 40), rgb(4 143 34), rgb(2 120 25), rgb(7 143 4), rgb(9 191 40))'
                     }}
                     >
                         <Typography

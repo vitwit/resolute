@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PeriodicFeegrant } from '../components/PeriodicFeeGrant';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
+import { resetError, setError } from '../features/common/commonSlice';
 
 export default function NewFeegrant() {
     const address = useSelector((state) => state.wallet.address);
@@ -74,9 +75,18 @@ export default function NewFeegrant() {
     const selectedAuthz = useSelector((state) => state.authz.selected);
     useEffect(() => {
         if (selectedAuthz.granter.length > 0) {
-            alert("Not allowed in Authz mode");
-            navigateTo("/");
-        }
+            dispatch(setError({
+              type: 'error',
+              message: 'Not supported in Authz mode'
+            }))
+            setTimeout(() => {
+              navigateTo("/");
+            },1000);
+          }
+
+          return () => {
+            dispatch(resetError());
+          }
     }, []);
 
     return (

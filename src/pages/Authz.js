@@ -106,11 +106,18 @@ export default function Authz() {
   const selectedAuthz = useSelector((state) => state.authz.selected);
   useEffect(() => {
     if (selectedAuthz.granter.length > 0) {
-      alert("Not allowed in Authz mode");
-      navigateTo("/")
+      dispatch(setError({
+        type: 'error',
+        message: 'Not supported in Authz mode'
+      }))
+      setTimeout(() => {
+        navigateTo("/");
+      }, 1000);
     }
-    dispatch(resetError())
-    dispatch(resetTxHash())
+    return () => {
+      dispatch(resetError())
+      dispatch(resetTxHash())
+    }
   }, []);
 
   const onExecSend = (data) => {

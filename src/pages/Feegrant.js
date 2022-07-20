@@ -69,8 +69,13 @@ export default function Feegrant() {
   const selectedAuthz = useSelector((state) => state.authz.selected);
   useEffect(() => {
     if (selectedAuthz.granter.length > 0) {
-      alert("Not allowed in Authz mode");
-      navigateTo("/");
+      dispatch(setError({
+        type: 'error',
+        message: 'Not supported in Authz mode'
+      }))
+      setTimeout(() => {
+        navigateTo("/");
+      },1000);
     }
     return () => {
       dispatch(resetAlerts())
