@@ -12,11 +12,6 @@ import Checkbox from '@mui/material/Checkbox';
 import { useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import Alert from '@mui/material/Alert';
-import { shortenAddress } from '../utils/util';
 
 export default function VoteDialog(props) {
     const [option, setOption] = React.useState('')
@@ -24,22 +19,16 @@ export default function VoteDialog(props) {
     const authzExecTx = useSelector((state) => state.authz.execTx);
 
     const handleClose = () => {
-        setGranter('');
         setOption('');
         props.closeDialog(true);
     };
 
     const handleVote = () => {
-        props.onVote(option, granter);
+        props.onVote(option);
     }
 
     const handleChange = (e) => {
         setOption(e.target.value);
-    }
-
-    const [granter, setGranter] = React.useState('');
-    const handleGranterChange = (g) => {
-        setGranter(g?.granter)
     }
 
     return (
@@ -51,52 +40,6 @@ export default function VoteDialog(props) {
                 <DialogTitle>Vote</DialogTitle>
                 <DialogContent>
                     <Box>
-                        {
-                            props.grants?.length > 0
-                                ?
-                                <Box sx={{ display: 'flex', flexDirection: 'column', m: 3 }} >
-                                    <Typography
-                                        variant='body1'
-                                        color='text.primary'
-                                        fontWeight={700}
-                                        gutterBottom
-                                    >
-                                        Authz available
-                                    </Typography>
-                                    <FormControl
-
-                                        component="fieldset"
-                                        variant="standard"
-                                    >
-                                        <InputLabel id="demo-simple-select-label">Select Granter</InputLabel>
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={granter}
-                                            label="Granter"
-                                            onChange={() => { }}
-                                        >
-                                            {
-                                                props.grants.map((item, index) =>
-                                                (
-                                                    <MenuItem
-                                                        key={index}
-                                                        id={index}
-                                                        value={item.granter}
-                                                        onClick={() => handleGranterChange(item)}
-                                                    >
-                                                        {item.granter}
-                                                    </MenuItem>
-                                                )
-                                                )
-                                            }
-                                        </Select>
-
-                                    </FormControl>
-                                </Box>
-                                :
-                                <></>
-                        }
                         <FormControl
                             required
                             component="fieldset"
@@ -138,14 +81,6 @@ export default function VoteDialog(props) {
                                 />
                             </FormGroup>
                         </FormControl>
-                        {
-                            granter.length > 0 ?
-                                <Alert severity='info'>
-                                    You are voting on behalf of <b>{shortenAddress(granter, 21)}</b>
-                                </Alert>
-                                :
-                                <></>
-                        }
                     </Box>
                 </DialogContent>
                 <DialogActions>

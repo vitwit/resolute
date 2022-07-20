@@ -82,7 +82,7 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "GENERATE_SOURCEMAP=true node scripts/start.js",
+    "start": "node scripts/start.js",
     "build": "GENERATE_SOURCEMAP=false CI=false node scripts/build.js",
     "test": "node scripts/test.js"
   },
@@ -158,6 +158,7 @@
     ]
   },
   "devDependencies": {
+    "jest": "^28.1.1",
     "webpack-bundle-analyzer": "^4.5.0"
   },
   "resolutions": {

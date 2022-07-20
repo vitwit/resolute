@@ -1,8 +1,6 @@
 import Grid from '@mui/material/Grid';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Button from '@mui/material/Button';
 import React, { useState, useMemo, useEffect } from 'react';
-import { filterSendFromAuthz } from '../utils/authorizations';
+import { getSendAuthz } from '../utils/authorizations';
 import { useDispatch, useSelector } from 'react-redux';
 import { authzExecHelper, getGrantsToMe } from '../features/authz/authzSlice';
 import {
@@ -11,10 +9,9 @@ import {
 import { getBalance, txBankSend } from '../features/bank/bankSlice';
 import Send from '../components/Send';
 import { totalBalance } from '../utils/denom';
-import AuthzSend from '../components/AuthzSend';
+import Alert from '@mui/material/Alert';
 
 export default function SendPage() {
-    const [activeTab, setActiveTab] = useState('send');
     const [available, setBalance] = useState(0);
 
     const from = useSelector((state) => state.wallet.address);
@@ -26,7 +23,9 @@ export default function SendPage() {
     const authzExecTx = useSelector((state) => state.authz.execTx);
     const grantsToMe = useSelector((state) => state.authz.grantsToMe);
 
-    const authzSends = useMemo(() => filterSendFromAuthz(grantsToMe.grants), [grantsToMe.grants]);
+    const selectedAuthz = useSelector((state) => state.authz.selected);
+
+    const authzSend = useMemo(() => getSendAuthz(grantsToMe.grants, selectedAuthz.granter), [grantsToMe.grants]);
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -36,11 +35,19 @@ export default function SendPage() {
 
     useEffect(() => {
         if (chainInfo.config.currencies.length > 0 && address.length > 0) {
-            dispatch(getBalance({
-                baseURL: chainInfo.config.rest,
-                address: address,
-                denom: currency.coinMinimalDenom
-            }))
+            if (selectedAuthz.granter.length === 0) {
+                dispatch(getBalance({
+                    baseURL: chainInfo.config.rest,
+                    address: address,
+                    denom: currency.coinMinimalDenom
+                }))
+            } else {
+                dispatch(getBalance({
+                    baseURL: chainInfo.config.rest,
+                    address: selectedAuthz.granter,
+                    denom: currency.coinMinimalDenom
+                }))
+            }
 
             dispatch(getGrantsToMe({
                 baseURL: chainInfo.config.rest,
@@ -55,80 +62,61 @@ export default function SendPage() {
 
     const onSendTx = (data) => {
         const amount = Number(data.amount);
-        if (Number(balance) < (amount + Number(25000 / (10 ** currency.coinDecimals)))) {
-            dispatch(setError({
-                type: 'error',
-                message: 'Not enough balance'
-            }))
+        if (selectedAuthz.granter.length === 0) {
+            if (Number(balance) < (amount + Number(25000 / (10 ** currency.coinDecimals)))) {
+                dispatch(setError({
+                    type: 'error',
+                    message: 'Not enough balance'
+                }))
+            } else {
+                dispatch(txBankSend({
+                    from: from,
+                    to: data.to,
+                    amount: amount,
+                    denom: currency.coinMinimalDenom,
+                    chainId: chainInfo.config.chainId,
+                    rpc: chainInfo.config.rpc,
+                    feeAmount: chainInfo.config.gasPriceStep.average,
+                }))
+            }
         } else {
-            dispatch(txBankSend({
-                from: from,
-                to: data.to,
+            authzExecHelper(dispatch, {
+                type: "send",
+                from: address,
+                granter: selectedAuthz.granter,
+                recipient: data.to,
                 amount: amount,
                 denom: currency.coinMinimalDenom,
                 chainId: chainInfo.config.chainId,
                 rpc: chainInfo.config.rpc,
                 feeAmount: chainInfo.config.gasPriceStep.average,
-            }))
+            })
         }
     }
 
-    const onSendExec = (data) => {
-        const amount = Number(data.amount);
-        authzExecHelper(dispatch, {
-            type: "send",
-            from: address,
-            granter: data.granter,
-            recipient: data.to,
-            amount: amount,
-            denom: currency.coinMinimalDenom,
-            chainId: chainInfo.config.chainId,
-            rpc: chainInfo.config.rpc,
-            feeAmount: chainInfo.config.gasPriceStep.average,
-        })
-
-    }
-
-
     return (
         <>
-            <ButtonGroup variant="outlined" aria-label="outlined button group">
-                <Button
-                    onClick={() => setActiveTab("send")}
-                    variant={activeTab === "send" ? "contained" : "outlined"}
-                >Send</Button>
-                <Button onClick={() => setActiveTab("authz-send")}
-                    disabled={authzSends.length === 0}
-                    variant={activeTab === "authz-send" ? "contained" : "outlined"}
-
-                >Authz Send</Button>
-            </ButtonGroup>
             <Grid container style={{ marginTop: 24 }}>
                 <Grid item xs={2} md={3}></Grid>
                 <Grid item xs={10} md={6}>
                     {
-                        activeTab === "send" ?
-                            <>
-                                <Send
-                                    chainInfo={chainInfo}
-                                    available={available}
-                                    onSend={onSendTx}
-                                    sendTx={sendTx}
-                                />
-                            </>
+                        (selectedAuthz.granter.length > 0 && authzSend?.granter !== selectedAuthz.granter ) ?
+                            <Alert>
+                                You don't have permission to execute this transcation
+                            </Alert>
                             :
-                            <>
-                                <AuthzSend
-                                    chainInfo={chainInfo}
-                                    onAuthzSend={onSendExec}
-                                    grants={authzSends}
-                                    authzTx={authzExecTx}
-                                />
-                            </>
+                            <Send
+                                chainInfo={chainInfo}
+                                available={available}
+                                onSend={onSendTx}
+                                sendTx={sendTx}
+                                authzTx={authzExecTx}
+                            />
+                            
                     }
                 </Grid>
-                <Grid item xs={2} md={3}></Grid>
 
+                <Grid item xs={2} md={3}></Grid>
             </Grid>
         </>
     );
