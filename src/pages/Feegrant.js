@@ -45,7 +45,7 @@ export default function Feegrant() {
   const address = useSelector((state) => state.wallet.address);
   const errState = useSelector((state) => state.feegrant.errState);
   const txStatus = useSelector((state) => state.feegrant.tx);
-  const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
+  const currency = useSelector((state) => state.wallet.chainInfo.config.currencies[0]);
   const [infoOpen, setInfoOpen] = React.useState(false);
 
   const [selected, setSelected] = React.useState({});
@@ -56,11 +56,11 @@ export default function Feegrant() {
   useEffect(() => {
     if (address && address.length > 0) {
       dispatch(getGrantsByMe({
-        baseURL: chainInfo.lcd,
+        baseURL: chainInfo.config.rest,
         granter: address
       }))
       dispatch(getGrantsToMe({
-        baseURL: chainInfo.lcd,
+        baseURL: chainInfo.config.rest,
         grantee: address
       }))
     }
@@ -96,10 +96,10 @@ export default function Feegrant() {
       granter: a.granter,
       grantee: a.grantee,
       denom: currency.coinMinimalDenom,
-      chainId: chainInfo.chainId,
-      rpc: chainInfo.rpc,
-      feeAmount: chainInfo?.config.gasPriceStep.average,
-      baseURL: chainInfo?.lcd,
+      chainId: chainInfo.config.chainId,
+      rpc: chainInfo.config.rpc,
+      feeAmount: chainInfo.config.gasPriceStep.average,
+      baseURL: chainInfo.config.rest,
     }))
   }
 
@@ -237,7 +237,7 @@ export default function Feegrant() {
                               <StyledTableCell >Type</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
                               <StyledTableCell>Details</StyledTableCell>
-                              <StyledTableCell >Use Feegrant</StyledTableCell>
+                              {/* <StyledTableCell >Use Feegrant</StyledTableCell> */}
                             </StyledTableRow>
                           </TableHead>
                           <TableBody>
@@ -263,13 +263,13 @@ export default function Feegrant() {
                                     Details
                                   </Link>
                                 </StyledTableCell>
-                                <StyledTableCell>
+                                {/* <StyledTableCell>
                                   <Switch checked={useFeeChecked}
                                     onChange={(e) => handleOnFeeChecked(e, row)}
                                     inputProps={{ 'aria-label': 'controlled' }}
                                     size="small" />
 
-                                </StyledTableCell>
+                                </StyledTableCell> */}
                               </StyledTableRow>
                             ))}
                           </TableBody>

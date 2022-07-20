@@ -22,13 +22,13 @@ export function CustomAppBar(props) {
     };
 
     useEffect(() => {
-        document.getElementById("logo-chain-main").src = props.selectedNetwork.logoName
+        document.getElementById("logo-chain-main").src = props.selectedNetwork.logos?.toolbar
     }, [props.selectedNetwork]);
 
     return (
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Toolbar>
-                <img id='logo-chain-main' src="white-logo.png" />
+                <img id='logo-chain-main' src="white-logo.png" style={{maxWidth: 161, maxHeight: 45}}/>
                 <Typography
                     component="h1"
                     variant="h6"
@@ -54,7 +54,7 @@ export function CustomAppBar(props) {
                     aria-expanded={anchorEl ? 'true' : undefined}
                     onClick={handleClick}
                 >
-                    {props.selectedNetwork.displayName}
+                    {props.selectedNetwork.config?.chainName}
                 </Button>
                 <Menu
                     id="demo-positioned-menu"
@@ -82,10 +82,10 @@ export function CustomAppBar(props) {
                                 }
                             >
                                 <ListItemIcon>
-                                    <img src={network?.src} />
+                                    <img src={network.logos.menu} />
                                 </ListItemIcon>
                                 <ListItemText>
-                                    {network.displayName}
+                                    {network.config.chainName}
                                 </ListItemText>
                             </MenuItem>
                         ))
@@ -107,10 +107,10 @@ export function CustomAppBar(props) {
                                 }
                             >
                                 <ListItemIcon>
-                                    <img src={network?.src} />
+                                    <img src={network.logos?.menu} />
                                 </ListItemIcon>
                                 <ListItemText>
-                                    {network.displayName}
+                                    {network.config?.chainName}
                                 </ListItemText>
                             </MenuItem>
                         ))

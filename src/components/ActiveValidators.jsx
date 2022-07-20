@@ -20,11 +20,14 @@ export function ActiveValidators(props) {
                         <StyledTableRow>
                             <StyledTableCell>Rank</StyledTableCell>
                             <StyledTableCell
-                                align='center'
+                                align='left'
                             >Validator</StyledTableCell>
                             <StyledTableCell
                                 align='center'
                             >Voting Power</StyledTableCell>
+                            <StyledTableCell
+                                align='center'
+                            >Status</StyledTableCell>
                             <StyledTableCell
                                 align='center'
                             >Comission</StyledTableCell>
@@ -43,16 +46,17 @@ export function ActiveValidators(props) {
                                     {index + 1}
                                 </StyledTableCell>
                                 <StyledTableCell
-                                    align='center'
+                                    align='left'
                                 >
                                     {validators.active[keyName]?.description.moniker}
-                                    <br />
-                                    {validators.active[keyName]?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validators.active[keyName]?.status)}
                                 </StyledTableCell>
                                 <StyledTableCell
                                     align='center'
                                 >
                                     {formatVotingPower(validators.active[keyName].tokens)}
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                    {validators.active[keyName]?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validators.active[keyName]?.status)}
                                 </StyledTableCell>
                                 <StyledTableCell
                                     align='center'

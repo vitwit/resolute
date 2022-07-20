@@ -37,3 +37,8 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
+## Start with Docker 
+```bash
+$ make docker-run
+# Open the browser with http://localhost:8081
+```

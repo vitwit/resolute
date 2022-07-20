@@ -56,6 +56,15 @@ export function computeVotePercentage(tally) {
     let noWithVeto = parseInt(tally?.no_with_veto)
     let total = yes + no + abstain + noWithVeto
 
+    if (total === 0) {
+        return {
+            yes: 0,
+            no: 0,
+            abstain: 0,
+            no_with_veto: 0
+        }
+    }
+
     let result = {}
     result['yes'] = ((yes / total) * 100).toFixed(2)
     result['no'] = ((no / total) * 100).toFixed(2)
@@ -63,6 +72,10 @@ export function computeVotePercentage(tally) {
     result['no_with_veto'] = ((noWithVeto / total) * 100).toFixed(2)
 
     return result
+}
+
+export function shortenPubKey(pubKey, n) {
+    return (pubKey.length > n) ? pubKey.substr(0, n-1) + '&hellip;' : str;
 }
 
 

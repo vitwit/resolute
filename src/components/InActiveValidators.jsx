@@ -19,9 +19,10 @@ export function InActiveValidators(props) {
                     <TableHead>
                         <StyledTableRow>
                             <StyledTableCell>Rank</StyledTableCell>
-                            <StyledTableCell align='center'>Validator</StyledTableCell>
+                            <StyledTableCell align='left'>Validator</StyledTableCell>
                             <StyledTableCell align='center'>Voting Power</StyledTableCell>
                             <StyledTableCell align='center'>Commission</StyledTableCell>
+                            <StyledTableCell align='center'>Status</StyledTableCell>
                             <StyledTableCell align='center'>Action</StyledTableCell>
                         </StyledTableRow>
                     </TableHead>
@@ -36,10 +37,9 @@ export function InActiveValidators(props) {
                                     {index + 1}
                                 </StyledTableCell>
                                 <StyledTableCell
-                                    align='center'
+                                    align='left'
                                 >
                                     {validators.inactive[keyName]?.description.moniker}
-                                    {validators.inactive[keyName]?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validators.inactive[keyName]?.status)}
                                 </StyledTableCell>
                                 <StyledTableCell
                                     align='center'
@@ -51,9 +51,9 @@ export function InActiveValidators(props) {
                                 >
                                     {(validators.inactive[keyName]?.commission.commission_rates.rate * 100).toFixed(2)}%
                                 </StyledTableCell>
-                                {/* <StyledTableCell>
+                                <StyledTableCell>
                                     {validators.inactive[keyName]?.jailed ? formatValidatorStatus(true, null) : formatValidatorStatus(false, validators.inactive[keyName]?.status)}
-                                </StyledTableCell> */}
+                                </StyledTableCell>
                                 <StyledTableCell
                                     align='center'
                                 >

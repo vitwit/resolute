@@ -8,10 +8,10 @@ import LayersIcon from '@mui/icons-material/Layers';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import DocumentScannerOutlinedIcon from '@mui/icons-material/DocumentScannerOutlined';
 
-export function mainListItems(currentPath, onNavigate, showAirdrop) {
+export function drawerListItems(currentPath, onNavigate, showAirdrop) {
   return (
   <React.Fragment>
-    <ListItemButton  onClick={() => onNavigate("/")} selected={currentPath === "/"}>
+    <ListItemButton  onClick={() => onNavigate("/")} selected={currentPath === "/"}  sx={{pb: 0.5, pt:0.5}}>
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
@@ -23,31 +23,31 @@ export function mainListItems(currentPath, onNavigate, showAirdrop) {
       </ListItemIcon>
       <ListItemText primary="Send" />
     </ListItemButton> */}
-     <ListItemButton onClick={() => onNavigate("/multisig")} selected={currentPath === "/multisig"}>
+     <ListItemButton onClick={() => onNavigate("/multisig")} selected={currentPath === "/multisig"} sx={{pb: 0.5, pt:0.5}}>
       <ListItemIcon>
         <BarChartOutlinedIcon />
       </ListItemIcon>
       <ListItemText primary="Multisig" />
     </ListItemButton>
-    <ListItemButton onClick={() => onNavigate("/validators")} selected={currentPath === "/validators"}>
+    <ListItemButton onClick={() => onNavigate("/staking")} selected={currentPath === "/staking"}  sx={{pb: 0.5, pt:0.5}}>
       <ListItemIcon>
         <BarChartOutlinedIcon />
       </ListItemIcon>
       <ListItemText primary="Staking" />
     </ListItemButton>
-    <ListItemButton onClick={() => onNavigate("/proposals")} selected={currentPath === "/proposals"}>
+    <ListItemButton onClick={() => onNavigate("/governance")} selected={currentPath === "/governance"} sx={{pb: 0.5, pt:0.5}}>
       <ListItemIcon>
         <DocumentScannerOutlinedIcon />
       </ListItemIcon>
-      <ListItemText primary="Proposals" />
+      <ListItemText primary="Governance" />
     </ListItemButton>
-    <ListItemButton onClick={() => {}} disabled>
+    <ListItemButton onClick={() => onNavigate("/authz")} selected={currentPath === "/authz"} sx={{pb: 0.5, pt:0.5}}>
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
-      <ListItemText primary="Authz" secondary="coming soon" />
+      <ListItemText primary="Authz"/>
     </ListItemButton>
-    <ListItemButton onClick={() => {}} disabled>
+    <ListItemButton onClick={() => {}} disabled sx={{pb: 0.5, pt:0.5}}>
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>
@@ -55,7 +55,7 @@ export function mainListItems(currentPath, onNavigate, showAirdrop) {
     </ListItemButton>
 
   { showAirdrop ?
-    <ListItemButton onClick={() => onNavigate("/airdrop-check")} selected={currentPath === "/airdrop-check"}>
+    <ListItemButton onClick={() => onNavigate("/airdrop-check")} selected={currentPath === "/airdrop-check"} sx={{pb: 0.5, pt:0.5}}>
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>

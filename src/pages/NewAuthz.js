@@ -18,6 +18,7 @@ import {
     resetError, resetTxHash, setError
 } from './../features/common/commonSlice';
 import InputAdornment from '@mui/material/InputAdornment';
+import { Typography } from '@mui/material';
 
 
 export default function NewAuthz() {
@@ -54,7 +55,7 @@ export default function NewAuthz() {
     const [selected, setSelected] = useState('send')
     let date = new Date()
     let expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
-    const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
+    const currency = useSelector((state) => state.wallet.chainInfo.config.currencies[0]);
 
 
     const { handleSubmit, control } = useForm({
@@ -70,12 +71,12 @@ export default function NewAuthz() {
         dispatch(txAuthzSend({
             granter: address,
             grantee: data.grantee,
-            spendLimit: amountToMinimalValue(data.spendLimit, chainInfo.currencies[0]),
+            spendLimit: amountToMinimalValue(data.spendLimit, chainInfo.config.currencies[0]),
             expiration: data.expiration,
             denom: currency.coinMinimalDenom,
-            chainId: chainInfo.chainId,
-            rpc: chainInfo.rpc,
-            feeAmount: chainInfo?.config.gasPriceStep.average,
+            chainId: chainInfo.config.chainId,
+            rpc: chainInfo.config.rpc,
+            feeAmount: chainInfo.config.gasPriceStep.average,
         }))
     };
 
@@ -86,9 +87,9 @@ export default function NewAuthz() {
             typeUrl: data.typeURL?.typeURL,
             expiration: data.expiration,
             denom: currency.coinMinimalDenom,
-            chainId: chainInfo.chainId,
-            rpc: chainInfo.rpc,
-            feeAmount: chainInfo.gasPriceStep.average,
+            chainId: chainInfo.config.chainId,
+            rpc: chainInfo.config.rpc,
+            feeAmount: chainInfo.config.gasPriceStep.average,
         }))
     };
 
@@ -187,7 +188,14 @@ export default function NewAuthz() {
                                                 />
                                             </LocalizationProvider>
                                         }
-                                    />
+                                        />
+                                        <Typography
+                                            variant='caption'
+                                            color='text.secondary'
+                                            style={{justifyContent: 'left', display:'flex', marginTop: 8}}
+                                        >
+                                            &nbsp;Note:&nbsp;By default expiration is set to one year
+                                        </Typography>
                                     <br />
 
                                     <Button
@@ -279,6 +287,13 @@ export default function NewAuthz() {
                                                 </LocalizationProvider>
                                             }
                                         />
+                                        <Typography
+                                            variant='caption'
+                                            color='text.secondary'
+                                            style={{justifyContent: 'left', display:'flex', marginTop: 8}}
+                                        >
+                                            &nbsp;Note:&nbsp;By default expiration is set to one year
+                                        </Typography>
                                         <br />
 
                                         <Button

@@ -74,3 +74,11 @@
 .m-t-40 {
         margin-top: 40px;
 }
+
+.read-more {
+        text-decoration: underline;
+}
+
+.read-more:hover {
+        cursor: pointer;
+}

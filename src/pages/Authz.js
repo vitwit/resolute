@@ -40,7 +40,7 @@ export default function Authz() {
   const address = useSelector((state) => state.wallet.address);
   const authzTx = useSelector((state) => state.authz.tx);
   const execTx = useSelector((state) => state.authz.execTx);
-  const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
+  const currency = useSelector((state) => state.wallet.chainInfo?.config?.currencies[0]);
 
   useEffect(() => {
     if (execTx.status === 'idle') {
@@ -51,7 +51,7 @@ export default function Authz() {
   useEffect(() => {
     if (address !== "") {
       dispatch(getGrantsByMe({
-        baseURL: chainInfo.lcd,
+        baseURL: chainInfo.config.rest,
         granter: address
       }))
     }
@@ -82,9 +82,9 @@ export default function Authz() {
       typeURL: typeURL,
       denom: currency.coinMinimalDenom,
       memo: "",
-      chainId: chainInfo.chainId,
-      rpc: chainInfo.rpc,
-      feeAmount: chainInfo?.config.gasPriceStep.average,
+      chainId: chainInfo.config.chainId,
+      rpc: chainInfo.config.rpc,
+      feeAmount: chainInfo.config.gasPriceStep.average,
     }))
 
   }
@@ -101,7 +101,14 @@ export default function Authz() {
 
   const [selectedGrant, setSelectedGrant] = React.useState({});
   const onUseAuthz = (row) => {
+    if (
+      row?.authorization["@type"] === "/cosmos.bank.v1beta1.SendAuthorization" ||
+            row?.authorization?.msg === "/cosmos.bank.v1beta1.MsgSend"
+    ){
     setSelectedGrant(row);
+    } else {
+      alert("TODO")
+    }
   }
 
   const onExecSend = (data) => {
@@ -112,9 +119,9 @@ export default function Authz() {
       recipient: data.recipient,
       amount: data.amount,
       denom: currency.coinMinimalDenom,
-      chainId: chainInfo.chainId,
-      rpc: chainInfo.rpc,
-      feeAmount: chainInfo?.config.gasPriceStep.average,
+      chainId: chainInfo.config.chainId,
+      rpc: chainInfo.config.rpc,
+      feeAmount: chainInfo.config.gasPriceStep.average,
     })
   }
 
@@ -144,7 +151,7 @@ export default function Authz() {
             variant={grantType === 'by-me' ? 'contained' : 'outlined'}
             onClick={() => {
               dispatch(getGrantsByMe({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 granter: address
               }))
               setGrantType('by-me')
@@ -154,7 +161,7 @@ export default function Authz() {
             variant={grantType === 'to-me' ? 'contained' : 'outlined'}
             onClick={() => {
               dispatch(getGrantsToMe({
-                baseURL: chainInfo.lcd,
+                baseURL: chainInfo.config.rest,
                 grantee: address
               }))
               setGrantType('to-me')
@@ -169,7 +176,7 @@ export default function Authz() {
               (
                 <>
                   {
-                    grantsByMe?.grants.length === 0 ?
+                    grantsByMe?.grants?.length === 0 ?
                       <Typography
                         variant='h6'
                         color="text.primary"
@@ -232,7 +239,7 @@ export default function Authz() {
               (
                 <>
                   {
-                    grantsToMe?.grants.length === 0 ?
+                    grantsToMe?.grants?.length === 0 ?
 
                       <Typography
                         variant='h6'
@@ -276,13 +283,13 @@ export default function Authz() {
                                   </Link>
                                 </StyledTableCell>
                                 <StyledTableCell>
-                                  <Button
+                                  {/* <Button
                                     size='small'
                                     color='info'
                                     onClick={() => onUseAuthz(row)}
                                   >
                                     Use
-                                  </Button>
+                                  </Button> */}
                                 </StyledTableCell>
                               </StyledTableRow>
                             ))}

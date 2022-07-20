@@ -1,11 +1,14 @@
+import { toBase64 } from '@cosmjs/encoding';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { getKeplrWalletAmino, isKeplrInstalled } from '../../txns/execute'
+import { setConnected } from '../../utils/localStorage';
 import { setError } from '../common/commonSlice'
 
 const initialState = {
   name: '',
   connected: false,
   address: '',
+  pubKey: '',
   chainInfo: {
     currencies: [],
   },
@@ -32,8 +35,9 @@ export const connectKeplrWallet = createAsyncThunk(
           await window.keplr.experimentalSuggestChain(network.config)
         }
         try {
-          const result = await getKeplrWalletAmino(network.chainId)
-          const walletInfo = await window.keplr.getKey(network.chainId)
+          const result = await getKeplrWalletAmino(network.config.chainId)
+          const walletInfo = await window.keplr.getKey(network.config.chainId)
+          setConnected();
           return fulfillWithValue({
             walletInfo: walletInfo,
             result: result,
@@ -70,11 +74,12 @@ export const walletSlice = createSlice({
       state.connected = false
       state.address = ''
       state.algo = ''
-      state.chainInfo = {
-        currencies: [],
-      }
       state.name = ''
+      state.pubKey = ''
     },
+    setNetwork: (state, action) => {
+      state.chainInfo = action.payload.chainInfo
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -83,6 +88,7 @@ export const walletSlice = createSlice({
       .addCase(connectKeplrWallet.fulfilled, (state, action) => {
         const result = action.payload
         state.name = result.walletInfo?.name
+        state.pubKey = toBase64(result.walletInfo?.pubKey)
         state.address = result.result[1].address
         state.chainInfo = result.network
         state.connected = true
@@ -93,6 +99,6 @@ export const walletSlice = createSlice({
 
 });
 
-export const { setWallet, resetWallet } = walletSlice.actions
+export const { setWallet, resetWallet, setNetwork } = walletSlice.actions
 
 export default walletSlice.reducer

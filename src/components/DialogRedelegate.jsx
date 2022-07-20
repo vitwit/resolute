@@ -157,7 +157,7 @@ export function DialogRedelegate(props) {
                                         fullWidth
                                         size='small'
                                         InputProps={{
-                                            endAdornment: <InputAdornment position="start">STAKE</InputAdornment>,
+                                            endAdornment: <InputAdornment position="start">{currency?.coinDenom}</InputAdornment>,
                                         }}
                                         error={!!error}
                                         helperText={errors.amount?.type === 'validate' ? 'Invalid amount' : error?.message}

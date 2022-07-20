@@ -71,7 +71,7 @@ export const txVote = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = GovVoteMsg(data.proposalId, data.voter, data.option)
-      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount),data.chainId, data.rpc)
+      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount, 260000),data.chainId, data.rpc)
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
@@ -89,7 +89,7 @@ export const txVote = createAsyncThunk(
         type: 'error',
         message: error.message
       }))
-      return rejectWithValue(error)
+      return rejectWithValue(error.message)
     }
   }
 );
@@ -98,7 +98,13 @@ export const txVote = createAsyncThunk(
 export const proposalsSlice = createSlice({
   name: 'gov',
   initialState,
-  reducers: {},
+  reducers: {
+    resetTx: (state) => {
+      state.tx = {
+        status: '',
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getProposals.pending, (state) => {
@@ -164,4 +170,5 @@ export const proposalsSlice = createSlice({
   },
 });
 
+export const { resetTx } = proposalsSlice.actions;
 export default proposalsSlice.reducer;
