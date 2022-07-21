@@ -75,7 +75,7 @@ export default function CreateMultisig({ handleNext }) {
                     <br /><br />
                     <Box>
                         {
-                            multisigAccounts?.status !== 'pending' && !accounts.length ?
+                            multisigAccounts?.status !== 'pending' && !accounts?.length ?
                                 <span> <strong style={{
                                     color: '#8c3030'
                                 }}> <InfoIcon style={{ top: 2 }}></InfoIcon>  No MultisigAccounts found on your address</strong>
@@ -90,7 +90,7 @@ export default function CreateMultisig({ handleNext }) {
                     </Box>
 
                     {
-                        accounts.length && !showFormAddress ?
+                        accounts?.length && !showFormAddress ?
                             <FormControl fullWidth>
                                 <TableContainer component={Paper}>
                                     <Table sx={{ minWidth: 650 }} aria-label="simple table">

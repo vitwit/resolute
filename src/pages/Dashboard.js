@@ -100,7 +100,7 @@ function DashboardContent(props) {
     const txSuccess = useSelector((state) => state.common.txSuccess);
 
     useEffect(() => {
-        if (errState.message.length > 0 && errState.type.length > 0) {
+        if (errState.message?.length > 0 && errState.type?.length > 0) {
             showSnack(true)
         } else {
             showSnack(false)
@@ -108,7 +108,7 @@ function DashboardContent(props) {
     }, [errState]);
 
     useEffect(() => {
-        if (txSuccess.hash.length > 0) {
+        if (txSuccess.hash?.length > 0) {
             showTxSnack(true)
         } else {
             showTxSnack(false)
@@ -122,7 +122,7 @@ function DashboardContent(props) {
 
     function disconnectWallet() {
         logout();
-        if (selectedAuthz.granter.length > 0) {
+        if (selectedAuthz.granter?.length > 0) {
             dispatch(exitAuthzMode());
         }
         dispatch(resetWallet());
@@ -204,7 +204,7 @@ function DashboardContent(props) {
                                 }}
                             >
                                 {
-                                    selectedAuthz.granter.length > 0
+                                    selectedAuthz.granter?.length > 0
                                         ?
                                         <>
                                             <Toolbar />
@@ -271,7 +271,7 @@ function DashboardContent(props) {
             }
             {errState.message.length > 0
                 ?
-                <Snackbar open={snackOpen && errState.message.length > 0 && errState.type.length > 0} autoHideDuration={3000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                <Snackbar open={snackOpen && errState.message?.length > 0 && errState.type?.length > 0} autoHideDuration={3000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                     <Alert onClose={() => { showSnack(false) }} severity={errState.type === 'success' ? 'success' : 'error'} sx={{ width: '100%' }}>
                         {errState.message}
                     </Alert>

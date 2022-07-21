@@ -344,7 +344,7 @@ export function getSelectedNetwork(): Network | null {
     let name = localStorage.getItem('LAST_SELECTED')
     let mainNets = getMainNetworks()
     if (name != null) {
-        for (let i = 0; i < mainNets.length; i++) {
+        for (let i = 0; i < mainNets?.length; i++) {
             if (mainNets[i].config.chainName === name) {
                 saveSelectedNetwork(mainNets[i].config.chainName)
                 return mainNets[i]
@@ -354,7 +354,7 @@ export function getSelectedNetwork(): Network | null {
 
     let testNets = getTestNetworks()
     if (name != null) {
-        for (let i = 0; i < testNets.length; i++) {
+        for (let i = 0; i < testNets?.length; i++) {
             if (testNets[i].config.chainName === name) {
                 saveSelectedNetwork(testNets[i].config.chainName)
                 return testNets[i]
@@ -363,12 +363,12 @@ export function getSelectedNetwork(): Network | null {
     }
 
     // return passage network if provided network is not present
-    if (testNets.length > 0) {
+    if (testNets?.length > 0) {
         saveSelectedNetwork(testNets[0].config.chainName)
         return testNets[0]
     }
 
-    if (mainNets.length > 0) {
+    if (mainNets?.length > 0) {
         saveSelectedNetwork(mainNets[0].config.chainName)
         return mainNets[0]
     }

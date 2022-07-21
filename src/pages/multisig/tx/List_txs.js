@@ -58,13 +58,13 @@ const TableRowComponent = ({ tx }) => {
         let signs = tx?.signatures || []
         let existedAddress = signs.filter(k => k.address === walletAddress)
 
-        if (existedAddress && existedAddress.length) return true
+        if (existedAddress && existedAddress?.length) return true
         else return false
     }
 
     const isReadyToBroadcast = () => {
         let signs = tx?.signatures || [];
-        if (signs.length >= threshold) return true
+        if (signs?.length >= threshold) return true
         else return false
     }
 
@@ -174,12 +174,12 @@ const TableRowComponent = ({ tx }) => {
                 </TableCell>
                 <TableCell>
                     {
-                        tx?.signatures.length || 0
+                        tx?.signatures?.length || 0
                     }/{threshold}
                 </TableCell>
                 <TableCell align='right'>
                     {
-                        tx?.signatures.length || 0 >= threshold ?
+                        tx?.signatures?.length || 0 >= threshold ?
                             <span>{
                                 tx?.status === 'DONE' ? 'DONE' : 'Waiting for brodcast'
                             }</span>
@@ -271,7 +271,7 @@ function List_txs({ address }) {
         <TableContainer component={Paper}>
             <Box>
                 {
-                    txns?.status !== 'pending' && !txns.length ?
+                    txns?.status !== 'pending' && !txns?.length ?
                         <span> <strong style={{
                             color: '#8c3030'
                         }}> <InfoIcon style={{ top: 2 }}></InfoIcon>

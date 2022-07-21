@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Typography } from '@mui/material';
+import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Table, TableCell, TableRow, Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { connect, useDispatch, useSelector } from 'react-redux'
@@ -14,6 +14,7 @@ export const Tx_index = ({ }) => {
     const { address: multisigAddress } = useParams();
     const multisigAccountDetails = useSelector(state => state.multisig.multisigAccount)
     const multisigAccount = multisigAccountDetails?.data?.data || {};
+    console.log('mmmmmmmmmmmm', multisigAccount)
 
     // const multisigAccount = localStorage.getItem('multisigAddress') &&
     //     JSON.parse(localStorage.getItem('multisigAddress')) || {};
@@ -55,10 +56,53 @@ export const Tx_index = ({ }) => {
                         <a align="left" href='javascript:void(0);' onClick={() => navigate('/multisig')}> Back</a>
                         <br /><br />
                     </Paper>
-                    <Paper className='mt-20'>
-                        <Box>
+                    <Paper align="left" className='mt-20'>
+                        <Box style={{display: 'flex'}}>
+                            <Box>
+                                <Table>
+                                    <TableRow>
+                                        <TableCell>Multisig Account</TableCell>
+                                        <TableCell> <strong>{multisigAddress}</strong></TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>Threshold</TableCell>
+                                        <TableCell> <strong> {multisigAccount?.pubkeyJSON?.value?.threshold}</strong></TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>Signers</TableCell>
+                                        <TableCell> {
+                                            multisigAccount?.pubkeyJSON?.value?.pubkeys?.map(p => (
+                                                <p><strong>{p?.address}</strong></p>
+                                            ))
+                                        }</TableCell>
+                                    </TableRow>
+                                </Table>
+                            </Box>
+                            <Box alignSelf={'right'}>
+                                <Table>
+                                    <TableRow>
+                                        <TableCell>
+                                            Balance
+                                        </TableCell>
+                                        <TableCell>3 Stake</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>
+                                            Delegations
+                                        </TableCell>
+                                        <TableCell>3 Stake</TableCell>
+                                    </TableRow>
+                                </Table>
+                            </Box>
+                        </Box>
+                        {/* <Box>
                             Multisig Account: <strong>{multisigAddress}</strong>
                         </Box>
+                        <Box>
+                            Threshold: <strong>{
+                                multisigAccount?.pubkeyJSON?.value?.threshold
+                            }</strong>
+                        </Box> */}
                     </Paper>
                 </Grid>
 

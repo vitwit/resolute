@@ -28,7 +28,6 @@ const Delegation_Form = ({chainInfo}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('ddddddd', obj)
 
         const amountInAtomics = Decimal.fromUserInput(
             obj?.amount,

@@ -53,8 +53,8 @@ const TableRowComponent = ({ tx }) => {
     }, [])
 
     const isThresholdMatch = (tx, signatures) => {
-        let cond = signatures.length >= Number(multisigAccount?.pubkeyJSON?.value?.threshold || 0) ? true : false;
-        console.log('condddddd', cond, signatures.length, multisigAccount)
+        let cond = signatures?.length >= Number(multisigAccount?.pubkeyJSON?.value?.threshold || 0) ? true : false;
+        
         return true;
     }
 
@@ -72,7 +72,7 @@ const TableRowComponent = ({ tx }) => {
                 </TableCell>
                 <TableCell component="th" scope="row">
                     {
-                        mapTxns[tx?.msgs && tx.msgs.length && tx.msgs[0].typeUrl || 'Msg']
+                        mapTxns[tx?.msgs && tx.msgs?.length && tx.msgs[0].typeUrl || 'Msg']
                     }
                     <span>
                         {

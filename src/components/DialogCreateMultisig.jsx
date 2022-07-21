@@ -83,7 +83,7 @@ export function DialogCreateMultisig(props) {
     const [name, setName] = useState(null);
 
     const handleAddPubKey = () => {
-        if (pubKeyFields.length > 6) {
+        if (pubKeyFields?.length > 6) {
             dispatch(setError({
                 type: 'error', message: `You can't add more than 7 pub keys`
             }))
@@ -112,14 +112,14 @@ export function DialogCreateMultisig(props) {
 
         let pubKeys = pubKeyFields.map(v => v.value);
 
-        if (!pubKeys.length) {
+        if (!pubKeys?.length) {
             dispatch(setError('Atleast 1 pubkey is required'))
             return
         }
 
         let uniquePubKeys = Array.from(new Set(pubKeys))
 
-        if (uniquePubKeys.length !== pubKeys.length) {
+        if (uniquePubKeys?.length !== pubKeys?.length) {
             dispatch(setError({
                 type: 'error',
                 message: 'You have entered duplicate pubkeys'
@@ -147,7 +147,7 @@ export function DialogCreateMultisig(props) {
     }
 
     const handleChange = (e) => {
-        if (e.target.value > pubKeyFields.length) {
+        if (e.target.value > pubKeyFields?.length) {
             alert('Threshold can not be greater than pubkeys')
             return
         }
@@ -217,7 +217,7 @@ export function DialogCreateMultisig(props) {
                             </Typography>
                             <TextField
                                 name="threshold"
-                                value={pubKeyFields.length}
+                                value={pubKeyFields?.length}
                                 label="Threshold"
                                 disabled
                                 style={{ maxWidth: 120 }}
