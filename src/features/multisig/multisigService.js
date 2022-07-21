@@ -4,7 +4,7 @@ const MULTI_ACCOUNT_URL = '/multisig/accounts';
 const TXNS_URL = '/txs';
 const SIGN_URL = '/signs';
 const DELEGATOR_VALIDATORS = `/cosmos/staking/v1beta1/delegators`;
-const BASE_URL = process.env.REACT_APP_MULTISIG_API || 'https://airdrop.passage3d.com/api/';
+const BASE_URL = 'http://localhost:1323';
 
 export const createMultisigAccount = (data) => {
     let uri = `${BASE_URL}${ACCOUNT_URL}`
@@ -35,6 +35,12 @@ export const createTransaction = (data) => {
     let uri = `${BASE_URL}${TXNS_URL}`
 
     return Axios.post(uri, data)
+}
+
+export const deleteTx = (txId) => {
+    let uri = `${BASE_URL}${TXNS_URL}/${txId}`
+    console.log('uriiiiiiiiiii--delete', uri)
+    return Axios.delete(uri)
 }
 
 export const fetchTransactins = (address, status='current') => {

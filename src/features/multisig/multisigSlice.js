@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createMultisigAccount, createSignature, createTransaction, fetchDelegatorValidators, fetchMultisigAccount, fetchMultisigAccountByAddress, fetchMultisigAccounts, fetchSignatures, fetchTransactins, fetchTransaction, updateTransaction } from './multisigService';
+import { createMultisigAccount, createSignature, createTransaction, deleteTx, fetchDelegatorValidators, fetchMultisigAccount, fetchMultisigAccountByAddress, fetchMultisigAccounts, fetchSignatures, fetchTransactins, fetchTransaction, updateTransaction } from './multisigService';
 
 const initialState = {
     createMultisigAccountRes: {},
@@ -11,7 +11,8 @@ const initialState = {
     signatures: {},
     multisigAccount: {},
     delegatorVals: {},
-    updateTxn: {}
+    updateTxn: {},
+    deleteTxnRes: {}
 };
 
 export const createAccount = createAsyncThunk(
@@ -26,6 +27,14 @@ export const getMultisigAccounts = createAsyncThunk(
     'multisig/getMultisigAccounts',
     async (data) => {
         const response = await fetchMultisigAccounts(data);
+        return response.data;
+    }
+);
+
+export const deleteTxn = createAsyncThunk(
+    'multisig/deleteTxn',
+    async (data) => {
+        const response = await deleteTx(data);
         return response.data;
     }
 );
@@ -195,6 +204,17 @@ export const multiSlice = createSlice({
             })
             .addCase(getSigns.rejected, (state, action) => {
                 state.signatures.status = 'rejected'
+            })
+
+            builder
+            .addCase(deleteTxn.pending, (state) => {
+                state.deleteTxnRes.status = 'pending'
+            })
+            .addCase(deleteTxn.fulfilled, (state, action) => {
+                state.deleteTxnRes = action.payload;
+            })
+            .addCase(deleteTxn.rejected, (state, action) => {
+                state.deleteTxnRes.status = 'rejected'
             })
 
         builder

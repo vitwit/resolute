@@ -9,7 +9,7 @@ import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react'
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchSingleMultiAccount, getSigns, getTxns } from '../../../features/multisig/multisigSlice';
+import { deleteTxn, fetchSingleMultiAccount, getSigns, getTxns } from '../../../features/multisig/multisigSlice';
 import BroadcastTx from '../BroadcastTx';
 import SignTxn from '../SignTxn';
 import InfoIcon from '@mui/icons-material/Info';
@@ -209,6 +209,10 @@ const TableRowComponent = ({ tx }) => {
                     }
                 </TableCell>
                 <TableCell align='right'>
+                    <Button onClick={()=>{
+                        dispatch(deleteTxn(tx?._id))
+                    }} variant='contained'>Delete</Button>
+                    <br/>
                     <IconButton
                         align="right"
                         aria-label="expand row"
@@ -243,15 +247,20 @@ function List_txs({ address }) {
 
     const createSignRes = useSelector(state => state.multisig.createSignRes)
     const updateTxnStatus = useSelector(state => state.multisig.updateTxn)
+    const deleteTxnStatus = useSelector(state => state.multisig.deleteTxnRes)
 
 
     const getAllTxns = (status) => {
         dispatch(getTxns({ address, status }))
     }
 
+
+    useEffect(() => {
+        getAllTxns('history')
+    }, [deleteTxnStatus])
+
     useEffect(() => {
         getAllTxns('current')
-        // dispatch(getTxns(address, status))
     }, [updateTxnStatus])
 
 

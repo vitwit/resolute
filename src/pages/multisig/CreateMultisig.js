@@ -111,15 +111,23 @@ export default function CreateMultisig({ handleNext }) {
                                                     <TableCell>
                                                         <a onClick={() => {
                                                             localStorage.setItem('multisigAddress', JSON.stringify(row))
+                                                            navigate(`/multisig/${row.address}/txs`)
                                                         }}
-                                                            href={`/multisig/${row.address}/txs`}>{row?.name}</a>
+                                                        href="javascript:void(0);"
+                                                            // href={`/multisig/${row.address}/txs`}
+                                                            >{row?.name}</a>
                                                     </TableCell>
                                                     <TableCell component="th" scope="row">
                                                         <a
                                                             onClick={() => {
                                                                 localStorage.setItem('multisigAddress', JSON.stringify(row))
+                                                                navigate(`/multisig/${row.address}/txs`)
                                                             }}
-                                                            href={`/multisig/${row.address}/txs`}> {row?.address}</a>
+                                                            href="javascript:void(0);"
+                                                            // href={`/multisig/${row.address}/txs`}
+                                                            >
+                                                             {row?.address}
+                                                            </a>
                                                     </TableCell>
                                                     <TableCell align="center">{row?.pubkeyjson?.value?.threshold || 0}</TableCell>
                                                     <TableCell align="center">
