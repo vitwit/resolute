@@ -97,13 +97,28 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
             const result1 = await broadcaster.broadcastTx(
                 Uint8Array.from(TxRaw.encode(signedTx).finish()),
             );
+
+            console.log('result11111', result1)
             setLoad(false);
 
-            dispatch(updateTxn(tx?._id))
+            dispatch(updateTxn({
+                txId: tx?._id, body: {
+                    status: 'DONE',
+                    hash: result1?.transactionHash || ''
+                }
+            }))
 
             console.log(result1);
         } catch (err) {
+            console.log('Errror broadcast', err, err.message)
             setLoad(false);
+            dispatch(updateTxn({
+                txId: tx?._id, body: {
+                    status: 'FAILED',
+                    message: err?.message
+                }
+            }))
+
             dispatch(setError({
                 type: 'error',
                 message: err.message

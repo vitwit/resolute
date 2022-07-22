@@ -76,8 +76,8 @@ export const createTxn = createAsyncThunk(
 
 export const updateTxn = createAsyncThunk(
     'multisig/updateTxn',
-    async (txId) => {
-        const response = await updateTransaction(txId);
+    async ({txId, body}) => {
+        const response = await updateTransaction({txId, body});
         return response.data;
     }
 );

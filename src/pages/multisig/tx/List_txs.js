@@ -181,9 +181,12 @@ const TableRowComponent = ({ tx }) => {
                 <TableCell align='right'>
                     {
                         tx?.signatures?.length || 0 >= threshold ?
-                            <span>{
-                                tx?.status === 'DONE' ? 'DONE' : 'Waiting for brodcast'
-                            }</span>
+                            <span>
+                                {
+                                tx?.status === 'DONE' || 
+                                tx?.status === 'FAILED' ? tx?.status : 'Waiting for brodcast'
+                            }
+                            </span>
                             :
                             <span>{
                                 !isWalletSigned() ? 'Waiting for your sign' :
@@ -195,7 +198,8 @@ const TableRowComponent = ({ tx }) => {
                 <TableCell align='right'>
                     {
                         isReadyToBroadcast() ?
-                            tx?.status === 'DONE' ? 'DONE' :
+                            tx?.status === 'DONE' || 
+                            tx?.status === 'FAILED' ? tx?.status :
                                 <BroadcastTx
                                     tx={tx}
                                     signatures={tx?.signatures}

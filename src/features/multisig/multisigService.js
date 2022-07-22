@@ -49,10 +49,10 @@ export const fetchTransactins = (address, status='current') => {
     return Axios.get(uri)
 }
 
-export const updateTransaction = (txId) => {
+export const updateTransaction = ({txId, body}) => {
     let uri = `${BASE_URL}${TXNS_URL}/${txId}/update`
 
-    return Axios.post(uri)
+    return Axios.post(uri, body)
 }
 
 export const fetchTransaction = (txId) => {
