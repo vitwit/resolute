@@ -1,6 +1,6 @@
 import { fromBase64, toBase64 } from '@cosmjs/encoding';
 import { Button } from '@mui/material'
-import React, {useState} from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { StargateClient, SigningStargateClient, makeMultisignedTx } from "@cosmjs/stargate";
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,16 +21,35 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
 
     const from = useSelector((state) => state.wallet.address);
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
+    const updateTxnRes = useSelector(state => state.multisig.updateTxn);
+
+    useEffect(() => {
+        if (updateTxnRes.status === 200 ||
+            updateTxnRes.status === 201) {
+            dispatch(setError({
+                type: 'success',
+                message: updateTxnRes.message
+            }))
+        } else if (updateTxnRes.status === 400 ||
+            updateTxnRes.status === 500) {
+            dispatch(setError({
+                type: 'error',
+                message: updateTxnRes.message || 'Error'
+            }))
+        }
+
+    }, [updateTxnRes])
 
     const broadcastTxn = async () => {
         setLoad(true);
         const client = await SigningStargateClient.connect(chainInfo?.config?.rpc);
-        
+
 
         let result = await getKeplrWalletAmino(chainInfo?.config?.chainId);
-        const fromAccount = signatures.filter(s => s.address === from)
+        const fromAccount = signatures.filter(s => s.address === from);
+        console.log('AAAAAAAAAAAAA------ ', signatures, fromAccount)
 
-        const bodyBytes = fromBase64(signatures[0].bodyBytes?signatures[0].bodyBytes: signatures[0].bodybytes);
+        const bodyBytes = fromBase64(signatures[0].bodyBytes ? signatures[0].bodyBytes : signatures[0].bodybytes);
 
         let currentSignatures = []
         signatures.map(s => {
@@ -95,6 +114,6 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
     return (
         <Button variant="contained" disableElevation className='pull-right' onClick={() => {
             broadcastTxn()
-        }}>{load?'Loading...': 'BroadCast'}</Button>
+        }}>{load ? 'Loading...' : 'BroadCast'}</Button>
     )
 }

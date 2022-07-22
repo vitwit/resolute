@@ -5,11 +5,17 @@ import { calculateFee } from '@cosmjs/stargate'
 import { useDispatch, useSelector } from 'react-redux';
 import { createTxn } from '../../features/multisig/multisigSlice';
 import { fee } from '../../txns/execute';
+import FeeComponent from './FeeComponent';
 
 
-const Delegation_Form = ({chainInfo}) => {
+const Delegation_Form = ({ chainInfo }) => {
     const dispatch = useDispatch();
     const currency = chainInfo.config.currencies[0];
+    const [feeAmount, setFeeAmount] = useState(0);
+
+    const onSetFeeChange = (value) => {
+        setFeeAmount(Number(value) * (10 ** chainInfo?.config.currencies[0].coinDecimals))
+    }
 
     const multisigAddress = localStorage.getItem('multisigAddress')
         && JSON.parse(localStorage.getItem('multisigAddress')) || {}
@@ -49,10 +55,10 @@ const Delegation_Form = ({chainInfo}) => {
         };
 
         const feeObj = fee(chainInfo?.config.currencies[0].coinMinimalDenom,
-            chainInfo?.config?.gasPriceStep?.average,
+            feeAmount || chainInfo?.config?.gasPriceStep?.average * (10 ** chainInfo?.config.currencies[0].coinDecimals),
             300000)
 
-        let delegationObj =  {
+        let delegationObj = {
             address: multisigAddress?.address,
             chainId: chainInfo?.config?.chainId,
             msgs: [msg],
@@ -132,6 +138,7 @@ const Delegation_Form = ({chainInfo}) => {
                 fullWidth
                 style={{ marginTop: 8, marginBottom: 8 }}
             />
+            <FeeComponent onSetFeeChange={onSetFeeChange} chainInfo={chainInfo} />
             <Button type="submit" variant='contained' disableElevation
                 style={{ marginTop: 16 }}
                 className='button-capitalize-title'

@@ -5,6 +5,7 @@ import { connect, useDispatch, useSelector } from 'react-redux'
 import { Decimal } from "@cosmjs/math";
 import { createTxn } from '../../features/multisig/multisigSlice';
 import { fee } from '../../txns/execute';
+import FeeComponent from './FeeComponent';
 
 export const SendForm = ({ handleSubmit,
     chainInfo }) => {
@@ -15,6 +16,12 @@ export const SendForm = ({ handleSubmit,
 
     const [inputObj, setInputObj] = useState({});
     const currency = chainInfo.config.currencies[0];
+
+    const [feeAmount, setFeeAmount] = useState(0);
+
+    const onSetFeeChange = (value) => {
+        setFeeAmount(Number(value) * (10 ** chainInfo?.config.currencies[0].coinDecimals))
+    }
 
     const handleSubmit1 = (e) => {
         e.preventDefault();
@@ -39,9 +46,10 @@ export const SendForm = ({ handleSubmit,
             typeUrl: "/cosmos.bank.v1beta1.MsgSend",
             value: msgSend,
         };
+
         const feeObj = fee(chainInfo?.config.currencies[0].coinMinimalDenom,
-            chainInfo?.config?.gasPriceStep?.average,
-            300000)
+            feeAmount || chainInfo?.config?.gasPriceStep?.average * (10 ** chainInfo?.config.currencies[0].coinDecimals),
+             300000)
 
         let obj = {
             chainId: chainInfo?.config?.chainId,
@@ -91,6 +99,9 @@ export const SendForm = ({ handleSubmit,
                 fullWidth
                 style={{ marginTop: 8, marginBottom: 8 }}
             />
+
+            <FeeComponent onSetFeeChange={onSetFeeChange} chainInfo={chainInfo} />
+
             <Button type="submit" variant='contained' disableElevation
                 style={{ marginTop: 16 }}
                 className='button-capitalize-title'

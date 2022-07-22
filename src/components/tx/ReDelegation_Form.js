@@ -6,9 +6,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createTxn, getDelegatorValidators } from '../../features/multisig/multisigSlice';
 import { Redelegate } from '../../txns/proto';
 import { fee } from '../../txns/execute';
+import FeeComponent from './FeeComponent';
 
 const ReDelegation_Form = ({ chainInfo }) => {
     const dispatch = useDispatch();
+    const [feeAmount, setFeeAmount] = useState(0);
+
+    const onSetFeeChange = (value) => {
+        setFeeAmount(Number(value) * (10 ** chainInfo?.config.currencies[0].coinDecimals))
+    }
 
     const currency = chainInfo.config.currencies[0];
 
@@ -58,8 +64,8 @@ const ReDelegation_Form = ({ chainInfo }) => {
         ).atomics;
 
         const feeObj = fee(chainInfo?.config.currencies[0].coinMinimalDenom,
-            chainInfo?.config?.gasPriceStep?.average,
-            300000)
+            feeAmount || chainInfo?.config?.gasPriceStep?.average * (10 ** chainInfo?.config.currencies[0].coinDecimals),
+             300000)
 
         const msg = Redelegate(multisigAddress?.address,
             obj?.fromValidator, obj?.toValidator, amountInAtomics,
@@ -184,6 +190,7 @@ const ReDelegation_Form = ({ chainInfo }) => {
                 fullWidth
                 style={{ marginTop: 8, marginBottom: 8 }}
             />
+            <FeeComponent onSetFeeChange={onSetFeeChange} chainInfo={chainInfo} />
             <Button type="submit" variant='contained' disableElevation
                 style={{ marginTop: 16 }}
                 className='button-capitalize-title'

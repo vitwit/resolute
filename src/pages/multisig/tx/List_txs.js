@@ -4,6 +4,7 @@ import {
     IconButton, Table, TableBody, Paper,
     TableCell, TableContainer, TableRow, TableHead, CircularProgress, Button
 } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete';
 import Collapse from '@mui/material/Collapse';
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react'
@@ -208,18 +209,19 @@ const TableRowComponent = ({ tx }) => {
                             />
                     }
                 </TableCell>
-                <TableCell align='right'>
-                    <Button onClick={()=>{
+                <TableCell style={{ display: 'flex' }} align='right'>
+                    <DeleteIcon style={{ marginTop: 24, color: 'red' }} onClick={() => {
                         dispatch(deleteTxn(tx?._id))
-                    }} variant='contained'>Delete</Button>
-                    <br/>
+                    }} />
+                    {/* <Button   variant='contained'>Delete</Button> */}
+                    {/* <br/> */}
                     <IconButton
                         align="right"
                         aria-label="expand row"
                         size="small"
                         onClick={() => setOpen(!open)}
                     >
-                        <h5>RawLog</h5>
+                        <h5>Raw</h5>
                         {open ? <KeyboardArrowUpIcon align="right" /> : <KeyboardArrowDown
                             align="right" />}
                     </IconButton>
@@ -298,14 +300,14 @@ function List_txs({ address }) {
 
             <Box style={{ display: 'flex' }}>
                 <ButtonGroup variant="outlined" aria-label="outlined button group">
-                    <Button variant={isHistory ? 'contained' : 'outlined'} onClick={() => {
-                        getAllTxns('history')
-                        setIsHistory(true)
-                    }}>History</Button>
                     <Button variant={isHistory ? 'outlined' : 'contained'} onClick={() => {
                         getAllTxns('current')
                         setIsHistory(false)
-                    }}>Current</Button>
+                    }}>Active</Button>
+                    <Button variant={isHistory ? 'contained' : 'outlined'} onClick={() => {
+                        getAllTxns('history')
+                        setIsHistory(true)
+                    }}>Completed</Button>
                 </ButtonGroup>
 
             </Box>

@@ -114,7 +114,7 @@ export const Tx_index = ({ }) => {
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell>
-                                                    Delegations
+                                                    Staked
                                                 </TableCell>
                                                 <TableCell>
                                                     {
