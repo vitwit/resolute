@@ -8,6 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { getLocalTime } from './../utils/datetime';
 import Button from '@mui/material/Button';
+import { Link } from '@mui/material';
 
 export interface GroupsByAdminProps {
     groups: any;
@@ -19,13 +20,14 @@ export default function GroupsByAdmin(props: GroupsByAdminProps) {
 
     return (
         <TableContainer component={Paper} elevation={0}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table sx={{ minWidth: 650 }} aria-label="simple table" size='small'>
                 <TableHead>
                     <TableRow>
                         <TableCell>Id</TableCell>
                         <TableCell>Version</TableCell>
                         <TableCell>Total Weight</TableCell>
                         <TableCell>Created At</TableCell>
+                        <TableCell>Info</TableCell>
                         <TableCell align='center'>Actions</TableCell>
                     </TableRow>
                 </TableHead>
@@ -47,12 +49,18 @@ export default function GroupsByAdmin(props: GroupsByAdminProps) {
                             <TableCell>
                                 {getLocalTime(group.created_at)}
                             </TableCell>
+                            <TableCell>
+                            <Link align='center'
+                                sx={{
+                                    '&:hover': {
+                                        cursor: 'pointer'
+                                    }
+                                }}
+                            >
+                                More Info
+                            </Link>
+                            </TableCell>
                             <TableCell align='center'>
-                                <Button variant='text'
-                                    className='button-capitalize-title'
-                                >
-                                    Details
-                                </Button>
                                 <Button
                                     className='button-capitalize-title'
                                     onClick={(): void => { onAction(group) }}

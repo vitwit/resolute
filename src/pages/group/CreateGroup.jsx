@@ -8,6 +8,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { shortenAddress } from '../../utils/util';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import DialogAttachPolicy from '../../components/group/DialogAttachPolicy';
 
 export default function CreateGroupPage() {
 
@@ -49,6 +50,8 @@ export default function CreateGroupPage() {
         setShowMemberDialog(true);
     }
 
+    const [policyDialogOpen, setpolicyDialogOpen] = useState(false);
+
     return (
         <>
             {
@@ -64,7 +67,7 @@ export default function CreateGroupPage() {
                                         metadata: metadata,
                                         weight: weight
                                     }
-                            setShowMemberDialog(false);
+                                    setShowMemberDialog(false);
                                     return
                                 }
                             }
@@ -85,9 +88,18 @@ export default function CreateGroupPage() {
                     :
                     <></>
             }
+            {
+                policyDialogOpen ?
+                    <DialogAttachPolicy
+                        open={policyDialogOpen}
+                        onClose={() => setpolicyDialogOpen(false)}
+                    />
+                    :
+                    <></>
+            }
             <Paper
                 elevation={0}
-                sx={{ p: 2 }}
+                sx={{ p: 2, textAlign: 'center' }}
             >
                 <Typography
                     color='text.primary'
@@ -102,6 +114,7 @@ export default function CreateGroupPage() {
                     autoComplete="off"
                     sx={{
                         '& .MuiTextField-root': { mt: 1.5, mb: 1.5 },
+                        p: 2,
                     }}
                 >
                     <form onSubmit={handleSubmit(onSubmit)}>
@@ -114,20 +127,25 @@ export default function CreateGroupPage() {
                                     <TextField
                                         {...field}
                                         required
-                                        label="Metadata"
+                                        label="Group Metadata"
                                         fullWidth
                                     />}
                             />
                         </div>
                         <div>
-                            <Typography
-                                variant='body1'
-                                color='text.primary'
-                                fontWeight={500}
-                                style={{ textAlign: 'left' }}
-                            >
-                                Members
-                            </Typography>
+                            {
+                                members.length > 0 ?
+                                    <Typography
+                                        variant='body1'
+                                        color='text.primary'
+                                        fontWeight={500}
+                                        style={{ textAlign: 'left' }}
+                                    >
+                                        Members
+                                    </Typography>
+                                    :
+                                    ''
+                            }
                             {
                                 members.map((member, index) =>
                                     <MemberItem
@@ -141,8 +159,27 @@ export default function CreateGroupPage() {
                             }
                         </div>
 
-                        <div>
+                        <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'right'
+                        }}
+                        >
                             <Button
+                                variant='outlined'
+                                onClick={() => {
+                                    setpolicyDialogOpen(true)
+                                }
+                                }
+                                sx={{
+                                    textTransform: 'none'
+                                }}
+                            >
+                                Attach decision policy
+                            </Button>
+                            &nbsp;
+                            <Button
+                                variant='outlined'
                                 onClick={() => {
                                     setMemberFields({
                                         address: '',
@@ -150,23 +187,27 @@ export default function CreateGroupPage() {
                                         weight: ''
                                     })
                                     showGroupMemberDialog()
-                                }
-                                }
+                                }}
+                                sx={{
+                                    textTransform: 'none'
+                                }}
                             >
-                                Add member
+                                Add Group Member
                             </Button>
-                        </div>
+                        </Box>
 
-                        <div>
                             <Button
                                 type='submit'
                                 variant='outlined'
                                 disableElevation
                                 size='medium'
+                                sx={{
+                                    mt:2
+                                }}
                             >
                                 Create
                             </Button>
-                        </div>
+                            
                     </form>
                 </Box>
             </Paper>
@@ -179,38 +220,43 @@ function MemberItem(props) {
     const { onRemove, onEdit } = props;
 
     return (
-        <div
-            style={{
+        <Box
+            sx={{
                 display: 'flex',
                 flexDirection: 'row',
-                justifyContent: 'space-between'
+                justifyContent: 'space-around',
+                ml: 1,
+                mr: 1,
             }}
         >
-            <div>&nbsp;</div>
             <TextField
                 value={shortenAddress(address, 21)}
-                variant='outlined'
+                variant='standard'
                 size='small'
                 disabled
-                label='Address'
+                label=''
             >
             </TextField>
             <TextField
                 value={weight}
-                variant='outlined'
+                variant='standard'
                 size='small'
                 disabled
-                label='Weight'
+                label=''
+                sx={{
+                    maxWidth: 50
+                }}
             >
             </TextField>
             <TextField
                 value={metadata}
-                variant='outlined'
+                variant='standard'
                 size='small'
                 disabled
-                label='Metadata'
+                label=''
             >
             </TextField>
+            <div>
             <IconButton aria-label='remove member' color='error'
                 onClick={() => onRemove(address)}
             >
@@ -223,9 +269,7 @@ function MemberItem(props) {
                 <ModeEditOutlineOutlinedIcon />
 
             </IconButton>
-            <div>&nbsp;</div>
-            <div>&nbsp;</div>
-            <div>&nbsp;</div>
-        </div>
+            </div>
+        </Box>
     );
 }

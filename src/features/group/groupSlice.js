@@ -69,9 +69,6 @@ export const groupSlice = createSlice({
       .addCase(getGroupsByMember.rejected, (state, action) => {
         console.log(action.error)
       })
-
-
-
   },
 });
 
