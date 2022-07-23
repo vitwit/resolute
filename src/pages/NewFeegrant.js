@@ -1,7 +1,7 @@
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import TextField from '@mui/material/TextField';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import InputAdornment from '@mui/material/InputAdornment';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -12,7 +12,9 @@ import { txFeegrantBasic, txGrantPeriodic } from '../features/feegrant/feegrantS
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
 import { PeriodicFeegrant } from '../components/PeriodicFeeGrant';
-
+import CircularProgress from '@mui/material/CircularProgress';
+import { useNavigate } from 'react-router-dom';
+import { resetError, setError } from '../features/common/commonSlice';
 
 export default function NewFeegrant() {
     const address = useSelector((state) => state.wallet.address);
@@ -42,7 +44,7 @@ export default function NewFeegrant() {
         dispatch(txFeegrantBasic({
             granter: address,
             grantee: data.grantee,
-            spendLimit: Number(data.spendLimit) === 0 ? null : data.spendLimit,
+            spendLimit: Number(data.spendLimit) === 0 ? null : (Number(data.spendLimit) * (10 ** currency.coinDecimals)),
             expiration: data.expiration,
             denom: currency.coinMinimalDenom,
             chainId: chainInfo.config.chainId,
@@ -55,7 +57,7 @@ export default function NewFeegrant() {
         dispatch(txGrantPeriodic({
             granter: address,
             grantee: data.grantee,
-            spendLimit: Number(data.spendLimit) === 0 ? null : data.spendLimit,
+            spendLimit: Number(data.spendLimit) === 0 ? null : (Number(data.spendLimit) * (10 ** currency.coinDecimals)),
             expiration: data.expiration,
             period: data.period,
             periodSpendLimit: data.periodSpendLimit,
@@ -65,6 +67,27 @@ export default function NewFeegrant() {
             feeAmount: chainInfo.config.gasPriceStep.average,
         }))
     }
+
+    let navigate = useNavigate();
+    function navigateTo(path) {
+        navigate(path);
+    }
+    const selectedAuthz = useSelector((state) => state.authz.selected);
+    useEffect(() => {
+        if (selectedAuthz.granter.length > 0) {
+            dispatch(setError({
+              type: 'error',
+              message: 'Not supported in Authz mode'
+            }))
+            setTimeout(() => {
+              navigateTo("/");
+            },1000);
+          }
+
+          return () => {
+            dispatch(resetError());
+          }
+    }, []);
 
     return (
         <>
@@ -166,8 +189,13 @@ export default function NewFeegrant() {
                                             style={{ marginTop: 32 }}
                                             variant="outlined"
                                             type='submit'
+                                            disabled={feegrantTx?.status === 'pending'}
                                         >
-                                            Grant
+                                            {feegrantTx?.status === 'pending' ?
+                                                <CircularProgress
+                                                    size={25}
+                                                />
+                                                : 'Grant'}
                                         </Button>
                                     </form>
                                 </>
@@ -177,8 +205,8 @@ export default function NewFeegrant() {
 
                         {
                             selected === 'periodic' ?
-                                <PeriodicFeegrant 
-                                    loading= {feegrantTx.status}
+                                <PeriodicFeegrant
+                                    loading={feegrantTx.status}
                                     onGrant={onPeriodicGrant}
                                     currency={currency}
                                 />

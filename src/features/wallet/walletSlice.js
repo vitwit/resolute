@@ -1,3 +1,4 @@
+import { toBase64 } from '@cosmjs/encoding';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { getKeplrWalletAmino, isKeplrInstalled } from '../../txns/execute'
 import { setConnected } from '../../utils/localStorage';
@@ -7,6 +8,7 @@ const initialState = {
   name: '',
   connected: false,
   address: '',
+  pubKey: '',
   chainInfo: {
     currencies: [],
   },
@@ -73,6 +75,7 @@ export const walletSlice = createSlice({
       state.address = ''
       state.algo = ''
       state.name = ''
+      state.pubKey = ''
     },
     setNetwork: (state, action) => {
       state.chainInfo = action.payload.chainInfo
@@ -85,6 +88,7 @@ export const walletSlice = createSlice({
       .addCase(connectKeplrWallet.fulfilled, (state, action) => {
         const result = action.payload
         state.name = result.walletInfo?.name
+        state.pubKey = toBase64(result.walletInfo?.pubKey)
         state.address = result.result[1].address
         state.chainInfo = result.network
         state.connected = true

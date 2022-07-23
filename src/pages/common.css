@@ -53,3 +53,26 @@
 .route-selected {
         background-color: #1a0dab;
 }
+
+.read-more {
+        text-decoration: underline;
+}
+
+.read-more:hover {
+        cursor: pointer;
+}
+
+.footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+}
+
+.footer-link {
+        cursor: pointer;
+}
+
+.footer-link:hover {
+        cursor: pointer;
+}

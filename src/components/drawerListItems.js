@@ -11,61 +11,61 @@ import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 
 export function drawerListItems(currentPath, onNavigate, showAirdrop) {
   return (
-  <React.Fragment>
-    <ListItemButton  onClick={() => onNavigate("/")} selected={currentPath === "/"}>
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Dashboard" />
-    </ListItemButton>
-    {/* <ListItemButton onClick={() => onNavigate("/send")}>
+    <React.Fragment>
+      <ListItemButton onClick={() => onNavigate("/")} selected={currentPath === "/"} sx={{ pb: 0.5, pt: 0.5 }}>
+        <ListItemIcon>
+          <DashboardIcon />
+        </ListItemIcon>
+        <ListItemText primary="Dashboard" />
+      </ListItemButton>
+      {/* <ListItemButton onClick={() => onNavigate("/send")}>
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
       <ListItemText primary="Send" />
     </ListItemButton> */}
-    <ListItemButton onClick={() => onNavigate("/staking")} selected={currentPath === "/staking"}>
-      <ListItemIcon>
-        <BarChartOutlinedIcon />
-      </ListItemIcon>
-      <ListItemText primary="Staking" />
-    </ListItemButton>
-    <ListItemButton onClick={() => onNavigate("/governance")} selected={currentPath === "/governance"}>
-      <ListItemIcon>
-        <DocumentScannerOutlinedIcon />
-      </ListItemIcon>
-      <ListItemText primary="Governance" />
-    </ListItemButton>
-    <ListItemButton onClick={() => onNavigate("/authz")} selected={currentPath === "/authz"}>
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Authz"/>
-    </ListItemButton>
-    <ListItemButton onClick={() => {}} disabled>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Feegrant" secondary="coming soon" />
-    </ListItemButton>
-    <ListItemButton onClick={() => onNavigate("/group")} selected={currentPath === "/group"}>
+      <ListItemButton onClick={() => onNavigate("/staking")} selected={currentPath === "/staking"} sx={{ pb: 0.5, pt: 0.5 }}>
+        <ListItemIcon>
+          <BarChartOutlinedIcon />
+        </ListItemIcon>
+        <ListItemText primary="Staking" />
+      </ListItemButton>
+      <ListItemButton onClick={() => onNavigate("/governance")} selected={currentPath === "/governance"} sx={{ pb: 0.5, pt: 0.5 }}>
+        <ListItemIcon>
+          <DocumentScannerOutlinedIcon />
+        </ListItemIcon>
+        <ListItemText primary="Governance" />
+      </ListItemButton>
+      <ListItemButton onClick={() => onNavigate("/authz")} selected={currentPath === "/authz"} sx={{ pb: 0.5, pt: 0.5 }}>
+        <ListItemIcon>
+          <BarChartIcon />
+        </ListItemIcon>
+        <ListItemText primary="Authz" />
+      </ListItemButton>
+      <ListItemButton onClick={() => onNavigate("/feegrant")} sx={{ pb: 0.5, pt: 0.5 }} selected={currentPath === "/feegrant"}>
+        <ListItemIcon>
+          <LayersIcon />
+        </ListItemIcon>
+        <ListItemText primary="Feegrant" />
+      </ListItemButton>
+      <ListItemButton onClick={() => onNavigate("/group")} sx={{ pb: 0.5, pt: 0.5 }} selected={currentPath === "/group"}>
       <ListItemIcon>
         <GroupsOutlinedIcon />
       </ListItemIcon>
       <ListItemText primary="Group" />
     </ListItemButton>
 
-  { showAirdrop ?
-    <ListItemButton onClick={() => onNavigate("/airdrop-check")} selected={currentPath === "/airdrop-check"}>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Airdrop" />
-    </ListItemButton>
+      {showAirdrop ?
+        <ListItemButton onClick={() => onNavigate("/airdrop-check")} selected={currentPath === "/airdrop-check"} sx={{ pb: 0.5, pt: 0.5 }}>
+          <ListItemIcon>
+            <LayersIcon />
+          </ListItemIcon>
+          <ListItemText primary="Airdrop" />
+        </ListItemButton>
 
-    :
-    <></>
-  }
-  </React.Fragment >
-);
+        :
+        <></>
+      }
+    </React.Fragment >
+  );
 }

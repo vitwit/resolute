@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import authzService from './authzService';
 import { fee, signAndBroadcastProto } from '../../txns/execute';
-import { AuthzSendGrantMsg, AuthzGenericGrantMsg, AuthzRevokeMsg, AuthzExecSendMsg, AuthzExecVoteMsg } from '../../txns/proto';
+import { AuthzSendGrantMsg, AuthzGenericGrantMsg, AuthzRevokeMsg, AuthzExecSendMsg, AuthzExecVoteMsg, AuthzExecWithdrawRewardsMsg, AuthzExecDelegateMsg, AuthzExecReDelegateMsg, AuthzExecUnDelegateMsg } from '../../txns/proto';
 import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
@@ -18,10 +18,13 @@ const initialState = {
     pagination: {}
   },
   tx: {
-      status: 'idle',
+    status: 'idle',
   },
   execTx: {
-    status: 'idle',
+    status: 'init',
+  },
+  selected: {
+    granter: '',
   }
 };
 
@@ -79,6 +82,10 @@ export const txAuthzRevoke = createAsyncThunk(
         dispatch(setTxHash({
           hash: result?.transactionHash
         }))
+        dispatch(getGrantsByMe({
+          baseURL: data.baseURL,
+          granter: data.granter,
+        }))
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         dispatch(setError({
@@ -99,7 +106,7 @@ export const txAuthzRevoke = createAsyncThunk(
 
 
 export const authzExecHelper = (dispatch, data) => {
-  switch(data.type) {
+  switch (data.type) {
     case "send": {
       const msg = AuthzExecSendMsg(data.from, data.granter, data.recipient, data.amount, data.denom)
       dispatch(txAuthzExec({
@@ -112,6 +119,46 @@ export const authzExecHelper = (dispatch, data) => {
     }
     case "vote": {
       const msg = AuthzExecVoteMsg(data.from, data.proposalId, data.option, data.granter)
+      dispatch(txAuthzExec({
+        msg: msg,
+        denom: data.denom,
+        rpc: data.rpc,
+        feeAmount: data.feeAmount,
+      }))
+      break
+    }
+    case "withdraw": {
+      const msg = AuthzExecWithdrawRewardsMsg(data.from, data.payload)
+      dispatch(txAuthzExec({
+        msg: msg,
+        denom: data.denom,
+        rpc: data.rpc,
+        feeAmount: data.feeAmount,
+      }))
+      break
+    }
+    case "delegate": {
+      const msg = AuthzExecDelegateMsg(data.address,data.delegator,data.validator, data.amount, data.denom)
+      dispatch(txAuthzExec({
+        msg: msg,
+        denom: data.denom,
+        rpc: data.rpc,
+        feeAmount: data.feeAmount,
+      }))
+      break
+    }
+    case "redelegate": {
+      const msg = AuthzExecReDelegateMsg(data.address, data.delegator, data.srcVal, data.destVal, data.amount, data.denom)
+      dispatch(txAuthzExec({
+        msg: msg,
+        denom: data.denom,
+        rpc: data.rpc,
+        feeAmount: data.feeAmount,
+      }))
+      break
+    }
+    case "undelegate": {
+      const msg = AuthzExecUnDelegateMsg(data.address, data.delegator, data.validator, data.amount, data.denom)
       dispatch(txAuthzExec({
         msg: msg,
         denom: data.denom,
@@ -186,9 +233,15 @@ export const authzSlice = createSlice({
   name: 'authz',
   initialState,
   reducers: {
+    setSelectedGranter: (state, data) => {
+      state.selected.granter = data.payload.granter
+    },
+    exitAuthzMode: (state) => {
+      state.selected.granter = ''
+    },
     resetAlerts: (state) => {
       state.tx = {
-          status: 'idle',
+        status: 'idle',
       }
       state.grantsToMe = {
         status: 'idle',
@@ -198,6 +251,10 @@ export const authzSlice = createSlice({
         status: 'idle',
         errMsg: ''
       }
+      state.execTx.status = 'init'
+    },
+    resetExecTx: (state) =>  {
+      state.execTx.status = 'init'
     }
   },
   extraReducers: (builder) => {
@@ -275,7 +332,7 @@ export const authzSlice = createSlice({
         state.tx.status = `rejected`
       })
 
-      builder
+    builder
       .addCase(txAuthzExec.pending, (state) => {
         state.execTx.status = `pending`
 
@@ -289,6 +346,6 @@ export const authzSlice = createSlice({
   },
 });
 
-export const {resetAlerts} = authzSlice.actions;
+export const { resetAlerts, setSelectedGranter, resetExecTx, exitAuthzMode } = authzSlice.actions;
 
 export default authzSlice.reducer;

@@ -18,6 +18,8 @@ export default function Overview() {
     const rewards = useSelector((state) => state.distribution.delegatorRewards);
     const unbonding = useSelector((state) => state.staking.unbonding);
 
+    const selectedAuthz = useSelector((state) => state.authz.selected);
+
     const [available, setTotalBalance] = useState(0);
     const [delegated, setTotalDelegations] = useState(0);
     const [pendingRewards, setTotalRewards] = useState(0);
@@ -35,29 +37,44 @@ export default function Overview() {
     }, [balance, delegations, rewards, unbonding, chainInfo, address]);
 
     useEffect(() => {
-        if (address.length > 0 && chainInfo.config.currencies.length > 0 && connected) {
-            dispatch(getBalance({
-                baseURL: chainInfo.config.rest,
-                address: address,
-                denom: chainInfo.config.currencies[0].coinMinimalDenom
-            }))
-
-            dispatch(getDelegations({
-                baseURL: chainInfo.config.rest,
-                address: address,
-            }))
-
-            dispatch(getDelegatorTotalRewards({
-                baseURL: chainInfo.config.rest,
-                address: address,
-            }))
-
-            dispatch(getUnbonding({
-                baseURL: chainInfo.config.rest,
-                address: address,
-            }))
+        if (connected && selectedAuthz.granter.length === 0) {
+            if (address.length > 0 && chainInfo.config.currencies.length > 0) {
+                fetchDetails(address);
+            }
         }
     }, [address]);
+
+    useEffect(() => {
+        if (selectedAuthz.granter.length > 0) {
+            fetchDetails(selectedAuthz.granter);
+        } else if (address?.length > 0){
+            fetchDetails(address);
+        }
+    }, [selectedAuthz]);
+
+
+    const fetchDetails = (address) => {
+        dispatch(getBalance({
+            baseURL: chainInfo.config.rest,
+            address: address,
+            denom: chainInfo.config.currencies[0].coinMinimalDenom
+        }))
+
+        dispatch(getDelegations({
+            baseURL: chainInfo.config.rest,
+            address: address,
+        }))
+
+        dispatch(getDelegatorTotalRewards({
+            baseURL: chainInfo.config.rest,
+            address: address,
+        }))
+
+        dispatch(getUnbonding({
+            baseURL: chainInfo.config.rest,
+            address: address,
+        }))
+    }
 
     return (
         <>

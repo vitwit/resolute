@@ -12,8 +12,7 @@ export const ProposalItem = (props) => {
     const tallyInfo = computeVotePercentage(tally);
 
     const onVoteClick = () => {
-        props.onVote(info?.proposal_id)
-        props.setOpen(true);
+        props.setOpen(info?.proposal_id);
     }
 
     return (

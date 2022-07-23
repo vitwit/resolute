@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  getGrantsToMe, getGrantsByMe, txAuthzRevoke, authzExecHelper
+  getGrantsToMe, getGrantsByMe, txAuthzRevoke, authzExecHelper, setSelectedGranter
 } from './../features/authz/authzSlice';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Chip from '@mui/material/Chip';
@@ -20,7 +20,7 @@ import Typography from '@mui/material/Typography';
 import { getLocalTime } from '../utils/datetime';
 import { AuthorizationInfo } from '../components/AuthorizationInfo';
 import { resetError, resetTxHash, setError } from '../features/common/commonSlice';
-import { getTypeURLFromAuthorization } from '../utils/authorizations';
+import { getMsgNameFromAuthz, getTypeURLFromAuthorization } from '../utils/authorizations';
 import { AuthzSendDialog } from '../components/authz/AuthzSend';
 
 export default function Authz() {
@@ -78,21 +78,15 @@ export default function Authz() {
   const onRevoke = (granter, grantee, typeURL) => {
     dispatch(txAuthzRevoke({
       granter: granter,
+      baseURL: chainInfo.config.rest,
       grantee: grantee,
       typeURL: typeURL,
       denom: currency.coinMinimalDenom,
-      memo: "",
       chainId: chainInfo.config.chainId,
       rpc: chainInfo.config.rpc,
       feeAmount: chainInfo.config.gasPriceStep.average,
     }))
-
   }
-
-  useEffect(() => {
-    dispatch(resetError())
-    dispatch(resetTxHash())
-  }, [])
 
   let navigate = useNavigate();
   function navigateTo(path) {
@@ -101,15 +95,30 @@ export default function Authz() {
 
   const [selectedGrant, setSelectedGrant] = React.useState({});
   const onUseAuthz = (row) => {
-    if (
-      row?.authorization["@type"] === "/cosmos.bank.v1beta1.SendAuthorization" ||
-            row?.authorization?.msg === "/cosmos.bank.v1beta1.MsgSend"
-    ){
-    setSelectedGrant(row);
-    } else {
-      alert("TODO")
-    }
+    dispatch(setSelectedGranter({
+      granter: row.granter
+    }))
+    setTimeout(() => {
+      navigateTo("/")
+    }, 200)
   }
+
+  const selectedAuthz = useSelector((state) => state.authz.selected);
+  useEffect(() => {
+    if (selectedAuthz.granter.length > 0) {
+      dispatch(setError({
+        type: 'error',
+        message: 'Not supported in Authz mode'
+      }))
+      setTimeout(() => {
+        navigateTo("/");
+      }, 1000);
+    }
+    return () => {
+      dispatch(resetError())
+      dispatch(resetTxHash())
+    }
+  }, []);
 
   const onExecSend = (data) => {
     authzExecHelper(dispatch, {
@@ -185,11 +194,12 @@ export default function Authz() {
                       </Typography>
                       :
                       <>
-                        <Table sx={{ minWidth: 700 }} aria-label="simple table">
+                        <Table sx={{ minWidth: 700 }} size="small" aria-label="simple table">
                           <TableHead>
                             <StyledTableRow>
                               <StyledTableCell>Grantee</StyledTableCell>
                               <StyledTableCell >Type</StyledTableCell>
+                              <StyledTableCell >Message</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
                               <StyledTableCell>Details</StyledTableCell>
                               <StyledTableCell>Action</StyledTableCell>
@@ -206,6 +216,9 @@ export default function Authz() {
                                 </StyledTableCell>
                                 <StyledTableCell>
                                   <Chip label={getTypeURLName(row.authorization['@type'])} variant="filled" size="medium" />
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  <Chip label={getMsgNameFromAuthz(row.authorization)} variant="filled" size="medium" />
                                 </StyledTableCell>
                                 <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
                                 <StyledTableCell>
@@ -250,11 +263,12 @@ export default function Authz() {
                       :
 
                       <>
-                        <Table sx={{ minWidth: 700 }} aria-label="simple table">
+                        <Table sx={{ minWidth: 700 }} size="small" aria-label="simple table">
                           <TableHead>
                             <StyledTableRow>
                               <StyledTableCell >Granter</StyledTableCell>
                               <StyledTableCell >Type</StyledTableCell>
+                              <StyledTableCell >Message</StyledTableCell>
                               <StyledTableCell>Expiration</StyledTableCell>
                               <StyledTableCell >Details</StyledTableCell>
                               <StyledTableCell >Actions</StyledTableCell>
@@ -271,6 +285,9 @@ export default function Authz() {
                                 </StyledTableCell>
                                 <StyledTableCell>
                                   <Chip label={getTypeURLName(row.authorization['@type'])} variant="filled" size="medium" />
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  <Chip label={getMsgNameFromAuthz(row.authorization)} variant="filled" size="medium" />
                                 </StyledTableCell>
                                 <StyledTableCell>{row.expiration ? getLocalTime(row.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
                                 <StyledTableCell>
