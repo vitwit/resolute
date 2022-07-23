@@ -6,56 +6,53 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useForm, Controller } from 'react-hook-form';
-import { Grid } from '@mui/material';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import { useDispatch, useSelector } from 'react-redux';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DialogTitle from '@mui/material/DialogTitle';
 import { setError } from '../features/common/commonSlice';
 import { createMultiSig } from '../txns/multisig';
 import { createAccount } from '../features/multisig/multisigSlice';
-
+import Box from '@mui/system/Box';
+import { useSelector, useDispatch } from 'react-redux';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const InputTextComponent = ({ field, index, handleChangeValue, handleRemoveValue }) => {
     return (
-        <>
-            <Grid item>
-                <Grid xs={12}>
-                    <TextField
-                        style={{ marginTop: 12, marginBotton: 16 }}
-                        onChange={(e) => {
-                            handleChangeValue(index, e)
+        <TextField
+            onChange={(e) => {
+                handleChangeValue(index, e)
+            }}
+            sx={{
+                mt: 2,
+            }}
+            name={field.name}
+            value={field.value}
+            required={field?.required}
+            label={field.label}
+            placeholder={field.placeHolder}
+            fullWidth
+            InputProps={{
+                endAdornment:
+                    <InputAdornment onClick={() => {
+                        handleRemoveValue(index)
+                    }} position="end"
+                        sx={{
+                            '&:hover': {
+                                cursor: 'pointer'
+                            }
                         }}
-                        name={field.name}
-                        value={field.value}
-                        required={field?.required}
-                        label={field.label}
-                        placeholder={field.placeHolder}
-                        fullWidth
-                        InputProps={{
-                            endAdornment:
-                                <InputAdornment onClick={() => {
-                                    handleRemoveValue(index)
-                                }} position="end">
-                                    <DeleteIcon />
-                                </InputAdornment>,
-                        }}
-                    />
-                </Grid>
-
-            </Grid>
-        </>
-
+                    >
+                        <DeleteIcon />
+                    </InputAdornment>,
+            }}
+        />
     )
 }
 
 export function DialogCreateMultisig(props) {
     const { onClose, open,
         addressPrefix,
-        chainId, loading } = props;
+        chainId } = props;
 
     const createMultiAccRes = useSelector((state) => state.multisig.createMultisigAccountRes);
 
@@ -73,14 +70,14 @@ export function DialogCreateMultisig(props) {
     const pubKeyObj = {
         name: 'pubKey',
         value: '',
-        label: 'Pubkey',
-        placeHolder: 'Add Account Pubkey',
+        label: 'Public Key (Secp256k1)',
+        placeHolder: 'E. g. AtgCrYjD+21d1+og3inzVEOGbCf5uhXnVeltFIo7RcRp',
         required: true,
     };
 
-    const [pubKeyFields, setPubKeyFields] = useState([{ ...pubKeyObj }, { ...pubKeyObj }]);
+    const [pubKeyFields, setPubKeyFields] = useState([{ ...pubKeyObj }]);
     const [threshold, setThreshold] = useState(0);
-    const [name, setName] = useState(null);
+    const [name, setName] = useState('');
 
     const handleAddPubKey = () => {
         if (pubKeyFields?.length > 6) {
@@ -95,8 +92,10 @@ export function DialogCreateMultisig(props) {
     }
 
     const handleRemoveValue = (i) => {
-        let pubKeyFieldsArr = pubKeyFields.splice(i, 1);
-        setPubKeyFields([...pubKeyFields])
+        if (pubKeyFields.length > 1) {
+            pubKeyFields.splice(i, 1);
+            setPubKeyFields([...pubKeyFields]);
+        }
     }
 
     const handleSubmit = (e) => {
@@ -154,9 +153,6 @@ export function DialogCreateMultisig(props) {
         setThreshold(e.target.value);
     }
 
-    const [value, setValue] = React.useState(0);
-
-
     const handleClose = () => {
         onClose();
     };
@@ -168,45 +164,69 @@ export function DialogCreateMultisig(props) {
     return (
         <>
             <Dialog fullWidth maxWidth={'sm'} onClose={handleClose} open={open}>
+                <DialogTitle sx={{ textAlign: 'center', fontWeight: 600 }} variant='h6' >
+                    Create Multisig Account
+                </DialogTitle>
                 <form onSubmit={handleSubmit}>
                     <DialogContent>
-                        <h3 style={{textAlign: 'center'}}>Create Mulitsig Address</h3>
-                        <Grid xs={12}>
-                            <TextField
-                                style={{ marginTop: 12, marginBotton: 16 }}
-                                onChange={handleNameChange}
-                                name={'name'}
-                                value={name}
-                                required={true}
-                                label={'Name'}
-                                placeholder={'Enter name'}
-                                fullWidth
-                            />
-                        </Grid>
+                        <TextField
+                            onChange={handleNameChange}
+                            name={'name'}
+                            value={name}
+                            required={true}
+                            label={'Name'}
+                            placeholder={'E.g. Alice'}
+                            fullWidth
+                        />
                         {pubKeyFields.map((field, index) => (
                             <InputTextComponent
+                                key={index}
                                 handleRemoveValue={handleRemoveValue}
                                 handleChangeValue={handleChangeValue}
                                 index={index} field={field} />
                         ))}
-                        <div style={{ display: 'flex', justifyContent: 'right', marginTop: 12 }}>
+                        <Box
+                            sx={{
+                                mt: 2,
+                                textAlign: 'right'
+                            }}
+                        >
                             <Button onClick={handleAddPubKey}
-                                endIcon={<AddOutlinedIcon />}
                                 variant='contained'
                                 disableElevation
+                                sx={{
+                                    textTransform: 'none'
+                                }}
                             >
-                                Add
+                                Add another public key
                             </Button>
-                        </div>
+                        </Box>
 
-                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+                        <Typography
+                            variant='body1'
+                            color='text.secondary'
+                            sx={{
+                                mt: 2,
+                                textAlign: 'center'
+                            }}
+                        >
+                            Signatures required to send a transaction
+                        </Typography>
+
+                        <Box
+                            sx={{
+                                mt: 1,
+                                display: 'flex',
+                                justifyContent: 'center'
+                            }}
+                        >
                             <TextField
                                 name="threshold"
                                 value={threshold}
                                 inputProps={{ maxLength: 1 }}
                                 onChange={handleChange}
-                                label="Threshold"
-                                style={{ maxWidth: 120 }}
+                                label=""
+                                style={{ maxWidth: 90 }}
                             />
                             <Typography
                                 variant='body1'
@@ -218,11 +238,11 @@ export function DialogCreateMultisig(props) {
                             <TextField
                                 name="threshold"
                                 value={pubKeyFields?.length}
-                                label="Threshold"
+                                label=""
                                 disabled
-                                style={{ maxWidth: 120 }}
+                                style={{ maxWidth: 90 }}
                             />
-                        </div>
+                        </Box>
 
                     </DialogContent>
                     <DialogActions>
@@ -239,7 +259,7 @@ export function DialogCreateMultisig(props) {
                             variant='contained'
                             disableElevation
                             type='submit'
-                            disabled={loading === 'pending'}
+                            disabled={createMultiAccRes?.status === 'pending'}
                             className='button-capitalize-title'
                         >
                             {createMultiAccRes?.status === 'pending' ? <CircularProgress size={25} /> : 'Create'}
@@ -254,9 +274,7 @@ export function DialogCreateMultisig(props) {
 
 DialogCreateMultisig.propTypes = {
     onClose: PropTypes.func.isRequired,
-    onDelegate: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    params: PropTypes.object.isRequired,
-    validator: PropTypes.object.isRequired,
-    balance: PropTypes.number.isRequired,
+    addressPrefix: PropTypes.string.isRequired,
+    chainId: PropTypes.string.isRequired,
 };

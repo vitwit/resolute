@@ -6,9 +6,6 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CreateMultisig from './multisig/CreateMultisig';
-import CreateTxn from './multisig/CreateTxn';
-import BroadcastTx from './multisig/BroadcastTx';
-import SignTxn from './multisig/SignTxn';
 import './common.css';
 import Tx_index from './multisig/tx/Tx_index';
 
