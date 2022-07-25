@@ -123,7 +123,7 @@ export default function Tx_index() {
                                 label={multisigAccount?.address ? shortenAddress(multisigAccount?.address, 24) : ''}
                                 size="small"
                                 deleteIcon={<ContentCopyOutlined />}
-                                onDelete={() => { copyToClipboard(multisigAccount) }}
+                                onDelete={() => { copyToClipboard(multisigAccount?.address) }}
                             />
                         </Typography>
                     </Grid>
