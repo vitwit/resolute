@@ -7,8 +7,12 @@ import { getDelegations, getValidators } from '../../../features/staking/stakeSl
 import List_txs from './List_txs';
 import DialogCreateMultisigTx from '../../../components/DialogCreateMultisigTx';
 import { fetchSingleMultiAccount, getMultisigAccount } from '../../../features/multisig/multisigSlice';
+import { shortenAddress } from '../../../utils/util';
+import ContentCopyOutlined from '@mui/icons-material/ContentCopyOutlined';
+import Chip from '@mui/material/Chip'
+import { resetError, setError } from '../../../features/common/commonSlice';
 
-export const Tx_index = ({ }) => {
+export default function Tx_index() {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -20,6 +24,26 @@ export const Tx_index = ({ }) => {
     const multisigDel = useSelector(state => state.staking.delegations)
     const currency = useSelector((state) => state.wallet.chainInfo?.config?.currencies[0]);
     const [totalStake, setTotalStaked] = useState(0);
+
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text).then(function () {
+            dispatch(setError({
+                type: 'success',
+                message: 'Copied to clipboard'
+            }))
+            setTimeout(() => {
+                dispatch(resetError());
+            }, 1000);
+        }, function () {
+            dispatch(setError({
+                type: 'error',
+                message: 'Failed to copy'
+            }))
+            setTimeout(() => {
+                dispatch(resetError());
+            }, 1000);
+        });
+    }
 
     useEffect(() => {
         let delegations = multisigDel?.delegations || []
@@ -64,73 +88,180 @@ export const Tx_index = ({ }) => {
     }, [chainInfo]);
 
     return (
-        <Grid container>
-            <Grid item xs={12} md={12}>
-                <Grid>
-                    <Paper align="left" className='mt-20'>
-                        <a align="left" href='javascript:void(0);' onClick={() => navigate('/multisig')}> Back</a>
-                        <br /><br />
-                    </Paper>
-                    <Paper align="left" className='mt-20'>
-                        {
-                            multisigAccountDetails?.status === 'pending' ? <CircularProgress /> :
-                                <Box style={{ display: 'flex', justifyContent: 'center' }}>
-                                    <Box>
-                                        <Table>
-                                            <TableRow>
-                                                <TableCell>Multisig Account</TableCell>
-                                                <TableCell> <strong>{multisigAddress}</strong></TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell>Threshold</TableCell>
-                                                <TableCell> <strong> {multisigAccount?.pubkeyJSON?.value?.threshold || 0}</strong></TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell>Signers</TableCell>
-                                                <TableCell> {
-                                                    multisigAccount?.pubkeyJSON?.value?.pubkeys?.map(p => (
-                                                        <p><strong>{p?.address}</strong></p>
-                                                    ))
-                                                }</TableCell>
-                                            </TableRow>
-                                        </Table>
-                                    </Box>
-                                    <Box alignSelf={'right'}>
-                                        <Table>
-                                            <TableRow>
-                                                <TableCell>
-                                                    Balance
-                                                </TableCell>
-                                                <TableCell>
-                                                    {
-                                                        multisigBal.status === 'pending' ?
-                                                            <CircularProgress /> :
-                                                            <strong>
-                                                                {multisigBal?.balance?.amount/10**currency?.coinDecimals} &nbsp;
-                                                                {currency?.coinDenom}
-                                                            </strong>
-                                                    }
-                                                </TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell>
-                                                    Staked
-                                                </TableCell>
-                                                <TableCell>
-                                                    {
-                                                        multisigDel?.status === 'pending' ?
-                                                            <CircularProgress /> :
-                                                            <strong>{totalStake} {currency?.coinDenom}</strong>
-                                                    }
+        <>
+            <Paper elevation={0}
+                sx={{
+                    borderRadius: 0,
+                    p: 1,
+                    pl: 2, pr: 2,
+                }}
+            >
+                <Typography
+                    variant='h6'
+                    color='text.primary'
+                    fontWeight={600}
+                    gutterBottom
+                >
+                    Multisig Account Information
+                </Typography>
 
-                                                </TableCell>
-                                            </TableRow>
-                                        </Table>
-                                    </Box>
+                <Grid container sx={{
+                    textAlign: 'left',
+                    p: 1,
+                }} spacing={4}>
+                    <Grid item sx={6} md={3}>
+                        <Typography
+                            variant='body1'
+                            color='text.primary'
+                            fontWeight={500}
+                            gutterBottom
+                        >
+                            Account
+                        </Typography>
+                        <Typography>
+                            <Chip
+                                label={multisigAccount?.address ? shortenAddress(multisigAccount?.address, 24) : ''}
+                                size="small"
+                                deleteIcon={<ContentCopyOutlined />}
+                                onDelete={() => { copyToClipboard(multisigAccount) }}
+                            />
+                        </Typography>
+                    </Grid>
+                    <Grid item sx={6} md={3}>
+                        <Typography
+                            variant='body1'
+                            color='text.primary'
+                            fontWeight={500}
+                            gutterBottom
+                        >
+                            Threshold
+                        </Typography>
+                        <Typography>
+                            &nbsp;&nbsp;{multisigAccount?.pubkeyJSON?.value?.threshold || 0}
+                        </Typography>
+                    </Grid>
+                    <Grid item sx={6} md={3} >
+                        <Typography
+                            gutterBottom
+                            variant='body1'
+                            color='text.primary'
+                            fontWeight={500}
+                        >
+                            Available
+                        </Typography>
+                        <Typography>
+                            {multisigBal?.balance?.amount / 10 ** currency?.coinDecimals} &nbsp;
+                            {currency?.coinDenom}
+                        </Typography>
+                    </Grid>
+                    <Grid item sx={6} md={3}>
+                        <Typography
+                            gutterBottom
+                            variant='body1'
+                            color='text.primary'
+                            fontWeight={500}
+                        >
+                            Staked
+                        </Typography>
+                        <Typography>
+                            {totalStake} {currency?.coinDenom}
+                        </Typography>
+                    </Grid>
+                    <Grid item sx={12} md={12}>
+                        <Typography
+                            variant='body1'
+                            color='text.primary'
+                            fontWeight={500}
+                            gutterBottom
+                        >
+                            Signers
+                        </Typography>
+                        <Box component='div' sx={{
+                        }}>
+                            {
+                                multisigAccount?.pubkeyJSON?.value?.pubkeys?.map(p => (
+                                        <Chip
+                                            sx={{
+                                                ml: 0.5, mr: 0.5, mt: 1
+                                            }}
+                                            label={p?.address ? shortenAddress(p.address, 24) : ''}
+                                            size="small"
+                                            deleteIcon={<ContentCopyOutlined />}
+                                            onDelete={() => { copyToClipboard(p?.address) }}
+                                        />
+                                ))
+                            }
+                        </Box>
+
+                    </Grid>
+                </Grid>
+
+            </Paper>
+            {/* <Grid>
+                <Paper align="left" className='mt-20'>
+                    <a align="left" href='javascript:void(0);' onClick={() => navigate('/multisig')}> Back</a>
+                    <br /><br />
+                </Paper>
+                <Paper align="left" className='mt-20'>
+                    {
+                        multisigAccountDetails?.status === 'pending' ? <CircularProgress /> :
+                            <Box style={{ display: 'flex', justifyContent: 'center' }}>
+                                <Box>
+                                    <Table>
+                                        <TableRow>
+                                            <TableCell>Multisig Account</TableCell>
+                                            <TableCell> <strong>{multisigAddress}</strong></TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>Threshold</TableCell>
+                                            <TableCell> <strong> {multisigAccount?.pubkeyJSON?.value?.threshold || 0}</strong></TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>Signers</TableCell>
+                                            <TableCell> {
+                                                multisigAccount?.pubkeyJSON?.value?.pubkeys?.map(p => (
+                                                    <p><strong>{p?.address}</strong></p>
+                                                ))
+                                            }</TableCell>
+                                        </TableRow>
+                                    </Table>
                                 </Box>
-                        }
+                                <Box alignSelf={'right'}>
+                                    <Table>
+                                        <TableRow>
+                                            <TableCell>
+                                                Balance
+                                            </TableCell>
+                                            <TableCell>
+                                                {
+                                                    multisigBal.status === 'pending' ?
+                                                        <CircularProgress /> :
+                                                        <strong>
+                                                            {multisigBal?.balance?.amount / 10 ** currency?.coinDecimals} &nbsp;
+                                                            {currency?.coinDenom}
+                                                        </strong>
+                                                }
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>
+                                                Staked
+                                            </TableCell>
+                                            <TableCell>
+                                                {
+                                                    multisigDel?.status === 'pending' ?
+                                                        <CircularProgress /> :
+                                                        <strong>{totalStake} {currency?.coinDenom}</strong>
+                                                }
 
-                        {/* <Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    </Table>
+                                </Box>
+                            </Box>
+                    }
+
+                    {/* <Box>
                             Multisig Account: <strong>{multisigAddress}</strong>
                         </Box>
                         <Box>
@@ -138,37 +269,43 @@ export const Tx_index = ({ }) => {
                                 multisigAccount?.pubkeyJSON?.value?.threshold
                             }</strong>
                         </Box> */}
-                    </Paper>
-                </Grid>
+            {/* </Paper>
+            </Grid> */}
 
-                <Paper elevation={0} style={{ padding: 24 }}>
-                    <Typography
-                        variant='h6'
-                        fontWeight={600}
-                        color='text.primary'
+            <Paper elevation={0} sx={{
+                p: 2,
+                mt: 1
+            }}>
+                <Typography
+                    variant='h6'
+                    fontWeight={600}
+                    color='text.primary'
+                >
+                    Transactions
+                </Typography>
+
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'right'
+                }}>
+                    <Button
+                        onClick={() => setOpen(true)}
+                        disableElevation
+                        variant='contained'
+                        sx={{
+                            textTransform: 'none'
+                        }}
                     >
-                        Transactions
-                    </Typography>
-
-                    <Box>
-                        <Paper elevation={0} style={{ padding: 24 }}>
-                            <Button onClick={() => setOpen(true)}
-                                className='text-right'>+ Create Txn</Button>
-                        </Paper>
-                    </Box>
-                    <List_txs address={multisigAddress} />
-                </Paper>
-                <DialogCreateMultisigTx
-                    open={open}
-                    handleClose={handleClose}
-                />
-            </Grid>
-        </Grid>
+                        Create Transaction
+                    </Button>
+                </Box>
+                <List_txs address={multisigAddress} />
+            </Paper>
+            <DialogCreateMultisigTx
+                open={open}
+                handleClose={handleClose}
+            />
+        </>
     )
 }
-
-const mapStateToProps = (state) => ({})
-
-const mapDispatchToProps = {}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Tx_index)

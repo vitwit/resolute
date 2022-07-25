@@ -203,14 +203,14 @@ export function DialogCreateMultisig(props) {
                         </Box>
 
                         <Typography
-                            variant='body1'
+                            variant='body2'
                             color='text.secondary'
                             sx={{
                                 mt: 2,
                                 textAlign: 'center'
                             }}
                         >
-                            Signatures required to send a transaction
+                            Threshold: Signatures required to send a transaction
                         </Typography>
 
                         <Box
@@ -226,7 +226,9 @@ export function DialogCreateMultisig(props) {
                                 inputProps={{ maxLength: 1 }}
                                 onChange={handleChange}
                                 label=""
-                                style={{ maxWidth: 90 }}
+                                type='number'
+                                size='small'
+                                style={{ maxWidth: 75 }}
                             />
                             <Typography
                                 variant='body1'
@@ -240,7 +242,8 @@ export function DialogCreateMultisig(props) {
                                 value={pubKeyFields?.length}
                                 label=""
                                 disabled
-                                style={{ maxWidth: 90 }}
+                                size='small'
+                                style={{ maxWidth: 75 }}
                             />
                         </Box>
 
@@ -249,7 +252,9 @@ export function DialogCreateMultisig(props) {
                         <Button
                             variant='outlined'
                             color='secondary'
-                            className='button-capitalize-title'
+                            sx={{
+                                textTransform: 'none'
+                            }}
                             disableElevation
                             onClick={() => handleClose()}
                         >
@@ -260,7 +265,9 @@ export function DialogCreateMultisig(props) {
                             disableElevation
                             type='submit'
                             disabled={createMultiAccRes?.status === 'pending'}
-                            className='button-capitalize-title'
+                            sx={{
+                                textTransform: 'none'
+                            }}
                         >
                             {createMultiAccRes?.status === 'pending' ? <CircularProgress size={25} /> : 'Create'}
                         </Button>

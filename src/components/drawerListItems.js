@@ -7,6 +7,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import DocumentScannerOutlinedIcon from '@mui/icons-material/DocumentScannerOutlined';
+import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 
 export function drawerListItems(currentPath, onNavigate, showAirdrop) {
   return (
@@ -17,15 +18,9 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         </ListItemIcon>
         <ListItemText primary="Dashboard" />
       </ListItemButton>
-      {/* <ListItemButton onClick={() => onNavigate("/send")}>
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Send" />
-    </ListItemButton> */}
       <ListItemButton onClick={() => onNavigate("/multisig")} selected={currentPath === "/multisig"} sx={{ pb: 0.5, pt: 0.5 }}>
         <ListItemIcon>
-          <BarChartOutlinedIcon />
+          <GroupsOutlinedIcon />
         </ListItemIcon>
         <ListItemText primary="Multisig" />
       </ListItemButton>

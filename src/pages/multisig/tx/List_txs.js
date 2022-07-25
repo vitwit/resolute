@@ -2,7 +2,7 @@ import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
     IconButton, Table, TableBody, Paper,
-    TableCell, TableContainer, TableRow, TableHead, CircularProgress, Button
+    TableCell, TableContainer, TableRow, TableHead, CircularProgress, Button, Typography
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete';
 import Collapse from '@mui/material/Collapse';
@@ -283,27 +283,27 @@ function List_txs({ address }) {
     }, [])
 
     return (
-        <TableContainer component={Paper}>
-            <Box>
+        <TableContainer component={Box}>
                 {
                     txns?.status !== 'pending' && !txns?.length ?
-                        <span> <strong style={{
-                            color: '#8c3030'
-                        }}> <InfoIcon style={{ top: 2 }}></InfoIcon>
-                            No transactions found.
-                        </strong>
-                        </span> :
-                        null
+                    <Typography
+                            variant='body1'
+                            color='error'
+                            fontWeight={500}
+                        >
+                        No transactions found
+                        </Typography>
+                        :
+                        ''
 
                 }
                 {
                     txns?.status === 'pending' ?
                         <CircularProgress size={40} /> : null
                 }
-            </Box>
 
             <Box style={{ display: 'flex' }}>
-                <ButtonGroup variant="outlined" aria-label="outlined button group">
+                <ButtonGroup disableElevation variant="outlined" aria-label="outlined button group">
                     <Button variant={isHistory ? 'outlined' : 'contained'} onClick={() => {
                         getAllTxns('current')
                         setIsHistory(false)

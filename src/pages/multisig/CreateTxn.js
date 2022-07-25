@@ -33,12 +33,10 @@ const mapTxns = {
 }
 
 const TableRowComponent = ({ tx }) => {
-    console.log('roooooooooooowwwwww', tx?._id)
     const multisigAccount = localStorage.getItem('multisigAddress') && JSON.parse(localStorage.getItem('multisigAddress'))
     const [open, setOpen] = React.useState(false);
     const dispatch = useDispatch();
     const signatures = useSelector(state => state.multisig.signatures?.data?.data || [])
-    console.log('signaturessssss', signatures)
 
     // dispatch(getSigns(localStorage.getItem('multisigAddress')), tx?._id)
 
@@ -140,8 +138,6 @@ export default function CreateTxn({ handleNext }) {
     const createTxRes = useSelector(state => state.multisig.createTxnRes)
 
     const validators = useSelector((state) => state.staking.validators);
-    console.log({ validators })
-
 
     useEffect(() => {
         if (connected) {
@@ -249,7 +245,6 @@ export default function CreateTxn({ handleNext }) {
 
     const handleChange = (e) => {
         obj[e.target.name] = e.target.value;
-        console.log('bbbbbbbbbbbb', obj)
         setObj({ ...obj });
     }
 
@@ -259,9 +254,7 @@ export default function CreateTxn({ handleNext }) {
             obj['toAddress'] = obj['validator_address']
         }
         let txn = createTransaction(obj);
-        console.log('waleetttttttt', walletAddress)
         txn.address = walletAddress;
-        console.log('txnnnnnnnnn', txn)
         dispatch(createTxn(txn))
     }
 
