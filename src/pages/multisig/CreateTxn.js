@@ -38,8 +38,6 @@ const TableRowComponent = ({ tx }) => {
     const dispatch = useDispatch();
     const signatures = useSelector(state => state.multisig.signatures?.data?.data || [])
 
-    // dispatch(getSigns(localStorage.getItem('multisigAddress')), tx?._id)
-
     const getAllSignatures = () => {
         let txId = tx?._id
         dispatch(getSigns({ address: multisigAccount?.address, txId }))
@@ -119,7 +117,7 @@ const TxnsComponent = ({ address }) => {
 
 }
 
-export default function CreateTxn({ handleNext }) {
+export default function CreateTxn() {
     const multisigAccount = localStorage.getItem('multisigAddress') &&
         JSON.parse(localStorage.getItem('multisigAddress')) || {}
     const [txType, setTxType] = React.useState('');
@@ -132,11 +130,8 @@ export default function CreateTxn({ handleNext }) {
     const [obj, setObj] = useState({});
     const wallet = useSelector((state) => state.wallet);
 
-    const balance = useSelector((state) => state.bank.balance);
     const { chainInfo, address, connected } = wallet;
     const currency = useSelector((state) => state.wallet.chainInfo.currencies[0]);
-    const createTxRes = useSelector(state => state.multisig.createTxnRes)
-
     const validators = useSelector((state) => state.staking.validators);
 
     useEffect(() => {
@@ -510,19 +505,19 @@ export default function CreateTxn({ handleNext }) {
                                 <Box sx={{ minWidth: 120 }}>
                                     <FormControl fullWidth>
                                         <InputLabel id="demo-simple-select-label">
-                                            Select Tx Type
+                                            Select Transaction
                                         </InputLabel>
                                         <Select
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
                                             value={txType}
-                                            label="Select Tx Type"
+                                            label="Select Transaction"
                                             onChange={handleTypeChange}
                                         >
                                             <MenuItem value={'send'}>Send</MenuItem>
                                             <MenuItem value={'delegate'}>Delegate</MenuItem>
-                                            <MenuItem value={'redelegate'}>Re-Delegate</MenuItem>
-                                            <MenuItem value={'undelegate'}>Un-Delegate</MenuItem>
+                                            <MenuItem value={'redelegate'}>Redelegate</MenuItem>
+                                            <MenuItem value={'undelegate'}>Undelegate</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Box>
