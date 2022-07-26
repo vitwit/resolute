@@ -66,11 +66,10 @@ export default function SignTxn({txId, tx: unSignedTxn, getAllSignatures }) {
                 signature: toBase64(signatures[0])
             }
 
-            console.log('txIdddddddd', obj)
-
             dispatch(createSign(obj))
             setLoad(false);
         } catch (error) {
+            console.log('Err: sign ', error.message)
             setLoad(false)
             dispatch(setError({ type: 'error', message: error.message }))
         }

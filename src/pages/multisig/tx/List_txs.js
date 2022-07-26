@@ -19,6 +19,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { fetchMultisigAccount } from '../../../features/multisig/multisigService';
 import { shortenAddress } from '../../../utils/util';
 import { parseTokens } from '../../../utils/denom';
+import { setError } from '../../../features/common/commonSlice';
 
 const mapTxns = {
     '/cosmos.staking.v1beta1.MsgDelegate': 'Delegate',
@@ -183,9 +184,9 @@ const TableRowComponent = ({ tx }) => {
                         tx?.signatures?.length || 0 >= threshold ?
                             <span>
                                 {
-                                tx?.status === 'DONE' || 
-                                tx?.status === 'FAILED' ? tx?.status : 'Waiting for brodcast'
-                            }
+                                    tx?.status === 'DONE' ||
+                                        tx?.status === 'FAILED' ? tx?.status : 'Waiting for brodcast'
+                                }
                             </span>
                             :
                             <span>{
@@ -198,8 +199,8 @@ const TableRowComponent = ({ tx }) => {
                 <TableCell align='right'>
                     {
                         isReadyToBroadcast() ?
-                            tx?.status === 'DONE' || 
-                            tx?.status === 'FAILED' ? tx?.status :
+                            tx?.status === 'DONE' ||
+                                tx?.status === 'FAILED' ? tx?.status :
                                 <BroadcastTx
                                     tx={tx}
                                     signatures={tx?.signatures}
@@ -262,6 +263,11 @@ function List_txs({ address }) {
 
 
     useEffect(() => {
+        if (deleteTxnStatus?.status === 'done' || deleteTxnStatus?.status === 200) {
+            dispatch(setError({ type: 'success', message: 'Successfully deleted' }))
+        } else if (deleteTxnStatus?.status === 'error') {
+            dispatch(setError({ type: 'error', message: 'Error while deleting the txn' }))
+        }
         getAllTxns('history')
     }, [deleteTxnStatus])
 
@@ -271,10 +277,20 @@ function List_txs({ address }) {
 
 
     useEffect(() => {
+        if (createSignRes?.status === 'done' || createSignRes?.status === 201) {
+            dispatch(setError({ type: 'success', message: 'Successfully signed' }))
+        } else if (createSignRes?.status === 'error') {
+            dispatch(setError({ type: 'error', message: 'Error while signing the transaction' }))
+        }
         getAllTxns();
     }, [createSignRes])
 
     useEffect(() => {
+        if (createTxRes?.status === 'done') {
+            dispatch(setError({ type: 'success', message: 'Successfully created' }))
+        } else if (createTxRes?.status === 'error') {
+            dispatch(setError({ type: 'error', message: 'Error while creating the txn' }))
+        }
         getAllTxns();
     }, [createTxRes])
 
@@ -284,23 +300,23 @@ function List_txs({ address }) {
 
     return (
         <TableContainer component={Box}>
-                {
-                    txns?.status !== 'pending' && !txns?.length ?
+            {
+                txns?.status !== 'pending' && !txns?.length ?
                     <Typography
-                            variant='body1'
-                            color='error'
-                            fontWeight={500}
-                        >
+                        variant='body1'
+                        color='error'
+                        fontWeight={500}
+                    >
                         No transactions found
-                        </Typography>
-                        :
-                        ''
+                    </Typography>
+                    :
+                    ''
 
-                }
-                {
-                    txns?.status === 'pending' ?
-                        <CircularProgress size={40} /> : null
-                }
+            }
+            {
+                txns?.status === 'pending' ?
+                    <CircularProgress size={40} /> : null
+            }
 
             <Box style={{ display: 'flex' }}>
                 <ButtonGroup disableElevation variant="outlined" aria-label="outlined button group">

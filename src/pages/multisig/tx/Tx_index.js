@@ -150,7 +150,7 @@ export default function Tx_index() {
                             Available
                         </Typography>
                         <Typography>
-                            {multisigBal?.balance?.amount / 10 ** currency?.coinDecimals} &nbsp;
+                            {(multisigBal?.balance?.amount / 10 ** currency?.coinDecimals) || 0} &nbsp;
                             {currency?.coinDenom}
                         </Typography>
                     </Grid>
@@ -164,7 +164,7 @@ export default function Tx_index() {
                             Staked
                         </Typography>
                         <Typography>
-                            {totalStake} {currency?.coinDenom}
+                            {totalStake || 0} {currency?.coinDenom}
                         </Typography>
                     </Grid>
                     <Grid item sx={12} md={12}>
@@ -180,15 +180,15 @@ export default function Tx_index() {
                         }}>
                             {
                                 multisigAccount?.pubkeyJSON?.value?.pubkeys?.map(p => (
-                                        <Chip
-                                            sx={{
-                                                ml: 0.5, mr: 0.5, mt: 1
-                                            }}
-                                            label={p?.address ? shortenAddress(p.address, 24) : ''}
-                                            size="small"
-                                            deleteIcon={<ContentCopyOutlined />}
-                                            onDelete={() => { copyToClipboard(p?.address) }}
-                                        />
+                                    <Chip
+                                        sx={{
+                                            ml: 0.5, mr: 0.5, mt: 1
+                                        }}
+                                        label={p?.address ? shortenAddress(p.address, 24) : ''}
+                                        size="small"
+                                        deleteIcon={<ContentCopyOutlined />}
+                                        onDelete={() => { copyToClipboard(p?.address) }}
+                                    />
                                 ))
                             }
                         </Box>
