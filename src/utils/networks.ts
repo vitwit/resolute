@@ -196,8 +196,9 @@ export function getTestNetworks(): Network[] {
         },
       ],
       logos: {
-        menu: "https://www.mintscan.io/_next/static/image/assets/header/token_cosmos.a0bcdc826e90453483f279070ca2fb36.svg",
-        toolbar: "white-logo.png",
+        menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
+        toolbar:
+          "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
       },
       isTestnet: true,
       explorerTxHashEndpoint: "https://www.mintscan.io/simapp/txs/",

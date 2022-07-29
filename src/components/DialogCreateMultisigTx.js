@@ -9,7 +9,9 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import React, { useState, useEffect } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { getBalance } from "../features/bank/bankSlice";
@@ -18,6 +20,36 @@ import Delegation_Form from "./tx/Delegation_Form";
 import ReDelegation_Form from "./tx/ReDelegation_Form";
 import SendForm from "./tx/SendForm";
 import UnDelegation_Form from "./tx/UnDelegation_Form";
+import PropTypes from "prop-types";
+
+const BootstrapDialogTitle = (props) => {
+  const { children, onClose, ...other } = props;
+
+  return (
+    <DialogTitle sx={{ m: 0, p: 2, ml: 1 }} {...other}>
+      {children}
+      {onClose ? (
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </DialogTitle>
+  );
+};
+
+BootstrapDialogTitle.propTypes = {
+  children: PropTypes.node,
+  onClose: PropTypes.func.isRequired,
+};
 
 export const DialogCreateMultisigTx = (props) => {
   const [txType, setTxType] = useState("");
@@ -65,7 +97,10 @@ export const DialogCreateMultisigTx = (props) => {
 
   return (
     <Dialog fullWidth maxWidth={"xs"} onClose={handleClose} open={open}>
-      <DialogTitle
+      <BootstrapDialogTitle onClose={handleClose}>
+        Create Transaction
+      </BootstrapDialogTitle>
+      {/* <DialogTitle
         variant="h6"
         fontWeight={600}
         sx={{
@@ -73,13 +108,16 @@ export const DialogCreateMultisigTx = (props) => {
         }}
       >
         Create Transaction
-      </DialogTitle>
+      </DialogTitle> */}
       <DialogContent>
         <Box>
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth sx={{
-              mt: 1,
-            }}>
+            <FormControl
+              fullWidth
+              sx={{
+                mt: 1,
+              }}
+            >
               <InputLabel id="demo-simple-select-label">
                 Select Transaction
               </InputLabel>
@@ -111,12 +149,8 @@ export const DialogCreateMultisigTx = (props) => {
           {txType === "undelegate" ? (
             <UnDelegation_Form chainInfo={chainInfo} />
           ) : null}
-          <br />
         </Box>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Close</Button>
-      </DialogActions>
     </Dialog>
   );
 };

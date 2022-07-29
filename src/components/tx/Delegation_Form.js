@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Decimal } from "@cosmjs/math";
-import { calculateFee } from "@cosmjs/stargate";
 import { useDispatch, useSelector } from "react-redux";
 import { createTxn } from "../../features/multisig/multisigSlice";
 import { fee } from "../../txns/execute";
@@ -167,6 +166,7 @@ const Delegation_Form = ({ chainInfo }) => {
       <Box
         sx={{
           textAlign: "center",
+          mt: 2,
         }}
         component="div"
       >

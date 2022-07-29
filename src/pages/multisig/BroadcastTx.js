@@ -1,4 +1,4 @@
-import { fromBase64, toBase64 } from "@cosmjs/encoding";
+import { fromBase64 } from "@cosmjs/encoding";
 import { Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
@@ -50,7 +50,6 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
     const client = await SigningStargateClient.connect(chainInfo?.config?.rpc);
 
     let result = await getKeplrWalletAmino(chainInfo?.config?.chainId);
-    const fromAccount = signatures.filter((s) => s.address === from);
     const bodyBytes = fromBase64(
       signatures[0].bodyBytes
         ? signatures[0].bodyBytes

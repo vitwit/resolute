@@ -206,6 +206,7 @@ const UnDelegation_Form = ({ chainInfo }) => {
         component="div"
         sx={{
           textAlign: "center",
+          mt: 2,
         }}
       >
         <Button
