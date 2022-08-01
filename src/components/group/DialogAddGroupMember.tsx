@@ -64,7 +64,10 @@ export default function DialogAddGroupMember (props: DialogAddGroupMemberProps) 
                                     <TextField
                                         {...field}
                                         label="Member address"
-                                        style={{marginTop: 8, marginBottom: 8}}
+                                        sx={{
+                                            mt: 1,
+                                            mb: 1,
+                                        }}
                                         fullWidth
                                         error={!!errors.address}
                                         helperText={errors.address?.message}

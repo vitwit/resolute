@@ -52,6 +52,11 @@ export default function CreateGroupPage() {
 
     const [policyDialogOpen, setpolicyDialogOpen] = useState(false);
 
+    const onAttachPolicy = (metadata, policyAsAdmin, type,threshold, 
+        percentage, votingPeriod, minExecutionPeriod) => {
+        setpolicyDialogOpen(false);
+    }
+
     return (
         <>
             {
@@ -93,6 +98,7 @@ export default function CreateGroupPage() {
                     <DialogAttachPolicy
                         open={policyDialogOpen}
                         onClose={() => setpolicyDialogOpen(false)}
+                        onAttachPolicy={onAttachPolicy}
                     />
                     :
                     <></>
