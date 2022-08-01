@@ -2,16 +2,16 @@ import Chip from '@mui/material/Chip';
 
 export function getTypeURLName(url) {
     let temp = url.split(".")
-    if (temp.length > 0) {
-        return temp[temp.length - 1]
+    if (temp?.length > 0) {
+        return temp[temp?.length - 1]
     }
     return "-"
 }
 
 export function getAddressPretty(url) {
     let temp = url.split(".")
-    if (temp.length > 0) {
-        return temp[temp.length - 1]
+    if (temp?.length > 0) {
+        return temp[temp?.length - 1]
     }
     return "-"
 }
@@ -75,12 +75,12 @@ export function computeVotePercentage(tally) {
 }
 
 export function shortenPubKey(pubKey, n) {
-    return (pubKey.length > n) ? pubKey.substr(0, n-1) + '&hellip;' : str;
+    return (pubKey?.length > n) ? pubKey.substr(0, n-1) + '&hellip;' : str;
 }
 
 
 export function shortenAddress(bech32, maxCharacters) {
-    if (maxCharacters >= bech32.length) {
+    if (maxCharacters >= bech32?.length) {
         return bech32;
     }
 
@@ -88,7 +88,7 @@ export function shortenAddress(bech32, maxCharacters) {
     const prefix = bech32.slice(0, i);
     const address = bech32.slice(i + 1);
 
-    maxCharacters -= prefix.length;
+    maxCharacters -= prefix?.length;
     maxCharacters -= 3; // For "..."
     maxCharacters -= 1; // For "1"
 
@@ -96,13 +96,13 @@ export function shortenAddress(bech32, maxCharacters) {
         return "";
     }
 
-    const mid = Math.floor(address.length / 2);
+    const mid = Math.floor(address?.length / 2);
     let former = address.slice(0, mid);
     let latter = address.slice(mid);
 
-    while (maxCharacters < former.length + latter.length) {
-        if ((former.length + latter.length) % 2 === 1 && former.length > 0) {
-            former = former.slice(0, former.length - 1);
+    while (maxCharacters < former?.length + latter?.length) {
+        if ((former?.length + latter?.length) % 2 === 1 && former?.length > 0) {
+            former = former.slice(0, former?.length - 1);
         } else {
             latter = latter.slice(1);
         }
@@ -132,7 +132,7 @@ export function formatValidatorStatus(jailed, status) {
 
 export function totalDelegations(delegations, coinDecimals) {
     let total = 0
-    for( let i=0;i<delegations.length;i++) {
+    for( let i=0;i<delegations?.length;i++) {
         total += parseInt(delegations[i].balance.amount)
     }
     const temp = total/(10.0 ** coinDecimals)
@@ -141,12 +141,12 @@ export function totalDelegations(delegations, coinDecimals) {
 
 export function totalRewards(rewards, coinDecimals) {
     if (rewards === undefined) return 0
-    if (rewards.length === 0) { return 0}
+    if (rewards?.length === 0) { return 0}
     let total = 0
 
-    for( let i=0;i<rewards.length;i++) {
+    for( let i=0;i<rewards?.length;i++) {
         const reward = rewards[i].reward
-        if (reward.length > 0)
+        if (reward?.length > 0)
             total += parseInt(reward[0].amount)
     }
     const temp = total/(10.0 ** coinDecimals)
@@ -155,10 +155,10 @@ export function totalRewards(rewards, coinDecimals) {
 
 
 export function totalUnbonding(unbonding, coinDecimals) {
-    if (unbonding.length === 0) { return 0}
+    if (unbonding?.length === 0) { return 0}
     let total = 0
-    for( let i=0;i<unbonding.length;i++) {
-        for (let j=0;j<unbonding[i].entries.length;j++) {
+    for( let i=0;i<unbonding?.length;i++) {
+        for (let j=0;j<unbonding[i].entries?.length;j++) {
             total += parseInt(unbonding[i].entries[j].balance)
         }
     }

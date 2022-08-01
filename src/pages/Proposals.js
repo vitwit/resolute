@@ -15,7 +15,7 @@ import { authzExecHelper, getGrantsToMe, resetExecTx } from '../features/authz/a
 import VoteDialog from '../components/Vote';
 import { getVoteAuthz } from '../utils/authorizations';
 
-export function Proposals() {
+export default function Proposals() {
   const proposals = useSelector((state) => state.gov.active.proposals);
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);

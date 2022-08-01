@@ -18,12 +18,12 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         </ListItemIcon>
         <ListItemText primary="Dashboard" />
       </ListItemButton>
-      {/* <ListItemButton onClick={() => onNavigate("/send")}>
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Send" />
-    </ListItemButton> */}
+      <ListItemButton onClick={() => onNavigate("/multisig")} selected={currentPath === "/multisig"} sx={{ pb: 0.5, pt: 0.5 }}>
+        <ListItemIcon>
+          <GroupsOutlinedIcon />
+        </ListItemIcon>
+        <ListItemText primary="Multisig" />
+      </ListItemButton>
       <ListItemButton onClick={() => onNavigate("/staking")} selected={currentPath === "/staking"} sx={{ pb: 0.5, pt: 0.5 }}>
         <ListItemIcon>
           <BarChartOutlinedIcon />

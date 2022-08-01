@@ -9,6 +9,7 @@ import commonSlice from '../features/common/commonSlice';
 import distributionSlice from '../features/distribution/distributionSlice';
 import airdropSlice from '../features/airdrop/airdropSlice';
 import groupSlice from '../features/group/groupSlice';
+import multiSlice  from '../features/multisig/multisigSlice';
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     distribution: distributionSlice,
     airdrop: airdropSlice,
     group: groupSlice,
+    multisig: multiSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
