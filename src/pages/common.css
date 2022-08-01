@@ -54,6 +54,27 @@
         background-color: #1a0dab;
 }
 
+.pd-22 {
+        padding: 22;
+}
+
+.f-right {
+        margin-top: 10px;
+        float: right;       
+}
+
+.pull-right{
+        float: right;
+}
+
+.m-20 {
+        margin: 20px;
+}
+
+.m-t-40 {
+        margin-top: 40px;
+}
+
 .read-more {
         text-decoration: underline;
 }
