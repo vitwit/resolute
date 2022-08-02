@@ -8,6 +8,7 @@ import walletSlice from '../features/wallet/walletSlice';
 import commonSlice from '../features/common/commonSlice';
 import distributionSlice from '../features/distribution/distributionSlice';
 import airdropSlice from '../features/airdrop/airdropSlice';
+import multiSlice  from '../features/multisig/multisigSlice';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     common: commonSlice,
     distribution: distributionSlice,
     airdrop: airdropSlice,
+    multisig: multiSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

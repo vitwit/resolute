@@ -25,7 +25,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { getDelegateAuthz, getReDelegateAuthz, getUnDelegateAuthz, getWithdrawRewardsAuthz } from '../utils/authorizations';
 import { authzExecHelper } from '../features/authz/authzSlice';
 
-export function Validators() {
+export default function Validators() {
     const [type, setType] = useState('delegations');
 
     const validators = useSelector((state) => state.staking.validators);

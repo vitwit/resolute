@@ -1,6 +1,5 @@
 import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -10,8 +9,8 @@ const Feegrant = lazy(() => import('./Feegrant'));
 import { getSelectedNetwork, saveSelectedNetwork } from './../utils/networks'
 import Link from '@mui/material/Link';
 import { Routes, Route } from "react-router-dom";
-import { Validators } from './Validators';
-import { Proposals } from './Proposals';
+const Validators = lazy(() => import("./Validators"));
+const Proposals = lazy(() => import("./Proposals"));
 import { useSelector, useDispatch } from 'react-redux'
 import { resetWallet, connectKeplrWallet, setNetwork } from './../features/wallet/walletSlice'
 import { useNavigate } from "react-router-dom";
@@ -24,7 +23,10 @@ import { CustomAppBar } from '../components/CustomAppBar';
 const AirdropEligibility = lazy(() => import('./AirdropEligibility'));
 import { resetError, setError } from '../features/common/commonSlice';
 import Page404 from './Page404';
-import SendPage from './SendPage';
+const CreateMultisig = lazy(() => import("./multisig/CreateMultisig"));
+const Tx_index = lazy(() => import("./multisig/tx/Tx_index"));
+const Single_Tx =  lazy(() => import("./multisig/tx/Single_Tx"));
+const SendPage =  lazy(() => import("./SendPage"));
 import AppDrawer from '../components/AppDrawer';
 import { Alert } from '../components/Alert';
 import { getPallet, isDarkMode, mdTheme } from '../utils/theme';
@@ -96,7 +98,7 @@ function DashboardContent(props) {
     const txSuccess = useSelector((state) => state.common.txSuccess);
 
     useEffect(() => {
-        if (errState.message.length > 0 && errState.type.length > 0) {
+        if (errState.message?.length > 0 && errState.type?.length > 0) {
             showSnack(true)
         } else {
             showSnack(false)
@@ -104,7 +106,7 @@ function DashboardContent(props) {
     }, [errState]);
 
     useEffect(() => {
-        if (txSuccess.hash.length > 0) {
+        if (txSuccess.hash?.length > 0) {
             showTxSnack(true)
         } else {
             showTxSnack(false)
@@ -118,7 +120,7 @@ function DashboardContent(props) {
 
     function disconnectWallet() {
         logout();
-        if (selectedAuthz.granter.length > 0) {
+        if (selectedAuthz.granter?.length > 0) {
             dispatch(exitAuthzMode());
         }
         dispatch(resetWallet());
@@ -200,7 +202,7 @@ function DashboardContent(props) {
                                 }}
                             >
                                 {
-                                    selectedAuthz.granter.length > 0
+                                    selectedAuthz.granter?.length > 0
                                         ?
                                         <>
                                             <Toolbar />
@@ -235,9 +237,24 @@ function DashboardContent(props) {
                                                 <NewAuthz />
                                             </Suspense>
                                         }></Route>
-                                        <Route path="/staking" element={<Validators />}></Route>
-                                        <Route path="/governance" element={<Proposals />}></Route>
-                                        <Route path="/send" element={<SendPage />}></Route>
+                                        <Route path="/staking" element={
+                                            <Suspense fallback={<CircularProgress />}>
+                                                <Validators />
+                                            </Suspense>
+                                        }
+                                        >
+                                        </Route>
+                                        <Route path="/governance" element={
+                                            <Suspense fallback={<CircularProgress />}>
+                                                <Proposals />
+                                            </Suspense>
+                                        }></Route>
+                                        <Route path="/send" element={
+                                            <Suspense fallback={<CircularProgress />}>
+                                                <SendPage />
+                                            </Suspense>
+                                        }></Route>
+
                                         {
                                             selectedNetwork.showAirdrop ?
                                                 <Route path="/airdrop-check" element={
@@ -247,8 +264,27 @@ function DashboardContent(props) {
                                                 :
                                                 <></>
                                         }
+                                        <Route path="/multisig" element={
+                                            <Suspense fallback={<CircularProgress />}>
+                                                <CreateMultisig />
+                                            </Suspense>
+                                        }></Route>
+
+                                        <Route path="/multisig/:address/txs" element={
+                                            <Suspense fallback={<CircularProgress />}>
+                                                <Tx_index />
+                                            </Suspense>
+                                        }></Route>
+
+                                        <Route path="/multisig/:address/txs/:txId"
+                                            element={
+                                                <Suspense fallback={<CircularProgress />}>
+                                                    <Single_Tx />
+                                                </Suspense>
+                                            }></Route>
                                         <Route path="*" element={<Page404 />}>
                                         </Route>
+
                                     </Routes>
                                 </Container>
                             </Box>
@@ -261,7 +297,7 @@ function DashboardContent(props) {
             }
             {errState.message.length > 0
                 ?
-                <Snackbar open={snackOpen && errState.message.length > 0 && errState.type.length > 0} autoHideDuration={3000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                <Snackbar open={snackOpen && errState.message?.length > 0 && errState.type?.length > 0} autoHideDuration={3000} onClose={() => { showSnack(false) }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                     <Alert onClose={() => { showSnack(false) }} severity={errState.type === 'success' ? 'success' : 'error'} sx={{ width: '100%' }}>
                         {errState.message}
                     </Alert>
