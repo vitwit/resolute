@@ -116,7 +116,6 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
           },
         })
       );
-
     } catch (err) {
       console.log("Errror broadcast", err, err.message);
       setLoad(false);
