@@ -1,15 +1,15 @@
-import { configureStore } from '@reduxjs/toolkit';
-import stakeReducer from '../features/staking/stakeSlice';
-import proposalsReducer from '../features/gov/govSlice';
-import feegrantReducer from '../features/feegrant/feegrantSlice';
-import authzReducer from '../features/authz/authzSlice';
-import bankReducer from '../features/bank/bankSlice';
-import walletSlice from '../features/wallet/walletSlice';
-import commonSlice from '../features/common/commonSlice';
-import distributionSlice from '../features/distribution/distributionSlice';
-import airdropSlice from '../features/airdrop/airdropSlice';
-import groupSlice from '../features/group/groupSlice';
-import multiSlice  from '../features/multisig/multisigSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import stakeReducer from "../features/staking/stakeSlice";
+import proposalsReducer from "../features/gov/govSlice";
+import feegrantReducer from "../features/feegrant/feegrantSlice";
+import authzReducer from "../features/authz/authzSlice";
+import bankReducer from "../features/bank/bankSlice";
+import walletSlice from "../features/wallet/walletSlice";
+import commonSlice from "../features/common/commonSlice";
+import distributionSlice from "../features/distribution/distributionSlice";
+import airdropSlice from "../features/airdrop/airdropSlice";
+import multiSlice from "../features/multisig/multisigSlice";
+import groupSlice from "../features/group/groupSlice";
 
 export const store = configureStore({
   reducer: {
@@ -29,7 +29,7 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         // Ignore these action types
-        ignoredActions: ['wallet/connect/fulfilled'],
+        ignoredActions: ["wallet/connect/fulfilled"],
       },
     }),
 });
