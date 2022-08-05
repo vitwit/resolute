@@ -178,126 +178,209 @@ export function getMainNetworks(): Network[] {
         gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
       },
     },
+    {
+      logos: {
+        toolbar:
+          "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
+        menu: "https://www.mintscan.io/_next/static/image/assets/header/token_juno.a36436fb7578f1014a6fc3f505b19457.svg",
+      },
+      showAirdrop: false,
+      experimental: false,
+      isTestnet: false,
+      explorerTxHashEndpoint: "https://www.mintscan.io/juno/txs/",
+      config: {
+        chainId: "juno-1",
+        chainName: "Juno",
+        rest: "https://api.juno.pupmos.network",
+        rpc: "https://rpc-juno.ecostake.com",
+        currencies: [
+          { coinDenom: "JUNO", coinMinimalDenom: "ujuno", coinDecimals: 6 },
+        ],
+        gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
+      },
+    },
   ];
 }
 
 export function getTestNetworks(): Network[] {
-  return [
-    {
-      experimental: true,
-      showAirdrop: true,
-      airdropActions: [
-        { title: "#1 Initial Claim", type: "action" },
-        { title: "#2 Stake", type: "redirect", redirect: "/validators" },
-        {
-          title: "#3 Vote on Proposal",
-          type: "redirect",
-          redirect: "/proposals",
+  if (window.location.origin === "https://airdrop.passage3d.com") {
+    return [
+      {
+        experimental: true,
+        showAirdrop: true,
+        airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
+        airdropMessage:
+          "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
+        logos: {
+          toolbar:
+            "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
+          menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png",
         },
-      ],
-      logos: {
-        menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
-        toolbar:
-          "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
+        isTestnet: true,
+        explorerTxHashEndpoint: "https://passage3d.testaneka.com/txs/",
+        config: {
+          chainId: "passage-testnet-1",
+          chainName: "Passage-Testnet",
+          rest: "https://api.passage3d.vitwit.com/",
+          rpc: "https://rpc.passage3d.vitwit.com",
+          stakeCurrency: {
+            coinDenom: "PASG",
+            coinMinimalDenom: "upasg",
+            coinDecimals: 6,
+            coinGeckoId: "passage3d",
+          },
+          bip44: { coinType: 118 },
+          bech32Config: {
+            bech32PrefixAccAddr: `pasg`,
+            bech32PrefixAccPub: `pasgpub`,
+            bech32PrefixValAddr: `pasgvaloper`,
+            bech32PrefixValPub: `pasgvaloperpub`,
+            bech32PrefixConsAddr: `pasgvalcons`,
+            bech32PrefixConsPub: `pasgvalconspub`,
+          },
+          currencies: [
+            {
+              coinDenom: "PASG",
+              coinMinimalDenom: "upasg",
+              coinDecimals: 6,
+              coinGeckoId: "passage",
+            },
+          ],
+          feeCurrencies: [
+            {
+              coinDenom: "PASG",
+              coinMinimalDenom: "upasg",
+              coinDecimals: 6,
+              coinGeckoId: "passage",
+            },
+          ],
+          coinType: 118,
+          gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
+          walletUrlForStaking: "https://stake.vitwit.com/validators",
+        },
       },
-      isTestnet: true,
-      explorerTxHashEndpoint: "https://www.mintscan.io/simapp/txs/",
-      config: {
-        chainId: "testnet",
-        chainName: "Simapp",
-        rpc: "http://localhost:26657",
-        rest: "http://localhost:1317",
-        stakeCurrency: {
-          coinDenom: "STAKE",
-          coinMinimalDenom: "stake",
-          coinDecimals: 6,
-          coinGeckoId: "simapp",
-        },
-        bip44: { coinType: 118 },
-        bech32Config: {
-          bech32PrefixAccAddr: `cosmos`,
-          bech32PrefixAccPub: `cosmospub`,
-          bech32PrefixValAddr: `cosmosvaloper`,
-          bech32PrefixValPub: `cosmosvaloperpub`,
-          bech32PrefixConsAddr: `cosmosvalcons`,
-          bech32PrefixConsPub: `cosmosvalconspub`,
-        },
-        currencies: [
+    ];
+  }
+  if (window.location.origin === "http://localhost:3000") {
+    return [
+      {
+        experimental: true,
+        showAirdrop: true,
+        airdropActions: [
+          { title: "#1 Initial Claim", type: "action" },
+          { title: "#2 Stake", type: "redirect", redirect: "/validators" },
           {
+            title: "#3 Vote on Proposal",
+            type: "redirect",
+            redirect: "/proposals",
+          },
+        ],
+        logos: {
+          menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
+          toolbar:
+            "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
+        },
+        isTestnet: true,
+        explorerTxHashEndpoint: "https://www.mintscan.io/simapp/txs/",
+        config: {
+          chainId: "testnet",
+          chainName: "Simapp",
+          rpc: "http://localhost:26657",
+          rest: "http://localhost:1317",
+          stakeCurrency: {
             coinDenom: "STAKE",
             coinMinimalDenom: "stake",
             coinDecimals: 6,
             coinGeckoId: "simapp",
           },
-        ],
-        feeCurrencies: [
-          {
-            coinDenom: "STAKE",
-            coinMinimalDenom: "stake",
-            coinDecimals: 6,
-            coinGeckoId: "simapp",
+          bip44: { coinType: 118 },
+          bech32Config: {
+            bech32PrefixAccAddr: `cosmos`,
+            bech32PrefixAccPub: `cosmospub`,
+            bech32PrefixValAddr: `cosmosvaloper`,
+            bech32PrefixValPub: `cosmosvaloperpub`,
+            bech32PrefixConsAddr: `cosmosvalcons`,
+            bech32PrefixConsPub: `cosmosvalconspub`,
           },
-        ],
-        coinType: 118,
-        gasPriceStep: { low: 0.0, average: 0.0025, high: 0.004 },
-        walletUrlForStaking: "http://localhost:1317/stake",
-      },
-    },
-    {
-      experimental: true,
-      showAirdrop: true,
-      airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
-      airdropMessage:
-        "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
-      logos: {
-        toolbar:
-          "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
-        menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png",
-      },
-      isTestnet: true,
-      explorerTxHashEndpoint: "https://passage3d.testaneka.com/txs/",
-      config: {
-        chainId: "passage-testnet-1",
-        chainName: "Passage-Testnet",
-        rest: "https://api.passage3d.vitwit.com/",
-        rpc: "https://rpc.passage3d.vitwit.com",
-        stakeCurrency: {
-          coinDenom: "PASG",
-          coinMinimalDenom: "upasg",
-          coinDecimals: 6,
-          coinGeckoId: "passage3d",
+          currencies: [
+            {
+              coinDenom: "STAKE",
+              coinMinimalDenom: "stake",
+              coinDecimals: 6,
+              coinGeckoId: "simapp",
+            },
+          ],
+          feeCurrencies: [
+            {
+              coinDenom: "STAKE",
+              coinMinimalDenom: "stake",
+              coinDecimals: 6,
+              coinGeckoId: "simapp",
+            },
+          ],
+          coinType: 118,
+          gasPriceStep: { low: 0.0, average: 0.0025, high: 0.004 },
+          walletUrlForStaking: "http://localhost:1317/stake",
         },
-        bip44: { coinType: 118 },
-        bech32Config: {
-          bech32PrefixAccAddr: `pasg`,
-          bech32PrefixAccPub: `pasgpub`,
-          bech32PrefixValAddr: `pasgvaloper`,
-          bech32PrefixValPub: `pasgvaloperpub`,
-          bech32PrefixConsAddr: `pasgvalcons`,
-          bech32PrefixConsPub: `pasgvalconspub`,
+      },
+      {
+        experimental: true,
+        showAirdrop: true,
+        airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
+        airdropMessage:
+          "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
+        logos: {
+          toolbar:
+            "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
+          menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png",
         },
-        currencies: [
-          {
+        isTestnet: true,
+        explorerTxHashEndpoint: "https://passage3d.testaneka.com/txs/",
+        config: {
+          chainId: "passage-testnet-1",
+          chainName: "Passage-Testnet",
+          rest: "https://api.passage3d.vitwit.com/",
+          rpc: "https://rpc.passage3d.vitwit.com",
+          stakeCurrency: {
             coinDenom: "PASG",
             coinMinimalDenom: "upasg",
             coinDecimals: 6,
-            coinGeckoId: "passage",
+            coinGeckoId: "passage3d",
           },
-        ],
-        feeCurrencies: [
-          {
-            coinDenom: "PASG",
-            coinMinimalDenom: "upasg",
-            coinDecimals: 6,
-            coinGeckoId: "passage",
+          bip44: { coinType: 118 },
+          bech32Config: {
+            bech32PrefixAccAddr: `pasg`,
+            bech32PrefixAccPub: `pasgpub`,
+            bech32PrefixValAddr: `pasgvaloper`,
+            bech32PrefixValPub: `pasgvaloperpub`,
+            bech32PrefixConsAddr: `pasgvalcons`,
+            bech32PrefixConsPub: `pasgvalconspub`,
           },
-        ],
-        coinType: 118,
-        gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
-        walletUrlForStaking: "https://stake.vitwit.com/validators",
+          currencies: [
+            {
+              coinDenom: "PASG",
+              coinMinimalDenom: "upasg",
+              coinDecimals: 6,
+              coinGeckoId: "passage",
+            },
+          ],
+          feeCurrencies: [
+            {
+              coinDenom: "PASG",
+              coinMinimalDenom: "upasg",
+              coinDecimals: 6,
+              coinGeckoId: "passage",
+            },
+          ],
+          coinType: 118,
+          gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
+          walletUrlForStaking: "https://stake.vitwit.com/validators",
+        },
       },
-    },
-  ];
+    ];
+  }
+
+  return [];
 }
 
 export function getSelectedNetwork(): Network | null {

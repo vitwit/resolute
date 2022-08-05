@@ -71,6 +71,20 @@ const networks = {
             dark: '#01786d',
             contrastText: '#000',
         },
+    },
+    "Juno": {
+        primary: {
+            light: '#5e4749',
+            main: '#523d3f',
+            dark: '#312526',
+            contrastText: '#fff',
+        },
+        secondary: {
+            light: '#8fc9c4',
+            main: '#009688',
+            dark: '#01786d',
+            contrastText: '#000',
+        },
     }
 }
 
