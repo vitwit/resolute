@@ -285,6 +285,9 @@ export default function DialogAttachPolicy(props: DialogAttachPolicyProps) {
             className="button-capitalize-title"
             disableElevation
             onClick={() => onClose()}
+            sx={{
+              textTransform: "none",
+            }}
           >
             Cancel
           </Button>
@@ -293,6 +296,9 @@ export default function DialogAttachPolicy(props: DialogAttachPolicyProps) {
             disableElevation
             type="submit"
             className="button-capitalize-title"
+            sx={{
+              textTransform: "none",
+            }}
           >
             Attach Policy
           </Button>
