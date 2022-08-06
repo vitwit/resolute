@@ -16,16 +16,18 @@ import {
   Switch,
 } from "@mui/material";
 
+export interface DecisionPolicyCallback {
+  metadata: string;
+  policyAsAdmin: boolean;
+  decisionPolicy: DecisionPolicyEnum;
+  threshold?: number;
+  percentage?: number;
+  votingPeriod: number;
+  minExecutionPeriod: number;
+}
+
 export interface DialogAttachPolicyProps {
-  onAttachPolicy: (
-    metadata: string,
-    policyAsAdmin: boolean,
-    decisionPolicy: DecisionPolicyEnum,
-    votingPeriod: number,
-    minExecutioPeriod: number,
-    threshold?: number,
-    percentage?: number
-  ) => void;
+  onAttachPolicy: (data: DecisionPolicyCallback) => void;
   onClose: () => void;
   open: boolean;
 }
@@ -70,26 +72,27 @@ export default function DialogAttachPolicy(props: DialogAttachPolicyProps) {
 
   const onSubmit = (data: IFormInput) => {
     if (data.decisionPolicy === DecisionPolicyEnum.percentage) {
-      onAttachPolicy(
-        data.metadata,
-        data.policyAsAdmin,
-        DecisionPolicyEnum.percentage,
-        data.minExecutioPeriod,
-        data.votingPeriod,
-        data.percentage,
-        0
-      );
+      onAttachPolicy({
+        decisionPolicy: DecisionPolicyEnum.percentage,
+        metadata: data.metadata,
+        minExecutionPeriod: data.minExecutioPeriod,
+        policyAsAdmin: data.policyAsAdmin,
+        votingPeriod: data.votingPeriod,
+        percentage: data.percentage,
+        threshold: 0,
+      });
     } else if (data.decisionPolicy === DecisionPolicyEnum.threshold) {
-      onAttachPolicy(
-        data.metadata,
-        data.policyAsAdmin,
-        DecisionPolicyEnum.threshold,
-        data.minExecutioPeriod,
-        data.votingPeriod,
-        0,
-        data.threshold
-      );
+      onAttachPolicy({
+        decisionPolicy: DecisionPolicyEnum.threshold,
+        metadata: data.metadata,
+        minExecutionPeriod: data.minExecutioPeriod,
+        policyAsAdmin: data.policyAsAdmin,
+        votingPeriod: data.votingPeriod,
+        percentage: 0,
+        threshold: data.threshold,
+      });
     } else {
+      alert("unknown decision policy");
     }
   };
 
