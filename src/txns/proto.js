@@ -12,7 +12,6 @@ import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
 import { Duration } from "cosmjs-types/google/protobuf/duration";
 import Long from "long";
 import { MsgClaim } from "./msg_claim";
-import { formatMuiErrorMessage } from "@mui/utils";
 
 const msgSendTypeUrl = "/cosmos.bank.v1beta1.MsgSend";
 const msgAuthzGrantTypeUrl = "/cosmos.authz.v1beta1.MsgGrant";
@@ -32,6 +31,15 @@ const msgDelegate = "/cosmos.staking.v1beta1.MsgDelegate";
 const msgUnDelegate = "/cosmos.staking.v1beta1.MsgUndelegate";
 const msgReDelegate = "/cosmos.staking.v1beta1.MsgBeginRedelegate";
 
+// group
+const msgCreateGroup = "/cosmos.group.v1beta1.MsgCreateGroup"
+
+export function CreateGroup(admin, metadata, members) {
+    return {
+        typeUrl: msgCreateGroup,
+        // value: Msg
+    }
+}
 
 export function SendMsg(from, to, amount, denom) {
     return {
