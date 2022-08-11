@@ -197,10 +197,7 @@ export default function CreateGroupPage() {
                     </Typography>
                   </Grid>
                   <Grid item xs={4} md={3}>
-                    <Typography
-                      variant="body1"
-                      color="text.primary"
-                    >
+                    <Typography variant="body1" color="text.primary">
                       Policy As Admin
                     </Typography>
                     <Typography
@@ -212,10 +209,7 @@ export default function CreateGroupPage() {
                     </Typography>
                   </Grid>
                   <Grid item xs={4} md={3}>
-                    <Typography
-                      variant="body1"
-                      color="text.primary"
-                    >
+                    <Typography variant="body1" color="text.primary">
                       Min Execution Period
                     </Typography>
                     <Typography
@@ -228,10 +222,7 @@ export default function CreateGroupPage() {
                   </Grid>
                   {policyData.decisionPolicy === "threshold" ? (
                     <Grid item xs={4} md={3}>
-                      <Typography
-                        variant="body1"
-                        color="text.primary"
-                      >
+                      <Typography variant="body1" color="text.primary">
                         Threshold
                       </Typography>
                       <Typography
@@ -244,10 +235,7 @@ export default function CreateGroupPage() {
                     </Grid>
                   ) : (
                     <Grid item xs={4} md={3}>
-                      <Typography
-                        variant="body1"
-                        color="text.primary"
-                      >
+                      <Typography variant="body1" color="text.primary">
                         Percentage
                       </Typography>
                       <Typography
