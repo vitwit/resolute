@@ -26,7 +26,6 @@ export async function signAndBroadcastGroupMsg(
   );
   registry.register("/cosmos.group.v1.MsgCreateGroup", MsgCreateGroup);
 
-  console.log(registry.lookupType("/cosmos.group.v1.MsgCreateGroup"));
   const client = await SigningStargateClient.connectWithSigner(
     rpcURL,
     offlineSigner,
