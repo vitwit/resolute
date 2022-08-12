@@ -2,6 +2,36 @@ import { SigningStargateClient, defaultRegistryTypes } from "@cosmjs/stargate";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Registry } from '@cosmjs/proto-signing';
 import { MsgClaim } from "./msg_claim";
+import { MsgCreateGroup, MsgCreateGroupWithPolicy } from "./group/v1/tx";
+
+export async function signAndBroadcastGroupMsg(signer, msgs, fee, chainId, rpcURL, memo="") {
+    await window.keplr.enable(chainId);
+    const offlineSigner = window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+        let registry = new Registry()
+        defaultRegistryTypes.forEach((v) => {
+            registry.register(v[0], v[1])
+        })
+
+        registry.register("/cosmos.group.v1.MsgCreateGroupWithPolicy", MsgCreateGroupWithPolicy)
+        registry.register("/cosmos.group.v1.MsgCreateGroup", MsgCreateGroup)
+
+        console.log(registry.lookupType("/cosmos.group.v1.MsgCreateGroup"))
+        const client = await SigningStargateClient.connectWithSigner(
+            rpcURL,
+            offlineSigner,
+            {
+                registry: registry
+            }
+        );
+
+
+        return await client.signAndBroadcast(
+            signer,
+            msgs,
+            fee,
+            memo,
+        )
+}
 
 export async function signAndBroadcastCustomMsg(signer, msgs, fee, chainId, rpcURL, memo="") {
     await window.keplr.enable(chainId);
