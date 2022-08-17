@@ -8744,10 +8744,10 @@ symbol-observable@^2.0.3:
   resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-2.0.3.tgz#5b521d3d07a43c351055fa43b8355b62d33fd16a"
   integrity sha512-sQV7phh2WCYAn81oAkakC5qjq2Ml0g8ozqz03wOGnx9dDlG1de6yrF+0RAzSJD8fPUow3PTSMf2SAbOGxb93BA==
 
-tailwindcss@^3.1.7:
-  version "3.1.7"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.1.7.tgz#ce99425f30a74e01457a2e6a724463b0df3159ac"
-  integrity sha512-r7mgumZ3k0InfVPpGWcX8X/Ut4xBfv+1O/+C73ar/m01LxGVzWvPxF/w6xIUPEztrCoz7axfx0SMdh8FH8ZvRQ==
+tailwindcss@^3.1.8:
+  version "3.1.8"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.1.8.tgz#4f8520550d67a835d32f2f4021580f9fddb7b741"
+  integrity sha512-YSneUCZSFDYMwk+TGq8qYFdCA3yfBRdBlS7txSq0LUmzyeqRe3a8fBQzbz9M3WS/iFT4BNf/nmw9mEzrnSaC0g==
   dependencies:
     arg "^5.0.2"
     chokidar "^3.5.3"
