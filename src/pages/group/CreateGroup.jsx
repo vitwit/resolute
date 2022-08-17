@@ -8,6 +8,7 @@ import { shortenAddress } from "../../utils/util";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import DialogAttachPolicy from "../../components/group/DialogAttachPolicy";
+import { useDispatch } from "react-redux";
 
 export default function CreateGroupPage() {
   const [showMemberDialog, setShowMemberDialog] = useState(false);
@@ -28,8 +29,22 @@ export default function CreateGroupPage() {
     },
   });
 
+  const dispatch = useDispatch();
+
   const onSubmit = (data) => {
     console.log(data);
+    console.log(members);
+    console.log(policyData);
+    // dispatch({
+    //   granter: address,
+    //   grantee: data.grantee,
+    //   spendLimit: amountToMinimalValue(data.spendLimit, chainInfo.config.currencies[0]),
+    //   expiration: data.expiration,
+    //   denom: currency.coinMinimalDenom,
+    //   chainId: chainInfo.config.chainId,
+    //   rpc: chainInfo.config.rpc,
+    //   feeAmount: chainInfo.config.gasPriceStep.average,
+    // })
   };
 
   const [memberFields, setMemberFields] = useState({
@@ -100,6 +115,7 @@ export default function CreateGroupPage() {
           open={policyDialogOpen}
           onClose={() => setpolicyDialogOpen(false)}
           onAttachPolicy={onAttachPolicy}
+          members={members.reduce((a, o) => Number(a)+Number(o.weight), 0)}
         />
       ) : (
         <></>
@@ -259,17 +275,21 @@ export default function CreateGroupPage() {
                 justifyContent: "right",
               }}
             >
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setpolicyDialogOpen(true);
-                }}
-                sx={{
-                  textTransform: "none",
-                }}
-              >
-                Attach decision policy
-              </Button>
+              {members.length > 0 ? (
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    setpolicyDialogOpen(true);
+                  }}
+                  sx={{
+                    textTransform: "none",
+                  }}
+                >
+                  Attach decision policy
+                </Button>
+              ) : (
+                <></>
+              )}
               &nbsp;
               <Button
                 variant="outlined"
