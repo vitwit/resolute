@@ -318,11 +318,11 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
-                  <Route path="/group" element={<GroupPage />}></Route>
+                  {/* <Route path="/group" element={<GroupPage />}></Route>
                   <Route
                     path="/group/create-group"
                     element={<CreateGroupPage />}
-                  ></Route>
+                  ></Route> */}
                   <Route path="*" element={<Page404 />}></Route>
                 </Routes>
               </Container>

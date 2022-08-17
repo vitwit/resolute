@@ -72,12 +72,12 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         </ListItemIcon>
         <ListItemText primary="Feegrant" />
       </ListItemButton>
-      <ListItemButton onClick={() => onNavigate("/group")} sx={{ pb: 0.5, pt: 0.5 }} selected={currentPath === "/group"}>
+      {/* <ListItemButton onClick={() => onNavigate("/group")} sx={{ pb: 0.5, pt: 0.5 }} selected={currentPath === "/group"}>
       <ListItemIcon>
         <GroupsOutlinedIcon />
       </ListItemIcon>
       <ListItemText primary="Group" />
-    </ListItemButton>
+    </ListItemButton> */}
 
       {showAirdrop ? (
         <ListItemButton

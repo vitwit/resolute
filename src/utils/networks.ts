@@ -91,6 +91,60 @@ export function getMainNetworks(): Network[] {
           ],
         },
       },
+      {
+        experimental: true,
+        showAirdrop: true,
+        airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
+        airdropMessage:
+          "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
+        logos: {
+          toolbar:
+            "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
+          menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png",
+        },
+        isTestnet: true,
+        explorerTxHashEndpoint: "https://passage.aneka.io/txs/",
+        config: {
+          chainId: "passage-1",
+          chainName: "Passage",
+          rest: "https://api.passage.vitwit.com/",
+          rpc: "https://rpc.passage.vitwit.com",
+          stakeCurrency: {
+            coinDenom: "PASG",
+            coinMinimalDenom: "upasg",
+            coinDecimals: 6,
+            coinGeckoId: "passage3d",
+          },
+          bip44: { coinType: 118 },
+          bech32Config: {
+            bech32PrefixAccAddr: `pasg`,
+            bech32PrefixAccPub: `pasgpub`,
+            bech32PrefixValAddr: `pasgvaloper`,
+            bech32PrefixValPub: `pasgvaloperpub`,
+            bech32PrefixConsAddr: `pasgvalcons`,
+            bech32PrefixConsPub: `pasgvalconspub`,
+          },
+          currencies: [
+            {
+              coinDenom: "PASG",
+              coinMinimalDenom: "upasg",
+              coinDecimals: 6,
+              coinGeckoId: "passage",
+            },
+          ],
+          feeCurrencies: [
+            {
+              coinDenom: "PASG",
+              coinMinimalDenom: "upasg",
+              coinDecimals: 6,
+              coinGeckoId: "passage",
+            },
+          ],
+          coinType: 118,
+          gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
+          walletUrlForStaking: "https://stake.vitwit.com/validators",
+        },
+      },
     ];
   }
   return [
@@ -199,67 +253,66 @@ export function getMainNetworks(): Network[] {
         gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
       },
     },
+    {
+      experimental: true,
+      showAirdrop: true,
+      airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
+      airdropMessage:
+        "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
+      logos: {
+        toolbar:
+          "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
+        menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png",
+      },
+      isTestnet: true,
+      explorerTxHashEndpoint: "https://passage.aneka.io/txs/",
+      config: {
+        chainId: "passage-1",
+        chainName: "Passage",
+        rest: "https://api.passage.vitwit.com/",
+        rpc: "https://rpc.passage.vitwit.com",
+        stakeCurrency: {
+          coinDenom: "PASG",
+          coinMinimalDenom: "upasg",
+          coinDecimals: 6,
+          coinGeckoId: "passage3d",
+        },
+        bip44: { coinType: 118 },
+        bech32Config: {
+          bech32PrefixAccAddr: `pasg`,
+          bech32PrefixAccPub: `pasgpub`,
+          bech32PrefixValAddr: `pasgvaloper`,
+          bech32PrefixValPub: `pasgvaloperpub`,
+          bech32PrefixConsAddr: `pasgvalcons`,
+          bech32PrefixConsPub: `pasgvalconspub`,
+        },
+        currencies: [
+          {
+            coinDenom: "PASG",
+            coinMinimalDenom: "upasg",
+            coinDecimals: 6,
+            coinGeckoId: "passage",
+          },
+        ],
+        feeCurrencies: [
+          {
+            coinDenom: "PASG",
+            coinMinimalDenom: "upasg",
+            coinDecimals: 6,
+            coinGeckoId: "passage",
+          },
+        ],
+        coinType: 118,
+        gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
+        walletUrlForStaking: "https://stake.vitwit.com/validators",
+      },
+    },
   ];
 }
 
 export function getTestNetworks(): Network[] {
   if (window.location.origin === "https://airdrop.passage3d.com") {
-    return [
-      {
-        experimental: true,
-        showAirdrop: true,
-        airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
-        airdropMessage:
-          "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
-        logos: {
-          toolbar:
-            "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
-          menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png",
-        },
-        isTestnet: true,
-        explorerTxHashEndpoint: "https://passage3d.testaneka.com/txs/",
-        config: {
-          chainId: "passage-testnet-1",
-          chainName: "Passage-Testnet",
-          rest: "https://api.passage3d.vitwit.com/",
-          rpc: "https://rpc.passage3d.vitwit.com",
-          stakeCurrency: {
-            coinDenom: "PASG",
-            coinMinimalDenom: "upasg",
-            coinDecimals: 6,
-            coinGeckoId: "passage3d",
-          },
-          bip44: { coinType: 118 },
-          bech32Config: {
-            bech32PrefixAccAddr: `pasg`,
-            bech32PrefixAccPub: `pasgpub`,
-            bech32PrefixValAddr: `pasgvaloper`,
-            bech32PrefixValPub: `pasgvaloperpub`,
-            bech32PrefixConsAddr: `pasgvalcons`,
-            bech32PrefixConsPub: `pasgvalconspub`,
-          },
-          currencies: [
-            {
-              coinDenom: "PASG",
-              coinMinimalDenom: "upasg",
-              coinDecimals: 6,
-              coinGeckoId: "passage",
-            },
-          ],
-          feeCurrencies: [
-            {
-              coinDenom: "PASG",
-              coinMinimalDenom: "upasg",
-              coinDecimals: 6,
-              coinGeckoId: "passage",
-            },
-          ],
-          coinType: 118,
-          gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
-          walletUrlForStaking: "https://stake.vitwit.com/validators",
-        },
-      },
-    ];
+    return [];
   }
   if (window.location.origin === "http://localhost:3000") {
     return [
@@ -410,6 +463,12 @@ export function getSelectedNetwork(): Network | null {
     return testNets[0];
   }
   if (mainNets?.length > 0) {
+    for (let i = 0; i < mainNets.length; i++) {
+      if (mainNets[i].config.chainName === "Passage") {
+        saveSelectedNetwork(mainNets[i].config.chainName);
+        return mainNets[i];
+      }
+    }
     saveSelectedNetwork(mainNets[0].config.chainName);
     return mainNets[0];
   }
