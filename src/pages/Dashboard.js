@@ -173,7 +173,9 @@ function DashboardContent(props) {
   };
 
   return (
-    <ThemeProvider theme={mdTheme(darkMode, pallet.primary, pallet.secondary)}>
+    <ThemeProvider
+      theme={mdTheme(darkMode, pallet?.primary, pallet?.secondary)}
+    >
       {chainInfo?.config ? (
         <>
           <CustomAppBar

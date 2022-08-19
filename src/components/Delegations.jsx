@@ -106,7 +106,7 @@ export function MyDelegations(props) {
               color="text.primary"
               style={{ display: "flex", justifyContent: "center", padding: 16 }}
             >
-              No Deligations Found
+              No Delegations
             </Typography>
           ) : (
             <Table

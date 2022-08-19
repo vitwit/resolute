@@ -1,6 +1,6 @@
 import airdropService from './airdropService';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fee, signAndBroadcastAmino, signAndBroadcastCustomMsg } from '../../txns/execute';
+import { fee, signAndBroadcastClaimMsg } from '../../txns/execute';
 import { AirdropClaim } from '../../txns/proto';
 import { setError, setTxHash } from '../common/commonSlice';
 
@@ -36,7 +36,7 @@ export const txClaimAction = createAsyncThunk(
     async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
         try {
             const msg = AirdropClaim(data.address)
-            const result = await signAndBroadcastCustomMsg(data.address, [msg], fee(data.denom, data.feeAmount, 200000),data.chainId, data.rpc, data.memo)
+            const result = await signAndBroadcastClaimMsg(data.address, [msg], fee(data.denom, data.feeAmount, 200000),data.chainId, data.rpc, data.memo)
             if (result?.code === 0) {
                 dispatch(setTxHash({
                     hash: result?.transactionHash
