@@ -5,7 +5,7 @@ import Toolbar from "@mui/material/Toolbar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
 const Authz = lazy(() => import("./Authz"));
-const Feegrant = lazy(() => import("./Feegrant"));
+// const Feegrant = lazy(() => import("./Feegrant"));
 import { getSelectedNetwork, saveSelectedNetwork } from "./../utils/networks";
 import Link from "@mui/material/Link";
 import { Routes, Route } from "react-router-dom";
@@ -18,7 +18,7 @@ import {
   setNetwork,
 } from "./../features/wallet/walletSlice";
 import { useNavigate } from "react-router-dom";
-const NewFeegrant = lazy(() => import("./NewFeegrant"));
+// const NewFeegrant = lazy(() => import("./NewFeegrant"));
 const NewAuthz = lazy(() => import("./NewAuthz"));
 import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
@@ -106,7 +106,7 @@ function DashboardContent(props) {
   const txSuccess = useSelector((state) => state.common.txSuccess);
 
   useEffect(() => {
-    if (errState.message?.length > 0 && errState.type?.length > 0) {
+    if (errState?.message?.length > 0 && errState?.type?.length > 0) {
       showSnack(true);
     } else {
       showSnack(false);
@@ -114,7 +114,7 @@ function DashboardContent(props) {
   }, [errState]);
 
   useEffect(() => {
-    if (txSuccess.hash?.length > 0) {
+    if (txSuccess?.hash?.length > 0) {
       showTxSnack(true);
     } else {
       showTxSnack(false);
@@ -233,22 +233,22 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   />
-                  <Route
+                  {/* <Route
                     path="/feegrant"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <Feegrant />
                       </Suspense>
                     }
-                  ></Route>
-                  <Route
+                  ></Route> */}
+                  {/* <Route
                     path="/feegrant/new"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <NewFeegrant />
                       </Suspense>
                     }
-                  ></Route>
+                  ></Route> */}
                   <Route
                     path="/authz/new"
                     element={

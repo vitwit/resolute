@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { signAndBroadcastAmino, fee } from '../../txns/execute';
 import distService from './distributionService';
-import { WithdrawAllRewardsMsg } from '../../txns/proto';
+import { WithdrawAllRewardsMsg } from '../../txns/distr';
 import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {

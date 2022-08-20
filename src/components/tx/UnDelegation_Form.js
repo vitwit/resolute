@@ -14,7 +14,7 @@ import {
   createTxn,
   getDelegatorValidators,
 } from "../../features/multisig/multisigSlice";
-import { UnDelegate } from "../../txns/proto";
+import { UnDelegate } from "../../txns/staking";
 import { fee } from "../../txns/execute";
 import FeeComponent from "./FeeComponent";
 import Box from "@mui/system/Box";

@@ -11,7 +11,7 @@ import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 
 export function drawerListItems(currentPath, onNavigate, showAirdrop) {
   return (
-    <React.Fragment>
+    <>
       <ListItemButton
         onClick={() => onNavigate("/")}
         selected={currentPath === "/"}
@@ -63,6 +63,7 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         <ListItemText primary="Authz" />
       </ListItemButton>
       <ListItemButton
+        disabled
         onClick={() => onNavigate("/feegrant")}
         sx={{ pb: 0.5, pt: 0.5 }}
         selected={currentPath === "/feegrant"}
@@ -70,14 +71,18 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         <ListItemIcon>
           <LayersIcon />
         </ListItemIcon>
-        <ListItemText primary="Feegrant" />
+        <ListItemText primary="Feegrant" secondary="coming soon" />
       </ListItemButton>
-      <ListItemButton onClick={() => onNavigate("/group")} sx={{ pb: 0.5, pt: 0.5 }} selected={currentPath === "/group"}>
-      <ListItemIcon>
-        <GroupsOutlinedIcon />
-      </ListItemIcon>
-      <ListItemText primary="Group" />
-    </ListItemButton>
+      <ListItemButton
+        onClick={() => onNavigate("/group")}
+        sx={{ pb: 0.5, pt: 0.5 }}
+        selected={currentPath === "/group"}
+      >
+        <ListItemIcon>
+          <GroupsOutlinedIcon />
+        </ListItemIcon>
+        <ListItemText primary="Group" />
+      </ListItemButton>
 
       {showAirdrop ? (
         <ListItemButton
@@ -93,6 +98,6 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
       ) : (
         <></>
       )}
-    </React.Fragment>
+    </>
   );
 }

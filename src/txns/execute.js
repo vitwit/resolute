@@ -5,7 +5,7 @@ import {
 } from "@cosmjs/stargate";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Registry } from "@cosmjs/proto-signing";
-import { MsgClaim } from "./msg_claim";
+import { MsgClaim } from "./passage/msg_claim";
 import { MsgCreateGroup, MsgCreateGroupWithPolicy } from "./group/v1/tx";
 import { AirdropAminoConverter } from "../features/airdrop/amino";
 
@@ -54,9 +54,9 @@ export async function signAndBroadcastClaimMsg(
     ...AirdropAminoConverter,
   });
 
-  let result = await getKeplrWalletAmino(chainID);
-  var wallet = result[0];
-  var account = result[1];
+  const result = await getKeplrWalletAmino(chainID);
+  const wallet = result[0];
+  const account = result[1];
 
   let registry = new Registry();
   defaultRegistryTypes.forEach((v) => {

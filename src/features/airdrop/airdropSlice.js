@@ -1,7 +1,7 @@
 import airdropService from './airdropService';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fee, signAndBroadcastClaimMsg } from '../../txns/execute';
-import { AirdropClaim } from '../../txns/proto';
+import { AirdropClaim } from '../../txns/passage';
 import { setError, setTxHash } from '../common/commonSlice';
 
 const initialState = {
