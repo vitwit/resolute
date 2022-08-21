@@ -17,7 +17,7 @@ import {
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "../utils/util";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from "./../components/CustomTable";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
@@ -27,6 +27,7 @@ import {
   resetError,
   resetTxHash,
   setError,
+  setSelectedNetwork,
 } from "../features/common/commonSlice";
 import {
   getMsgNameFromAuthz,
@@ -49,16 +50,9 @@ export default function Authz() {
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const address = useSelector((state) => state.wallet.address);
   const authzTx = useSelector((state) => state.authz.tx);
-  const execTx = useSelector((state) => state.authz.execTx);
   const currency = useSelector(
     (state) => state.wallet.chainInfo?.config?.currencies[0]
   );
-
-  useEffect(() => {
-    if (execTx.status === "idle") {
-      setSelectedGrant({});
-    }
-  }, [execTx]);
 
   useEffect(() => {
     if (address !== "") {
@@ -115,12 +109,17 @@ export default function Authz() {
 
   const onUseAuthz = (row) => {
     setTimeout(() => {
-      navigateTo("/");
+      navigateTo(`/${selectedNetwork}`);
     }, 200);
   };
 
+  const { network } = useParams();
+  const selectedNetwork = useSelector((state) => state.common.selectedNetwork);
   const selectedAuthz = useSelector((state) => state.authz.selected);
   useEffect(() => {
+    if (selectedNetwork !== network) {
+      dispatch(setSelectedNetwork(network));
+    }
     if (selectedAuthz.granter.length > 0) {
       dispatch(
         setError({
@@ -160,7 +159,7 @@ export default function Authz() {
         <Button
           variant="contained"
           size="medium"
-          onClick={() => navigateTo("/authz/new")}
+          onClick={() => navigateTo(`/${selectedNetwork}/authz/new`)}
         >
           Grant New
         </Button>

@@ -17,8 +17,12 @@ import {
   resetClaimRecords,
 } from "./../features/airdrop/airdropSlice";
 import { getMainNetworks, getTestNetworks } from "../utils/networks";
-import { useNavigate } from "react-router-dom";
-import { resetError, setError } from "../features/common/commonSlice";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  resetError,
+  setError,
+  setSelectedNetwork,
+} from "../features/common/commonSlice";
 import AirdropProgress from "../components/AirdropProgress";
 import { fromBech32, toHex, toBech32, fromHex } from "@cosmjs/encoding";
 import AlertTitle from "@mui/material/AlertTitle";
@@ -74,7 +78,6 @@ export default function AirdropEligibility() {
   const errMsg = useSelector((state) => state.airdrop.errMsg);
   const txStatus = useSelector((state) => state.airdrop.tx.status);
   const walletAddress = useSelector((state) => state.wallet.address);
-  // const currency = useSelector((state) => state.wallet.chainInfo?.config?.currencies[0]);
   const currency = chainInfo.config.currencies[0];
 
   const { handleSubmit, control, setValue, getValues } = useForm({
@@ -83,7 +86,13 @@ export default function AirdropEligibility() {
     },
   });
 
+  const { network } = useParams();
+  const selectedNetwork = useSelector((state) => state.common.selectedNetwork);
+
   useEffect(() => {
+    if (selectedNetwork !== network) {
+      dispatch(setSelectedNetwork(network));
+    }
     if (chainInfo.showAirdrop) {
       dispatch(resetError());
       if (chainInfo.config.rest !== "") {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -18,6 +18,7 @@ import { DialogCreateMultisig } from "../../components/DialogCreateMultisig";
 import { getMultisigAccounts } from "../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
+import { setSelectedNetwork } from "../../features/common/commonSlice";
 
 export default function CreateMultisig() {
   const navigate = useNavigate();
@@ -35,9 +36,16 @@ export default function CreateMultisig() {
   const accounts = (multisigAccounts.data && multisigAccounts.data.data) || [];
   const walletAddress = useSelector((state) => state.wallet.address);
 
-  const { config } = chainInfo;
-  const { chainId } = config;
-  const addressPrefix = config?.bech32Config?.bech32PrefixAccAddr;
+  const addressPrefix = chainInfo?.config?.bech32Config?.bech32PrefixAccAddr;
+
+  const { network } = useParams();
+  const selectedNetwork = useSelector((state) => state.common.selectedNetwork);
+
+  useEffect(() => {
+    if (selectedNetwork !== network) {
+      dispatch(setSelectedNetwork(network));
+    }
+  }, []);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -131,7 +139,7 @@ export default function CreateMultisig() {
                         "multisigAddress",
                         JSON.stringify(row)
                       );
-                      navigate(`/multisig/${row.address}/txs`);
+                      navigate(`/${selectedNetwork}/multisig/${row.address}/txs`);
                     }}
                   >
                     <StyledTableCell>{row?.name}</StyledTableCell>
@@ -159,7 +167,7 @@ export default function CreateMultisig() {
       {open ? (
         <DialogCreateMultisig
           addressPrefix={addressPrefix}
-          chainId={chainId}
+          chainId={chainInfo?.chainId}
           onClose={onClose}
           open={open}
         />

@@ -1,6 +1,6 @@
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getBalance } from "../../../features/bank/bankSlice";
 import {
@@ -18,7 +18,6 @@ import { resetError, setError } from "../../../features/common/commonSlice";
 export default function Tx_index() {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { address: multisigAddress } = useParams();
   const multisigAccountDetails = useSelector(
     (state) => state.multisig.multisigAccount

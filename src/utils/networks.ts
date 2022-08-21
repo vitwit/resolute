@@ -173,61 +173,61 @@ export function getMainNetworks(): Network[] {
         ],
       },
     },
-    {
-      routeName: "passage",
-      experimental: true,
-      showAirdrop: true,
-      airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
-      airdropMessage:
-        "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
-      logos: {
-        toolbar:
-          "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
-        menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png",
-      },
-      isTestnet: false,
-      explorerTxHashEndpoint: "https://passage.aneka.io/txs/",
-      config: {
-        chainId: "passage-1",
-        chainName: "Passage",
-        rest: "https://api.passage.vitwit.com/",
-        rpc: "https://rpc.passage.vitwit.com",
-        stakeCurrency: {
-          coinDenom: "PASG",
-          coinMinimalDenom: "upasg",
-          coinDecimals: 6,
-          coinGeckoId: "passage3d",
-        },
-        bip44: { coinType: 118 },
-        bech32Config: {
-          bech32PrefixAccAddr: `pasg`,
-          bech32PrefixAccPub: `pasgpub`,
-          bech32PrefixValAddr: `pasgvaloper`,
-          bech32PrefixValPub: `pasgvaloperpub`,
-          bech32PrefixConsAddr: `pasgvalcons`,
-          bech32PrefixConsPub: `pasgvalconspub`,
-        },
-        currencies: [
-          {
-            coinDenom: "PASG",
-            coinMinimalDenom: "upasg",
-            coinDecimals: 6,
-            coinGeckoId: "passage",
-          },
-        ],
-        feeCurrencies: [
-          {
-            coinDenom: "PASG",
-            coinMinimalDenom: "upasg",
-            coinDecimals: 6,
-            coinGeckoId: "passage",
-          },
-        ],
-        coinType: 118,
-        gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
-        walletUrlForStaking: "https://artha.vitwit.com/validators",
-      },
-    },
+    // {
+    //   routeName: "passage",
+    //   experimental: true,
+    //   showAirdrop: true,
+    //   airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
+    //   airdropMessage:
+    //     "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
+    //   logos: {
+    //     toolbar:
+    //       "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
+    //     menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png",
+    //   },
+    //   isTestnet: false,
+    //   explorerTxHashEndpoint: "https://passage.aneka.io/txs/",
+    //   config: {
+    //     chainId: "passage-1",
+    //     chainName: "Passage",
+    //     rest: "https://api.passage.vitwit.com/",
+    //     rpc: "https://rpc.passage.vitwit.com",
+    //     stakeCurrency: {
+    //       coinDenom: "PASG",
+    //       coinMinimalDenom: "upasg",
+    //       coinDecimals: 6,
+    //       coinGeckoId: "passage3d",
+    //     },
+    //     bip44: { coinType: 118 },
+    //     bech32Config: {
+    //       bech32PrefixAccAddr: `pasg`,
+    //       bech32PrefixAccPub: `pasgpub`,
+    //       bech32PrefixValAddr: `pasgvaloper`,
+    //       bech32PrefixValPub: `pasgvaloperpub`,
+    //       bech32PrefixConsAddr: `pasgvalcons`,
+    //       bech32PrefixConsPub: `pasgvalconspub`,
+    //     },
+    //     currencies: [
+    //       {
+    //         coinDenom: "PASG",
+    //         coinMinimalDenom: "upasg",
+    //         coinDecimals: 6,
+    //         coinGeckoId: "passage",
+    //       },
+    //     ],
+    //     feeCurrencies: [
+    //       {
+    //         coinDenom: "PASG",
+    //         coinMinimalDenom: "upasg",
+    //         coinDecimals: 6,
+    //         coinGeckoId: "passage",
+    //       },
+    //     ],
+    //     coinType: 118,
+    //     gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
+    //     walletUrlForStaking: "https://artha.vitwit.com/validators",
+    //   },
+    // },
     {
       routeName: "regen",
       showAirdrop: false,

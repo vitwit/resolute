@@ -8,8 +8,9 @@ import {
   getGroupsByAdmin,
   getGroupsByMember,
 } from "../features/group/groupSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import GroupsByMember from "../components/group/GroupsByMember";
+import { setSelectedNetwork } from "../features/common/commonSlice";
 
 export default function GroupPage() {
   const [selectedTab, setSelectedTab] = useState("admin");
@@ -27,6 +28,14 @@ export default function GroupPage() {
         })
       );
   }, [address]);
+
+  const { network } = useParams();
+  const selectedNetwork = useSelector((state) => state.common.selectedNetwork);
+  useEffect(() => {
+    if (selectedNetwork !== network) {
+      dispatch(setSelectedNetwork(network));
+    }
+  }, []);
 
   useEffect(() => {
     if (address.length > 0 && selectedTab === "member")

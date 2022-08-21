@@ -10,6 +10,7 @@ import {
   setError,
   resetError,
   resetTxHash,
+  setSelectedNetwork,
 } from "./../features/common/commonSlice";
 import {
   authzExecHelper,
@@ -18,6 +19,7 @@ import {
 } from "../features/authz/authzSlice";
 import VoteDialog from "../components/Vote";
 import { getVoteAuthz } from "../utils/authorizations";
+import { useParams } from "react-router-dom";
 
 export default function Proposals() {
   const proposals = useSelector((state) => state.gov.active.proposals);
@@ -109,7 +111,12 @@ export default function Proposals() {
     }
   }, [govTx, authzExecTx]);
 
+  const { network } = useParams();
+  const selectedNetwork = useSelector((state) => state.common.selectedNetwork);
   useEffect(() => {
+    if (selectedNetwork !== network) {
+      dispatch(setSelectedNetwork(network));
+    }
     if (selectedAuthz.granter.length === 0) {
       dispatch(
         getProposals({

@@ -42,6 +42,7 @@ import {
   getWithdrawRewardsAuthz,
 } from "../utils/authorizations";
 import { authzExecHelper } from "../features/authz/authzSlice";
+import { useParams } from "react-router-dom";
 
 export default function Validators() {
   const [type, setType] = useState("delegations");
@@ -222,7 +223,12 @@ export default function Validators() {
     }
   }, [validators.pagination]);
 
+  const { network } = useParams();
+  const selectedNetwork = useSelector((state) => state.common.selectedNetwork);
   useEffect(() => {
+    if (selectedNetwork !== network) {
+      dispatch(setSelectedNetwork(network));
+    }
     return () => {
       dispatch(resetError());
       dispatch(resetTxHash());

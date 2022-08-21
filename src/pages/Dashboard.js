@@ -84,6 +84,7 @@ function DashboardContent(props) {
           chainInfo: network,
         })
       );
+      setPallet(getPallet(selectedNetwork));
 
       // wait for keplr instance to available
       setTimeout(() => {
@@ -200,7 +201,7 @@ function DashboardContent(props) {
           onExit={() => {
             dispatch(exitAuthzMode());
             setTimeout(() => {
-              navigateTo("/");
+              navigateTo(`/${selectedNetwork}`);
             }, 400);
           }}
         />
@@ -295,8 +296,6 @@ function DashboardContent(props) {
                     </Suspense>
                   }
                 ></Route>
-
-                {selectedNetwork.showAirdrop ? (
                   <Route
                     path="/:network/airdrop-check"
                     element={
@@ -305,9 +304,6 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
-                ) : (
-                  <></>
-                )}
                 <Route
                   path="/:network/multisig"
                   element={

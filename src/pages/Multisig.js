@@ -8,6 +8,10 @@ import Typography from "@mui/material/Typography";
 import CreateMultisig from "./multisig/CreateMultisig";
 import "./common.css";
 import Tx_index from "./multisig/tx/Tx_index";
+import { useSelect } from "@mui/base";
+import { setSelectedNetwork } from "../features/common/commonSlice";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const steps = ["Create/Select Multisig", "Create/Sign/Broadcast Transaction"];
 
@@ -29,6 +33,15 @@ export default function MultiSig() {
   const handleReset = () => {
     setActiveStep(0);
   };
+
+  const { network } = useParams();
+  const selectedNetwork = useSelector((state) => state.common.selectedNetwork);
+
+  useEffect(() => {
+    if (selectedNetwork !== network) {
+      dispatch(setSelectedNetwork(network));
+    }
+  }, []);
 
   return (
     <Box sx={{ width: "100%" }}>
