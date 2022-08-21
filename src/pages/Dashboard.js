@@ -4,41 +4,22 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
-const Authz = lazy(() => import("./Authz"));
-// const Feegrant = lazy(() => import("./Feegrant"));
-import {
-  getNetworkInfo,
-  getSelectedNetwork,
-  saveSelectedNetwork,
-} from "./../utils/networks";
+import { getSelectedNetwork, saveSelectedNetwork } from "./../utils/networks";
 import Link from "@mui/material/Link";
 import { Routes, Route } from "react-router-dom";
-const Validators = lazy(() => import("./Validators"));
-const Proposals = lazy(() => import("./Proposals"));
 import { useSelector, useDispatch } from "react-redux";
 import {
   resetWallet,
   connectKeplrWallet,
   setNetwork,
 } from "./../features/wallet/walletSlice";
-import { useNavigate, useParams } from "react-router-dom";
-// const NewFeegrant = lazy(() => import("./NewFeegrant"));
-const NewAuthz = lazy(() => import("./NewAuthz"));
+import { useNavigate } from "react-router-dom";
 import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
 import Overview from "./Overview";
 import { CustomAppBar } from "../components/CustomAppBar";
-const AirdropEligibility = lazy(() => import("./AirdropEligibility"));
-import {
-  resetError,
-  setError,
-  setSelectedNetwork,
-} from "../features/common/commonSlice";
+import { resetError, setError } from "../features/common/commonSlice";
 import Page404 from "./Page404";
-const CreateMultisig = lazy(() => import("./multisig/CreateMultisig"));
-const Tx_index = lazy(() => import("./multisig/tx/Tx_index"));
-const Single_Tx = lazy(() => import("./multisig/tx/Single_Tx"));
-const SendPage = lazy(() => import("./SendPage"));
 import AppDrawer from "../components/AppDrawer";
 import { Alert } from "../components/Alert";
 import { getPallet, isDarkMode, mdTheme } from "../utils/theme";
@@ -47,6 +28,17 @@ import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
 import GroupPage from "./GroupPage";
 import CreateGroupPage from "./group/CreateGroup";
+const Authz = lazy(() => import("./Authz"));
+// const Feegrant = lazy(() => import("./Feegrant"));
+const Validators = lazy(() => import("./Validators"));
+const Proposals = lazy(() => import("./Proposals"));
+// const NewFeegrant = lazy(() => import("./NewFeegrant"));
+const NewAuthz = lazy(() => import("./NewAuthz"));
+const AirdropEligibility = lazy(() => import("./AirdropEligibility"));
+const CreateMultisig = lazy(() => import("./multisig/CreateMultisig"));
+const Tx_index = lazy(() => import("./multisig/tx/Tx_index"));
+const Single_Tx = lazy(() => import("./multisig/tx/Single_Tx"));
+const SendPage = lazy(() => import("./SendPage"));
 
 function DashboardContent(props) {
   const selectedNetwork = useSelector((state) => state.common.selectedNetwork);
@@ -131,10 +123,7 @@ function DashboardContent(props) {
   }, [txSuccess]);
 
   const handleNetworkChange = (network) => {
-    if (
-      selectedNetwork.length > 0 &&
-      network.routeName !== selectedNetwork
-    ) {
+    if (selectedNetwork.length > 0 && network.routeName !== selectedNetwork) {
       dispatch(connectKeplrWallet(network));
       changeNetwork(network);
       navigateTo(network.routeName);
@@ -296,14 +285,14 @@ function DashboardContent(props) {
                     </Suspense>
                   }
                 ></Route>
-                  <Route
-                    path="/:network/airdrop-check"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <AirdropEligibility />
-                      </Suspense>
-                    }
-                  ></Route>
+                <Route
+                  path="/:network/airdrop-check"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <AirdropEligibility />
+                    </Suspense>
+                  }
+                ></Route>
                 <Route
                   path="/:network/multisig"
                   element={
