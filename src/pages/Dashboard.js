@@ -6,7 +6,11 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
 const Authz = lazy(() => import("./Authz"));
 // const Feegrant = lazy(() => import("./Feegrant"));
-import { getSelectedNetwork, saveSelectedNetwork } from "./../utils/networks";
+import {
+  getNetworkInfo,
+  getSelectedNetwork,
+  saveSelectedNetwork,
+} from "./../utils/networks";
 import Link from "@mui/material/Link";
 import { Routes, Route } from "react-router-dom";
 const Validators = lazy(() => import("./Validators"));
@@ -17,7 +21,7 @@ import {
   connectKeplrWallet,
   setNetwork,
 } from "./../features/wallet/walletSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // const NewFeegrant = lazy(() => import("./NewFeegrant"));
 const NewAuthz = lazy(() => import("./NewAuthz"));
 import AlertTitle from "@mui/material/AlertTitle";
@@ -25,7 +29,11 @@ import Snackbar from "@mui/material/Snackbar";
 import Overview from "./Overview";
 import { CustomAppBar } from "../components/CustomAppBar";
 const AirdropEligibility = lazy(() => import("./AirdropEligibility"));
-import { resetError, setError } from "../features/common/commonSlice";
+import {
+  resetError,
+  setError,
+  setSelectedNetwork,
+} from "../features/common/commonSlice";
 import Page404 from "./Page404";
 const CreateMultisig = lazy(() => import("./multisig/CreateMultisig"));
 const Tx_index = lazy(() => import("./multisig/tx/Tx_index"));
@@ -41,6 +49,7 @@ import GroupPage from "./GroupPage";
 import CreateGroupPage from "./group/CreateGroup";
 
 function DashboardContent(props) {
+  const selectedNetwork = useSelector((state) => state.common.selectedNetwork);
   const [snackOpen, setSnackOpen] = useState(false);
   const showSnack = (value) => {
     setSnackOpen(value);
@@ -52,7 +61,7 @@ function DashboardContent(props) {
     setDarkMode(!darkMode);
   };
 
-  const [pallet, setPallet] = useState(getPallet());
+  const [pallet, setPallet] = useState(getPallet(selectedNetwork));
   const balance = useSelector((state) => state.bank.balance);
 
   const [snackTxOpen, setSnackTxClose] = useState(false);
@@ -61,43 +70,42 @@ function DashboardContent(props) {
   };
   const selectedAuthz = useSelector((state) => state.authz.selected);
 
-  const [selectedNetwork, setSelectedNetwork] = useState(props.selectedNetwork);
   const changeNetwork = (network) => {
-    saveSelectedNetwork(network.config.chainName);
-    setSelectedNetwork(network);
-    setPallet(getPallet());
+    dispatch(setSelectedNetwork(network.routeName));
+    setPallet(getPallet(network.routeName));
   };
 
   const wallet = useSelector((state) => state.wallet);
   useEffect(() => {
-    const network = getSelectedNetwork();
-    dispatch(
-      setNetwork({
-        chainInfo: network,
-      })
-    );
+    if (selectedNetwork.length > 0) {
+      const network = getNetworkInfo(selectedNetwork);
+      dispatch(
+        setNetwork({
+          chainInfo: network,
+        })
+      );
 
-    // wait for keplr instance to available
-    setTimeout(() => {
-      if (isConnected()) {
-        dispatch(connectKeplrWallet(network));
-      }
-    }, 200);
-
-    const listener = () => {
+      // wait for keplr instance to available
       setTimeout(() => {
         if (isConnected()) {
           dispatch(connectKeplrWallet(network));
         }
-      }, 1000);
-    };
-    window.addEventListener("keplr_keystorechange", listener);
+      }, 200);
 
-    setSelectedNetwork(network);
-    return () => {
-      window.removeEventListener("keplr_keystorechange", listener);
-    };
-  }, []);
+      const listener = () => {
+        setTimeout(() => {
+          if (isConnected()) {
+            dispatch(connectKeplrWallet(network));
+          }
+        }, 1000);
+      };
+      window.addEventListener("keplr_keystorechange", listener);
+
+      return () => {
+        window.removeEventListener("keplr_keystorechange", listener);
+      };
+    }
+  }, [selectedNetwork]);
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const dispatch = useDispatch();
@@ -122,8 +130,14 @@ function DashboardContent(props) {
   }, [txSuccess]);
 
   const handleNetworkChange = (network) => {
-    dispatch(connectKeplrWallet(network));
-    changeNetwork(network);
+    if (
+      selectedNetwork.length > 0 &&
+      network.routeName !== selectedNetwork
+    ) {
+      dispatch(connectKeplrWallet(network));
+      changeNetwork(network);
+      navigateTo(network.routeName);
+    }
   };
 
   function disconnectWallet() {
@@ -135,6 +149,7 @@ function DashboardContent(props) {
   }
 
   const connectWallet = (network) => {
+    console.log(network);
     dispatch(connectKeplrWallet(network));
   };
 
@@ -176,64 +191,63 @@ function DashboardContent(props) {
     <ThemeProvider
       theme={mdTheme(darkMode, pallet?.primary, pallet?.secondary)}
     >
-      {chainInfo?.config ? (
-        <>
-          <CustomAppBar
+      <>
+        <CustomAppBar
+          selectedNetwork={selectedNetwork}
+          onNetworkChange={(network) => handleNetworkChange(network)}
+          darkMode={darkMode}
+          onModeChange={() => onModeChange()}
+          onExit={() => {
+            dispatch(exitAuthzMode());
+            setTimeout(() => {
+              navigateTo("/");
+            }, 400);
+          }}
+        />
+        <Box sx={{ display: "flex" }}>
+          <AppDrawer
+            balance={balance}
+            chainInfo={chainInfo}
+            onConnectWallet={connectWallet}
+            onDisconnectWallet={disconnectWallet}
+            onNavigate={navigateTo}
             selectedNetwork={selectedNetwork}
-            onNetworkChange={(network) => handleNetworkChange(network)}
-            darkMode={darkMode}
-            onModeChange={() => onModeChange()}
-            onExit={() => {
-              dispatch(exitAuthzMode());
-              setTimeout(() => {
-                navigateTo("/");
-              }, 400);
-            }}
+            wallet={wallet}
+            onCopy={copyToClipboard}
+            selectedAuthz={selectedAuthz}
           />
-          <Box sx={{ display: "flex" }}>
-            <AppDrawer
-              balance={balance}
-              chainInfo={chainInfo}
-              onConnectWallet={connectWallet}
-              onDisconnectWallet={disconnectWallet}
-              onNavigate={navigateTo}
-              selectedNetwork={selectedNetwork}
-              wallet={wallet}
-              onCopy={copyToClipboard}
-              selectedAuthz={selectedAuthz}
-            />
-            <Box
-              component="main"
-              sx={{
-                backgroundColor: (theme) =>
-                  theme.palette.mode === "light"
-                    ? theme.palette.grey[200]
-                    : theme.palette.grey[900],
-                flexGrow: 1,
-                height: "100vh",
-                overflow: "auto",
-              }}
-            >
-              {selectedAuthz.granter?.length > 0 ? (
-                <>
-                  <Toolbar />
-                  <Toolbar />
-                </>
-              ) : (
+          <Box
+            component="main"
+            sx={{
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? theme.palette.grey[200]
+                  : theme.palette.grey[900],
+              flexGrow: 1,
+              height: "100vh",
+              overflow: "auto",
+            }}
+          >
+            {selectedAuthz.granter?.length > 0 ? (
+              <>
                 <Toolbar />
-              )}
-              <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                <Routes>
-                  <Route path="/" element={<Overview />} />
-                  <Route
-                    path="/authz"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Authz />
-                      </Suspense>
-                    }
-                  />
-                  {/* <Route
+                <Toolbar />
+              </>
+            ) : (
+              <Toolbar />
+            )}
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Routes>
+                <Route path="/:network" element={<Overview />} />
+                <Route
+                  path="/:network/authz"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <Authz />
+                    </Suspense>
+                  }
+                />
+                {/* <Route
                     path="/feegrant"
                     element={
                       <Suspense fallback={<CircularProgress />}>
@@ -241,7 +255,7 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route> */}
-                  {/* <Route
+                {/* <Route
                     path="/feegrant/new"
                     element={
                       <Suspense fallback={<CircularProgress />}>
@@ -249,92 +263,89 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route> */}
-                  <Route
-                    path="/authz/new"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <NewAuthz />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/staking"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Validators />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/governance"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Proposals />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/send"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <SendPage />
-                      </Suspense>
-                    }
-                  ></Route>
+                <Route
+                  path="/:network/authz/new"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <NewAuthz />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/:network/staking"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <Validators />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/:network/governance"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <Proposals />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/:network/send"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <SendPage />
+                    </Suspense>
+                  }
+                ></Route>
 
-                  {selectedNetwork.showAirdrop ? (
-                    <Route
-                      path="/airdrop-check"
-                      element={
-                        <Suspense fallback={<CircularProgress />}>
-                          <AirdropEligibility />
-                        </Suspense>
-                      }
-                    ></Route>
-                  ) : (
-                    <></>
-                  )}
+                {selectedNetwork.showAirdrop ? (
                   <Route
-                    path="/multisig"
+                    path="/:network/airdrop-check"
                     element={
                       <Suspense fallback={<CircularProgress />}>
-                        <CreateMultisig />
+                        <AirdropEligibility />
                       </Suspense>
                     }
                   ></Route>
+                ) : (
+                  <></>
+                )}
+                <Route
+                  path="/:network/multisig"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <CreateMultisig />
+                    </Suspense>
+                  }
+                ></Route>
 
-                  <Route
-                    path="/multisig/:address/txs"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Tx_index />
-                      </Suspense>
-                    }
-                  ></Route>
+                <Route
+                  path="/:network/multisig/:address/txs"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <Tx_index />
+                    </Suspense>
+                  }
+                ></Route>
 
-                  <Route
-                    path="/multisig/:address/txs/:txId"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Single_Tx />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route path="/group" element={<GroupPage />}></Route>
-                  <Route
-                    path="/group/create-group"
-                    element={<CreateGroupPage />}
-                  ></Route>
-                  <Route path="*" element={<Page404 />}></Route>
-                </Routes>
-              </Container>
-            </Box>
+                <Route
+                  path="/:network/multisig/:address/txs/:txId"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <Single_Tx />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route path="/:network/group" element={<GroupPage />}></Route>
+                <Route
+                  path="/:network/group/create-group"
+                  element={<CreateGroupPage />}
+                ></Route>
+                <Route path="*" element={<Page404 />}></Route>
+              </Routes>
+            </Container>
           </Box>
-          <Footer />
-        </>
-      ) : (
-        <></>
-      )}
+        </Box>
+        <Footer />
+      </>
       {errState.message.length > 0 ? (
         <Snackbar
           open={
@@ -394,41 +405,7 @@ function DashboardContent(props) {
 }
 
 export default function Dashboard() {
-  const dispatch = useDispatch();
-
-  const network = getSelectedNetwork();
-  useEffect(() => {
-    dispatch(
-      setNetwork({
-        chainInfo: network,
-      })
-    );
-
-    // wait for keplr instance to available
-    setTimeout(() => {
-      if (isConnected()) {
-        dispatch(connectKeplrWallet(network));
-      }
-    }, 200);
-
-    const listener = () => {
-      setTimeout(() => {
-        if (isConnected()) {
-          dispatch(connectKeplrWallet(network));
-        }
-      }, 1000);
-    };
-    window.addEventListener("keplr_keystorechange", listener);
-
-    return () => {
-      window.removeEventListener("keplr_keystorechange", listener);
-    };
-  }, []);
-  return network ? (
-    <DashboardContent key={1} selectedNetwork={network} />
-  ) : (
-    <></>
-  );
+  return <DashboardContent key={1} />;
 }
 
 const Footer = () => {

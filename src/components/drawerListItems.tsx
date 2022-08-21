@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -9,12 +9,17 @@ import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import DocumentScannerOutlinedIcon from "@mui/icons-material/DocumentScannerOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 
-export function drawerListItems(currentPath, onNavigate, showAirdrop) {
+export function drawerListItems(
+  currentPath: string,
+  routeName: string,
+  onNavigate: (path: string) => void,
+  showAirdrop: boolean
+) {
   return (
     <>
       <ListItemButton
-        onClick={() => onNavigate("/")}
-        selected={currentPath === "/"}
+        onClick={() => onNavigate(`/${routeName}`)}
+        selected={currentPath === `/${routeName}`}
         sx={{ pb: 0.5, pt: 0.5 }}
       >
         <ListItemIcon>
@@ -23,8 +28,8 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         <ListItemText primary="Dashboard" />
       </ListItemButton>
       <ListItemButton
-        onClick={() => onNavigate("/multisig")}
-        selected={currentPath === "/multisig"}
+        onClick={() => onNavigate(`/${routeName}/multisig`)}
+        selected={currentPath === `/${routeName}/multisig`}
         sx={{ pb: 0.5, pt: 0.5 }}
       >
         <ListItemIcon>
@@ -33,8 +38,8 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         <ListItemText primary="Multisig" />
       </ListItemButton>
       <ListItemButton
-        onClick={() => onNavigate("/staking")}
-        selected={currentPath === "/staking"}
+        onClick={() => onNavigate(`/${routeName}/staking`)}
+        selected={currentPath === `/${routeName}/staking`}
         sx={{ pb: 0.5, pt: 0.5 }}
       >
         <ListItemIcon>
@@ -43,8 +48,8 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         <ListItemText primary="Staking" />
       </ListItemButton>
       <ListItemButton
-        onClick={() => onNavigate("/governance")}
-        selected={currentPath === "/governance"}
+        onClick={() => onNavigate(`/${routeName}/governance`)}
+        selected={currentPath === `/${routeName}/governance`}
         sx={{ pb: 0.5, pt: 0.5 }}
       >
         <ListItemIcon>
@@ -53,8 +58,8 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         <ListItemText primary="Governance" />
       </ListItemButton>
       <ListItemButton
-        onClick={() => onNavigate("/authz")}
-        selected={currentPath === "/authz"}
+        onClick={() => onNavigate(`/${routeName}/authz`)}
+        selected={currentPath === `/${routeName}/authz`}
         sx={{ pb: 0.5, pt: 0.5 }}
       >
         <ListItemIcon>
@@ -64,9 +69,9 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
       </ListItemButton>
       <ListItemButton
         disabled
-        onClick={() => onNavigate("/feegrant")}
+        onClick={() => onNavigate(`/${routeName}/feegrant`)}
         sx={{ pb: 0.5, pt: 0.5 }}
-        selected={currentPath === "/feegrant"}
+        selected={currentPath === `/${routeName}/feegrant`}
       >
         <ListItemIcon>
           <LayersIcon />
@@ -74,20 +79,20 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         <ListItemText primary="Feegrant" secondary="coming soon" />
       </ListItemButton>
       <ListItemButton
-        onClick={() => onNavigate("/group")}
+        onClick={() => onNavigate(`/${routeName}/group`)}
         sx={{ pb: 0.5, pt: 0.5 }}
-        selected={currentPath === "/group"}
+        selected={currentPath === `/${routeName}/group`}
       >
         <ListItemIcon>
           <GroupsOutlinedIcon />
         </ListItemIcon>
-        <ListItemText primary="Group" />
+        <ListItemText primary="Groups" />
       </ListItemButton>
 
       {showAirdrop ? (
         <ListItemButton
-          onClick={() => onNavigate("/airdrop-check")}
-          selected={currentPath === "/airdrop-check"}
+          onClick={() => onNavigate(`/${routeName}/airdrop-check`)}
+          selected={currentPath === `/${routeName}/airdrop-check`}
           sx={{ pb: 0.5, pt: 0.5 }}
         >
           <ListItemIcon>

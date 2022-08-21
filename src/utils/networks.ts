@@ -48,7 +48,7 @@ interface AirdropAction {
   redirect?: string;
 }
 
-interface Network {
+export interface Network {
   showAirdrop: boolean;
   logos: Logos;
   experimental: boolean;
@@ -57,12 +57,14 @@ interface Network {
   config: NetworkConfig;
   airdropMessage?: string;
   airdropActions?: AirdropAction[];
+  routeName: string;
 }
 
 export function getMainNetworks(): Network[] {
   if (window.location.origin === "https://airdrop.passage3d.com") {
     return [
       {
+        routeName: "passage",
         experimental: true,
         showAirdrop: true,
         airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
@@ -117,6 +119,7 @@ export function getMainNetworks(): Network[] {
         },
       },
       {
+        routeName: "cosmos",
         showAirdrop: false,
         logos: {
           menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
@@ -149,6 +152,7 @@ export function getMainNetworks(): Network[] {
   }
   return [
     {
+      routeName: "cosmos",
       showAirdrop: false,
       logos: {
         menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
@@ -170,6 +174,7 @@ export function getMainNetworks(): Network[] {
       },
     },
     {
+      routeName: "passage",
       experimental: true,
       showAirdrop: true,
       airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
@@ -224,6 +229,7 @@ export function getMainNetworks(): Network[] {
       },
     },
     {
+      routeName: "regen",
       showAirdrop: false,
       logos: {
         toolbar:
@@ -246,6 +252,7 @@ export function getMainNetworks(): Network[] {
     },
     {
       showAirdrop: false,
+      routeName: "akash",
       logos: {
         toolbar:
           "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/akash/images/akash-logo.svg",
@@ -266,6 +273,7 @@ export function getMainNetworks(): Network[] {
       },
     },
     {
+      routeName: "osmosis",
       logos: {
         toolbar:
           "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.svg",
@@ -287,6 +295,7 @@ export function getMainNetworks(): Network[] {
       },
     },
     {
+      routeName: "juno",
       logos: {
         toolbar:
           "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
@@ -314,6 +323,7 @@ export function getTestNetworks(): Network[] {
   if (window.location.origin === "http://localhost:3000") {
     return [
       {
+        routeName: "passage",
         experimental: true,
         showAirdrop: true,
         airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
@@ -373,13 +383,36 @@ export function getTestNetworks(): Network[] {
   return [];
 }
 
+export function getNetworkInfo(name: string): Network | null {
+  let mainNets = getMainNetworks();
+  if (name != null) {
+    for (let i = 0; i < mainNets?.length; i++) {
+      if (mainNets[i].routeName === name) {
+        return mainNets[i];
+      }
+    }
+  }
+
+  let testNets = getTestNetworks();
+  if (name != null) {
+    for (let i = 0; i < testNets?.length; i++) {
+      if (testNets[i].routeName === name) {
+        return testNets[i];
+      }
+    }
+  }
+
+  if (mainNets.length > 0) return mainNets[0];
+
+  return null;
+}
+
 export function getSelectedNetwork(): Network | null {
   let name = localStorage.getItem("LAST_SELECTED");
   let mainNets = getMainNetworks();
   if (name != null) {
     for (let i = 0; i < mainNets?.length; i++) {
-      if (mainNets[i].config.chainName === name) {
-        saveSelectedNetwork(mainNets[i].config.chainName);
+      if (mainNets[i].routeName === name) {
         return mainNets[i];
       }
     }
@@ -387,8 +420,7 @@ export function getSelectedNetwork(): Network | null {
   let testNets = getTestNetworks();
   if (name != null) {
     for (let i = 0; i < testNets?.length; i++) {
-      if (testNets[i].config.chainName === name) {
-        saveSelectedNetwork(testNets[i].config.chainName);
+      if (testNets[i].routeName === name) {
         return testNets[i];
       }
     }
@@ -396,25 +428,15 @@ export function getSelectedNetwork(): Network | null {
 
   // return passage network if provided network is not present
   if (testNets?.length > 0) {
-    saveSelectedNetwork(testNets[0].config.chainName);
     return testNets[0];
   }
   if (mainNets?.length > 0) {
     for (let i = 0; i < mainNets.length; i++) {
-      if (mainNets[i].config.chainName === "Passage") {
-        saveSelectedNetwork(mainNets[i].config.chainName);
+      if (mainNets[i].routeName === "passage") {
         return mainNets[i];
       }
     }
-    saveSelectedNetwork(mainNets[0].config.chainName);
     return mainNets[0];
   }
   return null;
-}
-
-export function saveSelectedNetwork(name: string) {
-  localStorage.setItem("LAST_SELECTED", name);
-}
-export function removeSelectedNetwork() {
-  localStorage.removeItem("LAST_SELECTED");
 }

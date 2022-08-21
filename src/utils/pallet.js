@@ -1,5 +1,5 @@
 const networks = {
-  "Passage-Testnet": {
+  passage: {
     primary: {
       light: "#b7abcf",
       main: "#58467d",
@@ -13,7 +13,7 @@ const networks = {
       contrastText: "#000",
     },
   },
-  "Cosmos Hub": {
+  cosmos: {
     primary: {
       light: "#C5CAE9",
       main: "#3F51B5",
@@ -27,7 +27,7 @@ const networks = {
       contrastText: "#000",
     },
   },
-  Regen: {
+  regen: {
     primary: {
       light: "#80bf98",
       main: "#43ad6b",
@@ -41,7 +41,7 @@ const networks = {
       contrastText: "#000",
     },
   },
-  Akash: {
+  akash: {
     primary: {
       light: "#c26859",
       main: "#cc3f33",
@@ -55,7 +55,7 @@ const networks = {
       contrastText: "#000",
     },
   },
-  Osmosis: {
+  osmosis: {
     primary: {
       light: "#D1C4E9",
       main: "#673AB7",
@@ -69,7 +69,7 @@ const networks = {
       contrastText: "#000",
     },
   },
-  Juno: {
+  juno: {
     primary: {
       light: "#5e4749",
       main: "#523d3f",
