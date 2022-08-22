@@ -10,6 +10,7 @@ import {
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import Long from "long";
+import { MsgUnjail } from "../slashing/tx";
 import { Msg } from "../types";
 
 const msgSendTypeUrl = "/cosmos.bank.v1beta1.MsgSend";
@@ -20,6 +21,8 @@ const msgWithdrawRewards =
 const msgDelegate = "/cosmos.staking.v1beta1.MsgDelegate";
 const msgUnDelegate = "/cosmos.staking.v1beta1.MsgUndelegate";
 const msgReDelegate = "/cosmos.staking.v1beta1.MsgBeginRedelegate";
+
+const msgUnjail = "/cosmos.slashing.v1beta1.MsgUnjail";
 
 export function AuthzExecSendMsg(
   grantee: string,
@@ -177,6 +180,23 @@ export function AuthzExecUnDelegateMsg(
               amount: String(amount),
               denom: denom,
             }),
+          }).finish(),
+        },
+      ],
+    }),
+  };
+}
+
+export function AuthzExecMsgUnjail(validator: string, grantee: string): Msg {
+  return {
+    typeUrl: msgAuthzExecypeUrl,
+    value: MsgExec.fromPartial({
+      grantee: grantee,
+      msgs: [
+        {
+          typeUrl: msgUnjail,
+          value: MsgUnjail.encode({
+            validatorAddr: validator,
           }).finish(),
         },
       ],

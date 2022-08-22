@@ -8,6 +8,8 @@ import { Registry } from "@cosmjs/proto-signing";
 import { MsgClaim } from "./passage/msg_claim";
 import { MsgCreateGroup, MsgCreateGroupWithPolicy } from "./group/v1/tx";
 import { AirdropAminoConverter } from "../features/airdrop/amino";
+import { MsgUnjail } from "./slashing/tx";
+import { SlashingAminoConverter } from "../features/slashing/slashing";
 
 export async function signAndBroadcastGroupMsg(
   signer,
@@ -98,6 +100,36 @@ export async function signAndBroadcastAmino(
   return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
 }
 
+export async function signAndBroadcastUnjail(
+  msgs,
+  fee,
+  chainID,
+  rpcURL,
+  memo = ""
+) {
+  const aTypes = new AminoTypes({
+    ...SlashingAminoConverter,
+  });
+
+  const result = await getKeplrWalletAmino(chainID);
+  const wallet = result[0];
+  const account = result[1];
+
+  let registry = new Registry();
+  defaultRegistryTypes.forEach((v) => {
+    registry.register(v[0], v[1]);
+  });
+
+  registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
+
+  const cosmJS = await SigningStargateClient.connectWithSigner(rpcURL, wallet, {
+    registry: registry,
+    aminoTypes: aTypes,
+  });
+
+  return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
+}
+
 export async function signAndBroadcastProto(msgs, fee, rpcURL) {
   const client = await SigningStargateClient.connect(rpcURL);
 
@@ -105,7 +137,17 @@ export async function signAndBroadcastProto(msgs, fee, rpcURL) {
   let result = await getKeplrWalletDirect(chainId);
   var wallet = result[0];
   var account = result[1];
-  const signingClient = await SigningStargateClient.offline(wallet);
+
+  let registry = new Registry();
+  defaultRegistryTypes.forEach((v) => {
+    registry.register(v[0], v[1]);
+  });
+
+  registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
+
+  const signingClient = await SigningStargateClient.offline(wallet, {
+    registry: registry,
+  });
 
   const accountInfo = await client.getAccount(account.address);
 

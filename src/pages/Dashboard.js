@@ -39,6 +39,7 @@ const CreateMultisig = lazy(() => import("./multisig/CreateMultisig"));
 const Tx_index = lazy(() => import("./multisig/tx/Tx_index"));
 const Single_Tx = lazy(() => import("./multisig/tx/Single_Tx"));
 const SendPage = lazy(() => import("./SendPage"));
+const UnjailPage = lazy(() => import("./UnjailPage"));
 
 function DashboardContent(props) {
   const [snackOpen, setSnackOpen] = useState(false);
@@ -257,6 +258,14 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
+                   <Route
+                    path="/slashing"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <UnjailPage />
+                      </Suspense>
+                    }
+                  ></Route>
                   <Route
                     path="/staking"
                     element={
@@ -442,9 +451,9 @@ const Footer = () => {
       }}
     >
       <Typography component="span" variant="caption" color="text.secondary">
-        Designed & Developed By
+      Love us by delegating to Witval
       </Typography>
-      <Typography
+      {/* <Typography
         component="span"
         variant="caption"
         fontWeight={600}
@@ -455,7 +464,7 @@ const Footer = () => {
         }}
       >
         &nbsp;Vitwit
-      </Typography>
+      </Typography> */}
     </Paper>
   );
 };

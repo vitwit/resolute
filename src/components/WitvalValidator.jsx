@@ -41,10 +41,10 @@ export function WitvalValidator(props) {
           <Typography
             style={{ padding: 12, textAlign: "left" }}
             color="text.primary"
-            fontWeight={600}
+            fontWeight={500}
             variant="body1"
           >
-            Help Witval By Staking
+            Love us by delegating to Witval
           </Typography>
           <TableContainer component={Paper} elevation={0}>
             <Table

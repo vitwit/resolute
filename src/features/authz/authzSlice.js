@@ -13,6 +13,7 @@ import {
   AuthzExecUnDelegateMsg,
 } from "../../txns/authz";
 import { setError, setTxHash } from "../common/commonSlice";
+import { AuthzExecMsgUnjail } from "../../txns/authz/exec";
 
 const initialState = {
   grantsToMe: {
@@ -253,6 +254,17 @@ export const authzExecHelper = (dispatch, data) => {
         })
       );
       break;
+    }
+    case "unjail": {
+      const msg = AuthzExecMsgUnjail(data.validator, data.address);
+      dispatch(
+        txAuthzExec({
+          msg: msg,
+          denom: data.denom,
+          rpc: data.rpc,
+          feeAmount: data.feeAmount,
+        })
+      );
     }
     default:
       alert("not supported");

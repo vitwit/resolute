@@ -161,8 +161,8 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "cosmoshub-4",
         chainName: "Cosmos Hub",
-        rest: "https://api-cosmoshub-ia.notional.ventures/",
-        rpc: "https://rpc-cosmoshub.blockapsis.com",
+        rest: "https://api-cosmoshub-ia.notional.ventures",
+        rpc: "https://rpc.cosmoshub.pupmos.network",
         gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
         currencies: [
           { coinDenom: "ATOM", coinMinimalDenom: "uatom", coinDecimals: 6 },
