@@ -451,7 +451,15 @@ const Footer = () => {
       }}
     >
       <Typography component="span" variant="caption" color="text.secondary">
-      Love us by delegating to Witval
+      Love us by delegating to&nbsp; 
+      <Typography
+      component="span"
+      variant="caption"
+      fontWeight={600}
+      color="text.primary"
+      >
+      Witval
+      </Typography>
       </Typography>
       {/* <Typography
         component="span"
