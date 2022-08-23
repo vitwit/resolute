@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fee, signAndBroadcastAmino } from '../../txns/execute';
-import { GovVoteMsg } from '../../txns/proto';
+import { GovVoteMsg } from '../../txns/gov';
 import { setError, setTxHash } from '../common/commonSlice';
 import govService from './govService';
 

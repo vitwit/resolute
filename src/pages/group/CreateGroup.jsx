@@ -1,13 +1,14 @@
 import Button from "@mui/material/Button";
 import React, { useState } from "react";
 import DialogAddGroupMember from "../../components/group/DialogAddGroupMember";
-import { IconButton, Paper, TextField, Typography } from "@mui/material";
+import { Grid, IconButton, Paper, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Controller, useForm } from "react-hook-form";
 import { shortenAddress } from "../../utils/util";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import DialogAttachPolicy from "../../components/group/DialogAttachPolicy";
+import { useDispatch } from "react-redux";
 
 export default function CreateGroupPage() {
   const [showMemberDialog, setShowMemberDialog] = useState(false);
@@ -28,8 +29,22 @@ export default function CreateGroupPage() {
     },
   });
 
+  const dispatch = useDispatch();
+
   const onSubmit = (data) => {
     console.log(data);
+    console.log(members);
+    console.log(policyData);
+    // dispatch({
+    //   granter: address,
+    //   grantee: data.grantee,
+    //   spendLimit: amountToMinimalValue(data.spendLimit, chainInfo.config.currencies[0]),
+    //   expiration: data.expiration,
+    //   denom: currency.coinMinimalDenom,
+    //   chainId: chainInfo.config.chainId,
+    //   rpc: chainInfo.config.rpc,
+    //   feeAmount: chainInfo.config.gasPriceStep.average,
+    // })
   };
 
   const [memberFields, setMemberFields] = useState({
@@ -100,6 +115,7 @@ export default function CreateGroupPage() {
           open={policyDialogOpen}
           onClose={() => setpolicyDialogOpen(false)}
           onAttachPolicy={onAttachPolicy}
+          members={members.reduce((a, o) => Number(a)+Number(o.weight), 0)}
         />
       ) : (
         <></>
@@ -155,11 +171,99 @@ export default function CreateGroupPage() {
               ))}
             </div>
             {policyData.metadata?.length > 0 ? (
-              <div>
-                <Typography variant="body1" color="text.primary">
+              <div
+                style={{
+                  textAlign: "left",
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  fontWeight={500}
+                  color="text.primary"
+                >
                   DecisionPolicy
                 </Typography>
-                {JSON.stringify(policyData)}
+                <Grid
+                  container
+                  sx={{
+                    mt: 1,
+                    mb: 1,
+                  }}
+                >
+                  <Grid item xs={12} md={12}>
+                    <Typography variant="body1" color="text.primary">
+                      Metadata
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      {policyData.metadata}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4} md={3}>
+                    <Typography>Voting Period</Typography>
+                    <Typography
+                      variant="body1"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      {policyData.votingPeriod}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4} md={3}>
+                    <Typography variant="body1" color="text.primary">
+                      Policy As Admin
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      {policyData.policyAsAdmin == true ? "true" : "false"}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4} md={3}>
+                    <Typography variant="body1" color="text.primary">
+                      Min Execution Period
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      {policyData.minExecutionPeriod}
+                    </Typography>
+                  </Grid>
+                  {policyData.decisionPolicy === "threshold" ? (
+                    <Grid item xs={4} md={3}>
+                      <Typography variant="body1" color="text.primary">
+                        Threshold
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        color="text.secondary"
+                        gutterBottom
+                      >
+                        {policyData.threshold}
+                      </Typography>
+                    </Grid>
+                  ) : (
+                    <Grid item xs={4} md={3}>
+                      <Typography variant="body1" color="text.primary">
+                        Percentage
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        color="text.secondary"
+                        gutterBottom
+                      >
+                        {policyData.percentage}%
+                      </Typography>
+                    </Grid>
+                  )}
+                </Grid>
               </div>
             ) : (
               <></>
@@ -171,17 +275,21 @@ export default function CreateGroupPage() {
                 justifyContent: "right",
               }}
             >
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setpolicyDialogOpen(true);
-                }}
-                sx={{
-                  textTransform: "none",
-                }}
-              >
-                Attach decision policy
-              </Button>
+              {members.length > 0 ? (
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    setpolicyDialogOpen(true);
+                  }}
+                  sx={{
+                    textTransform: "none",
+                  }}
+                >
+                  Attach decision policy
+                </Button>
+              ) : (
+                <></>
+              )}
               &nbsp;
               <Button
                 variant="outlined"

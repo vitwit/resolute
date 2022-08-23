@@ -30,6 +30,7 @@ export interface DialogAttachPolicyProps {
   onAttachPolicy: (data: DecisionPolicyCallback) => void;
   onClose: () => void;
   open: boolean;
+  members: number;
 }
 
 enum DecisionPolicyEnum {
@@ -48,7 +49,7 @@ interface IFormInput {
 }
 
 export default function DialogAttachPolicy(props: DialogAttachPolicyProps) {
-  const { open, onClose, onAttachPolicy } = props;
+  const { open, onClose, onAttachPolicy, members } = props;
 
   const {
     handleSubmit,
@@ -166,6 +167,12 @@ export default function DialogAttachPolicy(props: DialogAttachPolicyProps) {
                   rules={{
                     min: 1,
                     max: 100,
+                    validate: (v: number | undefined): boolean => { 
+                      if (v !== undefined) {
+                        return v < members;
+                      }
+                      return false;
+                     }
                   }}
                   render={({ field }) => (
                     <TextField
@@ -178,7 +185,7 @@ export default function DialogAttachPolicy(props: DialogAttachPolicyProps) {
                       required
                       fullWidth
                       error={!!errors.threshold}
-                      helperText={errors.threshold?.message}
+                      helperText={errors.threshold?.type === 'validate' ? 'Invalid threshold' : errors.threshold?.message}
                     />
                   )}
                 />
@@ -211,53 +218,56 @@ export default function DialogAttachPolicy(props: DialogAttachPolicyProps) {
           </Grid>
 
           {watch("decisionPolicy").length > 0 ? (
-            <>
-              <Controller
-                name="votingPeriod"
-                defaultValue={0}
-                control={control}
-                rules={{
-                  min: 1,
-                }}
-                render={({ field }) => (
-                  <TextField
-                    sx={{
-                      mt: 2,
-                    }}
-                    {...field}
-                    label="Voting Period"
-                    type="number"
-                    required
-                    fullWidth
-                    error={!!errors.votingPeriod}
-                    helperText={errors.votingPeriod?.message}
-                  />
-                )}
-              />
-
-              <Controller
-                name="minExecutioPeriod"
-                defaultValue={0}
-                control={control}
-                rules={{
-                  min: 1,
-                }}
-                render={({ field }) => (
-                  <TextField
-                    sx={{
-                      mt: 2,
-                    }}
-                    {...field}
-                    label="Min execution period"
-                    type="number"
-                    required
-                    fullWidth
-                    error={!!errors.minExecutioPeriod}
-                    helperText={errors.minExecutioPeriod?.message}
-                  />
-                )}
-              />
-            </>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Controller
+                  name="votingPeriod"
+                  defaultValue={0}
+                  control={control}
+                  rules={{
+                    min: 1,
+                  }}
+                  render={({ field }) => (
+                    <TextField
+                      sx={{
+                        mt: 2,
+                      }}
+                      {...field}
+                      label="Voting Period"
+                      type="number"
+                      required
+                      fullWidth
+                      error={!!errors.votingPeriod}
+                      helperText={errors.votingPeriod?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Controller
+                  name="minExecutioPeriod"
+                  defaultValue={0}
+                  control={control}
+                  rules={{
+                    min: 1,
+                  }}
+                  render={({ field }) => (
+                    <TextField
+                      sx={{
+                        mt: 2,
+                      }}
+                      {...field}
+                      label="Min execution period"
+                      type="number"
+                      required
+                      fullWidth
+                      error={!!errors.minExecutioPeriod}
+                      helperText={errors.minExecutioPeriod?.message}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
           ) : (
             <></>
           )}

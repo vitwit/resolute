@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Delegate, Redelegate, UnDelegate } from "../../txns/proto";
+import { Delegate, UnDelegate, Redelegate } from "../../txns/staking";
 import stakingService from "./stakingService";
 import { signAndBroadcastAmino, fee } from "../../txns/execute";
 import { setError, setTxHash } from "../common/commonSlice";
