@@ -113,38 +113,38 @@ export function getMainNetworks(): Network[] {
           ],
           coinType: 118,
           gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
-          walletUrlForStaking: "https://airdrop.passage3d.com/validators",
+          walletUrlForStaking: "https://airdrop.passage3d.com/staking",
         },
       },
-      {
-        showAirdrop: false,
-        logos: {
-          menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
-          toolbar:
-            "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
-        },
-        experimental: false,
-        isTestnet: false,
-        explorerTxHashEndpoint: "https://www.mintscan.io/cosmos/txs/",
-        config: {
-          chainId: "cosmoshub-4",
-          chainName: "Cosmos Hub",
-          rest: "https://api-cosmoshub-ia.notional.ventures/",
-          rpc: "https://rpc-cosmoshub.blockapsis.com",
-          gasPriceStep: {
-            low: 0.01,
-            average: 0.025,
-            high: 0.03,
-          },
-          currencies: [
-            {
-              coinDenom: "ATOM",
-              coinMinimalDenom: "uatom",
-              coinDecimals: 6,
-            },
-          ],
-        },
-      },
+      // {
+      //   showAirdrop: false,
+      //   logos: {
+      //     menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
+      //     toolbar:
+      //       "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
+      //   },
+      //   experimental: false,
+      //   isTestnet: false,
+      //   explorerTxHashEndpoint: "https://www.mintscan.io/cosmos/txs/",
+      //   config: {
+      //     chainId: "cosmoshub-4",
+      //     chainName: "Cosmos Hub",
+      //     rest: "https://api-cosmoshub-ia.notional.ventures/",
+      //     rpc: "https://rpc-cosmoshub.blockapsis.com",
+      //     gasPriceStep: {
+      //       low: 0.01,
+      //       average: 0.025,
+      //       high: 0.03,
+      //     },
+      //     currencies: [
+      //       {
+      //         coinDenom: "ATOM",
+      //         coinMinimalDenom: "uatom",
+      //         coinDecimals: 6,
+      //       },
+      //     ],
+      //   },
+      // },
     ];
   }
   return [
@@ -220,7 +220,7 @@ export function getMainNetworks(): Network[] {
         ],
         coinType: 118,
         gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
-        walletUrlForStaking: "https://artha.vitwit.com/validators",
+        walletUrlForStaking: "https://resolute.vitwit.com/staking",
       },
     },
     {
