@@ -6,9 +6,11 @@ on:
 
 jobs:
   test:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [16.x, 18.x]
+    steps:
       - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
