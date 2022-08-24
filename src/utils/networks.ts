@@ -299,10 +299,31 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "juno-1",
         chainName: "Juno",
-        rest: "https://api.juno.pupmos.network",
-        rpc: "https://rpc-juno.ecostake.com",
+        rest: "https://resolute.vitwit.com/juno_rest",
+        rpc: "https://resolute.vitwit.com/juno_rpc/",
         currencies: [
           { coinDenom: "JUNO", coinMinimalDenom: "ujuno", coinDecimals: 6 },
+        ],
+        gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
+      },
+    },
+    {
+      logos: {
+        toolbar:
+          "https://raw.githubusercontent.com/vitwit/chain-registry/cb6119d4d5c38d98904e4b3e7572f1ebe123c66c/stargaze/images/stargaze-logo.svg",
+        menu: "https://www.mintscan.io/_next/static/image/assets/header/token_stargaze.ae37b2d9c160b6fb95062f2822179a01.svg",
+      },
+      showAirdrop: false,
+      experimental: false,
+      isTestnet: false,
+      explorerTxHashEndpoint: "https://www.mintscan.io/stargaze/txs/",
+      config: {
+        chainId: "stargaze-1",
+        chainName: "Stargaze",
+        rest: "https://resolute.vitwit.com/stargaze_api",
+        rpc: "https://resolute.vitwit.com/stargaze_rpc/",
+        currencies: [
+          { coinDenom: "STARS", coinMinimalDenom: "ustars", coinDecimals: 6 },
         ],
         gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
       },
