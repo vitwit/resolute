@@ -186,7 +186,7 @@ export const txUnDelegate = createAsyncThunk(
 export const getValidators = createAsyncThunk(
   "staking/validators",
   async (data) => {
-    const response = await stakingService.validtors(
+    const response = await stakingService.validators(
       data.baseURL,
       data?.status,
       data.pagination

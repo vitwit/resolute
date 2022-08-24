@@ -26,8 +26,8 @@ import { getPallet, isDarkMode, mdTheme } from "../utils/theme";
 import { isConnected, logout } from "../utils/localStorage";
 import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
-import GroupPage from "./GroupPage";
-import CreateGroupPage from "./group/CreateGroup";
+// import GroupPage from "./GroupPage";
+// import CreateGroupPage from "./group/CreateGroup";
 const Authz = lazy(() => import("./Authz"));
 // const Feegrant = lazy(() => import("./Feegrant"));
 const Validators = lazy(() => import("./Validators"));
@@ -329,11 +329,11 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
-                  <Route path="/group" element={<GroupPage />}></Route>
+                  {/* <Route path="/group" element={<GroupPage />}></Route>
                   <Route
                     path="/group/create-group"
                     element={<CreateGroupPage />}
-                  ></Route>
+                  ></Route> */}
                   <Route path="*" element={<Page404 />}></Route>
                 </Routes>
               </Container>

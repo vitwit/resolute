@@ -161,8 +161,8 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "cosmoshub-4",
         chainName: "Cosmos Hub",
-        rest: "https://api-cosmoshub-ia.notional.ventures",
-        rpc: "https://rpc.cosmoshub.pupmos.network",
+        rest: "https://resolute.vitwit.com/cosmos_api",
+        rpc: "https://resolute.vitwit.com/cosmos_rpc/",
         gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
         currencies: [
           { coinDenom: "ATOM", coinMinimalDenom: "uatom", coinDecimals: 6 },
@@ -236,8 +236,8 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "regen-1",
         chainName: "Regen",
-        rest: "https://regen.api.ping.pub",
-        rpc: "http://rpc.regen.forbole.com:80",
+        rest: "https://resolute.vitwit.com/regen_api",
+        rpc: "https://resolute.vitwit.com/regen_rpc/",
         gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 },
         currencies: [
           { coinDenom: "REGEN", coinMinimalDenom: "uregen", coinDecimals: 6 },
@@ -257,8 +257,8 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "akashnet-2",
         chainName: "Akash",
-        rest: "https://akash.c29r3.xyz/api",
-        rpc: "https://rpc.akash.forbole.com:443",
+        rest: " https://resolute.vitwit.com/akash_api",
+        rpc: "https://resolute.vitwit.com/akash_rpc/",
         gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 },
         currencies: [
           { coinDenom: "AKT", coinMinimalDenom: "uakt", coinDecimals: 6 },
@@ -278,8 +278,8 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "osmosis-1",
         chainName: "Osmosis",
-        rest: "https://osmo.api.ping.pub",
-        rpc: "https://rpc-osmosis.blockapsis.com",
+        rest: "https://resolute.vitwit.com/osmosis_api",
+        rpc: "https://resolute.vitwit.com/osmosis_rpc/",
         currencies: [
           { coinDenom: "OSMO", coinMinimalDenom: "uosmo", coinDecimals: 6 },
         ],
