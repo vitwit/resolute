@@ -1,5 +1,5 @@
 const networks = {
-  "Passage-Testnet": {
+  "Passage": {
     primary: {
       light: "#b7abcf",
       main: "#58467d",
