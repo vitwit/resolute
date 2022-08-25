@@ -45,7 +45,8 @@ import { authzExecHelper } from "../features/authz/authzSlice";
 import { Box, TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import debounce from 'lodash.debounce';
+import debounce from "lodash.debounce";
+import { FilteredValidators } from "./../components/FilteredValidators";
 
 export default function Validators() {
   const [type, setType] = useState("delegations");
@@ -163,6 +164,10 @@ export default function Validators() {
   useEffect(() => {
     if (connected) {
       dispatch(resetState());
+      setFilteredVals({
+        active: [],
+        inactive: []
+      })
       dispatch(getParams({ baseURL: chainInfo.config.rest }));
       dispatch(
         getValidators({
@@ -487,20 +492,53 @@ export default function Validators() {
   const handleSearchChange = (e) => {
     setSearchMoniker(e.target.value);
     debounceMoniker(e.target.value);
-  }
+  };
 
-  const [filteredVals, setFilteredVals] = useState({});
+  const [filteredVals, setFilteredVals] = useState({
+    active: [],
+    inactive: [],
+  });
   const debounceMoniker = useCallback(
-		debounce(moniker => {
+    debounce((moniker) => {
       const keys = Object.keys(validators.active);
+      const filtered = {
+        active: [],
+        inactive: [],
+      };
 
-      const filtered = keys.filter(record => {
-        validators.active[record].description.moniker.search(moniker);
-      });
-      console.log(filtered);
-    }, 1000),
-		[], // will be created only once initially
-	);
+      if (moniker.length === 0) {
+        setFilteredVals({
+          active: [],
+          inactive: [],
+        });
+
+        return;
+      }
+      for (let i = 0; i < keys.length; i++) {
+        if (
+          validators.active[keys[i]].description.moniker
+            .toLowerCase()
+            .includes(moniker.toLowerCase())
+        ) {
+          filtered.active.push(keys[i]);
+        }
+      }
+
+      const inactivekeys = Object.keys(validators.inactive);
+      for (let i = 0; i < inactivekeys.length; i++) {
+        if (
+          validators.inactive[inactivekeys[i]].description.moniker
+            .toLowerCase()
+            .includes(moniker.toLowerCase())
+        ) {
+          filtered.inactive.push(inactivekeys[i]);
+        }
+      }
+
+      setFilteredVals(filtered);
+    }, 600),
+    [] // will be created only once initially
+  );
 
   return (
     <>
@@ -609,7 +647,14 @@ export default function Validators() {
                     onChange={handleSearchChange}
                   />
                 </Box>
-                {selected === "active" ? (
+                {filteredVals.active.length > 0 ||
+                filteredVals.inactive.length > 0 ? (
+                  <FilteredValidators
+                    onMenuAction={onMenuAction}
+                    validators={validators}
+                    filtered={filteredVals}
+                  />
+                ) : selected === "active" ? (
                   <ActiveValidators
                     onMenuAction={onMenuAction}
                     validators={validators}

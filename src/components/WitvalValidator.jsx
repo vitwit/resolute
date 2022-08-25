@@ -37,16 +37,24 @@ export function WitvalValidator(props) {
   return (
     <>
       {validator?.description?.moniker === "Witval" ? (
-        <Paper elevation={0} style={{ padding: 12 }}>
+        <Paper elevation={0} sx={{
+          p: 1,
+          borderRadius: 'none'
+        }}>
           <Typography
-            style={{ padding: 12, textAlign: "left" }}
+            sx={{
+              p: 1,
+              textAlign: 'left'
+            }}
             color="text.primary"
             fontWeight={500}
             variant="body1"
           >
             Love us by delegating to Witval
           </Typography>
-          <TableContainer component={Paper} elevation={0}>
+          <TableContainer component={Paper} elevation={0} sx={{
+            borderRadius: 'none'
+          }}>
             <Table
               sx={{ minWidth: 500 }}
               aria-label="simple table"
