@@ -1,8 +1,15 @@
-import { SigningStargateClient, defaultRegistryTypes } from "@cosmjs/stargate";
+import {
+  SigningStargateClient,
+  defaultRegistryTypes,
+  AminoTypes,
+} from "@cosmjs/stargate";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Registry } from "@cosmjs/proto-signing";
-import { MsgClaim } from "./msg_claim";
+import { MsgClaim } from "./passage/msg_claim";
 import { MsgCreateGroup, MsgCreateGroupWithPolicy } from "./group/v1/tx";
+import { AirdropAminoConverter } from "../features/airdrop/amino";
+import { MsgUnjail } from "./slashing/tx";
+import { SlashingAminoConverter } from "../features/slashing/slashing";
 
 export async function signAndBroadcastGroupMsg(
   signer,
@@ -37,17 +44,22 @@ export async function signAndBroadcastGroupMsg(
   return await client.signAndBroadcast(signer, msgs, fee, memo);
 }
 
-export async function signAndBroadcastCustomMsg(
+export async function signAndBroadcastClaimMsg(
   signer,
   msgs,
   fee,
-  chainId,
+  chainID,
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
-  const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  const aTypes = new AminoTypes({
+    ...AirdropAminoConverter,
+  });
+
+  const result = await getKeplrWalletAmino(chainID);
+  const wallet = result[0];
+  const account = result[1];
+
   let registry = new Registry();
   defaultRegistryTypes.forEach((v) => {
     registry.register(v[0], v[1]);
@@ -55,15 +67,12 @@ export async function signAndBroadcastCustomMsg(
 
   registry.register("/passage3d.claim.v1beta1.MsgClaim", MsgClaim);
 
-  const client = await SigningStargateClient.connectWithSigner(
-    rpcURL,
-    offlineSigner,
-    {
-      registry: registry,
-    }
-  );
+  const cosmJS = await SigningStargateClient.connectWithSigner(rpcURL, wallet, {
+    registry: registry,
+    aminoTypes: aTypes,
+  });
 
-  return await client.signAndBroadcast(signer, msgs, fee, memo);
+  return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
 }
 
 export async function signAndBroadcastAmino(
@@ -91,6 +100,36 @@ export async function signAndBroadcastAmino(
   return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
 }
 
+export async function signAndBroadcastUnjail(
+  msgs,
+  fee,
+  chainID,
+  rpcURL,
+  memo = ""
+) {
+  const aTypes = new AminoTypes({
+    ...SlashingAminoConverter,
+  });
+
+  const result = await getKeplrWalletAmino(chainID);
+  const wallet = result[0];
+  const account = result[1];
+
+  let registry = new Registry();
+  defaultRegistryTypes.forEach((v) => {
+    registry.register(v[0], v[1]);
+  });
+
+  registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
+
+  const cosmJS = await SigningStargateClient.connectWithSigner(rpcURL, wallet, {
+    registry: registry,
+    aminoTypes: aTypes,
+  });
+
+  return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
+}
+
 export async function signAndBroadcastProto(msgs, fee, rpcURL) {
   const client = await SigningStargateClient.connect(rpcURL);
 
@@ -98,7 +137,17 @@ export async function signAndBroadcastProto(msgs, fee, rpcURL) {
   let result = await getKeplrWalletDirect(chainId);
   var wallet = result[0];
   var account = result[1];
-  const signingClient = await SigningStargateClient.offline(wallet);
+
+  let registry = new Registry();
+  defaultRegistryTypes.forEach((v) => {
+    registry.register(v[0], v[1]);
+  });
+
+  registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
+
+  const signingClient = await SigningStargateClient.offline(wallet, {
+    registry: registry,
+  });
 
   const accountInfo = await client.getAccount(account.address);
 

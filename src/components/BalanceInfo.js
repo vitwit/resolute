@@ -76,7 +76,7 @@ export default function BalanceInfo(props) {
                         className='button-capitalize-title'
                         onClick={() => navigateTo("/staking")}
                     >
-                        Rewards
+                        Claim Rewards
                     </Button>
                 </Grid>
                 <Grid item xs={6} md={2}>

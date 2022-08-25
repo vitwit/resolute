@@ -77,7 +77,7 @@ export function computeVotePercentage(tally) {
 }
 
 export function shortenPubKey(pubKey, n) {
-  return pubKey?.length > n ? pubKey.substr(0, n - 1) + "&hellip;" : str;
+  return pubKey?.length > n ? pubKey.substr(0, n - 1) + "&hellip;" : pubKey;
 }
 
 export function shortenAddress(bech32, maxCharacters) {

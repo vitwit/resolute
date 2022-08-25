@@ -4,13 +4,9 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
-const Authz = lazy(() => import("./Authz"));
-const Feegrant = lazy(() => import("./Feegrant"));
 import { getSelectedNetwork, saveSelectedNetwork } from "./../utils/networks";
 import Link from "@mui/material/Link";
 import { Routes, Route } from "react-router-dom";
-const Validators = lazy(() => import("./Validators"));
-const Proposals = lazy(() => import("./Proposals"));
 import { useSelector, useDispatch } from "react-redux";
 import {
   resetWallet,
@@ -18,27 +14,33 @@ import {
   setNetwork,
 } from "./../features/wallet/walletSlice";
 import { useNavigate } from "react-router-dom";
-const NewFeegrant = lazy(() => import("./NewFeegrant"));
-const NewAuthz = lazy(() => import("./NewAuthz"));
 import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
 import Overview from "./Overview";
 import { CustomAppBar } from "../components/CustomAppBar";
-const AirdropEligibility = lazy(() => import("./AirdropEligibility"));
 import { resetError, setError } from "../features/common/commonSlice";
 import Page404 from "./Page404";
-const CreateMultisig = lazy(() => import("./multisig/CreateMultisig"));
-const Tx_index = lazy(() => import("./multisig/tx/Tx_index"));
-const Single_Tx = lazy(() => import("./multisig/tx/Single_Tx"));
-const SendPage = lazy(() => import("./SendPage"));
 import AppDrawer from "../components/AppDrawer";
 import { Alert } from "../components/Alert";
 import { getPallet, isDarkMode, mdTheme } from "../utils/theme";
 import { isConnected, logout } from "../utils/localStorage";
 import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
-import GroupPage from "./GroupPage";
-import CreateGroupPage from "./group/CreateGroup";
+// import GroupPage from "./GroupPage";
+// import CreateGroupPage from "./group/CreateGroup";
+const Authz = lazy(() => import("./Authz"));
+// const Feegrant = lazy(() => import("./Feegrant"));
+const Validators = lazy(() => import("./Validators"));
+const Proposals = lazy(() => import("./Proposals"));
+// const NewFeegrant = lazy(() => import("./NewFeegrant"));
+const NewAuthz = lazy(() => import("./NewAuthz"));
+const AirdropEligibility = lazy(() => import("./AirdropEligibility"));
+const CreateMultisig = lazy(() => import("./multisig/CreateMultisig"));
+const Tx_index = lazy(() => import("./multisig/tx/Tx_index"));
+const Single_Tx = lazy(() => import("./multisig/tx/Single_Tx"));
+const SendPage = lazy(() => import("./SendPage"));
+const UnjailPage = lazy(() => import("./UnjailPage"));
+const ProposalInfo = lazy(() => import("./ProposalInfo"));
 
 function DashboardContent(props) {
   const [snackOpen, setSnackOpen] = useState(false);
@@ -106,7 +108,7 @@ function DashboardContent(props) {
   const txSuccess = useSelector((state) => state.common.txSuccess);
 
   useEffect(() => {
-    if (errState.message?.length > 0 && errState.type?.length > 0) {
+    if (errState?.message?.length > 0 && errState?.type?.length > 0) {
       showSnack(true);
     } else {
       showSnack(false);
@@ -114,7 +116,7 @@ function DashboardContent(props) {
   }, [errState]);
 
   useEffect(() => {
-    if (txSuccess.hash?.length > 0) {
+    if (txSuccess?.hash?.length > 0) {
       showTxSnack(true);
     } else {
       showTxSnack(false);
@@ -173,7 +175,9 @@ function DashboardContent(props) {
   };
 
   return (
-    <ThemeProvider theme={mdTheme(darkMode, pallet.primary, pallet.secondary)}>
+    <ThemeProvider
+      theme={mdTheme(darkMode, pallet?.primary, pallet?.secondary)}
+    >
       {chainInfo?.config ? (
         <>
           <CustomAppBar
@@ -231,27 +235,35 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   />
-                  <Route
+                  {/* <Route
                     path="/feegrant"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <Feegrant />
                       </Suspense>
                     }
-                  ></Route>
-                  <Route
+                  ></Route> */}
+                  {/* <Route
                     path="/feegrant/new"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <NewFeegrant />
                       </Suspense>
                     }
-                  ></Route>
+                  ></Route> */}
                   <Route
                     path="/authz/new"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <NewAuthz />
+                      </Suspense>
+                    }
+                  ></Route>
+                   <Route
+                    path="/slashing"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <UnjailPage />
                       </Suspense>
                     }
                   ></Route>
@@ -268,6 +280,14 @@ function DashboardContent(props) {
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <Proposals />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/proposals/:id"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <ProposalInfo />
                       </Suspense>
                     }
                   ></Route>
@@ -318,11 +338,11 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
-                  <Route path="/group" element={<GroupPage />}></Route>
+                  {/* <Route path="/group" element={<GroupPage />}></Route>
                   <Route
                     path="/group/create-group"
                     element={<CreateGroupPage />}
-                  ></Route>
+                  ></Route> */}
                   <Route path="*" element={<Page404 />}></Route>
                 </Routes>
               </Container>
@@ -440,9 +460,17 @@ const Footer = () => {
       }}
     >
       <Typography component="span" variant="caption" color="text.secondary">
-        Designed & Developed By
-      </Typography>
+      Love us by delegating to&nbsp; 
       <Typography
+      component="span"
+      variant="caption"
+      fontWeight={600}
+      color="text.primary"
+      >
+      Witval
+      </Typography>
+      </Typography>
+      {/* <Typography
         component="span"
         variant="caption"
         fontWeight={600}
@@ -453,7 +481,7 @@ const Footer = () => {
         }}
       >
         &nbsp;Vitwit
-      </Typography>
+      </Typography> */}
     </Paper>
   );
 };

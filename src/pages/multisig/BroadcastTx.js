@@ -23,7 +23,6 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
   const dispatch = useDispatch();
   const [load, setLoad] = useState(false);
 
-  const from = useSelector((state) => state.wallet.address);
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const updateTxnRes = useSelector((state) => state.multisig.updateTxn);
 

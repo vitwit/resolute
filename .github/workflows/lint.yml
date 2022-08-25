@@ -1,22 +1,22 @@
-name: Lint
+# name: Lint
 
-on:
-  pull_request:
-    branches: [master]
+# on:
+#   pull_request:
+#     branches: [master]
 
-jobs:
-  prettier:
-    runs-on: ubuntu-latest
+# jobs:
+#   prettier:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 0
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v2
+#         with:
+#           ref: ${{ github.head_ref }}
+#           fetch-depth: 0
 
-      - name: Prettify code
-        uses: creyD/prettier_action@v4.2
-        with:
-          prettier_options: --write **/*.{js,md}
-          only_changed: True
+#       - name: Prettify code
+#         uses: creyD/prettier_action@v4.2
+#         with:
+#           prettier_options: --write **/*.{js,md}
+#           only_changed: True

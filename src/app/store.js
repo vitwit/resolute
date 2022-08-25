@@ -10,6 +10,7 @@ import distributionSlice from "../features/distribution/distributionSlice";
 import airdropSlice from "../features/airdrop/airdropSlice";
 import multiSlice from "../features/multisig/multisigSlice";
 import groupSlice from "../features/group/groupSlice";
+import slashingSlice from "../features/slashing/slashingSlice";
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     airdrop: airdropSlice,
     group: groupSlice,
     multisig: multiSlice,
+    slashing: slashingSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

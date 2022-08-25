@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { SendMsg } from '../../txns/proto';
+import { SendMsg } from '../../txns/bank';
 import bankService from './bankService';
 import { fee, signAndBroadcastAmino } from '../../txns/execute';
 import { setError, setTxHash } from '../common/commonSlice';

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { FeegrantBasicMsg, FeegrantPeriodicMsg, FeegrantRevokeMsg } from '../../txns/proto';
+import { FeegrantBasicMsg, FeegrantPeriodicMsg, FeegrantRevokeMsg } from '../../txns/feegrant';
 import feegrantService from './feegrantService';
 import { fee, signAndBroadcastProto } from '../../txns/execute';
 import { setError, setTxHash } from '../common/commonSlice';

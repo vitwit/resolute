@@ -62,7 +62,7 @@ const fetchParams = (baseURL) => {
 }
 
 const result = {
-  validtors: fetchValidators,
+  validators: fetchValidators,
   delegations: fetchdelegations,
   unbonding: fetchUnbonding,
   params: fetchParams,
