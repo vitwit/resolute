@@ -57,7 +57,7 @@ export default function SendPage() {
     }, [chainInfo]);
 
     useEffect(() => {
-        setBalance(totalBalance(balance.balance, currency?.coinDecimals, currency?.coinMinimalDenom));
+        setBalance(parseBalance(balance.balance, currency?.coinDecimals, currency?.coinMinimalDenom));
     }, [balance]);
 
     const onSendTx = (data) => {
