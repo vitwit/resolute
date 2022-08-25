@@ -299,7 +299,7 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "juno-1",
         chainName: "Juno",
-        rest: "https://resolute.vitwit.com/juno_rest",
+        rest: "https://resolute.vitwit.com/juno_api",
         rpc: "https://resolute.vitwit.com/juno_rpc/",
         currencies: [
           { coinDenom: "JUNO", coinMinimalDenom: "ujuno", coinDecimals: 6 },
