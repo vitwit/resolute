@@ -40,7 +40,6 @@ const Tx_index = lazy(() => import("./multisig/tx/Tx_index"));
 const Single_Tx = lazy(() => import("./multisig/tx/Single_Tx"));
 const SendPage = lazy(() => import("./SendPage"));
 const UnjailPage = lazy(() => import("./UnjailPage"));
-const ProposalInfo = lazy(() => import("./ProposalInfo"));
 
 function DashboardContent(props) {
   const [snackOpen, setSnackOpen] = useState(false);
@@ -280,14 +279,6 @@ function DashboardContent(props) {
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <Proposals />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/proposals/:id"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <ProposalInfo />
                       </Suspense>
                     }
                   ></Route>
