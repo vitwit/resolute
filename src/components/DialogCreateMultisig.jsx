@@ -126,6 +126,10 @@ export function DialogCreateMultisig(props) {
             return
         }
 
+        console.log(pubKeys)
+        console.log(threshold)
+        console.log(addressPrefix)
+        console.log(chainId)
         createMultiSig(pubKeys, Number(threshold), addressPrefix, chainId).then(res => {
             res.name = name;
             dispatch(createAccount(res))

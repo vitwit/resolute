@@ -35,7 +35,7 @@ const Proposals = lazy(() => import("./Proposals"));
 // const NewFeegrant = lazy(() => import("./NewFeegrant"));
 const NewAuthz = lazy(() => import("./NewAuthz"));
 const AirdropEligibility = lazy(() => import("./AirdropEligibility"));
-const CreateMultisig = lazy(() => import("./multisig/CreateMultisig"));
+const PageMultisig = lazy(() => import("./multisig/PageMultisig"));
 const Tx_index = lazy(() => import("./multisig/tx/Tx_index"));
 const Single_Tx = lazy(() => import("./multisig/tx/Single_Tx"));
 const SendPage = lazy(() => import("./SendPage"));
@@ -258,7 +258,7 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
-                   <Route
+                  <Route
                     path="/slashing"
                     element={
                       <Suspense fallback={<CircularProgress />}>
@@ -307,7 +307,7 @@ function DashboardContent(props) {
                     path="/multisig"
                     element={
                       <Suspense fallback={<CircularProgress />}>
-                        <CreateMultisig />
+                        <PageMultisig />
                       </Suspense>
                     }
                   ></Route>
@@ -451,15 +451,15 @@ const Footer = () => {
       }}
     >
       <Typography component="span" variant="caption" color="text.secondary">
-      Love us by delegating to&nbsp; 
-      <Typography
-      component="span"
-      variant="caption"
-      fontWeight={600}
-      color="text.primary"
-      >
-      Witval
-      </Typography>
+        Love us by delegating to&nbsp;
+        <Typography
+          component="span"
+          variant="caption"
+          fontWeight={600}
+          color="text.primary"
+        >
+          Witval
+        </Typography>
       </Typography>
       {/* <Typography
         component="span"

@@ -34,7 +34,7 @@ interface NetworkConfig {
   rpc: string;
   stakeCurrency?: StakeCurrency;
   bip44?: BIP44;
-  bech32Config?: Bech32Config;
+  bech32Config: Bech32Config;
   currencies: Currency[];
   feeCurrencies?: Currency[];
   coinType?: number;
@@ -167,6 +167,14 @@ export function getMainNetworks(): Network[] {
         currencies: [
           { coinDenom: "ATOM", coinMinimalDenom: "uatom", coinDecimals: 6 },
         ],
+        bech32Config: {
+          bech32PrefixAccAddr: `cosmos`,
+          bech32PrefixAccPub: `cosmospub`,
+          bech32PrefixValAddr: `cosmosvaloper`,
+          bech32PrefixValPub: `cosmosvaloperpub`,
+          bech32PrefixConsAddr: `cosmosgvalcons`,
+          bech32PrefixConsPub: `cosmosvalconspub`,
+        },
       },
     },
     {
@@ -242,6 +250,14 @@ export function getMainNetworks(): Network[] {
         currencies: [
           { coinDenom: "REGEN", coinMinimalDenom: "uregen", coinDecimals: 6 },
         ],
+        bech32Config: {
+          bech32PrefixAccAddr: `regen`,
+          bech32PrefixAccPub: `regenpub`,
+          bech32PrefixValAddr: `regenvaloper`,
+          bech32PrefixValPub: `regenvaloperpub`,
+          bech32PrefixConsAddr: `regenvalcons`,
+          bech32PrefixConsPub: `regenvalconspub`,
+        },
       },
     },
     {
@@ -263,6 +279,14 @@ export function getMainNetworks(): Network[] {
         currencies: [
           { coinDenom: "AKT", coinMinimalDenom: "uakt", coinDecimals: 6 },
         ],
+        bech32Config: {
+          bech32PrefixAccAddr: `akash`,
+          bech32PrefixAccPub: `akashpub`,
+          bech32PrefixValAddr: `akashvaloper`,
+          bech32PrefixValPub: `akashvaloperpub`,
+          bech32PrefixConsAddr: `akashvalcons`,
+          bech32PrefixConsPub: `akashvalconspub`,
+        },
       },
     },
     {
@@ -284,6 +308,14 @@ export function getMainNetworks(): Network[] {
           { coinDenom: "OSMO", coinMinimalDenom: "uosmo", coinDecimals: 6 },
         ],
         gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
+        bech32Config: {
+          bech32PrefixAccAddr: `osmosis`,
+          bech32PrefixAccPub: `osmosispub`,
+          bech32PrefixValAddr: `osmosisvaloper`,
+          bech32PrefixValPub: `osmosisvaloperpub`,
+          bech32PrefixConsAddr: `osmosisvalcons`,
+          bech32PrefixConsPub: `osmosisvalconspub`,
+        },
       },
     },
     {
@@ -305,6 +337,14 @@ export function getMainNetworks(): Network[] {
           { coinDenom: "JUNO", coinMinimalDenom: "ujuno", coinDecimals: 6 },
         ],
         gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
+        bech32Config: {
+          bech32PrefixAccAddr: `juno`,
+          bech32PrefixAccPub: `junopub`,
+          bech32PrefixValAddr: `junovaloper`,
+          bech32PrefixValPub: `junovaloperpub`,
+          bech32PrefixConsAddr: `junovalcons`,
+          bech32PrefixConsPub: `junovalconspub`,
+        },
       },
     },
     {
@@ -326,9 +366,35 @@ export function getMainNetworks(): Network[] {
           { coinDenom: "STARS", coinMinimalDenom: "ustars", coinDecimals: 6 },
         ],
         gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
+        bech32Config: {
+          bech32PrefixAccAddr: `stars`,
+          bech32PrefixAccPub: `starspub`,
+          bech32PrefixValAddr: `starsvaloper`,
+          bech32PrefixValPub: `starsvaloperpub`,
+          bech32PrefixConsAddr: `starsvalcons`,
+          bech32PrefixConsPub: `starsvalconspub`,
+        },
       },
     },
   ];
+}
+
+export function getNetworkByChainId(chainId: string): Network | null {
+  const mainNets = getMainNetworks();
+  for (let i = 0; i < mainNets.length; i++) {
+    if (mainNets[i].config.chainId === chainId) {
+      return mainNets[i];
+    }
+  }
+
+  const testNets = getTestNetworks();
+  for (let i = 0; i < testNets.length; i++) {
+    if (testNets[i].config.chainId === chainId) {
+      return testNets[i];
+    }
+  }
+
+  return null;
 }
 
 export function getTestNetworks(): Network[] {

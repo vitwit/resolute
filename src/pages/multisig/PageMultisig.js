@@ -18,8 +18,9 @@ import { DialogCreateMultisig } from "../../components/DialogCreateMultisig";
 import { getMultisigAccounts } from "../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
+import { getNetworkByChainId } from "../../utils/networks";
 
-export default function CreateMultisig() {
+export default function PageMultisig() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const createMultiAccRes = useSelector(
@@ -37,7 +38,8 @@ export default function CreateMultisig() {
 
   const { config } = chainInfo;
   const { chainId } = config;
-  const addressPrefix = config?.bech32Config?.bech32PrefixAccAddr;
+  const networkInfo = getNetworkByChainId(chainId);
+  const addressPrefix = networkInfo?.config?.bech32Config?.bech32PrefixAccAddr;
 
   const dispatch = useDispatch();
   useEffect(() => {

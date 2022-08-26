@@ -13,7 +13,7 @@ async function getKeplrWalletAmino(chainID) {
   return [offlineSigner, accounts[0]];
 }
 
-export default function SignTxn({ txId, tx: unSignedTxn, getAllSignatures }) {
+export default function SignTxn({ txId, tx: unSignedTxn }) {
   const dispatch = useDispatch();
   const [load, setLoad] = useState(false);
 
@@ -21,8 +21,6 @@ export default function SignTxn({ txId, tx: unSignedTxn, getAllSignatures }) {
     localStorage.getItem("multisigAddress") &&
     JSON.parse(localStorage.getItem("multisigAddress"));
   const from = useSelector((state) => state.wallet.address);
-  const createSignRes = useSelector((state) => state.multisig.createSignRes);
-
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
 
   const signTheTx = async () => {
