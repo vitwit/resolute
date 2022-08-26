@@ -19,7 +19,7 @@ export function parseTokens(
   displayName: string,
   coinDecimals: number
 ): string {
-  if (tokens.length == 0) {
+  if (tokens.length === 0) {
     return "0.0";
   }
 
@@ -33,7 +33,7 @@ export function parseBalance(
   coinDecimals: number,
   minimalDenom: string
 ): number {
-  if (tokens.length == 0) {
+  if (tokens.length === 0) {
     return 0.0;
   }
 

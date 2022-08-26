@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import { StyledTableCell, StyledTableRow } from "./CustomTable";
 import Paper from "@mui/material/Paper";
@@ -14,17 +14,18 @@ import { Box } from "@mui/system";
 export function ActiveValidators(props) {
   const { validators, onMenuAction } = props;
 
-  const activeVals = Object.keys(validators?.active) || [];
-  const totalActive = Number(activeVals?.length) || 1;
-
   const perPage = 10;
-  const [validatorsSlice, setValidatorsSlice] = useState(
-    activeVals.slice(0, perPage)
-  );
+  const [validatorsSlice, setValidatorsSlice] = useState([]);
 
-  console.log(activeVals.length)
-  console.log(validatorsSlice.length)
-  console.log("--------------------------------")
+  const [activeVals, setActiveVals] = useState([]);
+  const [totalActive, setTotalActive] = useState(1);
+  
+  useEffect(() => {
+    setActiveVals(Object.keys(validators.active));
+    console.log(activeVals);
+    setTotalActive(Number(activeVals.length));
+    setValidatorsSlice(activeVals.slice(0, perPage));
+  }, [validators]);
 
   return (
     <>
@@ -53,7 +54,7 @@ export function ActiveValidators(props) {
                   {validators.active[keyName]?.description.moniker}
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  {formatVotingPower(validators.active[keyName].tokens, 6)}
+                  {formatVotingPower(validators.active[keyName]?.tokens, 6)}
                 </StyledTableCell>
                 <StyledTableCell>
                   {validators.active[keyName]?.jailed
@@ -65,7 +66,7 @@ export function ActiveValidators(props) {
                 </StyledTableCell>
                 <StyledTableCell align="center">
                   {(
-                    validators.active[keyName].commission.commission_rates
+                    validators.active[keyName]?.commission.commission_rates
                       .rate * 100
                   ).toFixed(2)}
                   %

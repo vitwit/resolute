@@ -168,6 +168,7 @@ export default function Validators() {
         active: [],
         inactive: []
       })
+      if (Object.keys(validators.active).length === 0) {
       dispatch(getParams({ baseURL: chainInfo.config.rest }));
       dispatch(
         getValidators({
@@ -182,6 +183,7 @@ export default function Validators() {
         fetchUserInfo(address);
       }
     }
+  }
   }, [chainInfo, connected, selectedAuthz]);
 
   function fetchUserInfo(address) {
@@ -500,7 +502,6 @@ export default function Validators() {
   });
   const debounceMoniker = useCallback(
     debounce((moniker) => {
-      const keys = Object.keys(validators.active);
       const filtered = {
         active: [],
         inactive: [],
@@ -511,9 +512,12 @@ export default function Validators() {
           active: [],
           inactive: [],
         });
-
+        
         return;
       }
+
+      const keys = Object.keys(validators.active);
+
       for (let i = 0; i < keys.length; i++) {
         if (
           validators.active[keys[i]].description.moniker
@@ -535,6 +539,7 @@ export default function Validators() {
         }
       }
 
+      console.log(filtered);
       setFilteredVals(filtered);
     }, 600),
     [] // will be created only once initially

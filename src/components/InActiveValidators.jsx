@@ -75,7 +75,7 @@ export function InActiveValidators(props) {
                     className="button-capitalize-title"
                     size="small"
                     onClick={(e) =>
-                      onMenuAction(e, "delegate", validators.active[keyName])
+                      onMenuAction(e, "delegate", validators.inactive[keyName])
                     }
                     sx={{
                       textTransform: "none",
@@ -91,7 +91,7 @@ export function InActiveValidators(props) {
                     className="button-capitalize-title"
                     size="small"
                     onClick={(e) =>
-                      onMenuAction(e, "undelegate", validators.active[keyName])
+                      onMenuAction(e, "undelegate", validators.inactive[keyName])
                     }
                     sx={{
                       textTransform: "none",
@@ -106,7 +106,7 @@ export function InActiveValidators(props) {
                     className="button-capitalize-title"
                     size="small"
                     onClick={(e) =>
-                      onMenuAction(e, "redelegate", validators.active[keyName])
+                      onMenuAction(e, "redelegate", validators.inactive[keyName])
                     }
                     sx={{
                       textTransform: "none",
