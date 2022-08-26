@@ -1,5 +1,5 @@
 # Resolute
-Resolute-cli is an advanced spacecraft designed to travel through the space. connecting all Cosmos sovereign chains.
+Resolute is an advanced spacecraft designed to travel through the multiverse, connecting all Cosmos sovereign chains.
 Supported features:
 
 - [x] Staking
