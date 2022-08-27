@@ -8,9 +8,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import { formatVotingPower } from "../utils/denom";
 import { formatValidatorStatus } from "../utils/util";
+import { useSelector } from "react-redux";
 
 export function FilteredValidators(props) {
   const { validators, filtered, onMenuAction } = props;
+  const delegatedTo = useSelector(
+    (state) => state.staking.delegations.delegatedTo
+  );
 
   return (
     <>
@@ -71,36 +75,50 @@ export function FilteredValidators(props) {
                   >
                     Delegate
                   </Button>
-                  <Button
-                    variant="outlined"
-                    style={{ marginLeft: 4 }}
-                    className="button-capitalize-title"
-                    size="small"
-                    onClick={(e) =>
-                      onMenuAction(e, "undelegate", validators.active[keyName])
-                    }
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    disableElevation
-                  >
-                    Undelegate
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    className="button-capitalize-title"
-                    style={{ marginLeft: 4 }}
-                    size="small"
-                    onClick={(e) =>
-                      onMenuAction(e, "redelegate", validators.active[keyName])
-                    }
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    disableElevation
-                  >
-                    Redelegate
-                  </Button>
+                  {delegatedTo[keyName] ? (
+                    <>
+                      <Button
+                        variant="outlined"
+                        style={{ marginLeft: 4 }}
+                        className="button-capitalize-title"
+                        size="small"
+                        onClick={(e) =>
+                          onMenuAction(
+                            e,
+                            "undelegate",
+                            validators.active[keyName]
+                          )
+                        }
+                        sx={{
+                          textTransform: "none",
+                        }}
+                        disableElevation
+                      >
+                        Undelegate
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        className="button-capitalize-title"
+                        style={{ marginLeft: 4 }}
+                        size="small"
+                        onClick={(e) =>
+                          onMenuAction(
+                            e,
+                            "redelegate",
+                            validators.active[keyName]
+                          )
+                        }
+                        sx={{
+                          textTransform: "none",
+                        }}
+                        disableElevation
+                      >
+                        Redelegate
+                      </Button>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </StyledTableCell>
               </StyledTableRow>
             ))}
@@ -149,44 +167,50 @@ export function FilteredValidators(props) {
                   >
                     Delegate
                   </Button>
-                  <Button
-                    variant="outlined"
-                    style={{ marginLeft: 4 }}
-                    className="button-capitalize-title"
-                    size="small"
-                    onClick={(e) =>
-                      onMenuAction(
-                        e,
-                        "undelegate",
-                        validators.inactive[keyName]
-                      )
-                    }
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    disableElevation
-                  >
-                    Undelegate
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    className="button-capitalize-title"
-                    style={{ marginLeft: 4 }}
-                    size="small"
-                    onClick={(e) =>
-                      onMenuAction(
-                        e,
-                        "redelegate",
-                        validators.inactive[keyName]
-                      )
-                    }
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    disableElevation
-                  >
-                    Redelegate
-                  </Button>
+                  {delegatedTo[keyName] ? (
+                    <>
+                      <Button
+                        variant="outlined"
+                        style={{ marginLeft: 4 }}
+                        className="button-capitalize-title"
+                        size="small"
+                        onClick={(e) =>
+                          onMenuAction(
+                            e,
+                            "undelegate",
+                            validators.inactive[keyName]
+                          )
+                        }
+                        sx={{
+                          textTransform: "none",
+                        }}
+                        disableElevation
+                      >
+                        Undelegate
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        className="button-capitalize-title"
+                        style={{ marginLeft: 4 }}
+                        size="small"
+                        onClick={(e) =>
+                          onMenuAction(
+                            e,
+                            "redelegate",
+                            validators.inactive[keyName]
+                          )
+                        }
+                        sx={{
+                          textTransform: "none",
+                        }}
+                        disableElevation
+                      >
+                        Redelegate
+                      </Button>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </StyledTableCell>
               </StyledTableRow>
             ))}

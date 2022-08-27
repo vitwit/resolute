@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyledTableCell, StyledTableRow } from "./CustomTable";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -10,17 +10,28 @@ import { formatValidatorStatus } from "../utils/util";
 import Button from "@mui/material/Button";
 import { Box } from "@mui/system";
 import { Pagination } from "@mui/material";
+import { useSelector } from "react-redux";
 
 export function InActiveValidators(props) {
-  const { validators, onMenuAction } = props;
+  const { onMenuAction } = props;
+  const validators = useSelector((state) => state.staking.validators);
+  const totalInactive = useSelector(
+    (state) => state.staking.validators.totalInactive
+  );
+  const delegatedTo = useSelector(
+    (state) => state.staking.delegations.delegatedTo
+  );
 
-  const inactiveVals = Object.keys(validators?.inactive) || [];
-  const totalInActive = Number(inactiveVals?.length) || 1;
+  const [inactiveVals, setInactiveVals] = useState(validators.inactiveSorted);
 
   const perPage = 10;
-  const [validatorsSlice, setValidatorsSlice] = useState(
-    inactiveVals.slice(0, perPage)
-  );
+  const [validatorsSlice, setValidatorsSlice] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    setInactiveVals(validators.inactiveSorted);
+    setValidatorsSlice(inactiveVals.slice(0, perPage));
+  }, [validators]);
 
   return (
     <>
@@ -43,7 +54,7 @@ export function InActiveValidators(props) {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <StyledTableCell component="th" scope="row">
-                  {index + 1}
+                  {index + 1 + (currentPage - 1) * 10}
                 </StyledTableCell>
                 <StyledTableCell align="left">
                   {validators.inactive[keyName]?.description.moniker}
@@ -67,61 +78,79 @@ export function InActiveValidators(props) {
                       )}
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  { validators.inactive[keyName]?.jailed ?
-                  <></>
-                  :
-                  <Button
-                    variant="outlined"
-                    className="button-capitalize-title"
-                    size="small"
-                    onClick={(e) =>
-                      onMenuAction(e, "delegate", validators.inactive[keyName])
-                    }
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    disableElevation
-                  >
-                    Delegate
-                  </Button>
-                  }
-                  <Button
-                    style={{ marginLeft: 4 }}
-                    variant="outlined"
-                    className="button-capitalize-title"
-                    size="small"
-                    onClick={(e) =>
-                      onMenuAction(e, "undelegate", validators.inactive[keyName])
-                    }
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    disableElevation
-                  >
-                    Undelegate
-                  </Button>
-                  <Button
-                    style={{ marginLeft: 4 }}
-                    variant="outlined"
-                    className="button-capitalize-title"
-                    size="small"
-                    onClick={(e) =>
-                      onMenuAction(e, "redelegate", validators.inactive[keyName])
-                    }
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    disableElevation
-                  >
-                    Redelegate
-                  </Button>
+                  {validators.inactive[keyName]?.jailed ? (
+                    <></>
+                  ) : (
+                    <Button
+                      variant="outlined"
+                      className="button-capitalize-title"
+                      size="small"
+                      onClick={(e) =>
+                        onMenuAction(
+                          e,
+                          "delegate",
+                          validators.inactive[keyName]
+                        )
+                      }
+                      sx={{
+                        textTransform: "none",
+                      }}
+                      disableElevation
+                    >
+                      Delegate
+                    </Button>
+                  )}
+                  {delegatedTo[keyName] ? (
+                    <>
+                      <Button
+                        style={{ marginLeft: 4 }}
+                        variant="outlined"
+                        className="button-capitalize-title"
+                        size="small"
+                        onClick={(e) =>
+                          onMenuAction(
+                            e,
+                            "undelegate",
+                            validators.inactive[keyName]
+                          )
+                        }
+                        sx={{
+                          textTransform: "none",
+                        }}
+                        disableElevation
+                      >
+                        Undelegate
+                      </Button>
+                      <Button
+                        style={{ marginLeft: 4 }}
+                        variant="outlined"
+                        className="button-capitalize-title"
+                        size="small"
+                        onClick={(e) =>
+                          onMenuAction(
+                            e,
+                            "redelegate",
+                            validators.inactive[keyName]
+                          )
+                        }
+                        sx={{
+                          textTransform: "none",
+                        }}
+                        disableElevation
+                      >
+                        Redelegate
+                      </Button>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      {totalInActive > 0 ? (
+      {totalInactive > 0 ? (
         <Box
           component="div"
           sx={{
@@ -130,9 +159,10 @@ export function InActiveValidators(props) {
           }}
         >
           <Pagination
-            count={Math.ceil(totalInActive / perPage)}
+            count={Math.ceil(totalInactive / perPage)}
             shape="circular"
             onChange={(_, v) => {
+              setCurrentPage(v);
               setValidatorsSlice(
                 inactiveVals?.slice((v - 1) * perPage, v * perPage)
               );

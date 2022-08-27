@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getValidators,
@@ -45,7 +45,6 @@ import { authzExecHelper } from "../features/authz/authzSlice";
 import { Box, TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import debounce from "lodash.debounce";
 import { FilteredValidators } from "./../components/FilteredValidators";
 
 export default function Validators() {
@@ -166,9 +165,8 @@ export default function Validators() {
       dispatch(resetState());
       setFilteredVals({
         active: [],
-        inactive: []
-      })
-      if (Object.keys(validators.active).length === 0) {
+        inactive: [],
+      });
       dispatch(getParams({ baseURL: chainInfo.config.rest }));
       dispatch(
         getValidators({
@@ -176,15 +174,18 @@ export default function Validators() {
           status: null,
         })
       );
+    }
+  }, [chainInfo, connected]);
 
+  useEffect(() => {
+    if (connected) {
       if (selectedAuthz.granter.length > 0) {
         fetchUserInfo(selectedAuthz.granter);
       } else {
         fetchUserInfo(address);
       }
     }
-  }
-  }, [chainInfo, connected, selectedAuthz]);
+  }, [selectedAuthz]);
 
   function fetchUserInfo(address) {
     dispatch(
@@ -211,7 +212,10 @@ export default function Validators() {
   }
 
   useEffect(() => {
-    if (connected) {
+    if (
+      connected &&
+      (validators.totalActive > 0 || validators.totalInactive > 0)
+    ) {
       if (validators.pagination?.next_key !== null) {
         dispatch(
           getValidators({
@@ -227,8 +231,9 @@ export default function Validators() {
         if (
           Object.keys(validators?.active).length > 0 &&
           validators.pagination?.next_key === null
-        )
+        ) {
           dispatch(sortValidatorsByVotingPower());
+        }
       }
     }
   }, [validators.pagination]);
@@ -493,57 +498,50 @@ export default function Validators() {
   const [searchMoniker, setSearchMoniker] = useState("");
   const handleSearchChange = (e) => {
     setSearchMoniker(e.target.value);
-    debounceMoniker(e.target.value);
+    const moniker = e.target.value;
+    const filtered = {
+      active: [],
+      inactive: [],
+    };
+
+    if (moniker.length === 0) {
+      setFilteredVals({
+        active: [],
+        inactive: [],
+      });
+
+      return;
+    }
+
+    const keys = Object.keys(validators.active);
+    for (let i = 0; i < keys.length; i++) {
+      if (
+        validators.active[keys[i]].description.moniker
+          .toLowerCase()
+          .includes(moniker.toLowerCase())
+      ) {
+        filtered.active.push(keys[i]);
+      }
+    }
+
+    const inactivekeys = Object.keys(validators.inactive);
+    for (let i = 0; i < inactivekeys.length; i++) {
+      if (
+        validators.inactive[inactivekeys[i]].description.moniker
+          .toLowerCase()
+          .includes(moniker.toLowerCase())
+      ) {
+        filtered.inactive.push(inactivekeys[i]);
+      }
+    }
+
+    setFilteredVals(filtered);
   };
 
   const [filteredVals, setFilteredVals] = useState({
     active: [],
     inactive: [],
   });
-  const debounceMoniker = useCallback(
-    debounce((moniker) => {
-      const filtered = {
-        active: [],
-        inactive: [],
-      };
-
-      if (moniker.length === 0) {
-        setFilteredVals({
-          active: [],
-          inactive: [],
-        });
-        
-        return;
-      }
-
-      const keys = Object.keys(validators.active);
-
-      for (let i = 0; i < keys.length; i++) {
-        if (
-          validators.active[keys[i]].description.moniker
-            .toLowerCase()
-            .includes(moniker.toLowerCase())
-        ) {
-          filtered.active.push(keys[i]);
-        }
-      }
-
-      const inactivekeys = Object.keys(validators.inactive);
-      for (let i = 0; i < inactivekeys.length; i++) {
-        if (
-          validators.inactive[inactivekeys[i]].description.moniker
-            .toLowerCase()
-            .includes(moniker.toLowerCase())
-        ) {
-          filtered.inactive.push(inactivekeys[i]);
-        }
-      }
-
-      console.log(filtered);
-      setFilteredVals(filtered);
-    }, 600),
-    [] // will be created only once initially
-  );
 
   return (
     <>
@@ -660,10 +658,7 @@ export default function Validators() {
                     filtered={filteredVals}
                   />
                 ) : selected === "active" ? (
-                  <ActiveValidators
-                    onMenuAction={onMenuAction}
-                    validators={validators}
-                  />
+                  <ActiveValidators onMenuAction={onMenuAction} />
                 ) : (
                   <InActiveValidators
                     onMenuAction={onMenuAction}

@@ -15,13 +15,15 @@ export function WitvalValidator(props) {
   const [validator, setValidator] = useState({});
 
   const getWitvalValidator = () => {
-    const keys = Object.keys(validators?.active);
+    let keys = validators.activeSorted;
     for (let i = 0; i < keys.length; i++) {
       if (validators.active[keys[i]]?.description?.moniker === "Witval") {
         setValidator(validators.active[keys[i]]);
         return;
       }
     }
+
+    keys = validators.inactiveSorted;
     for (let i = 0; i < keys.length; i++) {
       if (validators.inactive[keys[i]]?.description?.moniker === "Witval") {
         setValidator(validators.inactive[keys[i]]);
@@ -37,14 +39,17 @@ export function WitvalValidator(props) {
   return (
     <>
       {validator?.description?.moniker === "Witval" ? (
-        <Paper elevation={0} sx={{
-          p: 1,
-          borderRadius: 'none'
-        }}>
+        <Paper
+          elevation={0}
+          sx={{
+            p: 1,
+            borderRadius: "none",
+          }}
+        >
           <Typography
             sx={{
               p: 1,
-              textAlign: 'left'
+              textAlign: "left",
             }}
             color="text.primary"
             fontWeight={500}
@@ -52,9 +57,13 @@ export function WitvalValidator(props) {
           >
             Love us by delegating to Witval
           </Typography>
-          <TableContainer component={Paper} elevation={0} sx={{
-            borderRadius: 'none'
-          }}>
+          <TableContainer
+            component={Paper}
+            elevation={0}
+            sx={{
+              borderRadius: "none",
+            }}
+          >
             <Table
               sx={{ minWidth: 500 }}
               aria-label="simple table"

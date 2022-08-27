@@ -10,20 +10,27 @@ import { formatVotingPower } from "../utils/denom";
 import { formatValidatorStatus } from "../utils/util";
 import { Pagination } from "@mui/material";
 import { Box } from "@mui/system";
+import { useSelector } from "react-redux";
 
 export function ActiveValidators(props) {
-  const { validators, onMenuAction } = props;
+  const { onMenuAction } = props;
+
+  const validators = useSelector((state) => state.staking.validators);
+  const delegatedTo = useSelector(
+    (state) => state.staking.delegations.delegatedTo
+  );
+  const totalActive = useSelector(
+    (state) => state.staking.validators.totalActive
+  );
+
+  const [activeVals, setActiveVals] = useState(validators.activeSorted);
 
   const perPage = 10;
   const [validatorsSlice, setValidatorsSlice] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const [activeVals, setActiveVals] = useState([]);
-  const [totalActive, setTotalActive] = useState(1);
-  
   useEffect(() => {
-    setActiveVals(Object.keys(validators.active));
-    console.log(activeVals);
-    setTotalActive(Number(activeVals.length));
+    setActiveVals(validators.activeSorted);
     setValidatorsSlice(activeVals.slice(0, perPage));
   }, [validators]);
 
@@ -48,7 +55,7 @@ export function ActiveValidators(props) {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <StyledTableCell component="th" scope="row">
-                  {index + 1}
+                  {index + 1 + (currentPage - 1) * perPage}
                 </StyledTableCell>
                 <StyledTableCell align="left">
                   {validators.active[keyName]?.description.moniker}
@@ -86,36 +93,50 @@ export function ActiveValidators(props) {
                   >
                     Delegate
                   </Button>
-                  <Button
-                    variant="outlined"
-                    style={{ marginLeft: 4 }}
-                    className="button-capitalize-title"
-                    size="small"
-                    onClick={(e) =>
-                      onMenuAction(e, "undelegate", validators.active[keyName])
-                    }
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    disableElevation
-                  >
-                    Undelegate
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    className="button-capitalize-title"
-                    style={{ marginLeft: 4 }}
-                    size="small"
-                    onClick={(e) =>
-                      onMenuAction(e, "redelegate", validators.active[keyName])
-                    }
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    disableElevation
-                  >
-                    Redelegate
-                  </Button>
+                  {delegatedTo[keyName] ? (
+                    <>
+                      <Button
+                        variant="outlined"
+                        style={{ marginLeft: 4 }}
+                        className="button-capitalize-title"
+                        size="small"
+                        onClick={(e) =>
+                          onMenuAction(
+                            e,
+                            "undelegate",
+                            validators.active[keyName]
+                          )
+                        }
+                        sx={{
+                          textTransform: "none",
+                        }}
+                        disableElevation
+                      >
+                        Undelegate
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        className="button-capitalize-title"
+                        style={{ marginLeft: 4 }}
+                        size="small"
+                        onClick={(e) =>
+                          onMenuAction(
+                            e,
+                            "redelegate",
+                            validators.active[keyName]
+                          )
+                        }
+                        sx={{
+                          textTransform: "none",
+                        }}
+                        disableElevation
+                      >
+                        Redelegate
+                      </Button>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </StyledTableCell>
               </StyledTableRow>
             ))}
@@ -134,6 +155,7 @@ export function ActiveValidators(props) {
             count={Math.ceil(totalActive / perPage)}
             shape="circular"
             onChange={(_, v) => {
+              setCurrentPage(v);
               setValidatorsSlice(
                 activeVals?.slice((v - 1) * perPage, v * perPage)
               );
