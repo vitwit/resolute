@@ -26,17 +26,13 @@ import { getPallet, isDarkMode, mdTheme } from "../utils/theme";
 import { isConnected, logout } from "../utils/localStorage";
 import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
-// import GroupPage from "./GroupPage";
-// import CreateGroupPage from "./group/CreateGroup";
 const Authz = lazy(() => import("./Authz"));
-// const Feegrant = lazy(() => import("./Feegrant"));
 const Validators = lazy(() => import("./Validators"));
 const Proposals = lazy(() => import("./Proposals"));
-// const NewFeegrant = lazy(() => import("./NewFeegrant"));
 const NewAuthz = lazy(() => import("./NewAuthz"));
 const AirdropEligibility = lazy(() => import("./AirdropEligibility"));
 const PageMultisig = lazy(() => import("./multisig/PageMultisig"));
-const Tx_index = lazy(() => import("./multisig/tx/Tx_index"));
+const PageMultisigInfo = lazy(() => import("./multisig/tx/PageMultisigInfo"));
 const Single_Tx = lazy(() => import("./multisig/tx/Single_Tx"));
 const SendPage = lazy(() => import("./SendPage"));
 const UnjailPage = lazy(() => import("./UnjailPage"));
@@ -316,7 +312,7 @@ function DashboardContent(props) {
                     path="/multisig/:address/txs"
                     element={
                       <Suspense fallback={<CircularProgress />}>
-                        <Tx_index />
+                        <PageMultisigInfo />
                       </Suspense>
                     }
                   ></Route>

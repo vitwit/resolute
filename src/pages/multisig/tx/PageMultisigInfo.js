@@ -1,6 +1,6 @@
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getBalance } from "../../../features/bank/bankSlice";
 import {
@@ -8,14 +8,14 @@ import {
   getValidators,
 } from "../../../features/staking/stakeSlice";
 import List_txs from "./List_txs";
-import DialogCreateMultisigTx from "../../../components/DialogCreateMultisigTx";
-import { fetchSingleMultiAccount } from "../../../features/multisig/multisigSlice";
+import { DialogCreateMultisigTx } from "../../../components/DialogCreateMultisigTx";
+import { multisigByAddress } from "../../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../../utils/util";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import Chip from "@mui/material/Chip";
 import { resetError, setError } from "../../../features/common/commonSlice";
 
-export default function Tx_index() {
+export default function PageMultisigInfo() {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const { address: multisigAddress } = useParams();
@@ -70,14 +70,14 @@ export default function Tx_index() {
   }, [multisigDel]);
 
   const wallet = useSelector((state) => state.wallet);
-  const { chainInfo, address, connected } = wallet;
+  const { chainInfo, connected } = wallet;
 
   const handleClose = () => {
     setOpen(false);
   };
 
   useEffect(() => {
-    dispatch(fetchSingleMultiAccount(multisigAddress));
+    dispatch(multisigByAddress(multisigAddress));
   }, []);
 
   useEffect(() => {
@@ -132,9 +132,9 @@ export default function Tx_index() {
             textAlign: "left",
             p: 1,
           }}
-          spacing={4}
+          spacing={2}
         >
-          <Grid item sx={6} md={3}>
+          <Grid item xs={6} md={3}>
             <Typography
               variant="body1"
               color="text.primary"
@@ -143,7 +143,6 @@ export default function Tx_index() {
             >
               Account
             </Typography>
-            <Typography>
               <Chip
                 label={
                   multisigAccount?.address
@@ -156,9 +155,8 @@ export default function Tx_index() {
                   copyToClipboard(multisigAccount?.address);
                 }}
               />
-            </Typography>
           </Grid>
-          <Grid item sx={6} md={3}>
+          <Grid item xs={6} md={3}>
             <Typography
               variant="body1"
               color="text.primary"
@@ -171,7 +169,7 @@ export default function Tx_index() {
               &nbsp;&nbsp;{multisigAccount?.pubkeyJSON?.value?.threshold || 0}
             </Typography>
           </Grid>
-          <Grid item sx={6} md={3}>
+          <Grid item xs={6} md={3}>
             <Typography
               gutterBottom
               variant="body1"
@@ -186,7 +184,7 @@ export default function Tx_index() {
               {currency?.coinDenom}
             </Typography>
           </Grid>
-          <Grid item sx={6} md={3}>
+          <Grid item xs={6} md={3}>
             <Typography
               gutterBottom
               variant="body1"
@@ -199,7 +197,7 @@ export default function Tx_index() {
               {totalStake || 0} {currency?.coinDenom}
             </Typography>
           </Grid>
-          <Grid item sx={12} md={12}>
+          <Grid item xs={12} md={12}>
             <Typography
               variant="body1"
               color="text.primary"
@@ -208,9 +206,9 @@ export default function Tx_index() {
             >
               Signers
             </Typography>
-            <Box component="div" sx={{}}>
-              {multisigAccount?.pubkeyJSON?.value?.pubkeys?.map((p) => (
+              {multisigAccount?.pubkeyJSON?.value?.pubkeys?.map((p, index) => (
                 <Chip
+                  key={index}
                   sx={{
                     ml: 0.5,
                     mr: 0.5,
@@ -224,7 +222,6 @@ export default function Tx_index() {
                   }}
                 />
               ))}
-            </Box>
           </Grid>
         </Grid>
       </Paper>

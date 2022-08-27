@@ -21,7 +21,7 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteTxn,
-  fetchSingleMultiAccount,
+  multisigByAddress,
   getSigns,
   getTxns,
 } from "../../../features/multisig/multisigSlice";
@@ -59,7 +59,7 @@ const TableRowComponent = ({ tx }) => {
   };
 
   const getMultisignatureAcc = () => {
-    dispatch(fetchSingleMultiAccount(address || ""));
+    dispatch(multisigByAddress(address || ""));
   };
 
   useEffect(() => {
@@ -339,8 +339,8 @@ export default function Transactions(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {txns.map((row) => (
-            <TableRowComponent tx={row} />
+          {txns.map((row, index) => (
+            <TableRowComponent key={index} tx={row} />
           ))}
         </TableBody>
       </Table>
@@ -349,5 +349,5 @@ export default function Transactions(props) {
 }
 
 Transactions.propTypes = {
-  value: PropTypes.number.isRequired,
+  address: PropTypes.string.isRequired,
 };

@@ -33,7 +33,7 @@ export default function PageMultisig() {
   const multisigAccounts = useSelector(
     (state) => state.multisig.multisigAccounts
   );
-  const accounts = (multisigAccounts.data && multisigAccounts.data.data) || [];
+  const accounts = multisigAccounts.accounts
   const walletAddress = useSelector((state) => state.wallet.address);
 
   const { config } = chainInfo;

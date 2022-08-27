@@ -12,7 +12,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
-  fetchSingleMultiAccount,
+  multisigByAddress,
   getSigns,
   getSingleTxn,
 } from "../../../features/multisig/multisigSlice";
@@ -36,7 +36,7 @@ export const Single_Tx = (props) => {
   const fetchTxn = () => {
     dispatch(getSingleTxn(txId));
     dispatch(getSigns({ address, txId }));
-    dispatch(fetchSingleMultiAccount(address));
+    dispatch(multisigByAddress(address));
   };
 
   useEffect(() => {

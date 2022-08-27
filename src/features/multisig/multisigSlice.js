@@ -43,9 +43,13 @@ export const createAccount = createAsyncThunk(
 
 export const getMultisigAccounts = createAsyncThunk(
   "multisig/getMultisigAccounts",
-  async (data) => {
-    const response = await fetchMultisigAccounts(data);
-    return response.data;
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await fetchMultisigAccounts(data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
   }
 );
 
@@ -73,8 +77,8 @@ export const getMultisigAccount = createAsyncThunk(
   }
 );
 
-export const fetchSingleMultiAccount = createAsyncThunk(
-  "multisig/fetchSingleMultiAccount",
+export const multisigByAddress = createAsyncThunk(
+  "multisig/multisigByAddress",
   async (data) => {
     const response = await fetchMultisigAccountByAddress(data);
     return response.data;
@@ -149,7 +153,7 @@ export const multiSlice = createSlice({
         state.multisigAccounts.status = "pending";
       })
       .addCase(getMultisigAccounts.fulfilled, (state, action) => {
-        state.multisigAccounts.accounts = action.payload?.data || [];
+        state.multisigAccounts.accounts = action.payload?.data?.data || [];
         state.multisigAccounts.status = "idle";
       })
       .addCase(getMultisigAccounts.rejected, (state, action) => {
@@ -169,13 +173,13 @@ export const multiSlice = createSlice({
       });
 
     builder
-      .addCase(fetchSingleMultiAccount.pending, (state) => {
+      .addCase(multisigByAddress.pending, (state) => {
         state.multisigAccount.status = "pending";
       })
-      .addCase(fetchSingleMultiAccount.fulfilled, (state, action) => {
+      .addCase(multisigByAddress.fulfilled, (state, action) => {
         state.multisigAccount = action.payload;
       })
-      .addCase(fetchSingleMultiAccount.rejected, (state, action) => {
+      .addCase(multisigByAddress.rejected, (state, action) => {
         state.multisigAccount.status = "rejected";
       });
 
