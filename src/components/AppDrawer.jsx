@@ -107,7 +107,7 @@ export default function AppDrawer(props) {
                                     color='text.primary'
                                     variant='body2'
                                 >
-                                    {parseBalance(balance.balance, chainInfo.config.currencies[0].coinDecimals, chainInfo.config.currencies[0].coinMinimalDenom)}
+                                    {parseBalance([balance.balance], chainInfo.config.currencies[0].coinDecimals, chainInfo.config.currencies[0].coinMinimalDenom)}
                                     &nbsp;{chainInfo.config.currencies[0].coinDenom}
                                 </Typography>
                             </ListItem>
