@@ -15,8 +15,13 @@ import {
 } from "./multisigService";
 
 const initialState = {
-  createMultisigAccountRes: {},
-  multisigAccounts: {},
+  createMultisigAccountRes: {
+    status: "",
+  },
+  multisigAccounts: {
+    status: "idle",
+    accounts: [],
+  },
   createTxnRes: {},
   txns: {},
   txn: {},
@@ -133,7 +138,7 @@ export const multiSlice = createSlice({
         state.createMultisigAccountRes.status = "pending";
       })
       .addCase(createAccount.fulfilled, (state, action) => {
-        state.createMultisigAccountRes.status = "done";
+        state.createMultisigAccountRes.status = "idle";
       })
       .addCase(createAccount.rejected, (state, action) => {
         state.createMultisigAccountRes.status = "rejected";
@@ -144,10 +149,12 @@ export const multiSlice = createSlice({
         state.multisigAccounts.status = "pending";
       })
       .addCase(getMultisigAccounts.fulfilled, (state, action) => {
-        state.multisigAccounts = action.payload;
+        state.multisigAccounts.accounts = action.payload?.data || [];
+        state.multisigAccounts.status = "idle";
       })
       .addCase(getMultisigAccounts.rejected, (state, action) => {
         state.multisigAccounts.status = "rejected";
+        state.multisigAccounts.accounts = [];
       });
 
     builder

@@ -43,7 +43,7 @@ export default function PageMultisig() {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    if (createMultiAccRes.status === "done") {
+    if (createMultiAccRes.status === "idle") {
       setOpen(false);
       dispatch(getMultisigAccounts(walletAddress));
     }

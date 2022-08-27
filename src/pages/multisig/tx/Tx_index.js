@@ -18,7 +18,6 @@ import { resetError, setError } from "../../../features/common/commonSlice";
 export default function Tx_index() {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { address: multisigAddress } = useParams();
   const multisigAccountDetails = useSelector(
     (state) => state.multisig.multisigAccount

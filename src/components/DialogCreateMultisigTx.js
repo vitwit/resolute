@@ -16,10 +16,10 @@ import React, { useState, useEffect } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { getBalance } from "../features/bank/bankSlice";
 import { getDelegations, getValidators } from "../features/staking/stakeSlice";
-import Delegation_Form from "./tx/Delegation_Form";
-import ReDelegation_Form from "./tx/ReDelegation_Form";
-import SendForm from "./tx/SendForm";
-import UnDelegation_Form from "./tx/UnDelegation_Form";
+import Delegation_Form from "./multisig/Delegation_Form";
+import ReDelegation_Form from "./multisig/ReDelegation_Form";
+import SendForm from "./multisig/SendForm";
+import UnDelegation_Form from "./multisig/UnDelegation_Form";
 import PropTypes from "prop-types";
 
 const BootstrapDialogTitle = (props) => {
