@@ -1,10 +1,10 @@
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import PropTypes from 'prop-types';
 import {
   IconButton,
   Table,
   TableBody,
-  Paper,
   TableCell,
   TableContainer,
   TableRow,
@@ -21,13 +21,13 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteTxn,
-  fetchSingleMultiAccount,
+  multisigByAddress,
   getSigns,
   getTxns,
 } from "../../../features/multisig/multisigSlice";
 import BroadcastTx from "../BroadcastTx";
 import SignTxn from "../SignTxn";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { shortenAddress } from "../../../utils/util";
 import { parseTokens } from "../../../utils/denom";
 import { setError } from "../../../features/common/commonSlice";
@@ -52,9 +52,6 @@ const TableRowComponent = ({ tx }) => {
   const threshold = Number(multisigAccount?.pubkeyJSON?.value?.threshold || 0);
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
-  const signatures = useSelector(
-    (state) => state.multisig.signatures?.data?.data || []
-  );
 
   const getAllSignatures = () => {
     let txId = tx?._id;
@@ -62,7 +59,7 @@ const TableRowComponent = ({ tx }) => {
   };
 
   const getMultisignatureAcc = () => {
-    dispatch(fetchSingleMultiAccount(address || ""));
+    dispatch(multisigByAddress(address || ""));
   };
 
   useEffect(() => {
@@ -236,7 +233,7 @@ const TableRowComponent = ({ tx }) => {
   );
 };
 
-function List_txs({ address }) {
+export default function Transactions(props) {
   const dispatch = useDispatch();
   const txns = useSelector((state) => state.multisig.txns?.data?.data || []);
   const createTxRes = useSelector((state) => state.multisig.createTxnRes);
@@ -247,7 +244,7 @@ function List_txs({ address }) {
   const deleteTxnStatus = useSelector((state) => state.multisig.deleteTxnRes);
 
   const getAllTxns = (status) => {
-    dispatch(getTxns({ address, status }));
+    dispatch(getTxns({ address: props.address, status: status }));
   };
 
   useEffect(() => {
@@ -342,8 +339,8 @@ function List_txs({ address }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {txns.map((row) => (
-            <TableRowComponent tx={row} />
+          {txns.map((row, index) => (
+            <TableRowComponent key={index} tx={row} />
           ))}
         </TableBody>
       </Table>
@@ -351,4 +348,6 @@ function List_txs({ address }) {
   );
 }
 
-export default List_txs;
+Transactions.propTypes = {
+  address: PropTypes.string.isRequired,
+};

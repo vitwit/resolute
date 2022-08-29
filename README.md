@@ -1,5 +1,15 @@
-# Staking User Interface for Witval
-> This user interface have staking actions funtionality for users to delegate, withdraw rewards.
+# Resolute
+Resolute is an advanced spacecraft designed to travel through the multiverse, connecting all Cosmos sovereign chains.
+Supported features:
+
+- [x] Staking
+- [x] Bank
+- [x] Governance
+- [x] Authz
+- [ ] Feegrant
+- [x] Airdrops
+- [ ] Groups
+- [x] Multisig
 
 ## Install deps 
 ```bash

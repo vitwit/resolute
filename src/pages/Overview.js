@@ -5,12 +5,13 @@ import { getBalance } from '../features/bank/bankSlice';
 import BalanceInfo from "../components/BalanceInfo";
 import { getDelegations, getUnbonding } from '../features/staking/stakeSlice';
 import { getDelegatorTotalRewards } from '../features/distribution/distributionSlice';
-import { totalBalance } from '../utils/denom';
+import { parseBalance } from '../utils/denom';
 import { totalDelegations, totalRewards, totalUnbonding } from '../utils/util';
 
 export default function Overview() {
 
     const chainInfo = useSelector((state) => state.wallet.chainInfo);
+    const {config} = chainInfo;
     const connected = useSelector((state) => state.wallet.connected);
     const address = useSelector((state) => state.wallet.address);
     const balance = useSelector((state) => state.bank.balance);
@@ -28,11 +29,11 @@ export default function Overview() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (connected && chainInfo.config.currencies.length > 0) {
-            setTotalBalance(totalBalance(balance.balance, chainInfo.config.currencies[0].coinDecimals))
-            setTotalDelegations(totalDelegations(delegations.delegations, chainInfo.config.currencies[0].coinDecimals))
-            setTotalRewards(totalRewards(rewards?.list, chainInfo.config.currencies[0].coinDecimals))
-            setTotalUnbonding(totalUnbonding(unbonding.delegations, chainInfo.config.currencies[0].coinDecimals))
+        if (connected && config.currencies.length > 0) {
+            setTotalBalance(parseBalance([balance.balance], config.currencies[0].coinDecimals, config.currencies[0].coinMinimalDenom))
+            setTotalDelegations(totalDelegations(delegations.delegations, config.currencies[0].coinDecimals))
+            setTotalRewards(totalRewards(rewards?.list, config.currencies[0].coinDecimals))
+            setTotalUnbonding(totalUnbonding(unbonding.delegations, config.currencies[0].coinDecimals))
         }
     }, [balance, delegations, rewards, unbonding, chainInfo, address]);
 

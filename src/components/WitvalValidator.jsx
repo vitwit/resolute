@@ -15,13 +15,15 @@ export function WitvalValidator(props) {
   const [validator, setValidator] = useState({});
 
   const getWitvalValidator = () => {
-    const keys = Object.keys(validators?.active);
+    let keys = validators.activeSorted;
     for (let i = 0; i < keys.length; i++) {
       if (validators.active[keys[i]]?.description?.moniker === "Witval") {
         setValidator(validators.active[keys[i]]);
         return;
       }
     }
+
+    keys = validators.inactiveSorted;
     for (let i = 0; i < keys.length; i++) {
       if (validators.inactive[keys[i]]?.description?.moniker === "Witval") {
         setValidator(validators.inactive[keys[i]]);
@@ -37,16 +39,31 @@ export function WitvalValidator(props) {
   return (
     <>
       {validator?.description?.moniker === "Witval" ? (
-        <Paper elevation={0} style={{ padding: 12 }}>
+        <Paper
+          elevation={0}
+          sx={{
+            p: 1,
+            borderRadius: "none",
+          }}
+        >
           <Typography
-            style={{ padding: 12, textAlign: "left" }}
+            sx={{
+              p: 1,
+              textAlign: "left",
+            }}
             color="text.primary"
             fontWeight={500}
             variant="body1"
           >
             Love us by delegating to Witval
           </Typography>
-          <TableContainer component={Paper} elevation={0}>
+          <TableContainer
+            component={Paper}
+            elevation={0}
+            sx={{
+              borderRadius: "none",
+            }}
+          >
             <Table
               sx={{ minWidth: 500 }}
               aria-label="simple table"
@@ -73,7 +90,7 @@ export function WitvalValidator(props) {
                       : formatValidatorStatus(false, validator?.status)}
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {formatVotingPower(validator.tokens)}
+                    {formatVotingPower(validator.tokens, 6)}
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {(validator.commission.commission_rates.rate * 100).toFixed(
@@ -87,6 +104,10 @@ export function WitvalValidator(props) {
                       className="button-capitalize-title"
                       size="small"
                       onClick={(e) => onMenuAction(e, "delegate", validator)}
+                      sx={{
+                        textTransform: "none",
+                      }}
+                      disableElevation
                     >
                       Delegate
                     </Button>
@@ -96,6 +117,10 @@ export function WitvalValidator(props) {
                       className="button-capitalize-title"
                       size="small"
                       onClick={(e) => onMenuAction(e, "undelegate", validator)}
+                      sx={{
+                        textTransform: "none",
+                      }}
+                      disableElevation
                     >
                       Undelegate
                     </Button>

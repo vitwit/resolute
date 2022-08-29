@@ -12,7 +12,7 @@ import ContentCopyOutlined from '@mui/icons-material/ContentCopyOutlined';
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types';
 import { drawerListItems } from './drawerListItems';
-import { totalBalance } from '../utils/denom';
+import { parseBalance } from '../utils/denom';
 import { shortenAddress, shortenPubKey } from '../utils/util';
 import { useLocation } from 'react-router-dom';
 
@@ -107,7 +107,7 @@ export default function AppDrawer(props) {
                                     color='text.primary'
                                     variant='body2'
                                 >
-                                    {totalBalance(balance.balance, chainInfo.config.currencies[0].coinDecimals)}
+                                    {parseBalance([balance.balance], chainInfo.config.currencies[0].coinDecimals, chainInfo.config.currencies[0].coinMinimalDenom)}
                                     &nbsp;{chainInfo.config.currencies[0].coinDenom}
                                 </Typography>
                             </ListItem>

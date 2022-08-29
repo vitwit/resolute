@@ -145,6 +145,9 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
       onClick={() => {
         broadcastTxn();
       }}
+      sx={{
+        textTransform: "none",
+      }}
     >
       {load ? "Loading..." : "BroadCast"}
     </Button>
