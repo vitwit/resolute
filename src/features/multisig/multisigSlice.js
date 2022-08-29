@@ -136,6 +136,11 @@ export const getSingleTxn = createAsyncThunk(
 export const multiSlice = createSlice({
   name: "multisig",
   initialState,
+  reducers: {
+    resetCreateMultisigRes: (state, _) => {
+      state.createMultisigAccountRes.status = "";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createAccount.pending, (state) => {
@@ -273,5 +278,7 @@ export const multiSlice = createSlice({
       });
   },
 });
+
+export const { resetCreateMultisigRes } = multiSlice.actions;
 
 export default multiSlice.reducer;

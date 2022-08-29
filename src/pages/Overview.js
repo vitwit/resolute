@@ -30,7 +30,7 @@ export default function Overview() {
 
     useEffect(() => {
         if (connected && config.currencies.length > 0) {
-            setTotalBalance(parseBalance(balance.balance, config.currencies[0].coinDecimals, config.currencies[0].coinMinimalDenom))
+            setTotalBalance(parseBalance([balance.balance], config.currencies[0].coinDecimals, config.currencies[0].coinMinimalDenom))
             setTotalDelegations(totalDelegations(delegations.delegations, config.currencies[0].coinDecimals))
             setTotalRewards(totalRewards(rewards?.list, config.currencies[0].coinDecimals))
             setTotalUnbonding(totalUnbonding(unbonding.delegations, config.currencies[0].coinDecimals))

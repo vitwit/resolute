@@ -402,10 +402,7 @@ export function getTestNetworks(): Network[] {
     return [
       {
         experimental: true,
-        showAirdrop: true,
-        airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
-        airdropMessage:
-          "Additional bonus will be credited if staked 50% of airdrop for 14+ months.",
+        showAirdrop: false,
         logos: {
           toolbar:
             "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
@@ -415,43 +412,43 @@ export function getTestNetworks(): Network[] {
         explorerTxHashEndpoint: "https://passage3d.testaneka.com/txs/",
         config: {
           chainId: "testnet",
-          chainName: "Passage-Testnet",
+          chainName: "Simapp",
           rest: "http://127.0.0.1:1317",
           rpc: "http://127.0.0.1:26657",
           stakeCurrency: {
-            coinDenom: "PASG",
-            coinMinimalDenom: "upasg",
+            coinDenom: "STAKE",
+            coinMinimalDenom: "stake",
             coinDecimals: 6,
-            coinGeckoId: "passage3d",
+            coinGeckoId: "stake",
           },
           bip44: { coinType: 118 },
           bech32Config: {
-            bech32PrefixAccAddr: `pasg`,
-            bech32PrefixAccPub: `pasgpub`,
-            bech32PrefixValAddr: `pasgvaloper`,
-            bech32PrefixValPub: `pasgvaloperpub`,
-            bech32PrefixConsAddr: `pasgvalcons`,
-            bech32PrefixConsPub: `pasgvalconspub`,
+            bech32PrefixAccAddr: `cosmos`,
+            bech32PrefixAccPub: `cosmospub`,
+            bech32PrefixValAddr: `cosmosvaloper`,
+            bech32PrefixValPub: `cosmosvaloperpub`,
+            bech32PrefixConsAddr: `cosmosvalcons`,
+            bech32PrefixConsPub: `cosmosvalconspub`,
           },
           currencies: [
             {
-              coinDenom: "PASG",
-              coinMinimalDenom: "upasg",
+              coinDenom: "STAKE",
+              coinMinimalDenom: "stake",
               coinDecimals: 6,
-              coinGeckoId: "passage",
+              coinGeckoId: "stake",
             },
           ],
           feeCurrencies: [
             {
-              coinDenom: "PASG",
-              coinMinimalDenom: "upasg",
+              coinDenom: "STAKE",
+              coinMinimalDenom: "stake",
               coinDecimals: 6,
-              coinGeckoId: "passage",
+              coinGeckoId: "stake",
             },
           ],
           coinType: 118,
           gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
-          walletUrlForStaking: "https://stake.vitwit.com/validators",
+          walletUrlForStaking: "http://localhost:3000/validators",
         },
       },
     ];

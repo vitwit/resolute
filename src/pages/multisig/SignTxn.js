@@ -32,23 +32,36 @@ export default function SignTxn({ txId, tx: unSignedTxn }) {
         disableBalanceCheck: true,
       },
     };
-    const client = await SigningStargateClient.connect(chainInfo?.config?.rpc);
-
-    let result = await getKeplrWalletAmino(chainInfo?.config?.chainId);
-    var wallet = result[0];
-    const signingClient = await SigningStargateClient.offline(wallet);
-
-    const multisigAcc = await client.getAccount(multisigAddress?.address);
-
-    const signerData = {
-      accountNumber: multisigAcc?.accountNumber,
-      sequence: multisigAcc.sequence,
-      chainId: chainInfo?.config?.chainId,
-    };
-
-    let msgs = unSignedTxn.msgs;
-
     try {
+      const client = await SigningStargateClient.connect(
+        chainInfo?.config?.rpc
+      );
+
+      let result = await getKeplrWalletAmino(chainInfo?.config?.chainId);
+      var wallet = result[0];
+      const signingClient = await SigningStargateClient.offline(wallet);
+
+      const multisigAcc = await client.getAccount(multisigAddress?.address);
+
+      if (!multisigAcc) {
+        dispatch(
+          setError({
+            type: "error",
+            message: "multisig account does not exist on chain",
+          })
+        );
+        setLoad(false);
+        return;
+      }
+
+      const signerData = {
+        accountNumber: multisigAcc?.accountNumber,
+        sequence: multisigAcc?.sequence,
+        chainId: chainInfo?.config?.chainId,
+      };
+
+      let msgs = unSignedTxn.msgs;
+
       const { bodyBytes, signatures } = await signingClient.sign(
         from,
         msgs,
@@ -68,7 +81,6 @@ export default function SignTxn({ txId, tx: unSignedTxn }) {
       dispatch(createSign(obj));
       setLoad(false);
     } catch (error) {
-      console.log("Err: sign ", error.message);
       setLoad(false);
       dispatch(setError({ type: "error", message: error.message }));
     }
