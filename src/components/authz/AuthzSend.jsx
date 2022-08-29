@@ -10,11 +10,11 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
 import CircularProgress from '@mui/material/CircularProgress';
-import { totalBalance } from '../../utils/denom';
+import { parseBalance } from '../../utils/denom';
 
 export function AuthzSendDialog(props) {
     const { onClose, grant, currency, open, execTx, onExecSend } = props;
-    const available = grant?.authorization.spend_limit ? totalBalance(grant.authorization.spend_limit, currency?.coinDecimals) : -1;
+    const available = grant?.authorization.spend_limit ? parseBalance(grant.authorization.spend_limit, currency?.coinDecimals, currency?.coinMinimalDenom) : -1;
     const { handleSubmit, control, setValue, formState: { errors } } = useForm({
         defaultValues: {
             amount: 0,

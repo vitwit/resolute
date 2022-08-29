@@ -10,18 +10,21 @@ const initialState = {
     status: "idle",
     active: {},
     inactive: {},
-    activeSorted: {},
-    inactiveSorted: {},
+    activeSorted: [],
+    inactiveSorted: [],
     errMsg: "",
     pagination: {
       next_key: null,
     },
+    totalActive: 0,
+    totalInactive: 0,
   },
   delegations: {
     status: "idle",
     delegations: [],
     errMsg: "",
     pagination: {},
+    delegatedTo: {}
   },
   unbonding: {
     status: "idle",
@@ -195,14 +198,6 @@ export const getValidators = createAsyncThunk(
   }
 );
 
-export const createMultiAccount = createAsyncThunk(
-  "staking/createaMultiAccount",
-  async (data) => {
-    const response = await createMultisigAccount(data);
-    return response.data;
-  }
-);
-
 export const getParams = createAsyncThunk("staking/params", async (data) => {
   const response = await stakingService.params(data.baseURL);
   return response.data;
@@ -258,14 +253,16 @@ export const stakeSlice = createSlice({
           return b.tokens - a.tokens;
         })
       );
-      state.validators.active = activeSort;
+
+      state.validators.activeSorted = Object.keys(activeSort);
 
       const inactiveSort = Object.fromEntries(
         Object.entries(state.validators.inactive).sort(([, a], [, b]) => {
           return b.tokens - a.tokens;
         })
       );
-      state.validators.inactive = inactiveSort;
+      state.validators.inactiveSorted = Object.keys(inactiveSort);
+
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -283,10 +280,18 @@ export const stakeSlice = createSlice({
         const res = action.payload.validators;
         for (let index = 0; index < res.length; index++) {
           const element = res[index];
-          if (element.status === "BOND_STATUS_BONDED") {
+          if (
+            element.status === "BOND_STATUS_BONDED" &&
+            !state.validators.active[element.operator_address]
+          ) {
             state.validators.active[element.operator_address] = element;
-          } else {
+            state.validators.totalActive += 1;
+          } else if (
+            element.status !== "BOND_STATUS_BONDED" &&
+            !state.validators.inactive[element.operator_address]
+          ) {
             state.validators.inactive[element.operator_address] = element;
+            state.validators.totalInactive += 1;
           }
         }
         state.validators.pagination = action.payload.pagination;
@@ -307,6 +312,11 @@ export const stakeSlice = createSlice({
         state.delegations.delegations = action.payload.delegation_responses;
         state.delegations.pagination = action.payload.pagination;
         state.delegations.errMsg = "";
+
+        for (let i=0;i<action.payload.delegation_responses.length;i++) {
+          const delegation = action.payload.delegation_responses[i];
+          state.delegations.delegatedTo[delegation?.delegation?.validator_address] = true;
+        }
       })
       .addCase(getDelegations.rejected, (state, action) => {
         state.delegations.status = "rejected";
@@ -376,19 +386,6 @@ export const stakeSlice = createSlice({
       .addCase(txReDelegate.rejected, (state, _) => {
         state.tx.status = "rejected";
         state.tx.type = "";
-      });
-
-    builder
-      .addCase(createMultiAccount.pending, (state) => {
-        console.log("pending", state);
-        // state.createMultisigAccount.status = 'pending';
-        // state.validators.errMsg = ''
-      })
-      .addCase(createMultiAccount.fulfilled, (state, action) => {
-        console.log("fullfilled", state, action);
-      })
-      .addCase(createMultiAccount.rejected, (state, action) => {
-        console.log("rejecteddddddd", state, action);
       });
   },
 });

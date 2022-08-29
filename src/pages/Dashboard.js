@@ -207,7 +207,7 @@ function DashboardContent(props) {
                     ? theme.palette.grey[200]
                     : theme.palette.grey[900],
                 flexGrow: 1,
-                height: "100vh",
+                height: "97vh",
                 overflow: "auto",
               }}
             >
@@ -219,7 +219,7 @@ function DashboardContent(props) {
               ) : (
                 <Toolbar />
               )}
-              <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Container maxWidth="lg" sx={{ mt: 3, mb: 4 }}>
                 <Routes>
                   <Route path="/" element={<Overview />} />
                   <Route
