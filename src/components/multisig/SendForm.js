@@ -75,7 +75,7 @@ export default function SendForm({ handleSubmit, chainInfo }) {
   };
 
   return (
-    <form onSubmit={handleSubmit1} sx>
+    <form onSubmit={handleSubmit1}>
       <TextField
         sx={{
           mt: 1.5,

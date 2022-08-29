@@ -41,8 +41,9 @@ function FeeComponent({ chainInfo, onSetFeeChange }) {
         Fee
       </Typography>
       <ButtonGroup fullWidth aria-label="outlined primary button group">
-        {Object.entries(gasPriceStep).map(([key, value]) => (
+        {Object.entries(gasPriceStep).map(([key, value], index) => (
           <BootstrapButton
+            key={index}
             onClick={() => {
               onSetFeeChange(value);
               setActive(key);

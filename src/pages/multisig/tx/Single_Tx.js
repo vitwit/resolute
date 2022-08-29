@@ -6,13 +6,14 @@ import {
   TableBody,
   TableCell,
   TableRow,
+  Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
-  fetchSingleMultiAccount,
+  multisigByAddress,
   getSigns,
   getSingleTxn,
 } from "../../../features/multisig/multisigSlice";
@@ -36,7 +37,7 @@ export const Single_Tx = (props) => {
   const fetchTxn = () => {
     dispatch(getSingleTxn(txId));
     dispatch(getSigns({ address, txId }));
-    dispatch(fetchSingleMultiAccount(address));
+    dispatch(multisigByAddress(address));
   };
 
   useEffect(() => {
@@ -138,10 +139,10 @@ export const Single_Tx = (props) => {
                 <TableRow>
                   <TableCell>{txnDetails?.msgs[0].typeUrl}</TableCell>
                   <TableCell colSpan={2}>
-                    {txnDetails?.msgs.map((m) => (
+                    {txnDetails?.msgs.map((m, index) => (
                       <>
                         {m.typeUrl === "/cosmos.bank.v1beta1.MsgSend" ? (
-                          <span>
+                          <Typography variant="caption" id={index}>
                             {m?.value?.fromAddress} <strong>send </strong>{" "}
                             <strong>
                               {m?.value?.amount[0].amount +
@@ -149,10 +150,10 @@ export const Single_Tx = (props) => {
                                 m?.value?.amount[0].denom}{" "}
                             </strong>{" "}
                             to {m?.value?.toAddress}
-                          </span>
+                          </Typography>
                         ) : null}
                         {m.typeUrl === "/cosmos.staking.v1beta1.MsgDelegate" ? (
-                          <span>
+                          <Typography variant="caption" id={index}>
                             {m?.value?.delegatorAddress}{" "}
                             <strong> delegate </strong>{" "}
                             <strong>
@@ -161,7 +162,7 @@ export const Single_Tx = (props) => {
                                 m?.value?.amount.denom}{" "}
                             </strong>{" "}
                             to {m?.value?.validatorAddress}
-                          </span>
+                          </Typography>
                         ) : null}
                       </>
                     ))}

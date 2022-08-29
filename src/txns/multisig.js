@@ -1,6 +1,6 @@
 import { createMultisigThresholdPubkey, pubkeyToAddress } from "@cosmjs/amino";
 
-export const createMultiSig = async (
+export const createMultisig = (
   pubKeysArr,
   threshold,
   addressPrefix,
@@ -24,7 +24,6 @@ export const createMultiSig = async (
     return pubkey;
   });
 
-  // save multisig to fauna
   const multisig = {
     address: multisigAddress,
     pubkeyJSON: multisigPubkey,

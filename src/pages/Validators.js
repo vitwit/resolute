@@ -487,7 +487,7 @@ export default function Validators() {
       if (balance !== undefined)
         setAvailableBalance(
           parseBalance(
-            balance.balance,
+            [balance.balance],
             currency.coinDecimals,
             currency.coinMinimalDenom
           )
