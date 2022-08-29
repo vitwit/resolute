@@ -7,7 +7,7 @@ export function formatVotingPower(token: number, coinDecimals: number): string {
 
 export function parseSpendLimit(tokens: any[], coinDecimals: number): number {
   if (tokens.length > 0) {
-    let temp = tokens[0].amount / 10.0 ** coinDecimals;
+    let temp = Number(tokens[0].amount) / (10.0 ** coinDecimals);
     return parseFloat(temp.toFixed(coinDecimals));
   }
 
