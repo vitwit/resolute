@@ -161,8 +161,8 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "cosmoshub-4",
         chainName: "Cosmos Hub",
-        rest: "https://resolute.vitwit.com/cosmos_api",
-        rpc: "https://resolute.vitwit.com/cosmos_rpc/",
+        rest: "https://resolute.witval.com/cosmos_api",
+        rpc: "https://resolute.witval.com/cosmos_rpc/",
         gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
         currencies: [
           { coinDenom: "ATOM", coinMinimalDenom: "uatom", coinDecimals: 6 },
@@ -244,8 +244,8 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "regen-1",
         chainName: "Regen",
-        rest: "https://resolute.vitwit.com/regen_api",
-        rpc: "https://resolute.vitwit.com/regen_rpc/",
+        rest: "https://resolute.witval.com/regen_api",
+        rpc: "https://resolute.witval.com/regen_rpc/",
         gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 },
         currencies: [
           { coinDenom: "REGEN", coinMinimalDenom: "uregen", coinDecimals: 6 },
@@ -273,8 +273,8 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "akashnet-2",
         chainName: "Akash",
-        rest: " https://resolute.vitwit.com/akash_api",
-        rpc: "https://resolute.vitwit.com/akash_rpc/",
+        rest: " https://resolute.witval.com/akash_api",
+        rpc: "https://resolute.witval.com/akash_rpc/",
         gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 },
         currencies: [
           { coinDenom: "AKT", coinMinimalDenom: "uakt", coinDecimals: 6 },
@@ -302,8 +302,8 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "osmosis-1",
         chainName: "Osmosis",
-        rest: "https://resolute.vitwit.com/osmosis_api",
-        rpc: "https://resolute.vitwit.com/osmosis_rpc/",
+        rest: "https://resolute.witval.com/osmosis_api",
+        rpc: "https://resolute.witval.com/osmosis_rpc/",
         currencies: [
           { coinDenom: "OSMO", coinMinimalDenom: "uosmo", coinDecimals: 6 },
         ],
@@ -331,8 +331,8 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "juno-1",
         chainName: "Juno",
-        rest: "https://resolute.vitwit.com/juno_api",
-        rpc: "https://resolute.vitwit.com/juno_rpc/",
+        rest: "https://resolute.witval.com/juno_api",
+        rpc: "https://resolute.witval.com/juno_rpc/",
         currencies: [
           { coinDenom: "JUNO", coinMinimalDenom: "ujuno", coinDecimals: 6 },
         ],
@@ -360,8 +360,8 @@ export function getMainNetworks(): Network[] {
       config: {
         chainId: "stargaze-1",
         chainName: "Stargaze",
-        rest: "https://resolute.vitwit.com/stargaze_api",
-        rpc: "https://resolute.vitwit.com/stargaze_rpc/",
+        rest: "https://resolute.witval.com/stargaze_api",
+        rpc: "https://resolute.witval.com/stargaze_rpc/",
         currencies: [
           { coinDenom: "STARS", coinMinimalDenom: "ustars", coinDecimals: 6 },
         ],
