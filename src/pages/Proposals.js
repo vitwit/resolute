@@ -18,6 +18,7 @@ import {
 } from "../features/authz/authzSlice";
 import VoteDialog from "../components/Vote";
 import { getVoteAuthz } from "../utils/authorizations";
+import { useNavigate } from "react-router-dom";
 
 export default function Proposals() {
   const proposals = useSelector((state) => state.gov.active.proposals);
@@ -186,6 +187,8 @@ export default function Proposals() {
     }
   };
 
+  const navigate = useNavigate();
+
   return (
     <>
       <Grid container spacing={2}>
@@ -205,15 +208,25 @@ export default function Proposals() {
             variant="h5"
             fontWeight={500}
             color="text.primary"
-            style={{ justifyContent: "center", width: "100%", marginTop: 24 }}
+            sx={{
+              justifyContent: "center",
+              width: "100%",
+              mt: 3,
+            }}
           >
             No Active Proposals Found
           </Typography>
         ) : (
           <>
             {proposals.map((proposal, index) => (
-              <Grid item md={6} xs={12} key={index}>
-                <Paper elevation={0} style={{ padding: 12 }}>
+              <Grid
+                item
+                md={6}
+                xs={12}
+                key={index}
+                onClick={() => navigate(`/proposals/${proposal?.proposal_id}`)}
+              >
+                <Paper elevation={0} sx={{ p: 1 }}>
                   <ProposalItem
                     info={proposal}
                     tally={proposalTally[proposal?.proposal_id]}
