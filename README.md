@@ -13,10 +13,10 @@ Supported features:
 
 ## Adding new network
 
-To add mainet use one of template from `example` directory and add it to the `mainNets` object in `src/utils/networks.ts`.
-To add testnet use one of template from `example` directory and add it to the `testNets` object in `src/utils/networks.ts`.
+To add mainet use one of template from the `example` directory and add it to the `mainNets` object in `src/utils/networks.ts`.
+To add testnet use one of template from the `example` directory and add it to the `testNets` object in `src/utils/networks.ts`.
 
-* If your network is already registered with keplr use `example/chain.json` template.
+* If your network is already registered with Keplr use `example/chain.json` template.
 * To register your network with keplr use `example/experimental.json` template.
 
 ## Install deps 
