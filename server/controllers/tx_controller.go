@@ -30,7 +30,6 @@ func UpdateTxnStatus(txId primitive.ObjectID, status string, hash string) error 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	fmt.Printf(" txid------------- %v, %v", txId, status)
 	query := bson.M{
 		"_id": txId,
 	}
