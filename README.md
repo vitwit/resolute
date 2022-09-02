@@ -11,11 +11,19 @@ Supported features:
 - [ ] Groups
 - [x] Multisig
 
+## Adding new network
+
+To add mainet use one of template from the `example` directory and add it to the `mainNets` object in `src/utils/networks.ts`.
+To add testnet use one of template from the `example` directory and add it to the `testNets` object in `src/utils/networks.ts`.
+
+* If your network is already registered with Keplr use `example/chain.json` template.
+* To register your network with keplr use `example/experimental.json` template.
+
 ## Install deps 
 ```bash
 # clone the repo with git and checkout to master
-$ git clone https://github.com/vitwit/Staking.git
-$ cd Staking
+$ git clone https://github.com/vitwit/resolute.git
+$ cd resolute
 $ git checkout master
 $ yarn
 ```
