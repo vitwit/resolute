@@ -28,7 +28,7 @@ func ConnectDB() *mongo.Client {
 		log.Fatal(err)
 	}
 
-	fmt.Println("connected to database")
+	log.Println("connected to database")
 	return client
 }
 
