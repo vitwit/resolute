@@ -55,6 +55,11 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
         : signatures[0].bodybytes
     );
 
+    console.log('Before base64 body bytes', signatures[0].bodyBytes
+      ? signatures[0].bodyBytes
+      : signatures[0].bodybytes)
+    console.log('After base64 body bytes', bodyBytes)
+
     let currentSignatures = [];
     signatures.map((s) => {
       let obj = {
@@ -87,6 +92,11 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
         pubkeys: pubkeys,
       },
     };
+
+    console.log('new map Obj', newMapObj)
+    console.log('multisig sequence ', multisigAcc?.sequence)
+    console.log('Pub keys ---- ', pubkeys)
+    console.log('current signatures --', currentSignatures)
 
     const signedTx = makeMultisignedTx(
       newMapObj,

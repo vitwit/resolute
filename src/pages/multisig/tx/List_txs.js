@@ -164,7 +164,7 @@ const TableRowComponent = ({ tx }) => {
           {tx?.signatures?.length || 0}/{threshold}
         </TableCell>
         <TableCell align="right">
-          {tx?.signatures?.length || 0 >= threshold ? (
+          {(tx?.signatures?.length || 0) >= threshold ? (
             <span>
               {tx?.status === "DONE" || tx?.status === "FAILED"
                 ? tx?.status
