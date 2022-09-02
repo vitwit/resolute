@@ -4,7 +4,7 @@ const MULTI_ACCOUNT_URL = "/multisig/accounts";
 const TXNS_URL = "/txs";
 const SIGN_URL = "/signs";
 const DELEGATOR_VALIDATORS = `/cosmos/staking/v1beta1/delegators`;
-const BASE_URL = process.env.REACT_APP_MULTISIG_API || "http://localhost:1323";
+const BASE_URL = "https://resolute.witval.com/api/"; // TODO: read BASE_URL from env variable
 
 export const createMultisigAccount = (data) => {
   let uri = `${BASE_URL}${ACCOUNT_URL}`;
