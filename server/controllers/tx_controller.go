@@ -237,7 +237,6 @@ func DeleteTxn(c echo.Context) error {
 func GetTxn(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	txId := c.Param("txId")
-	fmt.Printf("txiDDDDDDDDDDDDDDD %v", txId)
 	var txn models.Transactions
 	defer cancel()
 
