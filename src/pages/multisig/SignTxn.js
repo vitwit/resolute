@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { toBase64 } from "@cosmjs/encoding";

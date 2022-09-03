@@ -34,7 +34,7 @@ export function WitvalValidator(props) {
 
   useEffect(() => {
     getWitvalValidator();
-  }, [validators]);
+  }, [validators]); // react-hooks/exhaustive-deps
 
   return (
     <>

@@ -78,7 +78,7 @@ export function CustomAppBar(props) {
                     <></>
             }
             <Toolbar>
-                <img id='logo-chain-main' src="white-logo.png" style={{ maxWidth: 161, maxHeight: 45 }} />
+                <img id='logo-chain-main' alt="app-logo" src="white-logo.png" style={{ maxWidth: 161, maxHeight: 45 }} />
                 <Typography
                     component="h1"
                     variant="h6"
@@ -132,7 +132,9 @@ export function CustomAppBar(props) {
                                 }
                             >
                                 <ListItemIcon>
-                                    <img src={network.logos.menu} />
+                                    <img src={network.logos.menu}
+                                    alt="menu-icon"
+                                    />
                                 </ListItemIcon>
                                 <ListItemText>
                                     {network.config.chainName}
@@ -157,7 +159,9 @@ export function CustomAppBar(props) {
                                 }
                             >
                                 <ListItemIcon>
-                                    <img src={network.logos?.menu} />
+                                    <img src={network.logos?.menu} 
+                                    alt="menu-icon"
+                                    />
                                 </ListItemIcon>
                                 <ListItemText>
                                     {network.config?.chainName}
