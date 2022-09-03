@@ -22,7 +22,10 @@ const initialState = {
     status: "idle",
     accounts: [],
   },
-  createTxnRes: {},
+  createTxnRes: {
+    status: "",
+    error: "",
+  },
   txns: {},
   txn: {},
   createSignRes: {},
@@ -48,7 +51,7 @@ export const getMultisigAccounts = createAsyncThunk(
       const response = await fetchMultisigAccounts(data);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error);
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -87,9 +90,13 @@ export const multisigByAddress = createAsyncThunk(
 
 export const createTxn = createAsyncThunk(
   "multisig/createTxn",
-  async (data) => {
-    const response = await createTransaction(data);
-    return response.data;
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await createTransaction(data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error?.message || "Something went wrong");
+    }
   }
 );
 
@@ -140,6 +147,9 @@ export const multiSlice = createSlice({
     resetCreateMultisigRes: (state, _) => {
       state.createMultisigAccountRes.status = "";
     },
+    resetCreateTxnState: (state, _) => {
+      state.createTxnRes = initialState.createTxnRes;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -164,6 +174,7 @@ export const multiSlice = createSlice({
       .addCase(getMultisigAccounts.rejected, (state, action) => {
         state.multisigAccounts.status = "rejected";
         state.multisigAccounts.accounts = [];
+        state.multisigAccounts.error = action.payload;
       });
 
     builder
@@ -193,10 +204,11 @@ export const multiSlice = createSlice({
         state.createTxnRes.status = "pending";
       })
       .addCase(createTxn.fulfilled, (state, action) => {
-        state.createTxnRes.status = "done";
+        state.createTxnRes.status = "idle";
       })
       .addCase(createTxn.rejected, (state, action) => {
         state.createTxnRes.status = "rejected";
+        state.createTxnRes.error = action.payload;
       });
 
     builder
@@ -248,7 +260,6 @@ export const multiSlice = createSlice({
         state.delegatorVals.status = "pending";
       })
       .addCase(getDelegatorValidators.fulfilled, (state, action) => {
-        console.log("action payloaddddd", action.payload);
         state.delegatorVals = action.payload;
       })
       .addCase(getDelegatorValidators.rejected, (state, action) => {
@@ -279,6 +290,7 @@ export const multiSlice = createSlice({
   },
 });
 
-export const { resetCreateMultisigRes } = multiSlice.actions;
+export const { resetCreateMultisigRes, resetCreateTxnState } =
+  multiSlice.actions;
 
 export default multiSlice.reducer;

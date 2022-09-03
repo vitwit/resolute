@@ -1,6 +1,6 @@
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import {
   IconButton,
   Table,
@@ -85,11 +85,19 @@ const TableRowComponent = ({ tx }) => {
   const { chainInfo } = wallet;
 
   const displayDenom = (amountObj) => {
-    return parseTokens(
-      amountObj,
-      chainInfo?.config?.currencies[0].coinDenom,
-      chainInfo?.config?.currencies[0].coinDecimals
-    );
+    if (Array.isArray(amountObj)) {
+      return parseTokens(
+        amountObj,
+        chainInfo?.config?.currencies[0].coinDenom,
+        chainInfo?.config?.currencies[0].coinDecimals
+      );
+    } else {
+      return parseTokens(
+        [amountObj],
+        chainInfo?.config?.currencies[0].coinDenom,
+        chainInfo?.config?.currencies[0].coinDecimals
+      );
+    }
   };
 
   return (

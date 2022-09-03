@@ -1,7 +1,7 @@
 import { Button, InputAdornment, TextField } from "@mui/material";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { Decimal } from "@cosmjs/math";
+import { useDispatch, useSelector } from "react-redux";
 import {
   createTxn,
   resetCreateTxnState,
@@ -10,12 +10,11 @@ import { fee } from "../../txns/execute";
 import FeeComponent from "./FeeComponent";
 import { Box } from "@mui/system";
 import { useForm, Controller } from "react-hook-form";
-import { fromBech32 } from "@cosmjs/encoding";
+import Autocomplete from "@mui/material/Autocomplete";
 import { resetError, setError } from "../../features/common/commonSlice";
 
-export default function SendForm({ chainInfo }) {
+const DelegateForm = ({ chainInfo }) => {
   const dispatch = useDispatch();
-  var createRes = useSelector((state) => state.multisig.createTxnRes);
 
   const {
     handleSubmit,
@@ -25,7 +24,7 @@ export default function SendForm({ chainInfo }) {
   } = useForm({
     defaultValues: {
       amount: 0,
-      recipient: "",
+      validator: null,
       from: "",
       gas: 200000,
       memo: "",
@@ -33,101 +32,122 @@ export default function SendForm({ chainInfo }) {
     },
   });
 
+  const currency = chainInfo.config.currencies[0];
+
   const multisigAddress =
     (localStorage.getItem("multisigAddress") &&
       JSON.parse(localStorage.getItem("multisigAddress"))) ||
     {};
 
-  const currency = chainInfo.config.currencies[0];
+  var validators = useSelector((state) => state.staking.validators);
+  var createRes = useSelector((state) => state.multisig.createTxnRes);
+
+  useEffect(() => {
+    if (createRes?.status === "rejected") {
+      dispatch(
+        setError({
+          type: "error",
+          message: createRes?.error,
+        })
+      );
+    }
+  }, [createRes]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetError());
+      dispatch(resetCreateTxnState());
+    };
+  }, []);
+
+  validators = (validators && validators.active) || {};
+  var [data, setData] = useState([]);
+
+  useEffect(() => {
+    data = [];
+    Object.entries(validators).map(([k, v], index) => {
+      let obj1 = {
+        value: k,
+        label: v.description.moniker,
+      };
+
+      data = [...data, obj1];
+    });
+
+    setData([...data]);
+  }, [validators]);
 
   const onSubmit = (data) => {
-    const amountInAtomics = Decimal.fromUserInput(
+    const baseAmount = Decimal.fromUserInput(
       data.amount,
-      Number(currency.coinDecimals)
+      Number(currency?.coinDecimals)
     ).atomics;
 
-    const msgSend = {
-      fromAddress: multisigAddress?.address,
-      toAddress: data.recipient,
-      amount: [
-        {
-          amount: amountInAtomics,
-          denom: currency.coinMinimalDenom,
-        },
-      ],
+    const msgDelegate = {
+      delegatorAddress: multisigAddress?.address,
+      validatorAddress: data.validator?.value,
+      amount: {
+        amount: baseAmount,
+        denom: currency?.coinMinimalDenom,
+      },
     };
 
     const msg = {
-      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
-      value: msgSend,
+      typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+      value: msgDelegate,
     };
 
-    const feeObj = fee(
-      chainInfo?.config.currencies[0].coinMinimalDenom,
-      data.fees,
-      data.gas
-    );
+    const feeObj = fee(currency?.coinMinimalDenom, data.fees, data.gas);
 
     const payload = {
+      address: multisigAddress?.address,
       chainId: chainInfo?.config?.chainId,
       msgs: [msg],
       fee: feeObj,
       memo: data.memo,
-      address: multisigAddress?.address,
+      gas: data.gas,
     };
 
     dispatch(createTxn(payload));
   };
 
-  useEffect(() => {
-    if (createRes.status === "rejected") {
-      dispatch(
-        setError({
-          type: "error",
-          message: createRes.error,
-        })
-      );
-    }
-    return () => {
-      dispatch(resetCreateTxnState());
-      dispatch(resetError());
-    };
-  }, [createRes]);
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
-        name="recipient"
+        name="validator"
         control={control}
-        rules={{
-          required: "Recipient is required",
-          validate: (value) => {
-            try {
-              fromBech32(value);
-              return true;
-            } catch (error) {
-              return false;
-            }
-          },
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <TextField
-            {...field}
+        defaultValue={null}
+        rules={{ required: "Validator is required" }}
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <Autocomplete
+            disablePortal
+            label="validator"
+            value={value}
             sx={{
-              mb: 2,
               mt: 2,
+              mb: 2,
             }}
-            label="Recipient"
-            fullWidth
-            error={!!error}
-            helperText={
-              errors.recipient?.type === "validate"
-                ? "Invalid recipient address"
-                : error?.message
+            isOptionEqualToValue={(option, value) =>
+              option.value === value.value
             }
+            options={data}
+            onChange={(event, item) => {
+              onChange(item);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                required
+                placeholder="select validator"
+                error={!!error}
+                helperText={error ? error.message : null}
+                label="validator"
+              />
+            )}
           />
         )}
       />
+
       <Controller
         name="amount"
         control={control}
@@ -198,31 +218,30 @@ export default function SendForm({ chainInfo }) {
       />
 
       <FeeComponent
-        onSetFeeChange={(v) => {
-          setValue("fees", v);
-        }}
+        onSetFeeChange={(v) => setValue("fees", v)}
         chainInfo={chainInfo}
       />
       <Box
-        component="div"
         sx={{
           textAlign: "center",
+          mt: 2,
         }}
+        component="div"
       >
         <Button
           type="submit"
           variant="contained"
           disableElevation
+          disabled={createRes.status === "pending"}
           sx={{
-            mt: 2,
-            justifyContent: "center",
             textTransform: "none",
           }}
-          disabled={createRes.status === "pending"}
         >
           {createRes.status === "pending" ? "Please wait..." : "Create"}
         </Button>
       </Box>
     </form>
   );
-}
+};
+
+export default DelegateForm;
