@@ -28,6 +28,10 @@ $ git checkout master
 $ yarn
 ```
 
+## Environment variables
+
+Create .env file and set multisig backend URI `REACT_APP_API_URI`
+
 ## Start in DEV Mode 
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.

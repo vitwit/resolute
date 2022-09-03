@@ -39,7 +39,7 @@ export default function Unjail() {
     dispatch(resetTxHash());
   }, []);
 
-  const { handleSubmit, control, setValue } = useForm({
+  const { handleSubmit, control } = useForm({
     defaultValues: {
       validator: "",
     },

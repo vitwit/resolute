@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { signAndBroadcastAmino, fee, signAndBroadcastUnjail, signAndBroadcastProto } from "../../txns/execute";
+import { fee, signAndBroadcastUnjail } from "../../txns/execute";
 import { setError, setTxHash } from "../common/commonSlice";
 import { Unjail } from "../../txns/slashing/unjail";
 
