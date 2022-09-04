@@ -76,7 +76,7 @@ export default function SendPage() {
                     denom: currency.coinMinimalDenom,
                     chainId: chainInfo.config.chainId,
                     rpc: chainInfo.config.rpc,
-                    feeAmount: chainInfo.config.gasPriceStep.average,
+                    feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
                 }))
             }
         } else {
@@ -89,7 +89,7 @@ export default function SendPage() {
                 denom: currency.coinMinimalDenom,
                 chainId: chainInfo.config.chainId,
                 rpc: chainInfo.config.rpc,
-                feeAmount: chainInfo.config.gasPriceStep.average,
+                feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
             })
         }
     }

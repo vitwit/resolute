@@ -274,7 +274,7 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
       });
     } else {
       dispatch(
@@ -283,7 +283,7 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
         })
       );
     }
@@ -316,7 +316,7 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
       });
     } else {
       dispatch(
@@ -328,7 +328,7 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
         })
       );
     }
@@ -360,7 +360,7 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
       });
     } else {
       dispatch(
@@ -371,7 +371,7 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
         })
       );
     }
@@ -447,7 +447,7 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
       });
     } else {
       dispatch(
@@ -460,7 +460,7 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
         })
       );
     }
