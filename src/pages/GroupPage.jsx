@@ -10,6 +10,7 @@ import {
 } from "../features/group/groupSlice";
 import { useNavigate } from "react-router-dom";
 import GroupsByMember from "../components/group/GroupsByMember";
+import GroupList from "../components/group/GroupList";
 
 export default function GroupPage() {
   const [selectedTab, setSelectedTab] = useState("admin");
@@ -81,8 +82,9 @@ export default function GroupPage() {
           </Button>
         </ButtonGroup>
         <Box component="div" sx={{ mt: 1 }}>
+
           {selectedTab === "admin" ? (
-            <GroupsByAdmin
+            <GroupList
               groups={groups.admin.list}
               status={groups.admin.status}
               onAction={(group) => {
@@ -90,9 +92,9 @@ export default function GroupPage() {
               }}
             />
           ) : (
-            <GroupsByMember
+            <GroupList
               groups={groups.member.list}
-              status={groups.admin.status}
+              status={groups.member.status}
               onAction={(group) => {
                 console.log(group);
               }}

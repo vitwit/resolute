@@ -1,4 +1,6 @@
 import Chip from "@mui/material/Chip";
+import { Decimal } from "@cosmjs/math";
+
 
 export function getTypeURLName(url) {
   let temp = url.split(".");
@@ -198,3 +200,37 @@ export function mainValueToMinimum(amount, coinInfo) {
 export function amountToMinimalValue(amount, coinInfo) {
   return Number(amount) * 10 ** coinInfo.coinDecimals;
 }
+
+export const setLocalStorage = (key, value, type) => {
+  if (type === 'object') {
+    localStorage.setItem(key, JSON.stringify(value))
+    return
+  } else {
+    localStorage.setItem(key, value);
+    return
+  }
+}
+
+export const getLocalStorage = (key, type) => {
+  if (type === 'object') {
+    let obj = JSON.parse(localStorage.getItem(key));
+    return obj
+  } else {
+    let value = localStorage.getItem(key)
+    return value;
+  }
+}
+
+export const getAmountObj = (amount = 0, chainInfo) => {
+  const amountInAtomics = Decimal.fromUserInput(
+    amount,
+    Number(chainInfo.config.currencies[0].coinDecimals)
+  ).atomics;
+
+  return {
+    amount: amountInAtomics,
+    denom: chainInfo.config.currencies[0].coinMinimalDenom
+  }
+}
+
+

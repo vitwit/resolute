@@ -1,21 +1,41 @@
 import Button from "@mui/material/Button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DialogAddGroupMember from "../../components/group/DialogAddGroupMember";
 import { Grid, IconButton, Paper, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Controller, useForm } from "react-hook-form";
-import { shortenAddress } from "../../utils/util";
+import { amountToMinimalValue, shortenAddress } from "../../utils/util";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import DialogAttachPolicy from "../../components/group/DialogAttachPolicy";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { resetGroupTx, txCreateGroup } from "../../features/group/groupSlice";
+import CreateGroupForm from "./CreateGroupForm";
+import CreateGroupPolicy from "./CreateGroupPolicy";
+import { useNavigate } from "react-router-dom";
+import { setError } from "../../features/common/commonSlice";
 
 export default function CreateGroupPage() {
-  const [showMemberDialog, setShowMemberDialog] = useState(false);
   const [members, setMembers] = useState([]);
+  const wallet = useSelector((state) => state.wallet);
+  const { chainInfo, connected, address } = wallet;
+  const navigate = useNavigate();
+  const txRes = useSelector(state => state?.group?.tx);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetGroupTx());
+    }
+  }, [])
+
+  useEffect(() => {
+    if (txRes?.status === 'idle') {
+      // navigate(`/group`)
+    }
+  }, [txRes?.status])
 
   const showGroupMemberDialog = () => {
-    setShowMemberDialog(true);
+    // setShowMemberDialog(true);
   };
 
   const {
@@ -31,20 +51,28 @@ export default function CreateGroupPage() {
 
   const dispatch = useDispatch();
 
+  const handleMembers = members => setMembers([...members])
+
+  const handlePolicy = policy => setPolicyData({ ...policy })
+
+
   const onSubmit = (data) => {
-    console.log(data);
-    console.log(members);
-    console.log(policyData);
-    // dispatch({
-    //   granter: address,
-    //   grantee: data.grantee,
-    //   spendLimit: amountToMinimalValue(data.spendLimit, chainInfo.config.currencies[0]),
-    //   expiration: data.expiration,
-    //   denom: currency.coinMinimalDenom,
-    //   chainId: chainInfo.config.chainId,
-    //   rpc: chainInfo.config.rpc,
-    //   feeAmount: chainInfo.config.gasPriceStep.average,
-    // })
+    const dataObj = {
+      admin: address,
+      granter: address,
+      grantee: data.grantee,
+      members,
+      policyData,
+      groupMetaData: data?.metadata,
+      // spendLimit: amountToMinimalValue(data.spendLimit, chainInfo.config.currencies[0]),
+      expiration: data.expiration,
+      // denom: currency.coinMinimalDenom,
+      chainId: chainInfo.config.chainId,
+      rpc: chainInfo.config.rpc,
+      feeAmount: chainInfo.config.gasPriceStep.average,
+    }
+    console.log('dddddddddddddddd', dataObj)
+    dispatch(txCreateGroup(dataObj))
   };
 
   const [memberFields, setMemberFields] = useState({
@@ -65,7 +93,7 @@ export default function CreateGroupPage() {
       weight: weight,
       metadata: metadata,
     });
-    setShowMemberDialog(true);
+    // setShowMemberDialog(true);
   };
 
   const [policyDialogOpen, setpolicyDialogOpen] = useState(false);
@@ -76,50 +104,8 @@ export default function CreateGroupPage() {
   };
 
   return (
-    <>
-      {showMemberDialog ? (
-        <DialogAddGroupMember
-          open={showMemberDialog}
-          defaultFields={memberFields}
-          onAddMember={(address, metadata, weight) => {
-            for (let i = 0; i < members.length; i++) {
-              if (members[i].address === address) {
-                members[i] = {
-                  address: address,
-                  metadata: metadata,
-                  weight: weight,
-                };
-                setShowMemberDialog(false);
-                return;
-              }
-            }
+    <Box>
 
-            setMembers([
-              ...members,
-              {
-                address: address,
-                metadata: metadata,
-                weight: weight,
-              },
-            ]);
-
-            setShowMemberDialog(false);
-          }}
-          onClose={() => setShowMemberDialog(false)}
-        />
-      ) : (
-        <></>
-      )}
-      {policyDialogOpen ? (
-        <DialogAttachPolicy
-          open={policyDialogOpen}
-          onClose={() => setpolicyDialogOpen(false)}
-          onAttachPolicy={onAttachPolicy}
-          members={members.reduce((a, o) => Number(a)+Number(o.weight), 0)}
-        />
-      ) : (
-        <></>
-      )}
       <Paper elevation={0} sx={{ p: 2, textAlign: "center" }}>
         <Typography color="text.primary" variant="h6" fontWeight={600}>
           Create Group
@@ -130,6 +116,8 @@ export default function CreateGroupPage() {
           sx={{
             "& .MuiTextField-root": { mt: 1.5, mb: 1.5 },
             p: 2,
+            width: '70%',
+            margin: '0 auto'
           }}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -143,32 +131,11 @@ export default function CreateGroupPage() {
                     {...field}
                     required
                     label="Group Metadata"
+                    multiline
                     fullWidth
                   />
                 )}
               />
-            </div>
-            <div>
-              {members.length > 0 ? (
-                <Typography
-                  variant="body1"
-                  color="text.primary"
-                  fontWeight={500}
-                  style={{ textAlign: "left" }}
-                >
-                  Members
-                </Typography>
-              ) : (
-                ""
-              )}
-              {members.map((member, index) => (
-                <MemberItem
-                  key={index}
-                  member={member}
-                  onRemove={removeMember}
-                  onEdit={editMember}
-                />
-              ))}
             </div>
             {policyData.metadata?.length > 0 ? (
               <div
@@ -275,38 +242,12 @@ export default function CreateGroupPage() {
                 justifyContent: "right",
               }}
             >
-              {members.length > 0 ? (
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    setpolicyDialogOpen(true);
-                  }}
-                  sx={{
-                    textTransform: "none",
-                  }}
-                >
-                  Attach decision policy
-                </Button>
-              ) : (
-                <></>
-              )}
               &nbsp;
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setMemberFields({
-                    address: "",
-                    metadata: "",
-                    weight: "",
-                  });
-                  showGroupMemberDialog();
-                }}
-                sx={{
-                  textTransform: "none",
-                }}
-              >
-                Add Group Member
-              </Button>
+            </Box>
+            <Box>
+              <CreateGroupForm handleMembers={handleMembers} />
+              <br />
+              <CreateGroupPolicy handlePolicy={handlePolicy} />
             </Box>
 
             <Button
@@ -318,12 +259,15 @@ export default function CreateGroupPage() {
                 mt: 2,
               }}
             >
-              Create
+              {
+                txRes?.status === 'pending' ? 'Loading...' : 'Create'
+              }
+
             </Button>
           </form>
         </Box>
       </Paper>
-    </>
+    </Box>
   );
 }
 

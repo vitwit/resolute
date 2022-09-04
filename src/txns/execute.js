@@ -6,7 +6,7 @@ import {
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Registry } from "@cosmjs/proto-signing";
 import { MsgClaim } from "./passage/msg_claim";
-import { MsgCreateGroup, MsgCreateGroupWithPolicy } from "./group/v1/tx";
+import { MsgCreateGroup, MsgCreateGroupWithPolicy, MsgSubmitProposal, MsgVote } from "./group/v1/tx";
 import { AirdropAminoConverter } from "../features/airdrop/amino";
 import { MsgUnjail } from "./slashing/tx";
 import { SlashingAminoConverter } from "../features/slashing/slashing";
@@ -38,6 +38,78 @@ export async function signAndBroadcastGroupMsg(
     offlineSigner,
     {
       registry: registry,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastGroupProposalVote(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+
+  const aTypes = new AminoTypes({
+    ...MsgVote,
+  });
+
+  registry.register(
+    "/cosmos.group.v1.VotesByVoter",
+    MsgVote
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+      aminoTypes: aTypes,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastGroupProposal(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+
+  const aTypes = new AminoTypes({
+    ...MsgSubmitProposal,
+  });
+
+  defaultRegistryTypes.forEach((v) => {
+    registry.register(v[0], v[1]);
+  });
+
+  registry.register(
+    "/cosmos.group.v1.MsgSubmitProposal",
+    MsgSubmitProposal
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+      aminoTypes: aTypes,
     }
   );
 

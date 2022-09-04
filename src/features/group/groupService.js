@@ -3,6 +3,11 @@ import { convertPaginationToParams } from '../utils';
 
 const groupByAdminURL = (admin) => `/cosmos/group/v1/groups_by_admin/${admin}`
 const groupByMemberURL = (address) => `/cosmos/group/v1/groups_by_member/${address}`
+const groupMembersURL = groupId => `/cosmos/group/v1/group_members/${groupId}`
+const groupByIdURL = groupId => `/cosmos/group/v1/group_info/${groupId}`
+const groupMembersByIdURL = groupId => `/cosmos/group/v1/group_members/${groupId}`
+const groupPoliciesByIdURL = groupId => `/cosmos/group/v1/group_policies_by_group/${groupId}`
+const groupPolicyProposalsURL = address => `/cosmos/group/v1/proposals_by_group_policy/${address}`
 
 
 const fetchGroupsByAdmin = (baseURL, admin, pagination) => {
@@ -29,9 +34,75 @@ const fetchGroupsByMember = (baseURL, address, pagination) => {
     })
 }
 
+const fetchGroupMembers = (baseURL, groupId, pagination) => {
+    let uri = `${baseURL}${groupMembersURL(groupId)}`
+    const pageParams = convertPaginationToParams(pagination)
+    if (pageParams !== "") uri += `?${pageParams}`
+
+    return Axios.get(uri, {
+        headers: {
+            Accept: 'application/json, text/plain, */*',
+        },
+    })
+}
+
+const fetchGroupById = (baseURL, groupId) => {
+    let uri = `${baseURL}${groupByIdURL(groupId)}`
+
+    return Axios.get(uri, {
+        headers: {
+            Accept: 'application/json, text/plain, */*',
+        },
+    })
+}
+
+const fetchGroupMembersById = (baseURL, groupId, pagination) => {
+    let uri = `${baseURL}${groupMembersByIdURL(groupId)}`
+    const pageParams = convertPaginationToParams(pagination)
+    if (pageParams !== "") uri += `?${pageParams}&pagination.count_total=true`
+
+    return Axios.get(uri, {
+        headers: {
+            Accept: 'application/json, text/plain, */*',
+        },
+    })
+}
+
+const fetchGroupPoliciesById = (baseURL, groupId, pagination) => {
+    let uri = `${baseURL}${groupPoliciesByIdURL(groupId)}`
+    const pageParams = convertPaginationToParams(pagination)
+    if (pageParams !== "") uri += `?${pageParams}&pagination.count_total=true`
+
+    return Axios.get(uri, {
+        headers: {
+            Accept: 'application/json, text/plain, */*',
+        },
+    })
+}
+
+
+const fetchGroupPolicyProposalsById = (baseURL, address, pagination) => {
+    let uri = `${baseURL}${groupPolicyProposalsURL(address)}`
+    const pageParams = convertPaginationToParams(pagination)
+    if (pageParams !== "") uri += `?${pageParams}&pagination.count_total=true`
+
+    return Axios.get(uri, {
+        headers: {
+            Accept: 'application/json, text/plain, */*',
+        },
+    })
+}
+
+
+
 const result = {
     groupsByAdmin: fetchGroupsByAdmin,
     groupsByMember: fetchGroupsByMember,
+    groupMembers: fetchGroupMembers,
+    fetchGroupById: fetchGroupById,
+    fetchGroupMembersById: fetchGroupMembersById,
+    fetchGroupPoliciesById: fetchGroupPoliciesById,
+    fetchGroupPolicyProposalsById
 }
 
 export default result;
