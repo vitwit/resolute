@@ -358,6 +358,21 @@ export const stakeSlice = createSlice({
           }
         }
         state.validators.errMsg = "";
+
+        const activeSort = Object.fromEntries(
+          Object.entries(state.validators.active).sort(([, a], [, b]) => {
+            return b.tokens - a.tokens;
+          })
+        );
+  
+        state.validators.activeSorted = Object.keys(activeSort);
+  
+        const inactiveSort = Object.fromEntries(
+          Object.entries(state.validators.inactive).sort(([, a], [, b]) => {
+            return b.tokens - a.tokens;
+          })
+        );
+        state.validators.inactiveSorted = Object.keys(inactiveSort);
       })
       .addCase(getAllValidators.rejected, (state, action) => {
         state.validators.status = "rejected";

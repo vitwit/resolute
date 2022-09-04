@@ -213,17 +213,6 @@ export default function Validators() {
   }
 
   useEffect(() => {
-    if (
-      connected &&
-      (validators.totalActive > 0 || validators.totalInactive > 0)
-    ) {
-      if (Object.keys(validators?.active).length > 0) {
-        dispatch(sortValidatorsByVotingPower());
-      }
-    }
-  }, [validators]);
-
-  useEffect(() => {
     return () => {
       dispatch(resetError());
       dispatch(resetTxHash());
@@ -274,7 +263,8 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       });
     } else {
       dispatch(
@@ -283,7 +273,8 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     }
@@ -316,7 +307,8 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       });
     } else {
       dispatch(
@@ -328,7 +320,8 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     }
@@ -360,7 +353,8 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       });
     } else {
       dispatch(
@@ -371,7 +365,8 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     }
@@ -447,7 +442,8 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       });
     } else {
       dispatch(
@@ -460,7 +456,8 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     }

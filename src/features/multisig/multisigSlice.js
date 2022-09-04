@@ -30,22 +30,32 @@ const initialState = {
   },
   txns: {},
   txn: {},
-  createSignRes: {},
+  createSignRes: {
+    status: "",
+    error: "",
+  },
   signatures: {},
   multisigAccount: {},
   delegatorVals: {},
-  updateTxn: {},
+  updateTxn: {
+    status: "",
+    error: "",
+  },
   deleteTxnRes: {
     status: "",
-    error: ""
+    error: "",
   },
 };
 
 export const createAccount = createAsyncThunk(
   "multisig/createAccount",
-  async (data) => {
-    const response = await createMultisigAccount(data);
-    return response.data;
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await createMultisigAccount(data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error?.message || SOMETHING_WRONG);
+    }
   }
 );
 
@@ -65,8 +75,8 @@ export const deleteTxn = createAsyncThunk(
   "multisig/deleteTxn",
   async (data, { rejectWithValue }) => {
     try {
-    const response = await deleteTx(data);
-    return response.data;
+      const response = await deleteTx(data);
+      return response.data;
     } catch (error) {
       return rejectWithValue(error?.message || SOMETHING_WRONG);
     }
@@ -111,9 +121,13 @@ export const createTxn = createAsyncThunk(
 
 export const updateTxn = createAsyncThunk(
   "multisig/updateTxn",
-  async ({ txId, body }) => {
-    const response = await updateTransaction({ txId, body });
-    return response.data;
+  async ({ txId, body }, {rejectWithValue}) => {
+    try {
+      const response = await updateTransaction({ txId, body });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error?.message || SOMETHING_WRONG);
+    }
   }
 );
 
@@ -127,9 +141,13 @@ export const getTxns = createAsyncThunk(
 
 export const createSign = createAsyncThunk(
   "multisig/createSign",
-  async (data) => {
-    const response = await createSignature(data);
-    return response.data;
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await createSignature(data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error?.message || SOMETHING_WRONG);
+    }
   }
 );
 
@@ -159,9 +177,15 @@ export const multiSlice = createSlice({
     resetCreateTxnState: (state, _) => {
       state.createTxnRes = initialState.createTxnRes;
     },
-    resetDeleteTxnState: (state, _ ) => {
+    resetDeleteTxnState: (state, _) => {
       state.deleteTxnRes = initialState.deleteTxnRes;
-    }
+    },
+    resetUpdateTxnState: (state, _) => {
+      state.updateTxn = initialState.updateTxn;
+    },
+    resetSignTxnState: (state, _) => {
+      state.createSignRes = initialState.createSignRes;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -178,6 +202,7 @@ export const multiSlice = createSlice({
     builder
       .addCase(getMultisigAccounts.pending, (state) => {
         state.multisigAccounts.status = "pending";
+        state.multisigAccounts.accounts = [];
       })
       .addCase(getMultisigAccounts.fulfilled, (state, action) => {
         state.multisigAccounts.accounts = action.payload?.data?.data || [];
@@ -283,27 +308,34 @@ export const multiSlice = createSlice({
       .addCase(updateTxn.pending, (state) => {
         state.updateTxn.status = "pending";
       })
-      .addCase(updateTxn.fulfilled, (state, action) => {
-        state.updateTxn = action.payload;
+      .addCase(updateTxn.fulfilled, (state, _) => {
+        state.updateTxn.status = "idle";
       })
       .addCase(updateTxn.rejected, (state, action) => {
         state.updateTxn.status = "rejected";
+        state.updateTxn.error = action.payload;
       });
 
     builder
       .addCase(createSign.pending, (state) => {
         state.createSignRes.status = "pending";
       })
-      .addCase(createSign.fulfilled, (state, action) => {
-        state.createSignRes = action.payload;
+      .addCase(createSign.fulfilled, (state, _) => {
+        state.createSignRes.status = "idle";
       })
       .addCase(createSign.rejected, (state, action) => {
         state.createSignRes.status = "rejected";
+        state.createSignRes.error = action.payload;
       });
   },
 });
 
-export const { resetCreateMultisigRes, resetCreateTxnState, resetDeleteTxnState } =
-  multiSlice.actions;
+export const {
+  resetCreateMultisigRes,
+  resetCreateTxnState,
+  resetDeleteTxnState,
+  resetUpdateTxnState,
+  resetSignTxnState,
+} = multiSlice.actions;
 
 export default multiSlice.reducer;

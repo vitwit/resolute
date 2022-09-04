@@ -149,7 +149,7 @@ export function DialogCreateMultisig(props) {
 
     for (let i = 0; i < uniquePubKeys.length; i++) {
       if (!isValidPubKey(uniquePubKeys[i])) {
-        setFormError(`pubKey at ${i} is invalid`);
+        setFormError(`pubKey at ${i+1} is invalid`);
         return;
       }
     }
