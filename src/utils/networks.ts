@@ -363,7 +363,7 @@ export function getTestNetworks(): Network[] {
             },
           ],
           coinType: 118,
-          gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
+          gasPriceStep: { low: 0.0, average: 0.01, high: 0.2 },
           walletUrlForStaking: "http://localhost:3000/validators",
         },
       },

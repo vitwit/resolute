@@ -1,8 +1,6 @@
 import {
   Box,
-  Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
@@ -13,10 +11,10 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React, { useState, useEffect } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getBalance } from "../features/bank/bankSlice";
 import { getDelegations, getValidators } from "../features/staking/stakeSlice";
-import Delegation_Form from "./multisig/Delegation_Form";
+import DelegateForm from "./multisig/DelegateForm";
 import ReDelegation_Form from "./multisig/ReDelegation_Form";
 import SendForm from "./multisig/SendForm";
 import UnDelegation_Form from "./multisig/UnDelegation_Form";
@@ -63,7 +61,7 @@ export const DialogCreateMultisigTx = (props) => {
   const createTxnRes = useSelector((state) => state.multisig.createTxnRes);
 
   useEffect(() => {
-    if (createTxnRes?.status === "done") handleClose();
+    if (createTxnRes?.status === "idle") handleClose();
   }, [createTxnRes]);
 
   const wallet = useSelector((state) => state.wallet);
@@ -139,7 +137,7 @@ export const DialogCreateMultisigTx = (props) => {
           {txType === "send" ? <SendForm chainInfo={chainInfo} /> : null}
 
           {txType === "delegate" ? (
-            <Delegation_Form chainInfo={chainInfo} />
+            <DelegateForm chainInfo={chainInfo} />
           ) : null}
 
           {txType === "redelegate" ? (

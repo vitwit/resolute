@@ -4,6 +4,7 @@ import stakingService from "./stakingService";
 import { signAndBroadcastAmino, fee } from "../../txns/execute";
 import { setError, setTxHash } from "../common/commonSlice";
 import { createMultisigAccount } from "../multisig/multisigService";
+import { SOMETHING_WRONG } from "../multisig/multisigSlice";
 
 const initialState = {
   validators: {
@@ -24,7 +25,7 @@ const initialState = {
     delegations: [],
     errMsg: "",
     pagination: {},
-    delegatedTo: {}
+    delegatedTo: {},
   },
   unbonding: {
     status: "idle",
@@ -198,6 +199,35 @@ export const getValidators = createAsyncThunk(
   }
 );
 
+export const getAllValidators = createAsyncThunk(
+  "staking/all-validators",
+  async (data, { rejectWithValue }) => {
+    try {
+      const validators = [];
+      let nextKey = null;
+      const limit = 100;
+      while (true) {
+        const response = await stakingService.validators(
+          data.baseURL,
+          data?.status,
+          nextKey ? {
+            key: nextKey,
+            limit: limit,
+          } : {}
+        );
+        validators.push(...response.data.validators);
+        if (!response.data.pagination?.next_key) {
+          break;
+        }
+        nextKey = response.data.pagination.next_key;
+      }
+      return validators;
+    } catch (error) {
+      return rejectWithValue(error?.message || SOMETHING_WRONG);
+    }
+  }
+);
+
 export const getParams = createAsyncThunk("staking/params", async (data) => {
   const response = await stakingService.params(data.baseURL);
   return response.data;
@@ -262,7 +292,6 @@ export const stakeSlice = createSlice({
         })
       );
       state.validators.inactiveSorted = Object.keys(inactiveSort);
-
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -303,6 +332,54 @@ export const stakeSlice = createSlice({
       });
 
     builder
+      .addCase(getAllValidators.pending, (state) => {
+        state.validators.status = "pending";
+        state.validators.errMsg = "";
+      })
+      .addCase(getAllValidators.fulfilled, (state, action) => {
+        state.validators.status = "idle";
+        let result = {};
+        result.validators = action.payload;
+        const res = action.payload;
+        for (let index = 0; index < res.length; index++) {
+          const element = res[index];
+          if (
+            element.status === "BOND_STATUS_BONDED" &&
+            !state.validators.active[element.operator_address]
+          ) {
+            state.validators.active[element.operator_address] = element;
+            state.validators.totalActive += 1;
+          } else if (
+            element.status !== "BOND_STATUS_BONDED" &&
+            !state.validators.inactive[element.operator_address]
+          ) {
+            state.validators.inactive[element.operator_address] = element;
+            state.validators.totalInactive += 1;
+          }
+        }
+        state.validators.errMsg = "";
+
+        const activeSort = Object.fromEntries(
+          Object.entries(state.validators.active).sort(([, a], [, b]) => {
+            return b.tokens - a.tokens;
+          })
+        );
+  
+        state.validators.activeSorted = Object.keys(activeSort);
+  
+        const inactiveSort = Object.fromEntries(
+          Object.entries(state.validators.inactive).sort(([, a], [, b]) => {
+            return b.tokens - a.tokens;
+          })
+        );
+        state.validators.inactiveSorted = Object.keys(inactiveSort);
+      })
+      .addCase(getAllValidators.rejected, (state, action) => {
+        state.validators.status = "rejected";
+        state.validators.errMsg = action.error.message;
+      });
+
+    builder
       .addCase(getDelegations.pending, (state) => {
         state.delegations.status = "pending";
         state.delegations.errMsg = "";
@@ -313,9 +390,11 @@ export const stakeSlice = createSlice({
         state.delegations.pagination = action.payload.pagination;
         state.delegations.errMsg = "";
 
-        for (let i=0;i<action.payload.delegation_responses.length;i++) {
+        for (let i = 0; i < action.payload.delegation_responses.length; i++) {
           const delegation = action.payload.delegation_responses[i];
-          state.delegations.delegatedTo[delegation?.delegation?.validator_address] = true;
+          state.delegations.delegatedTo[
+            delegation?.delegation?.validator_address
+          ] = true;
         }
       })
       .addCase(getDelegations.rejected, (state, action) => {

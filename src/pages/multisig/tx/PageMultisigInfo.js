@@ -4,10 +4,11 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getBalance } from "../../../features/bank/bankSlice";
 import {
+  getAllValidators,
   getDelegations,
   getValidators,
 } from "../../../features/staking/stakeSlice";
-import List_txs from "./List_txs";
+import TransactionsList from "./TransactionsList";
 import { DialogCreateMultisigTx } from "../../../components/DialogCreateMultisigTx";
 import { multisigByAddress } from "../../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../../utils/util";
@@ -91,16 +92,16 @@ export default function PageMultisigInfo() {
       );
 
       dispatch(
-        getValidators({
+        getDelegations({
           baseURL: chainInfo.config.rest,
-          status: null,
+          address: multisigAddress,
         })
       );
 
       dispatch(
-        getDelegations({
+        getAllValidators({
           baseURL: chainInfo.config.rest,
-          address: multisigAddress,
+          status: null,
         })
       );
     }
@@ -143,18 +144,18 @@ export default function PageMultisigInfo() {
             >
               Account
             </Typography>
-              <Chip
-                label={
-                  multisigAccount?.address
-                    ? shortenAddress(multisigAccount?.address, 24)
-                    : ""
-                }
-                size="small"
-                deleteIcon={<ContentCopyOutlined />}
-                onDelete={() => {
-                  copyToClipboard(multisigAccount?.address);
-                }}
-              />
+            <Chip
+              label={
+                multisigAccount?.address
+                  ? shortenAddress(multisigAccount?.address, 24)
+                  : ""
+              }
+              size="small"
+              deleteIcon={<ContentCopyOutlined />}
+              onDelete={() => {
+                copyToClipboard(multisigAccount?.address);
+              }}
+            />
           </Grid>
           <Grid item xs={6} md={3}>
             <Typography
@@ -206,22 +207,22 @@ export default function PageMultisigInfo() {
             >
               Signers
             </Typography>
-              {multisigAccount?.pubkeyJSON?.value?.pubkeys?.map((p, index) => (
-                <Chip
-                  key={index}
-                  sx={{
-                    ml: 0.5,
-                    mr: 0.5,
-                    mt: 1,
-                  }}
-                  label={p?.address ? shortenAddress(p.address, 24) : ""}
-                  size="small"
-                  deleteIcon={<ContentCopyOutlined />}
-                  onDelete={() => {
-                    copyToClipboard(p?.address);
-                  }}
-                />
-              ))}
+            {multisigAccount?.pubkeyJSON?.value?.pubkeys?.map((p, index) => (
+              <Chip
+                key={index}
+                sx={{
+                  ml: 0.5,
+                  mr: 0.5,
+                  mt: 1,
+                }}
+                label={p?.address ? shortenAddress(p.address, 24) : ""}
+                size="small"
+                deleteIcon={<ContentCopyOutlined />}
+                onDelete={() => {
+                  copyToClipboard(p?.address);
+                }}
+              />
+            ))}
           </Grid>
         </Grid>
       </Paper>
@@ -254,7 +255,7 @@ export default function PageMultisigInfo() {
             Create Transaction
           </Button>
         </Box>
-        <List_txs address={multisigAddress} />
+        <TransactionsList address={multisigAddress} />
       </Paper>
       <DialogCreateMultisigTx open={open} handleClose={handleClose} />
     </>
