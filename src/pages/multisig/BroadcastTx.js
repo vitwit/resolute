@@ -12,12 +12,6 @@ import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { setError } from "../../features/common/commonSlice";
 import { updateTxn } from "../../features/multisig/multisigSlice";
 
-async function getKeplrWalletAmino(chainID) {
-  await window.keplr.enable(chainID);
-  const offlineSigner = window.getOfflineSignerOnlyAmino(chainID);
-  const accounts = await offlineSigner.getAccounts();
-  return [offlineSigner, accounts[0]];
-}
 
 export default function BroadcastTx({ tx, signatures, multisigAccount }) {
   const dispatch = useDispatch();
@@ -48,17 +42,11 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
     setLoad(true);
     const client = await SigningStargateClient.connect(chainInfo?.config?.rpc);
 
-    let result = await getKeplrWalletAmino(chainInfo?.config?.chainId);
     const bodyBytes = fromBase64(
       signatures[0].bodyBytes
         ? signatures[0].bodyBytes
         : signatures[0].bodybytes
     );
-
-    console.log('Before base64 body bytes', signatures[0].bodyBytes
-      ? signatures[0].bodyBytes
-      : signatures[0].bodybytes)
-    console.log('After base64 body bytes', bodyBytes)
 
     let currentSignatures = [];
     signatures.map((s) => {
@@ -92,11 +80,6 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
         pubkeys: pubkeys,
       },
     };
-
-    console.log('new map Obj', newMapObj)
-    console.log('multisig sequence ', multisigAcc?.sequence)
-    console.log('Pub keys ---- ', pubkeys)
-    console.log('current signatures --', currentSignatures)
 
     const signedTx = makeMultisignedTx(
       newMapObj,

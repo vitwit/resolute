@@ -24,6 +24,7 @@ import {
   multisigByAddress,
   getSigns,
   getTxns,
+  resetDeleteTxnState,
 } from "../../../features/multisig/multisigSlice";
 import BroadcastTx from "../BroadcastTx";
 import SignTxn from "../SignTxn";
@@ -252,22 +253,35 @@ export default function Transactions(props) {
   const deleteTxnStatus = useSelector((state) => state.multisig.deleteTxnRes);
 
   const getAllTxns = (status) => {
-    dispatch(getTxns({ address: props.address, status: status }));
+    dispatch(
+      getTxns({
+        address: props.address,
+        status: status,
+      })
+    );
   };
 
   useEffect(() => {
-    if (deleteTxnStatus?.status === "done" || deleteTxnStatus?.status === 200) {
-      dispatch(setError({ type: "success", message: "Successfully deleted" }));
-    } else if (deleteTxnStatus?.status === "error") {
+    if (deleteTxnStatus.status === "idle") {
       dispatch(
-        setError({ type: "error", message: "Error while deleting the txn" })
+        setError({
+          type: "success",
+          message: "Successfully deleted",
+        })
+      );
+      getAllTxns("current");
+    } else if (deleteTxnStatus.status === "error") {
+      dispatch(
+        setError({
+          type: "error",
+          message: deleteTxnStatus.error,
+        })
       );
     }
-    getAllTxns("history");
   }, [deleteTxnStatus]);
 
   useEffect(() => {
-    getAllTxns("current");
+    getAllTxns();
   }, [updateTxnStatus]);
 
   useEffect(() => {
@@ -297,6 +311,9 @@ export default function Transactions(props) {
 
   useEffect(() => {
     getAllTxns();
+    return () => {
+      dispatch(resetDeleteTxnState());
+    };
   }, []);
 
   return (
@@ -309,7 +326,6 @@ export default function Transactions(props) {
         ""
       )}
       {txns?.status === "pending" ? <CircularProgress size={40} /> : null}
-
       <Box style={{ display: "flex" }}>
         <ButtonGroup
           disableElevation
@@ -319,8 +335,13 @@ export default function Transactions(props) {
           <Button
             variant={isHistory ? "outlined" : "contained"}
             onClick={() => {
-              getAllTxns("current");
               setIsHistory(false);
+              dispatch(
+                getTxns({
+                  address: props.address,
+                  status: "current",
+                })
+              );
             }}
           >
             Active
@@ -328,8 +349,13 @@ export default function Transactions(props) {
           <Button
             variant={isHistory ? "contained" : "outlined"}
             onClick={() => {
-              getAllTxns("history");
               setIsHistory(true);
+              dispatch(
+                getTxns({
+                  address: props.address,
+                  status: "history",
+                })
+              );
             }}
           >
             Completed

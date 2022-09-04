@@ -1,8 +1,6 @@
 import {
   Box,
-  Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
@@ -13,7 +11,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React, { useState, useEffect } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getBalance } from "../features/bank/bankSlice";
 import { getDelegations, getValidators } from "../features/staking/stakeSlice";
 import DelegateForm from "./multisig/DelegateForm";
@@ -63,7 +61,7 @@ export const DialogCreateMultisigTx = (props) => {
   const createTxnRes = useSelector((state) => state.multisig.createTxnRes);
 
   useEffect(() => {
-    if (createTxnRes?.status === "done") handleClose();
+    if (createTxnRes?.status === "idle") handleClose();
   }, [createTxnRes]);
 
   const wallet = useSelector((state) => state.wallet);

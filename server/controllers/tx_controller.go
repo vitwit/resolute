@@ -134,19 +134,16 @@ func GetTxns(c echo.Context) error {
 
 	var statusStatge bson.D
 
-	if status != "" {
-		if status != "current" {
-			statusStatge = bson.D{{"$match", bson.D{{"status",
-				bson.D{{
-					"$in", bson.A{"DONE", "FAILED"},
-				}}}}}}
-		} else {
-			statusStatge = bson.D{{"$match", bson.D{{"status",
-				bson.D{{
-					"$in", bson.A{"PENDING", "SIGNED"},
-				}}}}}}
-		}
-
+	if status != "current" {
+		statusStatge = bson.D{{"$match", bson.D{{"status",
+			bson.D{{
+				"$in", bson.A{"DONE", "FAILED"},
+			}}}}}}
+	} else {
+		statusStatge = bson.D{{"$match", bson.D{{"status",
+			bson.D{{
+				"$in", bson.A{"PENDING", "SIGNED"},
+			}}}}}}
 	}
 
 	aggQuery = append(aggQuery, statusStatge)

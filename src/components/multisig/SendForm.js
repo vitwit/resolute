@@ -29,7 +29,7 @@ export default function SendForm({ chainInfo }) {
       from: "",
       gas: 200000,
       memo: "",
-      fees: chainInfo?.config?.gasPriceStep?.average,
+      fees: chainInfo?.config?.gasPriceStep?.average * (10 ** chainInfo?.config?.currencies[0].coinDecimals),
     },
   });
 
@@ -88,11 +88,14 @@ export default function SendForm({ chainInfo }) {
         })
       );
     }
+  }, [createRes]);
+
+  useEffect(() => {
     return () => {
       dispatch(resetCreateTxnState());
       dispatch(resetError());
     };
-  }, [createRes]);
+  }, []);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -199,7 +202,7 @@ export default function SendForm({ chainInfo }) {
 
       <FeeComponent
         onSetFeeChange={(v) => {
-          setValue("fees", v);
+          setValue("fees", Number(v) * (10 ** chainInfo?.config?.currencies[0].coinDecimals));
         }}
         chainInfo={chainInfo}
       />

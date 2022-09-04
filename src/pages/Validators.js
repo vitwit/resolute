@@ -10,6 +10,7 @@ import {
   txUnDelegate,
   txReDelegate,
   resetTxType,
+  getAllValidators,
 } from "../features/staking/stakeSlice";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -169,7 +170,7 @@ export default function Validators() {
       });
       dispatch(getParams({ baseURL: chainInfo.config.rest }));
       dispatch(
-        getValidators({
+        getAllValidators({
           baseURL: chainInfo.config.rest,
           status: null,
         })
@@ -216,27 +217,11 @@ export default function Validators() {
       connected &&
       (validators.totalActive > 0 || validators.totalInactive > 0)
     ) {
-      if (validators.pagination?.next_key !== null) {
-        dispatch(
-          getValidators({
-            baseURL: chainInfo.config.rest,
-            status: null,
-            pagination: {
-              key: validators.pagination.next_key,
-              limit: null,
-            },
-          })
-        );
-      } else {
-        if (
-          Object.keys(validators?.active).length > 0 &&
-          validators.pagination?.next_key === null
-        ) {
-          dispatch(sortValidatorsByVotingPower());
-        }
+      if (Object.keys(validators?.active).length > 0) {
+        dispatch(sortValidatorsByVotingPower());
       }
     }
-  }, [validators.pagination]);
+  }, [validators]);
 
   useEffect(() => {
     return () => {
