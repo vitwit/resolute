@@ -8,6 +8,8 @@ const groupByIdURL = groupId => `/cosmos/group/v1/group_info/${groupId}`
 const groupMembersByIdURL = groupId => `/cosmos/group/v1/group_members/${groupId}`
 const groupPoliciesByIdURL = groupId => `/cosmos/group/v1/group_policies_by_group/${groupId}`
 const groupPolicyProposalsURL = address => `/cosmos/group/v1/proposals_by_group_policy/${address}`
+const votesPropsalURL = proposal_id => `/cosmos/group/v1/votes_by_proposal/${proposal_id}`
+const GroupProposalURL = proposal_id => `/cosmos/group/v1/proposal/${proposal_id}`
 
 
 const fetchGroupsByAdmin = (baseURL, admin, pagination) => {
@@ -68,6 +70,18 @@ const fetchGroupMembersById = (baseURL, groupId, pagination) => {
     })
 }
 
+const fetchVotesProposalById = (baseURL, proposalId, pagination) => {
+    let uri = `${baseURL}${votesPropsalURL(proposalId)}`
+    const pageParams = convertPaginationToParams(pagination)
+    if (pageParams !== "") uri += `?${pageParams}&pagination.count_total=true`
+
+    return Axios.get(uri, {
+        headers: {
+            Accept: 'application/json, text/plain, */*',
+        },
+    })
+}
+
 const fetchGroupPoliciesById = (baseURL, groupId, pagination) => {
     let uri = `${baseURL}${groupPoliciesByIdURL(groupId)}`
     const pageParams = convertPaginationToParams(pagination)
@@ -93,6 +107,16 @@ const fetchGroupPolicyProposalsById = (baseURL, address, pagination) => {
     })
 }
 
+const fetchGroupProposalById = (baseURL, id) => {
+    let uri = `${baseURL}${GroupProposalURL(id)}`
+
+    return Axios.get(uri, {
+        headers: {
+            Accept: 'application/json, text/plain, */*',
+        },
+    })
+}
+
 
 
 const result = {
@@ -102,7 +126,9 @@ const result = {
     fetchGroupById: fetchGroupById,
     fetchGroupMembersById: fetchGroupMembersById,
     fetchGroupPoliciesById: fetchGroupPoliciesById,
-    fetchGroupPolicyProposalsById
+    fetchGroupPolicyProposalsById,
+    fetchVotesProposalById,
+    fetchGroupProposalById,
 }
 
 export default result;

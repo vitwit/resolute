@@ -1,7 +1,10 @@
 import {
     MsgCreateGroup, MsgCreateGroupWithPolicy,
     MsgVote,
-    MsgSubmitProposal
+    MsgSubmitProposal,
+    MsgExec,
+    MsgUpdateGroupMembers,
+    MsgLeaveGroup,
 } from "./v1/tx";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import {
@@ -21,7 +24,10 @@ const msgCreateGroupWithPolicy = "/cosmos.group.v1.MsgCreateGroupWithPolicy";
 const msgCreateGroupWithThresholdPolicy = `/cosmos.group.v1.ThresholdDecisionPolicy`;
 const msgCreateGroupWithPercentagePolicy = `/cosmos.group.v1.PercentageDecisionPolicy`;
 const msgCreateGroupProposal = `/cosmos.group.v1.MsgSubmitProposal`;
-const msgGroupProposalVote = `/cosmos.group.v1.VotesByVoter`
+const msgGroupProposalVote = `/cosmos.group.v1.MsgVote`;
+const msgGroupProposalExecute = `/cosmos.group.v1.MsgExec`;
+const msgUpdateGroupMember = `/cosmos.group.v1.MsgUpdateGroupMembers`;
+const msgLeaveGroupMember = `/cosmos.group.v1.MsgLeaveGroup`;
 
 export function CreateGroup(admin: any, metadata: any, members: any) {
     return {
@@ -45,8 +51,21 @@ export function CreateProposalVote(
         value: MsgVote.fromPartial({
             proposalId,
             voter,
-            option,
+            option: 1,
             metadata
+        })
+    }
+}
+
+export function CreateProposalExecute(
+    proposalId: string,
+    executor: string
+) {
+    return {
+        typeUrl: msgGroupProposalExecute,
+        value: MsgExec.fromPartial({
+            proposalId,
+            executor
         })
     }
 }
@@ -140,3 +159,36 @@ export function CreateGroupWithPolicy(
     return obj;
 }
 
+export function UpdateGroupMembers(
+    admin: any,
+    members: any,
+    groupId: any,
+) {
+
+    const obj = {
+        typeUrl: msgUpdateGroupMember,
+        value: MsgUpdateGroupMembers.fromPartial({
+            admin: admin,
+            memberUpdates: members,
+            groupId: groupId,
+        }),
+    };
+
+    return obj;
+}
+
+export function CreateLeaveGroupMember(
+    memberAddress: any,
+    groupId: any,
+) {
+
+    const obj = {
+        typeUrl: msgLeaveGroupMember,
+        value: MsgLeaveGroup.fromPartial({
+            groupId: groupId,
+            address: memberAddress
+        }),
+    };
+    
+    return obj;
+}

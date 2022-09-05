@@ -13,21 +13,18 @@ import ProposalDelegateForm from './ProposalDelegateForm';
 import ProposalRedelegateForm from './ProposalRedelegateForm';
 import ProposalUndelegateForm from './ProposalUndelegateForm';
 import RowItem from '../../components/group/RowItem';
-import { getAmountObj, getLocalStorage, shortenAddress } from '../../utils/util';
+import { getAmountObj, getLocalStorage, proposalStatus, shortenAddress } from '../../utils/util';
 import { useDispatch, useSelector } from 'react-redux';
-import { getGroupPolicyProposals, txCreateGroupProposal, txGroupProposalVote } from '../../features/group/groupSlice';
-import { useParams } from 'react-router-dom';
+import { getGroupPolicyProposals, txCreateGroupProposal, txGroupProposalExecute, txGroupProposalVote } from '../../features/group/groupSlice';
+import { useNavigate, useParams } from 'react-router-dom';
 import DialogVote from '../../components/group/DialogVote';
+import EastIcon from '@mui/icons-material/East';
 
 const DELEGATE_MSG = `/cosmos.staking.v1beta1.MsgDelegate`;
 const SEND_MSG = `/cosmos.bank.v1beta1.MsgSend`;
 
-const proposalStatus = {
-    'PROPOSAL_EXECUTOR_RESULT_NOT_RUN': 'RESULT NOT RUN'
-}
-
 const voteStatus = {
-    STATUS_CLOSED: 'Closed'
+    STATUS_CLOSED: 'Closed',
 }
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -342,6 +339,7 @@ const AllProposals = () => {
     const wallet = useSelector(state => state.wallet)
     const [voteOpen, setVoteOpen] = useState(false);
     const voteRes = useSelector(state => state.group?.voteRes);
+    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(getGroupPolicyProposals({
@@ -358,14 +356,30 @@ const AllProposals = () => {
         const chainInfo = wallet?.chainInfo;
 
         dispatch(txGroupProposalVote({
+            admin: wallet?.address,
             voter: wallet?.address,
             option: voteObj?.vote,
             proposalId: voteObj?.proposalId,
             chainId: chainInfo?.config?.chainId,
             rpc: chainInfo?.config?.rpc,
+            denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
             feeAmount: chainInfo?.config?.gasPriceStep?.average,
         }))
         console.log('vote objj', voteObj)
+    }
+
+    const onExecute = (proposalId) => {
+        const chainInfo = wallet?.chainInfo;
+
+        dispatch(txGroupProposalExecute({
+            proposalId: proposalId,
+            admin: wallet?.address,
+            executor: wallet?.address,
+            chainId: chainInfo?.config?.chainId,
+            rpc: chainInfo?.config?.rpc,
+            denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
+            feeAmount: chainInfo?.config?.gasPriceStep?.average,
+        }))
     }
 
     return (
@@ -383,6 +397,7 @@ const AllProposals = () => {
                         !proposals?.data?.proposals?.length ?
                         'No proposals found' : null
                 }
+
                 {proposals?.status !== 'pending' && proposals?.data?.proposals?.length &&
                     proposals?.data?.proposals?.map((p, index) => (
                         <Grid item xs={2} sm={4} md={6} key={index}>
@@ -390,13 +405,48 @@ const AllProposals = () => {
                                 <Grid container>
                                     <Box sx={{ display: 'flex', width: '100%' }}>
                                         <Box sx={{ width: '90%' }}>
-                                            <h2 style={{ float: 'left' }}># {p?.id}</h2>
+                                            <Typography sx={{
+                                                fontSize: 21,
+                                                textAlign: 'left',
+                                                fontWeight: 'bold'
+                                            }}>
+                                                # {p?.id}
+                                            </Typography>
+
+                                            <Typography sx={{
+                                                textAlign: 'left',
+                                                p: 1,
+                                                mt: 2,
+                                                fontSize: 18,
+                                                width: '30%',
+                                                borderRadius: 25,
+                                                textAlign: 'center',
+                                                bgcolor: proposalStatus[p?.status]?.bgColor,
+                                                color: proposalStatus[p?.status]?.textColor
+                                            }}>
+                                                {proposalStatus[p?.status]?.label || p?.status}
+                                            </Typography>
                                         </Box>
-                                        <Box sx={{ float: 'right' }}>
-                                            <Button
-                                                variant='outlined'
-                                                onClick={() => setVoteOpen(true)}
-                                                sx={{ float: 'right' }}>Vote</Button>
+                                        <Box sx={{ float: 'right', }}>
+                                            {
+                                                p?.status === 'PROPOSAL_STATUS_SUBMITTED' ?
+                                                    <Button
+                                                        variant='outlined'
+                                                        onClick={() => setVoteOpen(true)}
+                                                        sx={{ float: 'right', justifyContent: 'right' }}>Vote</Button>
+                                                    : null
+                                            }
+
+                                            {
+                                                p?.status === 'PROPOSAL_STATUS_ACCEPTED' ?
+                                                    <Button
+                                                        variant='outlined'
+                                                        onClick={() => onExecute(p?.id)}
+                                                    >
+                                                        Execute
+                                                    </Button>
+                                                    : null
+                                            }
 
                                             <DialogVote
                                                 proposalId={p?.id}
@@ -408,103 +458,116 @@ const AllProposals = () => {
                                         </Box>
 
                                     </Box>
-                                    {/* <RowItem lable={`# ${p?.id}`} /> */}
-                                    <RowItem lable={p?.metadata} />
-                                    <RowItem lable={'Group Policy Address'}
-                                        value={shortenAddress(p?.group_policy_address, 19)} />
+
                                     <Grid container>
-                                        <Grid md={4}>
-                                            <Typography sx={{
-                                                fontSize: 20,
-                                                float: 'left',
-                                                ml: 1
-                                            }}>
-                                                Proposers
-                                            </Typography>
-                                        </Grid>
-                                        <Grid md={8} >
-                                            {
-                                                p?.proposers?.map(p1 => (
+                                        <Grid md={11}>
+                                            <RowItem lable={p?.metadata} />
+                                            <RowItem lable={'Group Policy Address'}
+                                                value={shortenAddress(p?.group_policy_address, 19)} />
+                                            <Grid container>
+                                                <Grid md={4}>
                                                     <Typography sx={{
                                                         fontSize: 20,
                                                         float: 'left',
-                                                        ml: 1,
-                                                        fontWeight: 'bold'
+                                                        ml: 1
                                                     }}>
-                                                        -  {shortenAddress(p1, 19)}
+                                                        Proposers
                                                     </Typography>
-                                                ))
-                                            }
-                                        </Grid>
-                                    </Grid>
-                                    <RowItem lable={'Submit Time'}
-                                        value={p?.submit_time} />
-                                    <RowItem lable={'Group Version'}
-                                        value={p?.group_version} />
-                                    <RowItem lable={'Result'} value={p?.result} />
-                                    <RowItem lable={'Executor result'}
-                                        value={proposalStatus[p?.executor_result]} />
-                                    <RowItem lable={'Vote'} value={JSON.stringify(p?.vote_state, null, 2)}
-                                    />
-                                    <Grid container>
-                                        <Grid md={4}>
-                                            <Typography sx={{
-                                                fontSize: 20,
-                                                float: 'left',
-                                                ml: 1
-                                            }}>Messages</Typography>
-                                        </Grid>
-                                        <Grid md={8}>
+                                                </Grid>
+                                                <Grid md={8} >
+                                                    {
+                                                        p?.proposers?.map(p1 => (
+                                                            <Typography sx={{
+                                                                fontSize: 20,
+                                                                float: 'left',
+                                                                ml: 1,
+                                                                fontWeight: 'bold'
+                                                            }}>
+                                                                -  {shortenAddress(p1, 19)}
+                                                            </Typography>
+                                                        ))
+                                                    }
+                                                </Grid>
+                                            </Grid>
+                                            <RowItem lable={'Submit Time'}
+                                                value={p?.submit_time} />
+                                            <RowItem lable={'Group Version'}
+                                                value={p?.group_version} />
+                                            <RowItem lable={'Result'} value={p?.result} />
+                                            <RowItem lable={'Vote'} value={JSON.stringify(p?.vote_state, null, 2)}
+                                            />
+                                            <Grid container>
+                                                <Grid md={4}>
+                                                    <Typography sx={{
+                                                        fontSize: 20,
+                                                        float: 'left',
+                                                        ml: 1
+                                                    }}>Messages</Typography>
+                                                </Grid>
+                                                <Grid md={8}>
 
-                                            {
-                                                p?.messages?.map(m => (
-                                                    <Box>
-                                                        {
-                                                            m['@type'] === SEND_MSG ?
-                                                                <Box><Typography sx={{
-                                                                    fontSize: 20,
-                                                                    float: 'left'
-                                                                }}>
-                                                                    <strong> - Send </strong>
-                                                                    {
-                                                                        `${m?.amount?.[0]?.amount} `
-                                                                    }
-                                                                    {
-                                                                        `${m?.amount?.[0]?.denom} `
-                                                                    }
-                                                                    <strong> To </strong>
-                                                                    {
-                                                                        `${shortenAddress(m?.to_address, 19)}`
-                                                                    }
-                                                                </Typography></Box> : null
-                                                        }
-                                                        {
-                                                            m['@type'] === DELEGATE_MSG ?
-                                                                <Box>
-                                                                    <Typography sx={{
-                                                                        fontSize: 20,
-                                                                        float: 'left'
-                                                                    }}>
-                                                                        <strong> - Delegate </strong>
-                                                                        {
-                                                                            `${m?.amount?.amount} `
-                                                                        }
-                                                                        {
-                                                                            `${m?.amount?.denom} `
-                                                                        }
-                                                                        <strong> To </strong>
-                                                                        {
-                                                                            `${shortenAddress(m?.validator_address, 19)}`
-                                                                        }
-                                                                    </Typography></Box> : null
-                                                        }
-                                                    </Box>
-                                                ))
-                                            }
+                                                    {
+                                                        p?.messages?.map(m => (
+                                                            <Box>
+                                                                {
+                                                                    m['@type'] === SEND_MSG ?
+                                                                        <Box><Typography sx={{
+                                                                            fontSize: 20,
+                                                                            float: 'left'
+                                                                        }}>
+                                                                            <strong> - Send </strong>
+                                                                            {
+                                                                                `${m?.amount?.[0]?.amount} `
+                                                                            }
+                                                                            {
+                                                                                `${m?.amount?.[0]?.denom} `
+                                                                            }
+                                                                            <strong> To </strong>
+                                                                            {
+                                                                                `${shortenAddress(m?.to_address, 19)}`
+                                                                            }
+                                                                        </Typography></Box> : null
+                                                                }
+                                                                {
+                                                                    m['@type'] === DELEGATE_MSG ?
+                                                                        <Box>
+                                                                            <Typography sx={{
+                                                                                fontSize: 20,
+                                                                                float: 'left'
+                                                                            }}>
+                                                                                <strong> - Delegate </strong>
+                                                                                {
+                                                                                    `${m?.amount?.amount} `
+                                                                                }
+                                                                                {
+                                                                                    `${m?.amount?.denom} `
+                                                                                }
+                                                                                <strong> To </strong>
+                                                                                {
+                                                                                    `${shortenAddress(m?.validator_address, 19)}`
+                                                                                }
+                                                                            </Typography></Box> : null
+                                                                }
+                                                            </Box>
+                                                        ))
+                                                    }
+                                                </Grid>
+                                            </Grid>
                                         </Grid>
-                                    </Grid>
+                                        <Grid md={1}>
+                                            <EastIcon 
+                                            onClick={()=>{
+                                                navigate(`/groups/proposals/${p?.id}`)
+                                            }}
+                                            sx={{
+                                                height: '50%',
+                                                m: '0 auto',
+                                                fontSize: 35,
+                                                color: '#000'
+                                            }} />
+                                        </Grid>
 
-                                    {/* <RowItem lable={'Messages'} value={JSON.stringify(p?.msgs, null, 2)} /> */}
+                                    </Grid>
                                 </Grid>
                             </Item>
                         </Grid>

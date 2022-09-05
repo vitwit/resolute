@@ -30,6 +30,7 @@ import GroupPage from "./GroupPage";
 import Group from "./group/Group";
 import Policy from "./group/Policy";
 import CreateGroupPage from "./group/CreateGroup";
+import Proposal from "./group/Proposal";
 const Authz = lazy(() => import("./Authz"));
 const Validators = lazy(() => import("./Validators"));
 const Proposals = lazy(() => import("./Proposals"));
@@ -224,7 +225,7 @@ function DashboardContent(props) {
               ) : (
                 <Toolbar />
               )}
-              <Container maxWidth="lg" sx={{ mt: 3, mb: 4 }}>
+              <Container maxWidth="xl" sx={{ mt: 3, mb: 4 }}>
                 <Routes>
                   <Route path="/" element={<Overview />} />
                   <Route
@@ -338,13 +339,15 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
-                   <Route path="/group" element={<GroupPage />}></Route>
+                  <Route path="/group" element={<GroupPage />}></Route>
                   <Route path="/groups/:id" element={<Group />}></Route>
+                  <Route path="/groups/proposals/:id" element={<Proposal />}></Route>
                   <Route path="/groups/:id/policies/:policyId" element={<Policy />}></Route>
                   <Route
                     path="/group/create-group"
                     element={<CreateGroupPage />}
-                  ></Route> 
+                  >
+                  </Route>
                   {/* <Route path="/group" element={<GroupPage />}></Route>
                   <Route
                     path="/group/create-group"

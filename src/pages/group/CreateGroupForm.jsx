@@ -15,7 +15,7 @@ const memberObj = {
     metadata: '',
 }
 
-function CreateGroupForm({ handleMembers }) {
+export function CreateGroupForm({ handleMembers }) {
     const [memberObjs, setMemberObjs] = useState([]);
 
     const handleChange = (i, e) => {
@@ -27,7 +27,7 @@ function CreateGroupForm({ handleMembers }) {
     }
 
     const handleSubmit = () => {
-        setMemberObjs([...memberObjs, {address: '', weight: '', metadata: ''}])
+        setMemberObjs([...memberObjs, { address: '', weight: '', metadata: '' }])
     }
 
     return (
@@ -36,7 +36,7 @@ function CreateGroupForm({ handleMembers }) {
                 <Button
                     variant="outlined"
                     onClick={() => {
-                        setMemberObjs([...memberObjs, {address: '', weight: '', metadata: ''}])
+                        setMemberObjs([...memberObjs, { address: '', weight: '', metadata: '' }])
                     }}
                     sx={{
                         textTransform: "none",
@@ -50,33 +50,33 @@ function CreateGroupForm({ handleMembers }) {
                 {
                     memberObjs.length ?
                         <Box>
-                            <Typography sx={{ fontSize: 23 }}>
+                            <Typography sx={{ fontSize: 23, mb: 3 }}>
                                 Members
                             </Typography>
                             {memberObjs.map((row, i) => (
                                 <Grid sx={{ flexGrow: 1 }} spacing={1} container md={12}>
-                                    <Grid sx={{m: 1}} spacing={2} md={4}>
+                                    <Grid sx={{ m: 1 }} spacing={2} md={4}>
                                         <TextField
                                             sx={{ width: '100%' }}
                                             name="address"
                                             onChange={(e) => handleChange(i, e)}
                                             value={row?.address} placeholder='Member Address' />
                                     </Grid>
-                                    <Grid   sx={{m: 1}} spacing={2} md={1.5}>
+                                    <Grid sx={{ m: 1 }} spacing={2} md={1.5}>
                                         <TextField
                                             sx={{ width: '100%' }}
                                             name='weight'
                                             onChange={(e) => handleChange(i, e)}
                                             value={row?.weight} placeholder='Weight' />
                                     </Grid>
-                                    <Grid sx={{m: 1}} md={4.5}>
+                                    <Grid sx={{ m: 1 }} md={4.5}>
                                         <TextField
                                             sx={{ width: '100%' }}
                                             name="metadata"
                                             onChange={(e) => handleChange(i, e)}
                                             value={row?.metadata} placeholder='Metadata' />
                                     </Grid>
-                                    <Grid sx={{m: 1}} md={1}>
+                                    <Grid sx={{ m: 1 }} md={1}>
                                         {
                                             i !== memberObjs.length - 1 ?
                                                 <Box sx={{

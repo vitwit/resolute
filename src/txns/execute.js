@@ -6,7 +6,7 @@ import {
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Registry } from "@cosmjs/proto-signing";
 import { MsgClaim } from "./passage/msg_claim";
-import { MsgCreateGroup, MsgCreateGroupWithPolicy, MsgSubmitProposal, MsgVote } from "./group/v1/tx";
+import { MsgCreateGroup, MsgCreateGroupWithPolicy, MsgExec, MsgLeaveGroup, MsgSubmitProposal, MsgUpdateGroupMembers, MsgVote } from "./group/v1/tx";
 import { AirdropAminoConverter } from "../features/airdrop/amino";
 import { MsgUnjail } from "./slashing/tx";
 import { SlashingAminoConverter } from "../features/slashing/slashing";
@@ -44,6 +44,66 @@ export async function signAndBroadcastGroupMsg(
   return await client.signAndBroadcast(signer, msgs, fee, memo);
 }
 
+export async function signAndBroadcastUpdateGroupMembers(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+ 
+
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupMembers",
+    MsgUpdateGroupMembers
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastLeaveGroup(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+ 
+
+  registry.register(
+    "/cosmos.group.v1.MsgLeaveGroup",
+    MsgLeaveGroup
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
 export async function signAndBroadcastGroupProposalVote(
   signer,
   msgs,
@@ -62,8 +122,42 @@ export async function signAndBroadcastGroupProposalVote(
   });
 
   registry.register(
-    "/cosmos.group.v1.VotesByVoter",
+    "/cosmos.group.v1.MsgVote",
     MsgVote
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+      aminoTypes: aTypes,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastGroupProposalExecute(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+
+  const aTypes = new AminoTypes({
+    ...MsgExec,
+  });
+
+  registry.register(
+    "/cosmos.group.v1.MsgExec",
+    MsgExec
   );
 
   const client = await SigningStargateClient.connectWithSigner(

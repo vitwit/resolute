@@ -233,4 +233,39 @@ export const getAmountObj = (amount = 0, chainInfo) => {
   }
 }
 
+export const proposalStatus = {
+  'PROPOSAL_EXECUTOR_RESULT_NOT_RUN': {
+      label: 'Result not run',
+      bgColor: '#e3bbbb',
+      textColor: '#ad3131'
+  },
+  'PROPOSAL_STATUS_UNSPECIFIED': {
+      label: 'Unspecified',
+      bgColor: '#e3bbbb',
+      textColor: '#ad3131'
+  },
+  'PROPOSAL_STATUS_SUBMITTED': {
+      label: 'Submitted',
+      bgColor: '#c5c9e3',
+      textColor: '#3049d3'
+  }, 'PROPOSAL_STATUS_ACCEPTED': {
+      label: 'Accepted',
+      bgColor: '#d8dfd3',
+      textColor: '#30b448'
+  }, 'PROPOSAL_STATUS_REJECTED': {
+      label: 'Rejected',
+      bgColor: '#c5c9e3',
+      textColor: '#3049d3'
+  }, 'PROPOSAL_STATUS_ABORTED': {
+      label: 'Aborted',
+      bgColor: '#c5c9e3',
+      textColor: '#3049d3'
+  },
+  'PROPOSAL_STATUS_WITHDRAWN': {
+      label: 'Withdrawn',
+      bgColor: '#e7d4ca',
+      textColor: '#e56a11'
+  },
+}
+
 

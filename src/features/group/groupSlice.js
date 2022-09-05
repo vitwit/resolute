@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fee, signAndBroadcastGroupMsg, signAndBroadcastGroupProposal, signAndBroadcastGroupProposalVote, signAndBroadcastProto } from "../../txns/execute";
-import { CreateGroup, CreateGroupProposal, CreateGroupWithPolicy, CreateProposalVote } from "../../txns/group/group";
+import { fee, signAndBroadcastGroupMsg, signAndBroadcastGroupProposal, signAndBroadcastGroupProposalExecute, signAndBroadcastGroupProposalVote, signAndBroadcastLeaveGroup, signAndBroadcastProto, signAndBroadcastUpdateGroupMembers } from "../../txns/execute";
+import { CreateGroup, CreateGroupProposal, CreateGroupWithPolicy, CreateLeaveGroupMember, CreateProposalExecute, CreateProposalVote, UpdateGroupMembers } from "../../txns/group/group";
 import { setError, setTxHash } from "../common/commonSlice";
 import groupService from "./groupService";
 
@@ -31,6 +31,13 @@ const initialState = {
   groupProposalRes: {},
   proposals: {},
   voteRes: {},
+  executeRes: {},
+  updateGroupRes: {},
+  leaveGroupRes: {},
+  proposalVotes: {
+    data: []
+  },
+  groupProposal: {},
 };
 
 export const getGroupsByAdmin = createAsyncThunk(
@@ -60,6 +67,26 @@ export const getGroupMembersById = createAsyncThunk(
   async (data) => {
     const response = await groupService.fetchGroupMembersById(
       data.baseURL, data.id, data.pagination
+    );
+    return response.data;
+  }
+);
+
+export const getVotesProposalById = createAsyncThunk(
+  "group/group-proposal-votes",
+  async (data) => {
+    const response = await groupService.fetchVotesProposalById(
+      data.baseURL, data.id, data.pagination
+    );
+    return response.data;
+  }
+);
+
+export const getGroupProposalById = createAsyncThunk(
+  "group/group-proposal-info",
+  async (data) => {
+    const response = await groupService.fetchGroupProposalById(
+      data.baseURL, data.id
     );
     return response.data;
   }
@@ -120,6 +147,54 @@ export const txGroupProposalVote = createAsyncThunk(
       console.log('msg----', msg)
 
       const result = await signAndBroadcastGroupProposalVote(
+        data.admin,
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.chainId,
+        data.rpc
+      );
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        console.log('Error while creating propsoal', result?.rawLog)
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      console.log('Error while creating the group proposal', error.message)
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+)
+
+export const txGroupProposalExecute = createAsyncThunk(
+  'group/tx-group-proposal-execute',
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    try {
+      let msg = CreateProposalExecute(
+        data.proposalId,
+        data.executor
+      )
+
+      console.log('msg----', msg)
+
+      const result = await signAndBroadcastGroupProposalExecute(
         data.admin,
         [msg],
         fee(data.denom, data.feeAmount, 260000),
@@ -264,6 +339,103 @@ export const txCreateGroup = createAsyncThunk(
   }
 );
 
+export const txUpdateGroupMember = createAsyncThunk(
+  "group/tx-update-group-member",
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    let msg;
+    console.log({ data })
+    try {
+      msg = UpdateGroupMembers(
+        data.admin,
+        data.members,
+        data.groupId
+      );
+
+      const result = await signAndBroadcastUpdateGroupMembers(
+        data.admin,
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.chainId,
+        data.rpc
+      );
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        console.log('Error while creating the group', result?.rawLog)
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      console.log('Error while creating the group', error.message)
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const txLeaveGroupMember = createAsyncThunk(
+  "group/tx-leave-group-member",
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    let msg;
+    console.log({ data })
+    try {
+      msg = CreateLeaveGroupMember(
+        data.admin,
+        data.groupId
+      );
+
+      const result = await signAndBroadcastLeaveGroup(
+        data.admin,
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.chainId,
+        data.rpc
+      );
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        console.log('Error while creating the group', result?.rawLog)
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      console.log('Error while creating the group', error.message)
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const groupSlice = createSlice({
   name: "group",
   initialState,
@@ -372,6 +544,18 @@ export const groupSlice = createSlice({
       });
 
     builder
+      .addCase(getVotesProposalById.pending, (state) => {
+        state.proposalVotes.status = `pending`;
+      })
+      .addCase(getVotesProposalById.fulfilled, (state, action) => {
+        state.proposalVotes.status = 'idle';
+        state.proposalVotes.data = action.payload
+      })
+      .addCase(getVotesProposalById.rejected, (state, _) => {
+        state.proposalVotes.status = `rejected`;
+      });
+
+    builder
       .addCase(getGroupPolicyProposals.pending, (state) => {
         state.proposals.status = `pending`;
       })
@@ -403,6 +587,51 @@ export const groupSlice = createSlice({
       })
       .addCase(txGroupProposalVote.rejected, (state, _) => {
         state.voteRes.status = `rejected`;
+      });
+
+    builder
+      .addCase(txGroupProposalExecute.pending, (state) => {
+        state.executeRes.status = `pending`;
+      })
+      .addCase(txGroupProposalExecute.fulfilled, (state, action) => {
+        state.executeRes.status = 'idle';
+      })
+      .addCase(txGroupProposalExecute.rejected, (state, _) => {
+        state.executeRes.status = `rejected`;
+      });
+
+    builder
+      .addCase(txUpdateGroupMember.pending, (state) => {
+        state.updateGroupRes.status = `pending`;
+      })
+      .addCase(txUpdateGroupMember.fulfilled, (state, action) => {
+        state.updateGroupRes.status = 'idle';
+      })
+      .addCase(txUpdateGroupMember.rejected, (state, _) => {
+        state.updateGroupRes.status = `rejected`;
+      });
+
+    builder
+      .addCase(txLeaveGroupMember.pending, (state) => {
+        state.leaveGroupRes.status = `pending`;
+      })
+      .addCase(txLeaveGroupMember.fulfilled, (state, action) => {
+        state.leaveGroupRes.status = 'idle';
+      })
+      .addCase(txLeaveGroupMember.rejected, (state, _) => {
+        state.leaveGroupRes.status = `rejected`;
+      });
+
+    builder
+      .addCase(getGroupProposalById.pending, (state) => {
+        state.groupProposal.status = `pending`;
+      })
+      .addCase(getGroupProposalById.fulfilled, (state, action) => {
+        state.groupProposal.status = 'idle';
+        state.groupProposal.data = action.payload;
+      })
+      .addCase(getGroupProposalById.rejected, (state, _) => {
+        state.groupProposal.status = `rejected`;
       });
   },
 });
