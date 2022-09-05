@@ -11,6 +11,7 @@ type Transactions struct {
 	Status    string    `json:"status,omitempty" validate:"required"`
 	Timestamp time.Time `json:"timestamp"`
 	Hash      string    `json:"hash,omitempty"`
+	ErrorMsg  string    `json:"errorMsg,omitempty" bson:"errorMsg,omitempty"`
 }
 
 type Value interface{}
