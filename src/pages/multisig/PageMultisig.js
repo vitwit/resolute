@@ -92,7 +92,7 @@ export default function PageMultisig() {
       <Box sx={{ mt: 1 }}>
         {multisigAccounts?.status !== "pending" && !accounts?.length ? (
           <Typography variant="body1" color="error" fontWeight={500}>
-            No Multisig Accounts found on your address
+            No Multisig accounts found on your address
           </Typography>
         ) : (
           ""

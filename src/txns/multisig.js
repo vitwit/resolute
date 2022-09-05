@@ -1,5 +1,20 @@
 import { createMultisigThresholdPubkey, pubkeyToAddress } from "@cosmjs/amino";
 
+export const isValidPubKey = (pubKey) => {
+  try {
+    pubkeyToAddress(
+      {
+        type: "tendermint/PubKeySecp256k1",
+        value: pubKey,
+      },
+      "test"
+    );
+  } catch (error) {
+    return false;
+  }
+  return true;
+};
+
 export const createMultisig = (
   pubKeysArr,
   threshold,
