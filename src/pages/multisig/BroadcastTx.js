@@ -118,6 +118,7 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
             body: {
               status: "DONE",
               hash: result1?.transactionHash || "",
+              errorMsg: result1?.rawLog || "",
             },
           })
         );
@@ -134,6 +135,7 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
             body: {
               status: "FAILED",
               hash: result1?.transactionHash || "",
+              errorMsg: result1?.rawLog || "Failed to broadcast transaction",
             },
           })
         );
@@ -146,6 +148,15 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
           message: error?.message || "Failed to broadcast transaction",
         })
       );
+      
+      dispatch(updateTxn({
+        txId: tx?._id,
+        body: {
+          status: "FAILED",
+          hash: "",
+          errorMsg: error?.message || "Failed to broadcast transaction",
+        },
+      }));
     }
   };
 

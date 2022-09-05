@@ -18,14 +18,15 @@ import (
 )
 
 type TxnRequest struct {
-	Status string `json:"status"`
-	Hash   string `json:"hash"`
+	Status   string `json:"status"`
+	Hash     string `json:"hash"`
+	ErrorMsg string `json:"errorMsg"`
 }
 
 var txCollection *mongo.Collection = config.GetCollection(config.DB, "txs")
 var txValidate = validator.New()
 
-func UpdateTxnStatus(txId primitive.ObjectID, status string, hash string) error {
+func UpdateTxnStatus(txId primitive.ObjectID, status string, hash string, errorMsg string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -45,7 +46,8 @@ func UpdateTxnStatus(txId primitive.ObjectID, status string, hash string) error 
 	} else {
 		updateObj = bson.M{
 			"$set": bson.M{
-				"status": status,
+				"status":   status,
+				"errorMsg": errorMsg,
 			},
 		}
 	}
@@ -108,7 +110,7 @@ func UpdateTxn(c echo.Context) error {
 	txId := c.Param("txId")
 	objId, _ := primitive.ObjectIDFromHex(txId)
 
-	err := UpdateTxnStatus(objId, req.Status, req.Hash)
+	err := UpdateTxnStatus(objId, req.Status, req.Hash, req.ErrorMsg)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,

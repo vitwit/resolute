@@ -41,6 +41,10 @@ import {
   StyledTableCell,
   StyledTableRow,
 } from "../../../components/CustomTable";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
 
 const mapTxns = {
   "/cosmos.staking.v1beta1.MsgDelegate": "Delegate",
@@ -50,19 +54,33 @@ const mapTxns = {
   Msg: "Tx Msg",
 };
 
-const getTxStatusComponent = (status) => {
+const getTxStatusComponent = (status, onShowError) => {
   return (
     <>
       {status === "DONE" ? (
         <Chip size="small" label="Success" color="success" variant="outlined" />
       ) : (
-        <Chip size="small" label="Failed" color="error" variant="outlined" />
+        <>
+          <Chip size="small" label="Failed" color="error" variant="outlined" />
+          <Typography
+            color="primary"
+            variant="body2"
+            sx={{
+              textDecoration: "underline",
+              mt: 1,
+              cursor: "pointer",
+            }}
+            onClick={() => onShowError()}
+          >
+            Error message
+          </Typography>
+        </>
       )}
     </>
   );
 };
 
-const TableRowComponent = ({ tx, type, index }) => {
+const TableRowComponent = ({ tx, type, index, onShowError }) => {
   const { address } = useParams();
   const walletAddress = useSelector((state) => state.wallet.address);
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
@@ -112,6 +130,7 @@ const TableRowComponent = ({ tx, type, index }) => {
     delete tx1?.hash;
     delete tx1?.address;
     delete tx1?.chainid;
+    delete tx1?.errorMsg;
 
     const signatures = tx1?.signatures;
 
@@ -123,7 +142,6 @@ const TableRowComponent = ({ tx, type, index }) => {
     }
     delete tx1.signatures;
     tx1.signatures = signaturesOnly;
-
     return tx1;
   };
 
@@ -209,7 +227,7 @@ const TableRowComponent = ({ tx, type, index }) => {
         <StyledTableCell align="left">
           {(tx?.signatures?.length || 0) >= threshold
             ? tx?.status === "DONE" || tx?.status === "FAILED"
-              ? getTxStatusComponent(tx?.status)
+              ? getTxStatusComponent(tx?.status, onShowError)
               : "Waiting for brodcast"
             : !isWalletSigned()
             ? "Waiting for your sign"
@@ -217,13 +235,17 @@ const TableRowComponent = ({ tx, type, index }) => {
         </StyledTableCell>
         {type === "history" ? (
           <StyledTableCell align="center">
-            <Link
-              target="_blank"
-              href={`${chainInfo?.explorerTxHashEndpoint}${tx?.hash}`}
-              color="inherit"
-            >
-              Transaction info
-            </Link>
+            {tx?.hash && tx?.hash.length > 0 ? (
+              <Link
+                target="_blank"
+                href={`${chainInfo?.explorerTxHashEndpoint}${tx?.hash}`}
+                color="inherit"
+              >
+                Transaction info
+              </Link>
+            ) : (
+              "-"
+            )}
           </StyledTableCell>
         ) : null}
         {type === "active" ? (
@@ -293,11 +315,18 @@ const TableRowComponent = ({ tx, type, index }) => {
             width: "100%",
           }}
         >
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <pre style={{ width: 100 }}>
-              {JSON.stringify(parseMultisigTxn(tx), null, 2)}
-            </pre>
-          </Collapse>
+          <TableCell style={{ width: "50%", paddingBottom: 0, paddingTop: 0 }}>
+            <Collapse in={open} unmountOnExit>
+              <pre
+                style={{
+                  width: 100,
+                  outline: "none",
+                }}
+              >
+                {JSON.stringify(parseMultisigTxn(tx), undefined, 2)}
+              </pre>
+            </Collapse>
+          </TableCell>
         </TableRow>
       </TableRow>
     </>
@@ -384,6 +413,9 @@ export default function Transactions(props) {
     }
   }, [walletConnected]);
 
+  const [errorMsg, setErrorMsg] = useState("");
+  const [openError, setOpenError] = useState(false);
+
   return (
     <Box>
       {txns?.status !== "pending" && !txns?.length ? (
@@ -457,7 +489,15 @@ export default function Transactions(props) {
               </TableHead>
               <TableBody>
                 {txns.map((row, index) => (
-                  <TableRowComponent key={index} tx={row} type="history" />
+                  <TableRowComponent
+                    key={index}
+                    tx={row}
+                    type="history"
+                    onShowError={() => {
+                      setErrorMsg(row?.errorMsg);
+                      setOpenError(true);
+                    }}
+                  />
                 ))}
               </TableBody>
             </>
@@ -487,6 +527,36 @@ export default function Transactions(props) {
           )}
         </Table>
       </TableContainer>
+
+      {openError ? (
+        <Dialog
+          open={openError}
+          onClose={() => {
+            setOpenError(false);
+          }}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogContent>
+            <DialogContentText
+              id="alert-dialog-description"
+              variant="body1"
+              color="text.primary"
+            >
+              {errorMsg}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                setOpenError(false);
+              }}
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      ) : null}
     </Box>
   );
 }
