@@ -18,7 +18,7 @@ import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
 import Overview from "./Overview";
 import { CustomAppBar } from "../components/CustomAppBar";
-import { resetError, setError } from "../features/common/commonSlice";
+import { resetError, resetTxLoad, setError } from "../features/common/commonSlice";
 import Page404 from "./Page404";
 import AppDrawer from "../components/AppDrawer";
 import { Alert } from "../components/Alert";
@@ -55,6 +55,7 @@ function DashboardContent(props) {
     setDarkMode(!darkMode);
   };
 
+  const txLoadRes = useSelector(state => state?.common?.txLoadRes?.load)
   const [pallet, setPallet] = useState(getPallet());
   const balance = useSelector((state) => state.bank.balance);
 
@@ -389,6 +390,28 @@ function DashboardContent(props) {
       ) : (
         <></>
       )}
+
+      <Snackbar
+        open={txLoadRes}
+        onClose={() => {
+          showTxSnack(false);
+        }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => {
+            dispatch(resetTxLoad())
+          }}
+          severity="info"
+          sx={{ width: "100%" }}
+        >
+          <AlertTitle sx={{ width: '100%', display: 'flex' }}>
+            <CircularProgress size={25}
+              sx={{ color: '#FFF', mr: 2 }} />
+            <Typography> Loading..</Typography>
+          </AlertTitle>
+        </Alert>
+      </Snackbar>
 
       <Snackbar
         open={snackTxOpen}

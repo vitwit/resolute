@@ -15,37 +15,38 @@ const memberObj = {
     metadata: '',
 }
 
-export function CreateGroupForm({ handleMembers }) {
-    const [memberObjs, setMemberObjs] = useState([]);
+interface member {
+    address: string;
+    metadata: string;
+    weight: string;
+}
 
-    const handleChange = (i, e) => {
-        const obj = memberObjs[i];
-        obj[e.target.name] = e.target.value;
+interface UpdateGroupMemberProps {
+    members: Array<any>,
+    handleUpdate: any
+}
+
+export function UpdateGroupMemberForm({ members, handleUpdate }: UpdateGroupMemberProps) {
+    var [memberObjs, setMemberObjs] = useState([...members]);
+
+    const handleChange = (i: number,
+        e: { target: { name: string, value: string } }) => {
+        let obj = memberObjs[i];
+        obj = {
+            ...obj,
+            [e.target.name]: e.target.value
+        }
         memberObjs[i] = obj;
         setMemberObjs([...memberObjs])
-        handleMembers(memberObjs)
     }
 
-    const handleSubmit = () => {
-        setMemberObjs([...memberObjs, { address: '', weight: '', metadata: '' }])
+    const handleSubmit = (i: number) => {
+        memberObjs = [...memberObjs, { address: '', weight: '', metadata: '' }]
+        setMemberObjs(memberObjs)
     }
 
     return (
         <div>
-            <Box sx={{ textAlign: 'right' }}>
-                <Button
-                    variant="outlined"
-                    onClick={() => {
-                        setMemberObjs([...memberObjs, { address: '', weight: '', metadata: '' }])
-                    }}
-                    sx={{
-                        textTransform: "none",
-                    }}
-                >
-                    Add Group Member
-                </Button>
-            </Box>
-
             <Box>
                 {
                     memberObjs.length ?
@@ -93,7 +94,7 @@ export function CreateGroupForm({ handleMembers }) {
                                                     <DeleteOutline sx={{ mr: 2 }} onClick={() => {
                                                         memberObjs.splice(i, 1);
                                                         setMemberObjs([...memberObjs]);
-                                                    }} /> 
+                                                    }} />
                                                     <Button variant='outlined'
                                                         onClick={() => handleSubmit(i)}>+</Button>
                                                 </Box>
@@ -102,6 +103,15 @@ export function CreateGroupForm({ handleMembers }) {
                                     </Grid>
                                 </Grid>
                             ))}
+
+                            <Grid>
+                                <Button
+                                    onClick={() => handleUpdate(memberObjs)}
+                                    variant='outlined'>
+                                    Update
+                                </Button><br /><br />
+                            </Grid>
+
                         </Box> : null
                 }
             </Box>
@@ -109,4 +119,4 @@ export function CreateGroupForm({ handleMembers }) {
     )
 }
 
-export default CreateGroupForm
+export default UpdateGroupMemberForm

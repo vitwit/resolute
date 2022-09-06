@@ -30,13 +30,9 @@ export default function CreateGroupPage() {
 
   useEffect(() => {
     if (txRes?.status === 'idle') {
-      // navigate(`/group`)
+      navigate(`/group`)
     }
   }, [txRes?.status])
-
-  const showGroupMemberDialog = () => {
-    // setShowMemberDialog(true);
-  };
 
   const {
     handleSubmit,
@@ -64,14 +60,12 @@ export default function CreateGroupPage() {
       members,
       policyData,
       groupMetaData: data?.metadata,
-      // spendLimit: amountToMinimalValue(data.spendLimit, chainInfo.config.currencies[0]),
       expiration: data.expiration,
-      // denom: currency.coinMinimalDenom,
       chainId: chainInfo.config.chainId,
       rpc: chainInfo.config.rpc,
       feeAmount: chainInfo.config.gasPriceStep.average,
     }
-    console.log('dddddddddddddddd', dataObj)
+
     dispatch(txCreateGroup(dataObj))
   };
 
@@ -137,104 +131,6 @@ export default function CreateGroupPage() {
                 )}
               />
             </div>
-            {policyData.metadata?.length > 0 ? (
-              <div
-                style={{
-                  textAlign: "left",
-                }}
-              >
-                <Typography
-                  variant="body1"
-                  fontWeight={500}
-                  color="text.primary"
-                >
-                  DecisionPolicy
-                </Typography>
-                <Grid
-                  container
-                  sx={{
-                    mt: 1,
-                    mb: 1,
-                  }}
-                >
-                  <Grid item xs={12} md={12}>
-                    <Typography variant="body1" color="text.primary">
-                      Metadata
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      color="text.secondary"
-                      gutterBottom
-                    >
-                      {policyData.metadata}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4} md={3}>
-                    <Typography>Voting Period</Typography>
-                    <Typography
-                      variant="body1"
-                      color="text.secondary"
-                      gutterBottom
-                    >
-                      {policyData.votingPeriod}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4} md={3}>
-                    <Typography variant="body1" color="text.primary">
-                      Policy As Admin
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      color="text.secondary"
-                      gutterBottom
-                    >
-                      {policyData.policyAsAdmin == true ? "true" : "false"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4} md={3}>
-                    <Typography variant="body1" color="text.primary">
-                      Min Execution Period
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      color="text.secondary"
-                      gutterBottom
-                    >
-                      {policyData.minExecutionPeriod}
-                    </Typography>
-                  </Grid>
-                  {policyData.decisionPolicy === "threshold" ? (
-                    <Grid item xs={4} md={3}>
-                      <Typography variant="body1" color="text.primary">
-                        Threshold
-                      </Typography>
-                      <Typography
-                        variant="body1"
-                        color="text.secondary"
-                        gutterBottom
-                      >
-                        {policyData.threshold}
-                      </Typography>
-                    </Grid>
-                  ) : (
-                    <Grid item xs={4} md={3}>
-                      <Typography variant="body1" color="text.primary">
-                        Percentage
-                      </Typography>
-                      <Typography
-                        variant="body1"
-                        color="text.secondary"
-                        gutterBottom
-                      >
-                        {policyData.percentage}%
-                      </Typography>
-                    </Grid>
-                  )}
-                </Grid>
-              </div>
-            ) : (
-              <></>
-            )}
 
             <Box
               sx={{

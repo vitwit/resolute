@@ -63,7 +63,7 @@ export default function DailogVote(props: SimpleDialogProps) {
             m: 1,
             borderRadius: '5px',
             ':hover': { background: option?.value === vote ? option?.active : null },
-            background: option?.value === vote ? option?.active : null
+            background: option?.value === vote ? option?.active : '#f3f3f3'
           }} button
             onClick={() => handleListItemClick(option?.value)} key={option?.label}>
             <ListItemText primary={option?.label} />

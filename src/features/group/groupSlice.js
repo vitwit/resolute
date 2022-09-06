@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fee, signAndBroadcastGroupMsg, signAndBroadcastGroupProposal, signAndBroadcastGroupProposalExecute, signAndBroadcastGroupProposalVote, signAndBroadcastLeaveGroup, signAndBroadcastProto, signAndBroadcastUpdateGroupMembers } from "../../txns/execute";
-import { CreateGroup, CreateGroupProposal, CreateGroupWithPolicy, CreateLeaveGroupMember, CreateProposalExecute, CreateProposalVote, UpdateGroupMembers } from "../../txns/group/group";
-import { setError, setTxHash } from "../common/commonSlice";
+import { fee, signAndBroadcastGroupMsg, signAndBroadcastGroupProposal, signAndBroadcastGroupProposalExecute, signAndBroadcastGroupProposalVote, signAndBroadcastLeaveGroup, signAndBroadcastProto, signAndBroadcastUpdateGroupAdmin, signAndBroadcastUpdateGroupMembers, signAndBroadcastUpdateGroupMetadata, signAndBroadcastUpdateGroupPolicy } from "../../txns/execute";
+import { CreateGroup, CreateGroupProposal, CreateGroupWithPolicy, CreateLeaveGroupMember, CreateProposalExecute, CreateProposalVote, UpdateGroupAdmin, UpdateGroupMembers, UpdateGroupMetadata, UpdateGroupPolicy } from "../../txns/group/group";
+import { resetTxLoad, setError, setTxHash, setTxLoad } from "../common/commonSlice";
 import groupService from "./groupService";
 
 const initialState = {
@@ -38,6 +38,9 @@ const initialState = {
     data: []
   },
   groupProposal: {},
+  updateGroupPolicyRes: {},
+  updateGroupAdminRes: {},
+  updateGroupMetadataRes: {}
 };
 
 export const getGroupsByAdmin = createAsyncThunk(
@@ -136,6 +139,8 @@ export const getGroupPolicyProposals = createAsyncThunk(
 export const txGroupProposalVote = createAsyncThunk(
   'group/tx-group-proposal-vote',
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    dispatch(setTxLoad());
+
     try {
       let msg = CreateProposalVote(
         data.proposalId,
@@ -153,6 +158,8 @@ export const txGroupProposalVote = createAsyncThunk(
         data.chainId,
         data.rpc
       );
+
+      dispatch(resetTxLoad());
       if (result?.code === 0) {
         dispatch(
           setTxHash({
@@ -171,6 +178,9 @@ export const txGroupProposalVote = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+
+      dispatch(resetTxLoad());
+
       console.log('Error while creating the group proposal', error.message)
       dispatch(
         setError({
@@ -186,6 +196,7 @@ export const txGroupProposalVote = createAsyncThunk(
 export const txGroupProposalExecute = createAsyncThunk(
   'group/tx-group-proposal-execute',
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    dispatch(setTxLoad());
     try {
       let msg = CreateProposalExecute(
         data.proposalId,
@@ -201,6 +212,9 @@ export const txGroupProposalExecute = createAsyncThunk(
         data.chainId,
         data.rpc
       );
+
+      dispatch(resetTxLoad());
+
       if (result?.code === 0) {
         dispatch(
           setTxHash({
@@ -219,6 +233,119 @@ export const txGroupProposalExecute = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+
+      dispatch(resetTxLoad());
+
+      console.log('Error while creating the group proposal', error.message)
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+)
+
+export const txUpdateGroupAdmin = createAsyncThunk(
+  'group/tx-update-group-admin',
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    dispatch(setTxLoad());
+
+    try {
+      let msg = UpdateGroupAdmin(
+        data.admin,
+        data.groupId,
+        data.newAdmin
+      )
+
+      console.log('msg----', msg)
+
+      const result = await signAndBroadcastUpdateGroupAdmin(
+        data.admin,
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.chainId,
+        data.rpc
+      );
+      dispatch(resetTxLoad());
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        console.log('Error while creating propsoal', result?.rawLog)
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+
+      dispatch(resetTxLoad());
+
+      console.log('Error while creating the group proposal', error.message)
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+)
+
+export const txUpdateGroupMetadata = createAsyncThunk(
+  'group/tx-update-group-metadata',
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    dispatch(setTxLoad());
+
+    try {
+      let msg = UpdateGroupMetadata(
+        data.admin,
+        data.groupId,
+        data.metadata
+      )
+
+      console.log('msg----', msg)
+
+      const result = await signAndBroadcastUpdateGroupMetadata(
+        data.admin,
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.chainId,
+        data.rpc
+      );
+      dispatch(resetTxLoad());
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        console.log('Error while creating propsoal', result?.rawLog)
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+
+      dispatch(resetTxLoad());
+
       console.log('Error while creating the group proposal', error.message)
       dispatch(
         setError({
@@ -234,6 +361,8 @@ export const txGroupProposalExecute = createAsyncThunk(
 export const txCreateGroupProposal = createAsyncThunk(
   'group/tx-create-group-proposal',
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    dispatch(setTxLoad());
+
     try {
       let msg = CreateGroupProposal(
         data.groupPolicyAddress,
@@ -251,6 +380,7 @@ export const txCreateGroupProposal = createAsyncThunk(
         data.chainId,
         data.rpc
       );
+      dispatch(resetTxLoad());
       if (result?.code === 0) {
         dispatch(
           setTxHash({
@@ -269,6 +399,9 @@ export const txCreateGroupProposal = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+
+      dispatch(resetTxLoad());
+
       console.log('Error while creating the group proposal', error.message)
       dispatch(
         setError({
@@ -284,6 +417,7 @@ export const txCreateGroupProposal = createAsyncThunk(
 export const txCreateGroup = createAsyncThunk(
   "group/tx-create-group",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    dispatch(setTxLoad());
     let msg;
     console.log({ data })
     try {
@@ -310,6 +444,9 @@ export const txCreateGroup = createAsyncThunk(
         data.chainId,
         data.rpc
       );
+
+      dispatch(resetTxLoad());
+
       if (result?.code === 0) {
         dispatch(
           setTxHash({
@@ -327,6 +464,9 @@ export const txCreateGroup = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+
+      dispatch(resetTxLoad());
+
       console.log('Error while creating the group', error.message)
       dispatch(
         setError({
@@ -343,6 +483,7 @@ export const txUpdateGroupMember = createAsyncThunk(
   "group/tx-update-group-member",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     let msg;
+    dispatch(setTxLoad());
     console.log({ data })
     try {
       msg = UpdateGroupMembers(
@@ -351,6 +492,8 @@ export const txUpdateGroupMember = createAsyncThunk(
         data.groupId
       );
 
+      console.log({ msg })
+
       const result = await signAndBroadcastUpdateGroupMembers(
         data.admin,
         [msg],
@@ -358,6 +501,9 @@ export const txUpdateGroupMember = createAsyncThunk(
         data.chainId,
         data.rpc
       );
+
+      dispatch(resetTxLoad());
+
       if (result?.code === 0) {
         dispatch(
           setTxHash({
@@ -376,6 +522,67 @@ export const txUpdateGroupMember = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+
+      dispatch(resetTxLoad());
+
+      console.log('Error while creating the group', error.message)
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const txUpdateGroupPolicy = createAsyncThunk(
+  "group/tx-update-group-policy",
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    let msg;
+    dispatch(setTxLoad());
+    console.log({ data })
+    try {
+      msg = UpdateGroupPolicy(
+        data.admin,
+        data.groupPolicyAddress,
+        data.policyMetadata
+      );
+
+      console.log({ msg })
+
+      const result = await signAndBroadcastUpdateGroupPolicy(
+        data.admin,
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.chainId,
+        data.rpc
+      );
+
+      dispatch(resetTxLoad());
+
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        console.log('Error while creating the group', result?.rawLog)
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+
+      dispatch(resetTxLoad());
+
       console.log('Error while creating the group', error.message)
       dispatch(
         setError({
@@ -392,6 +599,7 @@ export const txLeaveGroupMember = createAsyncThunk(
   "group/tx-leave-group-member",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     let msg;
+    dispatch(setTxLoad());
     console.log({ data })
     try {
       msg = CreateLeaveGroupMember(
@@ -406,6 +614,9 @@ export const txLeaveGroupMember = createAsyncThunk(
         data.chainId,
         data.rpc
       );
+
+      dispatch(resetTxLoad());
+
       if (result?.code === 0) {
         dispatch(
           setTxHash({
@@ -424,6 +635,9 @@ export const txLeaveGroupMember = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+
+      dispatch(resetTxLoad());
+
       console.log('Error while creating the group', error.message)
       dispatch(
         setError({
@@ -446,6 +660,9 @@ export const groupSlice = createSlice({
     resetGroupTx: (state, _) => {
       state.tx.status = '';
     },
+    resetUpdateGroupMember: (state) => {
+      state.updateGroupRes.status = '';
+    }
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
   // including actions generated by createAsyncThunk or in other slices.
@@ -633,9 +850,42 @@ export const groupSlice = createSlice({
       .addCase(getGroupProposalById.rejected, (state, _) => {
         state.groupProposal.status = `rejected`;
       });
+
+    builder
+      .addCase(txUpdateGroupPolicy.pending, (state) => {
+        state.updateGroupPolicyRes.status = `pending`;
+      })
+      .addCase(txUpdateGroupPolicy.fulfilled, (state, action) => {
+        state.updateGroupPolicyRes.status = 'idle';
+      })
+      .addCase(txUpdateGroupPolicy.rejected, (state, _) => {
+        state.updateGroupPolicyRes.status = `rejected`;
+      });
+
+    builder
+      .addCase(txUpdateGroupAdmin.pending, (state) => {
+        state.updateGroupAdminRes.status = `pending`;
+      })
+      .addCase(txUpdateGroupAdmin.fulfilled, (state, action) => {
+        state.updateGroupAdminRes.status = 'idle';
+      })
+      .addCase(txUpdateGroupAdmin.rejected, (state, _) => {
+        state.updateGroupAdminRes.status = `rejected`;
+      });
+
+    builder
+      .addCase(txUpdateGroupMetadata.pending, (state) => {
+        state.updateGroupMetadataRes.status = `pending`;
+      })
+      .addCase(txUpdateGroupMetadata.fulfilled, (state, action) => {
+        state.updateGroupMetadataRes.status = 'idle';
+      })
+      .addCase(txUpdateGroupMetadata.rejected, (state, _) => {
+        state.updateGroupMetadataRes.status = `rejected`;
+      });
   },
 });
 
-export const { resetGroupTx } = groupSlice.actions;
+export const { resetGroupTx, resetUpdateGroupMember } = groupSlice.actions;
 
 export default groupSlice.reducer;

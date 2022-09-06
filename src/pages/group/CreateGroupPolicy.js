@@ -1,15 +1,9 @@
 import {
-    Box, Button, Table, TableCell, TableHead,
-    TableContainer,
-    TableBody,
-    Paper,
-    TableRow, TextField, Select, MenuItem, FormControlLabel, Switch, Typography, Grid, FormControl, InputLabel, InputAdornment,
+    Box, Button, TextField, Select, MenuItem, FormControlLabel, Switch, Typography, Grid, FormControl, InputLabel, InputAdornment,
 } from '@mui/material';
-import DeleteOutline from "@mui/icons-material/DeleteOutline";
-import Edit from "@mui/icons-material/Edit";
 import React, { useState } from 'react'
 
-function CreateGroupPolicy({handlePolicy}) {
+function CreateGroupPolicy({ handlePolicy }) {
     var [policies, setPolicies] = useState([]);
     const [policy, setPolicy] = useState({});
     const [editIndex, setEditIndex] = useState(-1);
@@ -18,7 +12,7 @@ function CreateGroupPolicy({handlePolicy}) {
     const handleChange = (e) => {
         policy[e.target.name] = e.target.value;
         if (e.target.name === 'decisionPolicy') {
-            if(e.target.value === 'percentage') {
+            if (e.target.value === 'percentage') {
                 policy['threshold'] = 0;
             } else if (e.target.value === 'threshold') {
                 policy['percentage'] = 0;
@@ -47,6 +41,8 @@ function CreateGroupPolicy({handlePolicy}) {
                         </Button> : null
 
                 }
+                <br /><br />
+
 
             </Box>
             {
@@ -57,7 +53,31 @@ function CreateGroupPolicy({handlePolicy}) {
                         mt: 2,
                         borderRadius: 2
                     }}>
-                        <h5>Add Group Policy</h5>
+                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                            <Typography
+                                sx={{
+                                    fontSize: 22
+                                }}>Add Decision Policy</Typography>
+                            {
+                                showAddForm ?
+                                    <Button
+                                        variant="outlined"
+                                        onClick={() => {
+                                            setShowAddForm(false)
+                                            setEditIndex(-1)
+                                        }}
+                                        sx={{
+                                            textTransform: "none",
+                                            color: 'red',
+                                            borderColor: 'red',
+                                            textAlign: 'right',
+                                            marginLeft: 'auto'
+                                        }}
+                                    >
+                                        Remove Decision Policy
+                                    </Button> : null
+                            }
+                        </Box>
                         <Box>
                             <TextField
                                 fullWidth

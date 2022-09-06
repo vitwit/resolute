@@ -3,16 +3,20 @@ import { experimentalStyled as styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import { Button, CircularProgress, FormControl, Table, TableCell, TableRow, TextField, Typography } from '@mui/material';
+import { Alert, Button, Card, CircularProgress, FormControl, Table, TableCell, TableRow, TextField, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import RowItem from '../../components/group/RowItem';
 import { useDispatch, useSelector } from 'react-redux';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { getGroupById, getGroupMembersById, getGroupPoliciesById, txLeaveGroupMember, txUpdateGroupMember } from '../../features/group/groupSlice';
+import { getGroupById, getGroupMembers, getGroupMembersById, getGroupPoliciesById, resetUpdateGroupMember, txLeaveGroupMember, txUpdateGroupAdmin, txUpdateGroupMember, txUpdateGroupMetadata, txUpdateGroupPolicy } from '../../features/group/groupSlice';
 import GroupsIcon from '@mui/icons-material/Groups';
 import MembersTable from '../../components/group/MembersTable';
 import PolicyCard from '../../components/group/PolicyCard';
 import CreateGroupForm from './CreateGroupForm';
+import UpdateGroupMemberForm from '../../components/group/UpdateGroupMemberForm';
+import CreateGroupPolicy from './CreateGroupPolicy';
+import EditIcon from '@mui/icons-material/Edit';
+import { UpdateGroupAdmin } from '../../txns/group/group';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -28,9 +32,14 @@ const Item = styled(Paper)(({ theme }) => ({
 const GroupPolicies = ({ id, wallet }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [showForm, setShowForm] = useState(false);
     const [limit, setLimit] = useState(5);
     const [total, setTotal] = useState(0);
     const [pageNumber, setPageNumber] = useState(0);
+    const [policyObj, setPolicyObj] = useState({});
+    const groupDetails = useSelector(state => state.group.groupInfo);
+    const { data: groupInformation, status: groupInfoStatus } = groupDetails;
+    console.log('----------', groupInformation)
 
     useEffect(() => {
         dispatch(getGroupPoliciesById({
@@ -57,25 +66,62 @@ const GroupPolicies = ({ id, wallet }) => {
         group_policies = data?.group_policies;
     }
 
-
-    // const {
-    //     group_policies = []
-    // } = data;
-
     useEffect(() => {
         if (Number(data?.pagination?.total))
             setTotal(Number(data?.pagination?.total || 0))
     }, [data])
 
+    const handlePolicy = (policyObj) => {
+        setPolicyObj({ ...policyObj })
+        console.log('policy obj---', policyObj)
+    }
+
+    const handlePolicySubmit = () => {
+        const chainInfo = wallet?.chainInfo;
+
+        dispatch(txUpdateGroupPolicy({
+            admin: groupInformation?.info?.admin,
+            groupPolicyAddress: wallet?.address,
+            policyMetadata: policyObj,
+            denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
+            chainId: chainInfo.config.chainId,
+            rpc: chainInfo.config.rpc,
+            feeAmount: chainInfo.config.gasPriceStep.average,
+        }))
+    }
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <Typography sx={{ fontSize: 24, mt: 2 }}>Group Policies</Typography><br />
+
+            <Card sx={{ width: '100%' }}>
+                <Card sx={{ width: '80%', m: '0 auto' }}>
+                    <CreateGroupPolicy handlePolicy={handlePolicy} />
+                    <Button
+                        onClick={() => handlePolicySubmit()}
+                        variant='outlined' sx={{ justifyContent: 'center' }}>
+                        Add Policy
+                    </Button>
+                </Card>
+            </Card>
+
+
             <Grid container spacing={{ xs: 2, md: 1 }}
                 columns={{ xs: 4, sm: 8, md: 10 }}>
                 {
                     status === 'pending' ?
                         <CircularProgress /> : null
                 }
+                {
+                    status !== 'pending' && !group_policies?.length && (
+                        <Card sx={{ width: '100%', p: 5 }}>
+                            <Alert sx={{ textAlign: 'center' }} severity='info'>
+                                No policies found.
+                            </Alert>
+                        </Card>
+                    )
+                }
+
                 {status !== 'pending' && group_policies.map((p, index) => (
                     <PolicyCard obj={p} />
                 ))}
@@ -90,12 +136,23 @@ const GroupMembers = ({ id, wallet }) => {
     const [total, setTotal] = useState(0);
     const [pageNumber, setPageNumber] = useState(0);
 
-    useEffect(() => {
+    const createGroupRes = useSelector(state => state.group?.updateGroupRes)
+
+    const getGroupmembers = () => {
         dispatch(getGroupMembersById({
             baseURL: wallet?.chainInfo?.config?.rest,
             id: id,
             pagination: { limit: limit, key: '' },
         }))
+    }
+
+    useEffect(() => {
+        dispatch(resetUpdateGroupMember())
+        getGroupmembers();
+    }, [createGroupRes?.status])
+
+    useEffect(() => {
+        getGroupmembers();
     }, [])
 
     const handleMembersPagination = (number, limit, key) => {
@@ -139,6 +196,10 @@ const GroupMembers = ({ id, wallet }) => {
 
 const GroupInfo = ({ id, wallet }) => {
     const dispatch = useDispatch();
+    const [showAdminInput, setShowAdminInput] = useState(false);
+    const [admin, setAdmin] = useState('');
+    const [metadata, setMetadata] = useState('');
+    const [showMetadataInput, setShowMetadataInput] = useState(false);
 
     const groupMembers = useSelector(state => state.group.groupMembers)
     const { data: members, status: memberStatus } = groupMembers;
@@ -173,8 +234,33 @@ const GroupInfo = ({ id, wallet }) => {
             rpc: chainInfo.config.rpc,
             feeAmount: chainInfo.config.gasPriceStep.average,
         }));
+    }
 
+    const UpdateAdmin = () => {
+        console.log('addddd', admin)
+        const chainInfo = wallet?.chainInfo;
+        dispatch(txUpdateGroupAdmin({
+            admin: data?.info?.admin,
+            groupId: id,
+            newAdmin: admin,
+            denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
+            chainId: chainInfo.config.chainId,
+            rpc: chainInfo.config.rpc,
+            feeAmount: chainInfo.config.gasPriceStep.average,
+        }));
+    }
 
+    const UpdateMetadata = () => {
+        const chainInfo = wallet?.chainInfo;
+        dispatch(txUpdateGroupMetadata({
+            admin: data?.info?.admin,
+            groupId: id,
+            metadata,
+            denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
+            chainId: chainInfo.config.chainId,
+            rpc: chainInfo.config.rpc,
+            feeAmount: chainInfo.config.gasPriceStep.average,
+        }));
     }
 
     return (
@@ -210,9 +296,112 @@ const GroupInfo = ({ id, wallet }) => {
                         {
                             status !== 'pending' ?
                                 <Box>
+                                    <Grid container>
+                                        <Grid md={2}>
+                                            <Typography sx={{
+                                                fontSize: 18,
+                                                textAlign: 'left',
+                                                ml: 1
+                                            }}>Admin</Typography>
+                                        </Grid>
+                                        <Grid md={6}>
+                                            {
+                                                showAdminInput ?
+                                                    <TextField
+                                                        fullWidth
+                                                        value={admin}
+                                                        onChange={e => {
+                                                            setAdmin(e.target.value)
+                                                        }}
+                                                    />
+                                                    :
+                                                    <Typography sx={{
+                                                        fontSize: 18,
+                                                        textAlign: 'left',
+                                                        fontWeight: 'bold',
+                                                        ml: 2
+                                                    }}>
+                                                        {data?.info?.admin || '-'}
+                                                    </Typography>
+                                            }
 
-                                    <RowItem lable={'Admin'} value={data?.info?.admin || '-'} />
-                                    <RowItem lable={'Metadata'} value={data?.info?.metadata || '-'} />
+                                        </Grid>
+                                        <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
+                                            {
+                                                showAdminInput ?
+                                                    <Button
+                                                        sx={{ mt: 1 }}
+                                                        onClick={
+                                                            () => UpdateAdmin()
+                                                        }
+                                                        variant='contained'>
+                                                        Update
+                                                    </Button> :
+                                                    <EditIcon onClick={
+                                                        () => {
+                                                            setAdmin(data?.info?.admin)
+                                                            setShowAdminInput(!showAdminInput)
+                                                        }
+                                                    } />
+                                            }
+
+                                        </Grid>
+                                    </Grid>
+                                    <br />
+                                    <Grid container>
+                                        <Grid md={2}>
+                                            <Typography sx={{
+                                                fontSize: 18,
+                                                textAlign: 'left',
+                                                ml: 1
+                                            }}>Metdata</Typography>
+                                        </Grid>
+                                        <Grid md={6}>
+                                            {
+                                                showMetadataInput ?
+                                                    <TextField
+                                                        fullWidth
+                                                        value={metadata}
+                                                        onChange={e => {
+                                                            setMetadata(e.target.value)
+                                                        }}
+                                                    />
+                                                    :
+                                                    <Typography sx={{
+                                                        fontSize: 18,
+                                                        textAlign: 'left',
+                                                        fontWeight: 'bold',
+                                                        ml: 2
+                                                    }}>
+                                                        {data?.info?.metadata || '-'}
+                                                    </Typography>
+                                            }
+
+                                        </Grid>
+                                        <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
+                                            {
+                                                showMetadataInput ?
+                                                    <Button
+                                                        sx={{ mt: 1 }}
+                                                        onClick={
+                                                            () => UpdateMetadata()
+                                                        }
+                                                        variant='contained'>
+                                                        Update
+                                                    </Button> :
+                                                    <EditIcon onClick={
+                                                        () => {
+                                                            setMetadata(data?.info?.metadata)
+                                                            setShowMetadataInput(!showMetadataInput)
+                                                        }
+                                                    } />
+                                            }
+
+                                        </Grid>
+                                    </Grid>
+                                    <br />
+                                    {/* <RowItem lable={'Admin'} value={data?.info?.admin || '-'} /> */}
+                                    {/* <RowItem lable={'Metadata'} value={data?.info?.metadata || '-'} /> */}
                                     <RowItem lable={'Version'} value={data?.info?.version || '-'} />
                                     <RowItem lable={'Total Weight'} value={data?.info?.total_weight || '-'} />
                                 </Box> : null
@@ -227,23 +416,59 @@ const GroupInfo = ({ id, wallet }) => {
 
 const UpdateGroupMember = ({ id, wallet }) => {
     const [showForm, setShowForm] = useState(false);
-    var [members, setMembers] = useState([]);
+    var [members2, setMembers] = useState([]);
     const dispatch = useDispatch();
     const updateRes = useSelector(state => state.group.updateGroupRes)
 
+    useEffect(() => {
+        if (updateRes?.status === 'idle') {
+            setShowForm(false);
+        }
+    }, [updateRes])
 
-    const handleMembers = (membersArr) => {
-        members = membersArr;
-        setMembers([...members]);
+    // useEffect(() => {
+    //     return () => {
+    //         dispatch(resetUpdateGroupMember())
+    //     }
+    // }, [])
+
+    const groupMembers = useSelector(state => state.group.groupMembers)
+    const members1 = [{ address: '', weight: '', metadata: '' }];
+    const { data: members, status: memberStatus } = groupMembers;
+
+    const getMembers = () => {
+        let m = members && members?.members?.map(m => {
+            let { added_at, ...newObj } = m?.member;
+            return newObj
+        })
+        if (m?.length)
+            setMembers([...m])
+        else
+            setMembers([...members2, members1]);
     }
 
-    const handleUpdate = () => {
+    // useEffect(() => {
+    //     if (updateRes?.status === 'idle')
+    //         getGroupMembers()
+    // }, [updateRes?.status])
+
+    useEffect(() => {
+        getMembers()
+    }, [])
+
+    const handleMembers = (membersArr) => {
+        members2 = membersArr;
+        setMembers([...members2]);
+    }
+
+    const handleUpdate = (allMembers) => {
+        console.log('allmembers ---- ', allMembers)
         const chainInfo = wallet?.chainInfo;
 
         const dataObj = {
             admin: wallet?.address,
             groupId: id,
-            members,
+            members: allMembers,
             denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
             chainId: chainInfo.config.chainId,
             rpc: chainInfo.config.rpc,
@@ -270,22 +495,11 @@ const UpdateGroupMember = ({ id, wallet }) => {
                                 <Typography sx={{ fontSize: 20 }}>
                                     Update Group Members
                                 </Typography>
-                                <CreateGroupForm
-                                    isSubmitBtn={true}
-                                    handleMembers={handleMembers} />
-                                {
-                                    members.length ?
-                                        <Grid>
-                                            <Button
-                                                onClick={() => handleUpdate()}
-                                                variant='outlined'>
-                                                {
-                                                    updateRes?.status === 'pending' ?
-                                                        'Loading...' : 'Update'
-                                                }
-                                            </Button><br /><br />
-                                        </Grid> : null
-                                }
+                                <UpdateGroupMemberForm
+                                    handleUpdate={handleUpdate}
+                                    members={members2}
+                                />
+
                             </Box>
                         </Paper>
                         : null

@@ -5,6 +5,9 @@ import {
     MsgExec,
     MsgUpdateGroupMembers,
     MsgLeaveGroup,
+    MsgUpdateGroupPolicyDecisionPolicy,
+    MsgUpdateGroupAdmin,
+    MsgUpdateGroupMetadata,
 } from "./v1/tx";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import {
@@ -28,6 +31,9 @@ const msgGroupProposalVote = `/cosmos.group.v1.MsgVote`;
 const msgGroupProposalExecute = `/cosmos.group.v1.MsgExec`;
 const msgUpdateGroupMember = `/cosmos.group.v1.MsgUpdateGroupMembers`;
 const msgLeaveGroupMember = `/cosmos.group.v1.MsgLeaveGroup`;
+const msgUpdateGroupPolicy = `/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy`;
+const msgUpdateGroupAdmin = `/cosmos.group.v1.MsgUpdateGroupAdmin`;
+const msgUpdateGroupMetadata = `/cosmos.group.v1.MsgUpdateGroupMetadata`;
 
 export function CreateGroup(admin: any, metadata: any, members: any) {
     return {
@@ -177,6 +183,91 @@ export function UpdateGroupMembers(
     return obj;
 }
 
+export function UpdateGroupAdmin(
+    admin: any,
+    groupId: any,
+    newAdmin: any,
+) {
+
+    const obj = {
+        typeUrl: msgUpdateGroupAdmin,
+        value: MsgUpdateGroupAdmin.fromPartial({
+            admin,
+            groupId,
+            newAdmin,
+        })
+    };
+
+    return obj;
+}
+
+export function UpdateGroupMetadata(
+    admin: any,
+    groupId: any,
+    metadata: any,
+) {
+
+    const obj = {
+        typeUrl: msgUpdateGroupMetadata,
+        value: MsgUpdateGroupMetadata.fromPartial({
+            admin,
+            groupId,
+            metadata,
+        })
+    };
+
+    return obj;
+}
+
+
+export function UpdateGroupPolicy(
+    admin: any,
+    groupPolicyAddress: any,
+    policyMetadata: any,
+) {
+
+    const obj = {
+        typeUrl: msgUpdateGroupPolicy,
+        value: MsgUpdateGroupPolicyDecisionPolicy.fromPartial({
+            admin: admin,
+            groupPolicyAddress: groupPolicyAddress,
+            decisionPolicy: {
+                typeUrl: policyMetadata?.percentage && msgCreateGroupWithPercentagePolicy ||
+                    msgCreateGroupWithThresholdPolicy,
+                value: policyMetadata?.percentage &&
+                    PercentageDecisionPolicy.encode({
+                        percentage: parseFloat(policyMetadata?.percentage || 0).toFixed(2).toString(),
+                        windows: DecisionPolicyWindows.fromPartial({
+                            votingPeriod: Duration.fromPartial({
+                                seconds: Long.fromNumber(policyMetadata?.votingPeriod),
+                                nanos: Number(policyMetadata?.votingPeriod)
+                            }),
+                            minExecutionPeriod: Duration.fromPartial({
+                                seconds: Long.fromNumber(policyMetadata?.minExecPeriod),
+                                nanos: Number(policyMetadata?.minExecPeriod)
+                            }),
+                        })
+                    }).finish() ||
+                    ThresholdDecisionPolicy.encode({
+                        threshold: policyMetadata?.threshold?.toString(),
+                        windows: DecisionPolicyWindows.fromPartial({
+                            votingPeriod: Duration.fromPartial({
+                                seconds: Long.fromNumber(policyMetadata?.votingPeriod),
+                                nanos: Number(policyMetadata?.votingPeriod)
+                            }),
+                            minExecutionPeriod: Duration.fromPartial({
+                                seconds: Long.fromNumber(policyMetadata?.minExecPeriod),
+                                nanos: Number(policyMetadata?.minExecPeriod)
+                            }),
+                        })
+                    }).finish()
+            },
+        }),
+    };
+
+    return obj;
+}
+
 export function CreateLeaveGroupMember(
     memberAddress: any,
     groupId: any,
@@ -189,6 +280,6 @@ export function CreateLeaveGroupMember(
             address: memberAddress
         }),
     };
-    
+
     return obj;
 }

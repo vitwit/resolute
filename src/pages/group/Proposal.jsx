@@ -12,7 +12,7 @@ const ProposalInfo = ({ id, wallet }) => {
 
     const dispatch = useDispatch();
     const proposalInfo = useSelector(state => state.group.groupProposal);
-    const { data: { proposal } } = proposalInfo;
+    const { data: { proposal } = {} } = proposalInfo;
 
     const getProposal = () => {
         dispatch(getGroupProposalById({
