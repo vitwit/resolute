@@ -54,8 +54,9 @@ export default function PolicyCard({ obj }) {
                 sx={{ bg: '#f7f7f9' }}
                 action={
                     <IconButton aria-label="settings">
-                        {/* <MoreVertIcon /> */}
-                        <ReadMoreIcon sx={{ float: 'right', fontSize: 34 }} />
+                        <ReadMoreIcon
+                            color={'primary'}
+                            sx={{ float: 'right', fontSize: 34 }} />
                     </IconButton>
                 }
                 title={policyType[obj?.decision_policy['@type']]}
@@ -63,6 +64,12 @@ export default function PolicyCard({ obj }) {
             />
             <CardContent>
                 <Grid container>
+                    <Typography sx={{
+                        fontSize: 18,
+                        ml: 1
+                    }}>
+                        ## {obj?.metadata || '-'}
+                    </Typography>
                     {
                         obj?.decision_policy['@type'] === '/cosmos.group.v1.ThresholdDecisionPolicy' ?
                             <RowItem equal={true} lable={'Thresold'}
@@ -70,23 +77,13 @@ export default function PolicyCard({ obj }) {
                             <RowItem equal={true} lable={'Percentage'}
                                 value={`${obj?.decision_policy?.percentage} %` || '-'} />
                     }
-
                     <RowItem equal={true} lable={'Min Exection Period'}
                         value={parseFloat(obj?.decision_policy?.windows?.min_execution_period || 0).toFixed(2) || '-'} />
                     <RowItem equal={true} lable={'Voting Period'}
                         value={parseFloat(obj?.decision_policy?.windows?.voting_period || 0).toFixed(2) || '-'} />
-                    <RowItem equal={true} lable={'Metadata'} value={obj?.metadata || '-'} />
+
                 </Grid>
             </CardContent>
-
-            {/* <CardActions disableSpacing>
-                <IconButton aria-label="add to favorites">
-                    <FavoriteIcon />
-                </IconButton>
-                <IconButton aria-label="share">
-                    <ShareIcon />
-                </IconButton>
-            </CardActions> */}
         </Card >
     );
 }

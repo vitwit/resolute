@@ -1,4 +1,4 @@
-import { Card, CircularProgress, Grid, Paper, Typography } from '@mui/material'
+import { Alert, Card, CircularProgress, Grid, Paper, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
@@ -196,6 +196,18 @@ function Proposal() {
                         status === 'pending' ?
                             <CircularProgress /> : null
                     }
+
+                    {
+                        (status !== 'pending' &&
+                            !data?.length) && (
+                            <Card sx={{ width: '100%', p: 5 }}>
+                                <Alert sx={{ textAlign: 'center' }} severity='info'>
+                                    No votes found.
+                                </Alert>
+                            </Card>
+                        )
+                    }
+
                     {
                         status !== 'pending' ?
                             <VotesTable

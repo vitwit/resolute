@@ -17,7 +17,7 @@ const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
     padding: theme.spacing(2),
-    boxShadow: 'none',
+    // boxShadow: 'none',
     textAlign: 'center',
     color: theme.palette.text.secondary,
 }));
@@ -55,13 +55,22 @@ export default function GroupList(props: GroupsByAdminProps) {
                                         textAlign: 'left'
                                     }}>
                                         <Box sx={{ display: 'flex' }}>
-                                            <Box sx={{ width: '50%' }}>
+                                            <Box sx={{ width: '50%', fontSize: 18 }}>
                                                 <h4>#{group?.id || '-'}</h4> </Box>
                                             <Box sx={{ width: '50%' }}>
-                                                <ReadMoreIcon sx={{ float: 'right', fontSize: 34 }} />
+                                                <ReadMoreIcon
+                                                    color={'primary'}
+                                                    sx={{ float: 'right', fontSize: 34 }}
+                                                />
                                             </Box>
                                         </Box>
-                                        <p>Metadata: <strong>{group?.metadata || '-'}</strong></p><br />
+                                        <Typography sx={{
+                                            mb: 1,
+                                            fontSize: 18,
+                                            fontWeight: 'bold'
+                                        }}>
+                                            ## {group?.metadata || '-'}
+                                        </Typography>
                                         <Grid container columns={{ xs: 2, sm: 2, md: 12 }}>
                                             <Grid item xs={6} sm={6} md={4} key={index}>
                                                 Admin

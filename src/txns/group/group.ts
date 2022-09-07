@@ -8,6 +8,9 @@ import {
     MsgUpdateGroupPolicyDecisionPolicy,
     MsgUpdateGroupAdmin,
     MsgUpdateGroupMetadata,
+    MsgCreateGroupPolicy,
+    MsgUpdateGroupPolicyMetadata,
+    MsgUpdateGroupPolicyAdmin,
 } from "./v1/tx";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import {
@@ -34,6 +37,9 @@ const msgLeaveGroupMember = `/cosmos.group.v1.MsgLeaveGroup`;
 const msgUpdateGroupPolicy = `/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy`;
 const msgUpdateGroupAdmin = `/cosmos.group.v1.MsgUpdateGroupAdmin`;
 const msgUpdateGroupMetadata = `/cosmos.group.v1.MsgUpdateGroupMetadata`;
+const msgAddGroupPolicy = `/cosmos.group.v1.MsgCreateGroupPolicy`;
+const msgUpatePolicyMetdata = `/cosmos.group.v1.MsgUpdateGroupPolicyMetadata`;
+const msgUpatePolicyAdmin = `/cosmos.group.v1.MsgUpdateGroupPolicyAdmin`;
 
 export function CreateGroup(admin: any, metadata: any, members: any) {
     return {
@@ -220,6 +226,54 @@ export function UpdateGroupMetadata(
 }
 
 
+export function CreateGroupPolicy(
+    admin: any,
+    groupId: any,
+    policyMetadata: any,
+) {
+
+    const obj = {
+        typeUrl: msgAddGroupPolicy,
+        value: MsgCreateGroupPolicy.fromPartial({
+            admin: admin,
+            groupId,
+            decisionPolicy: {
+                typeUrl: policyMetadata?.percentage && msgCreateGroupWithPercentagePolicy ||
+                    msgCreateGroupWithThresholdPolicy,
+                value: policyMetadata?.percentage &&
+                    PercentageDecisionPolicy.encode({
+                        percentage: parseFloat(policyMetadata?.percentage || 0).toFixed(2).toString(),
+                        windows: DecisionPolicyWindows.fromPartial({
+                            votingPeriod: Duration.fromPartial({
+                                seconds: Long.fromNumber(policyMetadata?.votingPeriod),
+                                nanos: Number(policyMetadata?.votingPeriod)
+                            }),
+                            minExecutionPeriod: Duration.fromPartial({
+                                seconds: Long.fromNumber(policyMetadata?.minExecPeriod),
+                                nanos: Number(policyMetadata?.minExecPeriod)
+                            }),
+                        })
+                    }).finish() ||
+                    ThresholdDecisionPolicy.encode({
+                        threshold: policyMetadata?.threshold?.toString(),
+                        windows: DecisionPolicyWindows.fromPartial({
+                            votingPeriod: Duration.fromPartial({
+                                seconds: Long.fromNumber(policyMetadata?.votingPeriod),
+                                nanos: Number(policyMetadata?.votingPeriod)
+                            }),
+                            minExecutionPeriod: Duration.fromPartial({
+                                seconds: Long.fromNumber(policyMetadata?.minExecPeriod),
+                                nanos: Number(policyMetadata?.minExecPeriod)
+                            }),
+                        })
+                    }).finish()
+            },
+        }),
+    };
+
+    return obj;
+}
+
 export function UpdateGroupPolicy(
     admin: any,
     groupPolicyAddress: any,
@@ -283,3 +337,40 @@ export function CreateLeaveGroupMember(
 
     return obj;
 }
+
+export function UpdatePolicyMetadata(
+    admin: any,
+    address: any,
+    metadata: any
+) {
+
+    const obj = {
+        typeUrl: msgUpatePolicyMetdata,
+        value: MsgUpdateGroupPolicyMetadata.fromPartial({
+            admin: admin,
+            groupPolicyAddress: address,
+            metadata: metadata
+        }),
+    };
+
+    return obj;
+}
+
+export function UpdatePolicyAdmin(
+    admin: any,
+    address: any,
+    newAdmin: any
+) {
+
+    const obj = {
+        typeUrl: msgUpatePolicyAdmin,
+        value: MsgUpdateGroupPolicyAdmin.fromPartial({
+            admin: admin,
+            groupPolicyAddress: address,
+            newAdmin: newAdmin
+        }),
+    };
+
+    return obj;
+}
+

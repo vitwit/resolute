@@ -3,12 +3,12 @@ import { experimentalStyled as styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import { Alert, Button, Card, CircularProgress, FormControl, Table, TableCell, TableRow, TextField, Typography } from '@mui/material';
+import { Alert, Button, Card, CircularProgress, FormControl, IconButton, Table, TableCell, TableRow, TextField, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import RowItem from '../../components/group/RowItem';
 import { useDispatch, useSelector } from 'react-redux';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { getGroupById, getGroupMembers, getGroupMembersById, getGroupPoliciesById, resetUpdateGroupMember, txLeaveGroupMember, txUpdateGroupAdmin, txUpdateGroupMember, txUpdateGroupMetadata, txUpdateGroupPolicy } from '../../features/group/groupSlice';
+import { getGroupById, getGroupMembers, getGroupMembersById, getGroupPoliciesById, resetUpdateGroupMember, txAddGroupPolicy, txLeaveGroupMember, txUpdateGroupAdmin, txUpdateGroupMember, txUpdateGroupMetadata, txUpdateGroupPolicy } from '../../features/group/groupSlice';
 import GroupsIcon from '@mui/icons-material/Groups';
 import MembersTable from '../../components/group/MembersTable';
 import PolicyCard from '../../components/group/PolicyCard';
@@ -17,6 +17,10 @@ import UpdateGroupMemberForm from '../../components/group/UpdateGroupMemberForm'
 import CreateGroupPolicy from './CreateGroupPolicy';
 import EditIcon from '@mui/icons-material/Edit';
 import { UpdateGroupAdmin } from '../../txns/group/group';
+import PolicyForm from '../../components/group/PolicyForm';
+import { groupStyles } from './group-css';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckIcon from '@mui/icons-material/Check';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -36,27 +40,31 @@ const GroupPolicies = ({ id, wallet }) => {
     const [limit, setLimit] = useState(5);
     const [total, setTotal] = useState(0);
     const [pageNumber, setPageNumber] = useState(0);
-    const [policyObj, setPolicyObj] = useState({});
     const groupDetails = useSelector(state => state.group.groupInfo);
     const { data: groupInformation, status: groupInfoStatus } = groupDetails;
-    console.log('----------', groupInformation)
+
+    const addPolicyRes = useSelector(state => state.group.addGroupPolicyRes);
 
     useEffect(() => {
+        getPolicies(limit, '')
+        setShowForm(false);
+    }, [addPolicyRes?.status])
+
+    const getPolicies = (limit, key = '') => {
         dispatch(getGroupPoliciesById({
             baseURL: wallet?.chainInfo?.config?.rest,
             id: id,
-            pagination: { limit: limit, key: '' },
+            pagination: { limit: limit, key },
         }))
+    }
+    useEffect(() => {
+        getPolicies(limit, '')
     }, [])
 
     const handlePagination = (number, limit, key) => {
         setLimit(limit);
         setPageNumber(number);
-        dispatch(getGroupMembersById({
-            baseURL: wallet?.chainInfo?.config?.rest,
-            id: id,
-            pagination: { limit: limit, key: key },
-        }))
+        getPolicies(limit, key)
     }
     let group_policies = [];
     const groupInfo = useSelector(state => state.group.groupPolicies);
@@ -72,16 +80,11 @@ const GroupPolicies = ({ id, wallet }) => {
     }, [data])
 
     const handlePolicy = (policyObj) => {
-        setPolicyObj({ ...policyObj })
-        console.log('policy obj---', policyObj)
-    }
-
-    const handlePolicySubmit = () => {
         const chainInfo = wallet?.chainInfo;
 
-        dispatch(txUpdateGroupPolicy({
+        dispatch(txAddGroupPolicy({
             admin: groupInformation?.info?.admin,
-            groupPolicyAddress: wallet?.address,
+            groupId: id,
             policyMetadata: policyObj,
             denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
             chainId: chainInfo.config.chainId,
@@ -94,16 +97,25 @@ const GroupPolicies = ({ id, wallet }) => {
         <Box sx={{ flexGrow: 1 }}>
             <Typography sx={{ fontSize: 24, mt: 2 }}>Group Policies</Typography><br />
 
-            <Card sx={{ width: '100%' }}>
-                <Card sx={{ width: '80%', m: '0 auto' }}>
-                    <CreateGroupPolicy handlePolicy={handlePolicy} />
-                    <Button
-                        onClick={() => handlePolicySubmit()}
-                        variant='outlined' sx={{ justifyContent: 'center' }}>
-                        Add Policy
-                    </Button>
+            <Box>
+                <Button
+                    variant="outlined"
+                    onClick={() => {
+                        setShowForm(!showForm)
+                    }}
+                    sx={groupStyles.fr_mb_2}
+                >
+                    Add Decision Policy
+                </Button>
+            </Box>
+            {
+                showForm &&
+                <Card sx={groupStyles.fw}>
+                    <PolicyForm handlePolicyClose={
+                        () => setShowForm(false)
+                    } handlePolicy={handlePolicy} />
                 </Card>
-            </Card>
+            }
 
 
             <Grid container spacing={{ xs: 2, md: 1 }}
@@ -113,7 +125,9 @@ const GroupPolicies = ({ id, wallet }) => {
                         <CircularProgress /> : null
                 }
                 {
-                    status !== 'pending' && !group_policies?.length && (
+                    (status !== 'pending' &&
+                        !showForm &&
+                        !group_policies?.length) && (
                         <Card sx={{ width: '100%', p: 5 }}>
                             <Alert sx={{ textAlign: 'center' }} severity='info'>
                                 No policies found.
@@ -237,7 +251,6 @@ const GroupInfo = ({ id, wallet }) => {
     }
 
     const UpdateAdmin = () => {
-        console.log('addddd', admin)
         const chainInfo = wallet?.chainInfo;
         dispatch(txUpdateGroupAdmin({
             admin: data?.info?.admin,
@@ -268,7 +281,9 @@ const GroupInfo = ({ id, wallet }) => {
             <Paper sx={{ p: 2, mt: 2 }}>
                 <Grid container>
                     <Grid md={3}>
-                        <GroupsIcon sx={{ fontSize: 95, color: '#666' }} />
+                        <GroupsIcon
+                            color={'primary'}
+                            sx={{ fontSize: 95 }} />
                         <Typography sx={{ fontSize: 34 }}>
                             # {data?.info?.id}
                         </Typography>
@@ -278,7 +293,9 @@ const GroupInfo = ({ id, wallet }) => {
                         }
                         {
                             memberStatus?.status !== 'pending' && isExistInGroup() ?
-                                <Button onClick={() => handleLeaveGroup()}
+                                <Button
+                                    color={'error'}
+                                    onClick={() => handleLeaveGroup()}
                                     variant={'outlined'}>
                                     {
                                         leaveGroupRes?.status === 'pending' ?
@@ -315,28 +332,48 @@ const GroupInfo = ({ id, wallet }) => {
                                                         }}
                                                     />
                                                     :
-                                                    <Typography sx={{
-                                                        fontSize: 18,
-                                                        textAlign: 'left',
-                                                        fontWeight: 'bold',
-                                                        ml: 2
-                                                    }}>
-                                                        {data?.info?.admin || '-'}
-                                                    </Typography>
+                                                    <>
+                                                        <Typography sx={{
+                                                            fontSize: 18,
+                                                            textAlign: 'left',
+                                                            fontWeight: 'bold',
+                                                            ml: 2
+                                                        }}>
+                                                            {data?.info?.admin || '-'}
+                                                        </Typography>
+                                                        <Typography sx={{
+                                                            ml: 2,
+                                                            textAlign: 'left'
+                                                        }}>
+                                                            Note: Only admin can be update admin address.
+                                                        </Typography>
+                                                    </>
                                             }
 
                                         </Grid>
                                         <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
                                             {
                                                 showAdminInput ?
-                                                    <Button
-                                                        sx={{ mt: 1 }}
-                                                        onClick={
-                                                            () => UpdateAdmin()
-                                                        }
-                                                        variant='contained'>
-                                                        Update
-                                                    </Button> :
+                                                    <Box>
+                                                        <IconButton
+                                                            onClick={
+                                                                () => UpdateAdmin()
+                                                            }
+                                                            color="primary">
+                                                            <CheckIcon
+                                                                sx={{ fontSize: 32 }}
+                                                            />
+                                                        </IconButton>
+                                                        <IconButton
+                                                            onClick={
+                                                                () => setShowAdminInput(false)
+                                                            }
+                                                            color="error">
+                                                            <CancelIcon
+                                                                sx={{ fontSize: 32 }}
+                                                            />
+                                                        </IconButton>
+                                                    </Box> :
                                                     <EditIcon onClick={
                                                         () => {
                                                             setAdmin(data?.info?.admin)
@@ -367,28 +404,48 @@ const GroupInfo = ({ id, wallet }) => {
                                                         }}
                                                     />
                                                     :
-                                                    <Typography sx={{
-                                                        fontSize: 18,
-                                                        textAlign: 'left',
-                                                        fontWeight: 'bold',
-                                                        ml: 2
-                                                    }}>
-                                                        {data?.info?.metadata || '-'}
-                                                    </Typography>
+                                                    <>
+                                                        <Typography sx={{
+                                                            fontSize: 18,
+                                                            textAlign: 'left',
+                                                            fontWeight: 'bold',
+                                                            ml: 2
+                                                        }}>
+                                                            {data?.info?.metadata || '-'}
+                                                        </Typography>
+                                                        <Typography sx={{
+                                                            ml: 2,
+                                                            textAlign: 'left'
+                                                        }}>
+                                                            Note: Only admin can be update metadata.
+                                                        </Typography>
+                                                    </>
                                             }
 
                                         </Grid>
                                         <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
                                             {
                                                 showMetadataInput ?
-                                                    <Button
-                                                        sx={{ mt: 1 }}
-                                                        onClick={
-                                                            () => UpdateMetadata()
-                                                        }
-                                                        variant='contained'>
-                                                        Update
-                                                    </Button> :
+                                                    <Box>
+                                                        <IconButton
+                                                            onClick={
+                                                                () => UpdateMetadata()
+                                                            }
+                                                            color="primary">
+                                                            <CheckIcon
+                                                                sx={{ fontSize: 32 }}
+                                                            />
+                                                        </IconButton>
+                                                        <IconButton
+                                                            onClick={
+                                                                () => setShowMetadataInput(false)
+                                                            }
+                                                            color="error">
+                                                            <CancelIcon
+                                                                sx={{ fontSize: 32 }}
+                                                            />
+                                                        </IconButton>
+                                                    </Box> :
                                                     <EditIcon onClick={
                                                         () => {
                                                             setMetadata(data?.info?.metadata)
@@ -400,10 +457,41 @@ const GroupInfo = ({ id, wallet }) => {
                                         </Grid>
                                     </Grid>
                                     <br />
-                                    {/* <RowItem lable={'Admin'} value={data?.info?.admin || '-'} /> */}
-                                    {/* <RowItem lable={'Metadata'} value={data?.info?.metadata || '-'} /> */}
-                                    <RowItem lable={'Version'} value={data?.info?.version || '-'} />
-                                    <RowItem lable={'Total Weight'} value={data?.info?.total_weight || '-'} />
+                                    <Grid container>
+                                        <Grid md={2}>
+                                            <Typography sx={{
+                                                fontSize: 18,
+                                                textAlign: 'left',
+                                                ml: 1
+                                            }}>Version</Typography>
+                                        </Grid>
+                                        <Grid md={10}>
+                                            <Typography sx={{
+                                                fontSize: 18,
+                                                textAlign: 'left',
+                                                fontWeight: 'bold',
+                                                ml: 2
+                                            }}>{data?.info?.version || '-'}</Typography>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container>
+                                        <Grid md={2}>
+                                            <Typography sx={{
+                                                fontSize: 18,
+                                                textAlign: 'left',
+                                                ml: 1
+                                            }}>Weight</Typography>
+                                        </Grid>
+                                        <Grid md={10}>
+                                            <Typography sx={{
+                                                fontSize: 18,
+                                                textAlign: 'left',
+                                                fontWeight: 'bold',
+                                                ml: 2
+                                            }}>{data?.info?.total_weight || '-'}</Typography>
+                                        </Grid>
+                                    </Grid>
+
                                 </Box> : null
                         }
 

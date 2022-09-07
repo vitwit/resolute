@@ -2,7 +2,7 @@ import {
     Box, Button, FormControl,
     Paper,
     Grid,
-    TextField, Typography, InputAdornment, IconButton, FormLabel, MenuItem, Select, InputLabel, Card, CircularProgress,
+    TextField, Typography, InputAdornment, IconButton, FormLabel, MenuItem, Select, InputLabel, Card, CircularProgress, Alert,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { experimentalStyled as styled } from '@mui/material/styles';
@@ -15,10 +15,13 @@ import ProposalUndelegateForm from './ProposalUndelegateForm';
 import RowItem from '../../components/group/RowItem';
 import { getAmountObj, getLocalStorage, proposalStatus, shortenAddress } from '../../utils/util';
 import { useDispatch, useSelector } from 'react-redux';
-import { getGroupPolicyProposals, txCreateGroupProposal, txGroupProposalExecute, txGroupProposalVote } from '../../features/group/groupSlice';
+import { getGroupPolicyProposals, txCreateGroupProposal, txGroupProposalExecute, txGroupProposalVote, txUpdateGroupPolicy, txUpdateGroupPolicyAdmin, txUpdateGroupPolicyMetdata } from '../../features/group/groupSlice';
 import { useNavigate, useParams } from 'react-router-dom';
 import DialogVote from '../../components/group/DialogVote';
 import EastIcon from '@mui/icons-material/East';
+import PolicyForm from '../../components/group/PolicyForm';
+import EditIcon from '@mui/icons-material/Edit';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const DELEGATE_MSG = `/cosmos.staking.v1beta1.MsgDelegate`;
 const SEND_MSG = `/cosmos.bank.v1beta1.MsgSend`;
@@ -161,7 +164,9 @@ const CreateProposal = () => {
 
     return (
         <Box>
-            <Button sx={{ float: 'right', mb: 3 }} variant='contained' onClick={() => setShowCreateProposal(!showCreateProposal)}>
+            <Button sx={{ float: 'right', mt: 3, mb: 3 }}
+                variant='outlined'
+                onClick={() => setShowCreateProposal(!showCreateProposal)}>
                 Create Proposal
             </Button>
 
@@ -172,6 +177,7 @@ const CreateProposal = () => {
                         <Box sx={{ width: '60%', m: '0 auto' }}>
                             <br />
                             <h3>Create Proposal</h3>
+
                             <form onSubmit={handleSubmit}>
                                 <FormControl fullWidth>
                                     <TextField
@@ -315,14 +321,21 @@ const CreateProposal = () => {
                                     || null}
 
                                 <br /><br />
-                                <FormControl fullWidth>
-                                    <Button variant='contained' type="submit">
+                                <Box>
+
+                                    <Button color='error'
+                                        sx={{ mr: 3 }}
+                                        onClick={()=>setShowCreateProposal(false)}
+                                        variant='outlined' type="submit">
+                                        Cancel
+                                    </Button>
+                                    <Button variant='outlined' type="submit">
                                         {
                                             createProposalRes.status === 'pending' ?
                                                 'Submitting....' : 'Submit'
                                         }
                                     </Button>
-                                </FormControl>
+                                </Box>
                             </form>
                         </Box>
                     </Card> : null
@@ -395,7 +408,12 @@ const AllProposals = () => {
                 {
                     proposals?.status !== 'pending' &&
                         !proposals?.data?.proposals?.length ?
-                        'No proposals found' : null
+                        <Card sx={{ width: '100%', p: 5 }}>
+                            <Alert sx={{ textAlign: 'center' }} severity='info'>
+                                No proposals found.
+                            </Alert>
+                        </Card>
+                        : null
                 }
 
                 {proposals?.status !== 'pending' && proposals?.data?.proposals?.length &&
@@ -555,29 +573,39 @@ const AllProposals = () => {
                                             </Grid>
                                         </Grid>
                                         <Grid md={1}>
-                                            <EastIcon 
-                                            onClick={()=>{
-                                                navigate(`/groups/proposals/${p?.id}`)
-                                            }}
-                                            sx={{
-                                                height: '50%',
-                                                m: '0 auto',
-                                                fontSize: 35,
-                                                color: '#000'
-                                            }} />
+                                            <EastIcon
+                                                onClick={() => {
+                                                    navigate(`/groups/proposals/${p?.id}`)
+                                                }}
+                                                sx={{
+                                                    height: '50%',
+                                                    m: '0 auto',
+                                                    fontSize: 35,
+                                                    color: '#000'
+                                                }} />
                                         </Grid>
 
                                     </Grid>
                                 </Grid>
                             </Item>
                         </Grid>
-                    ))}
+                    )) || null}
             </Grid>
-        </Box>
+        </Box >
     )
 }
 
 function Policy() {
+    const [showMetdataInput, setShowMetadataInput] = useState(false);
+    const [showAdminInput, setShowAdminInput] = useState(false);
+    const [metadata, setMetadata] = useState('');
+    const [admin, setAdmin] = useState('');
+    const [showEditForm, setShowEditForm] = useState(false);
+    const dispatch = useDispatch();
+
+    const wallet = useSelector(state => state.wallet);
+    const updateMetadataRes = useSelector(state => state.group.updateGroupMetadataRes)
+
     let policyInfo = {};
     try {
         policyInfo = getLocalStorage('policy', 'object');
@@ -585,31 +613,216 @@ function Policy() {
         console.log('Errot while getting policy', error?.message)
     }
 
+    useEffect(() => {
+        if (updateMetadataRes?.status === 'idle')
+            setShowMetadataInput(false);
+    }, [updateMetadataRes?.status])
+
+    const handleSubmitPolicy = (policyMetadata) => {
+        const chainInfo = wallet?.chainInfo;
+
+        dispatch(txUpdateGroupPolicy({
+            admin: policyInfo?.admin,
+            groupPolicyAddress: policyInfo?.address,
+            policyMetadata: policyMetadata,
+            denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
+            chainId: chainInfo.config.chainId,
+            rpc: chainInfo.config.rpc,
+            feeAmount: chainInfo.config.gasPriceStep.average,
+        }))
+    }
+
+    const handlePolicyMetadata = () => {
+        const chainInfo = wallet?.chainInfo;
+
+        dispatch(txUpdateGroupPolicyMetdata({
+            admin: policyInfo?.admin,
+            groupPolicyAddress: policyInfo?.address,
+            metadata: metadata,
+            denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
+            chainId: chainInfo.config.chainId,
+            rpc: chainInfo.config.rpc,
+            feeAmount: chainInfo.config.gasPriceStep.average,
+        }))
+    }
+
+    const handleUpdateAdmin = () => {
+        const chainInfo = wallet?.chainInfo;
+
+        dispatch(txUpdateGroupPolicyAdmin({
+            admin: policyInfo?.admin,
+            groupPolicyAddress: policyInfo?.address,
+            newAdmin: admin,
+            denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
+            chainId: chainInfo.config.chainId,
+            rpc: chainInfo.config.rpc,
+            feeAmount: chainInfo.config.gasPriceStep.average,
+        }))
+    }
+
     return (
         <Box>
             <Typography sx={{ fontSize: 24 }}>Policy Information</Typography>
-            <Item sx={{ m: 3 }}>
-                <Grid container >
-                    <Grid md={8}>
-                        <RowItem lable={'Metadata'} value={policyInfo?.metadata || '-'} />
-                        <RowItem lable={'Admin Address'}
-                            value={shortenAddress(policyInfo?.admin, 19) || '-'} />
-                        <RowItem lable={'Address'}
-                            value={shortenAddress(policyInfo?.address, 19) || '-'} />
-                        <RowItem lable={'Type'} value={policyInfo?.decision_policy['@type']} />
+
+            <Button variant='outlined'
+                onClick={() => setShowEditForm(true)}
+                sx={{ float: 'right', mb: 9 }}>
+                Update policy
+            </Button>
+
+            {
+                showEditForm && <Item sx={{ mt: 8 }}><PolicyForm
+                    policyObj={policyInfo}
+                    handlePolicyClose={() => setShowEditForm(false)}
+                    handlePolicy={handleSubmitPolicy} /></Item>
+            }
+
+            {
+                !showEditForm && <Item sx={{ mt: 8 }}>
+                    <Grid container >
+                        <Grid md={8}>
+                            <Grid sx={{
+                                mb: 4
+                            }} container>
+                                <Grid md={4}>
+                                    <Typography sx={{
+                                        textAlign: 'left',
+                                        fontSize: 18,
+                                        ml: 1
+                                    }}>Metdata</Typography>
+                                </Grid>
+                                <Grid md={4}>
+                                    {
+                                        showMetdataInput ?
+                                            <TextField
+                                                onChange={(e) => {
+                                                    setMetadata(e.target.value)
+                                                }}
+                                                placeholder='Metadata'
+                                                value={metadata}
+                                            /> :
+                                            <Typography
+                                                sx={{
+                                                    textAlign: 'left',
+                                                    fontSize: 18,
+                                                    ml: 2,
+                                                    fontWeight: 'bold'
+                                                }}>
+                                                {policyInfo?.metadata || '-'}
+                                            </Typography>
+                                    }
+
+                                </Grid>
+                                <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
+                                    {
+                                        showMetdataInput ?
+                                            <>
+                                                <Button
+                                                    sx={{ mt: 1 }}
+                                                    onClick={() => {
+                                                        handlePolicyMetadata()
+                                                    }}
+                                                    variant='contained'>
+                                                    Update
+                                                </Button>
+                                                <CancelIcon
+                                                    onClick={() => {
+                                                        setShowMetadataInput(false)
+                                                    }}
+                                                    sx={
+                                                        { color: 'red', fontSize: 22, ml: 2 }
+                                                    } />
+                                            </>
+                                            :
+                                            <EditIcon onClick={
+                                                () => {
+                                                    setMetadata(policyInfo?.metadata)
+                                                    setShowMetadataInput(!showMetdataInput)
+                                                }
+                                            } />
+                                    }
+
+                                </Grid>
+                            </Grid>
+                            <Grid sx={{ mb: 4 }} container>
+                                <Grid md={4}>
+                                    <Typography sx={{
+                                        textAlign: 'left',
+                                        fontSize: 18,
+                                        ml: 1
+                                    }}>Admin</Typography>
+                                </Grid>
+                                <Grid md={4}>
+                                    {
+                                        showAdminInput ?
+                                            <TextField
+                                                onChange={(e) => {
+                                                    setAdmin(e.target.value)
+                                                }}
+                                                placeholder='Admin'
+                                                value={admin}
+                                            /> :
+                                            <Typography sx={{
+                                                textAlign: 'left',
+                                                fontSize: 18,
+                                                ml: 3,
+                                                fontWeight: 'bold'
+                                            }}>
+                                                {shortenAddress(policyInfo?.admin, 19)}
+                                            </Typography>
+                                    }
+
+                                </Grid>
+                                <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
+                                    {
+                                        showAdminInput ?
+                                            <>
+                                                <Button
+                                                    sx={{ mt: 1 }}
+                                                    onClick={() => {
+                                                        handleUpdateAdmin()
+                                                    }}
+                                                    variant='contained'>
+                                                    Update
+                                                </Button>
+                                                <CancelIcon
+                                                    onClick={() => {
+                                                        setShowAdminInput(false)
+                                                    }}
+                                                    sx={
+                                                        { color: 'red', fontSize: 22, ml: 2 }
+                                                    } />
+                                            </>
+
+                                            :
+                                            <EditIcon onClick={
+                                                () => {
+                                                    setAdmin(policyInfo?.admin)
+                                                    setShowAdminInput(!showAdminInput)
+                                                }
+                                            } />
+                                    }
+
+                                </Grid>
+                            </Grid>
+                           
+                            <RowItem lable={'Address'}
+                                value={shortenAddress(policyInfo?.address, 19) || '-'} />
+                            <RowItem lable={'Type'} value={policyInfo?.decision_policy['@type']} />
+                        </Grid>
+                        <Grid md={4}>
+                            <RowItem lable={'Group Id'} value={policyInfo?.group_id} />
+                            <RowItem lable={'Version'} value={policyInfo?.version} />
+                            <RowItem lable={'Threshold'}
+                                value={policyInfo?.decision_policy?.threshold} />
+                            <RowItem lable={'Voting Period'}
+                                value={`${parseFloat(policyInfo?.decision_policy?.windows?.voting_period).toFixed(2)} s`} />
+                            <RowItem lable={'Mininum Exectuion Period'}
+                                value={`${parseFloat(policyInfo?.decision_policy?.windows?.min_execution_period).toFixed(2)} s`} />
+                        </Grid>
                     </Grid>
-                    <Grid md={4}>
-                        <RowItem lable={'Group Id'} value={policyInfo?.group_id} />
-                        <RowItem lable={'Version'} value={policyInfo?.version} />
-                        <RowItem lable={'Threshold'}
-                            value={policyInfo?.decision_policy?.threshold} />
-                        <RowItem lable={'Voting Period'}
-                            value={`${parseFloat(policyInfo?.decision_policy?.windows?.voting_period).toFixed(2)} s`} />
-                        <RowItem lable={'Mininum Exectuion Period'}
-                            value={`${parseFloat(policyInfo?.decision_policy?.windows?.min_execution_period).toFixed(2)} s`} />
-                    </Grid>
-                </Grid>
-            </Item>
+                </Item>
+            }
             <CreateProposal />
             <AllProposals />
         </Box >

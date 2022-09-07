@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fee, signAndBroadcastGroupMsg, signAndBroadcastGroupProposal, signAndBroadcastGroupProposalExecute, signAndBroadcastGroupProposalVote, signAndBroadcastLeaveGroup, signAndBroadcastProto, signAndBroadcastUpdateGroupAdmin, signAndBroadcastUpdateGroupMembers, signAndBroadcastUpdateGroupMetadata, signAndBroadcastUpdateGroupPolicy } from "../../txns/execute";
-import { CreateGroup, CreateGroupProposal, CreateGroupWithPolicy, CreateLeaveGroupMember, CreateProposalExecute, CreateProposalVote, UpdateGroupAdmin, UpdateGroupMembers, UpdateGroupMetadata, UpdateGroupPolicy } from "../../txns/group/group";
+import { fee, signAndBroadcastAddGroupPolicy, signAndBroadcastGroupMsg, signAndBroadcastGroupProposal, signAndBroadcastGroupProposalExecute, signAndBroadcastGroupProposalVote, signAndBroadcastLeaveGroup, signAndBroadcastProto, signAndBroadcastUpdateGroupAdmin, signAndBroadcastUpdateGroupMembers, signAndBroadcastUpdateGroupMetadata, signAndBroadcastUpdateGroupPolicy, signAndBroadcastUpdateGroupPolicyAdmin, signAndBroadcastUpdateGroupPolicyMetadata } from "../../txns/execute";
+import { CreateGroup, CreateGroupPolicy, CreateGroupProposal, CreateGroupWithPolicy, CreateLeaveGroupMember, CreateProposalExecute, CreateProposalVote, UpdateGroupAdmin, UpdateGroupMembers, UpdateGroupMetadata, UpdateGroupPolicy, UpdatePolicyAdmin, UpdatePolicyMetadata } from "../../txns/group/group";
 import { resetTxLoad, setError, setTxHash, setTxLoad } from "../common/commonSlice";
 import groupService from "./groupService";
 
@@ -40,7 +40,10 @@ const initialState = {
   groupProposal: {},
   updateGroupPolicyRes: {},
   updateGroupAdminRes: {},
-  updateGroupMetadataRes: {}
+  updateGroupMetadataRes: {},
+  addGroupPolicyRes: {},
+  addPolicyMetadataRes: {},
+  updatePolicyAdminRes: {}
 };
 
 export const getGroupsByAdmin = createAsyncThunk(
@@ -537,6 +540,64 @@ export const txUpdateGroupMember = createAsyncThunk(
   }
 );
 
+export const txAddGroupPolicy = createAsyncThunk(
+  "group/tx-add-group-policy",
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    let msg;
+    dispatch(setTxLoad());
+    console.log({ data })
+    try {
+      msg = CreateGroupPolicy(
+        data.admin,
+        data.groupId,
+        data.policyMetadata
+      );
+
+      console.log({ msg })
+
+      const result = await signAndBroadcastAddGroupPolicy(
+        data.admin,
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.chainId,
+        data.rpc
+      );
+
+      dispatch(resetTxLoad());
+
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        console.log('Error while creating the group', result?.rawLog)
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+
+      dispatch(resetTxLoad());
+
+      console.log('Error while creating the group', error.message)
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const txUpdateGroupPolicy = createAsyncThunk(
   "group/tx-update-group-policy",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
@@ -570,7 +631,123 @@ export const txUpdateGroupPolicy = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('Error while creating the group', result?.rawLog)
+        console.log('Error while updating the policy metadata', result, result?.rawLog)
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+
+      dispatch(resetTxLoad());
+
+      console.log('Error while creating the group', error.message)
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const txUpdateGroupPolicyMetdata = createAsyncThunk(
+  "group/tx-update-group-policy-metadata",
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    let msg;
+    dispatch(setTxLoad());
+    console.log({ data })
+    try {
+      msg = UpdatePolicyMetadata(
+        data.admin,
+        data.groupPolicyAddress,
+        data.metadata
+      );
+
+      console.log({ msg })
+
+      const result = await signAndBroadcastUpdateGroupPolicyMetadata(
+        data.admin,
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.chainId,
+        data.rpc
+      );
+
+      dispatch(resetTxLoad());
+
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        console.log('Error while updating the policy metadata', result, result?.rawLog)
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+
+      dispatch(resetTxLoad());
+
+      console.log('Error while creating the group', error.message)
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const txUpdateGroupPolicyAdmin = createAsyncThunk(
+  "group/tx-update-group-policy-admin",
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    let msg;
+    dispatch(setTxLoad());
+    console.log({ data })
+    try {
+      msg = UpdatePolicyAdmin(
+        data.admin,
+        data.groupPolicyAddress,
+        data.newAdmin
+      );
+
+      console.log({ msg })
+
+      const result = await signAndBroadcastUpdateGroupPolicyAdmin(
+        data.admin,
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.chainId,
+        data.rpc
+      );
+
+      dispatch(resetTxLoad());
+
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        console.log('Error while updating the policy metadata', result, result?.rawLog)
         dispatch(
           setError({
             type: "error",
@@ -875,13 +1052,46 @@ export const groupSlice = createSlice({
 
     builder
       .addCase(txUpdateGroupMetadata.pending, (state) => {
-        state.updateGroupMetadataRes.status = `pending`;
+        state.addPolicyMetadataRes.status = `pending`;
       })
       .addCase(txUpdateGroupMetadata.fulfilled, (state, action) => {
-        state.updateGroupMetadataRes.status = 'idle';
+        state.addPolicyMetadataRes.status = 'idle';
       })
       .addCase(txUpdateGroupMetadata.rejected, (state, _) => {
+        state.addPolicyMetadataRes.status = `rejected`;
+      });
+
+    builder
+      .addCase(txAddGroupPolicy.pending, (state) => {
+        state.addGroupPolicyRes.status = `pending`;
+      })
+      .addCase(txAddGroupPolicy.fulfilled, (state, action) => {
+        state.addGroupPolicyRes.status = 'idle';
+      })
+      .addCase(txAddGroupPolicy.rejected, (state, _) => {
+        state.addGroupPolicyRes.status = `rejected`;
+      });
+
+    builder
+      .addCase(txUpdateGroupPolicyMetdata.pending, (state) => {
+        state.updateGroupMetadataRes.status = `pending`;
+      })
+      .addCase(txUpdateGroupPolicyMetdata.fulfilled, (state, action) => {
+        state.updateGroupMetadataRes.status = 'idle';
+      })
+      .addCase(txUpdateGroupPolicyMetdata.rejected, (state, _) => {
         state.updateGroupMetadataRes.status = `rejected`;
+      });
+
+    builder
+      .addCase(txUpdateGroupPolicyAdmin.pending, (state) => {
+        state.updatePolicyAdminRes.status = `pending`;
+      })
+      .addCase(txUpdateGroupPolicyAdmin.fulfilled, (state, action) => {
+        state.updatePolicyAdminRes.status = 'idle';
+      })
+      .addCase(txUpdateGroupPolicyAdmin.rejected, (state, _) => {
+        state.updatePolicyAdminRes.status = `rejected`;
       });
   },
 });
