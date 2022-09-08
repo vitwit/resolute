@@ -31,7 +31,7 @@ export default function Delegate(props) {
   var [data, setData] = useState([]);
 
   useEffect(() => {
-    data = [];
+    const data = [];
     for (let i = 0; i < validators.activeSorted.length; i++) {
       const validator = validators.active[validators.activeSorted[i]];
       const temp = {
@@ -52,7 +52,7 @@ export default function Delegate(props) {
       }
     }
 
-    setData([...data]);
+    setData(data);
   }, [validators]);
 
   const currency = chainInfo.config.currencies[0];

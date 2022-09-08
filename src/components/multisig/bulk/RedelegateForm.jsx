@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { useForm, Controller } from "react-hook-form";
 import Autocomplete from "@mui/material/Autocomplete";
-import { Redelegate, UnDelegate } from "../../../txns/staking";
+import { Redelegate } from "../../../txns/staking";
 
 RedelegateForm.propTypes = {
   chainInfo: PropTypes.object.isRequired,
@@ -44,7 +44,7 @@ export default function RedelegateForm(props) {
   var [data, setData] = useState([]);
 
   useEffect(() => {
-    data = [];
+    const data = [];
 
     for (let i = 0; i < delegations.length; i++) {
       if (validators.active[delegations[i].delegation.validator_address]) {
@@ -80,7 +80,7 @@ export default function RedelegateForm(props) {
       }
     }
 
-    setData([...data]);
+    setData(data);
   }, [delegations]);
 
   const currency = chainInfo.config.currencies[0];
@@ -90,8 +90,7 @@ export default function RedelegateForm(props) {
       Number(currency?.coinDecimals)
     ).atomics;
 
-    console.log(data);
-    const msgUnDelegate = Redelegate(
+    const msgRedelegate = Redelegate(
       data.delegator,
       data.source?.value?.validator,
       data.destination?.value,
@@ -99,12 +98,12 @@ export default function RedelegateForm(props) {
       chainInfo.config.currencies[0].coinMinimalDenom
     );
 
-    props.onRedelegate(msgUnDelegate);
+    props.onRedelegate(msgRedelegate);
   };
 
   const [vals, setVals] = useState([]);
   useEffect(() => {
-    data = [];
+    const data = [];
     for (let i = 0; i < validators.activeSorted.length; i++) {
       const validator = validators.active[validators.activeSorted[i]];
       const temp = {
@@ -119,13 +118,13 @@ export default function RedelegateForm(props) {
       if (!validator.jailed) {
         const temp = {
           label: validator.description.moniker,
-          label: validators.inactiveSorted[i],
+          value: validators.inactiveSorted[i],
         };
         data.push(temp);
       }
     }
 
-    setVals([...data]);
+    setVals(data);
   }, [validators]);
 
   return (

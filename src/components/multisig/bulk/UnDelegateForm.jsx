@@ -42,47 +42,43 @@ export default function UnDelegateForm(props) {
   var [data, setData] = useState([]);
 
   useEffect(() => {
-    data = [];
+    const data = [];
 
     for (let i = 0; i < delegations.length; i++) {
       if (validators.active[delegations[i].delegation.validator_address]) {
-        data = [
-          ...data,
-          {
-            label:
-              validators.active[delegations[i].delegation.validator_address]
-                .description.moniker,
-            value: {
-              shares: parseDelegation(
-                delegations[i],
-                chainInfo.config.currencies[0]
-              ),
-              validator: delegations[i].delegation.validator_address,
-            },
+        const temp = {
+          label:
+            validators.active[delegations[i].delegation.validator_address]
+              .description.moniker,
+          value: {
+            shares: parseDelegation(
+              delegations[i],
+              chainInfo.config.currencies[0]
+            ),
+            validator: delegations[i].delegation.validator_address,
           },
-        ];
+        };
+        data.push(temp);
       } else if (
         validators.inactive[delegations[i].delegation.validator_address]
       ) {
-        data = [
-          ...data,
-          {
-            label:
-              validators.inactive[delegations[i].delegation.validator_address]
-                .description.moniker,
-            value: {
-              shares: parseDelegation(
-                delegations[i],
-                chainInfo.config.currencies[0]
-              ),
-              validator: delegations[i].delegation.validator_address,
-            },
+        const temp = {
+          label:
+            validators.inactive[delegations[i].delegation.validator_address]
+              .description.moniker,
+          value: {
+            shares: parseDelegation(
+              delegations[i],
+              chainInfo.config.currencies[0]
+            ),
+            validator: delegations[i].delegation.validator_address,
           },
-        ];
+        };
+        data.push(temp);
       }
     }
 
-    setData([...data]);
+    setData(data);
   }, [delegations]);
 
   const currency = chainInfo.config.currencies[0];
