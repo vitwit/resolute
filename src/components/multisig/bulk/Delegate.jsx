@@ -7,10 +7,9 @@ import { useForm, Controller } from "react-hook-form";
 import Autocomplete from "@mui/material/Autocomplete";
 
 Delegate.propTypes = {
-  validators: PropTypes.object.isRequired,
   chainInfo: PropTypes.object.isRequired,
   address: PropTypes.string.isRequired,
-  onDelegate: PropTypes.object.isRequired,
+  onDelegate: PropTypes.func.isRequired,
 };
 
 export default function Delegate(props) {
@@ -29,19 +28,29 @@ export default function Delegate(props) {
   });
 
   var validators = useSelector((state) => state.staking.validators);
-  validators = (validators && validators.active) || {};
   var [data, setData] = useState([]);
 
   useEffect(() => {
     data = [];
-    Object.entries(validators).map(([k, v], index) => {
-      let obj1 = {
-        value: k,
-        label: v.description.moniker,
+    for (let i = 0; i < validators.activeSorted.length; i++) {
+      const validator = validators.active[validators.activeSorted[i]];
+      const temp = {
+        label: validator.description.moniker,
+        value: validators.activeSorted[i],
       };
+      data.push(temp);
+    }
 
-      data = [...data, obj1];
-    });
+    for (let i = 0; i < validators.inactiveSorted.length; i++) {
+      const validator = validators.inactive[validators.inactiveSorted[i]];
+      if (!validator.jailed) {
+        const temp = {
+          label: validator.description.moniker,
+          label: validators.inactiveSorted[i],
+        };
+        data.push(temp);
+      }
+    }
 
     setData([...data]);
   }, [validators]);

@@ -8,11 +8,17 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { UnDelegate } from "../../../txns/staking";
 
 UnDelegateForm.propTypes = {
-  validators: PropTypes.object.isRequired,
   chainInfo: PropTypes.object.isRequired,
   address: PropTypes.string.isRequired,
-  onUndelegate: PropTypes.object.isRequired,
+  onUndelegate: PropTypes.func.isRequired,
 };
+
+function parseDelegation(delegation, currency) {
+  return (
+    parseFloat(delegation?.delegation?.shares) /
+    (10 ** currency?.coinDecimals).toFixed(6)
+  );
+}
 
 export default function UnDelegateForm(props) {
   const { chainInfo, address } = props;
@@ -29,23 +35,55 @@ export default function UnDelegateForm(props) {
     },
   });
 
-  var validators = useSelector((state) => state.staking.validators);
-  validators = (validators && validators.active) || {};
+  const validators = useSelector((state) => state.staking.validators);
+  const delegations = useSelector(
+    (state) => state.staking.delegations.delegations
+  );
   var [data, setData] = useState([]);
 
   useEffect(() => {
     data = [];
-    Object.entries(validators).map(([k, v], index) => {
-      let obj1 = {
-        value: k,
-        label: v.description.moniker,
-      };
 
-      data = [...data, obj1];
-    });
+    for (let i = 0; i < delegations.length; i++) {
+      if (validators.active[delegations[i].delegation.validator_address]) {
+        data = [
+          ...data,
+          {
+            label:
+              validators.active[delegations[i].delegation.validator_address]
+                .description.moniker,
+            value: {
+              shares: parseDelegation(
+                delegations[i],
+                chainInfo.config.currencies[0]
+              ),
+              validator: delegations[i].delegation.validator_address,
+            },
+          },
+        ];
+      } else if (
+        validators.inactive[delegations[i].delegation.validator_address]
+      ) {
+        data = [
+          ...data,
+          {
+            label:
+              validators.inactive[delegations[i].delegation.validator_address]
+                .description.moniker,
+            value: {
+              shares: parseDelegation(
+                delegations[i],
+                chainInfo.config.currencies[0]
+              ),
+              validator: delegations[i].delegation.validator_address,
+            },
+          },
+        ];
+      }
+    }
 
     setData([...data]);
-  }, [validators]);
+  }, [delegations]);
 
   const currency = chainInfo.config.currencies[0];
   const onSubmit = (data) => {
@@ -56,12 +94,11 @@ export default function UnDelegateForm(props) {
 
     const msgUnDelegate = UnDelegate(
       data.delegator,
-      data.validator?.value,
+      data.validator?.value.validator,
       baseAmount,
       chainInfo.config.currencies[0].coinMinimalDenom
     );
-
-    props.onUnDelegate(msgUnDelegate);
+    props.onUndelegate(msgUnDelegate);
   };
 
   return (
@@ -90,13 +127,13 @@ export default function UnDelegateForm(props) {
           <Autocomplete
             disablePortal
             label="validator"
-            value={value}
+            value={value?.validator}
             sx={{
               mt: 2,
               mb: 2,
             }}
             isOptionEqualToValue={(option, value) =>
-              option.value === value.value
+              option.value?.validator === value.value?.validator
             }
             options={data}
             onChange={(event, item) => {

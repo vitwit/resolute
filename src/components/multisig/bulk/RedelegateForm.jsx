@@ -5,14 +5,20 @@ import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { useForm, Controller } from "react-hook-form";
 import Autocomplete from "@mui/material/Autocomplete";
-import { UnDelegate } from "../../../txns/staking";
+import { Redelegate, UnDelegate } from "../../../txns/staking";
 
 RedelegateForm.propTypes = {
-  validators: PropTypes.object.isRequired,
   chainInfo: PropTypes.object.isRequired,
   address: PropTypes.string.isRequired,
   onRedelegate: PropTypes.object.isRequired,
 };
+
+function parseDelegation(delegation, currency) {
+  return (
+    parseFloat(delegation?.delegation?.shares) /
+    (10 ** currency?.coinDecimals).toFixed(6)
+  );
+}
 
 export default function RedelegateForm(props) {
   const { chainInfo, address } = props;
@@ -31,22 +37,51 @@ export default function RedelegateForm(props) {
   });
 
   var validators = useSelector((state) => state.staking.validators);
-  validators = (validators && validators.active) || {};
+  const delegations = useSelector(
+    (state) => state.staking.delegations.delegations
+  );
+
   var [data, setData] = useState([]);
 
   useEffect(() => {
     data = [];
-    Object.entries(validators).map(([k, v], index) => {
-      let obj1 = {
-        value: k,
-        label: v.description.moniker,
-      };
 
-      data = [...data, obj1];
-    });
+    for (let i = 0; i < delegations.length; i++) {
+      if (validators.active[delegations[i].delegation.validator_address]) {
+        const temp = {
+          label:
+            validators.active[delegations[i].delegation.validator_address]
+              .description.moniker,
+          value: {
+            shares: parseDelegation(
+              delegations[i],
+              chainInfo.config.currencies[0]
+            ),
+            validator: delegations[i].delegation.validator_address,
+          },
+        };
+        data.push(temp);
+      } else if (
+        validators.inactive[delegations[i].delegation.validator_address]
+      ) {
+        const temp = {
+          label:
+            validators.inactive[delegations[i].delegation.validator_address]
+              .description.moniker,
+          value: {
+            shares: parseDelegation(
+              delegations[i],
+              chainInfo.config.currencies[0]
+            ),
+            validator: delegations[i].delegation.validator_address,
+          },
+        };
+        data.push(temp);
+      }
+    }
 
     setData([...data]);
-  }, [validators]);
+  }, [delegations]);
 
   const currency = chainInfo.config.currencies[0];
   const onSubmit = (data) => {
@@ -55,15 +90,43 @@ export default function RedelegateForm(props) {
       Number(currency?.coinDecimals)
     ).atomics;
 
-    const msgUnDelegate = UnDelegate(
+    console.log(data);
+    const msgUnDelegate = Redelegate(
       data.delegator,
-      data.validator?.value,
+      data.source?.value?.validator,
+      data.destination?.value,
       baseAmount,
       chainInfo.config.currencies[0].coinMinimalDenom
     );
 
-    props.onUnDelegate(msgUnDelegate);
+    props.onRedelegate(msgUnDelegate);
   };
+
+  const [vals, setVals] = useState([]);
+  useEffect(() => {
+    data = [];
+    for (let i = 0; i < validators.activeSorted.length; i++) {
+      const validator = validators.active[validators.activeSorted[i]];
+      const temp = {
+        label: validator.description.moniker,
+        value: validators.activeSorted[i],
+      };
+      data.push(temp);
+    }
+
+    for (let i = 0; i < validators.inactiveSorted.length; i++) {
+      const validator = validators.inactive[validators.inactiveSorted[i]];
+      if (!validator.jailed) {
+        const temp = {
+          label: validator.description.moniker,
+          label: validators.inactiveSorted[i],
+        };
+        data.push(temp);
+      }
+    }
+
+    setVals([...data]);
+  }, [validators]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -97,7 +160,7 @@ export default function RedelegateForm(props) {
               mb: 2,
             }}
             isOptionEqualToValue={(option, value) =>
-              option.value === value.value
+              option.value?.validator === value.value?.validator
             }
             options={data}
             onChange={(event, item) => {
@@ -125,7 +188,7 @@ export default function RedelegateForm(props) {
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <Autocomplete
             disablePortal
-            label="Destination validator"
+            label="destination"
             value={value}
             sx={{
               mt: 2,
@@ -134,7 +197,7 @@ export default function RedelegateForm(props) {
             isOptionEqualToValue={(option, value) =>
               option.value === value.value
             }
-            options={data}
+            options={vals}
             onChange={(event, item) => {
               onChange(item);
             }}
@@ -142,10 +205,10 @@ export default function RedelegateForm(props) {
               <TextField
                 {...params}
                 required
-                placeholder="to validator"
+                placeholder="select destination validator"
                 error={!!error}
                 helperText={error ? error.message : null}
-                label="Destination validator"
+                label="destination"
               />
             )}
           />

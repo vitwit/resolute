@@ -1,6 +1,6 @@
 import { Button, Grid, IconButton, Paper, Typography } from "@mui/material";
 import react, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import Send from "../../../components/multisig/bulk/Send";
@@ -9,10 +9,34 @@ import RedelegateForm from "../../../components/multisig/bulk/RedelegateForm";
 import { shortenAddress } from "../../../utils/util";
 import { Divider } from "@mui/material";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
-import { getAllValidators } from "../../../features/staking/stakeSlice";
+import {
+  getAllValidators,
+  getDelegations,
+} from "../../../features/staking/stakeSlice";
 import Delegate from "../../../components/multisig/bulk/Delegate";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import {
+  DELEGATE_TYPE_URL,
+  parseDelegateMsgsFromContent,
+  parseReDelegateMsgsFromContent,
+  parseSendMsgsFromContent,
+  parseUnDelegateMsgsFromContent,
+  REDELEGATE_TYPE_URL,
+  SEND_TYPE_URL,
+  UNDELEGATE_TYPE_URL,
+} from "./utils";
+import { parseBalance } from "../../../utils/denom";
+import { Pagination } from "@mui/material";
+import { TextField } from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
+import FeeComponent from "./../../../components/multisig/FeeComponent";
+import {
+  createTxn,
+  resetCreateTxnState,
+} from "../../../features/multisig/multisigSlice";
+import { fee } from "../../../txns/execute";
+import { resetError, setError } from "../../../features/common/commonSlice";
 
 const MULTISIG_SEND_TEMPLATE = "https://resolute.vitwit.com/_static/send.csv";
 const MULTISIG_DELEGATE_TEMPLATE =
@@ -21,6 +45,13 @@ const MULTISIG_UNDELEGATE_TEMPLATE =
   "https://resolute.vitwit.com/_static/undelegate.csv";
 const MULTISIG_REDELEGATE_TEMPLATE =
   "https://resolute.vitwit.com/_static/redelegate.csv";
+
+const PER_PAGE = 6;
+
+const TYPE_SEND = "SEND";
+const TYPE_DELEGATE = "DELEGATE";
+const TYPE_UNDELEGATE = "UNDELEGATE";
+const TYPE_REDELEGATE = "REDELEGATE";
 
 const SelectTransactionType = (props) => {
   return (
@@ -38,7 +69,7 @@ const SelectTransactionType = (props) => {
         size="small"
         onClick={() => props.onSelect("manual")}
       >
-        Manual
+        Single transaction
       </Button>
       <Button
         variant="contained"
@@ -52,18 +83,18 @@ const SelectTransactionType = (props) => {
           textTransform: "none",
         }}
       >
-        Upload csv file
+        File upload
       </Button>
     </Box>
   );
 };
 
-const FileUpload = () => {
-  const [txType, setTxType] = useState("Send");
+const FileUpload = (props) => {
+  const [txType, setTxType] = useState(TYPE_SEND);
   return (
     <Box
       sx={{
-        minHeight: 70,
+        minHeight: 100,
       }}
     >
       <FormControl
@@ -84,10 +115,10 @@ const FileUpload = () => {
             setTxType(event.target.value);
           }}
         >
-          <MenuItem value={"Send"}>Send</MenuItem>
-          <MenuItem value={"Delegate"}>Delegate</MenuItem>
-          <MenuItem value={"Redelegate"}>Redelegate</MenuItem>
-          <MenuItem value={"Undelegate"}>Undelegate</MenuItem>
+          <MenuItem value={TYPE_SEND}>Send</MenuItem>
+          <MenuItem value={TYPE_DELEGATE}>Delegate</MenuItem>
+          <MenuItem value={TYPE_REDELEGATE}>Redelegate</MenuItem>
+          <MenuItem value={TYPE_UNDELEGATE}>Undelegate</MenuItem>
         </Select>
       </FormControl>
 
@@ -101,28 +132,28 @@ const FileUpload = () => {
         }}
         onClick={() => {
           switch (txType) {
-            case "Send":
+            case TYPE_SEND:
               window.open(
                 MULTISIG_SEND_TEMPLATE,
                 "_blank",
                 "noopener,noreferrer"
               );
               break;
-            case "Delegate":
+            case TYPE_DELEGATE:
               window.open(
                 MULTISIG_DELEGATE_TEMPLATE,
                 "_blank",
                 "noopener,noreferrer"
               );
               break;
-            case "Undelegate":
+            case TYPE_UNDELEGATE:
               window.open(
                 MULTISIG_UNDELEGATE_TEMPLATE,
                 "_blank",
                 "noopener,noreferrer"
               );
               break;
-            case "Redelegate":
+            case TYPE_REDELEGATE:
               window.open(
                 MULTISIG_REDELEGATE_TEMPLATE,
                 "_blank",
@@ -130,7 +161,7 @@ const FileUpload = () => {
               );
               break;
             default:
-                alert("unknown message type")
+              alert("unknown message type");
           }
         }}
       >
@@ -158,17 +189,15 @@ const FileUpload = () => {
           hidden
           type="file"
           onChange={(e) => {
-            console.log(e.target.files);
-
             const file = e.target.files[0];
             if (!file) {
               return;
             }
 
-            var reader = new FileReader();
+            const reader = new FileReader();
             reader.onload = function (e) {
-              var contents = e.target.result;
-              console.log(contents);
+              const contents = e.target.result;
+              props.onFileContents(contents, txType);
             };
             reader.readAsText(file);
           }}
@@ -185,19 +214,29 @@ export default function PageCreateTx() {
   const [txType, setTxType] = useState("");
 
   const wallet = useSelector((state) => state.wallet);
-  const { chainInfo, addr, connected } = wallet;
+  const { chainInfo, connected } = wallet;
 
   const validators = useSelector((state) => state.staking.validators);
+  const delegations = useSelector((state) => state.staking.delegations);
 
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(
-      getAllValidators({
-        baseURL: chainInfo.config.rest,
-        status: null,
-      })
-    );
-  }, []);
+    if (connected) {
+      dispatch(
+        getAllValidators({
+          baseURL: chainInfo.config.rest,
+          status: null,
+        })
+      );
+
+      dispatch(
+        getDelegations({
+          baseURL: chainInfo.config.rest,
+          address: address,
+        })
+      );
+    }
+  }, [connected]);
 
   const handleTypeChange = (event) => {
     setTxType(event.target.value);
@@ -205,21 +244,137 @@ export default function PageCreateTx() {
 
   const [messages, setMessages] = useState([]);
 
-  const renderMessage = (msg, index) => {
-    console.log(msg);
+  const renderMessage = (msg, index, currency, onDelete) => {
     switch (msg.typeUrl) {
-      case "/cosmos.bank.v1beta1.MsgSend":
-        return RenderSendMessage(msg, index);
-      case "/cosmos.staking.v1beta1.MsgDelegate":
-        return RenderDelegateMessage(msg, index);
-      case "/cosmos.staking.v1beta1.MsgUndelegate":
-        return RenderUnDelegateMessage(msg, index);
+      case SEND_TYPE_URL: {
+        return RenderSendMessage(msg, index, currency, onDelete);
+      }
+      case DELEGATE_TYPE_URL:
+        return RenderDelegateMessage(msg, index, currency, onDelete);
+      case UNDELEGATE_TYPE_URL:
+        return RenderUnDelegateMessage(msg, index, currency, onDelete);
+      case REDELEGATE_TYPE_URL:
+        return RenderReDelegateMessage(msg, index, currency, onDelete);
       default:
         return "";
     }
   };
 
+  const onDeleteMsg = (msg, index) => {
+    const arr = messages.filter((_, i) => i !== index);
+    setMessages(arr);
+  };
+
+  const onFileContents = (content, type) => {
+    switch (type) {
+      case TYPE_SEND: {
+        const [parsedTxns, error] = parseSendMsgsFromContent(address, content);
+        setMessages(parsedTxns);
+        break;
+      }
+      case TYPE_DELEGATE: {
+        const [parsedTxns, error] = parseDelegateMsgsFromContent(
+          address,
+          content
+        );
+        setMessages(parsedTxns);
+        break;
+      }
+      case TYPE_REDELEGATE: {
+        const [parsedTxns, error] = parseReDelegateMsgsFromContent(
+          address,
+          content
+        );
+        setMessages(parsedTxns);
+        break;
+      }
+      case TYPE_UNDELEGATE: {
+        const [parsedTxns, error] = parseUnDelegateMsgsFromContent(
+          address,
+          content
+        );
+        setMessages(parsedTxns);
+        break;
+      }
+    }
+  };
+
   const [mode, setMode] = useState("");
+
+  const [slicedMsgs, setSlicedMsgs] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  var createRes = useSelector((state) => state.multisig.createTxnRes);
+
+  let navigate = useNavigate();
+  useEffect(() => {
+    if (createRes?.status === "rejected") {
+      dispatch(
+        setError({
+          type: "error",
+          message: createRes?.error,
+        })
+      );
+    } else if (createRes?.status === "idle") {
+      dispatch(setError({
+        type: "success",
+        message: "Transaction created",
+      }));
+
+      setTimeout(() => {
+        navigate(`/multisig/${address}/txs`)
+      }, 200);
+    }
+  }, [createRes]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetError());
+      dispatch(resetCreateTxnState());
+    };
+  }, []);
+
+  useEffect(() => {
+    if (messages.length < PER_PAGE) {
+      setSlicedMsgs(messages);
+    } else {
+      setCurrentPage(1);
+      setSlicedMsgs(messages?.slice(0, 1 * PER_PAGE));
+    }
+  }, [messages]);
+
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      msgs: [],
+      gas: 200000,
+      memo: "",
+      fees:
+        chainInfo?.config?.gasPriceStep?.average *
+        10 ** chainInfo?.config?.currencies[0].coinDecimals,
+    },
+  });
+
+  const onSubmit = (data) => {
+    const feeObj = fee(
+      chainInfo?.config.currencies[0].coinMinimalDenom,
+      data.fees,
+      data.gas
+    );
+    dispatch(
+      createTxn({
+        address: address,
+        chainId: chainInfo?.config?.chainId,
+        msgs: messages,
+        fee: feeObj,
+        memo: data.memo,
+        gas: data.gas,
+      })
+    );
+  };
 
   return (
     <>
@@ -233,134 +388,290 @@ export default function PageCreateTx() {
       >
         Create Multisig Transaction
       </Typography>
-
-      <Grid
-        container
-        spacing={2}
-        sx={{
-          mt: 1,
-        }}
-      >
-        <Grid item md={5} xs={12}>
-          <Paper
-            elevation={0}
-            sx={{
-              borderRadius: 0,
-              p: 3,
-            }}
-          >
-            {mode === "" ? (
-              <SelectTransactionType onSelect={(mode) => setMode(mode)} />
-            ) : mode === "manual" ? (
-              <>
-                <FormControl
-                  fullWidth
-                  sx={{
-                    mt: 1,
-                  }}
-                >
-                  <InputLabel id="demo-simple-select-label">
-                    Select Transaction
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={txType}
-                    label="Select Transaction"
-                    onChange={handleTypeChange}
-                  >
-                    <MenuItem value={"Send"}>Send</MenuItem>
-                    <MenuItem value={"Delegate"}>Delegate</MenuItem>
-                    <MenuItem value={"Redelegate"}>Redelegate</MenuItem>
-                    <MenuItem value={"Undelegate"}>Undelegate</MenuItem>
-                  </Select>
-                </FormControl>
-              </>
-            ) : (
-              <FileUpload />
-            )}
-
-            {txType === "Send" ? (
-              <Send
-                chainInfo={chainInfo}
-                address={address}
-                onSend={(payload) => {
-                  console.log(payload);
-                  setMessages([...messages, payload]);
-                }}
-              />
-            ) : null}
-
-            {txType === "Delegate" ? (
-              <Delegate
-                chainInfo={chainInfo}
-                address={address}
-                validators={validators}
-                onDelegate={(payload) => {
-                  console.log(payload);
-                  setMessages([...messages, payload]);
-                }}
-              />
-            ) : null}
-
-            {txType === "Redelegate" ? (
-              <RedelegateForm chainInfo={chainInfo} address={address} />
-            ) : null}
-
-            {txType === "Undelegate" ? (
-              <UnDelegateForm
-                chainInfo={chainInfo}
-                address={address}
-                onUndelegate={(payload) => {
-                  console.log(payload);
-                  setMessages([...messages, payload]);
-                }}
-              />
-            ) : null}
-          </Paper>
-        </Grid>
-
-        <Grid item md={7} xs={12}>
-          <Paper
-            elevation={0}
-            sx={{
-              borderRadius: 0,
-              p: 1,
-              minHeight: 100,
-            }}
-          >
-            <Typography color="text.primary" variant="h6" fontWeight={600}>
-              Messages
-            </Typography>
-            <Box
+      {!connected ? (
+        <Typography
+          sx={{
+            mt: 4,
+          }}
+          variant="h5"
+          color="text.primary"
+        >
+          Wallet is not connected
+        </Typography>
+      ) : (
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            mt: 1,
+          }}
+        >
+          <Grid item md={5} xs={12}>
+            <Paper
+              elevation={0}
               sx={{
-                p: 2,
+                borderRadius: 0,
+                p: 3,
+                minHeight: 290,
               }}
             >
-              {messages.map((msg, index) => {
-                return (
-                  <Box component="div" key={index}>
-                    {renderMessage(msg, index)}
-                    <Divider />
-                  </Box>
-                );
-              })}
-            </Box>
-          </Paper>
+              {mode === "" ? (
+                <SelectTransactionType onSelect={(mode) => setMode(mode)} />
+              ) : mode === "manual" ? (
+                <>
+                  <FormControl
+                    fullWidth
+                    sx={{
+                      mt: 1,
+                    }}
+                  >
+                    <InputLabel id="demo-simple-select-label">
+                      Select Transaction
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={txType}
+                      label="Select Transaction"
+                      onChange={handleTypeChange}
+                    >
+                      <MenuItem value={"Send"}>Send</MenuItem>
+                      <MenuItem value={"Delegate"}>Delegate</MenuItem>
+                      <MenuItem value={"Redelegate"}>Redelegate</MenuItem>
+                      <MenuItem value={"Undelegate"}>Undelegate</MenuItem>
+                    </Select>
+                  </FormControl>
+                </>
+              ) : (
+                <FileUpload
+                  onFileContents={(content, type) =>
+                    onFileContents(content, type)
+                  }
+                />
+              )}
+
+              {txType === "Send" ? (
+                <Send
+                  chainInfo={chainInfo}
+                  address={address}
+                  onSend={(payload) => {
+                    setMessages([...messages, payload]);
+                  }}
+                />
+              ) : null}
+
+              {txType === "Delegate" ? (
+                <Delegate
+                  chainInfo={chainInfo}
+                  address={address}
+                  validators={validators}
+                  onDelegate={(payload) => {
+                    setMessages([...messages, payload]);
+                  }}
+                />
+              ) : null}
+
+              {txType === "Redelegate" ? (
+                <RedelegateForm
+                  chainInfo={chainInfo}
+                  address={address}
+                  onRedelegate={(payload) => {
+                    setMessages([...messages, payload]);
+                  }}
+                />
+              ) : null}
+
+              {txType === "Undelegate" ? (
+                <UnDelegateForm
+                  chainInfo={chainInfo}
+                  address={address}
+                  onUndelegate={(payload) => {
+                    setMessages([...messages, payload]);
+                  }}
+                />
+              ) : null}
+            </Paper>
+          </Grid>
+
+          <Grid item md={7} xs={12}>
+            <Paper
+              elevation={0}
+              sx={{
+                borderRadius: 0,
+                p: 1,
+                minHeight: 320,
+              }}
+            >
+              <Typography color="text.primary" variant="h6" fontWeight={600}>
+                Messages
+              </Typography>
+              <Box
+                sx={{
+                  p: 1,
+                }}
+              >
+                {messages.length === 0 ? (
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    fontWeight={600}
+                    sx={{
+                      mt: 2,
+                    }}
+                  >
+                    No Messages
+                  </Typography>
+                ) : null}
+                {slicedMsgs.map((msg, index) => {
+                  return (
+                    <Box
+                      component="div"
+                      key={index + PER_PAGE * (currentPage - 1)}
+                    >
+                      {renderMessage(
+                        msg,
+                        index + PER_PAGE * (currentPage - 1),
+                        chainInfo.config.currencies[0],
+                        onDeleteMsg
+                      )}
+                      <Divider />
+                    </Box>
+                  );
+                })}
+
+                {messages.length > 0 ? (
+                  <Pagination
+                    sx={{
+                      mt: 1,
+                    }}
+                    count={Math.ceil(messages.length / PER_PAGE)}
+                    shape="circular"
+                    onChange={(_, v) => {
+                      setCurrentPage(v);
+                      setSlicedMsgs(
+                        messages?.slice((v - 1) * PER_PAGE, v * PER_PAGE)
+                      );
+                    }}
+                  />
+                ) : null}
+
+                {messages.length > 0 ? (
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <Grid
+                      container
+                      spacing={2}
+                      sx={{
+                        mt: 2,
+                      }}
+                    >
+                      <Grid item xs={12} md={4}>
+                        <Controller
+                          name="gas"
+                          control={control}
+                          rules={{ required: "Gas is required" }}
+                          render={({ field, fieldState: { error } }) => (
+                            <TextField
+                              sx={{
+                                mb: 2,
+                              }}
+                              {...field}
+                              error={!!error}
+                              size="small"
+                              helperText={error ? error.message : null}
+                              type="number"
+                              required
+                              label="Gas"
+                              fullWidth
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={8}>
+                        <Controller
+                          name="memo"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              sx={{
+                                mb: 2,
+                              }}
+                              size="small"
+                              {...field}
+                              label="Memo"
+                              fullWidth
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid
+                        item
+                        xs={12}
+                        md={12}
+                        sx={{
+                          pt: 0,
+                          textAlign: "left",
+                        }}
+                      >
+                        <FeeComponent
+                          sx={{
+                            pt: 0,
+                            textAlign: "left",
+                          }}
+                          onSetFeeChange={(v) => {
+                            setValue(
+                              "fees",
+                              Number(v) *
+                                10 **
+                                  chainInfo?.config?.currencies[0].coinDecimals
+                            );
+                          }}
+                          chainInfo={chainInfo}
+                        />
+                      </Grid>
+
+                      <Grid
+                      item 
+                      xs={12}
+                      md={12}
+                        sx={{
+                          justifyContent: "right",
+                        }}
+                      >
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          disableElevation
+                          sx={{
+                            mt: 2,
+                            textTransform: "none",
+                          }}
+                          disabled={createRes.status === "pending"}
+                        >
+                          {createRes.status === "pending"
+                            ? "Please wait..."
+                            : "Create"}
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </form>
+                ) : null}
+              </Box>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </>
   );
 }
 
-const RenderSendMessage = (message, index) => {
+const RenderSendMessage = (message, index, currency, onDelete) => {
   return (
     <Box
       component="div"
       sx={{
         display: "flex",
         justifyContent: "space-between",
-        pt: 1.5,
+        pt: 1,
       }}
     >
       <Box
@@ -376,19 +687,25 @@ const RenderSendMessage = (message, index) => {
           Send&nbsp;
         </Typography>
         <Typography variant="body2" color="text.primary" fontWeight={600}>
-          10ATOM&nbsp;
+          {parseBalance(
+            message.value.amount,
+            currency.coinDecimals,
+            currency.coinMinimalDenom
+          )}
+          {currency.coinDenom}&nbsp;
         </Typography>
         <Typography variant="body2" color="text.secondary" fontWeight={500}>
           to&nbsp;
         </Typography>
         <Typography variant="body2" color="text.primary" fontWeight={600}>
-          {shortenAddress("cosmos1uz3spf69wjerxd278y85gpge08mhn8k4rltrut", 21)}
+          {shortenAddress(message.value.toAddress, 21)}
         </Typography>
       </Box>
       <IconButton
         color="error"
         aria-label="delete transaction"
         component="label"
+        onClick={(e) => onDelete(message, index)}
       >
         <DeleteOutline />
       </IconButton>
@@ -396,14 +713,14 @@ const RenderSendMessage = (message, index) => {
   );
 };
 
-const RenderDelegateMessage = (message, index) => {
+const RenderDelegateMessage = (message, index, currency, onDelete) => {
   return (
     <Box
       component="div"
       sx={{
         display: "flex",
         justifyContent: "space-between",
-        pt: 1.5,
+        pt: 1,
       }}
     >
       <Box
@@ -419,22 +736,25 @@ const RenderDelegateMessage = (message, index) => {
           Delegate&nbsp;
         </Typography>
         <Typography variant="body2" color="text.primary" fontWeight={600}>
-          100ATOM&nbsp;
+          {parseBalance(
+            message.value.amount,
+            currency.coinDecimals,
+            currency.coinMinimalDenom
+          )}
+          {currency.coinDenom}&nbsp;
         </Typography>
         <Typography variant="body2" color="text.secondary" fontWeight={500}>
           to&nbsp;
         </Typography>
         <Typography variant="body2" color="text.primary" fontWeight={600}>
-          {shortenAddress(
-            "cosmosvaloper12fprpy4dtgcxzlwdssztu5gg56dx9ctlns72v7",
-            21
-          )}
+          {shortenAddress(message.value.validatorAddress, 21)}
         </Typography>
       </Box>
       <IconButton
         color="error"
         aria-label="delete transaction"
         component="label"
+        onClick={(e) => onDelete(message, index)}
       >
         <DeleteOutline />
       </IconButton>
@@ -442,7 +762,7 @@ const RenderDelegateMessage = (message, index) => {
   );
 };
 
-const RenderUnDelegateMessage = (message, index) => {
+const RenderUnDelegateMessage = (message, index, currency, onDelete) => {
   return (
     <Box
       component="div"
@@ -465,19 +785,80 @@ const RenderUnDelegateMessage = (message, index) => {
           Undelegate&nbsp;
         </Typography>
         <Typography variant="body2" color="text.primary" fontWeight={600}>
-          10ATOM&nbsp;
+          {parseBalance(
+            [message.value.amount],
+            currency.coinDecimals,
+            currency.coinMinimalDenom
+          )}
+          {currency.coinDenom}&nbsp;
         </Typography>
         <Typography variant="body2" color="text.secondary" fontWeight={500}>
           from&nbsp;
         </Typography>
         <Typography variant="body2" color="text.primary" fontWeight={600}>
-          {shortenAddress("cosmos1uz3spf69wjerxd278y85gpge08mhn8k4rltrut", 21)}
+          {shortenAddress(message.value?.validatorAddress || "", 21)}
         </Typography>
       </Box>
       <IconButton
         color="error"
         aria-label="delete transaction"
         component="label"
+        onClick={(e) => onDelete(message, index)}
+      >
+        <DeleteOutline />
+      </IconButton>
+    </Box>
+  );
+};
+
+const RenderReDelegateMessage = (message, index, currency, onDelete) => {
+  return (
+    <Box
+      component="div"
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        pt: 1.5,
+      }}
+    >
+      <Box
+        component="div"
+        sx={{
+          display: "flex",
+        }}
+      >
+        <Typography variant="body2" color="text.primary" fontWeight={500}>
+          #{index + 1}&nbsp;&nbsp;
+        </Typography>
+        <Typography variant="body2" color="text.primary" fontWeight={600}>
+          Redelegate&nbsp;
+        </Typography>
+        <Typography variant="body2" color="text.primary" fontWeight={600}>
+          {parseBalance(
+            message.value.amount,
+            currency.coinDecimals,
+            currency.coinMinimalDenom
+          )}
+          {currency.coinDenom}&nbsp;
+        </Typography>
+        <Typography variant="body2" color="text.secondary" fontWeight={500}>
+          from&nbsp;
+        </Typography>
+        <Typography variant="body2" color="text.primary" fontWeight={600}>
+          {shortenAddress(message.value.validatorSrcAddress, 21)}&nbsp;
+        </Typography>
+        <Typography variant="body2" color="text.secondary" fontWeight={500}>
+          to&nbsp;
+        </Typography>
+        <Typography variant="body2" color="text.primary" fontWeight={600}>
+          {shortenAddress(message.value.validatorDstAddress, 21)}
+        </Typography>
+      </Box>
+      <IconButton
+        color="error"
+        aria-label="delete transaction"
+        component="label"
+        onClick={(e) => onDelete(message, index)}
       >
         <DeleteOutline />
       </IconButton>
