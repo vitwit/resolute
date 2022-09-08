@@ -6,10 +6,12 @@ Supported features:
 - [x] Bank
 - [x] Governance
 - [x] Authz
-- [ ] Feegrant
 - [x] Airdrops
-- [ ] Groups
 - [x] Multisig
+- [ ] Feegrant
+- [ ] IBC Transfer
+- [ ] Groups
+- [ ] ICA
 
 ## Adding new network
 
