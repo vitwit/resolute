@@ -315,13 +315,15 @@ export default function PageCreateTx() {
         })
       );
     } else if (createRes?.status === "idle") {
-      dispatch(setError({
-        type: "success",
-        message: "Transaction created",
-      }));
+      dispatch(
+        setError({
+          type: "success",
+          message: "Transaction created",
+        })
+      );
 
       setTimeout(() => {
-        navigate(`/multisig/${address}/txs`)
+        navigate(`/multisig/${address}/txs`);
       }, 200);
     }
   }, [createRes]);
@@ -630,9 +632,9 @@ export default function PageCreateTx() {
                       </Grid>
 
                       <Grid
-                      item 
-                      xs={12}
-                      md={12}
+                        item
+                        xs={12}
+                        md={12}
                         sx={{
                           justifyContent: "right",
                         }}
@@ -664,7 +666,7 @@ export default function PageCreateTx() {
   );
 }
 
-const RenderSendMessage = (message, index, currency, onDelete) => {
+export const RenderSendMessage = (message, index, currency, onDelete) => {
   return (
     <Box
       component="div"
@@ -701,19 +703,21 @@ const RenderSendMessage = (message, index, currency, onDelete) => {
           {shortenAddress(message.value.toAddress, 21)}
         </Typography>
       </Box>
-      <IconButton
-        color="error"
-        aria-label="delete transaction"
-        component="label"
-        onClick={(e) => onDelete(message, index)}
-      >
-        <DeleteOutline />
-      </IconButton>
+      {onDelete ? (
+        <IconButton
+          color="error"
+          aria-label="delete transaction"
+          component="label"
+          onClick={(e) => onDelete(message, index)}
+        >
+          <DeleteOutline />
+        </IconButton>
+      ) : null}
     </Box>
   );
 };
 
-const RenderDelegateMessage = (message, index, currency, onDelete) => {
+export const RenderDelegateMessage = (message, index, currency, onDelete) => {
   return (
     <Box
       component="div"
@@ -750,19 +754,21 @@ const RenderDelegateMessage = (message, index, currency, onDelete) => {
           {shortenAddress(message.value.validatorAddress, 21)}
         </Typography>
       </Box>
-      <IconButton
-        color="error"
-        aria-label="delete transaction"
-        component="label"
-        onClick={(e) => onDelete(message, index)}
-      >
-        <DeleteOutline />
-      </IconButton>
+      {onDelete ? (
+        <IconButton
+          color="error"
+          aria-label="delete transaction"
+          component="label"
+          onClick={(e) => onDelete(message, index)}
+        >
+          <DeleteOutline />
+        </IconButton>
+      ) : null}
     </Box>
   );
 };
 
-const RenderUnDelegateMessage = (message, index, currency, onDelete) => {
+export const RenderUnDelegateMessage = (message, index, currency, onDelete) => {
   return (
     <Box
       component="div"
@@ -799,19 +805,21 @@ const RenderUnDelegateMessage = (message, index, currency, onDelete) => {
           {shortenAddress(message.value?.validatorAddress || "", 21)}
         </Typography>
       </Box>
-      <IconButton
-        color="error"
-        aria-label="delete transaction"
-        component="label"
-        onClick={(e) => onDelete(message, index)}
-      >
-        <DeleteOutline />
-      </IconButton>
+      {onDelete ? (
+        <IconButton
+          color="error"
+          aria-label="delete transaction"
+          component="label"
+          onClick={(e) => onDelete(message, index)}
+        >
+          <DeleteOutline />
+        </IconButton>
+      ) : null}
     </Box>
   );
 };
 
-const RenderReDelegateMessage = (message, index, currency, onDelete) => {
+export const RenderReDelegateMessage = (message, index, currency, onDelete) => {
   return (
     <Box
       component="div"
@@ -854,14 +862,16 @@ const RenderReDelegateMessage = (message, index, currency, onDelete) => {
           {shortenAddress(message.value.validatorDstAddress, 21)}
         </Typography>
       </Box>
-      <IconButton
-        color="error"
-        aria-label="delete transaction"
-        component="label"
-        onClick={(e) => onDelete(message, index)}
-      >
-        <DeleteOutline />
-      </IconButton>
+      {onDelete ? (
+        <IconButton
+          color="error"
+          aria-label="delete transaction"
+          component="label"
+          onClick={(e) => onDelete(message, index)}
+        >
+          <DeleteOutline />
+        </IconButton>
+      ) : null}
     </Box>
   );
 };
