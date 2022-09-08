@@ -1,15 +1,13 @@
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getBalance } from "../../../features/bank/bankSlice";
 import {
   getAllValidators,
   getDelegations,
-  getValidators,
 } from "../../../features/staking/stakeSlice";
 import TransactionsList from "./TransactionsList";
-import { DialogCreateMultisigTx } from "../../../components/DialogCreateMultisigTx";
 import { multisigByAddress } from "../../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../../utils/util";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
@@ -17,7 +15,6 @@ import Chip from "@mui/material/Chip";
 import { resetError, setError } from "../../../features/common/commonSlice";
 
 export default function PageMultisigInfo() {
-  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const { address: multisigAddress } = useParams();
   const multisigAccountDetails = useSelector(
@@ -73,14 +70,11 @@ export default function PageMultisigInfo() {
   const wallet = useSelector((state) => state.wallet);
   const { chainInfo, connected } = wallet;
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   useEffect(() => {
     dispatch(multisigByAddress(multisigAddress));
   }, []);
 
+  let navigate = useNavigate();
   useEffect(() => {
     if (connected) {
       dispatch(
@@ -245,7 +239,7 @@ export default function PageMultisigInfo() {
           }}
         >
           <Button
-            onClick={() => setOpen(true)}
+            onClick={() => navigate(`/multisig/${multisigAddress}/create-tx`)}
             disableElevation
             variant="contained"
             sx={{
@@ -257,7 +251,6 @@ export default function PageMultisigInfo() {
         </Box>
         <TransactionsList address={multisigAddress} />
       </Paper>
-      <DialogCreateMultisigTx open={open} handleClose={handleClose} />
     </>
   );
 }
