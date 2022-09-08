@@ -1,4 +1,9 @@
 export const gpStyles = {
+    alert_card: {
+        width: '100%',
+        mt: 2,
+        boxShadow: 'none'
+    },
     policy_box: {
         border: '1px solid #eeeeee',
         p: 5,

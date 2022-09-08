@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import { convertPaginationToParams } from '../utils';
+import { convertPaginationToParams, convertPaginationToParamsOffset } from '../utils';
 
 const groupByAdminURL = (admin) => `/cosmos/group/v1/groups_by_admin/${admin}`
 const groupByMemberURL = (address) => `/cosmos/group/v1/groups_by_member/${address}`
@@ -14,8 +14,8 @@ const GroupProposalURL = proposal_id => `/cosmos/group/v1/proposal/${proposal_id
 
 const fetchGroupsByAdmin = (baseURL, admin, pagination) => {
     let uri = `${baseURL}${groupByAdminURL(admin)}`
-    const pageParams = convertPaginationToParams(pagination)
-    if (pageParams !== "") uri += `?${pageParams}`
+    const pageParams = convertPaginationToParamsOffset(pagination)
+    if (pageParams !== "") uri += `?${pageParams}&pagination.count_total=true`
 
     return Axios.get(uri, {
         headers: {
@@ -26,8 +26,8 @@ const fetchGroupsByAdmin = (baseURL, admin, pagination) => {
 
 const fetchGroupsByMember = (baseURL, address, pagination) => {
     let uri = `${baseURL}${groupByMemberURL(address)}`
-    const pageParams = convertPaginationToParams(pagination)
-    if (pageParams !== "") uri += `?${pageParams}`
+    const pageParams = convertPaginationToParamsOffset(pagination)
+    if (pageParams !== "") uri += `?${pageParams}&pagination.count_total=true`
 
     return Axios.get(uri, {
         headers: {

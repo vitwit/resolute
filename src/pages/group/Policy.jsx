@@ -81,7 +81,7 @@ const SendMsgComponent = ({ msg, index, deleteMsg }) => {
     )
 }
 
-const CreateProposal = () => {
+const CreateProposal = ({ policyInfo }) => {
     const dispatch = useDispatch();
     const params = useParams();
     const wallet = useSelector(state => state.wallet);
@@ -98,6 +98,7 @@ const CreateProposal = () => {
     var [proposers, setProposers] = useState([{ ...proposerObj }]);
     const createProposalRes = useSelector(state => state.group.groupProposalRes)
     const [obj, setObj] = useState({
+        groupPolicyAddress: policyInfo?.address || '',
         messages: []
     });
 
@@ -174,13 +175,14 @@ const CreateProposal = () => {
                 showCreateProposal ?
 
                     <Card sx={{ width: '100%', p: 3 }}>
-                        <Box sx={{ width: '60%', m: '0 auto' }}>
+                        <Box sx={{ width: '50%', m: '0 auto' }}>
                             <br />
                             <h3>Create Proposal</h3>
 
                             <form onSubmit={handleSubmit}>
                                 <FormControl fullWidth>
                                     <TextField
+                                        disabled
                                         fullWidth
                                         name='groupPolicyAddress'
                                         placeholder='Address'
@@ -325,7 +327,7 @@ const CreateProposal = () => {
 
                                     <Button color='error'
                                         sx={{ mr: 3 }}
-                                        onClick={()=>setShowCreateProposal(false)}
+                                        onClick={() => setShowCreateProposal(false)}
                                         variant='outlined' type="submit">
                                         Cancel
                                     </Button>
@@ -352,13 +354,24 @@ const AllProposals = () => {
     const wallet = useSelector(state => state.wallet)
     const [voteOpen, setVoteOpen] = useState(false);
     const voteRes = useSelector(state => state.group?.voteRes);
+    const createProposalRes = useSelector(state => state.group?.groupProposalRes);
     const navigate = useNavigate();
 
-    useEffect(() => {
+    const getProposals = () => {
         dispatch(getGroupPolicyProposals({
             baseURL: wallet?.chainInfo?.config?.rest,
             address: params?.policyId
         }))
+    }
+
+    useEffect(() => {
+        if (createProposalRes?.status === 'idle')
+            getProposals()
+
+    }, [createProposalRes?.status])
+
+    useEffect(() => {
+        getProposals();
     }, [])
 
     const onVoteDailogClose = () => {
@@ -805,7 +818,7 @@ function Policy() {
 
                                 </Grid>
                             </Grid>
-                           
+
                             <RowItem lable={'Address'}
                                 value={shortenAddress(policyInfo?.address, 19) || '-'} />
                             <RowItem lable={'Type'} value={policyInfo?.decision_policy['@type']} />
@@ -823,7 +836,7 @@ function Policy() {
                     </Grid>
                 </Item>
             }
-            <CreateProposal />
+            <CreateProposal policyInfo={policyInfo} />
             <AllProposals />
         </Box >
     )

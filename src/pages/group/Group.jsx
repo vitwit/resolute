@@ -356,6 +356,7 @@ const GroupInfo = ({ id, wallet }) => {
                                                 showAdminInput ?
                                                     <Box>
                                                         <IconButton
+                                                            sx={{ border: '1px solid' }}
                                                             onClick={
                                                                 () => UpdateAdmin()
                                                             }
@@ -374,7 +375,9 @@ const GroupInfo = ({ id, wallet }) => {
                                                             />
                                                         </IconButton>
                                                     </Box> :
-                                                    <EditIcon onClick={
+                                                    <EditIcon 
+                                                    color='primary'
+                                                    onClick={
                                                         () => {
                                                             setAdmin(data?.info?.admin)
                                                             setShowAdminInput(!showAdminInput)
@@ -428,6 +431,8 @@ const GroupInfo = ({ id, wallet }) => {
                                                 showMetadataInput ?
                                                     <Box>
                                                         <IconButton
+
+                                                            sx={{ border: '1px solid' }}
                                                             onClick={
                                                                 () => UpdateMetadata()
                                                             }
@@ -446,7 +451,7 @@ const GroupInfo = ({ id, wallet }) => {
                                                             />
                                                         </IconButton>
                                                     </Box> :
-                                                    <EditIcon onClick={
+                                                    <EditIcon color='primary' onClick={
                                                         () => {
                                                             setMetadata(data?.info?.metadata)
                                                             setShowMetadataInput(!showMetadataInput)
@@ -514,11 +519,11 @@ const UpdateGroupMember = ({ id, wallet }) => {
         }
     }, [updateRes])
 
-    // useEffect(() => {
-    //     return () => {
-    //         dispatch(resetUpdateGroupMember())
-    //     }
-    // }, [])
+    useEffect(() => {
+        return () => {
+            dispatch(resetUpdateGroupMember())
+        }
+    }, [])
 
     const groupMembers = useSelector(state => state.group.groupMembers)
     const members1 = [{ address: '', weight: '', metadata: '' }];
