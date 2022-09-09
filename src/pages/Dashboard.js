@@ -37,6 +37,7 @@ const Single_Tx = lazy(() => import("./multisig/tx/Single_Tx"));
 const SendPage = lazy(() => import("./SendPage"));
 const UnjailPage = lazy(() => import("./UnjailPage"));
 const ProposalInfo = lazy(() => import("./ProposalInfo"));
+const PageCreateTx = lazy(() => import("./multisig/tx/PageCreateTx"));
 
 function DashboardContent(props) {
   const [snackOpen, setSnackOpen] = useState(false);
@@ -322,6 +323,15 @@ function DashboardContent(props) {
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <PageMultisigInfo />
+                      </Suspense>
+                    }
+                  ></Route>
+
+                  <Route
+                    path="/multisig/:address/create-tx"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <PageCreateTx />
                       </Suspense>
                     }
                   ></Route>
