@@ -17,5 +17,6 @@ jobs:
         with:
           url: https://api.render.com/deploy/srv-ccadle6n6mponmv5j2ng
           method: GET
+          customHeaders: '{"Content-Type": "application/x-www-form-urlencoded"}'
           data: '{"key": ${{secrets.RENDER_SECRET}}}'
 
