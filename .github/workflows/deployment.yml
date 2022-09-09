@@ -11,7 +11,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
+      - name: echo env
+        run: |
+          echo ${{secrets.RENDER_SECRET}}
       - name: Deploy
         uses: fjogeleit/http-request-action@v1
         with:
