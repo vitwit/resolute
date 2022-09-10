@@ -1,11 +1,12 @@
 name: Deployment
 
 on:
-  pull_request:
+  push:
     branches: [master]
 
 jobs:
-  deploy:
+  dev-deployment:
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
