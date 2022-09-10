@@ -111,7 +111,7 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
       );
 
       setLoad(false);
-      if (result1.code == 0) {
+      if (result1.code === 0) {
         dispatch(
           updateTxn({
             txId: tx?._id,

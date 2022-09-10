@@ -24,7 +24,7 @@ import {
   setError,
 } from "./../features/common/commonSlice";
 import InputAdornment from "@mui/material/InputAdornment";
-import { AlertTitle, Typography, Alert } from "@mui/material";
+import { Typography, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 export default function NewAuthz() {
