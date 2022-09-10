@@ -6,7 +6,6 @@ on:
 
 jobs:
   dev-deployment:
-    needs: test
     runs-on: ubuntu-latest
 
     steps:
