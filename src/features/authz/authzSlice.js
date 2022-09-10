@@ -266,6 +266,7 @@ export const authzExecHelper = (dispatch, data) => {
         })
       );
     }
+    break;
     default:
       alert("not supported");
   }

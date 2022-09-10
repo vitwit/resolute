@@ -46,7 +46,7 @@ export default function Delegate(props) {
       if (!validator.jailed) {
         const temp = {
           label: validator.description.moniker,
-          label: validators.inactiveSorted[i],
+          value: validators.inactiveSorted[i],
         };
         data.push(temp);
       }

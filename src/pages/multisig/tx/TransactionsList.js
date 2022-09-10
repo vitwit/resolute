@@ -14,6 +14,8 @@ import {
   Typography,
   Link,
   Chip,
+  Paper,
+  DialogTitle,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Collapse from "@mui/material/Collapse";
@@ -45,6 +47,18 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
+import {
+  RenderSendMessage,
+  RenderDelegateMessage,
+  RenderReDelegateMessage,
+  RenderUnDelegateMessage,
+} from "./PageCreateTx";
+import {
+  DELEGATE_TYPE_URL,
+  REDELEGATE_TYPE_URL,
+  SEND_TYPE_URL,
+  UNDELEGATE_TYPE_URL,
+} from "./utils";
 
 const mapTxns = {
   "/cosmos.staking.v1beta1.MsgDelegate": "Delegate",
@@ -52,6 +66,62 @@ const mapTxns = {
   "/cosmos.staking.v1beta1.MsgBeginRedelegate": "Re-Delegate",
   "/cosmos.staking.v1beta1.MsgUndelegate": "Un-Delegate",
   Msg: "Tx Msg",
+};
+
+const DialogMultisigMessages = (props) => {
+  const renderMessage = (msg, index, currency, onDelete) => {
+    switch (msg.typeUrl) {
+      case SEND_TYPE_URL:
+        return RenderSendMessage(msg, index, currency, onDelete);
+      case DELEGATE_TYPE_URL:
+        return RenderDelegateMessage(msg, index, currency, onDelete);
+      case UNDELEGATE_TYPE_URL:
+        return RenderUnDelegateMessage(msg, index, currency, onDelete);
+      case REDELEGATE_TYPE_URL:
+        return RenderReDelegateMessage(msg, index, currency, onDelete);
+      default:
+        return "";
+    }
+  };
+
+  return (
+    <Dialog onClose={(e) => props.onClose(e)} open={props.open}>
+      <DialogTitle>Messages</DialogTitle>
+      <DialogContent>
+        <Paper
+          elevation={0}
+          sx={{
+            p: 2,
+          }}
+        >
+          {props.msgs.map((row, index) => {
+            return (
+              <Box component="div" key={index}>
+                {renderMessage(row, index, props.currency, null)}
+              </Box>
+            );
+          })}
+        </Paper>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            props.onClose();
+          }}
+        >
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+DialogMultisigMessages.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  msgs: PropTypes.array.isRequired,
+  currency: PropTypes.object.isRequired,
 };
 
 const getTxStatusComponent = (status, onShowError) => {
@@ -80,7 +150,13 @@ const getTxStatusComponent = (status, onShowError) => {
   );
 };
 
-const TableRowComponent = ({ tx, type, index, onShowError }) => {
+const TableRowComponent = ({
+  tx,
+  type,
+  index,
+  onShowError,
+  onShowMoreTxns,
+}) => {
   const { address } = useParams();
   const walletAddress = useSelector((state) => state.wallet.address);
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
@@ -164,62 +240,89 @@ const TableRowComponent = ({ tx, type, index, onShowError }) => {
   return (
     <>
       <StyledTableRow>
-        <StyledTableCell
-          sx={{
-            maxWidth: 250,
-          }}
-        >
-          {tx?.msgs.map((msg, index) => (
-            <Box component="div" id={index}>
-              {msg.typeUrl === "/cosmos.bank.v1beta1.MsgSend" ? (
+        <StyledTableCell>
+          {tx?.msgs.length === 0 ? (
+            <Typography>-</Typography>
+          ) : (
+            <Box component="div">
+              {tx?.msgs[0].typeUrl === "/cosmos.bank.v1beta1.MsgSend" ? (
                 <p>
-                  {mapTxns[msg?.typeUrl]} &nbsp;
-                  <strong>{displayDenom(msg?.value?.amount)}</strong>
+                  {mapTxns[tx?.msgs[0]?.typeUrl]} &nbsp;
+                  <strong>{displayDenom(tx?.msgs[0]?.value?.amount)}</strong>
                   &nbsp;To&nbsp;{" "}
-                  <strong> {shortenAddress(msg?.value?.toAddress, 27)}</strong>
+                  <strong>
+                    {" "}
+                    {shortenAddress(tx?.msgs[0]?.value?.toAddress, 27)}
+                  </strong>
                 </p>
               ) : null}
 
-              {msg.typeUrl === "/cosmos.staking.v1beta1.MsgDelegate" ? (
+              {tx?.msgs[0].typeUrl === "/cosmos.staking.v1beta1.MsgDelegate" ? (
                 <p>
-                  {mapTxns[msg?.typeUrl]}{" "}
-                  <strong>{displayDenom(msg?.value?.amount)}</strong>
+                  {mapTxns[tx?.msgs[0]?.typeUrl]}{" "}
+                  <strong>{displayDenom(tx?.msgs[0]?.value?.amount)}</strong>
                   &nbsp; To &nbsp;
                   <strong>
-                    {shortenAddress(msg?.value?.validatorAddress, 27)}
+                    {shortenAddress(tx?.msgs[0]?.value?.validatorAddress, 27)}
                   </strong>
                 </p>
               ) : null}
 
-              {msg.typeUrl === "/cosmos.staking.v1beta1.MsgUndelegate" ? (
+              {tx?.msgs[0].typeUrl ===
+              "/cosmos.staking.v1beta1.MsgUndelegate" ? (
                 <p>
-                  {mapTxns[msg?.typeUrl]}{" "}
-                  <strong>{displayDenom(msg?.value?.amount)}</strong>
+                  {mapTxns[tx?.msgs[0]?.typeUrl]}{" "}
+                  <strong>{displayDenom(tx?.msgs[0]?.value?.amount)}</strong>
                   &nbsp; From &nbsp;
                   <strong>
-                    {shortenAddress(msg?.value?.validatorAddress, 27)}
+                    {shortenAddress(tx?.msgs[0]?.value?.validatorAddress, 27)}
                   </strong>
                 </p>
               ) : null}
 
-              {msg.typeUrl === "/cosmos.staking.v1beta1.MsgBeginRedelegate" ? (
+              {tx?.msgs[0].typeUrl ===
+              "/cosmos.staking.v1beta1.MsgBeginRedelegate" ? (
                 <p>
-                  {mapTxns[msg?.typeUrl]} &nbsp;
-                  <strong>{displayDenom(msg?.value?.amount)}</strong>
+                  {mapTxns[tx?.msgs[0]?.typeUrl]} &nbsp;
+                  <strong>{displayDenom(tx?.msgs[0]?.value?.amount)}</strong>
                   &nbsp;
                   <br />
                   From &nbsp;
                   <strong>
-                    {shortenAddress(msg?.value?.validatorSrcAddress, 27)}
+                    {shortenAddress(
+                      tx?.msgs[0]?.value?.validatorSrcAddress,
+                      27
+                    )}
                   </strong>
                   &nbsp; To &nbsp;
                   <strong>
-                    {shortenAddress(msg?.value?.validatorDstAddress, 27)}
+                    {shortenAddress(
+                      tx?.msgs[0]?.value?.validatorDstAddress,
+                      27
+                    )}
                   </strong>
                 </p>
               ) : null}
+              {tx?.msgs.length > 1 ? (
+                <div
+                  style={{
+                    textAlign: "center",
+                  }}
+                >
+                  <Link
+                    sx={{
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      onShowMoreTxns(tx.msgs);
+                    }}
+                  >
+                    Show more
+                  </Link>
+                </div>
+              ) : null}
             </Box>
-          ))}
+          )}
         </StyledTableCell>
         <StyledTableCell>
           {tx?.signatures?.length || 0}/{threshold}
@@ -416,6 +519,10 @@ export default function Transactions(props) {
   const [errorMsg, setErrorMsg] = useState("");
   const [openError, setOpenError] = useState(false);
 
+  const [txnsListDialog, setTxnsListDialog] = useState(false);
+  const [selectedMsgs, setSelectedTxns] = useState({});
+  const chainInfo = useSelector((state) => state.wallet.chainInfo);
+
   return (
     <Box>
       {txns?.status !== "pending" && !txns?.length ? (
@@ -479,7 +586,7 @@ export default function Transactions(props) {
               <TableHead>
                 <StyledTableRow>
                   <StyledTableCell>Messages</StyledTableCell>
-                  <StyledTableCell>No of Signatures</StyledTableCell>
+                  <StyledTableCell>Signed</StyledTableCell>
                   <StyledTableCell align="left">Status</StyledTableCell>
                   <StyledTableCell align="center">
                     Transaction Url
@@ -497,6 +604,10 @@ export default function Transactions(props) {
                       setErrorMsg(row?.errorMsg);
                       setOpenError(true);
                     }}
+                    onShowMoreTxns={(msgs) => {
+                      setSelectedTxns(msgs);
+                      setTxnsListDialog(true);
+                    }}
                   />
                 ))}
               </TableBody>
@@ -512,7 +623,7 @@ export default function Transactions(props) {
                   >
                     Messages
                   </StyledTableCell>
-                  <StyledTableCell>No of Signatures</StyledTableCell>
+                  <StyledTableCell>Signed</StyledTableCell>
                   <StyledTableCell align="left">Status</StyledTableCell>
                   <StyledTableCell align="center"></StyledTableCell>
                   <StyledTableCell align="center">Action</StyledTableCell>
@@ -520,7 +631,16 @@ export default function Transactions(props) {
               </TableHead>
               <TableBody>
                 {txns.map((row, index) => (
-                  <TableRowComponent key={index} tx={row} type="active" />
+                  <TableRowComponent
+                    key={index}
+                    tx={row}
+                    type="active"
+                    onShowMoreTxns={(msgs) => {
+                      console.log(msgs);
+                      setSelectedTxns(msgs);
+                      setTxnsListDialog(true);
+                    }}
+                  />
                 ))}
               </TableBody>
             </>
@@ -556,6 +676,15 @@ export default function Transactions(props) {
             </Button>
           </DialogActions>
         </Dialog>
+      ) : null}
+
+      {chainInfo?.config && txnsListDialog ? (
+        <DialogMultisigMessages
+          open={txnsListDialog}
+          onClose={(e) => setTxnsListDialog(false)}
+          currency={chainInfo.config.currencies[0]}
+          msgs={selectedMsgs}
+        />
       ) : null}
     </Box>
   );

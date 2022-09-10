@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  getValidators,
   resetState,
   getDelegations,
-  sortValidatorsByVotingPower,
   getParams,
   txDelegate,
   txUnDelegate,

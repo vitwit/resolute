@@ -1,5 +1,5 @@
-import { Button, Grid, IconButton, Paper, Typography } from "@mui/material";
 import react, { useState, useEffect } from "react";
+import { Button, Grid, IconButton, Paper, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -195,11 +195,15 @@ const FileUpload = (props) => {
             }
 
             const reader = new FileReader();
-            reader.onload = function (e) {
+            reader.onload = (e) => {
               const contents = e.target.result;
               props.onFileContents(contents, txType);
             };
+            reader.onerror = (e) => {
+              alert(e);
+            };
             reader.readAsText(file);
+            e.target.value = null;
           }}
         />
         Upload csv file
@@ -217,7 +221,6 @@ export default function PageCreateTx() {
   const { chainInfo, connected } = wallet;
 
   const validators = useSelector((state) => state.staking.validators);
-  const delegations = useSelector((state) => state.staking.delegations);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -260,7 +263,7 @@ export default function PageCreateTx() {
     }
   };
 
-  const onDeleteMsg = (msg, index) => {
+  const onDeleteMsg = (index) => {
     const arr = messages.filter((_, i) => i !== index);
     setMessages(arr);
   };
@@ -269,7 +272,16 @@ export default function PageCreateTx() {
     switch (type) {
       case TYPE_SEND: {
         const [parsedTxns, error] = parseSendMsgsFromContent(address, content);
-        setMessages(parsedTxns);
+        if (error) {
+          dispatch(
+            setError({
+              type: "error",
+              messages: error,
+            })
+          );
+        } else {
+          setMessages(parsedTxns);
+        }
         break;
       }
       case TYPE_DELEGATE: {
@@ -277,7 +289,16 @@ export default function PageCreateTx() {
           address,
           content
         );
-        setMessages(parsedTxns);
+        if (error) {
+          dispatch(
+            setError({
+              type: "error",
+              messages: error,
+            })
+          );
+        } else {
+          setMessages(parsedTxns);
+        }
         break;
       }
       case TYPE_REDELEGATE: {
@@ -285,7 +306,16 @@ export default function PageCreateTx() {
           address,
           content
         );
-        setMessages(parsedTxns);
+        if (error) {
+          dispatch(
+            setError({
+              type: "error",
+              messages: error,
+            })
+          );
+        } else {
+          setMessages(parsedTxns);
+        }
         break;
       }
       case TYPE_UNDELEGATE: {
@@ -293,9 +323,20 @@ export default function PageCreateTx() {
           address,
           content
         );
-        setMessages(parsedTxns);
+        if (error) {
+          dispatch(
+            setError({
+              type: "error",
+              messages: error,
+            })
+          );
+        } else {
+          setMessages(parsedTxns);
+        }
         break;
       }
+      default:
+        setMessages([]);
     }
   };
 
@@ -344,12 +385,7 @@ export default function PageCreateTx() {
     }
   }, [messages]);
 
-  const {
-    handleSubmit,
-    control,
-    setValue,
-    formState: { errors },
-  } = useForm({
+  const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
       msgs: [],
       gas: 200000,
@@ -708,7 +744,7 @@ export const RenderSendMessage = (message, index, currency, onDelete) => {
           color="error"
           aria-label="delete transaction"
           component="label"
-          onClick={(e) => onDelete(message, index)}
+          onClick={() => onDelete(index)}
         >
           <DeleteOutline />
         </IconButton>
@@ -759,7 +795,7 @@ export const RenderDelegateMessage = (message, index, currency, onDelete) => {
           color="error"
           aria-label="delete transaction"
           component="label"
-          onClick={(e) => onDelete(message, index)}
+          onClick={() => onDelete(index)}
         >
           <DeleteOutline />
         </IconButton>
@@ -810,7 +846,7 @@ export const RenderUnDelegateMessage = (message, index, currency, onDelete) => {
           color="error"
           aria-label="delete transaction"
           component="label"
-          onClick={(e) => onDelete(message, index)}
+          onClick={() => onDelete(index)}
         >
           <DeleteOutline />
         </IconButton>
@@ -867,7 +903,7 @@ export const RenderReDelegateMessage = (message, index, currency, onDelete) => {
           color="error"
           aria-label="delete transaction"
           component="label"
-          onClick={(e) => onDelete(message, index)}
+          onClick={() => onDelete(index)}
         >
           <DeleteOutline />
         </IconButton>
