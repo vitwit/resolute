@@ -19,7 +19,7 @@ import {
 import { getMainNetworks, getTestNetworks } from "../utils/networks";
 import { useNavigate } from "react-router-dom";
 import { resetError, setError } from "../features/common/commonSlice";
-import AirdropProgress from "../components/AirdropProgress";
+import AirdropProgress from "../components/passage/AirdropProgress";
 import { fromBech32, toHex, toBech32, fromHex } from "@cosmjs/encoding";
 import AlertTitle from "@mui/material/AlertTitle";
 import CustomizedDialogs from "../components/passage/disclaimer";

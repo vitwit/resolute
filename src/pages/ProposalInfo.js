@@ -9,7 +9,6 @@ import {
   getProposalTally,
   txVote,
 } from "../features/gov/govSlice";
-import { parseBalance } from "../utils/denom";
 import { resetError, setError } from "../features/common/commonSlice";
 import { resetTx } from "../features/distribution/distributionSlice";
 import { getVoteAuthz } from "../utils/authorizations";
