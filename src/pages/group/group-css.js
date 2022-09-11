@@ -28,8 +28,10 @@ export const groupStyles = {
             ...this.d_flex
         }
     },
-    t_transform: {
-        textTransform: 'none'
+    t_transform_btn: {
+        textTransform: 'none',
+        padding: '10px',
+        fontSize: '16px'
     },
     t_align: {
         textAlign: 'left'

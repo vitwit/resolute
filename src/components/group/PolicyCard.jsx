@@ -15,7 +15,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import RowItem from './RowItem';
-import { Grid } from '@mui/material';
+import { Grid, Paper } from '@mui/material';
 import { setLocalStorage, shortenAddress } from '../../utils/util';
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { useNavigate } from 'react-router-dom';
@@ -46,10 +46,12 @@ export default function PolicyCard({ obj }) {
     const navigate = useNavigate();
 
     return (
-        <Card onClick={() => {
+        <Paper  elevation={0} variant={'outlined'} onClick={() => {
             setLocalStorage('policy', obj, 'object');
             navigate(`/groups/${obj?.group_id}/policies/${obj?.address}`)
-        }} sx={{ maxWidth: 345, m: 1 }}>
+        }} 
+        sx={{m: 1, borderRadius: 2 }}
+        >
             <CardHeader
                 sx={{ bg: '#f7f7f9' }}
                 action={
@@ -64,10 +66,9 @@ export default function PolicyCard({ obj }) {
             />
             <CardContent>
                 <Grid container>
-                    <Typography sx={{
-                        fontSize: 18,
-                        ml: 1
-                    }}>
+                    <Typography
+                    gutterBottom variant="subtitle1" color="text.secondary"
+                    >
                         ## {obj?.metadata || '-'}
                     </Typography>
                     {
@@ -84,6 +85,6 @@ export default function PolicyCard({ obj }) {
 
                 </Grid>
             </CardContent>
-        </Card >
+        </Paper >
     );
 }

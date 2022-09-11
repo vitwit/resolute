@@ -1,17 +1,23 @@
-import { Alert, Card, CircularProgress, Grid, Paper, Typography } from '@mui/material'
+import { Alert, Button, Card, Chip, CircularProgress, Grid, Paper, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import VotesTable from '../../components/group/VotesTable';
 import RowItem from '../../components/group/RowItem';
-import { getGroupProposalById, getVotesProposalById } from '../../features/group/groupSlice';
-import { proposalStatus } from '../../utils/util';
+import { getGroupProposalById, getVotesProposalById, txGroupProposalExecute, txGroupProposalVote } from '../../features/group/groupSlice';
+import { proposalStatus, shortenAddress } from '../../utils/util';
+import AlertMsg from '../../components/group/AlertMsg';
+import { getLocalTime } from '../../utils/datetime';
+import DailogVote from '../../components/group/DialogVote';
 
 const ProposalInfo = ({ id, wallet }) => {
+    const [voteOpen, setVoteOpen] = useState(false);
 
     const dispatch = useDispatch();
     const proposalInfo = useSelector(state => state.group.groupProposal);
+    const voteRes = useSelector(state => state.group?.voteRes);
+
     const { data: { proposal } = {} } = proposalInfo;
 
     const getProposal = () => {
@@ -25,86 +31,223 @@ const ProposalInfo = ({ id, wallet }) => {
         getProposal();
     }, [])
 
+    const onVoteDailogClose = () => {
+        setVoteOpen(false);
+    }
+
+    const onConfirm = (voteObj) => {
+        const chainInfo = wallet?.chainInfo;
+
+        dispatch(txGroupProposalVote({
+            admin: wallet?.address,
+            voter: wallet?.address,
+            option: voteObj?.vote,
+            proposalId: voteObj?.proposalId,
+            chainId: chainInfo?.config?.chainId,
+            rpc: chainInfo?.config?.rpc,
+            denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
+            feeAmount: chainInfo?.config?.gasPriceStep?.average,
+        }))
+        console.log('vote objj', voteObj)
+    }
+
+    const onExecute = (proposalId) => {
+        const chainInfo = wallet?.chainInfo;
+
+        dispatch(txGroupProposalExecute({
+            proposalId: proposalId,
+            admin: wallet?.address,
+            executor: wallet?.address,
+            chainId: chainInfo?.config?.chainId,
+            rpc: chainInfo?.config?.rpc,
+            denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
+            feeAmount: chainInfo?.config?.gasPriceStep?.average,
+        }))
+    }
+
     return (
         <Grid Containter>
+            <DailogVote
+                proposalId={proposal?.id}
+                voteRes={voteRes}
+                selectedValue={'yes here'}
+                onClose={onVoteDailogClose}
+                onConfirm={onConfirm}
+                open={voteOpen}
+            />
             {
                 proposalInfo?.status === 'pending' ?
                     <CircularProgress /> : null
             }
             {
-                proposalInfo?.status !== 'pending' && (
-                    <Grid sx={{ p: 3 }}>
-                        <Grid container md={12} sx={{ textAlign: 'left' }}>
-                            <Grid md={8}>
-                                <Typography sx={{ fontSize: 28 }}># {id}</Typography>
+                (proposalInfo?.status === 'idle' &&
+                    !proposal) ?
+                    <AlertMsg type='error'
+                        text='Proposal not found' /> : null
+            }
+
+            {
+                proposalInfo?.status === 'idle' ?
+                    <Box sx={{ p: 4, mb: 3 }}>
+                        <Box component={'div'}>
+                            <Chip
+                                sx={{ float: 'left', fontSize: 16, mb: 3 }}
+                                variant='outlined'
+                                label={proposal?.status} color='primary' />
+                        </Box>
+
+                        <br /><br /><br />
+                        <Box sx={{ width: '100%' }} component={'div'}>
+                            <Typography gutterBottom textAlign={'left'} variant='h5'>
+                                # {proposal?.metadata || '-'}
+                            </Typography>
+                        </Box>
+                        <Grid container>
+                            <Grid md={9} container>
+                                <Grid md={6}>
+                                    <Typography textAlign={'left'} variant='subtitle1'>
+                                        Submit Time
+                                    </Typography>
+                                    <Typography textAlign={'left'} fontWeight={'bold'} variant='subtitle1'>
+                                        {getLocalTime(proposal?.submit_time)}
+                                    </Typography>
+                                </Grid>
+
+                                <Grid md={6}>
+                                    <Typography textAlign={'left'} variant='subtitle1'>
+                                        Voting Ends
+                                    </Typography>
+                                    <Typography textAlign={'left'} fontWeight={'bold'} variant='subtitle1'>
+                                        {getLocalTime(proposal?.voting_period_end)}
+                                    </Typography>
+                                </Grid>
+
+                                <Grid mt={2} md={6}>
+                                    <Typography textAlign={'left'} variant='subtitle1'>
+                                        Group Policy Address
+                                    </Typography>
+                                    <Typography textAlign={'left'} fontWeight={'bold'} variant='subtitle1'>
+                                        {shortenAddress(proposal?.group_policy_address, 21)}
+                                    </Typography>
+                                </Grid>
+
+                                <Grid mt={2} md={6}>
+                                    <Typography textAlign={'left'} variant='subtitle1'>
+                                        Proposers
+                                    </Typography>
+                                    <Box>
+                                        {
+                                            proposal?.proposers?.map(p => (
+                                                <>
+                                                    <Typography textAlign={'left'}
+                                                        fontWeight={'bold'} variant='subtitle1'>
+                                                        {shortenAddress(p, 21)}
+                                                    </Typography>
+                                                    <br />
+                                                </>
+                                            ))
+                                        }
+                                    </Box>
+                                </Grid>
                             </Grid>
-                            <Grid md={2} sx={{ textAlign: 'right' }}>
-                                <Typography sx={{
-                                    fontSize: 20,
-                                    borderRadius: 25,
-                                    p: 1,
-                                    textAlign: 'center',
-                                    background: proposalStatus[proposal?.status]?.bgColor,
-                                    color: proposalStatus[proposal?.status]?.textColor
-                                }}>
-                                    {proposalStatus[proposal?.status]?.label ||
-                                        proposal?.status}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        <Grid md={12} sx={{ textAlign: 'left' }}>
-                            <Typography sx={{ fontSize: 28 }}>## {
-                                proposal?.metadata || '-'
-                            }</Typography>
-                        </Grid>
-                        <Grid container sx={{ textAlign: 'left' }}>
-                            <Grid md={4}>
-                                <Typography sx={{
-                                    fontSize: 18,
-                                    ml: 1
-                                }}>Proposers</Typography>
-                            </Grid>
-                            <Grid md={8}>
+                            <Grid md={3}>
                                 {
-                                    proposal?.proposers?.map(p => (
-                                        <Typography sx={{
-                                            fontSize: 18,
-                                            ml: 2,
-                                            fontWeight: 'bold'
-                                        }}>
-                                            - {p}
-                                        </Typography>
-                                    ))
+                                    proposal?.status === 'PROPOSAL_STATUS_SUBMITTED' ?
+                                        <Button
+                                            sx={{ width: '50%', p: 2 }}
+                                            variant='outlined'
+                                            onClick={() => setVoteOpen(true)}
+                                            >Vote</Button>
+                                        : null
+                                }
+
+                                {
+                                    proposal?.status === 'PROPOSAL_STATUS_ACCEPTED' ?
+                                        <Button
+                                            sx={{ width: '50%', p: 2 }}
+                                            variant='outlined'
+                                            onClick={() => onExecute(proposal?.id)}
+                                        >
+                                            Execute
+                                        </Button>
+                                        : null
                                 }
                             </Grid>
                         </Grid>
-                        <RowItem lable={'Group Policy Address'} value={
-                            proposal?.group_policy_address
-                        } />
-                        <RowItem lable={'Group Policy Version'} value={
-                            proposal?.group_policy_version
-                        } />
-                        <RowItem lable={'Group Version'} value={
-                            proposal?.group_version
-                        } />
-                        <RowItem lable={'Executor Result'} value={
-                            proposal?.executor_result?.replace(/_/g, ' ')
-                        } />
-                        <RowItem lable={'Submit Time'} value={
-                            new Date(proposal?.submit_time).toUTCString()
-                        } />
-                        <RowItem lable={'Voting End Time'} value={
-                            new Date(proposal?.voting_period_end).toUTCString()
-                        } />
 
-                        <Box>
+
+                        <Paper sx={{ p: 3 }} variant='outlined'>
                             <Typography
-                                sx={{
-                                    m: 2,
-                                    fontSize: 22,
-                                    textAlign: 'left'
-                                }}>
-                                Messages</Typography>
+                                sx={{ float: 'left' }}
+                                textAlign={'left'}
+                                variant='p'
+                            >Vote Details</Typography><br /><br />
+                            <Grid spacing={2} columnSpacing={{ md: 4 }} container>
+                                <Grid item md={2}>
+                                    <Paper sx={{ p: 1, borderColor: 'blue' }}
+                                        variant='outlined'>
+                                        <Typography
+                                            color={'primary'}
+                                            variant='subtitle1'
+                                        >Yes</Typography>
+                                        <Typography
+                                            color={'primary'}
+                                            fontWeight={'bold'}
+                                            variant='subtitle1'
+                                        >
+                                            {proposal?.final_tally_result?.yes_count || 0}
+                                        </Typography>
+                                    </Paper>
+
+                                </Grid>
+                                <Grid item md={2}>
+                                    <Paper sx={{ p: 1, borderColor: 'red' }} variant='outlined'>
+                                        <Typography
+                                            color={'error'}
+                                            variant='subtitle1'
+                                        >No</Typography>
+                                        <Typography
+                                            color={'error'}
+                                            fontWeight={'bold'}
+                                            variant='subtitle1'
+                                        >
+                                            {proposal?.final_tally_result?.no_count || 0}
+                                        </Typography>
+                                    </Paper>
+
+                                </Grid>
+                                <Grid item md={2}>
+                                    <Paper sx={{ p: 1, borderColor: 'orange' }} variant='outlined'>
+                                        <Typography
+                                            color={'orange'}
+                                            variant='subtitle1'
+                                        >Abstain</Typography>
+                                        <Typography color={'orange'}
+                                            fontWeight={'bold'}
+                                            variant='subtitle1'>
+                                            {proposal?.final_tally_result?.abstain_count || 0}
+                                        </Typography>
+                                    </Paper>
+
+                                </Grid>
+                                <Grid item md={2}>
+                                    <Paper sx={{ p: 1, borderColor: 'black' }} variant='outlined'>
+                                        <Typography>Veto</Typography>
+                                        <Typography
+                                            color={'black'}
+                                            fontWeight={'bold'}
+                                            variant='subtitle1'
+                                        >{proposal?.final_tally_result?.no_with_veto_account || 0}</Typography>
+                                    </Paper>
+
+                                </Grid>
+                            </Grid>
+                        </Paper>
+
+                        <Grid mt={4}>
+                            <Typography
+                                textAlign={'left'}
+                                gutterBottom variant='h5'>Messages</Typography>
 
                             {
                                 proposal?.messages?.map(p => (
@@ -134,9 +277,9 @@ const ProposalInfo = ({ id, wallet }) => {
                                     </Box>
                                 ))
                             }
-                        </Box>
-                    </Grid>
-                )
+                        </Grid>
+
+                    </Box> : null
             }
         </Grid>
     )
@@ -180,9 +323,6 @@ function Proposal() {
     return (
         <Box>
             <Box>
-                <Typography sx={{ fontSize: 22, textAlign: 'left' }}>
-                    Proposal Information
-                </Typography>
                 <Paper>
                     <Box>
                         <ProposalInfo id={id} wallet={wallet} />

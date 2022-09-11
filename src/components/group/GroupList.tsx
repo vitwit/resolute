@@ -1,7 +1,6 @@
 import * as React from "react";
-import { Box, Grid } from "@mui/material";
+import { Box, CircularProgress, Grid } from "@mui/material";
 import AlertMsg from "./AlertMsg";
-import CardSkeleton from "./CardSkeleton";
 import GroupCard from "./GroupCard";
 import PaginationElement from "./PaginationElement";
 
@@ -15,7 +14,7 @@ export interface GroupsByAdminProps {
 }
 
 export default function GroupList(props: GroupsByAdminProps) {
-    const { groups, onAction, 
+    const { groups, onAction,
         paginationKey,
         handlePagination, total, status } = props;
 
@@ -25,7 +24,8 @@ export default function GroupList(props: GroupsByAdminProps) {
                 <Grid container spacing={{ xs: 2 }}
                 >
                     {
-                        status === 'pending' ? <CardSkeleton /> : null
+                        status === 'pending'?
+                        <CircularProgress sx={{textAlign: 'center'}} />: null
                     }
 
                     {

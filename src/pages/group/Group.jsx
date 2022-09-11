@@ -9,7 +9,7 @@ import RowItem from '../../components/group/RowItem';
 import { useDispatch, useSelector } from 'react-redux';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { getGroupById, getGroupMembers, getGroupMembersById, getGroupPoliciesById, resetUpdateGroupMember, txAddGroupPolicy, txLeaveGroupMember, txUpdateGroupAdmin, txUpdateGroupMember, txUpdateGroupMetadata, txUpdateGroupPolicy } from '../../features/group/groupSlice';
-import GroupsIcon from '@mui/icons-material/Groups';
+
 import MembersTable from '../../components/group/MembersTable';
 import PolicyCard from '../../components/group/PolicyCard';
 import CreateGroupForm from './CreateGroupForm';
@@ -21,6 +21,8 @@ import PolicyForm from '../../components/group/PolicyForm';
 import { groupStyles } from './group-css';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckIcon from '@mui/icons-material/Check';
+import GroupTab, { TabPanel } from '../../components/group/GroupTab';
+import GroupInfo from './GroupInfo';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -95,11 +97,9 @@ const GroupPolicies = ({ id, wallet }) => {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <Typography sx={{ fontSize: 24, mt: 2 }}>Group Policies</Typography><br />
-
             <Box>
                 <Button
-                    variant="outlined"
+                    variant="contained"
                     onClick={() => {
                         setShowForm(!showForm)
                     }}
@@ -118,8 +118,8 @@ const GroupPolicies = ({ id, wallet }) => {
             }
 
 
-            <Grid container spacing={{ xs: 2, md: 1 }}
-                columns={{ xs: 4, sm: 8, md: 10 }}>
+            <Grid container 
+            >
                 {
                     status === 'pending' ?
                         <CircularProgress /> : null
@@ -137,7 +137,9 @@ const GroupPolicies = ({ id, wallet }) => {
                 }
 
                 {status !== 'pending' && group_policies.map((p, index) => (
-                    <PolicyCard obj={p} />
+                    <Grid md={4} xs={1} sm={2} lg={4}>
+                        <PolicyCard obj={p} />
+                    </Grid>
                 ))}
             </Grid>
         </Box>
@@ -187,6 +189,21 @@ const GroupMembers = ({ id, wallet }) => {
             setTotal(Number(data?.pagination?.total || 0))
     }, [data])
 
+    const handleDeleteMember = (deleteMemberObj) => {
+        const chainInfo = wallet?.chainInfo;
+
+        const dataObj = {
+            admin: wallet?.address,
+            groupId: id,
+            members: [deleteMemberObj],
+            denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
+            chainId: chainInfo.config.chainId,
+            rpc: chainInfo.config.rpc,
+            feeAmount: chainInfo.config.gasPriceStep.average,
+        }
+
+        dispatch(txUpdateGroupMember(dataObj))
+    }
 
     return (
         <Box sx={{ flexGrow: 1, mt: 2 }}>
@@ -199,6 +216,7 @@ const GroupMembers = ({ id, wallet }) => {
                     <MembersTable
                         total={total}
                         limit={limit}
+                        handleDeleteMember={handleDeleteMember}
                         pageNumber={pageNumber}
                         handleMembersPagination={handleMembersPagination}
                         rows={data} />
@@ -208,304 +226,7 @@ const GroupMembers = ({ id, wallet }) => {
     )
 }
 
-const GroupInfo = ({ id, wallet }) => {
-    const dispatch = useDispatch();
-    const [showAdminInput, setShowAdminInput] = useState(false);
-    const [admin, setAdmin] = useState('');
-    const [metadata, setMetadata] = useState('');
-    const [showMetadataInput, setShowMetadataInput] = useState(false);
 
-    const groupMembers = useSelector(state => state.group.groupMembers)
-    const { data: members, status: memberStatus } = groupMembers;
-
-
-    const isExistInGroup = () => {
-        const existMember = members?.members?.filter(m => m?.member?.address === wallet?.address)
-
-        if (existMember && existMember?.length) {
-            return true
-        }
-        return false;
-    }
-
-    useEffect(() => {
-        dispatch(getGroupById({
-            baseURL: wallet?.chainInfo?.config?.rest, id: id
-        }))
-    }, [])
-
-    const groupInfo = useSelector(state => state.group.groupInfo);
-    const { data, status } = groupInfo;
-    const leaveGroupRes = useSelector(state => state.group.leaveGroupRes)
-
-    const handleLeaveGroup = () => {
-        const chainInfo = wallet?.chainInfo;
-        dispatch(txLeaveGroupMember({
-            admin: wallet?.address,
-            groupId: id,
-            denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
-            chainId: chainInfo.config.chainId,
-            rpc: chainInfo.config.rpc,
-            feeAmount: chainInfo.config.gasPriceStep.average,
-        }));
-    }
-
-    const UpdateAdmin = () => {
-        const chainInfo = wallet?.chainInfo;
-        dispatch(txUpdateGroupAdmin({
-            admin: data?.info?.admin,
-            groupId: id,
-            newAdmin: admin,
-            denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
-            chainId: chainInfo.config.chainId,
-            rpc: chainInfo.config.rpc,
-            feeAmount: chainInfo.config.gasPriceStep.average,
-        }));
-    }
-
-    const UpdateMetadata = () => {
-        const chainInfo = wallet?.chainInfo;
-        dispatch(txUpdateGroupMetadata({
-            admin: data?.info?.admin,
-            groupId: id,
-            metadata,
-            denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
-            chainId: chainInfo.config.chainId,
-            rpc: chainInfo.config.rpc,
-            feeAmount: chainInfo.config.gasPriceStep.average,
-        }));
-    }
-
-    return (
-        <Box>
-            <Paper sx={{ p: 2, mt: 2 }}>
-                <Grid container>
-                    <Grid md={3}>
-                        <GroupsIcon
-                            color={'primary'}
-                            sx={{ fontSize: 95 }} />
-                        <Typography sx={{ fontSize: 34 }}>
-                            # {data?.info?.id}
-                        </Typography>
-                        {
-                            memberStatus?.status === 'pending' ?
-                                <CircularProgress /> : null
-                        }
-                        {
-                            memberStatus?.status !== 'pending' && isExistInGroup() ?
-                                <Button
-                                    color={'error'}
-                                    onClick={() => handleLeaveGroup()}
-                                    variant={'outlined'}>
-                                    {
-                                        leaveGroupRes?.status === 'pending' ?
-                                            'Loading...' : 'Leave Group'
-                                    }
-                                </Button> : null
-                        }
-
-                    </Grid>
-                    <Grid md={9}>
-                        {
-                            status === 'pending' ?
-                                <CircularProgress /> : null
-                        }
-                        {
-                            status !== 'pending' ?
-                                <Box>
-                                    <Grid container>
-                                        <Grid md={2}>
-                                            <Typography sx={{
-                                                fontSize: 18,
-                                                textAlign: 'left',
-                                                ml: 1
-                                            }}>Admin</Typography>
-                                        </Grid>
-                                        <Grid md={6}>
-                                            {
-                                                showAdminInput ?
-                                                    <TextField
-                                                        fullWidth
-                                                        value={admin}
-                                                        onChange={e => {
-                                                            setAdmin(e.target.value)
-                                                        }}
-                                                    />
-                                                    :
-                                                    <>
-                                                        <Typography sx={{
-                                                            fontSize: 18,
-                                                            textAlign: 'left',
-                                                            fontWeight: 'bold',
-                                                            ml: 2
-                                                        }}>
-                                                            {data?.info?.admin || '-'}
-                                                        </Typography>
-                                                        <Typography sx={{
-                                                            ml: 2,
-                                                            textAlign: 'left'
-                                                        }}>
-                                                            Note: Only admin can be update admin address.
-                                                        </Typography>
-                                                    </>
-                                            }
-
-                                        </Grid>
-                                        <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
-                                            {
-                                                showAdminInput ?
-                                                    <Box>
-                                                        <IconButton
-                                                            sx={{ border: '1px solid' }}
-                                                            onClick={
-                                                                () => UpdateAdmin()
-                                                            }
-                                                            color="primary">
-                                                            <CheckIcon
-                                                                sx={{ fontSize: 32 }}
-                                                            />
-                                                        </IconButton>
-                                                        <IconButton
-                                                            onClick={
-                                                                () => setShowAdminInput(false)
-                                                            }
-                                                            color="error">
-                                                            <CancelIcon
-                                                                sx={{ fontSize: 32 }}
-                                                            />
-                                                        </IconButton>
-                                                    </Box> :
-                                                    <EditIcon 
-                                                    color='primary'
-                                                    onClick={
-                                                        () => {
-                                                            setAdmin(data?.info?.admin)
-                                                            setShowAdminInput(!showAdminInput)
-                                                        }
-                                                    } />
-                                            }
-
-                                        </Grid>
-                                    </Grid>
-                                    <br />
-                                    <Grid container>
-                                        <Grid md={2}>
-                                            <Typography sx={{
-                                                fontSize: 18,
-                                                textAlign: 'left',
-                                                ml: 1
-                                            }}>Metdata</Typography>
-                                        </Grid>
-                                        <Grid md={6}>
-                                            {
-                                                showMetadataInput ?
-                                                    <TextField
-                                                        fullWidth
-                                                        value={metadata}
-                                                        onChange={e => {
-                                                            setMetadata(e.target.value)
-                                                        }}
-                                                    />
-                                                    :
-                                                    <>
-                                                        <Typography sx={{
-                                                            fontSize: 18,
-                                                            textAlign: 'left',
-                                                            fontWeight: 'bold',
-                                                            ml: 2
-                                                        }}>
-                                                            {data?.info?.metadata || '-'}
-                                                        </Typography>
-                                                        <Typography sx={{
-                                                            ml: 2,
-                                                            textAlign: 'left'
-                                                        }}>
-                                                            Note: Only admin can be update metadata.
-                                                        </Typography>
-                                                    </>
-                                            }
-
-                                        </Grid>
-                                        <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
-                                            {
-                                                showMetadataInput ?
-                                                    <Box>
-                                                        <IconButton
-
-                                                            sx={{ border: '1px solid' }}
-                                                            onClick={
-                                                                () => UpdateMetadata()
-                                                            }
-                                                            color="primary">
-                                                            <CheckIcon
-                                                                sx={{ fontSize: 32 }}
-                                                            />
-                                                        </IconButton>
-                                                        <IconButton
-                                                            onClick={
-                                                                () => setShowMetadataInput(false)
-                                                            }
-                                                            color="error">
-                                                            <CancelIcon
-                                                                sx={{ fontSize: 32 }}
-                                                            />
-                                                        </IconButton>
-                                                    </Box> :
-                                                    <EditIcon color='primary' onClick={
-                                                        () => {
-                                                            setMetadata(data?.info?.metadata)
-                                                            setShowMetadataInput(!showMetadataInput)
-                                                        }
-                                                    } />
-                                            }
-
-                                        </Grid>
-                                    </Grid>
-                                    <br />
-                                    <Grid container>
-                                        <Grid md={2}>
-                                            <Typography sx={{
-                                                fontSize: 18,
-                                                textAlign: 'left',
-                                                ml: 1
-                                            }}>Version</Typography>
-                                        </Grid>
-                                        <Grid md={10}>
-                                            <Typography sx={{
-                                                fontSize: 18,
-                                                textAlign: 'left',
-                                                fontWeight: 'bold',
-                                                ml: 2
-                                            }}>{data?.info?.version || '-'}</Typography>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid container>
-                                        <Grid md={2}>
-                                            <Typography sx={{
-                                                fontSize: 18,
-                                                textAlign: 'left',
-                                                ml: 1
-                                            }}>Weight</Typography>
-                                        </Grid>
-                                        <Grid md={10}>
-                                            <Typography sx={{
-                                                fontSize: 18,
-                                                textAlign: 'left',
-                                                fontWeight: 'bold',
-                                                ml: 2
-                                            }}>{data?.info?.total_weight || '-'}</Typography>
-                                        </Grid>
-                                    </Grid>
-
-                                </Box> : null
-                        }
-
-                    </Grid>
-                </Grid>
-            </Paper>
-        </Box>
-    )
-}
 
 const UpdateGroupMember = ({ id, wallet }) => {
     const [showForm, setShowForm] = useState(false);
@@ -555,7 +276,6 @@ const UpdateGroupMember = ({ id, wallet }) => {
     }
 
     const handleUpdate = (allMembers) => {
-        console.log('allmembers ---- ', allMembers)
         const chainInfo = wallet?.chainInfo;
 
         const dataObj = {
@@ -576,7 +296,7 @@ const UpdateGroupMember = ({ id, wallet }) => {
             <br />
             <Box sx={{ float: 'right' }}>
                 <Button onClick={() => setShowForm(!showForm)}
-                    variant='outlined'>Update Member</Button>
+                    variant='contained'>Update Member</Button>
             </Box><br /><br /><br />
             <Box>
                 {
@@ -605,14 +325,25 @@ const UpdateGroupMember = ({ id, wallet }) => {
 
 function Group() {
     const params = useParams();
+    const [tabIndex, setTabIndex] = useState(0);
 
     const wallet = useSelector(state => state.wallet)
+    const arr = ['Members', 'Decision Policies', 'Active Proposals']
+
     return (
         <Box>
             <GroupInfo id={params?.id} wallet={wallet} />
-            <UpdateGroupMember id={params?.id} wallet={wallet} />
-            <GroupMembers id={params?.id} wallet={wallet} />
-            <GroupPolicies id={params?.id} wallet={wallet} />
+
+            <Paper sx={{ mt: 2 }} elevation={0} >
+                <GroupTab tabs={arr} handleTabChange={(i) => setTabIndex(i)} />
+                <TabPanel value={tabIndex} index={0}>
+                    <UpdateGroupMember id={params?.id} wallet={wallet} />
+                    <GroupMembers id={params?.id} wallet={wallet} />
+                </TabPanel>
+                <TabPanel value={tabIndex} index={1} >
+                    <GroupPolicies id={params?.id} wallet={wallet} />
+                </TabPanel>
+            </Paper>
         </Box>
     )
 }

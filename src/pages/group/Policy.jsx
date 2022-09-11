@@ -22,6 +22,8 @@ import EastIcon from '@mui/icons-material/East';
 import PolicyForm from '../../components/group/PolicyForm';
 import EditIcon from '@mui/icons-material/Edit';
 import CancelIcon from '@mui/icons-material/Cancel';
+import PolicyInfo from './PolicyInfo';
+import PolicyProposalsList from './PolicyProposalsList';
 
 const DELEGATE_MSG = `/cosmos.staking.v1beta1.MsgDelegate`;
 const SEND_MSG = `/cosmos.bank.v1beta1.MsgSend`;
@@ -485,7 +487,8 @@ const AllProposals = () => {
                                                 selectedValue={'yes here'}
                                                 onClose={onVoteDailogClose}
                                                 onConfirm={onConfirm}
-                                                open={voteOpen} />
+                                                open={voteOpen} 
+                                                />
                                         </Box>
 
                                     </Box>
@@ -675,169 +678,9 @@ function Policy() {
 
     return (
         <Box>
-            <Typography sx={{ fontSize: 24 }}>Policy Information</Typography>
-
-            <Button variant='outlined'
-                onClick={() => setShowEditForm(true)}
-                sx={{ float: 'right', mb: 9 }}>
-                Update policy
-            </Button>
-
-            {
-                showEditForm && <Item sx={{ mt: 8 }}><PolicyForm
-                    policyObj={policyInfo}
-                    handlePolicyClose={() => setShowEditForm(false)}
-                    handlePolicy={handleSubmitPolicy} /></Item>
-            }
-
-            {
-                !showEditForm && <Item sx={{ mt: 8 }}>
-                    <Grid container >
-                        <Grid md={8}>
-                            <Grid sx={{
-                                mb: 4
-                            }} container>
-                                <Grid md={4}>
-                                    <Typography sx={{
-                                        textAlign: 'left',
-                                        fontSize: 18,
-                                        ml: 1
-                                    }}>Metdata</Typography>
-                                </Grid>
-                                <Grid md={4}>
-                                    {
-                                        showMetdataInput ?
-                                            <TextField
-                                                onChange={(e) => {
-                                                    setMetadata(e.target.value)
-                                                }}
-                                                placeholder='Metadata'
-                                                value={metadata}
-                                            /> :
-                                            <Typography
-                                                sx={{
-                                                    textAlign: 'left',
-                                                    fontSize: 18,
-                                                    ml: 2,
-                                                    fontWeight: 'bold'
-                                                }}>
-                                                {policyInfo?.metadata || '-'}
-                                            </Typography>
-                                    }
-
-                                </Grid>
-                                <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
-                                    {
-                                        showMetdataInput ?
-                                            <>
-                                                <Button
-                                                    sx={{ mt: 1 }}
-                                                    onClick={() => {
-                                                        handlePolicyMetadata()
-                                                    }}
-                                                    variant='contained'>
-                                                    Update
-                                                </Button>
-                                                <CancelIcon
-                                                    onClick={() => {
-                                                        setShowMetadataInput(false)
-                                                    }}
-                                                    sx={
-                                                        { color: 'red', fontSize: 22, ml: 2 }
-                                                    } />
-                                            </>
-                                            :
-                                            <EditIcon onClick={
-                                                () => {
-                                                    setMetadata(policyInfo?.metadata)
-                                                    setShowMetadataInput(!showMetdataInput)
-                                                }
-                                            } />
-                                    }
-
-                                </Grid>
-                            </Grid>
-                            <Grid sx={{ mb: 4 }} container>
-                                <Grid md={4}>
-                                    <Typography sx={{
-                                        textAlign: 'left',
-                                        fontSize: 18,
-                                        ml: 1
-                                    }}>Admin</Typography>
-                                </Grid>
-                                <Grid md={4}>
-                                    {
-                                        showAdminInput ?
-                                            <TextField
-                                                onChange={(e) => {
-                                                    setAdmin(e.target.value)
-                                                }}
-                                                placeholder='Admin'
-                                                value={admin}
-                                            /> :
-                                            <Typography sx={{
-                                                textAlign: 'left',
-                                                fontSize: 18,
-                                                ml: 3,
-                                                fontWeight: 'bold'
-                                            }}>
-                                                {shortenAddress(policyInfo?.admin, 19)}
-                                            </Typography>
-                                    }
-
-                                </Grid>
-                                <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
-                                    {
-                                        showAdminInput ?
-                                            <>
-                                                <Button
-                                                    sx={{ mt: 1 }}
-                                                    onClick={() => {
-                                                        handleUpdateAdmin()
-                                                    }}
-                                                    variant='contained'>
-                                                    Update
-                                                </Button>
-                                                <CancelIcon
-                                                    onClick={() => {
-                                                        setShowAdminInput(false)
-                                                    }}
-                                                    sx={
-                                                        { color: 'red', fontSize: 22, ml: 2 }
-                                                    } />
-                                            </>
-
-                                            :
-                                            <EditIcon onClick={
-                                                () => {
-                                                    setAdmin(policyInfo?.admin)
-                                                    setShowAdminInput(!showAdminInput)
-                                                }
-                                            } />
-                                    }
-
-                                </Grid>
-                            </Grid>
-
-                            <RowItem lable={'Address'}
-                                value={shortenAddress(policyInfo?.address, 19) || '-'} />
-                            <RowItem lable={'Type'} value={policyInfo?.decision_policy['@type']} />
-                        </Grid>
-                        <Grid md={4}>
-                            <RowItem lable={'Group Id'} value={policyInfo?.group_id} />
-                            <RowItem lable={'Version'} value={policyInfo?.version} />
-                            <RowItem lable={'Threshold'}
-                                value={policyInfo?.decision_policy?.threshold} />
-                            <RowItem lable={'Voting Period'}
-                                value={`${parseFloat(policyInfo?.decision_policy?.windows?.voting_period).toFixed(2)} s`} />
-                            <RowItem lable={'Mininum Exectuion Period'}
-                                value={`${parseFloat(policyInfo?.decision_policy?.windows?.min_execution_period).toFixed(2)} s`} />
-                        </Grid>
-                    </Grid>
-                </Item>
-            }
+            <PolicyInfo />
             <CreateProposal policyInfo={policyInfo} />
-            <AllProposals />
+            <PolicyProposalsList />
         </Box >
     )
 }

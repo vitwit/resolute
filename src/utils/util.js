@@ -268,4 +268,12 @@ export const proposalStatus = {
   },
 }
 
+export const ThresholdDecisionPolicy = `/cosmos.group.v1.ThresholdDecisionPolicy`;
+export const PercentageDecisionPolicy = `/cosmos.group.v1.PercentageDecisionPolicy`;
+
+export const PoliciesTypes = {
+  '/cosmos.group.v1.PercentageDecisionPolicy': 'Percentage Decision Policy',
+  '/cosmos.group.v1.ThresholdDecisionPolicy': 'Threshold Decision Policy'
+}
+
 

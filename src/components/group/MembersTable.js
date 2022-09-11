@@ -8,7 +8,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TablePagination from '@mui/material/TablePagination';
-import { Typography } from '@mui/material';
+import { IconButton, Typography } from '@mui/material';
+import DeleteOutline from '@mui/icons-material/DeleteOutline';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -33,7 +34,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function MembersTable({ rows, total,
-    pageNumber = 0, limit, handleMembersPagination }) {
+    pageNumber = 0, limit, handleMembersPagination, handleDeleteMember }) {
     const [page, setPage] = React.useState(pageNumber);
     const [rowsPerPage, setRowsPerPage] = React.useState(limit);
     const handleChangePage = (event, newPage) => {
@@ -58,6 +59,7 @@ export default function MembersTable({ rows, total,
                         <StyledTableCell>Address</StyledTableCell>
                         <StyledTableCell align="right">Weight</StyledTableCell>
                         <StyledTableCell align="right">Metadata</StyledTableCell>
+                        <StyledTableCell align="right"></StyledTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -70,10 +72,25 @@ export default function MembersTable({ rows, total,
                             </StyledTableCell>
                             <StyledTableCell style={{
                                 width: '10%'
-                            }} align="right">{row?.member?.weight || '-'}</StyledTableCell>
+                            }} align="right">
+                                {row?.member?.weight || '-'}
+                            </StyledTableCell>
                             <StyledTableCell
-
-                                align="right">{row?.member?.metadata || '-'}</StyledTableCell>
+                                align="right">
+                                {row?.member?.metadata || '-'}
+                            </StyledTableCell>
+                            <StyledTableCell
+                                align="right">
+                                <IconButton onClick={()=>{
+                                    handleDeleteMember({
+                                        address: row?.member?.address,
+                                        weight: '0',
+                                        metadata: row?.member?.metadata
+                                    })
+                                }} color='error'>
+                                    <DeleteOutline />
+                                </IconButton>
+                            </StyledTableCell>
                         </StyledTableRow>
                     ))}
                 </TableBody>

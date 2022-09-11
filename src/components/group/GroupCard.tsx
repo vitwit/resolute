@@ -6,7 +6,7 @@ import { Box } from '@mui/system';
 import { shortenAddress } from '../../utils/util';
 import { getLocalTime } from '../../utils/datetime';
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
-import { IconButton } from '@mui/material';
+import { IconButton, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 interface GroupCardProps {
@@ -35,7 +35,7 @@ export default function GroupCard({ group }: GroupCardProps) {
     const navigate = useNavigate();
 
     return (
-        <Card>
+        <Paper sx={{borderRadius: 2}} elevation={1} variant="outlined" square>
             <CardContent>
                 <IconButton
                 onClick={()=>navigate(`/groups/${group?.id}`)}
@@ -55,6 +55,6 @@ export default function GroupCard({ group }: GroupCardProps) {
                 <BoxText label={'Total Weight'} text={group?.total_weight} />
                 <BoxText label={'Version'} text={group?.version} />
             </CardContent>
-        </Card>
+        </Paper>
     );
 }
