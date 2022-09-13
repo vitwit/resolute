@@ -9,12 +9,28 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TablePagination from '@mui/material/TablePagination';
 import { Typography } from '@mui/material';
+import { getLocalTime } from '../../utils/datetime';
 
 const votesStatus = {
     'VOTE_OPTION_YES': {
         label: 'Yes',
         bgColor: '#d8ead8',
         color: 'green'
+    },
+    'VOTE_OPTION_NO': {
+        label: 'NO',
+        bgColor: '#edcdcd',
+        color: 'red'
+    },
+    'VOTE_OPTION_ABSTAIN': {
+        label: 'ABSTAIN',
+        bgColor: '#cdd1ed',
+        color: '#0026ff'
+    },
+    'VOTE_OPTION_NO_WITH_VETO': {
+        label: 'NO WITH VETO',
+        bgColor: '#f2dbf1',
+        color: '#df00fa'
     }
 }
 
@@ -93,7 +109,8 @@ export default function VotesTable({ rows, total,
                             <StyledTableCell
                                 align="right">{row?.metadata || '-'}</StyledTableCell>
                             <StyledTableCell
-                                align="right">{row?.submit_time || '-'}</StyledTableCell>
+                                align="right">{
+                                getLocalTime(row?.submit_time) || '-'}</StyledTableCell>
                         </StyledTableRow>
                     ))}
                 </TableBody>

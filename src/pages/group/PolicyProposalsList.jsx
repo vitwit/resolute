@@ -97,7 +97,7 @@ function PolicyProposalsList() {
                     <AlertMsg type='error' text='Proposals not found' /> : null
             }
 
-            <Grid component={'div'} container p={2}>
+            <Grid component={'div'} rowSpacing={{md: 2}} columnSpacing={{md: 2}} container p={2}>
                 {
                     proposals?.data?.proposals?.map(p => (
                         <Grid item md={6}>

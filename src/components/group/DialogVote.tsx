@@ -10,24 +10,24 @@ import { ListItemButton } from '@mui/material';
 
 const options = [{
   label: 'Yes',
-  value: 'yes',
+  value: 1,
   active: '#6d70fe'
 }, {
   label: 'No',
-  value: 'no',
+  value: 3,
   active: '#e87d91'
 }, {
   label: 'No with Veto',
-  value: 'no_with_veto',
+  value: 4,
   active: 'red'
 }, {
   label: 'Abstain',
-  value: 'Abstain',
+  value: 2,
   active: '#6e81cb'
 }]
 
 interface voteprops {
-  vote: string, proposalId: string
+  vote: number, proposalId: string
 }
 export interface SimpleDialogProps {
   open: boolean;
@@ -40,13 +40,13 @@ export interface SimpleDialogProps {
 
 export default function DailogVote(props: SimpleDialogProps) {
   const { onClose, voteRes, proposalId, onConfirm, selectedValue, open } = props;
-  const [vote, setVote] = React.useState('');
+  const [vote, setVote] = React.useState(0);
 
   const handleClose = () => {
     onClose(selectedValue);
   };
 
-  const handleListItemClick = (value: string) => {
+  const handleListItemClick = (value: number) => {
     setVote(value);
   };
 
@@ -69,7 +69,7 @@ export default function DailogVote(props: SimpleDialogProps) {
             <ListItemText primary={option?.label} />
           </ListItem>
         ))}
-        <ListItem autoFocus button onClick={() => handleListItemClick('addAccount')}>
+        <ListItem>
           <ListItemButton sx={{ justifyContent: 'right' }}>
             <Button onClick={() => {
               onConfirm({

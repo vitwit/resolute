@@ -1,17 +1,30 @@
 import ReadMore from '@mui/icons-material/ReadMore'
-import { Chip, Grid, Paper, Typography } from '@mui/material'
+import { Avatar, Chip, Grid, Paper, Stack, Typography } from '@mui/material'
+import { deepOrange, deepPurple } from '@mui/material/colors'
 import { Box } from '@mui/system'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getLocalTime } from '../../utils/datetime'
 import { proposalStatus, shortenAddress } from '../../utils/util'
 
+function stringAvatar(name: string) {
+    return {
+        sx: {
+            color: '#000000',
+            bgcolor: deepOrange[50],
+            
+        },
+        children: `${name}`,
+    };
+}
+
+
 interface ProposalCardProps {
     proposal: any
 }
 
 function ProposalCard({ proposal }: ProposalCardProps) {
-
+    const proposalStatuses: any = proposalStatus;
     const yes = parseFloat(proposal?.final_tally_result?.yes_count);
     const no = parseFloat(proposal?.final_tally_result?.no_count);
     const abstain = parseFloat(proposal?.final_tally_result?.abstain_count);
@@ -36,13 +49,18 @@ function ProposalCard({ proposal }: ProposalCardProps) {
                 float: 'right',
                 fontSize: 32
             }} color='primary' />
-            <Typography gutterBottom variant='h5' textAlign={'left'}>
-                # {proposal?.metadata || '-'}
-            </Typography>
-            { }
+
+            <Stack direction="row" mb={2} spacing={2}>
+                <Avatar  {...stringAvatar(proposal?.id)} />
+                <Typography gutterBottom variant='h5' textAlign={'left'}>
+                    # {proposal?.metadata || '-'}
+                </Typography>
+            </Stack>
+
             <Chip sx={{ float: 'left' }}
                 variant='outlined'
-                label={proposal?.status} />
+                color={proposalStatuses[proposal?.status]?.color}
+                label={proposal?.status?.split('_').join(' ')} />
 
             <br />
             <Grid mt={4} container>
@@ -83,7 +101,7 @@ function ProposalCard({ proposal }: ProposalCardProps) {
                                 fontWeight={'bold'}
                                 variant='subtitle1'
                                 textAlign={'left'}>
-                                {shortenAddress(p, 21)}
+                                {p && shortenAddress(p, 21)}
                             </Typography>
                         ))
                     }
@@ -96,7 +114,7 @@ function ProposalCard({ proposal }: ProposalCardProps) {
                         fontWeight={'bold'}
                         variant='subtitle1'
                         textAlign={'left'}>
-                        {shortenAddress(proposal?.group_policy_address, 21)}
+                        {proposal?.group_policy_address && shortenAddress(proposal?.group_policy_address, 21)}
                     </Typography>
                 </Grid>
             </Grid>

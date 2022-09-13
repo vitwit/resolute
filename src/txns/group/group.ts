@@ -63,7 +63,7 @@ export function CreateProposalVote(
         value: MsgVote.fromPartial({
             proposalId,
             voter,
-            option: 1,
+            option: option,
             metadata
         })
     }

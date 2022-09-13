@@ -42,12 +42,20 @@ export const commonSlice = createSlice({
         message: '',
         type: ''
       }
+    },
+    resetDecisionPolicies: (state) => {
+      state.groupPolicies = {}
+    },
+    resetActiveProposals: (state)=>{
+      state.policyProposals = {}
     }
   },
 })
 
 export const {
   setError, resetError,
+  resetActiveProposals,
+  resetDecisionPolicies,
   setTxLoad, resetTxLoad,
   setTxHash, resetTxHash } = commonSlice.actions
 

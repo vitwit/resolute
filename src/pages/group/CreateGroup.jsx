@@ -26,7 +26,7 @@ export default function CreateGroupPage() {
     return () => {
       dispatch(resetGroupTx());
     }
-  }, [])
+  })
 
   useEffect(() => {
     if (txRes?.status === 'idle') {
@@ -146,6 +146,20 @@ export default function CreateGroupPage() {
               <CreateGroupPolicy handlePolicy={handlePolicy} />
             </Box>
 
+            <Button
+              onClick={()=>navigate(`/group`)}
+              color="error"
+              variant="outlined"
+              disableElevation
+              size="medium"
+              sx={{
+                mt: 2,
+                mr: 2
+              }}
+            >
+              cancel
+
+            </Button>
             <Button
               type="submit"
               variant="outlined"

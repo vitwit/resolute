@@ -24,6 +24,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PolicyInfo from './PolicyInfo';
 import PolicyProposalsList from './PolicyProposalsList';
+import AddIcon from '@mui/icons-material/Add';
 
 const DELEGATE_MSG = `/cosmos.staking.v1beta1.MsgDelegate`;
 const SEND_MSG = `/cosmos.bank.v1beta1.MsgSend`;
@@ -167,8 +168,10 @@ const CreateProposal = ({ policyInfo }) => {
 
     return (
         <Box>
-            <Button sx={{ float: 'right', mt: 3, mb: 3 }}
-                variant='outlined'
+            <Button 
+                endIcon={<AddIcon />}
+                sx={{ float: 'right', m: 6 }}
+                variant='contained'
                 onClick={() => setShowCreateProposal(!showCreateProposal)}>
                 Create Proposal
             </Button>

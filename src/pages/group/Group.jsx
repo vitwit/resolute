@@ -23,6 +23,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import CheckIcon from '@mui/icons-material/Check';
 import GroupTab, { TabPanel } from '../../components/group/GroupTab';
 import GroupInfo from './GroupInfo';
+import ActiveProposals from './ActiveProposals';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -118,7 +119,7 @@ const GroupPolicies = ({ id, wallet }) => {
             }
 
 
-            <Grid container 
+            <Grid container
             >
                 {
                     status === 'pending' ?
@@ -342,6 +343,9 @@ function Group() {
                 </TabPanel>
                 <TabPanel value={tabIndex} index={1} >
                     <GroupPolicies id={params?.id} wallet={wallet} />
+                </TabPanel>
+                <TabPanel value={tabIndex} index={2}>
+                    <ActiveProposals id={params?.id} wallet={wallet}/>
                 </TabPanel>
             </Paper>
         </Box>

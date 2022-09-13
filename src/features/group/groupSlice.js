@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fee, signAndBroadcastAddGroupPolicy, signAndBroadcastGroupMsg, signAndBroadcastGroupProposal, signAndBroadcastGroupProposalExecute, signAndBroadcastGroupProposalVote, signAndBroadcastLeaveGroup, signAndBroadcastProto, signAndBroadcastUpdateGroupAdmin, signAndBroadcastUpdateGroupMembers, signAndBroadcastUpdateGroupMetadata, signAndBroadcastUpdateGroupPolicy, signAndBroadcastUpdateGroupPolicyAdmin, signAndBroadcastUpdateGroupPolicyMetadata } from "../../txns/execute";
 import { CreateGroup, CreateGroupPolicy, CreateGroupProposal, CreateGroupWithPolicy, CreateLeaveGroupMember, CreateProposalExecute, CreateProposalVote, UpdateGroupAdmin, UpdateGroupMembers, UpdateGroupMetadata, UpdateGroupPolicy, UpdatePolicyAdmin, UpdatePolicyMetadata } from "../../txns/group/group";
-import { resetTxLoad, setError, setTxHash, setTxLoad } from "../common/commonSlice";
+import { resetDecisionPolicies, resetTxLoad, setError, setTxHash, setTxLoad } from "../common/commonSlice";
 import groupService from "./groupService";
 
 const initialState = {
@@ -43,7 +43,8 @@ const initialState = {
   updateGroupMetadataRes: {},
   addGroupPolicyRes: {},
   addPolicyMetadataRes: {},
-  updatePolicyAdminRes: {}
+  updatePolicyAdminRes: {},
+  policyProposals: {},
 };
 
 export const getGroupsByAdmin = createAsyncThunk(
@@ -100,7 +101,8 @@ export const getGroupProposalById = createAsyncThunk(
 
 export const getGroupPoliciesById = createAsyncThunk(
   "group/group-policies-by-id",
-  async (data) => {
+  async (data, { dispatch }) => {
+    // dispatch(resetDecisionPolicies())
     const response = await groupService.fetchGroupPoliciesById(
       data.baseURL, data.id, data.pagination
     );
@@ -128,13 +130,66 @@ export const getGroupMembers = createAsyncThunk(
   }
 )
 
+export const getGroupPolicyProposalsByPage = createAsyncThunk(
+  "group/get-group-policy-proposals-by-page",
+  async (data, { dispatch }) => {
+    var totalData = [];
+    var allPolicies = [];
+    
+    try {
+      allPolicies = await groupService.fetchGroupPoliciesById(
+        data.baseURL, data.groupId, data?.pagination
+      )
+    } catch (error) {
+      throw error;
+    }
+
+    const getProposalsPagination = async (address, pagination) => {
+      const response = await groupService.fetchGroupPolicyProposalsById(
+        data.baseURL, address,
+        pagination
+      );
+      
+      let filteredProposals = response?.data?.proposals?.filter(p=>p?.status=== 'PROPOSAL_STATUS_SUBMITTED')
+
+      totalData = [...totalData, ...filteredProposals];
+
+      if (response?.data?.pagination?.next_key)
+        return getProposalsPagination(address, { limit: 1, key: response?.data?.pagination?.next_key })
+      else return totalData;
+    }
+
+
+    if (allPolicies?.data?.group_policies?.length) {
+      let data = allPolicies?.data?.group_policies || [];
+      let totalPolicyData = [];
+      for (let i = 0; i < data.length; i++) {
+
+        try {
+          await getProposalsPagination(data[i]?.address, {
+            limit: 1,
+            key: ''
+          });
+
+        } catch (error) {
+          console.log('Error while getting proposals', error)
+          throw error;
+        }
+      }
+
+      return totalData;
+    } else return ''
+  }
+)
+
 export const getGroupPolicyProposals = createAsyncThunk(
   "group/get-group-policy-proposals",
-  async (data) => {
+  async (data, { dispatch }) => {
     const response = await groupService.fetchGroupPolicyProposalsById(
       data.baseURL, data.address,
       data.pagination
     );
+
     return response.data;
   }
 )
@@ -1092,6 +1147,18 @@ export const groupSlice = createSlice({
       })
       .addCase(txUpdateGroupPolicyAdmin.rejected, (state, _) => {
         state.updatePolicyAdminRes.status = `rejected`;
+      });
+
+    builder
+      .addCase(getGroupPolicyProposalsByPage.pending, (state) => {
+        state.policyProposals.status = `pending`;
+      })
+      .addCase(getGroupPolicyProposalsByPage.fulfilled, (state, action) => {
+        state.policyProposals.status = 'idle';
+        state.policyProposals.data = action?.payload;
+      })
+      .addCase(getGroupPolicyProposalsByPage.rejected, (state, _) => {
+        state.policyProposals.status = `rejected`;
       });
   },
 });
