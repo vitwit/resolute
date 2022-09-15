@@ -31,6 +31,7 @@ import Group from "./group/Group";
 import Policy from "./group/Policy";
 import CreateGroupPage from "./group/CreateGroup";
 import Proposal from "./group/Proposal";
+import CreateProposal from "./group/CreateProposal";
 const Authz = lazy(() => import("./Authz"));
 const Validators = lazy(() => import("./Validators"));
 const Proposals = lazy(() => import("./Proposals"));
@@ -344,6 +345,7 @@ function DashboardContent(props) {
                   <Route path="/groups/:id" element={<Group />}></Route>
                   <Route path="/groups/proposals/:id" element={<Proposal />}></Route>
                   <Route path="/groups/:id/policies/:policyId" element={<Policy />}></Route>
+                  <Route path="/group/policies/:policyAddress/proposals" element={<CreateProposal />}></Route>
                   <Route
                     path="/group/create-group"
                     element={<CreateGroupPage />}
@@ -399,17 +401,22 @@ function DashboardContent(props) {
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <Alert
+          iconMapping={{
+            info: <CircularProgress size={35}
+              sx={{ color: '#FFF', mr: 2, mt: 1 }} />,
+          }}
           onClose={() => {
             dispatch(resetTxLoad())
           }}
           severity="info"
           sx={{ width: "100%" }}
         >
-          <AlertTitle sx={{ width: '100%', display: 'flex' }}>
-            <CircularProgress size={25}
-              sx={{ color: '#FFF', mr: 2 }} />
+          <AlertTitle
+            sx={{ width: '100%', display: 'flex' }}>
             <Typography> Loading..</Typography>
           </AlertTitle>
+
+          Please wait for sometime.
         </Alert>
       </Snackbar>
 

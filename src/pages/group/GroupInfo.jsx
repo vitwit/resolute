@@ -22,13 +22,19 @@ const GroupInfo = ({ id, wallet }) => {
     const groupMembers = useSelector(state => state.group.groupMembers)
     const { data: members, status: memberStatus } = groupMembers;
 
+    const groupInfo = useSelector(state => state.group.groupInfo);
+    const { data, status } = groupInfo;
+    
+    const leaveGroupRes = useSelector(state => state.group.leaveGroupRes)
+
 
     const isExistInGroup = () => {
         const existMember = members?.members?.filter(m => m?.member?.address === wallet?.address)
 
-        if (existMember && existMember?.length) {
-            return true
-        }
+        if (existMember && existMember?.length) return true
+        
+        if (data?.admin === wallet?.address)  return true
+
         return false;
     }
 
@@ -38,9 +44,6 @@ const GroupInfo = ({ id, wallet }) => {
         }))
     }, [])
 
-    const groupInfo = useSelector(state => state.group.groupInfo);
-    const { data, status } = groupInfo;
-    const leaveGroupRes = useSelector(state => state.group.leaveGroupRes)
 
     const handleLeaveGroup = () => {
         const chainInfo = wallet?.chainInfo;

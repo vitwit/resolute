@@ -42,14 +42,20 @@ const msgUpatePolicyMetdata = `/cosmos.group.v1.MsgUpdateGroupPolicyMetadata`;
 const msgUpatePolicyAdmin = `/cosmos.group.v1.MsgUpdateGroupPolicyAdmin`;
 
 export function CreateGroup(admin: any, metadata: any, members: any) {
-    return {
-        typeUrl: msgCreateGroup,
-        value: MsgCreateGroup.fromPartial({
-            admin: admin,
-            members: members,
-            metadata: metadata,
-        }),
-    };
+    try {
+        return {
+            typeUrl: msgCreateGroup,
+            value: MsgCreateGroup.fromPartial({
+                admin: admin,
+                members: members,
+                metadata: metadata,
+            }),
+        };
+    } catch (error) {
+        console.log('Error while creating obj for group and members', error)
+        throw error;
+    }
+
 }
 
 export function CreateProposalVote(
@@ -123,52 +129,76 @@ export function CreateGroupWithPolicy(
     members: any,
     decisionPolicy: any,
     policyMetadata: any,
-    policyAsAdmin: any
+    policyAsAdmin: any = false
 ) {
-    console.log('policy metada--------', policyMetadata)
+    console.log('policy metada--------', policyMetadata, members, admin, groupMetadata, policyAsAdmin)
 
-    const obj = {
-        typeUrl: msgCreateGroupWithPolicy,
-        value: MsgCreateGroupWithPolicy.fromPartial({
-            admin: admin,
-            members: members,
-            decisionPolicy: {
-                typeUrl: policyMetadata?.percentage && msgCreateGroupWithPercentagePolicy ||
-                    msgCreateGroupWithThresholdPolicy,
-                value: policyMetadata?.percentage &&
-                    PercentageDecisionPolicy.encode({
-                        percentage: parseFloat(policyMetadata?.percentage || 0).toFixed(2).toString(),
-                        windows: DecisionPolicyWindows.fromPartial({
-                            votingPeriod: Duration.fromPartial({
-                                seconds: Long.fromNumber(policyMetadata?.votingPeriod),
-                                nanos: Number(policyMetadata?.votingPeriod)
-                            }),
-                            minExecutionPeriod: Duration.fromPartial({
-                                seconds: Long.fromNumber(policyMetadata?.minExecPeriod),
-                                nanos: Number(policyMetadata?.minExecPeriod)
-                            }),
-                        })
-                    }).finish() ||
-                    ThresholdDecisionPolicy.encode({
-                        threshold: policyMetadata?.threshold?.toString(),
-                        windows: DecisionPolicyWindows.fromPartial({
-                            votingPeriod: Duration.fromPartial({
-                                seconds: Long.fromNumber(policyMetadata?.votingPeriod),
-                                nanos: Number(policyMetadata?.votingPeriod)
-                            }),
-                            minExecutionPeriod: Duration.fromPartial({
-                                seconds: Long.fromNumber(policyMetadata?.minExecPeriod),
-                                nanos: Number(policyMetadata?.minExecPeriod)
-                            }),
-                        })
-                    }).finish()
-            },
-            groupMetadata: groupMetadata,
-            groupPolicyAsAdmin: policyAsAdmin,
-            groupPolicyMetadata: policyMetadata,
-        }),
-    };
-    return obj;
+    try {
+
+        if (Object.keys(policyMetadata)?.length) {
+            console.log('here----')
+            const obj = {
+                typeUrl: msgCreateGroupWithPolicy,
+                value: MsgCreateGroupWithPolicy.fromPartial({
+                    admin: admin,
+                    members: members,
+                    groupMetadata: groupMetadata,
+                    groupPolicyAsAdmin: policyAsAdmin,
+                    groupPolicyMetadata: policyMetadata,
+                    decisionPolicy: {
+                        typeUrl: policyMetadata?.percentage && msgCreateGroupWithPercentagePolicy ||
+                            msgCreateGroupWithThresholdPolicy,
+                        value: policyMetadata?.percentage &&
+                            PercentageDecisionPolicy.encode({
+                                percentage: parseFloat(policyMetadata?.percentage || 0).toFixed(2).toString(),
+                                windows: DecisionPolicyWindows.fromPartial({
+                                    votingPeriod: Duration.fromPartial({
+                                        seconds: Long.fromNumber(policyMetadata?.votingPeriod),
+                                        nanos: Number(policyMetadata?.votingPeriod)
+                                    }),
+                                    minExecutionPeriod: Duration.fromPartial({
+                                        seconds: Long.fromNumber(policyMetadata?.minExecPeriod),
+                                        nanos: Number(policyMetadata?.minExecPeriod)
+                                    }),
+                                })
+                            }).finish() ||
+                            ThresholdDecisionPolicy.encode({
+                                threshold: policyMetadata?.threshold?.toString(),
+                                windows: DecisionPolicyWindows.fromPartial({
+                                    votingPeriod: Duration.fromPartial({
+                                        seconds: Long.fromNumber(policyMetadata?.votingPeriod),
+                                        nanos: Number(policyMetadata?.votingPeriod)
+                                    }),
+                                    minExecutionPeriod: Duration.fromPartial({
+                                        seconds: Long.fromNumber(policyMetadata?.minExecPeriod),
+                                        nanos: Number(policyMetadata?.minExecPeriod)
+                                    }),
+                                })
+                            }).finish()
+                    },
+                }),
+            };
+
+            return obj;
+        } else {
+            const obj = {
+                typeUrl: msgCreateGroupWithPolicy,
+                value: MsgCreateGroupWithPolicy.fromPartial({
+                    admin: admin,
+                    members: members,
+                    decisionPolicy: {},
+                    groupMetadata: groupMetadata,
+                    groupPolicyAsAdmin: policyAsAdmin,
+                    groupPolicyMetadata: policyMetadata,
+                }),
+            };
+
+            return obj;
+        }
+    } catch (error) {
+        console.log('Error while creating the obj -- ', error)
+        throw error;
+    }
 }
 
 export function UpdateGroupMembers(

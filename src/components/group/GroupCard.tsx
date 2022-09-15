@@ -33,14 +33,15 @@ const BoxText = ({ label, text }: BoxTextProps) => {
 
 export default function GroupCard({ group }: GroupCardProps) {
     const navigate = useNavigate();
+    const [showFullText, setShowFullText] = React.useState(false);
 
     return (
-        <Paper sx={{borderRadius: 2}} elevation={1} variant="outlined" square>
+        <Paper sx={{ borderRadius: 2 }} elevation={1} variant="outlined" square>
             <CardContent>
                 <IconButton
-                onClick={()=>navigate(`/groups/${group?.id}`)}
-                color='primary'
-                sx={{float: 'right'}}
+                    onClick={() => navigate(`/groups/${group?.id}`)}
+                    color='primary'
+                    sx={{ float: 'right' }}
                 >
                     <ReadMoreIcon fontSize='large' />
                 </IconButton>
@@ -48,7 +49,18 @@ export default function GroupCard({ group }: GroupCardProps) {
                     # {group?.id}
                 </Typography>
                 <Typography gutterBottom variant="subtitle1" color="text.secondary">
-                    ## {group?.metadata}
+                    ## &nbsp;
+                    {!showFullText && group?.metadata?.substring(0, 30)}
+
+                    {
+                        showFullText && group?.metadata
+                    }
+
+                    {group?.metadata?.length > 40 ? <a
+                        onClick={()=>setShowFullText(!showFullText)}
+                        href='javascript:void(0);'
+                    > {showFullText? ' ...show less': ' ...more'}</a> : null}
+
                 </Typography>
                 <BoxText label={'Admin'} text={shortenAddress(group?.admin, 19)} />
                 <BoxText label={'Created At'} text={getLocalTime(group?.created_at)} />

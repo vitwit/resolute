@@ -5,6 +5,7 @@ import { resetDecisionPolicies, resetTxLoad, setError, setTxHash, setTxLoad } fr
 import groupService from "./groupService";
 
 const initialState = {
+  txCreateGroupRes: {},
   tx: {
     status: "idle",
     type: "",
@@ -135,7 +136,7 @@ export const getGroupPolicyProposalsByPage = createAsyncThunk(
   async (data, { dispatch }) => {
     var totalData = [];
     var allPolicies = [];
-    
+
     try {
       allPolicies = await groupService.fetchGroupPoliciesById(
         data.baseURL, data.groupId, data?.pagination
@@ -149,8 +150,8 @@ export const getGroupPolicyProposalsByPage = createAsyncThunk(
         data.baseURL, address,
         pagination
       );
-      
-      let filteredProposals = response?.data?.proposals?.filter(p=>p?.status=== 'PROPOSAL_STATUS_SUBMITTED')
+
+      let filteredProposals = response?.data?.proposals?.filter(p => p?.status === 'PROPOSAL_STATUS_SUBMITTED')
 
       totalData = [...totalData, ...filteredProposals];
 
@@ -477,10 +478,10 @@ export const txCreateGroup = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     dispatch(setTxLoad());
     let msg;
-    console.log({ data })
     try {
-      if (data.members.length > 0) {
-        if (data.policyData) {
+      if (data?.members?.length > 0) {
+        if (data?.policyData && Object.keys(data?.policyData)?.length) {
+
           msg = CreateGroupWithPolicy(
             data.admin,
             data.groupMetaData,
@@ -489,11 +490,15 @@ export const txCreateGroup = createAsyncThunk(
             data.policyData,
             data.policyAsAdmin
           );
+        } else {
+          msg = CreateGroup(data.admin, data.groupMetaData, data?.members);
         }
-        // msg = CreateGroup(data.admin, data.groupMetaData, data.members);
       } else {
         msg = CreateGroup(data.admin, data.groupMetaData, []);
       }
+
+      console.log('msg--', msg)
+      console.log('admin--', data)
 
       const result = await signAndBroadcastGroupMsg(
         data.admin,
@@ -891,6 +896,7 @@ export const groupSlice = createSlice({
     },
     resetGroupTx: (state, _) => {
       state.tx.status = '';
+      state.txCreateGroupRes = {};
     },
     resetUpdateGroupMember: (state) => {
       state.updateGroupRes.status = '';
@@ -934,12 +940,15 @@ export const groupSlice = createSlice({
     builder
       .addCase(txCreateGroup.pending, (state) => {
         state.tx.status = `pending`;
+        state.txCreateGroupRes.status = 'pending';
       })
       .addCase(txCreateGroup.fulfilled, (state, _) => {
         state.tx.status = `idle`;
+        state.txCreateGroupRes.status = 'idle';
       })
       .addCase(txCreateGroup.rejected, (state, _) => {
         state.tx.status = `rejected`;
+        state.txCreateGroupRes.status = 'rejected';
       });
 
     builder

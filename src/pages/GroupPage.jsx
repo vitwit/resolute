@@ -43,7 +43,7 @@ export default function GroupPage() {
           Create Group
         </Button>
       </Box>
-      <Paper>
+      <Paper sx={{mt: 3}} variant={'outlined'} elevation={0}>
         <Box sx={groupStyles.btn_g_box}>
           <GroupTab tabs={['Created By me', 'Part of']} handleTabChange={handleTabChange} />
 

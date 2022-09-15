@@ -24,6 +24,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import GroupTab, { TabPanel } from '../../components/group/GroupTab';
 import GroupInfo from './GroupInfo';
 import ActiveProposals from './ActiveProposals';
+import { useForm } from 'react-hook-form';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -48,9 +49,13 @@ const GroupPolicies = ({ id, wallet }) => {
 
     const addPolicyRes = useSelector(state => state.group.addGroupPolicyRes);
 
+    const groupMembers = useSelector(state => state.group.groupMembers);
+
     useEffect(() => {
-        getPolicies(limit, '')
-        setShowForm(false);
+        if (addPolicyRes?.status === 'idle') {
+            getPolicies(limit, '')
+            setShowForm(false);
+        }
     }, [addPolicyRes?.status])
 
     const getPolicies = (limit, key = '') => {
@@ -64,11 +69,24 @@ const GroupPolicies = ({ id, wallet }) => {
         getPolicies(limit, '')
     }, [])
 
+    const getGroupmembers = () => {
+        dispatch(getGroupMembersById({
+            baseURL: wallet?.chainInfo?.config?.rest,
+            id: id,
+            pagination: { limit: limit, key: '' },
+        }))
+    }
+
+    useEffect(() => {
+        getGroupmembers();
+    }, [])
+
     const handlePagination = (number, limit, key) => {
         setLimit(limit);
         setPageNumber(number);
         getPolicies(limit, key)
     }
+
     let group_policies = [];
     const groupInfo = useSelector(state => state.group.groupPolicies);
     const { data, status } = groupInfo;
@@ -88,13 +106,19 @@ const GroupPolicies = ({ id, wallet }) => {
         dispatch(txAddGroupPolicy({
             admin: groupInformation?.info?.admin,
             groupId: id,
-            policyMetadata: policyObj,
+            policyMetadata: policyObj?.policyMetadata,
             denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
             chainId: chainInfo.config.chainId,
             rpc: chainInfo.config.rpc,
             feeAmount: chainInfo.config.gasPriceStep.average,
         }))
     }
+
+    const { register, control,
+        handleSubmit,
+        watch,
+        formState: { errors },
+        reset, trigger, setError } = useForm({});
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -112,9 +136,44 @@ const GroupPolicies = ({ id, wallet }) => {
             {
                 showForm &&
                 <Card sx={groupStyles.fw}>
-                    <PolicyForm handlePolicyClose={
-                        () => setShowForm(false)
-                    } handlePolicy={handlePolicy} />
+                    {
+                        groupMembers?.status === 'pending' ?
+                            <Typography>
+                                Wait fetching group members information ...
+                            </Typography> : null
+                    }
+
+                    {
+                        groupMembers?.status === 'idle' &&
+                            Number(groupMembers?.data?.pagination?.total) > 0 ?
+                            <form onSubmit={handleSubmit(handlePolicy)}>
+                                <CreateGroupPolicy
+                                    control={control}
+                                    register={register}
+                                    watch={watch}
+                                    errors={errors}
+                                    fields={Number(groupMembers?.data?.pagination?.total || 0)}
+                                    handleCancelPolicy={() => setShowForm(false)}
+                                />
+                                <Box sx={{ p: 2 }}>
+                                    <Button sx={{ mr: 2 }} variant='outlined'
+                                        onClick={() => setShowForm(false)}
+                                        color='error'>Cancel</Button>
+                                    <Button
+                                        disabled={addPolicyRes?.status === 'pending'}
+                                        type='submit'
+                                        variant='outlined' color='primary'>{
+                                            addPolicyRes?.status === 'pending' ?
+                                                'Loading...' : 'Add'
+                                        }</Button>
+                                </Box>
+                            </form>: 
+                            <Typography textAlign={'center'} variant={'body1'}>
+                                No members found on this group.
+                            </Typography>
+                    }
+
+
                 </Card>
             }
 
@@ -250,6 +309,7 @@ const UpdateGroupMember = ({ id, wallet }) => {
     const groupMembers = useSelector(state => state.group.groupMembers)
     const members1 = [{ address: '', weight: '', metadata: '' }];
     const { data: members, status: memberStatus } = groupMembers;
+    console.log({ members })
 
     const getMembers = () => {
         let m = members && members?.members?.map(m => {
@@ -263,26 +323,33 @@ const UpdateGroupMember = ({ id, wallet }) => {
     }
 
     // useEffect(() => {
-    //     if (updateRes?.status === 'idle')
-    //         getGroupMembers()
-    // }, [updateRes?.status])
+    //     getMembers()
+    // }, [])
+
+    const getGroupmembers = () => {
+        dispatch(getGroupMembersById({
+            baseURL: wallet?.chainInfo?.config?.rest,
+            id: id,
+            pagination: { limit: 200, key: '' },
+        }))
+    }
 
     useEffect(() => {
-        getMembers()
-    }, [])
+        getMembers();
+    }, [memberStatus])
 
-    const handleMembers = (membersArr) => {
-        members2 = membersArr;
-        setMembers([...members2]);
-    }
+    useEffect(() => {
+        getGroupmembers();
+    }, [])
 
     const handleUpdate = (allMembers) => {
         const chainInfo = wallet?.chainInfo;
 
+        console.log({ allMembers })
         const dataObj = {
             admin: wallet?.address,
             groupId: id,
-            members: allMembers,
+            members: allMembers?.members,
             denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
             chainId: chainInfo.config.chainId,
             rpc: chainInfo.config.rpc,
@@ -294,26 +361,25 @@ const UpdateGroupMember = ({ id, wallet }) => {
 
     return (
         <Box>
-            <br />
             <Box sx={{ float: 'right' }}>
                 <Button onClick={() => setShowForm(!showForm)}
                     variant='contained'>Update Member</Button>
-            </Box><br /><br /><br />
+            </Box>
             <Box>
                 {
                     showForm ?
-
-                        <Paper>
+                        <Paper sx={{ p: 2 }} variant='outlined' elevation={0}>
                             <Box sx={{ ml: 4 }}>
-                                <br />
-                                <Typography sx={{ fontSize: 20 }}>
-                                    Update Group Members
-                                </Typography>
-                                <UpdateGroupMemberForm
-                                    handleUpdate={handleUpdate}
-                                    members={members2}
-                                />
-
+                                {
+                                    memberStatus?.status === 'pending' ? <CircularProgress /> :
+                                        <UpdateGroupMemberForm
+                                            handleCancel={() => {
+                                                setShowForm(false);
+                                            }}
+                                            handleUpdate={handleUpdate}
+                                            members={members2}
+                                        />
+                                }
                             </Box>
                         </Paper>
                         : null
@@ -345,7 +411,7 @@ function Group() {
                     <GroupPolicies id={params?.id} wallet={wallet} />
                 </TabPanel>
                 <TabPanel value={tabIndex} index={2}>
-                    <ActiveProposals id={params?.id} wallet={wallet}/>
+                    <ActiveProposals id={params?.id} wallet={wallet} />
                 </TabPanel>
             </Paper>
         </Box>

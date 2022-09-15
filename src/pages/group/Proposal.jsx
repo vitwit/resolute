@@ -31,6 +31,11 @@ const ProposalInfo = ({ id, wallet }) => {
         getProposal();
     }, [])
 
+    useEffect(() => {
+        if (voteRes?.status === 'idle')
+            setVoteOpen(false);
+    }, [voteRes?.status])
+
     const onVoteDailogClose = () => {
         setVoteOpen(false);
     }
@@ -89,15 +94,14 @@ const ProposalInfo = ({ id, wallet }) => {
             {
                 proposalInfo?.status === 'idle' ?
                     <Box sx={{ p: 4, mb: 3 }}>
-                        <Box component={'div'}>
+                        <Box width={'100%'} component={'div'}>
                             <Chip
                                 sx={{ float: 'left', fontSize: 16, mb: 3 }}
                                 variant='outlined'
-                                label={proposal?.status} color='primary' />
+                                label={proposal?.status?.split('_').join('  ')} color='primary' />
                         </Box>
 
-                        <br /><br /><br />
-                        <Box sx={{ width: '100%' }} component={'div'}>
+                        <Box sx={{ width: '100%', mt: 8, textAlign: 'left' }} component={'div'}>
                             <Typography gutterBottom textAlign={'left'} variant='h5'>
                                 # {proposal?.metadata || '-'}
                             </Typography>
@@ -157,7 +161,7 @@ const ProposalInfo = ({ id, wallet }) => {
                                             sx={{ width: '50%', p: 2 }}
                                             variant='outlined'
                                             onClick={() => setVoteOpen(true)}
-                                            >Vote</Button>
+                                        >Vote</Button>
                                         : null
                                 }
 
@@ -293,6 +297,7 @@ function Proposal() {
     const [total, setTotal] = useState(0);
     const [pageNumber, setPageNumber] = useState(0);
     const wallet = useSelector(state => state.wallet);
+    const voteRes = useSelector(state => state.group?.voteRes);
 
     const fetchVotes = (baseURL, id, limit, key) => {
         dispatch(getVotesProposalById({
@@ -301,6 +306,11 @@ function Proposal() {
             pagination: { limit: limit, key: key },
         }))
     }
+
+    useEffect(() => {
+        if (voteRes?.status === 'idle')
+            fetchVotes(wallet?.chainInfo?.config?.rest, id, limit, '')
+    }, [voteRes?.status])
 
     useEffect(() => {
         fetchVotes(wallet?.chainInfo?.config?.rest, id, limit, '')
@@ -335,17 +345,6 @@ function Proposal() {
                     {
                         status === 'pending' ?
                             <CircularProgress /> : null
-                    }
-
-                    {
-                        (status !== 'pending' &&
-                            !data?.length) && (
-                            <Card sx={{ width: '100%', p: 5 }}>
-                                <Alert sx={{ textAlign: 'center' }} severity='info'>
-                                    No votes found.
-                                </Alert>
-                            </Card>
-                        )
                     }
 
                     {

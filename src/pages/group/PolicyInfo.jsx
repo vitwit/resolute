@@ -17,6 +17,8 @@ import { useParams } from 'react-router-dom';
 import AlertMsg from '../../components/group/AlertMsg';
 import PolicyDetails from '../../components/group/PolicyDetails';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { useForm } from 'react-hook-form';
+import CreateGroupPolicy from './CreateGroupPolicy'
 
 function PolicyInfo() {
     const [policyObj, setPolicyObj] = useState({});
@@ -158,7 +160,9 @@ function PolicyInfo() {
                                     policyObj={policyObj}
                                     handlePolicy={handleSubmitPolicy}
                                     handlePolicyClose={() => setEditPolicyForm(false)}
-                                /> :
+                                /> 
+
+                                :
                                 <PolicyDetails
                                     handleUpdateMetadata={handlePolicyMetadata}
                                     handleUpdateAdmin={handleUpdateAdmin}

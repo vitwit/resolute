@@ -1,121 +1,130 @@
+
 import {
-    Box, Button, Table, TableCell, TableHead,
-    TableContainer,
-    TableBody,
-    Paper,
-    TableRow, TextField, Typography, Grid,
+    Box, TextField, IconButton, Grid, Button,
 } from '@mui/material';
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
-import Edit from "@mui/icons-material/Edit";
-import React, { useState } from 'react';
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import React from 'react';
+import AddIcon from '@mui/icons-material/Add';
 
-const memberObj = {
-    address: '',
-    weight: '',
-    metadata: '',
+interface UpdateGroupMemberFormProps {
+    members: any,
+    handleUpdate: any,
+    handleCancel: any
 }
 
-interface member {
-    address: string;
-    metadata: string;
-    weight: string;
-}
+export function UpdateGroupMemberForm({
+    members,
+    handleUpdate,
+    handleCancel
+}: UpdateGroupMemberFormProps) {
+    const { register, control,
+        handleSubmit,
+        watch,
+        formState: { errors },
+        reset, trigger, setError } = useForm({
+            defaultValues: {
+                members: members
+            }
+        });
 
-interface UpdateGroupMemberProps {
-    members: Array<any>,
-    handleUpdate: any
-}
-
-export function UpdateGroupMemberForm({ members, handleUpdate }: UpdateGroupMemberProps) {
-    var [memberObjs, setMemberObjs] = useState([...members]);
-
-    const handleChange = (i: number,
-        e: { target: { name: string, value: string } }) => {
-        let obj = memberObjs[i];
-        obj = {
-            ...obj,
-            [e.target.name]: e.target.value
-        }
-        memberObjs[i] = obj;
-        setMemberObjs([...memberObjs])
-    }
-
-    const handleSubmit = (i: number) => {
-        memberObjs = [...memberObjs, { address: '', weight: '', metadata: '' }]
-        setMemberObjs(memberObjs)
-    }
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "members"
+    });
 
     return (
-        <div>
-            <Box>
-                {
-                    memberObjs.length ?
-                        <Box>
-                            <Typography sx={{ fontSize: 23, mb: 3 }}>
-                                Members
-                            </Typography>
-                            {memberObjs.map((row, i) => (
-                                <Grid sx={{ flexGrow: 1 }} spacing={1} container md={12}>
-                                    <Grid sx={{ m: 1 }} spacing={2} md={4}>
-                                        <TextField
-                                            sx={{ width: '100%' }}
-                                            name="address"
-                                            onChange={(e) => handleChange(i, e)}
-                                            value={row?.address} placeholder='Member Address' />
-                                    </Grid>
-                                    <Grid sx={{ m: 1 }} spacing={2} md={1.5}>
-                                        <TextField
-                                            sx={{ width: '100%' }}
-                                            name='weight'
-                                            onChange={(e) => handleChange(i, e)}
-                                            value={row?.weight} placeholder='Weight' />
-                                    </Grid>
-                                    <Grid sx={{ m: 1 }} md={4.5}>
-                                        <TextField
-                                            sx={{ width: '100%' }}
-                                            name="metadata"
-                                            onChange={(e) => handleChange(i, e)}
-                                            value={row?.metadata} placeholder='Metadata' />
-                                    </Grid>
-                                    <Grid sx={{ m: 1 }} md={1}>
-                                        {
-                                            i !== memberObjs.length - 1 ?
-                                                <Box sx={{
-                                                    pt: 3
-                                                }}>
-                                                    <DeleteOutline onClick={() => {
-                                                        memberObjs.splice(i, 1);
-                                                        setMemberObjs([...memberObjs]);
-                                                    }} />
-                                                </Box> :
-                                                <Box sx={{ display: 'flex', p: 2 }}>
-                                                    {/* {
-                                                        memberObjs.length === 1 ? */}
-                                                    <DeleteOutline sx={{ mr: 2 }} onClick={() => {
-                                                        memberObjs.splice(i, 1);
-                                                        setMemberObjs([...memberObjs]);
-                                                    }} />
-                                                    <Button variant='outlined'
-                                                        onClick={() => handleSubmit(i)}>+</Button>
-                                                </Box>
+        <Box>
+            <Grid>
+                <form onSubmit={handleSubmit(handleUpdate)}>
+                    {
+                        fields.map((item, index) => {
+                            return <Grid key={item?.id}
+                                rowSpacing={{ md: 2 }}
+                                sx={{ mb: 2 }}
+                                rowGap={2}
+                                item container
+                                columnSpacing={{ md: 1 }}>
+                                <Grid item md={4.7}>
+                                    <Controller
+                                        name={`members.${index}.address`}
+                                        control={control}
+                                        rules={{ required: "Address is required" }}
+                                        render={({ field }) => (
+                                            <TextField
+                                                {...field}
+                                                required
+                                                label="Member Address"
+                                                name="address"
+                                                fullWidth
 
-                                        }
-                                    </Grid>
+                                            />
+                                        )}
+                                    />
                                 </Grid>
-                            ))}
-
-                            <Grid>
-                                <Button
-                                    onClick={() => handleUpdate(memberObjs)}
-                                    variant='outlined'>
-                                    Update
-                                </Button><br /><br />
+                                <Grid item md={1.3}>
+                                    <Controller
+                                        name={`members.${index}.weight`}
+                                        control={control}
+                                        rules={{
+                                            min: 1,
+                                            required: "Weight is required"
+                                        }}
+                                        render={({ field }) => (
+                                            <TextField
+                                                type={'number'}
+                                                {...field}
+                                                required
+                                                label="Weight"
+                                                name="weight"
+                                                fullWidth
+                                            />
+                                        )}
+                                    />
+                                </Grid>
+                                <Grid item md={4.8}>
+                                    <Controller
+                                        name={`members.${index}.metadata`}
+                                        control={control}
+                                        rules={{ required: "Metadata is required" }}
+                                        render={({ field }) => (
+                                            <TextField
+                                                {...field}
+                                                required
+                                                label="Metadata"
+                                                multiline
+                                                name="metadata"
+                                                fullWidth
+                                            />
+                                        )}
+                                    />
+                                </Grid>
+                                <Grid sx={{ display: 'flex' }}
+                                    item container md={1.2}>
+                                    <IconButton onClick={() => remove(index)} color='error'>
+                                        <DeleteOutline />
+                                    </IconButton>
+                                    <IconButton onClick={() => {
+                                        append({ address: '', metadata: '', weight: 0 })
+                                    }} color='primary'>
+                                        <AddIcon />
+                                    </IconButton>
+                                </Grid>
                             </Grid>
+                        })
+                    }
 
-                        </Box> : null
-                }
-            </Box>
-        </div>
+                    <Box sx={{ p: 2 }}>
+                        <Button sx={{ mr: 2 }} variant='outlined'
+                        onClick={()=>handleCancel()}
+                        color='error'>Cancel</Button>
+                        <Button
+                        type='submit'
+                        variant='outlined' color='primary'>Update</Button>
+                    </Box>
+                </form>
+            </Grid >
+        </Box >
     )
 }
 

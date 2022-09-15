@@ -14,7 +14,7 @@ function ActiveProposals({ id, wallet }) {
     var [proposals, setProposals] = useState([]);
 
     const proposalsRes = useSelector(state => state.group?.policyProposals)
-
+    console.log('proposa ---res', proposalsRes)
 
     const getProposalByAddress = () => {
         dispatch(getGroupPolicyProposalsByPage({
@@ -31,10 +31,10 @@ function ActiveProposals({ id, wallet }) {
         setProposals([])
         if (proposalsRes?.status === 'idle') {
             
-            let allProposals = proposalsRes?.data?.filter(p => p.status === 'PROPOSAL_STATUS_SUBMITTED')
-            allProposals = allProposals?.sort((a, b) => b.id - a.id)
-            proposals = [...proposals, ...allProposals]
-            setProposals([...proposals])
+            // let allProposals = proposalsRes?.data?.filter(p => p.status === 'PROPOSAL_STATUS_SUBMITTED')
+            // let allProposals = proposalsRes?.data?.sort((a, b) => b.id - a.id)
+            // proposals = [...proposals, ...allProposals]
+            setProposals([...proposalsRes?.data])
         }
 
     }, [proposalsRes?.status])
