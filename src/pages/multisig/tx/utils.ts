@@ -63,7 +63,7 @@ export const parseDelegateMsgsFromContent = (
   content: string
 ): [Msg[], string] => {
   const messages = content.split("\n");
-  
+
   if (messages?.length === 0) {
     return [[], "no messages or invalid file content"];
   }
