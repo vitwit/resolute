@@ -1,10 +1,11 @@
 import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { toBase64 } from "@cosmjs/encoding";
 import { createSign } from "../../features/multisig/multisigSlice";
 import { setError } from "../../features/common/commonSlice";
+import PropTypes from "prop-types";
 
 async function getKeplrWalletAmino(chainID) {
   await window.keplr.enable(chainID);
@@ -13,13 +14,17 @@ async function getKeplrWalletAmino(chainID) {
   return [offlineSigner, accounts[0]];
 }
 
-export default function SignTxn({ txId, tx: unSignedTxn }) {
+SignTxn.propTypes = {
+  address: PropTypes.string.isRequired,
+  txId: PropTypes.string.isRequired,
+  unSignedTxn: PropTypes.object.isRequired,
+};
+
+export default function SignTxn(props) {
+  const { txId, unSignedTxn, address } = props;
   const dispatch = useDispatch();
   const [load, setLoad] = useState(false);
 
-  const multisigAddress =
-    localStorage.getItem("multisigAddress") &&
-    JSON.parse(localStorage.getItem("multisigAddress"));
   const from = useSelector((state) => state.wallet.address);
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
 
@@ -41,8 +46,7 @@ export default function SignTxn({ txId, tx: unSignedTxn }) {
       var wallet = result[0];
       const signingClient = await SigningStargateClient.offline(wallet);
 
-      const multisigAcc = await client.getAccount(multisigAddress?.address);
-
+      const multisigAcc = await client.getAccount(address);
       if (!multisigAcc) {
         dispatch(
           setError({
@@ -70,15 +74,15 @@ export default function SignTxn({ txId, tx: unSignedTxn }) {
         signerData
       );
 
-      let obj = {
+      const payload = {
         address: from,
         txId: txId,
-        multisigAddress: multisigAddress?.address,
+        multisigAddress: address,
         bodyBytes: toBase64(bodyBytes),
         signature: toBase64(signatures[0]),
       };
 
-      dispatch(createSign(obj));
+      dispatch(createSign(payload));
       setLoad(false);
     } catch (error) {
       setLoad(false);
@@ -90,9 +94,12 @@ export default function SignTxn({ txId, tx: unSignedTxn }) {
     <Button
       variant="contained"
       disableElevation
-      className="pull-right"
+      size="small"
       onClick={() => {
         signTheTx();
+      }}
+      sx={{
+        textTransform: "none",
       }}
     >
       {load ? "Loading..." : "Sign"}

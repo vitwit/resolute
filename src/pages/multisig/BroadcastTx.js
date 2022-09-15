@@ -10,14 +10,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { setError } from "../../features/common/commonSlice";
-import { updateTxn } from "../../features/multisig/multisigSlice";
-
-async function getKeplrWalletAmino(chainID) {
-  await window.keplr.enable(chainID);
-  const offlineSigner = window.getOfflineSignerOnlyAmino(chainID);
-  const accounts = await offlineSigner.getAccounts();
-  return [offlineSigner, accounts[0]];
-}
+import {
+  resetUpdateTxnState,
+  updateTxn,
+} from "../../features/multisig/multisigSlice";
 
 export default function BroadcastTx({ tx, signatures, multisigAccount }) {
   const dispatch = useDispatch();
@@ -27,123 +23,140 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
   const updateTxnRes = useSelector((state) => state.multisig.updateTxn);
 
   useEffect(() => {
-    if (updateTxnRes.status === 200 || updateTxnRes.status === 201) {
-      dispatch(
-        setError({
-          type: "success",
-          message: updateTxnRes.message,
-        })
-      );
-    } else if (updateTxnRes.status === 400 || updateTxnRes.status === 500) {
+    if (updateTxnRes.status === "rejected") {
       dispatch(
         setError({
           type: "error",
-          message: updateTxnRes.message || "Error",
+          message: updateTxnRes.message,
         })
       );
     }
   }, [updateTxnRes]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetUpdateTxnState());
+    };
+  }, []);
+
   const broadcastTxn = async () => {
     setLoad(true);
-    const client = await SigningStargateClient.connect(chainInfo?.config?.rpc);
-
-    let result = await getKeplrWalletAmino(chainInfo?.config?.chainId);
-    const bodyBytes = fromBase64(
-      signatures[0].bodyBytes
-        ? signatures[0].bodyBytes
-        : signatures[0].bodybytes
-    );
-
-    console.log('Before base64 body bytes', signatures[0].bodyBytes
-      ? signatures[0].bodyBytes
-      : signatures[0].bodybytes)
-    console.log('After base64 body bytes', bodyBytes)
-
-    let currentSignatures = [];
-    signatures.map((s) => {
-      let obj = {
-        address: s.address,
-        signature: s.signature,
-      };
-
-      currentSignatures = [...currentSignatures, obj];
-    });
-
-    const multisigAcc = await client.getAccount(multisigAccount.address);
-
-    let mapData = multisigAccount.pubkeyJSON || {};
-
-    let newMapObj = {};
-    let pubkeys = [];
-
-    mapData?.value?.pubkeys.map((p) => {
-      let obj = {
-        type: p?.type,
-        value: p?.value,
-      };
-      pubkeys = [...pubkeys, obj];
-    });
-
-    newMapObj = {
-      type: mapData?.type,
-      value: {
-        threshold: mapData?.value?.threshold,
-        pubkeys: pubkeys,
-      },
-    };
-
-    console.log('new map Obj', newMapObj)
-    console.log('multisig sequence ', multisigAcc?.sequence)
-    console.log('Pub keys ---- ', pubkeys)
-    console.log('current signatures --', currentSignatures)
-
-    const signedTx = makeMultisignedTx(
-      newMapObj,
-      multisigAcc.sequence,
-      tx?.fee,
-      bodyBytes,
-      new Map(
-        currentSignatures.map((s) => [s.address, fromBase64(s.signature)])
-      )
-    );
-
     try {
+      const client = await SigningStargateClient.connect(
+        chainInfo?.config?.rpc
+      );
+
+      const bodyBytes = fromBase64(
+        signatures[0].bodyBytes
+          ? signatures[0].bodyBytes
+          : signatures[0].bodybytes
+      );
+
+      let currentSignatures = [];
+      signatures.map((s) => {
+        let obj = {
+          address: s.address,
+          signature: s.signature,
+        };
+
+        currentSignatures = [...currentSignatures, obj];
+      });
+
+      const multisigAcc = await client.getAccount(multisigAccount.address);
+      if (!multisigAcc) {
+        dispatch(
+          setError({
+            type: "error",
+            message: "multisig account does not exist on chain",
+          })
+        );
+        setLoad(false);
+        return;
+      }
+
+      let mapData = multisigAccount.pubkeyJSON || {};
+
+      let newMapObj = {};
+      let pubkeys = [];
+
+      mapData?.value?.pubkeys.map((p) => {
+        let obj = {
+          type: p?.type,
+          value: p?.value,
+        };
+        pubkeys = [...pubkeys, obj];
+      });
+
+      newMapObj = {
+        type: mapData?.type,
+        value: {
+          threshold: mapData?.value?.threshold,
+          pubkeys: pubkeys,
+        },
+      };
+
+      const signedTx = makeMultisignedTx(
+        newMapObj,
+        multisigAcc.sequence,
+        tx?.fee,
+        bodyBytes,
+        new Map(
+          currentSignatures.map((s) => [s.address, fromBase64(s.signature)])
+        )
+      );
+
       const broadcaster = await StargateClient.connect(chainInfo?.config?.rpc);
       const result1 = await broadcaster.broadcastTx(
         Uint8Array.from(TxRaw.encode(signedTx).finish())
       );
 
       setLoad(false);
-
-      dispatch(
-        updateTxn({
-          txId: tx?._id,
-          body: {
-            status: "DONE",
-            hash: result1?.transactionHash || "",
-          },
-        })
-      );
-    } catch (err) {
-      console.log("Errror broadcast", err, err.message);
+      if (result1.code === 0) {
+        dispatch(
+          updateTxn({
+            txId: tx?._id,
+            body: {
+              status: "DONE",
+              hash: result1?.transactionHash || "",
+              errorMsg: result1?.rawLog || "",
+            },
+          })
+        );
+      } else {
+        dispatch(
+          setError({
+            type: "error",
+            message: result1?.rawLog || "Failed to broadcast transaction",
+          })
+        );
+        dispatch(
+          updateTxn({
+            txId: tx?._id,
+            body: {
+              status: "FAILED",
+              hash: result1?.transactionHash || "",
+              errorMsg: result1?.rawLog || "Failed to broadcast transaction",
+            },
+          })
+        );
+      }
+    } catch (error) {
       setLoad(false);
-      dispatch(
-        updateTxn({
-          txId: tx?._id,
-          body: {
-            status: "FAILED",
-            message: err?.message,
-          },
-        })
-      );
-
       dispatch(
         setError({
           type: "error",
-          message: err.message,
+          message: error?.message || "Failed to broadcast transaction",
         })
       );
+      
+      dispatch(updateTxn({
+        txId: tx?._id,
+        body: {
+          status: "FAILED",
+          hash: "",
+          errorMsg: error?.message || "Failed to broadcast transaction",
+        },
+      }));
     }
   };
 
@@ -151,7 +164,7 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
     <Button
       variant="contained"
       disableElevation
-      className="pull-right"
+      size="small"
       onClick={() => {
         broadcastTxn();
       }}
@@ -159,7 +172,7 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
         textTransform: "none",
       }}
     >
-      {load ? "Loading..." : "BroadCast"}
+      {load ? "Loading..." : "Broadcast"}
     </Button>
   );
 }

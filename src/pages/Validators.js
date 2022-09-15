@@ -1,15 +1,14 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  getValidators,
   resetState,
   getDelegations,
-  sortValidatorsByVotingPower,
   getParams,
   txDelegate,
   txUnDelegate,
   txReDelegate,
   resetTxType,
+  getAllValidators,
 } from "../features/staking/stakeSlice";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -169,7 +168,7 @@ export default function Validators() {
       });
       dispatch(getParams({ baseURL: chainInfo.config.rest }));
       dispatch(
-        getValidators({
+        getAllValidators({
           baseURL: chainInfo.config.rest,
           status: null,
         })
@@ -210,33 +209,6 @@ export default function Validators() {
       })
     );
   }
-
-  useEffect(() => {
-    if (
-      connected &&
-      (validators.totalActive > 0 || validators.totalInactive > 0)
-    ) {
-      if (validators.pagination?.next_key !== null) {
-        dispatch(
-          getValidators({
-            baseURL: chainInfo.config.rest,
-            status: null,
-            pagination: {
-              key: validators.pagination.next_key,
-              limit: null,
-            },
-          })
-        );
-      } else {
-        if (
-          Object.keys(validators?.active).length > 0 &&
-          validators.pagination?.next_key === null
-        ) {
-          dispatch(sortValidatorsByVotingPower());
-        }
-      }
-    }
-  }, [validators.pagination]);
 
   useEffect(() => {
     return () => {
@@ -289,7 +261,8 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       });
     } else {
       dispatch(
@@ -298,7 +271,8 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     }
@@ -331,7 +305,8 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       });
     } else {
       dispatch(
@@ -343,7 +318,8 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     }
@@ -375,7 +351,8 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       });
     } else {
       dispatch(
@@ -386,7 +363,8 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     }
@@ -462,7 +440,8 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       });
     } else {
       dispatch(
@@ -475,7 +454,8 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     }

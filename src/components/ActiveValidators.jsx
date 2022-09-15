@@ -32,7 +32,7 @@ export function ActiveValidators(props) {
   useEffect(() => {
     setActiveVals(validators.activeSorted);
     setValidatorsSlice(activeVals.slice(0, perPage));
-  }, [validators]);
+  }, [validators]); // react-hooks/exhaustive-deps
 
   return (
     <>

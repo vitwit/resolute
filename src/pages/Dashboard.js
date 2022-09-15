@@ -39,10 +39,10 @@ const NewAuthz = lazy(() => import("./NewAuthz"));
 const AirdropEligibility = lazy(() => import("./AirdropEligibility"));
 const PageMultisig = lazy(() => import("./multisig/PageMultisig"));
 const PageMultisigInfo = lazy(() => import("./multisig/tx/PageMultisigInfo"));
-const Single_Tx = lazy(() => import("./multisig/tx/Single_Tx"));
 const SendPage = lazy(() => import("./SendPage"));
 const UnjailPage = lazy(() => import("./UnjailPage"));
 const ProposalInfo = lazy(() => import("./ProposalInfo"));
+const PageCreateTx = lazy(() => import("./multisig/tx/PageCreateTx"));
 
 function DashboardContent(props) {
   const [snackOpen, setSnackOpen] = useState(false);
@@ -334,10 +334,10 @@ function DashboardContent(props) {
                   ></Route>
 
                   <Route
-                    path="/multisig/:address/txs/:txId"
+                    path="/multisig/:address/create-tx"
                     element={
                       <Suspense fallback={<CircularProgress />}>
-                        <Single_Tx />
+                        <PageCreateTx />
                       </Suspense>
                     }
                   ></Route>

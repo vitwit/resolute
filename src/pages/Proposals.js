@@ -145,7 +145,7 @@ export default function Proposals() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
         })
       );
     } else {
@@ -159,7 +159,7 @@ export default function Proposals() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
         });
       } else {
         alert("You don't have permission to vote");

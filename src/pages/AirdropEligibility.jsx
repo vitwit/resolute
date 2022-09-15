@@ -19,7 +19,7 @@ import {
 import { getMainNetworks, getTestNetworks } from "../utils/networks";
 import { useNavigate } from "react-router-dom";
 import { resetError, setError } from "../features/common/commonSlice";
-import AirdropProgress from "../components/AirdropProgress";
+import AirdropProgress from "../components/passage/AirdropProgress";
 import { fromBech32, toHex, toBech32, fromHex } from "@cosmjs/encoding";
 import AlertTitle from "@mui/material/AlertTitle";
 import CustomizedDialogs from "../components/passage/disclaimer";
@@ -74,7 +74,6 @@ export default function AirdropEligibility() {
   const errMsg = useSelector((state) => state.airdrop.errMsg);
   const txStatus = useSelector((state) => state.airdrop.tx.status);
   const walletAddress = useSelector((state) => state.wallet.address);
-  // const currency = useSelector((state) => state.wallet.chainInfo?.config?.currencies[0]);
   const currency = chainInfo.config.currencies[0];
 
   const { handleSubmit, control, setValue, getValues } = useForm({
@@ -190,7 +189,7 @@ export default function AirdropEligibility() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
           baseURL: chainInfo.config.rest,
           memo: "I agree to the passage airdrop terms and conditions",
         })

@@ -1,45 +1,32 @@
+import React from "react";
+import PropTypes from "prop-types";
 import { Button, InputAdornment, TextField } from "@mui/material";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Decimal } from "@cosmjs/math";
-import {
-  createTxn,
-  resetCreateTxnState,
-} from "../../features/multisig/multisigSlice";
-import { fee } from "../../txns/execute";
-import FeeComponent from "./FeeComponent";
 import { Box } from "@mui/system";
 import { useForm, Controller } from "react-hook-form";
 import { fromBech32 } from "@cosmjs/encoding";
-import { resetError, setError } from "../../features/common/commonSlice";
 
-export default function SendForm({ chainInfo }) {
-  const dispatch = useDispatch();
-  var createRes = useSelector((state) => state.multisig.createTxnRes);
+Send.propTypes = {
+  chainInfo: PropTypes.object.isRequired,
+  address: PropTypes.string.isRequired,
+  onSend: PropTypes.object.isRequired,
+};
 
+export default function Send(props) {
+  const { chainInfo } = props;
   const {
     handleSubmit,
     control,
-    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
       amount: 0,
       recipient: "",
-      from: "",
-      gas: 200000,
-      memo: "",
-      fees: chainInfo?.config?.gasPriceStep?.average * (10 ** chainInfo?.config?.currencies[0].coinDecimals),
+      from: props.address,
     },
   });
 
-  const multisigAddress =
-    (localStorage.getItem("multisigAddress") &&
-      JSON.parse(localStorage.getItem("multisigAddress"))) ||
-    {};
-
   const currency = chainInfo.config.currencies[0];
-
   const onSubmit = (data) => {
     const amountInAtomics = Decimal.fromUserInput(
       data.amount,
@@ -47,7 +34,7 @@ export default function SendForm({ chainInfo }) {
     ).atomics;
 
     const msgSend = {
-      fromAddress: multisigAddress?.address,
+      fromAddress: data.from,
       toAddress: data.recipient,
       amount: [
         {
@@ -62,43 +49,26 @@ export default function SendForm({ chainInfo }) {
       value: msgSend,
     };
 
-    const feeObj = fee(
-      chainInfo?.config.currencies[0].coinMinimalDenom,
-      data.fees,
-      data.gas
-    );
-
-    const payload = {
-      chainId: chainInfo?.config?.chainId,
-      msgs: [msg],
-      fee: feeObj,
-      memo: data.memo,
-      address: multisigAddress?.address,
-    };
-
-    dispatch(createTxn(payload));
+    props.onSend(msg);
   };
-
-  useEffect(() => {
-    if (createRes.status === "rejected") {
-      dispatch(
-        setError({
-          type: "error",
-          message: createRes.error,
-        })
-      );
-    }
-  }, [createRes]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(resetCreateTxnState());
-      dispatch(resetError());
-    };
-  }, []);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+        name="from"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            sx={{
+              mt: 2,
+            }}
+            label="From"
+            disabled
+            fullWidth
+          />
+        )}
+      />
       <Controller
         name="recipient"
         control={control}
@@ -165,47 +135,6 @@ export default function SendForm({ chainInfo }) {
         )}
       />
 
-      <Controller
-        name="gas"
-        control={control}
-        rules={{ required: "Gas is required" }}
-        render={({ field, fieldState: { error } }) => (
-          <TextField
-            sx={{
-              mb: 2,
-            }}
-            {...field}
-            error={!!error}
-            helperText={error ? error.message : null}
-            type="number"
-            required
-            label="Gas"
-            fullWidth
-          />
-        )}
-      />
-
-      <Controller
-        name="memo"
-        control={control}
-        render={({ field }) => (
-          <TextField
-            sx={{
-              mb: 2,
-            }}
-            {...field}
-            label="Memo"
-            fullWidth
-          />
-        )}
-      />
-
-      <FeeComponent
-        onSetFeeChange={(v) => {
-          setValue("fees", Number(v) * (10 ** chainInfo?.config?.currencies[0].coinDecimals));
-        }}
-        chainInfo={chainInfo}
-      />
       <Box
         component="div"
         sx={{
@@ -221,9 +150,8 @@ export default function SendForm({ chainInfo }) {
             justifyContent: "center",
             textTransform: "none",
           }}
-          disabled={createRes.status === "pending"}
         >
-          {createRes.status === "pending" ? "Please wait..." : "Create"}
+          Add transaction
         </Button>
       </Box>
     </form>

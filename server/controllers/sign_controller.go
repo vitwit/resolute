@@ -49,7 +49,7 @@ func CreateSign(c echo.Context) error {
 				Message: "error", Data: &echo.Map{"data": err.Error()}})
 	}
 
-	err = UpdateTxnStatus(signature.TxId, "SIGNED", "")
+	err = UpdateTxnStatus(signature.TxId, "SIGNED", "", "")
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
 			responses.UserResponse{

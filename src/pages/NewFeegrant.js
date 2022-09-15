@@ -60,7 +60,7 @@ export default function NewFeegrant() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
       })
     );
   };
@@ -83,7 +83,7 @@ export default function NewFeegrant() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
       })
     );
   };

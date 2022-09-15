@@ -9,8 +9,8 @@ import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import DialogTitle from "@mui/material/DialogTitle";
-import { setError } from "../features/common/commonSlice";
-import { createMultisig } from "../txns/multisig";
+import { resetError, setError } from "../features/common/commonSlice";
+import { createMultisig, isValidPubKey } from "../txns/multisig";
 import {
   createAccount,
   resetCreateMultisigRes,
@@ -31,7 +31,7 @@ const InputTextComponent = ({
         handleChangeValue(index, e);
       }}
       sx={{
-        mt: 2,
+        mb: 2,
       }}
       name={field.name}
       value={field.value}
@@ -102,7 +102,7 @@ export function DialogCreateMultisig(props) {
       );
       return;
     } else {
-      let arr = [...pubKeyFields, pubKeyObj];
+      const arr = [...pubKeyFields, pubKeyObj];
       setPubKeyFields([...arr]);
     }
   };
@@ -114,8 +114,10 @@ export function DialogCreateMultisig(props) {
     }
   };
 
+  const [formError, setFormError] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
+    setFormError("");
 
     if (Number(threshold) < 1) {
       dispatch(
@@ -134,8 +136,7 @@ export function DialogCreateMultisig(props) {
       return;
     }
 
-    let uniquePubKeys = Array.from(new Set(pubKeys));
-
+    const uniquePubKeys = Array.from(new Set(pubKeys));
     if (uniquePubKeys?.length !== pubKeys?.length) {
       dispatch(
         setError({
@@ -146,9 +147,30 @@ export function DialogCreateMultisig(props) {
       return;
     }
 
-    let res = createMultisig(pubKeys, Number(threshold), addressPrefix, chainId);
-    res.name = name;
-    dispatch(createAccount(res));
+    for (let i = 0; i < uniquePubKeys.length; i++) {
+      if (!isValidPubKey(uniquePubKeys[i])) {
+        setFormError(`pubKey at ${i+1} is invalid`);
+        return;
+      }
+    }
+
+    try {
+      let res = createMultisig(
+        pubKeys,
+        Number(threshold),
+        addressPrefix,
+        chainId
+      );
+      res.name = name;
+      dispatch(createAccount(res));
+    } catch (error) {
+      dispatch(
+        setError({
+          type: "error",
+          message: error,
+        })
+      );
+    }
   };
 
   const handleChangeValue = (index, e) => {
@@ -172,6 +194,8 @@ export function DialogCreateMultisig(props) {
 
   const handleClose = () => {
     dispatch(resetCreateMultisigRes());
+    dispatch(resetError());
+    setFormError("");
     onClose();
   };
 
@@ -193,9 +217,20 @@ export function DialogCreateMultisig(props) {
               value={name}
               required={true}
               label={"Name"}
-              placeholder={"E.g. Alice"}
+              placeholder={"Eg: Alice-Bob-Eve-Msig"}
               fullWidth
             />
+            <Typography
+              sx={{
+                mt: 2,
+              }}
+              gutterBottom
+              variant="body1"
+              color="text.primary"
+              fontWeight={500}
+            >
+              Members
+            </Typography>
             {pubKeyFields.map((field, index) => (
               <InputTextComponent
                 key={index}
@@ -205,9 +240,11 @@ export function DialogCreateMultisig(props) {
                 field={field}
               />
             ))}
+            <Typography color="error" variant="caption">
+              {formError}
+            </Typography>
             <Box
               sx={{
-                mt: 2,
                 textAlign: "right",
               }}
             >
@@ -219,7 +256,7 @@ export function DialogCreateMultisig(props) {
                   textTransform: "none",
                 }}
               >
-                Add another public key
+                +&nbsp;New member
               </Button>
             </Box>
 
