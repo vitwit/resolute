@@ -278,7 +278,7 @@ export default function PageCreateTx() {
           dispatch(
             setError({
               type: "error",
-              messages: error,
+              message: error,
             })
           );
         } else {
@@ -295,7 +295,7 @@ export default function PageCreateTx() {
           dispatch(
             setError({
               type: "error",
-              messages: error,
+              message: error,
             })
           );
         } else {
@@ -312,7 +312,7 @@ export default function PageCreateTx() {
           dispatch(
             setError({
               type: "error",
-              messages: error,
+              message: error,
             })
           );
         } else {
@@ -329,7 +329,7 @@ export default function PageCreateTx() {
           dispatch(
             setError({
               type: "error",
-              messages: error,
+              message: error,
             })
           );
         } else {
