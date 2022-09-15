@@ -14,8 +14,8 @@ export const parseSendMsgsFromContent = (
 ): [Msg[], string] => {
   const messages = content.split("\n");
 
-  if (messages.length === 0) {
-    return [[], "no messages found"];
+  if (messages?.length === 0) {
+    return [[], "no messages or invalid file content"];
   }
 
   const msgs = [];
@@ -33,7 +33,7 @@ export const parseSendMsgsFromContent = (
 
 const parseSendTx = (from: string, msg: string): Msg => {
   const values = msg.split(",");
-  if (values.length !== 2) {
+  if (values?.length !== 2) {
     throw new Error(
       `invalid message: expected ${2} values got ${values.length}`
     );
@@ -64,8 +64,8 @@ export const parseDelegateMsgsFromContent = (
 ): [Msg[], string] => {
   const messages = content.split("\n");
 
-  if (messages.length === 0) {
-    return [[], "no messages found"];
+  if (messages?.length === 0) {
+    return [[], "no messages or invalid file content"];
   }
 
   const msgs = [];
@@ -83,7 +83,7 @@ export const parseDelegateMsgsFromContent = (
 
 const parseDelegateMsg = (delegator: string, msg: string): Msg => {
   const values = msg.split(",");
-  if (values.length !== 2) {
+  if (values?.length !== 2) {
     throw new Error("invalid message");
   }
 
@@ -112,8 +112,8 @@ export const parseUnDelegateMsgsFromContent = (
 ): [Msg[], string] => {
   const messages = content.split("\n");
 
-  if (messages.length === 0) {
-    return [[], "no messages found"];
+  if (messages?.length === 0) {
+    return [[], "no messages or invalid file content"];
   }
 
   const msgs = [];
@@ -131,7 +131,7 @@ export const parseUnDelegateMsgsFromContent = (
 
 const parseUnDelegateMsg = (delegator: string, msg: string): Msg => {
   const values = msg.split(",");
-  if (values.length !== 2) {
+  if (values?.length !== 2) {
     throw new Error("invalid message");
   }
 
@@ -160,8 +160,8 @@ export const parseReDelegateMsgsFromContent = (
 ): [Msg[], string] => {
   const messages = content.split("\n");
 
-  if (messages.length === 0) {
-    return [[], "no messages found"];
+  if (messages?.length === 0) {
+    return [[], "no messages or invalid file content"];
   }
 
   const msgs = [];
@@ -179,7 +179,7 @@ export const parseReDelegateMsgsFromContent = (
 
 const parseReDelegateMsg = (delegator: string, msg: string): Msg => {
   const values = msg.split(",");
-  if (values.length !== 3) {
+  if (values?.length !== 3) {
     throw new Error("invalid message");
   }
 
