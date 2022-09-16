@@ -86,6 +86,7 @@ const SendMsgComponent = ({ msg, index, deleteMsg }) => {
 
 const CreateProposal = ({ policyInfo }) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const params = useParams();
     const wallet = useSelector(state => state.wallet);
     const [showMsgFrom, setShowMsgForm] = useState(true);
@@ -172,7 +173,9 @@ const CreateProposal = ({ policyInfo }) => {
                 endIcon={<AddIcon />}
                 sx={{ float: 'right', m: 6 }}
                 variant='contained'
-                onClick={() => setShowCreateProposal(!showCreateProposal)}>
+                onClick={()=>navigate(`/group/policies/${policyInfo?.address}/proposals`)}
+                // onClick={() => setShowCreateProposal(!showCreateProposal)}
+                >
                 Create Proposal
             </Button>
 
