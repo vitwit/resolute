@@ -11,6 +11,7 @@ import Button from "@mui/material/Button";
 import { Box } from "@mui/system";
 import { Pagination } from "@mui/material";
 import { useSelector } from "react-redux";
+import { useTheme } from "@emotion/react";
 
 export function InActiveValidators(props) {
   const { onMenuAction } = props;
@@ -32,6 +33,8 @@ export function InActiveValidators(props) {
     setInactiveVals(validators.inactiveSorted);
     setValidatorsSlice(inactiveVals.slice(0, perPage));
   }, [validators]);
+
+  const theme = useTheme();
 
   return (
     <>
@@ -82,7 +85,11 @@ export function InActiveValidators(props) {
                     <></>
                   ) : (
                     <Button
-                      variant="outlined"
+                      variant={
+                        theme.palette?.mode === "light"
+                          ? "outlined"
+                          : "contained"
+                      }
                       className="button-capitalize-title"
                       size="small"
                       onClick={(e) =>
@@ -104,7 +111,11 @@ export function InActiveValidators(props) {
                     <>
                       <Button
                         style={{ marginLeft: 4 }}
-                        variant="outlined"
+                        variant={
+                          theme.palette?.mode === "light"
+                            ? "outlined"
+                            : "contained"
+                        }
                         className="button-capitalize-title"
                         size="small"
                         onClick={(e) =>
@@ -123,7 +134,11 @@ export function InActiveValidators(props) {
                       </Button>
                       <Button
                         style={{ marginLeft: 4 }}
-                        variant="outlined"
+                        variant={
+                          theme.palette?.mode === "light"
+                            ? "outlined"
+                            : "contained"
+                        }
                         className="button-capitalize-title"
                         size="small"
                         onClick={(e) =>
