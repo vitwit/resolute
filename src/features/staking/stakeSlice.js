@@ -3,7 +3,6 @@ import { Delegate, UnDelegate, Redelegate } from "../../txns/staking";
 import stakingService from "./stakingService";
 import { signAndBroadcastAmino, fee } from "../../txns/execute";
 import { setError, setTxHash } from "../common/commonSlice";
-import { createMultisigAccount } from "../multisig/multisigService";
 import { SOMETHING_WRONG } from "../multisig/multisigSlice";
 
 const initialState = {
@@ -19,6 +18,7 @@ const initialState = {
     },
     totalActive: 0,
     totalInactive: 0,
+    witvalValidator: {},
   },
   delegations: {
     status: "idle",
@@ -210,10 +210,12 @@ export const getAllValidators = createAsyncThunk(
         const response = await stakingService.validators(
           data.baseURL,
           data?.status,
-          nextKey ? {
-            key: nextKey,
-            limit: limit,
-          } : {}
+          nextKey
+            ? {
+                key: nextKey,
+                limit: limit,
+              }
+            : {}
         );
         validators.push(...response.data.validators);
         if (!response.data.pagination?.next_key) {
@@ -315,12 +317,18 @@ export const stakeSlice = createSlice({
           ) {
             state.validators.active[element.operator_address] = element;
             state.validators.totalActive += 1;
+            if (element?.description?.moniker === "Witval") {
+              state.validators.witvalValidator = element;
+            }
           } else if (
             element.status !== "BOND_STATUS_BONDED" &&
             !state.validators.inactive[element.operator_address]
           ) {
             state.validators.inactive[element.operator_address] = element;
             state.validators.totalInactive += 1;
+            if (element?.description?.moniker === "Witval") {
+              state.validators.witvalValidator = element;
+            }
           }
         }
         state.validators.pagination = action.payload.pagination;
@@ -329,6 +337,10 @@ export const stakeSlice = createSlice({
       .addCase(getValidators.rejected, (state, action) => {
         state.validators.status = "rejected";
         state.validators.errMsg = action.error.message;
+        let result = initialState.validators;
+        result.errMsg = action.error.message;
+        result.status = "rejected";
+        state.validators = result;
       });
 
     builder
@@ -349,12 +361,18 @@ export const stakeSlice = createSlice({
           ) {
             state.validators.active[element.operator_address] = element;
             state.validators.totalActive += 1;
+            if (element?.description?.moniker === "Witval") {
+              state.validators.witvalValidator = element;
+            }
           } else if (
             element.status !== "BOND_STATUS_BONDED" &&
             !state.validators.inactive[element.operator_address]
           ) {
             state.validators.inactive[element.operator_address] = element;
             state.validators.totalInactive += 1;
+            if (element?.description?.moniker === "Witval") {
+              state.validators.witvalValidator = element;
+            }
           }
         }
         state.validators.errMsg = "";
@@ -364,9 +382,9 @@ export const stakeSlice = createSlice({
             return b.tokens - a.tokens;
           })
         );
-  
+
         state.validators.activeSorted = Object.keys(activeSort);
-  
+
         const inactiveSort = Object.fromEntries(
           Object.entries(state.validators.inactive).sort(([, a], [, b]) => {
             return b.tokens - a.tokens;
@@ -375,8 +393,10 @@ export const stakeSlice = createSlice({
         state.validators.inactiveSorted = Object.keys(inactiveSort);
       })
       .addCase(getAllValidators.rejected, (state, action) => {
-        state.validators.status = "rejected";
-        state.validators.errMsg = action.error.message;
+        let result = initialState.validators;
+        result.errMsg = action.error.message;
+        result.status = "rejected";
+        state.validators = result;
       });
 
     builder

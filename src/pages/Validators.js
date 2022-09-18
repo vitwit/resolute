@@ -79,7 +79,18 @@ export default function Validators() {
     setSelectedValidator(validator);
     switch (type) {
       case "delegate":
-        setStakingOpen(true);
+        {
+          if (availableBalance > 0) {
+            setStakingOpen(true);
+          } else {
+            dispatch(
+              setError({
+                type: "error",
+                message: "no balance",
+              })
+            );
+          }
+        }
         break;
       case "undelegate":
         if (delegations?.delegations.length > 0) {
@@ -559,11 +570,15 @@ export default function Validators() {
                 Validators
               </Button>
             </ButtonGroup>
-            <WitvalValidator
-              validators={validators}
-              onMenuAction={onMenuAction}
-            />
-            <br />
+            {validators.witvalValidator?.description ? (
+              <>
+                <WitvalValidator
+                  validator={validators.witvalValidator}
+                  onMenuAction={onMenuAction}
+                />
+                <br />
+              </>
+            ) : null}
             {type === "delegations" ? (
               <MyDelegations
                 validators={validators}
