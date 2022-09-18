@@ -11,6 +11,7 @@ function CreateGroupPolicy({
     watch,
     fields,
     errors,
+    reset,
     handleCancelPolicy }) {
 
     return (
@@ -80,7 +81,7 @@ function CreateGroupPolicy({
                             )}
                         />
                     </Grid>
-                    <Grid item sx={{ mt: 1.5 }} md={6} xs={5}>
+                    <Grid item sx={{ }} md={6} xs={5}>
                         {
                             watch('policyMetadata.decisionPolicy') === 'percentage' ?
                                 <Controller
@@ -127,7 +128,8 @@ function CreateGroupPolicy({
                                                 placeholder='Threshold'
                                                 error={errors?.policyMetadata?.threshold}
                                                 helperText={errors?.policyMetadata?.threshold?.type === 'max' ?
-                                                    'Invalid threshold' : errors?.policyMetadata?.threshold?.message}
+                                                    'Invalid threshold' : errors?.policyMetadata?.threshold?.message ||
+                                                'Threshold can not be greater than members count.'}
                                             />
                                         </FormControl>
                                     )} />
@@ -153,7 +155,7 @@ function CreateGroupPolicy({
                                             endAdornment: <InputAdornment position="start"> Sec</InputAdornment>,
                                         }}
                                         error={errors?.policyMetadata?.votingPeriod}
-                                        helperText={errors?.policyMetadata?.threshold?.message}
+                                        helperText={errors?.policyMetadata?.votingPeriod?.message}
                                     />
                                 </FormControl>
                             )} />

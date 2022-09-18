@@ -59,6 +59,7 @@ export default function CreateGroupPage() {
   const { register, control,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
     reset, trigger, setError } = useForm({});
 
@@ -151,8 +152,10 @@ export default function CreateGroupPage() {
                 showAddPolicyForm &&
                 <CreateGroupPolicy
                   handleCancelPolicy={() => {
+                    setValue('policyMetadata', null)
                     setShowAddPolicyForm(false)
                   }}
+                  reset={reset}
                   register={register}
                   errors={errors}
                   fields={fields}
@@ -175,6 +178,7 @@ export default function CreateGroupPage() {
               cancel
             </Button>
             <Button
+              disabled={txCreateGroupRes?.status === 'pending' }
               type="submit"
               variant="outlined"
               disableElevation
