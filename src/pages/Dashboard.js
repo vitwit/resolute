@@ -26,6 +26,7 @@ import { getPallet, isDarkMode, mdTheme } from "../utils/theme";
 import { isConnected, logout } from "../utils/localStorage";
 import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
+
 const Authz = lazy(() => import("./Authz"));
 const Validators = lazy(() => import("./Validators"));
 const Proposals = lazy(() => import("./Proposals"));
@@ -170,6 +171,8 @@ function DashboardContent(props) {
     );
   };
 
+  const [drawerOpen, setDrawerOpen] = React.useState(true);
+
   return (
     <ThemeProvider
       theme={mdTheme(darkMode, pallet?.primary, pallet?.secondary)}
@@ -187,6 +190,7 @@ function DashboardContent(props) {
                 navigateTo("/");
               }, 400);
             }}
+            toggleDrawer={() => setDrawerOpen(!drawerOpen)}
           />
           <Box sx={{ display: "flex" }}>
             <AppDrawer
@@ -199,6 +203,7 @@ function DashboardContent(props) {
               wallet={wallet}
               onCopy={copyToClipboard}
               selectedAuthz={selectedAuthz}
+              open={drawerOpen}
             />
             <Box
               component="main"
@@ -208,7 +213,7 @@ function DashboardContent(props) {
                     ? theme.palette.grey[200]
                     : theme.palette.grey[900],
                 flexGrow: 1,
-                height: "97vh",
+                height: "96vh",
                 overflow: "auto",
               }}
             >
@@ -220,7 +225,7 @@ function DashboardContent(props) {
               ) : (
                 <Toolbar />
               )}
-              <Container maxWidth="lg" sx={{ mt: 3, mb: 4 }}>
+              <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
                 <Routes>
                   <Route path="/" element={<Overview />} />
                   <Route
