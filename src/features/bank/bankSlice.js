@@ -1,117 +1,127 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { SendMsg } from '../../txns/bank';
-import bankService from './bankService';
-import { fee, signAndBroadcastAmino } from '../../txns/execute';
-import { setError, setTxHash } from '../common/commonSlice';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { SendMsg } from "../../txns/bank";
+import bankService from "./bankService";
+import { fee, signAndBroadcastAmino } from "../../txns/execute";
+import { setError, setTxHash } from "../common/commonSlice";
 
 const initialState = {
   balances: {
     list: [],
-    status: 'idle',
-    errMsg: '',
+    status: "idle",
+    errMsg: "",
   },
   balance: {
     balance: {},
-    status: 'idle',
-    errMsg: '',
+    status: "idle",
+    errMsg: "",
   },
   tx: {
-      status: 'idle',
-  }
-
+    status: "idle",
+  },
 };
 
-export const getBalances = createAsyncThunk(
-  'bank/balances',
-  async (data) => {
-    const response = await bankService.balances(data.baseURL, data.address, data.pagination);
-    return response.data;
-  }
-);
+export const getBalances = createAsyncThunk("bank/balances", async (data) => {
+  const response = await bankService.balances(
+    data.baseURL,
+    data.address,
+    data.pagination
+  );
+  return response.data;
+});
 
-export const getBalance = createAsyncThunk(
-  'bank/balance',
-  async (data) => {
-    const response = await bankService.balance(data.baseURL, data.address, data.denom);
-    return response.data;
-  }
-);
+export const getBalance = createAsyncThunk("bank/balance", async (data) => {
+  const response = await bankService.balance(
+    data.baseURL,
+    data.address,
+    data.denom
+  );
+  return response.data;
+});
 
 export const txBankSend = createAsyncThunk(
-  'bank/tx-bank-send',
+  "bank/tx-bank-send",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      const msg = SendMsg(data.from, data.to, data.amount, data.denom)
-      const result = await signAndBroadcastAmino([msg], fee(data.denom, data.feeAmount, 260000), data.chainId, data.rpc)
+      const msg = SendMsg(data.from, data.to, data.amount, data.denom);
+      const result = await signAndBroadcastAmino(
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.chainId,
+        data.rpc
+      );
       if (result?.code === 0) {
-        dispatch(setTxHash({
-          hash: result?.transactionHash
-        }))
-        return fulfillWithValue({txHash: result?.transactionHash});
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        dispatch(setError({
-          type: 'error',
-          message: result?.rawLog
-        }))
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-      dispatch(setError({
-        type: 'error',
-        message: error.message
-      }))
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
       return rejectWithValue(error.message);
     }
   }
 );
 
 export const bankSlice = createSlice({
-  name: 'bank',
+  name: "bank",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(getBalances.pending, (state) => {
-        state.balances.status = 'pending';
-        state.balances.errMsg = ''
-
+        state.balances.status = "pending";
+        state.balances.errMsg = "";
       })
       .addCase(getBalances.fulfilled, (state, action) => {
-        state.balances.status = 'idle';
-        state.balances.list = action.payload.balances
-        state.balances.errMsg = ''
+        state.balances.status = "idle";
+        state.balances.list = action.payload.balances;
+        state.balances.errMsg = "";
       })
       .addCase(getBalances.rejected, (state, action) => {
-        state.balances.status = 'rejected';
-        state.balances.errMsg = action.error.message
-      })
+        state.balances.status = "rejected";
+        state.balances.errMsg = action.error.message;
+        state.balances.list = [];
+      });
 
-      builder
+    builder
       .addCase(getBalance.pending, (state) => {
-        state.balance.status = 'pending';
-        state.balance.errMsg = ''
-
+        state.balance.status = "pending";
+        state.balance.errMsg = "";
       })
       .addCase(getBalance.fulfilled, (state, action) => {
-        state.balance.status = 'idle';
-        state.balance.balance = action.payload.balance
-        state.balance.errMsg = ''
+        state.balance.status = "idle";
+        state.balance.balance = action.payload.balance;
+        state.balance.errMsg = "";
       })
       .addCase(getBalance.rejected, (state, action) => {
-        state.balance.status = 'rejected';
-        state.balance.errMsg = action.error.message
+        state.balance.status = "rejected";
+        state.balance.errMsg = action.error.message;
+        state.balance.balance = {};
       })
       .addCase(txBankSend.pending, (state) => {
-        state.tx.status = 'pending';
+        state.tx.status = "pending";
       })
       .addCase(txBankSend.fulfilled, (state, _) => {
-        state.tx.status = 'idle';
+        state.tx.status = "idle";
       })
       .addCase(txBankSend.rejected, (state, _) => {
-        state.tx.status = 'rejected';
-      })
-
-      
+        state.tx.status = "rejected";
+      });
   },
 });
 
