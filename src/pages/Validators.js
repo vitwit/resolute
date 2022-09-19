@@ -537,7 +537,7 @@ export default function Validators() {
   return (
     <>
       {connected ? (
-        delegations?.status === "pending" ? (
+        delegations?.status === "pending" && validators?.status === "pending" ? (
           delegations?.delegations.length === 0 ? (
             <CircularProgress />
           ) : (

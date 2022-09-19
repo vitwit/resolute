@@ -26,6 +26,7 @@ const initialState = {
     errMsg: "",
     pagination: {},
     delegatedTo: {},
+    totalStaked: 0.0,
   },
   unbonding: {
     status: "idle",
@@ -237,13 +238,32 @@ export const getParams = createAsyncThunk("staking/params", async (data) => {
 
 export const getDelegations = createAsyncThunk(
   "staking/delegations",
-  async (data) => {
-    const response = await stakingService.delegations(
-      data.baseURL,
-      data.address,
-      data.pagination
-    );
-    return response.data;
+  async (data, { rejectWithValue }) => {
+    try {
+      const delegations = [];
+      let nextKey = null;
+      const limit = 100;
+      while (true) {
+        const response = await stakingService.delegations(
+          data.baseURL,
+          data.address,
+          nextKey
+            ? {
+                key: nextKey,
+                limit: limit,
+              }
+            : {}
+        );
+        delegations.push(...(response.data?.delegation_responses || []));
+        if (!response.data.pagination?.next_key) {
+          break;
+        }
+        nextKey = response.data.pagination.next_key;
+      }
+      return delegations;
+    } catch (error) {
+      return rejectWithValue(error?.message || SOMETHING_WRONG);
+    }
   }
 );
 
@@ -406,16 +426,18 @@ export const stakeSlice = createSlice({
       })
       .addCase(getDelegations.fulfilled, (state, action) => {
         state.delegations.status = "idle";
-        state.delegations.delegations = action.payload.delegation_responses;
-        state.delegations.pagination = action.payload.pagination;
+        state.delegations.delegations = action.payload;
         state.delegations.errMsg = "";
 
-        for (let i = 0; i < action.payload.delegation_responses.length; i++) {
-          const delegation = action.payload.delegation_responses[i];
+        let total = 0.0;
+        for (let i = 0; i < action.payload.length; i++) {
+          const delegation = action.payload[i];
           state.delegations.delegatedTo[
             delegation?.delegation?.validator_address
           ] = true;
+          total += parseFloat(delegation?.delegation?.shares);
         }
+        state.delegations.totalStaked = total;
       })
       .addCase(getDelegations.rejected, (state, action) => {
         state.delegations.status = "rejected";
