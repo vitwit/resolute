@@ -11,25 +11,16 @@ import Typography from "@mui/material/Typography";
 import { useSelector } from "react-redux";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
+import { useTheme } from "@emotion/react";
 
 export function MyDelegations(props) {
   const { delegations, validators, onDelegationAction, currency, rewards } =
     props;
-  const [totalStaked, setTotalStaked] = React.useState(0);
   const [totalRewards, setTotalRewards] = React.useState(0);
   const distTxStatus = useSelector((state) => state.distribution.tx);
   const [rewardsP, setRewardsP] = React.useState({});
 
-  useEffect(() => {
-    let total = 0.0;
-    if (delegations?.delegations.length > 0) {
-      for (let i = 0; i < delegations.delegations.length; i++)
-        total +=
-          parseFloat(delegations.delegations[i].delegation.shares) /
-          10 ** currency?.coinDecimals;
-    }
-    setTotalStaked(total?.toFixed(4));
-  }, [delegations]);
+  const theme = useTheme();
 
   useEffect(() => {
     let total = 0.0;
@@ -78,7 +69,9 @@ export function MyDelegations(props) {
         }}
       >
         <Typography>
-          Total staked: {totalStaked} {currency?.coinDenom}
+          Total staked:&nbsp;
+          {parseFloat(delegations.totalStaked) / 10 ** currency?.coinDecimals}
+          {currency?.coinDenom}
         </Typography>
 
         <Button
@@ -170,7 +163,11 @@ export function MyDelegations(props) {
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     <Button
-                      variant="outlined"
+                      variant={
+                        theme.palette?.mode === "light"
+                          ? "outlined"
+                          : "contained"
+                      }
                       className="button-capitalize-title"
                       size="small"
                       onClick={(e) =>
@@ -184,7 +181,11 @@ export function MyDelegations(props) {
                       Delegate
                     </Button>
                     <Button
-                      variant="outlined"
+                      variant={
+                        theme.palette?.mode === "light"
+                          ? "outlined"
+                          : "contained"
+                      }
                       style={{ marginLeft: 4 }}
                       className="button-capitalize-title"
                       size="small"
@@ -199,7 +200,11 @@ export function MyDelegations(props) {
                       Undelegate
                     </Button>
                     <Button
-                      variant="outlined"
+                      variant={
+                        theme.palette?.mode === "light"
+                          ? "outlined"
+                          : "contained"
+                      }
                       className="button-capitalize-title"
                       style={{ marginLeft: 4 }}
                       size="small"
