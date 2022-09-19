@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -20,7 +20,7 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         <ListItemIcon>
           <DashboardIcon />
         </ListItemIcon>
-        <ListItemText primary="Dashboard" />
+        <ListItemText primary="Overview" />
       </ListItemButton>
       <ListItemButton
         onClick={() => onNavigate("/multisig")}
@@ -74,7 +74,7 @@ export function drawerListItems(currentPath, onNavigate, showAirdrop) {
         <ListItemText primary="Feegrant" secondary="coming soon" />
       </ListItemButton>
       <ListItemButton
-      disabled
+        disabled
         onClick={() => onNavigate("/group")}
         sx={{ pb: 0.5, pt: 0.5 }}
         selected={currentPath === "/group"}
