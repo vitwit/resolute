@@ -1,32 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getBalance } from "../features/bank/bankSlice";
-import BalanceInfo from "../components/BalanceInfo";
 import { getDelegations, getUnbonding } from "../features/staking/stakeSlice";
 import { getDelegatorTotalRewards } from "../features/distribution/distributionSlice";
 import { parseBalance } from "../utils/denom";
 import {
+  getTypeURLName,
   shortenAddress,
   shortenPubKey,
   totalDelegations,
   totalRewards,
   totalUnbonding,
 } from "../utils/util";
-import { Chip, Grid, Paper, Typography } from "@mui/material";
+import { Button, Chip, Grid, Paper, Typography } from "@mui/material";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { resetError, setError } from "../features/common/commonSlice";
 import { Box } from "@mui/system";
+import { getAccountInfo } from "../features/auth/slice";
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 export default function Overview() {
   const wallet = useSelector((state) => state.wallet);
-    const {config} = chainInfo;
   const { chainInfo, connected, address } = wallet;
   const balance = useSelector((state) => state.bank.balance);
   const delegations = useSelector((state) => state.staking.delegations);
   const rewards = useSelector((state) => state.distribution.delegatorRewards);
   const unbonding = useSelector((state) => state.staking.unbonding);
+  const account = useSelector((state) => state.auth.accountInfo);
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
+  const { config } = chainInfo;
 
   const [available, setTotalBalance] = useState(0);
   const [delegated, setTotalDelegations] = useState(0);
@@ -38,9 +42,10 @@ export default function Overview() {
   useEffect(() => {
     if (connected && chainInfo.config.currencies.length > 0) {
       setTotalBalance(
-        totalBalance(
-          balance.balance,
-          chainInfo.config.currencies[0].coinDecimals
+        parseBalance(
+          [balance.balance],
+          chainInfo.config.currencies[0].coinDecimals,
+          chainInfo.config.currencies[0].coinMinimalDenom
         )
       );
       setTotalDelegations(
@@ -79,6 +84,13 @@ export default function Overview() {
 
   const fetchDetails = (address) => {
     dispatch(
+      getAccountInfo({
+        baseURL: chainInfo.config.rest,
+        address: address,
+      })
+    );
+
+    dispatch(
       getBalance({
         baseURL: chainInfo.config.rest,
         address: address,
@@ -108,118 +120,54 @@ export default function Overview() {
     );
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(
-      function () {
-        dispatch(
-          setError({
-            type: "success",
-            message: "Copied to clipboard",
-          })
-        );
-        setTimeout(() => {
-          dispatch(resetError());
-        }, 1000);
-      },
-      function (err) {
-        dispatch(
-          setError({
-            type: "error",
-            message: "Failed to copy",
-          })
-        );
-        setTimeout(() => {
-          dispatch(resetError());
-        }, 1000);
-      }
-    );
-  };
+  const navigate = useNavigate();
 
   return (
     <>
       {connected ? (
         <>
+          <AccountInfo
+            wallet={wallet}
+            account={account}
+            onCopy={(msg) => {
+              copyToClipboard(msg, dispatch);
+            }}
+          />
           <Box
             component="div"
             sx={{
               textAlign: "left",
+              p: 2,
             }}
           >
-            <Typography
-              variant="h6"
-              color="text.primary"
-              fontWeight={600}
-              gutterBottom
+            <Box
+              sx={{
+                mb: 1,
+                display: "flex",
+                justifyContent: "space-between",
+              }}
             >
-              Account Info
-            </Typography>
-          </Box>
-          <Paper
-            elevation={0}
-            sx={{
-              borderRadius: 0,
-              pl: 3,
-              pr: 3,
-              pt: 2,
-              pb: 2,
-              textAlign: "left",
-            }}
-          >
-            <Grid container>
-              <Grid item xs={12} md={6}>
-                <Typography
-                  variant="body1"
-                  color="text.primary"
-                  fontWeight={600}
-                  gutterBottom
-                >
-                  Address
-                </Typography>
-                <Chip
-                  label={wallet.address}
-                  size="small"
-                  deleteIcon={<ContentCopyOutlined />}
-                  onDelete={() => {
-                    copyToClipboard(wallet.address);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography
-                  variant="body1"
-                  color="text.primary"
-                  fontWeight={600}
-                  gutterBottom
-                >
-                  Public Key
-                </Typography>
-                <Chip
-                  label={wallet.pubKey ? wallet.pubKey : ""}
-                  size="small"
-                  deleteIcon={<ContentCopyOutlined />}
-                  onDelete={() => {
-                    copyToClipboard(wallet.pubKey);
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </Paper>
-
-          <Box
-            component="div"
-            sx={{
-              textAlign: "left",
-              mt: 2,
-            }}
-          >
-            <Typography
-              variant="h6"
-              color="text.primary"
-              fontWeight={600}
-              gutterBottom
-            >
-              Assets
-            </Typography>
+              <Typography
+                variant="h6"
+                color="text.primary"
+                fontWeight={600}
+                gutterBottom
+              >
+                Assets
+              </Typography>
+              <Button
+                sx={{
+                  mb: 1,
+                  textTransform: "none",
+                }}
+                variant="contained"
+                disableElevation
+                size="small"
+                onClick={() => navigate("/send")}
+              >
+                Send
+              </Button>
+            </Box>
 
             <Grid container spacing={2}>
               <Grid item xs={12} md={8}>
@@ -228,12 +176,16 @@ export default function Overview() {
                   sx={{
                     borderRadius: 0,
                     p: 2,
-                    textAlign: "left",
-                    minHeight: 200,
+                    textAlign: "center",
+                    minHeight: 250,
                   }}
                 >
-                  <Typography sx={{justifyContent: 'center'}} variant='h6' color='text.secondary'>
-                  Coming Soon
+                  <Typography
+                    sx={{ justifyContent: "center" }}
+                    variant="h6"
+                    color="text.secondary"
+                  >
+                    Coming soon
                   </Typography>
                 </Paper>
               </Grid>
@@ -248,6 +200,7 @@ export default function Overview() {
                     pl: 3,
                     pr: 3,
                     textAlign: "left",
+                    minHeight: 250,
                   }}
                 >
                   <Typography color="primary" fontWeight={600} variant="body1">
@@ -267,15 +220,14 @@ export default function Overview() {
                       }}
                     >
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         color="text.secondary"
-                        fontWeight={500}
                         gutterBottom
                       >
                         Available
                       </Typography>
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         fontWeight={500}
                         color="text.primary"
                       >
@@ -290,15 +242,14 @@ export default function Overview() {
                       }}
                     >
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         color="text.secondary"
-                        fontWeight={500}
                         gutterBottom
                       >
-                        Delegated
+                        Staked
                       </Typography>
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         fontWeight={500}
                         color="text.primary"
                       >
@@ -313,16 +264,14 @@ export default function Overview() {
                       }}
                     >
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         color="text.secondary"
-                        fontWeight={500}
                         gutterBottom
-
                       >
                         Rewards
                       </Typography>
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         fontWeight={500}
                         color="text.primary"
                       >
@@ -337,36 +286,47 @@ export default function Overview() {
                       }}
                     >
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         color="text.secondary"
-                        fontWeight={500}
                         gutterBottom
                       >
                         Unbonding
                       </Typography>
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         fontWeight={500}
                         color="text.primary"
                       >
                         {unbondingDel}
                       </Typography>
                     </li>
-                    <li>
-                    <Typography
-                        variant="body2"
+                    <hr />
+                    <li
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        marginTop: 8,
+                      }}
+                    >
+                      <Typography
+                        variant="body1"
                         color="text.secondary"
-                        fontWeight={500}
                         gutterBottom
                       >
                         Total
                       </Typography>
                       <Typography
-                        variant="body2"
-                        fontWeight={500}
+                        variant="body1"
+                        fontWeight={600}
                         color="text.primary"
                       >
-                        {unbondingDel}
+                        {(
+                          parseFloat(available) +
+                          parseFloat(delegated) +
+                          parseFloat(pendingRewards) +
+                          parseFloat(unbondingDel)
+                        ).toLocaleString()}
                       </Typography>
                     </li>
                   </ul>
@@ -374,18 +334,190 @@ export default function Overview() {
               </Grid>
             </Grid>
           </Box>
-          <BalanceInfo
-            chainInfo={chainInfo}
-            balance={available}
-            delegations={delegated}
-            rewards={pendingRewards}
-            unbonding={unbondingDel}
-            currencies={chainInfo.config.currencies}
-          />
         </>
       ) : (
-        <></>
+        <>
+          <Typography
+            variant="h5"
+            color="text.primary"
+            fontWeight={600}
+            sx={{
+              mt: 4,
+            }}
+          >
+            Wallet not connected
+          </Typography>
+        </>
       )}
     </>
   );
 }
+
+const AccountInfo = (props) => {
+  const { wallet, account } = props;
+  return (
+    <Box
+      component="div"
+      sx={{
+        textAlign: "left",
+        p: 2,
+      }}
+    >
+      <Typography
+        variant="h6"
+        color="text.primary"
+        fontWeight={600}
+        gutterBottom
+      >
+        Account Info
+      </Typography>
+      <Paper
+        elevation={0}
+        sx={{
+          borderRadius: 0,
+          p: 3,
+          textAlign: "left",
+        }}
+      >
+        <Grid container>
+          <Grid
+            item
+            xs={12}
+            md={3}
+            sx={{
+              mb: 1,
+            }}
+          >
+            <Typography
+              variant="body1"
+              color="text.primary"
+              fontWeight={600}
+              gutterBottom
+            >
+              Address
+            </Typography>
+            <Chip
+              label={shortenAddress(wallet.address, 24)}
+              size="small"
+              deleteIcon={<ContentCopyOutlined />}
+              onDelete={() => {
+                copyToClipboard(wallet.address);
+              }}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            md={3}
+            sx={{
+              mb: 1,
+            }}
+          >
+            <Typography
+              variant="body1"
+              color="text.primary"
+              fontWeight={600}
+              gutterBottom
+            >
+              Public Key
+            </Typography>
+            <Chip
+              label={wallet.pubKey ? shortenPubKey(wallet.pubKey, 24) : "-"}
+              size="small"
+              deleteIcon={<ContentCopyOutlined />}
+              onDelete={() => {
+                props.onCopy(wallet.pubKey);
+              }}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            md={3}
+            sx={{
+              mb: 1,
+            }}
+          >
+            <Typography
+              variant="body1"
+              color="text.primary"
+              fontWeight={600}
+              gutterBottom
+            >
+              Account Type
+            </Typography>
+            <Typography variant="body1" color="text.primary" gutterBottom>
+              {getTypeURLName(account && account?.account["@type"])}
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            md={3}
+            sx={{
+              mb: 1,
+            }}
+          >
+            <Typography
+              variant="body1"
+              color="text.primary"
+              fontWeight={600}
+              gutterBottom
+            >
+              Sequence
+            </Typography>
+            <Typography variant="body1" color="text.primary" gutterBottom>
+              {getSequence(account?.account)}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Paper>
+    </Box>
+  );
+};
+
+AccountInfo.propTypes = {
+  wallet: PropTypes.object.isRequired,
+  account: PropTypes.object.isRequired,
+  onCopy: PropTypes.func.isRequired,
+};
+
+const copyToClipboard = (text, dispatcher) => {
+  navigator.clipboard.writeText(text).then(
+    function () {
+      dispatcher(
+        setError({
+          type: "success",
+          message: "Copied to clipboard",
+        })
+      );
+      setTimeout(() => {
+        dispatcher(resetError());
+      }, 1000);
+    },
+    function (err) {
+      dispatcher(
+        setError({
+          type: "error",
+          message: "Failed to copy",
+        })
+      );
+      setTimeout(() => {
+        dispatcher(resetError());
+      }, 1000);
+    }
+  );
+};
+
+const getSequence = (account) => {
+  switch (account["@type"]) {
+    case "/cosmos.vesting.v1beta1.ContinuousVestingAccount": {
+      return account?.base_vesting_account?.base_account?.sequence || 0;
+    }
+    case "/cosmos.auth.v1beta1.BaseAccount": {
+      return account?.sequence || 0;
+    }
+    default:
+      return 0;
+  }
+};
