@@ -30,7 +30,6 @@ export default function Overview() {
   const account = useSelector((state) => state.auth.accountInfo);
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
-  const { config } = chainInfo;
 
   const [available, setTotalBalance] = useState(0);
   const [delegated, setTotalDelegations] = useState(0);
@@ -39,28 +38,30 @@ export default function Overview() {
 
   const dispatch = useDispatch();
 
+  const { config } = chainInfo;
+  const coinDecimals = config?.currencies[0].coinDecimals || 1;
+
+
   useEffect(() => {
-    if (connected && chainInfo.config.currencies.length > 0) {
+    if (connected && config.currencies.length > 0) {
       setTotalBalance(
         parseBalance(
           [balance.balance],
-          chainInfo.config.currencies[0].coinDecimals,
-          chainInfo.config.currencies[0].coinMinimalDenom
+          config.currencies[0].coinDecimals,
+          config.currencies[0].coinMinimalDenom
         )
       );
       setTotalDelegations(
-        totalDelegations(
-          delegations.delegations,
-          chainInfo.config.currencies[0].coinDecimals
-        )
+        parseFloat(delegations.totalStaked / 10.0 ** coinDecimals).toFixed(
+          coinDecimals)
       );
       setTotalRewards(
-        totalRewards(rewards?.list, chainInfo.config.currencies[0].coinDecimals)
+        totalRewards(rewards?.list, config.currencies[0].coinDecimals)
       );
       setTotalUnbonding(
         totalUnbonding(
           unbonding.delegations,
-          chainInfo.config.currencies[0].coinDecimals
+          config.currencies[0].coinDecimals
         )
       );
     }
@@ -68,7 +69,7 @@ export default function Overview() {
 
   useEffect(() => {
     if (connected && selectedAuthz.granter.length === 0) {
-      if (address.length > 0 && chainInfo.config.currencies.length > 0) {
+      if (address.length > 0 && config.currencies.length > 0) {
         fetchDetails(address);
       }
     }
@@ -85,14 +86,14 @@ export default function Overview() {
   const fetchDetails = (address) => {
     dispatch(
       getAccountInfo({
-        baseURL: chainInfo.config.rest,
+        baseURL: config.rest,
         address: address,
       })
     );
 
     dispatch(
       getBalance({
-        baseURL: chainInfo.config.rest,
+        baseURL: config.rest,
         address: address,
         denom: chainInfo.config.currencies[0].coinMinimalDenom,
       })
@@ -100,21 +101,21 @@ export default function Overview() {
 
     dispatch(
       getDelegations({
-        baseURL: chainInfo.config.rest,
+        baseURL: config.rest,
         address: address,
       })
     );
 
     dispatch(
       getDelegatorTotalRewards({
-        baseURL: chainInfo.config.rest,
+        baseURL: config.rest,
         address: address,
       })
     );
 
     dispatch(
       getUnbonding({
-        baseURL: chainInfo.config.rest,
+        baseURL: config.rest,
         address: address,
       })
     );
@@ -204,7 +205,7 @@ export default function Overview() {
                   }}
                 >
                   <Typography color="primary" fontWeight={600} variant="body1">
-                    {chainInfo.config.currencies[0].coinDenom}
+                    {config.currencies[0].coinDenom}
                   </Typography>
                   <ul
                     style={{
