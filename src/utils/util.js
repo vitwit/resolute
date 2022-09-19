@@ -8,14 +8,6 @@ export function getTypeURLName(url) {
   return "-";
 }
 
-export function getAddressPretty(url) {
-  let temp = url.split(".");
-  if (temp?.length > 0) {
-    return temp[temp?.length - 1];
-  }
-  return "-";
-}
-
 export function getProposalComponent(type) {
   switch (type) {
     case "PROPOSAL_STATUS_VOTING_PERIOD":

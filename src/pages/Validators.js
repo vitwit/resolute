@@ -1,15 +1,14 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  getValidators,
   resetState,
   getDelegations,
-  sortValidatorsByVotingPower,
   getParams,
   txDelegate,
   txUnDelegate,
   txReDelegate,
   resetTxType,
+  getAllValidators,
 } from "../features/staking/stakeSlice";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -22,7 +21,7 @@ import {
   txWithdrawAllRewards,
   resetTx,
 } from "../features/distribution/distributionSlice";
-import { totalBalance } from "../utils/denom";
+import { parseBalance } from "../utils/denom";
 import { DialogDelegate } from "../components/DialogDelegate";
 import { getBalance } from "../features/bank/bankSlice";
 import { DialogUndelegate } from "../components/DialogUndelegate";
@@ -42,6 +41,10 @@ import {
   getWithdrawRewardsAuthz,
 } from "../utils/authorizations";
 import { authzExecHelper } from "../features/authz/authzSlice";
+import { Box, TextField } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import { FilteredValidators } from "./../components/FilteredValidators";
 
 export default function Validators() {
   const [type, setType] = useState("delegations");
@@ -76,7 +79,18 @@ export default function Validators() {
     setSelectedValidator(validator);
     switch (type) {
       case "delegate":
-        setStakingOpen(true);
+        {
+          if (availableBalance > 0) {
+            setStakingOpen(true);
+          } else {
+            dispatch(
+              setError({
+                type: "error",
+                message: "no balance",
+              })
+            );
+          }
+        }
         break;
       case "undelegate":
         if (delegations?.delegations.length > 0) {
@@ -159,21 +173,29 @@ export default function Validators() {
   useEffect(() => {
     if (connected) {
       dispatch(resetState());
+      setFilteredVals({
+        active: [],
+        inactive: [],
+      });
       dispatch(getParams({ baseURL: chainInfo.config.rest }));
       dispatch(
-        getValidators({
+        getAllValidators({
           baseURL: chainInfo.config.rest,
           status: null,
         })
       );
+    }
+  }, [chainInfo, connected]);
 
+  useEffect(() => {
+    if (connected) {
       if (selectedAuthz.granter.length > 0) {
         fetchUserInfo(selectedAuthz.granter);
       } else {
         fetchUserInfo(address);
       }
     }
-  }, [chainInfo, connected, selectedAuthz]);
+  }, [selectedAuthz]);
 
   function fetchUserInfo(address) {
     dispatch(
@@ -198,29 +220,6 @@ export default function Validators() {
       })
     );
   }
-
-  useEffect(() => {
-    if (connected) {
-      if (validators.pagination?.next_key !== null) {
-        dispatch(
-          getValidators({
-            baseURL: chainInfo.config.rest,
-            status: null,
-            pagination: {
-              key: validators.pagination.next_key,
-              limit: null,
-            },
-          })
-        );
-      } else {
-        if (
-          Object.keys(validators?.active).length > 0 &&
-          validators.pagination?.next_key === null
-        )
-          dispatch(sortValidatorsByVotingPower());
-      }
-    }
-  }, [validators.pagination]);
 
   useEffect(() => {
     return () => {
@@ -273,7 +272,8 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       });
     } else {
       dispatch(
@@ -282,7 +282,8 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     }
@@ -315,7 +316,8 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       });
     } else {
       dispatch(
@@ -327,7 +329,8 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     }
@@ -359,7 +362,8 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       });
     } else {
       dispatch(
@@ -370,7 +374,8 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     }
@@ -446,7 +451,8 @@ export default function Validators() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       });
     } else {
       dispatch(
@@ -459,7 +465,8 @@ export default function Validators() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     }
@@ -470,10 +477,62 @@ export default function Validators() {
     if (connected && chainInfo.config.currencies.length > 0) {
       if (balance !== undefined)
         setAvailableBalance(
-          totalBalance(balance.balance, currency.coinDecimals)
+          parseBalance(
+            [balance.balance],
+            currency.coinDecimals,
+            currency.coinMinimalDenom
+          )
         );
     }
   }, [balance]);
+
+  const [searchMoniker, setSearchMoniker] = useState("");
+  const handleSearchChange = (e) => {
+    setSearchMoniker(e.target.value);
+    const moniker = e.target.value;
+    const filtered = {
+      active: [],
+      inactive: [],
+    };
+
+    if (moniker.length === 0) {
+      setFilteredVals({
+        active: [],
+        inactive: [],
+      });
+
+      return;
+    }
+
+    const keys = Object.keys(validators.active);
+    for (let i = 0; i < keys.length; i++) {
+      if (
+        validators.active[keys[i]].description.moniker
+          .toLowerCase()
+          .includes(moniker.toLowerCase())
+      ) {
+        filtered.active.push(keys[i]);
+      }
+    }
+
+    const inactivekeys = Object.keys(validators.inactive);
+    for (let i = 0; i < inactivekeys.length; i++) {
+      if (
+        validators.inactive[inactivekeys[i]].description.moniker
+          .toLowerCase()
+          .includes(moniker.toLowerCase())
+      ) {
+        filtered.inactive.push(inactivekeys[i]);
+      }
+    }
+
+    setFilteredVals(filtered);
+  };
+
+  const [filteredVals, setFilteredVals] = useState({
+    active: [],
+    inactive: [],
+  });
 
   return (
     <>
@@ -493,21 +552,33 @@ export default function Validators() {
               <Button
                 variant={type === "delegations" ? "contained" : "outlined"}
                 onClick={() => setType("delegations")}
+                sx={{
+                  textTransform: "none",
+                }}
+                disableElevation
               >
                 Delegations
               </Button>
               <Button
                 variant={type === "validators" ? "contained" : "outlined"}
                 onClick={() => setType("validators")}
+                sx={{
+                  textTransform: "none",
+                }}
+                disableElevation
               >
                 Validators
               </Button>
             </ButtonGroup>
-            <WitvalValidator
-              validators={validators}
-              onMenuAction={onMenuAction}
-            />
-            <br />
+            {validators.witvalValidator?.description ? (
+              <>
+                <WitvalValidator
+                  validator={validators.witvalValidator}
+                  onMenuAction={onMenuAction}
+                />
+                <br />
+              </>
+            ) : null}
             {type === "delegations" ? (
               <MyDelegations
                 validators={validators}
@@ -518,30 +589,71 @@ export default function Validators() {
                 onWithdrawAllRewards={onWithdrawAllRewards}
               />
             ) : (
-              <Paper elevation={0} style={{ padding: 12 }}>
-                <ButtonGroup
-                  variant="outlined"
-                  aria-label="validators"
-                  style={{ display: "flex", marginBottom: 12 }}
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 1,
+                }}
+              >
+                <Box
+                  component="div"
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    pt: 1,
+                    pb: 2,
+                  }}
                 >
-                  <Button
-                    variant={selected === "active" ? "contained" : "outlined"}
-                    onClick={() => setSelected("active")}
-                  >
-                    Active
-                  </Button>
-                  <Button
-                    variant={selected === "inactive" ? "contained" : "outlined"}
-                    onClick={() => setSelected("inactive")}
-                  >
-                    Inactive
-                  </Button>
-                </ButtonGroup>
-                {selected === "active" ? (
-                  <ActiveValidators
+                  <ButtonGroup variant="outlined" aria-label="validators">
+                    <Button
+                      variant={selected === "active" ? "contained" : "outlined"}
+                      onClick={() => setSelected("active")}
+                      sx={{
+                        textTransform: "none",
+                      }}
+                      disableElevation
+                    >
+                      Active
+                    </Button>
+                    <Button
+                      variant={
+                        selected === "inactive" ? "contained" : "outlined"
+                      }
+                      onClick={() => setSelected("inactive")}
+                      sx={{
+                        textTransform: "none",
+                      }}
+                      disableElevation
+                    >
+                      Inactive
+                    </Button>
+                  </ButtonGroup>
+
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    placeholder="search"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchOutlinedIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    value={searchMoniker}
+                    onChange={handleSearchChange}
+                  />
+                </Box>
+                {filteredVals.active.length > 0 ||
+                filteredVals.inactive.length > 0 ? (
+                  <FilteredValidators
                     onMenuAction={onMenuAction}
                     validators={validators}
+                    filtered={filteredVals}
                   />
+                ) : selected === "active" ? (
+                  <ActiveValidators onMenuAction={onMenuAction} />
                 ) : (
                   <InActiveValidators
                     onMenuAction={onMenuAction}
@@ -606,7 +718,9 @@ export default function Validators() {
           variant="h5"
           color="text.primary"
           fontWeight={700}
-          style={{ marginTop: 32 }}
+          sx={{
+            mt: 4,
+          }}
         >
           Wallet is not connected
         </Typography>

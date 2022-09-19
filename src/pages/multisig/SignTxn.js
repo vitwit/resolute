@@ -1,10 +1,11 @@
 import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { toBase64 } from "@cosmjs/encoding";
 import { createSign } from "../../features/multisig/multisigSlice";
 import { setError } from "../../features/common/commonSlice";
+import PropTypes from "prop-types";
 
 async function getKeplrWalletAmino(chainID) {
   await window.keplr.enable(chainID);
@@ -13,16 +14,18 @@ async function getKeplrWalletAmino(chainID) {
   return [offlineSigner, accounts[0]];
 }
 
-export default function SignTxn({ txId, tx: unSignedTxn, getAllSignatures }) {
+SignTxn.propTypes = {
+  address: PropTypes.string.isRequired,
+  txId: PropTypes.string.isRequired,
+  unSignedTxn: PropTypes.object.isRequired,
+};
+
+export default function SignTxn(props) {
+  const { txId, unSignedTxn, address } = props;
   const dispatch = useDispatch();
   const [load, setLoad] = useState(false);
 
-  const multisigAddress =
-    localStorage.getItem("multisigAddress") &&
-    JSON.parse(localStorage.getItem("multisigAddress"));
   const from = useSelector((state) => state.wallet.address);
-  const createSignRes = useSelector((state) => state.multisig.createSignRes);
-
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
 
   const signTheTx = async () => {
@@ -34,23 +37,35 @@ export default function SignTxn({ txId, tx: unSignedTxn, getAllSignatures }) {
         disableBalanceCheck: true,
       },
     };
-    const client = await SigningStargateClient.connect(chainInfo?.config?.rpc);
-
-    let result = await getKeplrWalletAmino(chainInfo?.config?.chainId);
-    var wallet = result[0];
-    const signingClient = await SigningStargateClient.offline(wallet);
-
-    const multisigAcc = await client.getAccount(multisigAddress?.address);
-
-    const signerData = {
-      accountNumber: multisigAcc?.accountNumber,
-      sequence: multisigAcc.sequence,
-      chainId: chainInfo?.config?.chainId,
-    };
-
-    let msgs = unSignedTxn.msgs;
-
     try {
+      const client = await SigningStargateClient.connect(
+        chainInfo?.config?.rpc
+      );
+
+      let result = await getKeplrWalletAmino(chainInfo?.config?.chainId);
+      var wallet = result[0];
+      const signingClient = await SigningStargateClient.offline(wallet);
+
+      const multisigAcc = await client.getAccount(address);
+      if (!multisigAcc) {
+        dispatch(
+          setError({
+            type: "error",
+            message: "multisig account does not exist on chain",
+          })
+        );
+        setLoad(false);
+        return;
+      }
+
+      const signerData = {
+        accountNumber: multisigAcc?.accountNumber,
+        sequence: multisigAcc?.sequence,
+        chainId: chainInfo?.config?.chainId,
+      };
+
+      let msgs = unSignedTxn.msgs;
+
       const { bodyBytes, signatures } = await signingClient.sign(
         from,
         msgs,
@@ -59,18 +74,17 @@ export default function SignTxn({ txId, tx: unSignedTxn, getAllSignatures }) {
         signerData
       );
 
-      let obj = {
+      const payload = {
         address: from,
         txId: txId,
-        multisigAddress: multisigAddress?.address,
+        multisigAddress: address,
         bodyBytes: toBase64(bodyBytes),
         signature: toBase64(signatures[0]),
       };
 
-      dispatch(createSign(obj));
+      dispatch(createSign(payload));
       setLoad(false);
     } catch (error) {
-      console.log("Err: sign ", error.message);
       setLoad(false);
       dispatch(setError({ type: "error", message: error.message }));
     }
@@ -80,9 +94,12 @@ export default function SignTxn({ txId, tx: unSignedTxn, getAllSignatures }) {
     <Button
       variant="contained"
       disableElevation
-      className="pull-right"
+      size="small"
       onClick={() => {
         signTheTx();
+      }}
+      sx={{
+        textTransform: "none",
       }}
     >
       {load ? "Loading..." : "Sign"}

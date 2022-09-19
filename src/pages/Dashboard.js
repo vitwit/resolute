@@ -26,20 +26,18 @@ import { getPallet, isDarkMode, mdTheme } from "../utils/theme";
 import { isConnected, logout } from "../utils/localStorage";
 import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
-import GroupPage from "./GroupPage";
-import CreateGroupPage from "./group/CreateGroup";
+
 const Authz = lazy(() => import("./Authz"));
-// const Feegrant = lazy(() => import("./Feegrant"));
 const Validators = lazy(() => import("./Validators"));
 const Proposals = lazy(() => import("./Proposals"));
-// const NewFeegrant = lazy(() => import("./NewFeegrant"));
 const NewAuthz = lazy(() => import("./NewAuthz"));
 const AirdropEligibility = lazy(() => import("./AirdropEligibility"));
-const CreateMultisig = lazy(() => import("./multisig/CreateMultisig"));
-const Tx_index = lazy(() => import("./multisig/tx/Tx_index"));
-const Single_Tx = lazy(() => import("./multisig/tx/Single_Tx"));
+const PageMultisig = lazy(() => import("./multisig/PageMultisig"));
+const PageMultisigInfo = lazy(() => import("./multisig/tx/PageMultisigInfo"));
 const SendPage = lazy(() => import("./SendPage"));
 const UnjailPage = lazy(() => import("./UnjailPage"));
+const ProposalInfo = lazy(() => import("./ProposalInfo"));
+const PageCreateTx = lazy(() => import("./multisig/tx/PageCreateTx"));
 
 function DashboardContent(props) {
   const [snackOpen, setSnackOpen] = useState(false);
@@ -173,6 +171,8 @@ function DashboardContent(props) {
     );
   };
 
+  const [drawerOpen, setDrawerOpen] = React.useState(true);
+
   return (
     <ThemeProvider
       theme={mdTheme(darkMode, pallet?.primary, pallet?.secondary)}
@@ -190,6 +190,7 @@ function DashboardContent(props) {
                 navigateTo("/");
               }, 400);
             }}
+            toggleDrawer={() => setDrawerOpen(!drawerOpen)}
           />
           <Box sx={{ display: "flex" }}>
             <AppDrawer
@@ -202,6 +203,7 @@ function DashboardContent(props) {
               wallet={wallet}
               onCopy={copyToClipboard}
               selectedAuthz={selectedAuthz}
+              open={drawerOpen}
             />
             <Box
               component="main"
@@ -211,7 +213,7 @@ function DashboardContent(props) {
                     ? theme.palette.grey[200]
                     : theme.palette.grey[900],
                 flexGrow: 1,
-                height: "100vh",
+                height: "96vh",
                 overflow: "auto",
               }}
             >
@@ -223,7 +225,7 @@ function DashboardContent(props) {
               ) : (
                 <Toolbar />
               )}
-              <Container maxWidth="xl" sx={{ mt: 4, mb: 4}}>
+              <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
                 <Routes>
                   <Route path="/" element={<Overview />} />
                   <Route
@@ -258,7 +260,7 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
-                   <Route
+                  <Route
                     path="/slashing"
                     element={
                       <Suspense fallback={<CircularProgress />}>
@@ -279,6 +281,14 @@ function DashboardContent(props) {
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <Proposals />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/proposals/:id"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <ProposalInfo />
                       </Suspense>
                     }
                   ></Route>
@@ -307,7 +317,7 @@ function DashboardContent(props) {
                     path="/multisig"
                     element={
                       <Suspense fallback={<CircularProgress />}>
-                        <CreateMultisig />
+                        <PageMultisig />
                       </Suspense>
                     }
                   ></Route>
@@ -316,24 +326,24 @@ function DashboardContent(props) {
                     path="/multisig/:address/txs"
                     element={
                       <Suspense fallback={<CircularProgress />}>
-                        <Tx_index />
+                        <PageMultisigInfo />
                       </Suspense>
                     }
                   ></Route>
 
                   <Route
-                    path="/multisig/:address/txs/:txId"
+                    path="/multisig/:address/create-tx"
                     element={
                       <Suspense fallback={<CircularProgress />}>
-                        <Single_Tx />
+                        <PageCreateTx />
                       </Suspense>
                     }
                   ></Route>
-                  <Route path="/group" element={<GroupPage />}></Route>
+                  {/* <Route path="/group" element={<GroupPage />}></Route>
                   <Route
                     path="/group/create-group"
                     element={<CreateGroupPage />}
-                  ></Route>
+                  ></Route> */}
                   <Route path="*" element={<Page404 />}></Route>
                 </Routes>
               </Container>
@@ -451,15 +461,15 @@ const Footer = () => {
       }}
     >
       <Typography component="span" variant="caption" color="text.secondary">
-      Love us by delegating to&nbsp; 
-      <Typography
-      component="span"
-      variant="caption"
-      fontWeight={600}
-      color="text.primary"
-      >
-      Witval
-      </Typography>
+        Love us by delegating to&nbsp;
+        <Typography
+          component="span"
+          variant="caption"
+          fontWeight={600}
+          color="text.primary"
+        >
+          Witval
+        </Typography>
       </Typography>
       {/* <Typography
         component="span"

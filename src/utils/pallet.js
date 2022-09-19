@@ -1,5 +1,5 @@
 const networks = {
-  "Passage-Testnet": {
+  "Passage": {
     primary: {
       light: "#b7abcf",
       main: "#58467d",
@@ -77,12 +77,26 @@ const networks = {
       contrastText: "#fff",
     },
     secondary: {
-      light: "#8fc9c4",
-      main: "#009688",
-      dark: "#01786d",
+      light: "#eb3d89",
+      main: "#c9226b",
+      dark: "#6e2444",
       contrastText: "#000",
     },
   },
+  Stargaze: {
+    primary: {
+      light: "#b7abcf",
+      main: "#58467d",
+      dark: "#312941",
+      contrastText: "#fff",
+    },
+    secondary: {
+      light: "#e73986",
+      main: "#db2777",
+      dark: "#8f174c",
+      contrastText: "#000",
+    },
+  }
 };
 
 const defaultPallet = {

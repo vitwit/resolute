@@ -4,7 +4,7 @@ import { getBalance } from "../features/bank/bankSlice";
 import BalanceInfo from "../components/BalanceInfo";
 import { getDelegations, getUnbonding } from "../features/staking/stakeSlice";
 import { getDelegatorTotalRewards } from "../features/distribution/distributionSlice";
-import { totalBalance } from "../utils/denom";
+import { parseBalance } from "../utils/denom";
 import {
   shortenAddress,
   shortenPubKey,
@@ -19,6 +19,7 @@ import { Box } from "@mui/system";
 
 export default function Overview() {
   const wallet = useSelector((state) => state.wallet);
+    const {config} = chainInfo;
   const { chainInfo, connected, address } = wallet;
   const balance = useSelector((state) => state.bank.balance);
   const delegations = useSelector((state) => state.staking.delegations);

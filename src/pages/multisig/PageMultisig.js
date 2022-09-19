@@ -18,8 +18,9 @@ import { DialogCreateMultisig } from "../../components/DialogCreateMultisig";
 import { getMultisigAccounts } from "../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
+import { getNetworkByChainId } from "../../utils/networks";
 
-export default function CreateMultisig() {
+export default function PageMultisig() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const createMultiAccRes = useSelector(
@@ -32,16 +33,17 @@ export default function CreateMultisig() {
   const multisigAccounts = useSelector(
     (state) => state.multisig.multisigAccounts
   );
-  const accounts = (multisigAccounts.data && multisigAccounts.data.data) || [];
+  const accounts = multisigAccounts.accounts
   const walletAddress = useSelector((state) => state.wallet.address);
 
   const { config } = chainInfo;
   const { chainId } = config;
-  const addressPrefix = config?.bech32Config?.bech32PrefixAccAddr;
+  const networkInfo = getNetworkByChainId(chainId);
+  const addressPrefix = networkInfo?.config?.bech32Config?.bech32PrefixAccAddr;
 
   const dispatch = useDispatch();
   useEffect(() => {
-    if (createMultiAccRes.status === "done") {
+    if (createMultiAccRes.status === "idle") {
       setOpen(false);
       dispatch(getMultisigAccounts(walletAddress));
     }
@@ -90,7 +92,7 @@ export default function CreateMultisig() {
       <Box sx={{ mt: 1 }}>
         {multisigAccounts?.status !== "pending" && !accounts?.length ? (
           <Typography variant="body1" color="error" fontWeight={500}>
-            No Multisig Accounts found on your address
+            No Multisig accounts found on your address
           </Typography>
         ) : (
           ""

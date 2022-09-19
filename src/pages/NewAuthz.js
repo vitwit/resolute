@@ -24,7 +24,7 @@ import {
   setError,
 } from "./../features/common/commonSlice";
 import InputAdornment from "@mui/material/InputAdornment";
-import { AlertTitle, Typography, Alert } from "@mui/material";
+import { Typography, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 export default function NewAuthz() {
@@ -109,7 +109,7 @@ export default function NewAuthz() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
       })
     );
   };
@@ -124,7 +124,7 @@ export default function NewAuthz() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
       })
     );
   };

@@ -8,7 +8,7 @@ import {
 } from './../features/common/commonSlice';
 import { getBalance, txBankSend } from '../features/bank/bankSlice';
 import Send from '../components/Send';
-import { totalBalance } from '../utils/denom';
+import { parseBalance } from '../utils/denom';
 import Alert from '@mui/material/Alert';
 
 export default function SendPage() {
@@ -57,7 +57,7 @@ export default function SendPage() {
     }, [chainInfo]);
 
     useEffect(() => {
-        setBalance(totalBalance(balance.balance, currency?.coinDecimals));
+        setBalance(parseBalance([balance.balance], currency?.coinDecimals, currency?.coinMinimalDenom));
     }, [balance]);
 
     const onSendTx = (data) => {
@@ -76,7 +76,7 @@ export default function SendPage() {
                     denom: currency.coinMinimalDenom,
                     chainId: chainInfo.config.chainId,
                     rpc: chainInfo.config.rpc,
-                    feeAmount: chainInfo.config.gasPriceStep.average,
+                    feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
                 }))
             }
         } else {
@@ -89,7 +89,7 @@ export default function SendPage() {
                 denom: currency.coinMinimalDenom,
                 chainId: chainInfo.config.chainId,
                 rpc: chainInfo.config.rpc,
-                feeAmount: chainInfo.config.gasPriceStep.average,
+                feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
             })
         }
     }

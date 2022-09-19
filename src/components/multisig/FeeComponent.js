@@ -41,8 +41,10 @@ function FeeComponent({ chainInfo, onSetFeeChange }) {
         Fee
       </Typography>
       <ButtonGroup fullWidth aria-label="outlined primary button group">
-        {Object.entries(gasPriceStep).map(([key, value]) => (
+        {Object.entries(gasPriceStep).map(([key, value], index) => (
           <BootstrapButton
+            key={index}
+            size="small"
             onClick={() => {
               onSetFeeChange(value);
               setActive(key);
@@ -50,11 +52,11 @@ function FeeComponent({ chainInfo, onSetFeeChange }) {
             variant={active === key ? "contained" : null}
           >
             <span style={{ color: active === key ? "" : "#6b6b6b" }}>
-              {key}
+              {key}&nbsp;
             </span>
-            <br />
             <span style={{ color: active === key ? "" : "#6b6b6b" }}>
-              {value} {chainInfo?.config.currencies[0].coinMinimalDenom}
+              ({value}
+              {chainInfo?.config.currencies[0].coinMinimalDenom})
             </span>
           </BootstrapButton>
         ))}
