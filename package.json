@@ -9,7 +9,7 @@
     "@cosmjs/proto-signing": "^0.28.11",
     "@cosmjs/stargate": "^0.28.13",
     "@emotion/react": "^11.10.0",
-    "@emotion/styled": "^11.10.0",
+    "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.3",
     "@mui/material": "^5.10.0",
     "@mui/x-date-pickers": "^5.0.1",
