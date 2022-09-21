@@ -1,0 +1,17 @@
+active: "dev"
+
+production:
+  database:
+    host: ""
+    port: 5432
+    user: ""
+    password: ""
+    name: ""
+
+dev:
+  database:
+    host: "localhost"
+    port: 5432
+    user: "alice"
+    password: "password"
+    name: "multisig"

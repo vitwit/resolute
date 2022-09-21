@@ -5,20 +5,13 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 
+	"github.com/vitwit/resolute/server/config"
+	"github.com/vitwit/resolute/server/handler"
+
 	"database/sql"
 	"fmt"
 
 	_ "github.com/lib/pq"
-
-	"github.com/vitwit/resolute/server/handler"
-)
-
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "alice"
-	password = "password"
-	dbname   = "multisig"
 )
 
 func main() {
@@ -26,8 +19,14 @@ func main() {
 	e.Logger.SetLevel(log.ERROR)
 	e.Use(middleware.Logger())
 
-	// connection string
-	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	config, err := config.ParseConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cfg := config.DB
+
+	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DatabaseName)
 
 	// open database
 	db, err := sql.Open("postgres", psqlconn)
@@ -53,9 +52,10 @@ func main() {
 
 	// Routes
 	e.POST("/multisig", h.CreateMultisigAccount)
-	e.GET("/accounts/:address", h.GetMultisigAccounts)
-	e.GET("/multisig/:address", h.GetMultisigAccount)
-	e.POST("/multisig/:address/tx", h.CreateTransaction)
+	e.GET("/multisig/:address", h.GetMultisigAccounts)
+	// e.GET("/multisig/:address", h.GetMultisigAccount)
+	// e.POST("/multisig/:address/tx", h.CreateTransaction)
+	// e.GET("/multisig/:address/txs", h.GetTransactions)
 	// e.POST("/follow/:id", h.Follow)
 	// e.POST("/posts", h.CreatePost)
 	// e.GET("/feed", h.FetchPost)
