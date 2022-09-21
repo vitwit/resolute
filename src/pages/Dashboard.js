@@ -345,7 +345,7 @@ function DashboardContent(props) {
                   <Route path="/groups/:id" element={<Group />}></Route>
                   <Route path="/groups/proposals/:id" element={<Proposal />}></Route>
                   <Route path="/groups/:id/policies/:policyId" element={<Policy />}></Route>
-                  <Route path="/group/policies/:policyAddress/proposals" element={<CreateProposal />}></Route>
+                  <Route path="/group/:id/policies/:policyAddress/proposals" element={<CreateProposal />}></Route>
                   <Route
                     path="/group/create-group"
                     element={<CreateGroupPage />}

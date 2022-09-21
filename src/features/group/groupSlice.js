@@ -322,7 +322,7 @@ export const txUpdateGroupAdmin = createAsyncThunk(
       console.log('msg----', msg)
 
       const result = await signAndBroadcastUpdateGroupAdmin(
-        data.admin,
+        data.signer,
         [msg],
         fee(data.denom, data.feeAmount, 260000),
         data.chainId,
@@ -377,7 +377,7 @@ export const txUpdateGroupMetadata = createAsyncThunk(
       console.log('msg----', msg)
 
       const result = await signAndBroadcastUpdateGroupMetadata(
-        data.admin,
+        data.signer,
         [msg],
         fee(data.denom, data.feeAmount, 260000),
         data.chainId,
@@ -421,7 +421,7 @@ export const txCreateGroupProposal = createAsyncThunk(
   'group/tx-create-group-proposal',
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     dispatch(setTxLoad());
-
+    console.log('proposal --- ', data)
     try {
       let msg = CreateGroupProposal(
         data.groupPolicyAddress,
@@ -900,6 +900,9 @@ export const groupSlice = createSlice({
     },
     resetUpdateGroupMember: (state) => {
       state.updateGroupRes.status = '';
+    },
+    resetCreateGroupProposalRes: state => {
+      state.groupProposalRes.status = '';
     }
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -1116,13 +1119,13 @@ export const groupSlice = createSlice({
 
     builder
       .addCase(txUpdateGroupMetadata.pending, (state) => {
-        state.addPolicyMetadataRes.status = `pending`;
+        state.updateGroupMetadataRes.status = `pending`;
       })
       .addCase(txUpdateGroupMetadata.fulfilled, (state, action) => {
-        state.addPolicyMetadataRes.status = 'idle';
+        state.updateGroupMetadataRes.status = 'idle';
       })
       .addCase(txUpdateGroupMetadata.rejected, (state, _) => {
-        state.addPolicyMetadataRes.status = `rejected`;
+        state.updateGroupMetadataRes.status = `rejected`;
       });
 
     builder
@@ -1172,6 +1175,8 @@ export const groupSlice = createSlice({
   },
 });
 
-export const { resetGroupTx, resetUpdateGroupMember } = groupSlice.actions;
+export const { resetGroupTx,
+  resetCreateGroupProposalRes,
+  resetUpdateGroupMember } = groupSlice.actions;
 
 export default groupSlice.reducer;

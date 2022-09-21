@@ -1,7 +1,7 @@
 import {
     Box, Button, CircularProgress, Grid, Paper,
     TextField,
-    Typography, IconButton
+    Typography, IconButton, Tooltip
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,31 +18,61 @@ const GroupInfo = ({ id, wallet }) => {
     const [admin, setAdmin] = useState('');
     const [metadata, setMetadata] = useState('');
     const [showMetadataInput, setShowMetadataInput] = useState(false);
+    const [groupInformation, setGroupInformation] = useState({});
 
     const groupMembers = useSelector(state => state.group.groupMembers)
     const { data: members, status: memberStatus } = groupMembers;
 
     const groupInfo = useSelector(state => state.group.groupInfo);
     const { data, status } = groupInfo;
-    
-    const leaveGroupRes = useSelector(state => state.group.leaveGroupRes)
+
+    const leaveGroupRes = useSelector(state => state.group.leaveGroupRes);
+    const updateAdminRes = useSelector(state => state.group.updateGroupAdminRes);
+    const updateMetadataRes = useSelector(state => state.group.updateGroupMetadataRes);
 
 
     const isExistInGroup = () => {
         const existMember = members?.members?.filter(m => m?.member?.address === wallet?.address)
 
         if (existMember && existMember?.length) return true
-        
-        if (data?.admin === wallet?.address)  return true
+
+        if (groupInformation?.admin === wallet?.address) return true
 
         return false;
     }
 
-    useEffect(() => {
+    const getGroup = () => {
         dispatch(getGroupById({
             baseURL: wallet?.chainInfo?.config?.rest, id: id
         }))
+    }
+
+    useEffect(() => {
+        getGroup();
     }, [])
+
+    useEffect(() => {
+        if (groupInfo?.status === 'idle') {
+            setGroupInformation(groupInfo?.data?.info)
+        }
+
+    }, [groupInfo?.status])
+
+    useEffect(() => {
+        if (updateAdminRes?.status === 'idle') {
+            setShowAdminInput(false);
+            getGroup();
+        }
+
+    }, [updateAdminRes?.status])
+
+    useEffect(() => {
+        if (updateMetadataRes?.status === 'idle') {
+            setShowMetadataInput(false);
+            getGroup();
+        }
+
+    }, [updateMetadataRes?.status])
 
 
     const handleLeaveGroup = () => {
@@ -60,6 +90,7 @@ const GroupInfo = ({ id, wallet }) => {
     const UpdateAdmin = () => {
         const chainInfo = wallet?.chainInfo;
         dispatch(txUpdateGroupAdmin({
+            signer: wallet?.address,
             admin: data?.info?.admin,
             groupId: id,
             newAdmin: admin,
@@ -73,6 +104,7 @@ const GroupInfo = ({ id, wallet }) => {
     const UpdateMetadata = () => {
         const chainInfo = wallet?.chainInfo;
         dispatch(txUpdateGroupMetadata({
+            signer: wallet?.address,
             admin: data?.info?.admin,
             groupId: id,
             metadata,
@@ -163,36 +195,47 @@ const GroupInfo = ({ id, wallet }) => {
                                         <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
                                             {
                                                 showAdminInput ?
-                                                    <Box>
-                                                        <IconButton
-                                                            sx={{ border: '1px solid' }}
-                                                            onClick={
-                                                                () => UpdateAdmin()
-                                                            }
-                                                            color="primary">
-                                                            <CheckIcon
-                                                                sx={{ fontSize: 32 }}
-                                                            />
-                                                        </IconButton>
-                                                        <IconButton
-                                                            onClick={
-                                                                () => setShowAdminInput(false)
-                                                            }
-                                                            color="error">
-                                                            <CancelIcon
-                                                                sx={{ fontSize: 32 }}
-                                                            />
-                                                        </IconButton>
-                                                    </Box> :
+                                                    updateAdminRes?.status === 'pending' ?
+                                                        <CircularProgress /> :
+                                                        <Box>
+
+                                                            <Tooltip title={'Update'} arrow>
+                                                                <IconButton
+                                                                    sx={{ border: '1px solid' }}
+                                                                    onClick={
+                                                                        () => UpdateAdmin()
+                                                                    }
+                                                                    color="primary">
+                                                                    <CheckIcon
+                                                                        sx={{ fontSize: 32 }}
+                                                                    />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                            <Tooltip title={'Cancel'} arrow>
+                                                                <IconButton
+                                                                    onClick={
+                                                                        () => setShowAdminInput(false)
+                                                                    }
+                                                                    color="error">
+                                                                    <CancelIcon
+                                                                        sx={{ fontSize: 32 }}
+                                                                    />
+                                                                </IconButton>
+                                                            </Tooltip>
+
+                                                        </Box> :
                                                     isExistInGroup() ?
-                                                        <EditIcon
-                                                            color='primary'
-                                                            onClick={
-                                                                () => {
-                                                                    setAdmin(data?.info?.admin)
-                                                                    setShowAdminInput(!showAdminInput)
-                                                                }
-                                                            } /> : null
+                                                        <Tooltip title={'Edit'} arrow>
+                                                            <EditIcon
+                                                                color='primary'
+                                                                onClick={
+                                                                    () => {
+                                                                        setAdmin(data?.info?.admin)
+                                                                        setShowAdminInput(!showAdminInput)
+                                                                    }
+                                                                } />
+                                                        </Tooltip>
+                                                        : null
                                             }
 
                                         </Grid>
@@ -239,35 +282,46 @@ const GroupInfo = ({ id, wallet }) => {
                                         <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
                                             {
                                                 showMetadataInput ?
-                                                    <Box>
-                                                        <IconButton
+                                                    updateMetadataRes?.status === 'pending' ?
+                                                        <CircularProgress /> :
+                                                        <Box>
+                                                            <Tooltip title={'Update'} arrow>
+                                                                <IconButton
 
-                                                            sx={{ border: '1px solid' }}
-                                                            onClick={
-                                                                () => UpdateMetadata()
-                                                            }
-                                                            color="primary">
-                                                            <CheckIcon
-                                                                sx={{ fontSize: 32 }}
-                                                            />
-                                                        </IconButton>
-                                                        <IconButton
-                                                            onClick={
-                                                                () => setShowMetadataInput(false)
-                                                            }
-                                                            color="error">
-                                                            <CancelIcon
-                                                                sx={{ fontSize: 32 }}
-                                                            />
-                                                        </IconButton>
-                                                    </Box> :
+                                                                    sx={{ border: '1px solid' }}
+                                                                    onClick={
+                                                                        () => UpdateMetadata()
+                                                                    }
+                                                                    color="primary">
+                                                                    <CheckIcon
+                                                                        sx={{ fontSize: 32 }}
+                                                                    />
+                                                                </IconButton>
+                                                            </Tooltip>
+
+                                                            <Tooltip title={'Cancel'} arrow>
+                                                                <IconButton
+                                                                    onClick={
+                                                                        () => setShowMetadataInput(false)
+                                                                    }
+                                                                    color="error">
+                                                                    <CancelIcon
+                                                                        sx={{ fontSize: 32 }}
+                                                                    />
+                                                                </IconButton>
+                                                            </Tooltip>
+
+                                                        </Box> :
                                                     isExistInGroup() ?
-                                                        <EditIcon color='primary' onClick={
-                                                            () => {
-                                                                setMetadata(data?.info?.metadata)
-                                                                setShowMetadataInput(!showMetadataInput)
-                                                            }
-                                                        } /> : null
+                                                        <Tooltip title={'Update'} arrow>
+                                                            <EditIcon color='primary' onClick={
+                                                                () => {
+                                                                    setMetadata(data?.info?.metadata)
+                                                                    setShowMetadataInput(!showMetadataInput)
+                                                                }
+                                                            } />
+                                                        </Tooltip>
+                                                        : null
 
 
                                             }

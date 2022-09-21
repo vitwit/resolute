@@ -3,9 +3,9 @@ import { Button, Grid, IconButton, Paper, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import Send from "../../components/multisig/bulk/Send";
-import UnDelegateForm from "../../components/multisig/bulk/UnDelegateForm";
-import RedelegateForm from "../../components/multisig/bulk/RedelegateForm";
+import Send from "../../components/group/bulk/Send";
+import UnDelegateForm from "../../components/group/bulk/UnDelegateForm";
+import RedelegateForm from "../../components/group/bulk/RedelegateForm";
 import { shortenAddress } from "../../utils/util";
 import { Divider } from "@mui/material";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
@@ -13,7 +13,7 @@ import {
     getAllValidators,
     getDelegations,
 } from "../../features/staking/stakeSlice";
-import Delegate from "../../components/multisig/bulk/Delegate";
+import Delegate from "../../components/group/bulk/Delegate";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import {
@@ -29,14 +29,16 @@ import {
 import { parseBalance } from "../../utils/denom";
 import { Pagination } from "@mui/material";
 import { TextField } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
 import FeeComponent from "./../../components/multisig/FeeComponent";
-import {
-    createTxn,
-    resetCreateTxnState,
-} from "../../features/multisig/multisigSlice";
+// import {
+//     createTxn,
+//     resetCreateTxnState,
+// } from "../../features/multisig/multisigSlice";
 import { fee } from "../../txns/execute";
 import { resetError, setError } from "../../features/common/commonSlice";
+import TxBasicFields from "../../components/group/TxBasicFields";
+import { useForm, Controller, FormProvider, useFormContext } from "react-hook-form";
+
 
 // TODO: serve urls from env
 
@@ -210,6 +212,12 @@ const FileUpload = (props) => {
                 />
                 Upload csv file
             </Button>
+            <Button
+                onClick={() => props.handleCancel()}
+                sx={{ ml: 3 }}
+                variant="outlined" color="error">
+                Cancel
+            </Button>
         </Box>
     );
 };
@@ -223,6 +231,12 @@ export default function PagePolicyTx({ control, setValue }) {
     const { chainInfo, connected } = wallet;
 
     const validators = useSelector((state) => state.staking.validators);
+    const methods = useForm({
+        defaultValues: {
+            gas: 20000
+        }
+    });
+    const onSubmit = data => console.log(data);
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -352,35 +366,35 @@ export default function PagePolicyTx({ control, setValue }) {
 
     const [slicedMsgs, setSlicedMsgs] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    var createRes = useSelector((state) => state.multisig.createTxnRes);
+    // var createRes = useSelector((state) => state.multisig.createTxnRes);
 
     let navigate = useNavigate();
-    useEffect(() => {
-        if (createRes?.status === "rejected") {
-            dispatch(
-                setError({
-                    type: "error",
-                    message: createRes?.error,
-                })
-            );
-        } else if (createRes?.status === "idle") {
-            dispatch(
-                setError({
-                    type: "success",
-                    message: "Transaction created",
-                })
-            );
+    // useEffect(() => {
+    //     if (createRes?.status === "rejected") {
+    //         dispatch(
+    //             setError({
+    //                 type: "error",
+    //                 message: createRes?.error,
+    //             })
+    //         );
+    //     } else if (createRes?.status === "idle") {
+    //         dispatch(
+    //             setError({
+    //                 type: "success",
+    //                 message: "Transaction created",
+    //             })
+    //         );
 
-            setTimeout(() => {
-                navigate(`/multisig/${address}/txs`);
-            }, 200);
-        }
-    }, [createRes]);
+    //         setTimeout(() => {
+    //             navigate(`/multisig/${address}/txs`);
+    //         }, 200);
+    //     }
+    // }, [createRes]);
 
     useEffect(() => {
         return () => {
             dispatch(resetError());
-            dispatch(resetCreateTxnState());
+            // dispatch(resetCreateTxnState());
         };
     }, []);
 
@@ -404,36 +418,27 @@ export default function PagePolicyTx({ control, setValue }) {
     //     },
     //   });
 
-    const onSubmit = (data) => {
-        const feeObj = fee(
-            chainInfo?.config.currencies[0].coinMinimalDenom,
-            data.fees,
-            data.gas
-        );
-        dispatch(
-            createTxn({
-                address: address,
-                chainId: chainInfo?.config?.chainId,
-                msgs: messages,
-                fee: feeObj,
-                memo: data.memo,
-                gas: data.gas,
-            })
-        );
-    };
+    // const onSubmit = (data) => {
+    //     const feeObj = fee(
+    //         chainInfo?.config.currencies[0].coinMinimalDenom,
+    //         data.fees,
+    //         data.gas
+    //     );
+    //     dispatch(
+    //         createTxn({
+    //             address: address,
+    //             chainId: chainInfo?.config?.chainId,
+    //             msgs: messages,
+    //             fee: feeObj,
+    //             memo: data.memo,
+    //             gas: data.gas,
+    //         })
+    //     );
+    // };
 
     return (
         <>
-            <Typography
-                mt={2}
-                variant="h6"
-                color="text.primary"
-                sx={{
-                    textAlign: "left",
-                }}
-            >
-                Create Policy Transaction
-            </Typography>
+
             {!connected ? (
                 <Typography
                     sx={{
@@ -490,56 +495,81 @@ export default function PagePolicyTx({ control, setValue }) {
                                 </>
                             ) : (
                                 <FileUpload
+                                    handleCancel={
+                                        () => setMode('')
+                                    }
                                     onFileContents={(content, type) =>
                                         onFileContents(content, type)
                                     }
                                 />
                             )}
 
-                            {txType === "Send" ? (
-                                <Send
-                                    chainInfo={chainInfo}
-                                    address={address}
-                                    onSend={(payload) => {
-                                        setMessages([...messages, payload]);
-                                        setValue('msgs', [...messages, payload])
-                                    }}
-                                />
-                            ) : null}
+                            {
+                                mode === 'manual' ?
+                                    <FormProvider {...methods}>
+                                        <form onSubmit={methods.handleSubmit(onSubmit)}>
+                                            {txType === "Send" ? (
+                                                <Send
+                                                    chainInfo={chainInfo}
+                                                    address={address}
+                                                    onSend={(payload) => {
+                                                        console.log('value---', payload)
+                                                        setMessages([...messages, payload]);
+                                                        setValue('msgs', [...messages, payload])
+                                                    }}
+                                                />
+                                            ) : null}
 
-                            {txType === "Delegate" ? (
-                                <Delegate
-                                    chainInfo={chainInfo}
-                                    address={address}
-                                    validators={validators}
-                                    onDelegate={(payload) => {
-                                        setMessages([...messages, payload]);
-                                        setValue('msgs', [...messages, payload])
-                                    }}
-                                />
-                            ) : null}
+                                            {txType === "Delegate" ? (
+                                                <Delegate
+                                                    chainInfo={chainInfo}
+                                                    address={address}
+                                                    validators={validators}
+                                                    onDelegate={(payload) => {
+                                                        setMessages([...messages, payload]);
+                                                        setValue('msgs', [...messages, payload])
+                                                    }}
+                                                />
+                                            ) : null}
 
-                            {txType === "Redelegate" ? (
-                                <RedelegateForm
-                                    chainInfo={chainInfo}
-                                    address={address}
-                                    onRedelegate={(payload) => {
-                                        setMessages([...messages, payload]);
-                                        setValue('msgs', [...messages, payload]);
-                                    }}
-                                />
-                            ) : null}
+                                            {txType === "Redelegate" ? (
+                                                <RedelegateForm
+                                                    chainInfo={chainInfo}
+                                                    address={address}
+                                                    onRedelegate={(payload) => {
+                                                        setMessages([...messages, payload]);
+                                                        setValue('msgs', [...messages, payload]);
+                                                    }}
+                                                />
+                                            ) : null}
 
-                            {txType === "Undelegate" ? (
-                                <UnDelegateForm
-                                    chainInfo={chainInfo}
-                                    address={address}
-                                    onUndelegate={(payload) => {
-                                        setMessages([...messages, payload]);
-                                        setValue('msgs', [...messages, payload])
-                                    }}
-                                />
-                            ) : null}
+                                            {txType === "Undelegate" ? (
+                                                <UnDelegateForm
+                                                    chainInfo={chainInfo}
+                                                    address={address}
+                                                    onUndelegate={(payload) => {
+                                                        setMessages([...messages, payload]);
+                                                        setValue('msgs', [...messages, payload])
+                                                    }}
+                                                />
+                                            ) : null}
+
+                                            <TxBasicFields
+                                                chainInfo={chainInfo}
+                                            />
+
+                                            <Button type="submit">
+                                                Submit
+                                            </Button>
+                                        </form>
+                                    </FormProvider> : null
+                            }
+                            {/* <Button
+                                onClick={() => setMode('')}
+                                sx={{ float: 'right', mt: -5,width: '20%' }}
+                                variant="outlined" color="error">
+                                Cancel
+                            </Button> */}
                         </Paper>
                     </Grid>
 
@@ -606,102 +636,106 @@ export default function PagePolicyTx({ control, setValue }) {
                                 ) : null}
 
                                 {messages.length > 0 ? (
-                                    <Grid
-                                        container
-                                        spacing={2}
-                                        sx={{
-                                            mt: 2,
-                                        }}
-                                    >
-                                        <Grid item xs={12} md={4}>
-                                            <Controller
-                                                name="gas"
-                                                control={control}
-                                                rules={{ required: "Gas is required" }}
-                                                render={({ field, fieldState: { error } }) => (
-                                                    <TextField
-                                                        sx={{
-                                                            mb: 2,
-                                                        }}
-                                                        {...field}
-                                                        error={!!error}
-                                                        size="small"
-                                                        helperText={error ? error.message : null}
-                                                        type="number"
-                                                        required
-                                                        label="Gas"
-                                                        fullWidth
-                                                    />
-                                                )}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} md={8}>
-                                            <Controller
-                                                name="memo"
-                                                control={control}
-                                                render={({ field }) => (
-                                                    <TextField
-                                                        sx={{
-                                                            mb: 2,
-                                                        }}
-                                                        size="small"
-                                                        {...field}
-                                                        label="Memo"
-                                                        fullWidth
-                                                    />
-                                                )}
-                                            />
-                                        </Grid>
-                                        <Grid
-                                            item
-                                            xs={12}
-                                            md={12}
-                                            sx={{
-                                                pt: 0,
-                                                textAlign: "left",
-                                            }}
-                                        >
-                                            <FeeComponent
-                                                sx={{
-                                                    pt: 0,
-                                                    textAlign: "left",
-                                                }}
-                                                onSetFeeChange={(v) => {
-                                                    setValue(
-                                                        "fees",
-                                                        Number(v) *
-                                                        10 **
-                                                        chainInfo?.config?.currencies[0].coinDecimals
-                                                    );
-                                                }}
-                                                chainInfo={chainInfo}
-                                            />
-                                        </Grid>
+                                    <TxBasicFields
+                                        chainInfo={chainInfo}
+                                        setValue={setValue}
+                                        control={control} />
+                                    //                 <Grid
+                                    //                     container
+                                    //                     spacing={2}
+                                    //                     sx={{
+                                    //                         mt: 2,
+                                    //                     }}
+                                    //                 >
+                                    //                     <Grid item xs={12} md={4}>
+                                    //                         <Controller
+                                    //                             name="gas"
+                                    //                             control={control}
+                                    //                             rules={{ required: "Gas is required" }}
+                                    //                             render={({ field, fieldState: { error } }) => (
+                                    //                                 <TextField
+                                    //                                     sx={{
+                                    //                                         mb: 2,
+                                    //                                     }}
+                                    //                                     {...field}
+                                    //                                     error={!!error}
+                                    //                                     size="small"
+                                    //                                     helperText={error ? error.message : null}
+                                    //                                     type="number"
+                                    //                                     required
+                                    //                                     label="Gas"
+                                    //                                     fullWidth
+                                    //                                 />
+                                    //                             )}
+                                    //                         />
+                                    //                     </Grid>
+                                    //                     <Grid item xs={12} md={8}>
+                                    //                         <Controller
+                                    //                             name="memo"
+                                    //                             control={control}
+                                    //                             render={({ field }) => (
+                                    //                                 <TextField
+                                    //                                     sx={{
+                                    //                                         mb: 2,
+                                    //                                     }}
+                                    //                                     size="small"
+                                    //                                     {...field}
+                                    //                                     label="Memo"
+                                    //                                     fullWidth
+                                    //                                 />
+                                    //                             )}
+                                    //                         />
+                                    //                     </Grid>
+                                    //                     <Grid
+                                    //                         item
+                                    //                         xs={12}
+                                    //                         md={12}
+                                    //                         sx={{
+                                    //                             pt: 0,
+                                    //                             textAlign: "left",
+                                    //                         }}
+                                    //                     >
+                                    //                         <FeeComponent
+                                    //                             sx={{
+                                    //                                 pt: 0,
+                                    //                                 textAlign: "left",
+                                    //                             }}
+                                    //                             onSetFeeChange={(v) => {
+                                    //                                 setValue(
+                                    //                                     "fees",
+                                    //                                     Number(v) *
+                                    //                                     10 **
+                                    //                                     chainInfo?.config?.currencies[0].coinDecimals
+                                    //                                 );
+                                    //                             }}
+                                    //                             chainInfo={chainInfo}
+                                    //                         />
+                                    //                     </Grid>
 
-                                        {/* <Grid
-                        item
-                        xs={12}
-                        md={12}
-                        sx={{
-                          justifyContent: "right",
-                        }}
-                      >
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          disableElevation
-                          sx={{
-                            mt: 2,
-                            textTransform: "none",
-                          }}
-                          disabled={createRes.status === "pending"}
-                        >
-                          {createRes.status === "pending"
-                            ? "Please wait..."
-                            : "Create"}
-                        </Button>
-                      </Grid> */}
-                                    </Grid>
+                                    //                     {/* <Grid
+                                    //     item
+                                    //     xs={12}
+                                    //     md={12}
+                                    //     sx={{
+                                    //       justifyContent: "right",
+                                    //     }}
+                                    //   >
+                                    //     <Button
+                                    //       type="submit"
+                                    //       variant="contained"
+                                    //       disableElevation
+                                    //       sx={{
+                                    //         mt: 2,
+                                    //         textTransform: "none",
+                                    //       }}
+                                    //       disabled={createRes.status === "pending"}
+                                    //     >
+                                    //       {createRes.status === "pending"
+                                    //         ? "Please wait..."
+                                    //         : "Create"}
+                                    //     </Button>
+                                    //   </Grid> */}
+                                    //                 </Grid>
                                 ) : null}
                             </Box>
                         </Paper>

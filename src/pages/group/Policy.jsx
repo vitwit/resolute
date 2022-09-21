@@ -173,7 +173,7 @@ const CreateProposal = ({ policyInfo }) => {
                 endIcon={<AddIcon />}
                 sx={{ float: 'right', m: 6 }}
                 variant='contained'
-                onClick={()=>navigate(`/group/policies/${policyInfo?.address}/proposals`)}
+                onClick={()=>navigate(`/group/${params?.id}/policies/${policyInfo?.address}/proposals`)}
                 // onClick={() => setShowCreateProposal(!showCreateProposal)}
                 >
                 Create Proposal

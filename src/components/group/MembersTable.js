@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TablePagination from '@mui/material/TablePagination';
-import { IconButton, Typography } from '@mui/material';
+import { IconButton, Tooltip, Typography } from '@mui/material';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -81,15 +81,18 @@ export default function MembersTable({ rows, total,
                             </StyledTableCell>
                             <StyledTableCell
                                 align="right">
-                                <IconButton onClick={()=>{
-                                    handleDeleteMember({
-                                        address: row?.member?.address,
-                                        weight: '0',
-                                        metadata: row?.member?.metadata
-                                    })
-                                }} color='error'>
-                                    <DeleteOutline />
-                                </IconButton>
+                                <Tooltip title={'Delete'} arrow>
+                                    <IconButton onClick={() => {
+                                        handleDeleteMember({
+                                            address: row?.member?.address,
+                                            weight: '0',
+                                            metadata: row?.member?.metadata
+                                        })
+                                    }} color='error'>
+                                        <DeleteOutline />
+                                    </IconButton>
+                                </Tooltip>
+
                             </StyledTableCell>
                         </StyledTableRow>
                     ))}

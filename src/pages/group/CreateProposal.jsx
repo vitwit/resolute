@@ -3,76 +3,65 @@ import { Box } from '@mui/system';
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, FormProvider } from "react-hook-form";
 
 import PagePolicyTx from './PagePolicyTx';
 import { txCreateGroupProposal } from '../../features/group/groupSlice';
+import TxTypeComponent from '../../components/group/TxTypeComponent';
+import AddManualTx from './AddManualTx';
+import AddFileTx from './AddFileTx';
 
 function CreateProposal() {
+  const [type, setType] = React.useState(null);
   const { policyAddress } = useParams();
   const dispatch = useDispatch();
 
   const wallet = useSelector(state => state.wallet);
   const chainInfo = wallet?.chainInfo;
 
-  const { control, handleSubmit, setValue } = useForm({
-    defaultValues: {
-      msgs: [],
-      gas: 200000,
-      memo: "",
-      fees:
-        chainInfo?.config?.gasPriceStep?.average *
-        10 ** chainInfo?.config?.currencies[0].coinDecimals,
-    }
-  });
-
   const onSubmit = (data) => {
     data.groupPolicyAddress = policyAddress;
     data.messages = data.msgs;
-    data.proposers = [data.proposer];
+    data.proposers = [wallet?.address];
     data.admin = wallet?.address;
     data.chainId = wallet?.chainInfo?.config?.chainId
     data.rpc = wallet?.chainInfo?.config?.rpc;
     data.denom = wallet?.chainInfo?.config?.currencies?.[0]?.coinMinimalDenom || ''
     data.feeAmount = wallet?.chainInfo?.config?.gasPriceStep?.average || 0;
     console.log('fee amount', data)
-    dispatch(txCreateGroupProposal(data));
+    // dispatch(txCreateGroupProposal(data));
   }
 
   return (
-    <Paper variant='outlined'>
-      <Typography mt={4} ml={5}
-        textAlign={'left'} gutterBottom variant='h6'>
+    <>
+      <Typography gutterBottom mt={4} p={1}
+        textAlign={'left'} variant='h6'>
         Create Policy Proposal </Typography>
-      <Box p={5}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Controller
-            name="proposer"
-            control={control}
-            render={({ field }) =>
-              <TextField
-                fullWidth
-                {...field}
-                placeholder={'Proposer'}
-                name='proposer'
-              />
-            }
-          />
 
-          <PagePolicyTx setValue={setValue} control={control} />
+      <Paper variant='outlined'>
+        <Box sx={{ ml: 5, mt: 3 }}>
+          <Typography textAlign={'left'}>Proposer
+            <br />
+            <strong>{wallet?.address}</strong></Typography>
+        </Box>
 
-          <Box>
-            <Button sx={{ mr: 2 }} variant='outlined' color='error'>
-              Cancel
-            </Button>
-            <Button type='submit' variant='outlined' color='primary'>
-              Submit
-            </Button>
-          </Box>
-        </form>
+        <Box>
+          <TxTypeComponent handleType={(type) => {
+            setType(type)
+          }} />
+        </Box>
 
-      </Box>
-    </Paper>
+        <Box ml={5} mt={2}>
+          {type === 'single' && <AddManualTx
+            address={policyAddress}
+            chainInfo={chainInfo}
+            handleCancel={()=>setType(null)}
+          /> || null}
+          {type === 'multiple' && <AddFileTx /> || null}
+        </Box>
+      </Paper>
+    </>
+
   )
 }
 

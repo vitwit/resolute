@@ -319,7 +319,7 @@ const UpdateGroupMember = ({ id, wallet }) => {
         if (m?.length)
             setMembers([...m])
         else
-            setMembers([...members2, members1]);
+            setMembers([...members1]);
     }
 
     // useEffect(() => {
