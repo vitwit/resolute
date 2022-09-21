@@ -11,7 +11,7 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import ContentCopyOutlined from '@mui/icons-material/ContentCopyOutlined';
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types';
-import { drawerListItems } from './drawerListItems';
+import { DrawerListItems } from './DrawerListItems';
 import { parseBalance } from '../utils/denom';
 import { shortenAddress, shortenPubKey } from '../utils/util';
 import { useLocation } from 'react-router-dom';
@@ -148,10 +148,13 @@ export default function AppDrawer(props) {
             </List>
             <Divider />
             <List>
-                {
-                    drawerListItems(location.pathname,
-                        (path) => { onNavigate(path) }, selectedNetwork?.showAirdrop)
-                }
+                <DrawerListItems
+                    currentPath={location.pathname}
+                    onNavigate={(path) => {
+                        onNavigate(path)
+                    }}
+                    showAirdrop={selectedNetwork?.showAirdrop}
+                />
             </List>
         </Drawer>
     );

@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import stakeReducer from "../features/staking/stakeSlice";
 import proposalsReducer from "../features/gov/govSlice";
+import nodeReducer from "../features/node/nodeSlice";
 import feegrantReducer from "../features/feegrant/feegrantSlice";
 import authzReducer from "../features/authz/authzSlice";
 import bankReducer from "../features/bank/bankSlice";
@@ -26,6 +27,7 @@ export const store = configureStore({
     group: groupSlice,
     multisig: multiSlice,
     slashing: slashingSlice,
+    node: nodeReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
