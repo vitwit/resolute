@@ -12,6 +12,7 @@ import airdropSlice from "../features/airdrop/airdropSlice";
 import multiSlice from "../features/multisig/multisigSlice";
 import groupSlice from "../features/group/groupSlice";
 import slashingSlice from "../features/slashing/slashingSlice";
+import authReducer from "../features/auth/slice";
 
 export const store = configureStore({
   reducer: {
@@ -27,7 +28,8 @@ export const store = configureStore({
     group: groupSlice,
     multisig: multiSlice,
     slashing: slashingSlice,
-    node: nodeReducer
+    node: nodeReducer,
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

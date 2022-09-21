@@ -177,6 +177,8 @@ function DashboardContent(props) {
     );
   };
 
+  const [drawerOpen, setDrawerOpen] = React.useState(true);
+
   return (
     <ThemeProvider
       theme={mdTheme(darkMode, pallet?.primary, pallet?.secondary)}
@@ -194,6 +196,7 @@ function DashboardContent(props) {
                 navigateTo("/");
               }, 400);
             }}
+            toggleDrawer={() => setDrawerOpen(!drawerOpen)}
           />
           <Box sx={{ display: "flex" }}>
             <AppDrawer
@@ -206,6 +209,7 @@ function DashboardContent(props) {
               wallet={wallet}
               onCopy={copyToClipboard}
               selectedAuthz={selectedAuthz}
+              open={drawerOpen}
             />
             <Box
               component="main"
@@ -215,7 +219,7 @@ function DashboardContent(props) {
                     ? theme.palette.grey[200]
                     : theme.palette.grey[900],
                 flexGrow: 1,
-                height: "97vh",
+                height: "96vh",
                 overflow: "auto",
               }}
             >
@@ -227,7 +231,7 @@ function DashboardContent(props) {
               ) : (
                 <Toolbar />
               )}
-              <Container maxWidth="xl" sx={{ mt: 3, mb: 4 }}>
+              <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
                 <Routes>
                   <Route path="/" element={<Overview />} />
                   <Route
@@ -351,11 +355,6 @@ function DashboardContent(props) {
                     element={<CreateGroupPage />}
                   >
                   </Route>
-                  {/* <Route path="/group" element={<GroupPage />}></Route>
-                  <Route
-                    path="/group/create-group"
-                    element={<CreateGroupPage />}
-                  ></Route> */}
                   <Route path="*" element={<Page404 />}></Route>
                 </Routes>
               </Container>

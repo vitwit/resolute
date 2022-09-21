@@ -11,6 +11,7 @@ import { formatValidatorStatus } from "../utils/util";
 import { Pagination } from "@mui/material";
 import { Box } from "@mui/system";
 import { useSelector } from "react-redux";
+import { useTheme } from "@emotion/react";
 
 export function ActiveValidators(props) {
   const { onMenuAction } = props;
@@ -33,6 +34,8 @@ export function ActiveValidators(props) {
     setActiveVals(validators.activeSorted);
     setValidatorsSlice(activeVals.slice(0, perPage));
   }, [validators]); // react-hooks/exhaustive-deps
+
+  const theme = useTheme();
 
   return (
     <>
@@ -80,7 +83,9 @@ export function ActiveValidators(props) {
                 </StyledTableCell>
                 <StyledTableCell align="center">
                   <Button
-                    variant="outlined"
+                    variant={
+                      theme.palette?.mode === "light" ? "outlined" : "contained"
+                    }
                     className="button-capitalize-title"
                     size="small"
                     onClick={(e) =>
@@ -96,7 +101,11 @@ export function ActiveValidators(props) {
                   {delegatedTo[keyName] ? (
                     <>
                       <Button
-                        variant="outlined"
+                        variant={
+                          theme.palette?.mode === "light"
+                            ? "outlined"
+                            : "contained"
+                        }
                         style={{ marginLeft: 4 }}
                         className="button-capitalize-title"
                         size="small"
@@ -115,7 +124,11 @@ export function ActiveValidators(props) {
                         Undelegate
                       </Button>
                       <Button
-                        variant="outlined"
+                        variant={
+                          theme.palette?.mode === "light"
+                            ? "outlined"
+                            : "contained"
+                        }
                         className="button-capitalize-title"
                         style={{ marginLeft: 4 }}
                         size="small"

@@ -3,6 +3,9 @@ import { Decimal } from "@cosmjs/math";
 
 
 export function getTypeURLName(url) {
+  if (!url) {
+    return "-";
+  }
   let temp = url.split(".");
   if (temp?.length > 0) {
     return temp[temp?.length - 1];
@@ -79,7 +82,7 @@ export function computeVotePercentage(tally) {
 }
 
 export function shortenPubKey(pubKey, n) {
-  return pubKey?.length > n ? pubKey.substr(0, n - 1) + "&hellip;" : pubKey;
+  return pubKey?.length > n ? `${pubKey.substr(0, n - 3)}...` : pubKey;
 }
 
 export function shortenAddress(bech32, maxCharacters) {
