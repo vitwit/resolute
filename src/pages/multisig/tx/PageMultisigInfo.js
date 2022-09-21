@@ -12,7 +12,7 @@ import { multisigByAddress } from "../../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../../utils/util";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import Chip from "@mui/material/Chip";
-import { resetError, setError } from "../../../features/common/commonSlice";
+import { copyToClipboard } from "../../../utils/clipboard";
 
 export default function PageMultisigInfo() {
   const dispatch = useDispatch();
@@ -27,33 +27,6 @@ export default function PageMultisigInfo() {
     (state) => state.wallet.chainInfo?.config?.currencies[0]
   );
   const [totalStake, setTotalStaked] = useState(0);
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(
-      function () {
-        dispatch(
-          setError({
-            type: "success",
-            message: "Copied to clipboard",
-          })
-        );
-        setTimeout(() => {
-          dispatch(resetError());
-        }, 1000);
-      },
-      function () {
-        dispatch(
-          setError({
-            type: "error",
-            message: "Failed to copy",
-          })
-        );
-        setTimeout(() => {
-          dispatch(resetError());
-        }, 1000);
-      }
-    );
-  };
 
   useEffect(() => {
     let delegations = multisigDel?.delegations || [];
@@ -147,7 +120,7 @@ export default function PageMultisigInfo() {
               size="small"
               deleteIcon={<ContentCopyOutlined />}
               onDelete={() => {
-                copyToClipboard(multisigAccount?.address);
+                copyToClipboard(multisigAccount?.address, dispatch);
               }}
             />
           </Grid>
@@ -213,7 +186,7 @@ export default function PageMultisigInfo() {
                 size="small"
                 deleteIcon={<ContentCopyOutlined />}
                 onDelete={() => {
-                  copyToClipboard(p?.address);
+                  copyToClipboard(p?.address, dispatch);
                 }}
               />
             ))}

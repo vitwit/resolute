@@ -18,7 +18,6 @@ import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
 import Overview from "./Overview";
 import { CustomAppBar } from "../components/CustomAppBar";
-import { resetError, setError } from "../features/common/commonSlice";
 import Page404 from "./Page404";
 import AppDrawer from "../components/AppDrawer";
 import { Alert } from "../components/Alert";
@@ -26,6 +25,7 @@ import { getPallet, isDarkMode, mdTheme } from "../utils/theme";
 import { isConnected, logout } from "../utils/localStorage";
 import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
+import { copyToClipboard } from "../utils/clipboard";
 
 const Authz = lazy(() => import("./Authz"));
 const Validators = lazy(() => import("./Validators"));
@@ -142,35 +142,6 @@ function DashboardContent(props) {
     navigate(path);
   }
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(
-      function () {
-        dispatch(
-          setError({
-            type: "success",
-            message: "Copied to clipboard",
-          })
-        );
-        setTimeout(() => {
-          showTxSnack(false);
-          dispatch(resetError());
-        }, 1000);
-      },
-      function (err) {
-        dispatch(
-          setError({
-            type: "error",
-            message: "Failed to copy",
-          })
-        );
-        setTimeout(() => {
-          showTxSnack(false);
-          dispatch(resetError());
-        }, 1000);
-      }
-    );
-  };
-
   const [drawerOpen, setDrawerOpen] = React.useState(true);
 
   return (
@@ -201,7 +172,7 @@ function DashboardContent(props) {
               onNavigate={navigateTo}
               selectedNetwork={selectedNetwork}
               wallet={wallet}
-              onCopy={copyToClipboard}
+              onCopy={(msg) => copyToClipboard(msg, dispatch)}
               selectedAuthz={selectedAuthz}
               open={drawerOpen}
             />
