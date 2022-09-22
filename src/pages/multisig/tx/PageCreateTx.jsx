@@ -1,4 +1,4 @@
-import react, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Grid, IconButton, Paper, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
@@ -38,13 +38,15 @@ import {
 import { fee } from "../../../txns/execute";
 import { resetError, setError } from "../../../features/common/commonSlice";
 
-const MULTISIG_SEND_TEMPLATE = "https://resolute.vitwit.com/_static/send.csv";
+// TODO: serve urls from env
+
+const MULTISIG_SEND_TEMPLATE = "https://resolute.witval.com/_static/send.csv";
 const MULTISIG_DELEGATE_TEMPLATE =
-  "https://resolute.vitwit.com/_static/delegate.csv";
+  "https://resolute.witval.com/_static/delegate.csv";
 const MULTISIG_UNDELEGATE_TEMPLATE =
-  "https://resolute.vitwit.com/_static/undelegate.csv";
+  "https://resolute.witval.com/_static/undelegate.csv";
 const MULTISIG_REDELEGATE_TEMPLATE =
-  "https://resolute.vitwit.com/_static/redelegate.csv";
+  "https://resolute.witval.com/_static/redelegate.csv";
 
 const PER_PAGE = 6;
 
@@ -276,7 +278,7 @@ export default function PageCreateTx() {
           dispatch(
             setError({
               type: "error",
-              messages: error,
+              message: error,
             })
           );
         } else {
@@ -293,7 +295,7 @@ export default function PageCreateTx() {
           dispatch(
             setError({
               type: "error",
-              messages: error,
+              message: error,
             })
           );
         } else {
@@ -310,7 +312,7 @@ export default function PageCreateTx() {
           dispatch(
             setError({
               type: "error",
-              messages: error,
+              message: error,
             })
           );
         } else {
@@ -327,7 +329,7 @@ export default function PageCreateTx() {
           dispatch(
             setError({
               type: "error",
-              messages: error,
+              message: error,
             })
           );
         } else {

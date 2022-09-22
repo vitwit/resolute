@@ -1,42 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import Box from "@mui/system/Box";
 import Button from "@mui/material/Button";
-import { ButtonGroup } from "@mui/material";
-import GroupsByAdmin from "../components/GroupsByAdmin";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getGroupsByAdmin,
-  getGroupsByMember,
-} from "../features/group/groupSlice";
+import { Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import GroupsByMember from "../components/group/GroupsByMember";
+import { groupStyles } from "./group/group-css";
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import GroupTab, { TabPanel } from "../components/group/GroupTab";
+import CardSkeleton from "../components/group/CardSkeleton";
+
+const AdminGroupList = lazy(() => import('./group/AdminGroupList'))
+const MemberGroupList = lazy(() => import('./group/MemberGroupList'))
 
 export default function GroupPage() {
-  const [selectedTab, setSelectedTab] = useState("admin");
+  const [tab, setTab] = useState(0);
 
-  const address = useSelector((state) => state.wallet.address);
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
-  const groups = useSelector((state) => state.group.groups);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (address.length > 0)
-      dispatch(
-        getGroupsByAdmin({
-          baseURL: chainInfo.config.rest,
-          admin: address,
-        })
-      );
-  }, [address]);
-
-  useEffect(() => {
-    if (address.length > 0 && selectedTab === "member")
-      dispatch(
-        getGroupsByMember({
-          baseURL: chainInfo.config.rest,
-          address: address,
-        })
-      );
-  }, [selectedTab]);
+  const handleTabChange = (value) => {
+    setTab(value);
+  }
 
   const navigate = useNavigate();
   function navigateTo(path) {
@@ -47,10 +27,7 @@ export default function GroupPage() {
     <Box sx={{ p: 1 }}>
       <Box
         component="div"
-        sx={{
-          display: "flex",
-          justifyContent: "right",
-        }}
+        sx={groupStyles.gp_main}
       >
         <Button
           variant="contained"
@@ -58,48 +35,31 @@ export default function GroupPage() {
           onClick={() => {
             navigateTo("/group/create-group");
           }}
-          sx={{
-            textTransform: "none",
-          }}
+          endIcon={
+            <GroupAddIcon />
+          }
+          sx={groupStyles.t_transform_btn}
         >
-          Create group
+          Create Group
         </Button>
       </Box>
-      <Box sx={{ mt: 2, textAlign: "left" }}>
-        <ButtonGroup disableElevation>
-          <Button
-            onClick={() => setSelectedTab("admin")}
-            variant={selectedTab === "admin" ? "contained" : "outlined"}
-          >
-            Created by me
-          </Button>
-          <Button
-            onClick={() => setSelectedTab("member")}
-            variant={selectedTab === "member" ? "contained" : "outlined"}
-          >
-            Part of
-          </Button>
-        </ButtonGroup>
-        <Box component="div" sx={{ mt: 1 }}>
-          {selectedTab === "admin" ? (
-            <GroupsByAdmin
-              groups={groups.admin.list}
-              status={groups.admin.status}
-              onAction={(group) => {
-                console.log(group);
-              }}
-            />
-          ) : (
-            <GroupsByMember
-              groups={groups.member.list}
-              status={groups.admin.status}
-              onAction={(group) => {
-                console.log(group);
-              }}
-            />
-          )}
+      <Paper sx={{mt: 3}} variant={'outlined'} elevation={0}>
+        <Box sx={groupStyles.btn_g_box}>
+          <GroupTab tabs={['Created By me', 'Part of']} handleTabChange={handleTabChange} />
+
+          <TabPanel value={tab} index={0}>
+            <Suspense fallback={<CardSkeleton />}>
+              <AdminGroupList />
+            </Suspense>
+          </TabPanel>
+
+          <TabPanel value={tab} index={1}>
+            <Suspense fallback={<CardSkeleton />}>
+              <MemberGroupList />
+            </Suspense>
+          </TabPanel>
         </Box>
-      </Box>
+      </Paper>
     </Box>
   );
 }

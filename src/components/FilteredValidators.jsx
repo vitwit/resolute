@@ -9,12 +9,15 @@ import TableHead from "@mui/material/TableHead";
 import { formatVotingPower } from "../utils/denom";
 import { formatValidatorStatus } from "../utils/util";
 import { useSelector } from "react-redux";
+import { useTheme } from "@emotion/react";
 
 export function FilteredValidators(props) {
   const { validators, filtered, onMenuAction } = props;
   const delegatedTo = useSelector(
     (state) => state.staking.delegations.delegatedTo
   );
+
+  const theme = useTheme();
 
   return (
     <>
@@ -62,7 +65,9 @@ export function FilteredValidators(props) {
                 </StyledTableCell>
                 <StyledTableCell align="center">
                   <Button
-                    variant="outlined"
+                    variant={
+                      theme.pallet.mode === "light" ? "outlined" : "contained"
+                    }
                     className="button-capitalize-title"
                     size="small"
                     onClick={(e) =>
@@ -78,7 +83,11 @@ export function FilteredValidators(props) {
                   {delegatedTo[keyName] ? (
                     <>
                       <Button
-                        variant="outlined"
+                        variant={
+                          theme.pallet.mode === "light"
+                            ? "outlined"
+                            : "contained"
+                        }
                         style={{ marginLeft: 4 }}
                         className="button-capitalize-title"
                         size="small"
@@ -97,7 +106,11 @@ export function FilteredValidators(props) {
                         Undelegate
                       </Button>
                       <Button
-                        variant="outlined"
+                        variant={
+                          theme.pallet.mode === "light"
+                            ? "outlined"
+                            : "contained"
+                        }
                         className="button-capitalize-title"
                         style={{ marginLeft: 4 }}
                         size="small"

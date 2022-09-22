@@ -3,7 +3,6 @@ import { Delegate, UnDelegate, Redelegate } from "../../txns/staking";
 import stakingService from "./stakingService";
 import { signAndBroadcastAmino, fee } from "../../txns/execute";
 import { setError, setTxHash } from "../common/commonSlice";
-import { createMultisigAccount } from "../multisig/multisigService";
 import { SOMETHING_WRONG } from "../multisig/multisigSlice";
 
 const initialState = {
@@ -19,6 +18,7 @@ const initialState = {
     },
     totalActive: 0,
     totalInactive: 0,
+    witvalValidator: {},
   },
   delegations: {
     status: "idle",
@@ -26,6 +26,7 @@ const initialState = {
     errMsg: "",
     pagination: {},
     delegatedTo: {},
+    totalStaked: 0.0,
   },
   unbonding: {
     status: "idle",
@@ -210,10 +211,12 @@ export const getAllValidators = createAsyncThunk(
         const response = await stakingService.validators(
           data.baseURL,
           data?.status,
-          nextKey ? {
-            key: nextKey,
-            limit: limit,
-          } : {}
+          nextKey
+            ? {
+                key: nextKey,
+                limit: limit,
+              }
+            : {}
         );
         validators.push(...response.data.validators);
         if (!response.data.pagination?.next_key) {
@@ -235,13 +238,32 @@ export const getParams = createAsyncThunk("staking/params", async (data) => {
 
 export const getDelegations = createAsyncThunk(
   "staking/delegations",
-  async (data) => {
-    const response = await stakingService.delegations(
-      data.baseURL,
-      data.address,
-      data.pagination
-    );
-    return response.data;
+  async (data, { rejectWithValue }) => {
+    try {
+      const delegations = [];
+      let nextKey = null;
+      const limit = 100;
+      while (true) {
+        const response = await stakingService.delegations(
+          data.baseURL,
+          data.address,
+          nextKey
+            ? {
+                key: nextKey,
+                limit: limit,
+              }
+            : {}
+        );
+        delegations.push(...(response.data?.delegation_responses || []));
+        if (!response.data.pagination?.next_key) {
+          break;
+        }
+        nextKey = response.data.pagination.next_key;
+      }
+      return delegations;
+    } catch (error) {
+      return rejectWithValue(error?.message || SOMETHING_WRONG);
+    }
   }
 );
 
@@ -315,12 +337,18 @@ export const stakeSlice = createSlice({
           ) {
             state.validators.active[element.operator_address] = element;
             state.validators.totalActive += 1;
+            if (element?.description?.moniker === "Witval") {
+              state.validators.witvalValidator = element;
+            }
           } else if (
             element.status !== "BOND_STATUS_BONDED" &&
             !state.validators.inactive[element.operator_address]
           ) {
             state.validators.inactive[element.operator_address] = element;
             state.validators.totalInactive += 1;
+            if (element?.description?.moniker === "Witval") {
+              state.validators.witvalValidator = element;
+            }
           }
         }
         state.validators.pagination = action.payload.pagination;
@@ -329,6 +357,10 @@ export const stakeSlice = createSlice({
       .addCase(getValidators.rejected, (state, action) => {
         state.validators.status = "rejected";
         state.validators.errMsg = action.error.message;
+        let result = initialState.validators;
+        result.errMsg = action.error.message;
+        result.status = "rejected";
+        state.validators = result;
       });
 
     builder
@@ -349,12 +381,18 @@ export const stakeSlice = createSlice({
           ) {
             state.validators.active[element.operator_address] = element;
             state.validators.totalActive += 1;
+            if (element?.description?.moniker === "Witval") {
+              state.validators.witvalValidator = element;
+            }
           } else if (
             element.status !== "BOND_STATUS_BONDED" &&
             !state.validators.inactive[element.operator_address]
           ) {
             state.validators.inactive[element.operator_address] = element;
             state.validators.totalInactive += 1;
+            if (element?.description?.moniker === "Witval") {
+              state.validators.witvalValidator = element;
+            }
           }
         }
         state.validators.errMsg = "";
@@ -364,9 +402,9 @@ export const stakeSlice = createSlice({
             return b.tokens - a.tokens;
           })
         );
-  
+
         state.validators.activeSorted = Object.keys(activeSort);
-  
+
         const inactiveSort = Object.fromEntries(
           Object.entries(state.validators.inactive).sort(([, a], [, b]) => {
             return b.tokens - a.tokens;
@@ -375,8 +413,10 @@ export const stakeSlice = createSlice({
         state.validators.inactiveSorted = Object.keys(inactiveSort);
       })
       .addCase(getAllValidators.rejected, (state, action) => {
-        state.validators.status = "rejected";
-        state.validators.errMsg = action.error.message;
+        let result = initialState.validators;
+        result.errMsg = action.error.message;
+        result.status = "rejected";
+        state.validators = result;
       });
 
     builder
@@ -386,16 +426,18 @@ export const stakeSlice = createSlice({
       })
       .addCase(getDelegations.fulfilled, (state, action) => {
         state.delegations.status = "idle";
-        state.delegations.delegations = action.payload.delegation_responses;
-        state.delegations.pagination = action.payload.pagination;
+        state.delegations.delegations = action.payload;
         state.delegations.errMsg = "";
 
-        for (let i = 0; i < action.payload.delegation_responses.length; i++) {
-          const delegation = action.payload.delegation_responses[i];
+        let total = 0.0;
+        for (let i = 0; i < action.payload.length; i++) {
+          const delegation = action.payload[i];
           state.delegations.delegatedTo[
             delegation?.delegation?.validator_address
           ] = true;
+          total += parseFloat(delegation?.delegation?.shares);
         }
+        state.delegations.totalStaked = total;
       })
       .addCase(getDelegations.rejected, (state, action) => {
         state.delegations.status = "rejected";
