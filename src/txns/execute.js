@@ -6,7 +6,7 @@ import {
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Registry } from "@cosmjs/proto-signing";
 import { MsgClaim } from "./passage/msg_claim";
-import { MsgCreateGroup, MsgCreateGroupWithPolicy } from "./group/v1/tx";
+import { MsgCreateGroup, MsgCreateGroupPolicy, MsgCreateGroupWithPolicy, MsgExec, MsgLeaveGroup, MsgSubmitProposal, MsgUpdateGroupAdmin, MsgUpdateGroupMembers, MsgUpdateGroupMetadata, MsgUpdateGroupPolicyAdmin, MsgUpdateGroupPolicyDecisionPolicy, MsgUpdateGroupPolicyMetadata, MsgVote } from "./group/v1/tx";
 import { AirdropAminoConverter } from "../features/airdrop/amino";
 import { MsgUnjail } from "./slashing/tx";
 import { SlashingAminoConverter } from "../features/slashing/slashing";
@@ -38,6 +38,360 @@ export async function signAndBroadcastGroupMsg(
     offlineSigner,
     {
       registry: registry,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastUpdateGroupMembers(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+ 
+
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupMembers",
+    MsgUpdateGroupMembers
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastUpdateGroupPolicy(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+ 
+
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy",
+    MsgUpdateGroupPolicyDecisionPolicy
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastUpdateGroupPolicyMetadata(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+ 
+
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupPolicyMetadata",
+    MsgUpdateGroupPolicyMetadata
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastUpdateGroupPolicyAdmin(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+ 
+
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupPolicyAdmin",
+    MsgUpdateGroupPolicyAdmin
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastAddGroupPolicy(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+ 
+
+  registry.register(
+    "/cosmos.group.v1.MsgCreateGroupPolicy",
+    MsgCreateGroupPolicy
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastLeaveGroup(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+ 
+
+  registry.register(
+    "/cosmos.group.v1.MsgLeaveGroup",
+    MsgLeaveGroup
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastGroupProposalVote(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+
+  const aTypes = new AminoTypes({
+    ...MsgVote,
+  });
+
+  registry.register(
+    "/cosmos.group.v1.MsgVote",
+    MsgVote
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+      aminoTypes: aTypes,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastGroupProposalExecute(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+
+  const aTypes = new AminoTypes({
+    ...MsgExec,
+  });
+
+  registry.register(
+    "/cosmos.group.v1.MsgExec",
+    MsgExec
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+      aminoTypes: aTypes,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastGroupProposal(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+
+  const aTypes = new AminoTypes({
+    ...MsgSubmitProposal,
+  });
+
+  defaultRegistryTypes.forEach((v) => {
+    registry.register(v[0], v[1]);
+  });
+
+  registry.register(
+    "/cosmos.group.v1.MsgSubmitProposal",
+    MsgSubmitProposal
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+      aminoTypes: aTypes,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastUpdateGroupAdmin(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+
+  const aTypes = new AminoTypes({
+    ...MsgUpdateGroupAdmin,
+  });
+
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupAdmin",
+    MsgUpdateGroupAdmin
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+      aminoTypes: aTypes,
+    }
+  );
+
+  return await client.signAndBroadcast(signer, msgs, fee, memo);
+}
+
+export async function signAndBroadcastUpdateGroupMetadata(
+  signer,
+  msgs,
+  fee,
+  chainId,
+  rpcURL,
+  memo = ""
+) {
+  await window.keplr.enable(chainId);
+  const offlineSigner =
+    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+  let registry = new Registry();
+
+  const aTypes = new AminoTypes({
+    ...MsgUpdateGroupMetadata,
+  });
+
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupMetadata",
+    MsgUpdateGroupMetadata
+  );
+
+  const client = await SigningStargateClient.connectWithSigner(
+    rpcURL,
+    offlineSigner,
+    {
+      registry: registry,
+      aminoTypes: aTypes,
     }
   );
 
