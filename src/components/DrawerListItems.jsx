@@ -27,7 +27,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
     if (nodeInfo?.nodeInfo?.status === 'idle') {
       if (nodeInfo?.nodeInfo?.data?.application_version) {
         let version = nodeInfo?.nodeInfo?.data?.application_version?.version;
-        
+
         if (version?.indexOf('46') >= 0) {
           setNodeDataInfo(true);
         } else setNodeDataInfo(false);
@@ -89,7 +89,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemText primary="Authz" />
       </ListItemButton>
       <ListItemButton
-        disabled
+        disabled={nodeDataInfo ? false : true}
         onClick={() => onNavigate("/feegrant")}
         sx={{ pb: 0.5, pt: 0.5 }}
         selected={currentPath === "/feegrant"}
@@ -97,7 +97,12 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemIcon>
           <LayersIcon />
         </ListItemIcon>
-        <ListItemText primary="Feegrant" secondary="coming soon" />
+        <ListItemText primary="Feegrant"
+          secondary={
+            nodeDataInfo?.status === 'pending' ? 'Loading..' :
+              !nodeDataInfo ? 'Not supported' :
+                null
+          } />
       </ListItemButton>
       <ListItemButton
         disabled={nodeDataInfo ? false : true}
@@ -110,9 +115,9 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         </ListItemIcon>
         <ListItemText primary="Groups"
           secondary={
-            nodeDataInfo?.status === 'pending'? 'Loading..':
-            !nodeDataInfo ? 'Not supported': 
-            null
+            nodeDataInfo?.status === 'pending' ? 'Loading..' :
+              !nodeDataInfo ? 'Not supported' :
+                null
           } />
       </ListItemButton>
 

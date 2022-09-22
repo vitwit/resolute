@@ -9,8 +9,11 @@ import DialogActions from "@mui/material/DialogActions";
 import { getTypeURLName, shortenAddress } from "../utils/util";
 import { parseSpendLimit } from "../utils/denom";
 import { getLocalTime } from "../utils/datetime";
+import { defaultRegistryTypes } from "@cosmjs/stargate";
+import { authzMsgTypes } from "../utils/authorizations";
 
 const renderAuthorization = (authz, displayDenom) => {
+  console.log('authz--', authz)
   const { allowance, granter, grantee } = authz;
   switch (allowance["@type"]) {
     case "/cosmos.feegrant.v1beta1.BasicAllowance":
@@ -157,6 +160,114 @@ const renderAuthorization = (authz, displayDenom) => {
                   size="medium"
                 />
               </Typography>
+            </li>
+          </ul>
+        </>
+      );
+    case "/cosmos.feegrant.v1beta1.AllowedMsgAllowance":
+      return (
+        <>
+          <ul>
+            <li>
+              <Typography>Type</Typography>
+              <Typography>
+                <Chip
+                  label={getTypeURLName(authz['allowance']["@type"])}
+                  variant="filled"
+                  size="medium"
+                />
+              </Typography>
+            </li>
+            <li className="inline-space-between">
+              <Typography>Granter</Typography>
+              <Chip
+                label={shortenAddress(granter, 21)}
+                variant="filled"
+                size="medium"
+              />
+            </li>
+            <li className="inline-space-between">
+              <Typography>Grantee</Typography>
+              <Chip
+                label={shortenAddress(grantee, 21)}
+                variant="filled"
+                size="medium"
+              />
+            </li>
+            <li>
+              <Typography>Allowance Type</Typography>
+              <Typography>
+                <Chip
+                  label={getTypeURLName(authz['allowance']['allowance']["@type"])}
+                  variant="filled"
+                  size="medium"
+                />
+              </Typography>
+            </li>
+            <li className="inline-space-between">
+              <Typography>SpendLimit</Typography>
+              <Typography>
+                {allowance?.allowance?.basic.spend_limit.length === 0 ? (
+                  <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
+                ) : (
+                  `${parseSpendLimit(
+                    allowance?.allowance?.basic.spend_limit
+                  )}${displayDenom}`
+                )}
+              </Typography>
+            </li>
+            <li className="inline-space-between">
+              <Typography>Expiration</Typography>
+              <Typography>
+                {allowance?.allowance?.basic.expiration ? (
+                  getLocalTime(allowance?.allowance.basic.expiration)
+                ) : (
+                  <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
+                )}
+              </Typography>
+            </li>
+            <li className="inline-space-between">
+              <Typography>Period</Typography>
+              {allowance?.allowance?.period}
+            </li>
+            <li className="inline-space-between">
+              <Typography>Period Spend Limit</Typography>
+              {allowance?.allowance?.period_spend_limit.length === 0 ? (
+                <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
+              ) : (
+                `${parseSpendLimit(
+                  allowance?.allowance?.period_spend_limit
+                )}${displayDenom}`
+              )}
+            </li>
+            <li className="inline-space-between">
+              <Typography>Period Can Spend</Typography>
+              {allowance?.allowance?.period_can_spend.length === 0 ? (
+                <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
+              ) : (
+                `${parseSpendLimit(allowance?.allowance.period_can_spend)}${displayDenom}`
+              )}
+            </li>
+            <li className="inline-space-between">
+              <Typography>Period Reset</Typography>
+              {getLocalTime(allowance?.allowance.period_reset)}
+            </li>
+            <li className="inline-space-between">
+              <Typography>Messages</Typography>
+              {
+                allowance?.allowed_messages.map(m => (
+                  <Chip
+                    label={authzMsgTypes().map(a=>{
+                      if(a.typeURL === m) {
+                        return a.label
+                      }
+                    })}
+                    variant="filled"
+                    size="medium"
+                  />
+                ))
+              }
+
             </li>
           </ul>
         </>

@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { FeegrantBasicMsg, FeegrantPeriodicMsg, FeegrantRevokeMsg } from '../../txns/feegrant';
 import feegrantService from './feegrantService';
-import { fee, signAndBroadcastProto } from '../../txns/execute';
-import { setError, setTxHash } from '../common/commonSlice';
+import { fee, signAndBroadcastProto, signAndBroadcastProtoFilterGrant } from '../../txns/execute';
+import { resetTxLoad, setError, setTxHash, setTxLoad } from '../common/commonSlice';
+import { FeegrantFilterMsg } from '../../txns/feegrant/grant';
 
 const initialState = {
   grantsToMe: {
@@ -20,7 +21,8 @@ const initialState = {
   tx: {
     status: 'idle',
     type: '',
-  }
+  },
+  txFilterRes: {},
 };
 
 export const getGrantsToMe = createAsyncThunk(
@@ -44,8 +46,10 @@ export const txFeegrantBasic = createAsyncThunk(
   'feegrant/tx-basic',
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
+      dispatch(setTxLoad())
       const msg = FeegrantBasicMsg(data.granter, data.grantee, data.denom, data.spendLimit, data.expiration)
       const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc)
+      dispatch(resetTxLoad())
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
@@ -59,6 +63,7 @@ export const txFeegrantBasic = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+      dispatch(resetTxLoad())
       dispatch(setError({
         type: 'error',
         message: error.message
@@ -71,16 +76,25 @@ export const txFeegrantBasic = createAsyncThunk(
 export const txGrantPeriodic = createAsyncThunk(
   'feegrant/tx-periodic',
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    dispatch(setTxLoad())
     try {
-      const msg = FeegrantPeriodicMsg(data.granter, data.grantee, data.denom, data.spendLimit, data.expiration,
-        data.period, data.periodSpendLimit)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc)
+      const msg = FeegrantPeriodicMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.period,
+        data.periodSpendLimit,
+        data.expiration)
+      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc);
+      dispatch(resetTxLoad())
       if (result?.code === 0) {
         dispatch(setTxHash({
           hash: result?.transactionHash
         }))
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
+        console.log('error---', result)
         dispatch(setError({
           type: 'error',
           message: result?.rawLog
@@ -88,6 +102,52 @@ export const txGrantPeriodic = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+      dispatch(resetTxLoad())
+      console.log('error---', error)
+      dispatch(setError({
+        type: 'error',
+        message: error.message
+      }))
+      return rejectWithValue(error.response)
+    }
+  }
+);
+
+export const txGrantFilter = createAsyncThunk(
+  'feegrant/tx-filter',
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+   
+    dispatch(setTxLoad())
+    try {
+      const msg = FeegrantFilterMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.period,
+        data.periodSpendLimit,
+        data.expiration,
+        data.txType || [],
+        data.allowanceType)
+
+      const result = await signAndBroadcastProtoFilterGrant([msg], fee(data.denom, data.feeAmount, 260000), data.rpc);
+      dispatch(resetTxLoad())
+      if (result?.code === 0) {
+        dispatch(setTxHash({
+          hash: result?.transactionHash
+        }))
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        console.log('error---', result)
+        dispatch(setError({
+          type: 'error',
+          message: result?.rawLog
+        }))
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      dispatch(resetTxLoad())
+      console.log('error---', error)
       dispatch(setError({
         type: 'error',
         message: error.message
@@ -101,8 +161,10 @@ export const txRevoke = createAsyncThunk(
   'feegrant/tx-revoke',
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
+      dispatch(setTxLoad())
       const msg = FeegrantRevokeMsg(data.granter, data.grantee)
       const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc)
+      dispatch(resetTxLoad())
       if (result?.code === 0) {
         dispatch(getGrantsByMe({
           baseURL: data.baseURL, granter: data.granter
@@ -117,6 +179,8 @@ export const txRevoke = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+      dispatch(resetTxLoad())
+
       dispatch(setError({
         type: 'error',
         message: error.message
@@ -137,6 +201,9 @@ export const feegrantSlice = createSlice({
         type: ''
       }
     },
+    resetFeeFilter: state => {
+      state.txFilterRes = {}
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -238,9 +305,21 @@ export const feegrantSlice = createSlice({
         state.tx.status = `rejected`
         state.tx.type = 'revoke'
       })
+
+    builder
+      .addCase(txGrantFilter.pending, (state) => {
+        state.txFilterRes.status = `pending`
+
+      })
+      .addCase(txGrantFilter.fulfilled, (state, _) => {
+        state.txFilterRes.status = `idle`
+      })
+      .addCase(txGrantFilter.rejected, (state, _) => {
+        state.txFilterRes.status = `rejected`
+      })
   },
 });
 
-export const { resetAlerts } = feegrantSlice.actions;
+export const { resetAlerts, resetFeeFilter } = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;

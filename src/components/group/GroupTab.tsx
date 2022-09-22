@@ -66,14 +66,6 @@ export default function GroupTab({ handleTabChange, tabs }: GroupTabinterface) {
                             }} label={t} {...a11yProps(i)} />
                         ))
                     }
-                    {/* <Tab sx={{
-                        fontSize: 16,
-                        padding: 3
-                    }} label="Created By Me" {...a11yProps(0)} />
-                    <Tab sx={{
-                        fontSize: 16,
-                        padding: 3
-                    }} label="Part of" {...a11yProps(1)} /> */}
                 </Tabs>
             </Box>
         </Box>

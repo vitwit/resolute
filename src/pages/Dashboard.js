@@ -27,6 +27,8 @@ import { isConnected, logout } from "../utils/localStorage";
 import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
 import { copyToClipboard } from "../utils/clipboard";
+import Feegrant from "./Feegrant";
+import NewFeegrant from "./NewFeegrant";
 
 const GroupPage = lazy(() => import("./GroupPage"));
 const Group = lazy(() => import("./group/Group"));
@@ -216,22 +218,22 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   />
-                  {/* <Route
+                  <Route
                     path="/feegrant"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <Feegrant />
                       </Suspense>
                     }
-                  ></Route> */}
-                  {/* <Route
+                  ></Route>
+                  <Route
                     path="/feegrant/new"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <NewFeegrant />
                       </Suspense>
                     }
-                  ></Route> */}
+                  ></Route>
                   <Route
                     path="/authz/new"
                     element={

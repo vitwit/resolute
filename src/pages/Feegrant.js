@@ -14,7 +14,7 @@ import {
   resetError, resetTxHash,
   setError
 } from './../features/common/commonSlice';
-
+import AddIcon from '@mui/icons-material/Add';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Chip from '@mui/material/Chip';
 import { getTypeURLName, shortenAddress } from '../utils/util';
@@ -25,9 +25,11 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { FeegrantInfo } from '../components/FeegrantInfo';
 import Switch from '@mui/material/Switch';
+import GroupTab, { TabPanel } from '../components/group/GroupTab';
 
 
 export default function Feegrant() {
+  const [tab, setTab] = React.useState(0);
   const grantsToMe = useSelector((state) => state.feegrant.grantsToMe);
   const grantsByMe = useSelector((state) => state.feegrant.grantsByMe);
   const dispatch = useDispatch();
@@ -75,7 +77,7 @@ export default function Feegrant() {
       }))
       setTimeout(() => {
         navigateTo("/");
-      },1000);
+      }, 1000);
     }
     return () => {
       dispatch(resetAlerts())
@@ -126,6 +128,10 @@ export default function Feegrant() {
     }
   }, [errState]);
 
+  const handleTabChange = (value) => {
+    setTab(value);
+  }
+
   return (
     <>
       {
@@ -140,158 +146,143 @@ export default function Feegrant() {
           <></>
       }
       <div style={{ display: 'flex', marginBottom: 12, flexDirection: 'row-reverse' }}>
-        <Button variant='contained' size='medium'
+        <Button variant='contained' 
+          endIcon={
+            <AddIcon />
+          }
+        size='medium'
           onClick={() => navigateTo("/feegrant/new")}
         >
           Grant New
         </Button>
       </div>
       <Paper elevation={0} style={{ padding: 12 }}>
-        <ButtonGroup variant="outlined" aria-label="validators" style={{ display: 'flex', marginBottom: 12 }}>
-          <Button
-            variant={grantType === 'by-me' ? 'contained' : 'outlined'}
-            onClick={() => setGrantType('by-me')}
-          >Granted By Me</Button>
-          <Button
-            variant={grantType === 'to-me' ? 'contained' : 'outlined'}
-            onClick={() => {
-              setGrantType('to-me')
-            }
-            }
-          >Granted To Me</Button>
-        </ButtonGroup>
-
-        <TableContainer component={Paper} elevation={0}>
-          {
-            grantType === 'by-me' ?
-              (
+        <GroupTab tabs={['Granted By Me', 'Granted To Me',]} handleTabChange={handleTabChange} />
+        <TabPanel value={tab} index={0}>
+          <>
+            {
+              grantsByMe && grantsByMe?.grants.length === 0 ?
+                <Typography
+                  variant='h6'
+                  color="text.primary"
+                  style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
+                  No Authorizations found
+                </Typography>
+                :
                 <>
-                  {
-                    grantsByMe && grantsByMe?.grants.length === 0 ?
-                      <Typography
-                        variant='h6'
-                        color="text.primary"
-                        style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
-                        No Authorizations found
-                      </Typography>
-                      :
-                      <>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                          <TableHead>
-                            <StyledTableRow>
-                              <StyledTableCell>Grantee</StyledTableCell>
-                              <StyledTableCell >Type</StyledTableCell>
-                              <StyledTableCell>Expiration</StyledTableCell>
-                              <StyledTableCell>Details</StyledTableCell>
-                              <StyledTableCell>Action</StyledTableCell>
-                            </StyledTableRow>
-                          </TableHead>
-                          <TableBody>
-                            {grantsByMe && grantsByMe?.grants.map((row, index) => (
-                              <StyledTableRow
-                                key={index}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                              >
-                                <StyledTableCell component="th" scope="row">
-                                  {shortenAddress(row.grantee, 21)}
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                  <Chip label={getTypeURLName(row.allowance['@type'])} variant="filled" size="medium" />
-                                </StyledTableCell>
-                                <StyledTableCell>{row?.allowance?.expiration ? getLocalTime(row?.allowance?.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
-                                <StyledTableCell>
-                                  <Link onClick={() => {
-                                    setSelected(row)
-                                    setInfoOpen(true)
-                                  }
-                                  }
-                                  >
-                                    Details
-                                  </Link>
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                  <Button
-                                    variant='outlined'
-                                    color='error'
-                                    size='small'
-                                    disableElevation
-                                    disabled={txStatus?.status === 'pending' ? true : false}
-                                    onClick={() => revoke(row)}
-                                  >
-                                    Revoke
-                                  </Button>
-                                </StyledTableCell>
-                              </StyledTableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </>
-                  }
+                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                      <StyledTableRow>
+                        <StyledTableCell>Grantee</StyledTableCell>
+                        <StyledTableCell >Type</StyledTableCell>
+                        <StyledTableCell>Expiration</StyledTableCell>
+                        <StyledTableCell>Details</StyledTableCell>
+                        <StyledTableCell>Action</StyledTableCell>
+                      </StyledTableRow>
+                    </TableHead>
+                    <TableBody>
+                      {grantsByMe && grantsByMe?.grants.map((row, index) => (
+                        <StyledTableRow
+                          key={index}
+                          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                          <StyledTableCell component="th" scope="row">
+                            {shortenAddress(row.grantee, 21)}
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            <Chip label={getTypeURLName(row.allowance['@type'])} variant="filled" size="medium" />
+                          </StyledTableCell>
+                          <StyledTableCell>{row?.allowance?.expiration ? getLocalTime(row?.allowance?.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
+                          <StyledTableCell>
+                            <Link onClick={() => {
+                              setSelected(row)
+                              setInfoOpen(true)
+                            }
+                            }
+                            >
+                              Details
+                            </Link>
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            <Button
+                              variant='outlined'
+                              color='error'
+                              size='small'
+                              disableElevation
+                              disabled={txStatus?.status === 'pending' ? true : false}
+                              onClick={() => revoke(row)}
+                            >
+                              Revoke
+                            </Button>
+                          </StyledTableCell>
+                        </StyledTableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </>
-              )
-              :
-              (
+            }
+          </>
+        </TabPanel>
+        <TabPanel value={tab} index={1}>
+          <>
+            {
+              grantsToMe && grantsToMe.grants?.length === 0 ?
+                <Typography
+                  variant='h6'
+                  color="text.primary"
+                  style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
+                  No Authorizations found
+                </Typography>
+                :
                 <>
-                  {
-                    grantsToMe && grantsToMe.grants?.length === 0 ?
-                      <Typography
-                        variant='h6'
-                        color="text.primary"
-                        style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
-                        No Authorizations found
-                      </Typography>
-                      :
-                      <>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                          <TableHead>
-                            <StyledTableRow>
-                              <StyledTableCell >Granter</StyledTableCell>
-                              <StyledTableCell >Type</StyledTableCell>
-                              <StyledTableCell>Expiration</StyledTableCell>
-                              <StyledTableCell>Details</StyledTableCell>
-                              {/* <StyledTableCell >Use Feegrant</StyledTableCell> */}
-                            </StyledTableRow>
-                          </TableHead>
-                          <TableBody>
-                            {grantsToMe && grantsToMe.grants?.map((row, index) => (
-                              <StyledTableRow
-                                key={index}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                              >
-                                <StyledTableCell component="th" scope="row">
-                                  {shortenAddress(row.granter, 21)}
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                  <Chip label={getTypeURLName(row.allowance['@type'])} variant="filled" size="medium" />
-                                </StyledTableCell>
-                                <StyledTableCell>{row.allowance.expiration ? getLocalTime(row.allowance.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
-                                <StyledTableCell>
-                                  <Link onClick={() => {
-                                    setSelected(row)
-                                    setInfoOpen(true)
-                                  }
-                                  }
-                                  >
-                                    Details
-                                  </Link>
-                                </StyledTableCell>
-                                {/* <StyledTableCell>
+                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                      <StyledTableRow>
+                        <StyledTableCell >Granter</StyledTableCell>
+                        <StyledTableCell >Type</StyledTableCell>
+                        <StyledTableCell>Expiration</StyledTableCell>
+                        <StyledTableCell>Details</StyledTableCell>
+                        {/* <StyledTableCell >Use Feegrant</StyledTableCell> */}
+                      </StyledTableRow>
+                    </TableHead>
+                    <TableBody>
+                      {grantsToMe && grantsToMe.grants?.map((row, index) => (
+                        <StyledTableRow
+                          key={index}
+                          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                          <StyledTableCell component="th" scope="row">
+                            {shortenAddress(row.granter, 21)}
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            <Chip label={getTypeURLName(row.allowance['@type'])} variant="filled" size="medium" />
+                          </StyledTableCell>
+                          <StyledTableCell>{row.allowance.expiration ? getLocalTime(row.allowance.expiration) : <span dangerouslySetInnerHTML={{ "__html": "&infin;" }} />}</StyledTableCell>
+                          <StyledTableCell>
+                            <Link onClick={() => {
+                              setSelected(row)
+                              setInfoOpen(true)
+                            }
+                            }
+                            >
+                              Details
+                            </Link>
+                          </StyledTableCell>
+                          {/* <StyledTableCell>
                                   <Switch checked={useFeeChecked}
                                     onChange={(e) => handleOnFeeChecked(e, row)}
                                     inputProps={{ 'aria-label': 'controlled' }}
                                     size="small" />
 
                                 </StyledTableCell> */}
-                              </StyledTableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </>
-                  }
+                        </StyledTableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </>
-              )
-          }
-        </TableContainer>
+            }
+          </>
+        </TabPanel>
       </Paper>
     </>
 

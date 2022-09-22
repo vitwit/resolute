@@ -10,6 +10,8 @@ import { MsgCreateGroup, MsgCreateGroupPolicy, MsgCreateGroupWithPolicy, MsgExec
 import { AirdropAminoConverter } from "../features/airdrop/amino";
 import { MsgUnjail } from "./slashing/tx";
 import { SlashingAminoConverter } from "../features/slashing/slashing";
+import { MsgGrantAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
+import { AllowedMsgAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/feegrant";
 
 export async function signAndBroadcastGroupMsg(
   signer,
@@ -515,6 +517,40 @@ export async function signAndBroadcastProto(msgs, fee, rpcURL) {
     Uint8Array.from(TxRaw.encode(signed).finish())
   );
 }
+
+export async function signAndBroadcastProtoFilterGrant(msgs, fee, rpcURL) {
+  const client = await SigningStargateClient.connect(rpcURL);
+
+  const chainId = await client.getChainId();
+  let result = await getKeplrWalletDirect(chainId);
+  var wallet = result[0];
+  var account = result[1];
+
+
+  let registry = new Registry();
+  defaultRegistryTypes.forEach((v) => {
+    registry.register(v[0], v[1]);
+  });
+
+  // registry.register("/cosmos.feegrant.v1beta1.MsgGrantAllowance", AllowedMsgAllowance);
+
+  const signingClient = await SigningStargateClient.offline(wallet, {
+    registry: registry,
+  });
+
+  const accountInfo = await client.getAccount(account.address);
+
+  const signed = await signingClient.sign(account.address, msgs, fee, "", {
+    accountNumber: accountInfo.accountNumber,
+    chainId: chainId,
+    sequence: accountInfo.sequence,
+  });
+
+  return await client.broadcastTx(
+    Uint8Array.from(TxRaw.encode(signed).finish())
+  );
+}
+
 
 export function fee(coinMinimalDenom, amount, gas = 280000) {
   return {
