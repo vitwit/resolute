@@ -314,7 +314,7 @@ export function getNetworkByChainId(chainId: string): Network | null {
 }
 
 export function getTestNetworks(): Network[] {
-  // if (window.location.origin === "http://localhost:3000") {
+  if (window.location.origin === "http://localhost:3000") {
     return [
       {
         experimental: true,
@@ -368,7 +368,7 @@ export function getTestNetworks(): Network[] {
         },
       },
     ];
-  // }
+  }
 
   return testNets;
 }

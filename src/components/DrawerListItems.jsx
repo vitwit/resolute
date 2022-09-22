@@ -110,8 +110,8 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         </ListItemIcon>
         <ListItemText primary="Groups"
           secondary={
-            nodeDataInfo?.status === 'pending'? 'Checking sdk version...':
-            !nodeDataInfo ? 'Available on 46 version': 
+            nodeDataInfo?.status === 'pending'? 'Loading..':
+            !nodeDataInfo ? 'Not supported': 
             null
           } />
       </ListItemButton>
