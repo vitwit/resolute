@@ -5,20 +5,18 @@ import { getDelegations, getUnbonding } from "../features/staking/stakeSlice";
 import { getDelegatorTotalRewards } from "../features/distribution/distributionSlice";
 import { parseBalance } from "../utils/denom";
 import {
-  getTypeURLName,
   shortenAddress,
   shortenPubKey,
-  totalDelegations,
   totalRewards,
   totalUnbonding,
 } from "../utils/util";
 import { Button, Chip, Grid, Paper, Typography } from "@mui/material";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
-import { resetError, setError } from "../features/common/commonSlice";
 import { Box } from "@mui/system";
 import { getAccountInfo } from "../features/auth/slice";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
+import { copyToClipboard } from "../utils/clipboard";
 
 export default function Overview() {
   const wallet = useSelector((state) => state.wallet);
@@ -41,7 +39,6 @@ export default function Overview() {
   const { config } = chainInfo;
   const coinDecimals = config?.currencies[0].coinDecimals || 1;
 
-
   useEffect(() => {
     if (connected && config.currencies.length > 0) {
       setTotalBalance(
@@ -52,17 +49,12 @@ export default function Overview() {
         )
       );
       setTotalDelegations(
-        parseFloat(delegations.totalStaked / 10.0 ** coinDecimals).toFixed(
-          coinDecimals)
-      );
+        delegations.totalStaked / 10.0 ** coinDecimals)
       setTotalRewards(
         totalRewards(rewards?.list, config.currencies[0].coinDecimals)
       );
       setTotalUnbonding(
-        totalUnbonding(
-          unbonding.delegations,
-          config.currencies[0].coinDecimals
-        )
+        totalUnbonding(unbonding.delegations, config.currencies[0].coinDecimals)
       );
     }
   }, [balance, delegations, rewards, unbonding, chainInfo, address]);
@@ -254,7 +246,7 @@ export default function Overview() {
                         fontWeight={500}
                         color="text.primary"
                       >
-                        {delegated}
+                        {parseFloat(delegated)}
                       </Typography>
                     </li>
                     <li
@@ -402,7 +394,7 @@ const AccountInfo = (props) => {
               size="small"
               deleteIcon={<ContentCopyOutlined />}
               onDelete={() => {
-                copyToClipboard(wallet.address);
+                props.onCopy(wallet.address);
               }}
             />
           </Grid>
@@ -445,10 +437,10 @@ const AccountInfo = (props) => {
               fontWeight={600}
               gutterBottom
             >
-              Account Type
+              Account Number
             </Typography>
             <Typography variant="body1" color="text.primary" gutterBottom>
-              {getTypeURLName(account && account?.account["@type"])}
+              {getAccountNumber(account?.account)}
             </Typography>
           </Grid>
           <Grid
@@ -483,32 +475,7 @@ AccountInfo.propTypes = {
   onCopy: PropTypes.func.isRequired,
 };
 
-const copyToClipboard = (text, dispatcher) => {
-  navigator.clipboard.writeText(text).then(
-    function () {
-      dispatcher(
-        setError({
-          type: "success",
-          message: "Copied to clipboard",
-        })
-      );
-      setTimeout(() => {
-        dispatcher(resetError());
-      }, 1000);
-    },
-    function (err) {
-      dispatcher(
-        setError({
-          type: "error",
-          message: "Failed to copy",
-        })
-      );
-      setTimeout(() => {
-        dispatcher(resetError());
-      }, 1000);
-    }
-  );
-};
+
 
 const getSequence = (account) => {
   switch (account["@type"]) {
@@ -517,6 +484,37 @@ const getSequence = (account) => {
     }
     case "/cosmos.auth.v1beta1.BaseAccount": {
       return account?.sequence || 0;
+    }
+    case "/cosmos.vesting.v1beta1.DelayedVestingAccount": {
+      return account?.base_vesting_account?.base_account?.sequence || 0;
+    }
+    case "/cosmos.vesting.v1beta1.PeriodicVestingAccount": {
+      return account?.base_vesting_account?.base_account?.sequence || 0;
+    }
+    case "/cosmos.vesting.v1beta1.PermanentLockedAccount": {
+      return account?.base_vesting_account?.base_account?.sequence || 0;
+    }
+    default:
+      return 0;
+  }
+};
+
+const getAccountNumber = (account) => {
+  switch (account["@type"]) {
+    case "/cosmos.vesting.v1beta1.ContinuousVestingAccount": {
+      return account?.base_vesting_account?.base_account?.account_number || 0;
+    }
+    case "/cosmos.auth.v1beta1.BaseAccount": {
+      return account?.account_number || 0;
+    }
+    case "/cosmos.vesting.v1beta1.DelayedVestingAccount": {
+      return account?.base_vesting_account?.base_account?.account_number || 0;
+    }
+    case "/cosmos.vesting.v1beta1.PeriodicVestingAccount": {
+      return account?.base_vesting_account?.base_account?.account_number || 0;
+    }
+    case "/cosmos.vesting.v1beta1.PermanentLockedAccount": {
+      return account?.base_vesting_account?.base_account?.account_number || 0;
     }
     default:
       return 0;

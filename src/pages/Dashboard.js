@@ -26,6 +26,7 @@ import { getPallet, isDarkMode, mdTheme } from "../utils/theme";
 import { isConnected, logout } from "../utils/localStorage";
 import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
+import { copyToClipboard } from "../utils/clipboard";
 
 const GroupPage = lazy(() => import("./GroupPage"));
 const Group = lazy(() => import("./group/Group"));
@@ -150,35 +151,6 @@ function DashboardContent(props) {
     navigate(path);
   }
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(
-      function () {
-        dispatch(
-          setError({
-            type: "success",
-            message: "Copied to clipboard",
-          })
-        );
-        setTimeout(() => {
-          showTxSnack(false);
-          dispatch(resetError());
-        }, 1000);
-      },
-      function (err) {
-        dispatch(
-          setError({
-            type: "error",
-            message: "Failed to copy",
-          })
-        );
-        setTimeout(() => {
-          showTxSnack(false);
-          dispatch(resetError());
-        }, 1000);
-      }
-    );
-  };
-
   const [drawerOpen, setDrawerOpen] = React.useState(true);
 
   return (
@@ -209,7 +181,7 @@ function DashboardContent(props) {
               onNavigate={navigateTo}
               selectedNetwork={selectedNetwork}
               wallet={wallet}
-              onCopy={copyToClipboard}
+              onCopy={(msg) => copyToClipboard(msg, dispatch)}
               selectedAuthz={selectedAuthz}
               open={drawerOpen}
             />
