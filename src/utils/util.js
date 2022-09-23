@@ -1,5 +1,6 @@
 import Chip from "@mui/material/Chip";
 import { Decimal } from "@cosmjs/math";
+import { authzMsgTypes } from "./authorizations";
 
 
 export function getTypeURLName(url) {
@@ -192,9 +193,8 @@ export function totalUnbonding(unbonding, coinDecimals) {
 
 export function mainValueToMinimum(amount, coinInfo) {
   if (Number(amount) !== "NaN") {
-    return `${Number(amount) * 10 ** coinInfo.coinDecimals}${
-      coinInfo.coinMinimalDenom
-    }`;
+    return `${Number(amount) * 10 ** coinInfo.coinDecimals}${coinInfo.coinMinimalDenom
+      }`;
   } else {
     return "";
   }
@@ -238,42 +238,42 @@ export const getAmountObj = (amount = 0, chainInfo) => {
 
 export const proposalStatus = {
   'PROPOSAL_EXECUTOR_RESULT_NOT_RUN': {
-      label: 'Result not run',
-      bgColor: '#e3bbbb',
-      textColor: '#ad3131',
-      color: 'error'
+    label: 'Result not run',
+    bgColor: '#e3bbbb',
+    textColor: '#ad3131',
+    color: 'error'
   },
   'PROPOSAL_STATUS_UNSPECIFIED': {
-      label: 'Unspecified',
-      bgColor: '#e3bbbb',
-      textColor: '#ad3131',
-      color: 'error'
+    label: 'Unspecified',
+    bgColor: '#e3bbbb',
+    textColor: '#ad3131',
+    color: 'error'
   },
   'PROPOSAL_STATUS_SUBMITTED': {
-      label: 'Submitted',
-      bgColor: '#c5c9e3',
-      textColor: '#3049d3',
-      color: 'primary'
+    label: 'Submitted',
+    bgColor: '#c5c9e3',
+    textColor: '#3049d3',
+    color: 'primary'
   }, 'PROPOSAL_STATUS_ACCEPTED': {
-      label: 'Accepted',
-      bgColor: '#d8dfd3',
-      textColor: '#30b448',
-      color: 'success'
+    label: 'Accepted',
+    bgColor: '#d8dfd3',
+    textColor: '#30b448',
+    color: 'success'
   }, 'PROPOSAL_STATUS_REJECTED': {
-      label: 'Rejected',
-      bgColor: '#c5c9e3',
-      textColor: '#3049d3',
-      color: 'error'
+    label: 'Rejected',
+    bgColor: '#c5c9e3',
+    textColor: '#3049d3',
+    color: 'error'
   }, 'PROPOSAL_STATUS_ABORTED': {
-      label: 'Aborted',
-      bgColor: '#c5c9e3',
-      textColor: '#3049d3',
-      color: 'error'
+    label: 'Aborted',
+    bgColor: '#c5c9e3',
+    textColor: '#3049d3',
+    color: 'error'
   },
   'PROPOSAL_STATUS_WITHDRAWN': {
-      label: 'Withdrawn',
-      bgColor: '#e7d4ca',
-      textColor: '#e56a11'
+    label: 'Withdrawn',
+    bgColor: '#e7d4ca',
+    textColor: '#e56a11'
   },
 }
 
@@ -283,6 +283,49 @@ export const PercentageDecisionPolicy = `/cosmos.group.v1.PercentageDecisionPoli
 export const PoliciesTypes = {
   '/cosmos.group.v1.PercentageDecisionPolicy': 'Percentage Decision Policy',
   '/cosmos.group.v1.ThresholdDecisionPolicy': 'Threshold Decision Policy'
+}
+
+export const HasGrantAccess = (type) => {
+  let obj = window.localStorage.getItem('feeGrant')
+  if (obj) {
+    obj = obj && JSON.parse(obj) || {};
+
+    if (type) {
+      if (obj?.allowance?.allowed_messages && obj?.allowance?.allowed_messages.length) {
+        
+        let msgs = authzMsgTypes();
+        let msg = msgs.filter(m => m.label === type);
+      
+        if (msg && msg.length) {
+          let found = obj?.allowance?.allowed_messages?.filter((m) => m === msg?.[0]?.typeURL);
+         
+          if (found && found.length) {
+            return {
+              yes: true,
+              ...obj,
+            }
+          } else {
+            return {
+              yes: false
+            }
+          }
+        }
+      } else {
+        return {
+          yes: false,
+          ...obj,
+        }
+      }
+    } else
+      return {
+        yes: true,
+        ...obj,
+      }
+  }
+
+  return {
+    yes: false
+  }
 }
 
 

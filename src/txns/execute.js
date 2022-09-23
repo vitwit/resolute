@@ -449,9 +449,13 @@ export async function signAndBroadcastAmino(
 
   registry.register("/passage3d.claim.v1beta1.MsgClaim", MsgClaim);
 
+  console.log('feee--- ', fee)
+
   const cosmJS = await SigningStargateClient.connectWithSigner(rpcURL, wallet, {
     registry: registry,
   });
+
+  
 
   return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
 }
@@ -488,6 +492,7 @@ export async function signAndBroadcastUnjail(
 
 export async function signAndBroadcastProto(msgs, fee, rpcURL) {
   const client = await SigningStargateClient.connect(rpcURL);
+
 
   const chainId = await client.getChainId();
   let result = await getKeplrWalletDirect(chainId);
@@ -552,10 +557,12 @@ export async function signAndBroadcastProtoFilterGrant(msgs, fee, rpcURL) {
 }
 
 
-export function fee(coinMinimalDenom, amount, gas = 280000) {
+export function fee(coinMinimalDenom, amount, gas = 280000, feeGranter = null) {
   return {
     amount: [{ amount: String(amount), denom: coinMinimalDenom }],
     gas: String(gas),
+    granter: feeGranter,
+    payer: feeGranter
   };
 }
 

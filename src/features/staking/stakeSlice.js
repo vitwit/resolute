@@ -51,9 +51,10 @@ export const txDelegate = createAsyncThunk(
         data.amount,
         data.denom
       );
+
       const result = await signAndBroadcastAmino(
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
+        fee(data.denom, data.feeAmount, 260000, data?.feeGranter),
         data.chainId,
         data.rpc
       );

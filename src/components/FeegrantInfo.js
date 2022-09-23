@@ -13,7 +13,6 @@ import { defaultRegistryTypes } from "@cosmjs/stargate";
 import { authzMsgTypes } from "../utils/authorizations";
 
 const renderAuthorization = (authz, displayDenom) => {
-  console.log('authz--', authz)
   const { allowance, granter, grantee } = authz;
   switch (allowance["@type"]) {
     case "/cosmos.feegrant.v1beta1.BasicAllowance":

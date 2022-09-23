@@ -26,6 +26,8 @@ import Typography from '@mui/material/Typography';
 import { FeegrantInfo } from '../components/FeegrantInfo';
 import Switch from '@mui/material/Switch';
 import GroupTab, { TabPanel } from '../components/group/GroupTab';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 
 export default function Feegrant() {
@@ -132,6 +134,17 @@ export default function Feegrant() {
     setTab(value);
   }
 
+  const isUsingFeeGrant = row => {
+    let grantObj = window.localStorage.getItem('feeGrant') &&
+      JSON.parse(window.localStorage.getItem('feeGrant'))
+
+    if (grantObj) {
+      return row?.granter === grantObj?.granter
+    }
+    return false
+
+  }
+
   return (
     <>
       {
@@ -146,11 +159,11 @@ export default function Feegrant() {
           <></>
       }
       <div style={{ display: 'flex', marginBottom: 12, flexDirection: 'row-reverse' }}>
-        <Button variant='contained' 
+        <Button variant='contained'
           endIcon={
             <AddIcon />
           }
-        size='medium'
+          size='medium'
           onClick={() => navigateTo("/feegrant/new")}
         >
           Grant New
@@ -178,6 +191,7 @@ export default function Feegrant() {
                         <StyledTableCell>Expiration</StyledTableCell>
                         <StyledTableCell>Details</StyledTableCell>
                         <StyledTableCell>Action</StyledTableCell>
+                        <StyledTableCell></StyledTableCell>
                       </StyledTableRow>
                     </TableHead>
                     <TableBody>
@@ -215,6 +229,7 @@ export default function Feegrant() {
                               Revoke
                             </Button>
                           </StyledTableCell>
+
                         </StyledTableRow>
                       ))}
                     </TableBody>
@@ -242,7 +257,7 @@ export default function Feegrant() {
                         <StyledTableCell >Type</StyledTableCell>
                         <StyledTableCell>Expiration</StyledTableCell>
                         <StyledTableCell>Details</StyledTableCell>
-                        {/* <StyledTableCell >Use Feegrant</StyledTableCell> */}
+                        <StyledTableCell >Use Feegrant</StyledTableCell>
                       </StyledTableRow>
                     </TableHead>
                     <TableBody>
@@ -275,6 +290,19 @@ export default function Feegrant() {
                                     size="small" />
 
                                 </StyledTableCell> */}
+                          <StyledTableCell>
+                            <FormControlLabel
+                              control={<Checkbox
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    let grantObj = JSON.stringify(row);
+                                    window.localStorage.setItem('feeGrant', grantObj);
+                                  } else {
+                                    window.localStorage.removeItem('feeGrant')
+                                  }
+                                }}
+                                defaultChecked={isUsingFeeGrant(row)} />} label="Use Grant" />
+                          </StyledTableCell>
                         </StyledTableRow>
                       ))}
                     </TableBody>

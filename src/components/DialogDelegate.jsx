@@ -10,6 +10,8 @@ import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useForm, Controller } from 'react-hook-form';
+import { Checkbox, FormControlLabel, Switch } from '@mui/material';
+import { HasGrantAccess } from '../utils/util';
 
 
 export function DialogDelegate(props) {
@@ -28,7 +30,8 @@ export function DialogDelegate(props) {
     const onSubmit = data => {
         onDelegate({
             validator: validator.operator_address,
-            amount: data.amount
+            amount: data.amount,
+            feeGranter: data?.feeGranter
         })
     }
 
@@ -85,9 +88,11 @@ export function DialogDelegate(props) {
                             <Controller
                                 name="amount"
                                 control={control}
-                                rules={{ required: 'Amount is required', validate: (value) => {
-                                    return Number(value) > 0 && Number(value) <= balance
-                                } }}
+                                // rules={{
+                                //     required: 'Amount is required', validate: (value) => {
+                                //         return Number(value) > 0 && Number(value) <= balance
+                                //     }
+                                // }}
                                 render={({ field }) =>
                                     <TextField
                                         {...field}
@@ -102,6 +107,24 @@ export function DialogDelegate(props) {
                                         helperText={errors.amount?.type === 'validate' ? 'Insufficient balance' : errors.amount?.message}
                                     />}
                             />
+                            {
+                                HasGrantAccess('Delegate').yes ?
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                onChange={(e)=>{
+                                                    if (e.target.checked) {
+                                                        setValue('feeGranter', HasGrantAccess('Delegate')?.granter)
+                                                    } else {
+                                                        setValue('feeGranter', null)
+                                                    }
+                                                }}
+                                                name="grant" />
+                                        }
+                                        label="Use Fee from granter."
+                                    /> : null
+                            }
+
                         </div>
                     </DialogContent>
                     <DialogActions>
@@ -121,7 +144,7 @@ export function DialogDelegate(props) {
                             disabled={loading === 'pending' || authzLoading === 'pending'}
                             className='button-capitalize-title'
                         >
-                            {loading === 'pending' || authzLoading === 'pending' ? <CircularProgress size={25}/> : 'Delegate'}
+                            {loading === 'pending' || authzLoading === 'pending' ? <CircularProgress size={25} /> : 'Delegate'}
                         </Button>
                     </DialogActions>
                 </form>

@@ -17,17 +17,24 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
 
   const wallet = useSelector(state => state?.wallet);
   const { chainInfo } = wallet;
-  const nodeInfo = useSelector(state => state?.node)
+  var nodeInfo = useSelector(state => state?.node)
+  console.log('wallle', wallet)
+
+  if (nodeInfo) {
+    nodeInfo = nodeInfo?.nodeInfo || nodeInfo
+  }
 
   React.useEffect(() => {
     dispatch(getNodeInfo({ baseURL: chainInfo?.config?.rest }))
   }, [])
 
   React.useEffect(() => {
-    if (nodeInfo?.nodeInfo?.status === 'idle') {
-      if (nodeInfo?.nodeInfo?.data?.application_version) {
-        let version = nodeInfo?.nodeInfo?.data?.application_version?.version;
-
+    let status =  nodeInfo
+    console.log('status', status)
+    if (status?.status === 'idle') {
+      if (status?.data?.application_version) {
+        let version = status?.data?.application_version?.version;
+        console.log('Version-- ', version)
         if (version?.indexOf('46') >= 0) {
           setNodeDataInfo(true);
         } else setNodeDataInfo(false);
