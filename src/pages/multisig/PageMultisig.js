@@ -14,7 +14,7 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import { DialogCreateMultisig } from "../../components/DialogCreateMultisig";
+import { DialogCreateMultisig } from "../../components/multisig/DialogCreateMultisig";
 import { getMultisigAccounts } from "../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
@@ -152,7 +152,7 @@ export default function PageMultisig() {
                       <strong> {pendingTxns[row?.address] || 0} </strong> txns
                     </StyledTableCell>
                     <StyledTableCell>
-                      {getLocalTime(row?.created_at) }
+                      {getLocalTime(row?.created_at)}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}

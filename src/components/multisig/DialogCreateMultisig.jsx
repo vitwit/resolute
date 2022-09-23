@@ -9,15 +9,12 @@ import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import DialogTitle from "@mui/material/DialogTitle";
-import { resetError, setError } from "../features/common/commonSlice";
-import {
-  generateMultisigAccount,
-  isValidPubKey,
-} from "../txns/multisig";
+import { resetError, setError } from "../../features/common/commonSlice";
+import { generateMultisigAccount, isValidPubKey } from "../../txns/multisig";
 import {
   createAccount,
   resetCreateMultisigRes,
-} from "../features/multisig/multisigSlice";
+} from "../../features/multisig/multisigSlice";
 import Box from "@mui/system/Box";
 import { useSelector, useDispatch } from "react-redux";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -73,11 +70,19 @@ export function DialogCreateMultisig(props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log(createMultiAccRes);
     if (createMultiAccRes?.status === "idle") {
       dispatch(
         setError({
           type: "success",
           message: "Successfully created",
+        })
+      );
+    } else if (createMultiAccRes?.status === "rejected") {
+      dispatch(
+        setError({
+          type: "error",
+          message: createMultiAccRes?.error,
         })
       );
     }
