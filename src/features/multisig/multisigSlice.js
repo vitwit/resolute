@@ -1,18 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import {
-  createMultisigAccount,
-  createSignature,
-  createTransaction,
-  deleteTx,
-  fetchDelegatorValidators,
-  fetchMultisigAccount,
-  fetchMultisigAccountByAddress,
-  fetchMultisigAccounts,
-  fetchSignatures,
-  fetchTransactins,
-  fetchTransaction,
-  updateTransaction,
-} from "./multisigService";
+import multisigService from "./multisigService";
 
 export const SOMETHING_WRONG = "Something went wrong";
 
@@ -23,19 +10,30 @@ const initialState = {
   multisigAccounts: {
     status: "idle",
     accounts: [],
+    txnCounts: {},
+    total: 0,
   },
   createTxnRes: {
     status: "",
     error: "",
   },
-  txns: {},
+  txns: {
+    list: [],
+    status: "idle",
+    errMsg: "",
+  },
   txn: {},
   createSignRes: {
     status: "",
     error: "",
   },
   signatures: {},
-  multisigAccount: {},
+  multisigAccount: {
+    account: {},
+    pubkeys: [],
+    status: "idle",
+    error: "",
+  },
   delegatorVals: {},
   updateTxn: {
     status: "",
@@ -47,11 +45,13 @@ const initialState = {
   },
 };
 
+const x = async () => {};
+
 export const createAccount = createAsyncThunk(
   "multisig/createAccount",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await createMultisigAccount(data);
+      const response = await multisigService.createAccount(data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error?.message || SOMETHING_WRONG);
@@ -61,9 +61,9 @@ export const createAccount = createAsyncThunk(
 
 export const getMultisigAccounts = createAsyncThunk(
   "multisig/getMultisigAccounts",
-  async (data, { rejectWithValue }) => {
+  async (address, { rejectWithValue }) => {
     try {
-      const response = await fetchMultisigAccounts(data);
+      const response = await multisigService.getAccounts(address);
       return response.data;
     } catch (error) {
       return rejectWithValue(error?.message || SOMETHING_WRONG);
@@ -75,7 +75,7 @@ export const deleteTxn = createAsyncThunk(
   "multisig/deleteTxn",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await deleteTx(data);
+      const response = await multisigService.deleteTx(data.address, data.id);
       return response.data;
     } catch (error) {
       return rejectWithValue(error?.message || SOMETHING_WRONG);
@@ -86,7 +86,7 @@ export const deleteTxn = createAsyncThunk(
 export const getDelegatorValidators = createAsyncThunk(
   "multisig/getDelegatorValidators",
   async ({ lcdUrl, delegatorAddress }) => {
-    const response = await fetchDelegatorValidators(lcdUrl, delegatorAddress);
+    const response = await x();
     return response.data;
   }
 );
@@ -94,15 +94,15 @@ export const getDelegatorValidators = createAsyncThunk(
 export const getMultisigAccount = createAsyncThunk(
   "multisig/getMultisigAccount",
   async (data) => {
-    const response = await fetchMultisigAccount(data);
+    const response = await x();
     return response.data;
   }
 );
 
 export const multisigByAddress = createAsyncThunk(
   "multisig/multisigByAddress",
-  async (data) => {
-    const response = await fetchMultisigAccountByAddress(data);
+  async (address) => {
+    const response = await multisigService.getAccount(address);
     return response.data;
   }
 );
@@ -111,7 +111,7 @@ export const createTxn = createAsyncThunk(
   "multisig/createTxn",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await createTransaction(data);
+      const response = await multisigService.createTxn(data.address, data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error?.message || SOMETHING_WRONG);
@@ -121,9 +121,9 @@ export const createTxn = createAsyncThunk(
 
 export const updateTxn = createAsyncThunk(
   "multisig/updateTxn",
-  async ({ txId, body }, {rejectWithValue}) => {
+  async ({address, txId, body }, { rejectWithValue }) => {
     try {
-      const response = await updateTransaction({ txId, body });
+      const response = await multisigService.updateTx(address, txId, body);
       return response.data;
     } catch (error) {
       return rejectWithValue(error?.message || SOMETHING_WRONG);
@@ -134,16 +134,21 @@ export const updateTxn = createAsyncThunk(
 export const getTxns = createAsyncThunk(
   "multisig/getTxns",
   async ({ address, status }) => {
-    const response = await fetchTransactins(address, status);
+    const response = await multisigService.getTxns(address, {
+      status: status,
+    });
     return response.data;
   }
 );
 
-export const createSign = createAsyncThunk(
-  "multisig/createSign",
+export const signTx = createAsyncThunk(
+  "multisig/signTx",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await createSignature(data);
+      const response = await multisigService.signTx(data.address, data.txId, {
+        signer: data.signer,
+        signature: data.signature,
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error?.message || SOMETHING_WRONG);
@@ -154,7 +159,7 @@ export const createSign = createAsyncThunk(
 export const getSigns = createAsyncThunk(
   "multisig/getSigns",
   async ({ address, txId }) => {
-    const response = await fetchSignatures(address, txId);
+    const response = await x();
     return response.data;
   }
 );
@@ -162,7 +167,7 @@ export const getSigns = createAsyncThunk(
 export const getSingleTxn = createAsyncThunk(
   "multisig/getSingleTxn",
   async (txId) => {
-    const response = await fetchTransaction(txId);
+    const response = await x();
     return response.data;
   }
 );
@@ -203,9 +208,14 @@ export const multiSlice = createSlice({
       .addCase(getMultisigAccounts.pending, (state) => {
         state.multisigAccounts.status = "pending";
         state.multisigAccounts.accounts = [];
+        state.multisigAccounts.total = 0;
+        state.multisigAccounts.txnCounts = {};
       })
       .addCase(getMultisigAccounts.fulfilled, (state, action) => {
-        state.multisigAccounts.accounts = action.payload?.data?.data || [];
+        state.multisigAccounts.accounts = action.payload?.data?.accounts || [];
+        state.multisigAccounts.total = action.payload?.data?.total;
+        state.multisigAccounts.txnCounts =
+          action.payload?.data?.pending_txns || {};
         state.multisigAccounts.status = "idle";
       })
       .addCase(getMultisigAccounts.rejected, (state, action) => {
@@ -217,9 +227,14 @@ export const multiSlice = createSlice({
     builder
       .addCase(getMultisigAccount.pending, (state) => {
         state.multisigAccount.status = "pending";
+        state.multisigAccount.account = {};
+        state.multisigAccount.error = "";
+        state.multisigAccount.pubkeys = [];
       })
       .addCase(getMultisigAccount.fulfilled, (state, action) => {
-        state.multisigAccount = action.payload;
+        state.multisigAccount.account = action.payload?.data?.account || {};
+        state.multisigAccount.pubkeys = action.payload?.data?.pubkeys || [];
+        state.multisigAccount.error = "";
       })
       .addCase(getMultisigAccount.rejected, (state, action) => {
         state.multisigAccount.status = "rejected";
@@ -228,9 +243,14 @@ export const multiSlice = createSlice({
     builder
       .addCase(multisigByAddress.pending, (state) => {
         state.multisigAccount.status = "pending";
+        state.multisigAccount.account = {};
+        state.multisigAccount.error = "";
+        state.multisigAccount.pubkeys = [];
       })
       .addCase(multisigByAddress.fulfilled, (state, action) => {
-        state.multisigAccount = action.payload;
+        state.multisigAccount.account = action.payload?.data?.account || {};
+        state.multisigAccount.pubkeys = action.payload?.data?.pubkeys || [];
+        state.multisigAccount.error = "";
       })
       .addCase(multisigByAddress.rejected, (state, action) => {
         state.multisigAccount.status = "rejected";
@@ -240,20 +260,24 @@ export const multiSlice = createSlice({
       .addCase(createTxn.pending, (state) => {
         state.createTxnRes.status = "pending";
       })
-      .addCase(createTxn.fulfilled, (state, _) => {
+      .addCase(createTxn.fulfilled, (state, result) => {
         state.createTxnRes.status = "idle";
       })
       .addCase(createTxn.rejected, (state, action) => {
         state.createTxnRes.status = "rejected";
-        state.createTxnRes.error = action.payload;
+        state.createTxnRes.error = action.payload?.message;
       });
 
     builder
       .addCase(getTxns.pending, (state) => {
         state.txns.status = "pending";
+        state.txns.errMsg = "";
+        state.txns.list = [];
       })
       .addCase(getTxns.fulfilled, (state, action) => {
-        state.txns = action.payload;
+        state.txns.errMsg = "";
+        state.txns.status = "idle";
+        state.txns.list = action.payload?.data || [];
       })
       .addCase(getTxns.rejected, (state, action) => {
         state.txns.status = "rejected";
@@ -317,13 +341,13 @@ export const multiSlice = createSlice({
       });
 
     builder
-      .addCase(createSign.pending, (state) => {
+      .addCase(signTx.pending, (state) => {
         state.createSignRes.status = "pending";
       })
-      .addCase(createSign.fulfilled, (state, _) => {
+      .addCase(signTx.fulfilled, (state, _) => {
         state.createSignRes.status = "idle";
       })
-      .addCase(createSign.rejected, (state, action) => {
+      .addCase(signTx.rejected, (state, action) => {
         state.createSignRes.status = "rejected";
         state.createSignRes.error = action.payload;
       });

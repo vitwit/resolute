@@ -20,7 +20,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import Collapse from "@mui/material/Collapse";
 import { Box } from "@mui/system";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -127,7 +127,7 @@ DialogMultisigMessages.propTypes = {
 const getTxStatusComponent = (status, onShowError) => {
   return (
     <>
-      {status === "DONE" ? (
+      {status === "SUCCESS" ? (
         <Chip size="small" label="Success" color="success" variant="outlined" />
       ) : (
         <>
@@ -150,39 +150,16 @@ const getTxStatusComponent = (status, onShowError) => {
   );
 };
 
-const TableRowComponent = ({
-  tx,
-  type,
-  index,
-  onShowError,
-  onShowMoreTxns,
-}) => {
-  const { address } = useParams();
+const TableRowComponent = (props) => {
+  const { tx, type, onShowError, onShowMoreTxns, multisigAccount } = props;
+
+  const threshold = multisigAccount?.account?.threshold || 0;
+
   const walletAddress = useSelector((state) => state.wallet.address);
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
 
-  const multisigAccountDetails = useSelector(
-    (state) => state.multisig.multisigAccount
-  );
-  const multisigAccount = multisigAccountDetails?.data?.data || {};
-
-  const threshold = Number(multisigAccount?.pubkeyJSON?.value?.threshold || 0);
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
-
-  const getAllSignatures = () => {
-    let txId = tx?._id;
-    dispatch(getSigns({ address: multisigAccount?.address, txId }));
-  };
-
-  const getMultisignatureAcc = () => {
-    dispatch(multisigByAddress(address || ""));
-  };
-
-  useEffect(() => {
-    getAllSignatures();
-    getMultisignatureAcc();
-  }, []);
 
   const isWalletSigned = () => {
     let signs = tx?.signatures || [];
@@ -194,19 +171,20 @@ const TableRowComponent = ({
 
   const isReadyToBroadcast = () => {
     let signs = tx?.signatures || [];
-    if (signs?.length >= threshold) return true;
+    if (signs?.length >= multisigAccount?.account?.threshold) return true;
     else return false;
   };
 
   const parseMultisigTxn = (tx) => {
     let tx1 = JSON.parse(JSON.stringify(tx));
-    delete tx1?.timestamp;
+    delete tx1?.created_at;
+    delete tx1?.last_updated;
     delete tx1?.status;
-    delete tx1?._id;
+    delete tx1?.id;
     delete tx1?.hash;
-    delete tx1?.address;
+    delete tx1?.multisig_address;
     delete tx1?.chainid;
-    delete tx1?.errorMsg;
+    delete tx1?.error_msg;
 
     const signatures = tx1?.signatures;
 
@@ -241,69 +219,84 @@ const TableRowComponent = ({
     <>
       <StyledTableRow>
         <StyledTableCell>
-          {tx?.msgs.length === 0 ? (
+          {tx?.messages?.length === 0 ? (
             <Typography>-</Typography>
           ) : (
             <Box component="div">
-              {tx?.msgs[0].typeUrl === "/cosmos.bank.v1beta1.MsgSend" ? (
+              {tx?.messages[0].typeUrl === "/cosmos.bank.v1beta1.MsgSend" ? (
                 <p>
-                  {mapTxns[tx?.msgs[0]?.typeUrl]} &nbsp;
-                  <strong>{displayDenom(tx?.msgs[0]?.value?.amount)}</strong>
+                  {mapTxns[tx?.messages[0]?.typeUrl]} &nbsp;
+                  <strong>
+                    {displayDenom(tx?.messages[0]?.value?.amount)}
+                  </strong>
                   &nbsp;To&nbsp;{" "}
                   <strong>
                     {" "}
-                    {shortenAddress(tx?.msgs[0]?.value?.toAddress, 27)}
+                    {shortenAddress(tx?.messages[0]?.value?.toAddress, 27)}
                   </strong>
                 </p>
               ) : null}
 
-              {tx?.msgs[0].typeUrl === "/cosmos.staking.v1beta1.MsgDelegate" ? (
+              {tx?.messages[0].typeUrl ===
+              "/cosmos.staking.v1beta1.MsgDelegate" ? (
                 <p>
-                  {mapTxns[tx?.msgs[0]?.typeUrl]}{" "}
-                  <strong>{displayDenom(tx?.msgs[0]?.value?.amount)}</strong>
+                  {mapTxns[tx?.messages[0]?.typeUrl]}{" "}
+                  <strong>
+                    {displayDenom(tx?.messages[0]?.value?.amount)}
+                  </strong>
                   &nbsp; To &nbsp;
                   <strong>
-                    {shortenAddress(tx?.msgs[0]?.value?.validatorAddress, 27)}
+                    {shortenAddress(
+                      tx?.messages[0]?.value?.validatorAddress,
+                      27
+                    )}
                   </strong>
                 </p>
               ) : null}
 
-              {tx?.msgs[0].typeUrl ===
+              {tx?.messages[0].typeUrl ===
               "/cosmos.staking.v1beta1.MsgUndelegate" ? (
                 <p>
-                  {mapTxns[tx?.msgs[0]?.typeUrl]}{" "}
-                  <strong>{displayDenom(tx?.msgs[0]?.value?.amount)}</strong>
+                  {mapTxns[tx?.messages[0]?.typeUrl]}{" "}
+                  <strong>
+                    {displayDenom(tx?.messages[0]?.value?.amount)}
+                  </strong>
                   &nbsp; From &nbsp;
                   <strong>
-                    {shortenAddress(tx?.msgs[0]?.value?.validatorAddress, 27)}
+                    {shortenAddress(
+                      tx?.messages[0]?.value?.validatorAddress,
+                      27
+                    )}
                   </strong>
                 </p>
               ) : null}
 
-              {tx?.msgs[0].typeUrl ===
+              {tx?.messages[0].typeUrl ===
               "/cosmos.staking.v1beta1.MsgBeginRedelegate" ? (
                 <p>
-                  {mapTxns[tx?.msgs[0]?.typeUrl]} &nbsp;
-                  <strong>{displayDenom(tx?.msgs[0]?.value?.amount)}</strong>
+                  {mapTxns[tx?.messages[0]?.typeUrl]} &nbsp;
+                  <strong>
+                    {displayDenom(tx?.messages[0]?.value?.amount)}
+                  </strong>
                   &nbsp;
                   <br />
                   From &nbsp;
                   <strong>
                     {shortenAddress(
-                      tx?.msgs[0]?.value?.validatorSrcAddress,
+                      tx?.messages[0]?.value?.validatorSrcAddress,
                       27
                     )}
                   </strong>
                   &nbsp; To &nbsp;
                   <strong>
                     {shortenAddress(
-                      tx?.msgs[0]?.value?.validatorDstAddress,
+                      tx?.messages[0]?.value?.validatorDstAddress,
                       27
                     )}
                   </strong>
                 </p>
               ) : null}
-              {tx?.msgs.length > 1 ? (
+              {tx?.messages.length > 1 ? (
                 <div
                   style={{
                     textAlign: "center",
@@ -314,7 +307,7 @@ const TableRowComponent = ({
                       cursor: "pointer",
                     }}
                     onClick={() => {
-                      onShowMoreTxns(tx.msgs);
+                      onShowMoreTxns(tx.messages);
                     }}
                   >
                     Show more
@@ -329,7 +322,7 @@ const TableRowComponent = ({
         </StyledTableCell>
         <StyledTableCell align="left">
           {(tx?.signatures?.length || 0) >= threshold
-            ? tx?.status === "DONE" || tx?.status === "FAILED"
+            ? tx?.status === "SUCCESS" || tx?.status === "FAILED"
               ? getTxStatusComponent(tx?.status, onShowError)
               : "Waiting for brodcast"
             : !isWalletSigned()
@@ -365,9 +358,9 @@ const TableRowComponent = ({
               )
             ) : (
               <SignTxn
-                address={multisigAccount?.address}
+                address={multisigAccount?.account?.address}
                 signatures={tx?.signatures}
-                txId={tx?._id}
+                txId={tx?.id}
                 unSignedTxn={tx}
               />
             )}
@@ -405,7 +398,12 @@ const TableRowComponent = ({
               ml: 1,
             }}
             onClick={() => {
-              dispatch(deleteTxn(tx?._id));
+              dispatch(
+                deleteTxn({
+                  address: tx?.multisig_address,
+                  id: tx?.id,
+                })
+              );
             }}
           >
             <DeleteIcon />
@@ -436,9 +434,17 @@ const TableRowComponent = ({
   );
 };
 
+TableRowComponent.propTypes = {
+  tx: PropTypes.object.isRequired,
+  type: PropTypes.string.isRequired,
+  onShowError: PropTypes.func.isRequired,
+  onShowMoreTxns: PropTypes.func.isRequired,
+  multisigAccount: PropTypes.object.isRequired,
+};
+
 export default function Transactions(props) {
   const dispatch = useDispatch();
-  const txns = useSelector((state) => state.multisig.txns?.data?.data || []);
+  const txnsState = useSelector((state) => state.multisig?.txns || {});
   const createTxRes = useSelector((state) => state.multisig.createTxnRes);
   const [isHistory, setIsHistory] = useState(false);
 
@@ -504,8 +510,14 @@ export default function Transactions(props) {
   }, [createTxRes]);
 
   const walletConnected = useSelector((state) => state.wallet.connected);
+
+  useEffect(() => {
+    alert();
+  }, []);
+
   useEffect(() => {
     if (walletConnected) {
+      // alert();
       getAllTxns(isHistory ? "history" : "current");
       return () => {
         dispatch(resetDeleteTxnState());
@@ -514,7 +526,7 @@ export default function Transactions(props) {
         dispatch(resetSignTxnState());
       };
     }
-  }, [walletConnected]);
+  }, []);
 
   const [errorMsg, setErrorMsg] = useState("");
   const [openError, setOpenError] = useState(false);
@@ -523,16 +535,20 @@ export default function Transactions(props) {
   const [selectedMsgs, setSelectedTxns] = useState({});
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
 
+  const multisigAccount = useSelector(
+    (state) => state.multisig.multisigAccount
+  );
+
   return (
     <Box>
-      {txns?.status !== "pending" && !txns?.length ? (
+      {txnsState?.status !== "pending" && !txnsState.list?.length ? (
         <Typography variant="body1" color="error" fontWeight={500}>
           No transactions found
         </Typography>
       ) : (
         ""
       )}
-      {txns?.status === "pending" ? <CircularProgress size={40} /> : null}
+      {txnsState?.status === "pending" ? <CircularProgress size={40} /> : null}
       <Box style={{ display: "flex" }}>
         <ButtonGroup
           disableElevation
@@ -595,19 +611,21 @@ export default function Transactions(props) {
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-                {txns.map((row, index) => (
+                {txnsState.list.map((row, index) => (
                   <TableRowComponent
                     key={index}
                     tx={row}
                     type="history"
                     onShowError={() => {
-                      setErrorMsg(row?.errorMsg);
+                      console.log(txnsState);
+                      setErrorMsg(row?.error_msg);
                       setOpenError(true);
                     }}
                     onShowMoreTxns={(msgs) => {
                       setSelectedTxns(msgs);
                       setTxnsListDialog(true);
                     }}
+                    multisigAccount={multisigAccount}
                   />
                 ))}
               </TableBody>
@@ -630,16 +648,16 @@ export default function Transactions(props) {
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-                {txns.map((row, index) => (
+                {txnsState.list.map((row, index) => (
                   <TableRowComponent
                     key={index}
                     tx={row}
                     type="active"
                     onShowMoreTxns={(msgs) => {
-                      console.log(msgs);
                       setSelectedTxns(msgs);
                       setTxnsListDialog(true);
                     }}
+                    multisigAccount={multisigAccount}
                   />
                 ))}
               </TableBody>

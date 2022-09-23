@@ -19,6 +19,7 @@ import { getMultisigAccounts } from "../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 import { getNetworkByChainId } from "../../utils/networks";
+import { getLocalTime } from "../../utils/datetime";
 
 export default function PageMultisig() {
   const navigate = useNavigate();
@@ -33,7 +34,8 @@ export default function PageMultisig() {
   const multisigAccounts = useSelector(
     (state) => state.multisig.multisigAccounts
   );
-  const accounts = multisigAccounts.accounts
+  const accounts = multisigAccounts.accounts;
+  const pendingTxns = multisigAccounts.txnCounts;
   const walletAddress = useSelector((state) => state.wallet.address);
 
   const { config } = chainInfo;
@@ -116,6 +118,7 @@ export default function PageMultisig() {
                   <StyledTableCell>Address</StyledTableCell>
                   <StyledTableCell>Threshold</StyledTableCell>
                   <StyledTableCell>Actions Required</StyledTableCell>
+                  <StyledTableCell>Created At</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
@@ -144,11 +147,12 @@ export default function PageMultisig() {
                         size="medium"
                       />
                     </StyledTableCell>
+                    <StyledTableCell>{row?.threshold || 0}</StyledTableCell>
                     <StyledTableCell>
-                      {row?.pubkeyjson?.value?.threshold || 0}
+                      <strong> {pendingTxns[row?.address] || 0} </strong> txns
                     </StyledTableCell>
                     <StyledTableCell>
-                      <strong> {row?.txns?.length || 0} </strong> txns
+                      {getLocalTime(row?.created_at) }
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
@@ -164,6 +168,7 @@ export default function PageMultisig() {
           chainId={chainId}
           onClose={onClose}
           open={open}
+          address={walletAddress}
         />
       ) : null}
     </Paper>

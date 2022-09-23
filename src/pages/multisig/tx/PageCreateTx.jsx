@@ -407,8 +407,8 @@ export default function PageCreateTx() {
     dispatch(
       createTxn({
         address: address,
-        chainId: chainInfo?.config?.chainId,
-        msgs: messages,
+        chain_id: chainInfo?.config?.chainId,
+        messages: messages,
         fee: feeObj,
         memo: data.memo,
         gas: data.gas,

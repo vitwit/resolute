@@ -10,7 +10,10 @@ import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import DialogTitle from "@mui/material/DialogTitle";
 import { resetError, setError } from "../features/common/commonSlice";
-import { createMultisig, isValidPubKey } from "../txns/multisig";
+import {
+  generateMultisigAccount,
+  isValidPubKey,
+} from "../txns/multisig";
 import {
   createAccount,
   resetCreateMultisigRes,
@@ -149,19 +152,20 @@ export function DialogCreateMultisig(props) {
 
     for (let i = 0; i < uniquePubKeys.length; i++) {
       if (!isValidPubKey(uniquePubKeys[i])) {
-        setFormError(`pubKey at ${i+1} is invalid`);
+        setFormError(`pubKey at ${i + 1} is invalid`);
         return;
       }
     }
 
     try {
-      let res = createMultisig(
+      let res = generateMultisigAccount(
         pubKeys,
         Number(threshold),
-        addressPrefix,
-        chainId
+        addressPrefix
       );
       res.name = name;
+      res.chainId = chainId;
+      res.createdBy = props.address;
       dispatch(createAccount(res));
     } catch (error) {
       dispatch(
@@ -344,4 +348,5 @@ DialogCreateMultisig.propTypes = {
   open: PropTypes.bool.isRequired,
   addressPrefix: PropTypes.string.isRequired,
   chainId: PropTypes.string.isRequired,
+  address: PropTypes.string.isRequired,
 };

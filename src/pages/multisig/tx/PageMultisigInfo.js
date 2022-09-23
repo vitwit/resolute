@@ -20,7 +20,8 @@ export default function PageMultisigInfo() {
   const multisigAccountDetails = useSelector(
     (state) => state.multisig.multisigAccount
   );
-  const multisigAccount = multisigAccountDetails?.data?.data || {};
+  const multisigAccount = multisigAccountDetails?.account || {};
+  const members = multisigAccountDetails?.pubkeys || [];
   const multisigBal = useSelector((state) => state.bank.balance);
   const multisigDel = useSelector((state) => state.staking.delegations);
   const currency = useSelector(
@@ -134,7 +135,7 @@ export default function PageMultisigInfo() {
               Threshold
             </Typography>
             <Typography>
-              &nbsp;&nbsp;{multisigAccount?.pubkeyJSON?.value?.threshold || 0}
+              &nbsp;&nbsp;{multisigAccount?.threshold || 0}
             </Typography>
           </Grid>
           <Grid item xs={6} md={3}>
@@ -174,7 +175,7 @@ export default function PageMultisigInfo() {
             >
               Signers
             </Typography>
-            {multisigAccount?.pubkeyJSON?.value?.pubkeys?.map((p, index) => (
+            {members.map((m, index) => (
               <Chip
                 key={index}
                 sx={{
@@ -182,11 +183,11 @@ export default function PageMultisigInfo() {
                   mr: 0.5,
                   mt: 1,
                 }}
-                label={p?.address ? shortenAddress(p.address, 24) : ""}
+                label={m?.address ? shortenAddress(m.address, 24) : ""}
                 size="small"
                 deleteIcon={<ContentCopyOutlined />}
                 onDelete={() => {
-                  copyToClipboard(p?.address, dispatch);
+                  copyToClipboard(m?.address, dispatch);
                 }}
               />
             ))}

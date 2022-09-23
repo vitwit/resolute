@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { toBase64 } from "@cosmjs/encoding";
-import { createSign } from "../../features/multisig/multisigSlice";
+import { signTx } from "../../features/multisig/multisigSlice";
 import { setError } from "../../features/common/commonSlice";
 import PropTypes from "prop-types";
 
@@ -58,14 +58,16 @@ export default function SignTxn(props) {
         return;
       }
 
+      console.log(multisigAcc);
       const signerData = {
         accountNumber: multisigAcc?.accountNumber,
         sequence: multisigAcc?.sequence,
         chainId: chainInfo?.config?.chainId,
       };
 
-      let msgs = unSignedTxn.msgs;
+      let msgs = unSignedTxn.messages;
 
+      console.log(msgs);
       const { bodyBytes, signatures } = await signingClient.sign(
         from,
         msgs,
@@ -75,14 +77,13 @@ export default function SignTxn(props) {
       );
 
       const payload = {
-        address: from,
+        signer: from,
         txId: txId,
-        multisigAddress: address,
-        bodyBytes: toBase64(bodyBytes),
+        address: address,
         signature: toBase64(signatures[0]),
       };
 
-      dispatch(createSign(payload));
+      dispatch(signTx(payload));
       setLoad(false);
     } catch (error) {
       setLoad(false);
