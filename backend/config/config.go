@@ -8,7 +8,8 @@ import (
 )
 
 type Config struct {
-	DB DBConfig `mapstructure:"database"`
+	DB  DBConfig  `mapstructure:"database"`
+	API APIConfig `mapstructure:"api"`
 }
 
 type DBConfig struct {
@@ -17,6 +18,10 @@ type DBConfig struct {
 	User         string `yaml:"user"`
 	Password     string `yaml:"password"`
 	DatabaseName string `yaml:"name"`
+}
+
+type APIConfig struct {
+	Port string `yaml:"port"`
 }
 
 func ParseConfig() (Config, error) {
@@ -37,12 +42,17 @@ func ParseConfig() (Config, error) {
 
 	switch viper.GetString("active") {
 	case "production":
-		cfg.DB = DBConfig{
-			Host:         viper.GetString("production.database.host"),
-			Port:         viper.GetString("production.database.port"),
-			User:         viper.GetString("production.database.user"),
-			Password:     viper.GetString("production.database.password"),
-			DatabaseName: viper.GetString("production.database.name"),
+		{
+			cfg.DB = DBConfig{
+				Host:         viper.GetString("production.database.host"),
+				Port:         viper.GetString("production.database.port"),
+				User:         viper.GetString("production.database.user"),
+				Password:     viper.GetString("production.database.password"),
+				DatabaseName: viper.GetString("production.database.name"),
+			}
+			cfg.API = APIConfig{
+				Port: viper.GetString("production.api.port"),
+			}
 		}
 
 	case "dev":
@@ -52,6 +62,9 @@ func ParseConfig() (Config, error) {
 			User:         viper.GetString("dev.database.user"),
 			Password:     viper.GetString("dev.database.password"),
 			DatabaseName: viper.GetString("dev.database.name"),
+		}
+		cfg.API = APIConfig{
+			Port: viper.GetString("production.api.port"),
 		}
 
 	default:

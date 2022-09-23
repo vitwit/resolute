@@ -7,6 +7,8 @@ production:
     user: ""
     password: ""
     name: ""
+  api:
+    port: 1323
 
 dev:
   database:
@@ -15,3 +17,5 @@ dev:
     user: "alice"
     password: "password"
     name: "multisig"
+  api:
+    port: 1323

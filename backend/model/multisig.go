@@ -1,6 +1,9 @@
 package model
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+)
 
 type CreateAccount struct {
 	Address   string       `json:"address"`
@@ -8,6 +11,7 @@ type CreateAccount struct {
 	Threshold int32        `json:"threshold"`
 	Pubkeys   []PubkeysReq `json:"pubkeys"`
 	ChainId   string       `json:"chainId"`
+	CreatedBy string       `json:"createdBy"`
 }
 
 type PubkeysReq struct {
@@ -28,8 +32,8 @@ func (a CreateAccount) Validate() error {
 		return errors.New("chainId cannot be empty")
 	}
 
-	if a.Threshold <= 1 {
-		return errors.New("threshold must be greater than 1")
+	if a.Threshold < 1 {
+		return errors.New("threshold must be greater than 0")
 	}
 
 	if len(a.Pubkeys) <= 1 {
@@ -54,13 +58,13 @@ func (p PubkeysReq) Validate() error {
 }
 
 type Pubkey struct {
-	TypeUrl string `json:"typeUrl"`
+	TypeUrl string `json:"type"`
 	Value   string `json:"value"`
 }
 
 func (p Pubkey) Validate() error {
 	if len(p.TypeUrl) == 0 {
-		return errors.New("type_url cannot be empty")
+		return errors.New("type cannot be empty")
 	}
 
 	if len(p.Value) == 0 {
@@ -75,12 +79,15 @@ type MultisigAccount struct {
 	Name       string `json:"name"`
 	PubkeyType string `json:"pubkey_type"`
 	Threshold  int32  `json:"threshold"`
+	ChainId    string `json:"chain_id"`
+	CreatedAt  string `json:"created_at"`
+	CreatedBy  string `json:"created_by"`
 }
 
 type Pubkeys struct {
-	MultisigAddress string `json:"multisig_address"`
-	Pubkey          string `json:"pubkey"`
-	Address         string `json:"address"`
+	MultisigAddress string          `json:"multisig_address"`
+	Pubkey          json.RawMessage `json:"pubkey"`
+	Address         string          `json:"address"`
 }
 
 type GetAccountsResponse struct {

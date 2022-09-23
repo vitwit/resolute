@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -15,58 +17,59 @@ func (h *Handler) CreateTransaction(c echo.Context) error {
 
 	req := &model.CreateTransactionRequest{}
 	if err := c.Bind(req); err != nil {
-		return c.JSON(http.StatusBadRequest, model.UserResponse{
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Status:  "error",
-			Message: err.Error(),
+			Message: "failed to decode request",
+			Log:     err.Error(),
 		})
 	}
 
 	if err := req.Validate(); err != nil {
-		return c.JSON(http.StatusBadRequest, model.UserResponse{
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Status:  "error",
 			Message: err.Error(),
+			Log:     err.Error(),
 		})
 	}
 
 	row := h.DB.QueryRow(`SELECT * FROM multisig_accounts WHERE "address"=$1`, address)
 	var addr model.MultisigAccount
 	fmt.Println(row.Scan(addr))
+	// TODO: make sure multisig_account exists
 
 	feebz, err := json.Marshal(req.Fee)
 	if err != nil {
-		return err
-	}
-
-	var id int
-	err = h.DB.QueryRow(`INSERT INTO "transactions"("multisig_address","fee","status","created_at") VALUES ($1,$2,$3,$4) RETURNING "id"`,
-		address, feebz, model.Pending, time.Now(),
-	).Scan(&id)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, model.UserResponse{
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Status:  "error",
-			Message: err.Error(),
+			Message: "failed to decode fee: invalid fee",
+			Log:     err.Error(),
 		})
 	}
 
-	for _, msg := range req.Messages {
-
-		mbz, err := json.Marshal(msg.Value)
-		if err != nil {
-			return err
-		}
-		_, err = h.DB.Exec(`INSERT INTO "messages"("tx_id","type_url","value") VALUES ($1,$2,$3)`,
-			id, msg.TypeUrl, mbz,
-		)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, model.UserResponse{
-				Status:  "error",
-				Message: err.Error(),
-			})
-		}
-
+	msgsbz, err := json.Marshal(req.Messages)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to decode messages: invalid messages",
+			Log:     err.Error(),
+		})
 	}
 
-	return c.JSON(http.StatusOK, model.UserResponse{
+	var id int
+	err = h.DB.QueryRow(`INSERT INTO "transactions"("multisig_address","fee","status","last_updated","messages","memo") 
+	VALUES
+	 ($1,$2,$3,$4,$5,$6) RETURNING "id"`,
+		address, feebz, model.Pending, time.Now(), msgsbz, req.Memo,
+	).Scan(&id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to store transaction",
+			Log:     err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, model.SuccessResponse{
 		Status:  "success",
 		Message: "transactions created",
 	})
@@ -74,47 +77,310 @@ func (h *Handler) CreateTransaction(c echo.Context) error {
 
 func (h *Handler) GetTransactions(c echo.Context) error {
 	address := c.Param("address")
-	page, limit, countTotal, err := ParsePaginationParams(c)
+	page, limit, _, err := ParsePaginationParams(c)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, model.UserResponse{
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Status:  "error",
 			Message: err.Error(),
+			Log:     err.Error(),
 		})
 	}
 
-	rows, err := h.DB.Query(`SELECT * FROM transactions WHERE multisig_address=$1 LIMIT $2 OFFSET $3`, address, limit, (page-1)*limit)
+	status := getStatus(c.QueryParam("status"))
+	var rows *sql.Rows
+	if status == model.Pending {
+		rows, err = h.DB.Query(`SELECT id,multisig_address,fee,status,created_at,messages,hash,
+		err_msg,last_updated,memo,signatures FROM transactions WHERE multisig_address=$1 AND status=$2 LIMIT $3 OFFSET $4`, address, status, limit, (page-1)*limit)
+	} else {
+		rows, err = h.DB.Query(`SELECT id,multisig_address,fee,status,created_at,messages,hash,
+		err_msg,last_updated,memo,signatures FROM transactions WHERE multisig_address=$1 AND status<>$2 LIMIT $3 OFFSET $4`, address, model.Pending, limit, (page-1)*limit)
+	}
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, model.UserResponse{
+		if rows != nil && sql.ErrNoRows == rows.Err() {
+			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Status:  "error",
+				Message: fmt.Sprintf("no transactions with address %s", address),
+				Log:     rows.Err().Error(),
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Status:  "error",
-			Message: err.Error(),
+			Message: "failed to query transaction",
+			Log:     err.Error(),
 		})
 	}
 
-	var transactions []model.Transaction
+	transactions := make([]model.Transaction, 0)
 	// Loop through rows, using Scan to assign column data to struct fields.
 	for rows.Next() {
 		var transaction model.Transaction
-		if err := rows.Scan(&transaction.Id, &transaction.Fee, &transaction.CreatedAt,
-			&transaction.ErrorMessage, &transaction.Status, &transaction.TxHash, &transaction.MultisigAccount); err != nil {
-			return c.JSON(http.StatusBadRequest, model.UserResponse{
+		if err := rows.Scan(
+			&transaction.Id,
+			&transaction.MultisigAddress,
+			&transaction.Fee,
+			&transaction.Status,
+			&transaction.CreatedAt,
+			&transaction.Messages,
+			&transaction.TxHash,
+			&transaction.ErrorMessage,
+			&transaction.LastUpdated,
+			&transaction.Memo,
+			&transaction.Signatures,
+		); err != nil {
+			return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 				Status:  "error",
-				Message: err.Error(),
+				Message: "failed to decode transaction",
+				Log:     err.Error(),
 			})
 		}
 		transactions = append(transactions, transaction)
 	}
 	rows.Close()
 
+	return c.JSON(http.StatusOK, model.SuccessResponse{
+		Data:   transactions,
+		Status: "success",
+	})
 }
 
-// status := model.Pending
-// switch c.Param("status") {
-// case "PENDING":
-// 	status = model.Pending
-// case "FAILED":
-// 	status = model.Failed
-// case "SUCCESS":
-// 	status = model.Success
-// default:
-// 	status = model.Pending
-// }
+func (h *Handler) GetTransaction(c echo.Context) error {
+	id := c.Param("id")
+	address := c.Param("address")
+	txId, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "invalid transaction id ",
+			Log:     "",
+		})
+	}
+
+	row := h.DB.QueryRow(`SELECT id,multisig_address,fee,status,created_at,messages,hash,
+	err_msg,last_updated,memo,signatures FROM transactions WHERE id=$1 AND multisig_address=$2`, txId, address)
+
+	var transaction model.Transaction
+	if err := row.Scan(
+		&transaction.Id,
+		&transaction.MultisigAddress,
+		&transaction.Fee,
+		&transaction.Status,
+		&transaction.CreatedAt,
+		&transaction.Messages,
+		&transaction.TxHash,
+		&transaction.ErrorMessage,
+		&transaction.LastUpdated,
+		&transaction.Memo,
+		&transaction.Signatures,
+	); err != nil {
+		if sql.ErrNoRows == row.Err() {
+			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Status:  "error",
+				Message: fmt.Sprintf("no transaction with address %s and id=%d", address, txId),
+				Log:     row.Err().Error(),
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to query transaction",
+			Log:     row.Err().Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, model.SuccessResponse{
+		Data:   transaction,
+		Status: "success",
+	})
+}
+
+type Signature struct {
+	Address   string `json:"address"`
+	Signature string `json:"signature"`
+}
+
+type SignTxReq struct {
+	Signature string `json:"signature"`
+	Signer    string `json:"signer"`
+}
+
+func (h *Handler) SignTransaction(c echo.Context) error {
+	id := c.Param("id")
+	address := c.Param("address")
+	txId, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "invalid transaction id ",
+		})
+	}
+
+	req := &SignTxReq{}
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
+	}
+
+	row := h.DB.QueryRow(`SELECT signatures FROM transactions WHERE id=$1 AND multisig_address=$2`, txId, address)
+
+	var transaction model.Transaction
+	if err := row.Scan(
+		&transaction.Signatures,
+	); err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
+	}
+
+	var signatures []Signature
+	if err := json.Unmarshal(transaction.Signatures, &signatures); err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
+	}
+
+	var result []Signature
+	if len(signatures) == 0 {
+		result = append(result, Signature{
+			Address:   req.Signer,
+			Signature: req.Signature,
+		})
+	} else {
+		exists := false
+		for _, sig := range signatures {
+			if sig.Address == req.Signer {
+				exists = true
+				result = append(result, Signature{
+					Address:   req.Signer,
+					Signature: req.Signature,
+				})
+			} else {
+
+				result = append(result, Signature{
+					Address:   sig.Address,
+					Signature: sig.Signature,
+				})
+			}
+
+		}
+
+		if !exists {
+			result = append(result, Signature{
+				Address:   req.Signer,
+				Signature: req.Signature,
+			})
+		}
+	}
+
+	bz, err := json.Marshal(result)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
+	}
+
+	_, err = h.DB.Exec("UPDATE transactions SET signatures=$1 WHERE id=$2", bz, id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, model.SuccessResponse{
+		Status: "successfully signed",
+	})
+}
+
+type UpdateTxReq struct {
+	Status       string `json:"status"`
+	ErrorMessage string `json:"error_message"`
+	TxHash       string `json:"hash"`
+}
+
+func (h *Handler) UpdateTransactionInfo(c echo.Context) error {
+	id := c.Param("id")
+	address := c.Param("address")
+	txId, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "invalid transaction id ",
+		})
+	}
+
+	req := &UpdateTxReq{}
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
+	}
+	// TODO: add request validation
+
+	fmt.Println(txId)
+	fmt.Println(address)
+	status := getStatus(req.Status)
+	_, err = h.DB.Exec(`UPDATE transactions SET status=$1,hash=$2,err_msg=$3,last_updated=$4 WHERE id=$5 AND multisig_address=$6`,
+		status, req.TxHash, req.ErrorMessage, time.Now().UTC(), txId, address,
+	)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to update transaction",
+			Log:     err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, model.SuccessResponse{
+		Status: "transaction updated",
+	})
+}
+
+func (h *Handler) DeleteTransaction(c echo.Context) error {
+	id := c.Param("id")
+	address := c.Param("address")
+	txId, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "invalid transaction id ",
+		})
+	}
+
+	_, err = h.DB.Exec(`DELETE from transactions WHERE id=$1 AND multisig_address=$2`, txId, address)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to delete transaction",
+			Log:     err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, model.SuccessResponse{
+		Status: "transaction deleted",
+	})
+}
+
+func getStatus(s string) model.STATUS {
+	status := model.Pending
+	switch s {
+	case "PENDING", "pending":
+		status = model.Pending
+	case "FAILED", "failed":
+		status = model.Failed
+	case "SUCCESS", "success", "history":
+		status = model.Success
+	default:
+		status = model.Pending
+	}
+
+	return status
+}

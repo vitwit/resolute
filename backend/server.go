@@ -1,12 +1,15 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 
 	"github.com/vitwit/resolute/server/config"
 	"github.com/vitwit/resolute/server/handler"
+	"github.com/vitwit/resolute/server/model"
 
 	"database/sql"
 	"fmt"
@@ -25,8 +28,9 @@ func main() {
 	}
 
 	cfg := config.DB
+	apiCfg := config.API
 
-	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DatabaseName)
+	psqlconn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DatabaseName)
 
 	// open database
 	db, err := sql.Open("postgres", psqlconn)
@@ -52,14 +56,26 @@ func main() {
 
 	// Routes
 	e.POST("/multisig", h.CreateMultisigAccount)
-	e.GET("/multisig/:address", h.GetMultisigAccounts)
-	// e.GET("/multisig/:address", h.GetMultisigAccount)
-	// e.POST("/multisig/:address/tx", h.CreateTransaction)
-	// e.GET("/multisig/:address/txs", h.GetTransactions)
-	// e.POST("/follow/:id", h.Follow)
-	// e.POST("/posts", h.CreatePost)
-	// e.GET("/feed", h.FetchPost)
-
+	e.GET("/multisig/accounts/:address", h.GetMultisigAccounts)
+	e.GET("/multisig/:address", h.GetMultisigAccount)
+	e.POST("/multisig/:address/tx", h.CreateTransaction)
+	e.GET("/multisig/:address/tx/:id", h.GetTransaction)
+	e.POST("/multisig/:address/tx/:id", h.UpdateTransactionInfo)
+	e.DELETE("/multisig/:address/tx/:id", h.DeleteTransaction)
+	e.POST("/multisig/:address/sign-tx/:id", h.SignTransaction)
+	e.GET("/multisig/:address/txs", h.GetTransactions)
+	e.GET("/", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, model.SuccessResponse{
+			Status:  "success",
+			Message: "server up",
+		})
+	})
+	e.RouteNotFound("*", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, model.ErrorResponse{
+			Status:  "error",
+			Message: "route not found",
+		})
+	})
 	// Start server
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", apiCfg.Port)))
 }
