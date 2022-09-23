@@ -70,7 +70,6 @@ export function DialogCreateMultisig(props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(createMultiAccRes);
     if (createMultiAccRes?.status === "idle") {
       dispatch(
         setError({

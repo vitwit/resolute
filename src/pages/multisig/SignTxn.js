@@ -58,7 +58,6 @@ export default function SignTxn(props) {
         return;
       }
 
-      console.log(multisigAcc);
       const signerData = {
         accountNumber: multisigAcc?.accountNumber,
         sequence: multisigAcc?.sequence,
@@ -67,8 +66,7 @@ export default function SignTxn(props) {
 
       let msgs = unSignedTxn.messages;
 
-      console.log(msgs);
-      const { bodyBytes, signatures } = await signingClient.sign(
+      const { signatures } = await signingClient.sign(
         from,
         msgs,
         unSignedTxn.fee,

@@ -610,7 +610,6 @@ export default function Transactions(props) {
                       tx={row}
                       type="history"
                       onShowError={() => {
-                        console.log(txnsState);
                         setErrorMsg(row?.error_msg);
                         setOpenError(true);
                       }}
