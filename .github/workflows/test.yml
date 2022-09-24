@@ -5,8 +5,8 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
-    needs: build
+  ui-test:
+    needs: frontend-build
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -21,3 +21,21 @@ jobs:
         yarn ci
         yarn build --if-present
         yarn test
+  backend-test:
+    needs: backend-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: technote-space/get-diff-action@v6
+        with:
+          PATTERNS: |
+            **/**.go
+            **/go.mod
+            **/go.sum
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+      - name: run unit tests
+        run: make test
+        if: env.GIT_DIFF
+      
