@@ -10,7 +10,7 @@ BUILD_FLAGS 		:= -ldflags "-X github.com/vitwit/resolute/server/main.Version=${V
 ## Build executable file.
 build: go.sum
 	@echo "-> Building ${NAME} executable file..."
-	@go build -mod=readonly $(BUILD_FLAGS) .
+	@go build -mod=readonly $(BUILD_FLAGS) -o build/ .
 
 ## Install executable file. 
 install: go.sum
@@ -28,4 +28,9 @@ test:
 	@echo "Running unit tests"
 	@echo go test -v ./...
 
-.PHONY: version build install test
+### Start backend server
+start: 
+	@echo "Starting server"
+	@echo go run server.go
+
+.PHONY: version build install test start
