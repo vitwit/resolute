@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        version: [16, 18]
     steps:
-      - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+      - name: Use Node.js ${{ matrix.version }}
+      uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: ${{ matrix.version }}
       - name: yarn ci, build and test
       run: |
         yarn ci
