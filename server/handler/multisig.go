@@ -10,12 +10,13 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/vitwit/resolute/server/model"
+	"github.com/vitwit/resolute/server/schema"
 	"github.com/vitwit/resolute/server/utils"
 )
 
 func (h *Handler) CreateMultisigAccount(c echo.Context) error {
 
-	account := &model.CreateAccount{}
+	account := &model.CreateAccountReq{}
 	if err := c.Bind(account); err != nil {
 		return err
 	}
@@ -76,9 +77,9 @@ func (h *Handler) CreateMultisigAccount(c echo.Context) error {
 }
 
 type AccountsResponse struct {
-	Accounts    []model.MultisigAccount `json:"accounts"`
-	Total       int                     `json:"total"`
-	PendingTxns map[string]int          `json:"pending_txns"`
+	Accounts    []schema.MultisigAccount `json:"accounts"`
+	Total       int                      `json:"total"`
+	PendingTxns map[string]int           `json:"pending_txns"`
 }
 
 type TxCount struct {
@@ -110,14 +111,14 @@ func (h *Handler) GetMultisigAccounts(c echo.Context) error {
 		})
 	}
 
-	accounts := make([]model.MultisigAccount, 0, 8)
+	accounts := make([]schema.MultisigAccount, 0, 8)
 	// Loop through rows, using Scan to assign column data to struct fields.
 	for rows.Next() {
-		var account model.MultisigAccount
+		var account schema.MultisigAccount
 		if err := rows.Scan(
 			&account.Address,
 			&account.Threshold,
-			&account.ChainId,
+			&account.ChainID,
 			&account.PubkeyType,
 			&account.CreatedAt,
 			&account.Name,
@@ -192,14 +193,15 @@ func (h *Handler) GetMultisigAccounts(c echo.Context) error {
 }
 
 type MultisigAccountResponse struct {
-	Account model.MultisigAccount `json:"account"`
-	Pubkeys []model.Pubkeys       `json:"pubkeys"`
+	Account schema.MultisigAccount `json:"account"`
+	Pubkeys []schema.Pubkey        `json:"pubkeys"`
 }
 
 func (h *Handler) GetMultisigAccount(c echo.Context) error {
 	address := c.Param("address")
 
-	row := h.DB.QueryRow(`SELECT * FROM multisig_accounts WHERE address=$1`, address)
+	row := h.DB.QueryRow(`SELECT address,threshold,chain_id,pubkey_type,created_at,name,created_by FROM
+	 multisig_accounts WHERE address=$1`, address)
 	if row.Err() != nil {
 		if sql.ErrNoRows == row.Err() {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
@@ -215,10 +217,11 @@ func (h *Handler) GetMultisigAccount(c echo.Context) error {
 		})
 	}
 
-	var account model.MultisigAccount
-	if err := row.Scan(&account.Address,
+	var account schema.MultisigAccount
+	if err := row.Scan(
+		&account.Address,
 		&account.Threshold,
-		&account.ChainId,
+		&account.ChainID,
 		&account.PubkeyType,
 		&account.CreatedAt,
 		&account.Name,
@@ -249,9 +252,9 @@ func (h *Handler) GetMultisigAccount(c echo.Context) error {
 
 	defer rows.Close()
 
-	var pubkeys []model.Pubkeys
+	var pubkeys []schema.Pubkey
 	for rows.Next() {
-		var pubkey model.Pubkeys
+		var pubkey schema.Pubkey
 		if err := rows.Scan(&pubkey.Address, &pubkey.MultisigAddress, &pubkey.Pubkey); err != nil {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Status:  "error",

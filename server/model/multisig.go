@@ -1,11 +1,12 @@
 package model
 
 import (
-	"encoding/json"
 	"errors"
+
+	"github.com/vitwit/resolute/server/schema"
 )
 
-type CreateAccount struct {
+type CreateAccountReq struct {
 	Address   string       `json:"address"`
 	Name      string       `json:"name"`
 	Threshold int32        `json:"threshold"`
@@ -19,7 +20,7 @@ type PubkeysReq struct {
 	Pubkey  Pubkey `json:"pubkey"`
 }
 
-func (a CreateAccount) Validate() error {
+func (a CreateAccountReq) Validate() error {
 	if len(a.Address) == 0 {
 		return errors.New("empty address is not allowed")
 	}
@@ -74,25 +75,9 @@ func (p Pubkey) Validate() error {
 	return nil
 }
 
-type MultisigAccount struct {
-	Address    string `json:"address"`
-	Name       string `json:"name"`
-	PubkeyType string `json:"pubkey_type"`
-	Threshold  int32  `json:"threshold"`
-	ChainId    string `json:"chain_id"`
-	CreatedAt  string `json:"created_at"`
-	CreatedBy  string `json:"created_by"`
-}
-
-type Pubkeys struct {
-	MultisigAddress string          `json:"multisig_address"`
-	Pubkey          json.RawMessage `json:"pubkey"`
-	Address         string          `json:"address"`
-}
-
 type GetAccountsResponse struct {
 	Address   string
 	Name      string
 	Threshold int
-	PubKeys   []Pubkeys
+	PubKeys   []schema.Pubkey
 }

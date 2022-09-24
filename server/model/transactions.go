@@ -1,9 +1,7 @@
 package model
 
 import (
-	"encoding/json"
 	"errors"
-	"time"
 )
 
 type STATUS string
@@ -13,20 +11,6 @@ const (
 	Success        = "SUCCESS"
 	Failed         = "FAILED"
 )
-
-type Transaction struct {
-	Id              int             `json:"id"`
-	MultisigAddress string          `json:"multisig_address"`
-	Fee             json.RawMessage `json:"fee"`
-	Status          STATUS          `json:"status"`
-	CreatedAt       time.Time       `json:"created_at"`
-	TxHash          string          `json:"hash"`
-	ErrorMessage    string          `json:"error_msg"`
-	LastUpdated     time.Time       `json:"last_updated"`
-	Messages        json.RawMessage `json:"messages"`
-	Signatures      json.RawMessage `json:"signatures"`
-	Memo            string          `json:"memo"`
-}
 
 type Fees struct {
 	Amount []Fee  `json:"amount"`
@@ -38,12 +22,8 @@ func (f Fees) Validate() error {
 		return errors.New("amount cannot be empty")
 	}
 	for _, fee := range f.Amount {
-		if len(fee.Denom) == 0 {
-			return errors.New("denom cannot be empty")
-		}
-
-		if len(fee.Amount) == 0 {
-			return errors.New("amount cannot be empty")
+		if err := fee.Validate(); err != nil {
+			return err
 		}
 	}
 
@@ -53,6 +33,18 @@ func (f Fees) Validate() error {
 type Fee struct {
 	Denom  string `json:"denom"`
 	Amount string `json:"amount"`
+}
+
+func (f Fee) Validate() error {
+	if len(f.Denom) == 0 {
+		return errors.New("denom cannot be empty")
+	}
+
+	if len(f.Amount) == 0 {
+		return errors.New("amount cannot be empty")
+	}
+
+	return nil
 }
 
 type Message struct {

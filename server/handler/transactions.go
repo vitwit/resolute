@@ -10,6 +10,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/vitwit/resolute/server/model"
+	"github.com/vitwit/resolute/server/schema"
 	"github.com/vitwit/resolute/server/utils"
 )
 
@@ -34,9 +35,21 @@ func (h *Handler) CreateTransaction(c echo.Context) error {
 	}
 
 	row := h.DB.QueryRow(`SELECT * FROM multisig_accounts WHERE "address"=$1`, address)
-	var addr model.MultisigAccount
-	fmt.Println(row.Scan(addr))
-	// TODO: make sure multisig_account exists
+	var addr schema.MultisigAccount
+	if err := row.Scan(addr); err != nil {
+		if sql.ErrNoRows == err {
+			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Status:  "error",
+				Message: fmt.Sprintf("invalid multisig account address %s: not found", address),
+				Log:     err.Error(),
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "something went wrong",
+			Log:     err.Error(),
+		})
+	}
 
 	feebz, err := json.Marshal(req.Fee)
 	if err != nil {
@@ -87,7 +100,7 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 		})
 	}
 
-	status := getStatus(c.QueryParam("status"))
+	status := utils.GetStatus(c.QueryParam("status"))
 	var rows *sql.Rows
 	if status == model.Pending {
 		rows, err = h.DB.Query(`SELECT id,multisig_address,fee,status,created_at,messages,hash,
@@ -112,19 +125,18 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 		})
 	}
 
-	transactions := make([]model.Transaction, 0)
-	// Loop through rows, using Scan to assign column data to struct fields.
+	transactions := make([]schema.Transaction, 0)
 	for rows.Next() {
-		var transaction model.Transaction
+		var transaction schema.Transaction
 		if err := rows.Scan(
-			&transaction.Id,
+			&transaction.ID,
 			&transaction.MultisigAddress,
 			&transaction.Fee,
 			&transaction.Status,
 			&transaction.CreatedAt,
 			&transaction.Messages,
-			&transaction.TxHash,
-			&transaction.ErrorMessage,
+			&transaction.Hash,
+			&transaction.ErrMsg,
 			&transaction.LastUpdated,
 			&transaction.Memo,
 			&transaction.Signatures,
@@ -160,16 +172,16 @@ func (h *Handler) GetTransaction(c echo.Context) error {
 	row := h.DB.QueryRow(`SELECT id,multisig_address,fee,status,created_at,messages,hash,
 	err_msg,last_updated,memo,signatures FROM transactions WHERE id=$1 AND multisig_address=$2`, txId, address)
 
-	var transaction model.Transaction
+	var transaction schema.Transaction
 	if err := row.Scan(
-		&transaction.Id,
+		&transaction.ID,
 		&transaction.MultisigAddress,
 		&transaction.Fee,
 		&transaction.Status,
 		&transaction.CreatedAt,
 		&transaction.Messages,
-		&transaction.TxHash,
-		&transaction.ErrorMessage,
+		&transaction.Hash,
+		&transaction.ErrMsg,
 		&transaction.LastUpdated,
 		&transaction.Memo,
 		&transaction.Signatures,
@@ -226,7 +238,7 @@ func (h *Handler) SignTransaction(c echo.Context) error {
 
 	row := h.DB.QueryRow(`SELECT signatures FROM transactions WHERE id=$1 AND multisig_address=$2`, txId, address)
 
-	var transaction model.Transaction
+	var transaction schema.Transaction
 	if err := row.Scan(
 		&transaction.Signatures,
 	); err != nil {
@@ -322,11 +334,8 @@ func (h *Handler) UpdateTransactionInfo(c echo.Context) error {
 			Message: err.Error(),
 		})
 	}
-	// TODO: add request validation
 
-	fmt.Println(txId)
-	fmt.Println(address)
-	status := getStatus(req.Status)
+	status := utils.GetStatus(req.Status)
 	_, err = h.DB.Exec(`UPDATE transactions SET status=$1,hash=$2,err_msg=$3,last_updated=$4 WHERE id=$5 AND multisig_address=$6`,
 		status, req.TxHash, req.ErrorMessage, time.Now().UTC(), txId, address,
 	)
@@ -368,20 +377,4 @@ func (h *Handler) DeleteTransaction(c echo.Context) error {
 	return c.JSON(http.StatusOK, model.SuccessResponse{
 		Status: "transaction deleted",
 	})
-}
-
-func getStatus(s string) model.STATUS {
-	status := model.Pending
-	switch s {
-	case "PENDING", "pending":
-		status = model.Pending
-	case "FAILED", "failed":
-		status = model.Failed
-	case "SUCCESS", "success", "history":
-		status = model.Success
-	default:
-		status = model.Pending
-	}
-
-	return status
 }
