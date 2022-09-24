@@ -13,7 +13,7 @@ jobs:
         version: [16, 18]
     steps:
       - name: Use Node.js ${{ matrix.version }}
-      - uses: actions/setup-node@v3
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.version }}
       - name: yarn ci, build and test
