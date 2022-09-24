@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 jobs:
-  ui-test:
+  frontend-test:
     needs: frontend-build
     runs-on: ubuntu-latest
     strategy:
@@ -26,6 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          repository: vitwit/resolute
+          path: server
       - uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
