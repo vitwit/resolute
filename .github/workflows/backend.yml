@@ -11,37 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          repository: vitwit/resolute
-          path: server
-      - uses: technote-space/get-diff-action@v6
-        with:
-          PATTERNS: |
-            **/**.go
-            **/go.mod
-            **/go.sum
       - uses: actions/setup-go@v3
         with:
           go-version: 1.18
       - name: build binary
         working-directory: ./server
         run: make build
-        if: env.GIT_DIFF
 
   backend-test:
     needs: backend-build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          repository: vitwit/resolute
-          path: server
-      - uses: technote-space/get-diff-action@v6
-        with:
-          PATTERNS: |
-            **/**.go
-            **/go.mod
-            **/go.sum
       - uses: actions/setup-go@v3
         with:
           go-version: 1.18
@@ -49,4 +30,3 @@ jobs:
         working-directory: ./server
         run: |
           make test
-        if: env.GIT_DIFF
