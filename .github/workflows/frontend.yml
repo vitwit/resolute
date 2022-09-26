@@ -15,7 +15,7 @@ jobs:
           node-version: 16.x
       - name: npm ci, build
         run: |
-          yarn
+          yarn install --frozen-lockfile
           yarn build --if-present
   frontend-test:
     needs: frontend-build
@@ -29,5 +29,5 @@ jobs:
       - name: yarn ci, build and test
         working-directory: ./
         run: |
-          yarn ci
+          yarn install --frozen-lockfile
           yarn test
