@@ -35,5 +35,6 @@ jobs:
         with:
           go-version: 1.18
       - name: build binary
-        run: make build
+        run:  |
+          make build
       
