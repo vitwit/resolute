@@ -36,5 +36,4 @@ jobs:
           go-version: 1.18
       - name: build binary
         run: make build
-        if: env.GIT_DIFF
       
