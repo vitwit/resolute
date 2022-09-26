@@ -181,7 +181,7 @@ const TableRowComponent = (props) => {
     delete tx1?.hash;
     delete tx1?.multisig_address;
     delete tx1?.chainid;
-    delete tx1?.error_msg;
+    delete tx1?.err_msg;
 
     const signatures = tx1?.signatures;
 
@@ -610,7 +610,7 @@ export default function Transactions(props) {
                       tx={row}
                       type="history"
                       onShowError={() => {
-                        setErrorMsg(row?.error_msg);
+                        setErrorMsg(row?.err_msg);
                         setOpenError(true);
                       }}
                       onShowMoreTxns={(msgs) => {
