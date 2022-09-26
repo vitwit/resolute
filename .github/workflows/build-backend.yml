@@ -3,11 +3,12 @@ on:
   pull_request:
   push:
     branches: [ master ]
-  paths:
-    - "server/**" # Only run if only a backend code has changed
+  # paths:
+  #   - "server/**" # Only run if only a backend code has changed
 
 
-backend-build:
+jobs:
+  backend-build:
     runs-on: ubuntu-latest
     working-directory: ./server
     steps:
