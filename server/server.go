@@ -32,6 +32,7 @@ func main() {
 	cfg := config.DB
 	apiCfg := config.API
 
+	// TODO: add ssl support
 	psqlconn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DatabaseName)
 
 	// open database
@@ -79,5 +80,6 @@ func main() {
 		})
 	})
 	// Start server
+	// TODO: add ip and port
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", apiCfg.Port)))
 }
