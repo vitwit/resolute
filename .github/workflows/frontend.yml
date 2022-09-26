@@ -10,9 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: npm ci, build
         run: |
           yarn
@@ -20,17 +20,14 @@ jobs:
   frontend-test:
     needs: frontend-build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        version: [16.x, 18.x]
     steps:
-      - name: Use Node.js ${{ matrix.version }}
+      - uses: actions/checkout@v2
+      - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.version }}
+          node-version: 16.x
       - name: yarn ci, build and test
         working-directory: ./
         run: |
           yarn ci
-          yarn build --if-present
           yarn test
