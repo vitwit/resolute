@@ -65,11 +65,11 @@ type Pubkey struct {
 
 func (p Pubkey) Validate() error {
 	if len(p.TypeUrl) == 0 {
-		return errors.New("type cannot be empty")
+		return errors.New("pubkey type cannot be empty")
 	}
 
 	if len(p.Value) == 0 {
-		return errors.New("value cannot be empty")
+		return errors.New("pubkey value cannot be empty")
 	}
 
 	return nil

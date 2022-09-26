@@ -1,0 +1,23 @@
+name: Ui Test
+on:
+  pull_request:
+  push:
+    branches: [ master ]
+
+jobs:
+  frontend-test:
+    needs: frontend-build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [16, 18]
+    steps:
+      - name: Use Node.js ${{ matrix.version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.version }}
+      - name: yarn ci, build and test
+        run: |
+          yarn ci
+          yarn build --if-present
+          yarn test
