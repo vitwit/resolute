@@ -9,15 +9,12 @@ import TableHead from "@mui/material/TableHead";
 import { formatVotingPower } from "../utils/denom";
 import { formatValidatorStatus } from "../utils/util";
 import { useSelector } from "react-redux";
-import { useTheme } from "@emotion/react";
 
 export function FilteredValidators(props) {
-  const { validators, filtered, onMenuAction } = props;
+  const { validators, filtered, onMenuAction, theme } = props;
   const delegatedTo = useSelector(
     (state) => state.staking.delegations.delegatedTo
   );
-
-  const theme = useTheme();
 
   return (
     <>
@@ -29,12 +26,12 @@ export function FilteredValidators(props) {
               <StyledTableCell align="left">Validator</StyledTableCell>
               <StyledTableCell align="center">Voting Power</StyledTableCell>
               <StyledTableCell align="center">Status</StyledTableCell>
-              <StyledTableCell align="center">Comission</StyledTableCell>
+              <StyledTableCell align="center">Commission</StyledTableCell>
               <StyledTableCell align="center">Actions</StyledTableCell>
             </StyledTableRow>
           </TableHead>
           <TableBody>
-            {filtered.active.map((keyName, index) => (
+            {filtered?.active?.map((keyName, index) => (
               <StyledTableRow
                 key={index + 1}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -66,7 +63,7 @@ export function FilteredValidators(props) {
                 <StyledTableCell align="center">
                   <Button
                     variant={
-                      theme.pallet.mode === "light" ? "outlined" : "contained"
+                      theme?.pallet?.mode === "light" ? "outlined" : "contained"
                     }
                     className="button-capitalize-title"
                     size="small"
@@ -84,7 +81,7 @@ export function FilteredValidators(props) {
                     <>
                       <Button
                         variant={
-                          theme.pallet.mode === "light"
+                          theme?.pallet?.mode === "light"
                             ? "outlined"
                             : "contained"
                         }
@@ -107,7 +104,7 @@ export function FilteredValidators(props) {
                       </Button>
                       <Button
                         variant={
-                          theme.pallet.mode === "light"
+                          theme?.pallet?.mode === "light"
                             ? "outlined"
                             : "contained"
                         }
@@ -136,7 +133,7 @@ export function FilteredValidators(props) {
               </StyledTableRow>
             ))}
 
-            {filtered.inactive.map((keyName, index) => (
+            {filtered?.inactive?.map((keyName, index) => (
               <StyledTableRow
                 key={index + 1}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
