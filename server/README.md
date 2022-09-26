@@ -1,24 +1,42 @@
-# Backend server for resolute
-> This server is used for multisig functionality
 
-## Install deps 
-```bash
-# clone the repo with git and checkout to master
-$ go get ./...
+# Resolute Backend
+
+## Overview
+
+This module provides backend code for [Resolute](https://resolute.vitwit.com), and you can find frontend code [Here](https://github.com/vitwit/resolute).
+
+## Prerequisite
+
+- Requires [Go 1.18+](https://golang.org/dl/)
+- Postgres Database
+
+## Configuration
+
+For configuration we use YAML file format. To configure `backend` and `database`, you need to add `config.yaml` file. Reference `example.yaml`. 
+
+## Database setup
+
+This project uses Postgres database. Before starting the server make sure to initialize database tables. You can find schema [Here](https://github.com/vitwit/resolute/server/schema/schema.sql).
+
+## Install & Test
+
+### Git clone this repo
+```shell
+git clone https://github.com/viwit/resolute.git
 ```
 
-### Environment variables
-
-Create a `.env` file with following environment variables.
-
-``` bash
-MONGOURI=127.0.0.1
-DATABASE=multisig
+### Build
+```shell
+cd resolute/backend
+make build
 ```
 
-## Start in DEV Mode 
-Runs the app <br />
-Open [http://localhost:1323](http://localhost:1323) to view it in the browser.
-```bash
-$ go run main.go
+### Testing
+```shell
+cd resolute/backend
+make test
 ```
+
+## License
+
+Released under the [Apache 2.0 License](https://github.com/vitwit/resolute/LICENSE).

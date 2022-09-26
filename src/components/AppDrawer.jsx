@@ -10,9 +10,9 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import Button from "@mui/material/Button";
 import PropTypes from "prop-types";
-import { drawerListItems } from "./drawerListItems";
+import { DrawerListItems } from "./DrawerListItems";
 import { parseBalance } from "../utils/denom";
-import { shortenAddress, shortenPubKey } from "../utils/util";
+import { shortenAddress } from "../utils/util";
 import { useLocation } from "react-router-dom";
 import MuiDrawer from "@mui/material/Drawer";
 import { styled } from "@mui/material/styles";
@@ -129,21 +129,6 @@ export default function AppDrawer(props) {
                   }}
                 />
               </ListItem>
-              <ListItem sx={{ pb: 0.5, pt: 0.5 }}>
-                <Typography variant="body2" color="text.secondary">
-                  PubKey
-                </Typography>
-              </ListItem>
-              <ListItem sx={{ pt: 0.5 }}>
-                <Chip
-                  label={wallet.pubKey ? shortenPubKey(wallet.pubKey, 21) : ""}
-                  size="small"
-                  deleteIcon={<ContentCopyOutlined />}
-                  onDelete={() => {
-                    onCopy(wallet.pubKey);
-                  }}
-                />
-              </ListItem>
               <ListItem sx={{ pb: 0, pt: 0.5 }}>
                 <Typography
                   color="text.secondary"
@@ -206,13 +191,13 @@ export default function AppDrawer(props) {
       </List>
       <Divider />
       <List>
-        {drawerListItems(
-          location.pathname,
-          (path) => {
-            onNavigate(path);
-          },
-          selectedNetwork?.showAirdrop
-        )}
+        <DrawerListItems
+          currentPath={location.pathname}
+          onNavigate={(path) => {
+            onNavigate(path)
+          }}
+          showAirdrop={selectedNetwork?.showAirdrop}
+        />
       </List>
     </Drawer>
   );
