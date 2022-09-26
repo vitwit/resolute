@@ -10,7 +10,6 @@ on:
 jobs:
   backend-build:
     runs-on: ubuntu-latest
-    working-directory: ./server
     steps:
       - uses: actions/checkout@v3
         with:
@@ -26,6 +25,7 @@ jobs:
         with:
           go-version: 1.18
       - name: build binary
+        working-directory: ./server
         run: make build
         if: env.GIT_DIFF
       
