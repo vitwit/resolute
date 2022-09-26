@@ -38,23 +38,24 @@ export default function Overview() {
 
   const { config } = chainInfo;
   const coinDecimals = config?.currencies[0].coinDecimals || 1;
+  const coinDenom = config?.currencies[0].coinMinimalDenom || "";
 
   useEffect(() => {
     if (connected && config.currencies.length > 0) {
       setTotalBalance(
         parseBalance(
           [balance.balance],
-          config.currencies[0].coinDecimals,
-          config.currencies[0].coinMinimalDenom
+          coinDecimals,
+          coinDenom,
         )
       );
       setTotalDelegations(
         delegations.totalStaked / 10.0 ** coinDecimals)
       setTotalRewards(
-        totalRewards(rewards?.list, config.currencies[0].coinDecimals)
+        totalRewards(rewards?.list, coinDecimals, coinDenom)
       );
       setTotalUnbonding(
-        totalUnbonding(unbonding.delegations, config.currencies[0].coinDecimals)
+        totalUnbonding(unbonding.delegations, coinDecimals)
       );
     }
   }, [balance, delegations, rewards, unbonding, chainInfo, address]);
@@ -87,7 +88,7 @@ export default function Overview() {
       getBalance({
         baseURL: config.rest,
         address: address,
-        denom: chainInfo.config.currencies[0].coinMinimalDenom,
+        denom: coinDenom,
       })
     );
 
