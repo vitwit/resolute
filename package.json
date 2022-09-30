@@ -35,7 +35,7 @@
     "cosmjs-types": "^0.5.1",
     "css-loader": "^6.5.1",
     "css-minimizer-webpack-plugin": "^4.0.0",
-    "date-fns": "^2.29.1",
+    "date-fns": "^2.29.3",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
     "eslint": "^8.23.0",
