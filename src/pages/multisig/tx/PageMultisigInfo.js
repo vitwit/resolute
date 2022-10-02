@@ -1,18 +1,27 @@
-import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  Paper,
+  Typography,
+} from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getBalance } from "../../../features/bank/bankSlice";
 import {
   getAllValidators,
   getDelegations,
 } from "../../../features/staking/stakeSlice";
 import TransactionsList from "./TransactionsList";
-import { multisigByAddress } from "../../../features/multisig/multisigSlice";
+import {
+  multisigByAddress,
+  getMultisigBalance,
+} from "../../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../../utils/util";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import Chip from "@mui/material/Chip";
-import { resetError, setError } from "../../../features/common/commonSlice";
+import { copyToClipboard } from "../../../utils/clipboard";
 
 export default function PageMultisigInfo() {
   const dispatch = useDispatch();
@@ -20,40 +29,14 @@ export default function PageMultisigInfo() {
   const multisigAccountDetails = useSelector(
     (state) => state.multisig.multisigAccount
   );
-  const multisigAccount = multisigAccountDetails?.data?.data || {};
-  const multisigBal = useSelector((state) => state.bank.balance);
+  const multisigAccount = multisigAccountDetails?.account || {};
+  const members = multisigAccountDetails?.pubkeys || [];
+  const multisigBal = useSelector((state) => state.multisig.balance);
   const multisigDel = useSelector((state) => state.staking.delegations);
   const currency = useSelector(
     (state) => state.wallet.chainInfo?.config?.currencies[0]
   );
   const [totalStake, setTotalStaked] = useState(0);
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(
-      function () {
-        dispatch(
-          setError({
-            type: "success",
-            message: "Copied to clipboard",
-          })
-        );
-        setTimeout(() => {
-          dispatch(resetError());
-        }, 1000);
-      },
-      function () {
-        dispatch(
-          setError({
-            type: "error",
-            message: "Failed to copy",
-          })
-        );
-        setTimeout(() => {
-          dispatch(resetError());
-        }, 1000);
-      }
-    );
-  };
 
   useEffect(() => {
     let delegations = multisigDel?.delegations || [];
@@ -74,11 +57,11 @@ export default function PageMultisigInfo() {
     dispatch(multisigByAddress(multisigAddress));
   }, []);
 
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
     if (connected) {
       dispatch(
-        getBalance({
+        getMultisigBalance({
           baseURL: chainInfo.config.rest,
           address: multisigAddress,
           denom: chainInfo?.config?.currencies[0].coinMinimalDenom,
@@ -147,7 +130,7 @@ export default function PageMultisigInfo() {
               size="small"
               deleteIcon={<ContentCopyOutlined />}
               onDelete={() => {
-                copyToClipboard(multisigAccount?.address);
+                copyToClipboard(multisigAccount?.address, dispatch);
               }}
             />
           </Grid>
@@ -161,7 +144,7 @@ export default function PageMultisigInfo() {
               Threshold
             </Typography>
             <Typography>
-              &nbsp;&nbsp;{multisigAccount?.pubkeyJSON?.value?.threshold || 0}
+              &nbsp;&nbsp;{multisigAccount?.threshold || 0}
             </Typography>
           </Grid>
           <Grid item xs={6} md={3}>
@@ -201,7 +184,7 @@ export default function PageMultisigInfo() {
             >
               Signers
             </Typography>
-            {multisigAccount?.pubkeyJSON?.value?.pubkeys?.map((p, index) => (
+            {members.map((m, index) => (
               <Chip
                 key={index}
                 sx={{
@@ -209,11 +192,11 @@ export default function PageMultisigInfo() {
                   mr: 0.5,
                   mt: 1,
                 }}
-                label={p?.address ? shortenAddress(p.address, 24) : ""}
+                label={m?.address ? shortenAddress(m.address, 24) : ""}
                 size="small"
                 deleteIcon={<ContentCopyOutlined />}
                 onDelete={() => {
-                  copyToClipboard(p?.address);
+                  copyToClipboard(m?.address, dispatch);
                 }}
               />
             ))}
@@ -249,7 +232,12 @@ export default function PageMultisigInfo() {
             Create Transaction
           </Button>
         </Box>
-        <TransactionsList address={multisigAddress} />
+        {multisigAccountDetails.status === "idle" &&
+        multisigAccount?.address?.length > 0 ? (
+          <TransactionsList address={multisigAddress} />
+        ) : (
+          <CircularProgress size={40} />
+        )}
       </Paper>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Button from "@mui/material/Button";
 import { StyledTableCell, StyledTableRow } from "./CustomTable";
 import Paper from "@mui/material/Paper";
@@ -9,33 +9,12 @@ import TableHead from "@mui/material/TableHead";
 import { formatVotingPower } from "../utils/denom";
 import Typography from "@mui/material/Typography";
 import { formatValidatorStatus } from "../utils/util";
+import { useTheme } from "@emotion/react";
 
 export function WitvalValidator(props) {
-  const { validators, onMenuAction } = props;
-  const [validator, setValidator] = useState({});
+  const { validator, onMenuAction } = props;
 
-  const getWitvalValidator = () => {
-    let keys = validators.activeSorted;
-    for (let i = 0; i < keys.length; i++) {
-      if (validators.active[keys[i]]?.description?.moniker === "Witval") {
-        setValidator(validators.active[keys[i]]);
-        return;
-      }
-    }
-
-    keys = validators.inactiveSorted;
-    for (let i = 0; i < keys.length; i++) {
-      if (validators.inactive[keys[i]]?.description?.moniker === "Witval") {
-        setValidator(validators.inactive[keys[i]]);
-        return;
-      }
-    }
-  };
-
-  useEffect(() => {
-    getWitvalValidator();
-  }, [validators]); // react-hooks/exhaustive-deps
-
+  const theme = useTheme();
   return (
     <>
       {validator?.description?.moniker === "Witval" ? (
@@ -73,7 +52,7 @@ export function WitvalValidator(props) {
                 <StyledTableRow>
                   <StyledTableCell align="center">Validator</StyledTableCell>
                   <StyledTableCell align="center">Voting Power</StyledTableCell>
-                  <StyledTableCell align="center">Comission</StyledTableCell>
+                  <StyledTableCell align="center">Commission</StyledTableCell>
                   <StyledTableCell align="center">Actions</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
@@ -100,7 +79,11 @@ export function WitvalValidator(props) {
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     <Button
-                      variant="outlined"
+                      variant={
+                        theme.palette?.mode === "light"
+                          ? "outlined"
+                          : "contained"
+                      }
                       className="button-capitalize-title"
                       size="small"
                       onClick={(e) => onMenuAction(e, "delegate", validator)}
@@ -112,7 +95,11 @@ export function WitvalValidator(props) {
                       Delegate
                     </Button>
                     <Button
-                      variant="outlined"
+                      variant={
+                        theme.palette?.mode === "light"
+                          ? "outlined"
+                          : "contained"
+                      }
                       style={{ marginLeft: 4 }}
                       className="button-capitalize-title"
                       size="small"

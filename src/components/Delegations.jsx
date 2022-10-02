@@ -11,42 +11,39 @@ import Typography from "@mui/material/Typography";
 import { useSelector } from "react-redux";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
+import { useTheme } from "@emotion/react";
 
 export function MyDelegations(props) {
   const { delegations, validators, onDelegationAction, currency, rewards } =
     props;
-  const [totalStaked, setTotalStaked] = React.useState(0);
   const [totalRewards, setTotalRewards] = React.useState(0);
   const distTxStatus = useSelector((state) => state.distribution.tx);
   const [rewardsP, setRewardsP] = React.useState({});
 
-  useEffect(() => {
-    let total = 0.0;
-    if (delegations?.delegations.length > 0) {
-      for (let i = 0; i < delegations.delegations.length; i++)
-        total +=
-          parseFloat(delegations.delegations[i].delegation.shares) /
-          10 ** currency?.coinDecimals;
-    }
-    setTotalStaked(total?.toFixed(4));
-  }, [delegations]);
+  const theme = useTheme();
 
   useEffect(() => {
     let total = 0.0;
     if (rewards.length > 0) {
-      for (let i = 0; i < rewards.length; i++)
+      for (let i = 0; i < rewards.length; i++) {
         if (rewards[i].reward.length > 0) {
-          const reward = rewards[i]?.reward[0];
-          let temp = rewardsP;
-          temp[rewards[i].validator_address] =
-            parseFloat(reward.amount) / 10 ** currency?.coinDecimals;
-          setRewardsP(temp);
-          total += parseFloat(reward.amount) / 10 ** currency?.coinDecimals;
+          const reward = rewards[i].reward;
+          for (let j = 0; j < reward.length; j++) {
+            if (reward[j].denom === currency.coinMinimalDenom) {
+              let temp = rewardsP;
+              temp[rewards[i].validator_address] =
+                parseFloat(reward[j].amount) / 10 ** currency?.coinDecimals;
+              setRewardsP(temp);
+              total +=
+                parseFloat(reward[j].amount) / 10 ** currency?.coinDecimals;
+            }
+          }
         } else {
           let temp = rewardsP;
           temp[rewards[i].validator_address] = 0.0;
           setRewardsP(temp);
         }
+      }
     }
 
     setTotalRewards(total.toFixed(5));
@@ -78,7 +75,9 @@ export function MyDelegations(props) {
         }}
       >
         <Typography>
-          Total staked: {totalStaked} {currency?.coinDenom}
+          Total staked:&nbsp;
+          {parseFloat(delegations.totalStaked) / 10 ** currency?.coinDecimals}
+          {currency?.coinDenom}
         </Typography>
 
         <Button
@@ -125,7 +124,7 @@ export function MyDelegations(props) {
               <StyledTableRow>
                 <StyledTableCell>Rank</StyledTableCell>
                 <StyledTableCell align="center">Validator</StyledTableCell>
-                <StyledTableCell align="center">Comission</StyledTableCell>
+                <StyledTableCell align="center">Commission</StyledTableCell>
                 <StyledTableCell align="center">Delegated</StyledTableCell>
                 <StyledTableCell align="center">Rewards</StyledTableCell>
                 <StyledTableCell align="center">Action</StyledTableCell>
@@ -170,7 +169,11 @@ export function MyDelegations(props) {
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     <Button
-                      variant="outlined"
+                      variant={
+                        theme.palette?.mode === "light"
+                          ? "outlined"
+                          : "contained"
+                      }
                       className="button-capitalize-title"
                       size="small"
                       onClick={(e) =>
@@ -184,7 +187,11 @@ export function MyDelegations(props) {
                       Delegate
                     </Button>
                     <Button
-                      variant="outlined"
+                      variant={
+                        theme.palette?.mode === "light"
+                          ? "outlined"
+                          : "contained"
+                      }
                       style={{ marginLeft: 4 }}
                       className="button-capitalize-title"
                       size="small"
@@ -199,7 +206,11 @@ export function MyDelegations(props) {
                       Undelegate
                     </Button>
                     <Button
-                      variant="outlined"
+                      variant={
+                        theme.palette?.mode === "light"
+                          ? "outlined"
+                          : "contained"
+                      }
                       className="button-capitalize-title"
                       style={{ marginLeft: 4 }}
                       size="small"

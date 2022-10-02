@@ -1,5 +1,6 @@
 import { parseCoins } from "@cosmjs/proto-signing";
 import { Msg } from "../../../txns/types";
+import { MultisigThresholdPubkey, SinglePubkey } from "@cosmjs/amino";
 
 export const SEND_TYPE_URL = "/cosmos.bank.v1beta1.MsgSend";
 export const DELEGATE_TYPE_URL = "/cosmos.staking.v1beta1.MsgDelegate";
@@ -14,8 +15,8 @@ export const parseSendMsgsFromContent = (
 ): [Msg[], string] => {
   const messages = content.split("\n");
 
-  if (messages.length === 0) {
-    return [[], "no messages found"];
+  if (messages?.length === 0) {
+    return [[], "no messages or invalid file content"];
   }
 
   const msgs = [];
@@ -24,7 +25,7 @@ export const parseSendMsgsFromContent = (
       const tx = parseSendTx(from, messages[i]);
       msgs.push(tx);
     } catch (error: any) {
-      return [[], error || `failed to parse message at ${i}`];
+      return [[], error?.message || `failed to parse message at ${i}`];
     }
   }
 
@@ -33,7 +34,7 @@ export const parseSendMsgsFromContent = (
 
 const parseSendTx = (from: string, msg: string): Msg => {
   const values = msg.split(",");
-  if (values.length !== 2) {
+  if (values?.length !== 2) {
     throw new Error(
       `invalid message: expected ${2} values got ${values.length}`
     );
@@ -64,8 +65,8 @@ export const parseDelegateMsgsFromContent = (
 ): [Msg[], string] => {
   const messages = content.split("\n");
 
-  if (messages.length === 0) {
-    return [[], "no messages found"];
+  if (messages?.length === 0) {
+    return [[], "no messages or invalid file content"];
   }
 
   const msgs = [];
@@ -74,7 +75,7 @@ export const parseDelegateMsgsFromContent = (
       const msg = parseDelegateMsg(delegator, messages[i]);
       msgs.push(msg);
     } catch (error: any) {
-      return [[], error || `failed to parse message at ${i}`];
+      return [[], error?.message || `failed to parse message at ${i}`];
     }
   }
 
@@ -83,7 +84,7 @@ export const parseDelegateMsgsFromContent = (
 
 const parseDelegateMsg = (delegator: string, msg: string): Msg => {
   const values = msg.split(",");
-  if (values.length !== 2) {
+  if (values?.length !== 2) {
     throw new Error("invalid message");
   }
 
@@ -112,8 +113,8 @@ export const parseUnDelegateMsgsFromContent = (
 ): [Msg[], string] => {
   const messages = content.split("\n");
 
-  if (messages.length === 0) {
-    return [[], "no messages found"];
+  if (messages?.length === 0) {
+    return [[], "no messages or invalid file content"];
   }
 
   const msgs = [];
@@ -122,7 +123,7 @@ export const parseUnDelegateMsgsFromContent = (
       const msg = parseUnDelegateMsg(delegator, messages[i]);
       msgs.push(msg);
     } catch (error: any) {
-      return [[], error || `failed to parse message at ${i}`];
+      return [[], error?.message || `failed to parse message at ${i}`];
     }
   }
 
@@ -131,7 +132,7 @@ export const parseUnDelegateMsgsFromContent = (
 
 const parseUnDelegateMsg = (delegator: string, msg: string): Msg => {
   const values = msg.split(",");
-  if (values.length !== 2) {
+  if (values?.length !== 2) {
     throw new Error("invalid message");
   }
 
@@ -160,8 +161,8 @@ export const parseReDelegateMsgsFromContent = (
 ): [Msg[], string] => {
   const messages = content.split("\n");
 
-  if (messages.length === 0) {
-    return [[], "no messages found"];
+  if (messages?.length === 0) {
+    return [[], "no messages or invalid file content"];
   }
 
   const msgs = [];
@@ -170,7 +171,7 @@ export const parseReDelegateMsgsFromContent = (
       const msg = parseReDelegateMsg(delegator, messages[i]);
       msgs.push(msg);
     } catch (error: any) {
-      return [[], error || `failed to parse message at ${i}`];
+      return [[], error?.message || `failed to parse message at ${i}`];
     }
   }
 
@@ -179,7 +180,7 @@ export const parseReDelegateMsgsFromContent = (
 
 const parseReDelegateMsg = (delegator: string, msg: string): Msg => {
   const values = msg.split(",");
-  if (values.length !== 3) {
+  if (values?.length !== 3) {
     throw new Error("invalid message");
   }
 
@@ -201,3 +202,16 @@ const parseReDelegateMsg = (delegator: string, msg: string): Msg => {
     },
   };
 };
+
+export function NewMultisigThreshoPubkey(
+  pubkeys: SinglePubkey[],
+  threshold: string
+): MultisigThresholdPubkey {
+  return {
+    type: "tendermint/PubKeyMultisigThreshold",
+    value: {
+      pubkeys: pubkeys,
+      threshold: threshold,
+    },
+  };
+}

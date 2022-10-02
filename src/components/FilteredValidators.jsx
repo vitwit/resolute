@@ -11,7 +11,7 @@ import { formatValidatorStatus } from "../utils/util";
 import { useSelector } from "react-redux";
 
 export function FilteredValidators(props) {
-  const { validators, filtered, onMenuAction } = props;
+  const { validators, filtered, onMenuAction, theme } = props;
   const delegatedTo = useSelector(
     (state) => state.staking.delegations.delegatedTo
   );
@@ -26,12 +26,12 @@ export function FilteredValidators(props) {
               <StyledTableCell align="left">Validator</StyledTableCell>
               <StyledTableCell align="center">Voting Power</StyledTableCell>
               <StyledTableCell align="center">Status</StyledTableCell>
-              <StyledTableCell align="center">Comission</StyledTableCell>
+              <StyledTableCell align="center">Commission</StyledTableCell>
               <StyledTableCell align="center">Actions</StyledTableCell>
             </StyledTableRow>
           </TableHead>
           <TableBody>
-            {filtered.active.map((keyName, index) => (
+            {filtered?.active?.map((keyName, index) => (
               <StyledTableRow
                 key={index + 1}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -62,7 +62,9 @@ export function FilteredValidators(props) {
                 </StyledTableCell>
                 <StyledTableCell align="center">
                   <Button
-                    variant="outlined"
+                    variant={
+                      theme?.pallet?.mode === "light" ? "outlined" : "contained"
+                    }
                     className="button-capitalize-title"
                     size="small"
                     onClick={(e) =>
@@ -78,7 +80,11 @@ export function FilteredValidators(props) {
                   {delegatedTo[keyName] ? (
                     <>
                       <Button
-                        variant="outlined"
+                        variant={
+                          theme?.pallet?.mode === "light"
+                            ? "outlined"
+                            : "contained"
+                        }
                         style={{ marginLeft: 4 }}
                         className="button-capitalize-title"
                         size="small"
@@ -97,7 +103,11 @@ export function FilteredValidators(props) {
                         Undelegate
                       </Button>
                       <Button
-                        variant="outlined"
+                        variant={
+                          theme?.pallet?.mode === "light"
+                            ? "outlined"
+                            : "contained"
+                        }
                         className="button-capitalize-title"
                         style={{ marginLeft: 4 }}
                         size="small"
@@ -123,7 +133,7 @@ export function FilteredValidators(props) {
               </StyledTableRow>
             ))}
 
-            {filtered.inactive.map((keyName, index) => (
+            {filtered?.inactive?.map((keyName, index) => (
               <StyledTableRow
                 key={index + 1}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
