@@ -34,9 +34,11 @@ func (h *Handler) CreateTransaction(c echo.Context) error {
 		})
 	}
 
-	row := h.DB.QueryRow(`SELECT * FROM multisig_accounts WHERE "address"=$1`, address)
+	row := h.DB.QueryRow(`SELECT address,threshold,chain_id,pubkey_type,name,created_by,created_at
+	 FROM multisig_accounts WHERE "address"=$1`, address)
 	var addr schema.MultisigAccount
-	if err := row.Scan(addr); err != nil {
+	if err := row.Scan(&addr.Address, &addr.Threshold, &addr.ChainID, &addr.PubkeyType, &addr.Name,
+		&addr.CreatedBy, &addr.CreatedAt); err != nil {
 		if sql.ErrNoRows == err {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Status:  "error",
