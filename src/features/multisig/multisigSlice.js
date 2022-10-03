@@ -275,13 +275,14 @@ export const multiSlice = createSlice({
     builder
       .addCase(createTxn.pending, (state) => {
         state.createTxnRes.status = "pending";
+        state.createTxnRes.error = "";
       })
       .addCase(createTxn.fulfilled, (state, result) => {
         state.createTxnRes.status = "idle";
       })
       .addCase(createTxn.rejected, (state, action) => {
         state.createTxnRes.status = "rejected";
-        state.createTxnRes.error = action.payload?.message;
+        state.createTxnRes.error = action.payload;
       });
 
     builder
