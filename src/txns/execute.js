@@ -58,7 +58,7 @@ export async function signAndBroadcastUpdateGroupMembers(
   const offlineSigner =
     window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
   let registry = new Registry();
- 
+
 
   registry.register(
     "/cosmos.group.v1.MsgUpdateGroupMembers",
@@ -88,7 +88,7 @@ export async function signAndBroadcastUpdateGroupPolicy(
   const offlineSigner =
     window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
   let registry = new Registry();
- 
+
 
   registry.register(
     "/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy",
@@ -118,7 +118,7 @@ export async function signAndBroadcastUpdateGroupPolicyMetadata(
   const offlineSigner =
     window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
   let registry = new Registry();
- 
+
 
   registry.register(
     "/cosmos.group.v1.MsgUpdateGroupPolicyMetadata",
@@ -148,7 +148,7 @@ export async function signAndBroadcastUpdateGroupPolicyAdmin(
   const offlineSigner =
     window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
   let registry = new Registry();
- 
+
 
   registry.register(
     "/cosmos.group.v1.MsgUpdateGroupPolicyAdmin",
@@ -178,7 +178,7 @@ export async function signAndBroadcastAddGroupPolicy(
   const offlineSigner =
     window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
   let registry = new Registry();
- 
+
 
   registry.register(
     "/cosmos.group.v1.MsgCreateGroupPolicy",
@@ -208,7 +208,7 @@ export async function signAndBroadcastLeaveGroup(
   const offlineSigner =
     window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
   let registry = new Registry();
- 
+
 
   registry.register(
     "/cosmos.group.v1.MsgLeaveGroup",
@@ -449,15 +449,20 @@ export async function signAndBroadcastAmino(
 
   registry.register("/passage3d.claim.v1beta1.MsgClaim", MsgClaim);
 
-  console.log('feee--- ', fee)
+  console.log('feee--- ', fee, msgs)
 
   const cosmJS = await SigningStargateClient.connectWithSigner(rpcURL, wallet, {
     registry: registry,
   });
 
-  
-
-  return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
+  console.log('feee--- afeter ', fee, msgs)
+  return await cosmJS.delegateTokens(account?.address,
+    msgs[0].value.validatorAddress,
+    msgs[0].value.amount,
+    // fee,
+    // 'simple memo'
+  )
+  // return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
 }
 
 export async function signAndBroadcastUnjail(
