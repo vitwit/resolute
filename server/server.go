@@ -10,6 +10,7 @@ import (
 	"github.com/labstack/gommon/log"
 
 	"github.com/vitwit/resolute/server/config"
+	"github.com/vitwit/resolute/server/cron"
 	"github.com/vitwit/resolute/server/handler"
 	"github.com/vitwit/resolute/server/model"
 
@@ -67,6 +68,10 @@ func main() {
 	e.DELETE("/multisig/:address/tx/:id", h.DeleteTransaction)
 	e.POST("/multisig/:address/sign-tx/:id", h.SignTransaction)
 	e.GET("/multisig/:address/txs", h.GetTransactions)
+
+	e.GET("/tokens-info", h.GetTokensInfo)
+	e.GET("/tokens-info/:denom", h.GetTokenInfo)
+
 	e.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, model.SuccessResponse{
 			Status:  "success",
@@ -79,6 +84,11 @@ func main() {
 			Message: "route not found",
 		})
 	})
+
+	// Setup coingecko cron job
+	cronClient := cron.NewCron(config, db)
+	cronClient.Start()
+
 	// Start server
 	// TODO: add ip and port
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", apiCfg.Port)))

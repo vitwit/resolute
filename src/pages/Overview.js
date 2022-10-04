@@ -17,6 +17,7 @@ import { getAccountInfo } from "../features/auth/slice";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { copyToClipboard } from "../utils/clipboard";
+import { getTokenPrice } from "../features/common/commonSlice";
 
 export default function Overview() {
   const wallet = useSelector((state) => state.wallet);
@@ -26,6 +27,7 @@ export default function Overview() {
   const rewards = useSelector((state) => state.distribution.delegatorRewards);
   const unbonding = useSelector((state) => state.staking.unbonding);
   const account = useSelector((state) => state.auth.accountInfo);
+  const priceInfo = useSelector((state) => state.common.tokensInfoState.info);
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
 
@@ -112,6 +114,8 @@ export default function Overview() {
         address: address,
       })
     );
+
+    dispatch(getTokenPrice(coinDenom))
   };
 
   const navigate = useNavigate();
@@ -171,7 +175,7 @@ export default function Overview() {
                     borderRadius: 0,
                     p: 2,
                     textAlign: "center",
-                    minHeight: 250,
+                    minHeight: 280,
                   }}
                 >
                   <Typography
@@ -194,7 +198,7 @@ export default function Overview() {
                     pl: 3,
                     pr: 3,
                     textAlign: "left",
-                    minHeight: 250,
+                    minHeight: 280,
                   }}
                 >
                   <Typography color="primary" fontWeight={600} variant="body1">
@@ -323,6 +327,56 @@ export default function Overview() {
                         ).toLocaleString()}
                       </Typography>
                     </li>
+                    { priceInfo?.info?.usd ?
+                    <li
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        marginTop: 8,
+                      }}
+                    >
+                      <Typography
+                        variant="body1"
+                        color="text.secondary"
+                        gutterBottom
+                      >
+                        Total value
+                      </Typography>
+                      <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                      >
+                      <Typography
+                        variant="body1"
+                        fontWeight={600}
+                        color="text.primary"
+                      >
+                        &#36;{
+                        (priceInfo?.info?.usd *  parseFloat((
+                          parseFloat(available) +
+                          parseFloat(delegated) +
+                          parseFloat(pendingRewards) +
+                          parseFloat(unbondingDel)
+                        )).toFixed(2)).toLocaleString()}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        fontWeight={600}
+                        color="text.secondary"
+                        sx={{
+                          textAlign: "right"
+                        }}
+                      >
+                        &#36;{priceInfo?.info?.usd}
+                      </Typography>
+                      </div>
+                    </li>
+                    :
+                    null
+                        }
                   </ul>
                 </Paper>
               </Grid>
