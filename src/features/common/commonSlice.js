@@ -1,62 +1,104 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { SOMETHING_WRONG } from "../multisig/multisigSlice";
+import commonService from "./commonService";
 
 const initialState = {
   errState: {
-    message: '',
-    type: '',
+    message: "",
+    type: "",
   },
   txSuccess: {
-    hash: ''
+    hash: "",
   },
-  txLoadRes: { load: false }
-}
+  txLoadRes: { load: false },
+  tokensInfoState: {
+    error: "",
+    info: {},
+    status: "idle",
+  },
+};
+
+export const getTokenPrice = createAsyncThunk(
+  "common/getTokenPrice",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await commonService.tokenInfo(data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data?.message || error?.message || SOMETHING_WRONG
+      );
+    }
+  }
+);
 
 export const commonSlice = createSlice({
-  name: 'common',
+  name: "common",
   initialState,
   reducers: {
     setError: (state, action) => {
       state.errState = {
         message: action.payload.message,
-        type: action.payload.type
-      }
+        type: action.payload.type,
+      };
     },
     setTxHash: (state, action) => {
       state.txSuccess = {
         hash: action.payload.hash,
-      }
+      };
     },
     setTxLoad: (state) => {
-      state.txLoadRes = { load: true }
+      state.txLoadRes = { load: true };
     },
     resetTxLoad: (state) => {
-      state.txLoadRes = { load: false }
+      state.txLoadRes = { load: false };
     },
     resetTxHash: (state) => {
       state.txSuccess = {
-        hash: '',
-      }
+        hash: "",
+      };
     },
     resetError: (state) => {
       state.errState = {
-        message: '',
-        type: ''
-      }
+        message: "",
+        type: "",
+      };
     },
     resetDecisionPolicies: (state) => {
-      state.groupPolicies = {}
+      state.groupPolicies = {};
     },
-    resetActiveProposals: (state)=>{
-      state.policyProposals = {}
-    }
+    resetActiveProposals: (state) => {
+      state.policyProposals = {};
+    },
   },
-})
+  extraReducers: (builder) => {
+    builder
+      .addCase(getTokenPrice.pending, (state) => {
+        state.tokensInfoState.status = "pending";
+        state.tokensInfoState.error = "";
+      })
+      .addCase(getTokenPrice.fulfilled, (state, action) => {
+        state.tokensInfoState.status = "idle";
+        state.tokensInfoState.error = "";
+        state.tokensInfoState.info = action.payload.data || {};
+      })
+      .addCase(getTokenPrice.rejected, (state, action) => {
+        state.tokensInfoState.status = "rejected";
+        state.tokensInfoState.error = action.payload;
+        state.tokensInfoState.info = {};
+      });
+  },
+});
 
 export const {
-  setError, resetError,
+  setError,
+  resetError,
   resetActiveProposals,
   resetDecisionPolicies,
-  setTxLoad, resetTxLoad,
-  setTxHash, resetTxHash } = commonSlice.actions
+  setTxLoad,
+  resetTxLoad,
+  setTxHash,
+  resetTxHash,
+} = commonSlice.actions;
 
-export default commonSlice.reducer
+export default commonSlice.reducer;
