@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	DB  DBConfig  `mapstructure:"database"`
-	API APIConfig `mapstructure:"api"`
+	DB        DBConfig        `mapstructure:"database"`
+	API       APIConfig       `mapstructure:"api"`
+	COINGECKO CoingeckoConfig `mapstructure:"coingecko"`
 }
 
 type DBConfig struct {
@@ -22,6 +23,10 @@ type DBConfig struct {
 
 type APIConfig struct {
 	Port string `yaml:"port"`
+}
+
+type CoingeckoConfig struct {
+	URI string `yaml:"uri"`
 }
 
 func ParseConfig() (Config, error) {
@@ -53,18 +58,26 @@ func ParseConfig() (Config, error) {
 			cfg.API = APIConfig{
 				Port: viper.GetString("production.api.port"),
 			}
+			cfg.COINGECKO = CoingeckoConfig{
+				URI: viper.GetString("production.coingecko.uri"),
+			}
 		}
 
 	case "dev":
-		cfg.DB = DBConfig{
-			Host:         viper.GetString("dev.database.host"),
-			Port:         viper.GetString("dev.database.port"),
-			User:         viper.GetString("dev.database.user"),
-			Password:     viper.GetString("dev.database.password"),
-			DatabaseName: viper.GetString("dev.database.name"),
-		}
-		cfg.API = APIConfig{
-			Port: viper.GetString("production.api.port"),
+		{
+			cfg.DB = DBConfig{
+				Host:         viper.GetString("dev.database.host"),
+				Port:         viper.GetString("dev.database.port"),
+				User:         viper.GetString("dev.database.user"),
+				Password:     viper.GetString("dev.database.password"),
+				DatabaseName: viper.GetString("dev.database.name"),
+			}
+			cfg.API = APIConfig{
+				Port: viper.GetString("production.api.port"),
+			}
+			cfg.COINGECKO = CoingeckoConfig{
+				URI: viper.GetString("production.coingecko.uri"),
+			}
 		}
 
 	default:

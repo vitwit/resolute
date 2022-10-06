@@ -3,13 +3,13 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { computeVotePercentage, getProposalComponent } from "../utils/util";
-import "./common.css";
-import { getLocalTime } from "../utils/datetime";
+import { computeVotePercentage, getProposalComponent } from "../../utils/util";
+import { getLocalTime } from "../../utils/datetime";
+import "./../common.css";
 
 export const ProposalItem = (props) => {
-  const { info, tally, vote } = props;
-  const tallyInfo = computeVotePercentage(tally);
+  const { info, tally, vote, poolInfo } = props;
+  const tallyInfo = computeVotePercentage(tally, poolInfo);
 
   const onVoteClick = () => {
     props.setOpen(info?.proposal_id);

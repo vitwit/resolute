@@ -35,6 +35,7 @@ const initialState = {
     pagination: {},
   },
   params: {},
+  pool: {},
   tx: {
     status: "idle",
     type: "",
@@ -188,15 +189,27 @@ export const txUnDelegate = createAsyncThunk(
   }
 );
 
+export const getPoolInfo = createAsyncThunk(
+  "staking/poolInfo",
+  async (data) => {
+    const response = await stakingService.poolInfo(data.baseURL);
+    return response.data;
+  }
+);
+
 export const getValidators = createAsyncThunk(
   "staking/validators",
-  async (data) => {
-    const response = await stakingService.validators(
-      data.baseURL,
-      data?.status,
-      data.pagination
-    );
-    return response.data;
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await stakingService.validators(
+        data.baseURL,
+        data?.status,
+        data.pagination
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error?.message || SOMETHING_WRONG);
+    }
   }
 );
 
@@ -508,6 +521,14 @@ export const stakeSlice = createSlice({
         state.tx.status = "rejected";
         state.tx.type = "";
       });
+
+    // pool info
+    builder
+      .addCase(getPoolInfo.pending, (state) => {})
+      .addCase(getPoolInfo.fulfilled, (state, action) => {
+        state.pool = action.payload;
+      })
+      .addCase(getPoolInfo.rejected, (state, action) => {});
   },
 });
 

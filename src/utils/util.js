@@ -47,7 +47,8 @@ export function getProposalComponent(type) {
   }
 }
 
-export function computeVotePercentage(tally) {
+export function computeVotePercentage(tally, poolInfo) {
+  const bonded = poolInfo?.pool?.bonded_tokens || 1;
   if (tally == null || tally.yes == null) {
     return {
       yes: 0,
@@ -56,20 +57,11 @@ export function computeVotePercentage(tally) {
       no_with_veto: 0,
     };
   }
-  let yes = parseInt(tally?.yes);
-  let no = parseInt(tally?.no);
-  let abstain = parseInt(tally?.abstain);
-  let noWithVeto = parseInt(tally?.no_with_veto);
-  let total = yes + no + abstain + noWithVeto;
-
-  if (total === 0) {
-    return {
-      yes: 0,
-      no: 0,
-      abstain: 0,
-      no_with_veto: 0,
-    };
-  }
+  const yes = parseInt(tally?.yes);
+  const no = parseInt(tally?.no);
+  const abstain = parseInt(tally?.abstain);
+  const noWithVeto = parseInt(tally?.no_with_veto);
+  const total = parseInt(bonded);
 
   let result = {};
   result["yes"] = ((yes / total) * 100).toFixed(2);
