@@ -12,7 +12,10 @@ function CreateGroupPolicy({
     fields,
     errors,
     reset,
+    setValue,
     handleCancelPolicy }) {
+
+    // setValue('policyMetadata.votingPeriodDuration', 'Minutes')
 
     return (
         <Paper sx={{ p: 2, mt: 3 }} variant='outlined' elevation={0} >
@@ -22,6 +25,7 @@ function CreateGroupPolicy({
                 </Typography>
 
                 <Button
+                    size='small'
                     onClick={() => handleCancelPolicy()}
                     sx={{ marginLeft: 'auto' }}
                     endIcon={
@@ -30,7 +34,7 @@ function CreateGroupPolicy({
                     variant="outlined"
                     color='error'
                 >
-                    Remove
+                    Cancel
                 </Button>
             </Box>
 
@@ -62,7 +66,7 @@ function CreateGroupPolicy({
                             render={({ field }) => (
                                 <FormControl fullWidth>
                                     <InputLabel id="Decision-Policy">
-                                        Decision Policy</InputLabel>
+                                        Decision Policy Type *</InputLabel>
                                     <Select
                                         sx={{ textAlign: 'center' }}
                                         fullWidth
@@ -70,7 +74,7 @@ function CreateGroupPolicy({
                                         placeholder='Decision policy*'
                                         labelId="Decision-Policy*"
                                         id="decision-policy"
-                                        label="Decision Policy*"
+                                        label="Decision Policy Type*"
                                         name='decisionPolicy'
                                     >
                                         <MenuItem value={'threshold'}>Threshold</MenuItem>
@@ -81,7 +85,7 @@ function CreateGroupPolicy({
                             )}
                         />
                     </Grid>
-                    <Grid item sx={{ }} md={6} xs={5}>
+                    <Grid item sx={{}} md={6} xs={5}>
                         {
                             watch('policyMetadata.decisionPolicy') === 'percentage' ?
                                 <Controller
@@ -99,6 +103,7 @@ function CreateGroupPolicy({
                                                 fullWidth
                                                 sx={{ float: 'right', textAlign: 'right' }}
                                                 name='percentage'
+                                                label='Percentage*'
                                                 type='number'
                                                 placeholder='Percentage'
                                                 error={errors?.policyMetadata?.percentage}
@@ -125,11 +130,12 @@ function CreateGroupPolicy({
                                                 fullWidth
                                                 name='threshold'
                                                 type='number'
+                                                label='Threshold*'
                                                 placeholder='Threshold'
                                                 error={errors?.policyMetadata?.threshold}
                                                 helperText={errors?.policyMetadata?.threshold?.type === 'max' ?
                                                     'Invalid threshold' : errors?.policyMetadata?.threshold?.message ||
-                                                'Threshold can not be greater than members count.'}
+                                                    'Threshold can not be greater than members count.'}
                                             />
                                         </FormControl>
                                     )} />
@@ -137,6 +143,7 @@ function CreateGroupPolicy({
                     </Grid>
                     <Grid item xs={6}>
                         <Controller
+                            fullWidth
                             name={`policyMetadata.votingPeriod`}
                             control={control}
                             rules={{
@@ -150,19 +157,44 @@ function CreateGroupPolicy({
                                         fullWidth
                                         name='votingPeriod'
                                         type='number'
+                                        label="Voting Period*"
                                         placeholder='Voting Period*'
                                         InputProps={{
-                                            endAdornment: <InputAdornment position="start"> Sec</InputAdornment>,
+                                            endAdornment: <FormControl sx={{ width: 150, mr: '-13px' }} fullWidth>
+                                                <InputLabel>Duration*</InputLabel>
+                                                <Select
+                                                    fullWidth
+                                                    required
+                                                    placeholder='Duration*'
+                                                    label="Duration*"
+                                                    labelId="duration"
+                                                    id="duration"
+                                                    onChange={(e) => {
+                                                        setValue('policyMetadata.votingPeriodDuration', e.target.value)
+                                                        console.log('target value', e.target.value)
+                                                    }}
+                                                    value={watch('policyMetadata.votingPeriodDuration')}
+                                                    name='votingPeriodDuration'
+                                                >
+                                                    <MenuItem defaultValue={'Days'}  value={'Days'}>Days</MenuItem>
+                                                    <MenuItem defaultChecked value={'Hours'}>Hours</MenuItem>
+                                                    <MenuItem value={'Minutes'}>Minutes</MenuItem>
+                                                </Select>
+                                            </FormControl>
                                         }}
                                         error={errors?.policyMetadata?.votingPeriod}
                                         helperText={errors?.policyMetadata?.votingPeriod?.message}
                                     />
+                                    <Typography textAlign={'left'} variant='caption'>
+                                       Info: A maximum time after submission that a proposal may be voted on before it is tallied
+                                    </Typography>
                                 </FormControl>
                             )} />
 
                     </Grid>
                     <Grid item xs={6}>
                         <Controller
+                            fullWidth
                             name={`policyMetadata.minExecPeriod`}
                             control={control}
                             rules={{
@@ -178,17 +210,40 @@ function CreateGroupPolicy({
                                         type='number'
                                         placeholder='Min Exection Period*'
                                         InputProps={{
-                                            endAdornment: <InputAdornment position="start"> Sec</InputAdornment>,
+                                            endAdornment: <FormControl sx={{ width: 150, mr: '-13px' }} fullWidth>
+                                                <InputLabel>Duration*</InputLabel>
+                                                <Select
+                                                    fullWidth
+                                                    required
+                                                    label="Duration*"
+                                                    labelId="duration"
+                                                    id="duration"
+                                                    onChange={(e) => {
+                                                        setValue('policyMetadata.minExecPeriodDuration', e.target.value)
+                                                        console.log('target value', e.target.value)
+                                                    }}
+                                                    value={watch('policyMetadata.minExecPeriodDuration')}
+                                                    name='minExecPeriodDuration'
+                                                >
+                                                    <MenuItem value={'Days'}>Days</MenuItem>
+                                                    <MenuItem value={'Hours'}>Hours</MenuItem>
+                                                    <MenuItem value={'Minutes'}>Minutes</MenuItem>
+                                                </Select>
+                                            </FormControl>
                                         }}
                                         error={errors?.policyMetadata?.minExecPeriod}
                                         helperText={errors?.policyMetadata?.minExecPeriod?.message}
                                     />
+                                    <Typography textAlign={'left'} variant='caption'>
+                                       Info: A Minimum amount of time that must pass after submission in order for a proposal to potentially be executed.
+                                    </Typography>
                                 </FormControl>
                             )} />
 
                     </Grid>
                 </Grid>
-                <Box textAlign={'center'}>
+                <br/>
+                <Box textAlign={'left'}>
                     <FormControlLabel
                         name="policyAsAdmin"
                         control={
@@ -197,9 +252,9 @@ function CreateGroupPolicy({
                         }
                         label="Group policy as admin"
                         labelPlacement="start"
-                    />
-                    <Typography>
-                        if set to true, the group policy account address will be used as
+                    /><br/>
+                    <Typography variant='caption'>
+                        Info: if set to true, the group policy account address will be used as
                         group and policy admin
                     </Typography>
                 </Box>

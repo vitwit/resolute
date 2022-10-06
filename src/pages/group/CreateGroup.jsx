@@ -1,6 +1,6 @@
 import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
-import { Paper, TextField, Typography } from "@mui/material";
+import { FormControlLabel, Paper, Switch, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -48,8 +48,40 @@ export default function CreateGroupPage() {
       denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom
     }
 
+    const getMinExecPeriod = policyData => {
+      let time;
+      if (policyData?.minExecPeriodDuration === 'Days')
+        time = 24 * 60 * 60;
+      else if (policyData?.minExecPeriodDuration === 'Hours')
+        time = 60 * 60;
+      else if (policyData?.minExecPeriodDuration === 'Minutes')
+        time = 60
+      else time = 1;
+
+      time = time * Number(policyData?.minExecPeriod);
+      return time;
+    }
+
+    const getVotingPeriod = policyData => {
+      let time;
+      if (policyData?.votingPeriodDuration === 'Days')
+        time = 24 * 60 * 60;
+      else if (policyData?.votingPeriodDuration === 'Hours')
+        time = 60 * 60;
+      else if (policyData?.votingPeriodDuration === 'Minutes')
+        time = 60
+      else time = 1;
+
+      time = time * Number(policyData?.votingPeriod);
+      return time;
+    }
+
     if (data.policyMetadata) {
-      dataObj['policyData'] = data.policyMetadata
+      dataObj['policyData'] = {
+        ...data.policyMetadata,
+        minExecPeriod: getMinExecPeriod(data.policyMetadata),
+        votingPeriod: getVotingPeriod(data.policyMetadata)
+      }
     }
 
     dispatch(txCreateGroup(dataObj))
@@ -102,11 +134,11 @@ export default function CreateGroupPage() {
                 )}
               />
             </div>
+
             <Box component={'div'} sx={{
               display: 'flow-root',
               textAlign: 'right'
             }}>
-
               {
                 !fields?.length && <Button
                   onClick={() => {
@@ -124,6 +156,7 @@ export default function CreateGroupPage() {
                   Add Group Member
                 </Button> || null
               }
+
 
               <CreateGroupForm
                 fields={fields}
@@ -149,18 +182,19 @@ export default function CreateGroupPage() {
               }
 
               {
-                showAddPolicyForm &&
+                fields.length && showAddPolicyForm &&
                 <CreateGroupPolicy
                   handleCancelPolicy={() => {
                     setValue('policyMetadata', null)
                     setShowAddPolicyForm(false)
                   }}
+                  setValue={setValue}
                   reset={reset}
                   register={register}
                   errors={errors}
                   fields={fields}
                   watch={watch}
-                  control={control} />
+                  control={control} /> || null
               }
             </Box>
 
@@ -178,7 +212,7 @@ export default function CreateGroupPage() {
               cancel
             </Button>
             <Button
-              disabled={txCreateGroupRes?.status === 'pending' }
+              disabled={txCreateGroupRes?.status === 'pending'}
               type="submit"
               variant="outlined"
               disableElevation

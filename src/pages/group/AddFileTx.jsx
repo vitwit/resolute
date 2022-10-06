@@ -378,11 +378,11 @@ export const RenderSendMessage = (message, index, currency, onDelete) => {
                     Send&nbsp;
                 </Typography>
                 <Typography variant="body2" color="text.primary" fontWeight={600}>
-                    {parseBalance(
+                    {/* {parseBalance(
                         message.value.amount,
                         currency.coinDecimals,
                         currency.coinMinimalDenom
-                    )}
+                    )} */}
                     {currency.coinDenom}&nbsp;
                 </Typography>
                 <Typography variant="body2" color="text.secondary" fontWeight={500}>

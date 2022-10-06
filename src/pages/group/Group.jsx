@@ -25,6 +25,7 @@ import GroupTab, { TabPanel } from '../../components/group/GroupTab';
 import GroupInfo from './GroupInfo';
 import ActiveProposals from './ActiveProposals';
 import { useForm } from 'react-hook-form';
+import AlertMsg from '../../components/group/AlertMsg';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -272,7 +273,11 @@ const GroupMembers = ({ id, wallet }) => {
                     <CircularProgress /> : null
             }
             {
-                status !== 'pending' ?
+                 status !== 'pending' && !data?.members?.length ?
+                 <AlertMsg type='error' text='No members found'/>: null
+            }
+            {
+                status !== 'pending' && data?.members?.length?
                     <MembersTable
                         total={total}
                         limit={limit}
@@ -362,7 +367,7 @@ const UpdateGroupMember = ({ id, wallet }) => {
     return (
         <Box>
             <Box sx={{ float: 'right' }}>
-                <Button onClick={() => setShowForm(!showForm)}
+                <Button sx={{mb: 2}} onClick={() => setShowForm(!showForm)}
                     variant='contained'>Update Member</Button>
             </Box>
             <Box>

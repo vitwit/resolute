@@ -89,7 +89,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemText primary="Authz" />
       </ListItemButton>
       <ListItemButton
-        disabled
+        // disabled
         onClick={() => onNavigate("/feegrant")}
         sx={{ pb: 0.5, pt: 0.5 }}
         selected={currentPath === "/feegrant"}
@@ -100,7 +100,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemText primary="Feegrant" secondary="coming soon" />
       </ListItemButton>
       <ListItemButton
-        disabled={nodeDataInfo ? false : true}
+        // disabled={nodeDataInfo ? false : true}
         onClick={() => onNavigate("/group")}
         sx={{ pb: 0.5, pt: 0.5 }}
         selected={currentPath === "/group"}

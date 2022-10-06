@@ -13,11 +13,46 @@ import { resetCreateGroupProposalRes, txCreateGroupProposal } from '../../featur
 import { fee } from '../../txns/execute';
 import { useNavigate, useParams } from 'react-router-dom';
 import { setError } from '../../features/common/commonSlice';
+import { DELEGATE_TYPE_URL, SEND_TYPE_URL } from './utils';
+import { RenderDelegateMessage, RenderSendMessage } from './AddFileTx';
 
 const TYPE_SEND = "SEND";
 const TYPE_DELEGATE = "DELEGATE";
 const TYPE_UNDELEGATE = "UNDELEGATE";
 const TYPE_REDELEGATE = "REDELEGATE";
+
+const TxMsgsList = ({ messages = [], currency, onDelete }) => {
+    console.log('currency---', currency)
+    return (
+        <Box sx={{ width: '80%', ml: 3, mt: 2 }}>
+            {
+                messages.map((m, i) => (
+                    <Box>
+                        {
+                            m?.typeUrl === SEND_TYPE_URL ?
+                                RenderSendMessage(
+                                    m,
+                                    i,
+                                    currency,
+                                    onDelete,
+                                ) : null
+                        }
+
+                        {
+                            m?.typeUrl === DELEGATE_TYPE_URL ?
+                                RenderDelegateMessage(
+                                    m,
+                                    i,
+                                    currency,
+                                    () => { },
+                                ) : null
+                        }
+                    </Box>
+                ))
+            }
+        </Box>
+    )
+}
 
 const getAmountInAtomics = (amount, currency) => {
     const amountInAtomics = Decimal.fromUserInput(
@@ -37,6 +72,7 @@ function AddManualTx({
     handleCancel
 }) {
     const { policyAddress, id } = useParams();
+    var [messages, setMessages] = useState([]);
 
     const currency = chainInfo?.config?.currencies[0];
 
@@ -51,6 +87,7 @@ function AddManualTx({
 
     const validators = useSelector((state) => state.staking.validators);
     const wallet = useSelector(state => state.wallet);
+    console.log('wallet--', wallet)
 
     useEffect(() => {
         dispatch(
@@ -100,8 +137,25 @@ function AddManualTx({
         }
     }, [])
 
+    const onSubmit = (data) => {
+        dispatch(txCreateGroupProposal(
+            {
+                metadata: data?.metadata,
+                admin: wallet?.address,
+                proposers: [wallet?.address],
+                messages: messages,
+                groupPolicyAddress: address,
+                chainId: chainInfo?.config?.chainId,
+                rpc: chainInfo?.config?.rpc,
+                denom: chainInfo?.config.currencies[0].coinMinimalDenom,
+                feeAmount: data?.fees,
+                memo: data?.memo,
+                gas: data?.gas
+            }
+        ))
+    }
 
-    const onSubmit = data => {
+    const onMsgSubmit = data => {
         let msg = {
         };
 
@@ -131,123 +185,140 @@ function AddManualTx({
                 break;
         }
 
-        dispatch(txCreateGroupProposal(
-            {
-                metadata: data?.metadata,
-                admin: wallet?.address,
-                proposers: [wallet?.address],
-                messages: [msg],
-                groupPolicyAddress: address,
-                chainId: chainInfo?.config?.chainId,
-                rpc: chainInfo?.config?.rpc,
-                denom: chainInfo?.config.currencies[0].coinMinimalDenom,
-                feeAmount: data?.fees,
-                memo: data?.memo,
-                gas: data?.gas
-            }
-        ))
+        messages = [...messages, msg];
+        setMessages(messages);
+        setTxType('');
+        methods.reset();
+        methods.setValue('txType', '');
+
+        console.log('messages', messages)
+
     };
+
+    const onDelete = (index) => {
+        messages.splice(index, 1);
+        setMessages([...messages]);
+    }
 
 
     return (
-        <Box p={2} width={'50%'} component={'div'}>
-
-            <FormProvider {...methods}>
-                <FormControl
-                    fullWidth
-                    sx={{
-                        mt: 1,
-                    }}
-                >
-                    <InputLabel id="demo-simple-select-label">
-                        Select Transaction
-                    </InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={txType}
-                        label="Select Transaction"
-                        onChange={(event) => {
-                            setTxType(event.target.value);
-                            methods.setValue('txType', event.target.value);
+        <Box p={2} width={'100%'} display={'flex'} component={'div'}>
+            <Box width={'40%'}>
+                <FormProvider {...methods}>
+                    <FormControl
+                        fullWidth
+                        sx={{
+                            mt: 1,
                         }}
                     >
-                        <MenuItem value={TYPE_SEND}>Send</MenuItem>
-                        <MenuItem value={TYPE_DELEGATE}>Delegate</MenuItem>
-                        {/* <MenuItem value={TYPE_REDELEGATE}>Redelegate</MenuItem>
-                        <MenuItem value={TYPE_UNDELEGATE}>Undelegate</MenuItem> */}
-                    </Select>
-                </FormControl>
+                        <InputLabel id="demo-simple-select-label">
+                            Select Transaction
+                        </InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={txType}
+                            label="Select Transaction"
+                            onChange={(event) => {
+                                setTxType(event.target.value);
+                                methods.setValue('txType', event.target.value);
+                            }}
+                        >
+                            <MenuItem value={''}>Select Transaction Type</MenuItem>
+                            <MenuItem value={TYPE_SEND}>Send</MenuItem>
+                            <MenuItem value={TYPE_DELEGATE}>Delegate</MenuItem>
+                            <MenuItem value={TYPE_REDELEGATE}>Redelegate</MenuItem>
+                            <MenuItem value={TYPE_UNDELEGATE}>Undelegate</MenuItem>
+                        </Select>
+                    </FormControl>
 
-                <form onSubmit={methods.handleSubmit(onSubmit)}>
-                    {
-                        txType && (
-                            <Controller
-                                name="metadata"
-                                control={methods.control}
-                                render={({ field }) => (
-                                    <TextField
-                                        sx={{
-                                            mt: 1
-                                        }}
-                                        {...field}
-                                        label="Proposal Metadata"
-                                        fullWidth
-                                    />
-                                )}
+                    <form onSubmit={methods.handleSubmit(onMsgSubmit)}>
+
+                        {txType === TYPE_SEND ? (
+                            <Send
+                                currency={currency}
                             />
-                        ) || null
-                    }
-                    {txType === TYPE_SEND ? (
-                        <Send
-                            currency={currency}
-                        />
-                    ) : null}
+                        ) : null}
 
-                    {txType === TYPE_DELEGATE ? (
-                        <Delegate
-                            currency={currency}
-                            validators={validators}
-                        />
-                    ) : null}
+                        {txType === TYPE_DELEGATE ? (
+                            <Delegate
+                                currency={currency}
+                                validators={validators}
+                            />
+                        ) : null}
 
-                    {txType === TYPE_REDELEGATE ? (
-                        <RedelegateForm
-                            currency={currency}
-                            validators={validators}
-                        />
-                    ) : null}
+                        {txType === TYPE_REDELEGATE ? (
+                            <RedelegateForm
+                                currency={currency}
+                                validators={validators}
+                            />
+                        ) : null}
 
-                    {txType === TYPE_UNDELEGATE ? (
-                        <UnDelegateForm
-                            currency={currency}
-                            validators={validators}
-                        />
-                    ) : null}
+                        {txType === TYPE_UNDELEGATE ? (
+                            <UnDelegateForm
+                                currency={currency}
+                                validators={validators}
+                            />
+                        ) : null}
 
-                    {
-                        txType && <TxBasicFields
-                            chainInfo={chainInfo}
-                        /> || null
-                    }
+                        <Button size='small'
+                            sx={{ mt: 2 }}
+                            variant='outlined' type='submit'>Add Message</Button>
 
-                    {
-                        txType && <Box mt={2}>
-                            <Button sx={{ mr: 2 }}
-                                onClick={() => handleCancel()}
-                                variant='outlined' color='error'>
-                                Cancel
-                            </Button>
+                    </form>
+                </FormProvider>
+            </Box>
+            {
+                messages?.length ?
+                    <Box component={'div'} ml={3} mt={-10} width={'50%'}>
 
-                            <Button
-                                disabled={createRes?.status === 'pending'}
-                                variant='outlined' type="submit">
-                                Submit
-                            </Button>
-                        </Box> || null
-                    }
-                </form>
-            </FormProvider>
+                        <FormProvider {...methods}>
+                            <form onSubmit={methods.handleSubmit(onSubmit)}>
+                                <Controller
+                                    name="metadata"
+                                    control={methods.control}
+                                    render={({ field }) => (
+                                        <TextField
+                                            sx={{
+                                                mt: 1
+                                            }}
+                                            {...field}
+                                            label="Proposal Metadata"
+                                            fullWidth
+                                        />
+                                    )}
+                                />
+
+                                <Typography
+                                mt={2}
+                                textAlign={'left'}>Messages</Typography>
+                                <TxMsgsList
+                                    onDelete={onDelete}
+                                    currency={wallet?.chainInfo?.config?.currencies?.[0]}
+                                    messages={messages}
+                                />
+
+                                <TxBasicFields
+                                    chainInfo={chainInfo}
+                                />
+
+                                <Box mt={2}>
+                                    <Button sx={{ mr: 2 }}
+                                        onClick={() => handleCancel()}
+                                        variant='outlined' color='error'>
+                                        Cancel
+                                    </Button>
+
+                                    <Button
+                                        disabled={createRes?.status === 'pending'}
+                                        variant='outlined' type="submit">
+                                        Submit
+                                    </Button>
+                                </Box>
+                            </form>
+                        </FormProvider>
+                    </Box> : null
+            }
         </Box>
     )
 }
