@@ -73,8 +73,6 @@ export default function BroadcastTx(props) {
       }
 
       let mapData = multisigAccount.pubkeys || {};
-
-      let newMapObj = {};
       let pubkeys = [];
 
       mapData.map((p) => {
