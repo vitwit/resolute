@@ -20,14 +20,27 @@ const initialState = {
   },
 };
 
-export const getBalances = createAsyncThunk("bank/balances", async (data) => {
-  const response = await bankService.balances(
-    data.baseURL,
-    data.address,
-    data.pagination
-  );
-  return response.data;
-});
+export const getBalances = createAsyncThunk(
+  "bank/balances",
+  async (data, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await bankService.balances(
+        data.baseURL,
+        data.address,
+        data.pagination
+      );
+      return response.data;
+    } catch (error) {
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 export const getBalance = createAsyncThunk("bank/balance", async (data) => {
   const response = await bankService.balance(
