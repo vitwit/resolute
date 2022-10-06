@@ -15,15 +15,15 @@ import {
   getClaimParams,
   txClaimAction,
   resetClaimRecords,
-} from "./../features/airdrop/airdropSlice";
-import { getMainNetworks, getTestNetworks } from "../utils/networks";
+} from "../../features/airdrop/airdropSlice";
+import { getMainNetworks, getTestNetworks } from "../../utils/networks";
 import { useNavigate } from "react-router-dom";
-import { resetError, setError } from "../features/common/commonSlice";
-import AirdropProgress from "../components/passage/AirdropProgress";
+import { resetError, setError } from "../../features/common/commonSlice";
+import AirdropProgress from "../../components/passage/AirdropProgress";
 import { fromBech32, toHex, toBech32, fromHex } from "@cosmjs/encoding";
 import AlertTitle from "@mui/material/AlertTitle";
-import CustomizedDialogs from "../components/passage/disclaimer";
-import "./common.css";
+import CustomizedDialogs from "../../components/passage/disclaimer";
+import "./../common.css";
 
 function getPasgNetwork() {
   const mainNetworks = getMainNetworks();

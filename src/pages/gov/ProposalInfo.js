@@ -1,19 +1,20 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
-import { computeVotePercentage, getProposalComponent } from "./../utils/util";
-import { getLocalTime } from "./../utils/datetime";
+import { computeVotePercentage, getProposalComponent } from "../../utils/util";
+import { getLocalTime } from "../../utils/datetime";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getProposal,
   getProposalTally,
   txVote,
-} from "../features/gov/govSlice";
-import { resetError, setError } from "../features/common/commonSlice";
-import { resetTx } from "../features/distribution/distributionSlice";
-import { getVoteAuthz } from "../utils/authorizations";
-import { authzExecHelper } from "../features/authz/authzSlice";
-import VoteDialog from "../components/Vote";
+} from "../../features/gov/govSlice";
+import { resetError, setError } from "../../features/common/commonSlice";
+import { resetTx } from "../../features/distribution/distributionSlice";
+import { getVoteAuthz } from "../../utils/authorizations";
+import { authzExecHelper } from "../../features/authz/authzSlice";
+import VoteDialog from "../../components/Vote";
+import { getPoolInfo } from "../../features/staking/stakeSlice";
 
 export default function ProposalInfo() {
   const { id } = useParams();
@@ -21,6 +22,7 @@ export default function ProposalInfo() {
   const tallyState = useSelector((state) => state.gov.tally);
   const dispatch = useDispatch();
   const { proposalInfo } = proposalState;
+  const poolInfo = useSelector((state) => state.staking.pool);
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
 
@@ -29,6 +31,11 @@ export default function ProposalInfo() {
       getProposal({
         baseURL: chainInfo.config.rest,
         proposalId: id,
+      })
+    );
+    dispatch(
+      getPoolInfo({
+        baseURL: chainInfo.config.rest,
       })
     );
     dispatch(
@@ -111,7 +118,8 @@ export default function ProposalInfo() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     } else {
@@ -125,7 +133,8 @@ export default function ProposalInfo() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         });
       } else {
         alert("You don't have permission to vote");
@@ -268,7 +277,13 @@ export default function ProposalInfo() {
                   YES
                 </Typography>
                 <Typography>
-                  {computeVotePercentage(tallyState?.proposalTally[id]).yes}%
+                  {
+                    computeVotePercentage(
+                      tallyState?.proposalTally[id],
+                      poolInfo
+                    ).yes
+                  }
+                  %
                 </Typography>
               </Grid>
               <Grid item xs={6} md={2}>
@@ -280,7 +295,13 @@ export default function ProposalInfo() {
                   NO
                 </Typography>
                 <Typography>
-                  {computeVotePercentage(tallyState?.proposalTally[id]).no}%
+                  {
+                    computeVotePercentage(
+                      tallyState?.proposalTally[id],
+                      poolInfo
+                    ).no
+                  }
+                  %
                 </Typography>
               </Grid>
               <Grid item xs={6} md={2}>
@@ -293,8 +314,10 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(tallyState?.proposalTally[id])
-                      .no_with_veto
+                    computeVotePercentage(
+                      tallyState?.proposalTally[id],
+                      poolInfo
+                    ).no_with_veto
                   }
                   %
                 </Typography>
@@ -308,7 +331,12 @@ export default function ProposalInfo() {
                   ABSTAIN
                 </Typography>
                 <Typography>
-                  {computeVotePercentage(tallyState?.proposalTally[id]).abstain}
+                  {
+                    computeVotePercentage(
+                      tallyState?.proposalTally[id],
+                      poolInfo
+                    ).abstain
+                  }
                   %
                 </Typography>
               </Grid>
@@ -325,6 +353,11 @@ export default function ProposalInfo() {
               Proposal Details
             </Typography>
             <div
+              style={{
+                padding: 8,
+                backgroundColor: "#f9fafc",
+                color: "text.primary",
+              }}
               dangerouslySetInnerHTML={{
                 __html: parseDescription(
                   `${proposalInfo?.content?.description}`
