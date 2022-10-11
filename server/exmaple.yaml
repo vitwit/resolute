@@ -9,6 +9,8 @@ production:
     name: ""
   api:
     port: 1323
+  coingecko:
+    uri: "https://api.coingecko.com/api/v3/"
 
 dev:
   database:
@@ -19,3 +21,5 @@ dev:
     name: "multisig"
   api:
     port: 1323
+  coingecko:
+    uri: "https://api.coingecko.com/api/v3/"

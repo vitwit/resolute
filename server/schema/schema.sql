@@ -91,6 +91,36 @@ CREATE TABLE public.transactions (
     created_at timestamp with time zone DEFAULT '2022-09-23 22:27:24.815343+05:30'::timestamp with time zone NOT NULL
 );
 
+--
+-- TOC entry 206 (class 1259 OID 16444)
+-- Name: price_info; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.price_info (
+    denom character varying(50) NOT NULL,
+    coingecko_name character varying(50) NOT NULL,
+    enabled boolean DEFAULT true NOT NULL,
+    last_updated timestamp with time zone,
+    info jsonb DEFAULT '{}'::jsonb
+);
+
+
+--
+-- TOC entry 2969 (class 0 OID 16444)
+-- Dependencies: 206
+-- Data for Name: price_info; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.price_info (denom, coingecko_name, enabled, last_updated, info) FROM stdin;
+uatom	cosmos	t	2022-10-04 09:10:29.043476+00	{}
+uregen	regen	t	2022-10-04 09:10:29.043476+00	{}
+uosmo	osmosis	t	2022-10-04 09:10:29.043476+00	{}
+ujuno	juno-network	t	2022-10-04 09:10:29.043476+00	{}
+ustars	stargaze	t	2022-10-04 09:10:29.043476+00	{}
+uakt	akash-network	t	2022-10-04 09:10:29.043476+00	{}
+\.
+
+
 
 --
 -- TOC entry 206 (class 1259 OID 16875)

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getProposals, resetTx, txVote } from "./../features/gov/govSlice";
+import { getProposals, resetTx, txVote } from "../../features/gov/govSlice";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
@@ -10,15 +10,16 @@ import {
   setError,
   resetError,
   resetTxHash,
-} from "./../features/common/commonSlice";
+} from "../../features/common/commonSlice";
 import {
   authzExecHelper,
   getGrantsToMe,
   resetExecTx,
-} from "../features/authz/authzSlice";
-import VoteDialog from "../components/Vote";
-import { getVoteAuthz } from "../utils/authorizations";
+} from "../../features/authz/authzSlice";
+import VoteDialog from "../../components/Vote";
+import { getVoteAuthz } from "../../utils/authorizations";
 import { useNavigate } from "react-router-dom";
+import { getPoolInfo } from "../../features/staking/stakeSlice";
 
 export default function Proposals() {
   const proposals = useSelector((state) => state.gov.active.proposals);
@@ -28,6 +29,7 @@ export default function Proposals() {
   const votes = useSelector((state) => state.gov.votes.proposals);
   const address = useSelector((state) => state.wallet.address);
   const govTx = useSelector((state) => state.gov.tx);
+  const poolInfo = useSelector((state) => state.staking.pool);
   const currency = useSelector(
     (state) => state.wallet.chainInfo?.config?.currencies[0]
   );
@@ -111,6 +113,11 @@ export default function Proposals() {
   }, [govTx, authzExecTx]);
 
   useEffect(() => {
+    dispatch(
+      getPoolInfo({
+        baseURL: chainInfo.config.rest,
+      })
+    );
     if (selectedAuthz.granter.length === 0) {
       dispatch(
         getProposals({
@@ -233,6 +240,7 @@ export default function Proposals() {
                     vote={votes[proposal?.proposal_id]}
                     txStatus={govTx}
                     setOpen={(pId) => onVoteDialog(pId)}
+                    poolInfo={poolInfo}
                   />
                 </Paper>
               </Grid>

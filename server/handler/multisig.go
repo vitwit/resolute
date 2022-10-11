@@ -182,7 +182,7 @@ func (h *Handler) GetMultisigAccounts(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, model.SuccessResponse{
-		Status:  "succness",
+		Status:  "success",
 		Message: "",
 		Data: AccountsResponse{
 			Accounts:    accounts,
