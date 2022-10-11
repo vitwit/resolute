@@ -21,7 +21,7 @@ function CreateGroupPolicy({
         <Paper sx={{ p: 2, mt: 3 }} variant='outlined' elevation={0} >
             <Box sx={{ display: 'flex', m: 2, justifyContent: 'center' }}>
                 <Typography gutterBottom variant='subtitle1'>
-                    <strong> Add Decision Policy</strong>
+                    <strong> Decision Policy</strong>
                 </Typography>
 
                 <Button
@@ -186,7 +186,7 @@ function CreateGroupPolicy({
                                         helperText={errors?.policyMetadata?.votingPeriod?.message}
                                     />
                                     <Typography textAlign={'left'} variant='caption'>
-                                       Info: A maximum time after submission that a proposal may be voted on before it is tallied
+                                       A maximum time after submission that a proposal may be voted on before it is tallied
                                     </Typography>
                                 </FormControl>
                             )} />
@@ -225,7 +225,7 @@ function CreateGroupPolicy({
                                                     value={watch('policyMetadata.minExecPeriodDuration')}
                                                     name='minExecPeriodDuration'
                                                 >
-                                                    <MenuItem value={'Days'}>Days</MenuItem>
+                                                    <MenuItem value={'Days'} defaultChecked>Days</MenuItem>
                                                     <MenuItem value={'Hours'}>Hours</MenuItem>
                                                     <MenuItem value={'Minutes'}>Minutes</MenuItem>
                                                 </Select>
@@ -235,7 +235,7 @@ function CreateGroupPolicy({
                                         helperText={errors?.policyMetadata?.minExecPeriod?.message}
                                     />
                                     <Typography textAlign={'left'} variant='caption'>
-                                       Info: A Minimum amount of time that must pass after submission in order for a proposal to potentially be executed.
+                                       A Minimum amount of time that must pass after submission in order for a proposal to potentially be executed.
                                     </Typography>
                                 </FormControl>
                             )} />
@@ -254,7 +254,7 @@ function CreateGroupPolicy({
                         labelPlacement="start"
                     /><br/>
                     <Typography variant='caption'>
-                        Info: if set to true, the group policy account address will be used as
+                        If set to true, the group policy account address will be used as
                         group and policy admin
                     </Typography>
                 </Box>

@@ -37,19 +37,21 @@ export default function GroupCard({ group }: GroupCardProps) {
 
     return (
         <Paper sx={{ borderRadius: 2 }} elevation={1} variant="outlined" square>
-            <CardContent>
-                <IconButton
+            <CardContent 
+            sx={{"&:hover": {border: 2, borderRadius:2, borderColor: '#3f51b585'}}}
+            onClick={() => navigate(`/groups/${group?.id}`)}>
+                {/* <IconButton
                     onClick={() => navigate(`/groups/${group?.id}`)}
                     color='primary'
                     sx={{ float: 'right' }}
                 >
                     <ReadMoreIcon fontSize='large' />
-                </IconButton>
-                <Typography gutterBottom variant="h5" component="div">
+                </IconButton> */}
+                {/* <Typography gutterBottom variant="h5" component="div">
                     # {group?.id}
-                </Typography>
-                <Typography gutterBottom variant="subtitle1" color="text.secondary">
-                    ## &nbsp;
+                </Typography> */}
+                <Typography gutterBottom variant="h5" component="div">
+                     &nbsp;
                     {!showFullText && group?.metadata?.substring(0, 30)}
 
                     {
@@ -62,6 +64,7 @@ export default function GroupCard({ group }: GroupCardProps) {
                     > {showFullText? ' ...show less': ' ...more'}</a> : null}
 
                 </Typography>
+                <BoxText label={'Group ID'} text={group?.id} />
                 <BoxText label={'Admin'} text={shortenAddress(group?.admin, 19)} />
                 <BoxText label={'Created At'} text={getLocalTime(group?.created_at)} />
                 <BoxText label={'Total Weight'} text={group?.total_weight} />

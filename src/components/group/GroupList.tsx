@@ -1,8 +1,9 @@
 import * as React from "react";
-import { Box, CircularProgress, Grid } from "@mui/material";
+import { Box, Button, CircularProgress, Grid } from "@mui/material";
 import AlertMsg from "./AlertMsg";
 import GroupCard from "./GroupCard";
 import PaginationElement from "./PaginationElement";
+import { useNavigate } from "react-router-dom";
 
 export interface GroupsByAdminProps {
     groups: any;
@@ -13,10 +14,16 @@ export interface GroupsByAdminProps {
     paginationKey: string;
 }
 
+
+
 export default function GroupList(props: GroupsByAdminProps) {
     const { groups, onAction,
         paginationKey,
         handlePagination, total, status } = props;
+    const navigate = useNavigate();
+    function navigateTo(path: string) {
+        navigate(path);
+    }
 
     return (
         <>
@@ -24,13 +31,27 @@ export default function GroupList(props: GroupsByAdminProps) {
                 <Grid container spacing={{ xs: 2 }}
                 >
                     {
-                        status === 'pending'?
-                        <CircularProgress sx={{textAlign: 'center'}} />: null
+                        status === 'pending' ?
+                            <CircularProgress sx={{ textAlign: 'center' }} /> : null
                     }
 
                     {
                         status !== 'pending' && !groups.length ?
-                            <AlertMsg text={'Sorry, No groups found'} type='error' />
+                            <>
+                                <AlertMsg text={'Sorry, No groups found'} type='error' />
+                                <Box sx={{
+                                    m: '0 auto'
+                                }}>
+                                    <Button
+                                        onClick={() => {
+                                            navigateTo("/group/create-group");
+                                        }}
+                                        sx={{ mt: 2 }}
+                                        variant="contained"
+                                    >Create Group</Button>
+                                </Box>
+
+                            </>
                             : null
                     }
 
