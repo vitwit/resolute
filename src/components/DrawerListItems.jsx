@@ -15,33 +15,29 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
   const dispatch = useDispatch();
   const [nodeDataInfo, setNodeDataInfo] = React.useState(false);
 
-  const wallet = useSelector(state => state?.wallet);
+  const wallet = useSelector((state) => state?.wallet);
   const { chainInfo } = wallet;
-  var nodeInfo = useSelector(state => state?.node)
-  console.log('wallle', wallet)
+  var nodeInfo = useSelector((state) => state?.node);
 
   if (nodeInfo) {
-    nodeInfo = nodeInfo?.nodeInfo || nodeInfo
+    nodeInfo = nodeInfo?.nodeInfo || nodeInfo;
   }
 
   React.useEffect(() => {
-    dispatch(getNodeInfo({ baseURL: chainInfo?.config?.rest }))
-  }, [])
+    dispatch(getNodeInfo({ baseURL: chainInfo?.config?.rest }));
+  }, []);
 
   React.useEffect(() => {
-    let status =  nodeInfo
-    console.log('status', status)
-    if (status?.status === 'idle') {
+    let status = nodeInfo;
+    if (status?.status === "idle") {
       if (status?.data?.application_version) {
         let version = status?.data?.application_version?.version;
-        console.log('Version-- ', version)
-        if (version?.indexOf('46') >= 0) {
+        if (version?.indexOf("46") >= 0) {
           setNodeDataInfo(true);
         } else setNodeDataInfo(false);
       }
     }
-  }, [nodeInfo?.status])
-
+  }, [nodeInfo?.status]);
 
   return (
     <>
@@ -104,12 +100,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemIcon>
           <LayersIcon />
         </ListItemIcon>
-        <ListItemText primary="Feegrant"
-          secondary={
-            nodeDataInfo?.status === 'pending' ? 'Loading..' :
-              !nodeDataInfo ? 'Not supported' :
-                null
-          } />
+        <ListItemText primary="Feegrant" />
       </ListItemButton>
       <ListItemButton
         disabled={nodeDataInfo ? false : true}
@@ -120,12 +111,16 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemIcon>
           <GroupsOutlinedIcon />
         </ListItemIcon>
-        <ListItemText primary="Groups"
+        <ListItemText
+          primary="Groups"
           secondary={
-            nodeDataInfo?.status === 'pending' ? 'Loading..' :
-              !nodeDataInfo ? 'Not supported' :
-                null
-          } />
+            nodeDataInfo?.status === "pending"
+              ? "Loading.."
+              : !nodeDataInfo
+              ? "Not supported"
+              : null
+          }
+        />
       </ListItemButton>
 
       {showAirdrop ? (

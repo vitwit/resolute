@@ -9,7 +9,6 @@ import DialogActions from "@mui/material/DialogActions";
 import { getTypeURLName, shortenAddress } from "../utils/util";
 import { parseSpendLimit } from "../utils/denom";
 import { getLocalTime } from "../utils/datetime";
-import { defaultRegistryTypes } from "@cosmjs/stargate";
 import { authzMsgTypes } from "../utils/authorizations";
 
 const renderAuthorization = (authz, displayDenom) => {
@@ -20,7 +19,9 @@ const renderAuthorization = (authz, displayDenom) => {
         <>
           <ul>
             <li className="inline-space-between">
-              <Typography>Type</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Type
+              </Typography>
               <Chip
                 label={getTypeURLName(allowance["@type"])}
                 variant="filled"
@@ -28,7 +29,9 @@ const renderAuthorization = (authz, displayDenom) => {
               />
             </li>
             <li className="inline-space-between">
-              <Typography>Granter</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Granter
+              </Typography>
               <Chip
                 label={shortenAddress(granter, 21)}
                 variant="filled"
@@ -36,7 +39,9 @@ const renderAuthorization = (authz, displayDenom) => {
               />
             </li>
             <li className="inline-space-between">
-              <Typography>Grantee</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Grantee
+              </Typography>
               <Chip
                 label={shortenAddress(grantee, 21)}
                 variant="filled"
@@ -44,17 +49,21 @@ const renderAuthorization = (authz, displayDenom) => {
               />
             </li>
             <li className="inline-space-between">
-              <Typography>SpendLimit</Typography>
+              <Typography color="text.primary" gutterBottom>
+                SpendLimit
+              </Typography>
               <Typography>
                 {allowance.spend_limit.length === 0 ? (
                   <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
                 ) : (
-                  `${parseSpendLimit(allowance.spend_limit)}${displayDenom}`
+                  `${parseSpendLimit(allowance.spend_limit, 6)}${displayDenom}`
                 )}
               </Typography>
             </li>
             <li className="inline-space-between">
-              <Typography>Expiration</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Expiration
+              </Typography>
               <Typography>
                 {allowance.expiration ? (
                   getLocalTime(allowance.expiration)
@@ -72,7 +81,9 @@ const renderAuthorization = (authz, displayDenom) => {
         <>
           <ul>
             <li className="inline-space-between">
-              <Typography>Type</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Type
+              </Typography>
               <Chip
                 label={getTypeURLName(allowance["@type"])}
                 variant="filled"
@@ -80,7 +91,9 @@ const renderAuthorization = (authz, displayDenom) => {
               />
             </li>
             <li className="inline-space-between">
-              <Typography>Granter</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Granter
+              </Typography>
               <Chip
                 label={shortenAddress(granter, 21)}
                 variant="filled"
@@ -88,7 +101,9 @@ const renderAuthorization = (authz, displayDenom) => {
               />
             </li>
             <li className="inline-space-between">
-              <Typography>Grantee</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Grantee
+              </Typography>
               <Chip
                 label={shortenAddress(grantee, 21)}
                 variant="filled"
@@ -96,19 +111,24 @@ const renderAuthorization = (authz, displayDenom) => {
               />
             </li>
             <li className="inline-space-between">
-              <Typography>SpendLimit</Typography>
+              <Typography color="text.primary" gutterBottom>
+                SpendLimit
+              </Typography>
               <Typography>
                 {allowance.basic.spend_limit.length === 0 ? (
                   <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
                 ) : (
                   `${parseSpendLimit(
-                    allowance.basic.spend_limit
+                    allowance.basic.spend_limit,
+                    6
                   )}${displayDenom}`
                 )}
               </Typography>
             </li>
             <li className="inline-space-between">
-              <Typography>Expiration</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Expiration
+              </Typography>
               <Typography>
                 {allowance.basic.expiration ? (
                   getLocalTime(allowance.basic.expiration)
@@ -118,11 +138,15 @@ const renderAuthorization = (authz, displayDenom) => {
               </Typography>
             </li>
             <li className="inline-space-between">
-              <Typography>Period</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Period
+              </Typography>
               {allowance?.period}
             </li>
             <li className="inline-space-between">
-              <Typography>Period Spend Limit</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Period Spend Limit
+              </Typography>
               {allowance.period_spend_limit.length === 0 ? (
                 <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
               ) : (
@@ -132,7 +156,9 @@ const renderAuthorization = (authz, displayDenom) => {
               )}
             </li>
             <li className="inline-space-between">
-              <Typography>Period Can Spend</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Period Can Spend
+              </Typography>
               {allowance.period_can_spend.length === 0 ? (
                 <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
               ) : (
@@ -140,7 +166,9 @@ const renderAuthorization = (authz, displayDenom) => {
               )}
             </li>
             <li className="inline-space-between">
-              <Typography>Period Reset</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Period Reset
+              </Typography>
               {getLocalTime(allowance.period_reset)}
             </li>
           </ul>
@@ -151,7 +179,9 @@ const renderAuthorization = (authz, displayDenom) => {
         <>
           <ul>
             <li>
-              <Typography>Type</Typography>
+              <Typography color="text.primary" gutterBottom>
+                Type
+              </Typography>
               <Typography>
                 <Chip
                   label={getTypeURLName(authz["@type"])}
@@ -168,105 +198,92 @@ const renderAuthorization = (authz, displayDenom) => {
         <>
           <ul>
             <li>
-              <Typography>Type</Typography>
-              <Typography>
+              <Typography gutterBottom color="text.primary" variant="body1">
+                Type
+              </Typography>
+              <Typography gutterBottom color="text.primary" variant="body2">
                 <Chip
-                  label={getTypeURLName(authz['allowance']["@type"])}
+                  label={getTypeURLName(authz["allowance"]["@type"])}
                   variant="filled"
                   size="medium"
                 />
               </Typography>
             </li>
             <li className="inline-space-between">
-              <Typography>Granter</Typography>
+              <Typography gutterBottom color="text.primary" variant="body1">
+                Granter
+              </Typography>
               <Chip
                 label={shortenAddress(granter, 21)}
                 variant="filled"
                 size="medium"
+                sx={{
+                  mt: 1,
+                }}
               />
             </li>
             <li className="inline-space-between">
-              <Typography>Grantee</Typography>
+              <Typography gutterBottom color="text.primary" variant="body1">
+                Grantee
+              </Typography>
               <Chip
                 label={shortenAddress(grantee, 21)}
                 variant="filled"
                 size="medium"
+                sx={{
+                  mt: 1,
+                }}
               />
             </li>
             <li>
-              <Typography>Allowance Type</Typography>
+              <Typography gutterBottom color="text.primary" variant="body1">
+                Allowance Type
+              </Typography>
               <Typography>
                 <Chip
-                  label={getTypeURLName(authz['allowance']['allowance']["@type"])}
+                  label={getTypeURLName(
+                    authz["allowance"]["allowance"]["@type"]
+                  )}
                   variant="filled"
                   size="medium"
+                  sx={{
+                    mt: 1,
+                  }}
                 />
               </Typography>
             </li>
             <li className="inline-space-between">
-              <Typography>SpendLimit</Typography>
-              <Typography>
-                {allowance?.allowance?.basic.spend_limit.length === 0 ? (
-                  <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
-                ) : (
-                  `${parseSpendLimit(
-                    allowance?.allowance?.basic.spend_limit
-                  )}${displayDenom}`
-                )}
+              <Typography gutterBottom color="text.primary" variant="body1">
+                Expiration
               </Typography>
-            </li>
-            <li className="inline-space-between">
-              <Typography>Expiration</Typography>
-              <Typography>
-                {allowance?.allowance?.basic.expiration ? (
-                  getLocalTime(allowance?.allowance.basic.expiration)
+              <Typography gutterBottom color="text.primary" variant="body2">
+                {allowance?.allowance?.expiration ? (
+                  getLocalTime(allowance?.allowance?.expiration)
                 ) : (
                   <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
                 )}
               </Typography>
             </li>
-            <li className="inline-space-between">
-              <Typography>Period</Typography>
-              {allowance?.allowance?.period}
-            </li>
-            <li className="inline-space-between">
-              <Typography>Period Spend Limit</Typography>
-              {allowance?.allowance?.period_spend_limit.length === 0 ? (
-                <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
-              ) : (
-                `${parseSpendLimit(
-                  allowance?.allowance?.period_spend_limit
-                )}${displayDenom}`
-              )}
-            </li>
-            <li className="inline-space-between">
-              <Typography>Period Can Spend</Typography>
-              {allowance?.allowance?.period_can_spend.length === 0 ? (
-                <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
-              ) : (
-                `${parseSpendLimit(allowance?.allowance.period_can_spend)}${displayDenom}`
-              )}
-            </li>
-            <li className="inline-space-between">
-              <Typography>Period Reset</Typography>
-              {getLocalTime(allowance?.allowance.period_reset)}
-            </li>
-            <li className="inline-space-between">
-              <Typography>Messages</Typography>
-              {
-                allowance?.allowed_messages.map(m => (
-                  <Chip
-                    label={authzMsgTypes().map(a=>{
-                      if(a.typeURL === m) {
-                        return a.label
-                      }
-                    })}
-                    variant="filled"
-                    size="medium"
-                  />
-                ))
-              }
 
+            <li className="inline-space-between">
+              <Typography gutterBottom color="text.primary" variant="body1">
+                Messages
+              </Typography>
+              {allowance?.allowed_messages.map((m, i) => (
+                <Chip
+                  index={i}
+                  label={authzMsgTypes().map((a) => {
+                    if (a.typeURL === m) {
+                      return a.label;
+                    }
+                  })}
+                  sx={{
+                    mr: 0.5,
+                  }}
+                  variant="filled"
+                  size="medium"
+                />
+              ))}
             </li>
           </ul>
         </>
@@ -285,7 +302,11 @@ export function FeegrantInfo(props) {
 
   return (
     <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth={true}>
-      <DialogContent style={{ margin: 24 }}>
+      <DialogContent
+        sx={{
+          m: 3,
+        }}
+      >
         {renderAuthorization(props.authorization, displayDenom)}
       </DialogContent>
       <DialogActions>

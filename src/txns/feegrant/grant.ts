@@ -12,7 +12,6 @@ import { Msg } from "../types";
 import { MsgGrantAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
 
 const msgFeegrantGrantTypeUrl = "/cosmos.feegrant.v1beta1.MsgGrantAllowance";
-const msgAllowFeegrantGrantTypeUrl = "/cosmos.feegrant.v1beta1.AllowedMsgAllowance";
 
 export function FeegrantBasicMsg(
   granter: string,
@@ -39,11 +38,11 @@ export function FeegrantBasicMsg(
         spendLimit === null
           ? undefined
           : [
-            Coin.fromPartial({
-              amount: String(spendLimit),
-              denom: denom,
-            }),
-          ],
+              Coin.fromPartial({
+                amount: String(spendLimit),
+                denom: denom,
+              }),
+            ],
       expiration: exp,
     })
   ).finish();
@@ -79,16 +78,16 @@ export function FeegrantPeriodicMsg(
         const expWithNano = fromRfc3339WithNanoseconds(expiration);
         let expSec = Math.floor(expWithNano.getTime() / 1000);
         let expNano =
-          (expWithNano.getTime() % 1000) * 1000000 + (expWithNano.nanoseconds ?? 0);
+          (expWithNano.getTime() % 1000) * 1000000 +
+          (expWithNano.nanoseconds ?? 0);
         exp = Timestamp.fromPartial({
           nanos: expNano,
           seconds: Long.fromNumber(expSec),
         });
       }
     } catch (error) {
-      console.log('Error while expiration set', error)
+      console.log("Error while expiration set", error);
     }
-
 
     const periodDuration = Duration.fromPartial({
       nanos: period,
@@ -101,11 +100,11 @@ export function FeegrantPeriodicMsg(
         spendLimit === undefined
           ? undefined
           : [
-            Coin.fromPartial({
-              amount: String(spendLimit),
-              denom: denom,
-            }),
-          ],
+              Coin.fromPartial({
+                amount: String(spendLimit),
+                denom: denom,
+              }),
+            ],
     });
 
     const periodicValue = PeriodicAllowance.encode({
@@ -143,10 +142,9 @@ export function FeegrantPeriodicMsg(
       }),
     };
   } catch (error) {
-    console.log('error while creating periodic allowance', error)
+    console.log("error while creating periodic allowance", error);
     throw error;
   }
-
 }
 
 export function FeegrantFilterMsg(
@@ -169,16 +167,16 @@ export function FeegrantFilterMsg(
         const expWithNano = fromRfc3339WithNanoseconds(expiration);
         let expSec = Math.floor(expWithNano.getTime() / 1000);
         let expNano =
-          (expWithNano.getTime() % 1000) * 1000000 + (expWithNano.nanoseconds ?? 0);
+          (expWithNano.getTime() % 1000) * 1000000 +
+          (expWithNano.nanoseconds ?? 0);
         exp = Timestamp.fromPartial({
           nanos: expNano,
           seconds: Long.fromNumber(expSec),
         });
       }
     } catch (error) {
-      console.log('Error while expiration set', error)
+      console.log("Error while expiration set", error);
     }
-
 
     const periodDuration = Duration.fromPartial({
       nanos: period,
@@ -191,11 +189,11 @@ export function FeegrantFilterMsg(
         spendLimit === undefined
           ? undefined
           : [
-            Coin.fromPartial({
-              amount: String(spendLimit),
-              denom: denom,
-            }),
-          ],
+              Coin.fromPartial({
+                amount: String(spendLimit),
+                denom: denom,
+              }),
+            ],
     });
 
     const periodicValue = PeriodicAllowance.encode({
@@ -224,27 +222,27 @@ export function FeegrantFilterMsg(
     let value, typeURL;
     let obj;
 
-    if (allowanceType === 'Basic') {
+    if (allowanceType === "Basic") {
       value = basicValue;
-      typeURL = '/cosmos.feegrant.v1beta1.BasicAllowance'
+      typeURL = "/cosmos.feegrant.v1beta1.BasicAllowance";
 
       obj = AllowedMsgAllowance.encode({
         allowance: {
-          typeUrl: '/cosmos.feegrant.v1beta1.BasicAllowance',
+          typeUrl: "/cosmos.feegrant.v1beta1.BasicAllowance",
           value: BasicAllowance.encode(basicValue).finish(),
         },
-        allowedMessages: txMsg || []
-      }).finish()
+        allowedMessages: txMsg || [],
+      }).finish();
     } else {
       value = periodicValue;
-      typeURL = '/cosmos.feegrant.v1beta1.PeriodicAllowance';
+      typeURL = "/cosmos.feegrant.v1beta1.PeriodicAllowance";
       obj = AllowedMsgAllowance.encode({
         allowance: {
           typeUrl: typeURL,
           value: value,
         },
-        allowedMessages: txMsg || []
-      }).finish()
+        allowedMessages: txMsg || [],
+      }).finish();
     }
 
     return {
@@ -255,12 +253,11 @@ export function FeegrantFilterMsg(
           value: obj,
         },
         grantee: grantee,
-        granter: granter
+        granter: granter,
       }),
     };
   } catch (error) {
-    console.log('error while creating periodic allowance', error)
+    console.log("error while creating periodic allowance", error);
     throw error;
   }
-
 }

@@ -80,7 +80,7 @@ export default function Validators() {
     switch (type) {
       case "delegate":
         {
-          if (availableBalance >= 0) {
+          if (availableBalance > 0) {
             setStakingOpen(true);
           } else {
             dispatch(
@@ -331,7 +331,6 @@ export default function Validators() {
           rpc: chainInfo.config.rpc,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-          feeGranter: data?.feeGranter || null
         })
       );
     }
@@ -538,7 +537,8 @@ export default function Validators() {
   return (
     <>
       {connected ? (
-        delegations?.status === "pending" && validators?.status === "pending" ? (
+        delegations?.status === "pending" &&
+        validators?.status === "pending" ? (
           delegations?.delegations.length === 0 ? (
             <CircularProgress />
           ) : (
@@ -664,7 +664,7 @@ export default function Validators() {
               </Paper>
             )}
 
-            {availableBalance >= 0 ? (
+            {availableBalance > 0 ? (
               <DialogDelegate
                 open={stakingOpen}
                 onClose={handleDialogClose}

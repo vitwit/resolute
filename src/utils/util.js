@@ -288,7 +288,7 @@ export const PoliciesTypes = {
 export const HasGrantAccess = (type) => {
   let obj = window.localStorage.getItem('feeGrant')
   if (obj) {
-    obj = obj && JSON.parse(obj) || {};
+    obj = (obj && JSON.parse(obj)) || {};
 
     if (type) {
       if (obj?.allowance?.allowed_messages && obj?.allowance?.allowed_messages.length) {

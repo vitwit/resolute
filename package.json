@@ -5,9 +5,9 @@
   "author": "Vitwit Technologies Pvt Ltd",
   "dependencies": {
     "@babel/core": "^7.16.0",
-    "@cosmjs/encoding": "^0.29.0",
+    "@cosmjs/encoding": "^0.28.10",
     "@cosmjs/proto-signing": "^0.28.11",
-    "@cosmjs/stargate": "^0.29.0",
+    "@cosmjs/stargate": "^0.28.13",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.3",

@@ -1,82 +1,117 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { FeegrantBasicMsg, FeegrantPeriodicMsg, FeegrantRevokeMsg } from '../../txns/feegrant';
-import feegrantService from './feegrantService';
-import { fee, signAndBroadcastProto, signAndBroadcastProtoFilterGrant } from '../../txns/execute';
-import { resetTxLoad, setError, setTxHash, setTxLoad } from '../common/commonSlice';
-import { FeegrantFilterMsg } from '../../txns/feegrant/grant';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  FeegrantBasicMsg,
+  FeegrantPeriodicMsg,
+  FeegrantRevokeMsg,
+} from "../../txns/feegrant";
+import feegrantService from "./feegrantService";
+import {
+  fee,
+  signAndBroadcastProto
+} from "../../txns/execute";
+import {
+  resetTxLoad,
+  setError,
+  setTxHash,
+  setTxLoad,
+} from "../common/commonSlice";
+import { FeegrantFilterMsg } from "../../txns/feegrant/grant";
 
 const initialState = {
   grantsToMe: {
-    status: 'idle',
-    grants: []
+    status: "idle",
+    grants: [],
   },
   errState: {
-    message: '',
-    type: '',
+    message: "",
+    type: "",
   },
   grantsByMe: {
-    status: 'idle',
-    grants: []
+    status: "idle",
+    grants: [],
   },
   tx: {
-    status: 'idle',
-    type: '',
+    status: "idle",
+    type: "",
   },
   txFilterRes: {},
 };
 
 export const getGrantsToMe = createAsyncThunk(
-  'feegrant/grantsToMe',
+  "feegrant/grantsToMe",
   async (data) => {
-    const response = await feegrantService.grantsToMe(data.baseURL, data.grantee, data.pagination);
+    const response = await feegrantService.grantsToMe(
+      data.baseURL,
+      data.grantee,
+      data.pagination
+    );
     return response.data;
   }
 );
 
 export const getGrantsByMe = createAsyncThunk(
-  'feegrant/grantsByMe',
+  "feegrant/grantsByMe",
   async (data) => {
-    const response = await feegrantService.grantsByMe(data.baseURL, data.granter, data.pagination);
+    const response = await feegrantService.grantsByMe(
+      data.baseURL,
+      data.granter,
+      data.pagination
+    );
     return response.data;
   }
 );
 
-
 export const txFeegrantBasic = createAsyncThunk(
-  'feegrant/tx-basic',
+  "feegrant/tx-basic",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      dispatch(setTxLoad())
-      const msg = FeegrantBasicMsg(data.granter, data.grantee, data.denom, data.spendLimit, data.expiration)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc)
-      dispatch(resetTxLoad())
+      dispatch(setTxLoad());
+      const msg = FeegrantBasicMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.expiration
+      );
+      const result = await signAndBroadcastProto(
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.rpc
+      );
+      dispatch(resetTxLoad());
       if (result?.code === 0) {
-        dispatch(setTxHash({
-          hash: result?.transactionHash
-        }))
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        dispatch(setError({
-          type: 'error',
-          message: result?.rawLog
-        }))
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-      dispatch(resetTxLoad())
-      dispatch(setError({
-        type: 'error',
-        message: error.message
-      }))
-      return rejectWithValue(error.response)
+      dispatch(resetTxLoad());
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.response);
     }
   }
 );
 
 export const txGrantPeriodic = createAsyncThunk(
-  'feegrant/tx-periodic',
+  "feegrant/tx-periodic",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
-    dispatch(setTxLoad())
+    dispatch(setTxLoad());
     try {
       const msg = FeegrantPeriodicMsg(
         data.granter,
@@ -85,39 +120,47 @@ export const txGrantPeriodic = createAsyncThunk(
         data.spendLimit,
         data.period,
         data.periodSpendLimit,
-        data.expiration)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc);
-      dispatch(resetTxLoad())
+        data.expiration
+      );
+      const result = await signAndBroadcastProto(
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.rpc
+      );
+      dispatch(resetTxLoad());
       if (result?.code === 0) {
-        dispatch(setTxHash({
-          hash: result?.transactionHash
-        }))
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('error---', result)
-        dispatch(setError({
-          type: 'error',
-          message: result?.rawLog
-        }))
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-      dispatch(resetTxLoad())
-      console.log('error---', error)
-      dispatch(setError({
-        type: 'error',
-        message: error.message
-      }))
-      return rejectWithValue(error.response)
+      dispatch(resetTxLoad());
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.response);
     }
   }
 );
 
 export const txGrantFilter = createAsyncThunk(
-  'feegrant/tx-filter',
+  "feegrant/tx-filter",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
-   
-    dispatch(setTxLoad())
+    dispatch(setTxLoad());
     try {
       const msg = FeegrantFilterMsg(
         data.granter,
@@ -128,195 +171,207 @@ export const txGrantFilter = createAsyncThunk(
         data.periodSpendLimit,
         data.expiration,
         data.txType || [],
-        data.allowanceType)
+        data.allowanceType
+      );
 
-      const result = await signAndBroadcastProtoFilterGrant([msg], fee(data.denom, data.feeAmount, 260000), data.rpc);
-      dispatch(resetTxLoad())
+      const result = await signAndBroadcastProto(
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.rpc
+      );
+      dispatch(resetTxLoad());
       if (result?.code === 0) {
-        dispatch(setTxHash({
-          hash: result?.transactionHash
-        }))
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('error---', result)
-        dispatch(setError({
-          type: 'error',
-          message: result?.rawLog
-        }))
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-      dispatch(resetTxLoad())
-      console.log('error---', error)
-      dispatch(setError({
-        type: 'error',
-        message: error.message
-      }))
-      return rejectWithValue(error.response)
+      dispatch(resetTxLoad());
+      console.log("error---", error);
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.response);
     }
   }
 );
 
 export const txRevoke = createAsyncThunk(
-  'feegrant/tx-revoke',
+  "feegrant/tx-revoke",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      dispatch(setTxLoad())
-      const msg = FeegrantRevokeMsg(data.granter, data.grantee)
-      const result = await signAndBroadcastProto([msg], fee(data.denom, data.feeAmount, 260000), data.rpc)
-      dispatch(resetTxLoad())
+      dispatch(setTxLoad());
+      const msg = FeegrantRevokeMsg(data.granter, data.grantee);
+      const result = await signAndBroadcastProto(
+        [msg],
+        fee(data.denom, data.feeAmount, 260000),
+        data.rpc
+      );
+      dispatch(resetTxLoad());
       if (result?.code === 0) {
-        dispatch(getGrantsByMe({
-          baseURL: data.baseURL, granter: data.granter
-        }
-        ))
+        dispatch(
+          getGrantsByMe({
+            baseURL: data.baseURL,
+            granter: data.granter,
+          })
+        );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        dispatch(setError({
-          type: 'error',
-          message: result?.rawLog
-        }))
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-      dispatch(resetTxLoad())
+      dispatch(resetTxLoad());
 
-      dispatch(setError({
-        type: 'error',
-        message: error.message
-      }))
-      return rejectWithValue(error.response)
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.response);
     }
   }
 );
 
 export const feegrantSlice = createSlice({
-  name: 'feegrant',
+  name: "feegrant",
   initialState,
   reducers: {
     resetAlerts: (state) => {
       state.errState = {
-        status: 'idle',
-        message: '',
-        type: ''
-      }
+        status: "idle",
+        message: "",
+        type: "",
+      };
     },
-    resetFeeFilter: state => {
-      state.txFilterRes = {}
-    }
+    resetFeeFilter: (state) => {
+      state.txFilterRes = {};
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(getGrantsToMe.pending, (state) => {
-        state.grantsToMe.status = 'pending';
+        state.grantsToMe.status = "pending";
         state.errState = {
-          message: '',
-          type: '',
-        }
-
+          message: "",
+          type: "",
+        };
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
-        state.grantsToMe.status = 'idle';
-        state.grantsToMe.grants = action.payload?.allowances
-        state.grantsToMe.pagination = action.payload?.pagination
+        state.grantsToMe.status = "idle";
+        state.grantsToMe.grants = action.payload?.allowances;
+        state.grantsToMe.pagination = action.payload?.pagination;
         state.errState = {
-          message: '',
-          type: '',
-        }
+          message: "",
+          type: "",
+        };
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
-        state.grantsToMe.status = 'rejected';
+        state.grantsToMe.status = "rejected";
         state.errState = {
           message: action.error.message,
-          type: 'error',
-        }
-      })
+          type: "error",
+        };
+      });
 
     builder
       .addCase(getGrantsByMe.pending, (state) => {
-        state.grantsByMe.status = 'pending';
+        state.grantsByMe.status = "pending";
         state.errState = {
-          message: '',
-          type: '',
-        }
-
+          message: "",
+          type: "",
+        };
       })
       .addCase(getGrantsByMe.fulfilled, (state, action) => {
-        state.grantsByMe.status = 'idle';
-        state.grantsByMe.grants = action.payload?.allowances
-        state.grantsByMe.pagination = action.payload?.pagination
+        state.grantsByMe.status = "idle";
+        state.grantsByMe.grants = action.payload?.allowances;
+        state.grantsByMe.pagination = action.payload?.pagination;
         state.errState = {
-          message: '',
-          type: '',
-        }
+          message: "",
+          type: "",
+        };
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
-        state.grantsByMe.status = 'rejected';
+        state.grantsByMe.status = "rejected";
         state.errState = {
           message: action.error.message,
-          type: 'error',
-        }
-      })
-
+          type: "error",
+        };
+      });
 
     // txns
     builder
       .addCase(txFeegrantBasic.pending, (state) => {
-        state.tx.status = `pending`
-        state.tx.type = `basic`
-
+        state.tx.status = `pending`;
+        state.tx.type = `basic`;
       })
       .addCase(txFeegrantBasic.fulfilled, (state, _) => {
-        state.tx.status = `idle`
-        state.tx.type = `basic`
+        state.tx.status = `idle`;
+        state.tx.type = `basic`;
       })
       .addCase(txFeegrantBasic.rejected, (state, _) => {
-        state.tx.status = `rejected`
-        state.tx.type = 'basic'
-      })
+        state.tx.status = `rejected`;
+        state.tx.type = "basic";
+      });
 
     builder
       .addCase(txGrantPeriodic.pending, (state) => {
-        state.tx.status = `pending`
-        state.tx.type = `periodic`
-
+        state.tx.status = `pending`;
+        state.tx.type = `periodic`;
       })
       .addCase(txGrantPeriodic.fulfilled, (state, _) => {
-        state.tx.status = `idle`
-        state.tx.type = `periodic`
+        state.tx.status = `idle`;
+        state.tx.type = `periodic`;
       })
       .addCase(txGrantPeriodic.rejected, (state, _) => {
-        state.tx.status = `rejected`
-        state.tx.type = 'periodic'
-      })
-
+        state.tx.status = `rejected`;
+        state.tx.type = "periodic";
+      });
 
     builder
       .addCase(txRevoke.pending, (state) => {
-        state.tx.status = `pending`
-        state.tx.type = `revoke`
-
+        state.tx.status = `pending`;
+        state.tx.type = `revoke`;
       })
       .addCase(txRevoke.fulfilled, (state, _) => {
-        state.tx.status = `idle`
-        state.tx.type = `revoke`
+        state.tx.status = `idle`;
+        state.tx.type = `revoke`;
       })
       .addCase(txRevoke.rejected, (state, _) => {
-        state.tx.status = `rejected`
-        state.tx.type = 'revoke'
-      })
+        state.tx.status = `rejected`;
+        state.tx.type = "revoke";
+      });
 
     builder
       .addCase(txGrantFilter.pending, (state) => {
-        state.txFilterRes.status = `pending`
-
+        state.txFilterRes.status = `pending`;
       })
       .addCase(txGrantFilter.fulfilled, (state, _) => {
-        state.txFilterRes.status = `idle`
+        state.txFilterRes.status = `idle`;
       })
       .addCase(txGrantFilter.rejected, (state, _) => {
-        state.txFilterRes.status = `rejected`
-      })
+        state.txFilterRes.status = `rejected`;
+      });
   },
 });
 
