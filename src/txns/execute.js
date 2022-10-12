@@ -6,10 +6,26 @@ import {
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Registry } from "@cosmjs/proto-signing";
 import { MsgClaim } from "./passage/msg_claim";
-import { MsgCreateGroup, MsgCreateGroupPolicy, MsgCreateGroupWithPolicy, MsgExec, MsgLeaveGroup, MsgSubmitProposal, MsgUpdateGroupAdmin, MsgUpdateGroupMembers, MsgUpdateGroupMetadata, MsgUpdateGroupPolicyAdmin, MsgUpdateGroupPolicyDecisionPolicy, MsgUpdateGroupPolicyMetadata, MsgVote } from "./group/v1/tx";
+import {
+  MsgCreateGroup,
+  MsgCreateGroupPolicy,
+  MsgCreateGroupWithPolicy,
+  MsgExec,
+  MsgLeaveGroup,
+  MsgSubmitProposal,
+  MsgUpdateGroupAdmin,
+  MsgUpdateGroupMembers,
+  MsgUpdateGroupMetadata,
+  MsgUpdateGroupPolicyAdmin,
+  MsgUpdateGroupPolicyDecisionPolicy,
+  MsgUpdateGroupPolicyMetadata,
+  MsgVote,
+} from "./group/v1/tx";
 import { AirdropAminoConverter } from "../features/airdrop/amino";
 import { MsgUnjail } from "./slashing/tx";
 import { SlashingAminoConverter } from "../features/slashing/slashing";
+import { MsgGrantAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
+import { AllowedMsgAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/feegrant";
 
 export async function signAndBroadcastGroupMsg(
   signer,
@@ -56,7 +72,6 @@ export async function signAndBroadcastUpdateGroupMembers(
   const offlineSigner =
     window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
   let registry = new Registry();
- 
 
   registry.register(
     "/cosmos.group.v1.MsgUpdateGroupMembers",
@@ -86,7 +101,6 @@ export async function signAndBroadcastUpdateGroupPolicy(
   const offlineSigner =
     window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
   let registry = new Registry();
- 
 
   registry.register(
     "/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy",
@@ -116,7 +130,6 @@ export async function signAndBroadcastUpdateGroupPolicyMetadata(
   const offlineSigner =
     window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
   let registry = new Registry();
- 
 
   registry.register(
     "/cosmos.group.v1.MsgUpdateGroupPolicyMetadata",
@@ -146,7 +159,6 @@ export async function signAndBroadcastUpdateGroupPolicyAdmin(
   const offlineSigner =
     window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
   let registry = new Registry();
- 
 
   registry.register(
     "/cosmos.group.v1.MsgUpdateGroupPolicyAdmin",
@@ -176,7 +188,6 @@ export async function signAndBroadcastAddGroupPolicy(
   const offlineSigner =
     window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
   let registry = new Registry();
- 
 
   registry.register(
     "/cosmos.group.v1.MsgCreateGroupPolicy",
@@ -206,12 +217,8 @@ export async function signAndBroadcastLeaveGroup(
   const offlineSigner =
     window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
   let registry = new Registry();
- 
 
-  registry.register(
-    "/cosmos.group.v1.MsgLeaveGroup",
-    MsgLeaveGroup
-  );
+  registry.register("/cosmos.group.v1.MsgLeaveGroup", MsgLeaveGroup);
 
   const client = await SigningStargateClient.connectWithSigner(
     rpcURL,
@@ -241,10 +248,7 @@ export async function signAndBroadcastGroupProposalVote(
     ...MsgVote,
   });
 
-  registry.register(
-    "/cosmos.group.v1.MsgVote",
-    MsgVote
-  );
+  registry.register("/cosmos.group.v1.MsgVote", MsgVote);
 
   const client = await SigningStargateClient.connectWithSigner(
     rpcURL,
@@ -275,10 +279,7 @@ export async function signAndBroadcastGroupProposalExecute(
     ...MsgExec,
   });
 
-  registry.register(
-    "/cosmos.group.v1.MsgExec",
-    MsgExec
-  );
+  registry.register("/cosmos.group.v1.MsgExec", MsgExec);
 
   const client = await SigningStargateClient.connectWithSigner(
     rpcURL,
@@ -313,10 +314,7 @@ export async function signAndBroadcastGroupProposal(
     registry.register(v[0], v[1]);
   });
 
-  registry.register(
-    "/cosmos.group.v1.MsgSubmitProposal",
-    MsgSubmitProposal
-  );
+  registry.register("/cosmos.group.v1.MsgSubmitProposal", MsgSubmitProposal);
 
   const client = await SigningStargateClient.connectWithSigner(
     rpcURL,
@@ -516,10 +514,11 @@ export async function signAndBroadcastProto(msgs, fee, rpcURL) {
   );
 }
 
-export function fee(coinMinimalDenom, amount, gas = 280000) {
+export function fee(coinMinimalDenom, amount, gas = 280000, feeGranter = null) {
   return {
     amount: [{ amount: String(amount), denom: coinMinimalDenom }],
     gas: String(gas),
+    granter: feeGranter,
   };
 }
 

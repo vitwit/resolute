@@ -15,26 +15,29 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
   const dispatch = useDispatch();
   const [nodeDataInfo, setNodeDataInfo] = React.useState(false);
 
-  const wallet = useSelector(state => state?.wallet);
+  const wallet = useSelector((state) => state?.wallet);
   const { chainInfo } = wallet;
-  const nodeInfo = useSelector(state => state?.node)
+  var nodeInfo = useSelector((state) => state?.node);
+
+  if (nodeInfo) {
+    nodeInfo = nodeInfo?.nodeInfo || nodeInfo;
+  }
 
   React.useEffect(() => {
-    dispatch(getNodeInfo({ baseURL: chainInfo?.config?.rest }))
-  }, [])
+    dispatch(getNodeInfo({ baseURL: chainInfo?.config?.rest }));
+  }, []);
 
   React.useEffect(() => {
-    if (nodeInfo?.nodeInfo?.status === 'idle') {
-      if (nodeInfo?.nodeInfo?.data?.application_version) {
-        let version = nodeInfo?.nodeInfo?.data?.application_version?.version;
-        
-        if (version?.indexOf('46') >= 0) {
+    let status = nodeInfo;
+    if (status?.status === "idle") {
+      if (status?.data?.application_version) {
+        let version = status?.data?.application_version?.version;
+        if (version?.indexOf("46") >= 0) {
           setNodeDataInfo(true);
         } else setNodeDataInfo(false);
       }
     }
-  }, [nodeInfo?.status])
-
+  }, [nodeInfo?.status]);
 
   return (
     <>
@@ -89,7 +92,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemText primary="Authz" />
       </ListItemButton>
       <ListItemButton
-        disabled
+        disabled={nodeDataInfo ? false : true}
         onClick={() => onNavigate("/feegrant")}
         sx={{ pb: 0.5, pt: 0.5 }}
         selected={currentPath === "/feegrant"}
@@ -97,7 +100,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemIcon>
           <LayersIcon />
         </ListItemIcon>
-        <ListItemText primary="Feegrant" secondary="coming soon" />
+        <ListItemText primary="Feegrant" />
       </ListItemButton>
       <ListItemButton
         disabled={nodeDataInfo ? false : true}
@@ -108,12 +111,16 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemIcon>
           <GroupsOutlinedIcon />
         </ListItemIcon>
-        <ListItemText primary="Groups"
+        <ListItemText
+          primary="Groups"
           secondary={
-            nodeDataInfo?.status === 'pending'? 'Loading..':
-            !nodeDataInfo ? 'Not supported': 
-            null
-          } />
+            nodeDataInfo?.status === "pending"
+              ? "Loading.."
+              : !nodeDataInfo
+              ? "Not supported"
+              : null
+          }
+        />
       </ListItemButton>
 
       {showAirdrop ? (

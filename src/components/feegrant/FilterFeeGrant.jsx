@@ -4,17 +4,45 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import Button from '@mui/material/Button';
 import PropTypes from 'prop-types';
 import TextField from '@mui/material/TextField';
-import {  Controller, useFormContext } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import { useSelector } from 'react-redux';
+import CircularProgress from '@mui/material/CircularProgress';
+import { MenuItem, Select } from '@mui/material';
 
-export function PeriodicFeegrant(props) {
-    const {loading, onGrant, currency} = props;
+export function FilterFeeGrant(props) {
+    const { loading, onGrant, currency } = props;
 
-    const { handleSubmit, control, getValues } = useFormContext();
+    const date = new Date()
+    const expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
+
+    const { handleSubmit, control, getValues } = useForm({
+        defaultValues: {
+            grantee: '',
+            spendLimit: 0,
+            expiration: expiration,
+            period: 1,
+            periodSpendLimit: 0,
+        }
+    });
+
+    const onFormSubmit = (data) => {
+        onGrant({
+            grantee: data.grantee,
+            spendLimit: Number(data.spendLimit) === 0 ? null : data.spendLimit,
+            expiration: data.expiration,
+            period: data.period,
+            periodSpendLimit: data.periodSpendLimit,
+        })
+    }
+
 
     return (
         <>
+            <form onSubmit={handleSubmit(onFormSubmit)}>
+                
                 <Controller
                     name="grantee"
                     control={control}
@@ -129,12 +157,22 @@ export function PeriodicFeegrant(props) {
                 />
 
                 <br />
+
+                <Button
+                    style={{ marginTop: 32 }}
+                    variant="outlined"
+                    type='submit'
+                    disabled={loading === 'pending'}
+                >
+                    {loading === 'pending' ? <CircularProgress size={25} /> : "Grant"}
+                </Button>
+            </form>
         </>
     )
 }
 
 
-PeriodicFeegrant.propTypes = {
+FilterFeeGrant.propTypes = {
     loading: PropTypes.string.isRequired,
     onGrant: PropTypes.func.isRequired,
     currency: PropTypes.object.isRequired,

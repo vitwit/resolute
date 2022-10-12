@@ -1,47 +1,75 @@
 import Button from "@mui/material/Button";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
-import InputAdornment from "@mui/material/InputAdornment";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import Grid from "@mui/material/Grid";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormLabel from "@mui/material/FormLabel";
 import {
+  resetFeeFilter,
   txFeegrantBasic,
+  txGrantFilter,
   txGrantPeriodic,
 } from "../features/feegrant/feegrantSlice";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { PeriodicFeegrant } from "../components/PeriodicFeeGrant";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
 import { resetError, setError } from "../features/common/commonSlice";
+import GroupTab, { TabPanel } from "../components/group/GroupTab";
+import {
+  Chip,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  Typography,
+} from "@mui/material";
+import { Box } from "@mui/system";
+import BasicFeeGrant from "../components/feegrant/BasicFeeGrant";
+import { authzMsgTypes } from "../utils/authorizations";
 
 export default function NewFeegrant() {
+  const [tab, setTab] = useState(0);
+  const [value, setValue] = React.useState("");
+
   const address = useSelector((state) => state.wallet.address);
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const dispatch = useDispatch();
-  const [selected, setSelected] = useState("basic");
   const feegrantTx = useSelector((state) => state.feegrant.tx);
+  const feeFilterTxRes = useSelector((state) => state.feegrant.txFilterRes);
 
-  let date = new Date();
-  let expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
+  useEffect(() => {
+    if (feeFilterTxRes?.status === "idle") {
+      navigate(`/feegrant`);
+    }
+  }, [feeFilterTxRes?.status]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetFeeFilter());
+    };
+  }, []);
+
+  const date = new Date();
+  const expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
   const currency = useSelector(
     (state) => state.wallet.chainInfo.config.currencies[0]
   );
 
-  const { handleSubmit, control } = useForm({
-    defaultValues: {
-      grantee: "",
-      spendLimit: 0,
-      expiration: expiration,
-    },
-  });
+  const [msgTxTypes, setMsgTxTypes] = React.useState([]);
 
-  const onChange = (type) => {
-    setSelected(type);
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setMsgTxTypes(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value
+    );
   };
 
   const onBasicSubmit = (data) => {
@@ -60,7 +88,8 @@ export default function NewFeegrant() {
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       })
     );
   };
@@ -76,14 +105,41 @@ export default function NewFeegrant() {
             : Number(data.spendLimit) * 10 ** currency.coinDecimals,
         expiration:
           data.expiration === null
-            ? data.expiration
-            : data.expiration.toISOString(),
+            ? new Date(data.expiration).toISOString()
+            : new Date(data.expiration).toISOString(),
         period: data.period,
         periodSpendLimit: data.periodSpendLimit,
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+      })
+    );
+  };
+
+  const onFilteredTx = (data) => {
+    dispatch(
+      txGrantFilter({
+        granter: address,
+        grantee: data.grantee,
+        spendLimit:
+          Number(data.spendLimit) === 0
+            ? null
+            : Number(data.spendLimit) * 10 ** currency.coinDecimals,
+        expiration:
+          data.expiration === null
+            ? new Date(data.expiration).toISOString()
+            : new Date(data.expiration).toISOString(),
+        period: data.period,
+        periodSpendLimit: data.periodSpendLimit,
+        denom: currency.coinMinimalDenom,
+        chainId: chainInfo.config.chainId,
+        rpc: chainInfo.config.rpc,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        allowanceType: value,
+        txType: msgTxTypes,
       })
     );
   };
@@ -111,128 +167,51 @@ export default function NewFeegrant() {
     };
   }, []);
 
+  const handleTabChange = (value) => {
+    setTab(value);
+  };
+
+  const methods = useForm({
+    defaultValues: {
+      grantee: "",
+      spendLimit: 0,
+      expiration: expiration,
+      period: 1,
+      periodSpendLimit: 0,
+    },
+  });
+
+  const getLabelValue = (value) => {
+    const arrSplit = value && value.split(".");
+    return (arrSplit && arrSplit[arrSplit?.length - 1]) || "";
+  };
+
   return (
     <>
-      <br />
-      <ButtonGroup variant="outlined" aria-label="outlined button group">
-        <Button
-          variant={selected === "basic" ? "contained" : "outlined"}
-          onClick={() => onChange("basic")}
-        >
-          Basic
-        </Button>
-        <Button
-          variant={selected === "periodic" ? "contained" : "outlined"}
-          onClick={() => onChange("periodic")}
-        >
-          Periodic
-        </Button>
-        <Button
-          variant={selected === "filtered" ? "contained" : "outlined"}
-          onClick={() => onChange("filtered")}
-        >
-          Filtered
-        </Button>
-      </ButtonGroup>
-      <Grid container spacing={2}>
-        <br />
-        <Grid item md={3} sm={2}></Grid>
-        <Grid item md={6} sm={8}>
-          <Paper elevation={0} style={{ padding: 32 }}>
-            {selected === "basic" ? (
-              <>
-                <form onSubmit={handleSubmit(onBasicSubmit)}>
-                  <Controller
-                    name="grantee"
-                    control={control}
-                    rules={{ required: "Grantee is required" }}
-                    render={({
-                      field: { onChange, value },
-                      fieldState: { error },
-                    }) => (
-                      <TextField
-                        label="Grantee"
-                        value={value}
-                        required
-                        onChange={onChange}
-                        error={!!error}
-                        helperText={error ? error.message : null}
-                        fullWidth
-                      />
-                    )}
-                  />
-                  <br />
-                  <br />
-                  <div>
-                    <Controller
-                      name="spendLimit"
-                      control={control}
-                      rules={{
-                        validate: (value) => {
-                          return Number(value) >= 0;
-                        },
-                      }}
-                      render={({
-                        field: { onChange, value },
-                        fieldState: { error },
-                      }) => (
-                        <TextField
-                          label="Spend Limit"
-                          value={value}
-                          onChange={onChange}
-                          inputMode="decimal"
-                          error={!!error}
-                          helperText={
-                            error
-                              ? error.message.length === 0
-                                ? "Invalid spend limit"
-                                : error.message
-                              : null
-                          }
-                          fullWidth
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="start">
-                                {currency?.coinDenom}
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      )}
-                    />
-                  </div>
-                  <Controller
-                    name="expiration"
-                    control={control}
-                    render={({
-                      field: { onChange, value },
-                      fieldState: { error },
-                    }) => (
-                      <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <DateTimePicker
-                          disablePast
-                          renderInput={(props) => (
-                            <TextField
-                              style={{ marginTop: 32 }}
-                              fullWidth
-                              {...props}
-                            />
-                          )}
-                          label="Expiration"
-                          value={value}
-                          error={!!error}
-                          onChange={onChange}
-                          helperText={error ? error.message : null}
-                        />
-                      </LocalizationProvider>
-                    )}
-                  />
-                  <br />
+      <Typography variant="h6" textAlign={"left"} gutterBottom>
+        Create Feegrant
+      </Typography>
+      <Paper variant="outlined">
+        <GroupTab
+          tabs={["Basic", "Periodic", "Filtered"]}
+          handleTabChange={handleTabChange}
+        />
+        <TabPanel value={tab} index={0}>
+          <Grid container>
+            <Grid item xs={1} md={3}></Grid>
+            <Grid item xs={10} md={6}>
+              <Typography variant="h6" gutterBottom>
+                Basic Feegrant
+              </Typography>
 
+              <FormProvider {...methods}>
+                <form onSubmit={methods.handleSubmit(onBasicSubmit)}>
+                  <BasicFeeGrant />
                   <Button
-                    style={{ marginTop: 32 }}
-                    variant="outlined"
+                    sx={{ mt: 4 }}
+                    variant="contained"
                     type="submit"
+                    disableElevation
                     disabled={feegrantTx?.status === "pending"}
                   >
                     {feegrantTx?.status === "pending" ? (
@@ -242,26 +221,148 @@ export default function NewFeegrant() {
                     )}
                   </Button>
                 </form>
-              </>
-            ) : (
-              ""
-            )}
+              </FormProvider>
+            </Grid>
+            <Grid item xs={1} md={3} />
+          </Grid>
+        </TabPanel>
+        <TabPanel value={tab} index={1}>
+          <Grid container>
+            <Grid item xs={1} md={3}></Grid>
+            <Grid item xs={10} md={6}>
+              <Typography variant="h6" gutterBottom>
+                Periodic Feegrant
+              </Typography>
 
-            {selected === "periodic" ? (
-              <PeriodicFeegrant
-                loading={feegrantTx.status}
-                onGrant={onPeriodicGrant}
-                currency={currency}
-              />
-            ) : (
-              ""
-            )}
+              <FormProvider {...methods}>
+                <form onSubmit={methods.handleSubmit(onPeriodicGrant)}>
+                  <PeriodicFeegrant
+                    loading={feegrantTx.status}
+                    onGrant={onPeriodicGrant}
+                    currency={currency}
+                  />
 
-            {selected === "filtered" ? <h1>Coming Soon</h1> : ""}
-          </Paper>
-        </Grid>
-        <Grid item md={3} sm={2}></Grid>
-      </Grid>
+                  <Button
+                    sx={{ mt: 4 }}
+                    variant="contained"
+                    disableElevation
+                    type="submit"
+                    disabled={feegrantTx.status === "pending"}
+                  >
+                    {feegrantTx.status === "pending" ? (
+                      <CircularProgress size={25} />
+                    ) : (
+                      "Grant"
+                    )}
+                  </Button>
+                </form>
+              </FormProvider>
+            </Grid>
+            <Grid item xs={1} md={3} />
+          </Grid>
+        </TabPanel>
+        <TabPanel value={tab} index={2}>
+          <Grid container>
+            <Grid item xs={1} md={3}></Grid>
+            <Grid item xs={10} md={6}>
+              <Typography variant="h6" gutterBottom>
+                Filter Feegrant
+              </Typography>
+
+              <FormControl sx={{ float: "left", mb: 2, mt: 1 }}>
+                <FormLabel
+                  sx={{ textAlign: "left" }}
+                  id="row-radio-buttons-group-label"
+                >
+                  Feegrant type
+                </FormLabel>
+                <RadioGroup
+                  row
+                  onChange={(e) => setValue(e.target.value)}
+                  aria-labelledby="allowance-group"
+                  name="row-radio-allowance-group"
+                >
+                  <FormControlLabel
+                    value="Basic"
+                    control={<Radio />}
+                    label="Basic"
+                  />
+                  <FormControlLabel
+                    value="Periodic"
+                    control={<Radio />}
+                    label="Periodic"
+                  />
+                </RadioGroup>
+              </FormControl>
+
+              <FormProvider {...methods}>
+                <form onSubmit={methods.handleSubmit(onFilteredTx)}>
+                  <FormControl sx={{ mb: 2 }} fullWidth>
+                    <InputLabel id="demo-multiple-chip-label">
+                      Select Transaction
+                    </InputLabel>
+                    <Select
+                      required
+                      labelId="demo-multiple-chip-label"
+                      id="demo-multiple-chip"
+                      multiple
+                      value={msgTxTypes}
+                      onChange={handleChange}
+                      input={
+                        <OutlinedInput
+                          id="select-multiple-chip"
+                          label="Select Transaction"
+                        />
+                      }
+                      renderValue={(selected) => (
+                        <Box
+                          sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}
+                        >
+                          {selected.map((value) => (
+                            <Chip key={value} label={getLabelValue(value)} />
+                          ))}
+                        </Box>
+                      )}
+                    >
+                      {authzMsgTypes().map((a) => (
+                        <MenuItem value={a.typeURL}>{a.label}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  {(value === "Basic" && <BasicFeeGrant />) || null}
+                  {(value === "Periodic" && (
+                    <PeriodicFeegrant
+                      loading={feegrantTx.status}
+                      onGrant={onPeriodicGrant}
+                      currency={currency}
+                    />
+                  )) ||
+                    null}
+
+                  {(value && (
+                    <Button
+                      sx={{ mt: 4 }}
+                      variant="contained"
+                      type="submit"
+                      disableElevation
+                      disabled={feeFilterTxRes.status === "pending"}
+                    >
+                      {feeFilterTxRes.status === "pending" ? (
+                        <CircularProgress size={25} />
+                      ) : (
+                        "Grant"
+                      )}
+                    </Button>
+                  )) ||
+                    null}
+                </form>
+              </FormProvider>
+            </Grid>
+            <Grid item xs={1} md={3} />
+          </Grid>
+        </TabPanel>
+      </Paper>
     </>
   );
 }
