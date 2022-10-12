@@ -257,6 +257,12 @@ export const proposalStatus = {
     textColor: "#30b448",
     color: "success",
   },
+  PROPOSAL_STATUS_REJECTED: {
+    label: "Rejected",
+    bgColor: "#c5c9e3",
+    textColor: "#3049d3",
+    color: "error",
+  },
   PROPOSAL_STATUS_ABORTED: {
     label: "Aborted",
     bgColor: "#c5c9e3",
