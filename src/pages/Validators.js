@@ -45,6 +45,7 @@ import { Box, TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { FilteredValidators } from "./../components/FilteredValidators";
+import { useTheme } from "@emotion/react";
 
 export default function Validators() {
   const [type, setType] = useState("delegations");
@@ -67,6 +68,8 @@ export default function Validators() {
   const [stakingOpen, setStakingOpen] = React.useState(false);
   const [undelegateOpen, setUndelegateOpen] = React.useState(false);
   const [redelegateOpen, setRedelegateOpen] = React.useState(false);
+
+  const theme = useTheme();
 
   const handleDialogClose = () => {
     setStakingOpen(false);
@@ -652,6 +655,7 @@ export default function Validators() {
                     onMenuAction={onMenuAction}
                     validators={validators}
                     filtered={filteredVals}
+                    theme={theme}
                   />
                 ) : selected === "active" ? (
                   <ActiveValidators onMenuAction={onMenuAction} />

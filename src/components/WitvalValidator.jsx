@@ -52,7 +52,7 @@ export function WitvalValidator(props) {
                 <StyledTableRow>
                   <StyledTableCell align="center">Validator</StyledTableCell>
                   <StyledTableCell align="center">Voting Power</StyledTableCell>
-                  <StyledTableCell align="center">Comission</StyledTableCell>
+                  <StyledTableCell align="center">Commission</StyledTableCell>
                   <StyledTableCell align="center">Actions</StyledTableCell>
                 </StyledTableRow>
               </TableHead>

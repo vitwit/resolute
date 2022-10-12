@@ -1,0 +1,32 @@
+name: Backend Build and Test
+on:
+  pull_request:
+  push:
+    branches: [master]
+  # paths:
+  #   - "server/**" # Only run if only a backend code has changed
+
+jobs:
+  backend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+      - name: build binary
+        working-directory: ./server
+        run: make build
+
+  backend-test:
+    needs: backend-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+      - name: run unit tests
+        working-directory: ./server
+        run: |
+          make test

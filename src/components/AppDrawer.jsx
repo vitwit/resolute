@@ -77,9 +77,10 @@ export default function AppDrawer(props) {
       variant="permanent"
       open={open}
       sx={{
+        // eslint-disable-next-line no-useless-computed-key
         ["& .MuiDrawer-paper::-webkit-scrollbar"]: {
           display: "none",
-        }, // no-useless-computed-key
+        },
         [`& .MuiDrawer-paper`]: {
           boxSizing: "border-box",
           scrollbarWidth: "none",
@@ -194,7 +195,7 @@ export default function AppDrawer(props) {
         <DrawerListItems
           currentPath={location.pathname}
           onNavigate={(path) => {
-            onNavigate(path)
+            onNavigate(path);
           }}
           showAirdrop={selectedNetwork?.showAirdrop}
         />

@@ -1,5 +1,6 @@
 import { parseCoins } from "@cosmjs/proto-signing";
 import { Msg } from "../../../txns/types";
+import { MultisigThresholdPubkey, SinglePubkey } from "@cosmjs/amino";
 
 export const SEND_TYPE_URL = "/cosmos.bank.v1beta1.MsgSend";
 export const DELEGATE_TYPE_URL = "/cosmos.staking.v1beta1.MsgDelegate";
@@ -201,3 +202,16 @@ const parseReDelegateMsg = (delegator: string, msg: string): Msg => {
     },
   };
 };
+
+export function NewMultisigThreshoPubkey(
+  pubkeys: SinglePubkey[],
+  threshold: string
+): MultisigThresholdPubkey {
+  return {
+    type: "tendermint/PubKeyMultisigThreshold",
+    value: {
+      pubkeys: pubkeys,
+      threshold: threshold,
+    },
+  };
+}

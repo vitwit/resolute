@@ -6,6 +6,7 @@ const delegationsURL = "/cosmos/staking/v1beta1/delegations/";
 const unbondingDelegationsURL = (address: string) =>
   `/cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`;
 const paramsURL = "/cosmos/staking/v1beta1/params";
+const poolURL = "/cosmos/staking/v1beta1/pool";
 
 const fetchValidators = (
   baseURL: string,
@@ -52,11 +53,15 @@ const fetchUnbonding = (
 const fetchParams = (baseURL: string): Promise<AxiosResponse> =>
   Axios.get(`${baseURL}${paramsURL}`);
 
+const fetchPoolInfo = (baseURL: string): Promise<AxiosResponse> =>
+  Axios.get(`${baseURL}${poolURL}`);
+
 const result = {
   validators: fetchValidators,
   delegations: fetchdelegations,
   unbonding: fetchUnbonding,
   params: fetchParams,
+  poolInfo: fetchPoolInfo,
 };
 
 export default result;

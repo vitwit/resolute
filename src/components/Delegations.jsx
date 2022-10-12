@@ -25,19 +25,25 @@ export function MyDelegations(props) {
   useEffect(() => {
     let total = 0.0;
     if (rewards.length > 0) {
-      for (let i = 0; i < rewards.length; i++)
+      for (let i = 0; i < rewards.length; i++) {
         if (rewards[i].reward.length > 0) {
-          const reward = rewards[i]?.reward[0];
-          let temp = rewardsP;
-          temp[rewards[i].validator_address] =
-            parseFloat(reward.amount) / 10 ** currency?.coinDecimals;
-          setRewardsP(temp);
-          total += parseFloat(reward.amount) / 10 ** currency?.coinDecimals;
+          const reward = rewards[i].reward;
+          for (let j = 0; j < reward.length; j++) {
+            if (reward[j].denom === currency.coinMinimalDenom) {
+              let temp = rewardsP;
+              temp[rewards[i].validator_address] =
+                parseFloat(reward[j].amount) / 10 ** currency?.coinDecimals;
+              setRewardsP(temp);
+              total +=
+                parseFloat(reward[j].amount) / 10 ** currency?.coinDecimals;
+            }
+          }
         } else {
           let temp = rewardsP;
           temp[rewards[i].validator_address] = 0.0;
           setRewardsP(temp);
         }
+      }
     }
 
     setTotalRewards(total.toFixed(5));
@@ -118,7 +124,7 @@ export function MyDelegations(props) {
               <StyledTableRow>
                 <StyledTableCell>Rank</StyledTableCell>
                 <StyledTableCell align="center">Validator</StyledTableCell>
-                <StyledTableCell align="center">Comission</StyledTableCell>
+                <StyledTableCell align="center">Commission</StyledTableCell>
                 <StyledTableCell align="center">Delegated</StyledTableCell>
                 <StyledTableCell align="center">Rewards</StyledTableCell>
                 <StyledTableCell align="center">Action</StyledTableCell>

@@ -2,7 +2,6 @@ import Chip from "@mui/material/Chip";
 import { Decimal } from "@cosmjs/math";
 import { authzMsgTypes } from "./authorizations";
 
-
 export function getTypeURLName(url) {
   if (!url) {
     return "-";
@@ -49,7 +48,8 @@ export function getProposalComponent(type) {
   }
 }
 
-export function computeVotePercentage(tally) {
+export function computeVotePercentage(tally, poolInfo) {
+  const bonded = poolInfo?.pool?.bonded_tokens || 1;
   if (tally == null || tally.yes == null) {
     return {
       yes: 0,
@@ -58,20 +58,11 @@ export function computeVotePercentage(tally) {
       no_with_veto: 0,
     };
   }
-  let yes = parseInt(tally?.yes);
-  let no = parseInt(tally?.no);
-  let abstain = parseInt(tally?.abstain);
-  let noWithVeto = parseInt(tally?.no_with_veto);
-  let total = yes + no + abstain + noWithVeto;
-
-  if (total === 0) {
-    return {
-      yes: 0,
-      no: 0,
-      abstain: 0,
-      no_with_veto: 0,
-    };
-  }
+  const yes = parseInt(tally?.yes);
+  const no = parseInt(tally?.no);
+  const abstain = parseInt(tally?.abstain);
+  const noWithVeto = parseInt(tally?.no_with_veto);
+  const total = parseInt(bonded);
 
   let result = {};
   result["yes"] = ((yes / total) * 100).toFixed(2);
@@ -162,7 +153,7 @@ export function totalDelegations(delegations, coinDecimals) {
   return `${parseFloat(temp.toFixed(6))}`;
 }
 
-export function totalRewards(rewards, coinDecimals) {
+export function totalRewards(rewards, coinDecimals, coinDenom) {
   if (rewards === undefined) return 0;
   if (rewards?.length === 0) {
     return 0;
@@ -171,7 +162,11 @@ export function totalRewards(rewards, coinDecimals) {
 
   for (let i = 0; i < rewards?.length; i++) {
     const reward = rewards[i].reward;
-    if (reward?.length > 0) total += parseInt(reward[0].amount);
+    if (reward?.length > 0) {
+      for (let j = 0; j < reward.length; j++) {
+        if (reward[j].denom === coinDenom) total += parseInt(reward[j].amount);
+      }
+    }
   }
   const temp = total / 10.0 ** coinDecimals;
   return `${parseFloat(temp.toFixed(6))}`;
@@ -193,8 +188,9 @@ export function totalUnbonding(unbonding, coinDecimals) {
 
 export function mainValueToMinimum(amount, coinInfo) {
   if (Number(amount) !== "NaN") {
-    return `${Number(amount) * 10 ** coinInfo.coinDecimals}${coinInfo.coinMinimalDenom
-      }`;
+    return `${Number(amount) * 10 ** coinInfo.coinDecimals}${
+      coinInfo.coinMinimalDenom
+    }`;
   } else {
     return "";
   }
@@ -205,24 +201,24 @@ export function amountToMinimalValue(amount, coinInfo) {
 }
 
 export const setLocalStorage = (key, value, type) => {
-  if (type === 'object') {
-    localStorage.setItem(key, JSON.stringify(value))
-    return
+  if (type === "object") {
+    localStorage.setItem(key, JSON.stringify(value));
+    return;
   } else {
     localStorage.setItem(key, value);
-    return
+    return;
   }
-}
+};
 
 export const getLocalStorage = (key, type) => {
-  if (type === 'object') {
+  if (type === "object") {
     let obj = JSON.parse(localStorage.getItem(key));
-    return obj
+    return obj;
   } else {
-    let value = localStorage.getItem(key)
+    let value = localStorage.getItem(key);
     return value;
   }
-}
+};
 
 export const getAmountObj = (amount = 0, chainInfo) => {
   const amountInAtomics = Decimal.fromUserInput(
@@ -232,100 +228,99 @@ export const getAmountObj = (amount = 0, chainInfo) => {
 
   return {
     amount: amountInAtomics,
-    denom: chainInfo.config.currencies[0].coinMinimalDenom
-  }
-}
+    denom: chainInfo.config.currencies[0].coinMinimalDenom,
+  };
+};
 
 export const proposalStatus = {
-  'PROPOSAL_EXECUTOR_RESULT_NOT_RUN': {
-    label: 'Result not run',
-    bgColor: '#e3bbbb',
-    textColor: '#ad3131',
-    color: 'error'
+  PROPOSAL_EXECUTOR_RESULT_NOT_RUN: {
+    label: "Result not run",
+    bgColor: "#e3bbbb",
+    textColor: "#ad3131",
+    color: "error",
   },
-  'PROPOSAL_STATUS_UNSPECIFIED': {
-    label: 'Unspecified',
-    bgColor: '#e3bbbb',
-    textColor: '#ad3131',
-    color: 'error'
+  PROPOSAL_STATUS_UNSPECIFIED: {
+    label: "Unspecified",
+    bgColor: "#e3bbbb",
+    textColor: "#ad3131",
+    color: "error",
   },
-  'PROPOSAL_STATUS_SUBMITTED': {
-    label: 'Submitted',
-    bgColor: '#c5c9e3',
-    textColor: '#3049d3',
-    color: 'primary'
-  }, 'PROPOSAL_STATUS_ACCEPTED': {
-    label: 'Accepted',
-    bgColor: '#d8dfd3',
-    textColor: '#30b448',
-    color: 'success'
-  }, 'PROPOSAL_STATUS_REJECTED': {
-    label: 'Rejected',
-    bgColor: '#c5c9e3',
-    textColor: '#3049d3',
-    color: 'error'
-  }, 'PROPOSAL_STATUS_ABORTED': {
-    label: 'Aborted',
-    bgColor: '#c5c9e3',
-    textColor: '#3049d3',
-    color: 'error'
+  PROPOSAL_STATUS_SUBMITTED: {
+    label: "Submitted",
+    bgColor: "#c5c9e3",
+    textColor: "#3049d3",
+    color: "primary",
   },
-  'PROPOSAL_STATUS_WITHDRAWN': {
-    label: 'Withdrawn',
-    bgColor: '#e7d4ca',
-    textColor: '#e56a11'
+  PROPOSAL_STATUS_ACCEPTED: {
+    label: "Accepted",
+    bgColor: "#d8dfd3",
+    textColor: "#30b448",
+    color: "success",
   },
-}
+  PROPOSAL_STATUS_ABORTED: {
+    label: "Aborted",
+    bgColor: "#c5c9e3",
+    textColor: "#3049d3",
+    color: "error",
+  },
+  PROPOSAL_STATUS_WITHDRAWN: {
+    label: "Withdrawn",
+    bgColor: "#e7d4ca",
+    textColor: "#e56a11",
+  },
+};
 
 export const ThresholdDecisionPolicy = `/cosmos.group.v1.ThresholdDecisionPolicy`;
 export const PercentageDecisionPolicy = `/cosmos.group.v1.PercentageDecisionPolicy`;
 
 export const PoliciesTypes = {
-  '/cosmos.group.v1.PercentageDecisionPolicy': 'Percentage Decision Policy',
-  '/cosmos.group.v1.ThresholdDecisionPolicy': 'Threshold Decision Policy'
-}
+  "/cosmos.group.v1.PercentageDecisionPolicy": "Percentage Decision Policy",
+  "/cosmos.group.v1.ThresholdDecisionPolicy": "Threshold Decision Policy",
+};
 
 export const HasGrantAccess = (type) => {
-  let obj = window.localStorage.getItem('feeGrant')
+  let obj = window.localStorage.getItem("feeGrant");
   if (obj) {
     obj = (obj && JSON.parse(obj)) || {};
 
     if (type) {
-      if (obj?.allowance?.allowed_messages && obj?.allowance?.allowed_messages.length) {
-        
+      if (
+        obj?.allowance?.allowed_messages &&
+        obj?.allowance?.allowed_messages.length
+      ) {
         let msgs = authzMsgTypes();
-        let msg = msgs.filter(m => m.label === type);
-      
+        let msg = msgs.filter((m) => m.label === type);
+
         if (msg && msg.length) {
-          let found = obj?.allowance?.allowed_messages?.filter((m) => m === msg?.[0]?.typeURL);
-         
+          let found = obj?.allowance?.allowed_messages?.filter(
+            (m) => m === msg?.[0]?.typeURL
+          );
+
           if (found && found.length) {
             return {
               yes: true,
               ...obj,
-            }
+            };
           } else {
             return {
-              yes: false
-            }
+              yes: false,
+            };
           }
         }
       } else {
         return {
           yes: false,
           ...obj,
-        }
+        };
       }
     } else
       return {
         yes: true,
         ...obj,
-      }
+      };
   }
 
   return {
-    yes: false
-  }
-}
-
-
+    yes: false,
+  };
+};

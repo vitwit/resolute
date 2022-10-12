@@ -37,14 +37,14 @@ const CreateProposal = lazy(() => import("./group/CreateProposal"));
 
 const Authz = lazy(() => import("./Authz"));
 const Validators = lazy(() => import("./Validators"));
-const Proposals = lazy(() => import("./Proposals"));
+const Proposals = lazy(() => import("./gov/Proposals"));
 const NewAuthz = lazy(() => import("./NewAuthz"));
-const AirdropEligibility = lazy(() => import("./AirdropEligibility"));
+const AirdropEligibility = lazy(() => import("./passage/AirdropEligibility"));
 const PageMultisig = lazy(() => import("./multisig/PageMultisig"));
 const PageMultisigInfo = lazy(() => import("./multisig/tx/PageMultisigInfo"));
 const SendPage = lazy(() => import("./SendPage"));
 const UnjailPage = lazy(() => import("./UnjailPage"));
-const ProposalInfo = lazy(() => import("./ProposalInfo"));
+const ProposalInfo = lazy(() => import("./gov/ProposalInfo"));
 const PageCreateTx = lazy(() => import("./multisig/tx/PageCreateTx"));
 
 const Feegrant = lazy(() => import("./Feegrant"));

@@ -2,11 +2,7 @@ import { fromBase64 } from "@cosmjs/encoding";
 import { Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-import {
-  StargateClient,
-  SigningStargateClient,
-  makeMultisignedTx,
-} from "@cosmjs/stargate";
+import { SigningStargateClient, makeMultisignedTx } from "@cosmjs/stargate";
 import { useDispatch, useSelector } from "react-redux";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { setError } from "../../features/common/commonSlice";
@@ -14,8 +10,24 @@ import {
   resetUpdateTxnState,
   updateTxn,
 } from "../../features/multisig/multisigSlice";
+import PropTypes from "prop-types";
+import { NewMultisigThreshoPubkey } from "./tx/utils";
 
-export default function BroadcastTx({ tx, signatures, multisigAccount }) {
+async function getKeplrWalletAmino(chainID) {
+  await window.keplr.enable(chainID);
+  const offlineSigner = window.getOfflineSignerOnlyAmino(chainID);
+  const accounts = await offlineSigner.getAccounts();
+  return [offlineSigner, accounts[0]];
+}
+
+BroadcastTx.propTypes = {
+  tx: PropTypes.object.isRequired,
+  multisigAccount: PropTypes.object.isRequired,
+};
+
+export default function BroadcastTx(props) {
+  const { tx, multisigAccount } = props;
+
   const dispatch = useDispatch();
   const [load, setLoad] = useState(false);
 
@@ -27,7 +39,7 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
       dispatch(
         setError({
           type: "error",
-          message: updateTxnRes.message,
+          message: updateTxnRes?.message || "something went wrong",
         })
       );
     }
@@ -46,23 +58,9 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
         chainInfo?.config?.rpc
       );
 
-      const bodyBytes = fromBase64(
-        signatures[0].bodyBytes
-          ? signatures[0].bodyBytes
-          : signatures[0].bodybytes
+      const multisigAcc = await client.getAccount(
+        multisigAccount?.account.address
       );
-
-      let currentSignatures = [];
-      signatures.map((s) => {
-        let obj = {
-          address: s.address,
-          signature: s.signature,
-        };
-
-        currentSignatures = [...currentSignatures, obj];
-      });
-
-      const multisigAcc = await client.getAccount(multisigAccount.address);
       if (!multisigAcc) {
         dispatch(
           setError({
@@ -74,51 +72,57 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
         return;
       }
 
-      let mapData = multisigAccount.pubkeyJSON || {};
-
-      let newMapObj = {};
+      let mapData = multisigAccount.pubkeys || {};
       let pubkeys = [];
 
-      mapData?.value?.pubkeys.map((p) => {
+      mapData.map((p) => {
+        const parsed = p?.pubkey;
         let obj = {
-          type: p?.type,
-          value: p?.value,
+          type: parsed?.type,
+          value: parsed?.value,
         };
         pubkeys = [...pubkeys, obj];
       });
 
-      newMapObj = {
-        type: mapData?.type,
+      const multisigThresholdPK = NewMultisigThreshoPubkey(
+        pubkeys,
+        `${multisigAccount?.account?.threshold}`
+      );
+
+      const txBody = {
+        typeUrl: "/cosmos.tx.v1beta1.TxBody",
         value: {
-          threshold: mapData?.value?.threshold,
-          pubkeys: pubkeys,
+          messages: tx.messages,
+          memo: tx.memo,
         },
       };
 
+      let keplr = await getKeplrWalletAmino(chainInfo?.config?.chainId);
+      const offlineClient = await SigningStargateClient.offline(keplr[0]);
+      const txBodyBytes = offlineClient.registry.encode(txBody);
+
       const signedTx = makeMultisignedTx(
-        newMapObj,
+        multisigThresholdPK,
         multisigAcc.sequence,
         tx?.fee,
-        bodyBytes,
-        new Map(
-          currentSignatures.map((s) => [s.address, fromBase64(s.signature)])
-        )
+        txBodyBytes,
+        new Map(tx?.signatures.map((s) => [s.address, fromBase64(s.signature)]))
       );
 
-      const broadcaster = await StargateClient.connect(chainInfo?.config?.rpc);
-      const result1 = await broadcaster.broadcastTx(
+      const result = await client.broadcastTx(
         Uint8Array.from(TxRaw.encode(signedTx).finish())
       );
 
       setLoad(false);
-      if (result1.code === 0) {
+      if (result.code === 0) {
         dispatch(
           updateTxn({
-            txId: tx?._id,
+            txId: tx?.id,
+            address: multisigAccount?.account.address,
             body: {
-              status: "DONE",
-              hash: result1?.transactionHash || "",
-              errorMsg: result1?.rawLog || "",
+              status: "SUCCESS",
+              hash: result?.transactionHash || "",
+              error_message: "",
             },
           })
         );
@@ -126,16 +130,18 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
         dispatch(
           setError({
             type: "error",
-            message: result1?.rawLog || "Failed to broadcast transaction",
+            message: result?.rawLog || "Failed to broadcast transaction",
           })
         );
         dispatch(
           updateTxn({
-            txId: tx?._id,
+            txId: tx.id,
+            address: multisigAccount?.account.address,
             body: {
               status: "FAILED",
-              hash: result1?.transactionHash || "",
-              errorMsg: result1?.rawLog || "Failed to broadcast transaction",
+              hash: result?.transactionHash || "",
+              error_message:
+                result?.rawLog || "Failed to broadcast transaction",
             },
           })
         );
@@ -148,15 +154,18 @@ export default function BroadcastTx({ tx, signatures, multisigAccount }) {
           message: error?.message || "Failed to broadcast transaction",
         })
       );
-      
-      dispatch(updateTxn({
-        txId: tx?._id,
-        body: {
-          status: "FAILED",
-          hash: "",
-          errorMsg: error?.message || "Failed to broadcast transaction",
-        },
-      }));
+
+      dispatch(
+        updateTxn({
+          txId: tx?.id,
+          address: multisigAccount?.account.address,
+          body: {
+            status: "FAILED",
+            hash: "",
+            error_message: error?.message || "Failed to broadcast transaction",
+          },
+        })
+      );
     }
   };
 

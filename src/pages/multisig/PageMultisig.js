@@ -14,11 +14,12 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import { DialogCreateMultisig } from "../../components/DialogCreateMultisig";
+import { DialogCreateMultisig } from "../../components/multisig/DialogCreateMultisig";
 import { getMultisigAccounts } from "../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 import { getNetworkByChainId } from "../../utils/networks";
+import { getLocalTime } from "../../utils/datetime";
 
 export default function PageMultisig() {
   const navigate = useNavigate();
@@ -33,7 +34,8 @@ export default function PageMultisig() {
   const multisigAccounts = useSelector(
     (state) => state.multisig.multisigAccounts
   );
-  const accounts = multisigAccounts.accounts
+  const accounts = multisigAccounts.accounts;
+  const pendingTxns = multisigAccounts.txnCounts;
   const walletAddress = useSelector((state) => state.wallet.address);
 
   const { config } = chainInfo;
@@ -116,40 +118,74 @@ export default function PageMultisig() {
                   <StyledTableCell>Address</StyledTableCell>
                   <StyledTableCell>Threshold</StyledTableCell>
                   <StyledTableCell>Actions Required</StyledTableCell>
+                  <StyledTableCell>Created At</StyledTableCell>
+                  {/* <StyledTableCell>Action</StyledTableCell> */}
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-                {accounts.map((row) => (
+                {accounts.map((row, index) => (
                   <StyledTableRow
-                    key={row.name}
+                    key={index}
                     sx={{
                       "&:last-child td, &:last-child th": { border: 0 },
                       "&:hover": {
                         cursor: "pointer",
                       },
                     }}
-                    onClick={() => {
-                      localStorage.setItem(
-                        "multisigAddress",
-                        JSON.stringify(row)
-                      );
-                      navigate(`/multisig/${row.address}/txs`);
-                    }}
                   >
-                    <StyledTableCell>{row?.name}</StyledTableCell>
-                    <StyledTableCell>
+                    <StyledTableCell
+                      onClick={() => {
+                        navigate(`/multisig/${row.address}/txs`);
+                      }}
+                    >
+                      {row?.name}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      onClick={() => {
+                        navigate(`/multisig/${row.address}/txs`);
+                      }}
+                    >
                       <Chip
                         label={shortenAddress(row?.address, 21)}
                         variant="filled"
                         size="medium"
                       />
                     </StyledTableCell>
-                    <StyledTableCell>
-                      {row?.pubkeyjson?.value?.threshold || 0}
+                    <StyledTableCell
+                      onClick={() => {
+                        navigate(`/multisig/${row.address}/txs`);
+                      }}
+                    >
+                      {row?.threshold || 0}
                     </StyledTableCell>
-                    <StyledTableCell>
-                      <strong> {row?.txns?.length || 0} </strong> txns
+                    <StyledTableCell
+                      onClick={() => {
+                        navigate(`/multisig/${row.address}/txs`);
+                      }}
+                    >
+                      <strong> {pendingTxns[row?.address] || 0} </strong> txns
                     </StyledTableCell>
+                    <StyledTableCell
+                      onClick={() => {
+                        navigate(`/multisig/${row.address}/txs`);
+                      }}
+                    >
+                      {getLocalTime(row?.created_at)}
+                    </StyledTableCell>
+                    {/* <StyledTableCell>
+                      <IconButton
+                        aria-label="delete txn"
+                        color="error"
+                        sx={{
+                          m: 1,
+                        }}
+                        onClick={() => {
+                          dispatch();
+                        }}
+                      >
+                        <DeleteOutline />
+                      </IconButton>
+                    </StyledTableCell> */}
                   </StyledTableRow>
                 ))}
               </TableBody>
@@ -164,6 +200,7 @@ export default function PageMultisig() {
           chainId={chainId}
           onClose={onClose}
           open={open}
+          address={walletAddress}
         />
       ) : null}
     </Paper>

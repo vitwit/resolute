@@ -9,7 +9,7 @@ import { fromBech32 } from "@cosmjs/encoding";
 Send.propTypes = {
   chainInfo: PropTypes.object.isRequired,
   address: PropTypes.string.isRequired,
-  onSend: PropTypes.object.isRequired,
+  onSend: PropTypes.func.isRequired,
 };
 
 export default function Send(props) {
