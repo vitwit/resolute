@@ -7,7 +7,7 @@
     "@babel/core": "^7.19.3",
     "@cosmjs/encoding": "^0.28.10",
     "@cosmjs/proto-signing": "^0.28.11",
-    "@cosmjs/stargate": "^0.28.13",
+    "@cosmjs/stargate": "^0.29.2",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.3",
