@@ -1,5 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { computeVotePercentage, getProposalComponent } from "../../utils/util";
 import { getLocalTime } from "../../utils/datetime";
 import { useParams } from "react-router-dom";
@@ -15,6 +22,7 @@ import { getVoteAuthz } from "../../utils/authorizations";
 import { authzExecHelper } from "../../features/authz/authzSlice";
 import VoteDialog from "../../components/Vote";
 import { getPoolInfo } from "../../features/staking/stakeSlice";
+import { useTheme } from "@emotion/react";
 
 export default function ProposalInfo() {
   const { id } = useParams();
@@ -158,6 +166,8 @@ export default function ProposalInfo() {
       setOpen(true);
     }
   };
+
+  const theme = useTheme();
 
   return (
     <>
@@ -355,7 +365,9 @@ export default function ProposalInfo() {
             <div
               style={{
                 padding: 8,
-                backgroundColor: "#f9fafc",
+
+                backgroundColor:
+                  theme.palette?.mode === "light" ? "#f9fafc" : "#282828",
                 color: "text.primary",
               }}
               dangerouslySetInnerHTML={{
@@ -367,7 +379,7 @@ export default function ProposalInfo() {
           </Paper>
         </>
       ) : (
-        <></>
+        <CircularProgress size={35} />
       )}
 
       <VoteDialog open={open} closeDialog={closeDialog} onVote={onVoteSubmit} />
