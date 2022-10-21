@@ -1,7 +1,6 @@
 import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
 import {
-  FormControlLabel,
   Paper,
   Grid,
   TextField,
@@ -19,7 +18,7 @@ export default function CreateGroupPage() {
   const [showAddPolicyForm, setShowAddPolicyForm] = useState(null);
 
   const wallet = useSelector((state) => state.wallet);
-  const { chainInfo, connected, address } = wallet;
+  const { chainInfo, address } = wallet;
   const navigate = useNavigate();
   const txCreateGroupRes = useSelector(
     (state) => state?.group?.txCreateGroupRes
@@ -95,7 +94,6 @@ export default function CreateGroupPage() {
     setValue,
     formState: { errors },
     reset,
-    trigger,
     getValues,
   } = useForm({});
 
