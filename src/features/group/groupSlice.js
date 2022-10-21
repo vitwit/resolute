@@ -1,7 +1,40 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fee, signAndBroadcastAddGroupPolicy, signAndBroadcastGroupMsg, signAndBroadcastGroupProposal, signAndBroadcastGroupProposalExecute, signAndBroadcastGroupProposalVote, signAndBroadcastLeaveGroup, signAndBroadcastProto, signAndBroadcastUpdateGroupAdmin, signAndBroadcastUpdateGroupMembers, signAndBroadcastUpdateGroupMetadata, signAndBroadcastUpdateGroupPolicy, signAndBroadcastUpdateGroupPolicyAdmin, signAndBroadcastUpdateGroupPolicyMetadata } from "../../txns/execute";
-import { CreateGroup, CreateGroupPolicy, CreateGroupProposal, CreateGroupWithPolicy, CreateLeaveGroupMember, CreateProposalExecute, CreateProposalVote, UpdateGroupAdmin, UpdateGroupMembers, UpdateGroupMetadata, UpdateGroupPolicy, UpdatePolicyAdmin, UpdatePolicyMetadata } from "../../txns/group/group";
-import { resetDecisionPolicies, resetTxLoad, setError, setTxHash, setTxLoad } from "../common/commonSlice";
+import {
+  fee,
+  signAndBroadcastAddGroupPolicy,
+  signAndBroadcastGroupMsg,
+  signAndBroadcastGroupProposal,
+  signAndBroadcastGroupProposalExecute,
+  signAndBroadcastGroupProposalVote,
+  signAndBroadcastLeaveGroup,
+  signAndBroadcastUpdateGroupAdmin,
+  signAndBroadcastUpdateGroupMembers,
+  signAndBroadcastUpdateGroupMetadata,
+  signAndBroadcastUpdateGroupPolicy,
+  signAndBroadcastUpdateGroupPolicyAdmin,
+  signAndBroadcastUpdateGroupPolicyMetadata,
+} from "../../txns/execute";
+import {
+  CreateGroup,
+  CreateGroupPolicy,
+  CreateGroupProposal,
+  CreateGroupWithPolicy,
+  CreateLeaveGroupMember,
+  CreateProposalExecute,
+  CreateProposalVote,
+  UpdateGroupAdmin,
+  UpdateGroupMembers,
+  UpdateGroupMetadata,
+  UpdateGroupPolicy,
+  UpdatePolicyAdmin,
+  UpdatePolicyMetadata,
+} from "../../txns/group/group";
+import {
+  resetTxLoad,
+  setError,
+  setTxHash,
+  setTxLoad,
+} from "../common/commonSlice";
 import groupService from "./groupService";
 
 const initialState = {
@@ -23,10 +56,9 @@ const initialState = {
     },
   },
   members: {
-    data: []
+    data: [],
   },
-  groupInfo: {
-  },
+  groupInfo: {},
   groupMembers: {},
   groupPolicies: {},
   groupProposalRes: {},
@@ -36,7 +68,7 @@ const initialState = {
   updateGroupRes: {},
   leaveGroupRes: {},
   proposalVotes: {
-    data: []
+    data: [],
   },
   groupProposal: {},
   updateGroupPolicyRes: {},
@@ -63,9 +95,7 @@ export const getGroupsByAdmin = createAsyncThunk(
 export const getGroupById = createAsyncThunk(
   "group/group-by-id",
   async (data) => {
-    const response = await groupService.fetchGroupById(
-      data.baseURL, data.id
-    );
+    const response = await groupService.fetchGroupById(data.baseURL, data.id);
     return response.data;
   }
 );
@@ -74,7 +104,9 @@ export const getGroupMembersById = createAsyncThunk(
   "group/group-members-by-id",
   async (data) => {
     const response = await groupService.fetchGroupMembersById(
-      data.baseURL, data.id, data.pagination
+      data.baseURL,
+      data.id,
+      data.pagination
     );
     return response.data;
   }
@@ -84,7 +116,9 @@ export const getVotesProposalById = createAsyncThunk(
   "group/group-proposal-votes",
   async (data) => {
     const response = await groupService.fetchVotesProposalById(
-      data.baseURL, data.id, data.pagination
+      data.baseURL,
+      data.id,
+      data.pagination
     );
     return response.data;
   }
@@ -94,7 +128,8 @@ export const getGroupProposalById = createAsyncThunk(
   "group/group-proposal-info",
   async (data) => {
     const response = await groupService.fetchGroupProposalById(
-      data.baseURL, data.id
+      data.baseURL,
+      data.id
     );
     return response.data;
   }
@@ -105,7 +140,9 @@ export const getGroupPoliciesById = createAsyncThunk(
   async (data, { dispatch }) => {
     // dispatch(resetDecisionPolicies())
     const response = await groupService.fetchGroupPoliciesById(
-      data.baseURL, data.id, data.pagination
+      data.baseURL,
+      data.id,
+      data.pagination
     );
     return response.data;
   }
@@ -126,10 +163,13 @@ export const getGroupsByMember = createAsyncThunk(
 export const getGroupMembers = createAsyncThunk(
   "group/get-group-members",
   async (data) => {
-    const response = await groupService.groupMembers(data.baseURL, data.groupId);
+    const response = await groupService.groupMembers(
+      data.baseURL,
+      data.groupId
+    );
     return response.data;
   }
-)
+);
 
 export const getGroupPolicyProposalsByPage = createAsyncThunk(
   "group/get-group-policy-proposals-by-page",
@@ -139,64 +179,69 @@ export const getGroupPolicyProposalsByPage = createAsyncThunk(
 
     try {
       allPolicies = await groupService.fetchGroupPoliciesById(
-        data.baseURL, data.groupId, data?.pagination
-      )
+        data.baseURL,
+        data.groupId,
+        data?.pagination
+      );
     } catch (error) {
       throw error;
     }
 
     const getProposalsPagination = async (address, pagination) => {
       const response = await groupService.fetchGroupPolicyProposalsById(
-        data.baseURL, address,
+        data.baseURL,
+        address,
         pagination
       );
 
-      let filteredProposals = response?.data?.proposals?.filter(p => p?.status === 'PROPOSAL_STATUS_SUBMITTED')
+      let filteredProposals = response?.data?.proposals?.filter(
+        (p) => p?.status === "PROPOSAL_STATUS_SUBMITTED"
+      );
 
       totalData = [...totalData, ...filteredProposals];
 
       if (response?.data?.pagination?.next_key)
-        return getProposalsPagination(address, { limit: 1, key: response?.data?.pagination?.next_key })
+        return getProposalsPagination(address, {
+          limit: 1,
+          key: response?.data?.pagination?.next_key,
+        });
       else return totalData;
-    }
-
+    };
 
     if (allPolicies?.data?.group_policies?.length) {
       let data = allPolicies?.data?.group_policies || [];
-      let totalPolicyData = [];
       for (let i = 0; i < data.length; i++) {
-
         try {
           await getProposalsPagination(data[i]?.address, {
             limit: 1,
-            key: ''
+            key: "",
           });
-
         } catch (error) {
-          console.log('Error while getting proposals', error)
+          console.log("Error while getting proposals", error);
           throw error;
         }
       }
 
       return totalData;
-    } else return ''
+    } else return "";
   }
-)
+);
 
 export const getGroupPolicyProposals = createAsyncThunk(
   "group/get-group-policy-proposals",
   async (data, { dispatch }) => {
     const response = await groupService.fetchGroupPolicyProposalsById(
-      data.baseURL, data.address,
+      data.baseURL,
+      data.address,
       data.pagination
     );
 
     return response.data;
   }
-)
+);
 
 export const txGroupProposalVote = createAsyncThunk(
-  'group/tx-group-proposal-vote',
+  "group/tx-group-proposal-vote",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     dispatch(setTxLoad());
 
@@ -205,10 +250,10 @@ export const txGroupProposalVote = createAsyncThunk(
         data.proposalId,
         data.voter,
         data.option,
-        data?.metadata || '',
-      )
+        data?.metadata || ""
+      );
 
-      console.log('msg----', msg)
+      console.log("msg----", msg);
 
       const result = await signAndBroadcastGroupProposalVote(
         data.admin,
@@ -227,7 +272,7 @@ export const txGroupProposalVote = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('Error while creating propsoal', result?.rawLog)
+        console.log("Error while creating propsoal", result?.rawLog);
         dispatch(
           setError({
             type: "error",
@@ -237,10 +282,9 @@ export const txGroupProposalVote = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-
       dispatch(resetTxLoad());
 
-      console.log('Error while creating the group proposal', error.message)
+      console.log("Error while creating the group proposal", error.message);
       dispatch(
         setError({
           type: "error",
@@ -250,19 +294,16 @@ export const txGroupProposalVote = createAsyncThunk(
       return rejectWithValue(error.message);
     }
   }
-)
+);
 
 export const txGroupProposalExecute = createAsyncThunk(
-  'group/tx-group-proposal-execute',
+  "group/tx-group-proposal-execute",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     dispatch(setTxLoad());
     try {
-      let msg = CreateProposalExecute(
-        data.proposalId,
-        data.executor
-      )
+      let msg = CreateProposalExecute(data.proposalId, data.executor);
 
-      console.log('msg----', msg)
+      console.log("msg----", msg);
 
       const result = await signAndBroadcastGroupProposalExecute(
         data.admin,
@@ -282,7 +323,7 @@ export const txGroupProposalExecute = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('Error while creating propsoal', result?.rawLog)
+        console.log("Error while creating propsoal", result?.rawLog);
         dispatch(
           setError({
             type: "error",
@@ -292,10 +333,9 @@ export const txGroupProposalExecute = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-
       dispatch(resetTxLoad());
 
-      console.log('Error while creating the group proposal', error.message)
+      console.log("Error while creating the group proposal", error.message);
       dispatch(
         setError({
           type: "error",
@@ -305,21 +345,17 @@ export const txGroupProposalExecute = createAsyncThunk(
       return rejectWithValue(error.message);
     }
   }
-)
+);
 
 export const txUpdateGroupAdmin = createAsyncThunk(
-  'group/tx-update-group-admin',
+  "group/tx-update-group-admin",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     dispatch(setTxLoad());
 
     try {
-      let msg = UpdateGroupAdmin(
-        data.admin,
-        data.groupId,
-        data.newAdmin
-      )
+      let msg = UpdateGroupAdmin(data.admin, data.groupId, data.newAdmin);
 
-      console.log('msg----', msg)
+      console.log("msg----", msg);
 
       const result = await signAndBroadcastUpdateGroupAdmin(
         data.signer,
@@ -337,7 +373,7 @@ export const txUpdateGroupAdmin = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('Error while creating propsoal', result?.rawLog)
+        console.log("Error while creating propsoal", result?.rawLog);
         dispatch(
           setError({
             type: "error",
@@ -347,10 +383,9 @@ export const txUpdateGroupAdmin = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-
       dispatch(resetTxLoad());
 
-      console.log('Error while creating the group proposal', error.message)
+      console.log("Error while creating the group proposal", error.message);
       dispatch(
         setError({
           type: "error",
@@ -360,21 +395,17 @@ export const txUpdateGroupAdmin = createAsyncThunk(
       return rejectWithValue(error.message);
     }
   }
-)
+);
 
 export const txUpdateGroupMetadata = createAsyncThunk(
-  'group/tx-update-group-metadata',
+  "group/tx-update-group-metadata",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     dispatch(setTxLoad());
 
     try {
-      let msg = UpdateGroupMetadata(
-        data.admin,
-        data.groupId,
-        data.metadata
-      )
+      let msg = UpdateGroupMetadata(data.admin, data.groupId, data.metadata);
 
-      console.log('msg----', msg)
+      console.log("msg----", msg);
 
       const result = await signAndBroadcastUpdateGroupMetadata(
         data.signer,
@@ -392,7 +423,7 @@ export const txUpdateGroupMetadata = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('Error while creating propsoal', result?.rawLog)
+        console.log("Error while creating propsoal", result?.rawLog);
         dispatch(
           setError({
             type: "error",
@@ -402,10 +433,9 @@ export const txUpdateGroupMetadata = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-
       dispatch(resetTxLoad());
 
-      console.log('Error while creating the group proposal', error.message)
+      console.log("Error while creating the group proposal", error.message);
       dispatch(
         setError({
           type: "error",
@@ -415,22 +445,22 @@ export const txUpdateGroupMetadata = createAsyncThunk(
       return rejectWithValue(error.message);
     }
   }
-)
+);
 
 export const txCreateGroupProposal = createAsyncThunk(
-  'group/tx-create-group-proposal',
+  "group/tx-create-group-proposal",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     dispatch(setTxLoad());
-    console.log('proposal --- ', data)
+    console.log("proposal --- ", data);
     try {
       let msg = CreateGroupProposal(
         data.groupPolicyAddress,
         data.proposers,
         data.metadata,
-        data.messages,
-      )
+        data.messages
+      );
 
-      console.log('msg----', msg)
+      console.log("msg----", msg);
 
       const result = await signAndBroadcastGroupProposal(
         data.admin,
@@ -448,7 +478,7 @@ export const txCreateGroupProposal = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('Error while creating propsoal', result?.rawLog)
+        console.log("Error while creating propsoal", result?.rawLog);
         dispatch(
           setError({
             type: "error",
@@ -458,10 +488,9 @@ export const txCreateGroupProposal = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-
       dispatch(resetTxLoad());
 
-      console.log('Error while creating the group proposal', error.message)
+      console.log("Error while creating the group proposal", error.message);
       dispatch(
         setError({
           type: "error",
@@ -471,7 +500,7 @@ export const txCreateGroupProposal = createAsyncThunk(
       return rejectWithValue(error.message);
     }
   }
-)
+);
 
 export const txCreateGroup = createAsyncThunk(
   "group/tx-create-group",
@@ -481,6 +510,7 @@ export const txCreateGroup = createAsyncThunk(
     try {
       if (data?.members?.length > 0) {
         if (data?.policyData && Object.keys(data?.policyData)?.length) {
+          console.log(data);
 
           msg = CreateGroupWithPolicy(
             data.admin,
@@ -488,7 +518,7 @@ export const txCreateGroup = createAsyncThunk(
             data.members,
             data.decisionPolicy,
             data.policyData,
-            data.policyAsAdmin
+            data?.policyData?.policyAsAdmin
           );
         } else {
           msg = CreateGroup(data.admin, data.groupMetaData, data?.members);
@@ -497,8 +527,8 @@ export const txCreateGroup = createAsyncThunk(
         msg = CreateGroup(data.admin, data.groupMetaData, []);
       }
 
-      console.log('msg--', msg)
-      console.log('admin--', data)
+      console.log("msg--", msg);
+      console.log("admin--", data);
 
       const result = await signAndBroadcastGroupMsg(
         data.admin,
@@ -527,10 +557,9 @@ export const txCreateGroup = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-
       dispatch(resetTxLoad());
 
-      console.log('Error while creating the group', error.message)
+      console.log("Error while creating the group", error.message);
       dispatch(
         setError({
           type: "error",
@@ -547,15 +576,11 @@ export const txUpdateGroupMember = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     let msg;
     dispatch(setTxLoad());
-    console.log({ data })
+    console.log({ data });
     try {
-      msg = UpdateGroupMembers(
-        data.admin,
-        data.members,
-        data.groupId
-      );
+      msg = UpdateGroupMembers(data.admin, data.members, data.groupId);
 
-      console.log({ msg })
+      console.log({ msg });
 
       const result = await signAndBroadcastUpdateGroupMembers(
         data.admin,
@@ -575,7 +600,7 @@ export const txUpdateGroupMember = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('Error while creating the group', result?.rawLog)
+        console.log("Error while creating the group", result?.rawLog);
         dispatch(
           setError({
             type: "error",
@@ -585,10 +610,9 @@ export const txUpdateGroupMember = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-
       dispatch(resetTxLoad());
 
-      console.log('Error while creating the group', error.message)
+      console.log("Error while creating the group", error.message);
       dispatch(
         setError({
           type: "error",
@@ -605,15 +629,11 @@ export const txAddGroupPolicy = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     let msg;
     dispatch(setTxLoad());
-    console.log({ data })
+    console.log({ data });
     try {
-      msg = CreateGroupPolicy(
-        data.admin,
-        data.groupId,
-        data.policyMetadata
-      );
+      msg = CreateGroupPolicy(data.admin, data.groupId, data.policyMetadata);
 
-      console.log({ msg })
+      console.log({ msg });
 
       const result = await signAndBroadcastAddGroupPolicy(
         data.admin,
@@ -633,7 +653,7 @@ export const txAddGroupPolicy = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('Error while creating the group', result?.rawLog)
+        console.log("Error while creating the group", result?.rawLog);
         dispatch(
           setError({
             type: "error",
@@ -643,10 +663,9 @@ export const txAddGroupPolicy = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-
       dispatch(resetTxLoad());
 
-      console.log('Error while creating the group', error.message)
+      console.log("Error while creating the group", error.message);
       dispatch(
         setError({
           type: "error",
@@ -663,7 +682,7 @@ export const txUpdateGroupPolicy = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     let msg;
     dispatch(setTxLoad());
-    console.log({ data })
+    console.log({ data });
     try {
       msg = UpdateGroupPolicy(
         data.admin,
@@ -671,7 +690,7 @@ export const txUpdateGroupPolicy = createAsyncThunk(
         data.policyMetadata
       );
 
-      console.log({ msg })
+      console.log({ msg });
 
       const result = await signAndBroadcastUpdateGroupPolicy(
         data.admin,
@@ -691,7 +710,11 @@ export const txUpdateGroupPolicy = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('Error while updating the policy metadata', result, result?.rawLog)
+        console.log(
+          "Error while updating the policy metadata",
+          result,
+          result?.rawLog
+        );
         dispatch(
           setError({
             type: "error",
@@ -701,10 +724,9 @@ export const txUpdateGroupPolicy = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-
       dispatch(resetTxLoad());
 
-      console.log('Error while creating the group', error.message)
+      console.log("Error while creating the group", error.message);
       dispatch(
         setError({
           type: "error",
@@ -721,7 +743,7 @@ export const txUpdateGroupPolicyMetdata = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     let msg;
     dispatch(setTxLoad());
-    console.log({ data })
+    console.log({ data });
     try {
       msg = UpdatePolicyMetadata(
         data.admin,
@@ -729,7 +751,7 @@ export const txUpdateGroupPolicyMetdata = createAsyncThunk(
         data.metadata
       );
 
-      console.log({ msg })
+      console.log({ msg });
 
       const result = await signAndBroadcastUpdateGroupPolicyMetadata(
         data.admin,
@@ -749,7 +771,11 @@ export const txUpdateGroupPolicyMetdata = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('Error while updating the policy metadata', result, result?.rawLog)
+        console.log(
+          "Error while updating the policy metadata",
+          result,
+          result?.rawLog
+        );
         dispatch(
           setError({
             type: "error",
@@ -759,10 +785,9 @@ export const txUpdateGroupPolicyMetdata = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-
       dispatch(resetTxLoad());
 
-      console.log('Error while creating the group', error.message)
+      console.log("Error while creating the group", error.message);
       dispatch(
         setError({
           type: "error",
@@ -779,7 +804,7 @@ export const txUpdateGroupPolicyAdmin = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     let msg;
     dispatch(setTxLoad());
-    console.log({ data })
+    console.log({ data });
     try {
       msg = UpdatePolicyAdmin(
         data.admin,
@@ -787,7 +812,7 @@ export const txUpdateGroupPolicyAdmin = createAsyncThunk(
         data.newAdmin
       );
 
-      console.log({ msg })
+      console.log({ msg });
 
       const result = await signAndBroadcastUpdateGroupPolicyAdmin(
         data.admin,
@@ -807,7 +832,11 @@ export const txUpdateGroupPolicyAdmin = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('Error while updating the policy metadata', result, result?.rawLog)
+        console.log(
+          "Error while updating the policy metadata",
+          result,
+          result?.rawLog
+        );
         dispatch(
           setError({
             type: "error",
@@ -817,10 +846,9 @@ export const txUpdateGroupPolicyAdmin = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-
       dispatch(resetTxLoad());
 
-      console.log('Error while creating the group', error.message)
+      console.log("Error while creating the group", error.message);
       dispatch(
         setError({
           type: "error",
@@ -837,12 +865,9 @@ export const txLeaveGroupMember = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     let msg;
     dispatch(setTxLoad());
-    console.log({ data })
+    console.log({ data });
     try {
-      msg = CreateLeaveGroupMember(
-        data.admin,
-        data.groupId
-      );
+      msg = CreateLeaveGroupMember(data.admin, data.groupId);
 
       const result = await signAndBroadcastLeaveGroup(
         data.admin,
@@ -862,7 +887,7 @@ export const txLeaveGroupMember = createAsyncThunk(
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        console.log('Error while creating the group', result?.rawLog)
+        console.log("Error while creating the group", result?.rawLog);
         dispatch(
           setError({
             type: "error",
@@ -872,10 +897,9 @@ export const txLeaveGroupMember = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-
       dispatch(resetTxLoad());
 
-      console.log('Error while creating the group', error.message)
+      console.log("Error while creating the group", error.message);
       dispatch(
         setError({
           type: "error",
@@ -895,15 +919,15 @@ export const groupSlice = createSlice({
       state.tx.type = "";
     },
     resetGroupTx: (state, _) => {
-      state.tx.status = '';
+      state.tx.status = "";
       state.txCreateGroupRes = {};
     },
     resetUpdateGroupMember: (state) => {
-      state.updateGroupRes.status = '';
+      state.updateGroupRes.status = "";
     },
-    resetCreateGroupProposalRes: state => {
-      state.groupProposalRes.status = '';
-    }
+    resetCreateGroupProposalRes: (state) => {
+      state.groupProposalRes.status = "";
+    },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
   // including actions generated by createAsyncThunk or in other slices.
@@ -943,15 +967,15 @@ export const groupSlice = createSlice({
     builder
       .addCase(txCreateGroup.pending, (state) => {
         state.tx.status = `pending`;
-        state.txCreateGroupRes.status = 'pending';
+        state.txCreateGroupRes.status = "pending";
       })
       .addCase(txCreateGroup.fulfilled, (state, _) => {
         state.tx.status = `idle`;
-        state.txCreateGroupRes.status = 'idle';
+        state.txCreateGroupRes.status = "idle";
       })
       .addCase(txCreateGroup.rejected, (state, _) => {
         state.tx.status = `rejected`;
-        state.txCreateGroupRes.status = 'rejected';
+        state.txCreateGroupRes.status = "rejected";
       });
 
     builder
@@ -959,9 +983,9 @@ export const groupSlice = createSlice({
         state.members.status = `pending`;
       })
       .addCase(getGroupMembers.fulfilled, (state, action) => {
-        state.members.status = 'idle';
-        console.log('action paydddddddd', action.payload)
-        state.members.data = [...state.members.data, action.payload]
+        state.members.status = "idle";
+        console.log("action paydddddddd", action.payload);
+        state.members.data = [...state.members.data, action.payload];
       })
       .addCase(getGroupMembers.rejected, (state, _) => {
         state.members.status = `rejected`;
@@ -972,9 +996,9 @@ export const groupSlice = createSlice({
         state.groupInfo.status = `pending`;
       })
       .addCase(getGroupById.fulfilled, (state, action) => {
-        console.log('fffffffff', action.payload)
-        state.groupInfo.status = 'idle';
-        state.groupInfo.data = action.payload
+        console.log("fffffffff", action.payload);
+        state.groupInfo.status = "idle";
+        state.groupInfo.data = action.payload;
       })
       .addCase(getGroupById.rejected, (state, _) => {
         state.groupInfo.status = `rejected`;
@@ -985,8 +1009,8 @@ export const groupSlice = createSlice({
         state.groupMembers.status = `pending`;
       })
       .addCase(getGroupMembersById.fulfilled, (state, action) => {
-        state.groupMembers.status = 'idle';
-        state.groupMembers.data = action.payload
+        state.groupMembers.status = "idle";
+        state.groupMembers.data = action.payload;
       })
       .addCase(getGroupMembersById.rejected, (state, _) => {
         state.groupMembers.status = `rejected`;
@@ -997,8 +1021,8 @@ export const groupSlice = createSlice({
         state.groupPolicies.status = `pending`;
       })
       .addCase(getGroupPoliciesById.fulfilled, (state, action) => {
-        state.groupPolicies.status = 'idle';
-        state.groupPolicies.data = action.payload
+        state.groupPolicies.status = "idle";
+        state.groupPolicies.data = action.payload;
       })
       .addCase(getGroupPoliciesById.rejected, (state, _) => {
         state.groupPolicies.status = `rejected`;
@@ -1009,8 +1033,8 @@ export const groupSlice = createSlice({
         state.proposalVotes.status = `pending`;
       })
       .addCase(getVotesProposalById.fulfilled, (state, action) => {
-        state.proposalVotes.status = 'idle';
-        state.proposalVotes.data = action.payload
+        state.proposalVotes.status = "idle";
+        state.proposalVotes.data = action.payload;
       })
       .addCase(getVotesProposalById.rejected, (state, _) => {
         state.proposalVotes.status = `rejected`;
@@ -1021,8 +1045,8 @@ export const groupSlice = createSlice({
         state.proposals.status = `pending`;
       })
       .addCase(getGroupPolicyProposals.fulfilled, (state, action) => {
-        state.proposals.status = 'idle';
-        state.proposals.data = action.payload
+        state.proposals.status = "idle";
+        state.proposals.data = action.payload;
       })
       .addCase(getGroupPolicyProposals.rejected, (state, _) => {
         state.proposals.status = `rejected`;
@@ -1033,7 +1057,7 @@ export const groupSlice = createSlice({
         state.groupProposalRes.status = `pending`;
       })
       .addCase(txCreateGroupProposal.fulfilled, (state, action) => {
-        state.groupProposalRes.status = 'idle';
+        state.groupProposalRes.status = "idle";
       })
       .addCase(txCreateGroupProposal.rejected, (state, _) => {
         state.groupProposalRes.status = `rejected`;
@@ -1044,7 +1068,7 @@ export const groupSlice = createSlice({
         state.voteRes.status = `pending`;
       })
       .addCase(txGroupProposalVote.fulfilled, (state, action) => {
-        state.voteRes.status = 'idle';
+        state.voteRes.status = "idle";
       })
       .addCase(txGroupProposalVote.rejected, (state, _) => {
         state.voteRes.status = `rejected`;
@@ -1055,7 +1079,7 @@ export const groupSlice = createSlice({
         state.executeRes.status = `pending`;
       })
       .addCase(txGroupProposalExecute.fulfilled, (state, action) => {
-        state.executeRes.status = 'idle';
+        state.executeRes.status = "idle";
       })
       .addCase(txGroupProposalExecute.rejected, (state, _) => {
         state.executeRes.status = `rejected`;
@@ -1066,7 +1090,7 @@ export const groupSlice = createSlice({
         state.updateGroupRes.status = `pending`;
       })
       .addCase(txUpdateGroupMember.fulfilled, (state, action) => {
-        state.updateGroupRes.status = 'idle';
+        state.updateGroupRes.status = "idle";
       })
       .addCase(txUpdateGroupMember.rejected, (state, _) => {
         state.updateGroupRes.status = `rejected`;
@@ -1077,7 +1101,7 @@ export const groupSlice = createSlice({
         state.leaveGroupRes.status = `pending`;
       })
       .addCase(txLeaveGroupMember.fulfilled, (state, action) => {
-        state.leaveGroupRes.status = 'idle';
+        state.leaveGroupRes.status = "idle";
       })
       .addCase(txLeaveGroupMember.rejected, (state, _) => {
         state.leaveGroupRes.status = `rejected`;
@@ -1088,7 +1112,7 @@ export const groupSlice = createSlice({
         state.groupProposal.status = `pending`;
       })
       .addCase(getGroupProposalById.fulfilled, (state, action) => {
-        state.groupProposal.status = 'idle';
+        state.groupProposal.status = "idle";
         state.groupProposal.data = action.payload;
       })
       .addCase(getGroupProposalById.rejected, (state, _) => {
@@ -1100,7 +1124,7 @@ export const groupSlice = createSlice({
         state.updateGroupPolicyRes.status = `pending`;
       })
       .addCase(txUpdateGroupPolicy.fulfilled, (state, action) => {
-        state.updateGroupPolicyRes.status = 'idle';
+        state.updateGroupPolicyRes.status = "idle";
       })
       .addCase(txUpdateGroupPolicy.rejected, (state, _) => {
         state.updateGroupPolicyRes.status = `rejected`;
@@ -1111,7 +1135,7 @@ export const groupSlice = createSlice({
         state.updateGroupAdminRes.status = `pending`;
       })
       .addCase(txUpdateGroupAdmin.fulfilled, (state, action) => {
-        state.updateGroupAdminRes.status = 'idle';
+        state.updateGroupAdminRes.status = "idle";
       })
       .addCase(txUpdateGroupAdmin.rejected, (state, _) => {
         state.updateGroupAdminRes.status = `rejected`;
@@ -1122,7 +1146,7 @@ export const groupSlice = createSlice({
         state.updateGroupMetadataRes.status = `pending`;
       })
       .addCase(txUpdateGroupMetadata.fulfilled, (state, action) => {
-        state.updateGroupMetadataRes.status = 'idle';
+        state.updateGroupMetadataRes.status = "idle";
       })
       .addCase(txUpdateGroupMetadata.rejected, (state, _) => {
         state.updateGroupMetadataRes.status = `rejected`;
@@ -1133,7 +1157,7 @@ export const groupSlice = createSlice({
         state.addGroupPolicyRes.status = `pending`;
       })
       .addCase(txAddGroupPolicy.fulfilled, (state, action) => {
-        state.addGroupPolicyRes.status = 'idle';
+        state.addGroupPolicyRes.status = "idle";
       })
       .addCase(txAddGroupPolicy.rejected, (state, _) => {
         state.addGroupPolicyRes.status = `rejected`;
@@ -1144,7 +1168,7 @@ export const groupSlice = createSlice({
         state.updateGroupMetadataRes.status = `pending`;
       })
       .addCase(txUpdateGroupPolicyMetdata.fulfilled, (state, action) => {
-        state.updateGroupMetadataRes.status = 'idle';
+        state.updateGroupMetadataRes.status = "idle";
       })
       .addCase(txUpdateGroupPolicyMetdata.rejected, (state, _) => {
         state.updateGroupMetadataRes.status = `rejected`;
@@ -1155,7 +1179,7 @@ export const groupSlice = createSlice({
         state.updatePolicyAdminRes.status = `pending`;
       })
       .addCase(txUpdateGroupPolicyAdmin.fulfilled, (state, action) => {
-        state.updatePolicyAdminRes.status = 'idle';
+        state.updatePolicyAdminRes.status = "idle";
       })
       .addCase(txUpdateGroupPolicyAdmin.rejected, (state, _) => {
         state.updatePolicyAdminRes.status = `rejected`;
@@ -1166,7 +1190,7 @@ export const groupSlice = createSlice({
         state.policyProposals.status = `pending`;
       })
       .addCase(getGroupPolicyProposalsByPage.fulfilled, (state, action) => {
-        state.policyProposals.status = 'idle';
+        state.policyProposals.status = "idle";
         state.policyProposals.data = action?.payload;
       })
       .addCase(getGroupPolicyProposalsByPage.rejected, (state, _) => {
@@ -1175,8 +1199,10 @@ export const groupSlice = createSlice({
   },
 });
 
-export const { resetGroupTx,
+export const {
+  resetGroupTx,
   resetCreateGroupProposalRes,
-  resetUpdateGroupMember } = groupSlice.actions;
+  resetUpdateGroupMember,
+} = groupSlice.actions;
 
 export default groupSlice.reducer;

@@ -45,19 +45,21 @@ function CreateProposal() {
             <strong>{wallet?.address}</strong></Typography>
         </Box>
 
-        <Box>
+        {/* <Box>
           <TxTypeComponent handleType={(type) => {
             setType(type)
           }} />
-        </Box>
+        </Box> */}
 
         <Box ml={5} mt={2}>
-          {type === 'single' && <AddManualTx
+          {/* {type === 'single' &&  */}
+          <AddManualTx
             address={policyAddress}
             chainInfo={chainInfo}
             handleCancel={()=>setType(null)}
-          /> || null}
-          {type === 'multiple' && <AddFileTx /> || null}
+          /> 
+           {/* || null} */}
+          {/* {type === 'multiple' && <AddFileTx /> || null} */}
         </Box>
       </Paper>
     </>
