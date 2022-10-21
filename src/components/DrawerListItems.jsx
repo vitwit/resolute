@@ -15,7 +15,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
   const dispatch = useDispatch();
   const [nodeDataInfo, setNodeDataInfo] = React.useState(false);
 
-  const wallet = useSelector(state => state?.wallet);
+  const wallet = useSelector((state) => state?.wallet);
   const { chainInfo } = wallet;
   const nodeInfo = useSelector(state => state?.node)
 
@@ -33,8 +33,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         } else setNodeDataInfo(false);
       }
     }
-  }, [nodeInfo?.status])
-
+  }, [nodeInfo?.status]);
 
   return (
     <>
@@ -89,7 +88,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemText primary="Authz" />
       </ListItemButton>
       <ListItemButton
-        // disabled
+        disabled={nodeDataInfo ? false : true}
         onClick={() => onNavigate("/feegrant")}
         sx={{ pb: 0.5, pt: 0.5 }}
         selected={currentPath === "/feegrant"}
@@ -97,10 +96,10 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemIcon>
           <LayersIcon />
         </ListItemIcon>
-        <ListItemText primary="Feegrant" secondary="coming soon" />
+        <ListItemText primary="Feegrant" />
       </ListItemButton>
       <ListItemButton
-        // disabled={nodeDataInfo ? false : true}
+        disabled={nodeDataInfo ? false : true}
         onClick={() => onNavigate("/group")}
         sx={{ pb: 0.5, pt: 0.5 }}
         selected={currentPath === "/group"}
@@ -108,12 +107,16 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemIcon>
           <GroupsOutlinedIcon />
         </ListItemIcon>
-        <ListItemText primary="Groups"
+        <ListItemText
+          primary="Groups"
           secondary={
-            nodeDataInfo?.status === 'pending'? 'Loading..':
-            !nodeDataInfo ? 'Not supported': 
-            null
-          } />
+            nodeDataInfo?.status === "pending"
+              ? "Loading.."
+              : !nodeDataInfo
+              ? "Not supported"
+              : null
+          }
+        />
       </ListItemButton>
 
       {showAirdrop ? (

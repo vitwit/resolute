@@ -18,7 +18,7 @@ import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
 import Overview from "./Overview";
 import { CustomAppBar } from "../components/CustomAppBar";
-import { resetError, resetTxLoad, setError } from "../features/common/commonSlice";
+import { resetTxLoad } from "../features/common/commonSlice";
 import Page404 from "./Page404";
 import AppDrawer from "../components/AppDrawer";
 import { Alert } from "../components/Alert";
@@ -32,8 +32,8 @@ const GroupPage = lazy(() => import("./GroupPage"));
 const Group = lazy(() => import("./group/Group"));
 const Policy = lazy(() => import("./group/Policy"));
 const CreateGroupPage = lazy(() => import("./group/CreateGroup"));
-const Proposal = lazy(() => import("./group/Proposal"))
-const CreateProposal = lazy(() => import("./group/CreateProposal"))
+const Proposal = lazy(() => import("./group/Proposal"));
+const CreateProposal = lazy(() => import("./group/CreateProposal"));
 
 const Authz = lazy(() => import("./Authz"));
 const Validators = lazy(() => import("./Validators"));
@@ -47,6 +47,9 @@ const UnjailPage = lazy(() => import("./UnjailPage"));
 const ProposalInfo = lazy(() => import("./gov/ProposalInfo"));
 const PageCreateTx = lazy(() => import("./multisig/tx/PageCreateTx"));
 
+const Feegrant = lazy(() => import("./Feegrant"));
+const NewFeegrant = lazy(() => import("./NewFeegrant"));
+
 function DashboardContent(props) {
   const [snackOpen, setSnackOpen] = useState(false);
   const showSnack = (value) => {
@@ -59,7 +62,7 @@ function DashboardContent(props) {
     setDarkMode(!darkMode);
   };
 
-  const txLoadRes = useSelector(state => state?.common?.txLoadRes?.load)
+  const txLoadRes = useSelector((state) => state?.common?.txLoadRes?.load);
   const [pallet, setPallet] = useState(getPallet());
   const balance = useSelector((state) => state.bank.balance);
 
@@ -216,22 +219,22 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   />
-                  {/* <Route
+                  <Route
                     path="/feegrant"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <Feegrant />
                       </Suspense>
                     }
-                  ></Route> */}
-                  {/* <Route
+                  ></Route>
+                  <Route
                     path="/feegrant/new"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <NewFeegrant />
                       </Suspense>
                     }
-                  ></Route> */}
+                  ></Route>
                   <Route
                     path="/authz/new"
                     element={
@@ -319,35 +322,46 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
-                  <Route path="/group" element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <GroupPage />
-                    </Suspense>
-                  }></Route>
-                  <Route path="/groups/:id" element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <Group />
-                    </Suspense>
-
-                  }></Route>
-                  <Route path="/groups/proposals/:id" element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <Proposal />
-                    </Suspense>
-
-                  }></Route>
-                  <Route path="/groups/:id/policies/:policyId" element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <Policy />
-                    </Suspense>
-                  }></Route>
-                  <Route path="/group/:id/policies/:policyAddress/proposals"
+                  <Route
+                    path="/group"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <GroupPage />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/groups/:id"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <Group />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/groups/proposals/:id"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <Proposal />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/groups/:id/policies/:policyId"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <Policy />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/group/:id/policies/:policyAddress/proposals"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <CreateProposal />
                       </Suspense>
-
-                    }></Route>
+                    }
+                  ></Route>
                   <Route
                     path="/group/create-group"
                     element={
@@ -355,8 +369,7 @@ function DashboardContent(props) {
                         <CreateGroupPage />
                       </Suspense>
                     }
-                  >
-                  </Route>
+                  ></Route>
                   <Route path="*" element={<Page404 />}></Route>
                 </Routes>
               </Container>
@@ -403,20 +416,22 @@ function DashboardContent(props) {
       >
         <Alert
           iconMapping={{
-            info: <CircularProgress size={35}
-              sx={{ color: '#FFF', mr: 2, mt: 1 }} />,
+            info: (
+              <CircularProgress
+                size={35}
+                sx={{ color: "#FFF", mr: 2, mt: 1 }}
+              />
+            ),
           }}
           onClose={() => {
-            dispatch(resetTxLoad())
+            dispatch(resetTxLoad());
           }}
           severity="info"
           sx={{ width: "100%" }}
         >
-          <AlertTitle
-            sx={{ width: '100%', display: 'flex' }}>
+          <AlertTitle sx={{ width: "100%", display: "flex" }}>
             <Typography> Loading..</Typography>
           </AlertTitle>
-
           Please wait for sometime.
         </Alert>
       </Snackbar>

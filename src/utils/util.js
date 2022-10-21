@@ -1,5 +1,6 @@
 import Chip from "@mui/material/Chip";
 import { Decimal } from "@cosmjs/math";
+import { authzMsgTypes } from "./authorizations";
 
 export function getTypeURLName(url) {
   if (!url) {
@@ -281,4 +282,51 @@ export const PercentageDecisionPolicy = `/cosmos.group.v1.PercentageDecisionPoli
 export const PoliciesTypes = {
   "/cosmos.group.v1.PercentageDecisionPolicy": "Percentage Decision Policy",
   "/cosmos.group.v1.ThresholdDecisionPolicy": "Threshold Decision Policy",
+};
+
+export const HasGrantAccess = (type) => {
+  let obj = window.localStorage.getItem("feeGrant");
+  if (obj) {
+    obj = (obj && JSON.parse(obj)) || {};
+
+    if (type) {
+      if (
+        obj?.allowance?.allowed_messages &&
+        obj?.allowance?.allowed_messages.length
+      ) {
+        let msgs = authzMsgTypes();
+        let msg = msgs.filter((m) => m.label === type);
+
+        if (msg && msg.length) {
+          let found = obj?.allowance?.allowed_messages?.filter(
+            (m) => m === msg?.[0]?.typeURL
+          );
+
+          if (found && found.length) {
+            return {
+              yes: true,
+              ...obj,
+            };
+          } else {
+            return {
+              yes: false,
+            };
+          }
+        }
+      } else {
+        return {
+          yes: false,
+          ...obj,
+        };
+      }
+    } else
+      return {
+        yes: true,
+        ...obj,
+      };
+  }
+
+  return {
+    yes: false,
+  };
 };
