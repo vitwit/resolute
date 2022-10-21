@@ -481,6 +481,7 @@ export const txCreateGroup = createAsyncThunk(
     try {
       if (data?.members?.length > 0) {
         if (data?.policyData && Object.keys(data?.policyData)?.length) {
+          console.log(data);
 
           msg = CreateGroupWithPolicy(
             data.admin,
@@ -488,7 +489,7 @@ export const txCreateGroup = createAsyncThunk(
             data.members,
             data.decisionPolicy,
             data.policyData,
-            data.policyAsAdmin
+            data?.policyData?.policyAsAdmin
           );
         } else {
           msg = CreateGroup(data.admin, data.groupMetaData, data?.members);

@@ -1,75 +1,84 @@
-import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import { Box } from '@mui/system';
-import { shortenAddress } from '../../utils/util';
-import { getLocalTime } from '../../utils/datetime';
-import ReadMoreIcon from '@mui/icons-material/ReadMore';
-import { IconButton, Paper } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import * as React from "react";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/system/Box";
+import { shortenAddress } from "../../utils/util";
+import { getFormatDate } from "../../utils/datetime";
+import { useNavigate } from "react-router-dom";
 
 interface GroupCardProps {
-    group: any
+  group: any;
 }
 
 interface BoxTextProps {
-    label: any,
-    text: any
+  label: string;
+  text: string;
 }
 
 const BoxText = ({ label, text }: BoxTextProps) => {
-    return (
-        <Box sx={{ display: 'flex' }}>
-            <Typography width={'30%'} variant="body1">
-                {label}
-            </Typography>
-            <Typography variant="body1">
-                <strong> {text}</strong>
-            </Typography>
-        </Box>
-    )
-}
+  return (
+    <Box sx={{ display: "flex" }} component="div">
+      <Typography
+        width={"30%"}
+        variant="body1"
+        color="text.secondary"
+        gutterBottom
+        fontWeight={500}
+      >
+        {label}
+      </Typography>
+      <Typography
+        gutterBottom
+        variant="body1"
+        fontWeight={500}
+        color="text.primary"
+      >
+        {text}
+      </Typography>
+    </Box>
+  );
+};
 
 export default function GroupCard({ group }: GroupCardProps) {
-    const navigate = useNavigate();
-    const [showFullText, setShowFullText] = React.useState(false);
+  const navigate = useNavigate();
+  const [showFullText, setShowFullText] = React.useState(false);
 
-    return (
-        <Paper sx={{ borderRadius: 2 }} elevation={1} variant="outlined" square>
-            <CardContent 
-            sx={{"&:hover": {border: 2, borderRadius:2, borderColor: '#3f51b585'}}}
-            onClick={() => navigate(`/groups/${group?.id}`)}>
-                {/* <IconButton
-                    onClick={() => navigate(`/groups/${group?.id}`)}
-                    color='primary'
-                    sx={{ float: 'right' }}
-                >
-                    <ReadMoreIcon fontSize='large' />
-                </IconButton> */}
-                {/* <Typography gutterBottom variant="h5" component="div">
-                    # {group?.id}
-                </Typography> */}
-                <Typography gutterBottom variant="h5" component="div">
-                     &nbsp;
-                    {!showFullText && group?.metadata?.substring(0, 30)}
-
-                    {
-                        showFullText && group?.metadata
-                    }
-
-                    {group?.metadata?.length > 40 ? <a
-                        onClick={()=>setShowFullText(!showFullText)}
-                        href='javascript:void(0);'
-                    > {showFullText? ' ...show less': ' ...more'}</a> : null}
-
-                </Typography>
-                <BoxText label={'Group ID'} text={group?.id} />
-                <BoxText label={'Admin'} text={shortenAddress(group?.admin, 19)} />
-                <BoxText label={'Created At'} text={getLocalTime(group?.created_at)} />
-                <BoxText label={'Total Weight'} text={group?.total_weight} />
-                <BoxText label={'Version'} text={group?.version} />
-            </CardContent>
-        </Paper>
-    );
+  return (
+    <Paper elevation={0} variant="outlined" square>
+      <CardContent
+        sx={{
+          "&:hover": {
+            cursor: "pointer",
+          },
+          textAlign: "left",
+        }}
+        onClick={() => navigate(`/groups/${group?.id}`)}
+        component="div"
+      >
+        <Typography
+          gutterBottom
+          variant="h5"
+          color="text.primary"
+          fontWeight={500}
+        >
+          &nbsp;
+          {!showFullText && group?.metadata?.substring(0, 30)}
+          {showFullText && group?.metadata}
+          {group?.metadata?.length > 40 ? (
+            <a
+              onClick={() => setShowFullText(!showFullText)}
+              href="javascript:void(0);"
+            >
+              {" "}
+              {showFullText ? " ...show less" : " ...more"}
+            </a>
+          ) : null}
+        </Typography>
+        <BoxText label={"Admin"} text={shortenAddress(group?.admin, 19)} />
+        <BoxText label={"Created At"} text={getFormatDate(group?.created_at)} />
+        <BoxText label={"Total Weight"} text={group?.total_weight} />
+      </CardContent>
+    </Paper>
+  );
 }
