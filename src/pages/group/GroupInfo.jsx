@@ -9,8 +9,25 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+
 
 import { getGroupById, txLeaveGroupMember, txUpdateGroupAdmin, txUpdateGroupMetadata } from "../../features/group/groupSlice";
+import { getFormatDate, getLocalTime } from "../../utils/datetime";
+
+
+const LabelText = ({ text }) => <Typography
+    fontSize={17}
+    color={'GrayText'}
+    textAlign={'left'}>{text}</Typography>
+const LabelValue = ({ text, toolTip }) =>
+    <Tooltip
+        arrow placement="top-start" followCursor title={toolTip}>
+        <Typography
+            fontSize={18}
+            textAlign={'left'}>{text} </Typography>
+    </Tooltip>
+
 
 const GroupInfo = ({ id, wallet }) => {
     const dispatch = useDispatch();
@@ -119,255 +136,166 @@ const GroupInfo = ({ id, wallet }) => {
         <Box>
             <Paper elevation={0} sx={{ p: 2, mt: 2 }}>
                 <Grid container>
-                    <Grid md={3}>
-                        <GroupsIcon
-                            color={'primary'}
-                            sx={{ fontSize: 95 }} />
-                        <Typography variant="h4">
-                            # {data?.info?.id}
-                        </Typography>
-                        {
-                            memberStatus?.status === 'pending' ?
-                                <CircularProgress /> : null
-                        }
-                        {
-                            memberStatus?.status !== 'pending' && isExistInGroup() ?
-                                <Button
-                                    color={'error'}
+                    {
+                        status === 'pending' ?
+                            <CircularProgress /> : null
+                    }
+
+                    {
+                        status !== 'pending' ?
+                            <Box sx={{ width: '100%' }}>
+
+                                <Button sx={{ float: 'right' }}
+                                    endIcon={
+                                        <ExitToAppIcon />
+                                    }
+                                    color="error"
                                     onClick={() => handleLeaveGroup()}
                                     variant={'outlined'}>
                                     {
                                         leaveGroupRes?.status === 'pending' ?
                                             'Loading...' : 'Leave Group'
                                     }
-                                </Button> : null
-                        }
+                                </Button>
+                                {
+                                    !showMetadataInput ?
+                                        <>
+                                            <Typography p={2}
+                                                textAlign={'left'}
+                                                variant="h5" color={'primary'}>
+                                                {data?.info?.metadata}
+                                                &nbsp; &nbsp;&nbsp;
+                                                {
+                                                    isExistInGroup() ?
+                                                        <Button variant="outlined"
+                                                            size="small"
+                                                            onClick={
+                                                                () => {
+                                                                    setMetadata(data?.info?.metadata)
+                                                                    setShowMetadataInput(!showMetadataInput)
+                                                                }
+                                                            }
+                                                            endIcon={<EditIcon />}>Edit</Button> : null
+                                                }
+                                            </Typography>
+                                        </> : <>
+                                            <TextField sx={{ mt: 2 }} name="groupMetadata"
+                                                value={metadata}
+                                                fullWidth
+                                                label={'Group Metadata'}
+                                                onChange={e => {
+                                                    setMetadata(e.target.value)
+                                                }}
+                                            />
+                                            <Box sx={{ float: 'right', mt: 2 }}>
+                                                <Button size="small"
+                                                    color="error"
+                                                    sx={{ mr: 2 }}
+                                                    onClick={
+                                                        () => {
+                                                            setShowMetadataInput(false)
+                                                        }
+                                                    }
+                                                    variant="outlined">Cancel</Button>
+                                                <Button size="small"
+                                                    onClick={
+                                                        () => UpdateMetadata()
+                                                    }
+                                                    disabled={updateMetadataRes?.status === 'pending'}
+                                                    variant="outlined">
+                                                    {
+                                                        updateMetadataRes?.status === 'pending' ?
+                                                            'Submitting...' : 'Update'
+                                                    }
+                                                </Button>
 
-                    </Grid>
-                    <Grid md={9}>
-                        {
-                            status === 'pending' ?
-                                <CircularProgress /> : null
-                        }
-                        {
-                            status !== 'pending' ?
-                                <Box>
-                                    <Grid container>
-                                        <Grid md={2}>
-                                            <Typography sx={{
-                                                fontSize: 18,
-                                                textAlign: 'left',
-                                                ml: 1
-                                            }}>Admin</Typography>
-                                        </Grid>
-                                        <Grid md={6}>
-                                            {
-                                                showAdminInput ?
+                                            </Box>
+                                        </>
+                                }
+
+                                <Grid p={2} md={12} columnGap={0.5} container>
+                                    <Grid md={5}>
+                                        {
+                                            showAdminInput ?
+                                                <>
                                                     <TextField
                                                         fullWidth
                                                         value={admin}
                                                         onChange={e => {
                                                             setAdmin(e.target.value)
                                                         }}
+                                                        label={'Admin'}
                                                     />
-                                                    :
-                                                    <>
-                                                        <Typography sx={{
-                                                            fontSize: 18,
-                                                            textAlign: 'left',
-                                                            fontWeight: 'bold',
-                                                            ml: 2
-                                                        }}>
-                                                            {data?.info?.admin || '-'}
-                                                        </Typography>
-                                                        <Typography
-                                                            sx={{
-                                                                ml: 2,
-                                                                textAlign: 'left'
-                                                            }}
-                                                        >
-                                                            Note: Only admin can be update admin address.
-                                                        </Typography>
-                                                    </>
-                                            }
+                                                    <br /><br />
 
-                                        </Grid>
-                                        <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
-                                            {
-                                                showAdminInput ?
-                                                    updateAdminRes?.status === 'pending' ?
-                                                        <CircularProgress /> :
-                                                        <Box>
+                                                    <Button onClick={
+                                                        () => UpdateAdmin()
+                                                    } sx={{ float: 'right' }}
+                                                        disabled={updateAdminRes?.status === 'pending'}
+                                                        size="small" variant="outlined">
+                                                        {updateAdminRes?.status === 'pending' ?
+                                                            'Loading...'
+                                                            : 'Update'}
+                                                    </Button>
+                                                    <Button onClick={() => setShowAdminInput(false)} sx={{ mr: 2, float: 'right' }}
+                                                        color="error"
+                                                        size="small" variant="outlined">
+                                                        Cancel
+                                                    </Button>
+                                                </>
 
-                                                            <Tooltip title={'Update'} arrow>
-                                                                <IconButton
-                                                                    sx={{ border: '1px solid' }}
-                                                                    onClick={
-                                                                        () => UpdateAdmin()
-                                                                    }
-                                                                    color="primary">
-                                                                    <CheckIcon
-                                                                        sx={{ fontSize: 32 }}
-                                                                    />
-                                                                </IconButton>
-                                                            </Tooltip>
-                                                            <Tooltip title={'Cancel'} arrow>
-                                                                <IconButton
-                                                                    onClick={
-                                                                        () => setShowAdminInput(false)
-                                                                    }
-                                                                    color="error">
-                                                                    <CancelIcon
-                                                                        sx={{ fontSize: 32 }}
-                                                                    />
-                                                                </IconButton>
-                                                            </Tooltip>
+                                                : <>
+                                                    <LabelText text='Admin' />
+                                                    <Box style={{ display: 'flex' }}>
+                                                        <LabelValue
+                                                            toolTip={data?.info?.admin}
+                                                            text={data?.info?.admin} />
+                                                        &nbsp;&nbsp;
+                                                        {
+                                                            isExistInGroup() ?
+                                                                <Button onClick={() => {
+                                                                    setAdmin(data?.info?.admin)
+                                                                    setShowAdminInput(true)
+                                                                }} endIcon={
+                                                                    <EditIcon />
+                                                                } size="small" variant="outlined">Edit</Button> : null
+                                                        }
 
-                                                        </Box> :
-                                                    isExistInGroup() ?
-                                                        <Tooltip title={'Edit'} arrow>
-                                                            <EditIcon
-                                                                color='primary'
-                                                                onClick={
-                                                                    () => {
-                                                                        setAdmin(data?.info?.admin)
-                                                                        setShowAdminInput(!showAdminInput)
-                                                                    }
-                                                                } />
-                                                        </Tooltip>
-                                                        : null
-                                            }
+                                                    </Box>
 
-                                        </Grid>
+                                                    <Typography
+                                                        sx={{ float: 'left' }}
+                                                        variant="caption"
+                                                    >
+                                                        Note: Only admin can be update admin address.
+                                                    </Typography>
+
+                                                </>
+                                        }
+
                                     </Grid>
-                                    <br />
-                                    <Grid container>
-                                        <Grid md={2}>
-                                            <Typography sx={{
-                                                fontSize: 18,
-                                                textAlign: 'left',
-                                                ml: 1
-                                            }}>Metdata</Typography>
-                                        </Grid>
-                                        <Grid md={6}>
-                                            {
-                                                showMetadataInput ?
-                                                    <TextField
-                                                        fullWidth
-                                                        value={metadata}
-                                                        onChange={e => {
-                                                            setMetadata(e.target.value)
-                                                        }}
-                                                    />
-                                                    :
-                                                    <>
-                                                        <Typography sx={{
-                                                            fontSize: 18,
-                                                            textAlign: 'left',
-                                                            fontWeight: 'bold',
-                                                            ml: 2
-                                                        }}>
-                                                            {data?.info?.metadata || '-'}
-                                                        </Typography>
-                                                        <Typography sx={{
-                                                            ml: 2,
-                                                            textAlign: 'left'
-                                                        }}>
-                                                            Note: Only admin can be update metadata.
-                                                        </Typography>
-                                                    </>
-                                            }
-
-                                        </Grid>
-                                        <Grid sx={{ textAlign: 'left', ml: 1 }} md={2}>
-                                            {
-                                                showMetadataInput ?
-                                                    updateMetadataRes?.status === 'pending' ?
-                                                        <CircularProgress /> :
-                                                        <Box>
-                                                            <Tooltip title={'Update'} arrow>
-                                                                <IconButton
-
-                                                                    sx={{ border: '1px solid' }}
-                                                                    onClick={
-                                                                        () => UpdateMetadata()
-                                                                    }
-                                                                    color="primary">
-                                                                    <CheckIcon
-                                                                        sx={{ fontSize: 32 }}
-                                                                    />
-                                                                </IconButton>
-                                                            </Tooltip>
-
-                                                            <Tooltip title={'Cancel'} arrow>
-                                                                <IconButton
-                                                                    onClick={
-                                                                        () => setShowMetadataInput(false)
-                                                                    }
-                                                                    color="error">
-                                                                    <CancelIcon
-                                                                        sx={{ fontSize: 32 }}
-                                                                    />
-                                                                </IconButton>
-                                                            </Tooltip>
-
-                                                        </Box> :
-                                                    isExistInGroup() ?
-                                                        <Tooltip title={'Update'} arrow>
-                                                            <EditIcon color='primary' onClick={
-                                                                () => {
-                                                                    setMetadata(data?.info?.metadata)
-                                                                    setShowMetadataInput(!showMetadataInput)
-                                                                }
-                                                            } />
-                                                        </Tooltip>
-                                                        : null
-
-
-                                            }
-
-                                        </Grid>
+                                    <Grid sx={{ ml: 3 }} md={2}>
+                                        <LabelText text='ID' />
+                                        <LabelValue
+                                        toolTip={data?.info?.id}
+                                        text={data?.info?.id} />
                                     </Grid>
-                                    <br />
-                                    <Grid container>
-                                        <Grid md={2}>
-                                            <Typography sx={{
-                                                fontSize: 18,
-                                                textAlign: 'left',
-                                                ml: 1
-                                            }}>Version</Typography>
-                                        </Grid>
-                                        <Grid md={10}>
-                                            <Typography sx={{
-                                                fontSize: 18,
-                                                textAlign: 'left',
-                                                fontWeight: 'bold',
-                                                ml: 2
-                                            }}>{data?.info?.version || '-'}</Typography>
-                                        </Grid>
+                                    <Grid md={2}>
+                                        <LabelText text='Total Weight' />
+                                        <LabelValue 
+                                        toolTip={data?.info?.total_weight}
+                                        text={data?.info?.total_weight} />
                                     </Grid>
-                                    <Grid container>
-                                        <Grid md={2}>
-                                            <Typography sx={{
-                                                fontSize: 18,
-                                                textAlign: 'left',
-                                                ml: 1
-                                            }}>Weight</Typography>
-                                        </Grid>
-                                        <Grid md={10}>
-                                            <Typography sx={{
-                                                fontSize: 18,
-                                                textAlign: 'left',
-                                                fontWeight: 'bold',
-                                                ml: 2
-                                            }}>{data?.info?.total_weight || '-'}</Typography>
-                                        </Grid>
+                                    <Grid md={2}>
+                                        <LabelText text='Created At' />
+                                        <LabelValue
+                                            toolTip={getLocalTime(data?.info?.created_at)}
+                                            text={getFormatDate(data?.info?.created_at)} />
+
                                     </Grid>
-
-                                </Box> : null
-                        }
-
-                    </Grid>
+                                </Grid>
+                            </Box> : null
+                    }
                 </Grid>
             </Paper>
         </Box>

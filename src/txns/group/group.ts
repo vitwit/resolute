@@ -203,7 +203,6 @@ export function CreateGroupWithPolicy(
       return obj;
     }
   } catch (error) {
-    console.log("Error while creating the obj -- ", error);
     throw error;
   }
 }
