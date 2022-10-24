@@ -38,9 +38,14 @@ function a11yProps(index: number) {
   };
 }
 
+interface TypeGroupTabItem {
+  title: string;
+  disabled: boolean;
+}
+
 interface GroupTabinterface {
   handleTabChange: (newValue: number) => number;
-  tabs: Array<[]>;
+  tabs: TypeGroupTabItem[];
 }
 
 export default function GroupTab({ handleTabChange, tabs }: GroupTabinterface) {
@@ -54,17 +59,14 @@ export default function GroupTab({ handleTabChange, tabs }: GroupTabinterface) {
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="groups tabs"
-        >
+        <Tabs value={value} onChange={handleChange} aria-label="groups tabs">
           {tabs.map((t, index) => (
             <Tab
               sx={{
                 padding: 2,
               }}
-              label={t}
+              label={t.title}
+              disabled={t.disabled}
               key={index}
               {...a11yProps(index)}
             />

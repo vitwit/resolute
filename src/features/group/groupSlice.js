@@ -58,14 +58,23 @@ const initialState = {
   members: {
     data: [],
   },
-  groupInfo: {},
-  groupMembers: {},
+  groupInfo: {
+    status: "idle",
+    data: {},
+  },
+  groupMembers: {
+    status: "idle",
+    members: [],
+    pagination: {},
+  },
   groupPolicies: {},
   groupProposalRes: {},
   proposals: {},
   voteRes: {},
   executeRes: {},
-  updateGroupRes: {},
+  updateGroupRes: {
+    status: "idle",
+  },
   leaveGroupRes: {},
   proposalVotes: {
     data: [],
@@ -996,9 +1005,8 @@ export const groupSlice = createSlice({
         state.groupInfo.status = `pending`;
       })
       .addCase(getGroupById.fulfilled, (state, action) => {
-        console.log("fffffffff", action.payload);
         state.groupInfo.status = "idle";
-        state.groupInfo.data = action.payload;
+        state.groupInfo.data = action.payload?.info || {};
       })
       .addCase(getGroupById.rejected, (state, _) => {
         state.groupInfo.status = `rejected`;
@@ -1010,7 +1018,8 @@ export const groupSlice = createSlice({
       })
       .addCase(getGroupMembersById.fulfilled, (state, action) => {
         state.groupMembers.status = "idle";
-        state.groupMembers.data = action.payload;
+        state.groupMembers.members = action.payload?.members || [];
+        state.groupMembers.pagination = action.payload?.pagination || {};
       })
       .addCase(getGroupMembersById.rejected, (state, _) => {
         state.groupMembers.status = `rejected`;
