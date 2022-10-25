@@ -58,7 +58,7 @@ export default function GroupCard({ group }: GroupCardProps) {
       >
         <Typography
           gutterBottom
-          variant="h5"
+          variant="h6"
           color="text.primary"
           fontWeight={500}
         >

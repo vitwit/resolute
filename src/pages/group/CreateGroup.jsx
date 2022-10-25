@@ -71,7 +71,7 @@ export default function CreateGroupPage() {
       return time;
     };
 
-    if (data.policyMetadata) {
+    if (data?.policyMetadata) {
       dataObj["policyData"] = {
         ...data.policyMetadata,
         minExecPeriod: getMinExecPeriod(data.policyMetadata),
@@ -79,7 +79,7 @@ export default function CreateGroupPage() {
       };
     }
 
-    if (dataObj.policyData.decisionPolicy === "percentage") {
+    if (dataObj?.policyData?.decisionPolicy === "percentage") {
       dataObj.policyData.percentage = Number(dataObj.policyData.percentage) / 100.0
     }
 
@@ -131,6 +131,7 @@ export default function CreateGroupPage() {
                       required
                       label="Group Metadata"
                       multiline
+                      size="small"
                       name="Group Metadata"
                       fullWidth
                     />
@@ -244,6 +245,7 @@ export default function CreateGroupPage() {
                       watch={watch}
                       control={control}
                       members={getValues("members")}
+                      showRemoveButton={true}
                     />
                   </fieldset>
                 )) ||

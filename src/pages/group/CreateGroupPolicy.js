@@ -19,33 +19,34 @@ function CreateGroupPolicy({
   control,
   register,
   watch,
-  fields,
   errors,
   setValue,
   handleCancelPolicy,
   members,
+  showRemoveButton,
 }) {
-  const totalWeight = members.reduce(
-    (initial, weight) => initial + Number(weight.weight),
-    0
-  );
+  const totalWeight =
+    members.reduce((initial, weight) => initial + Number(weight.weight), 0) ||
+    0;
 
   const [threshold, setThreshold] = useState("threshold");
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <Button
-          size="small"
-          onClick={() => handleCancelPolicy()}
-          sx={{ marginLeft: "auto", textTransform: "none" }}
-          endIcon={<CloseIcon />}
-          variant="outlined"
-          color="error"
-        >
-          Remove
-        </Button>
-      </Box>
+      {showRemoveButton ? (
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Button
+            size="small"
+            onClick={() => handleCancelPolicy()}
+            sx={{ marginLeft: "auto", textTransform: "none" }}
+            endIcon={<CloseIcon />}
+            variant="outlined"
+            color="error"
+          >
+            Remove
+          </Button>
+        </Box>
+      ) : null}
 
       <Box
         sx={{

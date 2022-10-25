@@ -11,7 +11,7 @@ export function CreateGroupForm({ fields, control, append, remove }) {
           {fields.map((item, index) => {
             return (
               <Grid key={item?.id} container columnSpacing={{ md: 2, xs: 2 }}>
-                <Grid item md={4} sx={6}>
+                <Grid item md={4} xs={4.5}>
                   <Controller
                     name={`members.${index}.address`}
                     control={control}
@@ -28,7 +28,7 @@ export function CreateGroupForm({ fields, control, append, remove }) {
                     )}
                   />
                 </Grid>
-                <Grid item md={1.5} xs={4}>
+                <Grid item md={1.5} xs={2}>
                   <Controller
                     name={`members.${index}.weight`}
                     control={control}
@@ -49,7 +49,7 @@ export function CreateGroupForm({ fields, control, append, remove }) {
                     )}
                   />
                 </Grid>
-                <Grid item md={5} xs={6}>
+                <Grid item md={5} xs={4.5}>
                   <Controller
                     name={`members.${index}.metadata`}
                     control={control}
@@ -67,7 +67,7 @@ export function CreateGroupForm({ fields, control, append, remove }) {
                     )}
                   />
                 </Grid>
-                <Grid sx={{ display: "flex" }} item container md={1.5} xs={2}>
+                <Grid sx={{ display: "flex" }} item container md={1.5} xs={1}>
                   <IconButton onClick={() => remove(index)} color="error">
                     <Close />
                   </IconButton>

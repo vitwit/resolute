@@ -211,38 +211,47 @@ function DashboardContent(props) {
               <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
                 <Routes>
                   <Route path="/" element={<Overview />} />
-                  <Route
-                    path="/authz"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Authz />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/feegrant"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Feegrant />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/feegrant/new"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <NewFeegrant />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/authz/new"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <NewAuthz />
-                      </Suspense>
-                    }
-                  ></Route>
+
+                  {chainInfo?.config?.enableFeegrant ? (
+                    <>
+                      <Route
+                        path="/feegrant"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <Feegrant />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="/feegrant/new"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <NewFeegrant />
+                          </Suspense>
+                        }
+                      ></Route>
+                    </>
+                  ) : null}
+                  {chainInfo?.config?.enableAuthz ? (
+                    <>
+                      <Route
+                        path="/authz"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <Authz />
+                          </Suspense>
+                        }
+                      />
+                      <Route
+                        path="/authz/new"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <NewAuthz />
+                          </Suspense>
+                        }
+                      ></Route>
+                    </>
+                  ) : null}
                   <Route
                     path="/slashing"
                     element={
@@ -322,54 +331,58 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
-                  <Route
-                    path="/group"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <GroupPage />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/groups/:id"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Group />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/groups/proposals/:id"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Proposal />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/groups/:id/policies/:policyId"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Policy />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/group/:id/policies/:policyAddress/proposals"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <CreateProposal />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/group/create-group"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <CreateGroupPage />
-                      </Suspense>
-                    }
-                  ></Route>
+                  {chainInfo?.config?.enableGroup ? (
+                    <>
+                      <Route
+                        path="/group"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <GroupPage />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="/groups/:id"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <Group />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="/groups/proposals/:id"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <Proposal />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="/groups/:id/policies/:policyId"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <Policy />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="/group/:id/policies/:policyAddress/proposals"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <CreateProposal />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="/group/create-group"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <CreateGroupPage />
+                          </Suspense>
+                        }
+                      ></Route>
+                    </>
+                  ) : null}
                   <Route path="*" element={<Page404 />}></Route>
                 </Routes>
               </Container>

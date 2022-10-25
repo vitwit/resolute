@@ -519,8 +519,6 @@ export const txCreateGroup = createAsyncThunk(
     try {
       if (data?.members?.length > 0) {
         if (data?.policyData && Object.keys(data?.policyData)?.length) {
-          console.log(data);
-
           msg = CreateGroupWithPolicy(
             data.admin,
             data.groupMetaData,
@@ -535,9 +533,6 @@ export const txCreateGroup = createAsyncThunk(
       } else {
         msg = CreateGroup(data.admin, data.groupMetaData, []);
       }
-
-      console.log("msg--", msg);
-      console.log("admin--", data);
 
       const result = await signAndBroadcastGroupMsg(
         data.admin,
@@ -641,8 +636,6 @@ export const txAddGroupPolicy = createAsyncThunk(
     console.log({ data });
     try {
       msg = CreateGroupPolicy(data.admin, data.groupId, data.policyMetadata);
-
-      console.log({ msg });
 
       const result = await signAndBroadcastAddGroupPolicy(
         data.admin,

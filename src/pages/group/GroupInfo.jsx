@@ -47,6 +47,11 @@ const GroupInfo = (props) => {
   const membersInfo = useSelector((state) => state.group.groupMembers);
   const { data, status } = groupInfo;
 
+  const canLeaveGroup = membersInfo?.members.some((element) => {
+    if (element?.member?.address === wallet?.address) return true;
+    return false;
+  });
+
   const leaveGroupRes = useSelector((state) => state.group.leaveGroupRes);
   const updateAdminRes = useSelector(
     (state) => state.group.updateGroupAdminRes
@@ -128,6 +133,17 @@ const GroupInfo = (props) => {
 
   return (
     <Box>
+      <Typography
+        variant="h6"
+        color="text.primary"
+        fontWeight={600}
+        gutterBottom
+        sx={{
+          textAlign: "left"
+        }}
+      >
+        Group Information
+      </Typography>
       <Paper elevation={0} sx={{ p: 2 }}>
         {status === "pending" ? <CircularProgress /> : null}
 
@@ -137,20 +153,22 @@ const GroupInfo = (props) => {
               p: 2,
             }}
           >
-            <Button
-              color="error"
-              size="small"
-              onClick={() => handleLeaveGroup()}
-              variant={"outlined"}
-              sx={{
-                textTransform: "none",
-                float: "right",
-              }}
-            >
-              {leaveGroupRes?.status === "pending"
-                ? "Loading..."
-                : "Leave Group"}
-            </Button>
+            {canLeaveGroup ? (
+              <Button
+                color="error"
+                size="small"
+                onClick={() => handleLeaveGroup()}
+                variant={"outlined"}
+                sx={{
+                  textTransform: "none",
+                  float: "right",
+                }}
+              >
+                {leaveGroupRes?.status === "pending"
+                  ? "Loading..."
+                  : "Leave Group"}
+              </Button>
+            ) : null}
             {!showMetadataInput ? (
               <>
                 <Typography
@@ -361,7 +379,7 @@ const GroupInfo = (props) => {
                     color="text.primary"
                     fontWeight={500}
                   >
-                    {membersInfo?.data?.members?.length || 0}
+                    {membersInfo?.members?.length || 0}
                   </Typography>
                 </Box>
               </Grid>

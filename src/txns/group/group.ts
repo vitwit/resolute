@@ -247,13 +247,14 @@ export function UpdateGroupMetadata(admin: any, groupId: any, metadata: any) {
 }
 
 export function CreateGroupPolicy(
-  admin: any,
-  groupId: any,
+  admin: string,
+  groupId: string,
   policyMetadata: any
 ) {
   const obj = {
     typeUrl: msgAddGroupPolicy,
     value: MsgCreateGroupPolicy.fromPartial({
+      metadata: policyMetadata?.metadata || "",
       admin: admin,
       groupId,
       decisionPolicy: {

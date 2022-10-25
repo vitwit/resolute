@@ -1,5 +1,5 @@
 // add mainnet here
-const mainNets = [
+const mainNets: Network[] = [
   {
     showAirdrop: false,
     logos: {
@@ -27,6 +27,9 @@ const mainNets = [
         bech32PrefixConsAddr: `cosmosgvalcons`,
         bech32PrefixConsPub: `cosmosvalconspub`,
       },
+      enableAuthz: true,
+      enableFeegrant: true,
+      enableGroup: true,
     },
   },
   {
@@ -81,6 +84,9 @@ const mainNets = [
       coinType: 118,
       gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
       walletUrlForStaking: "https://resolute.vitwit.com/staking",
+      enableAuthz: true,
+      enableFeegrant: false,
+      enableGroup: false,
     },
   },
   {
@@ -110,6 +116,9 @@ const mainNets = [
         bech32PrefixConsAddr: `regenvalcons`,
         bech32PrefixConsPub: `regenvalconspub`,
       },
+      enableAuthz: true,
+      enableFeegrant: false,
+      enableGroup: false,
     },
   },
   {
@@ -139,6 +148,9 @@ const mainNets = [
         bech32PrefixConsAddr: `akashvalcons`,
         bech32PrefixConsPub: `akashvalconspub`,
       },
+      enableAuthz: true,
+      enableFeegrant: false,
+      enableGroup: false,
     },
   },
   {
@@ -168,6 +180,9 @@ const mainNets = [
         bech32PrefixConsAddr: `osmosisvalcons`,
         bech32PrefixConsPub: `osmosisvalconspub`,
       },
+      enableAuthz: true,
+      enableFeegrant: false,
+      enableGroup: false,
     },
   },
   {
@@ -197,6 +212,9 @@ const mainNets = [
         bech32PrefixConsAddr: `junovalcons`,
         bech32PrefixConsPub: `junovalconspub`,
       },
+      enableAuthz: true,
+      enableFeegrant: false,
+      enableGroup: false,
     },
   },
   {
@@ -226,6 +244,9 @@ const mainNets = [
         bech32PrefixConsAddr: `starsvalcons`,
         bech32PrefixConsPub: `starsvalconspub`,
       },
+      enableAuthz: true,
+      enableFeegrant: false,
+      enableGroup: false,
     },
   },
 ];
@@ -288,6 +309,9 @@ export function getMainNetworks(): Network[] {
           coinType: 118,
           gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
           walletUrlForStaking: "https://airdrop.passage3d.com/staking",
+          enableAuthz: true,
+          enableFeegrant: false,
+          enableGroup: false,
         },
       },
     ];
@@ -365,6 +389,9 @@ export function getTestNetworks(): Network[] {
           coinType: 118,
           gasPriceStep: { low: 0.0, average: 0.01, high: 0.2 },
           walletUrlForStaking: "http://localhost:3000/validators",
+          enableAuthz: true,
+          enableFeegrant: true,
+          enableGroup: true,
         },
       },
     ];
