@@ -8,6 +8,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  getGroupById,
   getGroupPoliciesById,
   txUpdateGroupPolicy,
   txUpdateGroupPolicyAdmin,
@@ -17,7 +18,6 @@ import PolicyForm from "../../components/group/PolicyForm";
 import { useParams } from "react-router-dom";
 import AlertMsg from "../../components/group/AlertMsg";
 import PolicyDetails from "../../components/group/PolicyDetails";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
 function PolicyInfo() {
   const [policyObj, setPolicyObj] = useState({});
@@ -53,6 +53,7 @@ function PolicyInfo() {
   };
 
   useEffect(() => {
+    getGroup();
     getPolicies();
   }, []);
 
@@ -113,6 +114,18 @@ function PolicyInfo() {
     );
   };
 
+  const getGroup = () => {
+    dispatch(
+      getGroupById({
+        baseURL: wallet?.chainInfo?.config?.rest,
+        id: id,
+      })
+    );
+  };
+
+  const groupInfo = useSelector((state) => state.group.groupInfo);
+  const canUpdateGroup = () => groupInfo?.data?.admin === wallet?.address;
+
   const handleSubmitPolicy = (policyMetadata) => {
     const chainInfo = wallet?.chainInfo;
     dispatch(
@@ -130,16 +143,16 @@ function PolicyInfo() {
 
   return (
     <Box
-        sx={{
-            textAlign: "left"
-        }}
+      sx={{
+        textAlign: "left",
+      }}
     >
-      <Typography 
-      gutterBottom
-       variant="h5"
-        color="text.secondary"
-         fontWeight={600}
-        >
+      <Typography
+        gutterBottom
+        variant="h6"
+        color="text.primary"
+        fontWeight={600}
+      >
         Policy Information
       </Typography>
       {groupPoliceis?.status === "pending" ? (
@@ -153,20 +166,25 @@ function PolicyInfo() {
 
       {groupPoliceis?.status === "idle" && policyObj?.address ? (
         <Paper variant="outlined" sx={{ p: 4 }} elevation={0}>
+          {
+            canUpdateGroup() ?
           <Button
             variant="contained"
             onClick={() => setEditPolicyForm(true)}
-            sx={{ 
-                float: "right", 
-                textTransform: "none"
+            sx={{
+              float: "right",
+              textTransform: "none",
             }}
             size="small"
             disableElevation
           >
             Update policy
           </Button>
+          :
+          null
+}
 
-          {isEditPolicyForm ? (
+          {isEditPolicyForm && canUpdateGroup() ? (
             <PolicyForm
               policyObj={policyObj}
               handlePolicy={handleSubmitPolicy}
@@ -177,6 +195,7 @@ function PolicyInfo() {
               handleUpdateMetadata={handlePolicyMetadata}
               handleUpdateAdmin={handleUpdateAdmin}
               policyObj={policyObj}
+              canUpdateGroup={canUpdateGroup()}
             />
           )}
         </Paper>

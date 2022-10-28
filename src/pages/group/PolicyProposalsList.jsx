@@ -1,14 +1,11 @@
+import React, { useState, useEffect } from "react";
 import {
-  Alert,
-  Card,
-  CircularProgress,
   Button,
+  CircularProgress,
   Grid,
   Paper,
   Typography,
 } from "@mui/material";
-import { Box } from "@mui/system";
-import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import AlertMsg from "../../components/group/AlertMsg";
@@ -18,17 +15,15 @@ import {
   txGroupProposalExecute,
   txGroupProposalVote,
 } from "../../features/group/groupSlice";
-import { proposalStatus } from "../../utils/util";
+import { Box } from "@mui/system";
 
-function PolicyProposalsList() {
+function PolicyProposalsList(props) {
   const dispatch = useDispatch();
   const params = useParams();
 
   const proposals = useSelector((state) => state.group?.proposals);
-  console.log("p----------", proposals);
   const wallet = useSelector((state) => state.wallet);
   const [voteOpen, setVoteOpen] = useState(false);
-  const voteRes = useSelector((state) => state.group?.voteRes);
   const createProposalRes = useSelector(
     (state) => state.group?.groupProposalRes
   );
@@ -70,7 +65,6 @@ function PolicyProposalsList() {
         feeAmount: chainInfo?.config?.gasPriceStep?.average,
       })
     );
-    console.log("vote objj", voteObj);
   };
 
   const onExecute = (proposalId) => {
@@ -90,15 +84,44 @@ function PolicyProposalsList() {
   };
 
   return (
-    <Paper sx={{ borderRadius: 2, mt: 3 }} variant="outlined">
-      <Typography
+    <Paper
+      sx={{
+        mt: 3,
+        p: 2,
+        textAlign: "left",
+      }}
+      variant="outlined"
+      elevation={0}
+    >
+      <Box
+        component="div"
         sx={{
-          background: "#FFF",
-          textAlign: "left",
+          mt: 2,
+          mb: 1,
+          textAlign: "right",
         }}
-        p={1.5}
+      >
+        <Button
+          variant="contained"
+          sx={{
+            textTransform: "none",
+          }}
+          disableElevation
+          onClick={() => {
+            navigate(
+              `/group/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
+            );
+          }}
+        >
+          Create Proposal
+        </Button>
+      </Box>
+
+      <Typography
         gutterBottom
-        variant="h5"
+        variant="h6"
+        color="text.primary"
+        fontWeight={600}
       >
         All Proposals
       </Typography>
@@ -111,15 +134,9 @@ function PolicyProposalsList() {
         <AlertMsg type="error" text="Proposals not found" />
       ) : null}
 
-      <Grid
-        component={"div"}
-        rowSpacing={{ md: 2 }}
-        columnSpacing={{ md: 2 }}
-        container
-        p={2}
-      >
-        {proposals?.data?.proposals?.map((p) => (
-          <Grid item md={6}>
+      <Grid spacing={2} container>
+        {proposals?.data?.proposals?.map((p, index) => (
+          <Grid item md={6} xs={12} key={index}>
             <ProposalCard proposal={p} />
           </Grid>
         ))}

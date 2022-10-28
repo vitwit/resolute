@@ -12,7 +12,11 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { getFormatDate, getLocalTime } from "../../utils/datetime";
 import CheckIcon from "@mui/icons-material/Check";
 import { useSelector } from "react-redux";
-import { ThresholdDecisionPolicy } from "../../utils/util";
+import {
+  getTypeURLName,
+  shortenAddress,
+  ThresholdDecisionPolicy,
+} from "../../utils/util";
 
 interface GridItemProps {
   label: string;
@@ -20,6 +24,7 @@ interface GridItemProps {
   isEditMode?: boolean;
   handleUpdate: any;
   disabledSubmit?: any;
+  canEdit?: boolean;
 }
 
 interface TextProps {
@@ -28,12 +33,28 @@ interface TextProps {
 }
 
 const LabelText = ({ text }: TextProps) => (
-  <Typography fontSize={17} color={"GrayText"} textAlign={"left"}>
+  <Typography
+    textAlign={"left"}
+    variant="body1"
+    color="text.secondary"
+    fontWeight={500}
+  >
     {text}
   </Typography>
 );
 
-const LabelValue = ({ text, toolTip }: TextProps) => (
+const LabelValue = ({ text }: TextProps) => (
+  <Typography
+    variant="body1"
+    color="text.primary"
+    fontWeight={500}
+    gutterBottom
+  >
+    {text}
+  </Typography>
+);
+
+const LabelWithTooltip = ({ text, toolTip }: TextProps) => (
   <Tooltip arrow placement="top-start" followCursor title={toolTip || ""}>
     <Typography fontSize={18} textAlign={"left"}>
       {text}{" "}
@@ -47,12 +68,18 @@ const GridItemEdit = ({
   isEditMode,
   handleUpdate,
   disabledSubmit,
+  canEdit,
 }: GridItemProps) => {
   const [isEdit, setIsEdit] = useState(isEditMode);
 
   return (
     <>
-      <Typography fontSize={19} color={"GrayText"} textAlign={"left"}>
+      <Typography
+        variant="body1"
+        color={"text.secondary"}
+        fontWeight={500}
+        textAlign={"left"}
+      >
         {label}
       </Typography>
       {isEdit ? (
@@ -65,11 +92,18 @@ const GridItemEdit = ({
         />
       ) : (
         <Box display={"flex"}>
-          <Typography fontSize={19} textAlign={"left"} fontWeight={"bold"}>
-            {text}
-          </Typography>{" "}
-          &nbsp;&nbsp;&nbsp;
-          <EditIcon onClick={() => setIsEdit(true)} color="primary" />
+          <Typography
+            variant="body1"
+            textAlign={"left"}
+            fontWeight={600}
+            gutterBottom
+          >
+            {shortenAddress(text, 24)}
+          </Typography>
+          &nbsp;&nbsp;
+          {canEdit ? (
+            <EditIcon onClick={() => setIsEdit(true)} color="primary" />
+          ) : null}
         </Box>
       )}
     </>
@@ -96,27 +130,27 @@ const EditTextField = ({
   const [field, setField] = useState(value);
 
   return (
-    <Box sx={{ display: "flex", width: "80%" }}>
+    <Box sx={{ display: "flex" }}>
       <TextField
         placeholder={placeholder}
         multiline
+        fullWidth
         onChange={(e) => setField(e.target.value)}
         value={field}
-        fullWidth
       />
 
       <IconButton
         disabled={disableSubmit}
         onClick={() => handleUpdate(field)}
         color="primary"
-        sx={{ border: "1px solid", borderRadius: 2, ml: 2 }}
+        sx={{ ml: 1 }}
       >
         <CheckIcon color="primary" />
       </IconButton>
       <IconButton
         color="error"
         onClick={() => hideShowEdit()}
-        sx={{ border: "1px solid", borderRadius: 2, ml: 2 }}
+        sx={{ ml: 1, mr: 1 }}
       >
         <CancelIcon color="error" />
       </IconButton>
@@ -128,12 +162,14 @@ interface PolicyDetailsProps {
   policyObj: any;
   handleUpdateAdmin: any;
   handleUpdateMetadata: any;
+  canUpdateGroup: boolean;
 }
 
 function PolicyDetails({
   policyObj,
   handleUpdateMetadata,
   handleUpdateAdmin,
+  canUpdateGroup,
 }: PolicyDetailsProps) {
   const [isMetaEditMode, setIsMetaEditMode] = useState(false);
   const [isAdminEdit, setIsAdminEdit] = useState(false);
@@ -161,11 +197,11 @@ function PolicyDetails({
   return (
     <Box
       sx={{
-        mt: 3,
+        mt: 2,
       }}
     >
       <Box>
-        {isMetaEditMode ? (
+        {isMetaEditMode && canUpdateGroup ? (
           <EditTextField
             handleUpdate={handleUpdateMetadata}
             placeholder="Metadata"
@@ -183,18 +219,27 @@ function PolicyDetails({
             color="text.primary"
           >
             {policyObj?.metadata || "-"} &nbsp;&nbsp;
-            <IconButton
-              color={"primary"}
-              onClick={() => setIsMetaEditMode(true)}
-            >
-              <EditIcon />
-            </IconButton>
+            {canUpdateGroup ? (
+              <IconButton
+                color={"primary"}
+                onClick={() => setIsMetaEditMode(true)}
+              >
+                <EditIcon />
+              </IconButton>
+            ) : null}
           </Typography>
         )}
       </Box>
 
       <Grid container>
-        <Grid item md={6} xs={12}>
+        <Grid
+          item
+          md={6}
+          xs={12}
+          sx={{
+            mt: 1,
+          }}
+        >
           <Box>
             <GridItemEdit
               handleUpdate={handleUpdateAdmin}
@@ -202,14 +247,31 @@ function PolicyDetails({
               label="Admin"
               isEditMode={isAdminEdit}
               text={policyObj?.admin}
+              canEdit={canUpdateGroup}
             />
           </Box>
         </Grid>
-        <Grid md={4}>
+        <Grid
+          item
+          md={3}
+          xs={6}
+          sx={{
+            mt: 1,
+          }}
+        >
           <LabelText text="Type" />
-          <LabelValue text={policyObj?.decision_policy["@type"]} />
+          <LabelValue
+            text={getTypeURLName(policyObj?.decision_policy["@type"])}
+          />
         </Grid>
-        <Grid md={2}>
+        <Grid
+          item
+          md={3}
+          xs={6}
+          sx={{
+            mt: 1,
+          }}
+        >
           {policyObj?.decision_policy["@type"] === ThresholdDecisionPolicy ? (
             <>
               <LabelText text="Threshold" />
@@ -224,27 +286,53 @@ function PolicyDetails({
             </>
           )}
         </Grid>
-      </Grid>
-      <Grid mt={2} container>
-        <Grid md={3}>
+        <Grid
+          item
+          md={4}
+          xs={6}
+          sx={{
+            mt: 1,
+          }}
+        >
           <LabelText text="Created At" />
           <LabelValue
             text={getFormatDate(policyObj?.created_at)}
             toolTip={getLocalTime(policyObj?.created_at)}
           />
         </Grid>
-        <Grid md={2}>
+        <Grid
+          item
+          md={4}
+          xs={6}
+          sx={{
+            mt: 1,
+          }}
+        >
           <LabelText text="Group ID" />
           <LabelValue
             text={policyObj?.group_id}
             toolTip={policyObj?.group_id}
           />
         </Grid>
-        <Grid md={1}>
+        <Grid
+          item
+          md={4}
+          xs={6}
+          sx={{
+            mt: 1,
+          }}
+        >
           <LabelText text="Version" />
           <LabelValue text={policyObj?.version} toolTip={policyObj?.version} />
         </Grid>
-        <Grid md={2}>
+        <Grid
+          item
+          md={4}
+          xs={6}
+          sx={{
+            mt: 1,
+          }}
+        >
           <LabelText text="Voting Period" />
           <LabelValue
             text={
@@ -257,7 +345,14 @@ function PolicyDetails({
             ).toFixed(2)}
           />
         </Grid>
-        <Grid md={3}>
+        <Grid
+          item
+          md={4}
+          xs={6}
+          sx={{
+            mt: 1,
+          }}
+        >
           <LabelText text="Min Execution Period" />
           <LabelValue
             text={
