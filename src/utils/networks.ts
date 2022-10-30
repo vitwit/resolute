@@ -228,6 +228,35 @@ const mainNets = [
       },
     },
   },
+  {
+    logos: {
+      toolbar:
+        "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis.svg",
+    },
+    showAirdrop: false,
+    experimental: false,
+    isTestnet: false,
+    explorerTxHashEndpoint: "https://www.mintscan.io/evmos/txs/",
+    config: {
+      chainId: "evmos_9001-2",
+      chainName: "Evmos",
+      rest: "https://api.evmos.interbloc.org",
+      rpc: "https://rpc-evmos-ia.cosmosia.notional.ventures/",
+      currencies: [
+        { coinDenom: "EVMOS", coinMinimalDenom: "aevmos", coinDecimals: 18 },
+      ],
+      gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
+      bech32Config: {
+        bech32PrefixAccAddr: `evmos`,
+        bech32PrefixAccPub: `evmospub`,
+        bech32PrefixValAddr: `evmosvaloper`,
+        bech32PrefixValPub: `evmosvaloperpub`,
+        bech32PrefixConsAddr: `evmosvalcons`,
+        bech32PrefixConsPub: `evmosvalconspub`,
+      },
+    },
+  },
 ];
 
 // add testnet here
