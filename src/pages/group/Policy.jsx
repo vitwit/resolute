@@ -19,7 +19,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import ProposalSendForm from "./ProposalSendForm";
 import ProposalDelegateForm from "./ProposalDelegateForm";
 import ProposalRedelegateForm from "./ProposalRedelegateForm";
@@ -44,19 +43,11 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import DialogVote from "../../components/group/DialogVote";
 import EastIcon from "@mui/icons-material/East";
-import PolicyForm from "../../components/group/PolicyForm";
-import EditIcon from "@mui/icons-material/Edit";
-import CancelIcon from "@mui/icons-material/Cancel";
 import PolicyInfo from "./PolicyInfo";
 import PolicyProposalsList from "./PolicyProposalsList";
-import AddIcon from "@mui/icons-material/Add";
 
 const DELEGATE_MSG = `/cosmos.staking.v1beta1.MsgDelegate`;
 const SEND_MSG = `/cosmos.bank.v1beta1.MsgSend`;
-
-const voteStatus = {
-  STATUS_CLOSED: "Closed",
-};
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -105,13 +96,11 @@ const SendMsgComponent = ({ msg, index, deleteMsg }) => {
 
 const CreateProposal = ({ policyInfo }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const params = useParams();
   const wallet = useSelector((state) => state.wallet);
   const [showMsgFrom, setShowMsgForm] = useState(true);
   const denom =
     wallet?.chainInfo?.config?.currencies?.[0].coinMinimalDenom || "-";
-  console.log("wallet", wallet);
   const proposerObj = {
     name: "proposer",
     placeholder: "Enter Proposer Address",
@@ -192,7 +181,6 @@ const CreateProposal = ({ policyInfo }) => {
 
   return (
     <Box>
-
       {showCreateProposal ? (
         <Card sx={{ width: "100%", p: 3 }}>
           <Box sx={{ width: "50%", m: "0 auto" }}>
@@ -731,9 +719,8 @@ function Policy() {
   return (
     <Box>
       <PolicyInfo />
-      <CreateProposal policyInfo={policyInfo} 
-      />
-      <PolicyProposalsList policyInfo={policyInfo}/>
+      <CreateProposal policyInfo={policyInfo} />
+      <PolicyProposalsList policyInfo={policyInfo} />
     </Box>
   );
 }

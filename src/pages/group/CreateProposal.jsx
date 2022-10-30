@@ -1,22 +1,16 @@
-import { Button, Paper, TextField, Typography } from '@mui/material'
-import { Box } from '@mui/system';
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { useForm, Controller, FormProvider } from "react-hook-form";
-
-import PagePolicyTx from './PagePolicyTx';
-import { txCreateGroupProposal } from '../../features/group/groupSlice';
-import TxTypeComponent from '../../components/group/TxTypeComponent';
-import AddManualTx from './AddManualTx';
-import AddFileTx from './AddFileTx';
+import { Paper, Typography } from "@mui/material";
+import { Box } from "@mui/system";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import AddManualTx from "./AddManualTx";
 
 function CreateProposal() {
   const [type, setType] = React.useState(null);
   const { policyAddress } = useParams();
   const dispatch = useDispatch();
 
-  const wallet = useSelector(state => state.wallet);
+  const wallet = useSelector((state) => state.wallet);
   const chainInfo = wallet?.chainInfo;
 
   const onSubmit = (data) => {
@@ -24,26 +18,41 @@ function CreateProposal() {
     data.messages = data.msgs;
     data.proposers = [wallet?.address];
     data.admin = wallet?.address;
-    data.chainId = wallet?.chainInfo?.config?.chainId
+    data.chainId = wallet?.chainInfo?.config?.chainId;
     data.rpc = wallet?.chainInfo?.config?.rpc;
-    data.denom = wallet?.chainInfo?.config?.currencies?.[0]?.coinMinimalDenom || ''
+    data.denom =
+      wallet?.chainInfo?.config?.currencies?.[0]?.coinMinimalDenom || "";
     data.feeAmount = wallet?.chainInfo?.config?.gasPriceStep?.average || 0;
-    console.log('fee amount', data)
+    console.log("fee amount", data);
     // dispatch(txCreateGroupProposal(data));
-  }
+  };
 
   return (
     <>
-      <Typography gutterBottom mt={4} p={1}
-        textAlign={'left'} variant='h6'>
-        Create Policy Proposal </Typography>
+      <Typography
+        gutterBottom
+        mt={4}
+        p={1}
+        fontWeight={600}
+        textAlign={"left"}
+        variant="h6"
+      >
+        Create Proposal
+      </Typography>
 
-      <Paper variant='outlined'>
-        <Box sx={{ ml: 5, mt: 3 }}>
-          <Typography textAlign={'left'}>Proposer
-            <br />
-            <strong>{wallet?.address}</strong></Typography>
-        </Box>
+      <Paper
+        variant="outlined"
+        sx={{
+          p: 3,
+        }}
+      >
+        {/* <Box sx={{ p:2, mt: 2 }}> */}
+        <Typography textAlign={"left"} variant="body1">
+          Proposer
+          <br />
+          <strong>{wallet?.address}</strong>
+        </Typography>
+        {/* </Box> */}
 
         {/* <Box>
           <TxTypeComponent handleType={(type) => {
@@ -51,20 +60,19 @@ function CreateProposal() {
           }} />
         </Box> */}
 
-        <Box ml={5} mt={2}>
+        <Box>
           {/* {type === 'single' &&  */}
           <AddManualTx
             address={policyAddress}
             chainInfo={chainInfo}
-            handleCancel={()=>setType(null)}
-          /> 
-           {/* || null} */}
+            handleCancel={() => setType(null)}
+          />
+          {/* || null} */}
           {/* {type === 'multiple' && <AddFileTx /> || null} */}
         </Box>
       </Paper>
     </>
-
-  )
+  );
 }
 
-export default CreateProposal
+export default CreateProposal;

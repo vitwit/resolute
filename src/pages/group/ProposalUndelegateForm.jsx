@@ -1,25 +1,29 @@
-import { Button, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material'
-import { Box } from '@mui/system'
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { getDelegations, getValidators } from '../../features/staking/stakeSlice';
+import {
+  Button,
+  FormControl,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import { Box } from "@mui/system";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getDelegations } from "../../features/staking/stakeSlice";
 
-function ProposalUnDelegateForm({ chainInfo,
-  handleMsgChange,
-  type,
-  address }) {
+function ProposalUnDelegateForm({ chainInfo, handleMsgChange, type, address }) {
   var [data, setData] = useState([]);
   const dispatch = useDispatch();
 
-  const denom = chainInfo?.config?.currencies?.[0]?.coinDenom || ''
+  const denom = chainInfo?.config?.currencies?.[0]?.coinDenom || "";
   const [obj, setObj] = useState({
     typeUrl: type,
-    delegatorAddress: address
+    delegatorAddress: address,
   });
 
   var validators = useSelector((state) => state.staking.validators);
   var delegatorVals = useSelector((state) => state.multisig.delegatorVals);
-  console.log('dddddddddd', delegatorVals)
   validators = validators?.active || {};
 
   useEffect(() => {
@@ -29,7 +33,7 @@ function ProposalUnDelegateForm({ chainInfo,
         address: address,
       })
     );
-  }, [])
+  }, []);
 
   useEffect(() => {
     data = [];
@@ -45,10 +49,10 @@ function ProposalUnDelegateForm({ chainInfo,
     setData([...data]);
   }, [validators]);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     obj[e.target.name] = e.target.value;
     setObj({ ...obj });
-  }
+  };
 
   const onSubmit = () => {
     handleMsgChange(obj);
@@ -94,17 +98,16 @@ function ProposalUnDelegateForm({ chainInfo,
           }}
           InputProps={{
             endAdornment: (
-              <InputAdornment position="start">
-                {denom}
-              </InputAdornment>
+              <InputAdornment position="start">{denom}</InputAdornment>
             ),
           }}
         />
       </FormControl>
-      <Button sx={{ m: 2 }} variant='contained' onClick={onSubmit}>Add</Button>
-
+      <Button sx={{ m: 2 }} variant="contained" onClick={onSubmit}>
+        Add
+      </Button>
     </Box>
-  )
+  );
 }
 
-export default ProposalUnDelegateForm
+export default ProposalUnDelegateForm;

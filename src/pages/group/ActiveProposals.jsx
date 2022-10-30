@@ -1,7 +1,6 @@
 import { Box, CircularProgress, Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import AlertMsg from "../../components/group/AlertMsg";
 import { NoData } from "../../components/group/NoData";
 import ProposalCard from "../../components/group/ProposalCard";
 import { resetActiveProposals } from "../../features/common/commonSlice";

@@ -23,6 +23,8 @@ import AlertMsg from "../../components/group/AlertMsg";
 import { getLocalTime } from "../../utils/datetime";
 import DailogVote from "../../components/group/DialogVote";
 import { parseProposalStatus } from "../../components/group/ProposalCard";
+import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
+import { copyToClipboard } from "../../utils/clipboard";
 
 const ProposalInfo = ({ id, wallet }) => {
   const [voteOpen, setVoteOpen] = useState(false);
@@ -105,7 +107,7 @@ const ProposalInfo = ({ id, wallet }) => {
           open={voteOpen}
         />
       ) : null}
-      <Box sx={{ p: 3 }} component="div" >
+      <Box sx={{ p: 3 }} component="div">
         {proposalInfo?.status === "idle" && proposal ? (
           <>
             <Grid container>
@@ -175,7 +177,7 @@ const ProposalInfo = ({ id, wallet }) => {
                   </Button>
                 ) : null}
               </Grid>
-              <Grid item md={6} xs={12}>
+              <Grid item md={4} xs={12}>
                 <Typography
                   textAlign={"left"}
                   variant="body1"
@@ -193,7 +195,7 @@ const ProposalInfo = ({ id, wallet }) => {
                 </Typography>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
                 <Typography
                   textAlign={"left"}
                   variant="body1"
@@ -211,7 +213,7 @@ const ProposalInfo = ({ id, wallet }) => {
                 </Typography>
               </Grid>
 
-              <Grid item md={6} xs={12}>
+              <Grid item md={4} xs={12}>
                 <Typography
                   textAlign={"left"}
                   variant="body1"
@@ -225,7 +227,14 @@ const ProposalInfo = ({ id, wallet }) => {
                   variant="body1"
                   gutterBottom
                 >
-                  {shortenAddress(proposal?.group_policy_address, 21)}
+                  <Chip
+                    label={shortenAddress(proposal?.group_policy_address, 21)}
+                    size="small"
+                    deleteIcon={<ContentCopyOutlined />}
+                    onDelete={() => {
+                      copyToClipboard(proposal?.group_policy_address, dispatch);
+                    }}
+                  />
                 </Typography>
               </Grid>
 
@@ -234,37 +243,41 @@ const ProposalInfo = ({ id, wallet }) => {
                   textAlign={"left"}
                   variant="body1"
                   color="text.secondary"
+                  gutterBottom
                 >
                   Proposers
                 </Typography>
-                <Box>
+                <Box
+                  sx={{
+                    textAlign: "left",
+                  }}
+                >
                   {proposal?.proposers?.map((p, index) => (
-                    <>
-                      <Typography
-                        key={index}
-                        textAlign={"left"}
-                        fontWeight={500}
-                        variant="body1"
-                        gutterBottom
-                      >
-                        {shortenAddress(p, 21)}
-                      </Typography>
-                      <br />
-                    </>
+                      <Chip
+                        label={shortenAddress(p, 21)}
+                        size="small"
+                        deleteIcon={<ContentCopyOutlined />}
+                        onDelete={() => {
+                          copyToClipboard(p, dispatch);
+                        }}
+                        sx={{
+                          mr: 1,
+                        }}
+                      />
                   ))}
                 </Box>
               </Grid>
             </Grid>
 
-            <Paper sx={{ mt: 2, p: 2, }} variant="outlined">
-              <Typography 
-              sx={{ float: "left" }}
-              variant="body1"
-              fontWeight={600}
+            <Paper sx={{ mt: 3, p: 2 }} variant="outlined">
+              <Typography
+                sx={{ float: "left" }}
+                variant="body1"
+                fontWeight={600}
               >
                 Vote Details
               </Typography>
-              <Grid spacing={2} columnSpacing={{ md: 4,xs: 2 }} container>
+              <Grid spacing={2} columnSpacing={{ md: 4, xs: 2 }} container>
                 <Grid item md={2} xs={6}>
                   <Paper sx={{ p: 1, borderColor: "blue" }} variant="outlined">
                     <Typography color={"primary"} variant="subtitle1">
@@ -325,12 +338,15 @@ const ProposalInfo = ({ id, wallet }) => {
               </Grid>
             </Paper>
 
-            <Box sx={{
+            <Box
+              sx={{
                 mt: 3,
-            }}>
-              <Typography 
-              textAlign={"left"} 
-              gutterBottom variant="h6"
+              }}
+            >
+              <Typography
+                textAlign={"left"}
+                gutterBottom
+                variant="h6"
                 fontWeight={600}
               >
                 Messages
@@ -338,29 +354,29 @@ const ProposalInfo = ({ id, wallet }) => {
 
               {proposal?.messages?.map((p) => (
                 <Box sx={{ mt: 1 }}>
-                    <Card sx={{ p: 2 }} elevation={0}>
-                  {p["@type"] === "/cosmos.bank.v1beta1.MsgSend" ? (
-                    <>
-                      <Typography sx={{ textAlign: "left" }}>
-                        <strong>Send</strong> &nbsp;
-                        {p?.amount?.[0]?.amount} &nbsp;
-                        {p?.amount?.[0]?.denom} &nbsp;
-                        <strong> to </strong> &nbsp;
-                        {p?.to_address}
-                      </Typography>
-                    </>
-                  ) : null}
-                  {p["@type"] === "/cosmos.staking.v1beta1.MsgDelegate" ? (
-                    <>
-                      <Typography sx={{ fontSize: 18, textAlign: "left" }}>
-                        <strong>Delegate</strong> &nbsp;
-                        {p?.amount?.amount} &?.[0]nbsp;
-                        {p?.amount?.denom} &nbsp;
-                        <strong> to </strong> &nbsp;
-                        {p?.validator_address}
-                      </Typography>
-                    </>
-                  ) : null}
+                  <Card sx={{ p: 2 }} elevation={0}>
+                    {p["@type"] === "/cosmos.bank.v1beta1.MsgSend" ? (
+                      <>
+                        <Typography sx={{ textAlign: "left" }}>
+                          <strong>Send</strong> &nbsp;
+                          {p?.amount?.[0]?.amount} &nbsp;
+                          {p?.amount?.[0]?.denom} &nbsp;
+                          <strong> to </strong> &nbsp;
+                          {p?.to_address}
+                        </Typography>
+                      </>
+                    ) : null}
+                    {p["@type"] === "/cosmos.staking.v1beta1.MsgDelegate" ? (
+                      <>
+                        <Typography sx={{ fontSize: 18, textAlign: "left" }}>
+                          <strong>Delegate</strong> &nbsp;
+                          {p?.amount?.amount} &?.[0]nbsp;
+                          {p?.amount?.denom} &nbsp;
+                          <strong> to </strong> &nbsp;
+                          {p?.validator_address}
+                        </Typography>
+                      </>
+                    ) : null}
                   </Card>
                 </Box>
               ))}
@@ -426,7 +442,6 @@ function Proposal() {
       </Box>
 
       <Box sx={{ mt: 2 }}>
-        <Paper>
           {status === "pending" ? <CircularProgress /> : null}
 
           {status !== "pending" ? (
@@ -438,7 +453,6 @@ function Proposal() {
               rows={data}
             />
           ) : null}
-        </Paper>
       </Box>
     </Box>
   );

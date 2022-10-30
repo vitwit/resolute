@@ -1,11 +1,10 @@
-import { Box, Button, InputAdornment, TextField } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Decimal } from "@cosmjs/math";
 import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import Autocomplete from "@mui/material/Autocomplete";
 
-import { useForm, Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
 Delegate.propTypes = {
   currency: PropTypes.object.isRequired,
@@ -14,14 +13,15 @@ Delegate.propTypes = {
 export default function Delegate(props) {
   const { currency } = props;
 
-  const { handleSubmit, watch, control,
-    setValue,
-    formState: { errors }, } = useFormContext({
-      defaultValues: {
-        amount: 0,
-        validator: null,
-      },
-    });
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext({
+    defaultValues: {
+      amount: 0,
+      validator: null,
+    },
+  });
 
   var validators = useSelector((state) => state.staking.validators);
   var [data, setData] = useState([]);

@@ -1,4 +1,4 @@
-import { Box, Button, InputAdornment, TextField } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Decimal } from "@cosmjs/math";
 import { useSelector } from "react-redux";
@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Redelegate } from "../../../txns/staking";
 
-import { useForm, Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
 RedelegateForm.propTypes = {
   chainInfo: PropTypes.object.isRequired,
@@ -22,19 +22,20 @@ function parseDelegation(delegation, currency) {
 }
 
 export default function RedelegateForm(props) {
-  const wallet = useSelector(state => state?.wallet);
+  const wallet = useSelector((state) => state?.wallet);
 
   const { chainInfo } = wallet;
 
-  const { handleSubmit, watch, control,
-    setValue,
-    formState: { errors }, } = useFormContext({
-      defaultValues: {
-        amount: 0,
-        source: null,
-        destination: null,
-      },
-    });
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext({
+    defaultValues: {
+      amount: 0,
+      source: null,
+      destination: null,
+    },
+  });
 
   var validators = useSelector((state) => state.staking.validators);
   const delegations = useSelector(
