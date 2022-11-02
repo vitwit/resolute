@@ -15,12 +15,7 @@ import RedelegateForm from "../../components/group/bulk/RedelegateForm";
 import Send from "../../components/group/bulk/Send";
 import UnDelegateForm from "../../components/group/bulk/UnDelegateForm";
 import TxBasicFields from "../../components/group/TxBasicFields";
-import {
-  useForm,
-  FormProvider,
-  useFormContext,
-  Controller,
-} from "react-hook-form";
+import { useForm, FormProvider, Controller } from "react-hook-form";
 import { Decimal } from "@cosmjs/math";
 import {
   getAllValidators,
@@ -31,11 +26,14 @@ import {
   resetCreateGroupProposalRes,
   txCreateGroupProposal,
 } from "../../features/group/groupSlice";
-import { fee } from "../../txns/execute";
 import { useNavigate, useParams } from "react-router-dom";
 import { setError } from "../../features/common/commonSlice";
-import { DELEGATE_TYPE_URL, SEND_TYPE_URL } from "./utils";
-import { RenderDelegateMessage, RenderSendMessage } from "./AddFileTx";
+import { DELEGATE_TYPE_URL, SEND_TYPE_URL, UNDELEGATE_TYPE_URL } from "./utils";
+import { RenderSendMessage } from "./AddFileTx";
+import {
+  RenderUnDelegateMessage,
+  RenderDelegateMessage,
+} from "../multisig/tx/PageCreateTx";
 
 const TYPE_SEND = "SEND";
 const TYPE_DELEGATE = "DELEGATE";
@@ -43,17 +41,23 @@ const TYPE_UNDELEGATE = "UNDELEGATE";
 const TYPE_REDELEGATE = "REDELEGATE";
 
 const TxMsgsList = ({ messages = [], currency, onDelete }) => {
-  console.log("currency---", currency);
   return (
-    <Box sx={{ width: "80%", ml: 3, mt: 2 }}>
+    <Box
+      sx={{
+        p: 2,
+      }}
+    >
       {messages.map((m, i) => (
-        <Box>
+        <Box component="div" key={i}>
           {m?.typeUrl === SEND_TYPE_URL
             ? RenderSendMessage(m, i, currency, onDelete)
             : null}
 
           {m?.typeUrl === DELEGATE_TYPE_URL
-            ? RenderDelegateMessage(m, i, currency, () => {})
+            ? RenderDelegateMessage(m, i, currency, onDelete)
+            : null}
+          {m?.typeUrl === UNDELEGATE_TYPE_URL
+            ? RenderUnDelegateMessage(m, i, currency, onDelete)
             : null}
         </Box>
       ))}
@@ -79,7 +83,7 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
 
   const currency = chainInfo?.config?.currencies[0];
 
-  const [txType, setTxType] = useState();
+  const [txType, setTxType] = useState(null);
 
   const methods = useForm({
     defaultValues: {
@@ -183,13 +187,28 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
           },
           ...msg,
         };
+      case TYPE_UNDELEGATE:
+        msg = {
+          typeUrl: "/cosmos.staking.v1beta1.MsgUndelegate",
+          value: {
+            delegatorAddress: address,
+            validatorAddress: data?.validator?.value,
+            amount: getAmountInAtomics(data.amount, currency),
+          },
+          ...msg,
+        };
         break;
+      case TYPE_REDELEGATE:
+        alert("todo");
+        return;
+      default:
+        return;
     }
 
     messages = [...messages, msg];
     setMessages(messages);
-    setTxType("");
     methods.reset();
+    setTxType(null);
     methods.setValue("txType", "");
   };
 
@@ -209,20 +228,15 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
       <Grid item xs={12} md={5}>
         <Box>
           <FormProvider {...methods}>
-            <FormControl
-              fullWidth
-              sx={{
-                mt: 1,
-              }}
-            >
+            <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">
                 Select Transaction
               </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={txType}
                 label="Select Transaction"
+                defaultValue={TYPE_SEND}
                 onChange={(event) => {
                   setTxType(event.target.value);
                   methods.setValue("txType", event.target.value);
@@ -253,9 +267,13 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
 
               <Button
                 size="small"
-                sx={{ mt: 2 }}
-                variant="outlined"
+                variant="contained"
                 type="submit"
+                sx={{
+                  textTransform: "none",
+                  mt: 1.2,
+                }}
+                disableElevation
               >
                 Add Message
               </Button>
@@ -284,7 +302,12 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
                   )}
                 />
 
-                <Typography mt={2} textAlign={"left"} variant="body1" fontWeight={500}>
+                <Typography
+                  mt={2}
+                  textAlign={"left"}
+                  variant="body1"
+                  fontWeight={600}
+                >
                   Messages
                 </Typography>
                 <TxMsgsList

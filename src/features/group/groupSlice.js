@@ -68,7 +68,10 @@ const initialState = {
     pagination: {},
   },
   groupPolicies: {},
-  groupProposalRes: {},
+  groupProposalRes: {
+    status: "",
+    error: "",
+  },
   proposals: {},
   voteRes: {},
   executeRes: {},
@@ -460,7 +463,6 @@ export const txCreateGroupProposal = createAsyncThunk(
   "group/tx-create-group-proposal",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     dispatch(setTxLoad());
-    console.log("proposal --- ", data);
     try {
       let msg = CreateGroupProposal(
         data.groupPolicyAddress,
@@ -468,8 +470,6 @@ export const txCreateGroupProposal = createAsyncThunk(
         data.metadata,
         data.messages
       );
-
-      console.log("msg----", msg);
 
       const result = await signAndBroadcastGroupProposal(
         data.admin,
@@ -929,6 +929,7 @@ export const groupSlice = createSlice({
     },
     resetCreateGroupProposalRes: (state) => {
       state.groupProposalRes.status = "";
+      state.groupProposalRes.error = "";
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -1063,6 +1064,7 @@ export const groupSlice = createSlice({
       })
       .addCase(txCreateGroupProposal.rejected, (state, _) => {
         state.groupProposalRes.status = `rejected`;
+        state.groupProposalRes.error = `rejected`;
       });
 
     builder

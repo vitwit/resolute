@@ -779,7 +779,7 @@ export const RenderDelegateMessage = (message, index, currency, onDelete) => {
         </Typography>
         <Typography variant="body2" color="text.primary" fontWeight={600}>
           {parseBalance(
-            message.value.amount,
+            [message.value.amount],
             currency.coinDecimals,
             currency.coinMinimalDenom
           )}
@@ -881,7 +881,7 @@ export const RenderReDelegateMessage = (message, index, currency, onDelete) => {
         </Typography>
         <Typography variant="body2" color="text.primary" fontWeight={600}>
           {parseBalance(
-            message.value.amount,
+            [message.value.amount],
             currency.coinDecimals,
             currency.coinMinimalDenom
           )}

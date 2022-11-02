@@ -417,10 +417,10 @@ const UpdateGroupMember = (props) => {
 
             {fields.map((item, index) => {
               return (
-                <TableRow key={index}>
-                  <StyledTableCell>
+                <TableRow component="div" key={item.id}>
+                  <StyledTableCell component="div" key={item.id}>
                     <Controller
-                      name={`members.${index}.address`}
+                      name={`members[${index}].address`}
                       control={control}
                       rules={{ required: "Address is required" }}
                       render={({ field }) => (
@@ -437,7 +437,7 @@ const UpdateGroupMember = (props) => {
                   </StyledTableCell>
                   <StyledTableCell>
                     <Controller
-                      name={`members.${index}.weight`}
+                      name={`members[${index}].weight`}
                       control={control}
                       rules={{
                         min: 1,
@@ -457,7 +457,7 @@ const UpdateGroupMember = (props) => {
                   </StyledTableCell>
                   <StyledTableCell>
                     <Controller
-                      name={`members.${index}.metadata`}
+                      name={`members[${index}].metadata`}
                       control={control}
                       rules={{ required: "Metadata is required" }}
                       render={({ field }) => (
@@ -472,12 +472,13 @@ const UpdateGroupMember = (props) => {
                       )}
                     />
                   </StyledTableCell>
+
                   <StyledTableCell>
                     {fields.length > 1 ? (
                       <IconButton
                         onClick={() => {
                           setRemovedMembers([...removedMembers, item]);
-                          remove(index - 1);
+                          remove(index);
                         }}
                         color="error"
                       >
