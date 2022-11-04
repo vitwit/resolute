@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { SendMsg } from "../../txns/bank";
 import bankService from "./bankService";
-import { fee, signAndBroadcastAmino } from "../../txns/execute";
+import { fee, getKeplrWalletAmino, signAndBroadcastAmino } from "../../txns/execute";
 import { setError, setTxHash } from "../common/commonSlice";
+import { signAndBroadcast } from "../../utils/signing";
 
 const initialState = {
   balances: {
@@ -43,11 +44,18 @@ export const txBankSend = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = SendMsg(data.from, data.to, data.amount, data.denom);
-      const result = await signAndBroadcastAmino(
-        [msg],
-        fee(data.denom, data.feeAmount, 260000),
+      const result = await signAndBroadcast(
         data.chainId,
-        data.rpc
+        {
+          authzSupport: false,
+          feegrantSupport: false,
+          groupSupport: false,
+        },
+        [msg],
+        260000,
+        "hello world",
+        "0.2stake",
+        data.rest
       );
       if (result?.code === 0) {
         dispatch(

@@ -56,7 +56,7 @@ export default function Unjail() {
           validator: validator,
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
-          rpc: chainInfo.config.rpc,
+          rest: chainInfo.config.rest,
           feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
         })
       );

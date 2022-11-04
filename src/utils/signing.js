@@ -4,34 +4,81 @@ import {
   TxBody,
   TxRaw,
 } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
+import { Buffer } from "buffer";
+import axios from "axios";
 import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys.js";
 import { toBase64, fromBase64 } from "@cosmjs/encoding";
 import Long from "long";
-import { assertIsDeliverTxSuccess } from "@cosmjs/stargate";
+import {
+  assertIsDeliverTxSuccess,
+  GasPrice,
+  coin,
+  defaultRegistryTypes as defaultStargateTypes,
+  createBankAminoConverters,
+  createDistributionAminoConverters,
+  createFreegrantAminoConverters,
+  createGovAminoConverters,
+  createIbcAminoConverters,
+  AminoTypes,
+} from "@cosmjs/stargate";
 import { sleep } from "@cosmjs/utils";
-import { multiply, ceil, bignumber } from "mathjs";
+import { multiply, format, ceil, bignumber, floor } from "mathjs";
+import { makeSignDoc as makeAminoSignDoc } from "@cosmjs/amino";
+import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js";
+import { makeSignDoc, Registry } from "@cosmjs/proto-signing";
+import { slashingAminoConverter } from "../features/slashing/slashing";
+import { MsgUnjail } from "../txns/slashing/tx";
 
 export const signAndBroadcast = async (
-  signer,
+  chainId,
   aminoConfig,
-  aminoTypes,
-  address,
   messages,
   gas,
   memo,
-  gasPrice
+  gasPrice,
+  restUrl
 ) => {
+  await window.keplr.enable(chainId);
+  const signer = window.getOfflineSignerOnlyAmino(chainId);
+  const accounts = await signer.getAccounts();
+
+  if (accounts?.length === 0) {
+    throw new Error("failed to get account");
+  }
+
+  const registry = new Registry(defaultStargateTypes);
+  const defaultConverters = {
+    ...slashingAminoConverter(),
+    // ...createAuthzAminoConverters(),
+    ...createBankAminoConverters(),
+    ...createDistributionAminoConverters(),
+    ...createGovAminoConverters(),
+    // ...createStakingAminoConverters(""),
+    ...createIbcAminoConverters(),
+    ...createFreegrantAminoConverters(),
+  };
+  let aminoTypes = new AminoTypes(defaultConverters);
+  aminoTypes = new AminoTypes({ ...defaultConverters });
+
+  registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
+
+  console.log(messages);
+
   const fee = getFee(gas, gasPrice);
   const txBody = await sign(
     signer,
+    chainId,
     aminoConfig,
     aminoTypes,
-    address,
+    accounts[0].address,
     messages,
     memo,
-    fee
+    fee,
+    restUrl,
+    registry
   );
-  return broadcast(txBody);
+  console.log(txBody);
+  return broadcast(txBody, restUrl);
 };
 
 function calculateFee(gasLimit, gasPrice) {
@@ -47,14 +94,14 @@ function calculateFee(gasLimit, gasPrice) {
     )
   );
   return {
-    amount: [coin(amount, denom)],
+    amount: [coin(format(floor(amount), { notation: "fixed" }), denom)],
     gas: gasLimit.toString(),
   };
 }
 
 function getFee(gas, gasPrice) {
   if (!gas) gas = 200000;
-  return calculateFee(gas, gasPrice || defaultGasPrice);
+  return calculateFee(gas, gasPrice);
 }
 
 function getAccount(restUrl, address) {
@@ -93,12 +140,13 @@ function getAccount(restUrl, address) {
       if (error.response?.status === 404) {
         throw new Error("Account does not exist on chain");
       } else {
+        console.log(error);
         throw error;
       }
     });
 }
 
-async function broadcast(txBody) {
+async function broadcast(txBody, restUrl) {
   const timeoutMs = 60_000;
   const pollIntervalMs = 3_000;
   let timedOut = false;
@@ -121,7 +169,8 @@ async function broadcast(txBody) {
       );
       const result = parseTxResult(response.data.tx_response);
       return result;
-    } catch {
+    } catch (error) {
+      console.log("ee = = ", error);
       return pollForTx(txId);
     }
   };
@@ -181,20 +230,26 @@ function convertToAmino(aminoConfig, aminoTypes, messages) {
 
 async function sign(
   signer,
+  chainId,
   aminoConfig,
   aminoTypes,
   address,
   messages,
   memo,
-  fee
+  fee,
+  restUrl,
+  registry
 ) {
-  const account = await getAccount(address);
+  const account = await getAccount(restUrl, address);
   const { account_number: accountNumber, sequence } = account;
-  const txBodyBytes = makeBodyBytes(messages, memo);
+  const txBodyBytes = makeBodyBytes(registry, messages, memo);
   let aminoMsgs;
   try {
     aminoMsgs = convertToAmino(aminoConfig, aminoTypes, messages);
-  } catch (e) {}
+    alert(JSON.stringify(aminoMsgs))
+  } catch (e) {
+    alert(JSON.stringify(e));
+  }
   if (aminoMsgs && signer.signAmino) {
     // Sign as amino if possible for Ledger and Keplr support
     const signDoc = makeAminoSignDoc(
@@ -207,6 +262,7 @@ async function sign(
     );
     const { signature, signed } = await signer.signAmino(address, signDoc);
     const authInfoBytes = await makeAuthInfoBytes(
+      signer,
       account,
       {
         amount: signed.fee.amount,
@@ -214,14 +270,18 @@ async function sign(
       },
       SignMode.SIGN_MODE_LEGACY_AMINO_JSON
     );
+    console.log(signature);
+    console.log(Buffer);
+
     return {
-      bodyBytes: makeBodyBytes(messages, signed.memo),
+      bodyBytes: makeBodyBytes(registry, messages, signed.memo),
       authInfoBytes: authInfoBytes,
       signatures: [Buffer.from(signature.signature, "base64")],
     };
   } else {
     // Sign using standard protobuf messages
     const authInfoBytes = await makeAuthInfoBytes(
+      signer,
       account,
       {
         amount: fee.amount,
