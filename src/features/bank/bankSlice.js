@@ -4,6 +4,7 @@ import bankService from "./bankService";
 import { fee, getKeplrWalletAmino, signAndBroadcastAmino } from "../../txns/execute";
 import { setError, setTxHash } from "../common/commonSlice";
 import { signAndBroadcast } from "../../utils/signing";
+import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
 
 const initialState = {
   balances: {
@@ -46,15 +47,12 @@ export const txBankSend = createAsyncThunk(
       const msg = SendMsg(data.from, data.to, data.amount, data.denom);
       const result = await signAndBroadcast(
         data.chainId,
-        {
-          authzSupport: false,
-          feegrantSupport: false,
-          groupSupport: false,
-        },
+        data.aminoConfig,
+        data.prefix,
         [msg],
         260000,
-        "hello world",
-        "0.2stake",
+        "",
+        `${data.feeAmount}${data.denom}`,
         data.rest
       );
       if (result?.code === 0) {

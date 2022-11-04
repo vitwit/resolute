@@ -77,6 +77,8 @@ export default function SendPage() {
                     chainId: chainInfo.config.chainId,
                     rpc: chainInfo.config.rpc,
                     rest: chainInfo.config.rest,
+                    aminoConfig: chainInfo.aminoConfig,
+                    prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
                     feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
                 }))
             }
@@ -90,6 +92,8 @@ export default function SendPage() {
                 denom: currency.coinMinimalDenom,
                 chainId: chainInfo.config.chainId,
                 rpc: chainInfo.config.rpc,
+                aminoConfig: chainInfo.aminoConfig,
+                prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
                 feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
             })
         }

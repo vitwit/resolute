@@ -10,14 +10,14 @@ import {
   txFeegrantBasic,
   txGrantFilter,
   txGrantPeriodic,
-} from "../features/feegrant/feegrantSlice";
+} from "../../features/feegrant/feegrantSlice";
 import { useForm, FormProvider } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { PeriodicFeegrant } from "../components/PeriodicFeeGrant";
+import { PeriodicFeegrant } from "../../components/PeriodicFeeGrant";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
-import { resetError, setError } from "../features/common/commonSlice";
-import GroupTab, { TabPanel } from "../components/group/GroupTab";
+import { resetError, setError } from "../../features/common/commonSlice";
+import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import {
   Chip,
   FormControl,
@@ -29,8 +29,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import BasicFeeGrant from "../components/feegrant/BasicFeeGrant";
-import { authzMsgTypes } from "../utils/authorizations";
+import BasicFeeGrant from "../../components/feegrant/BasicFeeGrant";
+import { authzMsgTypes } from "./../../utils/authorizations";
 
 export default function NewFeegrant() {
   const [tab, setTab] = useState(0);
@@ -87,7 +87,9 @@ export default function NewFeegrant() {
             : data.expiration.toISOString(),
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       })
@@ -111,7 +113,9 @@ export default function NewFeegrant() {
         periodSpendLimit: data.periodSpendLimit,
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       })
@@ -135,7 +139,9 @@ export default function NewFeegrant() {
         periodSpendLimit: data.periodSpendLimit,
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         allowanceType: value,

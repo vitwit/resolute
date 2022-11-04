@@ -1,6 +1,11 @@
 // add mainnet here
 const mainNets = [
   {
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
     showAirdrop: false,
     logos: {
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
@@ -30,6 +35,11 @@ const mainNets = [
     },
   },
   {
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
     experimental: true,
     showAirdrop: true,
     airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
@@ -84,6 +94,11 @@ const mainNets = [
     },
   },
   {
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
     showAirdrop: false,
     logos: {
       toolbar:
@@ -113,6 +128,11 @@ const mainNets = [
     },
   },
   {
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
     showAirdrop: false,
     logos: {
       toolbar:
@@ -142,6 +162,11 @@ const mainNets = [
     },
   },
   {
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
     logos: {
       toolbar:
         "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.svg",
@@ -171,6 +196,11 @@ const mainNets = [
     },
   },
   {
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
     logos: {
       toolbar:
         "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
@@ -200,6 +230,11 @@ const mainNets = [
     },
   },
   {
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
     logos: {
       toolbar:
         "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
@@ -229,6 +264,11 @@ const mainNets = [
     },
   },
   {
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
     logos: {
       toolbar:
         "https://raw.githubusercontent.com/vitwit/chain-registry/cb6119d4d5c38d98904e4b3e7572f1ebe123c66c/stargaze/images/stargaze-logo.svg",
@@ -258,6 +298,11 @@ const mainNets = [
     },
   },
   {
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
     logos: {
       toolbar:
         "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.svg",
@@ -295,6 +340,11 @@ export function getMainNetworks(): Network[] {
   if (window.location.origin === "https://airdrop.passage3d.com") {
     return [
       {
+        aminoConfig: {
+          authz: false,
+          feegrant: false,
+          group: false,
+        },
         experimental: true,
         showAirdrop: true,
         airdropActions: [{ title: "#1 Initial Claim", type: "action" }],
@@ -375,6 +425,11 @@ export function getTestNetworks(): Network[] {
   if (window.location.origin === "http://localhost:3000") {
     return [
       {
+        aminoConfig: {
+          authz: false,
+          feegrant: false,
+          group: false,
+        },
         experimental: true,
         showAirdrop: false,
         logos: {
@@ -385,13 +440,13 @@ export function getTestNetworks(): Network[] {
         isTestnet: true,
         explorerTxHashEndpoint: "https://passage3d.testaneka.com/txs/",
         config: {
-          chainId: "testnet",
+          chainId: "test",
           chainName: "Simapp",
           rest: "http://127.0.0.1:1317",
-          rpc: "http://127.0.0.1:26657",
+          rpc: "http://127.0.0.1:16657",
           stakeCurrency: {
             coinDenom: "STAKE",
-            coinMinimalDenom: "stake",
+            coinMinimalDenom: "uatom",
             coinDecimals: 6,
             coinGeckoId: "stake",
           },
@@ -407,7 +462,7 @@ export function getTestNetworks(): Network[] {
           currencies: [
             {
               coinDenom: "STAKE",
-              coinMinimalDenom: "stake",
+              coinMinimalDenom: "uatom",
               coinDecimals: 6,
               coinGeckoId: "stake",
             },
@@ -415,7 +470,7 @@ export function getTestNetworks(): Network[] {
           feeCurrencies: [
             {
               coinDenom: "STAKE",
-              coinMinimalDenom: "stake",
+              coinMinimalDenom: "uatom",
               coinDecimals: 6,
               coinGeckoId: "stake",
             },

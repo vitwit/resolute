@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import authzService from "./authzService";
-import { fee, signAndBroadcastProto } from "../../txns/execute";
 import {
   AuthzSendGrantMsg,
   AuthzGenericGrantMsg,
@@ -14,6 +13,7 @@ import {
 } from "../../txns/authz";
 import { setError, setTxHash } from "../common/commonSlice";
 import { AuthzExecMsgUnjail } from "../../txns/authz/exec";
+import { signAndBroadcast } from "../../utils/signing";
 
 const initialState = {
   grantsToMe: {
@@ -74,10 +74,15 @@ export const txAuthzSend = createAsyncThunk(
         data.spendLimit,
         data.expiration
       );
-      const result = await signAndBroadcastProto(
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
-        data.rpc
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest
       );
       if (result?.code === 0) {
         dispatch(
@@ -112,10 +117,15 @@ export const txAuthzRevoke = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = AuthzRevokeMsg(data.granter, data.grantee, data.typeURL);
-      const result = await signAndBroadcastProto(
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
-        data.rpc
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest
       );
       if (result?.code === 0) {
         dispatch(
@@ -255,18 +265,19 @@ export const authzExecHelper = (dispatch, data) => {
       );
       break;
     }
-    case "unjail": {
-      const msg = AuthzExecMsgUnjail(data.validator, data.address);
-      dispatch(
-        txAuthzExec({
-          msg: msg,
-          denom: data.denom,
-          rpc: data.rpc,
-          feeAmount: data.feeAmount,
-        })
-      );
-    }
-    break;
+    case "unjail":
+      {
+        const msg = AuthzExecMsgUnjail(data.validator, data.address);
+        dispatch(
+          txAuthzExec({
+            msg: msg,
+            denom: data.denom,
+            rpc: data.rpc,
+            feeAmount: data.feeAmount,
+          })
+        );
+      }
+      break;
     default:
       alert("not supported");
   }
@@ -282,10 +293,15 @@ export const txAuthzGeneric = createAsyncThunk(
         data.typeUrl,
         data.expiration
       );
-      const result = await signAndBroadcastProto(
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
-        data.rpc
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest
       );
       if (result?.code === 0) {
         dispatch(
@@ -319,10 +335,15 @@ export const txAuthzExec = createAsyncThunk(
   "authz/tx-exec",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      const result = await signAndBroadcastProto(
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
         [data.msg],
-        fee(data.denom, data.feeAmount, 260000),
-        data.rpc
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest
       );
       if (result?.code === 0) {
         dispatch(

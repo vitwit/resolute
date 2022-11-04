@@ -10,10 +10,10 @@ import {
 import React, { useMemo, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { authzExecHelper } from "../features/authz/authzSlice";
-import { resetError, resetTxHash } from "../features/common/commonSlice";
-import { txUnjail } from "../features/slashing/slashingSlice";
-import { getUnjailAuthz } from "../utils/authorizations";
+import { authzExecHelper } from "../../features/authz/authzSlice";
+import { resetError, resetTxHash } from "../../features/common/commonSlice";
+import { txUnjail } from "../../features/slashing/slashingSlice";
+import { getUnjailAuthz } from "../../utils/authorizations";
 import TextField from "@mui/material/TextField";
 
 export default function Unjail() {
@@ -57,6 +57,8 @@ export default function Unjail() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rest: chainInfo.config.rest,
+          aminoConfig: chainInfo.aminoConfig,
+          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
         })
       );

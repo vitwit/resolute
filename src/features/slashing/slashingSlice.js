@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fee, signAndBroadcastUnjail } from "../../txns/execute";
 import { setError, setTxHash } from "../common/commonSlice";
 import { Unjail } from "../../txns/slashing/unjail";
 import { signAndBroadcast } from "../../utils/signing";
@@ -18,15 +17,12 @@ export const txUnjail = createAsyncThunk(
       const msg = Unjail(data.validator);
       const result = await signAndBroadcast(
         data.chainId,
-        {
-          authzSupport: false,
-          feegrantSupport: false,
-          groupSupport: false,
-        },
+        data.aminoConfig,
+        data.prefix,
         [msg],
         260000,
         "",
-        "0.2stake",
+        `${data.feeAmount}${data.denom}`,
         data.rest
       );
       if (result?.code === 0) {

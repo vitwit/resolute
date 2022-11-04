@@ -16,9 +16,8 @@ import {
   defaultRegistryTypes as defaultStargateTypes,
   createBankAminoConverters,
   createDistributionAminoConverters,
-  createFreegrantAminoConverters,
   createGovAminoConverters,
-  createIbcAminoConverters,
+  createStakingAminoConverters,
   AminoTypes,
 } from "@cosmjs/stargate";
 import { sleep } from "@cosmjs/utils";
@@ -29,40 +28,58 @@ import { makeSignDoc, Registry } from "@cosmjs/proto-signing";
 import { slashingAminoConverter } from "../features/slashing/slashing";
 import { MsgUnjail } from "../txns/slashing/tx";
 
+const getKeplrClient = async (aminoConfig, chainId) => {
+  let signer;
+  if (aminoConfig.authz || aminoConfig.feegrant || aminoConfig.group) {
+    try {
+      await window.keplr.enable(chainId);
+      signer = window.getOfflineSignerOnlyAmino(chainId);
+    } catch (error) {
+      throw new Error("failed to get keplr");
+    }
+  }
+
+  try {
+    alert();
+    await window.keplr.enable(chainId);
+    signer = window.getOfflineSigner(chainId);
+  } catch (error) {
+    throw new Error("failed to get keplr");
+  }
+
+  return signer;
+};
+
 export const signAndBroadcast = async (
   chainId,
   aminoConfig,
+  prefix,
   messages,
   gas,
   memo,
   gasPrice,
   restUrl
 ) => {
-  await window.keplr.enable(chainId);
-  const signer = window.getOfflineSignerOnlyAmino(chainId);
-  const accounts = await signer.getAccounts();
-
-  if (accounts?.length === 0) {
-    throw new Error("failed to get account");
+  let signer;
+  try {
+    signer = await getKeplrClient(aminoConfig, chainId);
+  } catch (error) {
+    throw new Error("failed to get keplr");
   }
 
+  const accounts = await signer.getAccounts();
   const registry = new Registry(defaultStargateTypes);
   const defaultConverters = {
     ...slashingAminoConverter(),
-    // ...createAuthzAminoConverters(),
     ...createBankAminoConverters(),
     ...createDistributionAminoConverters(),
     ...createGovAminoConverters(),
-    // ...createStakingAminoConverters(""),
-    ...createIbcAminoConverters(),
-    ...createFreegrantAminoConverters(),
+    ...createStakingAminoConverters(prefix),
   };
   let aminoTypes = new AminoTypes(defaultConverters);
   aminoTypes = new AminoTypes({ ...defaultConverters });
 
   registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
-
-  console.log(messages);
 
   const fee = getFee(gas, gasPrice);
   const txBody = await sign(
@@ -77,7 +94,7 @@ export const signAndBroadcast = async (
     restUrl,
     registry
   );
-  console.log(txBody);
+
   return broadcast(txBody, restUrl);
 };
 
@@ -100,7 +117,7 @@ function calculateFee(gasLimit, gasPrice) {
 }
 
 function getFee(gas, gasPrice) {
-  if (!gas) gas = 200000;
+  if (!gas) gas = 260000;
   return calculateFee(gas, gasPrice);
 }
 
@@ -246,7 +263,6 @@ async function sign(
   let aminoMsgs;
   try {
     aminoMsgs = convertToAmino(aminoConfig, aminoTypes, messages);
-    alert(JSON.stringify(aminoMsgs))
   } catch (e) {
     alert(JSON.stringify(e));
   }
@@ -270,8 +286,6 @@ async function sign(
       },
       SignMode.SIGN_MODE_LEGACY_AMINO_JSON
     );
-    console.log(signature);
-    console.log(Buffer);
 
     return {
       bodyBytes: makeBodyBytes(registry, messages, signed.memo),
@@ -295,6 +309,7 @@ async function sign(
       chainId,
       accountNumber
     );
+    console.log(signer.signDirect);
     const { signature, signed } = await signer.signDirect(address, signDoc);
     return {
       bodyBytes: signed.bodyBytes,

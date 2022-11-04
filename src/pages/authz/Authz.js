@@ -9,19 +9,19 @@ import Paper from '@mui/material/Paper';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   getGrantsToMe, getGrantsByMe, txAuthzRevoke, authzExecHelper, setSelectedGranter
-} from './../features/authz/authzSlice';
+} from '../../features/authz/authzSlice';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Chip from '@mui/material/Chip';
-import { getTypeURLName, shortenAddress } from '../utils/util';
+import { getTypeURLName, shortenAddress } from '../../utils/util';
 import { useNavigate } from "react-router-dom";
-import { StyledTableCell, StyledTableRow } from './../components/CustomTable';
+import { StyledTableCell, StyledTableRow } from '../../components/CustomTable';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import { getLocalTime } from '../utils/datetime';
-import { AuthorizationInfo } from '../components/AuthorizationInfo';
-import { resetError, resetTxHash, setError } from '../features/common/commonSlice';
-import { getMsgNameFromAuthz, getTypeURLFromAuthorization } from '../utils/authorizations';
-import { AuthzSendDialog } from '../components/authz/AuthzSend';
+import { getLocalTime } from '../../utils/datetime';
+import { AuthorizationInfo } from '../../components/AuthorizationInfo';
+import { resetError, resetTxHash, setError } from '../../features/common/commonSlice';
+import { getMsgNameFromAuthz, getTypeURLFromAuthorization } from '../../utils/authorizations';
+import { AuthzSendDialog } from '../../components/authz/AuthzSend';
 
 export default function Authz() {
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);

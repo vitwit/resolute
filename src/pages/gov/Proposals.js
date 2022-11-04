@@ -151,7 +151,9 @@ export default function Proposals() {
           option: vote,
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
-          rpc: chainInfo.config.rpc,
+          rest: chainInfo.config.rest,
+          aminoConfig: chainInfo.aminoConfig,
+          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
         })
       );
@@ -231,7 +233,6 @@ export default function Proposals() {
                 md={6}
                 xs={12}
                 key={index}
-                onClick={() => navigate(`/proposals/${proposal?.proposal_id}`)}
               >
                 <Paper elevation={0} sx={{ p: 1 }}>
                   <ProposalItem
@@ -241,6 +242,7 @@ export default function Proposals() {
                     txStatus={govTx}
                     setOpen={(pId) => onVoteDialog(pId)}
                     poolInfo={poolInfo}
+                    onItemClick={() => navigate(`/proposals/${proposal?.proposal_id}`)}
                   />
                 </Paper>
               </Grid>
