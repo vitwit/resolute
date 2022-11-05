@@ -173,10 +173,13 @@ export const authzExecHelper = (dispatch, data) => {
       );
       dispatch(
         txAuthzExec({
-          msg: msg,
+          msgs: [msg],
           denom: data.denom,
-          rpc: data.rpc,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
           feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
         })
       );
       break;
@@ -190,22 +193,30 @@ export const authzExecHelper = (dispatch, data) => {
       );
       dispatch(
         txAuthzExec({
-          msg: msg,
+          msgs: [msg],
           denom: data.denom,
           rpc: data.rpc,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
           feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
         })
       );
       break;
     }
     case "withdraw": {
-      const msg = AuthzExecWithdrawRewardsMsg(data.from, data.payload);
+      const msgs = AuthzExecWithdrawRewardsMsg(data.from, data.payload);
       dispatch(
         txAuthzExec({
-          msg: msg,
+          msgs: [msgs],
           denom: data.denom,
           rpc: data.rpc,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
           feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
         })
       );
       break;
@@ -220,10 +231,13 @@ export const authzExecHelper = (dispatch, data) => {
       );
       dispatch(
         txAuthzExec({
-          msg: msg,
+          msgs: [msg],
           denom: data.denom,
-          rpc: data.rpc,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
           feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
         })
       );
       break;
@@ -239,10 +253,13 @@ export const authzExecHelper = (dispatch, data) => {
       );
       dispatch(
         txAuthzExec({
-          msg: msg,
+          msgs: [msg],
           denom: data.denom,
-          rpc: data.rpc,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
           feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
         })
       );
       break;
@@ -257,10 +274,13 @@ export const authzExecHelper = (dispatch, data) => {
       );
       dispatch(
         txAuthzExec({
-          msg: msg,
+          msgs: [msg],
           denom: data.denom,
-          rpc: data.rpc,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
           feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
         })
       );
       break;
@@ -270,10 +290,12 @@ export const authzExecHelper = (dispatch, data) => {
         const msg = AuthzExecMsgUnjail(data.validator, data.address);
         dispatch(
           txAuthzExec({
-            msg: msg,
+            msgs: [msg],
             denom: data.denom,
-            rpc: data.rpc,
+            rest: data.rest,
+            aminoConfig: data.aminoConfig,
             feeAmount: data.feeAmount,
+            prefix: data.prefix,
           })
         );
       }
@@ -339,7 +361,7 @@ export const txAuthzExec = createAsyncThunk(
         data.chainId,
         data.aminoConfig,
         data.prefix,
-        [data.msg],
+        data.msgs,
         260000,
         "",
         `${data.feeAmount}${data.denom}`,

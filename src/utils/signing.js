@@ -40,10 +40,10 @@ const getKeplrClient = async (aminoConfig, chainId) => {
   }
 
   try {
-    alert();
     await window.keplr.enable(chainId);
     signer = window.getOfflineSigner(chainId);
   } catch (error) {
+    console.log(error);
     throw new Error("failed to get keplr");
   }
 
@@ -264,8 +264,8 @@ async function sign(
   try {
     aminoMsgs = convertToAmino(aminoConfig, aminoTypes, messages);
   } catch (e) {
-    alert(JSON.stringify(e));
   }
+
   if (aminoMsgs && signer.signAmino) {
     // Sign as amino if possible for Ledger and Keplr support
     const signDoc = makeAminoSignDoc(

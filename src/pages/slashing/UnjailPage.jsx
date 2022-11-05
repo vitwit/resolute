@@ -70,7 +70,9 @@ export default function Unjail() {
         granter: selectedAuthz.granter,
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
       });
     }
