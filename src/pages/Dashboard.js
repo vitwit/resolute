@@ -35,20 +35,20 @@ const CreateGroupPage = lazy(() => import("./group/CreateGroup"));
 const Proposal = lazy(() => import("./group/Proposal"));
 const CreateProposal = lazy(() => import("./group/CreateProposal"));
 
-const Authz = lazy(() => import("./Authz"));
+const Authz = lazy(() => import("./authz/Authz"));
 const Validators = lazy(() => import("./Validators"));
 const Proposals = lazy(() => import("./gov/Proposals"));
-const NewAuthz = lazy(() => import("./NewAuthz"));
+const NewAuthz = lazy(() => import("./authz/NewAuthz"));
 const AirdropEligibility = lazy(() => import("./passage/AirdropEligibility"));
 const PageMultisig = lazy(() => import("./multisig/PageMultisig"));
 const PageMultisigInfo = lazy(() => import("./multisig/tx/PageMultisigInfo"));
 const SendPage = lazy(() => import("./SendPage"));
-const UnjailPage = lazy(() => import("./UnjailPage"));
+const UnjailPage = lazy(() => import("./slashing/UnjailPage"));
 const ProposalInfo = lazy(() => import("./gov/ProposalInfo"));
 const PageCreateTx = lazy(() => import("./multisig/tx/PageCreateTx"));
 
-const Feegrant = lazy(() => import("./Feegrant"));
-const NewFeegrant = lazy(() => import("./NewFeegrant"));
+const Feegrant = lazy(() => import("./feegrant/Feegrant"));
+const NewFeegrant = lazy(() => import("./feegrant/NewFeegrant"));
 
 function DashboardContent(props) {
   const [snackOpen, setSnackOpen] = useState(false);

@@ -23,7 +23,7 @@ import {
 } from "./group/v1/tx";
 import { AirdropAminoConverter } from "../features/airdrop/amino";
 import { MsgUnjail } from "./slashing/tx";
-import { SlashingAminoConverter } from "../features/slashing/slashing";
+import { slashingAminoConverter } from "../features/slashing/slashing";
 import { MsgGrantAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
 import { AllowedMsgAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/feegrant";
 
@@ -460,7 +460,7 @@ export async function signAndBroadcastUnjail(
   memo = ""
 ) {
   const aTypes = new AminoTypes({
-    ...SlashingAminoConverter,
+    ...slashingAminoConverter(),
   });
 
   const result = await getKeplrWalletAmino(chainID);
@@ -514,11 +514,10 @@ export async function signAndBroadcastProto(msgs, fee, rpcURL) {
   );
 }
 
-export function fee(coinMinimalDenom, amount, gas = 280000, feeGranter = null) {
+export function fee(coinMinimalDenom, amount, gas = 280000, feeGranter = "") {
   return {
     amount: [{ amount: String(amount), denom: coinMinimalDenom }],
     gas: String(gas),
-    granter: feeGranter,
   };
 }
 

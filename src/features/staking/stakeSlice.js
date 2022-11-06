@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Delegate, UnDelegate, Redelegate } from "../../txns/staking";
 import stakingService from "./stakingService";
-import { signAndBroadcastAmino, fee } from "../../txns/execute";
 import { setError, setTxHash } from "../common/commonSlice";
 import { SOMETHING_WRONG } from "../multisig/multisigSlice";
+import { signAndBroadcast } from "../../utils/signing";
 
 const initialState = {
   validators: {
@@ -53,11 +53,15 @@ export const txDelegate = createAsyncThunk(
         data.denom
       );
 
-      const result = await signAndBroadcastAmino(
-        [msg],
-        fee(data.denom, data.feeAmount, 260000),
+      const result = await signAndBroadcast(
         data.chainId,
-        data.rpc
+        data.aminoConfig,
+        data.prefix,
+        [msg],
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest
       );
       if (result?.code === 0) {
         dispatch(
@@ -105,11 +109,15 @@ export const txReDelegate = createAsyncThunk(
         data.amount,
         data.denom
       );
-      const result = await signAndBroadcastAmino(
-        [msg],
-        fee(data.denom, data.feeAmount, 280000),
+      const result = await signAndBroadcast(
         data.chainId,
-        data.rpc
+        data.aminoConfig,
+        data.prefix,
+        [msg],
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest
       );
       if (result?.code === 0) {
         dispatch(
@@ -156,11 +164,15 @@ export const txUnDelegate = createAsyncThunk(
         data.amount,
         data.denom
       );
-      const result = await signAndBroadcastAmino(
-        [msg],
-        fee(data.denom, data.feeAmount, 260000),
+      const result = await signAndBroadcast(
         data.chainId,
-        data.rpc
+        data.aminoConfig,
+        data.prefix,
+        [msg],
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest
       );
       if (result?.code === 0) {
         dispatch(

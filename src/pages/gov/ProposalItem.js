@@ -8,7 +8,7 @@ import { getLocalTime } from "../../utils/datetime";
 import "./../common.css";
 
 export const ProposalItem = (props) => {
-  const { info, tally, vote, poolInfo } = props;
+  const { info, tally, vote, poolInfo, onItemClick } = props;
   const tallyInfo = computeVotePercentage(tally, poolInfo);
 
   const onVoteClick = () => {
@@ -24,8 +24,10 @@ export const ProposalItem = (props) => {
             flexDirection: "row",
             justifyContent: "space-between",
           }}
+          onClick={() => onItemClick()}
         >
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom
+          >
             #{info.proposal_id}
           </Typography>
           {getProposalComponent(info.status)}
@@ -35,6 +37,7 @@ export const ProposalItem = (props) => {
           component="div"
           color="text.primary"
           className="proposal-title"
+          onClick={() => onItemClick()}
         >
           {info.content?.title}
         </Typography>
@@ -43,6 +46,7 @@ export const ProposalItem = (props) => {
           variant="body2"
           color="text.secondary"
           className="proposal-description"
+          onClick={() => onItemClick()}
         >
           {info.content?.description}
         </Typography>
