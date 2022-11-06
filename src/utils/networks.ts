@@ -229,40 +229,40 @@ const mainNets = [
       },
     },
   },
-  {
-    aminoConfig: {
-      authz: false,
-      feegrant: false,
-      group: false,
-    },
-    logos: {
-      toolbar:
-        "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
-      menu: "https://www.mintscan.io/_next/static/image/assets/header/token_juno.a36436fb7578f1014a6fc3f505b19457.svg",
-    },
-    showAirdrop: false,
-    experimental: false,
-    isTestnet: false,
-    explorerTxHashEndpoint: "https://www.mintscan.io/juno/txs/",
-    config: {
-      chainId: "evmos_9001-2",
-      chainName: "Evmos",
-      rest: "https://api-evmos-ia.cosmosia.notional.ventures/",
-      rpc: "https://evmos-api.lavenderfive.com:443",
-      currencies: [
-        { coinDenom: "EVMOS", coinMinimalDenom: "aevmos", coinDecimals: 18 },
-      ],
-      gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
-      bech32Config: {
-        bech32PrefixAccAddr: `evmos`,
-        bech32PrefixAccPub: `evmospub`,
-        bech32PrefixValAddr: `evmosvaloper`,
-        bech32PrefixValPub: `evmosvaloperpub`,
-        bech32PrefixConsAddr: `evmosvalcons`,
-        bech32PrefixConsPub: `evmosvalconspub`,
-      },
-    },
-  },
+  // {
+  //   aminoConfig: {
+  //     authz: false,
+  //     feegrant: false,
+  //     group: false,
+  //   },
+  //   logos: {
+  //     toolbar:
+  //       "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
+  //     menu: "https://www.mintscan.io/_next/static/image/assets/header/token_juno.a36436fb7578f1014a6fc3f505b19457.svg",
+  //   },
+  //   showAirdrop: false,
+  //   experimental: false,
+  //   isTestnet: false,
+  //   explorerTxHashEndpoint: "https://www.mintscan.io/juno/txs/",
+  //   config: {
+  //     chainId: "evmos_9001-2",
+  //     chainName: "Evmos",
+  //     rest: "https://api-evmos-ia.cosmosia.notional.ventures/",
+  //     rpc: "https://evmos-api.lavenderfive.com:443",
+  //     currencies: [
+  //       { coinDenom: "EVMOS", coinMinimalDenom: "aevmos", coinDecimals: 18 },
+  //     ],
+  //     gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
+  //     bech32Config: {
+  //       bech32PrefixAccAddr: `evmos`,
+  //       bech32PrefixAccPub: `evmospub`,
+  //       bech32PrefixValAddr: `evmosvaloper`,
+  //       bech32PrefixValPub: `evmosvaloperpub`,
+  //       bech32PrefixConsAddr: `evmosvalcons`,
+  //       bech32PrefixConsPub: `evmosvalconspub`,
+  //     },
+  //   },
+  // },
   {
     aminoConfig: {
       authz: false,
@@ -297,40 +297,40 @@ const mainNets = [
       },
     },
   },
-  {
-    aminoConfig: {
-      authz: false,
-      feegrant: false,
-      group: false,
-    },
-    logos: {
-      toolbar:
-        "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.svg",
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis.svg",
-    },
-    showAirdrop: false,
-    experimental: false,
-    isTestnet: false,
-    explorerTxHashEndpoint: "https://www.mintscan.io/evmos/txs/",
-    config: {
-      chainId: "evmos_9001-2",
-      chainName: "Evmos",
-      rest: "https://api.evmos.interbloc.org",
-      rpc: "https://rpc-evmos-ia.cosmosia.notional.ventures/",
-      currencies: [
-        { coinDenom: "EVMOS", coinMinimalDenom: "aevmos", coinDecimals: 18 },
-      ],
-      gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
-      bech32Config: {
-        bech32PrefixAccAddr: `evmos`,
-        bech32PrefixAccPub: `evmospub`,
-        bech32PrefixValAddr: `evmosvaloper`,
-        bech32PrefixValPub: `evmosvaloperpub`,
-        bech32PrefixConsAddr: `evmosvalcons`,
-        bech32PrefixConsPub: `evmosvalconspub`,
-      },
-    },
-  },
+  // {
+  //   aminoConfig: {
+  //     authz: false,
+  //     feegrant: false,
+  //     group: false,
+  //   },
+  //   logos: {
+  //     toolbar:
+  //       "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.svg",
+  //     menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis.svg",
+  //   },
+  //   showAirdrop: false,
+  //   experimental: false,
+  //   isTestnet: false,
+  //   explorerTxHashEndpoint: "https://www.mintscan.io/evmos/txs/",
+  //   config: {
+  //     chainId: "evmos_9001-2",
+  //     chainName: "Evmos",
+  //     rest: "https://api.evmos.interbloc.org",
+  //     rpc: "https://rpc-evmos-ia.cosmosia.notional.ventures/",
+  //     currencies: [
+  //       { coinDenom: "EVMOS", coinMinimalDenom: "aevmos", coinDecimals: 18 },
+  //     ],
+  //     gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
+  //     bech32Config: {
+  //       bech32PrefixAccAddr: `evmos`,
+  //       bech32PrefixAccPub: `evmospub`,
+  //       bech32PrefixValAddr: `evmosvaloper`,
+  //       bech32PrefixValPub: `evmosvaloperpub`,
+  //       bech32PrefixConsAddr: `evmosvalcons`,
+  //       bech32PrefixConsPub: `evmosvalconspub`,
+  //     },
+  //   },
+  // },
 ];
 
 // add testnet here

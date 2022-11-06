@@ -28,23 +28,44 @@ import { makeSignDoc, Registry } from "@cosmjs/proto-signing";
 import { slashingAminoConverter } from "../features/slashing/slashing";
 import { MsgUnjail } from "../txns/slashing/tx";
 
-const getKeplrClient = async (aminoConfig, chainId) => {
+const canUseAmino = (aminoConfig, messages) => {
+  for (let i = 0; i < messages.length; i++) {
+    const message = messages[i];
+    if (message.typeUrl.startsWith("/cosmos.authz") && !aminoConfig.authz) {
+      return false;
+    } else if (
+      message.typeUrl.startsWith("/cosmos.feegrant") &&
+      !aminoConfig.feegrant
+    ) {
+      return false;
+    } else if (
+      message.typeUrl.startsWith("/cosmos.group") &&
+      !aminoConfig.group
+    ) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const getKeplrClient = async (aminoConfig, chainId, messages) => {
   let signer;
-  if (aminoConfig.authz || aminoConfig.feegrant || aminoConfig.group) {
+  if (!canUseAmino(aminoConfig, messages)) {
+    try {
+      await window.keplr.enable(chainId);
+      signer = window.getOfflineSigner(chainId);
+    } catch (error) {
+      console.log(error);
+      throw new Error("failed to get keplr");
+    }
+  } else {
     try {
       await window.keplr.enable(chainId);
       signer = window.getOfflineSignerOnlyAmino(chainId);
     } catch (error) {
+      console.log(error);
       throw new Error("failed to get keplr");
     }
-  }
-
-  try {
-    await window.keplr.enable(chainId);
-    signer = window.getOfflineSigner(chainId);
-  } catch (error) {
-    console.log(error);
-    throw new Error("failed to get keplr");
   }
 
   return signer;
@@ -62,7 +83,7 @@ export const signAndBroadcast = async (
 ) => {
   let signer;
   try {
-    signer = await getKeplrClient(aminoConfig, chainId);
+    signer = await getKeplrClient(aminoConfig, chainId, messages);
   } catch (error) {
     throw new Error("failed to get keplr");
   }
@@ -187,7 +208,7 @@ async function broadcast(txBody, restUrl) {
       const result = parseTxResult(response.data.tx_response);
       return result;
     } catch (error) {
-      console.log("ee = = ", error);
+      console.log(error);
       return pollForTx(txId);
     }
   };
@@ -224,19 +245,16 @@ function parseTxResult(result) {
 
 function convertToAmino(aminoConfig, aminoTypes, messages) {
   return messages.map((message) => {
-    if (
-      message.typeUrl.startsWith("/cosmos.authz") &&
-      !aminoConfig.authzAminoSupport
-    ) {
+    if (message.typeUrl.startsWith("/cosmos.authz") && !aminoConfig.authz) {
       throw new Error("This chain does not support amino signing for authz");
     } else if (
       message.typeUrl.startsWith("/cosmos.feegrant") &&
-      !aminoConfig.feegrantAminoSupport
+      !aminoConfig.feegrant
     ) {
       throw new Error("This chain does not support amino signing for feegrant");
     } else if (
       message.typeUrl.startsWith("/cosmos.group") &&
-      !aminoConfig.groupAminoSupport
+      !aminoConfig.group
     ) {
       throw new Error("This chain does not support amino signing for group");
     }
@@ -263,7 +281,8 @@ async function sign(
   let aminoMsgs;
   try {
     aminoMsgs = convertToAmino(aminoConfig, aminoTypes, messages);
-  } catch (e) {
+  } catch (error) {
+    console.log(error);
   }
 
   if (aminoMsgs && signer.signAmino) {
@@ -309,7 +328,6 @@ async function sign(
       chainId,
       accountNumber
     );
-    console.log(signer.signDirect);
     const { signature, signed } = await signer.signDirect(address, signDoc);
     return {
       bodyBytes: signed.bodyBytes,

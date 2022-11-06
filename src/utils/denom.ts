@@ -7,7 +7,7 @@ export function formatVotingPower(token: number, coinDecimals: number): string {
 
 export function parseSpendLimit(tokens: any[], coinDecimals: number): number {
   if (tokens.length > 0) {
-    let temp = Number(tokens[0].amount) / (10.0 ** coinDecimals);
+    let temp = Number(tokens[0].amount) / 10.0 ** coinDecimals;
     return parseFloat(temp.toFixed(coinDecimals));
   }
 
@@ -33,6 +33,7 @@ export function parseBalance(
   coinDecimals: number,
   minimalDenom: string
 ): number {
+  const precision = coinDecimals > 6 ? 6 : coinDecimals;
   if (tokens.length === 0) {
     return 0.0;
   }
@@ -40,7 +41,7 @@ export function parseBalance(
   for (let i = 0; i < tokens.length; i++) {
     if (tokens[i].denom === minimalDenom) {
       return parseFloat(
-        (Number(tokens[i].amount) / 10.0 ** coinDecimals).toFixed(coinDecimals)
+        (Number(tokens[i].amount) / 10.0 ** coinDecimals).toFixed(precision)
       );
     }
   }
