@@ -229,7 +229,7 @@ export default function Overview() {
                         fontWeight={500}
                         color="text.primary"
                       >
-                        {available}
+                        {available?.toFixed(6)}
                       </Typography>
                     </li>
                     <li
@@ -251,7 +251,7 @@ export default function Overview() {
                         fontWeight={500}
                         color="text.primary"
                       >
-                        {parseFloat(delegated)}
+                        {parseFloat(delegated)?.toFixed(6)}
                       </Typography>
                     </li>
                     <li
@@ -273,7 +273,7 @@ export default function Overview() {
                         fontWeight={500}
                         color="text.primary"
                       >
-                        {pendingRewards}
+                        {parseFloat(pendingRewards)?.toFixed(6) || 0}
                       </Typography>
                     </li>
                     <li
@@ -295,7 +295,7 @@ export default function Overview() {
                         fontWeight={500}
                         color="text.primary"
                       >
-                        {unbondingDel}
+                        {unbondingDel?.toFixed(6) || 0}
                       </Typography>
                     </li>
                     <hr />
@@ -549,6 +549,9 @@ const getSequence = (account) => {
     case "/cosmos.vesting.v1beta1.PermanentLockedAccount": {
       return account?.base_vesting_account?.base_account?.sequence || 0;
     }
+    case "/ethermint.types.v1.EthAccount": {
+      return account?.base_account?.sequence || 0;
+    }
     default:
       return 0;
   }
@@ -570,6 +573,9 @@ const getAccountNumber = (account) => {
     }
     case "/cosmos.vesting.v1beta1.PermanentLockedAccount": {
       return account?.base_vesting_account?.base_account?.account_number || 0;
+    }
+    case "/ethermint.types.v1.EthAccount": {
+      return account?.base_account?.account_number || 0;
     }
     default:
       return 0;

@@ -151,8 +151,11 @@ export default function Proposals() {
           option: vote,
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
-          rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+          rest: chainInfo.config.rest,
+          aminoConfig: chainInfo.aminoConfig,
+          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         })
       );
     } else {
@@ -165,8 +168,11 @@ export default function Proposals() {
           proposalId: selected,
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
-          rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+          rest: chainInfo.config.rest,
+          aminoConfig: chainInfo.aminoConfig,
+          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         });
       } else {
         alert("You don't have permission to vote");
@@ -226,13 +232,7 @@ export default function Proposals() {
         ) : (
           <>
             {proposals.map((proposal, index) => (
-              <Grid
-                item
-                md={6}
-                xs={12}
-                key={index}
-                onClick={() => navigate(`/proposals/${proposal?.proposal_id}`)}
-              >
+              <Grid item md={6} xs={12} key={index}>
                 <Paper elevation={0} sx={{ p: 1 }}>
                   <ProposalItem
                     info={proposal}
@@ -241,6 +241,9 @@ export default function Proposals() {
                     txStatus={govTx}
                     setOpen={(pId) => onVoteDialog(pId)}
                     poolInfo={poolInfo}
+                    onItemClick={() =>
+                      navigate(`/proposals/${proposal?.proposal_id}`)
+                    }
                   />
                 </Paper>
               </Grid>

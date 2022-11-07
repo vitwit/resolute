@@ -11,21 +11,21 @@ import {
   getGrantsByMe,
   txRevoke,
   resetAlerts,
-} from "./../features/feegrant/feegrantSlice";
+} from "./../../features/feegrant/feegrantSlice";
 import {
   resetError,
   resetTxHash,
   setError,
-} from "./../features/common/commonSlice";
+} from "./../../features/common/commonSlice";
 import Chip from "@mui/material/Chip";
-import { getTypeURLName, shortenAddress } from "../utils/util";
-import { getLocalTime } from "./../utils/datetime";
+import { getTypeURLName, shortenAddress } from "./../../utils/util";
+import { getLocalTime } from "./../../utils/datetime";
 import { useNavigate } from "react-router-dom";
-import { StyledTableCell, StyledTableRow } from "./../components/CustomTable";
+import { StyledTableCell, StyledTableRow } from "./../../components/CustomTable";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { FeegrantInfo } from "../components/FeegrantInfo";
-import GroupTab, { TabPanel } from "../components/group/GroupTab";
+import { FeegrantInfo } from "./../../components/FeegrantInfo";
+import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Box } from "@mui/material";
@@ -118,7 +118,9 @@ export default function Feegrant() {
         grantee: a.grantee,
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         baseURL: chainInfo.config.rest,
