@@ -9,20 +9,20 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import Grid from "@mui/material/Grid";
-import { authzMsgTypes } from "../utils/authorizations";
+import { authzMsgTypes } from "../../utils/authorizations";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { amountToMinimalValue } from "../utils/util";
+import { amountToMinimalValue } from "../../utils/util";
 import {
   txAuthzGeneric,
   txAuthzSend,
   resetAlerts,
-} from "../features/authz/authzSlice";
+} from "../../features/authz/authzSlice";
 import {
   resetError,
   resetTxHash,
   setError,
-} from "./../features/common/commonSlice";
+} from "../../features/common/commonSlice";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Typography, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -108,8 +108,11 @@ export default function NewAuthz() {
         expiration: data.expiration.toISOString(),
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       })
     );
   };
@@ -123,8 +126,11 @@ export default function NewAuthz() {
         expiration: data.expiration.toISOString(),
         denom: currency.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       })
     );
   };

@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import authzService from "./authzService";
-import { fee, signAndBroadcastProto } from "../../txns/execute";
 import {
   AuthzSendGrantMsg,
   AuthzGenericGrantMsg,
@@ -14,6 +13,7 @@ import {
 } from "../../txns/authz";
 import { setError, setTxHash } from "../common/commonSlice";
 import { AuthzExecMsgUnjail } from "../../txns/authz/exec";
+import { signAndBroadcast } from "../../utils/signing";
 
 const initialState = {
   grantsToMe: {
@@ -74,10 +74,15 @@ export const txAuthzSend = createAsyncThunk(
         data.spendLimit,
         data.expiration
       );
-      const result = await signAndBroadcastProto(
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
-        data.rpc
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest
       );
       if (result?.code === 0) {
         dispatch(
@@ -112,10 +117,15 @@ export const txAuthzRevoke = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = AuthzRevokeMsg(data.granter, data.grantee, data.typeURL);
-      const result = await signAndBroadcastProto(
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
-        data.rpc
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest
       );
       if (result?.code === 0) {
         dispatch(
@@ -163,10 +173,13 @@ export const authzExecHelper = (dispatch, data) => {
       );
       dispatch(
         txAuthzExec({
-          msg: msg,
+          msgs: [msg],
           denom: data.denom,
-          rpc: data.rpc,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
           feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
         })
       );
       break;
@@ -180,22 +193,30 @@ export const authzExecHelper = (dispatch, data) => {
       );
       dispatch(
         txAuthzExec({
-          msg: msg,
+          msgs: [msg],
           denom: data.denom,
           rpc: data.rpc,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
           feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
         })
       );
       break;
     }
     case "withdraw": {
-      const msg = AuthzExecWithdrawRewardsMsg(data.from, data.payload);
+      const msgs = AuthzExecWithdrawRewardsMsg(data.from, data.payload);
       dispatch(
         txAuthzExec({
-          msg: msg,
+          msgs: [msgs],
           denom: data.denom,
           rpc: data.rpc,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
           feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
         })
       );
       break;
@@ -210,10 +231,13 @@ export const authzExecHelper = (dispatch, data) => {
       );
       dispatch(
         txAuthzExec({
-          msg: msg,
+          msgs: [msg],
           denom: data.denom,
-          rpc: data.rpc,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
           feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
         })
       );
       break;
@@ -229,10 +253,13 @@ export const authzExecHelper = (dispatch, data) => {
       );
       dispatch(
         txAuthzExec({
-          msg: msg,
+          msgs: [msg],
           denom: data.denom,
-          rpc: data.rpc,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
           feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
         })
       );
       break;
@@ -247,26 +274,32 @@ export const authzExecHelper = (dispatch, data) => {
       );
       dispatch(
         txAuthzExec({
-          msg: msg,
+          msgs: [msg],
           denom: data.denom,
-          rpc: data.rpc,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
           feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
         })
       );
       break;
     }
-    case "unjail": {
-      const msg = AuthzExecMsgUnjail(data.validator, data.address);
-      dispatch(
-        txAuthzExec({
-          msg: msg,
-          denom: data.denom,
-          rpc: data.rpc,
-          feeAmount: data.feeAmount,
-        })
-      );
-    }
-    break;
+    case "unjail":
+      {
+        const msg = AuthzExecMsgUnjail(data.validator, data.address);
+        dispatch(
+          txAuthzExec({
+            msgs: [msg],
+            denom: data.denom,
+            rest: data.rest,
+            aminoConfig: data.aminoConfig,
+            feeAmount: data.feeAmount,
+            prefix: data.prefix,
+          })
+        );
+      }
+      break;
     default:
       alert("not supported");
   }
@@ -282,10 +315,15 @@ export const txAuthzGeneric = createAsyncThunk(
         data.typeUrl,
         data.expiration
       );
-      const result = await signAndBroadcastProto(
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
-        data.rpc
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest
       );
       if (result?.code === 0) {
         dispatch(
@@ -319,10 +357,15 @@ export const txAuthzExec = createAsyncThunk(
   "authz/tx-exec",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      const result = await signAndBroadcastProto(
-        [data.msg],
-        fee(data.denom, data.feeAmount, 260000),
-        data.rpc
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
+        data.msgs,
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest
       );
       if (result?.code === 0) {
         dispatch(

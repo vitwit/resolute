@@ -21,11 +21,11 @@ export function authzMsgTypes(): AuthzMenuItem[] {
     },
     {
       label: "Grant Feegrant",
-      typeURL: "/cosmos.feegrant.v1beta1.MsgGrant",
+      typeURL: "/cosmos.feegrant.v1beta1.MsgGrantAllowance",
     },
     {
       label: "Revoke Feegrant",
-      typeURL: "/cosmos.feegrant.v1beta1.MsgRevoke",
+      typeURL: "/cosmos.feegrant.v1beta1.MsgRevokeAllowance",
     },
     {
       label: "Submit Proposal",
