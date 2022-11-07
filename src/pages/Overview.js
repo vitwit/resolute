@@ -44,21 +44,10 @@ export default function Overview() {
 
   useEffect(() => {
     if (connected && config.currencies.length > 0) {
-      setTotalBalance(
-        parseBalance(
-          [balance.balance],
-          coinDecimals,
-          coinDenom,
-        )
-      );
-      setTotalDelegations(
-        delegations.totalStaked / 10.0 ** coinDecimals)
-      setTotalRewards(
-        totalRewards(rewards?.list, coinDecimals, coinDenom)
-      );
-      setTotalUnbonding(
-        totalUnbonding(unbonding.delegations, coinDecimals)
-      );
+      setTotalBalance(parseBalance([balance.balance], coinDecimals, coinDenom));
+      setTotalDelegations(delegations.totalStaked / 10.0 ** coinDecimals);
+      setTotalRewards(totalRewards(rewards?.list, coinDecimals, coinDenom));
+      setTotalUnbonding(totalUnbonding(unbonding.delegations, coinDecimals));
     }
   }, [balance, delegations, rewards, unbonding, chainInfo, address]);
 
@@ -115,7 +104,7 @@ export default function Overview() {
       })
     );
 
-    dispatch(getTokenPrice(coinDenom))
+    dispatch(getTokenPrice(coinDenom));
   };
 
   const navigate = useNavigate();
@@ -229,7 +218,10 @@ export default function Overview() {
                         fontWeight={500}
                         color="text.primary"
                       >
-                        {available?.toFixed(6)}
+                        {getDisplayAmount(
+                          available,
+                          chainInfo?.config?.currencies[0].coinDecimals
+                        )}
                       </Typography>
                     </li>
                     <li
@@ -251,7 +243,10 @@ export default function Overview() {
                         fontWeight={500}
                         color="text.primary"
                       >
-                        {parseFloat(delegated)?.toFixed(6)}
+                        {getDisplayAmount(
+                          delegated,
+                          chainInfo?.config?.currencies[0].coinDecimals
+                        )}
                       </Typography>
                     </li>
                     <li
@@ -273,7 +268,10 @@ export default function Overview() {
                         fontWeight={500}
                         color="text.primary"
                       >
-                        {parseFloat(pendingRewards)?.toFixed(6) || 0}
+                        {getDisplayAmount(
+                          pendingRewards,
+                          chainInfo?.config?.currencies[0].coinDecimals
+                        )}
                       </Typography>
                     </li>
                     <li
@@ -295,7 +293,10 @@ export default function Overview() {
                         fontWeight={500}
                         color="text.primary"
                       >
-                        {unbondingDel?.toFixed(6) || 0}
+                        {getDisplayAmount(
+                          unbondingDel,
+                          chainInfo?.config?.currencies[0].coinDecimals
+                        )}
                       </Typography>
                     </li>
                     <hr />
@@ -327,56 +328,57 @@ export default function Overview() {
                         ).toLocaleString()}
                       </Typography>
                     </li>
-                    { priceInfo?.info?.usd ?
-                    <li
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        marginTop: 8,
-                      }}
-                    >
-                      <Typography
-                        variant="body1"
-                        color="text.secondary"
-                        gutterBottom
-                      >
-                        Total value
-                      </Typography>
-                      <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                      >
-                      <Typography
-                        variant="body1"
-                        fontWeight={600}
-                        color="text.primary"
-                      >
-                        &#36;{
-                        (priceInfo?.info?.usd *  parseFloat((
-                          parseFloat(available) +
-                          parseFloat(delegated) +
-                          parseFloat(pendingRewards) +
-                          parseFloat(unbondingDel)
-                        )).toFixed(2)).toLocaleString()}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        fontWeight={600}
-                        color="text.secondary"
-                        sx={{
-                          textAlign: "right"
+                    {priceInfo?.info?.usd ? (
+                      <li
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          marginTop: 8,
                         }}
                       >
-                        &#36;{priceInfo?.info?.usd}
-                      </Typography>
-                      </div>
-                    </li>
-                    :
-                    null
-                        }
+                        <Typography
+                          variant="body1"
+                          color="text.secondary"
+                          gutterBottom
+                        >
+                          Total value
+                        </Typography>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <Typography
+                            variant="body1"
+                            fontWeight={600}
+                            color="text.primary"
+                          >
+                            &#36;
+                            {(
+                              priceInfo?.info?.usd *
+                              parseFloat(
+                                parseFloat(available) +
+                                  parseFloat(delegated) +
+                                  parseFloat(pendingRewards) +
+                                  parseFloat(unbondingDel)
+                              ).toFixed(2)
+                            ).toLocaleString()}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            fontWeight={600}
+                            color="text.secondary"
+                            sx={{
+                              textAlign: "right",
+                            }}
+                          >
+                            &#36;{priceInfo?.info?.usd}
+                          </Typography>
+                        </div>
+                      </li>
+                    ) : null}
                   </ul>
                 </Paper>
               </Grid>
@@ -530,7 +532,13 @@ AccountInfo.propTypes = {
   onCopy: PropTypes.func.isRequired,
 };
 
-
+const getDisplayAmount = (amount, decimals) => {
+  if (decimals > 6) {
+    return parseFloat(amount)?.toFixed(6).toLocaleString() || 0;
+  } else {
+    return parseFloat(amount)?.toLocaleString() || 0;
+  }
+};
 
 const getSequence = (account) => {
   switch (account["@type"]) {
