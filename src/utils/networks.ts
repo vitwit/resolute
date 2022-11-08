@@ -482,66 +482,66 @@ export function getNetworkByChainId(chainId: string): Network | null {
 }
 
 export function getTestNetworks(): Network[] {
-  // if (window.location.origin === "http://localhost:3000") {
-  //   return [
-  //     {
-  //       aminoConfig: {
-  //         authz: false,
-  //         feegrant: false,
-  //         group: false,
-  //       },
-  //       experimental: true,
-  //       showAirdrop: false,
-  //       logos: {
-  //         toolbar:
-  //           "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
-  //         menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png",
-  //       },
-  //       isTestnet: true,
-  //       explorerTxHashEndpoint: "https://passage3d.testaneka.com/txs/",
-  //       config: {
-  //         chainId: "test",
-  //         chainName: "Simapp",
-  //         rest: "http://127.0.0.1:1317",
-  //         rpc: "http://127.0.0.1:16657",
-  //         stakeCurrency: {
-  //           coinDenom: "STAKE",
-  //           coinMinimalDenom: "uatom",
-  //           coinDecimals: 6,
-  //           coinGeckoId: "stake",
-  //         },
-  //         bip44: { coinType: 118 },
-  //         bech32Config: {
-  //           bech32PrefixAccAddr: `cosmos`,
-  //           bech32PrefixAccPub: `cosmospub`,
-  //           bech32PrefixValAddr: `cosmosvaloper`,
-  //           bech32PrefixValPub: `cosmosvaloperpub`,
-  //           bech32PrefixConsAddr: `cosmosvalcons`,
-  //           bech32PrefixConsPub: `cosmosvalconspub`,
-  //         },
-  //         currencies: [
-  //           {
-  //             coinDenom: "STAKE",
-  //             coinMinimalDenom: "uatom",
-  //             coinDecimals: 6,
-  //             coinGeckoId: "stake",
-  //           },
-  //         ],
-  //         feeCurrencies: [
-  //           {
-  //             coinDenom: "STAKE",
-  //             coinMinimalDenom: "uatom",
-  //             coinDecimals: 6,
-  //             coinGeckoId: "stake",
-  //           },
-  //         ],
-  //         coinType: 118,
-  //         gasPriceStep: { low: 0.0, average: 0.01, high: 0.2 },
-  //         walletUrlForStaking: "http://localhost:3000/validators",
-  //       },
-  //     },
-  //   ];
-  // }
+  if (window.location.origin === "http://localhost:3000") {
+    return [
+      {
+        aminoConfig: {
+          authz: false,
+          feegrant: false,
+          group: false,
+        },
+        experimental: true,
+        showAirdrop: false,
+        logos: {
+          toolbar:
+            "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
+          menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png",
+        },
+        isTestnet: true,
+        explorerTxHashEndpoint: "https://passage3d.testaneka.com/txs/",
+        config: {
+          chainId: "test",
+          chainName: "Simapp",
+          rest: "http://127.0.0.1:1317",
+          rpc: "http://127.0.0.1:16657",
+          stakeCurrency: {
+            coinDenom: "STAKE",
+            coinMinimalDenom: "uatom",
+            coinDecimals: 6,
+            coinGeckoId: "stake",
+          },
+          bip44: { coinType: 118 },
+          bech32Config: {
+            bech32PrefixAccAddr: `cosmos`,
+            bech32PrefixAccPub: `cosmospub`,
+            bech32PrefixValAddr: `cosmosvaloper`,
+            bech32PrefixValPub: `cosmosvaloperpub`,
+            bech32PrefixConsAddr: `cosmosvalcons`,
+            bech32PrefixConsPub: `cosmosvalconspub`,
+          },
+          currencies: [
+            {
+              coinDenom: "STAKE",
+              coinMinimalDenom: "uatom",
+              coinDecimals: 6,
+              coinGeckoId: "stake",
+            },
+          ],
+          feeCurrencies: [
+            {
+              coinDenom: "STAKE",
+              coinMinimalDenom: "uatom",
+              coinDecimals: 6,
+              coinGeckoId: "stake",
+            },
+          ],
+          coinType: 118,
+          gasPriceStep: { low: 0.0, average: 0.01, high: 0.2 },
+          walletUrlForStaking: "http://localhost:3000/validators",
+        },
+      },
+    ];
+  }
 
   return testNets;
 }
