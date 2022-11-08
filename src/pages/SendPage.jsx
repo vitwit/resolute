@@ -26,6 +26,7 @@ export default function SendPage() {
   const balance = useSelector((state) => state.bank.balance);
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
+  const feegrant = useSelector((state) => state.common.feegrant);
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
 
@@ -106,6 +107,7 @@ export default function SendPage() {
             feeAmount:
               chainInfo.config.gasPriceStep.average *
               10 ** currency.coinDecimals,
+            feegranter: data.feegranter,
           })
         );
       }
@@ -123,14 +125,15 @@ export default function SendPage() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: data.feegranter,
       });
     }
   };
 
   return (
     <>
-      <Grid container style={{ marginTop: 24 }}>
-        <Grid item xs={2} md={3}></Grid>
+      <Grid container sx={{ mt: 4 }}>
+        <Grid item xs={1} md={3}></Grid>
         <Grid item xs={10} md={6}>
           {selectedAuthz.granter.length > 0 &&
           authzSend?.granter !== selectedAuthz.granter ? (
@@ -142,11 +145,12 @@ export default function SendPage() {
               onSend={onSendTx}
               sendTx={sendTx}
               authzTx={authzExecTx}
+              feegrant={feegrant}
             />
           )}
         </Grid>
 
-        <Grid item xs={2} md={3}></Grid>
+        <Grid item xs={1} md={3}></Grid>
       </Grid>
     </>
   );

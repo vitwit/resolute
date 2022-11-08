@@ -92,6 +92,7 @@ export default function NewFeegrant() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+
       })
     );
   };
@@ -194,10 +195,19 @@ export default function NewFeegrant() {
 
   return (
     <>
-      <Typography variant="h6" textAlign={"left"} gutterBottom>
+      <Typography 
+      variant="h6"
+       textAlign={"left"}
+       color="text.primary"
+       gutterBottom
+       >
         Create Feegrant
       </Typography>
-      <Paper variant="outlined">
+      <Paper variant="outlined"
+        sx={{
+          mt: 1,
+        }}
+      >
         <GroupTab
           tabs={["Basic", "Periodic", "Filtered"]}
           handleTabChange={handleTabChange}

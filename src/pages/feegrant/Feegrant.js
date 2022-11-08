@@ -21,7 +21,10 @@ import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "./../../utils/util";
 import { getLocalTime } from "./../../utils/datetime";
 import { useNavigate } from "react-router-dom";
-import { StyledTableCell, StyledTableRow } from "./../../components/CustomTable";
+import {
+  StyledTableCell,
+  StyledTableRow,
+} from "./../../components/CustomTable";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { FeegrantInfo } from "./../../components/FeegrantInfo";
@@ -29,8 +32,11 @@ import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Box } from "@mui/material";
-
-const TYPE_FEEGRANT = "fee_granter";
+import {
+  getFeegrant,
+  removeFeegrant,
+  setFeegrant,
+} from "../../utils/localStorage";
 
 export default function Feegrant() {
   const [tab, setTab] = React.useState(0);
@@ -144,12 +150,9 @@ export default function Feegrant() {
   };
 
   const isUsingFeeGrant = (row) => {
-    let grantObj =
-      window.localStorage.getItem("feeGrant") &&
-      JSON.parse(window.localStorage.getItem("feeGrant"));
-
-    if (grantObj) {
-      return row?.granter === grantObj?.granter;
+    const grant = getFeegrant();
+    if (grant) {
+      return row?.granter === grant?.granter;
     }
     return false;
   };
@@ -360,17 +363,10 @@ export default function Feegrant() {
                                 <Checkbox
                                   onChange={(e) => {
                                     if (e.target.checked) {
-                                      let grantObj = JSON.stringify(row);
-                                      window.localStorage.setItem(
-                                        TYPE_FEEGRANT,
-                                        grantObj
-                                      );
+                                      setFeegrant(row);
                                     } else {
-                                      window.localStorage.removeItem(
-                                        TYPE_FEEGRANT
-                                      );
+                                      removeFeegrant();
                                     }
-                                    alert("Coming soon");
                                   }}
                                   defaultChecked={isUsingFeeGrant(row)}
                                 />
