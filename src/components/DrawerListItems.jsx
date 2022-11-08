@@ -8,33 +8,8 @@ import LayersIcon from "@mui/icons-material/Layers";
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import DocumentScannerOutlinedIcon from "@mui/icons-material/DocumentScannerOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
-import { useDispatch, useSelector } from "react-redux";
-import { getNodeInfo } from "../features/node/nodeSlice";
 
 export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
-  const dispatch = useDispatch();
-  const [nodeDataInfo, setNodeDataInfo] = React.useState(false);
-
-  const wallet = useSelector((state) => state?.wallet);
-  const { chainInfo } = wallet;
-  const nodeInfo = useSelector(state => state?.node)
-
-  React.useEffect(() => {
-    dispatch(getNodeInfo({ baseURL: chainInfo?.config?.rest }))
-  }, [])
-
-  React.useEffect(() => {
-    if (nodeInfo?.nodeInfo?.status === 'idle') {
-      if (nodeInfo?.nodeInfo?.data?.application_version) {
-        let version = nodeInfo?.nodeInfo?.data?.application_version?.version;
-        
-        if (version?.indexOf('46') >= 0) {
-          setNodeDataInfo(true);
-        } else setNodeDataInfo(false);
-      }
-    }
-  }, [nodeInfo?.status]);
-
   return (
     <>
       <ListItemButton
@@ -88,7 +63,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemText primary="Authz" />
       </ListItemButton>
       <ListItemButton
-        disabled={nodeDataInfo ? false : true}
+        disabled={true}
         onClick={() => onNavigate("/feegrant")}
         sx={{ pb: 0.5, pt: 0.5 }}
         selected={currentPath === "/feegrant"}
@@ -96,10 +71,10 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemIcon>
           <LayersIcon />
         </ListItemIcon>
-        <ListItemText primary="Feegrant" />
+        <ListItemText primary="Feegrant" secondary="Coming soon" />
       </ListItemButton>
       <ListItemButton
-        disabled={nodeDataInfo ? false : true}
+        disabled={true}
         onClick={() => onNavigate("/group")}
         sx={{ pb: 0.5, pt: 0.5 }}
         selected={currentPath === "/group"}
@@ -107,16 +82,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemIcon>
           <GroupsOutlinedIcon />
         </ListItemIcon>
-        <ListItemText
-          primary="Groups"
-          secondary={
-            nodeDataInfo?.status === "pending"
-              ? "Loading.."
-              : !nodeDataInfo
-              ? "Not supported"
-              : null
-          }
-        />
+        <ListItemText primary="Groups" secondary="Coming soon" />
       </ListItemButton>
 
       {showAirdrop ? (
