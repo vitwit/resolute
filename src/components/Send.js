@@ -1,14 +1,13 @@
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import React, { useState } from "react";
+import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
 import PropTypes from "prop-types";
-import { Checkbox, FormControlLabel } from "@mui/material";
 
 Send.propTypes = {
   onSend: PropTypes.func.isRequired,
@@ -16,11 +15,10 @@ Send.propTypes = {
   sendTx: PropTypes.object.isRequired,
   available: PropTypes.number.isRequired,
   authzTx: PropTypes.object.isRequired,
-  feegrant: PropTypes.object.isRequired,
 };
 
 export default function Send(props) {
-  const { chainInfo, sendTx, available, onSend, authzTx, feegrant } = props;
+  const { chainInfo, sendTx, available, onSend, authzTx } = props;
 
   const currency = chainInfo.config.currencies[0];
   const { handleSubmit, control, setValue } = useForm({
@@ -30,21 +28,11 @@ export default function Send(props) {
     },
   });
 
-  const [feegranter, setFeegranter] = useState(feegrant?.granter || "");
-  const handleFeeGranter = (e) => {
-    if (e.target.checked) {
-      setFeegranter(feegrant.granter);
-    } else {
-      setFeegranter("");
-    }
-  }
-
   const onSubmit = (data) => {
     onSend({
       to: data.recipient,
       amount: Number(data.amount) * 10 ** currency.coinDecimals,
       denom: currency.coinMinimalDenom,
-      feegranter,
     });
   };
 
@@ -107,20 +95,6 @@ export default function Send(props) {
               />
             )}
           />
-          <div style={{ textAlign: "right" }}>
-            <FormControlLabel
-              value="Use Feegrant"
-              control={
-                <Checkbox
-                  onChange={handleFeeGranter}
-                  disabled={feegrant?.granter?.length === 0}
-                  defaultChecked={feegrant?.granter?.length > 0}
-                />
-              }
-              label="Use Feegrant"
-              labelPlacement="end"
-            />
-          </div>
 
           <div>
             <Button

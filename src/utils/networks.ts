@@ -371,6 +371,11 @@ const mainNets = [
 // add testnet here
 const testNets: Network[] = [
   {
+    enableModules: {
+      authz: true,
+      feegrant: false,
+      group: false,
+    },
     aminoConfig: {
       authz: false,
       feegrant: false,
@@ -391,7 +396,7 @@ const testNets: Network[] = [
     config: {
       chainId: "provider",
       chainName: "ICS-Provider",
-      rest: "https://rest.provider-sentry-01.goc.earthball.xyz/",
+      rest: "https://rest.provider-sentry-01.goc.earthball.xyz",
       rpc: "https://rpc.provider-sentry-01.goc.earthball.xyz",
       stakeCurrency: {
         coinDenom: "PROV",
