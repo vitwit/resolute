@@ -108,7 +108,8 @@ export const txVote = createAsyncThunk(
         260000,
         "",
         `${data.feeAmount}${data.denom}`,
-        data.rest
+        data.rest,
+        data.feegranter.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
         dispatch(

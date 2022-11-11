@@ -10,6 +10,7 @@ import {
   setError,
   resetError,
   resetTxHash,
+  resetFeegrant,
 } from "../../features/common/commonSlice";
 import {
   authzExecHelper,
@@ -20,6 +21,7 @@ import VoteDialog from "../../components/Vote";
 import { getVoteAuthz } from "../../utils/authorizations";
 import { useNavigate } from "react-router-dom";
 import { getPoolInfo } from "../../features/staking/stakeSlice";
+import FeegranterInfo from "../../components/FeegranterInfo";
 
 export default function Proposals() {
   const proposals = useSelector((state) => state.gov.active.proposals);
@@ -28,6 +30,8 @@ export default function Proposals() {
   const proposalTally = useSelector((state) => state.gov.tally.proposalTally);
   const votes = useSelector((state) => state.gov.votes.proposals);
   const address = useSelector((state) => state.wallet.address);
+  const feegrant = useSelector((state) => state.common.feegrant);
+
   const govTx = useSelector((state) => state.gov.tx);
   const poolInfo = useSelector((state) => state.staking.pool);
   const currency = useSelector(
@@ -156,6 +160,7 @@ export default function Proposals() {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+            feegranter: feegrant.granter,
         })
       );
     } else {
@@ -173,11 +178,17 @@ export default function Proposals() {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+            feegranter: feegrant.granter,
         });
       } else {
         alert("You don't have permission to vote");
       }
     }
+  };
+
+  const removeFeegrant = () => {
+    // Should we completely remove feegrant or only for this session.
+    dispatch(resetFeegrant());
   };
 
   const [open, setOpen] = useState(false);
@@ -204,6 +215,14 @@ export default function Proposals() {
 
   return (
     <>
+      {feegrant.granter.length > 0 ? (
+        <FeegranterInfo
+          feegrant={feegrant}
+          onRemove={() => {
+            removeFeegrant();
+          }}
+        />
+      ) : null}
       <Grid container spacing={2}>
         {status === "pending" ? (
           <div

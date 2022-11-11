@@ -62,16 +62,6 @@ export default function Overview() {
         fetchDetails(address);
       }
     }
-
-    if (connected) {
-      // check if feegrant is available and set it in the redux store
-      const feegrant = getFeegrant();
-      if (feegrant && feegrant.grantee === address) {
-        dispatch(setFeegrantState(feegrant));
-      } else {
-        dispatch(resetFeegrant());
-      }
-    }
   }, [address]);
 
   useEffect(() => {

@@ -11,10 +11,15 @@ import React, { useMemo, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { authzExecHelper } from "../../features/authz/authzSlice";
-import { resetError, resetTxHash } from "../../features/common/commonSlice";
+import {
+  resetError,
+  resetFeegrant,
+  resetTxHash,
+} from "../../features/common/commonSlice";
 import { txUnjail } from "../../features/slashing/slashingSlice";
 import { getUnjailAuthz } from "../../utils/authorizations";
 import TextField from "@mui/material/TextField";
+import FeegranterInfo from "../../components/FeegranterInfo";
 
 export default function Unjail() {
   const slashingTx = useSelector((state) => state.slashing.tx);
@@ -22,6 +27,8 @@ export default function Unjail() {
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
+  const feegrant = useSelector((state) => state.common.feegrant);
+
   const currency = useSelector(
     (state) => state.wallet.chainInfo.config.currencies[0]
   );
@@ -59,7 +66,9 @@ export default function Unjail() {
           rest: chainInfo.config.rest,
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          feegranter: feegrant.granter,
         })
       );
     } else {
@@ -73,9 +82,16 @@ export default function Unjail() {
         rest: chainInfo.config.rest,
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-        feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant.granter,
       });
     }
+  };
+
+  const removeFeegrant = () => {
+    // Should we completely remove feegrant or only for this session.
+    dispatch(resetFeegrant());
   };
 
   return (
@@ -85,6 +101,14 @@ export default function Unjail() {
         mt: 6,
       }}
     >
+      {feegrant.granter.length > 0 ? (
+        <FeegranterInfo
+          feegrant={feegrant}
+          onRemove={() => {
+            removeFeegrant();
+          }}
+        />
+      ) : null}
       {selectedAuthz.granter.length > 0 &&
       authzUnjail?.granter !== selectedAuthz.granter ? (
         <Alert>You don't have permission to execute this transcation</Alert>

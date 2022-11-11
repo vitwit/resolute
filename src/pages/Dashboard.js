@@ -18,12 +18,16 @@ import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
 import Overview from "./Overview";
 import { CustomAppBar } from "../components/CustomAppBar";
-import { resetTxLoad } from "../features/common/commonSlice";
+import { resetFeegrant, resetTxLoad, setFeegrant } from "../features/common/commonSlice";
 import Page404 from "./Page404";
 import AppDrawer from "../components/AppDrawer";
 import { Alert } from "../components/Alert";
 import { getPallet, isDarkMode, mdTheme } from "../utils/theme";
-import { isConnected, logout } from "../utils/localStorage";
+import {
+  getFeegrant,
+  isConnected,
+  logout,
+} from "../utils/localStorage";
 import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
 import { copyToClipboard } from "../utils/clipboard";
@@ -144,6 +148,18 @@ function DashboardContent(props) {
     }
     dispatch(resetWallet());
   }
+
+  useEffect(() => {
+    if (wallet?.connected) {
+        // check if feegrant is available and set it in the redux store
+        const feegrant = getFeegrant();
+        if (feegrant && feegrant.grantee === wallet.address) {
+          dispatch(setFeegrant(feegrant));
+        } else {
+          dispatch(resetFeegrant());
+        }
+    }
+  }, [wallet]);
 
   const connectWallet = (network) => {
     dispatch(connectKeplrWallet(network));
