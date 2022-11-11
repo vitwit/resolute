@@ -396,12 +396,12 @@ function DashboardContent(props) {
       ) : (
         <></>
       )}
-      {errState.message.length > 0 ? (
+      {errState?.message?.length > 0 ? (
         <Snackbar
           open={
             snackOpen &&
-            errState.message?.length > 0 &&
-            errState.type?.length > 0
+            errState?.message?.length > 0 &&
+            errState?.type?.length > 0
           }
           autoHideDuration={3000}
           onClose={() => {
