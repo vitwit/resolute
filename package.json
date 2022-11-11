@@ -13,7 +13,7 @@
     "@mui/icons-material": "^5.10.3",
     "@mui/material": "^5.10.0",
     "@mui/x-date-pickers": "^5.0.4",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.8",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.9",
     "@reduxjs/toolkit": "^1.8.6",
     "@svgr/webpack": "^6.4.0",
     "@testing-library/jest-dom": "^5.16.5",
