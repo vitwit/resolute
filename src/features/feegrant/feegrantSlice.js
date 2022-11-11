@@ -16,6 +16,7 @@ import {
   setTxLoad,
 } from "../common/commonSlice";
 import { FeegrantFilterMsg } from "../../txns/feegrant/grant";
+import { signAndBroadcast } from "../../utils/signing";
 
 const initialState = {
   grantsToMe: {
@@ -73,10 +74,15 @@ export const txFeegrantBasic = createAsyncThunk(
         data.spendLimit,
         data.expiration
       );
-      const result = await signAndBroadcastProto(
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
-        data.rpc
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest
       );
       dispatch(resetTxLoad());
       if (result?.code === 0) {

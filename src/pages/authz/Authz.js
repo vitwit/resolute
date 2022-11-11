@@ -190,17 +190,23 @@ export default function Authz() {
           onClick={() => navigateTo("/authz/new")}
           disableElevation
           sx={{
-            textTransform: "none"
+            textTransform: "none",
           }}
         >
           Grant New
         </Button>
       </div>
-      <Paper elevation={0} style={{ padding: 12 }}>
+      <Paper
+        elevation={0}
+        sx={{
+          p: 2,
+        }}
+      >
         <ButtonGroup
           variant="outlined"
           aria-label="validators"
-          style={{ display: "flex", marginBottom: 12 }}
+          sx={{ display: "flex", mb: 1 }}
+          disableElevation
         >
           <Button
             variant={grantType === "by-me" ? "contained" : "outlined"}

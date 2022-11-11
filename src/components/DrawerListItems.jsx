@@ -8,8 +8,12 @@ import LayersIcon from "@mui/icons-material/Layers";
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import DocumentScannerOutlinedIcon from "@mui/icons-material/DocumentScannerOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import { useSelector } from "react-redux";
 
 export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
+  const wallet = useSelector((state) => state?.wallet);
+  const { chainInfo } = wallet;
+
   return (
     <>
       <ListItemButton
@@ -53,6 +57,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemText primary="Governance" />
       </ListItemButton>
       <ListItemButton
+        disabled={!chainInfo?.enableModules.authz}
         onClick={() => onNavigate("/authz")}
         selected={currentPath === "/authz"}
         sx={{ pb: 0.5, pt: 0.5 }}
@@ -60,10 +65,13 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemIcon>
           <BarChartIcon />
         </ListItemIcon>
-        <ListItemText primary="Authz" />
+        <ListItemText
+          primary="Authz"
+          secondary={chainInfo?.enableModules.authz ? null : "Not supported"}
+        />
       </ListItemButton>
       <ListItemButton
-        disabled={true}
+        disabled={!chainInfo?.enableModules.feegrant}
         onClick={() => onNavigate("/feegrant")}
         sx={{ pb: 0.5, pt: 0.5 }}
         selected={currentPath === "/feegrant"}
@@ -71,10 +79,13 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemIcon>
           <LayersIcon />
         </ListItemIcon>
-        <ListItemText primary="Feegrant" secondary="Coming soon" />
+        <ListItemText
+          primary="Feegrant"
+          secondary={chainInfo?.enableModules.feegrant ? null : "Not supported"}
+        />
       </ListItemButton>
       <ListItemButton
-        disabled={true}
+        disabled={!chainInfo?.enableModules.group}
         onClick={() => onNavigate("/group")}
         sx={{ pb: 0.5, pt: 0.5 }}
         selected={currentPath === "/group"}
@@ -82,7 +93,10 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
         <ListItemIcon>
           <GroupsOutlinedIcon />
         </ListItemIcon>
-        <ListItemText primary="Groups" secondary="Coming soon" />
+        <ListItemText
+          primary="Groups"
+          secondary={chainInfo?.enableModules.group ? null : "Not supported"}
+        />
       </ListItemButton>
 
       {showAirdrop ? (

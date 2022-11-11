@@ -79,7 +79,8 @@ export const signAndBroadcast = async (
   gas,
   memo,
   gasPrice,
-  restUrl
+  restUrl,
+  granter = undefined,
 ) => {
   let signer;
   try {
@@ -102,7 +103,7 @@ export const signAndBroadcast = async (
 
   registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
 
-  const fee = getFee(gas, gasPrice);
+  const fee = getFee(gas, gasPrice, granter);
   const txBody = await sign(
     signer,
     chainId,
@@ -119,7 +120,7 @@ export const signAndBroadcast = async (
   return broadcast(txBody, restUrl);
 };
 
-function calculateFee(gasLimit, gasPrice) {
+function calculateFee(gasLimit, gasPrice, granter) {
   const processedGasPrice =
     typeof gasPrice === "string" ? GasPrice.fromString(gasPrice) : gasPrice;
   const { denom, amount: gasPriceAmount } = processedGasPrice;
@@ -134,12 +135,13 @@ function calculateFee(gasLimit, gasPrice) {
   return {
     amount: [coin(format(floor(amount), { notation: "fixed" }), denom)],
     gas: gasLimit.toString(),
+    granter: granter,
   };
 }
 
-function getFee(gas, gasPrice) {
+function getFee(gas, gasPrice, granter) {
   if (!gas) gas = 260000;
-  return calculateFee(gas, gasPrice);
+  return calculateFee(gas, gasPrice, granter);
 }
 
 function getAccount(restUrl, address) {
@@ -296,12 +298,14 @@ async function sign(
       sequence
     );
     const { signature, signed } = await signer.signAmino(address, signDoc);
+    console.log(signed.fee);
     const authInfoBytes = await makeAuthInfoBytes(
       signer,
       account,
       {
         amount: signed.fee.amount,
         gasLimit: signed.fee.gas,
+        granter: signed.fee.granter,
       },
       SignMode.SIGN_MODE_LEGACY_AMINO_JSON
     );
@@ -319,6 +323,8 @@ async function sign(
       {
         amount: fee.amount,
         gasLimit: fee.gas,
+        granter: fee.granter,
+
       },
       SignMode.SIGN_MODE_DIRECT
     );

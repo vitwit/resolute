@@ -19,6 +19,7 @@ Send.propTypes = {
 
 export default function Send(props) {
   const { chainInfo, sendTx, available, onSend, authzTx } = props;
+
   const currency = chainInfo.config.currencies[0];
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
@@ -36,7 +37,12 @@ export default function Send(props) {
   };
 
   return (
-    <Paper elevation={0} style={{ padding: 22 }}>
+    <Paper
+      elevation={0}
+      sx={{
+        p: 4,
+      }}
+    >
       <Typography color="text.primary" variant="h6" fontWeight={600}>
         Send
       </Typography>
@@ -89,19 +95,6 @@ export default function Send(props) {
               />
             )}
           />
-          {/* <div
-                                            style={{textAlign: 'right'}}
-                                        >
-                                        <FormControlLabel
-                                        value="Use Feegrant"
-                                        control={<Checkbox 
-                                            onChange={handleFeePayer}
-                                        disabled // disabled={feepayer === null}
-                                        />}
-                                        label="Use Feegrant"
-                                        labelPlacement="right"
-                                        />
-                                        </div> */}
 
           <div>
             <Button
@@ -111,10 +104,17 @@ export default function Send(props) {
               disabled={
                 sendTx.status === "pending" || authzTx.status === "pending"
               }
+              sx={{
+                textTransform: "none",
+                mt: 2,
+              }}
               size="medium"
             >
               {sendTx.status === "pending" || authzTx.status === "pending" ? (
-                <CircularProgress size={25} />
+                <>
+                  <CircularProgress size={18} />
+                  &nbsp;&nbsp;Please wait...
+                </>
               ) : (
                 "Send"
               )}
