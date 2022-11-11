@@ -150,7 +150,7 @@ function DashboardContent(props) {
   }
 
   useEffect(() => {
-    if (wallet?.connected) {
+    if (wallet?.connected && wallet?.isNanoLedger) {
         // check if feegrant is available and set it in the redux store
         const feegrant = getFeegrant();
         if (feegrant && feegrant.grantee === wallet.address) {

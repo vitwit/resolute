@@ -52,6 +52,7 @@ export default function Feegrant() {
     (state) => state.wallet.chainInfo.config.currencies[0]
   );
   const [infoOpen, setInfoOpen] = React.useState(false);
+  const isNanoLedger = useSelector((state) => state.wallet.isNanoLedger);
 
   const [selected, setSelected] = React.useState({});
   const handleInfoClose = (value) => {
@@ -362,10 +363,21 @@ export default function Feegrant() {
                               control={
                                 <Checkbox
                                   onChange={(e) => {
-                                    if (e.target.checked) {
-                                      setFeegrant(row);
+                                    if (isNanoLedger) {
+                                      dispatch(
+                                        setError({
+                                          type: "info",
+                                          message:
+                                            "Feegrant does not support ledger signing",
+                                        })
+                                      );
+                                      
                                     } else {
-                                      removeFeegrant();
+                                      if (e.target.checked) {
+                                        setFeegrant(row);
+                                      } else {
+                                        removeFeegrant();
+                                      }
                                     }
                                   }}
                                   defaultChecked={isUsingFeeGrant(row)}
