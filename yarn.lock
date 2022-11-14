@@ -1257,14 +1257,7 @@
     core-js-pure "^3.20.2"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.3", "@babel/runtime@^7.17.2", "@babel/runtime@^7.18.3", "@babel/runtime@^7.18.9", "@babel/runtime@^7.19.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
-  version "7.19.0"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.19.0.tgz#22b11c037b094d27a8a2504ea4dcff00f50e2259"
-  integrity sha512-eR8Lo9hnDS7tqkO7NsV+mKvCmv5boaXFSZ70DnfhcgiEne8hv9oCEd36Klw74EtizEqLsy4YnW8UWwpBVolHZA==
-  dependencies:
-    regenerator-runtime "^0.13.4"
-
-"@babel/runtime@^7.19.4":
+"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.3", "@babel/runtime@^7.17.2", "@babel/runtime@^7.18.3", "@babel/runtime@^7.18.9", "@babel/runtime@^7.19.0", "@babel/runtime@^7.20.1", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   version "7.20.1"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.20.1.tgz#1148bb33ab252b165a06698fde7576092a78b4a9"
   integrity sha512-mrzLkl6U9YLF8qpqI7TB82PESyEGjm/0Ly91jG575eVxMMlb8fYfOXFZIJ8XfLrJZQbm7dlKry2bJmXBUEkdFg==
@@ -4367,12 +4360,7 @@ debug@^3.2.7:
   dependencies:
     ms "^2.1.1"
 
-decimal.js@^10.2.1:
-  version "10.4.0"
-  resolved "https://registry.yarnpkg.com/decimal.js/-/decimal.js-10.4.0.tgz#97a7448873b01e92e5ff9117d89a7bca8e63e0fe"
-  integrity sha512-Nv6ENEzyPQ6AItkGwLE2PGKinZZ9g59vSh2BeH6NqPu0OTKZ5ruJsVqh/orbAnqXc9pBbgXAIrc2EyaCj8NpGg==
-
-decimal.js@^10.4.2:
+decimal.js@^10.2.1, decimal.js@^10.4.2:
   version "10.4.2"
   resolved "https://registry.yarnpkg.com/decimal.js/-/decimal.js-10.4.2.tgz#0341651d1d997d86065a2ce3a441fbd0d8e8b98e"
   integrity sha512-ic1yEvwT6GuvaYwBLLY6/aFFgjZdySKTE8en/fkU3QICTmRtgtSlFn0u0BXN06InZwtfCelR7j8LRiDI/02iGA==
@@ -7111,12 +7099,12 @@ makeerror@1.0.12:
   dependencies:
     tmpl "1.0.5"
 
-mathjs@^11.3.2:
-  version "11.3.2"
-  resolved "https://registry.yarnpkg.com/mathjs/-/mathjs-11.3.2.tgz#6bac058b486247db41475a52f6fbe3bb01e5ef6f"
-  integrity sha512-p3QRDt16OrS7R/7Y29qHldua9YkiyPQLenjsqcPuE+feo3q5iO77G8QXeBxfDHhQUqH+5IGlJIZozl7hpaPUvg==
+mathjs@^11.3.3:
+  version "11.3.3"
+  resolved "https://registry.yarnpkg.com/mathjs/-/mathjs-11.3.3.tgz#ceb5a873cf3d22d386a35552baea5b36e82377b5"
+  integrity sha512-+NsgPRzvnczrw5hp7fNPMnfXCaBo2cs7c8Edoacbjcc2Z3js6jHf+Pz8FY6nb5udmBj0q4zl+a5PxbjWVgOQcA==
   dependencies:
-    "@babel/runtime" "^7.19.4"
+    "@babel/runtime" "^7.20.1"
     complex.js "^2.1.1"
     decimal.js "^10.4.2"
     escape-latex "^1.2.0"
