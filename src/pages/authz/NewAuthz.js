@@ -20,12 +20,14 @@ import {
 } from "../../features/authz/authzSlice";
 import {
   resetError,
+  resetFeegrant,
   resetTxHash,
   setError,
 } from "../../features/common/commonSlice";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Typography, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import FeegranterInfo from "../../components/FeegranterInfo";
 
 export default function NewAuthz() {
   const address = useSelector((state) => state.wallet.address);
@@ -34,6 +36,7 @@ export default function NewAuthz() {
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
   const grantsByMe = useSelector((state) => state.authz.grantsByMe);
   const dispatch = useDispatch();
+  const feegrant = useSelector((state) => state.common.feegrant);
 
   useEffect(() => {
     if (grantsToMe.errMsg !== "" && grantsToMe.status === "rejected") {
@@ -80,6 +83,11 @@ export default function NewAuthz() {
     navigate(path);
   }
 
+  const removeFeegrant = () => {
+    // Should we completely remove feegrant or only for this session.
+    dispatch(resetFeegrant());
+  };
+
   const [selected, setSelected] = useState("send");
   let date = new Date();
   let expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
@@ -113,6 +121,7 @@ export default function NewAuthz() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant.granter,
       })
     );
   };
@@ -131,6 +140,7 @@ export default function NewAuthz() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant.granter,
       })
     );
   };
@@ -152,6 +162,14 @@ export default function NewAuthz() {
         Authz does not support ledger signing. Signing transactions through
         ledger will fail.
       </Alert>
+      {feegrant.granter.length > 0 ? (
+        <FeegranterInfo
+          feegrant={feegrant}
+          onRemove={() => {
+            removeFeegrant();
+          }}
+        />
+      ) : null}
       <ButtonGroup variant="outlined" aria-label="outlined button group">
         <Button
           variant={selected === "send" ? "contained" : "outlined"}

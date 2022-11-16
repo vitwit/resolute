@@ -80,7 +80,7 @@ export const signAndBroadcast = async (
   memo,
   gasPrice,
   restUrl,
-  granter = undefined,
+  granter = undefined
 ) => {
   let signer;
   try {
@@ -144,46 +144,46 @@ function getFee(gas, gasPrice, granter) {
   return calculateFee(gas, gasPrice, granter);
 }
 
-function getAccount(restUrl, address) {
-  return axios
-    .get(restUrl + "/cosmos/auth/v1beta1/accounts/" + address)
-    .then((res) => res.data.account)
-    .then((value) => {
-      const baseAccount =
+async function getAccount(restUrl, address) {
+  let value;
+  try {
+    const res = await axios.get(
+      restUrl + "/cosmos/auth/v1beta1/accounts/" + address
+    );
+    value = res.data.account;
+    const baseAccount =
+      value.BaseAccount || value.baseAccount || value.base_account;
+    if (baseAccount) {
+      value = baseAccount;
+    }
+
+    const baseVestingAccount =
+      value.BaseVestingAccount ||
+      value.baseVestingAccount ||
+      value.base_vesting_account;
+    if (baseVestingAccount) {
+      value = baseVestingAccount;
+
+      const baseAccount_1 =
         value.BaseAccount || value.baseAccount || value.base_account;
-      if (baseAccount) {
-        value = baseAccount;
+      if (baseAccount_1) {
+        value = baseAccount_1;
       }
+    }
 
-      const baseVestingAccount =
-        value.BaseVestingAccount ||
-        value.baseVestingAccount ||
-        value.base_vesting_account;
-      if (baseVestingAccount) {
-        value = baseVestingAccount;
-
-        const baseAccount =
-          value.BaseAccount || value.baseAccount || value.base_account;
-        if (baseAccount) {
-          value = baseAccount;
-        }
-      }
-
-      const nestedAccount = value.account;
-      if (nestedAccount) {
-        value = nestedAccount;
-      }
-
-      return value;
-    })
-    .catch((error) => {
-      if (error.response?.status === 404) {
-        throw new Error("Account does not exist on chain");
-      } else {
-        console.log(error);
-        throw error;
-      }
-    });
+    const nestedAccount = value.account;
+    if (nestedAccount) {
+      value = nestedAccount;
+    }
+    return value;
+  } catch (error) {
+    if (error.response?.status === 404) {
+      throw new Error("Account does not exist on chain");
+    } else {
+      console.log(error);
+      throw error;
+    }
+  }
 }
 
 async function broadcast(txBody, restUrl) {
@@ -298,7 +298,6 @@ async function sign(
       sequence
     );
     const { signature, signed } = await signer.signAmino(address, signDoc);
-    console.log(signed.fee);
     const authInfoBytes = await makeAuthInfoBytes(
       signer,
       account,
@@ -324,7 +323,6 @@ async function sign(
         amount: fee.amount,
         gasLimit: fee.gas,
         granter: fee.granter,
-
       },
       SignMode.SIGN_MODE_DIRECT
     );

@@ -16,6 +16,7 @@ import {
   resetError,
   resetTxHash,
   setError,
+  setFeegrant as setFeegrantState,
 } from "./../../features/common/commonSlice";
 import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "./../../utils/util";
@@ -375,6 +376,7 @@ export default function Feegrant() {
                                     } else {
                                       if (e.target.checked) {
                                         setFeegrant(row);
+                                        dispatch(setFeegrantState(row))
                                       } else {
                                         removeFeegrant();
                                       }
