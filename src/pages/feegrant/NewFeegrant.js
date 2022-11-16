@@ -97,6 +97,7 @@ export default function NewFeegrant() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+
       })
     );
   };
@@ -199,12 +200,12 @@ export default function NewFeegrant() {
 
   return (
     <>
-      <Typography
-        variant="h6"
-        textAlign={"left"}
-        color="text.primary"
-        gutterBottom
-      >
+      <Typography 
+      variant="h6"
+       textAlign={"left"}
+       color="text.primary"
+       gutterBottom
+       >
         Create Feegrant
       </Typography>
       <Alert

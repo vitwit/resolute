@@ -80,7 +80,7 @@ export const signAndBroadcast = async (
   memo,
   gasPrice,
   restUrl,
-  granter = undefined
+  granter = undefined,
 ) => {
   let signer;
   try {
@@ -298,6 +298,7 @@ async function sign(
       sequence
     );
     const { signature, signed } = await signer.signAmino(address, signDoc);
+    console.log(signed.fee);
     const authInfoBytes = await makeAuthInfoBytes(
       signer,
       account,
@@ -322,7 +323,6 @@ async function sign(
       {
         amount: fee.amount,
         gasLimit: fee.gas,
-        granter: fee.granter,
       },
       SignMode.SIGN_MODE_DIRECT
     );
