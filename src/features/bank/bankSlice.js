@@ -1,11 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { SendMsg } from "../../txns/bank";
 import bankService from "./bankService";
-import {
-  fee,
-  getKeplrWalletAmino,
-  signAndBroadcastAmino,
-} from "../../txns/execute";
 import { setError, setTxHash } from "../common/commonSlice";
 import { signAndBroadcast } from "../../utils/signing";
 

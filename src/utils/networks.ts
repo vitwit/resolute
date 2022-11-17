@@ -3,7 +3,7 @@ const mainNets = [
   {
     enableModules: {
       authz: true,
-      feegrant: false,
+      feegrant: true,
       group: false,
     },
     aminoConfig: {
@@ -42,7 +42,7 @@ const mainNets = [
   {
     enableModules: {
       authz: true,
-      feegrant: false,
+      feegrant: true,
       group: false,
     },
     aminoConfig: {
@@ -106,7 +106,7 @@ const mainNets = [
   {
     enableModules: {
       authz: true,
-      feegrant: false,
+      feegrant: true,
       group: false,
     },
     aminoConfig: {
@@ -145,7 +145,7 @@ const mainNets = [
   {
     enableModules: {
       authz: true,
-      feegrant: false,
+      feegrant: true,
       group: false,
     },
     aminoConfig: {
@@ -184,7 +184,7 @@ const mainNets = [
   {
     enableModules: {
       authz: true,
-      feegrant: false,
+      feegrant: true,
       group: false,
     },
     aminoConfig: {
@@ -223,7 +223,7 @@ const mainNets = [
   {
     enableModules: {
       authz: true,
-      feegrant: false,
+      feegrant: true,
       group: false,
     },
     aminoConfig: {
@@ -296,7 +296,7 @@ const mainNets = [
   {
     enableModules: {
       authz: true,
-      feegrant: false,
+      feegrant: true,
       group: false,
     },
     aminoConfig: {
@@ -373,7 +373,7 @@ const testNets: Network[] = [
   {
     enableModules: {
       authz: true,
-      feegrant: false,
+      feegrant: true,
       group: false,
     },
     aminoConfig: {
@@ -442,7 +442,7 @@ export function getMainNetworks(): Network[] {
       {
         enableModules: {
           authz: true,
-          feegrant: false,
+          feegrant: true,
           group: false,
         },
         aminoConfig: {

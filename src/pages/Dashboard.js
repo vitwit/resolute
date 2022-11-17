@@ -467,7 +467,7 @@ function DashboardContent(props) {
           severity="success"
           sx={{ width: "100%" }}
         >
-          <AlertTitle>Tx Successful</AlertTitle>
+          <AlertTitle>Transaction Broadcasted</AlertTitle>
           View on explorer{" "}
           <Link
             target="_blank"
