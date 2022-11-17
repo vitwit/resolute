@@ -83,7 +83,7 @@ export const txAuthzSend = createAsyncThunk(
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
-        data.feegranter.length > 0 ? data.feegranter : undefined
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
         dispatch(
@@ -127,7 +127,7 @@ export const txAuthzRevoke = createAsyncThunk(
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
-        data.feegranter.length > 0 ? data.feegranter : undefined
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
         dispatch(
@@ -376,7 +376,7 @@ export const txAuthzExec = createAsyncThunk(
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
-        data.feegranter.length > 0 ? data.feegranter : undefined
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
         dispatch(
