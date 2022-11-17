@@ -1,11 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { SendMsg } from "../../txns/bank";
 import bankService from "./bankService";
-import {
-  fee,
-  getKeplrWalletAmino,
-  signAndBroadcastAmino,
-} from "../../txns/execute";
 import { setError, setTxHash } from "../common/commonSlice";
 import { signAndBroadcast } from "../../utils/signing";
 
@@ -57,7 +52,7 @@ export const txBankSend = createAsyncThunk(
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
-        data.feegranter.length > 0 ? data.feegranter : undefined
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
         dispatch(

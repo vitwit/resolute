@@ -62,7 +62,7 @@ export const txDelegate = createAsyncThunk(
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
-        data.feegranter.length > 0 ? data.feegranter : undefined
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
         dispatch(
@@ -119,7 +119,7 @@ export const txReDelegate = createAsyncThunk(
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
-        data.feegranter.length > 0 ? data.feegranter : undefined
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
         dispatch(
@@ -175,7 +175,7 @@ export const txUnDelegate = createAsyncThunk(
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
-        data.feegranter.length > 0 ? data.feegranter : undefined
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
         dispatch(

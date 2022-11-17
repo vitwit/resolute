@@ -6,10 +6,6 @@ import {
 } from "../../txns/feegrant";
 import feegrantService from "./feegrantService";
 import {
-  fee,
-  signAndBroadcastProto
-} from "../../txns/execute";
-import {
   resetTxLoad,
   setError,
   setTxHash,
@@ -82,7 +78,8 @@ export const txFeegrantBasic = createAsyncThunk(
         260000,
         "",
         `${data.feeAmount}${data.denom}`,
-        data.rest
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       dispatch(resetTxLoad());
       if (result?.code === 0) {
@@ -128,10 +125,16 @@ export const txGrantPeriodic = createAsyncThunk(
         data.periodSpendLimit,
         data.expiration
       );
-      const result = await signAndBroadcastProto(
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
-        data.rpc
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       dispatch(resetTxLoad());
       if (result?.code === 0) {
@@ -180,10 +183,16 @@ export const txGrantFilter = createAsyncThunk(
         data.allowanceType
       );
 
-      const result = await signAndBroadcastProto(
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
-        data.rpc
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       dispatch(resetTxLoad());
       if (result?.code === 0) {
@@ -204,7 +213,6 @@ export const txGrantFilter = createAsyncThunk(
       }
     } catch (error) {
       dispatch(resetTxLoad());
-      console.log("error---", error);
       dispatch(
         setError({
           type: "error",
@@ -222,10 +230,16 @@ export const txRevoke = createAsyncThunk(
     try {
       dispatch(setTxLoad());
       const msg = FeegrantRevokeMsg(data.granter, data.grantee);
-      const result = await signAndBroadcastProto(
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
-        data.rpc
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data?.feegranter?.length > 0 ? data.feegranter : undefined
       );
       dispatch(resetTxLoad());
       if (result?.code === 0) {
