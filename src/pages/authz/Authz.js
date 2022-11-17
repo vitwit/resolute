@@ -25,6 +25,7 @@ import { getLocalTime } from "../../utils/datetime";
 import { AuthorizationInfo } from "../../components/AuthorizationInfo";
 import {
   resetError,
+  resetFeegrant,
   resetTxHash,
   setError,
 } from "../../features/common/commonSlice";
@@ -33,6 +34,7 @@ import {
   getTypeURLFromAuthorization,
 } from "../../utils/authorizations";
 import { AuthzSendDialog } from "../../components/authz/AuthzSend";
+import FeegranterInfo from "../../components/FeegranterInfo";
 
 export default function Authz() {
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
@@ -54,12 +56,18 @@ export default function Authz() {
   const currency = useSelector(
     (state) => state.wallet.chainInfo?.config?.currencies[0]
   );
+  const feegrant = useSelector((state) => state.common.feegrant);
 
   useEffect(() => {
     if (execTx.status === "idle") {
       setSelectedGrant({});
     }
   }, [execTx]);
+
+  const removeFeegrant = () => {
+    // Should we completely remove feegrant or only for this session.
+    dispatch(resetFeegrant());
+  };
 
   useEffect(() => {
     if (address !== "") {
@@ -108,6 +116,7 @@ export default function Authz() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant.granter,
       })
     );
   };
@@ -162,6 +171,7 @@ export default function Authz() {
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
         chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+      feegranter: feegrant.granter,
     });
   };
 
@@ -177,6 +187,14 @@ export default function Authz() {
       ) : (
         <></>
       )}
+      {feegrant.granter.length > 0 ? (
+        <FeegranterInfo
+          feegrant={feegrant}
+          onRemove={() => {
+            removeFeegrant();
+          }}
+        />
+      ) : null}
       <div
         style={{
           display: "flex",
@@ -190,17 +208,23 @@ export default function Authz() {
           onClick={() => navigateTo("/authz/new")}
           disableElevation
           sx={{
-            textTransform: "none"
+            textTransform: "none",
           }}
         >
           Grant New
         </Button>
       </div>
-      <Paper elevation={0} style={{ padding: 12 }}>
+      <Paper
+        elevation={0}
+        sx={{
+          p: 2,
+        }}
+      >
         <ButtonGroup
           variant="outlined"
           aria-label="validators"
-          style={{ display: "flex", marginBottom: 12 }}
+          sx={{ display: "flex", mb: 1 }}
+          disableElevation
         >
           <Button
             variant={grantType === "by-me" ? "contained" : "outlined"}

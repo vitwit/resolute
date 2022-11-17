@@ -79,7 +79,8 @@ export const signAndBroadcast = async (
   gas,
   memo,
   gasPrice,
-  restUrl
+  restUrl,
+  granter = undefined,
 ) => {
   let signer;
   try {
@@ -102,7 +103,7 @@ export const signAndBroadcast = async (
 
   registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
 
-  const fee = getFee(gas, gasPrice);
+  const fee = getFee(gas, gasPrice, granter);
   const txBody = await sign(
     signer,
     chainId,
@@ -119,7 +120,7 @@ export const signAndBroadcast = async (
   return broadcast(txBody, restUrl);
 };
 
-function calculateFee(gasLimit, gasPrice) {
+function calculateFee(gasLimit, gasPrice, granter) {
   const processedGasPrice =
     typeof gasPrice === "string" ? GasPrice.fromString(gasPrice) : gasPrice;
   const { denom, amount: gasPriceAmount } = processedGasPrice;
@@ -134,54 +135,55 @@ function calculateFee(gasLimit, gasPrice) {
   return {
     amount: [coin(format(floor(amount), { notation: "fixed" }), denom)],
     gas: gasLimit.toString(),
+    granter: granter,
   };
 }
 
-function getFee(gas, gasPrice) {
+function getFee(gas, gasPrice, granter) {
   if (!gas) gas = 260000;
-  return calculateFee(gas, gasPrice);
+  return calculateFee(gas, gasPrice, granter);
 }
 
-function getAccount(restUrl, address) {
-  return axios
-    .get(restUrl + "/cosmos/auth/v1beta1/accounts/" + address)
-    .then((res) => res.data.account)
-    .then((value) => {
-      const baseAccount =
+async function getAccount(restUrl, address) {
+  let value;
+  try {
+    const res = await axios.get(
+      restUrl + "/cosmos/auth/v1beta1/accounts/" + address
+    );
+    value = res.data.account;
+    const baseAccount =
+      value.BaseAccount || value.baseAccount || value.base_account;
+    if (baseAccount) {
+      value = baseAccount;
+    }
+
+    const baseVestingAccount =
+      value.BaseVestingAccount ||
+      value.baseVestingAccount ||
+      value.base_vesting_account;
+    if (baseVestingAccount) {
+      value = baseVestingAccount;
+
+      const baseAccount_1 =
         value.BaseAccount || value.baseAccount || value.base_account;
-      if (baseAccount) {
-        value = baseAccount;
+      if (baseAccount_1) {
+        value = baseAccount_1;
       }
+    }
 
-      const baseVestingAccount =
-        value.BaseVestingAccount ||
-        value.baseVestingAccount ||
-        value.base_vesting_account;
-      if (baseVestingAccount) {
-        value = baseVestingAccount;
-
-        const baseAccount =
-          value.BaseAccount || value.baseAccount || value.base_account;
-        if (baseAccount) {
-          value = baseAccount;
-        }
-      }
-
-      const nestedAccount = value.account;
-      if (nestedAccount) {
-        value = nestedAccount;
-      }
-
-      return value;
-    })
-    .catch((error) => {
-      if (error.response?.status === 404) {
-        throw new Error("Account does not exist on chain");
-      } else {
-        console.log(error);
-        throw error;
-      }
-    });
+    const nestedAccount = value.account;
+    if (nestedAccount) {
+      value = nestedAccount;
+    }
+    return value;
+  } catch (error) {
+    if (error.response?.status === 404) {
+      throw new Error("Account does not exist on chain");
+    } else {
+      console.log(error);
+      throw error;
+    }
+  }
 }
 
 async function broadcast(txBody, restUrl) {
@@ -208,7 +210,14 @@ async function broadcast(txBody, restUrl) {
       const result = parseTxResult(response.data.tx_response);
       return result;
     } catch (error) {
-      console.log(error);
+      // if transaction index is disabled return txhash
+      if (error.response?.data?.message === "transaction indexing is disabled") {
+        const result = parseTxResult({
+          code: 0,
+          txhash: txId,
+        });
+        return result;
+      }
       return pollForTx(txId);
     }
   };
@@ -296,12 +305,14 @@ async function sign(
       sequence
     );
     const { signature, signed } = await signer.signAmino(address, signDoc);
+    console.log(signed.fee);
     const authInfoBytes = await makeAuthInfoBytes(
       signer,
       account,
       {
         amount: signed.fee.amount,
         gasLimit: signed.fee.gas,
+        granter: signed.fee.granter,
       },
       SignMode.SIGN_MODE_LEGACY_AMINO_JSON
     );

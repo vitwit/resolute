@@ -16,13 +16,18 @@ import {
   getProposalTally,
   txVote,
 } from "../../features/gov/govSlice";
-import { resetError, setError } from "../../features/common/commonSlice";
+import {
+  resetError,
+  resetFeegrant,
+  setError,
+} from "../../features/common/commonSlice";
 import { resetTx } from "../../features/distribution/distributionSlice";
 import { getVoteAuthz } from "../../utils/authorizations";
 import { authzExecHelper } from "../../features/authz/authzSlice";
 import VoteDialog from "../../components/Vote";
 import { getPoolInfo } from "../../features/staking/stakeSlice";
 import { useTheme } from "@emotion/react";
+import FeegranterInfo from "../../components/FeegranterInfo";
 
 export default function ProposalInfo() {
   const { id } = useParams();
@@ -31,6 +36,7 @@ export default function ProposalInfo() {
   const dispatch = useDispatch();
   const { proposalInfo } = proposalState;
   const poolInfo = useSelector((state) => state.staking.pool);
+  const feegrant = useSelector((state) => state.common.feegrant);
 
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
 
@@ -115,6 +121,11 @@ export default function ProposalInfo() {
     }
   }, [govTx, authzExecTx]);
 
+  const removeFeegrant = () => {
+    // Should we completely remove feegrant or only for this session.
+    dispatch(resetFeegrant());
+  };
+
   const onVoteSubmit = (option) => {
     const vote = nameToOption(option);
     if (selectedAuthz.granter.length === 0) {
@@ -131,6 +142,7 @@ export default function ProposalInfo() {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          feegranter: feegrant.granter,
         })
       );
     } else {
@@ -148,6 +160,7 @@ export default function ProposalInfo() {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          feegranter: feegrant.granter,
         });
       } else {
         alert("You don't have permission to vote");
@@ -192,6 +205,14 @@ export default function ProposalInfo() {
           >
             Proposal Details
           </Typography>
+          {feegrant.granter.length > 0 ? (
+            <FeegranterInfo
+              feegrant={feegrant}
+              onRemove={() => {
+                removeFeegrant();
+              }}
+            />
+          ) : null}
           <Paper
             sx={{
               borderRadius: 0,

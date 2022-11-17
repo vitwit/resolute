@@ -1,6 +1,11 @@
 // add mainnet here
 const mainNets = [
   {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
     aminoConfig: {
       authz: false,
       feegrant: false,
@@ -35,6 +40,11 @@ const mainNets = [
     },
   },
   {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
     aminoConfig: {
       authz: false,
       feegrant: false,
@@ -94,6 +104,11 @@ const mainNets = [
     },
   },
   {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
     aminoConfig: {
       authz: false,
       feegrant: false,
@@ -128,6 +143,11 @@ const mainNets = [
     },
   },
   {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
     aminoConfig: {
       authz: false,
       feegrant: false,
@@ -162,6 +182,11 @@ const mainNets = [
     },
   },
   {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
     aminoConfig: {
       authz: false,
       feegrant: false,
@@ -196,6 +221,11 @@ const mainNets = [
     },
   },
   {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
     aminoConfig: {
       authz: false,
       feegrant: false,
@@ -264,6 +294,11 @@ const mainNets = [
   //   },
   // },
   {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
     aminoConfig: {
       authz: false,
       feegrant: false,
@@ -336,6 +371,11 @@ const mainNets = [
 // add testnet here
 const testNets: Network[] = [
   {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
     aminoConfig: {
       authz: false,
       feegrant: false,
@@ -356,7 +396,7 @@ const testNets: Network[] = [
     config: {
       chainId: "provider",
       chainName: "ICS-Provider",
-      rest: "https://rest.provider-sentry-01.goc.earthball.xyz/",
+      rest: "https://rest.provider-sentry-01.goc.earthball.xyz",
       rpc: "https://rpc.provider-sentry-01.goc.earthball.xyz",
       stakeCurrency: {
         coinDenom: "PROV",
@@ -400,6 +440,11 @@ export function getMainNetworks(): Network[] {
   if (window.location.origin === "https://airdrop.passage3d.com") {
     return [
       {
+        enableModules: {
+          authz: true,
+          feegrant: true,
+          group: false,
+        },
         aminoConfig: {
           authz: false,
           feegrant: false,
@@ -485,6 +530,11 @@ export function getTestNetworks(): Network[] {
   if (window.location.origin === "http://localhost:3000") {
     return [
       {
+        enableModules: {
+          authz: true,
+          feegrant: true,
+          group: true,
+        },
         aminoConfig: {
           authz: false,
           feegrant: false,
@@ -500,13 +550,13 @@ export function getTestNetworks(): Network[] {
         isTestnet: true,
         explorerTxHashEndpoint: "https://passage3d.testaneka.com/txs/",
         config: {
-          chainId: "test",
+          chainId: "testnet",
           chainName: "Simapp",
           rest: "http://127.0.0.1:1317",
-          rpc: "http://127.0.0.1:16657",
+          rpc: "http://127.0.0.1:26657",
           stakeCurrency: {
             coinDenom: "STAKE",
-            coinMinimalDenom: "uatom",
+            coinMinimalDenom: "stake",
             coinDecimals: 6,
             coinGeckoId: "stake",
           },
@@ -522,7 +572,7 @@ export function getTestNetworks(): Network[] {
           currencies: [
             {
               coinDenom: "STAKE",
-              coinMinimalDenom: "uatom",
+              coinMinimalDenom: "stake",
               coinDecimals: 6,
               coinGeckoId: "stake",
             },
@@ -530,7 +580,7 @@ export function getTestNetworks(): Network[] {
           feeCurrencies: [
             {
               coinDenom: "STAKE",
-              coinMinimalDenom: "uatom",
+              coinMinimalDenom: "stake",
               coinDecimals: 6,
               coinGeckoId: "stake",
             },

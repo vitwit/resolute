@@ -27,6 +27,7 @@ import { getBalance } from "../features/bank/bankSlice";
 import { DialogUndelegate } from "../components/DialogUndelegate";
 import {
   resetError,
+  resetFeegrant,
   resetTxHash,
   setError,
 } from "./../features/common/commonSlice";
@@ -46,6 +47,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { FilteredValidators } from "./../components/FilteredValidators";
 import { useTheme } from "@emotion/react";
+import FeegranterInfo from "../components/FeegranterInfo";
 
 export default function Validators() {
   const [type, setType] = useState("delegations");
@@ -58,6 +60,8 @@ export default function Validators() {
   const rewards = useSelector((state) => state.distribution.delegatorRewards);
   const wallet = useSelector((state) => state.wallet);
   const balance = useSelector((state) => state.bank.balance);
+  const feegrant = useSelector((state) => state.common.feegrant);
+
   const { chainInfo, address, connected } = wallet;
   const currency = useSelector(
     (state) => state.wallet.chainInfo?.config?.currencies[0]
@@ -279,6 +283,7 @@ export default function Validators() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant.granter,
       });
     } else {
       dispatch(
@@ -291,6 +296,7 @@ export default function Validators() {
           rest: chainInfo.config.rest,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          feegranter: feegrant.granter,
         })
       );
     }
@@ -327,6 +333,7 @@ export default function Validators() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant.granter,
       });
     } else {
       dispatch(
@@ -343,6 +350,7 @@ export default function Validators() {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          feegranter: feegrant.granter,
         })
       );
     }
@@ -378,6 +386,7 @@ export default function Validators() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant.granter,
       });
     } else {
       dispatch(
@@ -392,6 +401,7 @@ export default function Validators() {
           rest: chainInfo.config.rest,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          feegranter: feegrant.granter,
         })
       );
     }
@@ -471,6 +481,7 @@ export default function Validators() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant.granter,
       });
     } else {
       dispatch(
@@ -487,6 +498,7 @@ export default function Validators() {
           rest: chainInfo.config.rest,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          feegranter: feegrant.granter,
         })
       );
     }
@@ -554,6 +566,11 @@ export default function Validators() {
     inactive: [],
   });
 
+  const removeFeegrant = () => {
+    // Should we completely remove feegrant or only for this session.
+    dispatch(resetFeegrant());
+  };
+
   return (
     <>
       {connected ? (
@@ -566,6 +583,14 @@ export default function Validators() {
           )
         ) : (
           <>
+            {feegrant.granter.length > 0 ? (
+              <FeegranterInfo
+                feegrant={feegrant}
+                onRemove={() => {
+                  removeFeegrant();
+                }}
+              />
+            ) : null}
             <ButtonGroup
               variant="outlined"
               aria-label="outlined button staking"

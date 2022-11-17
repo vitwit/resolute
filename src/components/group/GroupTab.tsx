@@ -1,9 +1,7 @@
 import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { Button, Paper } from "@mui/material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -23,8 +21,8 @@ export function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+        <Box sx={{ p: 2 }}>
+          {children}
         </Box>
       )}
     </div>
@@ -52,25 +50,19 @@ export default function GroupTab({ handleTabChange, tabs }: GroupTabinterface) {
   };
 
   return (
-    <Box>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="groups tabs"
-        >
-          {tabs.map((t, index) => (
-            <Tab
-              sx={{
-                padding: 2,
-              }}
-              label={t}
-              key={index}
-              {...a11yProps(index)}
-            />
-          ))}
-        </Tabs>
-      </Box>
+    <Box sx={{ borderBottom: 0.5, borderColor: "divider" }}>
+      <Tabs value={value} onChange={handleChange} aria-label="groups tabs">
+        {tabs.map((t, index) => (
+          <Tab
+            sx={{
+              padding: 2,
+            }}
+            label={t}
+            key={index}
+            {...a11yProps(index)}
+          />
+        ))}
+      </Tabs>
     </Box>
   );
 }

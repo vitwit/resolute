@@ -54,6 +54,12 @@ interface AminoConfig {
   group: boolean;
 }
 
+interface EnableModule {
+  authz: boolean;
+  feegrant: boolean;
+  group: boolean;
+}
+
 interface Network {
   showAirdrop: boolean;
   logos: Logos;
@@ -64,4 +70,5 @@ interface Network {
   airdropMessage?: string;
   airdropActions?: AirdropAction[];
   aminoConfig: AminoConfig;
+  enableModules: EnableModule;
 }

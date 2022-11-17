@@ -82,7 +82,8 @@ export const txAuthzSend = createAsyncThunk(
         260000,
         "",
         `${data.feeAmount}${data.denom}`,
-        data.rest
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
         dispatch(
@@ -125,7 +126,8 @@ export const txAuthzRevoke = createAsyncThunk(
         260000,
         "",
         `${data.feeAmount}${data.denom}`,
-        data.rest
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
         dispatch(
@@ -180,6 +182,7 @@ export const authzExecHelper = (dispatch, data) => {
           feeAmount: data.feeAmount,
           prefix: data.prefix,
           chainId: data.chainId,
+          feegranter: data.feegranter,
         })
       );
       break;
@@ -201,6 +204,7 @@ export const authzExecHelper = (dispatch, data) => {
           feeAmount: data.feeAmount,
           prefix: data.prefix,
           chainId: data.chainId,
+          feegranter: data.feegranter,
         })
       );
       break;
@@ -217,6 +221,7 @@ export const authzExecHelper = (dispatch, data) => {
           feeAmount: data.feeAmount,
           prefix: data.prefix,
           chainId: data.chainId,
+          feegranter: data.feegranter,
         })
       );
       break;
@@ -238,6 +243,7 @@ export const authzExecHelper = (dispatch, data) => {
           feeAmount: data.feeAmount,
           prefix: data.prefix,
           chainId: data.chainId,
+          feegranter: data.feegranter,
         })
       );
       break;
@@ -260,6 +266,7 @@ export const authzExecHelper = (dispatch, data) => {
           feeAmount: data.feeAmount,
           prefix: data.prefix,
           chainId: data.chainId,
+          feegranter: data.feegranter,
         })
       );
       break;
@@ -281,6 +288,7 @@ export const authzExecHelper = (dispatch, data) => {
           feeAmount: data.feeAmount,
           prefix: data.prefix,
           chainId: data.chainId,
+          feegranter: data.feegranter,
         })
       );
       break;
@@ -296,6 +304,8 @@ export const authzExecHelper = (dispatch, data) => {
             aminoConfig: data.aminoConfig,
             feeAmount: data.feeAmount,
             prefix: data.prefix,
+            chainId: data.chainId,
+            feegranter: data.feegranter,
           })
         );
       }
@@ -365,7 +375,8 @@ export const txAuthzExec = createAsyncThunk(
         260000,
         "",
         `${data.feeAmount}${data.denom}`,
-        data.rest
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
         dispatch(

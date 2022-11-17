@@ -17,7 +17,12 @@ import { getAccountInfo } from "../features/auth/slice";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { copyToClipboard } from "../utils/clipboard";
-import { getTokenPrice } from "../features/common/commonSlice";
+import {
+  getTokenPrice,
+  setFeegrant as setFeegrantState,
+  resetFeegrant,
+} from "../features/common/commonSlice";
+import { getFeegrant } from "../utils/localStorage";
 
 export default function Overview() {
   const wallet = useSelector((state) => state.wallet);
