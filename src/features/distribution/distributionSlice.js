@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import distService from "./distributionService";
+import distService from "./service";
 import { WithdrawAllRewardsMsg } from "../../txns/distr";
 import { setError, setTxHash } from "../common/commonSlice";
 import { signAndBroadcast } from "../../utils/signing";

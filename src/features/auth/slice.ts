@@ -1,7 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { SOMETHING_WRONG } from "../multisig/multisigSlice";
 import service from "./service";
 
-const initialState = {
+export interface AccountInfoState {
+  status: "idle" | "pending" | "rejected";
+  errMsg: string;
+  account: any;
+}
+
+export interface AuthState {
+  accountInfo: AccountInfoState;
+}
+
+const initialState: AuthState = {
   accountInfo: {
     status: "idle",
     errMsg: "",
@@ -11,7 +22,7 @@ const initialState = {
 
 export const getAccountInfo = createAsyncThunk(
   "auth/accountInfo",
-  async (data) => {
+  async (data: any) => {
     const response = await service.accountInfo(data.baseURL, data.address);
     return response.data;
   }
@@ -21,8 +32,8 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    resetAccountInfo: (state) => {
-      state.accountInfo.granter = initialState.accountInfo;
+    resetAccountInfo: (state: any) => {
+      state.accountInfo = initialState.accountInfo;
     },
   },
   extraReducers: (builder) => {
@@ -38,7 +49,7 @@ export const authSlice = createSlice({
       })
       .addCase(getAccountInfo.rejected, (state, action) => {
         state.accountInfo.status = "rejected";
-        state.accountInfo.errMsg = action.error.message;
+        state.accountInfo.errMsg = action.error?.message || SOMETHING_WRONG;
         state.accountInfo.account = {};
       });
   },
