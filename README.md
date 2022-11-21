@@ -68,4 +68,4 @@ $ make docker-run
 ```
 
 ## License
-Released under the Apache 2.0 License.
+Released under the [Apache 2.0 License](https://github.com/vitwit/resolute/blob/master/LICENSE).
