@@ -40,9 +40,6 @@ interface NetworkConfig {
   coinType?: number;
   gasPriceStep: GasPrice;
   walletUrlForStaking?: string;
-  enableAuthz: boolean;
-  enableFeegrant: boolean;
-  enableGroup: boolean;
 }
 
 interface AirdropAction {

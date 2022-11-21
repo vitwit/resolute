@@ -18,16 +18,16 @@ import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
 import Overview from "./Overview";
 import { CustomAppBar } from "../components/CustomAppBar";
-import { resetFeegrant, resetTxLoad, setFeegrant } from "../features/common/commonSlice";
+import {
+  resetFeegrant,
+  resetTxLoad,
+  setFeegrant,
+} from "../features/common/commonSlice";
 import Page404 from "./Page404";
 import AppDrawer from "../components/AppDrawer";
 import { Alert } from "../components/Alert";
 import { getPallet, isDarkMode, mdTheme } from "../utils/theme";
-import {
-  getFeegrant,
-  isConnected,
-  logout,
-} from "../utils/localStorage";
+import { getFeegrant, isConnected, logout } from "../utils/localStorage";
 import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
 import { copyToClipboard } from "../utils/clipboard";
@@ -151,13 +151,13 @@ function DashboardContent(props) {
 
   useEffect(() => {
     if (wallet?.connected && wallet?.isNanoLedger) {
-        // check if feegrant is available and set it in the redux store
-        const feegrant = getFeegrant();
-        if (feegrant && feegrant.grantee === wallet.address) {
-          dispatch(setFeegrant(feegrant));
-        } else {
-          dispatch(resetFeegrant());
-        }
+      // check if feegrant is available and set it in the redux store
+      const feegrant = getFeegrant();
+      if (feegrant && feegrant.grantee === wallet.address) {
+        dispatch(setFeegrant(feegrant));
+      } else {
+        dispatch(resetFeegrant());
+      }
     }
   }, [wallet]);
 
@@ -228,7 +228,7 @@ function DashboardContent(props) {
                 <Routes>
                   <Route path="/" element={<Overview />} />
 
-                  {chainInfo?.config?.enableFeegrant ? (
+                  {chainInfo?.enableModules?.feegrant ? (
                     <>
                       <Route
                         path="/feegrant"
@@ -248,7 +248,7 @@ function DashboardContent(props) {
                       ></Route>
                     </>
                   ) : null}
-                  {chainInfo?.config?.enableAuthz ? (
+                  {chainInfo?.enableModules?.authz ? (
                     <>
                       <Route
                         path="/authz"
@@ -347,7 +347,7 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
-                  {chainInfo?.config?.enableGroup ? (
+                  {chainInfo?.enableModules?.group ? (
                     <>
                       <Route
                         path="/group"
