@@ -18,7 +18,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
 import {
   resetError,
-  resetFeegrant,
   setError,
 } from "../../features/common/commonSlice";
 import GroupTab, { TabPanel } from "../../components/group/GroupTab";
@@ -47,11 +46,12 @@ export default function NewFeegrant() {
   const feegrantTx = useSelector((state) => state.feegrant.tx);
   const feeFilterTxRes = useSelector((state) => state.feegrant.txFilterRes);
 
+  let navigate = useNavigate();
   useEffect(() => {
     if (feeFilterTxRes?.status === "idle") {
       navigate(`/feegrant`);
     }
-  }, [feeFilterTxRes?.status]);
+  }, [feeFilterTxRes?.status, navigate]);
 
   useEffect(() => {
     return () => {
@@ -156,7 +156,6 @@ export default function NewFeegrant() {
     );
   };
 
-  let navigate = useNavigate();
   function navigateTo(path) {
     navigate(path);
   }
@@ -348,8 +347,8 @@ export default function NewFeegrant() {
                         </Box>
                       )}
                     >
-                      {authzMsgTypes().map((a) => (
-                        <MenuItem value={a.typeURL}>{a.label}</MenuItem>
+                      {authzMsgTypes().map((a, index) => (
+                        <MenuItem key={index} value={a.typeURL}>{a.label}</MenuItem>
                       ))}
                     </Select>
                   </FormControl>
