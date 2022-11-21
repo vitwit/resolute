@@ -16,9 +16,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { PeriodicFeegrant } from "../../components/PeriodicFeeGrant";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
-import { resetError, setError } from "../../features/common/commonSlice";
+import {
+  resetError,
+  setError,
+} from "../../features/common/commonSlice";
 import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import {
+  Alert,
   Chip,
   FormControl,
   Grid,
@@ -42,11 +46,12 @@ export default function NewFeegrant() {
   const feegrantTx = useSelector((state) => state.feegrant.tx);
   const feeFilterTxRes = useSelector((state) => state.feegrant.txFilterRes);
 
+  let navigate = useNavigate();
   useEffect(() => {
     if (feeFilterTxRes?.status === "idle") {
       navigate(`/feegrant`);
     }
-  }, [feeFilterTxRes?.status]);
+  }, [feeFilterTxRes?.status, navigate]);
 
   useEffect(() => {
     return () => {
@@ -92,6 +97,7 @@ export default function NewFeegrant() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+
       })
     );
   };
@@ -150,7 +156,6 @@ export default function NewFeegrant() {
     );
   };
 
-  let navigate = useNavigate();
   function navigateTo(path) {
     navigate(path);
   }
@@ -194,10 +199,34 @@ export default function NewFeegrant() {
 
   return (
     <>
-      <Typography variant="h6" textAlign={"left"} gutterBottom>
+      <Typography 
+      variant="h6"
+       textAlign={"left"}
+       color="text.primary"
+       gutterBottom
+       >
         Create Feegrant
       </Typography>
-      <Paper variant="outlined">
+      <Alert
+        variant="standard"
+        severity="info"
+        sx={{
+          textAlign: "left",
+          mb: 2,
+          mt: 1,
+        }}
+      >
+        Feegrant does not support ledger signing. Signing transactions through
+        ledger will fail.
+      </Alert>
+
+      <Paper
+        variant="elevation"
+        sx={{
+          mt: 1,
+        }}
+        elevation={0}
+      >
         <GroupTab
           tabs={["Basic", "Periodic", "Filtered"]}
           handleTabChange={handleTabChange}
@@ -206,10 +235,6 @@ export default function NewFeegrant() {
           <Grid container>
             <Grid item xs={1} md={3}></Grid>
             <Grid item xs={10} md={6}>
-              <Typography variant="h6" gutterBottom>
-                Basic Feegrant
-              </Typography>
-
               <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(onBasicSubmit)}>
                   <BasicFeeGrant />
@@ -236,10 +261,6 @@ export default function NewFeegrant() {
           <Grid container>
             <Grid item xs={1} md={3}></Grid>
             <Grid item xs={10} md={6}>
-              <Typography variant="h6" gutterBottom>
-                Periodic Feegrant
-              </Typography>
-
               <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(onPeriodicGrant)}>
                   <PeriodicFeegrant
@@ -271,10 +292,6 @@ export default function NewFeegrant() {
           <Grid container>
             <Grid item xs={1} md={3}></Grid>
             <Grid item xs={10} md={6}>
-              <Typography variant="h6" gutterBottom>
-                Filter Feegrant
-              </Typography>
-
               <FormControl sx={{ float: "left", mb: 2, mt: 1 }}>
                 <FormLabel
                   sx={{ textAlign: "left" }}
@@ -330,8 +347,8 @@ export default function NewFeegrant() {
                         </Box>
                       )}
                     >
-                      {authzMsgTypes().map((a) => (
-                        <MenuItem value={a.typeURL}>{a.label}</MenuItem>
+                      {authzMsgTypes().map((a, index) => (
+                        <MenuItem key={index} value={a.typeURL}>{a.label}</MenuItem>
                       ))}
                     </Select>
                   </FormControl>

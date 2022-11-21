@@ -1,29 +1,32 @@
-import { toBase64 } from '@cosmjs/encoding';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { getKeplrWalletAmino, isKeplrInstalled } from '../../txns/execute'
-import { setConnected } from '../../utils/localStorage';
-import { setError } from '../common/commonSlice'
+import { toBase64 } from "@cosmjs/encoding";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { getKeplrWalletAmino, isKeplrInstalled } from "../../txns/execute";
+import { setConnected } from "../../utils/localStorage";
+import { setError } from "../common/commonSlice";
 
 const initialState = {
-  name: '',
+  name: "",
   connected: false,
-  address: '',
-  pubKey: '',
+  address: "",
+  pubKey: "",
+  isNanoLedger: false,
   chainInfo: {
     currencies: [],
   },
-}
+};
 
 export const connectKeplrWallet = createAsyncThunk(
-  'wallet/connect',
+  "wallet/connect",
   async (network, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       if (!isKeplrInstalled()) {
-        dispatch(setError({
-          type: 'error',
-          message: 'Keplr wallet is not installed'
-        }))
-        return rejectWithValue('Keplr wallet is not installed')
+        dispatch(
+          setError({
+            type: "error",
+            message: "Keplr wallet is not installed",
+          })
+        );
+        return rejectWithValue("Keplr wallet is not installed");
       } else {
         window.keplr.defaultOptions = {
           sign: {
@@ -32,73 +35,75 @@ export const connectKeplrWallet = createAsyncThunk(
           },
         };
         if (network.experimental) {
-          await window.keplr.experimentalSuggestChain(network.config)
+          await window.keplr.experimentalSuggestChain(network.config);
         }
         try {
-          const result = await getKeplrWalletAmino(network.config.chainId)
-          const walletInfo = await window.keplr.getKey(network.config.chainId)
+          const result = await getKeplrWalletAmino(network.config.chainId);
+          const walletInfo = await window.keplr.getKey(network.config.chainId);
           setConnected();
           return fulfillWithValue({
             walletInfo: walletInfo,
             result: result,
-            network: network
-          })
+            network: network,
+          });
         } catch (error) {
-          dispatch(setError({
-            type: 'error',
-            message: error.message || ""
-          }))
-          return rejectWithValue(error.message)
+          dispatch(
+            setError({
+              type: "error",
+              message: error.message || "",
+            })
+          );
+          return rejectWithValue(error.message);
         }
       }
     } catch (error) {
-      dispatch(setError({
-        type: 'error',
-        message: error.message || ""
-      }))
-      return rejectWithValue(error.message)
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message || "",
+        })
+      );
+      return rejectWithValue(error.message);
     }
   }
 );
 
 export const walletSlice = createSlice({
-  name: 'wallet',
+  name: "wallet",
   initialState,
   reducers: {
     setWallet: (state, action) => {
-      state.address = action.payload.address
-      state.connected = true
-      state.chainInfo = action.payload.chainInfo
+      state.address = action.payload.address;
+      state.connected = true;
+      state.chainInfo = action.payload.chainInfo;
     },
     resetWallet: (state) => {
-      state.connected = false
-      state.address = ''
-      state.algo = ''
-      state.name = ''
-      state.pubKey = ''
+      state.connected = false;
+      state.address = "";
+      state.algo = "";
+      state.name = "";
+      state.pubKey = "";
     },
     setNetwork: (state, action) => {
-      state.chainInfo = action.payload.chainInfo
-    }
+      state.chainInfo = action.payload.chainInfo;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(connectKeplrWallet.pending, () => {
-      })
+      .addCase(connectKeplrWallet.pending, () => {})
       .addCase(connectKeplrWallet.fulfilled, (state, action) => {
-        const result = action.payload
-        state.name = result.walletInfo?.name
-        state.pubKey = toBase64(result.walletInfo?.pubKey)
-        state.address = result.result[1].address
-        state.chainInfo = result.network
-        state.connected = true
+        const result = action.payload;
+        state.name = result.walletInfo?.name;
+        state.pubKey = toBase64(result.walletInfo?.pubKey);
+        state.address = result.result[1].address;
+        state.chainInfo = result.network;
+        state.connected = true;
+        state.isNanoLedger = action.payload?.walletInfo?.isNanoLedger || false;
       })
-      .addCase(connectKeplrWallet.rejected, () => {
-      })
-  }
-
+      .addCase(connectKeplrWallet.rejected, () => {});
+  },
 });
 
-export const { setWallet, resetWallet, setNetwork } = walletSlice.actions
+export const { setWallet, resetWallet, setNetwork } = walletSlice.actions;
 
-export default walletSlice.reducer
+export default walletSlice.reducer;

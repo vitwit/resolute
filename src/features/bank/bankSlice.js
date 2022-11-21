@@ -1,10 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { SendMsg } from "../../txns/bank";
 import bankService from "./bankService";
-import { fee, getKeplrWalletAmino, signAndBroadcastAmino } from "../../txns/execute";
 import { setError, setTxHash } from "../common/commonSlice";
 import { signAndBroadcast } from "../../utils/signing";
-import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
 
 const initialState = {
   balances: {
@@ -53,7 +51,8 @@ export const txBankSend = createAsyncThunk(
         260000,
         "",
         `${data.feeAmount}${data.denom}`,
-        data.rest
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
         dispatch(

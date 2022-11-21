@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { authzExecHelper, getGrantsToMe } from "../features/authz/authzSlice";
 import {
   resetError,
+  resetFeegrant,
   resetTxHash,
   setError,
 } from "./../features/common/commonSlice";
@@ -12,6 +13,7 @@ import { getBalance, txBankSend } from "../features/bank/bankSlice";
 import Send from "../components/Send";
 import { parseBalance } from "../utils/denom";
 import Alert from "@mui/material/Alert";
+import FeegranterInfo from "../components/FeegranterInfo";
 
 export default function SendPage() {
   const [available, setBalance] = useState(0);
@@ -26,6 +28,7 @@ export default function SendPage() {
   const balance = useSelector((state) => state.bank.balance);
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
+  const feegrant = useSelector((state) => state.common.feegrant);
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
 
@@ -106,6 +109,7 @@ export default function SendPage() {
             feeAmount:
               chainInfo.config.gasPriceStep.average *
               10 ** currency.coinDecimals,
+            feegranter: feegrant.granter,
           })
         );
       }
@@ -123,14 +127,28 @@ export default function SendPage() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant.granter,
       });
     }
   };
 
+  const removeFeegrant = () => {
+    // Should we completely remove feegrant or only for this session.
+    dispatch(resetFeegrant());
+  };
+
   return (
     <>
-      <Grid container style={{ marginTop: 24 }}>
-        <Grid item xs={2} md={3}></Grid>
+      {feegrant.granter.length > 0 ? (
+        <FeegranterInfo
+          feegrant={feegrant}
+          onRemove={() => {
+            removeFeegrant();
+          }}
+        />
+      ) : null}
+      <Grid container sx={{ mt: 4 }}>
+        <Grid item xs={1} md={3}></Grid>
         <Grid item xs={10} md={6}>
           {selectedAuthz.granter.length > 0 &&
           authzSend?.granter !== selectedAuthz.granter ? (
@@ -146,7 +164,7 @@ export default function SendPage() {
           )}
         </Grid>
 
-        <Grid item xs={2} md={3}></Grid>
+        <Grid item xs={1} md={3}></Grid>
       </Grid>
     </>
   );

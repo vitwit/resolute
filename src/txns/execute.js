@@ -485,6 +485,7 @@ export function fee(coinMinimalDenom, amount, gas = 280000, feeGranter = "") {
   return {
     amount: [{ amount: String(amount), denom: coinMinimalDenom }],
     gas: String(gas),
+    granter: feeGranter,
   };
 }
 

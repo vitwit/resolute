@@ -34,12 +34,11 @@ export const parseSendMsgsFromContent = (
 
 const parseSendTx = (from: string, msg: string): Msg => {
   const values = msg.split(",");
-  console.log('Parsed values-----', values)
   if (values?.length !== 2) {
-    return {}
-    // throw new Error(
-    //   `invalid message: expected ${2} values got ${values.length}`
-    // );
+    // return {}
+    throw new Error(
+      `invalid message: expected ${2} values got ${values.length}`
+    );
   }
 
   const to = values[0];

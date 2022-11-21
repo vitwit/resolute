@@ -16,6 +16,11 @@ const initialState = {
     info: {},
     status: "idle",
   },
+  feegrant: {
+    granter: "",
+    grantee: ""
+  }
+  
 };
 
 export const getTokenPrice = createAsyncThunk(
@@ -70,6 +75,12 @@ export const commonSlice = createSlice({
     resetActiveProposals: (state) => {
       state.policyProposals = {};
     },
+    setFeegrant: (state, data) => {
+      state.feegrant = data.payload;
+    },
+    resetFeegrant: (state) => {
+      state.feegrant = initialState.feegrant;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -99,6 +110,8 @@ export const {
   resetTxLoad,
   setTxHash,
   resetTxHash,
+  setFeegrant,
+  resetFeegrant,
 } = commonSlice.actions;
 
 export default commonSlice.reducer;
