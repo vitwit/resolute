@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import authzService from "./authzService";
+import authzService from "./service";
 import {
   AuthzSendGrantMsg,
   AuthzGenericGrantMsg,

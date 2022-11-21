@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import multisigService from "./multisigService";
-import bankService from "./../bank/bankService";
+import bankService from "../bank/service";
 
 export const SOMETHING_WRONG = "Something went wrong";
 

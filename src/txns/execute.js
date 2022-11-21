@@ -24,8 +24,6 @@ import {
 import { AirdropAminoConverter } from "../features/airdrop/amino";
 import { MsgUnjail } from "./slashing/tx";
 import { slashingAminoConverter } from "../features/slashing/slashing";
-import { MsgGrantAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
-import { AllowedMsgAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/feegrant";
 
 export async function signAndBroadcastGroupMsg(
   signer,
