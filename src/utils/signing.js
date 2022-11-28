@@ -80,7 +80,7 @@ export const signAndBroadcast = async (
   memo,
   gasPrice,
   restUrl,
-  granter = undefined,
+  granter = undefined
 ) => {
   let signer;
   try {
@@ -211,7 +211,9 @@ async function broadcast(txBody, restUrl) {
       return result;
     } catch (error) {
       // if transaction index is disabled return txhash
-      if (error.response?.data?.message === "transaction indexing is disabled") {
+      if (
+        error.response?.data?.message === "transaction indexing is disabled"
+      ) {
         const result = parseTxResult({
           code: 0,
           txhash: txId,

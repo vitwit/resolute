@@ -79,6 +79,8 @@ const GroupPolicies = ({ id, wallet }) => {
 
   const handlePolicy = (policyObj) => {
     const chainInfo = wallet?.chainInfo;
+
+    console.log("policy = ", policyObj);
     dispatch(
       txAddGroupPolicy({
         admin: groupInformation?.admin,
