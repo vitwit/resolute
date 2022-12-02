@@ -39,4 +39,4 @@ make test
 
 ## License
 
-Released under the [Apache 2.0 License](https://github.com/vitwit/resolute/LICENSE).
+Released under the [Apache 2.0 License](https://github.com/vitwit/resolute/blob/master/LICENSE).

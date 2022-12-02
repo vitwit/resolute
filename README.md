@@ -8,7 +8,7 @@ Supported features:
 - [x] Authz
 - [x] Airdrops
 - [x] Multisig
-- [ ] Feegrant
+- [x] Feegrant
 - [ ] IBC Transfer
 - [ ] Groups
 - [ ] ICA
@@ -66,3 +66,6 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 $ make docker-run
 # Open the browser with http://localhost:8081
 ```
+
+## License
+Released under the [Apache 2.0 License](https://github.com/vitwit/resolute/blob/master/LICENSE).
