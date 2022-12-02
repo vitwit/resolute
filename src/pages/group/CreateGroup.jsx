@@ -1,16 +1,11 @@
 import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
-import {
-  Paper,
-  Grid,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Paper, Grid, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { resetGroupTx, txCreateGroup } from "../../features/group/groupSlice";
-import CreateGroupForm from "./CreateGroupForm";
+import CreateGroupMembersForm from "./CreateGroupMembersForm";
 import CreateGroupPolicy from "./CreateGroupPolicy";
 import { useNavigate } from "react-router-dom";
 
@@ -80,7 +75,8 @@ export default function CreateGroupPage() {
     }
 
     if (dataObj?.policyData?.decisionPolicy === "percentage") {
-      dataObj.policyData.percentage = Number(dataObj.policyData.percentage) / 100.0
+      dataObj.policyData.percentage =
+        Number(dataObj.policyData.percentage) / 100.0;
     }
 
     dispatch(txCreateGroup(dataObj));
@@ -95,11 +91,28 @@ export default function CreateGroupPage() {
     formState: { errors },
     reset,
     getValues,
-  } = useForm({});
+  } = useForm({
+    defaultValues: {
+      members: [
+        {
+          address: "",
+          weight: 0,
+          metadata: "",
+        },
+      ],
+      policyMetadata: {
+        metadata: "",
+        decisionPolicy: "threshold",
+        percentage: 0,
+        threshold: 0,
+      }
+    },
+  });
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "members",
+    rules: { minLength: 1 },
   });
 
   return (
@@ -147,10 +160,10 @@ export default function CreateGroupPage() {
                 }}
               >
                 {/* group members section start */}
-                {(!fields?.length && (
+                {/* {(!fields?.length && (
                   <Button
                     onClick={() => {
-                      append({ address: "", weight: 0, metadata: "" });
+                      // append({ address: "", weight: 0, metadata: "" });
                     }}
                     variant="outlined"
                     sx={{
@@ -161,7 +174,7 @@ export default function CreateGroupPage() {
                     Add Group Member
                   </Button>
                 )) ||
-                  null}
+                  null} */}
 
                 {fields.length ? (
                   <fieldset
@@ -180,7 +193,7 @@ export default function CreateGroupPage() {
                       Group members
                     </Typography>
 
-                    <CreateGroupForm
+                    <CreateGroupMembersForm
                       fields={fields}
                       control={control}
                       append={append}
@@ -199,7 +212,10 @@ export default function CreateGroupPage() {
                         setShowAddPolicyForm(true);
                         setValue("policyMetadata.decisionPolicy", "threshold");
                         setValue("policyMetadata.votingPeriodDuration", "Days");
-                        setValue("policyMetadata.minExecPeriodDuration", "Days");
+                        setValue(
+                          "policyMetadata.minExecPeriodDuration",
+                          "Days"
+                        );
                       }}
                       variant="outlined"
                       sx={{

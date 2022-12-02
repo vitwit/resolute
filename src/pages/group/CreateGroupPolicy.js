@@ -97,7 +97,6 @@ function CreateGroupPolicy({
                     onChange={(e) => {
                       setPolicyType(e.target.value);
                       setValue("policyMetadata.decisionPolicy", e.target.value);
-                      console.log(e.target.value);
                     }}
                     value={policyType}
                   >
@@ -158,6 +157,7 @@ function CreateGroupPolicy({
                       min={1}
                       max={100}
                       valueLabelDisplay="on"
+                      valueLabelFormat={value => <div>{value}%</div>}
                       {...field}       
                       onChange={(_, value) => {
                         field.onChange(value);
