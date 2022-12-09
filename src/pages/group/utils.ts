@@ -22,8 +22,7 @@ export const parseSendMsgsFromContent = (
   for (let i = 1; i < messages.length; i++) {
     try {
       const tx = parseSendTx(from, messages[i]);
-      if (tx && Object.keys(tx)?.length)
-        msgs.push(tx);
+      if (tx && Object.keys(tx)?.length) msgs.push(tx);
     } catch (error: any) {
       return [[], error?.message || `failed to parse message at ${i}`];
     }
@@ -32,10 +31,10 @@ export const parseSendMsgsFromContent = (
   return [msgs, ""];
 };
 
-const parseSendTx = (from: string, msg: string): Msg => {
+const parseSendTx = (from: string, msg: string): Msg | null => {
   const values = msg.split(",");
+  if (values?.length === 1) return null;
   if (values?.length !== 2) {
-    // return {}
     throw new Error(
       `invalid message: expected ${2} values got ${values.length}`
     );
@@ -74,7 +73,7 @@ export const parseDelegateMsgsFromContent = (
   for (let i = 0; i < messages.length; i++) {
     try {
       const msg = parseDelegateMsg(delegator, messages[i]);
-      msgs.push(msg);
+      if (msg && Object.keys(msg)?.length) msgs.push(msg);
     } catch (error: any) {
       return [[], error?.message || `failed to parse message at ${i}`];
     }
@@ -83,8 +82,11 @@ export const parseDelegateMsgsFromContent = (
   return [msgs, ""];
 };
 
-const parseDelegateMsg = (delegator: string, msg: string): Msg => {
+const parseDelegateMsg = (delegator: string, msg: string): Msg | null => {
   const values = msg.split(",");
+
+  if (values?.length === 1) return null;
+
   if (values?.length !== 2) {
     throw new Error("invalid message");
   }
@@ -122,7 +124,7 @@ export const parseUnDelegateMsgsFromContent = (
   for (let i = 0; i < messages.length; i++) {
     try {
       const msg = parseUnDelegateMsg(delegator, messages[i]);
-      msgs.push(msg);
+      if (msg && Object.keys(msg)?.length) msgs.push(msg);
     } catch (error: any) {
       return [[], error?.message || `failed to parse message at ${i}`];
     }
@@ -131,8 +133,10 @@ export const parseUnDelegateMsgsFromContent = (
   return [msgs, ""];
 };
 
-const parseUnDelegateMsg = (delegator: string, msg: string): Msg => {
+const parseUnDelegateMsg = (delegator: string, msg: string): Msg | null => {
   const values = msg.split(",");
+  if (values?.length === 1) return null;
+
   if (values?.length !== 2) {
     throw new Error("invalid message");
   }
@@ -170,7 +174,7 @@ export const parseReDelegateMsgsFromContent = (
   for (let i = 0; i < messages.length; i++) {
     try {
       const msg = parseReDelegateMsg(delegator, messages[i]);
-      msgs.push(msg);
+      if (msg && Object.keys(msg)?.length) msgs.push(msg);
     } catch (error: any) {
       return [[], error?.message || `failed to parse message at ${i}`];
     }
@@ -179,8 +183,11 @@ export const parseReDelegateMsgsFromContent = (
   return [msgs, ""];
 };
 
-const parseReDelegateMsg = (delegator: string, msg: string): Msg => {
+const parseReDelegateMsg = (delegator: string, msg: string): Msg | null => {
   const values = msg.split(",");
+
+  if (values?.length === 1) return null;
+
   if (values?.length !== 3) {
     throw new Error("invalid message");
   }
