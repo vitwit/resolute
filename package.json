@@ -31,7 +31,7 @@
     "bfj": "^7.0.2",
     "browserslist": "^4.21.4",
     "buffer": "^6.0.3",
-    "camelcase": "^6.2.1",
+    "camelcase": "^7.0.0",
     "case-sensitive-paths-webpack-plugin": "^2.4.0",
     "cosmjs-types": "^0.5.1",
     "css-loader": "^6.7.2",
