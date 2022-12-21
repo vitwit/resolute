@@ -153,7 +153,7 @@ export default function Overview() {
                   size="small"
                   onClick={() => navigate("/multi-tx")}
                 >
-                  Txn Upload
+                  Multi Send
                 </Button>
                 <Button
                   sx={{

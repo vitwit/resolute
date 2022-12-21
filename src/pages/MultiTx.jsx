@@ -7,6 +7,7 @@ import {
   Typography,
   TextField,
   FormControl,
+  Link,
 } from "@mui/material";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { parseSendMsgsFromContent } from "./group/utils";
@@ -18,6 +19,7 @@ import { multiTxns } from "../features/bank/bankSlice";
 import { resetError, setError } from "../features/common/commonSlice";
 
 const PER_PAGE = 5;
+const SEND_TEMPLATE = "https://resolute.witval.com/_static/send.csv";
 
 export default function MultiTx() {
   const wallet = useSelector((state) => state.wallet);
@@ -130,7 +132,7 @@ export default function MultiTx() {
                 document.getElementById("multisig_file").click();
               }}
             >
-              upload
+              Upload
             </Button>
             <input
               id="multisig_file"
@@ -158,7 +160,22 @@ export default function MultiTx() {
             <br />
             <Typography variant="caption">
               upload csv file. Each line must contains `recipient,amount`.
+              Download
             </Typography>
+            &nbsp;
+            <Link
+              variant="caption"
+              sx={{
+                ":hover": {
+                  cursor: "pointer",
+                },
+              }}
+              onClick={() => {
+                window.open(SEND_TEMPLATE, "_blank", "noopener,noreferrer");
+              }}
+            >
+              sample.
+            </Link>
           </Paper>
         </Grid>
         <Grid item md={7} xs={12}>
