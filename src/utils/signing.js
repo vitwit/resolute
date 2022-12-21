@@ -80,7 +80,7 @@ export const signAndBroadcast = async (
   memo,
   gasPrice,
   restUrl,
-  granter = undefined,
+  granter = undefined
 ) => {
   let signer;
   try {
@@ -103,6 +103,20 @@ export const signAndBroadcast = async (
 
   registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
 
+  if (!gas) {
+    gas = await simulate(
+      restUrl,
+      registry,
+      signer,
+      accounts[0].address,
+      messages,
+      memo,
+      1.2,
+      gasPrice,
+      granter
+    );
+  }
+
   const fee = getFee(gas, gasPrice, granter);
   const txBody = await sign(
     signer,
@@ -123,17 +137,22 @@ export const signAndBroadcast = async (
 function calculateFee(gasLimit, gasPrice, granter) {
   const processedGasPrice =
     typeof gasPrice === "string" ? GasPrice.fromString(gasPrice) : gasPrice;
-  const { denom, amount: gasPriceAmount } = processedGasPrice;
+
   const amount = ceil(
     bignumber(
       multiply(
-        bignumber(gasPriceAmount.toString()),
+        bignumber(processedGasPrice?.amount?.toString()),
         bignumber(gasLimit.toString())
       )
     )
   );
   return {
-    amount: [coin(format(floor(amount), { notation: "fixed" }), denom)],
+    amount: [
+      coin(
+        format(floor(amount), { notation: "fixed" }),
+        processedGasPrice.denom
+      ),
+    ],
     gas: gasLimit.toString(),
     granter: granter,
   };
@@ -186,6 +205,45 @@ async function getAccount(restUrl, address) {
   }
 }
 
+async function simulate(
+  restUrl,
+  registry,
+  signer,
+  address,
+  messages,
+  memo,
+  modifier,
+  gasPrice,
+  granter
+) {
+  const account = await getAccount(restUrl, address);
+  const fee = getFee(50_000, gasPrice, granter);
+  const txBody = {
+    bodyBytes: makeBodyBytes(registry, messages, memo),
+    authInfoBytes: await makeAuthInfoBytes(
+      signer,
+      account,
+      {
+        amount: fee.amount,
+        gasLimit: fee.gas,
+      },
+      SignMode.SIGN_MODE_UNSPECIFIED
+    ),
+    signatures: [new Uint8Array()],
+  };
+
+  try {
+    const estimate = await axios
+      .post(restUrl + "/cosmos/tx/v1beta1/simulate", {
+        tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
+      })
+      .then((el) => el.data.gas_info.gas_used);
+    return parseInt(estimate * modifier);
+  } catch (error) {
+    throw new Error(error.response?.data?.message || error.message);
+  }
+}
+
 async function broadcast(txBody, restUrl) {
   const timeoutMs = 60_000;
   const pollIntervalMs = 3_000;
@@ -211,7 +269,9 @@ async function broadcast(txBody, restUrl) {
       return result;
     } catch (error) {
       // if transaction index is disabled return txhash
-      if (error.response?.data?.message === "transaction indexing is disabled") {
+      if (
+        error.response?.data?.message === "transaction indexing is disabled"
+      ) {
         const result = parseTxResult({
           code: 0,
           txhash: txId,
@@ -305,7 +365,6 @@ async function sign(
       sequence
     );
     const { signature, signed } = await signer.signAmino(address, signDoc);
-    console.log(signed.fee);
     const authInfoBytes = await makeAuthInfoBytes(
       signer,
       account,
