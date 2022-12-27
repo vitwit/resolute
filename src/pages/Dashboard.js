@@ -50,6 +50,7 @@ const SendPage = lazy(() => import("./SendPage"));
 const UnjailPage = lazy(() => import("./slashing/UnjailPage"));
 const ProposalInfo = lazy(() => import("./gov/ProposalInfo"));
 const PageCreateTx = lazy(() => import("./multisig/tx/PageCreateTx"));
+const MultiTx = lazy(() => import("./MultiTx"));
 
 const Feegrant = lazy(() => import("./feegrant/Feegrant"));
 const NewFeegrant = lazy(() => import("./feegrant/NewFeegrant"));
@@ -347,58 +348,54 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
-                  {chainInfo?.enableModules?.group ? (
-                    <>
-                      <Route
-                        path="/group"
-                        element={
-                          <Suspense fallback={<CircularProgress />}>
-                            <GroupPage />
-                          </Suspense>
-                        }
-                      ></Route>
-                      <Route
-                        path="/groups/:id"
-                        element={
-                          <Suspense fallback={<CircularProgress />}>
-                            <Group />
-                          </Suspense>
-                        }
-                      ></Route>
-                      <Route
-                        path="/groups/proposals/:id"
-                        element={
-                          <Suspense fallback={<CircularProgress />}>
-                            <Proposal />
-                          </Suspense>
-                        }
-                      ></Route>
-                      <Route
-                        path="/groups/:id/policies/:policyId"
-                        element={
-                          <Suspense fallback={<CircularProgress />}>
-                            <Policy />
-                          </Suspense>
-                        }
-                      ></Route>
-                      <Route
-                        path="/group/:id/policies/:policyAddress/proposals"
-                        element={
-                          <Suspense fallback={<CircularProgress />}>
-                            <CreateProposal />
-                          </Suspense>
-                        }
-                      ></Route>
-                      <Route
-                        path="/group/create-group"
-                        element={
-                          <Suspense fallback={<CircularProgress />}>
-                            <CreateGroupPage />
-                          </Suspense>
-                        }
-                      ></Route>
-                    </>
-                  ) : null}
+                  <Route
+                    path="/group"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <GroupPage />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/groups/:id"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <Group />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/groups/proposals/:id"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <Proposal />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/groups/:id/policies/:policyId"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <Policy />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/group/:id/policies/:policyAddress/proposals"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <CreateProposal />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/group/create-group"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <CreateGroupPage />
+                      </Suspense>
+                    }
+                  ></Route>
                   <Route path="*" element={<Page404 />}></Route>
                 </Routes>
               </Container>

@@ -17,12 +17,7 @@ import { getAccountInfo } from "../features/auth/slice";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { copyToClipboard } from "../utils/clipboard";
-import {
-  getTokenPrice,
-  setFeegrant as setFeegrantState,
-  resetFeegrant,
-} from "../features/common/commonSlice";
-import { getFeegrant } from "../utils/localStorage";
+import { getTokenPrice } from "../features/common/commonSlice";
 
 export default function Overview() {
   const wallet = useSelector((state) => state.wallet);
@@ -147,18 +142,33 @@ export default function Overview() {
               >
                 Assets
               </Typography>
-              <Button
-                sx={{
-                  mb: 1,
-                  textTransform: "none",
-                }}
-                variant="contained"
-                disableElevation
-                size="small"
-                onClick={() => navigate("/send")}
-              >
-                Send
-              </Button>
+              <Box>
+                <Button
+                  sx={{
+                    mb: 1,
+                    textTransform: "none",
+                  }}
+                  variant="contained"
+                  disableElevation
+                  size="small"
+                  onClick={() => navigate("/multi-tx")}
+                >
+                  Multi Send
+                </Button>
+                <Button
+                  sx={{
+                    mb: 1,
+                    ml: 2,
+                    textTransform: "none",
+                  }}
+                  variant="contained"
+                  disableElevation
+                  size="small"
+                  onClick={() => navigate("/send")}
+                >
+                  Send
+                </Button>
+              </Box>
             </Box>
 
             <Grid container spacing={2}>

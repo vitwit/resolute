@@ -38,6 +38,49 @@ export const getBalance = createAsyncThunk("bank/balance", async (data) => {
   return response.data;
 });
 
+export const multiTxns = createAsyncThunk(
+  "bank/multi-txs",
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    try {
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
+        data.msgs,
+        null,
+        data.memo,
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const txBankSend = createAsyncThunk(
   "bank/tx-bank-send",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
@@ -125,6 +168,15 @@ export const bankSlice = createSlice({
         state.tx.status = "idle";
       })
       .addCase(txBankSend.rejected, (state, _) => {
+        state.tx.status = "rejected";
+      })
+      .addCase(multiTxns.pending, (state) => {
+        state.tx.status = "pending";
+      })
+      .addCase(multiTxns.fulfilled, (state, _) => {
+        state.tx.status = "idle";
+      })
+      .addCase(multiTxns.rejected, (state, _) => {
         state.tx.status = "rejected";
       });
   },
