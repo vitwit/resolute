@@ -93,10 +93,17 @@ function CreateGroupPolicy({
                   <FormLabel id="Decision-Policy">
                     Decision Policy Type
                   </FormLabel>
-                  <RadioGroup row {...field}
+                  <RadioGroup
+                    row
+                    {...field}
                     onChange={(e) => {
                       setPolicyType(e.target.value);
                       setValue("policyMetadata.decisionPolicy", e.target.value);
+                      if (e.target.value === "threshold") {
+                        setValue("policyMetadata.percentage", 0);
+                      } else {
+                        setValue("policyMetadata.threshold", 0);
+                      }
                     }}
                     value={policyType}
                   >
@@ -144,7 +151,7 @@ function CreateGroupPolicy({
                   min: { value: 1, message: "Invalid percentage" },
                   max: { value: 100, message: "Invalid percentage" },
                 }}
-                render={({field}) => (
+                render={({ field }) => (
                   <FormControl
                     fullWidth
                     sx={{
@@ -157,8 +164,8 @@ function CreateGroupPolicy({
                       min={1}
                       max={100}
                       valueLabelDisplay="on"
-                      valueLabelFormat={value => <div>{value}%</div>}
-                      {...field}       
+                      valueLabelFormat={(value) => <div>{value}%</div>}
+                      {...field}
                       onChange={(_, value) => {
                         field.onChange(value);
                       }}

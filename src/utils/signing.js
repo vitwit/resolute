@@ -27,6 +27,7 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js";
 import { makeSignDoc, Registry } from "@cosmjs/proto-signing";
 import { slashingAminoConverter } from "../features/slashing/slashing";
 import { MsgUnjail } from "../txns/slashing/tx";
+import { MsgCreateGroup, MsgCreateGroupPolicy, MsgCreateGroupWithPolicy, MsgExec, MsgLeaveGroup, MsgSubmitProposal, MsgUpdateGroupAdmin, MsgUpdateGroupMembers, MsgUpdateGroupMetadata, MsgUpdateGroupPolicyAdmin, MsgUpdateGroupPolicyDecisionPolicy, MsgUpdateGroupPolicyMetadata, MsgVote } from "../txns/group/v1/tx";
 
 const canUseAmino = (aminoConfig, messages) => {
   for (let i = 0; i < messages.length; i++) {
@@ -102,6 +103,19 @@ export const signAndBroadcast = async (
   aminoTypes = new AminoTypes({ ...defaultConverters });
 
   registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
+  registry.register("/cosmos.group.v1.MsgCreateGroup", MsgCreateGroup);
+  registry.register("/cosmos.group.v1.MsgCreateGroupPolicy", MsgCreateGroupPolicy);
+  registry.register("/cosmos.group.v1.MsgUpdateGroupAdmin", MsgUpdateGroupAdmin);
+  registry.register("/cosmos.group.v1.MsgLeaveGroup", MsgLeaveGroup);
+  registry.register("/cosmos.group.v1.MsgUpdateGroupMetadata", MsgUpdateGroupMetadata);
+  registry.register("/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy", MsgUpdateGroupPolicyDecisionPolicy);
+  registry.register("/cosmos.group.v1.MsgUpdateGroupPolicyMetadata", MsgUpdateGroupPolicyMetadata);
+  registry.register("/cosmos.group.v1.MsgUpdateGroupMembers", MsgUpdateGroupMembers);
+  registry.register("/cosmos.group.v1.MsgVote", MsgVote);
+  registry.register("/cosmos.group.v1.MsgExec", MsgExec);
+  registry.register("/cosmos.group.v1.MsgSubmitProposal", MsgSubmitProposal);
+  registry.register("/cosmos.group.v1.MsgCreateGroupWithPolicy", MsgCreateGroupWithPolicy);
+  registry.register("/cosmos.group.v1.MsgUpdateGroupPolicyAdmin", MsgUpdateGroupPolicyAdmin);
 
   if (!gas) {
     gas = await simulate(

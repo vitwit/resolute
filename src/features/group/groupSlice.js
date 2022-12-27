@@ -2,33 +2,32 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   fee,
   signAndBroadcastAddGroupPolicy,
-  signAndBroadcastGroupMsg,
   signAndBroadcastGroupProposal,
   signAndBroadcastGroupProposalExecute,
   signAndBroadcastGroupProposalVote,
   signAndBroadcastLeaveGroup,
   signAndBroadcastUpdateGroupAdmin,
   signAndBroadcastUpdateGroupMembers,
-  signAndBroadcastUpdateGroupMetadata,
   signAndBroadcastUpdateGroupPolicy,
   signAndBroadcastUpdateGroupPolicyAdmin,
   signAndBroadcastUpdateGroupPolicyMetadata,
 } from "../../txns/execute";
 import {
-  CreateGroup,
   CreateGroupPolicy,
   CreateGroupProposal,
-  CreateGroupWithPolicy,
-  CreateLeaveGroupMember,
+  NewMsgLeaveGroup,
   CreateProposalExecute,
   CreateProposalVote,
-  UpdateGroupAdmin,
+  NewMsgCreateGroup,
+  NewMsgCreateGroupWithPolicy,
+  NewMsgUpdateGroupAdmin,
   UpdateGroupMembers,
   UpdateGroupMetadata,
   UpdateGroupPolicy,
   UpdatePolicyAdmin,
   UpdatePolicyMetadata,
 } from "../../txns/group/group";
+import { signAndBroadcast } from "../../utils/signing";
 import {
   resetTxLoad,
   setError,
@@ -150,7 +149,6 @@ export const getGroupProposalById = createAsyncThunk(
 export const getGroupPoliciesById = createAsyncThunk(
   "group/group-policies-by-id",
   async (data, { dispatch }) => {
-    // dispatch(resetDecisionPolicies())
     const response = await groupService.fetchGroupPoliciesById(
       data.baseURL,
       data.id,
@@ -365,16 +363,18 @@ export const txUpdateGroupAdmin = createAsyncThunk(
     dispatch(setTxLoad());
 
     try {
-      let msg = UpdateGroupAdmin(data.admin, data.groupId, data.newAdmin);
+      const msg = NewMsgUpdateGroupAdmin(data.admin, data.groupId, data.newAdmin);
 
-      console.log("msg----", msg);
-
-      const result = await signAndBroadcastUpdateGroupAdmin(
-        data.signer,
-        [msg],
-        fee(data.denom, data.feeAmount, 260000),
+      const result = await signAndBroadcast(
         data.chainId,
-        data.rpc
+        data.aminoConfig,
+        data.prefix,
+        [msg],
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       dispatch(resetTxLoad());
       if (result?.code === 0) {
@@ -415,16 +415,18 @@ export const txUpdateGroupMetadata = createAsyncThunk(
     dispatch(setTxLoad());
 
     try {
-      let msg = UpdateGroupMetadata(data.admin, data.groupId, data.metadata);
+      const msg = UpdateGroupMetadata(data.admin, data.groupId, data.metadata);
 
-      console.log("msg----", msg);
-
-      const result = await signAndBroadcastUpdateGroupMetadata(
-        data.signer,
-        [msg],
-        fee(data.denom, data.feeAmount, 260000),
+      const result = await signAndBroadcast(
         data.chainId,
-        data.rpc
+        data.aminoConfig,
+        data.prefix,
+        [msg],
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       dispatch(resetTxLoad());
       if (result?.code === 0) {
@@ -519,7 +521,7 @@ export const txCreateGroup = createAsyncThunk(
     try {
       if (data?.members?.length > 0) {
         if (data?.policyData && Object.keys(data?.policyData)?.length) {
-          msg = CreateGroupWithPolicy(
+          msg = NewMsgCreateGroupWithPolicy(
             data.admin,
             data.groupMetaData,
             data.members,
@@ -528,18 +530,22 @@ export const txCreateGroup = createAsyncThunk(
             data?.policyData?.policyAsAdmin
           );
         } else {
-          msg = CreateGroup(data.admin, data.groupMetaData, data?.members);
+          msg = NewMsgCreateGroup(data.admin, data.groupMetaData, data?.members);
         }
       } else {
-        msg = CreateGroup(data.admin, data.groupMetaData, []);
+        msg = NewMsgCreateGroup(data.admin, data.groupMetaData, []);
       }
 
-      const result = await signAndBroadcastGroupMsg(
-        data.admin,
-        [msg],
-        fee(data.denom, data.feeAmount, 260000),
+      const result = await signAndBroadcast(
         data.chainId,
-        data.rpc
+        data.aminoConfig,
+        data.prefix,
+        [msg],
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
 
       dispatch(resetTxLoad());
@@ -865,18 +871,20 @@ export const txUpdateGroupPolicyAdmin = createAsyncThunk(
 export const txLeaveGroupMember = createAsyncThunk(
   "group/tx-leave-group-member",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
-    let msg;
     dispatch(setTxLoad());
-    console.log({ data });
     try {
-      msg = CreateLeaveGroupMember(data.admin, data.groupId);
+      const msg = NewMsgLeaveGroup(data.admin, data.groupId);
 
-      const result = await signAndBroadcastLeaveGroup(
-        data.admin,
-        [msg],
-        fee(data.denom, data.feeAmount, 260000),
+      const result = await signAndBroadcast(
         data.chainId,
-        data.rpc
+        data.aminoConfig,
+        data.prefix,
+        [msg],
+        260000,
+        "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
       );
 
       dispatch(resetTxLoad());

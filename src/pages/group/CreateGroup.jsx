@@ -39,44 +39,51 @@ export default function CreateGroupPage() {
       members: data.members,
       groupMetaData: data?.metadata,
       chainId: chainInfo.config.chainId,
-      rpc: chainInfo.config.rpc,
       feeAmount: chainInfo.config.gasPriceStep.average,
       denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
+      rest: chainInfo.config.rest,
+      aminoConfig: chainInfo.aminoConfig,
+      prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
     };
 
-    const getMinExecPeriod = (policyData) => {
-      let time;
-      if (policyData?.minExecPeriodDuration === "Days") time = 24 * 60 * 60;
-      else if (policyData?.minExecPeriodDuration === "Hours") time = 60 * 60;
-      else if (policyData?.minExecPeriodDuration === "Minutes") time = 60;
-      else time = 1;
+    if (
+      data.policyMetadata.percentage !== 0 ||
+      data.policyMetadata.threshold !== 0
+    ) {
+      const getMinExecPeriod = (policyData) => {
+        let time;
+        if (policyData?.minExecPeriodDuration === "Days") time = 24 * 60 * 60;
+        else if (policyData?.minExecPeriodDuration === "Hours") time = 60 * 60;
+        else if (policyData?.minExecPeriodDuration === "Minutes") time = 60;
+        else time = 1;
 
-      time = time * Number(policyData?.minExecPeriod);
-      return time;
-    };
-
-    const getVotingPeriod = (policyData) => {
-      let time;
-      if (policyData?.votingPeriodDuration === "Days") time = 24 * 60 * 60;
-      else if (policyData?.votingPeriodDuration === "Hours") time = 60 * 60;
-      else if (policyData?.votingPeriodDuration === "Minutes") time = 60;
-      else time = 1;
-
-      time = time * Number(policyData?.votingPeriod);
-      return time;
-    };
-
-    if (data?.policyMetadata) {
-      dataObj["policyData"] = {
-        ...data.policyMetadata,
-        minExecPeriod: getMinExecPeriod(data.policyMetadata),
-        votingPeriod: getVotingPeriod(data.policyMetadata),
+        time = time * Number(policyData?.minExecPeriod);
+        return time;
       };
-    }
 
-    if (dataObj?.policyData?.decisionPolicy === "percentage") {
-      dataObj.policyData.percentage =
-        Number(dataObj.policyData.percentage) / 100.0;
+      const getVotingPeriod = (policyData) => {
+        let time;
+        if (policyData?.votingPeriodDuration === "Days") time = 24 * 60 * 60;
+        else if (policyData?.votingPeriodDuration === "Hours") time = 60 * 60;
+        else if (policyData?.votingPeriodDuration === "Minutes") time = 60;
+        else time = 1;
+
+        time = time * Number(policyData?.votingPeriod);
+        return time;
+      };
+
+      if (data?.policyMetadata) {
+        dataObj["policyData"] = {
+          ...data.policyMetadata,
+          minExecPeriod: getMinExecPeriod(data.policyMetadata),
+          votingPeriod: getVotingPeriod(data.policyMetadata),
+        };
+      }
+
+      if (dataObj?.policyData?.decisionPolicy === "percentage") {
+        dataObj.policyData.percentage =
+          Number(dataObj.policyData.percentage) / 100.0;
+      }
     }
 
     dispatch(txCreateGroup(dataObj));
@@ -105,7 +112,7 @@ export default function CreateGroupPage() {
         decisionPolicy: "threshold",
         percentage: 0,
         threshold: 0,
-      }
+      },
     },
   });
 

@@ -86,7 +86,7 @@ function PolicyProposalsList(props) {
   return (
     <Paper
       sx={{
-        mt: 3,
+        mt: 2,
         p: 2,
         textAlign: "left",
       }}
@@ -96,7 +96,7 @@ function PolicyProposalsList(props) {
       <Box
         component="div"
         sx={{
-          mt: 2,
+          mt: 1,
           mb: 1,
           textAlign: "right",
         }}
@@ -131,7 +131,31 @@ function PolicyProposalsList(props) {
       ) : null}
 
       {proposals?.status === "idle" && !proposals?.data?.proposals?.length ? (
-        <AlertMsg type="error" text="Proposals not found" />
+        <Box
+          sx={{
+            textAlign: "center",
+            pb: 1,
+          }}
+        >
+          <Typography color="text.primary" variant="h6" gutterBottom>
+            No proposals found
+          </Typography>
+          <Button
+            variant="contained"
+            disableElevation
+            size="small"
+            sx={{
+              textTransform: "none",
+            }}
+            onClick={() => {
+              navigate(
+                `/group/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
+              );
+            }}
+          >
+            Create one
+          </Button>
+        </Box>
       ) : null}
 
       <Grid spacing={2} container>

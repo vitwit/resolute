@@ -93,8 +93,10 @@ const GroupInfo = (props) => {
         groupId: id,
         denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
         chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
         feeAmount: chainInfo.config.gasPriceStep.average,
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       })
     );
   };
@@ -109,8 +111,10 @@ const GroupInfo = (props) => {
         newAdmin: admin,
         denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
         chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
         feeAmount: chainInfo.config.gasPriceStep.average,
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       })
     );
   };
@@ -125,8 +129,10 @@ const GroupInfo = (props) => {
         metadata,
         denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
         chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
         feeAmount: chainInfo.config.gasPriceStep.average,
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       })
     );
   };
@@ -139,7 +145,7 @@ const GroupInfo = (props) => {
         fontWeight={600}
         gutterBottom
         sx={{
-          textAlign: "left"
+          textAlign: "left",
         }}
       >
         Group Information
