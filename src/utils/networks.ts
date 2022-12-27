@@ -1,5 +1,5 @@
 // add mainnet here
-const mainNets = [
+const mainNets: Network[] = [
   {
     enableModules: {
       authz: true,
@@ -384,12 +384,11 @@ const testNets: Network[] = [
     experimental: true,
     showAirdrop: false,
     airdropActions: [],
-    airdropMessage:
-      "",
+    airdropMessage: "",
     logos: {
-      menu:
-        "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
-      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
+      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
+      toolbar:
+        "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
     },
     isTestnet: false,
     explorerTxHashEndpoint: "https://passage.aneka.io/txs/",

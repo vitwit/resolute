@@ -1,11 +1,9 @@
-import { Box, Button, InputAdornment, TextField } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Decimal } from "@cosmjs/math";
 import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
-import { useForm, Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import Autocomplete from "@mui/material/Autocomplete";
-import { UnDelegate } from "../../../txns/staking";
 
 UnDelegateForm.propTypes = {
   chainInfo: PropTypes.object.isRequired,
@@ -21,13 +19,12 @@ function parseDelegation(delegation, currency) {
 }
 
 export default function UnDelegateForm(props) {
-  const {  address } = props;
+  const { address } = props;
 
-  const wallet = useSelector(state => state?.wallet);
+  const wallet = useSelector((state) => state?.wallet);
   const { chainInfo } = wallet;
 
   const {
-    handleSubmit,
     control,
     formState: { errors },
   } = useFormContext({

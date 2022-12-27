@@ -58,9 +58,10 @@ export default function GroupCard({ group }: GroupCardProps) {
       >
         <Typography
           gutterBottom
-          variant="h5"
+          variant="h6"
           color="text.primary"
           fontWeight={500}
+          component="span"
         >
           &nbsp;
           {!showFullText && group?.metadata?.substring(0, 30)}

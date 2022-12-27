@@ -23,7 +23,6 @@ import {
 } from "./group/v1/tx";
 import { AirdropAminoConverter } from "../features/airdrop/amino";
 import { MsgUnjail } from "./slashing/tx";
-import { slashingAminoConverter } from "../features/slashing/slashing";
 
 export async function signAndBroadcastGroupMsg(
   signer,
@@ -445,36 +444,6 @@ export async function signAndBroadcastAmino(
 
   const cosmJS = await SigningStargateClient.connectWithSigner(rpcURL, wallet, {
     registry: registry,
-  });
-
-  return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
-}
-
-export async function signAndBroadcastUnjail(
-  msgs,
-  fee,
-  chainID,
-  rpcURL,
-  memo = ""
-) {
-  const aTypes = new AminoTypes({
-    ...slashingAminoConverter(),
-  });
-
-  const result = await getKeplrWalletAmino(chainID);
-  const wallet = result[0];
-  const account = result[1];
-
-  let registry = new Registry();
-  defaultRegistryTypes.forEach((v) => {
-    registry.register(v[0], v[1]);
-  });
-
-  registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
-
-  const cosmJS = await SigningStargateClient.connectWithSigner(rpcURL, wallet, {
-    registry: registry,
-    aminoTypes: aTypes,
   });
 
   return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);

@@ -11,6 +11,10 @@ import {
   Grid,
   FormControl,
   InputLabel,
+  FormLabel,
+  RadioGroup,
+  Radio,
+  Slider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Controller } from "react-hook-form";
@@ -19,33 +23,35 @@ function CreateGroupPolicy({
   control,
   register,
   watch,
-  fields,
   errors,
   setValue,
   handleCancelPolicy,
   members,
+  showRemoveButton,
 }) {
-  const totalWeight = members.reduce(
-    (initial, weight) => initial + Number(weight.weight),
-    0
-  );
+  const totalWeight =
+    members.reduce((initial, weight) => initial + Number(weight.weight), 0) ||
+    0;
 
   const [threshold, setThreshold] = useState("threshold");
+  const [policyType, setPolicyType] = useState("threshold");
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <Button
-          size="small"
-          onClick={() => handleCancelPolicy()}
-          sx={{ marginLeft: "auto", textTransform: "none" }}
-          endIcon={<CloseIcon />}
-          variant="outlined"
-          color="error"
-        >
-          Remove
-        </Button>
-      </Box>
+      {showRemoveButton ? (
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Button
+            size="small"
+            onClick={() => handleCancelPolicy()}
+            sx={{ marginLeft: "auto", textTransform: "none" }}
+            endIcon={<CloseIcon />}
+            variant="outlined"
+            color="error"
+          >
+            Remove
+          </Button>
+        </Box>
+      ) : null}
 
       <Box
         sx={{
@@ -69,13 +75,7 @@ function CreateGroupPolicy({
             />
           )}
         />
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            mt: 0.5,
-          }}
-        >
+        <Grid container spacing={2}>
           <Grid item md={6} xs={12}>
             <Controller
               name={`policyMetadata.decisionPolicy`}
@@ -87,13 +87,38 @@ function CreateGroupPolicy({
                 <FormControl
                   fullWidth
                   sx={{
-                    mt: 1.5,
+                    mt: 1,
                   }}
                 >
-                  <InputLabel id="Decision-Policy">
+                  <FormLabel id="Decision-Policy">
                     Decision Policy Type
-                  </InputLabel>
-                  <Select
+                  </FormLabel>
+                  <RadioGroup
+                    row
+                    {...field}
+                    onChange={(e) => {
+                      setPolicyType(e.target.value);
+                      setValue("policyMetadata.decisionPolicy", e.target.value);
+                      if (e.target.value === "threshold") {
+                        setValue("policyMetadata.percentage", 0);
+                      } else {
+                        setValue("policyMetadata.threshold", 0);
+                      }
+                    }}
+                    value={policyType}
+                  >
+                    <FormControlLabel
+                      value={"percentage"}
+                      control={<Radio />}
+                      label="Percentage"
+                    />
+                    <FormControlLabel
+                      value={"threshold"}
+                      control={<Radio />}
+                      label="Threshold"
+                    />
+                  </RadioGroup>
+                  {/* <Select
                     fullWidth
                     {...field}
                     size="small"
@@ -111,7 +136,7 @@ function CreateGroupPolicy({
                   >
                     <MenuItem value={"threshold"}>Threshold</MenuItem>
                     <MenuItem value={"percentage"}>Percentage</MenuItem>
-                  </Select>
+                  </Select> */}
                 </FormControl>
               )}
             />
@@ -127,8 +152,26 @@ function CreateGroupPolicy({
                   max: { value: 100, message: "Invalid percentage" },
                 }}
                 render={({ field }) => (
-                  <FormControl fullWidth>
-                    <TextField
+                  <FormControl
+                    fullWidth
+                    sx={{
+                      mt: 1,
+                    }}
+                  >
+                    <Slider
+                      aria-label="Percentage"
+                      defaultValue={50}
+                      min={1}
+                      max={100}
+                      valueLabelDisplay="on"
+                      valueLabelFormat={(value) => <div>{value}%</div>}
+                      {...field}
+                      onChange={(_, value) => {
+                        field.onChange(value);
+                      }}
+                      name="percentage"
+                    />
+                    {/* <TextField
                       {...field}
                       fullWidth
                       name="percentage"
@@ -139,7 +182,7 @@ function CreateGroupPolicy({
                       placeholder="Percentage"
                       error={errors?.policyMetadata?.percentage}
                       helperText={errors?.policyMetadata?.percentage?.message}
-                    />
+                    /> */}
                   </FormControl>
                 )}
               />
@@ -156,8 +199,13 @@ function CreateGroupPolicy({
                   },
                 }}
                 render={({ field }) => (
-                  <FormControl fullWidth>
-                    <TextField
+                  <FormControl
+                    fullWidth
+                    sx={{
+                      mt: 1,
+                    }}
+                  >
+                    {/* <TextField
                       {...field}
                       fullWidth
                       name="threshold"
@@ -168,6 +216,15 @@ function CreateGroupPolicy({
                       size="small"
                       error={errors?.policyMetadata?.threshold}
                       helperText={errors?.policyMetadata?.threshold?.message}
+                    /> */}
+                    <Slider
+                      {...field}
+                      name="threshold"
+                      aria-label="Threshold"
+                      defaultValue={totalWeight}
+                      min={0}
+                      max={totalWeight}
+                      valueLabelDisplay="on"
                     />
                   </FormControl>
                 )}

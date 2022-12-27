@@ -45,7 +45,16 @@ export default function GroupPage() {
       <Paper sx={{ mt: 2 }} variant={"outlined"} elevation={0}>
         <Box>
           <GroupTab
-            tabs={["Created By me", "Part of"]}
+            tabs={[
+              {
+                disabled: false,
+                title: "Created By me",
+              },
+              {
+                disabled: false,
+                title: "Part of",
+              }
+            ]}
             handleTabChange={handleTabChange}
           />
 

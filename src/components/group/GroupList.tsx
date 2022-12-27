@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, CircularProgress, Grid } from "@mui/material";
+import { CircularProgress, Grid } from "@mui/material";
 import GroupCard from "./GroupCard";
 import PaginationElement from "./PaginationElement";
 import { useNavigate } from "react-router-dom";
@@ -30,23 +30,14 @@ export default function GroupList(props: GroupsByAdminProps) {
         <CircularProgress sx={{ textAlign: "center" }} />
       ) : null}
       {status !== "pending" && !groups.length ? (
-        // <Box
-        //   sx={{
-        //     display: "flex",
-        //     flexGrow: 1,
-        //     justifyContent: "center",
-        //   }}
-        //   component="div"
-        // >
-          <NoData
-            title={props.notFoundText}
-            showAction={props.showNotFoundAction}
-            onAction={() => {
-              navigateTo("/group/create-group");
-            }}
-            actionText="Create group"
-          />
-        // </Box>
+        <NoData
+          title={props.notFoundText}
+          showAction={props.showNotFoundAction}
+          onAction={() => {
+            navigateTo("/group/create-group");
+          }}
+          actionText="Create group"
+        />
       ) : null}
 
       {status !== "pending" && groups?.length > 0 ? (

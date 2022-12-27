@@ -228,38 +228,47 @@ function DashboardContent(props) {
               <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
                 <Routes>
                   <Route path="/" element={<Overview />} />
-                  <Route
-                    path="/authz"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Authz />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/feegrant"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Feegrant />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/feegrant/new"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <NewFeegrant />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/authz/new"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <NewAuthz />
-                      </Suspense>
-                    }
-                  ></Route>
+
+                  {chainInfo?.enableModules?.feegrant ? (
+                    <>
+                      <Route
+                        path="/feegrant"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <Feegrant />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="/feegrant/new"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <NewFeegrant />
+                          </Suspense>
+                        }
+                      ></Route>
+                    </>
+                  ) : null}
+                  {chainInfo?.enableModules?.authz ? (
+                    <>
+                      <Route
+                        path="/authz"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <Authz />
+                          </Suspense>
+                        }
+                      />
+                      <Route
+                        path="/authz/new"
+                        element={
+                          <Suspense fallback={<CircularProgress />}>
+                            <NewAuthz />
+                          </Suspense>
+                        }
+                      ></Route>
+                    </>
+                  ) : null}
                   <Route
                     path="/slashing"
                     element={
@@ -339,15 +348,6 @@ function DashboardContent(props) {
                       </Suspense>
                     }
                   ></Route>
-                  <Route
-                    path="/multi-tx"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <MultiTx />
-                      </Suspense>
-                    }
-                  ></Route>
-
                   <Route
                     path="/group"
                     element={

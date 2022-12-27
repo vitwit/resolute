@@ -1,28 +1,25 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Button, InputAdornment, TextField } from "@mui/material";
-import { Decimal } from "@cosmjs/math";
-import { Box } from "@mui/system";
-import { useForm, Controller, useFormContext } from "react-hook-form";
+import { InputAdornment, TextField } from "@mui/material";
+import { Controller, useFormContext } from "react-hook-form";
 import { fromBech32 } from "@cosmjs/encoding";
 
 Send.propTypes = {
-  chainInfo: PropTypes.object.isRequired,
-  address: PropTypes.string.isRequired,
-  onSend: PropTypes.object.isRequired,
+  currency: PropTypes.object.isRequired,
 };
 
 export default function Send(props) {
   const { currency } = props;
 
-  const { handleSubmit, watch, control,
-    setValue,
-    formState: { errors }, } = useFormContext({
-      defaultValues: {
-        amount: 0,
-        recipient: "",
-      },
-    });
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext({
+    defaultValues: {
+      amount: 0,
+      toAddress: "",
+    },
+  });
 
   return (
     <>

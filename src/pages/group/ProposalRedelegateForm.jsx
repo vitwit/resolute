@@ -1,20 +1,30 @@
-import { Button, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material'
-import { Box } from '@mui/system'
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { getValidators } from '../../features/staking/stakeSlice';
+import {
+  Button,
+  FormControl,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import { Box } from "@mui/system";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getValidators } from "../../features/staking/stakeSlice";
 
-function ProposalReDelegateForm({ chainInfo,
+function ProposalReDelegateForm({
+  chainInfo,
   handleMsgChange,
   type,
-  fromAddress }) {
+  fromAddress,
+}) {
   var [data, setData] = useState([]);
   const dispatch = useDispatch();
 
-  const denom = chainInfo?.config?.currencies?.[0]?.coinDenom || ''
+  const denom = chainInfo?.config?.currencies?.[0]?.coinDenom || "";
   const [obj, setObj] = useState({
     typeUrl: type,
-    delegatorAddress: fromAddress
+    delegatorAddress: fromAddress,
   });
 
   var validators = useSelector((state) => state.staking.validators);
@@ -27,7 +37,7 @@ function ProposalReDelegateForm({ chainInfo,
         status: null,
       })
     );
-  }, [])
+  }, []);
 
   useEffect(() => {
     data = [];
@@ -43,10 +53,10 @@ function ProposalReDelegateForm({ chainInfo,
     setData([...data]);
   }, [validators]);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     obj[e.target.name] = e.target.value;
     setObj({ ...obj });
-  }
+  };
 
   const onSubmit = () => {
     handleMsgChange(obj);
@@ -92,17 +102,16 @@ function ProposalReDelegateForm({ chainInfo,
           }}
           InputProps={{
             endAdornment: (
-              <InputAdornment position="start">
-                {denom}
-              </InputAdornment>
+              <InputAdornment position="start">{denom}</InputAdornment>
             ),
           }}
         />
       </FormControl>
-      <Button sx={{ m: 2 }} variant='contained' onClick={onSubmit}>Add</Button>
-
+      <Button sx={{ m: 2 }} variant="contained" onClick={onSubmit}>
+        Add
+      </Button>
     </Box>
-  )
+  );
 }
 
-export default ProposalReDelegateForm
+export default ProposalReDelegateForm;

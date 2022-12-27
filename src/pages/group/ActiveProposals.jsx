@@ -1,75 +1,65 @@
-import { Box, CircularProgress, Grid } from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import AlertMsg from '../../components/group/AlertMsg';
-import ProposalCard from '../../components/group/ProposalCard';
-import { resetActiveProposals } from '../../features/common/commonSlice';
-import { getGroupPoliciesById, getGroupPolicyProposals, getGroupPolicyProposalsByPage } from '../../features/group/groupSlice';
-
-const limit = 100;
+import { Box, CircularProgress, Grid } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { NoData } from "../../components/group/NoData";
+import ProposalCard from "../../components/group/ProposalCard";
+import { resetActiveProposals } from "../../features/common/commonSlice";
+import { getGroupPolicyProposalsByPage } from "../../features/group/groupSlice";
 
 function ActiveProposals({ id, wallet }) {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    var [proposals, setProposals] = useState([]);
+  var [proposals, setProposals] = useState([]);
+  const proposalsRes = useSelector((state) => state.group?.policyProposals);
 
-    const proposalsRes = useSelector(state => state.group?.policyProposals)
-    console.log('proposa ---res', proposalsRes)
+  const getProposalByAddress = () => {
+    dispatch(
+      getGroupPolicyProposalsByPage({
+        baseURL: wallet?.chainInfo?.config?.rest,
+        groupId: id,
+      })
+    );
+  };
 
-    const getProposalByAddress = () => {
-        dispatch(getGroupPolicyProposalsByPage({
-            baseURL: wallet?.chainInfo?.config?.rest,
-            groupId: id,
-        }))
+  useEffect(() => {
+    getProposalByAddress();
+  }, []);
+
+  useEffect(() => {
+    setProposals([]);
+    if (proposalsRes?.status === "idle") {
+      setProposals([...proposalsRes?.data]);
     }
+  }, [proposalsRes?.status]);
 
-    useEffect(() => {
-        getProposalByAddress();
-    }, [])
+  useEffect(() => {
+    return () => {
+      dispatch(resetActiveProposals());
+    };
+  });
 
-    useEffect(() => {
-        setProposals([])
-        if (proposalsRes?.status === 'idle') {
-            
-            // let allProposals = proposalsRes?.data?.filter(p => p.status === 'PROPOSAL_STATUS_SUBMITTED')
-            // let allProposals = proposalsRes?.data?.sort((a, b) => b.id - a.id)
-            // proposals = [...proposals, ...allProposals]
-            setProposals([...proposalsRes?.data])
-        }
-
-    }, [proposalsRes?.status])
-
-    useEffect(() => {
-        return () => {
-            // setProposals([])
-            dispatch(resetActiveProposals())
-        }
-    })
-
-    return (
-        <Box>
-            <Grid component={'div'} columnSpacing={{ md: 2 }} container p={2}>
-                {
-                    !proposals?.length ?
-                        <AlertMsg type='error' text='No Active proposals found' /> : null
-
-                }
-
-                {
-                    proposalsRes?.status === 'pending' ?
-                        <CircularProgress /> : null
-                }
-
-                {
-                    proposals?.map(p => (
-                        <Grid item md={6}>
-                            <ProposalCard proposal={p} />
-                        </Grid>
-                    ))
-                }
+  return (
+    <Box
+      component="div"
+      sx={{
+        p: 2,
+      }}
+    >
+      {proposals.length === 0 ? (
+        <NoData showAction={false} title="No Active Proposals" />
+      ) : null}
+      {proposalsRes?.status === "pending" ? <CircularProgress /> : null}
+      {proposalsRes?.status === "idle" && proposals.length > 0 ? (
+        <Grid container spacing={2}>
+          {proposals?.map((p, index) => (
+            <Grid item key={index} md={6} xs={12}>
+              <ProposalCard proposal={p} />
             </Grid>
-        </Box>
-    )
+          ))}
+        </Grid>
+      ) : null}
+    </Box>
+  );
 }
 
-export default ActiveProposals
+export default ActiveProposals;

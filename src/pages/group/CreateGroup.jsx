@@ -1,16 +1,11 @@
 import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
-import {
-  Paper,
-  Grid,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Paper, Grid, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { resetGroupTx, txCreateGroup } from "../../features/group/groupSlice";
-import CreateGroupForm from "./CreateGroupForm";
+import CreateGroupMembersForm from "./CreateGroupMembersForm";
 import CreateGroupPolicy from "./CreateGroupPolicy";
 import { useNavigate } from "react-router-dom";
 
@@ -44,43 +39,51 @@ export default function CreateGroupPage() {
       members: data.members,
       groupMetaData: data?.metadata,
       chainId: chainInfo.config.chainId,
-      rpc: chainInfo.config.rpc,
       feeAmount: chainInfo.config.gasPriceStep.average,
       denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
+      rest: chainInfo.config.rest,
+      aminoConfig: chainInfo.aminoConfig,
+      prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
     };
 
-    const getMinExecPeriod = (policyData) => {
-      let time;
-      if (policyData?.minExecPeriodDuration === "Days") time = 24 * 60 * 60;
-      else if (policyData?.minExecPeriodDuration === "Hours") time = 60 * 60;
-      else if (policyData?.minExecPeriodDuration === "Minutes") time = 60;
-      else time = 1;
+    if (
+      data.policyMetadata.percentage !== 0 ||
+      data.policyMetadata.threshold !== 0
+    ) {
+      const getMinExecPeriod = (policyData) => {
+        let time;
+        if (policyData?.minExecPeriodDuration === "Days") time = 24 * 60 * 60;
+        else if (policyData?.minExecPeriodDuration === "Hours") time = 60 * 60;
+        else if (policyData?.minExecPeriodDuration === "Minutes") time = 60;
+        else time = 1;
 
-      time = time * Number(policyData?.minExecPeriod);
-      return time;
-    };
-
-    const getVotingPeriod = (policyData) => {
-      let time;
-      if (policyData?.votingPeriodDuration === "Days") time = 24 * 60 * 60;
-      else if (policyData?.votingPeriodDuration === "Hours") time = 60 * 60;
-      else if (policyData?.votingPeriodDuration === "Minutes") time = 60;
-      else time = 1;
-
-      time = time * Number(policyData?.votingPeriod);
-      return time;
-    };
-
-    if (data.policyMetadata) {
-      dataObj["policyData"] = {
-        ...data.policyMetadata,
-        minExecPeriod: getMinExecPeriod(data.policyMetadata),
-        votingPeriod: getVotingPeriod(data.policyMetadata),
+        time = time * Number(policyData?.minExecPeriod);
+        return time;
       };
-    }
 
-    if (dataObj.policyData.decisionPolicy === "percentage") {
-      dataObj.policyData.percentage = Number(dataObj.policyData.percentage) / 100.0
+      const getVotingPeriod = (policyData) => {
+        let time;
+        if (policyData?.votingPeriodDuration === "Days") time = 24 * 60 * 60;
+        else if (policyData?.votingPeriodDuration === "Hours") time = 60 * 60;
+        else if (policyData?.votingPeriodDuration === "Minutes") time = 60;
+        else time = 1;
+
+        time = time * Number(policyData?.votingPeriod);
+        return time;
+      };
+
+      if (data?.policyMetadata) {
+        dataObj["policyData"] = {
+          ...data.policyMetadata,
+          minExecPeriod: getMinExecPeriod(data.policyMetadata),
+          votingPeriod: getVotingPeriod(data.policyMetadata),
+        };
+      }
+
+      if (dataObj?.policyData?.decisionPolicy === "percentage") {
+        dataObj.policyData.percentage =
+          Number(dataObj.policyData.percentage) / 100.0;
+      }
     }
 
     dispatch(txCreateGroup(dataObj));
@@ -95,11 +98,28 @@ export default function CreateGroupPage() {
     formState: { errors },
     reset,
     getValues,
-  } = useForm({});
+  } = useForm({
+    defaultValues: {
+      members: [
+        {
+          address: "",
+          weight: 0,
+          metadata: "",
+        },
+      ],
+      policyMetadata: {
+        metadata: "",
+        decisionPolicy: "threshold",
+        percentage: 0,
+        threshold: 0,
+      },
+    },
+  });
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "members",
+    rules: { minLength: 1 },
   });
 
   return (
@@ -131,6 +151,7 @@ export default function CreateGroupPage() {
                       required
                       label="Group Metadata"
                       multiline
+                      size="small"
                       name="Group Metadata"
                       fullWidth
                     />
@@ -146,10 +167,10 @@ export default function CreateGroupPage() {
                 }}
               >
                 {/* group members section start */}
-                {(!fields?.length && (
+                {/* {(!fields?.length && (
                   <Button
                     onClick={() => {
-                      append({ address: "", weight: 0, metadata: "" });
+                      // append({ address: "", weight: 0, metadata: "" });
                     }}
                     variant="outlined"
                     sx={{
@@ -160,7 +181,7 @@ export default function CreateGroupPage() {
                     Add Group Member
                   </Button>
                 )) ||
-                  null}
+                  null} */}
 
                 {fields.length ? (
                   <fieldset
@@ -179,7 +200,7 @@ export default function CreateGroupPage() {
                       Group members
                     </Typography>
 
-                    <CreateGroupForm
+                    <CreateGroupMembersForm
                       fields={fields}
                       control={control}
                       append={append}
@@ -198,7 +219,10 @@ export default function CreateGroupPage() {
                         setShowAddPolicyForm(true);
                         setValue("policyMetadata.decisionPolicy", "threshold");
                         setValue("policyMetadata.votingPeriodDuration", "Days");
-                        setValue("policyMetadata.minExecPeriodDuration", "Days");
+                        setValue(
+                          "policyMetadata.minExecPeriodDuration",
+                          "Days"
+                        );
                       }}
                       variant="outlined"
                       sx={{
@@ -244,6 +268,7 @@ export default function CreateGroupPage() {
                       watch={watch}
                       control={control}
                       members={getValues("members")}
+                      showRemoveButton={true}
                     />
                   </fieldset>
                 )) ||
