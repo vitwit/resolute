@@ -53,7 +53,7 @@
     "mathjs": "^11.4.0",
     "mini-css-extract-plugin": "^2.7.2",
     "moment": "^2.29.4",
-    "postcss": "^8.4.17",
+    "postcss": "^8.4.20",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-loader": "^7.0.2",
     "postcss-normalize": "^10.0.1",
