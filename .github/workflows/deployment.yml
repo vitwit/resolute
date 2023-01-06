@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.2.0
+        uses: actions/checkout@v3.3.0
       - name: trigger deployment
         run: |
           curl https://api.render.com/deploy/srv-ccadle6n6mponmv5j2ng?key=${{secrets.RENDER_SECRET}}
