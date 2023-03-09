@@ -49,7 +49,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.4.3",
     "jest-resolve": "^29.3.1",
-    "jest-watch-typeahead": "^2.2.1",
+    "jest-watch-typeahead": "^2.2.2",
     "mathjs": "^11.4.0",
     "mini-css-extract-plugin": "^2.7.2",
     "moment": "^2.29.4",
