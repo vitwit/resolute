@@ -51,7 +51,7 @@
     "jest-resolve": "^29.3.1",
     "jest-watch-typeahead": "^2.2.2",
     "mathjs": "^11.4.0",
-    "mini-css-extract-plugin": "^2.7.2",
+    "mini-css-extract-plugin": "^2.7.3",
     "moment": "^2.29.4",
     "postcss": "^8.4.21",
     "postcss-flexbugs-fixes": "^5.0.2",
