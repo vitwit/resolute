@@ -14,6 +14,7 @@ jobs:
         with:
           node-version: 16.x
       - name: npm ci, build
+        working-directory: ./frontend
         run: |
           yarn install --frozen-lockfile
           yarn build --if-present
@@ -27,7 +28,7 @@ jobs:
         with:
           node-version: 16.x
       - name: yarn ci, build and test
-        working-directory: ./
+        working-directory: ./frontend
         run: |
           yarn install --frozen-lockfile
           yarn test
