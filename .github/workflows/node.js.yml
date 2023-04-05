@@ -21,6 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3.5.0
     - name: Use Node.js ${{ matrix.node-version }}
+      working-directory: ./frontend
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
