@@ -2,6 +2,7 @@ import React from "react";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { computeVotePercentage, getProposalComponent } from "../../utils/util";
 import { getLocalTime } from "../../utils/datetime";
@@ -10,7 +11,13 @@ import "./../common.css";
 export const ProposalItem = (props) => {
   const { info, tally, vote, poolInfo, onItemClick } = props;
   const tallyInfo = computeVotePercentage(tally, poolInfo);
-
+  const tallySum = Number(tallyInfo.yes) + Number(tallyInfo.no) + Number(tallyInfo.no_with_veto) + Number(tallyInfo.abstain) 
+  const tallySumInfo = {
+    yes: tallyInfo.yes/tallySum * 100,
+    no: tallyInfo.no/tallySum * 100,
+    no_with_veto: tallyInfo.no_with_veto/tallySum * 100,
+    abstain: tallyInfo.abstain/tallySum * 100,
+  }
   const onVoteClick = () => {
     props.setOpen(info?.proposal_id);
   };
@@ -108,6 +115,18 @@ export const ProposalItem = (props) => {
           </Typography>
         </div>
         <br />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box sx={{width:`${tallySumInfo.yes}%`,margin:"0 0.5px", backgroundColor:"#18a572", height:"3px"}}></Box>
+          <Box sx={{width:`${tallySumInfo.no}%`,margin:"0 0.5px", backgroundColor:"#ce4256", height:"3px"}}></Box>
+          <Box sx={{width:`${tallySumInfo.no_with_veto}%`,margin:"0 0.5px", backgroundColor:"#ce4256", height:"3px"}}></Box>
+          <Box sx={{width:`${tallySumInfo.abstain}%`,margin:"0 0.5px", backgroundColor:"primary.main", height:"3px"}}></Box>
+        </div>
       </CardContent>
       <CardActions style={{ display: "flex", justifyContent: "space-between" }}>
         {vote?.proposal_id ? (
