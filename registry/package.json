@@ -19,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/vitwit/resolute/issues"
   },
-  "homepage": "https://github.com/vitwit/resolute/tree/tejatest#readme"
+  "homepage": "https://github.com/vitwit/resolute/tree/tejatest#readme",
+  "dependencies": {
+    "deepmerge": "^4.3.1",
+    "glob": "^9.3.4"
+  }
 }

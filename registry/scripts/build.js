@@ -1,8 +1,11 @@
 const fs = require('fs');
 const deepmerge = require('deepmerge');
 const glob = require('glob').sync;
-
-const paths = glob(`${__dirname}/../chain-registry/**/*.json`);
+const paths = glob(`../registry/**/*.json`);
+console.log(paths.length)
+paths.forEach((file) => {
+    console.log(file)
+})
 const assets = [];
 const chains = [];
 const ibcs = [];
@@ -39,8 +42,6 @@ addChains.forEach((chain) => {
   }
 });
 
-console.log(chains)
-
 chains.forEach((chain) => {
   if (!chain.slip44) chain.slip44 = 118;
 });
@@ -61,7 +62,7 @@ const write = (file, json, TypeName, isArray = false) => {
   const exportType = isArray ? TypeName + '[]' : TypeName;
   fs.writeFileSync(
     `${__dirname}/../src/${file}.ts`,
-    `import { ${TypeName} } from '@registry/types';
+    `import { ${TypeName} } from '@chain-registry/types';
 const ${file}: ${exportType} = ${strfy};
 export default ${file};
     `
