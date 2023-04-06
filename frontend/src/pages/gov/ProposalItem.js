@@ -33,11 +33,10 @@ export const ProposalItem = (props) => {
           }}
           onClick={() => onItemClick()}
         >
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom
+          <Typography sx={{ fontSize: 14, cursor:"pointer"}} color="text.primary" gutterBottom
           >
             #{info.proposal_id}
           </Typography>
-          {getProposalComponent(info.status)}
         </div>
         <Typography
           variant="body1"
@@ -45,17 +44,9 @@ export const ProposalItem = (props) => {
           color="text.primary"
           className="proposal-title"
           onClick={() => onItemClick()}
+          sx={{cursor:"pointer"}}
         >
           {info.content?.title}
-        </Typography>
-        <Typography
-          sx={{ mb: 1.5 }}
-          variant="body2"
-          color="text.secondary"
-          className="proposal-description"
-          onClick={() => onItemClick()}
-        >
-          {info.content?.description}
         </Typography>
         <ul
           style={{
@@ -88,33 +79,6 @@ export const ProposalItem = (props) => {
           </li>
         </ul>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            YES <br />
-            {tallyInfo.yes}%
-          </Typography>
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            NO <br />
-            {tallyInfo.no}%
-          </Typography>
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            NoWithVeto
-            <br />
-            {tallyInfo.no_with_veto}%
-          </Typography>
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            Abstain
-            <br />
-            {tallyInfo.abstain}%
-          </Typography>
-        </div>
-        <br />
         <div
           style={{
             display: "flex",
