@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+      "baseUrl": "./",
+      "paths": {
+        "@registry/types": ["./registry/types"]
+      }
+    }
+  }

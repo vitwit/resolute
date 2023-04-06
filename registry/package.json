@@ -1,0 +1,23 @@
+{
+  "name": "registry",
+  "version": "1.0.0",
+  "description": "To link with comsos/chain-registry repo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitwit/resolute.git#tejatest"
+  },
+  "keywords": [
+    "chain-registry",
+    "resolute"
+  ],
+  "author": "Saiteja",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vitwit/resolute/issues"
+  },
+  "homepage": "https://github.com/vitwit/resolute/tree/tejatest#readme"
+}

@@ -1,0 +1,163 @@
+{
+  "$schema": "../chain.schema.json",
+  "chain_name": "omniflixhub",
+  "status": "live",
+  "network_type": "mainnet",
+  "website": "https://omniflix.co/home",
+  "pretty_name": "OmniFlix",
+  "chain_id": "omniflixhub-1",
+  "daemon_name": "omniflixhubd",
+  "node_home": "$HOME/.omniflixhub",
+  "bech32_prefix": "omniflix",
+  "slip44": 118,
+  "codebase": {
+    "git_repo": "https://github.com/OmniFlix/omniflixhub",
+    "recommended_version": "v0.8.0",
+    "compatible_versions": [
+      "v0.8.0"
+    ],
+    "genesis": {
+      "genesis_url": "https://raw.githubusercontent.com/OmniFlix/mainnet/main/omniflixhub-1/genesis.json"
+    },
+    "versions": [
+      {
+        "name": "v0.8.0",
+        "recommended_version": "v0.8.0",
+        "compatible_versions": [
+          "v0.8.0"
+        ]
+      }
+    ]
+  },
+  "fees": {
+    "fee_tokens": [
+      {
+        "denom": "uflix",
+        "fixed_min_gas_price": 0
+      }
+    ]
+  },
+  "peers": {
+    "seeds": [
+      {
+        "id": "babc3f3f7804933265ec9c40ad94f4da8e9e0017",
+        "address": "seed.rhinostake.com:16956",
+        "provider": "RHINO"
+      },
+      {
+        "id": "20e1000e88125698264454a884812746c2eb4807",
+        "address": "seeds.lavenderfive.com:16956",
+        "provider": "Lavender.Five Nodes 🐝"
+      }
+    ],
+    "persistent_peers": [
+      {
+        "id": "574b37cc6e80663e70673cbe848147c2643ca48e",
+        "address": "35.240.187.174:26656"
+      }
+    ]
+  },
+  "apis": {
+    "rpc": [
+      {
+        "address": "https://omniflix.kingnodes.com",
+        "provider": "kingnodes"
+      },
+      {
+        "address": "https://rpc.omniflix.nodestake.top",
+        "provider": "NodeStake"
+      },
+      {
+        "address": "https://rpc.omniflix.chaintools.tech/",
+        "provider": "ChainTools"
+      },
+      {
+        "address": "https://rpc-omniflixhub-ia.cosmosia.notional.ventures/",
+        "provider": "Notional"
+      },
+      {
+        "address": "https://omniflix-rpc.lavenderfive.com/",
+        "provider": "Lavender.Five Nodes 🐝"
+      },
+      {
+        "address": "https://rpc-omniflix.huginn.tech:443",
+        "provider": "Huginn"
+      },
+      {
+        "address": "https://rpc.omniflix.silentvalidator.com/",
+        "provider": "silent"
+      },
+      {
+        "address": "https://omniflix.nodejumper.io",
+        "provider": "NODEJUMPER"
+      }
+    ],
+    "rest": [
+      {
+        "address": "https://api.omniflix.nodestake.top",
+        "provider": "NodeStake"
+      },
+      {
+        "address": "https://api-omniflixhub-ia.cosmosia.notional.ventures/",
+        "provider": "Notional"
+      },
+      {
+        "address": "https://omniflix-api.lavenderfive.com/",
+        "provider": "Lavender.Five Nodes 🐝"
+      },
+      {
+        "address": "https://api.omniflix.silentvalidator.com/",
+        "provider": "silent"
+      },
+      {
+        "address": "https://omniflix.nodejumper.io:1317",
+        "provider": "NODEJUMPER"
+      },
+      {
+        "address": "https://omniflix.kingnodes.com",
+        "provider": "kingnodes"
+      }
+    ],
+    "grpc": [
+      {
+        "address": "grpc-omniflix.kingnodes.com:443",
+        "provider": "kingnodes"
+      },
+      {
+        "address": "grpc.omniflix.nodestake.top:443",
+        "provider": "NodeStake"
+      },
+      {
+        "address": "grpc-omniflixhub-ia.cosmosia.notional.ventures:443",
+        "provider": "Notional"
+      },
+      {
+        "address": "omniflix-grpc.lavenderfive.com:443",
+        "provider": "Lavender.Five Nodes 🐝"
+      },
+      {
+        "address": "omniflix.nodejumper.io:9090",
+        "provider": "NODEJUMPER"
+      }
+    ]
+  },
+  "explorers": [
+    {
+      "kind": "EZStaking Tools",
+      "url": "https://ezstaking.tools/omniflixhub",
+      "tx_page": "https://ezstaking.tools/omniflixhub/txs/${txHash}",
+      "account_page": "https://ezstaking.tools/omniflixhub/account/${accountAddress}"
+    },
+    {
+      "kind": "mintscan",
+      "url": "https://www.mintscan.io/omniflix",
+      "tx_page": "https://www.mintscan.io/omniflix/txs/${txHash}",
+      "account_page": "https://www.mintscan.io/omniflix/account/${accountAddress}"
+    },
+    {
+      "kind": "atomscan",
+      "url": "https://atomscan.com/omniflixhub",
+      "tx_page": "https://atomscan.com/omniflixhub/transactions/${txHash}"
+    }
+  ]
+}

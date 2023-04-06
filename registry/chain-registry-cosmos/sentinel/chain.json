@@ -1,0 +1,163 @@
+{
+  "$schema": "../chain.schema.json",
+  "chain_name": "sentinel",
+  "status": "live",
+  "network_type": "mainnet",
+  "website": "https://sentinel.co/",
+  "pretty_name": "Sentinel",
+  "chain_id": "sentinelhub-2",
+  "bech32_prefix": "sent",
+  "daemon_name": "sentinelhub",
+  "node_home": "$HOME/.sentinelhub",
+  "slip44": 118,
+  "key_algos": [
+    "secp256k1"
+  ],
+  "fees": {
+    "fee_tokens": [
+      {
+        "denom": "udvpn",
+        "low_gas_price": 0.1,
+        "average_gas_price": 0.25,
+        "high_gas_price": 0.4
+      }
+    ]
+  },
+  "staking": {
+    "staking_tokens": [
+      {
+        "denom": "udvpn"
+      }
+    ]
+  },
+  "codebase": {
+    "git_repo": "https://github.com/sentinel-official/hub",
+    "recommended_version": "v0.9.3",
+    "compatible_versions": [
+      "v0.9.3"
+    ],
+    "genesis": {
+      "genesis_url": "https://raw.githubusercontent.com/sentinel-official/networks/main/sentinelhub-2/genesis.zip"
+    },
+    "versions": [
+      {
+        "name": "v0.9.3",
+        "recommended_version": "v0.9.3",
+        "compatible_versions": [
+          "v0.9.3"
+        ]
+      }
+    ]
+  },
+  "peers": {
+    "seeds": [
+      {
+        "id": "ebc272824924ea1a27ea3183dd0b9ba713494f83",
+        "address": "sentinel-mainnet-seed.autostake.com:26706",
+        "provider": "AutoStake 🛡️ Slash Protected"
+      },
+      {
+        "id": "e1b058e5cfa2b836ddaa496b10911da62dcf182e",
+        "address": "sentinel-seed-1.allnodes.me:26656",
+        "provider": "Allnodes.com ⚡️ Nodes & Staking"
+      },
+      {
+        "id": "e726816f42831689eab9378d5d577f1d06d25716",
+        "address": "sentinel-seed-2.allnodes.me:26656",
+        "provider": "Allnodes.com ⚡️ Nodes & Staking"
+      },
+      {
+        "id": "e8b2ebbd5e90bd89cb89160dd040fda7d04984a4",
+        "address": "seeds.badgerbite.io:26656",
+        "provider": "BadgerBite"
+      }
+    ],
+    "persistent_peers": [
+      {
+        "id": "9174af5f16f74660cccf49f893d243949af45f7f",
+        "address": "54.177.29.46:26656"
+      },
+      {
+        "id": "a77f6a094578dad899e2f40e0626b4c6d4705311",
+        "address": "3.36.165.232:26656"
+      },
+      {
+        "id": "ebc272824924ea1a27ea3183dd0b9ba713494f83",
+        "address": "sentinel-mainnet-peer.autostake.com:26706",
+        "provider": "AutoStake 🛡️ Slash Protected"
+      }
+    ]
+  },
+  "apis": {
+    "rpc": [
+      {
+        "address": "https://rpc-sentinel-ia.cosmosia.notional.ventures/",
+        "provider": "Notional"
+      },
+      {
+        "address": "https://rpc-sentinel.whispernode.com:443",
+        "provider": "WhisperNode🤐"
+      },
+      {
+        "address": "https://rpc.sentinel.chaintools.tech/",
+        "provider": "ChainTools"
+      },
+      {
+        "address": "https://rpc.sentinel.quokkastake.io",
+        "provider": "🐹 Quokka Stake"
+      },
+      {
+        "address": "https://sentinel-mainnet-rpc.autostake.com:443",
+        "provider": "AutoStake 🛡️ Slash Protected"
+      },
+      {
+        "address": "https://sentinel-rpc.badgerbite.io/",
+        "provider": "BadgerBite"
+      },
+      {
+        "address": "https://sentinel-rpc2.badgerbite.io",
+        "provider": "BadgerBite"
+      }
+    ],
+    "rest": [
+      {
+        "address": "https://api-sentinel-ia.cosmosia.notional.ventures/",
+        "provider": "Notional"
+      },
+      {
+        "address": "https://sentinel-mainnet-lcd.autostake.com:443",
+        "provider": "AutoStake 🛡️ Slash Protected"
+      },
+      {
+        "address": "https://lcd-sentinel.whispernode.com:443",
+        "provider": "WhisperNode🤐"
+      },
+      {
+        "address": "https://api.sentinel.quokkastake.io",
+        "provider": "🐹 Quokka Stake"
+      }
+    ],
+    "grpc": [
+      {
+        "address": "grpc-sentinel-ia.cosmosia.notional.ventures:443",
+        "provider": "Notional"
+      },
+      {
+        "address": "sentinel.grpcui.chaintools.host:443",
+        "provider": "ChainTools"
+      },
+      {
+        "address": "sentinel-mainnet-grpc.autostake.com:443",
+        "provider": "AutoStake 🛡️ Slash Protected"
+      }
+    ]
+  },
+  "explorers": [
+    {
+      "kind": "mintscan",
+      "url": "https://www.mintscan.io/sentinel",
+      "tx_page": "https://www.mintscan.io/sentinel/txs/${txHash}",
+      "account_page": "https://www.mintscan.io/sentinel/account/${accountAddress}"
+    }
+  ]
+}

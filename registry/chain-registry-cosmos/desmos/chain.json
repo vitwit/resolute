@@ -1,0 +1,205 @@
+{
+  "$schema": "../chain.schema.json",
+  "chain_name": "desmos",
+  "status": "live",
+  "network_type": "mainnet",
+  "website": "https://desmos.network/",
+  "pretty_name": "Desmos",
+  "chain_id": "desmos-mainnet",
+  "bech32_prefix": "desmos",
+  "daemon_name": "desmos",
+  "node_home": "$HOME/.desmos",
+  "key_algos": [
+    "secp256k1"
+  ],
+  "slip44": 852,
+  "fees": {
+    "fee_tokens": [
+      {
+        "denom": "udsm",
+        "fixed_min_gas_price": 0.001,
+        "low_gas_price": 0.01,
+        "average_gas_price": 0.03,
+        "high_gas_price": 0.05
+      }
+    ]
+  },
+  "staking": {
+    "staking_tokens": [
+      {
+        "denom": "udsm"
+      }
+    ]
+  },
+  "codebase": {
+    "git_repo": "https://github.com/desmos-labs/desmos",
+    "recommended_version": "v4.7.0",
+    "compatible_versions": [
+      "v4.7.0"
+    ],
+    "binaries": {
+      "linux/amd64": "https://github.com/desmos-labs/desmos/releases/download/v4.7.0/desmos-4.7.0-linux-amd64",
+      "linux/arm64": "https://github.com/desmos-labs/desmos/releases/download/v4.7.0/desmos-4.7.0-linux-arm64",
+      "darwin/amd64": "https://github.com/desmos-labs/desmos/releases/download/v4.7.0/desmos-4.7.0-darwin-amd64",
+      "windows/amd64": "https://github.com/desmos-labs/desmos/releases/download/v4.7.0/desmos-4.7.0-windows-amd64.exe"
+    },
+    "genesis": {
+      "genesis_url": "https://raw.githubusercontent.com/desmos-labs/mainnet/main/genesis.json"
+    },
+    "versions": [
+      {
+        "name": "v4.7.0",
+        "recommended_version": "v4.7.0",
+        "compatible_versions": [
+          "v4.7.0"
+        ],
+        "binaries": {
+          "linux/amd64": "https://github.com/desmos-labs/desmos/releases/download/v4.7.0/desmos-4.7.0-linux-amd64",
+          "linux/arm64": "https://github.com/desmos-labs/desmos/releases/download/v4.7.0/desmos-4.7.0-linux-arm64",
+          "darwin/amd64": "https://github.com/desmos-labs/desmos/releases/download/v4.7.0/desmos-4.7.0-darwin-amd64",
+          "windows/amd64": "https://github.com/desmos-labs/desmos/releases/download/v4.7.0/desmos-4.7.0-windows-amd64.exe"
+        }
+      }
+    ]
+  },
+  "peers": {
+    "seeds": [
+      {
+        "id": "5c86915026093f9a2f81e5910107cf14676b48fc",
+        "address": "seed-2.mainnet.desmos.network:26656",
+        "provider": "desmos"
+      },
+      {
+        "id": "45105c7241068904bdf5a32c86ee45979794637f",
+        "address": "seed-3.mainnet.desmos.network:26656",
+        "provider": "desmos"
+      },
+      {
+        "id": "20e1000e88125698264454a884812746c2eb4807",
+        "address": "seeds.lavenderfive.com:16256",
+        "provider": "Lavender.Five Nodes 🐝"
+      },
+      {
+        "id": "15b1f6b49a548e9f0d0855bd340199bce9140add",
+        "address": "seed-desmos.starsquid.io:15601",
+        "provider": "Starsquid"
+      },
+      {
+        "id": "c071562db4d2ed2d22100b0d34ec4788f1b058cf",
+        "address": "seed-desmos.explorer.co.id:17656",
+        "provider": "Nodine.ID"
+      },
+      {
+        "id": "73fc6b8b41aada42306b2f149619cc0ff935a868",
+        "address": "desmos-seed.panthea.eu:39656",
+        "provider": "Panthea EU"
+      }
+    ],
+    "persistent_peers": [
+      {
+        "id": "7c506d9e32cfc486ea714ee0c0307022398b8c20",
+        "address": "desmos-peer.panthea.eu:29656",
+        "provider": "Panthea EU"
+      }
+    ]
+  },
+  "apis": {
+    "rpc": [
+      {
+        "address": "https://rpc.mainnet.desmos.network",
+        "provider": "desmos"
+      },
+      {
+        "address": "https://desmos-rpc.lavenderfive.com/",
+        "provider": "Lavender.Five Nodes 🐝"
+      },
+      {
+        "address": "https://desmos-rpc.ibs.team/",
+        "provider": "Inter Blockchain Services"
+      },
+      {
+        "address": "https://desmos.nodejumper.io",
+        "provider": "NODEJUMPER"
+      },
+      {
+        "address": "https://rpc-desmos.whispernode.com:443",
+        "provider": "WhisperNode🤐"
+      },
+      {
+        "address": "https://rpc-desmos.explorer.co.id",
+        "provider": "Nodine.ID"
+      }
+    ],
+    "rest": [
+      {
+        "address": "https://api.mainnet.desmos.network",
+        "provider": "desmos"
+      },
+      {
+        "address": "https://desmos-api.lavenderfive.com/",
+        "provider": "Lavender.Five Nodes 🐝"
+      },
+      {
+        "address": "https://desmos-api.ibs.team/",
+        "provider": "Inter Blockchain Services"
+      },
+      {
+        "address": "https://desmos.nodejumper.io:1317",
+        "provider": "NODEJUMPER"
+      },
+      {
+        "address": "https://api-desmos.explorer.co.id",
+        "provider": "Nodine.ID"
+      }
+    ],
+    "grpc": [
+      {
+        "address": "desmos-grpc.lavenderfive.com:443",
+        "provider": "Lavender.Five Nodes 🐝"
+      },
+      {
+        "address": "https://desmos.nodejumper.io:9090",
+        "provider": "Nodejumper 🚀"
+      },
+      {
+        "address": "https://grpc-desmos.explorer.co.id",
+        "provider": "Nodine.ID"
+      }
+    ]
+  },
+  "explorers": [
+    {
+      "kind": "EZStaking Tools",
+      "url": "https://ezstaking.tools/desmos",
+      "tx_page": "https://ezstaking.tools/desmos/txs/${txHash}",
+      "account_page": "https://ezstaking.tools/desmos/account/${accountAddress}"
+    },
+    {
+      "kind": "bigdipper",
+      "url": "https://bigdipper.live/desmos",
+      "tx_page": "https://bigdipper.live/desmos/transactions/${txHash}",
+      "account_page": "https://bigdipper.live/desmos/accounts/${accountAddress}"
+    },
+    {
+      "kind": "mintscan",
+      "url": "https://www.mintscan.io/desmos",
+      "tx_page": "https://www.mintscan.io/desmos/txs/${txHash}",
+      "account_page": "https://www.mintscan.io/desmos/account/${accountAddress}"
+    },
+    {
+      "kind": "ping.pub",
+      "url": "https://ping.pub/desmos",
+      "tx_page": "https://ping.pub/desmos/tx/${txHash}"
+    },
+    {
+      "kind": "atomscan",
+      "url": "https://atomscan.com/desmos",
+      "tx_page": "https://atomscan.com/desmos/transactions/${txHash}"
+    },
+    {
+      "kind": "TC Network",
+      "url": "https://explorer.tcnetwork.io/desmos",
+      "tx_page": "https://explorer.tcnetwork.io/desmos/transaction/${txHash}"
+    }
+  ]
+}
