@@ -1,0 +1,670 @@
+[
+  {
+    "enableModules": {
+      "authz": true,
+      "feegrant": true,
+      "group": false
+    },
+    "aminoConfig": {
+      "authz": false,
+      "feegrant": false,
+      "group": false
+    },
+    "showAirdrop": false,
+    "logos": {
+      "menu": "",
+      "toolbar": ""
+    },
+    "experimental": false,
+    "isTestnet": true,
+    "config": {
+      "chainId": "stargaze-1",
+      "chainName": "stargaze",
+      "rest": {
+        "address": "https://rest.stargaze-apis.com/",
+        "provider": "Stargaze Foundation"
+      },
+      "rpc": {
+        "address": "https://rpc.stargaze-apis.com/",
+        "provider": "Stargaze Foundation"
+      },
+      "stakeCurrency": {
+        "coinDenom": "STARS",
+        "coinMinimalDenom": "ustars",
+        "coinDecimals": 6,
+        "coinGeckoId": "stargaze"
+      },
+      "currencies": [
+        {
+          "coinDenom": "STARS",
+          "coinMinimalDenom": "ustars",
+          "coinDecimals": 6,
+          "coinGeckoId": "stargaze"
+        }
+      ],
+      "feeCurrencies": [
+        {
+          "coinDenom": "STARS",
+          "coinMinimalDenom": "ustars",
+          "coinDecimals": 6,
+          "coinGeckoId": "stargaze"
+        }
+      ],
+      "gasPriceStep": {
+        "low": 0.01,
+        "average": 0.025,
+        "high": 0.04
+      },
+      "coinType": 118,
+      "bip44": {
+        "coinType": 118
+      },
+      "bech32Config": {
+        "bech32PrefixAccAddr": "stars",
+        "bech32PrefixAccPub": "starspub",
+        "bech32PrefixValAddr": "starsvaloper",
+        "bech32PrefixValPub": "starsvaloperpub",
+        "bech32PrefixConsAddr": "starsvalcons",
+        "bech32PrefixConsPub": "starsvalconspub"
+      }
+    }
+  },
+  {
+    "enableModules": {
+      "authz": true,
+      "feegrant": true,
+      "group": false
+    },
+    "aminoConfig": {
+      "authz": false,
+      "feegrant": false,
+      "group": false
+    },
+    "showAirdrop": false,
+    "logos": {
+      "menu": "https://raw.githubusercontent.com/cosmos/chain-registry/master/regen/images/regen.png",
+      "toolbar": "https://raw.githubusercontent.com/cosmos/chain-registry/master/regen/images/regen.png"
+    },
+    "experimental": false,
+    "isTestnet": true,
+    "config": {
+      "chainId": "regen-1",
+      "chainName": "regen",
+      "rest": {
+        "address": "http://public-rpc.regen.vitwit.com:1317",
+        "provider": "vitwit"
+      },
+      "rpc": {
+        "address": "https://rpc-regen.ecostake.com",
+        "provider": "ecostake"
+      },
+      "stakeCurrency": {
+        "coinDenom": "REGEN",
+        "coinMinimalDenom": "uregen",
+        "coinDecimals": 6,
+        "coinGeckoId": "regen"
+      },
+      "currencies": [
+        {
+          "coinDenom": "REGEN",
+          "coinMinimalDenom": "uregen",
+          "coinDecimals": 6,
+          "coinGeckoId": "regen"
+        },
+        {
+          "coinDenom": "NCT",
+          "coinMinimalDenom": "eco.uC.NCT",
+          "coinDecimals": 6,
+          "coinGeckoId": "toucan-protocol-nature-carbon-tonne"
+        }
+      ],
+      "feeCurrencies": [
+        {
+          "coinDenom": "REGEN",
+          "coinMinimalDenom": "uregen",
+          "coinDecimals": 6,
+          "coinGeckoId": "regen"
+        }
+      ],
+      "gasPriceStep": {},
+      "coinType": 118,
+      "bip44": {
+        "coinType": 118
+      },
+      "bech32Config": {
+        "bech32PrefixAccAddr": "regen",
+        "bech32PrefixAccPub": "regenpub",
+        "bech32PrefixValAddr": "regenvaloper",
+        "bech32PrefixValPub": "regenvaloperpub",
+        "bech32PrefixConsAddr": "regenvalcons",
+        "bech32PrefixConsPub": "regenvalconspub"
+      }
+    }
+  },
+  {
+    "enableModules": {
+      "authz": true,
+      "feegrant": true,
+      "group": false
+    },
+    "aminoConfig": {
+      "authz": false,
+      "feegrant": false,
+      "group": false
+    },
+    "showAirdrop": false,
+    "logos": {
+      "menu": "https://raw.githubusercontent.com/cosmos/chain-registry/master/passage/images/pasg.png",
+      "toolbar": "https://raw.githubusercontent.com/cosmos/chain-registry/master/passage/images/pasg.png"
+    },
+    "experimental": false,
+    "isTestnet": true,
+    "config": {
+      "chainId": "passage-1",
+      "chainName": "passage",
+      "rest": {
+        "address": "https://api.passage.vitwit.com",
+        "provider": "vitwit"
+      },
+      "rpc": {
+        "address": "https://rpc.passage.vitwit.com",
+        "provider": "vitwit"
+      },
+      "currencies": [
+        {
+          "coinDenom": "PASG",
+          "coinMinimalDenom": "upasg",
+          "coinDecimals": 6
+        }
+      ],
+      "feeCurrencies": [
+        {
+          "coinDenom": "PASG",
+          "coinMinimalDenom": "upasg",
+          "coinDecimals": 6
+        }
+      ],
+      "gasPriceStep": {
+        "low": 0.01,
+        "average": 0.025,
+        "high": 0.04
+      },
+      "coinType": 118,
+      "bip44": {
+        "coinType": 118
+      },
+      "bech32Config": {
+        "bech32PrefixAccAddr": "pasg",
+        "bech32PrefixAccPub": "pasgpub",
+        "bech32PrefixValAddr": "pasgvaloper",
+        "bech32PrefixValPub": "pasgvaloperpub",
+        "bech32PrefixConsAddr": "pasgvalcons",
+        "bech32PrefixConsPub": "pasgvalconspub"
+      }
+    }
+  },
+  {
+    "enableModules": {
+      "authz": true,
+      "feegrant": true,
+      "group": false
+    },
+    "aminoConfig": {
+      "authz": false,
+      "feegrant": false,
+      "group": false
+    },
+    "showAirdrop": false,
+    "logos": {
+      "menu": "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
+      "toolbar": "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png"
+    },
+    "experimental": false,
+    "isTestnet": true,
+    "config": {
+      "chainId": "osmosis-1",
+      "chainName": "osmosis",
+      "rest": {
+        "address": "https://lcd.osmosis.zone/",
+        "provider": "Osmosis Foundation"
+      },
+      "rpc": {
+        "address": "https://rpc.osmosis.zone/",
+        "provider": "Osmosis Foundation"
+      },
+      "stakeCurrency": {
+        "coinDenom": "OSMO",
+        "coinMinimalDenom": "uosmo",
+        "coinDecimals": 6,
+        "coinGeckoId": "osmosis"
+      },
+      "currencies": [
+        {
+          "coinDenom": "OSMO",
+          "coinMinimalDenom": "uosmo",
+          "coinDecimals": 6,
+          "coinGeckoId": "osmosis"
+        },
+        {
+          "coinDenom": "ION",
+          "coinMinimalDenom": "uion",
+          "coinDecimals": 6,
+          "coinGeckoId": "ion"
+        },
+        {
+          "coinDenom": "ASTRO",
+          "coinMinimalDenom": "ibc/8410580A4F5421DFDBD888212624591E92A9E3B5C87D3C58913CE16ABD98B9B4",
+          "coinDecimals": 6,
+          "coinGeckoId": "astroport-fi"
+        }
+      ],
+      "feeCurrencies": [
+        {
+          "coinDenom": "OSMO",
+          "coinMinimalDenom": "uosmo",
+          "coinDecimals": 6,
+          "coinGeckoId": "osmosis"
+        }
+      ],
+      "gasPriceStep": {
+        "low": 0.01
+      },
+      "coinType": 118,
+      "bip44": {
+        "coinType": 118
+      },
+      "bech32Config": {
+        "bech32PrefixAccAddr": "osmo",
+        "bech32PrefixAccPub": "osmopub",
+        "bech32PrefixValAddr": "osmovaloper",
+        "bech32PrefixValPub": "osmovaloperpub",
+        "bech32PrefixConsAddr": "osmovalcons",
+        "bech32PrefixConsPub": "osmovalconspub"
+      }
+    }
+  },
+  {
+    "enableModules": {
+      "authz": true,
+      "feegrant": true,
+      "group": false
+    },
+    "aminoConfig": {
+      "authz": false,
+      "feegrant": false,
+      "group": false
+    },
+    "showAirdrop": false,
+    "logos": {
+      "menu": "",
+      "toolbar": ""
+    },
+    "experimental": false,
+    "isTestnet": true,
+    "config": {
+      "chainId": "juno-1",
+      "chainName": "juno",
+      "rest": {
+        "address": "https://lcd-juno.itastakers.com",
+        "provider": "itastakers"
+      },
+      "rpc": {
+        "address": "https://rpc-juno.whispernode.com:443",
+        "provider": "WhisperNode🤐"
+      },
+      "stakeCurrency": {
+        "coinDenom": "JUNO",
+        "coinMinimalDenom": "ujuno",
+        "coinDecimals": 6,
+        "coinGeckoId": "juno-network"
+      },
+      "currencies": [
+        {
+          "coinDenom": "JUNO",
+          "coinMinimalDenom": "ujuno",
+          "coinDecimals": 6,
+          "coinGeckoId": "juno-network"
+        },
+        {
+          "coinDenom": "NETA",
+          "coinMinimalDenom": "cw20:juno168ctmpyppk90d34p3jjy658zf5a5l3w8wk35wht6ccqj4mr0yv8s4j5awr",
+          "coinDecimals": 6,
+          "coinGeckoId": "neta"
+        },
+        {
+          "coinDenom": "MARBLE",
+          "coinMinimalDenom": "cw20:juno1g2g7ucurum66d42g8k5twk34yegdq8c82858gz0tq2fc75zy7khssgnhjl",
+          "coinDecimals": 3,
+          "coinGeckoId": "marble"
+        },
+        {
+          "coinDenom": "HOPE",
+          "coinMinimalDenom": "cw20:juno1re3x67ppxap48ygndmrc7har2cnc7tcxtm9nplcas4v0gc3wnmvs3s807z",
+          "coinDecimals": 6,
+          "coinGeckoId": "hope-galaxy"
+        },
+        {
+          "coinDenom": "RAC",
+          "coinMinimalDenom": "cw20:juno1r4pzw8f9z0sypct5l9j906d47z998ulwvhvqe5xdwgy8wf84583sxwh0pa",
+          "coinDecimals": 6,
+          "coinGeckoId": "racoon"
+        },
+        {
+          "coinDenom": "BLOCK",
+          "coinMinimalDenom": "cw20:juno1y9rf7ql6ffwkv02hsgd4yruz23pn4w97p75e2slsnkm0mnamhzysvqnxaq",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "DHK",
+          "coinMinimalDenom": "cw20:juno1tdjwrqmnztn2j3sj2ln9xnyps5hs48q3ddwjrz7jpv6mskappjys5czd49",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "RAW",
+          "coinMinimalDenom": "cw20:juno15u3dt79t6sxxa3x3kpkhzsy56edaa5a66wvt3kxmukqjz2sx0hes5sn38g",
+          "coinDecimals": 6,
+          "coinGeckoId": "junoswap-raw-dao"
+        },
+        {
+          "coinDenom": "ASVT",
+          "coinMinimalDenom": "cw20:juno17wzaxtfdw5em7lc94yed4ylgjme63eh73lm3lutp2rhcxttyvpwsypjm4w",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "HNS",
+          "coinMinimalDenom": "cw20:juno1ur4jx0sxchdevahep7fwq28yk4tqsrhshdtylz46yka3uf6kky5qllqp4k",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "JOE",
+          "coinMinimalDenom": "cw20:juno1n7n7d5088qlzlj37e9mgmkhx6dfgtvt02hqxq66lcap4dxnzdhwqfmgng3",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "DLA",
+          "coinMinimalDenom": "cw20:juno1sfwye65qxcfsc837gu5qcprcz7w49gkv3wnat04764ld76hy3arqs779tr",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "GLTO",
+          "coinMinimalDenom": "cw20:juno1j0a9ymgngasfn3l5me8qpd53l5zlm9wurfdk7r65s5mg6tkxal3qpgf5se",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "GKEY",
+          "coinMinimalDenom": "cw20:juno1gz8cf86zr4vw9cjcyyv432vgdaecvr9n254d3uwwkx9rermekddsxzageh",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "HOLE",
+          "coinMinimalDenom": "cw20:juno1t46z6hg8vvsena7sue0vg6w85ljar3cundplkre9sz0skeqkap9sxyyy6m",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "SEJUNO",
+          "coinMinimalDenom": "cw20:juno1dd0k0um5rqncfueza62w9sentdfh3ec4nw4aq4lk5hkjl63vljqscth9gv",
+          "coinDecimals": 6,
+          "coinGeckoId": "stakeeasy-juno-derivative"
+        },
+        {
+          "coinDenom": "BJUNO",
+          "coinMinimalDenom": "cw20:juno1wwnhkagvcd3tjz6f8vsdsw5plqnw8qy2aj3rrhqr2axvktzv9q2qz8jxn3",
+          "coinDecimals": 6,
+          "coinGeckoId": "stakeeasy-bjuno"
+        },
+        {
+          "coinDenom": "SOLAR",
+          "coinMinimalDenom": "cw20:juno159q8t5g02744lxq8lfmcn6f78qqulq9wn3y9w7lxjgkz4e0a6kvsfvapse",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "SEASY",
+          "coinMinimalDenom": "cw20:juno19rqljkh95gh40s7qdx40ksx3zq5tm4qsmsrdz9smw668x9zdr3lqtg33mf",
+          "coinDecimals": 6,
+          "coinGeckoId": "seasy"
+        },
+        {
+          "coinDenom": "MUSE",
+          "coinMinimalDenom": "cw20:juno1p8x807f6h222ur0vssqy3qk6mcpa40gw2pchquz5atl935t7kvyq894ne3",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "LOOP",
+          "coinMinimalDenom": "cw20:juno1qsrercqegvs4ye0yqg93knv73ye5dc3prqwd6jcdcuj8ggp6w0us66deup",
+          "coinDecimals": 6,
+          "coinGeckoId": "loop"
+        },
+        {
+          "coinDenom": "FURY",
+          "coinMinimalDenom": "cw20:juno1cltgm8v842gu54srmejewghnd6uqa26lzkpa635wzra9m9xuudkqa2gtcz",
+          "coinDecimals": 6,
+          "coinGeckoId": "fanfury"
+        },
+        {
+          "coinDenom": "PHMN",
+          "coinMinimalDenom": "cw20:juno1rws84uz7969aaa7pej303udhlkt3j9ca0l3egpcae98jwak9quzq8szn2l",
+          "coinDecimals": 6,
+          "coinGeckoId": "posthuman"
+        },
+        {
+          "coinDenom": "HOPERS",
+          "coinMinimalDenom": "cw20:juno1u45shlp0q4gcckvsj06ss4xuvsu0z24a0d0vr9ce6r24pht4e5xq7q995n",
+          "coinDecimals": 6,
+          "coinGeckoId": "hopers-io "
+        },
+        {
+          "coinDenom": "RED",
+          "coinMinimalDenom": "cw20:juno1g647t78y2ulqlm3lss8rs3d0spzd0teuwhdvnqn92tr79yltk9dq2h24za",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "BLUE",
+          "coinMinimalDenom": "cw20:juno14q8kk464fafql2fwmlsgvgcdl6h2csqpzv4hr025fmcvgjahpess32k0j7",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "WYND",
+          "coinMinimalDenom": "cw20:juno1mkw83sv6c7sjdvsaplrzc8yaes9l42p4mhy0ssuxjnyzl87c9eps7ce3m9",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "BANANA",
+          "coinMinimalDenom": "juno1s2dp05rspeuzzpzyzdchk262szehrtfpz847uvf98cnwh53ulx4qg20qwj",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "NRIDE",
+          "coinMinimalDenom": "cw20:juno1qmlchtmjpvu0cr7u0tad2pq8838h6farrrjzp39eqa9xswg7teussrswlq",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "SGNL",
+          "coinMinimalDenom": "cw20:juno14lycavan8gvpjn97aapzvwmsj8kyrvf644p05r0hu79namyj3ens87650k",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "JAPE",
+          "coinMinimalDenom": "cw20:juno1zkwveux7y6fmsr88atf3cyffx96p0c96qr8tgcsj7vfnhx7sal3s3zu3ps",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "CATOM",
+          "coinMinimalDenom": "cw20:juno12wxyvtqe76x2a5jj6ckp2hfq8v32m6rvyyxwwufl2tksqvkt7whqczv6pa",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "HOWL",
+          "coinMinimalDenom": "cw20:juno1g0wuyu2f49ncf94r65278puxzclf5arse9f3kvffxyv4se4vgdmsk4dvqz",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "FOX",
+          "coinMinimalDenom": "cw20:juno1u8cr3hcjvfkzxcaacv9q75uw9hwjmn8pucc93pmy6yvkzz79kh3qncca8x",
+          "coinDecimals": 6
+        },
+        {
+          "coinDenom": "GRDN",
+          "coinMinimalDenom": "cw20:juno1xekkh27punj0uxruv3gvuydyt856fax0nu750xns99t2qcxp7xmsqwhfma",
+          "coinDecimals": 6
+        }
+      ],
+      "feeCurrencies": [
+        {
+          "coinDenom": "JUNO",
+          "coinMinimalDenom": "ujuno",
+          "coinDecimals": 6,
+          "coinGeckoId": "juno-network"
+        }
+      ],
+      "gasPriceStep": {},
+      "coinType": 118,
+      "bip44": {
+        "coinType": 118
+      },
+      "bech32Config": {
+        "bech32PrefixAccAddr": "juno",
+        "bech32PrefixAccPub": "junopub",
+        "bech32PrefixValAddr": "junovaloper",
+        "bech32PrefixValPub": "junovaloperpub",
+        "bech32PrefixConsAddr": "junovalcons",
+        "bech32PrefixConsPub": "junovalconspub"
+      }
+    }
+  },
+  {
+    "enableModules": {
+      "authz": true,
+      "feegrant": true,
+      "group": false
+    },
+    "aminoConfig": {
+      "authz": false,
+      "feegrant": false,
+      "group": false
+    },
+    "showAirdrop": false,
+    "logos": {
+      "menu": "",
+      "toolbar": ""
+    },
+    "experimental": false,
+    "isTestnet": true,
+    "config": {
+      "chainId": "cosmoshub-4",
+      "chainName": "cosmoshub",
+      "rest": {
+        "address": "https://lcd-cosmoshub.blockapsis.com",
+        "provider": "chainapsis"
+      },
+      "rpc": {
+        "address": "https://rpc-cosmoshub.blockapsis.com",
+        "provider": "chainapsis"
+      },
+      "stakeCurrency": {
+        "coinDenom": "ATOM",
+        "coinMinimalDenom": "uatom",
+        "coinDecimals": 6,
+        "coinGeckoId": "cosmos"
+      },
+      "currencies": [
+        {
+          "coinDenom": "ATOM",
+          "coinMinimalDenom": "uatom",
+          "coinDecimals": 6,
+          "coinGeckoId": "cosmos"
+        }
+      ],
+      "feeCurrencies": [
+        {
+          "coinDenom": "ATOM",
+          "coinMinimalDenom": "uatom",
+          "coinDecimals": 6,
+          "coinGeckoId": "cosmos"
+        }
+      ],
+      "gasPriceStep": {},
+      "coinType": 118,
+      "bip44": {
+        "coinType": 118
+      },
+      "bech32Config": {
+        "bech32PrefixAccAddr": "cosmos",
+        "bech32PrefixAccPub": "cosmospub",
+        "bech32PrefixValAddr": "cosmosvaloper",
+        "bech32PrefixValPub": "cosmosvaloperpub",
+        "bech32PrefixConsAddr": "cosmosvalcons",
+        "bech32PrefixConsPub": "cosmosvalconspub"
+      }
+    }
+  },
+  {
+    "enableModules": {
+      "authz": true,
+      "feegrant": true,
+      "group": false
+    },
+    "aminoConfig": {
+      "authz": false,
+      "feegrant": false,
+      "group": false
+    },
+    "showAirdrop": false,
+    "logos": {
+      "menu": "",
+      "toolbar": ""
+    },
+    "experimental": false,
+    "isTestnet": true,
+    "config": {
+      "chainId": "akashnet-2",
+      "chainName": "akash",
+      "rest": {
+        "address": "https://api.akash.forbole.com:443",
+        "provider": "forbole"
+      },
+      "rpc": {
+        "address": "https://rpc.akash.forbole.com:443",
+        "provider": "forbole"
+      },
+      "stakeCurrency": {
+        "coinDenom": "AKT",
+        "coinMinimalDenom": "uakt",
+        "coinDecimals": 6,
+        "coinGeckoId": "akash-network"
+      },
+      "currencies": [
+        {
+          "coinDenom": "AKT",
+          "coinMinimalDenom": "uakt",
+          "coinDecimals": 6,
+          "coinGeckoId": "akash-network"
+        }
+      ],
+      "feeCurrencies": [
+        {
+          "coinDenom": "AKT",
+          "coinMinimalDenom": "uakt",
+          "coinDecimals": 6,
+          "coinGeckoId": "akash-network"
+        }
+      ],
+      "gasPriceStep": {
+        "low": 0.01,
+        "average": 0.025,
+        "high": 0.04
+      },
+      "coinType": 118,
+      "bip44": {
+        "coinType": 118
+      },
+      "bech32Config": {
+        "bech32PrefixAccAddr": "akash",
+        "bech32PrefixAccPub": "akashpub",
+        "bech32PrefixValAddr": "akashvaloper",
+        "bech32PrefixValPub": "akashvaloperpub",
+        "bech32PrefixConsAddr": "akashvalcons",
+        "bech32PrefixConsPub": "akashvalconspub"
+      }
+    }
+  }
+]
