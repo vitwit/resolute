@@ -5,8 +5,7 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Overview from "./Overview";
-import Proposals from "./gov/Proposals";
-import AllProposals from "./gov/AllProposals";
+import ActiveProposals from "./gov/ActiveProposals";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -64,7 +63,7 @@ export default function Home() {
         <Overview />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <AllProposals />
+        <ActiveProposals />
       </TabPanel>
     </Box>
   );

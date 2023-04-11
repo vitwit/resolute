@@ -7,3 +7,8 @@ export function getLocalTime(value) {
 export function getFormatDate(value) {
     return `${moment(value).startOf('hour').fromNow()}`
 }
+
+export function getDaysLeft(end_date) {
+    const end = moment(end_date,"YYYY-MM-DD")
+    return end.diff(moment(), 'days') + 1
+}

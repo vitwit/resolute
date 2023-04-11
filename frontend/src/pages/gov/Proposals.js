@@ -22,9 +22,13 @@ import { getVoteAuthz } from "../../utils/authorizations";
 import { useNavigate } from "react-router-dom";
 import { getPoolInfo } from "../../features/staking/stakeSlice";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import govService from "/home/hemanthsai/hemanthghs/resolute/frontend/src/features/gov/govService.ts";
+import { i } from "mathjs";
+import Box from "@mui/material/Box";
+import Badge from "@mui/material/Badge";
+import Avatar from "@mui/material/Avatar";
 
-export default function Proposals() {
-  const proposals = useSelector((state) => state.gov.active.proposals);
+export default function Proposals({ chainUrl, chainName, chainLogo }) {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
   const proposalTally = useSelector((state) => state.gov.tally.proposalTally);
@@ -41,15 +45,16 @@ export default function Proposals() {
   const dispatch = useDispatch();
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const walletConnected = useSelector((state) => state.wallet.connected);
+  const [proposals, setProposals] = useState([]);
   useEffect(() => {
     if (walletConnected) {
-      dispatch(
-        getGrantsToMe({
-          baseURL: chainInfo.config.rest,
-          grantee: address,
-        })
-      );
-
+      // chainUrl = chainInfo.config.rest;
+      const response = async (chainUrl) => {
+        const res = await govService.proposals(chainUrl);
+        return res.data;
+      };
+      response(chainUrl).then((res) => setProposals(res.proposals));
+      dispatch(getProposals(proposals));
       if (selectedAuthz.granter.length === 0) {
         dispatch(
           getProposals({
@@ -160,7 +165,7 @@ export default function Proposals() {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-            feegranter: feegrant.granter,
+          feegranter: feegrant.granter,
         })
       );
     } else {
@@ -178,7 +183,7 @@ export default function Proposals() {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-            feegranter: feegrant.granter,
+          feegranter: feegrant.granter,
         });
       } else {
         alert("You don't have permission to vote");
@@ -223,6 +228,38 @@ export default function Proposals() {
           }}
         />
       ) : null}
+      {proposals.length === 0 ? (
+          <Box
+            sx={{
+              margin: "16px 0 10px 0",
+            }}
+          ></Box>
+      ) : (
+        <Box
+          sx={{
+            margin: "16px 0 10px 0",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Avatar src={chainLogo} alt="network-icon" />
+            <Typography
+              variant="h6"
+              sx={{ color: "text.primary", margin: "0 8px" }}
+            >
+              {chainName}
+            </Typography>
+            <Badge sx={{ margin: "12px" }} badgeContent={0} color="primary" />
+          </Box>
+        </Box>
+      )}
       <Grid container spacing={2}>
         {status === "pending" ? (
           <div
@@ -236,18 +273,7 @@ export default function Proposals() {
             <CircularProgress />
           </div>
         ) : proposals.length === 0 ? (
-          <Typography
-            variant="h5"
-            fontWeight={500}
-            color="text.primary"
-            sx={{
-              justifyContent: "center",
-              width: "100%",
-              mt: 3,
-            }}
-          >
-            No Active Proposals Found
-          </Typography>
+          <></>
         ) : (
           <>
             {proposals.map((proposal, index) => (

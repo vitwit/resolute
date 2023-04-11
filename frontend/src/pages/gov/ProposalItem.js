@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { computeVotePercentage, getProposalComponent } from "../../utils/util";
-import { getLocalTime } from "../../utils/datetime";
+import { getDaysLeft } from "../../utils/datetime";
 import "./../common.css";
 
 export const ProposalItem = (props) => {
@@ -60,20 +60,10 @@ export const ProposalItem = (props) => {
           <li>
             <div style={{ display: "flex" }}>
               <Typography variant="body1">
-                Voting start &nbsp;&nbsp;&nbsp;
+                Voting ends in &nbsp;
               </Typography>
               <Typography variant="body2">
-                {getLocalTime(info?.voting_start_time)}
-              </Typography>
-            </div>
-          </li>
-          <li>
-            <div style={{ display: "flex" }}>
-              <Typography variant="body1">
-                Voting end&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              </Typography>
-              <Typography variant="body2">
-                {getLocalTime(info?.voting_end_time)}
+              {getDaysLeft(info?.voting_end_time)} days
               </Typography>
             </div>
           </li>
