@@ -1,2 +1,2 @@
-const {str, networks} = require('./index')
-console.log(str)
+const { networks} = require('./index')
+console.log(networks)

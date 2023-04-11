@@ -20,14 +20,106 @@
     "config": {
       "chainId": "stargaze-1",
       "chainName": "stargaze",
-      "rest": {
-        "address": "https://rest.stargaze-apis.com/",
-        "provider": "Stargaze Foundation"
-      },
-      "rpc": {
-        "address": "https://rpc.stargaze-apis.com/",
-        "provider": "Stargaze Foundation"
-      },
+      "rest": [
+        {
+          "address": "https://rest.stargaze-apis.com/",
+          "provider": "Stargaze Foundation"
+        },
+        {
+          "address": "https://api-stargaze.pupmos.network",
+          "provider": "PUPMØS"
+        },
+        {
+          "address": "https://api-stargaze.ezstaking.dev",
+          "provider": "EZStaking.io"
+        },
+        {
+          "address": "https://api-stargaze-ia.cosmosia.notional.ventures/",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://stargaze.c29r3.xyz:443/api/",
+          "provider": "c29r3"
+        },
+        {
+          "address": "https://stargaze-api.polkachu.com",
+          "provider": "Polkachu"
+        },
+        {
+          "address": "https://stargaze-api.ibs.team",
+          "provider": "Inter Blockchain Services"
+        },
+        {
+          "address": "https://api-stargaze.d-stake.xyz",
+          "provider": "D-stake"
+        },
+        {
+          "address": "https://api.stargaze.silentvalidator.com/",
+          "provider": "silent"
+        },
+        {
+          "address": "https://stargaze-mainnet-lcd.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://lcd-stargaze.whispernode.com:443",
+          "provider": "WhisperNode🤐"
+        },
+        {
+          "address": "https://stargaze-api.ramuchi.tech",
+          "provider": "ramuchi.tech"
+        }
+      ],
+      "rpc": [
+        {
+          "address": "https://rpc.stargaze-apis.com/",
+          "provider": "Stargaze Foundation"
+        },
+        {
+          "address": "https://rpc-stargaze.pupmos.network",
+          "provider": "PUPMØS"
+        },
+        {
+          "address": "https://rpc-stargaze.ezstaking.dev",
+          "provider": "EZStaking.io"
+        },
+        {
+          "address": "https://stargaze-rpc.polkachu.com",
+          "provider": "Polkachu"
+        },
+        {
+          "address": "https://rpc-stargaze-ia.cosmosia.notional.ventures/",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://stargaze.c29r3.xyz:443/rpc/",
+          "provider": "c29r3"
+        },
+        {
+          "address": "https://stargaze-rpc.ibs.team",
+          "provider": "Inter Blockchain Services"
+        },
+        {
+          "address": "https://rpc-stargaze.d-stake.xyz",
+          "provider": "D-stake"
+        },
+        {
+          "address": "https://rpc.stargaze.silentvalidator.com/",
+          "provider": "silent"
+        },
+        {
+          "address": "https://rpc-stargaze.whispernode.com:443",
+          "provider": "WhisperNode🤐"
+        },
+        {
+          "address": "https://stargaze-mainnet-rpc.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://stargaze-rpc.ramuchi.tech",
+          "provider": "ramuchi.tech"
+        }
+      ],
       "stakeCurrency": {
         "coinDenom": "STARS",
         "coinMinimalDenom": "ustars",
@@ -90,14 +182,62 @@
     "config": {
       "chainId": "regen-1",
       "chainName": "regen",
-      "rest": {
-        "address": "http://public-rpc.regen.vitwit.com:1317",
-        "provider": "vitwit"
-      },
-      "rpc": {
-        "address": "https://rpc-regen.ecostake.com",
-        "provider": "ecostake"
-      },
+      "rest": [
+        {
+          "address": "http://public-rpc.regen.vitwit.com:1317",
+          "provider": "vitwit"
+        },
+        {
+          "address": "https://regen.stakesystems.io",
+          "provider": "stakesystems"
+        },
+        {
+          "address": "https://api-regen-ia.cosmosia.notional.ventures/",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://regen-mainnet-lcd.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://rest-regen.ecostake.com",
+          "provider": "ecostake"
+        },
+        {
+          "address": "https://regen-lcd.easy2stake.com",
+          "provider": "Easy 2 Stake"
+        }
+      ],
+      "rpc": [
+        {
+          "address": "https://rpc-regen.ecostake.com",
+          "provider": "ecostake"
+        },
+        {
+          "address": "http://public-rpc.regen.vitwit.com:26657",
+          "provider": "vitwit"
+        },
+        {
+          "address": "https://regen.stakesystems.io:2053",
+          "provider": "stakesystems"
+        },
+        {
+          "address": "http://rpc.regen.forbole.com:80",
+          "provider": "forbole"
+        },
+        {
+          "address": "https://rpc-regen-ia.cosmosia.notional.ventures/",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://regen-mainnet-rpc.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://regen-rpc.easy2stake.com",
+          "provider": "Easy 2 Stake"
+        }
+      ],
       "stakeCurrency": {
         "coinDenom": "REGEN",
         "coinMinimalDenom": "uregen",
@@ -126,7 +266,11 @@
           "coinGeckoId": "regen"
         }
       ],
-      "gasPriceStep": {},
+      "gasPriceStep": {
+        "low": 0.015,
+        "average": 0.025,
+        "high": 0.04
+      },
       "coinType": 118,
       "bip44": {
         "coinType": 118
@@ -162,14 +306,98 @@
     "config": {
       "chainId": "passage-1",
       "chainName": "passage",
-      "rest": {
-        "address": "https://api.passage.vitwit.com",
-        "provider": "vitwit"
-      },
-      "rpc": {
-        "address": "https://rpc.passage.vitwit.com",
-        "provider": "vitwit"
-      },
+      "rest": [
+        {
+          "address": "https://api.passage.vitwit.com",
+          "provider": "vitwit"
+        },
+        {
+          "address": "https://services.staketab.com/passage-api",
+          "provider": "staketab"
+        },
+        {
+          "address": "https://rest-passage.ecostake.com",
+          "provider": "ecostake"
+        },
+        {
+          "address": "https://passage-api.lavenderfive.com:443",
+          "provider": "Lavender.Five Nodes 🐝"
+        },
+        {
+          "address": "https://api-passage-ia.cosmosia.notional.ventures/",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://api.passage.nodestake.top",
+          "provider": "NodeStake"
+        },
+        {
+          "address": "https://passage-api.polkachu.com",
+          "provider": "Polkachu"
+        },
+        {
+          "address": "https://passage-api.ibs.team/",
+          "provider": "Inter Blockchain Services"
+        },
+        {
+          "address": "https://api-passage.d-stake.xyz",
+          "provider": "D-stake"
+        },
+        {
+          "address": "https://passage-mainnet-lcd.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://lcd-passage.whispernode.com:443",
+          "provider": "WhisperNode🤐"
+        }
+      ],
+      "rpc": [
+        {
+          "address": "https://rpc.passage.vitwit.com",
+          "provider": "vitwit"
+        },
+        {
+          "address": "https://services.staketab.com/passage-rpc",
+          "provider": "staketab"
+        },
+        {
+          "address": "https://rpc-passage.ecostake.com",
+          "provider": "ecostake"
+        },
+        {
+          "address": "https://passage-rpc.lavenderfive.com:443",
+          "provider": "Lavender.Five Nodes 🐝"
+        },
+        {
+          "address": "https://rpc-passage-ia.cosmosia.notional.ventures/",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://rpc.passage.nodestake.top",
+          "provider": "NodeStake"
+        },
+        {
+          "address": "https://passage-rpc.polkachu.com",
+          "provider": "Polkachu"
+        },
+        {
+          "address": "https://passage-rpc.ibs.team/",
+          "provider": "Inter Blockchain Services"
+        },
+        {
+          "address": "https://rpc-passage.d-stake.xyz",
+          "provider": "D-stake"
+        },
+        {
+          "address": "https://rpc-passage.whispernode.com:443",
+          "provider": "WhisperNode🤐"
+        },
+        {
+          "address": "https://passage-mainnet-rpc.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        }
+      ],
       "currencies": [
         {
           "coinDenom": "PASG",
@@ -224,14 +452,114 @@
     "config": {
       "chainId": "osmosis-1",
       "chainName": "osmosis",
-      "rest": {
-        "address": "https://lcd.osmosis.zone/",
-        "provider": "Osmosis Foundation"
-      },
-      "rpc": {
-        "address": "https://rpc.osmosis.zone/",
-        "provider": "Osmosis Foundation"
-      },
+      "rest": [
+        {
+          "address": "https://lcd.osmosis.zone/",
+          "provider": "Osmosis Foundation"
+        },
+        {
+          "address": "https://osmosis-lcd.quickapi.com:443",
+          "provider": "Chainlayer"
+        },
+        {
+          "address": "https://lcd-osmosis.blockapsis.com",
+          "provider": "chainapsis"
+        },
+        {
+          "address": "https://osmosis-api.lavenderfive.com:443",
+          "provider": "Lavender.Five Nodes 🐝"
+        },
+        {
+          "address": "https://rest-osmosis.ecostake.com",
+          "provider": "ecostake"
+        },
+        {
+          "address": "https://api-osmosis-ia.cosmosia.notional.ventures",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://api.osmosis.interbloc.org",
+          "provider": "Interbloc"
+        },
+        {
+          "address": "https://osmosis-api.polkachu.com",
+          "provider": "Polkachu"
+        },
+        {
+          "address": "https://osmosis.rest.stakin-nodes.com",
+          "provider": "Stakin"
+        },
+        {
+          "address": "https://api.osl.zone",
+          "provider": "Osmosis Support Lab"
+        },
+        {
+          "address": "https://osmosis-mainnet-lcd.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://osmosis.rest.interchain.ivaldilabs.xyz",
+          "provider": "ivaldilabs"
+        }
+      ],
+      "rpc": [
+        {
+          "address": "https://rpc.osmosis.zone/",
+          "provider": "Osmosis Foundation"
+        },
+        {
+          "address": "https://rpc-osmosis.blockapsis.com",
+          "provider": "chainapsis"
+        },
+        {
+          "address": "https://osmosis-rpc.quickapi.com:443",
+          "provider": "Chainlayer"
+        },
+        {
+          "address": "https://rpc-osmosis.whispernode.com:443",
+          "provider": "WhisperNode 🤐"
+        },
+        {
+          "address": "https://osmosis-rpc.lavenderfive.com:443",
+          "provider": "Lavender.Five Nodes 🐝"
+        },
+        {
+          "address": "https://rpc-osmosis.ecostake.com",
+          "provider": "ecostake"
+        },
+        {
+          "address": "https://osmosis-rpc.polkachu.com",
+          "provider": "Polkachu"
+        },
+        {
+          "address": "https://rpc-osmosis-ia.cosmosia.notional.ventures",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://rpc.osmosis.interbloc.org",
+          "provider": "Interbloc"
+        },
+        {
+          "address": "https://osmosis.rpc.stakin-nodes.com",
+          "provider": "Stakin"
+        },
+        {
+          "address": "https://rpc.osmosis.goldenratiostaking.net",
+          "provider": "Golden Ratio Staking"
+        },
+        {
+          "address": "https://rpc.osl.zone",
+          "provider": "Osmosis Support Lab"
+        },
+        {
+          "address": "https://osmosis-mainnet-rpc.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://osmosis.rpc.interchain.ivaldilabs.xyz",
+          "provider": "ivaldilabs"
+        }
+      ],
       "stakeCurrency": {
         "coinDenom": "OSMO",
         "coinMinimalDenom": "uosmo",
@@ -267,7 +595,9 @@
         }
       ],
       "gasPriceStep": {
-        "low": 0.01
+        "low": 0.01,
+        "average": 0.025,
+        "high": 0.04
       },
       "coinType": 118,
       "bip44": {
@@ -304,14 +634,178 @@
     "config": {
       "chainId": "juno-1",
       "chainName": "juno",
-      "rest": {
-        "address": "https://lcd-juno.itastakers.com",
-        "provider": "itastakers"
-      },
-      "rpc": {
-        "address": "https://rpc-juno.whispernode.com:443",
-        "provider": "WhisperNode🤐"
-      },
+      "rest": [
+        {
+          "address": "https://lcd-juno.itastakers.com",
+          "provider": "itastakers"
+        },
+        {
+          "address": "https://rest-juno.ecostake.com",
+          "provider": "ecostake"
+        },
+        {
+          "address": "https://juno-api.lavenderfive.com:443",
+          "provider": "Lavender.Five Nodes 🐝"
+        },
+        {
+          "address": "https://api-juno.pupmos.network",
+          "provider": "PUPMØS"
+        },
+        {
+          "address": "https://api-juno-ia.cosmosia.notional.ventures/",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://api.juno.chaintools.tech/",
+          "provider": "ChainTools"
+        },
+        {
+          "address": "https://juno-api.polkachu.com",
+          "provider": "Polkachu"
+        },
+        {
+          "address": "https://juno-api.kleomedes.network",
+          "provider": "Kleomedes"
+        },
+        {
+          "address": "https://api.juno.interbloc.org",
+          "provider": "Interbloc"
+        },
+        {
+          "address": "https://juno.rest.stakin-nodes.com",
+          "provider": "Stakin"
+        },
+        {
+          "address": "https://api.juno.bh.rocks",
+          "provider": "BlockHunters 🎯"
+        },
+        {
+          "address": "https://juno.kingnodes.com",
+          "provider": "kingnodes 👑"
+        },
+        {
+          "address": "https://juno-api.reece.sh",
+          "provider": "Reecepbcups"
+        },
+        {
+          "address": "https://juno-api.stakeandrelax.net",
+          "provider": "Stake&Relax Validator 🦥"
+        },
+        {
+          "address": "https://rest-juno.architectnodes.com",
+          "provider": "Architect Nodes"
+        },
+        {
+          "address": "https://juno-mainnet-lcd.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://juno.rest.interchain.ivaldilabs.xyz",
+          "provider": "ivaldilabs"
+        },
+        {
+          "address": "https://juno-api.cosmosrescue.com",
+          "provider": "cosmosrescue"
+        },
+        {
+          "address": "http://167.235.211.168:1317",
+          "provider": "CommunityStaking"
+        }
+      ],
+      "rpc": [
+        {
+          "address": "https://rpc-juno.whispernode.com:443",
+          "provider": "WhisperNode🤐"
+        },
+        {
+          "address": "https://rpc-juno.goldenratiostaking.net",
+          "provider": "Golden Ratio Staking"
+        },
+        {
+          "address": "https://rpc-juno.itastakers.com",
+          "provider": "itastakers"
+        },
+        {
+          "address": "https://rpc-juno.ecostake.com",
+          "provider": "ecostake"
+        },
+        {
+          "address": "https://juno-rpc.polkachu.com",
+          "provider": "Polkachu"
+        },
+        {
+          "address": "https://juno-rpc.lavenderfive.com:443",
+          "provider": "Lavender.Five Nodes 🐝"
+        },
+        {
+          "address": "https://rpc-juno.pupmos.network",
+          "provider": "PUPMØS"
+        },
+        {
+          "address": "https://rpc-juno-ia.cosmosia.notional.ventures/",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://rpc.juno.chaintools.tech/",
+          "provider": "ChainTools"
+        },
+        {
+          "address": "https://juno-rpc.kleomedes.network",
+          "provider": "Kleomedes"
+        },
+        {
+          "address": "https://rpc.juno.interbloc.org",
+          "provider": "Interbloc"
+        },
+        {
+          "address": "https://juno.rpc.stakin-nodes.com",
+          "provider": "Stakin"
+        },
+        {
+          "address": "https://juno-rpc.icycro.org",
+          "provider": "IcyCRO 🧊"
+        },
+        {
+          "address": "https://rpc.juno.bh.rocks",
+          "provider": "BlockHunters 🎯"
+        },
+        {
+          "address": "https://juno.kingnodes.com",
+          "provider": "kingnodes 👑"
+        },
+        {
+          "address": "https://juno-rpc.reece.sh",
+          "provider": "Reecepbcups"
+        },
+        {
+          "address": "https://juno-rpc.stakeandrelax.net",
+          "provider": "Stake&Relax Validator 🦥"
+        },
+        {
+          "address": "https://juno-mainnet-rpc.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "http://rpc-juno.freshstaking.com:39657",
+          "provider": "FreshSTAKING"
+        },
+        {
+          "address": "https://rpc-juno.architectnodes.com",
+          "provider": "Architect Nodes"
+        },
+        {
+          "address": "https://juno.rpc.interchain.ivaldilabs.xyz",
+          "provider": "ivaldilabs"
+        },
+        {
+          "address": "https://juno-rpc.cosmosrescue.com",
+          "provider": "cosmosrescue"
+        },
+        {
+          "address": "http://167.235.211.168:26657",
+          "provider": "CommunityStaking"
+        }
+      ],
       "stakeCurrency": {
         "coinDenom": "JUNO",
         "coinMinimalDenom": "ujuno",
@@ -516,7 +1010,11 @@
           "coinGeckoId": "juno-network"
         }
       ],
-      "gasPriceStep": {},
+      "gasPriceStep": {
+        "low": 0.001,
+        "average": 0.0025,
+        "high": 0.004
+      },
       "coinType": 118,
       "bip44": {
         "coinType": 118
@@ -552,14 +1050,146 @@
     "config": {
       "chainId": "cosmoshub-4",
       "chainName": "cosmoshub",
-      "rest": {
-        "address": "https://lcd-cosmoshub.blockapsis.com",
-        "provider": "chainapsis"
-      },
-      "rpc": {
-        "address": "https://rpc-cosmoshub.blockapsis.com",
-        "provider": "chainapsis"
-      },
+      "rest": [
+        {
+          "address": "https://lcd-cosmoshub.blockapsis.com",
+          "provider": "chainapsis"
+        },
+        {
+          "address": "https://cosmos-lcd.quickapi.com:443",
+          "provider": "Chainlayer"
+        },
+        {
+          "address": "https://cosmoshub-api.lavenderfive.com:443",
+          "provider": "Lavender.Five Nodes 🐝"
+        },
+        {
+          "address": "https://api-cosmoshub.pupmos.network",
+          "provider": "PUPMØS"
+        },
+        {
+          "address": "https://api-cosmoshub-ia.cosmosia.notional.ventures/",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://api.cosmos.interbloc.org",
+          "provider": "Interbloc"
+        },
+        {
+          "address": "https://lcd.cosmos.dragonstake.io",
+          "provider": "DragonStake"
+        },
+        {
+          "address": "https://cosmoshub.rest.stakin-nodes.com",
+          "provider": "Stakin"
+        },
+        {
+          "address": "https://rest-cosmoshub.architectnodes.com",
+          "provider": "Architect Nodes"
+        },
+        {
+          "address": "https://rest-cosmoshub.ecostake.com",
+          "provider": "ecostake"
+        },
+        {
+          "address": "https://cosmoshub.rest.interchain.ivaldilabs.xyz",
+          "provider": "ivaldilabs"
+        },
+        {
+          "address": "https://lcd-cosmoshub.whispernode.com:443",
+          "provider": "WhisperNode🤐"
+        },
+        {
+          "address": "https://cosmos-lcd.easy2stake.com",
+          "provider": "Easy 2 Stake"
+        },
+        {
+          "address": "https://api.cosmos.nodestake.top",
+          "provider": "NodeStake"
+        }
+      ],
+      "rpc": [
+        {
+          "address": "https://rpc-cosmoshub.blockapsis.com",
+          "provider": "chainapsis"
+        },
+        {
+          "address": "https://cosmos-rpc.quickapi.com:443",
+          "provider": "Chainlayer"
+        },
+        {
+          "address": "https://rpc-cosmoshub.whispernode.com:443",
+          "provider": "WhisperNode🤐"
+        },
+        {
+          "address": "https://cosmoshub-rpc.lavenderfive.com:443",
+          "provider": "Lavender.Five Nodes 🐝"
+        },
+        {
+          "address": "https://rpc.cosmoshub.strange.love",
+          "provider": "strangelove-ventures"
+        },
+        {
+          "address": "https://rpc-cosmoshub.ecostake.com",
+          "provider": "ecostake"
+        },
+        {
+          "address": "https://rpc-cosmoshub.pupmos.network",
+          "provider": "PUPMØS"
+        },
+        {
+          "address": "https://cosmos-rpc.polkachu.com",
+          "provider": "Polkachu"
+        },
+        {
+          "address": "https://rpc-cosmoshub-ia.cosmosia.notional.ventures/",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://rpc.cosmos.interbloc.org",
+          "provider": "Interbloc"
+        },
+        {
+          "address": "https://rpc-cosmoshub.architectnodes.com",
+          "provider": "Architect Nodes"
+        },
+        {
+          "address": "https://rpc.cosmos.dragonstake.io",
+          "provider": "DragonStake"
+        },
+        {
+          "address": "https://cosmoshub.rpc.stakin-nodes.com",
+          "provider": "Stakin"
+        },
+        {
+          "address": "https://cosmos-rpc.icycro.org",
+          "provider": "IcyCRO 🧊"
+        },
+        {
+          "address": "https://rpc.cosmos.bh.rocks",
+          "provider": "BlockHunters 🎯"
+        },
+        {
+          "address": "https://cosmos-rpc.rockrpc.net",
+          "provider": "RockawayX Infra"
+        },
+        {
+          "address": "http://rpc-cosmoshub.freshstaking.com:26657",
+          "provider": "FreshSTAKING"
+        },
+        {
+          "address": "https://cosmoshub.rpc.interchain.ivaldilabs.xyz",
+          "provider": "ivaldilabs"
+        },
+        {
+          "address": "https://cosmos-rpc.easy2stake.com/",
+          "provider": "Easy 2 Stake"
+        },
+        {
+          "address": "https://rpc.cosmos.nodestake.top",
+          "provider": "NodeStake"
+        }
+      ],
       "stakeCurrency": {
         "coinDenom": "ATOM",
         "coinMinimalDenom": "uatom",
@@ -582,7 +1212,11 @@
           "coinGeckoId": "cosmos"
         }
       ],
-      "gasPriceStep": {},
+      "gasPriceStep": {
+        "low": 0.01,
+        "average": 0.025,
+        "high": 0.03
+      },
       "coinType": 118,
       "bip44": {
         "coinType": 118
@@ -618,14 +1252,74 @@
     "config": {
       "chainId": "akashnet-2",
       "chainName": "akash",
-      "rest": {
-        "address": "https://api.akash.forbole.com:443",
-        "provider": "forbole"
-      },
-      "rpc": {
-        "address": "https://rpc.akash.forbole.com:443",
-        "provider": "forbole"
-      },
+      "rest": [
+        {
+          "address": "https://api.akash.forbole.com:443",
+          "provider": "forbole"
+        },
+        {
+          "address": "https://rest-akash.ecostake.com",
+          "provider": "ecostake"
+        },
+        {
+          "address": "https://akash-api.lavenderfive.com:443",
+          "provider": "Lavender.Five Nodes"
+        },
+        {
+          "address": "https://akash-api.polkachu.com",
+          "provider": "Polkachu"
+        },
+        {
+          "address": "https://api-akash-ia.cosmosia.notional.ventures",
+          "provider": "Notional"
+        },
+        {
+          "address": "https://akash.c29r3.xyz:443/api",
+          "provider": "c29r3"
+        },
+        {
+          "address": "https://akash-mainnet-lcd.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://akash.rest.interchain.ivaldilabs.xyz",
+          "provider": "ivaldilabs"
+        }
+      ],
+      "rpc": [
+        {
+          "address": "https://rpc.akash.forbole.com:443",
+          "provider": "forbole"
+        },
+        {
+          "address": "https://rpc-akash.ecostake.com:443",
+          "provider": "ecostake"
+        },
+        {
+          "address": "https://akash-rpc.lavenderfive.com:443",
+          "provider": "Lavender.Five Nodes"
+        },
+        {
+          "address": "https://akash-rpc.polkachu.com",
+          "provider": "Polkachu"
+        },
+        {
+          "address": "https://rpc-akash-ia.cosmosia.notional.ventures:443",
+          "provider": "Notional"
+        },
+        {
+          "address": "http://akash.c29r3.xyz:80/rpc",
+          "provider": "c29r3"
+        },
+        {
+          "address": "https://akash-mainnet-rpc.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://akash.rpc.interchain.ivaldilabs.xyz",
+          "provider": "ivaldilabs"
+        }
+      ],
       "stakeCurrency": {
         "coinDenom": "AKT",
         "coinMinimalDenom": "uakt",

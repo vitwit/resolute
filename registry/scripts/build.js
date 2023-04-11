@@ -134,7 +134,12 @@ const transform = (chain) => {
         }
       }
     }
-  } 
+  }
+
+  let low = 0.01, avg = 0.025 , high = 0.04;
+  if(chain.fees?.fee_tokens[0]?.low_gas_price) low = chain.fees.fee_tokens[0].low_gas_price; 
+  if(chain.fees?.fee_tokens[0]?.average_gas_price) avg = chain.fees.fee_tokens[0].average_gas_price; 
+  if(chain.fees?.fee_tokens[0]?.high_gas_price) high = chain.fees.fee_tokens[0].high_gas_price; 
   return {
     enableModules: {
       authz: true,
@@ -157,15 +162,15 @@ const transform = (chain) => {
     config: {
       chainId: chain.chain_id,
       chainName: chain.chain_name,
-      rest: chain.apis.rest[0], 
-      rpc : chain.apis.rpc[0],
+      rest: chain.apis.rest, 
+      rpc : chain.apis.rpc,
       stakeCurrency : staking,
       currencies : chaincurrencies,
       feeCurrencies : fees,
       gasPriceStep: { 
-        low: chain.fees?.fee_tokens[0]?.low_gas_price ? chain.fees.fee_tokens.low_gas_price : 0.01,
-        average: chain.fees?.fee_tokens[0]?.average_gas_price ? chain.fees.fee_tokens.average_gas_price : 0.025, 
-        high: chain.fees?.fee_tokens[0]?.high_gas_price ? chain.fees.fee_tokens.high_gas_price : 0.04 
+        low: low, //chain.fees?.fee_tokens[0]?.low_gas_price ? chain.fees.fee_tokens.low_gas_price : 0.01,
+        average: avg, //chain.fees?.fee_tokens[0]?.average_gas_price ? chain.fees.fee_tokens.average_gas_price : 0.025, 
+        high: high //chain.fees?.fee_tokens[0]?.high_gas_price ? chain.fees.fee_tokens.high_gas_price : 0.04 
       },
       coinType : 118,
       bip44 : {coinType : 118},

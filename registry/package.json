@@ -1,5 +1,5 @@
 {
-  "name": "registry",
+  "name": "registry-resolute",
   "version": "1.0.0",
   "description": "To link with comsos/chain-registry repo",
   "main": "index.js",
@@ -15,7 +15,7 @@
     "chain-registry",
     "resolute"
   ],
-  "author": "Saiteja",
+  "author": "Saiteja Vitwit Technologies",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/vitwit/resolute/issues"
