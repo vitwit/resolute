@@ -69,7 +69,7 @@ export const ProposalItem = (props) => {
           onClick={() => onItemClick()}
           sx={{ cursor: "pointer" }}
         >
-          {info.content?.title}
+          {info.content?.title || info.content?.["@type"]}
         </Typography>
         <ul
           style={{
@@ -81,7 +81,7 @@ export const ProposalItem = (props) => {
           }}
         >
           <li>
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
               <Typography variant="body1">Voting ends in &nbsp;</Typography>
               <Typography variant="body2">
                 {getDaysLeft(info?.voting_end_time)} days
