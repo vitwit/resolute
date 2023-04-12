@@ -295,7 +295,7 @@ function DashboardContent(props) {
                     }
                   ></Route>
                   <Route
-                    path="/proposals/:id"
+                    path="/proposals/:chainName/:id"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <ProposalInfo />

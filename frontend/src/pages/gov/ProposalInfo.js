@@ -28,18 +28,19 @@ import VoteDialog from "../../components/Vote";
 import { getPoolInfo } from "../../features/staking/stakeSlice";
 import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import { getMainNetworks } from "../../utils/networks";
 
 export default function ProposalInfo() {
-  const { id } = useParams();
+  const { chainName, id } = useParams();
   const proposalState = useSelector((state) => state.gov.proposalInfo);
   const tallyState = useSelector((state) => state.gov.tally);
   const dispatch = useDispatch();
   const { proposalInfo } = proposalState;
   const poolInfo = useSelector((state) => state.staking.pool);
   const feegrant = useSelector((state) => state.common.feegrant);
-
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
-
+  const chainData = getMainNetworks();
+  const chainInfo = chainData.filter((item) => item.config.chainName == chainName)[0]
+  
   useEffect(() => {
     dispatch(
       getProposal({
