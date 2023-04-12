@@ -52,7 +52,7 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
         const res = await govService.proposals(chainUrl);
         return res.data;
       };
-      response(chainUrl).then((res) => {console.log(res.proposals);setProposals(res.proposals)});
+      response(chainUrl).then((res) => {setProposals(res.proposals)});
       if (selectedAuthz.granter.length === 0) {
         dispatch(
           getProposals({
