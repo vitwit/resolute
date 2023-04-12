@@ -22,7 +22,7 @@ import { getVoteAuthz } from "../../utils/authorizations";
 import { useNavigate } from "react-router-dom";
 import { getPoolInfo } from "../../features/staking/stakeSlice";
 import FeegranterInfo from "../../components/FeegranterInfo";
-import govService from "/home/hemanthsai/hemanthghs/resolute/frontend/src/features/gov/govService.ts";
+import govService from "../../features/gov/govService";
 import { i } from "mathjs";
 import Box from "@mui/material/Box";
 import Badge from "@mui/material/Badge";
@@ -48,13 +48,11 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
   const [proposals, setProposals] = useState([]);
   useEffect(() => {
     if (walletConnected) {
-      // chainUrl = chainInfo.config.rest;
       const response = async (chainUrl) => {
         const res = await govService.proposals(chainUrl);
         return res.data;
       };
-      response(chainUrl).then((res) => setProposals(res.proposals));
-      dispatch(getProposals(proposals));
+      response(chainUrl).then((res) => {console.log(res.proposals);setProposals(res.proposals)});
       if (selectedAuthz.granter.length === 0) {
         dispatch(
           getProposals({
@@ -287,8 +285,10 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
                     setOpen={(pId) => onVoteDialog(pId)}
                     poolInfo={poolInfo}
                     onItemClick={() =>
-                      navigate(`/proposals/${proposal?.proposal_id}`)
+                      navigate(`/proposals/${chainName}/${proposal?.proposal_id}`)
                     }
+                    chainUrl = {chainUrl}
+                    proposalId = {proposal?.proposal_id}
                   />
                 </Paper>
               </Grid>

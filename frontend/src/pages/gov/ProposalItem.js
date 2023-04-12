@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
@@ -7,11 +7,16 @@ import Typography from "@mui/material/Typography";
 import { computeVotePercentage, getProposalComponent } from "../../utils/util";
 import { getDaysLeft } from "../../utils/datetime";
 import "./../common.css";
+import govService from '../../features/gov/govService'
+import { useSelector } from "react-redux";
 
 export const ProposalItem = (props) => {
-  const { info, tally, vote, poolInfo, onItemClick } = props;
+  const { info, vote, poolInfo, onItemClick, chainUrl, proposalId } = props;
+  const [pTally, setPTally] = useState([]);
+  const tally = pTally
   const tallyInfo = computeVotePercentage(tally, poolInfo);
   const tallySum = Number(tallyInfo.yes) + Number(tallyInfo.no) + Number(tallyInfo.no_with_veto) + Number(tallyInfo.abstain) 
+  const walletConnected = useSelector((state) => state.wallet.connected);
   const tallySumInfo = {
     yes: tallyInfo.yes/tallySum * 100,
     no: tallyInfo.no/tallySum * 100,
@@ -21,6 +26,16 @@ export const ProposalItem = (props) => {
   const onVoteClick = () => {
     props.setOpen(info?.proposal_id);
   };
+
+  useEffect(() => {
+    if (walletConnected) {
+      const response = async (chainUrl) => {
+        const res = await govService.tally(chainUrl, proposalId);
+        return res.data;
+      };
+      response(chainUrl).then((res) => setPTally(res.tally))
+    }
+  }, []);
 
   return (
     <React.Fragment>
