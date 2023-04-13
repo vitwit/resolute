@@ -97,3 +97,7 @@
 .footer-link:hover {
         cursor: pointer;
 }
+
+.proposal-description-markdown p, .proposal-description-markdown h1, .proposal-description-markdown h2, .proposal-description-markdown ul, .proposal-description-markdown ol {
+        margin: 0;
+}

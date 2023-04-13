@@ -29,6 +29,8 @@ import { getPoolInfo } from "../../features/staking/stakeSlice";
 import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../../components/FeegranterInfo";
 import { getMainNetworks } from "../../utils/networks";
+import ReactMarkdown from "react-markdown";
+import "./../common.css";
 
 export default function ProposalInfo() {
   const { chainName, id } = useParams();
@@ -187,7 +189,6 @@ export default function ProposalInfo() {
   };
 
   const theme = useTheme();
-
   return (
     <>
       {proposalState.status === "idle" ? (
@@ -389,7 +390,7 @@ export default function ProposalInfo() {
             >
               Proposal Details
             </Typography>
-            <div
+            {/* <div
               style={{
                 padding: 8,
 
@@ -402,7 +403,16 @@ export default function ProposalInfo() {
                   `${proposalInfo?.content?.description}`
                 ),
               }}
-            />
+            /> */}
+            <div style={{
+                padding: 8,
+                backgroundColor:
+                theme.palette?.mode === "light" ? "#f9fafc" : "#282828",
+                color: "text.primary",
+                whiteSpace: "pre-line",
+              }} className="proposal-description-markdown">
+              <ReactMarkdown>{proposalInfo?.content?.description.replace(/\\n/g, '\n')}</ReactMarkdown>
+            </div>
           </Paper>
         </>
       ) : (
