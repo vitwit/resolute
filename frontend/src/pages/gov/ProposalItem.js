@@ -49,28 +49,28 @@ export const ProposalItem = (props) => {
           style={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
           }}
           onClick={() => onItemClick()}
         >
           <Typography
-            sx={{ fontSize: 14, cursor: "pointer" }}
+            sx={{ fontSize: 16, fontWeight: "500", cursor: "pointer" }}
             color="text.primary"
             gutterBottom
           >
             #{info.proposal_id}
           </Typography>
+          <Typography
+            variant="body1"
+            component="div"
+            color="text.primary"
+            className="proposal-title"
+            onClick={() => onItemClick()}
+            sx={{ cursor: "pointer", marginLeft: "8px" }}
+          >
+            {info.content?.title || info.content?.["@type"]}
+          </Typography>
         </div>
-        <Typography
-          variant="body1"
-          component="div"
-          color="text.primary"
-          className="proposal-title"
-          onClick={() => onItemClick()}
-          sx={{ cursor: "pointer" }}
-        >
-          {info.content?.title || info.content?.["@type"]}
-        </Typography>
+
         <ul
           style={{
             listStyleType: "none",
