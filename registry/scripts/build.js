@@ -33,6 +33,10 @@ testchains.forEach((chain)=>{
 //     console.log(file)
 // })
 
+
+// chains, assets, and read chains dont have common fields, the below maps are used to resolve that situation
+// chains, assets have common field - chain name
+// scanned chains, chains have common field - chain Id
 let fullassetsMap = new Map();
 let assetsMap = new Map();
 let chainsMap = new Map();
@@ -100,6 +104,7 @@ addset.forEach((addchainid) => {
   }
 });
 
+// function that transforms merged chain -> required chain object
 const transform = (chain) => {
 
   let chaincurrencies = [];
@@ -186,8 +191,8 @@ const transform = (chain) => {
   }
 }
 
+// function that merges chain, assets into required chains
 const getTransformedChains = (chainsMap, assetsMap) => {
-  //console.log("length", chainsMap.keys(), assetsMap.keys())
   let chains = [];
   chainsMap.forEach((chain, chainId) => {
     if(assetsMap.has(chainId)) {
@@ -195,15 +200,86 @@ const getTransformedChains = (chainsMap, assetsMap) => {
       chains.push(transform(mergedchain));
     }
   })
+
+  // Hard coded Info will be merged here
+  let chainsInfoMap = getChainsInfoMap();
+  for(let i=0;i<chains.length;i++) {
+    if(chainsInfoMap.has(chains[i].config.chainId)) {
+      chains[i] = deepmerge(chains[i], chainsInfoMap.get(chains[i].config.chainId));
+    }
+  }
   return chains;
 }
 
-//console.log(assetsMap)
+// To hard code any chain's info (Note: User can change the data here)
+const getChainsInfoMap = () => {
+  let chainsMap = new Map();
+  chainsMap.set("regen-1",
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    aminoConfig: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    logos: {
+      menu: "https://github.com/vitwit/chain-registry/tree/master/regen/images/regen.png",
+      toolbar: "https://github.com/vitwit/chain-registry/tree/master/regen/images/regen.png",
+    },
+
+  });
+  chainsMap.set("stargaze-1",
+  {
+    logos: {
+      menu: "https://github.com/vitwit/chain-registry/tree/master/stargaze/images/stars.png",
+      toolbar: "https://github.com/vitwit/chain-registry/tree/master/stargaze/images/stars.png",
+    },
+  });
+  chainsMap.set("passage-1",
+  {
+    logos: {
+      menu: "https://github.com/vitwit/chain-registry/blob/master/passage/images/pasg.png",
+      toolbar: "https://github.com/vitwit/chain-registry/blob/master/passage/images/pasg.png",
+    },
+  });
+  chainsMap.set("osmosis-1",
+  {
+    logos: {
+      menu: "https://github.com/vitwit/chain-registry/blob/master/osmosis/images/osmo.png",
+      toolbar: "https://github.com/vitwit/chain-registry/blob/master/osmosis/images/osmo.png",
+    },
+  });
+  chainsMap.set("juno-1",
+  {
+    logos: {
+      menu: "https://github.com/vitwit/chain-registry/blob/master/juno/images/juno.png",
+      toolbar: "https://github.com/vitwit/chain-registry/blob/master/juno/images/juno.png",
+    },
+  });
+  chainsMap.set("cosmoshub-4",
+  {
+    logos: {
+      menu: "https://github.com/vitwit/chain-registry/blob/master/cosmoshub/images/atom.png",
+      toolbar: "https://github.com/vitwit/chain-registry/blob/master/cosmoshub/images/atom.png",
+    },
+  });
+  chainsMap.set("akashnet-2",
+  {
+    logos: {
+      menu: "https://github.com/vitwit/chain-registry/blob/master/akash/images/akt.png",
+      toolbar: "https://github.com/vitwit/chain-registry/blob/master/akash/images/akt.png",
+    },
+  });
+  return chainsMap;
+}
+
 
 let chains = getTransformedChains(chainsMap, assetsMap);
 
-console.log(resoluteChainsSet)
-console.log(chains)
 
 const path = require('path');
 
@@ -218,20 +294,3 @@ fs.writeFile(chainsFilePath, JSON.stringify(chains, null, 2), (err) => {
   console.log('Chains file created and data saved!');
 });
 
-
-
-const write = (file, json, TypeName, isArray = false) => {
-  const strfy = JSON.stringify(json, null, 2);
-  const exportType = isArray ? TypeName + '[]' : TypeName;
-  fs.writeFileSync(
-    `${__dirname}/../src/${file}.ts`,
-    `import { ${TypeName} } from '@chain-registry/types';
-const ${file}: ${exportType} = ${strfy};
-export default ${file};
-    `
-  );
-};
-
-// write(`assets`, assets, 'AssetList', true);
-// write(`chains`, chains, 'Chain', true);
-// write(`ibc`, ibcs, 'IBCInfo', true);

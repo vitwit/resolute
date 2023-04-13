@@ -12,8 +12,8 @@
     },
     "showAirdrop": false,
     "logos": {
-      "menu": "",
-      "toolbar": ""
+      "menu": "https://github.com/vitwit/chain-registry/tree/master/stargaze/images/stars.png",
+      "toolbar": "https://github.com/vitwit/chain-registry/tree/master/stargaze/images/stars.png"
     },
     "experimental": false,
     "isTestnet": true,
@@ -168,14 +168,14 @@
       "group": false
     },
     "aminoConfig": {
-      "authz": false,
-      "feegrant": false,
+      "authz": true,
+      "feegrant": true,
       "group": false
     },
     "showAirdrop": false,
     "logos": {
-      "menu": "https://raw.githubusercontent.com/cosmos/chain-registry/master/regen/images/regen.png",
-      "toolbar": "https://raw.githubusercontent.com/cosmos/chain-registry/master/regen/images/regen.png"
+      "menu": "https://github.com/vitwit/chain-registry/tree/master/regen/images/regen.png",
+      "toolbar": "https://github.com/vitwit/chain-registry/tree/master/regen/images/regen.png"
     },
     "experimental": false,
     "isTestnet": true,
@@ -298,8 +298,8 @@
     },
     "showAirdrop": false,
     "logos": {
-      "menu": "https://raw.githubusercontent.com/cosmos/chain-registry/master/passage/images/pasg.png",
-      "toolbar": "https://raw.githubusercontent.com/cosmos/chain-registry/master/passage/images/pasg.png"
+      "menu": "https://github.com/vitwit/chain-registry/blob/master/passage/images/pasg.png",
+      "toolbar": "https://github.com/vitwit/chain-registry/blob/master/passage/images/pasg.png"
     },
     "experimental": false,
     "isTestnet": true,
@@ -444,8 +444,8 @@
     },
     "showAirdrop": false,
     "logos": {
-      "menu": "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
-      "toolbar": "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png"
+      "menu": "https://github.com/vitwit/chain-registry/blob/master/osmosis/images/osmo.png",
+      "toolbar": "https://github.com/vitwit/chain-registry/blob/master/osmosis/images/osmo.png"
     },
     "experimental": false,
     "isTestnet": true,
@@ -626,8 +626,8 @@
     },
     "showAirdrop": false,
     "logos": {
-      "menu": "",
-      "toolbar": ""
+      "menu": "https://github.com/vitwit/chain-registry/blob/master/juno/images/juno.png",
+      "toolbar": "https://github.com/vitwit/chain-registry/blob/master/juno/images/juno.png"
     },
     "experimental": false,
     "isTestnet": true,
@@ -1042,8 +1042,8 @@
     },
     "showAirdrop": false,
     "logos": {
-      "menu": "",
-      "toolbar": ""
+      "menu": "https://github.com/vitwit/chain-registry/blob/master/cosmoshub/images/atom.png",
+      "toolbar": "https://github.com/vitwit/chain-registry/blob/master/cosmoshub/images/atom.png"
     },
     "experimental": false,
     "isTestnet": true,
@@ -1244,8 +1244,8 @@
     },
     "showAirdrop": false,
     "logos": {
-      "menu": "",
-      "toolbar": ""
+      "menu": "https://github.com/vitwit/chain-registry/blob/master/akash/images/akt.png",
+      "toolbar": "https://github.com/vitwit/chain-registry/blob/master/akash/images/akt.png"
     },
     "experimental": false,
     "isTestnet": true,

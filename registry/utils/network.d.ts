@@ -30,8 +30,8 @@ type Bech32Config = {
 interface NetworkConfig {
   chainId: string;
   chainName: string;
-  rest: string;
-  rpc: string;
+  rest: string[];
+  rpc: string[];
   stakeCurrency?: StakeCurrency;
   bip44?: BIP44;
   bech32Config: Bech32Config;
