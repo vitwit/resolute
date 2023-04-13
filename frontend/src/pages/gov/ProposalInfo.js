@@ -411,7 +411,7 @@ export default function ProposalInfo() {
                 color: "text.primary",
                 whiteSpace: "pre-line",
               }} className="proposal-description-markdown">
-              <ReactMarkdown>{proposalInfo?.content?.description.replace(/\\n/g, '\n')}</ReactMarkdown>
+              <ReactMarkdown>{proposalInfo?.content?.description && proposalInfo?.content?.description.replace(/\\n/g, '\n')}</ReactMarkdown>
             </div>
           </Paper>
         </>
