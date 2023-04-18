@@ -8,7 +8,6 @@ import (
 
 	"github.com/vitwit/resolute/server/clients/coingecko"
 	"github.com/vitwit/resolute/server/config"
-	"github.com/vitwit/resolute/server/schema"
 	"github.com/vitwit/resolute/server/utils"
 
 	"github.com/robfig/cron"
@@ -47,28 +46,28 @@ func (c *Cron) Start() error {
 
 // CoinsPriceInfoList fetches tokens information list and save its price
 func (c *Cron) CoinsPriceInfoList() {
-	rows, err := c.db.Query(`SELECT denom,coingecko_name FROM price_info WHERE enabled=$1`, true)
+
+	// fetches the names of chains from https://registry.ping.pub/
+	chainnames, err := GetChainNames()
 	if err != nil {
-		if rows != nil && sql.ErrNoRows == rows.Err() {
-			utils.InfoLogger.Println("no coin info in database")
-		}
+		utils.ErrorLogger.Printf("failed to fetch chain names %s\n", err.Error())
 	}
 
+	// fetches map(key = base, value = coinGeckoId) from  https://registry.ping.pub/{chain-name}/assetlist.json
+	coinGeckoMap := GetCoinGeckoIdMap(chainnames)
+	if len(coinGeckoMap) == 0 {
+		utils.InfoLogger.Println("no coin info in the fetched map")
+	}
+
+	// coinId = coinGeckoId in assetlist.json
 	coinIds := make([]string, 0)
+
+	// key = coinGeckoId and value = base in assetlist.json
 	coinNameToDenom := make(map[string]string, 0)
 
-	for rows.Next() {
-		var priceInfo schema.PriceInfo
-		if err := rows.Scan(
-			&priceInfo.Denom,
-			&priceInfo.CoingeckoName,
-		); err != nil {
-			utils.ErrorLogger.Printf("failed to fetch coin information %s\n", err.Error())
-		}
-
-		coinIds = append(coinIds, priceInfo.CoingeckoName)
-
-		coinNameToDenom[priceInfo.CoingeckoName] = priceInfo.Denom
+	for denom, coinGeckoId := range coinGeckoMap {
+		coinIds = append(coinIds, coinGeckoId)
+		coinNameToDenom[coinGeckoId] = denom
 	}
 
 	if len(coinIds) > 0 {
@@ -86,5 +85,21 @@ func (c *Cron) CoinsPriceInfoList() {
 				utils.ErrorLogger.Printf("failed to update price information for denom = %s : %s\n", k, err.Error())
 			}
 		}
+
+		/*
+			// can use this instead of above in case want to have [insert / update] rather than just [update]
+				for k, v := range priceInfo {
+				    val, _ := json.Marshal(v)
+				    	_, err = c.db.Exec(`
+				        	INSERT INTO price_info (denom, info, last_updated)
+				        	VALUES ($1, $2, $3)
+				        	ON CONFLICT (denom) DO UPDATE
+				        	SET info = $2, last_updated = $3
+				    	`, coinNameToDenom[k], val, time.Now())
+				    if err != nil {
+				        utils.ErrorLogger.Printf("failed to update price information for denom = %s : %s\n", k, err.Error())
+				    }
+				}
+		*/
 	}
 }
