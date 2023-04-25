@@ -19,6 +19,8 @@ import { useNavigate } from "react-router-dom";
 import { copyToClipboard } from "../utils/clipboard";
 import { getTokenPrice } from "../features/common/commonSlice";
 
+
+
 export default function Overview() {
   const wallet = useSelector((state) => state.wallet);
   const { chainInfo, connected, address } = wallet;
@@ -113,6 +115,7 @@ export default function Overview() {
     <>
       {connected ? (
         <>
+        {console.log(account)}
           <AccountInfo
             wallet={wallet}
             account={account}
@@ -523,18 +526,22 @@ const AccountInfo = (props) => {
               mb: 1,
             }}
           >
+            
             <Typography
               variant="body1"
               color="text.primary"
               fontWeight={600}
               gutterBottom
             >
-              Sequence
+             Sequence
             </Typography>
             <Typography variant="body1" color="text.primary" gutterBottom>
               {getSequence(account?.account)}
             </Typography>
           </Grid>
+        <Grid>
+         <Account account={account}/>
+        </Grid>
         </Grid>
       </Paper>
     </Box>
@@ -603,4 +610,61 @@ const getAccountNumber = (account) => {
     default:
       return 0;
   }
+};
+
+
+function secondsToTime(seconds) {
+  const currentDate = new Date().getTime();
+const lengthInSeconds = seconds; // 1 hour
+const lengthInMilliseconds = lengthInSeconds * 1000;
+
+const dateInMilliseconds = currentDate + lengthInMilliseconds;
+
+const date = new Date(dateInMilliseconds);
+const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+return formattedDate
+}
+const Account = ({ account }) => {
+  let parameters = null;
+  let startTime = secondsToTime(account.start_time)
+  let endTime = secondsToTime(account.end_time)
+  let periodLength = account.end_time-account.start_time 
+    if (account === '/cosmos.vesting.v1beta1.ContinuousVestingAccount') {
+      parameters = (
+        <>
+          <p>Start Time: {startTime}</p>
+          <p>End Time: {endTime}</p>
+          
+        </>
+      );
+    } else if (account === '/cosmos.vesting.v1beta1.DelayedVestingAccount') {
+      parameters = (
+        <>
+         <p>End Time: {endTime}</p>
+        </>
+      );
+    }else if (account === '/cosmos.vesting.v1beta1.PeriodicVestingAccount') {
+      parameters = (
+        <>
+        <p>Start Time:{startTime}</p>
+         <p>End Time: {endTime}</p>
+         <p>Vesting Period:{account.vesting_periods}</p>
+         <p>Length : {periodLength}</p>
+         <p>Amount:{account.vesting_periods.amount}</p>
+        </>
+      );
+    } else if (account === '/cosmos.vesting.v1beta1.PermanentLockedAccount') {
+      parameters = (
+        <>
+         <p>End Time: {endTime}</p>
+        </>
+      );
+      }
+
+  return (
+    <div>
+
+      {parameters} 
+    </div>
+  );
 };
