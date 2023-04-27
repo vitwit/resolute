@@ -27,6 +27,7 @@ import { i } from "mathjs";
 import Box from "@mui/material/Box";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
+import service from "../../features/authz/service";
 
 export default function Proposals({ chainUrl, chainName, chainLogo }) {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
@@ -35,6 +36,7 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
   const votes = useSelector((state) => state.gov.votes.proposals);
   const address = useSelector((state) => state.wallet.address);
   const feegrant = useSelector((state) => state.common.feegrant);
+  const authzMode = useSelector((state) => state.authz.authzMode);
 
   const govTx = useSelector((state) => state.gov.tx);
   const poolInfo = useSelector((state) => state.staking.pool);
@@ -46,13 +48,38 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const walletConnected = useSelector((state) => state.wallet.connected);
   const [proposals, setProposals] = useState([]);
+  const [authzEnabled, setAuthzEnabled] = useState(false);
   useEffect(() => {
     if (walletConnected) {
       const response = async (chainUrl) => {
         const res = await govService.proposals(chainUrl);
         return res.data;
       };
-      response(chainUrl).then((res) => {setProposals(res.proposals)});
+      response(chainUrl).then((res) => {
+        setProposals(res.proposals);
+      });
+
+      const grantsToMeResponse = async (data) => {
+        const response = await service.grantsToMe(
+          data.baseURL,
+          data.grantee,
+          data.pagination
+        );
+        return response.data;
+      };
+      grantsToMeResponse({
+        baseURL: chainUrl,
+        grantee: address,
+      }).then((res) => {
+        if (res.grants.length > 0) {
+          if (
+            res.grants[0].authorization.msg === "/cosmos.gov.v1beta1.MsgVote"
+          ) {
+            setAuthzEnabled(true);
+          }
+        }
+      });
+
       if (selectedAuthz.granter.length === 0) {
         dispatch(
           getProposals({
@@ -216,7 +243,7 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
 
   const navigate = useNavigate();
 
-  return (
+  return (authzMode && authzEnabled) || !authzMode ? (
     <>
       {feegrant.granter.length > 0 ? (
         <FeegranterInfo
@@ -227,11 +254,11 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
         />
       ) : null}
       {proposals.length === 0 ? (
-          <Box
-            sx={{
-              margin: "16px 0 10px 0",
-            }}
-          ></Box>
+        <Box
+          sx={{
+            margin: "16px 0 10px 0",
+          }}
+        ></Box>
       ) : (
         <Box
           sx={{
@@ -285,10 +312,12 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
                     setOpen={(pId) => onVoteDialog(pId)}
                     poolInfo={poolInfo}
                     onItemClick={() =>
-                      navigate(`/proposals/${chainName}/${proposal?.proposal_id}`)
+                      navigate(
+                        `/proposals/${chainName}/${proposal?.proposal_id}`
+                      )
                     }
-                    chainUrl = {chainUrl}
-                    proposalId = {proposal?.proposal_id}
+                    chainUrl={chainUrl}
+                    proposalId={proposal?.proposal_id}
                   />
                 </Paper>
               </Grid>
@@ -303,6 +332,8 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
         )}
       </Grid>
     </>
+  ) : (
+    <></>
   );
 }
 
