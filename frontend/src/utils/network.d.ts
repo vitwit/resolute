@@ -63,6 +63,7 @@ interface EnableModule {
 interface Network {
   showAirdrop: boolean;
   logos: Logos;
+  sdkVersion: number;
   experimental: boolean;
   isTestnet: boolean;
   explorerTxHashEndpoint: string;
