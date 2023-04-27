@@ -37,6 +37,7 @@ const initialState = {
   selected: {
     granter: "",
   },
+  authzMode: false,
 };
 
 export const getGrantsToMe = createAsyncThunk(
@@ -433,6 +434,9 @@ export const authzSlice = createSlice({
     resetExecTx: (state) => {
       state.execTx.status = "init";
     },
+    setAuthzMode: (state, action) => {
+      state.authzMode = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -517,7 +521,7 @@ export const authzSlice = createSlice({
   },
 });
 
-export const { resetAlerts, setSelectedGranter, resetExecTx, exitAuthzMode } =
+export const { resetAlerts, setSelectedGranter, resetExecTx, exitAuthzMode, setAuthzMode } =
   authzSlice.actions;
 
 export default authzSlice.reducer;
