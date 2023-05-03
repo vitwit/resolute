@@ -135,8 +135,6 @@ export default function CreateGroupStepper() {
                   )}
                 />
               </div>
-              {/* <Button type="submit">Next</Button> */}
-              {watchAllFields.name?.length < 5 ? <>name less than 5</>:<></>}
             </Paper>
           </>
         ) : activeStep === 1 ? (
