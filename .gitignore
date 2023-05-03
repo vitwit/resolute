@@ -38,7 +38,7 @@ bower_components
 frontend/build/Release
 
 # Dependency directories
-registry/node_modules/
+registry/node_modules/*
 frontend/node_modules/
 frontend/jspm_packages/
 
