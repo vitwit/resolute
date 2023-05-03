@@ -58,24 +58,47 @@ function CreateGroupPolicy({
           mt: 1,
         }}
       >
-        <Controller
-          name={`policyMetadata.metadata`}
-          control={control}
-          rules={{
-            required: "Metadata is required",
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              required
-              size="small"
-              label="Policy Metadata"
-              name="metadta"
-              fullWidth
+        <Grid container spacing={2} sx={{ marginBottom: "32px" }}>
+          <Grid item md={6} xs={12}>
+            <Controller
+              name={`policyMetadata.name`}
+              control={control}
+              rules={{
+                required: "Metadata is required",
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  required
+                  size="small"
+                  label="Policy Name"
+                  name="name"
+                  fullWidth
+                />
+              )}
             />
-          )}
-        />
-        <Grid container spacing={2}>
+          </Grid>
+          <Grid item md={6} xs={12}>
+            <Controller
+              name={`policyMetadata.description`}
+              control={control}
+              rules={{
+                required: "Metadata is required",
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  required
+                  size="small"
+                  label="Policy Description"
+                  name="description"
+                  fullWidth
+                />
+              )}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={4}>
           <Grid item md={6} xs={12}>
             <Controller
               name={`policyMetadata.decisionPolicy`}
