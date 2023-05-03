@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -17,11 +16,15 @@ import (
 )
 
 func (h *Handler) CreateMultisigAccount(c echo.Context) error {
-
 	ctx := context.Background()
+
 	tx, err := h.DB.BeginTx(ctx, nil)
 	if err != nil {
-		log.Fatal(err)
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to initialize transaction",
+			Log:     err.Error(),
+		})
 	}
 
 	account := &model.CreateAccountReq{}
@@ -42,7 +45,6 @@ func (h *Handler) CreateMultisigAccount(c echo.Context) error {
 		time.Now().UTC(),
 	)
 	if err != nil {
-		tx.Rollback()
 		if strings.Contains(err.Error(), "duplicate key") {
 			return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 				Status:  "error",
@@ -71,7 +73,6 @@ func (h *Handler) CreateMultisigAccount(c echo.Context) error {
 			account.Address, bz, pubkey.Address,
 		)
 		if err != nil {
-			tx.Rollback()
 			return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 				Status:  "error",
 				Message: "failed to store pubkeys",
