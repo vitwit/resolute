@@ -226,7 +226,7 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
           }}
         />
       ) : null}
-      {proposals.length === 0 ? (
+      {!proposals?.length ? (
           <Box
             sx={{
               margin: "16px 0 10px 0",
