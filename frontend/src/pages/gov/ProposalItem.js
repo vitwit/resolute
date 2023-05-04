@@ -16,11 +16,9 @@ export const ProposalItem = (props) => {
   const [pTally, setPTally] = useState([]);
   const tally = pTally;
   const tallyInfo = computeVotePercentage(tally, poolInfo);
+  const { yes, no, no_with_veto, abstain } = tallyInfo;
   const tallySum =
-    Number(tallyInfo.yes) +
-    Number(tallyInfo.no) +
-    Number(tallyInfo.no_with_veto) +
-    Number(tallyInfo.abstain);
+    Number(yes) + Number(no) + Number(no_with_veto) + Number(abstain);
   const walletConnected = useSelector((state) => state.wallet.connected);
   const tallySumInfo = {
     yes: (tallyInfo.yes / tallySum) * 100,
