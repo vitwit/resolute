@@ -64,6 +64,16 @@ export default function CreateGroupStepper() {
       setGroupForumError("forum url cannot be empty");
       return 0;
     }
+    if (
+      watchAllFields.name?.length > 25 ||
+      watchAllFields.description?.length > 25 ||
+      watchAllFields.forumUrl?.length > 25
+    ) {
+      setGroupNameError("name length error");
+      setGroupDescError("desc length error");
+      setGroupForumError("forum length error");
+      return 0;
+    }
     setGroupNameError("");
     setGroupDescError("");
     setGroupForumError("");
@@ -113,10 +123,16 @@ export default function CreateGroupStepper() {
                       }}
                       error={groupNameError}
                       helperText={
-                        watchAllFields.name?.length === 0 ||
-                        !watchAllFields.name?.length
+                        watchAllFields.name?.length <= 25 &&
+                        watchAllFields.name?.length > 0
+                          ? setGroupNameError("")
+                          : groupNameError ||
+                            watchAllFields.name?.length === 0 ||
+                            !watchAllFields.name?.length
                           ? groupNameError
-                          : setGroupNameError("")
+                          : watchAllFields.name?.length < 25
+                          ? setGroupNameError("")
+                          : setGroupNameError("name length error")
                       }
                     />
                   )}
@@ -141,10 +157,16 @@ export default function CreateGroupStepper() {
                       }}
                       error={groupDescError}
                       helperText={
-                        watchAllFields.description?.length === 0 ||
-                        !watchAllFields.description?.length
+                        watchAllFields.description?.length <= 25 &&
+                        watchAllFields.description?.length > 0
+                          ? setGroupDescError("")
+                          : groupDescError ||
+                            watchAllFields.description?.length === 0 ||
+                            !watchAllFields.description?.length
                           ? groupDescError
-                          : setGroupDescError("")
+                          : watchAllFields.description?.length < 25
+                          ? setGroupDescError("")
+                          : setGroupDescError("desc length error")
                       }
                     />
                   )}
@@ -169,10 +191,16 @@ export default function CreateGroupStepper() {
                       }}
                       error={groupForumError}
                       helperText={
-                        watchAllFields.forumUrl?.length === 0 ||
-                        !watchAllFields.forumUrl?.length
+                        watchAllFields.forumUrl?.length <= 25 &&
+                        watchAllFields.forumUrl?.length > 0
+                          ? setGroupForumError("")
+                          : groupForumError ||
+                            watchAllFields.forumUrl?.length === 0 ||
+                            !watchAllFields.forumUrl?.length
                           ? groupForumError
-                          : setGroupForumError("")
+                          : watchAllFields.forumUrl?.length < 25
+                          ? setGroupForumError("")
+                          : setGroupForumError("forum length error")
                       }
                     />
                   )}
