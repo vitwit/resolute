@@ -13,6 +13,9 @@ const steps = ["Group information", "Add members", "Attach policy"];
 export default function CreateGroupStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [showAddPolicyForm, setShowAddPolicyForm] = useState(null);
+  const [groupNameError, setGroupNameError] = useState("");
+  const [groupDescError, setGroupDescError] = useState("");
+  const [groupForumError, setGroupForumError] = useState("");
 
   const {
     register,
@@ -47,6 +50,25 @@ export default function CreateGroupStepper() {
     name: "members",
     rules: { minLength: 1 },
   });
+
+  const watchAllFields = watch();
+
+  const validateGroupInfo = () => {
+    if (
+      !watchAllFields.name?.length ||
+      !watchAllFields.description?.length ||
+      !watchAllFields.forumUrl?.length
+    ) {
+      setGroupNameError("name cannot be empty");
+      setGroupDescError("description cannot be empty");
+      setGroupForumError("forum url cannot be empty");
+      return 0;
+    }
+    setGroupNameError("");
+    setGroupDescError("");
+    setGroupForumError("");
+    return 1;
+  };
 
   const onSubmit = (data) => {
     console.log(data);
@@ -89,6 +111,13 @@ export default function CreateGroupStepper() {
                       sx={{
                         mb: 2,
                       }}
+                      error={groupNameError}
+                      helperText={
+                        watchAllFields.name?.length === 0 ||
+                        !watchAllFields.name?.length
+                          ? groupNameError
+                          : setGroupNameError("")
+                      }
                     />
                   )}
                 />
@@ -110,6 +139,13 @@ export default function CreateGroupStepper() {
                       sx={{
                         mb: 2,
                       }}
+                      error={groupDescError}
+                      helperText={
+                        watchAllFields.description?.length === 0 ||
+                        !watchAllFields.description?.length
+                          ? groupDescError
+                          : setGroupDescError("")
+                      }
                     />
                   )}
                 />
@@ -131,6 +167,13 @@ export default function CreateGroupStepper() {
                       sx={{
                         mb: 2,
                       }}
+                      error={groupForumError}
+                      helperText={
+                        watchAllFields.forumUrl?.length === 0 ||
+                        !watchAllFields.forumUrl?.length
+                          ? groupForumError
+                          : setGroupForumError("")
+                      }
                     />
                   )}
                 />
@@ -252,7 +295,14 @@ export default function CreateGroupStepper() {
         )}
         {activeStep !== 2 ? (
           <Button
-            onClick={() => setActiveStep(activeStep === 2 ? 0 : activeStep + 1)}
+            onClick={() => {
+              if (activeStep === 0 && validateGroupInfo()) {
+                setActiveStep(activeStep === 2 ? 0 : activeStep + 1);
+              }
+              if (activeStep === 1) {
+                setActiveStep(activeStep === 2 ? 0 : activeStep + 1);
+              }
+            }}
           >
             Next
           </Button>
