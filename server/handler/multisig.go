@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -15,6 +16,16 @@ import (
 )
 
 func (h *Handler) CreateMultisigAccount(c echo.Context) error {
+	ctx := context.Background()
+
+	tx, err := h.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to initialize transaction",
+			Log:     err.Error(),
+		})
+	}
 
 	account := &model.CreateAccountReq{}
 	if err := c.Bind(account); err != nil {
@@ -28,7 +39,7 @@ func (h *Handler) CreateMultisigAccount(c echo.Context) error {
 		})
 	}
 
-	_, err := h.DB.Exec(`INSERT INTO "multisig_accounts"("address","name","pubkey_type","threshold","chain_id",
+	_, err = tx.ExecContext(ctx, `INSERT INTO "multisig_accounts"("address","name","pubkey_type","threshold","chain_id",
 	"created_by","created_at") VALUES ($1,$2,$3,$4,$5,$6,$7)`,
 		account.Address, account.Name, account.Pubkeys[0].Pubkey.TypeUrl, account.Threshold, account.ChainId, account.CreatedBy,
 		time.Now().UTC(),
@@ -58,7 +69,7 @@ func (h *Handler) CreateMultisigAccount(c echo.Context) error {
 				Log:     err.Error(),
 			})
 		}
-		_, err = h.DB.Exec(`INSERT INTO "pubkeys"("multisig_address","pubkey","address") VALUES ($1,$2,$3)`,
+		_, err = tx.ExecContext(ctx, `INSERT INTO "pubkeys"("multisig_address","pubkey","address") VALUES ($1,$2,$3)`,
 			account.Address, bz, pubkey.Address,
 		)
 		if err != nil {
@@ -68,6 +79,15 @@ func (h *Handler) CreateMultisigAccount(c echo.Context) error {
 				Log:     err.Error(),
 			})
 		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to commit database transactions",
+			Log:     err.Error(),
+		})
 	}
 
 	return c.JSON(http.StatusCreated, model.SuccessResponse{
