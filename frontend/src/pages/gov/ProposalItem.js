@@ -8,8 +8,9 @@ import { computeVotePercentage, getProposalComponent } from "../../utils/util";
 import { getDaysLeft } from "../../utils/datetime";
 import "./../common.css";
 import govService from "../../features/gov/govService";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Tooltip from "@mui/material/Tooltip";
+import { setError } from "../../features/common/commonSlice";
 
 export const ProposalItem = (props) => {
   const { info, vote, poolInfo, onItemClick, chainUrl, proposalId } = props;
@@ -19,7 +20,8 @@ export const ProposalItem = (props) => {
   const { yes, no, no_with_veto, abstain } = tallyInfo;
   const tallySum =
     Number(yes) + Number(no) + Number(no_with_veto) + Number(abstain);
-  const walletConnected = useSelector((state) => state.wallet.connected);
+  const dispatch = useDispatch();
+
   const tallySumInfo = {
     yes: (tallyInfo.yes / tallySum) * 100,
     no: (tallyInfo.no / tallySum) * 100,
@@ -31,13 +33,24 @@ export const ProposalItem = (props) => {
   };
 
   useEffect(() => {
-    if (walletConnected) {
-      const response = async (chainUrl) => {
+    const response = async (chainUrl) => {
+      try {
         const res = await govService.tally(chainUrl, proposalId);
         return res.data;
-      };
-      response(chainUrl).then((res) => setPTally(res.tally));
-    }
+      } catch (error) {
+        dispatch(
+          setError({
+            type: "error",
+            message: "some error occurred",
+          })
+        );
+      }
+    };
+    response(chainUrl).then((res) => {
+      if (res.tally) {
+        setPTally(res.tally);
+      }
+    });
   }, []);
 
   return (

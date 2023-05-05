@@ -47,12 +47,25 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
   const walletConnected = useSelector((state) => state.wallet.connected);
   const [proposals, setProposals] = useState([]);
   useEffect(() => {
-    if (walletConnected) {
-      const response = async (chainUrl) => {
+    const response = async (chainUrl) => {
+      try {
         const res = await govService.proposals(chainUrl);
         return res.data;
-      };
-      response(chainUrl).then((res) => {setProposals(res.proposals)});
+      } catch (error) {
+        dispatch(
+        setError({
+          type: "error",
+          message: "some error occurred",
+        })
+      );
+      }
+    };
+    response(chainUrl).then((res) => {
+      if(res.proposals) {
+        setProposals(res.proposals);
+      }
+    });
+    if (walletConnected) {
       if (selectedAuthz.granter.length === 0) {
         dispatch(
           getProposals({
@@ -227,11 +240,11 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
         />
       ) : null}
       {!proposals?.length ? (
-          <Box
-            sx={{
-              margin: "16px 0 10px 0",
-            }}
-          ></Box>
+        <Box
+          sx={{
+            margin: "16px 0 10px 0",
+          }}
+        ></Box>
       ) : (
         <Box
           sx={{
@@ -285,10 +298,12 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
                     setOpen={(pId) => onVoteDialog(pId)}
                     poolInfo={poolInfo}
                     onItemClick={() =>
-                      navigate(`/proposals/${chainName}/${proposal?.proposal_id}`)
+                      navigate(
+                        `/proposals/${chainName}/${proposal?.proposal_id}`
+                      )
                     }
-                    chainUrl = {chainUrl}
-                    proposalId = {proposal?.proposal_id}
+                    chainUrl={chainUrl}
+                    proposalId={proposal?.proposal_id}
                   />
                 </Paper>
               </Grid>
