@@ -2,8 +2,9 @@ import React from "react";
 import { Box, TextField, IconButton, Grid, Button } from "@mui/material";
 import { Controller } from "react-hook-form";
 import Close from "@mui/icons-material/Close";
+import { i } from "mathjs";
 
-export function CreateGroupMembersForm({ fields, control, append, remove }) {
+export function CreateGroupMembersForm({ fields, control, append, remove, validateMembersInfo }) {
   return (
     <Box>
       {(fields?.length && (
@@ -85,7 +86,9 @@ export function CreateGroupMembersForm({ fields, control, append, remove }) {
                   <Button
                     size="small"
                     onClick={() => {
-                      append({ address: "", metadata: "", weight: 0 });
+                      if(validateMembersInfo()) {
+                        append({ address: "", metadata: "", weight: 0 });
+                      }
                     }}
                     sx={{ ml: "auto", textTransform: "none", mt:"12px" }}
                     variant="outlined"

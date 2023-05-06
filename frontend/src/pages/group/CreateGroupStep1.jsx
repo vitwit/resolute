@@ -7,15 +7,19 @@ import { Button, Paper, TextField, Typography } from "@mui/material";
 import { Controller, useForm, useFieldArray } from "react-hook-form";
 import CreateGroupMembersForm from "./CreateGroupMembersForm";
 import CreateGroupPolicy from "./CreateGroupPolicy";
+import { setError } from "../../features/common/commonSlice";
+import { useDispatch } from "react-redux";
 
 const steps = ["Group information", "Add members", "Attach policy"];
 
 export default function CreateGroupStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
+  const dispatch = useDispatch();
   const [showAddPolicyForm, setShowAddPolicyForm] = useState(null);
   const [groupNameError, setGroupNameError] = useState("");
   const [groupDescError, setGroupDescError] = useState("");
   const [groupForumError, setGroupForumError] = useState("");
+  const [memberInfoError, setMemberInfoError] = useState("");
 
   const {
     register,
@@ -80,14 +84,30 @@ export default function CreateGroupStepper() {
     return 1;
   };
 
+  const validateMembersInfo = () => {
+    const members = watchAllFields.members;
+    for (let index in members) {
+      if (!members[index].address?.length || !members[index].metadata?.length || !members[index].weight?.toString().length) {
+        setMemberInfoError("fields cannot be empty");
+        dispatch(
+          setError({
+            type:"error",
+            message:"fields cannot be empty"
+        })
+        );
+        return 0;
+      }
+    }
+    setMemberInfoError("");
+    return 1;
+  };
+
   const onSubmit = (data) => {
     console.log(data);
   };
 
   return (
     <Box sx={{ width: "100%" }}>
-      {JSON.stringify(errors)}
-
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stepper activeStep={activeStep} alternativeLabel>
           {steps.map((label) => (
@@ -98,6 +118,7 @@ export default function CreateGroupStepper() {
         </Stepper>
         {activeStep === 0 ? (
           <>
+            {/* group info section start */}
             <Paper
               elevation={0}
               sx={{
@@ -207,6 +228,7 @@ export default function CreateGroupStepper() {
                 />
               </div>
             </Paper>
+            {/* group info section end */}
           </>
         ) : activeStep === 1 ? (
           <Paper
@@ -215,6 +237,7 @@ export default function CreateGroupStepper() {
               p: 4,
             }}
           >
+            <Typography color="error">{memberInfoError}</Typography>
             {/* group members section start */}
             {fields.length ? (
               <fieldset
@@ -234,6 +257,7 @@ export default function CreateGroupStepper() {
                   control={control}
                   append={append}
                   remove={remove}
+                  validateMembersInfo={validateMembersInfo}
                 />
               </fieldset>
             ) : null}
@@ -327,7 +351,7 @@ export default function CreateGroupStepper() {
               if (activeStep === 0 && validateGroupInfo()) {
                 setActiveStep(activeStep === 2 ? 0 : activeStep + 1);
               }
-              if (activeStep === 1) {
+              if (activeStep === 1 && validateMembersInfo()) {
                 setActiveStep(activeStep === 2 ? 0 : activeStep + 1);
               }
             }}
