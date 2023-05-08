@@ -184,7 +184,7 @@ const GroupInfo = (props) => {
                   fontWeight={600}
                   color={"primary"}
                 >
-                  {data?.metadata}
+                  {JSON.parse(data?.metadata)?.name}
                   &nbsp;
                   {canUpdateGroup() ? (
                     <IconButton

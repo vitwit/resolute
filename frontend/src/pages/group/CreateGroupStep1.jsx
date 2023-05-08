@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -8,14 +8,100 @@ import { Controller, useForm, useFieldArray } from "react-hook-form";
 import CreateGroupMembersForm from "./CreateGroupMembersForm";
 import CreateGroupPolicy from "./CreateGroupPolicy";
 import { setError } from "../../features/common/commonSlice";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { resetGroupTx, txCreateGroup } from "../../features/group/groupSlice";
 
 const steps = ["Group information", "Add members", "Attach policy"];
 
 export default function CreateGroupStepper() {
-  const [activeStep, setActiveStep] = React.useState(0);
-  const dispatch = useDispatch();
   const [showAddPolicyForm, setShowAddPolicyForm] = useState(null);
+
+  const wallet = useSelector((state) => state.wallet);
+  const { chainInfo, address } = wallet;
+  const navigate = useNavigate();
+  const txCreateGroupRes = useSelector(
+    (state) => state?.group?.txCreateGroupRes
+  );
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetGroupTx());
+    };
+  }, []);
+
+  useEffect(() => {
+    if (txCreateGroupRes?.status === "idle") {
+      navigate(`/group`);
+    }
+  }, [txCreateGroupRes?.status]);
+
+  const dispatch = useDispatch();
+
+  const onSubmit = (data) => {
+    const groupMetaData = {
+      name: data?.name,
+      description: data?.description,
+      forumUrl: data?.forumUrl,
+    };
+    const dataObj = {
+      admin: address,
+      members: data.members,
+      groupMetaData: groupMetaData,
+      chainId: chainInfo.config.chainId,
+      feeAmount: chainInfo.config.gasPriceStep.average,
+      denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
+      rest: chainInfo.config.rest,
+      aminoConfig: chainInfo.aminoConfig,
+      prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+    };
+
+    if (
+      data.policyMetadata.percentage !== 0 ||
+      data.policyMetadata.threshold !== 0
+    ) {
+      const getMinExecPeriod = (policyData) => {
+        let time;
+        if (policyData?.minExecPeriodDuration === "Days") time = 24 * 60 * 60;
+        else if (policyData?.minExecPeriodDuration === "Hours") time = 60 * 60;
+        else if (policyData?.minExecPeriodDuration === "Minutes") time = 60;
+        else time = 1;
+
+        time = time * Number(policyData?.minExecPeriod);
+        return time;
+      };
+
+      const getVotingPeriod = (policyData) => {
+        let time;
+        if (policyData?.votingPeriodDuration === "Days") time = 24 * 60 * 60;
+        else if (policyData?.votingPeriodDuration === "Hours") time = 60 * 60;
+        else if (policyData?.votingPeriodDuration === "Minutes") time = 60;
+        else time = 1;
+
+        time = time * Number(policyData?.votingPeriod);
+        return time;
+      };
+
+      if (data?.policyMetadata) {
+        dataObj["policyData"] = {
+          ...data.policyMetadata,
+          minExecPeriod: getMinExecPeriod(data.policyMetadata),
+          votingPeriod: getVotingPeriod(data.policyMetadata),
+        };
+      }
+
+      if (dataObj?.policyData?.decisionPolicy === "percentage") {
+        dataObj.policyData.percentage =
+          Number(dataObj.policyData.percentage) / 100.0;
+      }
+    }
+
+    dispatch(txCreateGroup(dataObj));
+  };
+
+  const [activeStep, setActiveStep] = React.useState(0);
+  // const dispatch = useDispatch();
+  // const [showAddPolicyForm, setShowAddPolicyForm] = useState(null);
   const [groupNameError, setGroupNameError] = useState("");
   const [groupDescError, setGroupDescError] = useState("");
   const [groupForumError, setGroupForumError] = useState("");
@@ -87,23 +173,23 @@ export default function CreateGroupStepper() {
   const validateMembersInfo = () => {
     const members = watchAllFields.members;
     for (let index in members) {
-      if (!members[index].address?.length || !members[index].metadata?.length || !members[index].weight?.toString().length) {
+      if (
+        !members[index].address?.length ||
+        !members[index].metadata?.length ||
+        !members[index].weight?.toString().length
+      ) {
         setMemberInfoError("fields cannot be empty");
         dispatch(
           setError({
-            type:"error",
-            message:"fields cannot be empty"
-        })
+            type: "error",
+            message: "fields cannot be empty",
+          })
         );
         return 0;
       }
     }
     setMemberInfoError("");
     return 1;
-  };
-
-  const onSubmit = (data) => {
-    console.log(data);
   };
 
   return (
@@ -272,29 +358,7 @@ export default function CreateGroupStepper() {
             }}
           >
             {/* group policy section start */}
-            {(fields?.length &&
-              ((!showAddPolicyForm && (
-                <Button
-                  onClick={() => {
-                    setShowAddPolicyForm(true);
-                    setValue("policyMetadata.decisionPolicy", "threshold");
-                    setValue("policyMetadata.votingPeriodDuration", "Days");
-                    setValue("policyMetadata.minExecPeriodDuration", "Days");
-                  }}
-                  variant="outlined"
-                  sx={{
-                    textTransform: "none",
-                    mt: 2,
-                  }}
-                  size="small"
-                >
-                  Attach Decision Policy
-                </Button>
-              )) ||
-                null)) ||
-              null}
-
-            {(fields.length && showAddPolicyForm && (
+            {(fields.length && (
               <fieldset
                 style={{
                   textAlign: "left",
@@ -325,7 +389,6 @@ export default function CreateGroupStepper() {
                   watch={watch}
                   control={control}
                   members={getValues("members")}
-                  showRemoveButton={true}
                 />
               </fieldset>
             )) ||

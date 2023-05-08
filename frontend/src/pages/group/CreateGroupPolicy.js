@@ -27,7 +27,6 @@ function CreateGroupPolicy({
   setValue,
   handleCancelPolicy,
   members,
-  showRemoveButton,
 }) {
   const totalWeight =
     members.reduce((initial, weight) => initial + Number(weight.weight), 0) ||
@@ -38,21 +37,6 @@ function CreateGroupPolicy({
 
   return (
     <>
-      {showRemoveButton ? (
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Button
-            size="small"
-            onClick={() => handleCancelPolicy()}
-            sx={{ marginLeft: "auto", textTransform: "none" }}
-            endIcon={<CloseIcon />}
-            variant="outlined"
-            color="error"
-          >
-            Remove
-          </Button>
-        </Box>
-      ) : null}
-
       <Box
         sx={{
           mt: 1,

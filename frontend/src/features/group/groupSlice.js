@@ -519,25 +519,26 @@ export const txCreateGroup = createAsyncThunk(
     dispatch(setTxLoad());
     let msg;
     try {
+      console.log(data)
       if (data?.members?.length > 0) {
-        if (data?.policyData && Object.keys(data?.policyData)?.length) {
           msg = NewMsgCreateGroupWithPolicy(
             data.admin,
             data.groupMetaData,
             data.members,
-            data.decisionPolicy,
             data.policyData,
+            {
+              name: data.policyData?.name,
+              description:  data.policyData?.description,
+            },
             data?.policyData?.policyAsAdmin
           );
-        } else {
-          msg = NewMsgCreateGroup(data.admin, data.groupMetaData, data?.members);
-        }
       } else {
         msg = NewMsgCreateGroup(data.admin, data.groupMetaData, []);
       }
 
+      console.log(msg)
       const result = await signAndBroadcast(
-        data.chainId,
+        data.chainId, 
         data.aminoConfig,
         data.prefix,
         [msg],
