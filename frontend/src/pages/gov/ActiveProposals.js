@@ -36,11 +36,14 @@ function ActiveProposals() {
         <Switch checked={checked} onChange={switchHandler} />
       </Box>
       {chains.map((key, index) => (
-        <Proposals
-              chainUrl={key.config.rest}
-              chainName={key.config.chainName}
-              chainLogo={key.logos.menu}
-            />
+        <>
+          {" "}
+          <Proposals
+            chainUrl={key.config.rest}
+            chainName={key.config.chainName}
+            chainLogo={key.logos.menu}
+          />
+        </>
       ))}
     </div>
   );
