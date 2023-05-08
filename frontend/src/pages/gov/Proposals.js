@@ -50,36 +50,59 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
   const [proposals, setProposals] = useState([]);
   const [authzEnabled, setAuthzEnabled] = useState(false);
   useEffect(() => {
-    if (walletConnected) {
-      const response = async (chainUrl) => {
+    const response = async (chainUrl) => {
+      try {
         const res = await govService.proposals(chainUrl);
         return res.data;
-      };
-      response(chainUrl).then((res) => {
+      }
+      catch (error) {
+        dispatch(
+        setError({
+          type: "error",
+          message: "some error occurred",
+        })
+      );
+      }
+    };
+    response(chainUrl).then((res) => {
+      if(res?.proposals) {
         setProposals(res.proposals);
-      });
+      }
+    });
 
-      const grantsToMeResponse = async (data) => {
+    const grantsToMeResponse = async (data) => {
+      try {
         const response = await service.grantsToMe(
           data.baseURL,
           data.grantee,
           data.pagination
         );
         return response.data;
-      };
-      grantsToMeResponse({
-        baseURL: chainUrl,
-        grantee: address,
-      }).then((res) => {
-        if (res.grants.length > 0) {
-          if (
-            res.grants[0].authorization.msg === "/cosmos.gov.v1beta1.MsgVote"
-          ) {
-            setAuthzEnabled(true);
-          }
-        }
-      });
+      }
+        catch (error) {
+        dispatch(
+          setError({
+            type: "error",
+            message: "some error occurred",
+          })
+        )
+      }
+    };
 
+    grantsToMeResponse({
+      baseURL: chainUrl,
+      grantee: address,
+    }).then((res) => {
+      if (res?.grants?.length > 0) {
+        if (
+          res.grants[0].authorization.msg === "/cosmos.gov.v1beta1.MsgVote" ||
+          res.grants[0].authorization.msg === "/cosmos.gov.v1.MsgVote"
+        ) {
+          setAuthzEnabled(true);
+        }
+      }
+    });
+    if (walletConnected) {
       if (selectedAuthz.granter.length === 0) {
         dispatch(
           getProposals({
@@ -253,7 +276,7 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
           }}
         />
       ) : null}
-      {proposals.length === 0 ? (
+      {!proposals?.length ? (
         <Box
           sx={{
             margin: "16px 0 10px 0",

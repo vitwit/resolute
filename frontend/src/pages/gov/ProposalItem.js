@@ -8,20 +8,20 @@ import { computeVotePercentage, getProposalComponent } from "../../utils/util";
 import { getDaysLeft } from "../../utils/datetime";
 import "./../common.css";
 import govService from "../../features/gov/govService";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Tooltip from "@mui/material/Tooltip";
+import { setError } from "../../features/common/commonSlice";
 
 export const ProposalItem = (props) => {
   const { info, vote, poolInfo, onItemClick, chainUrl, proposalId } = props;
   const [pTally, setPTally] = useState([]);
   const tally = pTally;
   const tallyInfo = computeVotePercentage(tally, poolInfo);
+  const { yes, no, no_with_veto, abstain } = tallyInfo;
   const tallySum =
-    Number(tallyInfo.yes) +
-    Number(tallyInfo.no) +
-    Number(tallyInfo.no_with_veto) +
-    Number(tallyInfo.abstain);
-  const walletConnected = useSelector((state) => state.wallet.connected);
+    Number(yes) + Number(no) + Number(no_with_veto) + Number(abstain);
+  const dispatch = useDispatch();
+
   const tallySumInfo = {
     yes: (tallyInfo.yes / tallySum) * 100,
     no: (tallyInfo.no / tallySum) * 100,
@@ -33,13 +33,24 @@ export const ProposalItem = (props) => {
   };
 
   useEffect(() => {
-    if (walletConnected) {
-      const response = async (chainUrl) => {
+    const response = async (chainUrl) => {
+      try {
         const res = await govService.tally(chainUrl, proposalId);
         return res.data;
-      };
-      response(chainUrl).then((res) => setPTally(res.tally));
-    }
+      } catch (error) {
+        dispatch(
+          setError({
+            type: "error",
+            message: "some error occurred",
+          })
+        );
+      }
+    };
+    response(chainUrl).then((res) => {
+      if (res.tally) {
+        setPTally(res.tally);
+      }
+    });
   }, []);
 
   return (
@@ -53,7 +64,7 @@ export const ProposalItem = (props) => {
           onClick={() => onItemClick()}
         >
           <Typography
-            sx={{ fontSize: 16, fontWeight: "500", cursor: "pointer" }}
+            sx={{ fontSize: 16, fontWeight: "700", cursor: "pointer" }}
             color="text.primary"
             gutterBottom
           >
@@ -65,7 +76,7 @@ export const ProposalItem = (props) => {
             color="text.primary"
             className="proposal-title"
             onClick={() => onItemClick()}
-            sx={{ cursor: "pointer", marginLeft: "8px" }}
+            sx={{ cursor: "pointer", marginLeft: "8px", fontWeight:"500" }}
           >
             {info.content?.title || info.content?.["@type"]}
           </Typography>
