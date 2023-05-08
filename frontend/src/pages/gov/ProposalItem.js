@@ -64,7 +64,7 @@ export const ProposalItem = (props) => {
           onClick={() => onItemClick()}
         >
           <Typography
-            sx={{ fontSize: 16, fontWeight: "500", cursor: "pointer" }}
+            sx={{ fontSize: 16, fontWeight: "700", cursor: "pointer" }}
             color="text.primary"
             gutterBottom
           >
@@ -76,7 +76,7 @@ export const ProposalItem = (props) => {
             color="text.primary"
             className="proposal-title"
             onClick={() => onItemClick()}
-            sx={{ cursor: "pointer", marginLeft: "8px" }}
+            sx={{ cursor: "pointer", marginLeft: "8px", fontWeight:"500" }}
           >
             {info.content?.title || info.content?.["@type"]}
           </Typography>
