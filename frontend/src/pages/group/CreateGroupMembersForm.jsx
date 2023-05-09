@@ -21,7 +21,7 @@ export function CreateGroupMembersForm({ fields, control, append, remove, valida
                       <TextField
                         {...field}
                         required
-                        label="Member Address"
+                        label="Address"
                         name="address"
                         size="small"
                         fullWidth
@@ -59,7 +59,7 @@ export function CreateGroupMembersForm({ fields, control, append, remove, valida
                       <TextField
                         {...field}
                         required
-                        label="Member Metadata"
+                        label="Name"
                         size="small"
                         multiline
                         name="metadata"

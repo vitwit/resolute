@@ -19,6 +19,8 @@ export default function PolicyCard({ obj }) {
 
   const dispatch = useDispatch();
 
+  const policyMetadata = JSON.parse(obj?.metadata)
+
   return (
     <Paper
       elevation={0}
@@ -35,7 +37,7 @@ export default function PolicyCard({ obj }) {
       }}
     >
       <CardHeader
-        title={obj?.metadata || "-"}
+        title={policyMetadata.name || "-"}
         color="text.primary"
         sx={{
           fontWeight: 600,

@@ -16,7 +16,6 @@ import {
   Radio,
   Slider,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import { Controller } from "react-hook-form";
 
 function CreateGroupPolicy({
@@ -34,6 +33,7 @@ function CreateGroupPolicy({
 
   const [threshold, setThreshold] = useState("threshold");
   const [policyType, setPolicyType] = useState("threshold");
+  const [asAdmin, setAsAdmin] = useState("gov");
 
   return (
     <>
@@ -55,7 +55,7 @@ function CreateGroupPolicy({
                   {...field}
                   required
                   size="small"
-                  label="Policy Name"
+                  label="Name"
                   name="name"
                   fullWidth
                 />
@@ -74,7 +74,7 @@ function CreateGroupPolicy({
                   {...field}
                   required
                   size="small"
-                  label="Policy Description"
+                  label="Description"
                   name="description"
                   fullWidth
                 />
@@ -125,25 +125,6 @@ function CreateGroupPolicy({
                       label="Threshold"
                     />
                   </RadioGroup>
-                  {/* <Select
-                    fullWidth
-                    {...field}
-                    size="small"
-                    required
-                    placeholder="Decision policy*"
-                    labelId="Decision-Policy*"
-                    id="decision-policy"
-                    label="Decision Policy Type*"
-                    name="decisionPolicy"
-                    value={threshold}
-                    onChange={(e) => {
-                      setThreshold(e.target.value);
-                      setValue("policyMetadata.decisionPolicy", e.target.value);
-                    }}
-                  >
-                    <MenuItem value={"threshold"}>Threshold</MenuItem>
-                    <MenuItem value={"percentage"}>Percentage</MenuItem>
-                  </Select> */}
                 </FormControl>
               )}
             />
@@ -178,18 +159,6 @@ function CreateGroupPolicy({
                       }}
                       name="percentage"
                     />
-                    {/* <TextField
-                      {...field}
-                      fullWidth
-                      name="percentage"
-                      label="Percentage"
-                      required
-                      size="small"
-                      type="number"
-                      placeholder="Percentage"
-                      error={errors?.policyMetadata?.percentage}
-                      helperText={errors?.policyMetadata?.percentage?.message}
-                    /> */}
                   </FormControl>
                 )}
               />
@@ -212,18 +181,6 @@ function CreateGroupPolicy({
                       mt: 1,
                     }}
                   >
-                    {/* <TextField
-                      {...field}
-                      fullWidth
-                      name="threshold"
-                      type="number"
-                      label="Threshold"
-                      required
-                      placeholder="Threshold"
-                      size="small"
-                      error={errors?.policyMetadata?.threshold}
-                      helperText={errors?.policyMetadata?.threshold?.message}
-                    /> */}
                     <Slider
                       {...field}
                       name="threshold"
@@ -363,22 +320,46 @@ function CreateGroupPolicy({
         </Grid>
         <br />
         <Box textAlign={"left"}>
-          <FormControlLabel
-            name="policyAsAdmin"
-            control={
-              <Switch
-                {...register("policyMetadata.policyAsAdmin")}
-                name="policyAsAdmin"
-                defaultValue={false}
-                onChange={(e) => {
-                  setValue("policyMetadata.policyAsAdmin", e.target.checked);
+          <Controller
+            name={`policyMetadata.policyAsAdmin`}
+            control={control}
+            render={({ field }) => (
+              <FormControl
+                fullWidth
+                sx={{
+                  mt: 1,
                 }}
-              />
-            }
-            label="Group policy as admin"
-            labelPlacement="start"
+              >
+                <RadioGroup
+                  row
+                  {...field}
+                  onLoad={()=>{
+                    setValue("policyMetadata.policyAsAdmin", false);
+                  }}
+                  onChange={(e) => {
+                    setAsAdmin(e.target.value);
+                    if (e.target.value === "self") {
+                      setValue("policyMetadata.policyAsAdmin", true);
+                    } else {
+                      setValue("policyMetadata.policyAsAdmin", false);
+                    }
+                  }}
+                  value={asAdmin}
+                >
+                  <FormControlLabel
+                    value={"self"}
+                    control={<Radio />}
+                    label="Self"
+                  />
+                  <FormControlLabel
+                    value={"gov"}
+                    control={<Radio />}
+                    label="Gov"
+                  />
+                </RadioGroup>
+              </FormControl>
+            )}
           />
-          <br />
           <Typography variant="caption">
             If set to true, the group policy account address will be used as
             group and policy admin

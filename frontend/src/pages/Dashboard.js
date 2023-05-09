@@ -35,8 +35,7 @@ import { copyToClipboard } from "../utils/clipboard";
 const GroupPage = lazy(() => import("./GroupPage"));
 const Group = lazy(() => import("./group/Group"));
 const Policy = lazy(() => import("./group/Policy"));
-const CreateGroupPage = lazy(() => import("./group/CreateGroup"));
-const CreateGroupNewPage = lazy(() => import("./group/CreateGroupStep1"));
+const CreateGroupNewPage = lazy(() => import("./group/CreateGroup"));
 const Proposal = lazy(() => import("./group/Proposal"));
 const CreateProposal = lazy(() => import("./group/CreateProposal"));
 
@@ -391,15 +390,6 @@ function DashboardContent(props) {
                   ></Route>
                   <Route
                     path="/group/create-group"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <CreateGroupPage />
-                      </Suspense>
-                    }
-                  ></Route>
-
-<Route
-                    path="/group/create-group-new"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <CreateGroupNewPage />
