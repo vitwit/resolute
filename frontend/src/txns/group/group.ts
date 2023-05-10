@@ -259,7 +259,10 @@ export function CreateGroupPolicy(
   const obj = {
     typeUrl: msgAddGroupPolicy,
     value: MsgCreateGroupPolicy.fromPartial({
-      metadata: policyMetadata?.metadata || "",
+      metadata: JSON.stringify({
+        name:policyMetadata?.name,
+        description:policyMetadata?.description
+      }) || "",
       admin: admin,
       groupId,
       decisionPolicy: {
