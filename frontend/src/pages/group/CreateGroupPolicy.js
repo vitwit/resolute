@@ -97,7 +97,7 @@ function CreateGroupPolicy({
                     mt: 1,
                   }}
                 >
-                  <FormLabel id="Decision-Policy">
+                  <FormLabel sx={{textAlign:"left"}} id="Decision-Policy">
                     Decision Policy Type
                   </FormLabel>
                   <RadioGroup
@@ -275,7 +275,8 @@ function CreateGroupPolicy({
                     size="small"
                     name="minExecPeriod"
                     type="number"
-                    placeholder="Min Exection Period"
+                    label="Min Execution Period*"
+                    placeholder="Min Execution Period*"
                     InputProps={{
                       endAdornment: (
                         <FormControl sx={{ width: 150, mr: "-13px" }} fullWidth>
@@ -330,12 +331,10 @@ function CreateGroupPolicy({
                   mt: 1,
                 }}
               >
+                <FormLabel>Policy Admin</FormLabel>
                 <RadioGroup
                   row
                   {...field}
-                  onLoad={()=>{
-                    setValue("policyMetadata.policyAsAdmin", false);
-                  }}
                   onChange={(e) => {
                     setAsAdmin(e.target.value);
                     if (e.target.value === "self") {
@@ -354,16 +353,12 @@ function CreateGroupPolicy({
                   <FormControlLabel
                     value={"gov"}
                     control={<Radio />}
-                    label="Gov"
+                    label="Governance"
                   />
                 </RadioGroup>
               </FormControl>
             )}
           />
-          <Typography variant="caption">
-            If set to true, the group policy account address will be used as
-            group and policy admin
-          </Typography>
         </Box>
       </Box>
     </>

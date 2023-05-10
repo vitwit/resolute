@@ -61,7 +61,6 @@ export function CreateGroupMembersForm({ fields, control, append, remove, valida
                         required
                         label="Name"
                         size="small"
-                        multiline
                         name="metadata"
                         fullWidth
                       />

@@ -106,6 +106,11 @@ export default function CreateGroupStepper() {
   const [groupDescError, setGroupDescError] = useState("");
   const [groupForumError, setGroupForumError] = useState("");
   const [memberInfoError, setMemberInfoError] = useState("");
+  const groupInfoErrors = {
+    nameErrors: ["name cannot be empty","name cannot contain more than 25 characters"],
+    descErrors: ["description cannot be empty","description cannot contain more than 100 characters"],
+    forumErrors: ["forum URL cannot be empty","forum URL cannot contain more than 70 characters"]
+  }
 
   const {
     register,
@@ -129,7 +134,7 @@ export default function CreateGroupStepper() {
         name: "",
         description: "",
         decisionPolicy: "threshold",
-        percentage: 0,
+        percentage: 1,
         threshold: 0,
         policyAsAdmin: false
       },
@@ -146,23 +151,23 @@ export default function CreateGroupStepper() {
 
   const validateGroupInfo = () => {
     if (
-      !watchAllFields.name?.length ||
-      !watchAllFields.description?.length ||
-      !watchAllFields.forumUrl?.length
+      !watchAllFields.name?.trim().length ||
+      !watchAllFields.description?.trim().length ||
+      !watchAllFields.forumUrl?.trim().length
     ) {
-      setGroupNameError("name cannot be empty");
-      setGroupDescError("description cannot be empty");
-      setGroupForumError("forum url cannot be empty");
+      setGroupNameError(groupInfoErrors.nameErrors[0]);
+      setGroupDescError(groupInfoErrors.descErrors[0]);
+      setGroupForumError(groupInfoErrors.forumErrors[0]);
       return 0;
     }
     if (
-      watchAllFields.name?.length > 25 ||
-      watchAllFields.description?.length > 100 ||
-      watchAllFields.forumUrl?.length > 25
+      watchAllFields.name?.trim().length > 25 ||
+      watchAllFields.description?.trim().length > 100 ||
+      watchAllFields.forumUrl?.trim().length > 70
     ) {
-      setGroupNameError("name length error");
-      setGroupDescError("desc length error");
-      setGroupForumError("forum length error");
+      setGroupNameError(groupInfoErrors.nameErrors[1]);
+      setGroupDescError(groupInfoErrors.descErrors[1]);
+      setGroupForumError(groupInfoErrors.forumErrors[1]);
       return 0;
     }
     setGroupNameError("");
@@ -175,11 +180,17 @@ export default function CreateGroupStepper() {
     const members = watchAllFields.members;
     for (let index in members) {
       if (
-        !members[index].address?.length ||
-        !members[index].metadata?.length ||
-        !members[index].weight?.toString().length
+        !members[index].address?.trim().length ||
+        !members[index].metadata?.trim().length ||
+        !members[index].weight?.toString().trim().length
       ) {
         setMemberInfoError("fields cannot be empty");
+        return 0;
+      }
+      if (
+        members[index].metadata?.trim().length > 25
+      ) {
+        setMemberInfoError("name length cannot be more than 25 characters");
         return 0;
       }
     }
@@ -225,16 +236,16 @@ export default function CreateGroupStepper() {
                         }}
                         error={groupNameError}
                         helperText={
-                          watchAllFields.name?.length <= 25 &&
-                          watchAllFields.name?.length > 0
+                          watchAllFields.name?.trim().length <= 25 &&
+                          watchAllFields.name?.trim().length > 0
                             ? setGroupNameError("")
                             : groupNameError ||
-                              watchAllFields.name?.length === 0 ||
-                              !watchAllFields.name?.length
+                              watchAllFields.name?.trim().length === 0 ||
+                              !watchAllFields.name?.trim().length
                             ? groupNameError
-                            : watchAllFields.name?.length < 25
+                            : watchAllFields.name?.trim().length <= 25
                             ? setGroupNameError("")
-                            : setGroupNameError("name length error")
+                            : setGroupNameError(groupInfoErrors.nameErrors[1])
                         }
                       />
                     )}
@@ -244,7 +255,7 @@ export default function CreateGroupStepper() {
                   <Controller
                     name="forumUrl"
                     control={control}
-                    rules={{ required: "Forum url is required", maxLength: 50 }}
+                    rules={{ required: "Forum url is required", maxLength: 70 }}
                     render={({ field }) => (
                       <TextField
                         {...field}
@@ -258,16 +269,16 @@ export default function CreateGroupStepper() {
                         }}
                         error={groupForumError}
                         helperText={
-                          watchAllFields.forumUrl?.length <= 25 &&
-                          watchAllFields.forumUrl?.length > 0
+                          watchAllFields.forumUrl?.trim().length <= 70 &&
+                          watchAllFields.forumUrl?.trim().length > 0
                             ? setGroupForumError("")
                             : groupForumError ||
-                              watchAllFields.forumUrl?.length === 0 ||
-                              !watchAllFields.forumUrl?.length
+                              watchAllFields.forumUrl?.trim().length === 0 ||
+                              !watchAllFields.forumUrl?.trim().length
                             ? groupForumError
-                            : watchAllFields.forumUrl?.length < 25
+                            : watchAllFields.forumUrl?.trim().length <= 70
                             ? setGroupForumError("")
-                            : setGroupForumError("forum length error")
+                            : setGroupForumError(groupInfoErrors.forumErrors[1])
                         }
                       />
                     )}
@@ -280,7 +291,7 @@ export default function CreateGroupStepper() {
                   control={control}
                   rules={{
                     required: "Description is required",
-                    maxLength: 60,
+                    maxLength: 100,
                   }}
                   render={({ field }) => (
                     <TextField
@@ -296,16 +307,16 @@ export default function CreateGroupStepper() {
                       }}
                       error={groupDescError}
                       helperText={
-                        watchAllFields.description?.length <= 100 &&
-                        watchAllFields.description?.length > 0
+                        watchAllFields.description?.trim().length <= 100 &&
+                        watchAllFields.description?.trim().length > 0
                           ? setGroupDescError("")
                           : groupDescError ||
-                            watchAllFields.description?.length === 0 ||
-                            !watchAllFields.description?.length
+                            watchAllFields.description?.trim().length === 0 ||
+                            !watchAllFields.description?.trim().length
                           ? groupDescError
-                          : watchAllFields.description?.length < 25
+                          : watchAllFields.description?.trim().length <= 100
                           ? setGroupDescError("")
-                          : setGroupDescError("desc length error")
+                          : setGroupDescError(groupInfoErrors.descErrors[1])
                       }
                     />
                   )}
