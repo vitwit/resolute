@@ -39,8 +39,6 @@ export default function CreateGroupStepper() {
   const dispatch = useDispatch();
 
   const onSubmit = (data) => {
-    console.log("form data")
-    console.log(data)
     const groupMetaData = {
       name: data?.name,
       description: data?.description,
