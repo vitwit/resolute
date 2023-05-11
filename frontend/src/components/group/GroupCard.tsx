@@ -43,6 +43,7 @@ const BoxText = ({ label, text }: BoxTextProps) => {
 export default function GroupCard({ group }: GroupCardProps) {
   const navigate = useNavigate();
   const [showFullText, setShowFullText] = React.useState(false);
+  const groupMetadata = JSON.parse(group.metadata)
 
   return (
     <Paper elevation={0} variant="outlined" square>
@@ -64,9 +65,9 @@ export default function GroupCard({ group }: GroupCardProps) {
           component="span"
         >
           &nbsp;
-          {!showFullText && group?.metadata?.substring(0, 30)}
-          {showFullText && group?.metadata}
-          {group?.metadata?.length > 40 ? (
+          {!showFullText && groupMetadata?.name?.substring(0, 30)}
+          {showFullText && groupMetadata?.name}
+          {groupMetadata?.name?.length > 40 ? (
             <a
               onClick={() => setShowFullText(!showFullText)}
               href="javascript:void(0);"
