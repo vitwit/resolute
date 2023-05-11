@@ -191,6 +191,12 @@ export default function CreateGroupStepper() {
         setMemberInfoError("name length cannot be more than 25 characters");
         return 0;
       }
+      if (
+        members[index].weight <= 0
+      ) {
+        setMemberInfoError("weight must be greater than zero");
+        return 0;
+      }
     }
     setMemberInfoError("");
     return 1;
