@@ -174,6 +174,8 @@ function PolicyDetails({
   const [isMetaEditMode, setIsMetaEditMode] = useState(false);
   const [isAdminEdit, setIsAdminEdit] = useState(false);
 
+  const policyMetadata = JSON.parse(policyObj?.metadata);
+
   const updateMetadataRes = useSelector(
     (state: any) => state?.group?.updateGroupMetadataRes
   );
@@ -201,35 +203,36 @@ function PolicyDetails({
       }}
     >
       <Box>
-        {isMetaEditMode && canUpdateGroup ? (
-          <EditTextField
-            handleUpdate={handleUpdateMetadata}
-            placeholder="Metadata"
-            disableSubmit={updateMetadataRes?.status === "pending"}
-            hideShowEdit={() => {
-              setIsMetaEditMode(false);
-            }}
-            value={policyObj?.metadata}
-          />
-        ) : (
-          <Typography
-            gutterBottom
-            textAlign="left"
-            variant="h6"
-            color="text.primary"
-          >
-            {policyObj?.metadata || "-"} &nbsp;&nbsp;
-            {canUpdateGroup ? (
-              <IconButton
-                color={"primary"}
-                onClick={() => setIsMetaEditMode(true)}
-              >
-                <EditIcon />
-              </IconButton>
-            ) : null}
-          </Typography>
-        )}
+        <Typography
+          gutterBottom
+          textAlign="left"
+          variant="h6"
+          color="text.primary"
+        >
+          {policyMetadata?.name || "-"} &nbsp;&nbsp;
+        </Typography>
       </Box>
+
+      <Grid container>
+        <Grid item>
+          <Box
+            sx={{
+              textAlign: "left",
+            }}
+          >
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              fontWeight={500}
+            >
+              Description
+            </Typography>
+            <Typography variant="body1" color="text.primary" fontWeight={500}>
+              {policyMetadata?.description || "-"}
+            </Typography>
+          </Box>
+        </Grid>
+      </Grid>
 
       <Grid container>
         <Grid
