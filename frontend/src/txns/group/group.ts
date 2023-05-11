@@ -135,7 +135,6 @@ export function NewMsgCreateGroupWithPolicy(
 
     return obj;
   } catch (error) {
-    alert(error)
     throw error;
   }
 }
