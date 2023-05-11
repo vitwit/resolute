@@ -175,7 +175,6 @@ function PolicyDetails({
   const [isAdminEdit, setIsAdminEdit] = useState(false);
 
   const policyMetadata = JSON.parse(policyObj?.metadata);
-  console.log(policyMetadata);
 
   const updateMetadataRes = useSelector(
     (state: any) => state?.group?.updateGroupMetadataRes
