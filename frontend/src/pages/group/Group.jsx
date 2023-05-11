@@ -161,7 +161,6 @@ const GroupPolicies = ({ id, wallet }) => {
               register={register}
               watch={watch}
               errors={errors}
-              showRemoveButton={false}
               handleCancelPolicy={() => setShowForm(false)}
               members={groupMembers?.members?.map((m) => m?.member) || []}
               setValue={setValue}

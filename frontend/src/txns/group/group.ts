@@ -44,9 +44,20 @@ const msgAddGroupPolicy = `/cosmos.group.v1.MsgCreateGroupPolicy`;
 const msgUpatePolicyMetdata = `/cosmos.group.v1.MsgUpdateGroupPolicyMetadata`;
 const msgUpatePolicyAdmin = `/cosmos.group.v1.MsgUpdateGroupPolicyAdmin`;
 
+export interface GroupMetata {
+  name: string;
+  description: string;
+  forumUrl: string;
+}
+
+export interface GroupPolicyMetata {
+  name: string;
+  description: string;
+}
+
 export function NewMsgCreateGroup(
   admin: string,
-  metadata: string,
+  metadata: GroupMetata,
   members: MemberRequest[]
 ): Msg {
   try {
@@ -55,7 +66,7 @@ export function NewMsgCreateGroup(
       value: MsgCreateGroup.fromPartial({
         admin: admin,
         members: members,
-        metadata: metadata,
+        metadata: JSON.stringify(metadata),
       }),
     };
   } catch (error) {
@@ -66,21 +77,23 @@ export function NewMsgCreateGroup(
 
 export function NewMsgCreateGroupWithPolicy(
   admin: string,
-  groupMetadata: string,
+  groupMetadata: GroupMetata,
   members: MemberRequest[],
   decisionPolicy: any,
-  policyMetadata: string,
+  policyMetadata: GroupPolicyMetata,
   policyAsAdmin: boolean = false
 ): Msg {
   try {
+
+    console.log(decisionPolicy)
     const obj = {
       typeUrl: msgCreateGroupWithPolicy,
       value: MsgCreateGroupWithPolicy.fromPartial({
         admin: admin,
         members: members,
-        groupMetadata: groupMetadata,
+        groupMetadata: JSON.stringify(groupMetadata),
         groupPolicyAsAdmin: policyAsAdmin,
-        groupPolicyMetadata: policyMetadata,
+        groupPolicyMetadata: JSON.stringify(policyMetadata),
         decisionPolicy: {
           typeUrl:
             (decisionPolicy?.percentage &&
@@ -89,22 +102,22 @@ export function NewMsgCreateGroupWithPolicy(
           value:
             (decisionPolicy?.percentage &&
               PercentageDecisionPolicy.encode({
-                percentage: parseFloat(decisionPolicy?.percentage || 0)
+                percentage: parseFloat(decisionPolicy.percentage)
                   .toFixed(2)
                   .toString(),
                 windows: DecisionPolicyWindows.fromPartial({
                   votingPeriod: Duration.fromPartial({
-                    seconds: Long.fromNumber(decisionPolicy?.votingPeriod),
-                    nanos: Number(decisionPolicy?.votingPeriod),
+                    seconds: Long.fromNumber(decisionPolicy.votingPeriod),
+                    nanos: Number(decisionPolicy.votingPeriod),
                   }),
                   minExecutionPeriod: Duration.fromPartial({
-                    seconds: Long.fromNumber(decisionPolicy?.minExecPeriod),
-                    nanos: Number(decisionPolicy?.minExecPeriod),
+                    seconds: Long.fromNumber(decisionPolicy.minExecPeriod),
+                    nanos: Number(decisionPolicy.minExecPeriod),
                   }),
                 }),
               }).finish()) ||
             ThresholdDecisionPolicy.encode({
-              threshold: decisionPolicy?.threshold?.toString(),
+              threshold: decisionPolicy.threshold.toString(),
               windows: DecisionPolicyWindows.fromPartial({
                 votingPeriod: Duration.fromPartial({
                   seconds: Long.fromNumber(decisionPolicy?.votingPeriod),
@@ -245,7 +258,10 @@ export function CreateGroupPolicy(
   const obj = {
     typeUrl: msgAddGroupPolicy,
     value: MsgCreateGroupPolicy.fromPartial({
-      metadata: policyMetadata?.metadata || "",
+      metadata: JSON.stringify({
+        name:policyMetadata?.name,
+        description:policyMetadata?.description
+      }) || "",
       admin: admin,
       groupId,
       decisionPolicy: {
