@@ -1,19 +1,57 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { computeVotePercentage, getProposalComponent } from "../../utils/util";
-import { getLocalTime } from "../../utils/datetime";
+import { getDaysLeft } from "../../utils/datetime";
 import "./../common.css";
+import govService from "../../features/gov/govService";
+import { useSelector, useDispatch } from "react-redux";
+import Tooltip from "@mui/material/Tooltip";
+import { setError } from "../../features/common/commonSlice";
 
 export const ProposalItem = (props) => {
-  const { info, tally, vote, poolInfo, onItemClick } = props;
+  const { info, vote, poolInfo, onItemClick, chainUrl, proposalId } = props;
+  const [pTally, setPTally] = useState([]);
+  const tally = pTally;
   const tallyInfo = computeVotePercentage(tally, poolInfo);
+  const { yes, no, no_with_veto, abstain } = tallyInfo;
+  const tallySum =
+    Number(yes) + Number(no) + Number(no_with_veto) + Number(abstain);
+  const dispatch = useDispatch();
 
+  const tallySumInfo = {
+    yes: (tallyInfo.yes / tallySum) * 100,
+    no: (tallyInfo.no / tallySum) * 100,
+    no_with_veto: (tallyInfo.no_with_veto / tallySum) * 100,
+    abstain: (tallyInfo.abstain / tallySum) * 100,
+  };
   const onVoteClick = () => {
     props.setOpen(info?.proposal_id);
   };
+
+  useEffect(() => {
+    const response = async (chainUrl) => {
+      try {
+        const res = await govService.tally(chainUrl, proposalId);
+        return res.data;
+      } catch (error) {
+        dispatch(
+          setError({
+            type: "error",
+            message: "some error occurred",
+          })
+        );
+      }
+    };
+    response(chainUrl).then((res) => {
+      if (res.tally) {
+        setPTally(res.tally);
+      }
+    });
+  }, []);
 
   return (
     <React.Fragment>
@@ -22,34 +60,28 @@ export const ProposalItem = (props) => {
           style={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
           }}
           onClick={() => onItemClick()}
         >
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom
+          <Typography
+            sx={{ fontSize: 16, fontWeight: "700", cursor: "pointer" }}
+            color="text.primary"
+            gutterBottom
           >
             #{info.proposal_id}
           </Typography>
-          {getProposalComponent(info.status)}
+          <Typography
+            variant="body1"
+            component="div"
+            color="text.primary"
+            className="proposal-title"
+            onClick={() => onItemClick()}
+            sx={{ cursor: "pointer", marginLeft: "8px", fontWeight:"500" }}
+          >
+            {info.content?.title || info.content?.["@type"]}
+          </Typography>
         </div>
-        <Typography
-          variant="body1"
-          component="div"
-          color="text.primary"
-          className="proposal-title"
-          onClick={() => onItemClick()}
-        >
-          {info.content?.title}
-        </Typography>
-        <Typography
-          sx={{ mb: 1.5 }}
-          variant="body2"
-          color="text.secondary"
-          className="proposal-description"
-          onClick={() => onItemClick()}
-        >
-          {info.content?.description}
-        </Typography>
+
         <ul
           style={{
             listStyleType: "none",
@@ -60,22 +92,10 @@ export const ProposalItem = (props) => {
           }}
         >
           <li>
-            <div style={{ display: "flex" }}>
-              <Typography variant="body1">
-                Voting start &nbsp;&nbsp;&nbsp;
-              </Typography>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="body1">Voting ends in &nbsp;</Typography>
               <Typography variant="body2">
-                {getLocalTime(info?.voting_start_time)}
-              </Typography>
-            </div>
-          </li>
-          <li>
-            <div style={{ display: "flex" }}>
-              <Typography variant="body1">
-                Voting end&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              </Typography>
-              <Typography variant="body2">
-                {getLocalTime(info?.voting_end_time)}
+                {getDaysLeft(info?.voting_end_time)} days
               </Typography>
             </div>
           </li>
@@ -88,26 +108,47 @@ export const ProposalItem = (props) => {
             justifyContent: "space-between",
           }}
         >
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            YES <br />
-            {tallyInfo.yes}%
-          </Typography>
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            NO <br />
-            {tallyInfo.no}%
-          </Typography>
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            NoWithVeto
-            <br />
-            {tallyInfo.no_with_veto}%
-          </Typography>
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            Abstain
-            <br />
-            {tallyInfo.abstain}%
-          </Typography>
+          <Tooltip title={`${tallyInfo.yes}%`} placement="top">
+            <Box
+              sx={{
+                width: `${tallySumInfo.yes}%`,
+                margin: "0 0.5px",
+                backgroundColor: "#18a572",
+                height: "3px",
+              }}
+            ></Box>
+          </Tooltip>
+          <Tooltip title={`${tallyInfo.no}%`} placement="top">
+            <Box
+              sx={{
+                width: `${tallySumInfo.no}%`,
+                margin: "0 0.5px",
+                backgroundColor: "#ce4256",
+                height: "3px",
+              }}
+            ></Box>
+          </Tooltip>
+          <Tooltip title={`${tallyInfo.no_with_veto}%`} placement="top">
+            <Box
+              sx={{
+                width: `${tallySumInfo.no_with_veto}%`,
+                margin: "0 0.5px",
+                backgroundColor: "#ce4256",
+                height: "3px",
+              }}
+            ></Box>
+          </Tooltip>
+          <Tooltip title={`${tallyInfo.abstain}%`} placement="top">
+            <Box
+              sx={{
+                width: `${tallySumInfo.abstain}%`,
+                margin: "0 0.5px",
+                backgroundColor: "primary.main",
+                height: "3px",
+              }}
+            ></Box>
+          </Tooltip>
         </div>
-        <br />
       </CardContent>
       <CardActions style={{ display: "flex", justifyContent: "space-between" }}>
         {vote?.proposal_id ? (

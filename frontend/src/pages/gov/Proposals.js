@@ -22,9 +22,13 @@ import { getVoteAuthz } from "../../utils/authorizations";
 import { useNavigate } from "react-router-dom";
 import { getPoolInfo } from "../../features/staking/stakeSlice";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import govService from "../../features/gov/govService";
+import { i } from "mathjs";
+import Box from "@mui/material/Box";
+import Badge from "@mui/material/Badge";
+import Avatar from "@mui/material/Avatar";
 
-export default function Proposals() {
-  const proposals = useSelector((state) => state.gov.active.proposals);
+export default function Proposals({ chainUrl, chainName, chainLogo }) {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
   const proposalTally = useSelector((state) => state.gov.tally.proposalTally);
@@ -41,15 +45,27 @@ export default function Proposals() {
   const dispatch = useDispatch();
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const walletConnected = useSelector((state) => state.wallet.connected);
+  const [proposals, setProposals] = useState([]);
   useEffect(() => {
-    if (walletConnected) {
-      dispatch(
-        getGrantsToMe({
-          baseURL: chainInfo.config.rest,
-          grantee: address,
+    const response = async (chainUrl) => {
+      try {
+        const res = await govService.proposals(chainUrl);
+        return res.data;
+      } catch (error) {
+        dispatch(
+        setError({
+          type: "error",
+          message: "some error occurred",
         })
       );
-
+      }
+    };
+    response(chainUrl).then((res) => {
+      if(res.proposals) {
+        setProposals(res.proposals);
+      }
+    });
+    if (walletConnected) {
       if (selectedAuthz.granter.length === 0) {
         dispatch(
           getProposals({
@@ -160,7 +176,7 @@ export default function Proposals() {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-            feegranter: feegrant.granter,
+          feegranter: feegrant.granter,
         })
       );
     } else {
@@ -178,7 +194,7 @@ export default function Proposals() {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-            feegranter: feegrant.granter,
+          feegranter: feegrant.granter,
         });
       } else {
         alert("You don't have permission to vote");
@@ -223,6 +239,38 @@ export default function Proposals() {
           }}
         />
       ) : null}
+      {!proposals?.length ? (
+        <Box
+          sx={{
+            margin: "16px 0 10px 0",
+          }}
+        ></Box>
+      ) : (
+        <Box
+          sx={{
+            margin: "16px 0 10px 0",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Avatar src={chainLogo} alt="network-icon" />
+            <Typography
+              variant="h6"
+              sx={{ color: "text.primary", margin: "0 8px" }}
+            >
+              {chainName}
+            </Typography>
+            <Badge sx={{ margin: "12px" }} badgeContent={0} color="primary" />
+          </Box>
+        </Box>
+      )}
       <Grid container spacing={2}>
         {status === "pending" ? (
           <div
@@ -236,18 +284,7 @@ export default function Proposals() {
             <CircularProgress />
           </div>
         ) : proposals.length === 0 ? (
-          <Typography
-            variant="h5"
-            fontWeight={500}
-            color="text.primary"
-            sx={{
-              justifyContent: "center",
-              width: "100%",
-              mt: 3,
-            }}
-          >
-            No Active Proposals Found
-          </Typography>
+          <></>
         ) : (
           <>
             {proposals.map((proposal, index) => (
@@ -261,8 +298,12 @@ export default function Proposals() {
                     setOpen={(pId) => onVoteDialog(pId)}
                     poolInfo={poolInfo}
                     onItemClick={() =>
-                      navigate(`/proposals/${proposal?.proposal_id}`)
+                      navigate(
+                        `/proposals/${chainName}/${proposal?.proposal_id}`
+                      )
                     }
+                    chainUrl={chainUrl}
+                    proposalId={proposal?.proposal_id}
                   />
                 </Paper>
               </Grid>

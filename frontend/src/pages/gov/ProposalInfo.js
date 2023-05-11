@@ -28,18 +28,21 @@ import VoteDialog from "../../components/Vote";
 import { getPoolInfo } from "../../features/staking/stakeSlice";
 import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import { getMainNetworks } from "../../utils/networks";
+import ReactMarkdown from "react-markdown";
+import "./../common.css";
 
 export default function ProposalInfo() {
-  const { id } = useParams();
+  const { chainName, id } = useParams();
   const proposalState = useSelector((state) => state.gov.proposalInfo);
   const tallyState = useSelector((state) => state.gov.tally);
   const dispatch = useDispatch();
   const { proposalInfo } = proposalState;
   const poolInfo = useSelector((state) => state.staking.pool);
   const feegrant = useSelector((state) => state.common.feegrant);
-
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
-
+  const chainData = getMainNetworks();
+  const chainInfo = chainData.filter((item) => item.config.chainName == chainName)[0]
+  
   useEffect(() => {
     dispatch(
       getProposal({
@@ -186,7 +189,6 @@ export default function ProposalInfo() {
   };
 
   const theme = useTheme();
-
   return (
     <>
       {proposalState.status === "idle" ? (
@@ -388,7 +390,7 @@ export default function ProposalInfo() {
             >
               Proposal Details
             </Typography>
-            <div
+            {/* <div
               style={{
                 padding: 8,
 
@@ -401,7 +403,16 @@ export default function ProposalInfo() {
                   `${proposalInfo?.content?.description}`
                 ),
               }}
-            />
+            /> */}
+            <div style={{
+                padding: 8,
+                backgroundColor:
+                theme.palette?.mode === "light" ? "#f9fafc" : "#282828",
+                color: "text.primary",
+                whiteSpace: "pre-line",
+              }} className="proposal-description-markdown">
+              <ReactMarkdown>{proposalInfo?.content?.description && proposalInfo?.content?.description.replace(/\\n/g, '\n')}</ReactMarkdown>
+            </div>
           </Paper>
         </>
       ) : (

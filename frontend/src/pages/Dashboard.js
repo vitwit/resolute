@@ -31,6 +31,7 @@ import { getFeegrant, isConnected, logout } from "../utils/localStorage";
 import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
 import { copyToClipboard } from "../utils/clipboard";
+import Home from "./Home";
 
 const GroupPage = lazy(() => import("./GroupPage"));
 const Group = lazy(() => import("./group/Group"));
@@ -227,7 +228,7 @@ function DashboardContent(props) {
               )}
               <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
                 <Routes>
-                  <Route path="/" element={<Overview />} />
+                  <Route path="/" element={<Home />} />
 
                   {chainInfo?.enableModules?.feegrant ? (
                     <>
@@ -294,7 +295,7 @@ function DashboardContent(props) {
                     }
                   ></Route>
                   <Route
-                    path="/proposals/:id"
+                    path="/proposals/:chainName/:id"
                     element={
                       <Suspense fallback={<CircularProgress />}>
                         <ProposalInfo />
