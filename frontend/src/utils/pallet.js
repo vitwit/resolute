@@ -99,7 +99,7 @@ const networks = {
   }
 };
 
-const defaultPallet = {
+export const defaultPallet = {
   primary: {
     light: "#6573c3",
     main: "#3f51b5",
