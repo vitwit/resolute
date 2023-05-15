@@ -126,13 +126,13 @@ function PolicyInfo() {
   const groupInfo = useSelector((state) => state.group.groupInfo);
   const canUpdateGroup = () => groupInfo?.data?.admin === wallet?.address;
 
-  const handleSubmitPolicy = (policyMetadata) => {
+  const handleSubmitPolicy = (data) => {
     const chainInfo = wallet?.chainInfo;
     dispatch(
       txUpdateGroupPolicy({
         admin: policyObj?.admin,
         groupPolicyAddress: policyObj?.address,
-        policyMetadata: policyMetadata,
+        policyMetadata: data.policyMetadata,
         denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,

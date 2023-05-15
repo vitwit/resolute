@@ -237,13 +237,13 @@ function PolicyDetails({
       <Grid container>
         <Grid
           item
-          md={6}
+          md={4}
           xs={12}
           sx={{
             mt: 1,
           }}
         >
-          <Box>
+          <Box> 
             <GridItemEdit
               handleUpdate={handleUpdateAdmin}
               disabledSubmit={updatePolicyAdminRes?.status === "pending"}
@@ -256,7 +256,7 @@ function PolicyDetails({
         </Grid>
         <Grid
           item
-          md={3}
+          md={4}
           xs={6}
           sx={{
             mt: 1,
@@ -269,7 +269,7 @@ function PolicyDetails({
         </Grid>
         <Grid
           item
-          md={3}
+          md={4}
           xs={6}
           sx={{
             mt: 1,

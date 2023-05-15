@@ -135,7 +135,9 @@ export default function CreateGroupStepper() {
         decisionPolicy: "threshold",
         percentage: 1,
         threshold: 0,
-        policyAsAdmin: false
+        policyAsAdmin: false,
+        minExecPeriodDuration: "Days",
+        votingPeriodDuration: "Days",
       },
     },
   });
@@ -270,6 +272,7 @@ export default function CreateGroupStepper() {
                     setValue("policyMetadata", null);
                     setShowAddPolicyForm(false);
                   }}
+                  policyUpdate={false}
                   setValue={setValue}
                   reset={reset}
                   register={register}
