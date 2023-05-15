@@ -30,7 +30,7 @@ export const ProposalItem = (props) => {
 
   return (
     <Paper
-      disableElevation
+      elevation={0}
       sx={{
         p: 1,
       }}

@@ -48,7 +48,10 @@ export const getGrantsToMe = createAsyncThunk(
       data.grantee,
       data.pagination
     );
-    return response.data;
+    return {
+      chainID: data.chainID,
+      data: response.data
+    };
   }
 );
 
@@ -60,7 +63,10 @@ export const getGrantsByMe = createAsyncThunk(
       data.granter,
       data.pagination
     );
-    return response.data;
+    return {
+      chainID: data.chainID,
+      data: response.data
+    };
   }
 );
 
@@ -445,10 +451,13 @@ export const authzSlice = createSlice({
         state.grantsToMe.errMsg = "";
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
-        state.grantsToMe.status = "idle";
-        state.grantsToMe.grants = action.payload.grants;
-        state.grantsToMe.pagination = action.payload.pagination;
-        state.grantsToMe.errMsg = "";
+        let result = {
+          status: "idle",
+          errMsg: "",
+          grants: action.payload.data.grants,
+          pagination: action.payload.data.pagination
+        }
+        state.grantsToMe[action.payload.chainID] = result;
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
         state.grantsToMe.status = "rejected";
@@ -463,10 +472,13 @@ export const authzSlice = createSlice({
         state.grantsByMe.errMsg = "";
       })
       .addCase(getGrantsByMe.fulfilled, (state, action) => {
-        state.grantsByMe.status = "idle";
-        state.grantsByMe.grants = action.payload.grants;
-        state.grantsByMe.pagination = action.payload.pagination;
-        state.grantsByMe.errMsg = "";
+        let result = {
+          status: "idle",
+          errMsg: "",
+          grants: action.payload.data.grants,
+          pagination: action.payload.data.pagination
+        }
+        state.grantsByMe[action.payload.chainID] = result;
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
         state.grantsByMe.status = "rejected";

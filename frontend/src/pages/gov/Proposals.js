@@ -35,11 +35,17 @@ Proposals.propTypes = {
   aminoConfig: PropTypes.object.isRequired,
   currencies: PropTypes.array.isRequired,
   bech32Config: PropTypes.object.isRequired,
+  authzMode: PropTypes.bool.isRequired,
+  grantsToMe: PropTypes.array.isRequired,
 };
 
 
-export default function Proposals({ restEndpoint, chainName, chainLogo, signer, gasPriceStep,
-  chainID, aminoConfig, currencies, bech32Config,
+export default function Proposals({
+  restEndpoint, chainName, chainLogo,
+  signer, gasPriceStep,
+  chainID, aminoConfig,
+  currencies, bech32Config, authzMode,
+  grantsToMe,
 }) {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
@@ -47,7 +53,6 @@ export default function Proposals({ restEndpoint, chainName, chainLogo, signer, 
   const votes = useSelector((state) => state.gov.votes[chainID]?.proposals || {});
   const address = useSelector((state) => state.wallet.address);
   const feegrant = useSelector((state) => state.common.feegrant);
-  const authzMode = useSelector((state) => state.authz.authzMode);
 
   const govTx = useSelector((state) => state.gov.tx);
   const currency = currencies[0]
@@ -57,20 +62,12 @@ export default function Proposals({ restEndpoint, chainName, chainLogo, signer, 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (selectedAuthz.granter.length === 0) {
+    if (!authzMode || (authzMode && grantsToMe.length > 0)) {
       dispatch(
         getProposals({
           baseURL: restEndpoint,
           voter: signer,
           chainID: chainID,
-        })
-      );
-    } else {
-      dispatch(
-        getProposals({
-          baseURL: restEndpoint,
-          chainID: chainID,
-          voter: selectedAuthz.granter,
         })
       );
     }
@@ -84,12 +81,6 @@ export default function Proposals({ restEndpoint, chainName, chainLogo, signer, 
   }, []);
 
   // authz
-  const grantsToMe = useSelector((state) => state.authz.grantsToMe);
-  const selectedAuthz = useSelector((state) => state.authz.selected);
-  const authzProposal = useMemo(
-    () => getVoteAuthz(grantsToMe.grants, selectedAuthz.granter),
-    [grantsToMe.grants, selectedAuthz]
-  );
   const authzExecTx = useSelector((state) => state.authz.execTx);
 
   useEffect(() => {
@@ -103,69 +94,43 @@ export default function Proposals({ restEndpoint, chainName, chainLogo, signer, 
     }
   }, [errMsg, status]);
 
-  useEffect(() => {
-    if (selectedAuthz.granter.length === 0) {
-      if (govTx.status === "idle") {
-        dispatch(resetTx());
-        setOpen(false);
-        dispatch(
-          getProposals({
-            baseURL: restEndpoint,
-            voter: signer,
-          })
-        );
-      }
-    } else {
-      if (authzExecTx.status === "idle") {
-        dispatch(resetExecTx());
-        setOpen(false);
-        dispatch(
-          getProposals({
-            baseURL: restEndpoint,
-            voter: selectedAuthz.granter,
-          })
-        );
-      }
-    }
-  }, [govTx, authzExecTx]);
-
   const onVoteSubmit = (option) => {
     const vote = nameToOption(option);
-    if (selectedAuthz.granter.length === 0) {
-      dispatch(
-        txVote({
-          voter: signer,
-          proposalId: selected,
-          option: vote,
-          denom: currency.coinMinimalDenom,
-          chainId: chainID,
-          rest: restEndpoint,
-          aminoConfig: aminoConfig,
-          prefix: bech32Config.bech32PrefixAccAddr,
-          feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
-          feegranter: feegrant.granter,
-        })
-      );
-    } else {
-      if (authzProposal?.granter === selectedAuthz.granter) {
-        authzExecHelper(dispatch, {
-          type: "vote",
-          from: address,
-          granter: selectedAuthz.granter,
-          option: vote,
-          proposalId: selected,
-          denom: currency.coinMinimalDenom,
-          chainId: chainID,
-          rest: restEndpoint,
-          aminoConfig: aminoConfig,
-          prefix: bech32Config.bech32PrefixAccAddr,
-          feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
-          feegranter: feegrant.granter,
-        });
-      } else {
-        alert("You don't have permission to vote");
-      }
-    }
+    // if (selectedAuthz.granter.length === 0) {
+    dispatch(
+      txVote({
+        voter: signer,
+        proposalId: selected,
+        option: vote,
+        denom: currency.coinMinimalDenom,
+        chainId: chainID,
+        rest: restEndpoint,
+        aminoConfig: aminoConfig,
+        prefix: bech32Config.bech32PrefixAccAddr,
+        feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant.granter,
+      })
+    );
+    // } else {
+    //   if (authzProposal?.granter === selectedAuthz.granter) {
+    //     authzExecHelper(dispatch, {
+    //       type: "vote",
+    //       from: address,
+    //       granter: selectedAuthz.granter,
+    //       option: vote,
+    //       proposalId: selected,
+    //       denom: currency.coinMinimalDenom,
+    //       chainId: chainID,
+    //       rest: restEndpoint,
+    //       aminoConfig: aminoConfig,
+    //       prefix: bech32Config.bech32PrefixAccAddr,
+    //       feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
+    //       feegranter: feegrant.granter,
+    //     });
+    //   } else {
+    //     alert("You don't have permission to vote");
+    //   }
+    // }
   };
 
   const removeFeegrant = () => {
@@ -180,107 +145,97 @@ export default function Proposals({ restEndpoint, chainName, chainLogo, signer, 
 
   const [selected, setonShowVote] = useState("");
   const onVoteDialog = (proposalId) => {
-    if (selectedAuthz.granter.length > 0) {
-      if (authzProposal?.granter === selectedAuthz.granter) {
-        setOpen(true);
-        setonShowVote(proposalId);
-      } else {
-        alert("You don't have permission to vote");
-      }
-    } else {
-      setOpen(true);
-      setonShowVote(proposalId);
-    }
+    // if (selectedAuthz.granter.length > 0) {
+    // if (authzProposal?.granter === selectedAuthz.granter) {
+    //   setOpen(true);
+    //   setonShowVote(proposalId);
+    // } else {
+    //   alert("You don't have permission to vote");
+    // }
+    // } else {
+    setOpen(true);
+    setonShowVote(proposalId);
+    // }
   };
 
   const navigate = useNavigate();
 
-  return (authzMode && authzEnabled) || !authzMode ? (
+  return (authzMode && grantsToMe?.length > 0) || !authzMode ? (
     <>
-      {feegrant.granter.length > 0 ? (
-        <FeegranterInfo
-          feegrant={feegrant}
-          onRemove={() => {
-            removeFeegrant();
-          }}
-        />
-      ) : null}
       {!proposals?.length ? (
-        <Box
-          sx={{
-            margin: "16px 0 10px 0",
-          }}
-        ></Box>
+        <></>
       ) : (
         <Box
           sx={{
-            margin: "16px 0 10px 0",
             display: "flex",
-            justifyContent: "space-between",
+            alignItems: "left",
+            mt: 2,
           }}
         >
-          <Box
+          <Avatar src={chainLogo} alt="network-icon"
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
+              width: 30,
+              height: 30,
+            }}
+          />
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{
+              color: "text.primary",
+              ml: 1,
             }}
           >
-            <Avatar src={chainLogo} alt="network-icon" />
-            <Typography
-              variant="h6"
-              sx={{ color: "text.primary", margin: "0 8px" }}
-            >
-              {chainName}
-            </Typography>
-            <Badge sx={{ margin: "12px" }} badgeContent={0} color="primary" />
-          </Box>
+            {chainName}
+          </Typography>
         </Box>
       )}
-      <Grid container spacing={2}>
-        {status === "pending" ? (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              width: "100%",
-              marginTop: 22,
-            }}
-          >
-            <CircularProgress />
-          </div>
-        ) : proposals.length === 0 ? (
-          <></>
-        ) : (
-          <>
-            {proposals.map((proposal, index) => (
-              <Grid item md={6} xs={12} key={index}>
+      {status === "pending" ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
+            marginTop: 22,
+          }}
+        >
+          <CircularProgress />
+        </div>
+      ) : proposals.length === 0 ? (
+        <></>
+      ) : (
+        <Grid container spacing={2}
+          sx={{
+            mb: 1,
+          }}
+        >
+          {proposals.map((proposal, index) => (
+            <Grid item md={6} xs={12} key={index}>
 
-                <ProposalItem
-                  info={proposal}
-                  tally={proposalTally[proposal?.proposal_id]}
-                  vote={votes[proposal?.proposal_id]}
-                  txStatus={govTx}
-                  setOpen={(pId) => onVoteDialog(pId)}
-                  onItemClick={() =>
-                    navigate(
-                      `/proposals/${chainName}/${proposal?.proposal_id}`
-                    )
-                  }
-                  chainUrl={restEndpoint}
-                  proposalId={proposal?.proposal_id}
-                />
-              </Grid>
-            ))}
+              <ProposalItem
+                info={proposal}
+                tally={proposalTally[proposal?.proposal_id]}
+                vote={votes[proposal?.proposal_id]}
+                txStatus={govTx}
+                setOpen={(pId) => onVoteDialog(pId)}
+                onItemClick={() =>
+                  navigate(
+                    `/proposals/${chainName}/${proposal?.proposal_id}`
+                  )
+                }
+                chainUrl={restEndpoint}
+                proposalId={proposal?.proposal_id}
+              />
+            </Grid>
+          ))}
 
-            <VoteDialog
-              open={open}
-              closeDialog={closeDialog}
-              onVote={onVoteSubmit}
-            />
-          </>
-        )}
-      </Grid>
+          <VoteDialog
+            open={open}
+            closeDialog={closeDialog}
+            onVote={onVoteSubmit}
+          />
+        </Grid>
+      )}
     </>
   ) : (
     <></>
