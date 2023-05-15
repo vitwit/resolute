@@ -209,7 +209,10 @@ export const getPoolInfo = createAsyncThunk(
   "staking/poolInfo",
   async (data) => {
     const response = await stakingService.poolInfo(data.baseURL);
-    return response.data;
+    return {
+      chainID: data.chainID,
+      data: response.data
+    };
   }
 );
 
@@ -542,7 +545,7 @@ export const stakeSlice = createSlice({
     builder
       .addCase(getPoolInfo.pending, (state) => {})
       .addCase(getPoolInfo.fulfilled, (state, action) => {
-        state.pool = action.payload;
+        state.pool[action.payload.chainID] = action.payload.data;
       })
       .addCase(getPoolInfo.rejected, (state, action) => {});
   },

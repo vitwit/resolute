@@ -1,26 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { computeVotePercentage, getProposalComponent } from "../../utils/util";
+import { computeVotingPercentage } from "../../utils/util";
 import { getDaysLeft } from "../../utils/datetime";
 import "./../common.css";
-import govService from "../../features/gov/govService";
-import { useSelector, useDispatch } from "react-redux";
 import Tooltip from "@mui/material/Tooltip";
-import { setError } from "../../features/common/commonSlice";
+import { Paper } from "@mui/material";
 
 export const ProposalItem = (props) => {
-  const { info, vote, poolInfo, onItemClick, chainUrl, proposalId } = props;
-  const [pTally, setPTally] = useState([]);
-  const tally = pTally;
-  const tallyInfo = computeVotePercentage(tally, poolInfo);
+  const { info, vote, onItemClick, tally } = props;
+  const tallyInfo = computeVotingPercentage(tally);
   const { yes, no, no_with_veto, abstain } = tallyInfo;
   const tallySum =
     Number(yes) + Number(no) + Number(no_with_veto) + Number(abstain);
-  const dispatch = useDispatch();
 
   const tallySumInfo = {
     yes: (tallyInfo.yes / tallySum) * 100,
@@ -32,29 +27,14 @@ export const ProposalItem = (props) => {
     props.setOpen(info?.proposal_id);
   };
 
-  useEffect(() => {
-    const response = async (chainUrl) => {
-      try {
-        const res = await govService.tally(chainUrl, proposalId);
-        return res.data;
-      } catch (error) {
-        dispatch(
-          setError({
-            type: "error",
-            message: "some error occurred",
-          })
-        );
-      }
-    };
-    response(chainUrl).then((res) => {
-      if (res.tally) {
-        setPTally(res.tally);
-      }
-    });
-  }, []);
 
   return (
-    <React.Fragment>
+    <Paper
+      disableElevation
+      sx={{
+        p: 1,
+      }}
+    >
       <CardContent>
         <div
           style={{
@@ -76,39 +56,30 @@ export const ProposalItem = (props) => {
             color="text.primary"
             className="proposal-title"
             onClick={() => onItemClick()}
-            sx={{ cursor: "pointer", marginLeft: "8px", fontWeight:"500" }}
+            sx={{ cursor: "pointer", marginLeft: "8px", fontWeight: "500" }}
           >
             {info.content?.title || info.content?.["@type"]}
           </Typography>
         </div>
 
-        <ul
-          style={{
-            listStyleType: "none",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "left",
-            paddingInlineStart: 0,
-          }}
-        >
-          <li>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Typography variant="body1">Voting ends in &nbsp;</Typography>
-              <Typography variant="body2">
-                {getDaysLeft(info?.voting_end_time)} days
-              </Typography>
-            </div>
-          </li>
-        </ul>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Typography variant="body1">Voting ends in &nbsp;</Typography>
+          <Typography variant="body1">
+            {getDaysLeft(info?.voting_end_time)} days
+          </Typography>
+        </div>
 
-        <div
+        <Box
+          sx={{
+            mt: 1,
+          }}
           style={{
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
           }}
         >
-          <Tooltip title={`${tallyInfo.yes}%`} placement="top">
+          <Tooltip title={`Yes ${tallyInfo.yes}%`} placement="top">
             <Box
               sx={{
                 width: `${tallySumInfo.yes}%`,
@@ -118,7 +89,7 @@ export const ProposalItem = (props) => {
               }}
             ></Box>
           </Tooltip>
-          <Tooltip title={`${tallyInfo.no}%`} placement="top">
+          <Tooltip title={`No ${tallyInfo.no}%`} placement="top">
             <Box
               sx={{
                 width: `${tallySumInfo.no}%`,
@@ -128,7 +99,7 @@ export const ProposalItem = (props) => {
               }}
             ></Box>
           </Tooltip>
-          <Tooltip title={`${tallyInfo.no_with_veto}%`} placement="top">
+          <Tooltip title={`Veto ${tallyInfo.no_with_veto}%`} placement="top">
             <Box
               sx={{
                 width: `${tallySumInfo.no_with_veto}%`,
@@ -138,7 +109,7 @@ export const ProposalItem = (props) => {
               }}
             ></Box>
           </Tooltip>
-          <Tooltip title={`${tallyInfo.abstain}%`} placement="top">
+          <Tooltip title={`Abstain ${tallyInfo.abstain}%`} placement="top">
             <Box
               sx={{
                 width: `${tallySumInfo.abstain}%`,
@@ -148,7 +119,7 @@ export const ProposalItem = (props) => {
               }}
             ></Box>
           </Tooltip>
-        </div>
+        </Box>
       </CardContent>
       <CardActions style={{ display: "flex", justifyContent: "space-between" }}>
         {vote?.proposal_id ? (
@@ -167,7 +138,7 @@ export const ProposalItem = (props) => {
           Vote
         </Button>
       </CardActions>
-    </React.Fragment>
+    </Paper>
   );
 };
 function formatVoteOption(option) {

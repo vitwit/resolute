@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { getProposals, resetTx, txVote } from "../../features/gov/govSlice";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ProposalItem } from "./ProposalItem";
 import {
@@ -20,69 +19,68 @@ import {
 import VoteDialog from "../../components/Vote";
 import { getVoteAuthz } from "../../utils/authorizations";
 import { useNavigate } from "react-router-dom";
-import { getPoolInfo } from "../../features/staking/stakeSlice";
 import FeegranterInfo from "../../components/FeegranterInfo";
-import govService from "../../features/gov/govService";
-import { i } from "mathjs";
 import Box from "@mui/material/Box";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
+import PropTypes from "prop-types";
 
-export default function Proposals({ chainUrl, chainName, chainLogo }) {
+Proposals.propTypes = {
+  restEndpoint: PropTypes.string.isRequired,
+  chainName: PropTypes.string.isRequired,
+  chainLogo: PropTypes.string.isRequired,
+  signer: PropTypes.string.isRequired,
+  chainID: PropTypes.string.isRequired,
+  gasPriceStep: PropTypes.object.isRequired,
+  aminoConfig: PropTypes.object.isRequired,
+  currencies: PropTypes.array.isRequired,
+  bech32Config: PropTypes.object.isRequired,
+};
+
+
+export default function Proposals({ restEndpoint, chainName, chainLogo, signer, gasPriceStep,
+  chainID, aminoConfig, currencies, bech32Config,
+}) {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
-  const proposalTally = useSelector((state) => state.gov.tally.proposalTally);
-  const votes = useSelector((state) => state.gov.votes.proposals);
+  const proposalTally = useSelector((state) => state.gov.tally[chainID]?.proposalTally || {});
+  const votes = useSelector((state) => state.gov.votes[chainID]?.proposals || {});
   const address = useSelector((state) => state.wallet.address);
   const feegrant = useSelector((state) => state.common.feegrant);
 
   const govTx = useSelector((state) => state.gov.tx);
-  const poolInfo = useSelector((state) => state.staking.pool);
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo?.config?.currencies[0]
-  );
+  const currency = currencies[0]
+
+  const proposals = useSelector((state) => state.gov.active[chainID]?.proposals || []);
 
   const dispatch = useDispatch();
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
-  const walletConnected = useSelector((state) => state.wallet.connected);
-  const [proposals, setProposals] = useState([]);
+
   useEffect(() => {
-    const response = async (chainUrl) => {
-      try {
-        const res = await govService.proposals(chainUrl);
-        return res.data;
-      } catch (error) {
-        dispatch(
-        setError({
-          type: "error",
-          message: "some error occurred",
+    if (selectedAuthz.granter.length === 0) {
+      dispatch(
+        getProposals({
+          baseURL: restEndpoint,
+          voter: signer,
+          chainID: chainID,
         })
       );
-      }
-    };
-    response(chainUrl).then((res) => {
-      if(res.proposals) {
-        setProposals(res.proposals);
-      }
-    });
-    if (walletConnected) {
-      if (selectedAuthz.granter.length === 0) {
-        dispatch(
-          getProposals({
-            baseURL: chainInfo.config.rest,
-            voter: address,
-          })
-        );
-      } else {
-        dispatch(
-          getProposals({
-            baseURL: chainInfo.config.rest,
-            voter: selectedAuthz.granter,
-          })
-        );
-      }
+    } else {
+      dispatch(
+        getProposals({
+          baseURL: restEndpoint,
+          chainID: chainID,
+          voter: selectedAuthz.granter,
+        })
+      );
     }
-  }, [chainInfo, address, walletConnected]);
+
+    return () => {
+      dispatch(resetError());
+      dispatch(resetTxHash());
+      dispatch(resetTx());
+      setOpen(false);
+    };
+  }, []);
 
   // authz
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
@@ -105,77 +103,45 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
   }, [errMsg, status]);
 
   useEffect(() => {
-    if (walletConnected) {
-      if (selectedAuthz.granter.length === 0) {
-        if (govTx.status === "idle") {
-          dispatch(resetTx());
-          setOpen(false);
-          dispatch(
-            getProposals({
-              baseURL: chainInfo.config.rest,
-              voter: address,
-            })
-          );
-        }
-      } else {
-        if (authzExecTx.status === "idle") {
-          dispatch(resetExecTx());
-          setOpen(false);
-          dispatch(
-            getProposals({
-              baseURL: chainInfo.config.rest,
-              voter: selectedAuthz.granter,
-            })
-          );
-        }
+    if (selectedAuthz.granter.length === 0) {
+      if (govTx.status === "idle") {
+        dispatch(resetTx());
+        setOpen(false);
+        dispatch(
+          getProposals({
+            baseURL: restEndpoint,
+            voter: signer,
+          })
+        );
+      }
+    } else {
+      if (authzExecTx.status === "idle") {
+        dispatch(resetExecTx());
+        setOpen(false);
+        dispatch(
+          getProposals({
+            baseURL: restEndpoint,
+            voter: selectedAuthz.granter,
+          })
+        );
       }
     }
   }, [govTx, authzExecTx]);
-
-  useEffect(() => {
-    dispatch(
-      getPoolInfo({
-        baseURL: chainInfo.config.rest,
-      })
-    );
-    if (selectedAuthz.granter.length === 0) {
-      dispatch(
-        getProposals({
-          baseURL: chainInfo.config.rest,
-          voter: address,
-        })
-      );
-    } else {
-      dispatch(
-        getProposals({
-          baseURL: chainInfo.config.rest,
-          voter: selectedAuthz.granter,
-        })
-      );
-    }
-    return () => {
-      dispatch(resetError());
-      dispatch(resetTxHash());
-      dispatch(resetTx());
-      setOpen(false);
-    };
-  }, []);
 
   const onVoteSubmit = (option) => {
     const vote = nameToOption(option);
     if (selectedAuthz.granter.length === 0) {
       dispatch(
         txVote({
-          voter: address,
+          voter: signer,
           proposalId: selected,
           option: vote,
           denom: currency.coinMinimalDenom,
-          chainId: chainInfo.config.chainId,
-          rest: chainInfo.config.rest,
-          aminoConfig: chainInfo.aminoConfig,
-          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-          feeAmount:
-            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainId: chainID,
+          rest: restEndpoint,
+          aminoConfig: aminoConfig,
+          prefix: bech32Config.bech32PrefixAccAddr,
+          feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
           feegranter: feegrant.granter,
         })
       );
@@ -188,12 +154,11 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
           option: vote,
           proposalId: selected,
           denom: currency.coinMinimalDenom,
-          chainId: chainInfo.config.chainId,
-          rest: chainInfo.config.rest,
-          aminoConfig: chainInfo.aminoConfig,
-          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-          feeAmount:
-            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainId: chainID,
+          rest: restEndpoint,
+          aminoConfig: aminoConfig,
+          prefix: bech32Config.bech32PrefixAccAddr,
+          feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
           feegranter: feegrant.granter,
         });
       } else {
@@ -289,23 +254,21 @@ export default function Proposals({ chainUrl, chainName, chainLogo }) {
           <>
             {proposals.map((proposal, index) => (
               <Grid item md={6} xs={12} key={index}>
-                <Paper elevation={0} sx={{ p: 1 }}>
-                  <ProposalItem
-                    info={proposal}
-                    tally={proposalTally[proposal?.proposal_id]}
-                    vote={votes[proposal?.proposal_id]}
-                    txStatus={govTx}
-                    setOpen={(pId) => onVoteDialog(pId)}
-                    poolInfo={poolInfo}
-                    onItemClick={() =>
-                      navigate(
-                        `/proposals/${chainName}/${proposal?.proposal_id}`
-                      )
-                    }
-                    chainUrl={chainUrl}
-                    proposalId={proposal?.proposal_id}
-                  />
-                </Paper>
+
+                <ProposalItem
+                  info={proposal}
+                  tally={proposalTally[proposal?.proposal_id]}
+                  vote={votes[proposal?.proposal_id]}
+                  txStatus={govTx}
+                  setOpen={(pId) => onVoteDialog(pId)}
+                  onItemClick={() =>
+                    navigate(
+                      `/proposals/${chainName}/${proposal?.proposal_id}`
+                    )
+                  }
+                  chainUrl={restEndpoint}
+                  proposalId={proposal?.proposal_id}
+                />
               </Grid>
             ))}
 

@@ -48,19 +48,24 @@ export default function Home() {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
           value={value}
           onChange={handleChange}
-          aria-label="basic tabs example"
+          aria-label="menu bar"
         >
           <Tab label="Overview" {...a11yProps(0)} />
-          <Tab label="Active Proposals" {...a11yProps(1)} />
+          <Tab label="Governance" {...a11yProps(1)} />
+          <Tab label="Staking" {...a11yProps(2)} />
+          <Tab label="Multisig" {...a11yProps(3)} />
+          <Tab label="Authz" {...a11yProps(4)} />
+          <Tab label="Feegrant" {...a11yProps(5)} />
+          <Tab label="DAOs" {...a11yProps(6)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <Overview />
+        {/* <Overview />   */}
       </TabPanel>
       <TabPanel value={value} index={1}>
         <ActiveProposals />
