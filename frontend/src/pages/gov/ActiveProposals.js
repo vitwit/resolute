@@ -1,52 +1,38 @@
-import React, { useEffect, useState } from "react";
-import Proposals from "./Proposals";
-import { getMainNetworks, getTestNetworks } from "../../utils/networks";
-import Switch from "@mui/material/Switch";
-import Box from "@mui/material/Box";
-import { Typography } from "@mui/material";
-import { setAuthzMode } from "../../features/authz/authzSlice";
-import { useDispatch, useSelector } from "react-redux";
+import React from 'react'
+import Proposals from './Proposals'
+import { useSelector } from 'react-redux';
+import ConnectWallet from '../../components/ConnectWallet';
 
 function ActiveProposals() {
-  const chains = getMainNetworks();
-  const testChains = getTestNetworks();
-  const dispatch = useDispatch();
-  const [checked, setChecked] = useState(false);
-  const switchHandler = (event) => {
-    setChecked(event.target.checked);
-    if (checked) {
-      dispatch(setAuthzMode(false));
-    } else {
-      dispatch(setAuthzMode(true));
-    }
-  };
+
+  const walletConnected = useSelector((state) => state.wallet.connected);
+  const networks = useSelector((state) => state.wallet.networks);
 
   return (
-    <div>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-end",
-        }}
-      >
-        <Typography sx={{ fontWeight: "500", color: "text.primary" }}>
-          Authz
-        </Typography>
-        <Switch checked={checked} onChange={switchHandler} />
-      </Box>
-      {chains.map((key, index) => (
-        <>
-          {" "}
-          <Proposals
-            chainUrl={key.config.rest}
-            chainName={key.config.chainName}
-            chainLogo={key.logos.menu}
-          />
-        </>
-      ))}
-    </div>
-  );
+    <>
+      {
+        walletConnected ?
+          Object.keys(networks).map((key, index) => (
+            <>
+              <Proposals
+                restEndpoint={networks[key].network?.config?.rest}
+                chainName={networks[key].network?.config?.chainName}
+                chainLogo={networks[key]?.network?.logos?.menu}
+                signer={networks[key].walletInfo?.bech32Address}
+                gasPriceStep={networks[key].network?.config?.gasPriceStep}
+                aminoConfig={networks[key].network.aminoConfig}
+                bech32Config={networks[key].network?.config.bech32Config}
+                chainID={networks[key].network?.config?.chainId}
+                currencies={networks[key].network?.config?.currencies}
+                key={index}
+              />
+            </>
+          ))
+          :
+          <ConnectWallet />
+      }
+    </>
+  )
 }
 
-export default ActiveProposals;
+export default ActiveProposals

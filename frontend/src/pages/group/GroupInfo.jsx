@@ -14,6 +14,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import EditIcon from "@mui/icons-material/Edit";
 import PropTypes from "prop-types";
+import Link from "@mui/material/Link";
 
 import {
   getGroupById,
@@ -184,7 +185,7 @@ const GroupInfo = (props) => {
                   fontWeight={600}
                   color={"primary"}
                 >
-                  {data?.metadata}
+                  {JSON.parse(data?.metadata)?.name}
                   &nbsp;
                   {canUpdateGroup() ? (
                     <IconButton
@@ -207,7 +208,7 @@ const GroupInfo = (props) => {
                 <TextField
                   sx={{ mt: 2 }}
                   name="groupMetadata"
-                  value={metadata}
+                  value={JSON.parse(data?.metadata)?.name}
                   size="small"
                   fullWidth
                   label={"Group Metadata"}
@@ -243,6 +244,58 @@ const GroupInfo = (props) => {
                 </Box>
               </>
             )}
+
+            <Grid container sx={{my: "16px"}}>
+              <Grid item>
+                <Box
+                  sx={{
+                    textAlign: "left",
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    fontWeight={500}
+                    gutterBottom
+                  >
+                    Description
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    color="text.primary"
+                    fontWeight={500}
+                  >
+                  {JSON.parse(data?.metadata).description}
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+
+            <Grid container sx={{my: "16px"}}>
+              <Grid item>
+                <Box
+                  sx={{
+                    textAlign: "left",
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    fontWeight={500}
+                    gutterBottom
+                  >
+                    Forum
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    color="text.primary"
+                    fontWeight={500}
+                  >
+                  <Link href={JSON.parse(data?.metadata).forumUrl} target="_blank">{JSON.parse(data?.metadata).forumUrl}</Link>
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
 
             <Grid spacing={2} container>
               <Grid item md={4} xs={12}>

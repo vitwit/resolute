@@ -1,15 +1,20 @@
-import Button from "@mui/material/Button";
-import React, { useEffect, useState } from "react";
-import { Paper, Grid, TextField, Typography } from "@mui/material";
-import { Box } from "@mui/system";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { resetGroupTx, txCreateGroup } from "../../features/group/groupSlice";
+import React, { useState, useEffect } from "react";
+import Box from "@mui/material/Box";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import { Button, Paper, TextField, Typography } from "@mui/material";
+import { Controller, useForm, useFieldArray } from "react-hook-form";
 import CreateGroupMembersForm from "./CreateGroupMembersForm";
 import CreateGroupPolicy from "./CreateGroupPolicy";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { resetGroupTx, txCreateGroup } from "../../features/group/groupSlice";
+import { Grid } from "@mui/material";
 
-export default function CreateGroupPage() {
+const steps = ["Group information", "Add members", "Attach policy"];
+
+export default function CreateGroupStepper() {
   const [showAddPolicyForm, setShowAddPolicyForm] = useState(null);
 
   const wallet = useSelector((state) => state.wallet);
@@ -34,10 +39,15 @@ export default function CreateGroupPage() {
   const dispatch = useDispatch();
 
   const onSubmit = (data) => {
+    const groupMetaData = {
+      name: data?.name,
+      description: data?.description,
+      forumUrl: data?.forumUrl,
+    };
     const dataObj = {
       admin: address,
       members: data.members,
-      groupMetaData: data?.metadata,
+      groupMetaData: groupMetaData,
       chainId: chainInfo.config.chainId,
       feeAmount: chainInfo.config.gasPriceStep.average,
       denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
@@ -89,6 +99,17 @@ export default function CreateGroupPage() {
     dispatch(txCreateGroup(dataObj));
   };
 
+  const [activeStep, setActiveStep] = React.useState(0);
+  const [groupNameError, setGroupNameError] = useState("");
+  const [groupDescError, setGroupDescError] = useState("");
+  const [groupForumError, setGroupForumError] = useState("");
+  const [memberInfoError, setMemberInfoError] = useState("");
+  const groupInfoErrors = {
+    nameErrors: ["name cannot be empty","name cannot contain more than 25 characters"],
+    descErrors: ["description cannot be empty","description cannot contain more than 100 characters"],
+    forumErrors: ["forum URL cannot be empty","forum URL cannot contain more than 70 characters"]
+  }
+
   const {
     register,
     control,
@@ -108,10 +129,12 @@ export default function CreateGroupPage() {
         },
       ],
       policyMetadata: {
-        metadata: "",
+        name: "",
+        description: "",
         decisionPolicy: "threshold",
-        percentage: 0,
+        percentage: 1,
         threshold: 0,
+        policyAsAdmin: false
       },
     },
   });
@@ -122,193 +145,281 @@ export default function CreateGroupPage() {
     rules: { minLength: 1 },
   });
 
+  const watchAllFields = watch();
+
+  const validateGroupInfo = () => {
+    if (
+      !watchAllFields.name?.trim().length ||
+      !watchAllFields.description?.trim().length ||
+      !watchAllFields.forumUrl?.trim().length
+    ) {
+      setGroupNameError(groupInfoErrors.nameErrors[0]);
+      setGroupDescError(groupInfoErrors.descErrors[0]);
+      setGroupForumError(groupInfoErrors.forumErrors[0]);
+      return 0;
+    }
+    if (
+      watchAllFields.name?.trim().length > 25 ||
+      watchAllFields.description?.trim().length > 100 ||
+      watchAllFields.forumUrl?.trim().length > 70
+    ) {
+      setGroupNameError(groupInfoErrors.nameErrors[1]);
+      setGroupDescError(groupInfoErrors.descErrors[1]);
+      setGroupForumError(groupInfoErrors.forumErrors[1]);
+      return 0;
+    }
+    setGroupNameError("");
+    setGroupDescError("");
+    setGroupForumError("");
+    return 1;
+  };
+
+  const validateMembersInfo = () => {
+    const members = watchAllFields.members;
+    for (let index in members) {
+      if (
+        !members[index].address?.trim().length ||
+        !members[index].metadata?.trim().length ||
+        !members[index].weight?.toString().trim().length
+      ) {
+        setMemberInfoError("fields cannot be empty");
+        return 0;
+      }
+      if (
+        members[index].metadata?.trim().length > 25
+      ) {
+        setMemberInfoError("name length cannot be more than 25 characters");
+        return 0;
+      }
+      if (
+        members[index].weight <= 0
+      ) {
+        setMemberInfoError("weight must be greater than zero");
+        return 0;
+      }
+    }
+    setMemberInfoError("");
+    return 1;
+  };
+
   return (
-    <Grid container>
-      <Grid item md={2} />
-      <Grid item md={8} xs={12}>
-        <Paper elevation={0} sx={{ p: 2, textAlign: "center" }}>
-          <Typography color="text.primary" variant="h6" fontWeight={600}>
-            Create Group
-          </Typography>
-          <Box
-            noValidate
-            autoComplete="off"
-            sx={{
-              "& .MuiTextField-root": { mt: 1.5, mb: 1.5 },
-              p: 2,
-              margin: "0 auto",
-            }}
-          >
-            <form onSubmit={handleSubmit(onSubmit)}>
+    <Box sx={{ width: "100%" }}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Stepper activeStep={activeStep} alternativeLabel>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        {activeStep === 0 ? (
+          <>
+            {/* group info section start */}
+            <Paper
+              elevation={0}
+              sx={{
+                p: 4,
+              }}
+            >
+              <Grid container spacing={2}>
+                <Grid item md={6} xs={12}>
+                  <Controller
+                    name="name"
+                    control={control}
+                    rules={{ required: "Name is required", maxLength: 25 }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        required
+                        label="Name"
+                        size="small"
+                        name="Group name"
+                        fullWidth
+                        sx={{
+                          mb: 2,
+                        }}
+                        error={groupNameError}
+                        helperText={
+                          watchAllFields.name?.trim().length <= 25 &&
+                          watchAllFields.name?.trim().length > 0
+                            ? setGroupNameError("")
+                            : groupNameError ||
+                              watchAllFields.name?.trim().length === 0 ||
+                              !watchAllFields.name?.trim().length
+                            ? groupNameError
+                            : watchAllFields.name?.trim().length <= 25
+                            ? setGroupNameError("")
+                            : setGroupNameError(groupInfoErrors.nameErrors[1])
+                        }
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <Controller
+                    name="forumUrl"
+                    control={control}
+                    rules={{ required: "Forum url is required", maxLength: 70 }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        required
+                        label="Forum URL"
+                        size="small"
+                        name="Group forum"
+                        fullWidth
+                        sx={{
+                          mb: 2,
+                        }}
+                        error={groupForumError}
+                        helperText={
+                          watchAllFields.forumUrl?.trim().length <= 70 &&
+                          watchAllFields.forumUrl?.trim().length > 0
+                            ? setGroupForumError("")
+                            : groupForumError ||
+                              watchAllFields.forumUrl?.trim().length === 0 ||
+                              !watchAllFields.forumUrl?.trim().length
+                            ? groupForumError
+                            : watchAllFields.forumUrl?.trim().length <= 70
+                            ? setGroupForumError("")
+                            : setGroupForumError(groupInfoErrors.forumErrors[1])
+                        }
+                      />
+                    )}
+                  />
+                </Grid>
+              </Grid>
               <div>
                 <Controller
-                  name="metadata"
+                  name="description"
                   control={control}
-                  rules={{ required: "Metadata is required" }}
+                  rules={{
+                    required: "Description is required",
+                    maxLength: 100,
+                  }}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       required
-                      label="Group Metadata"
+                      label="Description"
                       multiline
                       size="small"
-                      name="Group Metadata"
+                      name="Group description"
                       fullWidth
+                      sx={{
+                        mb: 2,
+                      }}
+                      error={groupDescError}
+                      helperText={
+                        watchAllFields.description?.trim().length <= 100 &&
+                        watchAllFields.description?.trim().length > 0
+                          ? setGroupDescError("")
+                          : groupDescError ||
+                            watchAllFields.description?.trim().length === 0 ||
+                            !watchAllFields.description?.trim().length
+                          ? groupDescError
+                          : watchAllFields.description?.trim().length <= 100
+                          ? setGroupDescError("")
+                          : setGroupDescError(groupInfoErrors.descErrors[1])
+                      }
                     />
                   )}
                 />
               </div>
-
-              <Box
-                component={"div"}
-                sx={{
-                  textAlign: "right",
-                  mt: 1,
+            </Paper>
+            {/* group info section end */}
+          </>
+        ) : activeStep === 1 ? (
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+            }}
+          >
+            <Typography color="error">{memberInfoError}</Typography>
+            {/* group members section start */}
+            {fields.length ? (
+              <fieldset
+                style={{
+                  border:"none"
                 }}
               >
-                {/* group members section start */}
-                {/* {(!fields?.length && (
-                  <Button
-                    onClick={() => {
-                      // append({ address: "", weight: 0, metadata: "" });
-                    }}
-                    variant="outlined"
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    size="small"
-                  >
-                    Add Group Member
-                  </Button>
-                )) ||
-                  null} */}
+                <CreateGroupMembersForm
+                  fields={fields}
+                  control={control}
+                  append={append}
+                  remove={remove}
+                  validateMembersInfo={validateMembersInfo}
+                />
+              </fieldset>
+            ) : null}
 
-                {fields.length ? (
-                  <fieldset
-                    style={{
-                      textAlign: "left",
-                      borderWidth: 1.5,
-                      borderRadius: 6,
-                      borderColor: "#b9b9b966",
-                    }}
-                  >
-                    <Typography
-                      component="legend"
-                      variant="body1"
-                      fontWeight={500}
-                    >
-                      Group members
-                    </Typography>
-
-                    <CreateGroupMembersForm
-                      fields={fields}
-                      control={control}
-                      append={append}
-                      remove={remove}
-                    />
-                  </fieldset>
-                ) : null}
-
-                {/* group members section end */}
-
-                {/* group policy section start */}
-                {(fields?.length &&
-                  ((!showAddPolicyForm && (
-                    <Button
-                      onClick={() => {
-                        setShowAddPolicyForm(true);
-                        setValue("policyMetadata.decisionPolicy", "threshold");
-                        setValue("policyMetadata.votingPeriodDuration", "Days");
-                        setValue(
-                          "policyMetadata.minExecPeriodDuration",
-                          "Days"
-                        );
-                      }}
-                      variant="outlined"
-                      sx={{
-                        textTransform: "none",
-                        mt: 2,
-                      }}
-                      size="small"
-                    >
-                      Attach Decision Policy
-                    </Button>
-                  )) ||
-                    null)) ||
-                  null}
-
-                {(fields.length && showAddPolicyForm && (
-                  <fieldset
-                    style={{
-                      textAlign: "left",
-                      borderWidth: 1.5,
-                      borderRadius: 6,
-                      marginTop: 16,
-                      borderColor: "#b9b9b966",
-                    }}
-                  >
-                    <Typography
-                      variant="body1"
-                      color="text.primary"
-                      fontWeight={500}
-                      component="legend"
-                    >
-                      Decision Policy
-                    </Typography>
-                    <CreateGroupPolicy
-                      handleCancelPolicy={() => {
-                        setValue("policyMetadata", null);
-                        setShowAddPolicyForm(false);
-                      }}
-                      setValue={setValue}
-                      reset={reset}
-                      register={register}
-                      errors={errors}
-                      fields={fields}
-                      watch={watch}
-                      control={control}
-                      members={getValues("members")}
-                      showRemoveButton={true}
-                    />
-                  </fieldset>
-                )) ||
-                  null}
-
-                {/* group policy section end */}
-              </Box>
-
-              <Button
-                onClick={() => navigate(`/group`)}
-                color="error"
-                variant="outlined"
-                disableElevation
-                size="medium"
-                sx={{
-                  mt: 2,
-                  mr: 2,
+            {/* group members section end */}
+          </Paper>
+        ) : activeStep === 2 ? (
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+            }}
+          >
+            {/* group policy section start */}
+            {(fields.length && (
+              <fieldset
+                style={{
+                  border:"none"
                 }}
               >
-                cancel
-              </Button>
-              <Button
-                disabled={txCreateGroupRes?.status === "pending"}
-                type="submit"
-                variant="outlined"
-                disableElevation
-                size="medium"
-                sx={{
-                  mt: 2,
-                }}
-              >
-                {txCreateGroupRes?.status === "pending"
-                  ? "Loading..."
-                  : "Create"}
-              </Button>
-            </form>
-          </Box>
-        </Paper>
-      </Grid>
-      <Grid item md={2} />
-    </Grid>
+                <CreateGroupPolicy
+                  handleCancelPolicy={() => {
+                    setValue("policyMetadata", null);
+                    setShowAddPolicyForm(false);
+                  }}
+                  setValue={setValue}
+                  reset={reset}
+                  register={register}
+                  errors={errors}
+                  fields={fields}
+                  watch={watch}
+                  control={control}
+                  members={getValues("members")}
+                />
+              </fieldset>
+            )) ||
+              null}
+
+            {/* group policy section end */}
+          </Paper>
+        ) : (
+          <></>
+        )}
+        {activeStep !== 0 ? (
+          <Button
+            onClick={() => setActiveStep(activeStep === 0 ? 0 : activeStep - 1)}
+          >
+            Back
+          </Button>
+        ) : (
+          <></>
+        )}
+        {activeStep !== 2 ? (
+          <Button
+            onClick={() => {
+              if (activeStep === 0 && validateGroupInfo()) {
+                setActiveStep(activeStep === 2 ? 0 : activeStep + 1);
+              }
+              if (activeStep === 1 && validateMembersInfo()) {
+                setActiveStep(activeStep === 2 ? 0 : activeStep + 1);
+              }
+            }}
+          >
+            Next
+          </Button>
+        ) : (
+          <></>
+        )}
+        {activeStep === 2 ? <Button type="submit">Create Group</Button> : <></>}
+      </form>
+    </Box>
   );
 }

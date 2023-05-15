@@ -369,71 +369,7 @@ const mainNets: Network[] = [
 ];
 
 // add testnet here
-const testNets: Network[] = [
-  {
-    enableModules: {
-      authz: true,
-      feegrant: true,
-      group: false,
-    },
-    aminoConfig: {
-      authz: false,
-      feegrant: false,
-      group: false,
-    },
-    experimental: true,
-    showAirdrop: false,
-    airdropActions: [],
-    airdropMessage: "",
-    logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
-      toolbar:
-        "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
-    },
-    isTestnet: false,
-    explorerTxHashEndpoint: "https://passage.aneka.io/txs/",
-    config: {
-      chainId: "provider",
-      chainName: "ICS-Provider",
-      rest: "https://rest.provider-sentry-01.goc.earthball.xyz",
-      rpc: "https://rpc.provider-sentry-01.goc.earthball.xyz",
-      stakeCurrency: {
-        coinDenom: "PROV",
-        coinMinimalDenom: "uprov",
-        coinDecimals: 6,
-        coinGeckoId: "provider",
-      },
-      bip44: { coinType: 118 },
-      bech32Config: {
-        bech32PrefixAccAddr: `cosmos`,
-        bech32PrefixAccPub: `cosmospub`,
-        bech32PrefixValAddr: `cosmosvaloper`,
-        bech32PrefixValPub: `cosmosvaloperpub`,
-        bech32PrefixConsAddr: `cosmosvalcons`,
-        bech32PrefixConsPub: `cosmosvalconspub`,
-      },
-      currencies: [
-        {
-          coinDenom: "PROV",
-          coinMinimalDenom: "uprov",
-          coinDecimals: 6,
-          coinGeckoId: "provider",
-        },
-      ],
-      feeCurrencies: [
-        {
-          coinDenom: "PROV",
-          coinMinimalDenom: "uprov",
-          coinDecimals: 6,
-          coinGeckoId: "provider",
-        },
-      ],
-      coinType: 118,
-      gasPriceStep: { low: 0.0, average: 0.01, high: 0.02 },
-      walletUrlForStaking: "https://resolute.vitwit.com/staking",
-    },
-  },
-];
+const testNets: Network[] = [];
 
 export function getMainNetworks(): Network[] {
   if (window.location.origin === "https://airdrop.passage3d.com") {
@@ -526,7 +462,7 @@ export function getNetworkByChainId(chainId: string): Network | null {
 }
 
 export function getTestNetworks(): Network[] {
-  if (window.location.origin === "http://localhost:3000") {
+  if ((window.location.origin === "http://localhost:3000") || (window.location.origin === "https://resolute-beta.onrender.com")) {
     return [
       {
         enableModules: {
