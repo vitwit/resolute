@@ -3,6 +3,7 @@ type Currency = {
   coinMinimalDenom: string;
   coinDecimals: number;
   coinGeckoId?: string;
+  gasPriceStep?: GasPrice;
 };
 
 type Logos = { toolbar: string; menu: string };
@@ -37,8 +38,8 @@ interface NetworkConfig {
   bech32Config: Bech32Config;
   currencies: Currency[];
   feeCurrencies?: Currency[];
-  coinType?: number;
   gasPriceStep: GasPrice;
+  coinType?: number;
   walletUrlForStaking?: string;
 }
 
