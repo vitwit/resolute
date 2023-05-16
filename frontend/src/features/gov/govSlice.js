@@ -117,7 +117,7 @@ export const txVote = createAsyncThunk(
         data.prefix,
         [msg],
         260000,
-        "",
+        data?.justification || "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined

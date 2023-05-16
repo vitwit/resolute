@@ -21,6 +21,7 @@ const filterVoteAuthz = (authzs) => {
     }
     result[chainID] = granters;
   }
+
   return result;
 }
 
@@ -74,9 +75,9 @@ function ActiveProposals() {
               <Typography sx={{ fontWeight: "500", color: "text.primary" }}>
                 Authz mode
               </Typography>
-              <Switch checked={isAuthzMode} onChange={() => {
+              <Switch checked={isAuthzMode} onChange={(e) => {
                 setIsAuthzMode(!isAuthzMode);
-                getVoteAuthz(isAuthzMode);
+                getVoteAuthz(e.target.checked);
               }} />
             </Box>
             {

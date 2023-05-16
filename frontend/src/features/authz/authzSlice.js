@@ -212,6 +212,7 @@ export const authzExecHelper = (dispatch, data) => {
           prefix: data.prefix,
           chainId: data.chainId,
           feegranter: data.feegranter,
+          metadata: data.metadata
         })
       );
       break;
@@ -380,7 +381,7 @@ export const txAuthzExec = createAsyncThunk(
         data.prefix,
         data.msgs,
         260000,
-        "",
+        data?.metadata || "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined

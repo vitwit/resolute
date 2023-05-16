@@ -45,13 +45,13 @@ export const connectKeplrWalletV1 = createAsyncThunk(
             await window.keplr.experimentalSuggestChain(mainnets[i].config);
           }
           let chainId = mainnets[i].config.chainId;
-          const result = await getKeplrWalletAmino(chainId);
+          await getKeplrWalletAmino(chainId);
           let walletInfo = await window.keplr.getKey(chainId);
           delete walletInfo?.pubKey;
           delete walletInfo?.address;
+
           results[chainId] = {
             walletInfo: walletInfo,
-            result: result,
             network: mainnets[i],
           };
         } catch (error) {
@@ -65,12 +65,13 @@ export const connectKeplrWalletV1 = createAsyncThunk(
             await window.keplr.experimentalSuggestChain(testnets[i].config);
           }
           let chainId = testnets[i].config.chainId;
-          const result = await getKeplrWalletAmino(chainId);
+          await getKeplrWalletAmino(chainId);
           const walletInfo = await window.keplr.getKey(chainId);
+          delete walletInfo?.pubKey;
+          delete walletInfo?.address;
 
           results[chainId] = {
             walletInfo: walletInfo,
-            result: result,
             network: testnets[i],
           };
         } catch (error) {

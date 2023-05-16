@@ -51,7 +51,6 @@ export default function Proposals({
   const status = useSelector((state) => state.gov.active.status);
   const proposalTally = useSelector((state) => state.gov.tally[chainID]?.proposalTally || {});
   const votes = useSelector((state) => state.gov.votes[chainID]?.proposals || {});
-  const address = useSelector((state) => state.wallet.address);
   const feegrant = useSelector((state) => state.common.feegrant);
 
   const govTx = useSelector((state) => state.gov.tx);
@@ -94,9 +93,9 @@ export default function Proposals({
     }
   }, [errMsg, status]);
 
-  const onVoteSubmit = (option) => {
-    const vote = nameToOption(option);
-    // if (selectedAuthz.granter.length === 0) {
+  const onVoteSubmit = (data) => {
+    const vote = nameToOption(data.option);
+    if (!authzMode) {
     dispatch(
       txVote({
         voter: signer,
@@ -109,28 +108,30 @@ export default function Proposals({
         prefix: bech32Config.bech32PrefixAccAddr,
         feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
         feegranter: feegrant.granter,
+        justification: data.justification,
       })
     );
-    // } else {
-    //   if (authzProposal?.granter === selectedAuthz.granter) {
-    //     authzExecHelper(dispatch, {
-    //       type: "vote",
-    //       from: address,
-    //       granter: selectedAuthz.granter,
-    //       option: vote,
-    //       proposalId: selected,
-    //       denom: currency.coinMinimalDenom,
-    //       chainId: chainID,
-    //       rest: restEndpoint,
-    //       aminoConfig: aminoConfig,
-    //       prefix: bech32Config.bech32PrefixAccAddr,
-    //       feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
-    //       feegranter: feegrant.granter,
-    //     });
-    //   } else {
-    //     alert("You don't have permission to vote");
-    //   }
-    // }
+    } else {
+      if (data?.granter?.length > 0 ) {
+        authzExecHelper(dispatch, {
+          type: "vote",
+          from: signer,
+          granter: data.granter,
+          option: vote,
+          proposalId: selected,
+          denom: currency.coinMinimalDenom,
+          chainId: chainID,
+          rest: restEndpoint,
+          aminoConfig: aminoConfig,
+          prefix: bech32Config.bech32PrefixAccAddr,
+          feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
+          feegranter: feegrant.granter,
+          metadata: data.justification,
+        });
+      } else {
+        alert("granter is empty");
+      }
+    }
   };
 
   const removeFeegrant = () => {
@@ -145,17 +146,8 @@ export default function Proposals({
 
   const [selected, setonShowVote] = useState("");
   const onVoteDialog = (proposalId) => {
-    // if (selectedAuthz.granter.length > 0) {
-    // if (authzProposal?.granter === selectedAuthz.granter) {
-    //   setOpen(true);
-    //   setonShowVote(proposalId);
-    // } else {
-    //   alert("You don't have permission to vote");
-    // }
-    // } else {
     setOpen(true);
     setonShowVote(proposalId);
-    // }
   };
 
   const navigate = useNavigate();
@@ -233,6 +225,8 @@ export default function Proposals({
             open={open}
             closeDialog={closeDialog}
             onVote={onVoteSubmit}
+            isAuthzMode={authzMode}
+            granters={grantsToMe || []}
           />
         </Grid>
       )}
