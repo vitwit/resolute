@@ -29,8 +29,6 @@ export default function UpdateGroupInfoDialog(props) {
   );
 
   const UpdateMetadata = () => {
-    console.log(watchAllFields);
-    console.log("id = ", id);
     const chainInfo = wallet?.chainInfo;
     dispatch(
       txUpdateGroupMetadata({
@@ -123,22 +121,23 @@ export default function UpdateGroupInfoDialog(props) {
             description={description}
             forumUrl={forumUrl}
           />
+          <DialogActions>
+            <Button onClick={dialogCloseHandle}>Cancel</Button>
+            <Button
+              variant="contained"
+              disabled={updateMetadataRes?.status === "pending"}
+              onClick={() => {
+                if (validateGroupInfo()) {
+                  UpdateMetadata();
+                }
+              }}
+            >
+              {updateMetadataRes?.status === "pending"
+                ? "Updating..."
+                : "Update"}
+            </Button>
+          </DialogActions>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={dialogCloseHandle}>Cancel</Button>
-          <Button
-            disabled={updateMetadataRes?.status === "pending"}
-            onClick={() => {
-              if (validateGroupInfo()) {
-                UpdateMetadata();
-              }
-            }}
-          >
-            {updateMetadataRes?.status === "pending"
-              ? "Submitting..."
-              : "Update"}
-          </Button>
-        </DialogActions>
       </Dialog>
     </div>
   );

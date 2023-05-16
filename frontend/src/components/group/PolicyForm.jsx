@@ -1,11 +1,18 @@
 import React from "react";
-import { Button } from "@mui/material";
+import { Button, Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CreateGroupPolicy from "../../pages/group/CreateGroupPolicy";
+import { useDispatch, useSelector } from "react-redux";
 
 function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
-    // console.log("policy data:")
-    // console.log(policyObj)
+  const groupMembersInfo = useSelector(
+    (state) => state.group.groupMembers.members
+  );
+  let groupMembers = [];
+  for (let index in groupMembersInfo) {
+    groupMembers.push(groupMembersInfo[index].member);
+  }
+
   var policyInitialObj = {
     name: "",
     description: "",
@@ -19,27 +26,32 @@ function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
 
   if (policyObj) {
     policyInitialObj = {
-      name: JSON.parse(policyObj?.metadata).name || "Sample name",
-      description:
-        JSON.parse(policyObj?.metadata).description || "Sample description",
       decisionPolicy:
         policyObj?.decision_policy?.["@type"] ===
         "/cosmos.group.v1.ThresholdDecisionPolicy"
           ? "threshold"
           : "percentage",
       threshold: Number(policyObj?.decision_policy?.threshold || 0),
-      percentage: Number(policyObj?.decision_policy?.percentage || 1),
+      percentage: Number(policyObj?.decision_policy?.percentage * 100 || 1),
       votingPeriod:
-        "12" ||
-        parseFloat(policyObj?.decision_policy?.windows?.voting_period || 0),
+        parseFloat(policyObj?.decision_policy?.windows?.voting_period || 0) /
+        (24 * 60 * 60),
       minExecPeriod:
-        12 ||
         parseFloat(
           policyObj?.decision_policy?.windows?.min_execution_period || 0
-        ),
+        ) /
+        (24 * 60 * 60),
       policyAsAdmin: false,
+      minExecPeriodDuration: "Days",
+      votingPeriodDuration: "Days",
     };
   }
+
+  const decisionPolicyType =
+    policyObj?.decision_policy?.["@type"] ===
+    "/cosmos.group.v1.ThresholdDecisionPolicy"
+      ? "threshold"
+      : "percentage";
 
   const {
     register,
@@ -57,9 +69,7 @@ function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
   });
 
   const onSubmit = (data) => {
-    // console.log("submitted data:.....")
-    // console.log(data);
-    handlePolicy(data)
+    handlePolicy(data);
   };
 
   return (
@@ -79,14 +89,18 @@ function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
             watch={watch}
             control={control}
             policyUpdate={true}
-            members={[
-              { address: "q", weight: "1", metadata: "q" },
-              { address: "q", weight: "1", metadata: "q" },
-            ]}
+            members={groupMembers}
+            decisionPolicyType={decisionPolicyType}
           />
         </fieldset>
-        <Button onClick={()=>handlePolicyClose()}>Cancel</Button>
-        <Button type="submit">Submit</Button>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Button onClick={() => handlePolicyClose()} sx={{ mx: "8px" }}>
+            Cancel
+          </Button>
+          <Button variant="contained" type="submit" sx={{ mx: "8px" }}>
+            Update
+          </Button>
+        </Box>
       </form>
     </>
   );
