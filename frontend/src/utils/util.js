@@ -73,6 +73,30 @@ export function computeVotePercentage(tally, poolInfo) {
   return result;
 }
 
+export function computeVotingPercentage(tally) {
+  if (tally == null || tally.yes == null) {
+    return {
+      yes: 0,
+      no: 0,
+      abstain: 0,
+      no_with_veto: 0,
+    };
+  }
+  const yes = parseInt(tally?.yes);
+  const no = parseInt(tally?.no);
+  const abstain = parseInt(tally?.abstain);
+  const noWithVeto = parseInt(tally?.no_with_veto);
+  const total = yes + no + abstain + noWithVeto;
+
+  let result = {};
+  result["yes"] = ((yes / total) * 100).toFixed(2);
+  result["no"] = ((no / total) * 100).toFixed(2);
+  result["abstain"] = ((abstain / total) * 100).toFixed(2);
+  result["no_with_veto"] = ((noWithVeto / total) * 100).toFixed(2);
+
+  return result;
+}
+
 export function shortenPubKey(pubKey, n) {
   return pubKey?.length > n ? `${pubKey.substr(0, n - 3)}...` : pubKey;
 }

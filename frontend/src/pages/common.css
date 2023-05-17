@@ -21,7 +21,6 @@
         -webkit-box-orient: vertical;
         text-align: left;
         min-height: 48px;
-        margin-top: 8px !important;
 }
 
 .inline-space-between {
@@ -96,4 +95,8 @@
 
 .footer-link:hover {
         cursor: pointer;
+}
+
+.proposal-description-markdown p, .proposal-description-markdown h1, .proposal-description-markdown h2, .proposal-description-markdown ul, .proposal-description-markdown ol {
+        margin: 0;
 }

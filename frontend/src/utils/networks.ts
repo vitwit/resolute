@@ -21,13 +21,17 @@ const mainNets: Network[] = [
     isTestnet: false,
     explorerTxHashEndpoint: "https://www.mintscan.io/cosmos/txs/",
     config: {
+      gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
       chainId: "cosmoshub-4",
       chainName: "Cosmos Hub",
       rest: "https://resolute.witval.com/cosmos_api",
       rpc: "https://resolute.witval.com/cosmos_rpc/",
-      gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
       currencies: [
-        { coinDenom: "ATOM", coinMinimalDenom: "uatom", coinDecimals: 6 },
+        {
+          coinDenom: "ATOM",
+          coinMinimalDenom: "uatom",
+          coinDecimals: 6,
+        },
       ],
       bech32Config: {
         bech32PrefixAccAddr: `cosmos`,
@@ -96,6 +100,7 @@ const mainNets: Network[] = [
           coinMinimalDenom: "upasg",
           coinDecimals: 6,
           coinGeckoId: "passage",
+          gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
         },
       ],
       coinType: 118,
@@ -167,10 +172,12 @@ const mainNets: Network[] = [
       chainName: "Akash",
       rest: " https://resolute.witval.com/akash_api",
       rpc: "https://resolute.witval.com/akash_rpc/",
-      gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 },
       currencies: [
-        { coinDenom: "AKT", coinMinimalDenom: "uakt", coinDecimals: 6 },
+        {
+          coinDenom: "AKT", coinMinimalDenom: "uakt", coinDecimals: 6,
+        },
       ],
+      gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 },
       bech32Config: {
         bech32PrefixAccAddr: `akash`,
         bech32PrefixAccPub: `akashpub`,
@@ -207,7 +214,9 @@ const mainNets: Network[] = [
       rest: "https://resolute.witval.com/osmosis_api",
       rpc: "https://resolute.witval.com/osmosis_rpc/",
       currencies: [
-        { coinDenom: "OSMO", coinMinimalDenom: "uosmo", coinDecimals: 6 },
+        {
+          coinDenom: "OSMO", coinMinimalDenom: "uosmo", coinDecimals: 6,
+        },
       ],
       gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
       bech32Config: {
@@ -246,7 +255,9 @@ const mainNets: Network[] = [
       rest: "https://resolute.witval.com/juno_api",
       rpc: "https://resolute.witval.com/juno_rpc/",
       currencies: [
-        { coinDenom: "JUNO", coinMinimalDenom: "ujuno", coinDecimals: 6 },
+        {
+          coinDenom: "JUNO", coinMinimalDenom: "ujuno", coinDecimals: 6,
+        },
       ],
       gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
       bech32Config: {
@@ -319,7 +330,9 @@ const mainNets: Network[] = [
       rest: "https://resolute.witval.com/stargaze_api",
       rpc: "https://resolute.witval.com/stargaze_rpc/",
       currencies: [
-        { coinDenom: "STARS", coinMinimalDenom: "ustars", coinDecimals: 6 },
+        {
+          coinDenom: "STARS", coinMinimalDenom: "ustars", coinDecimals: 6,
+        },
       ],
       gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
       bech32Config: {
@@ -369,71 +382,7 @@ const mainNets: Network[] = [
 ];
 
 // add testnet here
-const testNets: Network[] = [
-  {
-    enableModules: {
-      authz: true,
-      feegrant: true,
-      group: false,
-    },
-    aminoConfig: {
-      authz: false,
-      feegrant: false,
-      group: false,
-    },
-    experimental: true,
-    showAirdrop: false,
-    airdropActions: [],
-    airdropMessage: "",
-    logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
-      toolbar:
-        "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
-    },
-    isTestnet: false,
-    explorerTxHashEndpoint: "https://passage.aneka.io/txs/",
-    config: {
-      chainId: "provider",
-      chainName: "ICS-Provider",
-      rest: "https://rest.provider-sentry-01.goc.earthball.xyz",
-      rpc: "https://rpc.provider-sentry-01.goc.earthball.xyz",
-      stakeCurrency: {
-        coinDenom: "PROV",
-        coinMinimalDenom: "uprov",
-        coinDecimals: 6,
-        coinGeckoId: "provider",
-      },
-      bip44: { coinType: 118 },
-      bech32Config: {
-        bech32PrefixAccAddr: `cosmos`,
-        bech32PrefixAccPub: `cosmospub`,
-        bech32PrefixValAddr: `cosmosvaloper`,
-        bech32PrefixValPub: `cosmosvaloperpub`,
-        bech32PrefixConsAddr: `cosmosvalcons`,
-        bech32PrefixConsPub: `cosmosvalconspub`,
-      },
-      currencies: [
-        {
-          coinDenom: "PROV",
-          coinMinimalDenom: "uprov",
-          coinDecimals: 6,
-          coinGeckoId: "provider",
-        },
-      ],
-      feeCurrencies: [
-        {
-          coinDenom: "PROV",
-          coinMinimalDenom: "uprov",
-          coinDecimals: 6,
-          coinGeckoId: "provider",
-        },
-      ],
-      coinType: 118,
-      gasPriceStep: { low: 0.0, average: 0.01, high: 0.02 },
-      walletUrlForStaking: "https://resolute.vitwit.com/staking",
-    },
-  },
-];
+const testNets: Network[] = [];
 
 export function getMainNetworks(): Network[] {
   if (window.location.origin === "https://airdrop.passage3d.com") {
@@ -495,6 +444,7 @@ export function getMainNetworks(): Network[] {
               coinMinimalDenom: "upasg",
               coinDecimals: 6,
               coinGeckoId: "passage",
+              gasPriceStep: { low: 0.0, average: 0.0, high: 0.0 },
             },
           ],
           coinType: 118,
@@ -526,7 +476,7 @@ export function getNetworkByChainId(chainId: string): Network | null {
 }
 
 export function getTestNetworks(): Network[] {
-  if (window.location.origin === "http://localhost:3000") {
+  if ((window.location.origin === "http://localhost:3000") || (window.location.origin === "https://resolute-beta.onrender.com")) {
     return [
       {
         enableModules: {
@@ -582,6 +532,7 @@ export function getTestNetworks(): Network[] {
               coinMinimalDenom: "stake",
               coinDecimals: 6,
               coinGeckoId: "stake",
+              gasPriceStep: { low: 0.0, average: 0.01, high: 0.2 },
             },
           ],
           coinType: 118,

@@ -4,14 +4,14 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
-import { getSelectedNetwork, saveSelectedNetwork } from "./../utils/networks";
+import { getMainNetworks, getSelectedNetwork, getTestNetworks, saveSelectedNetwork } from "./../utils/networks";
 import Link from "@mui/material/Link";
 import { Routes, Route } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  resetWallet,
   connectKeplrWallet,
   setNetwork,
+  connectKeplrWalletV1,
 } from "./../features/wallet/walletSlice";
 import { useNavigate } from "react-router-dom";
 import AlertTitle from "@mui/material/AlertTitle";
@@ -30,7 +30,8 @@ import { getPallet, isDarkMode, mdTheme } from "../utils/theme";
 import { getFeegrant, isConnected, logout } from "../utils/localStorage";
 import { Paper, Typography } from "@mui/material";
 import { exitAuthzMode } from "../features/authz/authzSlice";
-import { copyToClipboard } from "../utils/clipboard";
+import Home from "./Home";
+import { defaultPallet } from "../utils/pallet";
 
 const GroupPage = lazy(() => import("./GroupPage"));
 const Group = lazy(() => import("./group/Group"));
@@ -55,7 +56,7 @@ const MultiTx = lazy(() => import("./MultiTx"));
 const Feegrant = lazy(() => import("./feegrant/Feegrant"));
 const NewFeegrant = lazy(() => import("./feegrant/NewFeegrant"));
 
-function DashboardContent(props) {
+function DashboardContent() {
   const [snackOpen, setSnackOpen] = useState(false);
   const showSnack = (value) => {
     setSnackOpen(value);
@@ -68,48 +69,37 @@ function DashboardContent(props) {
   };
 
   const txLoadRes = useSelector((state) => state?.common?.txLoadRes?.load);
-  const [pallet, setPallet] = useState(getPallet());
-  const balance = useSelector((state) => state.bank.balance);
 
   const [snackTxOpen, setSnackTxClose] = useState(false);
   const showTxSnack = (value) => {
     setSnackTxClose(value);
   };
-  const selectedAuthz = useSelector((state) => state.authz.selected);
 
-  const [selectedNetwork, setSelectedNetwork] = useState(props.selectedNetwork);
-  const changeNetwork = (network) => {
-    saveSelectedNetwork(network.config.chainName);
-    setSelectedNetwork(network);
-    setPallet(getPallet());
-  };
-
-  const wallet = useSelector((state) => state.wallet);
+  const mainnets = getMainNetworks();
+  const testnets = getTestNetworks();
   useEffect(() => {
-    const network = getSelectedNetwork();
-    dispatch(
-      setNetwork({
-        chainInfo: network,
-      })
-    );
 
-    // wait for keplr instance to available
     setTimeout(() => {
-      if (isConnected()) {
-        dispatch(connectKeplrWallet(network));
-      }
-    }, 200);
-
+      dispatch(
+        connectKeplrWalletV1({
+          mainnets: mainnets,
+          testnets: testnets,
+        })
+      );
+    }, 1000);
+    
     const listener = () => {
       setTimeout(() => {
-        if (isConnected()) {
-          dispatch(connectKeplrWallet(network));
-        }
+        dispatch(
+          connectKeplrWalletV1({
+            mainnets: mainnets,
+            testnets: testnets,
+          })
+        );
       }, 1000);
     };
     window.addEventListener("keplr_keystorechange", listener);
 
-    setSelectedNetwork(network);
     return () => {
       window.removeEventListener("keplr_keystorechange", listener);
     };
@@ -137,276 +127,205 @@ function DashboardContent(props) {
     }
   }, [txSuccess]);
 
-  const handleNetworkChange = (network) => {
-    dispatch(connectKeplrWallet(network));
-    changeNetwork(network);
-  };
-
-  function disconnectWallet() {
-    logout();
-    if (selectedAuthz.granter?.length > 0) {
-      dispatch(exitAuthzMode());
-    }
-    dispatch(resetWallet());
-  }
-
-  useEffect(() => {
-    if (wallet?.connected && wallet?.isNanoLedger) {
-      // check if feegrant is available and set it in the redux store
-      const feegrant = getFeegrant();
-      if (feegrant && feegrant.grantee === wallet.address) {
-        dispatch(setFeegrant(feegrant));
-      } else {
-        dispatch(resetFeegrant());
-      }
-    }
-  }, [wallet]);
-
-  const connectWallet = (network) => {
-    dispatch(connectKeplrWallet(network));
-  };
-
-  let navigate = useNavigate();
-  function navigateTo(path) {
-    navigate(path);
-  }
-
-  const [drawerOpen, setDrawerOpen] = React.useState(true);
 
   return (
     <ThemeProvider
-      theme={mdTheme(darkMode, pallet?.primary, pallet?.secondary)}
+      theme={mdTheme(darkMode, defaultPallet.primary, defaultPallet.secondary)}
     >
-      {chainInfo?.config ? (
-        <>
-          <CustomAppBar
-            selectedNetwork={selectedNetwork}
-            onNetworkChange={(network) => handleNetworkChange(network)}
-            darkMode={darkMode}
-            onModeChange={() => onModeChange()}
-            onExit={() => {
-              dispatch(exitAuthzMode());
-              setTimeout(() => {
-                navigateTo("/");
-              }, 400);
+      <>
+        <CustomAppBar
+          darkMode={darkMode}
+          onModeChange={() => onModeChange()}
+        />
+
+        <Box sx={{ display: "flex" }}>
+          <Box
+            component="main"
+            sx={{
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? theme.palette.grey[200]
+                  : theme.palette.grey[900],
+              flexGrow: 1,
+              height: "96vh",
+              overflow: "auto",
             }}
-            toggleDrawer={() => setDrawerOpen(!drawerOpen)}
-          />
-          <Box sx={{ display: "flex" }}>
-            <AppDrawer
-              balance={balance}
-              chainInfo={chainInfo}
-              onConnectWallet={connectWallet}
-              onDisconnectWallet={disconnectWallet}
-              onNavigate={navigateTo}
-              selectedNetwork={selectedNetwork}
-              wallet={wallet}
-              onCopy={(msg) => copyToClipboard(msg, dispatch)}
-              selectedAuthz={selectedAuthz}
-              open={drawerOpen}
-            />
-            <Box
-              component="main"
-              sx={{
-                backgroundColor: (theme) =>
-                  theme.palette.mode === "light"
-                    ? theme.palette.grey[200]
-                    : theme.palette.grey[900],
-                flexGrow: 1,
-                height: "96vh",
-                overflow: "auto",
-              }}
-            >
-              {selectedAuthz.granter?.length > 0 ? (
+          >
+
+            <Toolbar />
+            <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
+              <Routes>
+                <Route path="/" element={<Home />} />
                 <>
-                  <Toolbar />
-                  <Toolbar />
+                  <Route
+                    path="/feegrant"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <Feegrant />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/feegrant/new"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <NewFeegrant />
+                      </Suspense>
+                    }
+                  ></Route>
                 </>
-              ) : (
-                <Toolbar />
-              )}
-              <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
-                <Routes>
-                  <Route path="/" element={<Overview />} />
 
-                  {chainInfo?.enableModules?.feegrant ? (
-                    <>
-                      <Route
-                        path="/feegrant"
-                        element={
-                          <Suspense fallback={<CircularProgress />}>
-                            <Feegrant />
-                          </Suspense>
-                        }
-                      ></Route>
-                      <Route
-                        path="/feegrant/new"
-                        element={
-                          <Suspense fallback={<CircularProgress />}>
-                            <NewFeegrant />
-                          </Suspense>
-                        }
-                      ></Route>
-                    </>
-                  ) : null}
-                  {chainInfo?.enableModules?.authz ? (
-                    <>
-                      <Route
-                        path="/authz"
-                        element={
-                          <Suspense fallback={<CircularProgress />}>
-                            <Authz />
-                          </Suspense>
-                        }
-                      />
-                      <Route
-                        path="/authz/new"
-                        element={
-                          <Suspense fallback={<CircularProgress />}>
-                            <NewAuthz />
-                          </Suspense>
-                        }
-                      ></Route>
-                    </>
-                  ) : null}
+                <>
                   <Route
-                    path="/slashing"
+                    path="/authz"
                     element={
                       <Suspense fallback={<CircularProgress />}>
-                        <UnjailPage />
+                        <Authz />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/authz/new"
+                    element={
+                      <Suspense fallback={<CircularProgress />}>
+                        <NewAuthz />
                       </Suspense>
                     }
                   ></Route>
-                  <Route
-                    path="/staking"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Validators />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/governance"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Proposals />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/proposals/:id"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <ProposalInfo />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/send"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <SendPage />
-                      </Suspense>
-                    }
-                  ></Route>
+                </>
+                <Route
+                  path="/slashing"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <UnjailPage />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/staking"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <Validators />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/governance"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <Proposals />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/proposals/:chainName/:id"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <ProposalInfo />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/send"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <SendPage />
+                    </Suspense>
+                  }
+                ></Route>
 
-                  {selectedNetwork.showAirdrop ? (
-                    <Route
-                      path="/airdrop-check"
-                      element={
-                        <Suspense fallback={<CircularProgress />}>
-                          <AirdropEligibility />
-                        </Suspense>
-                      }
-                    ></Route>
-                  ) : (
-                    <></>
-                  )}
-                  <Route
-                    path="/multisig"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <PageMultisig />
-                      </Suspense>
-                    }
-                  ></Route>
+                <Route
+                  path="/airdrop-check"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <AirdropEligibility />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/multisig"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <PageMultisig />
+                    </Suspense>
+                  }
+                ></Route>
 
-                  <Route
-                    path="/multisig/:address/txs"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <PageMultisigInfo />
-                      </Suspense>
-                    }
-                  ></Route>
+                <Route
+                  path="/multisig/:address/txs"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <PageMultisigInfo />
+                    </Suspense>
+                  }
+                ></Route>
 
-                  <Route
-                    path="/multisig/:address/create-tx"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <PageCreateTx />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/group"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <GroupPage />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/groups/:id"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Group />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/groups/proposals/:id"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Proposal />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/groups/:id/policies/:policyId"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Policy />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/group/:id/policies/:policyAddress/proposals"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <CreateProposal />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/group/create-group"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <CreateGroupNewPage />
-                      </Suspense>
-                    }
-                  ></Route>
+                <Route
+                  path="/multisig/:address/create-tx"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <PageCreateTx />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/group"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <GroupPage />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/groups/:id"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <Group />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/groups/proposals/:id"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <Proposal />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/groups/:id/policies/:policyId"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <Policy />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/group/:id/policies/:policyAddress/proposals"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <CreateProposal />
+                    </Suspense>
+                  }
+                ></Route>
+                <Route
+                  path="/group/create-group"
+                  element={
+                    <Suspense fallback={<CircularProgress />}>
+                      <CreateGroupNewPage />
+                    </Suspense>
+                  }
+                ></Route>
 
-                  <Route path="*" element={<Page404 />}></Route>
-                </Routes>
-              </Container>
-            </Box>
+                <Route path="*" element={<Page404 />}></Route>
+              </Routes>
+            </Container>
           </Box>
-          <Footer />
-        </>
-      ) : (
-        <></>
-      )}
+        </Box>
+        <Footer />
+      </>
+
+
       {errState?.message?.length > 0 ? (
         <Snackbar
           open={
@@ -495,41 +414,12 @@ function DashboardContent(props) {
 }
 
 export default function Dashboard() {
-  const dispatch = useDispatch();
 
-  const network = getSelectedNetwork();
-  useEffect(() => {
-    dispatch(
-      setNetwork({
-        chainInfo: network,
-      })
-    );
-
-    // wait for keplr instance to available
-    setTimeout(() => {
-      if (isConnected()) {
-        dispatch(connectKeplrWallet(network));
-      }
-    }, 200);
-
-    const listener = () => {
-      setTimeout(() => {
-        if (isConnected()) {
-          dispatch(connectKeplrWallet(network));
-        }
-      }, 1000);
-    };
-    window.addEventListener("keplr_keystorechange", listener);
-
-    return () => {
-      window.removeEventListener("keplr_keystorechange", listener);
-    };
-  }, []);
-  return network ? (
-    <DashboardContent key={1} selectedNetwork={network} />
-  ) : (
-    <></>
-  );
+  return (
+    <>
+      <DashboardContent key={1} />
+    </>
+  )
 }
 
 const Footer = () => {

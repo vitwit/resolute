@@ -13,7 +13,88 @@ const initialState = {
   chainInfo: {
     currencies: [],
   },
+  networks: {},
 };
+
+export const connectKeplrWalletV1 = createAsyncThunk(
+  "wallet/connectv1",
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    const mainnets = data.mainnets;
+    const testnets = data.testnets;
+
+    if (!isKeplrInstalled()) {
+      dispatch(
+        setError({
+          type: "error",
+          message: "Keplr wallet is not installed",
+        })
+      );
+      return rejectWithValue("Keplr wallet is not installed");
+    } else {
+      window.keplr.defaultOptions = {
+        sign: {
+          preferNoSetMemo: true,
+          disableBalanceCheck: true,
+        },
+      };
+
+      const results = {};
+      for (let i = 0; i < mainnets.length; i++) {
+        try {
+          if (mainnets[i].experimental) {
+            await window.keplr.experimentalSuggestChain(mainnets[i].config);
+          }
+          let chainId = mainnets[i].config.chainId;
+          await getKeplrWalletAmino(chainId);
+          let walletInfo = await window.keplr.getKey(chainId);
+          delete walletInfo?.pubKey;
+          delete walletInfo?.address;
+
+          results[chainId] = {
+            walletInfo: walletInfo,
+            network: mainnets[i],
+          };
+        } catch (error) {
+          console.log("unable to connect: ", error);
+        }
+      }
+
+      for (let i = 0; i < testnets.length; i++) {
+        try {
+          if (testnets[i].experimental) {
+            await window.keplr.experimentalSuggestChain(testnets[i].config);
+          }
+          let chainId = testnets[i].config.chainId;
+          await getKeplrWalletAmino(chainId);
+          const walletInfo = await window.keplr.getKey(chainId);
+          delete walletInfo?.pubKey;
+          delete walletInfo?.address;
+
+          results[chainId] = {
+            walletInfo: walletInfo,
+            network: testnets[i],
+          };
+        } catch (error) {
+          console.log("unable to connect: ", error);
+        }
+      }
+
+      if (results.length === 0) {
+        dispatch(
+          setError({
+            type: "error",
+            message: "Permission denied for all the networks",
+          })
+        );
+        return rejectWithValue("Permission denied for all the networks");
+      } else {
+        setConnected();
+        return fulfillWithValue(results);
+      }
+
+    }
+  }
+)
 
 export const connectKeplrWallet = createAsyncThunk(
   "wallet/connect",
@@ -90,7 +171,7 @@ export const walletSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(connectKeplrWallet.pending, () => {})
+      .addCase(connectKeplrWallet.pending, () => { })
       .addCase(connectKeplrWallet.fulfilled, (state, action) => {
         const result = action.payload;
         state.name = result.walletInfo?.name;
@@ -100,7 +181,16 @@ export const walletSlice = createSlice({
         state.connected = true;
         state.isNanoLedger = action.payload?.walletInfo?.isNanoLedger || false;
       })
-      .addCase(connectKeplrWallet.rejected, () => {});
+      .addCase(connectKeplrWallet.rejected, () => { })
+
+
+      .addCase(connectKeplrWalletV1.pending, () => { })
+      .addCase(connectKeplrWalletV1.fulfilled, (state, action) => {
+        const result = action.payload;
+        state.networks = result;
+        state.connected = true;
+      })
+      .addCase(connectKeplrWalletV1.rejected, () => { });
   },
 });
 

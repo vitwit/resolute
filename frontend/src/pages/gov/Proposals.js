@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { getProposals, resetTx, txVote } from "../../features/gov/govSlice";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ProposalItem } from "./ProposalItem";
 import {
@@ -20,61 +19,67 @@ import {
 import VoteDialog from "../../components/Vote";
 import { getVoteAuthz } from "../../utils/authorizations";
 import { useNavigate } from "react-router-dom";
-import { getPoolInfo } from "../../features/staking/stakeSlice";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import Box from "@mui/material/Box";
+import Badge from "@mui/material/Badge";
+import Avatar from "@mui/material/Avatar";
+import PropTypes from "prop-types";
 
-export default function Proposals() {
-  const proposals = useSelector((state) => state.gov.active.proposals);
+Proposals.propTypes = {
+  restEndpoint: PropTypes.string.isRequired,
+  chainName: PropTypes.string.isRequired,
+  chainLogo: PropTypes.string.isRequired,
+  signer: PropTypes.string.isRequired,
+  chainID: PropTypes.string.isRequired,
+  gasPriceStep: PropTypes.object.isRequired,
+  aminoConfig: PropTypes.object.isRequired,
+  currencies: PropTypes.array.isRequired,
+  bech32Config: PropTypes.object.isRequired,
+  authzMode: PropTypes.bool.isRequired,
+  grantsToMe: PropTypes.array.isRequired,
+};
+
+
+export default function Proposals({
+  restEndpoint, chainName, chainLogo,
+  signer, gasPriceStep,
+  chainID, aminoConfig,
+  currencies, bech32Config, authzMode,
+  grantsToMe,
+}) {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
-  const proposalTally = useSelector((state) => state.gov.tally.proposalTally);
-  const votes = useSelector((state) => state.gov.votes.proposals);
-  const address = useSelector((state) => state.wallet.address);
+  const proposalTally = useSelector((state) => state.gov.tally[chainID]?.proposalTally || {});
+  const votes = useSelector((state) => state.gov.votes[chainID]?.proposals || {});
   const feegrant = useSelector((state) => state.common.feegrant);
 
   const govTx = useSelector((state) => state.gov.tx);
-  const poolInfo = useSelector((state) => state.staking.pool);
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo?.config?.currencies[0]
-  );
+  const currency = currencies[0]
+
+  const proposals = useSelector((state) => state.gov.active[chainID]?.proposals || []);
 
   const dispatch = useDispatch();
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
-  const walletConnected = useSelector((state) => state.wallet.connected);
+
   useEffect(() => {
-    if (walletConnected) {
+    if (!authzMode || (authzMode && grantsToMe.length > 0)) {
       dispatch(
-        getGrantsToMe({
-          baseURL: chainInfo.config.rest,
-          grantee: address,
+        getProposals({
+          baseURL: restEndpoint,
+          voter: signer,
+          chainID: chainID,
         })
       );
-
-      if (selectedAuthz.granter.length === 0) {
-        dispatch(
-          getProposals({
-            baseURL: chainInfo.config.rest,
-            voter: address,
-          })
-        );
-      } else {
-        dispatch(
-          getProposals({
-            baseURL: chainInfo.config.rest,
-            voter: selectedAuthz.granter,
-          })
-        );
-      }
     }
-  }, [chainInfo, address, walletConnected]);
+
+    return () => {
+      dispatch(resetError());
+      dispatch(resetTxHash());
+      dispatch(resetTx());
+      setOpen(false);
+    };
+  }, []);
 
   // authz
-  const grantsToMe = useSelector((state) => state.authz.grantsToMe);
-  const selectedAuthz = useSelector((state) => state.authz.selected);
-  const authzProposal = useMemo(
-    () => getVoteAuthz(grantsToMe.grants, selectedAuthz.granter),
-    [grantsToMe.grants, selectedAuthz]
-  );
   const authzExecTx = useSelector((state) => state.authz.execTx);
 
   useEffect(() => {
@@ -88,100 +93,43 @@ export default function Proposals() {
     }
   }, [errMsg, status]);
 
-  useEffect(() => {
-    if (walletConnected) {
-      if (selectedAuthz.granter.length === 0) {
-        if (govTx.status === "idle") {
-          dispatch(resetTx());
-          setOpen(false);
-          dispatch(
-            getProposals({
-              baseURL: chainInfo.config.rest,
-              voter: address,
-            })
-          );
-        }
-      } else {
-        if (authzExecTx.status === "idle") {
-          dispatch(resetExecTx());
-          setOpen(false);
-          dispatch(
-            getProposals({
-              baseURL: chainInfo.config.rest,
-              voter: selectedAuthz.granter,
-            })
-          );
-        }
-      }
-    }
-  }, [govTx, authzExecTx]);
-
-  useEffect(() => {
+  const onVoteSubmit = (data) => {
+    const vote = nameToOption(data.option);
+    if (!authzMode) {
     dispatch(
-      getPoolInfo({
-        baseURL: chainInfo.config.rest,
+      txVote({
+        voter: signer,
+        proposalId: selected,
+        option: vote,
+        denom: currency.coinMinimalDenom,
+        chainId: chainID,
+        rest: restEndpoint,
+        aminoConfig: aminoConfig,
+        prefix: bech32Config.bech32PrefixAccAddr,
+        feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant.granter,
+        justification: data.justification,
       })
     );
-    if (selectedAuthz.granter.length === 0) {
-      dispatch(
-        getProposals({
-          baseURL: chainInfo.config.rest,
-          voter: address,
-        })
-      );
     } else {
-      dispatch(
-        getProposals({
-          baseURL: chainInfo.config.rest,
-          voter: selectedAuthz.granter,
-        })
-      );
-    }
-    return () => {
-      dispatch(resetError());
-      dispatch(resetTxHash());
-      dispatch(resetTx());
-      setOpen(false);
-    };
-  }, []);
-
-  const onVoteSubmit = (option) => {
-    const vote = nameToOption(option);
-    if (selectedAuthz.granter.length === 0) {
-      dispatch(
-        txVote({
-          voter: address,
-          proposalId: selected,
-          option: vote,
-          denom: currency.coinMinimalDenom,
-          chainId: chainInfo.config.chainId,
-          rest: chainInfo.config.rest,
-          aminoConfig: chainInfo.aminoConfig,
-          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-          feeAmount:
-            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-            feegranter: feegrant.granter,
-        })
-      );
-    } else {
-      if (authzProposal?.granter === selectedAuthz.granter) {
+      if (data?.granter?.length > 0 ) {
         authzExecHelper(dispatch, {
           type: "vote",
-          from: address,
-          granter: selectedAuthz.granter,
+          from: signer,
+          granter: data.granter,
           option: vote,
           proposalId: selected,
           denom: currency.coinMinimalDenom,
-          chainId: chainInfo.config.chainId,
-          rest: chainInfo.config.rest,
-          aminoConfig: chainInfo.aminoConfig,
-          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-          feeAmount:
-            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-            feegranter: feegrant.granter,
+          chainId: chainID,
+          rest: restEndpoint,
+          aminoConfig: aminoConfig,
+          prefix: bech32Config.bech32PrefixAccAddr,
+          feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
+          feegranter: feegrant.granter,
+          metadata: data.justification,
         });
       } else {
-        alert("You don't have permission to vote");
+        alert("granter is empty");
       }
     }
   };
@@ -198,85 +146,93 @@ export default function Proposals() {
 
   const [selected, setonShowVote] = useState("");
   const onVoteDialog = (proposalId) => {
-    if (selectedAuthz.granter.length > 0) {
-      if (authzProposal?.granter === selectedAuthz.granter) {
-        setOpen(true);
-        setonShowVote(proposalId);
-      } else {
-        alert("You don't have permission to vote");
-      }
-    } else {
-      setOpen(true);
-      setonShowVote(proposalId);
-    }
+    setOpen(true);
+    setonShowVote(proposalId);
   };
 
   const navigate = useNavigate();
 
-  return (
+  return (authzMode && grantsToMe?.length > 0) || !authzMode ? (
     <>
-      {feegrant.granter.length > 0 ? (
-        <FeegranterInfo
-          feegrant={feegrant}
-          onRemove={() => {
-            removeFeegrant();
+      {!proposals?.length ? (
+        <></>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "left",
+            mt: 2,
           }}
-        />
-      ) : null}
-      <Grid container spacing={2}>
-        {status === "pending" ? (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              width: "100%",
-              marginTop: 22,
-            }}
-          >
-            <CircularProgress />
-          </div>
-        ) : proposals.length === 0 ? (
-          <Typography
-            variant="h5"
-            fontWeight={500}
-            color="text.primary"
+        >
+          <Avatar src={chainLogo} alt="network-icon"
             sx={{
-              justifyContent: "center",
-              width: "100%",
-              mt: 3,
+              width: 30,
+              height: 30,
+            }}
+          />
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{
+              color: "text.primary",
+              ml: 1,
             }}
           >
-            No Active Proposals Found
+            {chainName}
           </Typography>
-        ) : (
-          <>
-            {proposals.map((proposal, index) => (
-              <Grid item md={6} xs={12} key={index}>
-                <Paper elevation={0} sx={{ p: 1 }}>
-                  <ProposalItem
-                    info={proposal}
-                    tally={proposalTally[proposal?.proposal_id]}
-                    vote={votes[proposal?.proposal_id]}
-                    txStatus={govTx}
-                    setOpen={(pId) => onVoteDialog(pId)}
-                    poolInfo={poolInfo}
-                    onItemClick={() =>
-                      navigate(`/proposals/${proposal?.proposal_id}`)
-                    }
-                  />
-                </Paper>
-              </Grid>
-            ))}
+        </Box>
+      )}
+      {status === "pending" ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
+            marginTop: 22,
+          }}
+        >
+          <CircularProgress />
+        </div>
+      ) : proposals.length === 0 ? (
+        <></>
+      ) : (
+        <Grid container spacing={2}
+          sx={{
+            mb: 1,
+          }}
+        >
+          {proposals.map((proposal, index) => (
+            <Grid item md={6} xs={12} key={index}>
 
-            <VoteDialog
-              open={open}
-              closeDialog={closeDialog}
-              onVote={onVoteSubmit}
-            />
-          </>
-        )}
-      </Grid>
+              <ProposalItem
+                info={proposal}
+                tally={proposalTally[proposal?.proposal_id]}
+                vote={votes[proposal?.proposal_id]}
+                txStatus={govTx}
+                setOpen={(pId) => onVoteDialog(pId)}
+                onItemClick={() =>
+                  navigate(
+                    `/proposals/${chainName}/${proposal?.proposal_id}`
+                  )
+                }
+                chainUrl={restEndpoint}
+                proposalId={proposal?.proposal_id}
+              />
+            </Grid>
+          ))}
+
+          <VoteDialog
+            open={open}
+            closeDialog={closeDialog}
+            onVote={onVoteSubmit}
+            isAuthzMode={authzMode}
+            granters={grantsToMe || []}
+          />
+        </Grid>
+      )}
     </>
+  ) : (
+    <></>
   );
 }
 
