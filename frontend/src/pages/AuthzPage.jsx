@@ -2,15 +2,20 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import SelectNetwork from '../components/common/SelectNetwork'
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
+import { ContextData } from './Home';
 
 export default function AuthzPage() {
     const networks = useSelector((state) => state.wallet.networks);
     const chainIDs = Object.keys(networks);
 
+    const data = React.useContext(ContextData)
+
+
     return (
         <div>
-            <Box
+            Network - {data}
+            {/* <Box
                 sx={{
                     justifyContent: "end",
                     display: "flex",
@@ -24,9 +29,9 @@ export default function AuthzPage() {
                         console.log(e);
                     }}
                 />
-            </Box>
+            </Box> */}
 
-            Authz
+            <br/> Page - Authz
         </div>
     )
 }
