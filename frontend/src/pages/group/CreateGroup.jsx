@@ -64,8 +64,6 @@ export default function CreateGroupStepper() {
       const getMinExecPeriod = (policyData) => {
         let time;
         if (policyData?.minExecPeriodDuration === "Days") time = 24 * 60 * 60;
-        else if (policyData?.minExecPeriodDuration === "Hours") time = 60 * 60;
-        else if (policyData?.minExecPeriodDuration === "Minutes") time = 60;
         else time = 1;
 
         time = time * Number(policyData?.minExecPeriod);
@@ -75,8 +73,6 @@ export default function CreateGroupStepper() {
       const getVotingPeriod = (policyData) => {
         let time;
         if (policyData?.votingPeriodDuration === "Days") time = 24 * 60 * 60;
-        else if (policyData?.votingPeriodDuration === "Hours") time = 60 * 60;
-        else if (policyData?.votingPeriodDuration === "Minutes") time = 60;
         else time = 1;
 
         time = time * Number(policyData?.votingPeriod);
@@ -281,6 +277,7 @@ export default function CreateGroupStepper() {
                   watch={watch}
                   control={control}
                   members={getValues("members")}
+                  getValues={getValues}
                 />
               </fieldset>
             )) ||

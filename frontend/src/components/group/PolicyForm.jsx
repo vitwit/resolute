@@ -22,6 +22,8 @@ function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
     votingPeriod: "",
     minExecPeriod: 0,
     policyAsAdmin: false,
+    minExecPeriodDuration: "Days",
+    votingPeriodDuration: "Days",
   };
 
   if (policyObj) {
@@ -34,10 +36,10 @@ function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
       threshold: Number(policyObj?.decision_policy?.threshold || 0),
       percentage: Number(policyObj?.decision_policy?.percentage * 100 || 1),
       votingPeriod:
-        parseFloat(policyObj?.decision_policy?.windows?.voting_period || 0) /
+        parseInt(policyObj?.decision_policy?.windows?.voting_period || 0) /
         (24 * 60 * 60),
       minExecPeriod:
-        parseFloat(
+        parseInt(
           policyObj?.decision_policy?.windows?.min_execution_period || 0
         ) /
         (24 * 60 * 60),
@@ -91,6 +93,7 @@ function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
             policyUpdate={true}
             members={groupMembers}
             policy_Type={decisionPolicyType}
+            getValues={getValues}
           />
         </fieldset>
         <Box sx={{ display: "flex", justifyContent: "center" }}>

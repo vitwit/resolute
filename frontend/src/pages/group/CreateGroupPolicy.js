@@ -17,6 +17,7 @@ import {
   Slider,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
+import { MAX_EXECUTION_PERIOD } from "./common";
 
 function CreateGroupPolicy({
   control,
@@ -30,6 +31,7 @@ function CreateGroupPolicy({
   policyMetadataUpdate,
   metadata,
   policy_Type,
+  getValues,
 }) {
   const totalWeight =
     members.reduce((initial, weight) => initial + Number(weight.weight), 0) ||
@@ -168,7 +170,6 @@ function CreateGroupPolicy({
                       >
                         <Slider
                           aria-label="Percentage"
-                          // defaultValue={50}
                           min={1}
                           max={100}
                           valueLabelDisplay="on"
@@ -232,46 +233,8 @@ function CreateGroupPolicy({
                         size="small"
                         name="votingPeriod"
                         type="number"
-                        label="Voting Period*"
-                        placeholder="Voting Period*"
-                        InputProps={{
-                          endAdornment: (
-                            <FormControl
-                              sx={{ width: 130, mr: "-13px" }}
-                              fullWidth
-                            >
-                              <Select
-                                fullWidth
-                                required
-                                placeholder="Duration*"
-                                label="Duration*"
-                                size="small"
-                                labelId="duration"
-                                id="duration"
-                                onChange={(e) => {
-                                  setValue(
-                                    "policyMetadata.votingPeriodDuration",
-                                    e.target.value
-                                  );
-                                }}
-                                value={
-                                  watch(
-                                    "policyMetadata.votingPeriodDuration"
-                                  ) || "Days"
-                                }
-                                name="votingPeriodDuration"
-                              >
-                                <MenuItem defaultValue={"Days"} value={"Days"}>
-                                  Days
-                                </MenuItem>
-                                <MenuItem defaultChecked value={"Hours"}>
-                                  Hours
-                                </MenuItem>
-                                <MenuItem value={"Minutes"}>Minutes</MenuItem>
-                              </Select>
-                            </FormControl>
-                          ),
-                        }}
+                        label="Voting Period (Days) *"
+                        placeholder="Voting Period (Days) *"
                         error={errors?.policyMetadata?.votingPeriod}
                         helperText={
                           errors?.policyMetadata?.votingPeriod?.message ||
@@ -290,6 +253,7 @@ function CreateGroupPolicy({
                   rules={{
                     required: "Min Exec Period is required",
                     min: { value: 1, message: "Invalid Min execution period" },
+                    validate: () => Number(getValues("policyMetadata.minExecPeriod")) < (Number(getValues("policyMetadata.votingPeriod")) + MAX_EXECUTION_PERIOD )
                   }}
                   render={({ field }) => (
                     <FormControl fullWidth>
@@ -299,46 +263,11 @@ function CreateGroupPolicy({
                         size="small"
                         name="minExecPeriod"
                         type="number"
-                        label="Min Execution Period*"
-                        placeholder="Min Execution Period*"
-                        InputProps={{
-                          endAdornment: (
-                            <FormControl
-                              sx={{ width: 150, mr: "-13px" }}
-                              fullWidth
-                            >
-                              <Select
-                                fullWidth
-                                required
-                                size="small"
-                                label="Duration*"
-                                labelId="duration"
-                                id="duration"
-                                onChange={(e) => {
-                                  setValue(
-                                    "policyMetadata.minExecPeriodDuration",
-                                    e.target.value
-                                  );
-                                }}
-                                value={
-                                  watch(
-                                    "policyMetadata.minExecPeriodDuration"
-                                  ) || "Days"
-                                }
-                                name="minExecPeriodDuration"
-                              >
-                                <MenuItem value={"Days"} defaultChecked>
-                                  Days
-                                </MenuItem>
-                                <MenuItem value={"Hours"}>Hours</MenuItem>
-                                <MenuItem value={"Minutes"}>Minutes</MenuItem>
-                              </Select>
-                            </FormControl>
-                          ),
-                        }}
+                        label="Min Execution Period (Days) *"
+                        placeholder="Min Execution Period (Days) *"
                         error={errors?.policyMetadata?.minExecPeriod}
                         helperText={
-                          errors?.policyMetadata?.minExecPeriod?.message ||
+                          errors?.policyMetadata?.minExecPeriod?.message || (errors?.policyMetadata?.minExecPeriod && errors?.policyMetadata?.minExecPeriod?.type === "validate" && `Min execution period cannot be greater than ${Number(getValues("policyMetadata.votingPeriod"))-1 + MAX_EXECUTION_PERIOD}` ) ||
                           "A Minimum amount of time that must pass after submission in order for a proposal to potentially be executed."
                         }
                       />
