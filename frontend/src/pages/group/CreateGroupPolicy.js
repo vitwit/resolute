@@ -29,7 +29,7 @@ function CreateGroupPolicy({
   policyUpdate,
   policyMetadataUpdate,
   metadata,
-  decisionPolicyType,
+  policy_Type,
 }) {
   const totalWeight =
     members.reduce((initial, weight) => initial + Number(weight.weight), 0) ||
@@ -38,6 +38,7 @@ function CreateGroupPolicy({
   const [threshold, setThreshold] = useState("threshold");
   const [policyType, setPolicyType] = useState("threshold");
   const [asAdmin, setAsAdmin] = useState("gov");
+  const [decisionPolicyType, setDecisionPolicyType] = useState(policy_Type)
 
   return (
     <>
@@ -120,6 +121,7 @@ function CreateGroupPolicy({
                         {...field}
                         onChange={(e) => {
                           setPolicyType(e.target.value);
+                          setDecisionPolicyType(null);
                           setValue(
                             "policyMetadata.decisionPolicy",
                             e.target.value
