@@ -14,6 +14,12 @@ import GroupPageV1 from "./GroupPageV1";
 import { Routes, Route, useRoutes, useParams, useLocation, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import Page404 from "./Page404";
+import { useSelector } from "react-redux";
+import SelectNetwork from "../components/common/SelectNetwork";
+
+export const ContextData = React.createContext();
+
+const ALL_NETWORKS = ["", "gov", "staking", "multisig", "authz", "feegrant", "daos"]
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -60,12 +66,21 @@ function getTabIndex(path) {
 
 export default function Home() {
   const [value, setValue] = React.useState(0);
-
+  const [network, setNetwork] = React.useState(null);
+ 
   const navigate = useNavigate();
   const location = useLocation();
+  const params = useParams();
+  const page = location.pathname.split('/')?.[location.pathname.split('/')?.length - 1]
+  console.log(location.pathname.split("/"), {params}, page)
+
+  const networks = useSelector((state) => state.wallet.networks);
+  const chainIDs = Object.keys(networks);
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    navigate(`${network}/${ALL_NETWORKS[newValue]}`)
   };
 
   return (
@@ -86,44 +101,62 @@ export default function Home() {
         </Tabs>
       </Box>
       <TabPanel value={value} index={getTabIndex(location.pathname)}></TabPanel>
-
-      <Routes>
-        <Route
-          path="/:networkName"
-
-          element={
-            <AuthzPage />
-          }
+      <Box
+        sx={{
+          justifyContent: "end",
+          display: "flex",
+          mr: 1,
+        }}
+      >
+        <SelectNetwork
+          defaultNetwork="cosmoshub"
+          networks={chainIDs.map(chain => networks[chain].network.config.chainName)}
+          onSelect={(e) => {
+            let n = e?.toLowerCase()
+            setNetwork(n);
+            navigate(`${n}/${ALL_NETWORKS[value]}`)
+          }}
         />
-        <Route path="/:networkName/authz" element={
-          <AuthzPage />
-        } />
+      </Box>
 
-        <Route path="/:networkName/feegrant" element={
-          <FeegrantPage />
-        } />
+      <ContextData.Provider value={network} setNetwork={setNetwork}>
+        <Routes>
+          <Route
+            path="/:networkName"
+            // element={
+            //   <AuthzPage />
+            // }
+          />
+          <Route path="/:networkName/authz" element={
+            <AuthzPage />
+          } />
 
-        <Route path="/:networkName/gov" element={
-          <ActiveProposals />
-        } />
+          <Route path="/:networkName/feegrant" element={
+            <FeegrantPage />
+          } />
 
-        <Route path="/:networkName/daos" element={
-          <GroupPageV1 />
-        } />
+          <Route path="/:networkName/gov" element={
+            <ActiveProposals />
+          } />
 
-        <Route path="/:networkName/multisig" element={
-          <MultisigPage />
-        } />
+          <Route path="/:networkName/daos" element={
+            <GroupPageV1 />
+          } />
 
-        <Route path="/:networkName/staking" element={
-          <StakingPage />
-        } />
+          <Route path="/:networkName/multisig" element={
+            <MultisigPage />
+          } />
+
+          <Route path="/:networkName/staking" element={
+            <StakingPage />
+          } />
 
 
 
 
-        <Route path="*" element={<Page404 />}></Route>
-      </Routes>
+          <Route path="*" element={<Page404 />}></Route>
+        </Routes>
+      </ContextData.Provider>
     </Box>
   );
 }
