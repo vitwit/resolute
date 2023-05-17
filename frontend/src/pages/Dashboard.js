@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -6,7 +6,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
 import { getMainNetworks, getSelectedNetwork, getTestNetworks, saveSelectedNetwork } from "./../utils/networks";
 import Link from "@mui/material/Link";
-import { Routes, Route } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   connectKeplrWallet,
@@ -23,38 +22,34 @@ import {
   resetTxLoad,
   setFeegrant,
 } from "../features/common/commonSlice";
-import Page404 from "./Page404";
-import AppDrawer from "../components/AppDrawer";
 import { Alert } from "../components/Alert";
-import { getPallet, isDarkMode, mdTheme } from "../utils/theme";
-import { getFeegrant, isConnected, logout } from "../utils/localStorage";
+import { isDarkMode, mdTheme } from "../utils/theme";
 import { Paper, Typography } from "@mui/material";
-import { exitAuthzMode } from "../features/authz/authzSlice";
 import Home from "./Home";
 import { defaultPallet } from "../utils/pallet";
 
-const GroupPage = lazy(() => import("./GroupPage"));
-const Group = lazy(() => import("./group/Group"));
-const Policy = lazy(() => import("./group/Policy"));
-const CreateGroupNewPage = lazy(() => import("./group/CreateGroup"));
-const Proposal = lazy(() => import("./group/Proposal"));
-const CreateProposal = lazy(() => import("./group/CreateProposal"));
+// const GroupPage = lazy(() => import("./GroupPage"));
+// const Group = lazy(() => import("./group/Group"));
+// const Policy = lazy(() => import("./group/Policy"));
+// const CreateGroupNewPage = lazy(() => import("./group/CreateGroup"));
+// const Proposal = lazy(() => import("./group/Proposal"));
+// const CreateProposal = lazy(() => import("./group/CreateProposal"));
 
-const Authz = lazy(() => import("./authz/Authz"));
-const Validators = lazy(() => import("./Validators"));
-const Proposals = lazy(() => import("./gov/Proposals"));
-const NewAuthz = lazy(() => import("./authz/NewAuthz"));
-const AirdropEligibility = lazy(() => import("./passage/AirdropEligibility"));
-const PageMultisig = lazy(() => import("./multisig/PageMultisig"));
-const PageMultisigInfo = lazy(() => import("./multisig/tx/PageMultisigInfo"));
-const SendPage = lazy(() => import("./SendPage"));
-const UnjailPage = lazy(() => import("./slashing/UnjailPage"));
-const ProposalInfo = lazy(() => import("./gov/ProposalInfo"));
-const PageCreateTx = lazy(() => import("./multisig/tx/PageCreateTx"));
-const MultiTx = lazy(() => import("./MultiTx"));
+// const Authz = lazy(() => import("./authz/Authz"));
+// const Validators = lazy(() => import("./Validators"));
+// const Proposals = lazy(() => import("./gov/Proposals"));
+// const NewAuthz = lazy(() => import("./authz/NewAuthz"));
+// const AirdropEligibility = lazy(() => import("./passage/AirdropEligibility"));
+// const PageMultisig = lazy(() => import("./multisig/PageMultisig"));
+// const PageMultisigInfo = lazy(() => import("./multisig/tx/PageMultisigInfo"));
+// const SendPage = lazy(() => import("./SendPage"));
+// const UnjailPage = lazy(() => import("./slashing/UnjailPage"));
+// const ProposalInfo = lazy(() => import("./gov/ProposalInfo"));
+// const PageCreateTx = lazy(() => import("./multisig/tx/PageCreateTx"));
+// const MultiTx = lazy(() => import("./MultiTx"));
 
-const Feegrant = lazy(() => import("./feegrant/Feegrant"));
-const NewFeegrant = lazy(() => import("./feegrant/NewFeegrant"));
+// const Feegrant = lazy(() => import("./feegrant/Feegrant"));
+// const NewFeegrant = lazy(() => import("./feegrant/NewFeegrant"));
 
 function DashboardContent() {
   const [snackOpen, setSnackOpen] = useState(false);
@@ -154,7 +149,8 @@ function DashboardContent() {
 
             <Toolbar />
             <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
-              <Routes>
+              <Home />
+              {/* <Routes>
                 <Route path="/" element={<Home />} />
                 <>
                   <Route
@@ -318,7 +314,7 @@ function DashboardContent() {
                 ></Route>
 
                 <Route path="*" element={<Page404 />}></Route>
-              </Routes>
+              </Routes> */}
             </Container>
           </Box>
         </Box>
