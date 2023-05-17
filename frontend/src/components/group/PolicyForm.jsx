@@ -90,7 +90,7 @@ function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
             control={control}
             policyUpdate={true}
             members={groupMembers}
-            decisionPolicyType={decisionPolicyType}
+            policy_Type={decisionPolicyType}
           />
         </fieldset>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
