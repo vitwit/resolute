@@ -77,20 +77,59 @@ const GroupPolicies = ({ id, wallet }) => {
     groupPolicies = data?.group_policies;
   }
 
-  const handlePolicy = (policyObj) => {
+  const handlePolicy = (data) => {
     const chainInfo = wallet?.chainInfo;
-
-    console.log("policy = ", policyObj);
-    dispatch(
-      txAddGroupPolicy({
+    const dataObj = {
         admin: groupInformation?.admin,
         groupId: id,
-        policyMetadata: policyObj?.policyMetadata,
+        policyMetadata: data?.policyMetadata,
         denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
         feeAmount: chainInfo.config.gasPriceStep.average,
-      })
+      }
+
+    if (
+      data.policyMetadata.percentage !== 0 ||
+      data.policyMetadata.threshold !== 0
+    ) {
+      const getMinExecPeriod = (policyData) => {
+        let time;
+        if (policyData?.minExecPeriodDuration === "Days") time = 24 * 60 * 60;
+        else if (policyData?.minExecPeriodDuration === "Hours") time = 60 * 60;
+        else if (policyData?.minExecPeriodDuration === "Minutes") time = 60;
+        else time = 1;
+
+        time = time * Number(policyData?.minExecPeriod);
+        return time;
+      };
+
+      const getVotingPeriod = (policyData) => {
+        let time;
+        if (policyData?.votingPeriodDuration === "Days") time = 24 * 60 * 60;
+        else if (policyData?.votingPeriodDuration === "Hours") time = 60 * 60;
+        else if (policyData?.votingPeriodDuration === "Minutes") time = 60;
+        else time = 1;
+
+        time = time * Number(policyData?.votingPeriod);
+        return time;
+      };
+
+      if (data?.policyMetadata) {
+        dataObj["policyMetadata"] = {
+          ...data.policyMetadata,
+          minExecPeriod: getMinExecPeriod(data.policyMetadata),
+          votingPeriod: getVotingPeriod(data.policyMetadata),
+        };
+      }
+
+      if (dataObj?.policyMetadata?.decisionPolicy === "percentage") {
+        dataObj.policyMetadata.percentage =
+          Number(dataObj.policyMetadata.percentage) / 100.0;
+      }
+    }
+    dispatch(
+      txAddGroupPolicy(dataObj)
     );
   };
 
@@ -101,10 +140,24 @@ const GroupPolicies = ({ id, wallet }) => {
     watch,
     formState: { errors },
     setValue,
-  } = useForm({});
+    getValues,
+  } = useForm({
+    defaultValues: {
+      policyMetadata: {
+        name: "",
+        description: "",
+        decisionPolicy: "percentage",
+        percentage: 1,
+        threshold: 1,
+        policyAsAdmin: false,
+        minExecPeriodDuration: "Days",
+        votingPeriodDuration: "Days",
+      },
+    },
+  });
 
   useEffect(() => {
-    setValue("policyMetadata.decisionPolicy", "threshold");
+    setValue("policyMetadata.decisionPolicy", "percentage");
     setValue("policyMetadata.votingPeriodDuration", "Days");
     setValue("policyMetadata.minExecPeriodDuration", "Days");
   }, []);
@@ -164,6 +217,7 @@ const GroupPolicies = ({ id, wallet }) => {
               handleCancelPolicy={() => setShowForm(false)}
               members={groupMembers?.members?.map((m) => m?.member) || []}
               setValue={setValue}
+              getValues={getValues}
             />
             <Box sx={{ p: 2 }}>
               <Button

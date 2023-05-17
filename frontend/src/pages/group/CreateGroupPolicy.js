@@ -38,7 +38,7 @@ function CreateGroupPolicy({
     0;
 
   const [threshold, setThreshold] = useState("threshold");
-  const [policyType, setPolicyType] = useState("threshold");
+  const [policyType, setPolicyType] = useState("percentage");
   const [asAdmin, setAsAdmin] = useState("gov");
   const [decisionPolicyType, setDecisionPolicyType] = useState(policy_Type)
 

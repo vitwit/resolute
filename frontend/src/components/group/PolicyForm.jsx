@@ -17,7 +17,7 @@ function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
     name: "",
     description: "",
     decisionPolicy: "",
-    threshold: 0,
+    threshold: 1,
     percentage: 1,
     votingPeriod: "",
     minExecPeriod: 0,

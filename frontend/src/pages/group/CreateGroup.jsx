@@ -128,9 +128,9 @@ export default function CreateGroupStepper() {
       policyMetadata: {
         name: "",
         description: "",
-        decisionPolicy: "threshold",
+        decisionPolicy: "percentage",
         percentage: 1,
-        threshold: 0,
+        threshold: 1,
         policyAsAdmin: false,
         minExecPeriodDuration: "Days",
         votingPeriodDuration: "Days",
