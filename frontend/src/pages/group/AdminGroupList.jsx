@@ -36,7 +36,7 @@ function AdminGroupList() {
   }, [groups?.admin?.pagination?.total]);
 
   const handlePagination = (page) => {
-    fetchGroupsByAdmin(page, PER_PAGE);
+    fetchGroupsByAdmin(page*PER_PAGE, PER_PAGE);
   };
 
   return (
