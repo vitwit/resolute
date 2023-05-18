@@ -374,7 +374,7 @@ const testNets: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false,
+      group: true,
     },
     aminoConfig: {
       authz: false,
@@ -391,17 +391,17 @@ const testNets: Network[] = [
         "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
     },
     isTestnet: false,
-    explorerTxHashEndpoint: "https://passage.aneka.io/txs/",
+    explorerTxHashEndpoint: "https://mintscan.io/txs/",
     config: {
-      chainId: "provider",
-      chainName: "ICS-Provider",
-      rest: "https://rest.provider-sentry-01.goc.earthball.xyz",
-      rpc: "https://rpc.provider-sentry-01.goc.earthball.xyz",
+      chainId: "dydxtest",
+      chainName: "DYDX",
+      rest: "https://api.dydx.vitwit.com",
+      rpc: "https://rpc.dydx.vitwit.com",
       stakeCurrency: {
-        coinDenom: "PROV",
-        coinMinimalDenom: "uprov",
+        coinDenom: "STAKE",
+        coinMinimalDenom: "stake",
         coinDecimals: 6,
-        coinGeckoId: "provider",
+        coinGeckoId: "dydx",
       },
       bip44: { coinType: 118 },
       bech32Config: {
@@ -414,18 +414,18 @@ const testNets: Network[] = [
       },
       currencies: [
         {
-          coinDenom: "PROV",
-          coinMinimalDenom: "uprov",
+          coinDenom: "STAKE",
+          coinMinimalDenom: "stake",
           coinDecimals: 6,
-          coinGeckoId: "provider",
+          coinGeckoId: "stake",
         },
       ],
       feeCurrencies: [
         {
-          coinDenom: "PROV",
-          coinMinimalDenom: "uprov",
+          coinDenom: "STAKE",
+          coinMinimalDenom: "stake",
           coinDecimals: 6,
-          coinGeckoId: "provider",
+          coinGeckoId: "stake",
         },
       ],
       coinType: 118,
@@ -528,6 +528,7 @@ export function getNetworkByChainId(chainId: string): Network | null {
 export function getTestNetworks(): Network[] {
   if (window.location.origin === "http://localhost:3000") {
     return [
+      ...testNets,
       {
         enableModules: {
           authz: true,
