@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
 import Toolbar from "@mui/material/Toolbar";
@@ -8,12 +8,12 @@ import DarkModeOutlined from "@mui/icons-material/DarkModeOutlined";
 import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
 import { setAuthzMode } from "../features/common/commonSlice";
-import { Switch } from "@mui/material";
+import { FormControlLabel, Switch } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
-import { Button, Box } from "@mui/material";
+import Button from "@mui/material/Button";
 import { setSelectedNetwork } from "../features/common/commonSlice";
 import { getGrantsToMe } from "../features/authz/authzSlice";
 
@@ -27,15 +27,9 @@ export function CustomAppBar(props) {
   const selectedAuthz = useSelector((state) => state.authz.selected);
   const selectNetwork = useSelector((state) => state.common.selectedNetwork.chainName)
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [checked, setChecked] = useState(false);
 
   const switchHandler = (event) => {
-    setChecked(event.target.checked);
-    if (checked) {
-      dispatch(setAuthzMode(false));
-    } else {
-      dispatch(setAuthzMode(true));
-    }
+    dispatch(setAuthzMode(event.target.checked));
   };
 
   const handleClick = (event) => {
@@ -46,8 +40,9 @@ export function CustomAppBar(props) {
     }
   };
 
-  const getVoteAuthz = (isAuthzMode) => {
+  useEffect(() => {
     if (isAuthzMode) {
+      console.log("callllled");
       Object.keys(networks).map((key, _) => {
         const network = networks[key];
         dispatch(getGrantsToMe({
@@ -57,7 +52,7 @@ export function CustomAppBar(props) {
         }))
       })
     }
-  }
+  }, [isAuthzMode]);
 
   return (
     <AppBar
@@ -83,20 +78,21 @@ export function CustomAppBar(props) {
           align="left"
         ></Typography>
 
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            mx: "10px",
-          }}
-        >
-          <Typography sx={{ fontWeight: "500" }}>Authz mode</Typography>
-          <Switch checked={checked} onChange={switchHandler} color="info" />
-        </Box>
-
         <IconButton aria-label="mode" onClick={() => props.onModeChange()}>
           {props.darkMode ? <LightModeOutlined /> : <DarkModeOutlined />}
         </IconButton>
+
+        <FormControlLabel
+          label="Authz mode"
+          control={
+            <Switch
+              checked={isAuthzMode}
+              onChange={switchHandler}
+              color="secondary"
+            />
+          }
+        >
+        </FormControlLabel>
         <Button
           id="demo-positioned-button"
           color="inherit"
@@ -105,7 +101,6 @@ export function CustomAppBar(props) {
           aria-haspopup="true"
           aria-expanded={anchorEl ? "true" : undefined}
           onClick={handleClick}
-          sx={{ width: { lg: "10%" } }}
         >
           {selectNetwork}
         </Button>
@@ -128,7 +123,6 @@ export function CustomAppBar(props) {
             <MenuItem
               key={chain}
               onClick={() => {
-                getVoteAuthz(isAuthzMode);
                 setAnchorEl(null);
                 dispatch(setSelectedNetwork({
                   chainName: networks[chain].network.config.chainName,

@@ -44,8 +44,6 @@ function ActiveProposals() {
     }
   }, [grantsToMe]);
 
-  const dispatch = useDispatch();
-
   return (
     <>
       {
