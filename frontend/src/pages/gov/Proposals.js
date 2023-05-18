@@ -61,7 +61,7 @@ export default function Proposals({
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!authzMode || (authzMode && grantsToMe.length > 0)) {
+    if (!authzMode || (authzMode && grantsToMe?.length > 0)) {
       dispatch(
         getProposals({
           baseURL: restEndpoint,

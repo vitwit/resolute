@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Proposals from './Proposals'
 import { useDispatch, useSelector } from 'react-redux';
 import ConnectWallet from '../../components/ConnectWallet';
-import { Box } from '@mui/system';
-import { Switch, Typography } from '@mui/material';
-import { getGrantsToMe } from '../../features/authz/authzSlice';
+import { Typography } from '@mui/material';
 
 const filterVoteAuthz = (authzs) => {
   const result = {};
@@ -27,13 +25,13 @@ const filterVoteAuthz = (authzs) => {
 
 function ActiveProposals() {
 
-  const [isAuthzMode, setIsAuthzMode] = useState(false);
   const [isNoAuthzs, setNoAuthzs] = useState(false);
   const [authzGrants, setAuthzGrants] = useState({});
 
   const walletConnected = useSelector((state) => state.wallet.connected);
   const networks = useSelector((state) => state.wallet.networks);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
 
 
   useEffect(() => {
@@ -46,40 +44,11 @@ function ActiveProposals() {
     }
   }, [grantsToMe]);
 
-  const dispatch = useDispatch();
-  const getVoteAuthz = (isAuthzMode) => {
-    if (isAuthzMode) {
-      Object.keys(networks).map((key, _) => {
-        const network = networks[key];
-        dispatch(getGrantsToMe({
-          baseURL: network.network?.config?.rest,
-          grantee: network.walletInfo?.bech32Address,
-          chainID: network.network?.config?.chainId
-        }))
-      })
-    }
-  }
-
   return (
     <>
       {
         walletConnected ?
           <>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Typography sx={{ fontWeight: "500", color: "text.primary" }}>
-                Authz mode
-              </Typography>
-              <Switch checked={isAuthzMode} onChange={(e) => {
-                setIsAuthzMode(!isAuthzMode);
-                getVoteAuthz(e.target.checked);
-              }} />
-            </Box>
             {
               isAuthzMode && isNoAuthzs ?
                 <Typography>

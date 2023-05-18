@@ -20,7 +20,7 @@ export default function SendPage() {
 
   const from = useSelector((state) => state.wallet.address);
   const currency = useSelector(
-    (state) => state.wallet.chainInfo.config.currencies[0]
+    (state) => state.wallet.chainInfo?.config?.currencies[0]
   );
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const address = useSelector((state) => state.wallet.address);
@@ -44,7 +44,7 @@ export default function SendPage() {
   }, []);
 
   useEffect(() => {
-    if (chainInfo.config.currencies.length > 0 && address.length > 0) {
+    if (chainInfo.config?.currencies.length > 0 && address.length > 0) {
       if (selectedAuthz.granter.length === 0) {
         dispatch(
           getBalance({
