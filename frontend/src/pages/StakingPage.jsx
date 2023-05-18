@@ -16,13 +16,6 @@ export default function MultisigPage() {
                     mr: 1,
                 }}
             >
-                <SelectNetwork
-                    defaultNetwork="cosmoshub"
-                    networks={chainIDs.map(chain => networks[chain].network.config.chainName)}
-                    onSelect={(e) => {
-                        console.log(e);
-                    }}
-                />
             </Box>
 
             Staking

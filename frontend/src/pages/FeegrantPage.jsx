@@ -12,22 +12,6 @@ export default function FeegrantPage() {
 
     return (
         <div>
-            Network - {data} <br/>
-            {/* <Box
-                sx={{
-                    justifyContent: "end",
-                    display: "flex",
-                    mr: 1,
-                }}
-            >
-                <SelectNetwork
-                    defaultNetwork="cosmoshub"
-                    networks={chainIDs.map(chain => networks[chain].network.config.chainName)}
-                    onSelect={(e) => {
-                        console.log(e);
-                    }}
-                />
-            </Box> */}
 
            Page -  Feegrant
         </div>

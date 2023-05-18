@@ -148,7 +148,7 @@ function DashboardContent() {
           >
 
             <Toolbar />
-            <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
+            <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
               <Home />
               {/* <Routes>
                 <Route path="/" element={<Home />} />

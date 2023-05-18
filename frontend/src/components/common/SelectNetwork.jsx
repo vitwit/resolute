@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { InputLabel, MenuItem, Select, FormControl } from '@mui/material'
 import { Box } from '@mui/system'
 import PropTypes from "prop-types";
@@ -7,11 +7,11 @@ import PropTypes from "prop-types";
 export default function SelectNetwork(props) {
     const { onSelect, networks, defaultNetwork } = props;
 
-    const [selected, setSelected] = useState(defaultNetwork?.length > 0 ? defaultNetwork : "");
+    const [selected, setSelected] = useState(defaultNetwork?.length > 0 ? defaultNetwork : "cosmoshub");
 
     const handleNetworkSelect = (e) => {
         setSelected(e.target.value);
-        onSelect(e.target.value);
+        onSelect(e.target.value.toLowerCase().replace(/ /g, ""));
     }
 
     return (
@@ -32,7 +32,7 @@ export default function SelectNetwork(props) {
                     {
                         networks.map((network, index) => (
                             <MenuItem
-                                value={network}
+                                value={network.toLowerCase().replace(/ /g, "")}
                                 key={index}
                                 sx={{
                                     textTransform: "capitalize"

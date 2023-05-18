@@ -16,10 +16,13 @@ import { CircularProgress } from "@mui/material";
 import Page404 from "./Page404";
 import { useSelector } from "react-redux";
 import SelectNetwork from "../components/common/SelectNetwork";
+import OverviewPage from "./OverviewPage";
+import TransfersPage from "./TransfersPage";
+import SendPage from "./SendPage";
 
 export const ContextData = React.createContext();
 
-const ALL_NETWORKS = ["", "gov", "staking", "multisig", "authz", "feegrant", "daos"]
+const ALL_NETWORKS = ["", "transfers", "gov", "staking", "multisig", "authz", "feegrant", "daos"]
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -55,24 +58,24 @@ function a11yProps(index) {
 }
 
 function getTabIndex(path) {
-  if (path.includes("gov")) return 1;
-  else if (path.includes("staking")) return 2;
-  else if (path.includes("multisig")) return 3;
-  else if (path.includes("authz")) return 4;
-  else if (path.includes("feegrant")) return 5;
-  else if (path.includes("daos")) return 6;
+  if (path.includes("transfers")) return 1;
+  if (path.includes("gov")) return 2;
+  else if (path.includes("staking")) return 3;
+  else if (path.includes("multisig")) return 4;
+  else if (path.includes("authz")) return 5;
+  else if (path.includes("feegrant")) return 6;
+  else if (path.includes("daos")) return 7;
   else return 0;
 }
 
 export default function Home() {
   const [value, setValue] = React.useState(0);
   const [network, setNetwork] = React.useState(null);
- 
+
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
   const page = location.pathname.split('/')?.[location.pathname.split('/')?.length - 1]
-  console.log(location.pathname.split("/"), {params}, page)
 
   const networks = useSelector((state) => state.wallet.networks);
   const chainIDs = Object.keys(networks);
@@ -80,8 +83,29 @@ export default function Home() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    navigate(`${network}/${ALL_NETWORKS[newValue]}`)
+    if (newValue === 0 || newValue === 2) {
+      navigate(ALL_NETWORKS[newValue]);
+    } else {
+      if (network === null) {
+        setNetwork("cosmoshub");
+        navigate(`cosmoshub/${ALL_NETWORKS[newValue]}`);
+      } else {
+      navigate(`${network}/${ALL_NETWORKS[newValue]}`);
+      }
+    }
   };
+
+  const canShowNetworks = (page) => {
+    if (page === "gov" || page === "overview") {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  useEffect(() => {
+    setValue(getTabIndex(page));
+  }, []);
 
   return (
     <Box>
@@ -92,41 +116,53 @@ export default function Home() {
           aria-label="menu bar"
         >
           <Tab label="Overview" {...a11yProps(0)} />
-          <Tab label="Governance" {...a11yProps(1)} />
-          <Tab label="Staking" {...a11yProps(2)} />
-          <Tab label="Multisig" {...a11yProps(3)} />
-          <Tab label="Authz" {...a11yProps(4)} />
-          <Tab label="Feegrant" {...a11yProps(5)} />
-          <Tab label="DAOs" {...a11yProps(6)} />
+          <Tab label="Transfers" {...a11yProps(1)} />
+          <Tab label="Governance" {...a11yProps(2)} />
+          <Tab label="Staking" {...a11yProps(3)} />
+          <Tab label="Multisig" {...a11yProps(4)} />
+          <Tab label="Authz" {...a11yProps(5)} />
+          <Tab label="Feegrant" {...a11yProps(6)} />
+          <Tab label="DAOs" {...a11yProps(7)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={getTabIndex(location.pathname)}></TabPanel>
-      <Box
-        sx={{
-          justifyContent: "end",
-          display: "flex",
-          mr: 1,
-        }}
-      >
-        <SelectNetwork
-          defaultNetwork="cosmoshub"
-          networks={chainIDs.map(chain => networks[chain].network.config.chainName)}
-          onSelect={(e) => {
-            let n = e?.toLowerCase()
-            setNetwork(n);
-            navigate(`${n}/${ALL_NETWORKS[value]}`)
-          }}
-        />
-      </Box>
+
+      {
+        canShowNetworks(page) ?
+          <Box
+            sx={{
+              justifyContent: "end",
+              display: "flex",
+              mr: 1,
+            }}
+          >
+            <SelectNetwork
+              defaultNetwork={network}
+              networks={chainIDs.map(chain => networks[chain].network.config.chainName)}
+              onSelect={(e) => {
+                let n = e?.toLowerCase()
+                setNetwork(n);
+                navigate(`${n}/${ALL_NETWORKS[value]}`)
+              }}
+            />
+          </Box>
+          :
+          null
+      }
 
       <ContextData.Provider value={network} setNetwork={setNetwork}>
         <Routes>
           <Route
-            path="/:networkName"
-            // element={
-            //   <AuthzPage />
-            // }
+            path="/"
+            element={
+              <OverviewPage />
+            }
           />
+
+          <Route path="/:networkName/transfers" element={
+            <SendPage />
+          } />
+
           <Route path="/:networkName/authz" element={
             <AuthzPage />
           } />
@@ -135,7 +171,7 @@ export default function Home() {
             <FeegrantPage />
           } />
 
-          <Route path="/:networkName/gov" element={
+          <Route path="/gov" element={
             <ActiveProposals />
           } />
 
@@ -150,9 +186,6 @@ export default function Home() {
           <Route path="/:networkName/staking" element={
             <StakingPage />
           } />
-
-
-
 
           <Route path="*" element={<Page404 />}></Route>
         </Routes>
