@@ -1,6 +1,5 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import SelectNetwork from '../components/common/SelectNetwork'
 import { useSelector } from 'react-redux';
 import { ContextData } from './Home';
 

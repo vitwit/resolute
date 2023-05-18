@@ -15,7 +15,6 @@ import { Routes, Route, useRoutes, useParams, useLocation, useNavigate } from "r
 import { CircularProgress } from "@mui/material";
 import Page404 from "./Page404";
 import { useSelector } from "react-redux";
-import SelectNetwork from "../components/common/SelectNetwork";
 import OverviewPage from "./OverviewPage";
 import TransfersPage from "./TransfersPage";
 import SendPage from "./SendPage";
@@ -126,29 +125,6 @@ export default function Home() {
         </Tabs>
       </Box>
       <TabPanel value={value} index={getTabIndex(location.pathname)}></TabPanel>
-
-      {
-        canShowNetworks(page) ?
-          <Box
-            sx={{
-              justifyContent: "end",
-              display: "flex",
-              mr: 1,
-            }}
-          >
-            <SelectNetwork
-              defaultNetwork={network}
-              networks={chainIDs.map(chain => networks[chain].network.config.chainName)}
-              onSelect={(e) => {
-                let n = e?.toLowerCase()
-                setNetwork(n);
-                navigate(`${n}/${ALL_NETWORKS[value]}`)
-              }}
-            />
-          </Box>
-          :
-          null
-      }
 
       <ContextData.Provider value={network} setNetwork={setNetwork}>
         <Routes>
