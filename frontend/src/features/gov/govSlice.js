@@ -162,33 +162,37 @@ export const proposalsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getProposals.pending, (state) => {
-        state.active.status = "pending";
-        state.active.errMsg = "";
+      .addCase(getProposals.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const chainData = state.active[chainID] || {};
+        chainData.status = "pending";
+        chainData.errMsg = "";
+        state.active[chainID] = chainData;
       })
       .addCase(getProposals.fulfilled, (state, action) => {
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          let result = {
+            status: "idle",
+            errMsg: "",
+            proposals: action.payload?.data?.proposals,
+            pagination: action.payload?.pagination
 
-        const chainID = action.payload.chainID;
-        let result = {
-          status: "idle",
-          errMsg: "",
-          proposals: action.payload?.data?.proposals,
-          pagination: action.payload?.pagination
-
+          }
+          state.active[chainID] = result;
         }
-        state.active[chainID] = result;
       })
       .addCase(getProposals.rejected, (state, action) => {
-        state.active.status = "rejected";
-        state.active.errMsg = action.error.message;
+        const chainID = action.payload?.chainID;
+        const chainData = state.active[chainID] || {};
+        chainData.status = "rejected";
+        chainData.errMsg = action.error.message;
+        state.active[chainID] = chainData;
       });
 
     // tally
     builder
-      .addCase(getProposalTally.pending, (state) => {
-        state.tally.status = "pending";
-        state.tally.errMsg = "";
-      })
+      .addCase(getProposalTally.pending, () => { })
       .addCase(getProposalTally.fulfilled, (state, action) => {
         const chainID = action.payload.chainID;
         let result = {
@@ -201,16 +205,12 @@ export const proposalsSlice = createSlice({
           action.payload?.data.tally;
         state.tally[chainID] = result;
       })
-      .addCase(getProposalTally.rejected, (state, action) => {
-        state.tally.status = "rejected";
-        state.tally.errMsg = action.error.message;
+      .addCase(getProposalTally.rejected, () => {
       });
 
     // votes
     builder
-      .addCase(getVotes.pending, (state) => {
-        state.votes.status = "pending";
-        state.votes.errMsg = "";
+      .addCase(getVotes.pending, () => {
       })
       .addCase(getVotes.fulfilled, (state, action) => {
         const chainID = action.payload.chainID;
@@ -226,8 +226,6 @@ export const proposalsSlice = createSlice({
         state.votes[chainID] = result
       })
       .addCase(getVotes.rejected, (state, action) => {
-        state.votes = "rejected";
-        state.votes.errMsg = action.error.message;
       });
 
     // tx-vote

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getProposals, resetTx, txVote } from "../../features/gov/govSlice";
 import Grid from "@mui/material/Grid";
@@ -9,23 +9,18 @@ import {
   setError,
   resetError,
   resetTxHash,
-  resetFeegrant,
 } from "../../features/common/commonSlice";
 import {
   authzExecHelper,
-  getGrantsToMe,
-  resetExecTx,
 } from "../../features/authz/authzSlice";
 import VoteDialog from "../../components/Vote";
-import { getVoteAuthz } from "../../utils/authorizations";
 import { useNavigate } from "react-router-dom";
-import FeegranterInfo from "../../components/FeegranterInfo";
 import Box from "@mui/material/Box";
-import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import PropTypes from "prop-types";
 
 Proposals.propTypes = {
+  id: PropTypes.number.isRequired,
   restEndpoint: PropTypes.string.isRequired,
   chainName: PropTypes.string.isRequired,
   chainLogo: PropTypes.string.isRequired,
@@ -41,6 +36,7 @@ Proposals.propTypes = {
 
 
 export default function Proposals({
+  id,
   restEndpoint, chainName, chainLogo,
   signer, gasPriceStep,
   chainID, aminoConfig,
@@ -79,9 +75,6 @@ export default function Proposals({
     };
   }, []);
 
-  // authz
-  const authzExecTx = useSelector((state) => state.authz.execTx);
-
   useEffect(() => {
     if (status === "rejected" && errMsg === "") {
       dispatch(
@@ -96,23 +89,23 @@ export default function Proposals({
   const onVoteSubmit = (data) => {
     const vote = nameToOption(data.option);
     if (!authzMode) {
-    dispatch(
-      txVote({
-        voter: signer,
-        proposalId: selected,
-        option: vote,
-        denom: currency.coinMinimalDenom,
-        chainId: chainID,
-        rest: restEndpoint,
-        aminoConfig: aminoConfig,
-        prefix: bech32Config.bech32PrefixAccAddr,
-        feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
-        feegranter: feegrant.granter,
-        justification: data.justification,
-      })
-    );
+      dispatch(
+        txVote({
+          voter: signer,
+          proposalId: selected,
+          option: vote,
+          denom: currency.coinMinimalDenom,
+          chainId: chainID,
+          rest: restEndpoint,
+          aminoConfig: aminoConfig,
+          prefix: bech32Config.bech32PrefixAccAddr,
+          feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
+          feegranter: feegrant.granter,
+          justification: data.justification,
+        })
+      );
     } else {
-      if (data?.granter?.length > 0 ) {
+      if (data?.granter?.length > 0) {
         authzExecHelper(dispatch, {
           type: "vote",
           from: signer,
@@ -134,11 +127,6 @@ export default function Proposals({
     }
   };
 
-  const removeFeegrant = () => {
-    // Should we completely remove feegrant or only for this session.
-    dispatch(resetFeegrant());
-  };
-
   const [open, setOpen] = useState(false);
   const closeDialog = () => {
     setOpen(false);
@@ -153,7 +141,9 @@ export default function Proposals({
   const navigate = useNavigate();
 
   return (authzMode && grantsToMe?.length > 0) || !authzMode ? (
-    <>
+    <React.Fragment
+      key={id}
+    >
       {!proposals?.length ? (
         <></>
       ) : (
@@ -230,9 +220,12 @@ export default function Proposals({
           />
         </Grid>
       )}
-    </>
+    </React.Fragment>
   ) : (
-    <></>
+    <
+      React.Fragment
+      key={id}
+    ></React.Fragment>
   );
 }
 
