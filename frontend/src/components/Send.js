@@ -1,13 +1,20 @@
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
 import PropTypes from "prop-types";
+import { Menu, MenuItem } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
+import ListItemText from "@mui/material/ListItemText";
+import { setSelectedNetwork } from "../features/common/commonSlice";
+import { useParams } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 Send.propTypes = {
   onSend: PropTypes.func.isRequired,
@@ -18,7 +25,23 @@ Send.propTypes = {
 };
 
 export default function Send(props) {
+  const params = useParams();
+  const dispatch = useDispatch();
+
   const { chainInfo, sendTx, available, onSend, authzTx } = props;
+  const networks = useSelector((state) => state.wallet.networks);
+  const chainIDs = Object.keys(networks);
+  console.log("networks: ...", networks);
+  console.log("chainids...", chainIDs);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const selectedAuthz = useSelector((state) => state.authz.selected);
+  const selectNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  useEffect(()=> {
+    setCurrentNetwork(selectNetwork);
+  }, [selectNetwork])
+  const [currentNetwork, setCurrentNetwork] =  useState(params?.networkName);
 
   const currency = chainInfo.config?.currencies[0];
   const { handleSubmit, control, setValue } = useForm({
@@ -27,6 +50,14 @@ export default function Send(props) {
       recipient: "",
     },
   });
+
+  const handleClick = (event) => {
+    if (selectedAuthz.granter.length === 0) {
+      setAnchorEl(event.currentTarget);
+    } else {
+      alert("cannot switch to other network in authz mode");
+    }
+  };
 
   const onSubmit = (data) => {
     onSend({
@@ -43,9 +74,51 @@ export default function Send(props) {
         p: 4,
       }}
     >
-      <Typography color="text.primary" variant="h6" fontWeight={600}>
-        Send
-      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Typography color="text.primary" variant="h6" fontWeight={600}>
+          Send
+        </Typography>
+        <Button
+          id="demo-positioned-button"
+          color="inherit"
+          endIcon={<ExpandMoreOutlinedIcon />}
+          aria-controls={anchorEl ? "demo-positioned-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={anchorEl ? "true" : undefined}
+          onClick={handleClick}
+        >
+          {currentNetwork}
+        </Button>
+        <Menu
+          id="demo-positioned-menu"
+          aria-labelledby="demo-positioned-button"
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={() => setAnchorEl(null)}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+        >
+          {chainIDs.map((chain) => (
+            <MenuItem
+              key={chain}
+              onClick={() => {
+                setAnchorEl(null);
+                setCurrentNetwork(networks[chain].network.config.chainName);
+              }}
+            >
+              <ListItemText>
+                {networks[chain].network.config.chainName}
+              </ListItemText>
+            </MenuItem>
+          ))}
+        </Menu>
+      </Box>
       <br />
       <Box
         noValidate
@@ -72,7 +145,7 @@ export default function Send(props) {
             className="hover-link"
             onClick={() => setValue("amount", available)}
           >
-            Availabel:&nbsp;{available}
+            Available:&nbsp;{available}
             {currency?.coinDenom}
           </Typography>
           <Controller
