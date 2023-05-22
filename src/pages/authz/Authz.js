@@ -35,6 +35,7 @@ import {
 } from "../../utils/authorizations";
 import { AuthzSendDialog } from "../../components/authz/AuthzSend";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import { getBalance, getBalances } from "../../features/bank/bankSlice";
 
 export default function Authz() {
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
@@ -57,6 +58,7 @@ export default function Authz() {
     (state) => state.wallet.chainInfo?.config?.currencies[0]
   );
   const feegrant = useSelector((state) => state.common.feegrant);
+  const coinDenom = chainInfo?.config?.currencies[0].coinMinimalDenom || "";
 
   useEffect(() => {
     if (execTx.status === "idle") {
@@ -79,6 +81,16 @@ export default function Authz() {
       );
     }
   }, [chainInfo]);
+
+  useEffect(() => {
+    dispatch(
+      getBalance({
+        baseURL: chainInfo.config.rest,
+        address: address,
+        denom: coinDenom,
+      })
+    );
+  }, [address]);
 
   useEffect(() => {
     if (grantsToMe?.errMsg !== "" && grantsToMe?.status === "rejected") {
@@ -329,6 +341,11 @@ export default function Authz() {
                             </StyledTableCell>
                             <StyledTableCell>
                               <Link
+                                sx={{
+                                  "&:hover": {
+                                    cursor: "pointer",
+                                  },
+                                }}
                                 onClick={() => {
                                   setSelected(row);
                                   setInfoOpen(true);
@@ -438,6 +455,11 @@ export default function Authz() {
                             </StyledTableCell>
                             <StyledTableCell>
                               <Link
+                                sx={{
+                                  "&:hover": {
+                                    cursor: "pointer",
+                                  },
+                                }}
                                 onClick={() => {
                                   setSelected(row);
                                   setInfoOpen(true);
@@ -467,16 +489,16 @@ export default function Authz() {
       </Paper>
 
       {selectedGrant?.authorization &&
-      (selectedGrant?.authorization["@type"] ===
-        "/cosmos.bank.v1beta1.SendAuthorization" ||
-        selectedGrant?.authorization?.msg ===
+        (selectedGrant?.authorization["@type"] ===
+          "/cosmos.bank.v1beta1.SendAuthorization" ||
+          selectedGrant?.authorization?.msg ===
           "/cosmos.bank.v1beta1.MsgSend") ? (
         <AuthzSendDialog
           grant={selectedGrant}
           currency={currency}
           open={
             selectedGrant?.authorization["@type"] ===
-              "/cosmos.bank.v1beta1.SendAuthorization" ||
+            "/cosmos.bank.v1beta1.SendAuthorization" ||
             selectedGrant?.authorization?.msg === "/cosmos.bank.v1beta1.MsgSend"
           }
           onClose={() => {

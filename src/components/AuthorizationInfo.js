@@ -165,20 +165,68 @@ const renderAuthorization = (authz, displayDenom) => {
       );
     case "/cosmos.staking.v1beta1.StakeAuthorization":
       return (
-        <>
-          <ul>
-            <li>
-              <Typography>Type</Typography>
-              <Typography>
-                <Chip
-                  label={getTypeURLName(authz["@type"])}
-                  variant="filled"
-                  size="medium"
-                />
-              </Typography>
-            </li>
-          </ul>
-        </>
+        <Grid container>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{
+              mb: 1,
+            }}
+          >
+            <Typography gutterBottom>Type</Typography>
+            <Chip
+              label={getTypeURLName(authorization["@type"])}
+              variant="filled"
+              size="medium"
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{
+              mb: 1,
+            }}
+          >
+            <Typography gutterBottom>Granter</Typography>
+            <Chip
+              label={shortenAddress(granter, 21)}
+              variant="filled"
+              size="medium"
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{
+              mb: 1,
+            }}
+          >
+            <Typography gutterBottom>Grantee</Typography>
+            <Chip
+              label={shortenAddress(grantee, 21)}
+              variant="filled"
+              size="medium"
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{
+              mb: 1,
+            }}
+          >
+            <Typography gutterBottom>Expiration</Typography>
+            {expiration ? (
+              <Typography>{getLocalTime(expiration)}</Typography>
+            ) : (
+              <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
+            )}
+          </Grid>
+        </Grid>
       );
     default:
       return <Typography>Not Supported</Typography>;
