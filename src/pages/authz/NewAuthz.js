@@ -28,10 +28,12 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { Typography, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import { getBalance } from "../../features/bank/bankSlice";
 
 export default function NewAuthz() {
   const address = useSelector((state) => state.wallet.address);
   const chainInfo = useSelector((state) => state.wallet.chainInfo);
+  const coinDenom = chainInfo?.config?.currencies[0].coinMinimalDenom || "";
   const authzTx = useSelector((state) => state.authz.tx);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
   const grantsByMe = useSelector((state) => state.authz.grantsByMe);
@@ -57,6 +59,18 @@ export default function NewAuthz() {
       );
     }
   }, [grantsByMe.errMsg, grantsToMe.errMsg]);
+
+  useEffect(() => {
+    if (address?.length > 0) {
+      dispatch(
+        getBalance({
+          baseURL: chainInfo.config.rest,
+          address: address,
+          denom: coinDenom,
+        })
+      );
+    }
+  }, [address]);
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
   useEffect(() => {
