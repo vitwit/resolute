@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import OverviewPage from "./OverviewPage";
 import SendPage from "./SendPage";
 import ProposalInfo from "./gov/ProposalInfo";
+import PageStaking from "./staking/PageStaking";
 
 export const ContextData = React.createContext();
 
@@ -164,8 +165,12 @@ export default function Home() {
             <MultisigPage />
           } />
 
-          <Route path="/:networkName/staking" element={
+          <Route path="/staking" element={
             <StakingPage />
+          } />
+
+          <Route path="/:networkName/staking" element={
+            <PageStaking />
           } />
 
           <Route path="*" element={<Page404 />}></Route>

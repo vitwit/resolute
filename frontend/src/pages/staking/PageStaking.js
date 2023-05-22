@@ -9,30 +9,30 @@ import {
   txReDelegate,
   resetTxType,
   getAllValidators,
-} from "../features/staking/stakeSlice";
+} from "../../features/staking/stakeSlice";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Paper from "@mui/material/Paper";
-import { ActiveValidators } from "../components/ActiveValidators";
-import { InActiveValidators } from "../components/InActiveValidators";
-import { MyDelegations } from "../components/Delegations";
+import { ActiveValidators } from "../../components/ActiveValidators";
+import { InActiveValidators } from "../../components/InActiveValidators";
+import { MyDelegations } from "../../components/Delegations";
 import {
   getDelegatorTotalRewards,
   txWithdrawAllRewards,
   resetTx,
-} from "../features/distribution/distributionSlice";
-import { parseBalance } from "../utils/denom";
-import { DialogDelegate } from "../components/DialogDelegate";
-import { getBalance } from "../features/bank/bankSlice";
-import { DialogUndelegate } from "../components/DialogUndelegate";
+} from "../../features/distribution/distributionSlice";
+import { parseBalance } from "../../utils/denom";
+import { DialogDelegate } from "../../components/DialogDelegate";
+import { getBalance } from "../../features/bank/bankSlice";
+import { DialogUndelegate } from "../../components/DialogUndelegate";
 import {
   resetError,
   resetFeegrant,
   resetTxHash,
   setError,
-} from "./../features/common/commonSlice";
-import { DialogRedelegate } from "../components/DialogRedelegate";
-import { WitvalValidator } from "../components/WitvalValidator";
+} from "../../features/common/commonSlice";
+import { DialogRedelegate } from "../../components/DialogRedelegate";
+import { WitvalValidator } from "../../components/WitvalValidator";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import {
@@ -40,16 +40,19 @@ import {
   getReDelegateAuthz,
   getUnDelegateAuthz,
   getWithdrawRewardsAuthz,
-} from "../utils/authorizations";
-import { authzExecHelper } from "../features/authz/authzSlice";
+} from "../../utils/authorizations";
+import { authzExecHelper } from "../../features/authz/authzSlice";
 import { Box, TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { FilteredValidators } from "./../components/FilteredValidators";
+import { FilteredValidators } from "../../components/FilteredValidators";
 import { useTheme } from "@emotion/react";
-import FeegranterInfo from "../components/FeegranterInfo";
+import FeegranterInfo from "../../components/FeegranterInfo";
+import { useParams } from "react-router-dom";
 
-export default function Validators() {
+export default function PageStaking() {
+  const params = useParams();
+
   const [type, setType] = useState("delegations");
 
   const validators = useSelector((state) => state.staking.validators);
@@ -184,10 +187,10 @@ export default function Validators() {
         active: [],
         inactive: [],
       });
-      dispatch(getParams({ baseURL: chainInfo.config.rest }));
+      dispatch(getParams({ baseURL: chainInfo?.config?.rest }));
       dispatch(
         getAllValidators({
-          baseURL: chainInfo.config.rest,
+          baseURL: chainInfo?.config?.rest,
           status: null,
         })
       );
