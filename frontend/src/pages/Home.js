@@ -139,6 +139,10 @@ export default function Home() {
             <SendPage />
           } />
 
+          <Route path="/transfers" element={
+            <SendPage />
+          } />
+
           <Route path="/:networkName/authz" element={
             <AuthzPage />
           } />

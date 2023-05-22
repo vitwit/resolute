@@ -16,9 +16,11 @@ import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import Button from "@mui/material/Button";
 import { setSelectedNetwork } from "../features/common/commonSlice";
 import { getGrantsToMe } from "../features/authz/authzSlice";
+import { useNavigate } from "react-router-dom";
 
 export function CustomAppBar(props) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const networks = useSelector((state) => state.wallet.networks);
   const isAuthzMode = useSelector((state) => state.common.authzMode);
@@ -39,6 +41,10 @@ export function CustomAppBar(props) {
       alert("cannot switch to other network in authz mode");
     }
   };
+
+  const navigateTo = (path) => {
+    navigate(path);
+  }
 
   useEffect(() => {
     if (isAuthzMode) {
@@ -128,6 +134,7 @@ export function CustomAppBar(props) {
                   chainName: networks[chain].network.config.chainName,
                   chainID: networks[chain].network.config.chainId
                 }));
+                navigateTo('/');
               }}
             >
               <ListItemText>{networks[chain].network.config.chainName}</ListItemText>

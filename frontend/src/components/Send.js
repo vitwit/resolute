@@ -12,9 +12,8 @@ import { Menu, MenuItem } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import ListItemText from "@mui/material/ListItemText";
-import { setSelectedNetwork } from "../features/common/commonSlice";
-import { useParams } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { getBalances } from "../features/bank/bankSlice";
 
 Send.propTypes = {
   onSend: PropTypes.func.isRequired,
@@ -25,25 +24,53 @@ Send.propTypes = {
 };
 
 export default function Send(props) {
+  const { chainInfo, sendTx, available, onSend, authzTx } = props;
+
   const params = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const { chainInfo, sendTx, available, onSend, authzTx } = props;
   const networks = useSelector((state) => state.wallet.networks);
-  const chainIDs = Object.keys(networks);
-  console.log("networks: ...", networks);
-  console.log("chainids...", chainIDs);
-  const [anchorEl, setAnchorEl] = useState(null);
   const selectedAuthz = useSelector((state) => state.authz.selected);
   const selectNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
-  useEffect(()=> {
-    setCurrentNetwork(selectNetwork);
-  }, [selectNetwork])
-  const [currentNetwork, setCurrentNetwork] =  useState(params?.networkName);
+
+  const address = useSelector((state) => state.wa)
+
+  useEffect(() => {
+    dispatch(getBalances(
+      {
+        baseURL:"https://resolute.witval.com/cosmos_api",
+        address:"cosmos1y0hvu8ts6m8hzwp57t9rhdgvnpc7yltglu9nrk",
+        pagination:null,
+      }
+    ))
+    console.log(balances)
+  },[])
+  const balances = useSelector((state) => state.bank.balances.list)
+
+
+
+  console.log(address)
+  // console.log(networks)
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName);
 
   const currency = chainInfo.config?.currencies[0];
+  const chainIDs = Object.keys(networks);
+
+  useEffect(() => {
+    if (!currentNetwork) {
+      setCurrentNetwork(selectNetwork);
+    }
+  }, []);
+
+  const navigateTo = (path) => {
+    navigate(path);
+  }
+
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
       amount: 0,
