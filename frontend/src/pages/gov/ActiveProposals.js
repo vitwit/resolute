@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Proposals from './Proposals'
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ConnectWallet from '../../components/ConnectWallet';
 import { Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';

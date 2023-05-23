@@ -33,10 +33,10 @@ import "./../common.css";
 
 export default function ProposalInfo() {
   const dispatch = useDispatch();
-  // const { proposalInfo } = proposalState;
   const poolInfo = useSelector((state) => state.staking.pool);
   const feegrant = useSelector((state) => state.common.feegrant);
-  
+  const proposalInfoRes = useSelector((state) => state.gov.proposalInfo);
+
   const { networkName, id } = useParams();
   const nameToIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const chainID = nameToIDs[networkName];
@@ -47,11 +47,12 @@ export default function ProposalInfo() {
   const activeProposals = useSelector((state) => state.gov.active);
 
   const [selectedNetwork, setSelectedNetwork] = useState("");
-  const {chainInfo} = {network};
+  const { chainInfo } = { network };
 
   const [proposal, setProposal] = useState({});
 
   useEffect(() => {
+    const chainID = nameToIDs[networkName];
     if (networkName?.length > 0 && chainID?.length > 0) {
       setSelectedNetwork(chainID);
       if (activeProposals[chainID]?.proposals?.length > 0) {
@@ -60,37 +61,17 @@ export default function ProposalInfo() {
           if (proposal?.proposal_id === id) {
             setProposal(proposal);
           }
-          
+
         }
       } else {
-        getProposal({
-          baseURL: network?.chainInfo?.config.rest,
+        dispatch(getProposal({
+          baseURL: network?.network?.config.rest,
           proposalId: id,
           chainID: chainID,
-        })
+        }))
       }
 
     }
-  }, [networkName, id]);
-  
-  useEffect(() => {
-    // dispatch(
-    //   getProposal({
-    //     baseURL: chainInfo.config.rest,
-    //     proposalId: id,
-    //   })
-    // );
-    // dispatch(
-    //   getPoolInfo({
-    //     baseURL: chainInfo.config.rest,
-    //   })
-    // );
-    // dispatch(
-    //   getProposalTally({
-    //     baseURL: chainInfo.config.rest,
-    //     proposalId: id,
-    //   })
-    // );
 
     return () => {
       dispatch(resetError());
@@ -98,16 +79,29 @@ export default function ProposalInfo() {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (proposalState.status === "rejected" && proposalState.error.length > 0) {
-  //     dispatch(
-  //       setError({
-  //         type: "error",
-  //         message: proposalState.error,
-  //       })
-  //     );
-  //   }
-  // }, [proposalState]);
+  useEffect(() => {
+    if (proposalInfoRes.status === "rejected" && proposalState.error.length > 0) {
+      dispatch(
+        setError({
+          type: "error",
+          message: proposalState.error,
+        })
+      );
+    } else if (proposalInfoRes.status === "idle") {
+      if (activeProposals[chainID]?.proposals?.length > 0) {
+        for (let index = 0; index < activeProposals[chainID].proposals.length; index++) {
+          const proposal = activeProposals[chainID].proposals[index];
+          if (proposal?.proposal_id === id) {
+            setProposal(proposal);
+          }
+
+        }
+      }
+    }
+  }, [proposalInfoRes]);
+
+
+
 
   const address = useSelector((state) => state.wallet.address);
   const govTx = useSelector((state) => state.gov.tx);
@@ -130,7 +124,7 @@ export default function ProposalInfo() {
   const status = useSelector((state) => state.gov.active.status);
 
   const tallyState = {};
-  const proposalState = {status: "idle"};
+  const proposalState = { status: "idle" };
 
   useEffect(() => {
     if (status === "rejected" && errMsg === "") {
@@ -340,7 +334,7 @@ export default function ProposalInfo() {
               </Button>
             </Box>
 
-            {/* <Grid container spacing={2}>
+            <Grid container spacing={2}>
               <Grid item xs={6} md={2}>
                 <Typography
                   variant="body1"
@@ -413,7 +407,7 @@ export default function ProposalInfo() {
                   %
                 </Typography>
               </Grid>
-            </Grid> */}
+            </Grid>
             <Typography
               color="text.primary"
               variant="body1"
@@ -440,12 +434,12 @@ export default function ProposalInfo() {
               }}
             /> */}
             <div style={{
-                padding: 8,
-                backgroundColor:
+              padding: 8,
+              backgroundColor:
                 theme.palette?.mode === "light" ? "#f9fafc" : "#282828",
-                color: "text.primary",
-                whiteSpace: "pre-line",
-              }} className="proposal-description-markdown">
+              color: "text.primary",
+              whiteSpace: "pre-line",
+            }} className="proposal-description-markdown">
               {proposal?.content?.description && proposal?.content?.description.replace(/\\n/g, '\n')}}
             </div>
           </Paper>
@@ -454,13 +448,13 @@ export default function ProposalInfo() {
         <CircularProgress size={35} />
       )}
 
-<VoteDialog
-            open={open}
-            closeDialog={closeDialog}
-            onVote={onVoteSubmit}
-            isAuthzMode={isAuthzMode}
-            granters={[]}
-          />
+      <VoteDialog
+        open={open}
+        closeDialog={closeDialog}
+        onVote={onVoteSubmit}
+        isAuthzMode={isAuthzMode}
+        granters={[]}
+      />
     </>
   );
 }
