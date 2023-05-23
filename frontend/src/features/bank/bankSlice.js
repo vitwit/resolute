@@ -3,13 +3,10 @@ import { SendMsg } from "../../txns/bank";
 import bankService from "./service";
 import { setError, setTxHash } from "../common/commonSlice";
 import { signAndBroadcast } from "../../utils/signing";
+import { act } from "react-dom/test-utils";
 
 const initialState = {
-  balances: {
-    list: [],
-    status: "idle",
-    errMsg: "",
-  },
+  balances: {},
   balance: {
     balance: {},
     status: "idle",
@@ -26,7 +23,10 @@ export const getBalances = createAsyncThunk("bank/balances", async (data) => {
     data.address,
     data.pagination
   );
-  return response.data;
+  return {
+    chainID: data.chainID,
+    data: response.data,
+  };
 });
 
 export const getBalance = createAsyncThunk("bank/balance", async (data) => {
@@ -131,20 +131,19 @@ export const bankSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getBalances.pending, (state) => {
-        state.balances.status = "pending";
-        state.balances.errMsg = "";
-      })
+      .addCase(getBalances.pending, (state) => {})
       .addCase(getBalances.fulfilled, (state, action) => {
-        state.balances.status = "idle";
-        state.balances.list = action.payload.balances;
-        state.balances.errMsg = "";
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          let result = {
+            list: action.payload?.data?.balances,
+            status: "idle",
+            errMsg: "",
+          };
+          state.balances[chainID] = result;
+        }
       })
-      .addCase(getBalances.rejected, (state, action) => {
-        state.balances.status = "rejected";
-        state.balances.errMsg = action.error.message;
-        state.balances.list = [];
-      });
+      .addCase(getBalances.rejected, (state, action) => {});
 
     builder
       .addCase(getBalance.pending, (state) => {

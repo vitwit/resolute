@@ -27,7 +27,6 @@ export default function Send(props) {
   const { chainInfo, sendTx, available, onSend, authzTx } = props;
 
   const params = useParams();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const networks = useSelector((state) => state.wallet.networks);
@@ -36,29 +35,10 @@ export default function Send(props) {
     (state) => state.common.selectedNetwork.chainName
   );
 
-  const address = useSelector((state) => state.wa)
-
-  useEffect(() => {
-    dispatch(getBalances(
-      {
-        baseURL:"https://resolute.witval.com/cosmos_api",
-        address:"cosmos1y0hvu8ts6m8hzwp57t9rhdgvnpc7yltglu9nrk",
-        pagination:null,
-      }
-    ))
-    console.log(balances)
-  },[])
-  const balances = useSelector((state) => state.bank.balances.list)
-
-
-
-  console.log(address)
-  // console.log(networks)
-
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentNetwork, setCurrentNetwork] = useState(params?.networkName);
 
-  const currency = chainInfo.config?.currencies[0];
+  const currency = chainInfo?.config?.currencies[0];
   const chainIDs = Object.keys(networks);
 
   useEffect(() => {
@@ -66,10 +46,6 @@ export default function Send(props) {
       setCurrentNetwork(selectNetwork);
     }
   }, []);
-
-  const navigateTo = (path) => {
-    navigate(path);
-  }
 
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
@@ -137,6 +113,7 @@ export default function Send(props) {
               onClick={() => {
                 setAnchorEl(null);
                 setCurrentNetwork(networks[chain].network.config.chainName);
+                navigate(`/${networks[chain].network.config.chainName.toLowerCase()}/transfers`)
               }}
             >
               <ListItemText>
@@ -173,7 +150,7 @@ export default function Send(props) {
             onClick={() => setValue("amount", available)}
           >
             Available:&nbsp;{available}
-            {currency?.coinDenom}
+            &nbsp;{currency?.coinDenom}
           </Typography>
           <Controller
             name="amount"

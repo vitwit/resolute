@@ -9,27 +9,39 @@ import {
   resetTxHash,
   setError,
 } from "./../features/common/commonSlice";
-import { getBalance, txBankSend } from "../features/bank/bankSlice";
+import { getBalances, txBankSend } from "../features/bank/bankSlice";
 import Send from "../components/Send";
 import { parseBalance } from "../utils/denom";
 import Alert from "@mui/material/Alert";
 import FeegranterInfo from "../components/FeegranterInfo";
+import { useParams } from "react-router-dom";
 
 export default function SendPage() {
   const [available, setBalance] = useState(0);
-
-  const from = useSelector((state) => state.wallet.address);
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo?.config?.currencies[0]
+  const params = useParams();
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
   );
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
-  const address = useSelector((state) => state.wallet.address);
+  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork);
+
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const from =
+    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+
+  const currency =
+    networks[nameToChainIDs[currentNetwork]]?.network.config.currencies;
+
+  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  const address =
+    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+
   const sendTx = useSelector((state) => state.bank.tx);
-  const balance = useSelector((state) => state.bank.balance);
+  const balance = useSelector((state) => state.bank.balances[nameToChainIDs[currentNetwork]]?.list[0]);
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
   const feegrant = useSelector((state) => state.common.feegrant);
-
   const selectedAuthz = useSelector((state) => state.authz.selected);
 
   const authzSend = useMemo(
@@ -44,42 +56,48 @@ export default function SendPage() {
   }, []);
 
   useEffect(() => {
-    if (chainInfo.config?.currencies.length > 0 && address.length > 0) {
+    setCurrentNetwork(params.networkName)
+  },[params])
+
+  useEffect(() => {
+    if (chainInfo?.config?.currencies.length > 0 && address.length > 0) {
       if (selectedAuthz.granter.length === 0) {
         dispatch(
-          getBalance({
-            baseURL: chainInfo.config.rest,
+          getBalances({
+            baseURL: chainInfo.config.rest+"/",
             address: address,
-            denom: currency.coinMinimalDenom,
+            chainID: nameToChainIDs[currentNetwork],
           })
         );
       } else {
         dispatch(
-          getBalance({
-            baseURL: chainInfo.config.rest,
+          getBalances({
+            baseURL: chainInfo.config.rest+"/",
             address: selectedAuthz.granter,
-            denom: currency.coinMinimalDenom,
+            chainID: nameToChainIDs[currentNetwork]
           })
         );
       }
 
       dispatch(
         getGrantsToMe({
-          baseURL: chainInfo.config.rest,
+          baseURL: chainInfo.config.rest+"/",
           grantee: address,
         })
       );
     }
-  }, [chainInfo]);
+  }, [chainInfo, currentNetwork]);
 
   useEffect(() => {
-    setBalance(
-      parseBalance(
-        [balance.balance],
-        currency?.coinDecimals,
-        currency?.coinMinimalDenom
-      )
-    );
+    if(balance){
+      setBalance(
+        parseBalance(
+          [balance],
+          currency[0]?.coinDecimals,
+          currency[0]?.coinMinimalDenom
+        )
+      );
+    }
   }, [balance]);
 
   const onSendTx = (data) => {
@@ -101,14 +119,14 @@ export default function SendPage() {
             from: from,
             to: data.to,
             amount: amount,
-            denom: currency.coinMinimalDenom,
+            denom: currency[0].coinMinimalDenom,
             chainId: chainInfo.config.chainId,
             rest: chainInfo.config.rest,
             aminoConfig: chainInfo.aminoConfig,
             prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
             feeAmount:
               chainInfo.config.gasPriceStep.average *
-              10 ** currency.coinDecimals,
+              10 ** currency[0].coinDecimals,
             feegranter: feegrant.granter,
           })
         );
@@ -120,13 +138,13 @@ export default function SendPage() {
         granter: selectedAuthz.granter,
         recipient: data.to,
         amount: amount,
-        denom: currency.coinMinimalDenom,
+        denom: currency[0].coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rest: chainInfo.config.rest,
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config.gasPriceStep.average * 10 ** currency[0].coinDecimals,
         feegranter: feegrant.granter,
       });
     }
@@ -156,7 +174,7 @@ export default function SendPage() {
           ) : (
             <Send
               chainInfo={chainInfo}
-              available={available}
+              available={balance? available:0}
               onSend={onSendTx}
               sendTx={sendTx}
               authzTx={authzExecTx}
