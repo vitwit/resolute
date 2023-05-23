@@ -1,23 +1,22 @@
-import React, { lazy, Suspense, useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Overview from "./Overview";
 import ActiveProposals from "./gov/ActiveProposals";
 import StakingPage from "./StakingPage";
 import MultisigPage from "./MultisigPage";
 import AuthzPage from "./AuthzPage";
 import FeegrantPage from "./FeegrantPage";
 import GroupPageV1 from "./GroupPageV1";
-import { Routes, Route, useRoutes, useParams, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, useParams, useLocation, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import Page404 from "./Page404";
 import { useSelector } from "react-redux";
 import OverviewPage from "./OverviewPage";
-import TransfersPage from "./TransfersPage";
 import SendPage from "./SendPage";
+import ProposalInfo from "./gov/ProposalInfo";
 
 export const ContextData = React.createContext();
 
@@ -89,18 +88,11 @@ export default function Home() {
         setNetwork("cosmoshub");
         navigate(`cosmoshub/${ALL_NETWORKS[newValue]}`);
       } else {
-      navigate(`${network}/${ALL_NETWORKS[newValue]}`);
+        navigate(`${network}/${ALL_NETWORKS[newValue]}`);
       }
     }
   };
 
-  const canShowNetworks = (page) => {
-    if (page === "gov" || page === "overview") {
-      return false;
-    } else {
-      return true;
-    }
-  }
 
   useEffect(() => {
     setValue(getTabIndex(page));
@@ -154,6 +146,19 @@ export default function Home() {
           <Route path="/gov" element={
             <ActiveProposals />
           } />
+
+          <Route path="/:networkName/gov" element={
+            <ActiveProposals />
+          } />
+
+          <Route
+            path="/:networkName/proposals/:id"
+            element={
+              <Suspense fallback={<CircularProgress />}>
+                <ProposalInfo />
+              </Suspense>
+            }
+          ></Route>
 
           <Route path="/:networkName/daos" element={
             <GroupPageV1 />
