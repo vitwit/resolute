@@ -2,7 +2,7 @@
 
 **Step-1:**
 - Go to [Authz page on Resolute](https://resolute.vitwit.com/authz)  and click on **Granted to me** tab
-- It will list down all the accounts you have access via authz. Click on **Use** for the respective account you wish to use the delegates permission
+- It will list down all the accounts for which you have authz access. Click on **Use** for the respective account you wish to use the delegates permission
 - Now the entire app works in authz mode. It means, whatever the action you perform after switching will be done on behalf of original granter account.
 ![Screenshot from 2023-05-24 20-09-38](https://github.com/vitwit/resolute/assets/3479820/d173df35-97a4-4b75-8de0-096ed4ef65f3)
 
