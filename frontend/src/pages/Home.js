@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import OverviewPage from "./OverviewPage";
 import SendPage from "./SendPage";
 import ProposalInfo from "./gov/ProposalInfo";
+import UnjailPage from "./slashing/UnjailPage";
 
 export const ContextData = React.createContext();
 
@@ -166,6 +167,10 @@ export default function Home() {
 
           <Route path="/:networkName/staking" element={
             <StakingPage />
+          } />
+
+          <Route path="/:networkName/slashing" element={
+            <UnjailPage />
           } />
 
           <Route path="*" element={<Page404 />}></Route>
