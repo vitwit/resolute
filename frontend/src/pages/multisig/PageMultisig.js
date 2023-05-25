@@ -25,59 +25,52 @@ import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
 
 export default function PageMultisig() {
-  const navigate = useNavigate();
-  const params = useParams();
-
-  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName);
-  const selectedNetwork = useSelector(
-    (state) => state.common.selectedNetwork.chainName
-  );
-
   const [open, setOpen] = useState(false);
+  const params = useParams();
+  const [selectedNetwork, setCurrentNetwork] = useState(params?.networkName);
+  const [chainInfo, setChainInfo] = useState({});
+
+  const navigate = useNavigate();
+
   const createMultiAccRes = useSelector(
     (state) => state.multisig.createMultisigAccountRes
   );
 
-  const wallet = useSelector((state) => state.wallet);
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const multisigAccounts = useSelector(
     (state) => state.multisig.multisigAccounts
   );
-
+  const wallet = useSelector((state) => state.wallet);
   const { connected } = wallet;
-  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  const { walletInfo, network } = chainInfo;
 
   const accounts = multisigAccounts.accounts;
   const pendingTxns = multisigAccounts.txnCounts;
-  const walletAddress =
-    wallet.networks[nameToChainIDs[currentNetwork]]?.walletInfo?.bech32Address;
 
-  const config = chainInfo?.config;
-  const chainId = config?.chainId;
-  const networkInfo = chainInfo;
-  const addressPrefix = networkInfo?.config?.bech32Config?.bech32PrefixAccAddr;
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!currentNetwork) {
-      setCurrentNetwork(selectedNetwork);
+    const network = params.networkName;
+    if (network.length > 0 && connected) {
+      const chainId = nameToChainIDs[network];
+      if (chainId?.length > 0) {
+        setChainInfo(networks[chainId]);
+        dispatch(getMultisigAccounts(walletInfo?.bech32Address));
+      } else {
+        throw new Error("you shouldn't be here");
+      }
     }
-  }, []);
+
+  }, [params, connected, networks]);
 
   useEffect(() => {
     if (createMultiAccRes.status === "idle") {
       setOpen(false);
-      dispatch(getMultisigAccounts(walletAddress));
+      dispatch(getMultisigAccounts(walletInfo?.bech32Address));
     }
   }, [createMultiAccRes]);
-
-  useEffect(() => {
-    if (connected) {
-      dispatch(getMultisigAccounts(walletAddress));
-    }
-  }, [chainInfo, currentNetwork]);
 
   const onClose = () => {
     setOpen(false);
@@ -102,8 +95,8 @@ export default function PageMultisig() {
           }}
           networks={Object.keys(nameToChainIDs)}
           defaultNetwork={
-            currentNetwork?.length > 0
-              ? currentNetwork.toLowerCase().replace(/ /g, "")
+            selectedNetwork?.length > 0
+              ? selectedNetwork.toLowerCase().replace(/ /g, "")
               : "cosmoshub"
           }
         />
@@ -133,10 +126,10 @@ export default function PageMultisig() {
         {multisigAccounts?.status !== "pending" && !accounts?.length ? (
           <Box
             sx={{
-              mt: 4,
+              mt: 6,
             }}
           >
-            <Typography variant="body1" color="error" fontWeight={500}>
+            <Typography variant="body1" fontWeight={500}>
               No Multisig accounts found on your address
             </Typography>
             <Button
@@ -161,7 +154,6 @@ export default function PageMultisig() {
           <CircularProgress size={40} />
         ) : null}
       </Box>
-
       {accounts?.length > 0 ? (
         <FormControl fullWidth sx={{ mt: 2 }}>
           <TableContainer>
@@ -238,16 +230,17 @@ export default function PageMultisig() {
               </TableBody>
             </Table>
           </TableContainer>
+
         </FormControl>
       ) : null}
 
       {open ? (
         <DialogCreateMultisig
-          addressPrefix={addressPrefix}
-          chainId={chainId}
+          addressPrefix={network?.config?.bech32Config?.bech32PrefixAccAddr}
+          chainId={network?.config?.chainId}
           onClose={onClose}
           open={open}
-          address={walletAddress}
+          address={walletInfo?.bech32Address}
         />
       ) : null}
     </Paper>
