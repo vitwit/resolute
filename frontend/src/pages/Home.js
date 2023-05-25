@@ -68,27 +68,23 @@ function getTabIndex(path) {
 
 export default function Home() {
   const [value, setValue] = React.useState(0);
-  const [network, setNetwork] = React.useState(null);
+  const selectedNetwork = useSelector(state => state.common.selectedNetwork?.chainName || "")
+  const [network, setNetwork] = React.useState(selectedNetwork);
 
   const navigate = useNavigate();
   const location = useLocation();
-  const params = useParams();
   const page = location.pathname.split('/')?.[location.pathname.split('/')?.length - 1]
-
-  const networks = useSelector((state) => state.wallet.networks);
-  const chainIDs = Object.keys(networks);
-
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
     if (newValue === 0 || newValue === 2) {
       navigate(ALL_NETWORKS[newValue]);
     } else {
-      if (network === null) {
-        setNetwork("cosmoshub");
-        navigate(`cosmoshub/${ALL_NETWORKS[newValue]}`);
+      if (selectedNetwork === "") {
+        setNetwork("simapp");
+        navigate(`simapp/${ALL_NETWORKS[newValue]}`);
       } else {
-        navigate(`${network}/${ALL_NETWORKS[newValue]}`);
+        navigate(`${selectedNetwork.toLowerCase()}/${ALL_NETWORKS[newValue]}`);
       }
     }
   };
@@ -128,6 +124,10 @@ export default function Home() {
           />
 
           <Route path="/:networkName/transfers" element={
+            <SendPage />
+          } />
+
+          <Route path="/transfers" element={
             <SendPage />
           } />
 

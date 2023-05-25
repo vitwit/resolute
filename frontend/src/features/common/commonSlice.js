@@ -21,7 +21,7 @@ const initialState = {
     grantee: ""
   },
   selectedNetwork: {
-    chainName: "Cosmos Hub",
+    chainName: "CosmosHub",
     chainID: "cosmoshub-4",
   },
   authzMode: false,
