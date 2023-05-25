@@ -73,7 +73,10 @@ export default function SendPage() {
 
 
   useEffect(() => {
+    if (params?.networkName?.length > 0)
     setCurrentNetwork(params.networkName)
+    else 
+    setCurrentNetwork("cosmoshub")
   }, [params])
 
   useEffect(() => {
@@ -172,21 +175,24 @@ export default function SendPage() {
         />
       ) : null}
       <Grid container sx={{ mt: 2 }}>
+
         <Grid item xs={1} md={3}></Grid>
         <Grid item xs={10} md={6}>
           {selectedAuthz.granter.length > 0 &&
             authzSend?.granter !== selectedAuthz.granter ? (
             <Alert>You don't have permission to execute this transcation</Alert>
-          ) : (
-            <Send
-              chainInfo={chainInfo}
-              available={parseBalance(balances, currency[0].coinDecimals, currency[0].coinMinimalDenom) || 0}
-              onSend={onSendTx}
-              sendTx={sendTx}
-              authzTx={authzExecTx}
+          ) :
+            (
+              <Send
+                chainInfo={chainInfo}
+                available={currency?.length > 0 && balances?.length > 0 ? parseBalance(balances, currency[0].coinDecimals, currency[0].coinMinimalDenom) : 0}
+                onSend={onSendTx}
+                sendTx={sendTx}
+                authzTx={authzExecTx}
 
-            />
-          )}
+              />
+            )
+          }
         </Grid>
         <Grid item xs={1} md={3}></Grid>
       </Grid>

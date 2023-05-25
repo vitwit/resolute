@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -9,7 +9,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SelectNetwork from "./common/SelectNetwork";
 
 Send.propTypes = {
@@ -24,27 +24,13 @@ Send.propTypes = {
 export default function Send(props) {
   const { chainInfo, sendTx, available, onSend, authzTx } = props;
 
-  const params = useParams();
   const navigate = useNavigate();
-
-  const networks = useSelector((state) => state.wallet.networks);
-  const selectedAuthz = useSelector((state) => state.authz.selected);
   const selectNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-
   const currency = chainInfo?.config?.currencies[0];
-  const chainIDs = Object.keys(networks);
-
-  useEffect(() => {
-    if (!currentNetwork) {
-      setCurrentNetwork(selectNetwork);
-    }
-  }, []);
 
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
@@ -74,7 +60,6 @@ export default function Send(props) {
         </Typography>
         <SelectNetwork
           onSelect={(name) => {
-            setCurrentNetwork(name);
             navigate(`/${name}/transfers`)
           }}
           networks={Object.keys(nameToChainIDs)}
