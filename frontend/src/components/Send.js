@@ -8,12 +8,9 @@ import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
 import PropTypes from "prop-types";
-import { Menu, MenuItem } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
-import ListItemText from "@mui/material/ListItemText";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { getBalances } from "../features/bank/bankSlice";
+import SelectNetwork from "./common/SelectNetwork";
 
 Send.propTypes = {
   onSend: PropTypes.func.isRequired,
@@ -21,6 +18,7 @@ Send.propTypes = {
   sendTx: PropTypes.object.isRequired,
   available: PropTypes.number.isRequired,
   authzTx: PropTypes.object.isRequired,
+  networkName: PropTypes.string.isRequired,
 };
 
 export default function Send(props) {
@@ -37,6 +35,7 @@ export default function Send(props) {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentNetwork, setCurrentNetwork] = useState(params?.networkName);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
   const currency = chainInfo?.config?.currencies[0];
   const chainIDs = Object.keys(networks);
@@ -53,14 +52,6 @@ export default function Send(props) {
       recipient: "",
     },
   });
-
-  const handleClick = (event) => {
-    if (selectedAuthz.granter.length === 0) {
-      setAnchorEl(event.currentTarget);
-    } else {
-      alert("cannot switch to other network in authz mode");
-    }
-  };
 
   const onSubmit = (data) => {
     onSend({
@@ -81,54 +72,21 @@ export default function Send(props) {
         <Typography color="text.primary" variant="h6" fontWeight={600}>
           Send
         </Typography>
-        <Button
-          id="demo-positioned-button"
-          color="inherit"
-          endIcon={<ExpandMoreOutlinedIcon />}
-          aria-controls={anchorEl ? "demo-positioned-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={anchorEl ? "true" : undefined}
-          onClick={handleClick}
-        >
-          {currentNetwork}
-        </Button>
-        <Menu
-          id="demo-positioned-menu"
-          aria-labelledby="demo-positioned-button"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={() => setAnchorEl(null)}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "left",
+        <SelectNetwork
+          onSelect={(name) => {
+            setCurrentNetwork(name);
+            navigate(`/${name}/transfers`)
           }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          {chainIDs.map((chain) => (
-            <MenuItem
-              key={chain}
-              onClick={() => {
-                setAnchorEl(null);
-                setCurrentNetwork(networks[chain].network.config.chainName);
-                navigate(`/${networks[chain].network.config.chainName.toLowerCase()}/transfers`)
-              }}
-            >
-              <ListItemText>
-                {networks[chain].network.config.chainName}
-              </ListItemText>
-            </MenuItem>
-          ))}
-        </Menu>
+          networks={Object.keys(nameToChainIDs)}
+          defaultNetwork={selectNetwork?.length > 0 ? selectNetwork.toLowerCase().replace(/ /g, "") : "cosmoshub"}
+        />
       </Box>
-      <br />
       <Box
         noValidate
         autoComplete="off"
         sx={{
           "& .MuiTextField-root": { mt: 1.5, mb: 1.5 },
+          mt: 2,
         }}
       >
         <form onSubmit={handleSubmit(onSubmit)}>

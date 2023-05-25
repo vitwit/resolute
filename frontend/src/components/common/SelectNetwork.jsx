@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { InputLabel, MenuItem, Select, FormControl } from '@mui/material'
+import React, { useState } from 'react'
+import { MenuItem, Select, FormControl } from '@mui/material'
 import { Box } from '@mui/system'
 import PropTypes from "prop-types";
-
 
 export default function SelectNetwork(props) {
     const { onSelect, networks, defaultNetwork } = props;
 
     const [selected, setSelected] = useState(defaultNetwork?.length > 0 ? defaultNetwork : "cosmoshub");
-
     const handleNetworkSelect = (e) => {
         setSelected(e.target.value);
         onSelect(e.target.value.toLowerCase().replace(/ /g, ""));
@@ -26,7 +24,9 @@ export default function SelectNetwork(props) {
                     placeholder="chains"
                     size="small"
                     sx={{
-                        textTransform: "capitalize"
+                        textTransform: "capitalize",
+                        boxShadow: 'none',
+                        '.MuiOutlinedInput-notchedOutline': { border: 0 }
                     }}
                 >
                     {
