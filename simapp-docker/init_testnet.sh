@@ -36,7 +36,9 @@ sed -i 's/enabled-unsafe-cors = false/enabled-unsafe-cors = true/' app.toml
 
 sed -i 's/enable = false/enable = true/1' app.toml
 
-sed -i 's|"tcp://127.0.0.1:26657"|"tcp://127.0.0.0:26657"|' config.toml
+sed -i 's|"tcp://127.0.0.1:26657"|"tcp://0.0.0.0:26657"|' config.toml
+
+sed -i 's|localhost:1317|0.0.0.0:1317|' app.toml
 
 # Start the node
 simd start
