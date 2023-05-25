@@ -22,11 +22,13 @@ export default function SelectNetwork(props) {
                     onChange={handleNetworkSelect}
                     variant="outlined"
                     placeholder="chains"
+                    
                     size="small"
                     sx={{
                         textTransform: "capitalize",
                         boxShadow: 'none',
-                        '.MuiOutlinedInput-notchedOutline': { border: 0 }
+                        '.MuiOutlinedInput-notchedOutline': { border: 0 },
+                        fontWeight: 500
                     }}
                 >
                     {
@@ -35,7 +37,7 @@ export default function SelectNetwork(props) {
                                 value={network.toLowerCase().replace(/ /g, "")}
                                 key={index}
                                 sx={{
-                                    textTransform: "capitalize"
+                                    textTransform: "capitalize",
                                 }}
                             >
                                 {network}
