@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+
+  db:
+    build: 
+      context: ./db-docker
+    ports:
+      - 5432:5432
+
+  simapp:
+    build:
+      context: ./simapp-docker
+    ports:
+      - 26657:26657
+      - 26656:26656
+      - 9090:9090
+      - 1317:1317
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - 3000:3000
+    depends_on:
+      - simapp
+    network_mode: host
+
+  backend:
+    build:
+      context: ./server
+    ports:
+      - 1213:1213
+    network_mode: host
+    depends_on:
+      - db
