@@ -8,6 +8,7 @@ const initialState = {
   name: "",
   connected: false,
   isNanoLedger: false,
+  pubKey: "",
   networks: {},
   nameToChainIDs: {},
 };
@@ -47,7 +48,7 @@ export const connectKeplrWalletV1 = createAsyncThunk(
           const chainName = mainnets[i].config.chainName;
           await getKeplrWalletAmino(chainId);
           let walletInfo = await window.keplr.getKey(chainId);
-          delete walletInfo?.pubKey;
+          walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString('base64');
           delete walletInfo?.address;
 
           walletName = walletInfo?.name;

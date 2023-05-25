@@ -27,7 +27,6 @@ import { copyToClipboard } from "../../utils/clipboard";
 export default function PageMultisig() {
   const [open, setOpen] = useState(false);
   const params = useParams();
-  const [selectedNetwork, setCurrentNetwork] = useState(params?.networkName);
   const [chainInfo, setChainInfo] = useState({});
 
   const navigate = useNavigate();
@@ -56,14 +55,15 @@ export default function PageMultisig() {
     if (network.length > 0 && connected) {
       const chainId = nameToChainIDs[network];
       if (chainId?.length > 0) {
+        const chain = networks[chainId];
         setChainInfo(networks[chainId]);
-        dispatch(getMultisigAccounts(walletInfo?.bech32Address));
+        dispatch(getMultisigAccounts(chain?.walletInfo?.bech32Address));
       } else {
         throw new Error("you shouldn't be here");
       }
     }
 
-  }, [params, connected, networks]);
+  }, [params, connected]);
 
   useEffect(() => {
     if (createMultiAccRes.status === "idle") {
@@ -90,13 +90,12 @@ export default function PageMultisig() {
         </Typography>
         <SelectNetwork
           onSelect={(name) => {
-            setCurrentNetwork(name);
             navigate(`/${name}/multisig`);
           }}
           networks={Object.keys(nameToChainIDs)}
           defaultNetwork={
-            selectedNetwork?.length > 0
-              ? selectedNetwork.toLowerCase().replace(/ /g, "")
+            params.networkName?.length > 0
+              ? params.networkName.toLowerCase().replace(/ /g, "")
               : "cosmoshub"
           }
         />
