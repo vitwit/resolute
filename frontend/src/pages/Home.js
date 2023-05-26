@@ -6,11 +6,10 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import ActiveProposals from "./gov/ActiveProposals";
 import StakingPage from "./StakingPage";
-import MultisigPage from "./MultisigPage";
 import AuthzPage from "./AuthzPage";
 import FeegrantPage from "./FeegrantPage";
 import GroupPageV1 from "./GroupPageV1";
-import { Routes, Route, useParams, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import Page404 from "./Page404";
 import { useSelector } from "react-redux";
@@ -18,6 +17,7 @@ import OverviewPage from "./OverviewPage";
 import SendPage from "./SendPage";
 import ProposalInfo from "./gov/ProposalInfo";
 import UnjailPage from "./slashing/UnjailPage";
+import PageMultisig from "./multisig/PageMultisig";
 
 export const ContextData = React.createContext();
 
@@ -162,7 +162,7 @@ export default function Home() {
           } />
 
           <Route path="/:networkName/multisig" element={
-            <MultisigPage />
+            <PageMultisig />
           } />
 
           <Route path="/:networkName/staking" element={

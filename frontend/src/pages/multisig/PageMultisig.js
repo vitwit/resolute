@@ -18,44 +18,59 @@ import { DialogCreateMultisig } from "../../components/multisig/DialogCreateMult
 import { getMultisigAccounts } from "../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
-import { getNetworkByChainId } from "../../utils/networks";
 import { getLocalTime } from "../../utils/datetime";
+import { useParams } from "react-router-dom";
+import SelectNetwork from "../../components/common/SelectNetwork";
+import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
+import { copyToClipboard } from "../../utils/clipboard";
 
 export default function PageMultisig() {
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const params = useParams();
+  const [chainInfo, setChainInfo] = useState({});
+
+  const navigate = useNavigate();
+
   const createMultiAccRes = useSelector(
     (state) => state.multisig.createMultisigAccountRes
   );
 
-  const wallet = useSelector((state) => state.wallet);
-  const { chainInfo, connected } = wallet;
-
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const multisigAccounts = useSelector(
     (state) => state.multisig.multisigAccounts
   );
+  const wallet = useSelector((state) => state.wallet);
+  const { connected } = wallet;
+  const { walletInfo, network } = chainInfo;
+
   const accounts = multisigAccounts.accounts;
   const pendingTxns = multisigAccounts.txnCounts;
-  const walletAddress = useSelector((state) => state.wallet.address);
 
-  const { config } = chainInfo;
-  const { chainId } = config;
-  const networkInfo = getNetworkByChainId(chainId);
-  const addressPrefix = networkInfo?.config?.bech32Config?.bech32PrefixAccAddr;
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const network = params.networkName;
+    if (network.length > 0 && connected) {
+      const chainId = nameToChainIDs[network];
+      if (chainId?.length > 0) {
+        const chain = networks[chainId];
+        setChainInfo(networks[chainId]);
+        dispatch(getMultisigAccounts(chain?.walletInfo?.bech32Address));
+      } else {
+        throw new Error("you shouldn't be here");
+      }
+    }
+
+  }, [params, connected]);
+
   useEffect(() => {
     if (createMultiAccRes.status === "idle") {
       setOpen(false);
-      dispatch(getMultisigAccounts(walletAddress));
+      dispatch(getMultisigAccounts(walletInfo?.bech32Address));
     }
   }, [createMultiAccRes]);
-
-  useEffect(() => {
-    if (connected) {
-      dispatch(getMultisigAccounts(walletAddress));
-    }
-  }, [chainInfo]);
 
   const onClose = () => {
     setOpen(false);
@@ -63,14 +78,28 @@ export default function PageMultisig() {
 
   return (
     <Paper elevation={0} sx={{ p: 2, borderRadius: 0 }}>
-      <Typography
-        variant="h6"
-        fontWeight={600}
-        color="text.primary"
-        gutterBottom
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
       >
-        Create / Select Multisig Account
-      </Typography>
+        <Typography variant="h6" fontWeight={600} color="text.primary">
+          Create / Select Multisig Account
+        </Typography>
+        <SelectNetwork
+          onSelect={(name) => {
+            navigate(`/${name}/multisig`);
+          }}
+          networks={Object.keys(nameToChainIDs)}
+          defaultNetwork={
+            params.networkName?.length > 0
+              ? params.networkName.toLowerCase().replace(/ /g, "")
+              : "cosmoshub"
+          }
+        />
+      </Box>
       <Box
         sx={{
           display: "flex",
@@ -87,15 +116,36 @@ export default function PageMultisig() {
           sx={{
             textTransform: "none",
           }}
+          size="small"
         >
           Create New Multisig
         </Button>
       </Box>
       <Box sx={{ mt: 1 }}>
         {multisigAccounts?.status !== "pending" && !accounts?.length ? (
-          <Typography variant="body1" color="error" fontWeight={500}>
-            No Multisig accounts found on your address
-          </Typography>
+          <Box
+            sx={{
+              mt: 6,
+            }}
+          >
+            <Typography variant="body1" fontWeight={500}>
+              No Multisig accounts found on your address
+            </Typography>
+            <Button
+              onClick={() => {
+                setOpen(!open);
+              }}
+              variant="contained"
+              disableElevation
+              sx={{
+                textTransform: "none",
+                my: 2,
+              }}
+              size="small"
+            >
+              Create New Multisig
+            </Button>
+          </Box>
         ) : (
           ""
         )}
@@ -103,7 +153,6 @@ export default function PageMultisig() {
           <CircularProgress size={40} />
         ) : null}
       </Box>
-
       {accounts?.length > 0 ? (
         <FormControl fullWidth sx={{ mt: 2 }}>
           <TableContainer>
@@ -119,7 +168,6 @@ export default function PageMultisig() {
                   <StyledTableCell>Threshold</StyledTableCell>
                   <StyledTableCell>Actions Required</StyledTableCell>
                   <StyledTableCell>Created At</StyledTableCell>
-                  {/* <StyledTableCell>Action</StyledTableCell> */}
                 </StyledTableRow>
               </TableHead>
               <TableBody>
@@ -149,6 +197,10 @@ export default function PageMultisig() {
                         label={shortenAddress(row?.address, 21)}
                         variant="filled"
                         size="medium"
+                        deleteIcon={<ContentCopyOutlined />}
+                        onDelete={() => {
+                          copyToClipboard(row?.address, dispatch);
+                        }}
                       />
                     </StyledTableCell>
                     <StyledTableCell
@@ -172,35 +224,22 @@ export default function PageMultisig() {
                     >
                       {getLocalTime(row?.created_at)}
                     </StyledTableCell>
-                    {/* <StyledTableCell>
-                      <IconButton
-                        aria-label="delete txn"
-                        color="error"
-                        sx={{
-                          m: 1,
-                        }}
-                        onClick={() => {
-                          dispatch();
-                        }}
-                      >
-                        <DeleteOutline />
-                      </IconButton>
-                    </StyledTableCell> */}
                   </StyledTableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
+
         </FormControl>
       ) : null}
 
       {open ? (
         <DialogCreateMultisig
-          addressPrefix={addressPrefix}
-          chainId={chainId}
+          addressPrefix={network?.config?.bech32Config?.bech32PrefixAccAddr}
+          chainId={network?.config?.chainId}
           onClose={onClose}
           open={open}
-          address={walletAddress}
+          address={walletInfo?.bech32Address}
         />
       ) : null}
     </Paper>
