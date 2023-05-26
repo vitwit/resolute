@@ -36,7 +36,6 @@ export default function Unjail() {
   const chainInfo = networks[nameToChainIDs[selectedNetwork]]?.network;
 
   const currency = networks[nameToChainIDs[selectedNetwork]]?.network.config.currencies[0];
-  console.log(chainInfo)
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
 
