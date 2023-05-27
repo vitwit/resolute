@@ -7,13 +7,10 @@ import { setError } from "../common/commonSlice";
 const initialState = {
   name: "",
   connected: false,
-  address: "",
-  pubKey: "",
   isNanoLedger: false,
-  chainInfo: {
-    currencies: [],
-  },
+  pubKey: "",
   networks: {},
+  nameToChainIDs: {},
 };
 
 export const connectKeplrWalletV1 = createAsyncThunk(
@@ -38,22 +35,31 @@ export const connectKeplrWalletV1 = createAsyncThunk(
         },
       };
 
-      const results = {};
+      let walletName = "";
+      let isNanoLedger = false;
+      const chainInfos = {};
+      const nameToChainIDs = {};
       for (let i = 0; i < mainnets.length; i++) {
         try {
           if (mainnets[i].experimental) {
             await window.keplr.experimentalSuggestChain(mainnets[i].config);
           }
           let chainId = mainnets[i].config.chainId;
+          const chainName = mainnets[i].config.chainName;
           await getKeplrWalletAmino(chainId);
           let walletInfo = await window.keplr.getKey(chainId);
-          delete walletInfo?.pubKey;
+          walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString('base64');
           delete walletInfo?.address;
 
-          results[chainId] = {
+          walletName = walletInfo?.name;
+          isNanoLedger = walletInfo?.isNanoLedger || false;
+
+
+          chainInfos[chainId] = {
             walletInfo: walletInfo,
             network: mainnets[i],
           };
+          nameToChainIDs[chainName?.toLowerCase().split(" ").join("")] = chainId;
         } catch (error) {
           console.log("unable to connect: ", error);
         }
@@ -64,22 +70,28 @@ export const connectKeplrWalletV1 = createAsyncThunk(
           if (testnets[i].experimental) {
             await window.keplr.experimentalSuggestChain(testnets[i].config);
           }
-          let chainId = testnets[i].config.chainId;
+          const chainId = testnets[i].config.chainId;
+          const chainName = testnets[i].config.chainName;
           await getKeplrWalletAmino(chainId);
           const walletInfo = await window.keplr.getKey(chainId);
           delete walletInfo?.pubKey;
           delete walletInfo?.address;
 
-          results[chainId] = {
+          walletName = walletInfo?.name;
+          isNanoLedger = walletInfo?.isNanoLedger || false;
+
+          chainInfos[chainId] = {
             walletInfo: walletInfo,
             network: testnets[i],
           };
+
+          nameToChainIDs[chainName?.toLowerCase()] = chainId;
         } catch (error) {
           console.log("unable to connect: ", error);
         }
       }
 
-      if (results.length === 0) {
+      if (chainInfos.length === 0) {
         dispatch(
           setError({
             type: "error",
@@ -89,7 +101,12 @@ export const connectKeplrWalletV1 = createAsyncThunk(
         return rejectWithValue("Permission denied for all the networks");
       } else {
         setConnected();
-        return fulfillWithValue(results);
+        return fulfillWithValue({
+          chainInfos,
+          nameToChainIDs,
+          walletName,
+          isNanoLedger
+        });
       }
 
     }
@@ -186,9 +203,13 @@ export const walletSlice = createSlice({
 
       .addCase(connectKeplrWalletV1.pending, () => { })
       .addCase(connectKeplrWalletV1.fulfilled, (state, action) => {
-        const result = action.payload;
-        state.networks = result;
+        const networks = action.payload.chainInfos;
+        const nameToChainIDs = action.payload.nameToChainIDs;
+        state.networks = networks;
+        state.nameToChainIDs = nameToChainIDs;
         state.connected = true;
+        state.isNanoLedger = action.payload.isNanoLedger;
+        state.name = action.payload.walletName;
       })
       .addCase(connectKeplrWalletV1.rejected, () => { });
   },

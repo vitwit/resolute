@@ -1,13 +1,16 @@
+import React from "react";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
 import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import SelectNetwork from "./common/SelectNetwork";
 
 Send.propTypes = {
   onSend: PropTypes.func.isRequired,
@@ -15,12 +18,20 @@ Send.propTypes = {
   sendTx: PropTypes.object.isRequired,
   available: PropTypes.number.isRequired,
   authzTx: PropTypes.object.isRequired,
+  networkName: PropTypes.string.isRequired,
 };
 
 export default function Send(props) {
   const { chainInfo, sendTx, available, onSend, authzTx } = props;
 
-  const currency = chainInfo.config.currencies[0];
+  const navigate = useNavigate();
+  const selectNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const currency = chainInfo?.config?.currencies[0];
+
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
       amount: 0,
@@ -43,15 +54,24 @@ export default function Send(props) {
         p: 4,
       }}
     >
-      <Typography color="text.primary" variant="h6" fontWeight={600}>
-        Send
-      </Typography>
-      <br />
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Typography color="text.primary" variant="h6" fontWeight={600}>
+          Send
+        </Typography>
+        <SelectNetwork
+          onSelect={(name) => {
+            navigate(`/${name}/transfers`)
+          }}
+          networks={Object.keys(nameToChainIDs)}
+          defaultNetwork={selectNetwork?.length > 0 ? selectNetwork.toLowerCase().replace(/ /g, "") : "cosmoshub"}
+        />
+      </Box>
       <Box
         noValidate
         autoComplete="off"
         sx={{
           "& .MuiTextField-root": { mt: 1.5, mb: 1.5 },
+          mt: 2,
         }}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -72,8 +92,8 @@ export default function Send(props) {
             className="hover-link"
             onClick={() => setValue("amount", available)}
           >
-            Availabel:&nbsp;{available}
-            {currency?.coinDenom}
+            Available:&nbsp;{available}
+            &nbsp;{currency?.coinDenom}
           </Typography>
           <Controller
             name="amount"

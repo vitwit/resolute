@@ -29,7 +29,6 @@ import { getPoolInfo } from "../../features/staking/stakeSlice";
 import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../../components/FeegranterInfo";
 import { getMainNetworks } from "../../utils/networks";
-import ReactMarkdown from "react-markdown";
 import "./../common.css";
 
 export default function ProposalInfo() {
@@ -411,7 +410,7 @@ export default function ProposalInfo() {
                 color: "text.primary",
                 whiteSpace: "pre-line",
               }} className="proposal-description-markdown">
-              <ReactMarkdown>{proposalInfo?.content?.description && proposalInfo?.content?.description.replace(/\\n/g, '\n')}</ReactMarkdown>
+              {proposalInfo?.content?.description && proposalInfo?.content?.description.replace(/\\n/g, '\n')}}
             </div>
           </Paper>
         </>

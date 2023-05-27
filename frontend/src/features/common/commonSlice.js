@@ -19,8 +19,12 @@ const initialState = {
   feegrant: {
     granter: "",
     grantee: ""
-  }
-  
+  },
+  selectedNetwork: {
+    chainName: "CosmosHub",
+    chainID: "cosmoshub-4",
+  },
+  authzMode: false,
 };
 
 export const getTokenPrice = createAsyncThunk(
@@ -80,6 +84,12 @@ export const commonSlice = createSlice({
     },
     resetFeegrant: (state) => {
       state.feegrant = initialState.feegrant;
+    },
+    setSelectedNetwork: (state, data) => {
+      state.selectedNetwork = data.payload;
+    },
+    setAuthzMode: (state, data) => {
+      state.authzMode = data.payload
     }
   },
   extraReducers: (builder) => {
@@ -112,6 +122,8 @@ export const {
   resetTxHash,
   setFeegrant,
   resetFeegrant,
+  setSelectedNetwork,
+  setAuthzMode,
 } = commonSlice.actions;
 
 export default commonSlice.reducer;

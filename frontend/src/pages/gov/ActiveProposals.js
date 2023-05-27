@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react'
 import Proposals from './Proposals'
 import { useDispatch, useSelector } from 'react-redux';
 import ConnectWallet from '../../components/ConnectWallet';
-import { Box } from '@mui/system';
-import { Switch, Typography } from '@mui/material';
-import { getGrantsToMe } from '../../features/authz/authzSlice';
+import { Typography } from '@mui/material';
+import { useParams } from 'react-router-dom';
 
 const filterVoteAuthz = (authzs) => {
   const result = {};
@@ -27,13 +26,17 @@ const filterVoteAuthz = (authzs) => {
 
 function ActiveProposals() {
 
-  const [isAuthzMode, setIsAuthzMode] = useState(false);
   const [isNoAuthzs, setNoAuthzs] = useState(false);
   const [authzGrants, setAuthzGrants] = useState({});
 
   const walletConnected = useSelector((state) => state.wallet.connected);
   const networks = useSelector((state) => state.wallet.networks);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
+  const nameToIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const [selectedNetwork, setSelectedNetwork] = useState("");
+
+  const params = useParams();
 
 
   useEffect(() => {
@@ -46,48 +49,48 @@ function ActiveProposals() {
     }
   }, [grantsToMe]);
 
-  const dispatch = useDispatch();
-  const getVoteAuthz = (isAuthzMode) => {
-    if (isAuthzMode) {
-      Object.keys(networks).map((key, _) => {
-        const network = networks[key];
-        dispatch(getGrantsToMe({
-          baseURL: network.network?.config?.rest,
-          grantee: network.walletInfo?.bech32Address,
-          chainID: network.network?.config?.chainId
-        }))
-      })
+  useEffect(() => {
+    if (params?.networkName?.length > 0) {
+      const chainID = nameToIDs[params.networkName];
+      const chainIDs = Object.keys(networks);
+      for (let i = 0; i < chainIDs.length; i++) {
+        if (chainIDs[i] == chainID) {
+          setSelectedNetwork(chainID);
+          break;
+        }
+      }
+
     }
-  }
+  }, [nameToIDs, params]);
 
   return (
     <>
       {
         walletConnected ?
           <>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Typography sx={{ fontWeight: "500", color: "text.primary" }}>
-                Authz mode
-              </Typography>
-              <Switch checked={isAuthzMode} onChange={(e) => {
-                setIsAuthzMode(!isAuthzMode);
-                getVoteAuthz(e.target.checked);
-              }} />
-            </Box>
             {
               isAuthzMode && isNoAuthzs ?
                 <Typography>
                   You don't have authz permission.
                 </Typography>
                 :
-                Object.keys(networks).map((key, index) => (
-                  <>
+                selectedNetwork.length > 0 ?
+                  <Proposals
+                    restEndpoint={networks[selectedNetwork].network?.config?.rest}
+                    chainName={networks[selectedNetwork].network?.config?.chainName}
+                    chainLogo={networks[selectedNetwork]?.network?.logos?.menu}
+                    signer={networks[selectedNetwork].walletInfo?.bech32Address}
+                    gasPriceStep={networks[selectedNetwork].network?.config?.gasPriceStep}
+                    aminoConfig={networks[selectedNetwork].network.aminoConfig}
+                    bech32Config={networks[selectedNetwork].network?.config.bech32Config}
+                    chainID={networks[selectedNetwork].network?.config?.chainId}
+                    currencies={networks[selectedNetwork].network?.config?.currencies}
+                    authzMode={isAuthzMode}
+                    grantsToMe={authzGrants[networks[selectedNetwork].network?.config?.chainId] || []}
+                    id={1}
+                  />
+                  :
+                  Object.keys(networks).map((key, index) => (
                     <Proposals
                       restEndpoint={networks[key].network?.config?.rest}
                       chainName={networks[key].network?.config?.chainName}
@@ -99,11 +102,10 @@ function ActiveProposals() {
                       chainID={networks[key].network?.config?.chainId}
                       currencies={networks[key].network?.config?.currencies}
                       authzMode={isAuthzMode}
-                      grantsToMe={authzGrants[networks[key].network?.config?.chainId]}
-                      key={index}
+                      grantsToMe={authzGrants[networks[key].network?.config?.chainId] || []}
+                      id={index}
                     />
-                  </>
-                ))
+                  ))
             }
 
           </>
