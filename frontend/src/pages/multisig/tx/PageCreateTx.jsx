@@ -215,12 +215,16 @@ const FileUpload = (props) => {
 };
 
 export default function PageCreateTx() {
-  const { address } = useParams();
+  const { address, networkName } = useParams();
 
   const [txType, setTxType] = useState("");
 
   const wallet = useSelector((state) => state.wallet);
-  const { chainInfo, connected } = wallet;
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const { connected } = wallet;
+  const chainInfo = networks[nameToChainIDs[networkName]]?.network;
 
   const validators = useSelector((state) => state.staking.validators);
 
@@ -229,14 +233,14 @@ export default function PageCreateTx() {
     if (connected) {
       dispatch(
         getAllValidators({
-          baseURL: chainInfo.config.rest,
+          baseURL: chainInfo?.config?.rest,
           status: null,
         })
       );
 
       dispatch(
         getDelegations({
-          baseURL: chainInfo.config.rest,
+          baseURL: chainInfo?.config?.rest,
           address: address,
         })
       );
@@ -366,7 +370,7 @@ export default function PageCreateTx() {
       );
 
       setTimeout(() => {
-        navigate(`/multisig/${address}/txs`);
+        navigate(`/${networkName}/multisig/${address}/txs`);
       }, 200);
     }
   }, [createRes]);

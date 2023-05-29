@@ -17,6 +17,8 @@ import OverviewPage from "./OverviewPage";
 import SendPage from "./SendPage";
 import ProposalInfo from "./gov/ProposalInfo";
 import PageMultisig from "./multisig/PageMultisig";
+import PageMultisigInfo from "./multisig/tx/PageMultisigInfo";
+import PageCreateTx from "./multisig/tx/PageCreateTx";
 
 export const ContextData = React.createContext();
 
@@ -166,6 +168,14 @@ export default function Home() {
 
           <Route path="/:networkName/staking" element={
             <StakingPage />
+          } />
+
+          <Route path="/:networkName/multisig/:address/txs" element={
+            <PageMultisigInfo />
+          } />
+
+          <Route path="/:networkName/multisig/:address/create-tx" element={
+            <PageCreateTx />
           } />
 
           <Route path="*" element={<Page404 />}></Route>
