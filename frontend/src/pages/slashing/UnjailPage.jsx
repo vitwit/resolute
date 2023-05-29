@@ -20,18 +20,22 @@ import { txUnjail } from "../../features/slashing/slashingSlice";
 import { getUnjailAuthz } from "../../utils/authorizations";
 import TextField from "@mui/material/TextField";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import { useParams } from "react-router-dom";
 
 export default function Unjail() {
+  const params = useParams();
+
   const slashingTx = useSelector((state) => state.slashing.tx);
-  const address = useSelector((state) => state.wallet.address);
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
   const feegrant = useSelector((state) => state.common.feegrant);
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const selectedNetwork = params?.networkName;
+  const address = networks[nameToChainIDs[selectedNetwork]]?.walletInfo.bech32Address;
+  const chainInfo = networks[nameToChainIDs[selectedNetwork]]?.network;
 
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo.config.currencies[0]
-  );
+  const currency = networks[nameToChainIDs[selectedNetwork]]?.network.config.currencies[0];
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
 
