@@ -12,6 +12,7 @@ import {
 } from "../../features/multisig/multisigSlice";
 import PropTypes from "prop-types";
 import { NewMultisigThreshoPubkey } from "./tx/utils";
+import { useParams } from "react-router-dom";
 
 async function getKeplrWalletAmino(chainID) {
   await window.keplr.enable(chainID);
@@ -27,11 +28,15 @@ BroadcastTx.propTypes = {
 
 export default function BroadcastTx(props) {
   const { tx, multisigAccount } = props;
+  const { networkName } = useParams();
 
   const dispatch = useDispatch();
   const [load, setLoad] = useState(false);
 
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const chainInfo = networks[nameToChainIDs[networkName]]?.network;
+
   const updateTxnRes = useSelector((state) => state.multisig.updateTxn);
 
   useEffect(() => {

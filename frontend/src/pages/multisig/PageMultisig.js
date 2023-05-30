@@ -49,9 +49,10 @@ export default function PageMultisig() {
 
 
   const dispatch = useDispatch();
-
+  const [currentNetwork, setCurrentNetwork] = useState();
   useEffect(() => {
     const network = params.networkName;
+    setCurrentNetwork(network);
     if (network.length > 0 && connected) {
       const chainId = nameToChainIDs[network];
       if (chainId?.length > 0) {
@@ -183,14 +184,14 @@ export default function PageMultisig() {
                   >
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/multisig/${row.address}/txs`);
+                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
                       }}
                     >
                       {row?.name}
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/multisig/${row.address}/txs`);
+                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
                       }}
                     >
                       <Chip
@@ -205,21 +206,21 @@ export default function PageMultisig() {
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/multisig/${row.address}/txs`);
+                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
                       }}
                     >
                       {row?.threshold || 0}
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/multisig/${row.address}/txs`);
+                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
                       }}
                     >
                       <strong> {pendingTxns[row?.address] || 0} </strong> txns
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/multisig/${row.address}/txs`);
+                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
                       }}
                     >
                       {getLocalTime(row?.created_at)}
