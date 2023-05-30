@@ -20,6 +20,7 @@ import UnjailPage from "./slashing/UnjailPage";
 import PageMultisig from "./multisig/PageMultisig";
 import PageMultisigInfo from "./multisig/tx/PageMultisigInfo";
 import PageCreateTx from "./multisig/tx/PageCreateTx";
+import CreateGroupNewPage from "./group/CreateGroup";
 
 export const ContextData = React.createContext();
 
@@ -182,6 +183,11 @@ export default function Home() {
           <Route path="/:networkName/slashing" element={
             <UnjailPage />
           } />
+
+          <Route path="/:networkName/daos/create-group" element={
+            <CreateGroupNewPage />
+          } />
+
 
           <Route path="*" element={<Page404 />}></Route>
         </Routes>
