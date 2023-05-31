@@ -17,7 +17,7 @@ import {
   Slider,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
-import { MAX_EXECUTION_PERIOD } from "./common";
+import { MAX_EXECUTION_PERIOD, PERCENTAGE, THRESHOLD } from "./common";
 
 function CreateGroupPolicy({
   control,
@@ -37,8 +37,8 @@ function CreateGroupPolicy({
     members.reduce((initial, weight) => initial + Number(weight.weight), 0) ||
     0;
 
-  const [threshold, setThreshold] = useState("threshold");
-  const [policyType, setPolicyType] = useState("percentage");
+  const [threshold, setThreshold] = useState(THRESHOLD);
+  const [policyType, setPolicyType] = useState(PERCENTAGE);
   const [asAdmin, setAsAdmin] = useState("gov");
   const [decisionPolicyType, setDecisionPolicyType] = useState(policy_Type)
 
@@ -128,7 +128,7 @@ function CreateGroupPolicy({
                             "policyMetadata.decisionPolicy",
                             e.target.value
                           );
-                          if (e.target.value === "threshold") {
+                          if (e.target.value === THRESHOLD) {
                             setValue("policyMetadata.percentage", 0);
                           } else {
                             setValue("policyMetadata.threshold", 0);
@@ -137,12 +137,12 @@ function CreateGroupPolicy({
                         value={decisionPolicyType || policyType}
                       >
                         <FormControlLabel
-                          value={"percentage"}
+                          value={PERCENTAGE}
                           control={<Radio />}
                           label="Percentage"
                         />
                         <FormControlLabel
-                          value={"threshold"}
+                          value={THRESHOLD}
                           control={<Radio />}
                           label="Threshold"
                         />
@@ -152,7 +152,7 @@ function CreateGroupPolicy({
                 />
               </Grid>
               <Grid item md={6} xs={12}>
-                {watch("policyMetadata.decisionPolicy") === "percentage" ? (
+                {watch("policyMetadata.decisionPolicy") === PERCENTAGE ? (
                   <Controller
                     name={`policyMetadata.percentage`}
                     control={control}
@@ -178,7 +178,7 @@ function CreateGroupPolicy({
                           onChange={(_, value) => {
                             field.onChange(value);
                           }}
-                          name="percentage"
+                          name={PERCENTAGE}
                         />
                       </FormControl>
                     )}
@@ -204,7 +204,7 @@ function CreateGroupPolicy({
                       >
                         <Slider
                           {...field}
-                          name="threshold"
+                          name={THRESHOLD}
                           aria-label="Threshold"
                           defaultValue={totalWeight}
                           min={0}

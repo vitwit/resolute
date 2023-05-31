@@ -13,6 +13,7 @@ import { resetGroupTx, txCreateGroup } from "../../features/group/groupSlice";
 import { Grid } from "@mui/material";
 import CreateGroupInfoForm from "./CreateGroupInfoForm";
 import { useParams } from "react-router-dom";
+import { DAYS, PERCENTAGE } from "./common";
 
 const steps = ["Group information", "Add members", "Attach policy"];
 
@@ -74,40 +75,29 @@ export default function CreateGroupStepper() {
       data.policyMetadata.percentage !== 0 ||
       data.policyMetadata.threshold !== 0
     ) {
-      const getMinExecPeriod = (policyData) => {
+
+      const getPeriod = (duration, period) => {
         let time;
-        if (policyData?.minExecPeriodDuration === "Days") time = 24 * 60 * 60;
+        if(duration === DAYS) time = 24 * 60 * 60;
         else time = 1;
 
-        time = time * Number(policyData?.minExecPeriod);
+        time = time * Number(period);
         return time;
-      };
-
-      const getVotingPeriod = (policyData) => {
-        let time;
-        if (policyData?.votingPeriodDuration === "Days") time = 24 * 60 * 60;
-        else time = 1;
-
-        time = time * Number(policyData?.votingPeriod);
-        return time;
-      };
+      }
 
       if (data?.policyMetadata) {
         dataObj["policyData"] = {
           ...data.policyMetadata,
-          minExecPeriod: getMinExecPeriod(data.policyMetadata),
-          votingPeriod: getVotingPeriod(data.policyMetadata),
+          minExecPeriod: getPeriod(data.policyMetadata?.minExecPeriodDuration, data.policyMetadata?.minExecPeriod),
+          votingPeriod: getPeriod(data.policyMetadata?.votingPeriodDuration, data.policyMetadata?.votingPeriod),
         };
       }
 
-      if (dataObj?.policyData?.decisionPolicy === "percentage") {
+      if (dataObj?.policyData?.decisionPolicy === PERCENTAGE) {
         dataObj.policyData.percentage =
           Number(dataObj.policyData.percentage) / 100.0;
       }
     }
-    console.log("----------------------------")
-    console.log(dataObj)
-    console.log("---------------------")
     dispatch(txCreateGroup(dataObj));
   };
 
@@ -178,12 +168,12 @@ export default function CreateGroupStepper() {
       policyMetadata: {
         name: "",
         description: "",
-        decisionPolicy: "percentage",
+        decisionPolicy: PERCENTAGE,
         percentage: 1,
         threshold: 1,
         policyAsAdmin: false,
-        minExecPeriodDuration: "Days",
-        votingPeriodDuration: "Days",
+        minExecPeriodDuration: DAYS,
+        votingPeriodDuration: DAYS,
       },
     },
   });

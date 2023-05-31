@@ -19,6 +19,7 @@ import { useParams } from "react-router-dom";
 import AlertMsg from "../../components/group/AlertMsg";
 import PolicyDetails from "../../components/group/PolicyDetails";
 import UpdatePolicyMetadataDialog from "../../components/group/UpdatePolicyMetadataDialog";
+import { DAYS, PERCENTAGE } from "./common";
 
 function PolicyInfo() {
   const [policyObj, setPolicyObj] = useState({});
@@ -155,37 +156,26 @@ function PolicyInfo() {
       data.policyMetadata.percentage !== 0 ||
       data.policyMetadata.threshold !== 0
     ) {
-      const getMinExecPeriod = (policyData) => {
+      const getPeriod = (duration, period) => {
         let time;
-        if (policyData?.minExecPeriodDuration === "Days") time = 24 * 60 * 60;
-        else if (policyData?.minExecPeriodDuration === "Hours") time = 60 * 60;
-        else if (policyData?.minExecPeriodDuration === "Minutes") time = 60;
+        if(duration === DAYS) time = 24 * 60 * 60;
+        else if (duration === "Hours") time = 60 * 60;
+        else if (duration === "Minutes") time = 60;
         else time = 1;
 
-        time = time * Number(policyData?.minExecPeriod);
+        time = time * Number(period);
         return time;
-      };
-
-      const getVotingPeriod = (policyData) => {
-        let time;
-        if (policyData?.votingPeriodDuration === "Days") time = 24 * 60 * 60;
-        else if (policyData?.votingPeriodDuration === "Hours") time = 60 * 60;
-        else if (policyData?.votingPeriodDuration === "Minutes") time = 60;
-        else time = 1;
-
-        time = time * Number(policyData?.votingPeriod);
-        return time;
-      };
+      }
 
       if (data?.policyMetadata) {
         dataObj["policyMetadata"] = {
           ...data.policyMetadata,
-          minExecPeriod: getMinExecPeriod(data.policyMetadata),
-          votingPeriod: getVotingPeriod(data.policyMetadata),
+          minExecPeriod: getPeriod(data.policyMetadata?.minExecPeriodDuration, data.policyMetadata?.minExecPeriod),
+          votingPeriod: getPeriod(data.policyMetadata?.votingPeriodDuration, data.policyMetadata?.votingPeriod),
         };
       }
 
-      if (dataObj?.policyMetadata?.decisionPolicy === "percentage") {
+      if (dataObj?.policyMetadata?.decisionPolicy === PERCENTAGE) {
         dataObj.policyMetadata.percentage =
           Number(dataObj.policyMetadata.percentage) / 100.0;
       }

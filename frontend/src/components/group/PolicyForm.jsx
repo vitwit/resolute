@@ -3,6 +3,7 @@ import { Button, Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CreateGroupPolicy from "../../pages/group/CreateGroupPolicy";
 import { useDispatch, useSelector } from "react-redux";
+import { DAYS, PERCENTAGE, THRESHOLD } from "../../pages/group/common";
 
 function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
   const groupMembersInfo = useSelector(
@@ -22,8 +23,8 @@ function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
     votingPeriod: "",
     minExecPeriod: 0,
     policyAsAdmin: false,
-    minExecPeriodDuration: "Days",
-    votingPeriodDuration: "Days",
+    minExecPeriodDuration: DAYS,
+    votingPeriodDuration: DAYS,
   };
 
   if (policyObj) {
@@ -31,8 +32,8 @@ function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
       decisionPolicy:
         policyObj?.decision_policy?.["@type"] ===
         "/cosmos.group.v1.ThresholdDecisionPolicy"
-          ? "threshold"
-          : "percentage",
+          ? THRESHOLD
+          : PERCENTAGE,
       threshold: Number(policyObj?.decision_policy?.threshold || 0),
       percentage: Number(policyObj?.decision_policy?.percentage * 100 || 1),
       votingPeriod:
@@ -44,16 +45,16 @@ function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
         ) /
         (24 * 60 * 60),
       policyAsAdmin: false,
-      minExecPeriodDuration: "Days",
-      votingPeriodDuration: "Days",
+      minExecPeriodDuration: DAYS,
+      votingPeriodDuration: DAYS,
     };
   }
 
   const decisionPolicyType =
     policyObj?.decision_policy?.["@type"] ===
     "/cosmos.group.v1.ThresholdDecisionPolicy"
-      ? "threshold"
-      : "percentage";
+      ? THRESHOLD
+      : PERCENTAGE;
 
   const {
     register,

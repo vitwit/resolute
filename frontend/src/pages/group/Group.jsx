@@ -36,6 +36,7 @@ import { NoData } from "../../components/group/NoData";
 import { StyledTableCell } from "../../components/CustomTable";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
+import { DAYS, PERCENTAGE } from "./common";
 
 const GroupPolicies = ({ id, wallet }) => {
   const LIMIT = 100;
@@ -93,37 +94,27 @@ const GroupPolicies = ({ id, wallet }) => {
       data.policyMetadata.percentage !== 0 ||
       data.policyMetadata.threshold !== 0
     ) {
-      const getMinExecPeriod = (policyData) => {
+
+      const getPeriod = (duration, period) => {
         let time;
-        if (policyData?.minExecPeriodDuration === "Days") time = 24 * 60 * 60;
-        else if (policyData?.minExecPeriodDuration === "Hours") time = 60 * 60;
-        else if (policyData?.minExecPeriodDuration === "Minutes") time = 60;
+        if(duration === DAYS) time = 24 * 60 * 60;
+        else if (duration === "Hours") time = 60 * 60;
+        else if (duration === "Minutes") time = 60;
         else time = 1;
 
-        time = time * Number(policyData?.minExecPeriod);
+        time = time * Number(period);
         return time;
-      };
-
-      const getVotingPeriod = (policyData) => {
-        let time;
-        if (policyData?.votingPeriodDuration === "Days") time = 24 * 60 * 60;
-        else if (policyData?.votingPeriodDuration === "Hours") time = 60 * 60;
-        else if (policyData?.votingPeriodDuration === "Minutes") time = 60;
-        else time = 1;
-
-        time = time * Number(policyData?.votingPeriod);
-        return time;
-      };
+      }
 
       if (data?.policyMetadata) {
         dataObj["policyMetadata"] = {
           ...data.policyMetadata,
-          minExecPeriod: getMinExecPeriod(data.policyMetadata),
-          votingPeriod: getVotingPeriod(data.policyMetadata),
+          minExecPeriod: getPeriod(data.policyMetadata?.minExecPeriodDuration, data.policyMetadata?.minExecPeriod),
+          votingPeriod: getPeriod(data.policyMetadata?.votingPeriodDuration, data.policyMetadata?.votingPeriod),
         };
       }
 
-      if (dataObj?.policyMetadata?.decisionPolicy === "percentage") {
+      if (dataObj?.policyMetadata?.decisionPolicy === PERCENTAGE) {
         dataObj.policyMetadata.percentage =
           Number(dataObj.policyMetadata.percentage) / 100.0;
       }
@@ -146,20 +137,20 @@ const GroupPolicies = ({ id, wallet }) => {
       policyMetadata: {
         name: "",
         description: "",
-        decisionPolicy: "percentage",
+        decisionPolicy: PERCENTAGE,
         percentage: 1,
         threshold: 1,
         policyAsAdmin: false,
-        minExecPeriodDuration: "Days",
-        votingPeriodDuration: "Days",
+        minExecPeriodDuration: DAYS,
+        votingPeriodDuration: DAYS,
       },
     },
   });
 
   useEffect(() => {
-    setValue("policyMetadata.decisionPolicy", "percentage");
-    setValue("policyMetadata.votingPeriodDuration", "Days");
-    setValue("policyMetadata.minExecPeriodDuration", "Days");
+    setValue("policyMetadata.decisionPolicy", PERCENTAGE);
+    setValue("policyMetadata.votingPeriodDuration", DAYS);
+    setValue("policyMetadata.minExecPeriodDuration", DAYS);
   }, []);
 
   return (
