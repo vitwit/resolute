@@ -4,34 +4,8 @@ import { Controller } from "react-hook-form";
 import { Grid } from "@mui/material";
 
 export function CreateGroupInfoForm(props) {
-  const {
-    control,
-    setGroupDescError,
-    setGroupNameError,
-    setGroupForumError,
-    groupNameError,
-    groupForumError,
-    groupDescError,
-    watchAllFields,
-    groupName,
-    forumUrl,
-    description,
-  } = props;
+  const { control, errors, groupName, forumUrl, description } = props;
 
-  const groupInfoErrors = {
-    nameErrors: [
-      "name cannot be empty",
-      "name cannot contain more than 25 characters",
-    ],
-    descErrors: [
-      "description cannot be empty",
-      "description cannot contain more than 100 characters",
-    ],
-    forumErrors: [
-      "forum URL cannot be empty",
-      "forum URL cannot contain more than 70 characters",
-    ],
-  };
   return (
     <>
       {/* group info section start */}
@@ -47,7 +21,13 @@ export function CreateGroupInfoForm(props) {
               defaultValue={groupName}
               name="name"
               control={control}
-              rules={{ required: "Name is required", maxLength: 25 }}
+              rules={{
+                required: "Name is required",
+                maxLength: {
+                  value: 25,
+                  message: "Name length cannot be more than 25 characters",
+                },
+              }}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -59,19 +39,8 @@ export function CreateGroupInfoForm(props) {
                   sx={{
                     mb: 2,
                   }}
-                  error={groupNameError}
-                  helperText={
-                    watchAllFields.name?.trim().length <= 25 &&
-                    watchAllFields.name?.trim().length > 0
-                      ? setGroupNameError("")
-                      : groupNameError ||
-                        watchAllFields.name?.trim().length === 0 ||
-                        !watchAllFields.name?.trim().length
-                      ? groupNameError
-                      : watchAllFields.name?.trim().length <= 25
-                      ? setGroupNameError("")
-                      : setGroupNameError(groupInfoErrors.nameErrors[1])
-                  }
+                  error={errors?.name}
+                  helperText={errors?.name?.message}
                 />
               )}
             />
@@ -81,10 +50,17 @@ export function CreateGroupInfoForm(props) {
               defaultValue={forumUrl}
               name="forumUrl"
               control={control}
-              rules={{ required: "Forum url is required", maxLength: 70 }}
+              rules={{
+                required: "Forum url is required",
+                maxLength: {
+                  value: 70,
+                  message: "Forum URL length cannot be more than 70 characters",
+                },
+              }}
               render={({ field }) => (
                 <TextField
                   {...field}
+                  type="url"
                   required
                   label="Forum URL"
                   size="small"
@@ -93,19 +69,8 @@ export function CreateGroupInfoForm(props) {
                   sx={{
                     mb: 2,
                   }}
-                  error={groupForumError}
-                  helperText={
-                    watchAllFields.forumUrl?.trim().length <= 70 &&
-                    watchAllFields.forumUrl?.trim().length > 0
-                      ? setGroupForumError("")
-                      : groupForumError ||
-                        watchAllFields.forumUrl?.trim().length === 0 ||
-                        !watchAllFields.forumUrl?.trim().length
-                      ? groupForumError
-                      : watchAllFields.forumUrl?.trim().length <= 70
-                      ? setGroupForumError("")
-                      : setGroupForumError(groupInfoErrors.forumErrors[1])
-                  }
+                  error={errors?.forumUrl}
+                  helperText={errors?.forumUrl?.message}
                 />
               )}
             />
@@ -118,7 +83,10 @@ export function CreateGroupInfoForm(props) {
             control={control}
             rules={{
               required: "Description is required",
-              maxLength: 100,
+              maxLength: {
+                  value: 100,
+                  message: "Description length cannot be more than 100 characters",
+                },
             }}
             render={({ field }) => (
               <TextField
@@ -133,19 +101,8 @@ export function CreateGroupInfoForm(props) {
                 sx={{
                   mb: 2,
                 }}
-                error={groupDescError}
-                helperText={
-                  watchAllFields.description?.trim().length <= 100 &&
-                  watchAllFields.description?.trim().length > 0
-                    ? setGroupDescError("")
-                    : groupDescError ||
-                      watchAllFields.description?.trim().length === 0 ||
-                      !watchAllFields.description?.trim().length
-                    ? groupDescError
-                    : watchAllFields.description?.trim().length <= 100
-                    ? setGroupDescError("")
-                    : setGroupDescError(groupInfoErrors.descErrors[1])
-                }
+                error={errors?.description}
+                helperText={errors?.description?.message}
               />
             )}
           />

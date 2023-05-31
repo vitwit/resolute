@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import GroupList from "../../components/group/GroupList";
 import { getGroupsByAdmin } from "../../features/group/groupSlice";
 import { PER_PAGE } from "./common";
@@ -8,8 +9,21 @@ function AdminGroupList() {
   const [adminTotal, setAdminTotal] = useState(0);
   const dispatch = useDispatch();
 
-  const address = useSelector((state) => state.wallet.address);
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
+  const params = useParams();
+
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork);
+
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const address =
+    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+
+  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  
   const groups = useSelector((state) => state.group.groups);
 
   const fetchGroupsByAdmin = (offset = 0, limit = PER_PAGE) => {
