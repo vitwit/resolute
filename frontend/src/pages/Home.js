@@ -20,6 +20,7 @@ import UnjailPage from "./slashing/UnjailPage";
 import PageMultisig from "./multisig/PageMultisig";
 import PageMultisigInfo from "./multisig/tx/PageMultisigInfo";
 import PageCreateTx from "./multisig/tx/PageCreateTx";
+import Feegrant from "./feegrant/Feegrant";
 
 export const ContextData = React.createContext();
 
@@ -115,8 +116,10 @@ export default function Home() {
           <Tab label="DAOs" {...a11yProps(7)} />
         </Tabs>
       </Box>
-      <TabPanel value={value} index={getTabIndex(location.pathname)}></TabPanel>
 
+    <Box sx={{
+      mt: 2,
+    }}>
       <ContextData.Provider value={network} setNetwork={setNetwork}>
         <Routes>
           <Route
@@ -139,7 +142,7 @@ export default function Home() {
           } />
 
           <Route path="/:networkName/feegrant" element={
-            <FeegrantPage />
+            <Feegrant />
           } />
 
           <Route path="/gov" element={
@@ -186,6 +189,7 @@ export default function Home() {
           <Route path="*" element={<Page404 />}></Route>
         </Routes>
       </ContextData.Provider>
+      </Box>
     </Box>
   );
 }
