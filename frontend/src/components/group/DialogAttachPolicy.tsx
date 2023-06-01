@@ -15,6 +15,7 @@ import {
   MenuItem,
   Switch,
 } from "@mui/material";
+import { PERCENTAGE, THRESHOLD } from "../../pages/group/common";
 
 export interface DecisionPolicyCallback {
   metadata: string;
@@ -161,7 +162,7 @@ export default function DialogAttachPolicy(props: DialogAttachPolicyProps) {
             <Grid item xs={12} md={4}>
               {watch("decisionPolicy") === DecisionPolicyEnum.threshold ? (
                 <Controller
-                  name="threshold"
+                  name={THRESHOLD}
                   defaultValue={0}
                   control={control}
                   rules={{
@@ -191,7 +192,7 @@ export default function DialogAttachPolicy(props: DialogAttachPolicyProps) {
                 />
               ) : (
                 <Controller
-                  name="percentage"
+                  name={PERCENTAGE}
                   defaultValue={0}
                   control={control}
                   rules={{

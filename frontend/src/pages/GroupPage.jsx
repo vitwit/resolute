@@ -5,6 +5,7 @@ import { Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import GroupTab, { TabPanel } from "../components/group/GroupTab";
 import CardSkeleton from "../components/group/CardSkeleton";
+import { useSelector } from "react-redux";
 
 const AdminGroupList = lazy(() => import("./group/AdminGroupList"));
 const MemberGroupList = lazy(() => import("./group/MemberGroupList"));
@@ -15,6 +16,8 @@ export default function GroupPage() {
   const handleTabChange = (value) => {
     setTab(value);
   };
+
+  const selectedNetwork = useSelector((state) => state.common.selectedNetwork.chainName).toLowerCase();
 
   const navigate = useNavigate();
   function navigateTo(path) {
@@ -33,7 +36,7 @@ export default function GroupPage() {
           variant="contained"
           disableElevation
           onClick={() => {
-            navigateTo("/group/create-group");
+            navigateTo(`/${selectedNetwork}/daos/create-group`);
           }}
           sx={{
             textTransform: "none",
