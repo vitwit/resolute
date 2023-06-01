@@ -23,7 +23,7 @@ const mainNets: Network[] = [
     config: {
       gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
       chainId: "cosmoshub-4",
-      chainName: "Cosmos Hub",
+      chainName: "CosmosHub",
       rest: "https://resolute.witval.com/cosmos_api",
       rpc: "https://resolute.witval.com/cosmos_rpc/",
       currencies: [

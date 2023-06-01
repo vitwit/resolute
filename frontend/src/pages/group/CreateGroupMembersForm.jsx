@@ -2,16 +2,26 @@ import React from "react";
 import { Box, TextField, IconButton, Grid, Button } from "@mui/material";
 import { Controller } from "react-hook-form";
 import Close from "@mui/icons-material/Close";
-import { i } from "mathjs";
 
-export function CreateGroupMembersForm({ fields, control, append, remove, validateMembersInfo }) {
+export function CreateGroupMembersForm({
+  fields,
+  control,
+  append,
+  remove,
+  errors,
+}) {
   return (
     <Box>
       {(fields?.length && (
         <>
           {fields.map((item, index) => {
             return (
-              <Grid key={item?.id} container columnSpacing={{ md: 2, xs: 2 }} sx={{marginY:"12px"}}>
+              <Grid
+                key={item?.id}
+                container
+                columnSpacing={{ md: 2, xs: 2 }}
+                sx={{ marginY: "12px" }}
+              >
                 <Grid item md={4} xs={4.5}>
                   <Controller
                     name={`members.${index}.address`}
@@ -85,11 +95,9 @@ export function CreateGroupMembersForm({ fields, control, append, remove, valida
                   <Button
                     size="small"
                     onClick={() => {
-                      if(validateMembersInfo()) {
-                        append({ address: "", metadata: "", weight: 0 });
-                      }
+                      append({ address: "", metadata: "", weight: 0 });
                     }}
-                    sx={{ ml: "auto", textTransform: "none", mt:"12px" }}
+                    sx={{ ml: "auto", textTransform: "none", mt: "12px" }}
                     variant="outlined"
                   >
                     Add Another Member

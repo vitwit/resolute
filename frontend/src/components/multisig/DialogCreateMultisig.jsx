@@ -18,6 +18,7 @@ import {
 import Box from "@mui/system/Box";
 import { useSelector, useDispatch } from "react-redux";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { THRESHOLD } from "../../pages/group/common";
 
 const InputTextComponent = ({
   field,
@@ -287,7 +288,7 @@ export function DialogCreateMultisig(props) {
               }}
             >
               <TextField
-                name="threshold"
+                name={THRESHOLD}
                 value={threshold}
                 inputProps={{ maxLength: 1 }}
                 onChange={handleChange}
@@ -304,7 +305,7 @@ export function DialogCreateMultisig(props) {
                 &nbsp;&nbsp;Of&nbsp;&nbsp;
               </Typography>
               <TextField
-                name="threshold"
+                name={THRESHOLD}
                 value={pubKeyFields?.length}
                 label=""
                 disabled

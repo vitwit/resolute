@@ -6,6 +6,7 @@ import { toBase64 } from "@cosmjs/encoding";
 import { signTx } from "../../features/multisig/multisigSlice";
 import { setError } from "../../features/common/commonSlice";
 import PropTypes from "prop-types";
+import { useParams } from "react-router-dom";
 
 async function getKeplrWalletAmino(chainID) {
   await window.keplr.enable(chainID);
@@ -25,8 +26,11 @@ export default function SignTxn(props) {
   const dispatch = useDispatch();
   const [load, setLoad] = useState(false);
 
-  const from = useSelector((state) => state.wallet.address);
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
+  const { networkName } = useParams();
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const from = networks[nameToChainIDs[networkName]]?.walletInfo?.bech32Address;
+  const chainInfo = networks[nameToChainIDs[networkName]]?.network;
 
   const signTheTx = async () => {
     setLoad(true);

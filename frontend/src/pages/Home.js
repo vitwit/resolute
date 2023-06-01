@@ -6,17 +6,21 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import ActiveProposals from "./gov/ActiveProposals";
 import StakingPage from "./StakingPage";
-import MultisigPage from "./MultisigPage";
 import AuthzPage from "./AuthzPage";
 import FeegrantPage from "./FeegrantPage";
 import GroupPageV1 from "./GroupPageV1";
-import { Routes, Route, useParams, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import Page404 from "./Page404";
 import { useSelector } from "react-redux";
 import OverviewPage from "./OverviewPage";
 import SendPage from "./SendPage";
 import ProposalInfo from "./gov/ProposalInfo";
+import UnjailPage from "./slashing/UnjailPage";
+import PageMultisig from "./multisig/PageMultisig";
+import PageMultisigInfo from "./multisig/tx/PageMultisigInfo";
+import PageCreateTx from "./multisig/tx/PageCreateTx";
+import CreateGroupNewPage from "./group/CreateGroup";
 
 export const ContextData = React.createContext();
 
@@ -68,27 +72,23 @@ function getTabIndex(path) {
 
 export default function Home() {
   const [value, setValue] = React.useState(0);
-  const [network, setNetwork] = React.useState(null);
+  const selectedNetwork = useSelector(state => state.common.selectedNetwork?.chainName || "")
+  const [network, setNetwork] = React.useState(selectedNetwork);
 
   const navigate = useNavigate();
   const location = useLocation();
-  const params = useParams();
   const page = location.pathname.split('/')?.[location.pathname.split('/')?.length - 1]
-
-  const networks = useSelector((state) => state.wallet.networks);
-  const chainIDs = Object.keys(networks);
-
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
     if (newValue === 0 || newValue === 2) {
       navigate(ALL_NETWORKS[newValue]);
     } else {
-      if (network === null) {
-        setNetwork("cosmoshub");
-        navigate(`cosmoshub/${ALL_NETWORKS[newValue]}`);
+      if (selectedNetwork === "") {
+        setNetwork("simapp");
+        navigate(`simapp/${ALL_NETWORKS[newValue]}`);
       } else {
-        navigate(`${network}/${ALL_NETWORKS[newValue]}`);
+        navigate(`${selectedNetwork.toLowerCase()}/${ALL_NETWORKS[newValue]}`);
       }
     }
   };
@@ -131,6 +131,10 @@ export default function Home() {
             <SendPage />
           } />
 
+          <Route path="/transfers" element={
+            <SendPage />
+          } />
+
           <Route path="/:networkName/authz" element={
             <AuthzPage />
           } />
@@ -161,12 +165,29 @@ export default function Home() {
           } />
 
           <Route path="/:networkName/multisig" element={
-            <MultisigPage />
+            <PageMultisig />
           } />
 
           <Route path="/:networkName/staking" element={
             <StakingPage />
           } />
+
+          <Route path="/:networkName/multisig/:address/txs" element={
+            <PageMultisigInfo />
+          } />
+
+          <Route path="/:networkName/multisig/:address/create-tx" element={
+            <PageCreateTx />
+          } />
+          
+          <Route path="/:networkName/slashing" element={
+            <UnjailPage />
+          } />
+
+          <Route path="/:networkName/daos/create-group" element={
+            <CreateGroupNewPage />
+          } />
+
 
           <Route path="*" element={<Page404 />}></Route>
         </Routes>

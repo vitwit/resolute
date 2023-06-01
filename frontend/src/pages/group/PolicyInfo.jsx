@@ -18,10 +18,16 @@ import PolicyForm from "../../components/group/PolicyForm";
 import { useParams } from "react-router-dom";
 import AlertMsg from "../../components/group/AlertMsg";
 import PolicyDetails from "../../components/group/PolicyDetails";
+import UpdatePolicyMetadataDialog from "../../components/group/UpdatePolicyMetadataDialog";
+import { DAYS, PERCENTAGE } from "./common";
 
 function PolicyInfo() {
   const [policyObj, setPolicyObj] = useState({});
   const [isEditPolicyForm, setEditPolicyForm] = useState(false);
+  const [policyMetadataDialog, setPolicyMetadataDialog] = useState(false);
+  const dialogCloseHandle = () => {
+    setPolicyMetadataDialog(!policyMetadataDialog);
+  };
 
   const dispatch = useDispatch();
   const { id, policyId } = useParams();
@@ -35,6 +41,10 @@ function PolicyInfo() {
   );
   const updateGroupPolicyRes = useSelector(
     (state) => state.group.updateGroupPolicyRes
+  );
+
+  const updateGroupMetadataRes = useSelector(
+    (state) => state.group.updateGroupMetadataRes
   );
 
   const groupPoliceis = useSelector((state) => state?.group?.groupPolicies);
@@ -82,6 +92,12 @@ function PolicyInfo() {
     }
   }, [updateGroupPolicyRes?.status]);
 
+  useEffect(() => {
+    if (updateGroupMetadataRes?.status === "idle") {
+      setPolicyMetadataDialog(false);
+    }
+  }, [updateGroupMetadataRes?.status]);
+
   const handlePolicyMetadata = (newMetadata) => {
     const chainInfo = wallet?.chainInfo;
 
@@ -126,18 +142,47 @@ function PolicyInfo() {
   const groupInfo = useSelector((state) => state.group.groupInfo);
   const canUpdateGroup = () => groupInfo?.data?.admin === wallet?.address;
 
-  const handleSubmitPolicy = (policyMetadata) => {
+  const handleSubmitPolicy = (data) => {
     const chainInfo = wallet?.chainInfo;
-    dispatch(
-      txUpdateGroupPolicy({
+    const dataObj = {
         admin: policyObj?.admin,
         groupPolicyAddress: policyObj?.address,
-        policyMetadata: policyMetadata,
         denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
         feeAmount: chainInfo.config.gasPriceStep.average,
-      })
+      }
+    if (
+      data.policyMetadata.percentage !== 0 ||
+      data.policyMetadata.threshold !== 0
+    ) {
+      const getPeriod = (duration, period) => {
+        let time;
+        if(duration === DAYS) time = 24 * 60 * 60;
+        else if (duration === "Hours") time = 60 * 60;
+        else if (duration === "Minutes") time = 60;
+        else time = 1;
+
+        time = time * Number(period);
+        return time;
+      }
+
+      if (data?.policyMetadata) {
+        dataObj["policyMetadata"] = {
+          ...data.policyMetadata,
+          minExecPeriod: getPeriod(data.policyMetadata?.minExecPeriodDuration, data.policyMetadata?.minExecPeriod),
+          votingPeriod: getPeriod(data.policyMetadata?.votingPeriodDuration, data.policyMetadata?.votingPeriod),
+        };
+      }
+
+      if (dataObj?.policyMetadata?.decisionPolicy === PERCENTAGE) {
+        dataObj.policyMetadata.percentage =
+          Number(dataObj.policyMetadata.percentage) / 100.0;
+      }
+    }
+
+    dispatch(
+      txUpdateGroupPolicy(dataObj)
     );
   };
 
@@ -166,23 +211,36 @@ function PolicyInfo() {
 
       {groupPoliceis?.status === "idle" && policyObj?.address ? (
         <Paper variant="outlined" sx={{ p: 4 }} elevation={0}>
-          {
-            canUpdateGroup() ?
-          <Button
-            variant="contained"
-            onClick={() => setEditPolicyForm(true)}
-            sx={{
-              float: "right",
-              textTransform: "none",
-            }}
-            size="small"
-            disableElevation
-          >
-            Update policy
-          </Button>
-          :
-          null
-}
+          {(canUpdateGroup() && !isEditPolicyForm) ? (
+            <Button
+              variant="contained"
+              onClick={() => setPolicyMetadataDialog(true)}
+              sx={{
+                float: "right",
+                textTransform: "none",
+                mx: "2px",
+              }}
+              size="small"
+              disableElevation
+            >
+              Update policy metadata
+            </Button>
+          ) : null}
+          {(canUpdateGroup() && !isEditPolicyForm) ? (
+            <Button
+              variant="contained"
+              onClick={() => setEditPolicyForm(true)}
+              sx={{
+                float: "right",
+                textTransform: "none",
+                mx: "2px",
+              }}
+              size="small"
+              disableElevation
+            >
+              Update policy
+            </Button>
+          ) : null}
 
           {isEditPolicyForm && canUpdateGroup() ? (
             <PolicyForm
@@ -199,6 +257,14 @@ function PolicyInfo() {
             />
           )}
         </Paper>
+      ) : null}
+      {policyObj?.metadata ? (
+        <UpdatePolicyMetadataDialog
+          open={policyMetadataDialog}
+          metadata={JSON.parse(policyObj.metadata)}
+          handlePolicyMetadata={handlePolicyMetadata}
+          dialogCloseHandle={dialogCloseHandle}
+        />
       ) : null}
     </Box>
   );
