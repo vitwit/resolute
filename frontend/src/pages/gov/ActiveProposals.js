@@ -5,7 +5,7 @@ import ConnectWallet from '../../components/ConnectWallet';
 import { Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 
-const filterVoteAuthz = (authzs) => {
+export const filterVoteAuthz = (authzs) => {
   const result = {};
   const ids = Object.keys(authzs);
   for (let i = 0; i < ids.length; i++) {
@@ -14,7 +14,7 @@ const filterVoteAuthz = (authzs) => {
     for (let j = 0; j < authzs[chainID]?.grants?.length; j++) {
       const grant = authzs[chainID]?.grants[j];
       if (grant?.authorization["@type"] === "/cosmos.authz.v1beta1.GenericAuthorization" &&
-        grant?.authorization.msg === "/cosmos.gov.v1beta1.MsgVote") {
+        grant?.authorization.msg === "/cosmos.gov.v1beta1.MsgVote" || grant?.authorization.msg === "/cosmos.gov.v1.MsgVote") {
         granters.push(grant.granter);
       }
     }

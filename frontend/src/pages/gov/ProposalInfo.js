@@ -30,24 +30,34 @@ import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../../components/FeegranterInfo";
 import { getMainNetworks } from "../../utils/networks";
 import "./../common.css";
+import { filterVoteAuthz } from "./ActiveProposals";
 
 export default function ProposalInfo() {
   const dispatch = useDispatch();
-  // const { proposalInfo } = proposalState;
   const poolInfo = useSelector((state) => state.staking.pool);
   const feegrant = useSelector((state) => state.common.feegrant);
-  
+
+  const [authzGrants, setAuthzGrants] = useState({});
+
   const { networkName, id } = useParams();
   const nameToIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const chainID = nameToIDs[networkName];
   const network = useSelector((state) => state.wallet.networks[chainID]);
+  const grantsToMe = useSelector((state) => state.authz.grantsToMe);
 
-  const proposalTally = useSelector((state) => state.gov.tally[chainID]?.proposalTally || {});
-  const votes = useSelector((state) => state.gov.votes[chainID]?.proposals || {});
+  const currency = network?.network?.config?.currencies[0];
+  const address = network?.walletInfo?.bech32Address;
+
+  const proposalTally = useSelector(
+    (state) => state.gov.tally[chainID]?.proposalTally || {}
+  );
+  const votes = useSelector(
+    (state) => state.gov.votes[chainID]?.proposals || {}
+  );
   const activeProposals = useSelector((state) => state.gov.active);
 
   const [selectedNetwork, setSelectedNetwork] = useState("");
-  const {chainInfo} = {network};
+  const chainInfo = network?.network;
 
   const [proposal, setProposal] = useState({});
 
@@ -55,48 +65,53 @@ export default function ProposalInfo() {
     if (networkName?.length > 0 && chainID?.length > 0) {
       setSelectedNetwork(chainID);
       if (activeProposals[chainID]?.proposals?.length > 0) {
-        for (let index = 0; index < activeProposals[chainID].proposals.length; index++) {
+        for (
+          let index = 0;
+          index < activeProposals[chainID].proposals.length;
+          index++
+        ) {
           const proposal = activeProposals[chainID].proposals[index];
           if (proposal?.proposal_id === id) {
             setProposal(proposal);
           }
-          
         }
+        dispatch(
+          getPoolInfo({
+            baseURL: network?.network?.config?.rest,
+            chainID: chainID,
+          })
+        );
       } else {
-        getProposal({
-          baseURL: network?.chainInfo?.config.rest,
-          proposalId: id,
-          chainID: chainID,
-        })
+        dispatch(
+          getProposal({
+            baseURL: network?.network?.config.rest,
+            proposalId: id,
+            chainID: chainID,
+          })
+        );
+        dispatch(
+          getProposalTally({
+            baseURL: network?.network?.config.rest,
+            proposalId: id,
+          })
+        );
       }
-
     }
   }, [networkName, id]);
-  
-  useEffect(() => {
-    // dispatch(
-    //   getProposal({
-    //     baseURL: chainInfo.config.rest,
-    //     proposalId: id,
-    //   })
-    // );
-    // dispatch(
-    //   getPoolInfo({
-    //     baseURL: chainInfo.config.rest,
-    //   })
-    // );
-    // dispatch(
-    //   getProposalTally({
-    //     baseURL: chainInfo.config.rest,
-    //     proposalId: id,
-    //   })
-    // );
 
+  useEffect(() => {
     return () => {
       dispatch(resetError());
       dispatch(resetTx());
     };
   }, []);
+
+  useEffect(() => {
+    const result = filterVoteAuthz(grantsToMe);
+    if (Object.keys(result).length !== 0) {
+      setAuthzGrants(result);
+    }
+  }, [grantsToMe]);
 
   // useEffect(() => {
   //   if (proposalState.status === "rejected" && proposalState.error.length > 0) {
@@ -109,15 +124,15 @@ export default function ProposalInfo() {
   //   }
   // }, [proposalState]);
 
-  const address = useSelector((state) => state.wallet.address);
+  // const address = useSelector((state) => state.wallet.address);
   const govTx = useSelector((state) => state.gov.tx);
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo?.config?.currencies[0]
-  );
+  // const currency = useSelector(
+  //   (state) => state.wallet.chainInfo?.config?.currencies[0]
+  // );
+
   const walletConnected = useSelector((state) => state.wallet.connected);
 
   // authz
-  const grantsToMe = useSelector((state) => state.authz.grantsToMe);
   const selectedAuthz = useSelector((state) => state.authz.selected);
   const authzProposal = useMemo(
     () => getVoteAuthz(grantsToMe.grants, selectedAuthz.granter),
@@ -129,8 +144,8 @@ export default function ProposalInfo() {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
 
-  const tallyState = {};
-  const proposalState = {status: "idle"};
+  const tallyState = useSelector((state) => state.gov.tally);
+  const proposalState = { status: "idle" };
 
   useEffect(() => {
     if (status === "rejected" && errMsg === "") {
@@ -164,8 +179,8 @@ export default function ProposalInfo() {
     dispatch(resetFeegrant());
   };
 
-  const onVoteSubmit = (option) => {
-    const vote = nameToOption(option);
+  const onVoteSubmit = (data) => {
+    const vote = nameToOption(data.option);
     if (selectedAuthz.granter.length === 0) {
       dispatch(
         txVote({
@@ -340,7 +355,7 @@ export default function ProposalInfo() {
               </Button>
             </Box>
 
-            {/* <Grid container spacing={2}>
+            <Grid container spacing={2}>
               <Grid item xs={6} md={2}>
                 <Typography
                   variant="body1"
@@ -351,10 +366,8 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(
-                      tallyState?.proposalTally[id],
-                      poolInfo
-                    ).yes
+                    computeVotePercentage(proposalTally[id], poolInfo[chainID])
+                      .yes
                   }
                   %
                 </Typography>
@@ -369,10 +382,8 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(
-                      tallyState?.proposalTally[id],
-                      poolInfo
-                    ).no
+                    computeVotePercentage(proposalTally[id], poolInfo[chainID])
+                      .no
                   }
                   %
                 </Typography>
@@ -387,10 +398,8 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(
-                      tallyState?.proposalTally[id],
-                      poolInfo
-                    ).no_with_veto
+                    computeVotePercentage(proposalTally[id], poolInfo[chainID])
+                      .no_with_veto
                   }
                   %
                 </Typography>
@@ -405,15 +414,13 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(
-                      tallyState?.proposalTally[id],
-                      poolInfo
-                    ).abstain
+                    computeVotePercentage(proposalTally[id], poolInfo[chainID])
+                      .abstain
                   }
                   %
                 </Typography>
               </Grid>
-            </Grid> */}
+            </Grid>
             <Typography
               color="text.primary"
               variant="body1"
@@ -439,14 +446,18 @@ export default function ProposalInfo() {
                 ),
               }}
             /> */}
-            <div style={{
+            <div
+              style={{
                 padding: 8,
                 backgroundColor:
-                theme.palette?.mode === "light" ? "#f9fafc" : "#282828",
+                  theme.palette?.mode === "light" ? "#f9fafc" : "#282828",
                 color: "text.primary",
                 whiteSpace: "pre-line",
-              }} className="proposal-description-markdown">
-              {proposal?.content?.description && proposal?.content?.description.replace(/\\n/g, '\n')}}
+              }}
+              className="proposal-description-markdown"
+            >
+              {proposal?.content?.description &&
+                proposal?.content?.description.replace(/\\n/g, "\n")}
             </div>
           </Paper>
         </>
@@ -454,13 +465,13 @@ export default function ProposalInfo() {
         <CircularProgress size={35} />
       )}
 
-<VoteDialog
-            open={open}
-            closeDialog={closeDialog}
-            onVote={onVoteSubmit}
-            isAuthzMode={isAuthzMode}
-            granters={[]}
-          />
+      <VoteDialog
+        open={open}
+        closeDialog={closeDialog}
+        onVote={onVoteSubmit}
+        isAuthzMode={isAuthzMode}
+        granters={authzGrants[chainID] || []}
+      />
     </>
   );
 }
