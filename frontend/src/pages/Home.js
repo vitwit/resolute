@@ -20,6 +20,7 @@ import UnjailPage from "./slashing/UnjailPage";
 import PageMultisig from "./multisig/PageMultisig";
 import PageMultisigInfo from "./multisig/tx/PageMultisigInfo";
 import PageCreateTx from "./multisig/tx/PageCreateTx";
+import StakingOverview from "./stakingOverview/StakingOverview";
 
 export const ContextData = React.createContext();
 
@@ -141,6 +142,11 @@ export default function Home() {
           <Route path="/:networkName/feegrant" element={
             <FeegrantPage />
           } />
+
+          <Route path="/staking" element={
+            <StakingOverview/>
+          }
+          />
 
           <Route path="/gov" element={
             <ActiveProposals />
