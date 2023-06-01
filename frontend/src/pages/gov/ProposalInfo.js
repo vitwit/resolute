@@ -38,6 +38,7 @@ export default function ProposalInfo() {
   const feegrant = useSelector((state) => state.common.feegrant);
 
   const [authzGrants, setAuthzGrants] = useState({});
+  const proposalInfoRes = useSelector((state) => state.gov.proposalInfo);
 
   const { networkName, id } = useParams();
   const nameToIDs = useSelector((state) => state.wallet.nameToChainIDs);
@@ -62,6 +63,7 @@ export default function ProposalInfo() {
   const [proposal, setProposal] = useState({});
 
   useEffect(() => {
+    const chainID = nameToIDs[networkName];
     if (networkName?.length > 0 && chainID?.length > 0) {
       setSelectedNetwork(chainID);
       if (activeProposals[chainID]?.proposals?.length > 0) {
@@ -74,6 +76,7 @@ export default function ProposalInfo() {
           if (proposal?.proposal_id === id) {
             setProposal(proposal);
           }
+
         }
         dispatch(
           getPoolInfo({
@@ -144,7 +147,7 @@ export default function ProposalInfo() {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
 
-  const tallyState = useSelector((state) => state.gov.tally);
+  const tallyState = {};
   const proposalState = { status: "idle" };
 
   useEffect(() => {
