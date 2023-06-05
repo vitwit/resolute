@@ -50,6 +50,7 @@
     "jest": "^27.4.3",
     "jest-resolve": "^29.5.0",
     "jest-watch-typeahead": "^2.2.2",
+    "lodash": "^4.17.21",
     "mathjs": "^11.7.0",
     "mini-css-extract-plugin": "^2.7.5",
     "moment": "^2.29.4",

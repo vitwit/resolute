@@ -8,7 +8,7 @@ export const StakingTotal = (props) => {
           <Card>
             <CardContent>
               <Typography align="left">Total Staked Balance</Typography>
-              <Typography align="left" variant="h4">${props.data.totalAmount}</Typography>
+              <Typography align="left" variant="h4">${props?.data?.totalAmount}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -18,7 +18,7 @@ export const StakingTotal = (props) => {
               <Grid container justifyContent="space-between" alignItems="center">
                 <Grid item>
                   <Typography align="left">Total Staking Rewards</Typography>
-                  <Typography align="left" variant="h4">${props.data.totalRewards}</Typography>
+                  <Typography align="left" variant="h4">${props?.data?.totalRewards}</Typography>
                 </Grid>
                 <Grid item>
                   <Button variant="contained" color="primary">

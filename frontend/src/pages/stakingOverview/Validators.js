@@ -5,7 +5,6 @@ import { Validator } from './Validator';
 export const Validators = (props) => {
   return (
     <>
-      
       <TableContainer>
         <Table>
           <TableHead>
@@ -18,7 +17,7 @@ export const Validators = (props) => {
           </TableHead>
           <TableBody>
             {props.validators.map((validator) => (
-              <Validator validator={validator} denom={props.denom}/>
+              <Validator validator={validator} key={validator.validatorName} denom={props.denom}/>
             ))}
           </TableBody>
         </Table>
