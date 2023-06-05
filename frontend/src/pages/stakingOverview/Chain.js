@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Card, CardContent, Typography, Avatar } from '@mui/material';
+import { Grid, Card, CardContent, Typography, Avatar, Button } from '@mui/material';
 import { Validators } from './Validators';
 
 export const Chain = (props) => {
@@ -18,9 +18,14 @@ export const Chain = (props) => {
                   Total staked amount: {props.chain.stakedAmount + " " + props.chain.denom} | Available Amount: {props.chain.availableAmount + " " + props.chain.denom}
                 </Typography>
               </Grid>
-              <Typography align="left" variant="h6" gutterBottom>
+              
+              <Grid item>
+                  <Button variant="contained" color="primary">
+                  <Typography align="left" variant="h6" gutterBottom>
                 Claim: {props.chain.rewards + " " + props.chain.denom} 
               </Typography>
+                  </Button>
+                </Grid>
             </Grid>
             <Grid>
               <Grid item xs={12}>
