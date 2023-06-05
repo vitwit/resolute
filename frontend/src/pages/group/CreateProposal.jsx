@@ -20,6 +20,7 @@ function CreateProposal() {
         fontWeight={600}
         textAlign={"left"}
         variant="h6"
+        color="text.primary"
       >
         Create Proposal
       </Typography>
