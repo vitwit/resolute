@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getProposal,
+  getProposals,
   getProposalTally,
   txVote,
 } from "../../features/gov/govSlice";
@@ -66,25 +67,7 @@ export default function ProposalInfo() {
     const chainID = nameToIDs[networkName];
     if (networkName?.length > 0 && chainID?.length > 0) {
       setSelectedNetwork(chainID);
-      if (activeProposals[chainID]?.proposals?.length > 0) {
-        for (
-          let index = 0;
-          index < activeProposals[chainID].proposals.length;
-          index++
-        ) {
-          const proposal = activeProposals[chainID].proposals[index];
-          if (proposal?.proposal_id === id) {
-            setProposal(proposal);
-          }
-
-        }
-        dispatch(
-          getPoolInfo({
-            baseURL: network?.network?.config?.rest,
-            chainID: chainID,
-          })
-        );
-      } else {
+      if (!activeProposals[chainID]?.proposals?.length) {
         dispatch(
           getProposal({
             baseURL: network?.network?.config.rest,
@@ -96,11 +79,40 @@ export default function ProposalInfo() {
           getProposalTally({
             baseURL: network?.network?.config.rest,
             proposalId: id,
+            chainID: chainID,
           })
         );
       }
     }
-  }, [networkName, id]);
+  }, [nameToIDs]);
+
+  useEffect(() => {
+    if (activeProposals[chainID]?.proposals?.length > 0) {
+      for (
+        let index = 0;
+        index < activeProposals[chainID].proposals.length;
+        index++
+      ) {
+        const proposal = activeProposals[chainID].proposals[index];
+        if (proposal?.proposal_id === id) {
+          setProposal(proposal);
+        }
+      }
+      dispatch(
+        getPoolInfo({
+          baseURL: network?.network?.config?.rest,
+          chainID: chainID,
+        })
+      );
+      dispatch(
+        getProposalTally({
+          baseURL: network?.network?.config.rest,
+          proposalId: id,
+          chainID: chainID,
+        })
+      );
+    }
+  }, [activeProposals]);
 
   useEffect(() => {
     return () => {
