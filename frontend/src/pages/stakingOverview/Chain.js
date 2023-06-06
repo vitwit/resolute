@@ -39,7 +39,7 @@ export const Chain = (props) => {
                 textTransform: "none"
               }}
             >
-              Claim:&nbsp;{props.chain.rewards + " " + props.chain.denom}
+              Claim:&nbsp;{props.chain.rewards}&nbsp;{props.chain.denom}
             </Button>
           </Grid>
         </Grid>

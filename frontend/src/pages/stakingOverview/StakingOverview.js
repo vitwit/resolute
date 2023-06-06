@@ -26,26 +26,26 @@ const StakingOverview = (props) => {
         let amount = delegations.delegations[j].balance.amount;
         denom = delegations.delegations[j].balance.denom;
         validators.push({
-          validatorName : validator,
-          stakedAmount : amount,
-          rewards : 0,
-          apr : 0
+          validatorName: validator,
+          stakedAmount: amount,
+          rewards: 0,
+          apr: 0
         });
       }
       let chain = {
-        chainName : chainIds[i],
-        stakedAmount : chainTotalStaked,
-        availableAmount : 0,
-        denom : denom,
-        rewards : 0,
-        validators : validators
+        chainName: chainIds[i],
+        stakedAmount: chainTotalStaked,
+        availableAmount: 0,
+        denom: denom,
+        rewards: 0,
+        validators: validators
       }
       chainsdata.push(chain);
     }
     return {
-      totalAmount : 0,
-      totalRewards : 0,
-      chains : chainsdata,
+      totalAmount: 0,
+      totalRewards: 0,
+      chains: chainsdata,
     }
   };
 
@@ -54,9 +54,9 @@ const StakingOverview = (props) => {
   const stakingInfoChains = useSelector((state)=>state.staking.chains);
   let chainsmap = useSelector((state)=>state.staking.chains);
   const [data, setData] = useState( {
-    totalAmount : 0,
-    totalRewards : 0,
-    chains : []
+    totalAmount: 0,
+    totalRewards: 0,
+    chains: []
   });
   useEffect(()=>{
     let chainIds = Object.keys(wallet.networks);
