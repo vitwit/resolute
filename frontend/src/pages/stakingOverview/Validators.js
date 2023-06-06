@@ -11,12 +11,11 @@ export const Validators = (props) => {
               <TableCell>Validator Name</TableCell>
               <TableCell>Staked Amount</TableCell>
               <TableCell>Rewards</TableCell>
-              <TableCell>APR</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {props.validators.map((validator) => (
-              <Validator validator={validator} key={validator.validatorName} denom={props.denom}/>
+              <Validator validator={validator} key={validator.validatorName} denom={props.denom} />
             ))}
           </TableBody>
         </Table>
