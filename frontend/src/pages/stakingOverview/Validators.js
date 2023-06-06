@@ -4,7 +4,6 @@ import { Validator } from './Validator';
 
 export const Validators = (props) => {
   return (
-    <>
       <TableContainer>
         <Table>
           <TableHead>
@@ -22,6 +21,5 @@ export const Validators = (props) => {
           </TableBody>
         </Table>
       </TableContainer>
-    </>
   );
 };

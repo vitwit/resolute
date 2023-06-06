@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import { Container, Typography } from '@mui/material';
-import StakingDetails from './StakingDetails';
+import { Container, Typography, Grid } from '@mui/material';
 import { StakingTotal } from './StakingTotal';
-import stakingService from "../../features/staking/stakingService";
 import { getDelegations, resetDefaultState, getParams, getAllValidators } from '../../features/staking/stakeSlice';
+import { Chain } from './Chain';
 
 const StakingOverview = (props) => {
 
@@ -29,23 +28,23 @@ const StakingOverview = (props) => {
         validators.push({
           validatorName : validator,
           stakedAmount : amount,
-          rewards : '?',
-          apr : '?'
+          rewards : 0,
+          apr : 0
         });
       }
       let chain = {
         chainName : chainIds[i],
         stakedAmount : chainTotalStaked,
-        availableAmount : '?',
+        availableAmount : 0,
         denom : denom,
-        rewards : '?',
+        rewards : 0,
         validators : validators
       }
       chainsdata.push(chain);
     }
     return {
-      totalAmount : '?',
-      totalRewards : '?',
+      totalAmount : 0,
+      totalRewards : 0,
       chains : chainsdata,
     }
   };
@@ -54,9 +53,12 @@ const StakingOverview = (props) => {
   const wallet = useSelector((state) => state.wallet);
   const stakingInfoChains = useSelector((state)=>state.staking.chains);
   let chainsmap = useSelector((state)=>state.staking.chains);
-  const [data, setData] = useState();
+  const [data, setData] = useState( {
+    totalAmount : 0,
+    totalRewards : 0,
+    chains : []
+  });
   useEffect(()=>{
-    //console.log("1called.......")
     let chainIds = Object.keys(wallet.networks);
     dispatch(resetDefaultState(chainIds));
     for(let i=0;i<chainIds.length;i++) {
@@ -73,7 +75,6 @@ const StakingOverview = (props) => {
     if(Object.keys(chainsmap).length!==0) {
       
       setData(getStakingObjectForProps(wallet, chainsmap));
-      //console.log("called...", chainsmap);
     }
   },[chainsmap])
 
@@ -141,19 +142,27 @@ const StakingOverview = (props) => {
     chains : chains
   }
   return (
-    <>
     <Container sx={{mb:4}}>
       <Typography color="text.primary" variant="h4" component="h1" align="center" gutterBottom sx={{ mt: 2}}>
         Staking Overview
       </Typography>
-      <StakingTotal data={dummyStakingData}/>
-      <StakingDetails chains={dummyStakingData.chains}/>
-      {//!(data===undefined || Object.keys(data)===0 || data.chains.length===0) &&  <StakingTotal data={data}/> 
-      }
-      {//!(data===undefined || Object.keys(data)===0 || data.chains.length===0) && <StakingDetails chains={data.chains} /> 
+      {!(data===undefined || Object.keys(data)===0 || data.chains.length===0) &&  <StakingTotal data={data}/> }
+      {!(data===undefined || Object.keys(data)===0 || data.chains.length===0) && 
+        <div>
+          <Grid container alignItems="center">
+            <Grid item>
+              <Typography color="text.primary" variant="h4" component="h2">
+                {console.log("here",data)}
+                Staking-{data.chains.length}
+              </Typography>
+            </Grid>
+          </Grid>
+          <div>
+            {data.chains.map((chain) => <Chain chain={chain} key={chain.chainName}/>)}
+          </div>
+        </div>
       }
       </Container >
-    </>
   );
 };
 

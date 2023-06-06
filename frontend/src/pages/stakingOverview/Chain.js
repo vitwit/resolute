@@ -22,7 +22,7 @@ export const Chain = (props) => {
               <Grid item>
                   <Button variant="contained" color="primary">
                   <Typography align="left" variant="h6" gutterBottom>
-                Claim: {props.chain.rewards + " " + props.chain.denom} 
+                  Claim:&nbsp;{props.chain.rewards}&nbsp;{props.chain.denom}
               </Typography>
                   </Button>
                 </Grid>
