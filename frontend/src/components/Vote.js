@@ -16,6 +16,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
+import { setError } from "../features/common/commonSlice";
 
 VoteDialog.propTypes = {
   closeDialog: PropTypes.func.isRequired,
@@ -28,6 +30,7 @@ VoteDialog.propTypes = {
 
 export default function VoteDialog(props) {
   const [option, setOption] = React.useState("");
+  const dispatch = useDispatch();
   const [granter, setGranter] = React.useState(props.granters.length > 0 ? props.granters[0] : "");
   const [justification, setJustification] = React.useState("");
   const govTx = useSelector((state) => state.gov.tx);
@@ -39,6 +42,15 @@ export default function VoteDialog(props) {
   };
 
   const handleVote = () => {
+    if(!option) {
+      dispatch(
+        setError({
+          type: "error",
+          message: "Vote option not selected"
+        })
+      )
+      return;
+    }
     props.onVote({
       option: option,
       justification: justification,
