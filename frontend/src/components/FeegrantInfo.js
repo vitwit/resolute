@@ -151,7 +151,8 @@ const renderAuthorization = (authz, displayDenom) => {
                 <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
               ) : (
                 `${parseSpendLimit(
-                  allowance.period_spend_limit
+                  allowance.period_spend_limit,
+                  6
                 )}${displayDenom}`
               )}
             </li>
@@ -162,7 +163,10 @@ const renderAuthorization = (authz, displayDenom) => {
               {allowance.period_can_spend.length === 0 ? (
                 <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
               ) : (
-                `${parseSpendLimit(allowance.period_can_spend)}${displayDenom}`
+                `${parseSpendLimit(
+                  allowance.period_can_spend,
+                  6
+                )}${displayDenom}`
               )}
             </li>
             <li className="inline-space-between">

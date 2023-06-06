@@ -40,6 +40,38 @@ import {
 } from "../../utils/localStorage";
 import SelectNetwork from "../../components/common/SelectNetwork";
 
+const renderExpiration = (row) => {
+  return (
+    <>
+      {row?.allowance["@type"] === "/cosmos.feegrant.v1beta1.BasicAllowance" ? (
+        <>
+          {row?.allowance?.expiration ? (
+            getLocalTime(row?.allowance?.expiration)
+          ) : (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: "&infin;",
+              }}
+            />
+          )}
+        </>
+      ) : (
+        <>
+          {row?.allowance?.basic?.expiration ? (
+            getLocalTime(row?.allowance?.basic?.expiration)
+          ) : (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: "&infin;",
+              }}
+            />
+          )}
+        </>
+      )}
+    </>
+  );
+};
+
 export default function Feegrant() {
   const [tab, setTab] = React.useState(0);
   const grantsToMe = useSelector((state) => state.feegrant.grantsToMe);
@@ -52,7 +84,7 @@ export default function Feegrant() {
   );
   const networks = useSelector((state) => state.wallet.networks);
   const [currentNetwork, setCurrentNetwork] = React.useState(
-    params?.networkName || selectedNetwork
+    params?.networkName || selectedNetwork.toLowerCase()
   );
 
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
@@ -189,7 +221,7 @@ export default function Feegrant() {
             navigate(`/${name}/feegrant`);
           }}
           networks={Object.keys(nameToChainIDs)}
-          defaultNetwork={selectedNetwork.toLowerCase().replace(/ /g, "")}
+          defaultNetwork={currentNetwork.toLowerCase().replace(/ /g, "")}
         />
       </Box>
       {selected?.allowance ? (
@@ -282,13 +314,7 @@ export default function Feegrant() {
                             />
                           </StyledTableCell>
                           <StyledTableCell>
-                            {row?.allowance?.expiration ? (
-                              getLocalTime(row?.allowance?.expiration)
-                            ) : (
-                              <span
-                                dangerouslySetInnerHTML={{ __html: "&infin;" }}
-                              />
-                            )}
+                            {renderExpiration(row)}
                           </StyledTableCell>
                           <StyledTableCell>
                             <Link
@@ -372,13 +398,7 @@ export default function Feegrant() {
                             />
                           </StyledTableCell>
                           <StyledTableCell>
-                            {row.allowance.expiration ? (
-                              getLocalTime(row.allowance.expiration)
-                            ) : (
-                              <span
-                                dangerouslySetInnerHTML={{ __html: "&infin;" }}
-                              />
-                            )}
+                            {renderExpiration(row)}
                           </StyledTableCell>
                           <StyledTableCell>
                             <Link
@@ -390,13 +410,6 @@ export default function Feegrant() {
                               Details
                             </Link>
                           </StyledTableCell>
-                          {/* <StyledTableCell>
-                                  <Switch checked={useFeeChecked}
-                                    onChange={(e) => handleOnFeeChecked(e, row)}
-                                    inputProps={{ 'aria-label': 'controlled' }}
-                                    size="small" />
-
-                                </StyledTableCell> */}
                           <StyledTableCell>
                             <FormControlLabel
                               control={
