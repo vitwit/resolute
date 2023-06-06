@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Grid, Card, CardContent, Typography, Button } from '@mui/material';
 
 export const StakingTotal = (props) => {
@@ -62,4 +63,12 @@ export const StakingTotal = (props) => {
       </Grid>
     </Grid>
   );
+};
+
+
+StakingTotal.propTypes = {
+  data: PropTypes.shape({
+    totalAmount: PropTypes.number,
+    totalRewards: PropTypes.number,
+  }),
 };

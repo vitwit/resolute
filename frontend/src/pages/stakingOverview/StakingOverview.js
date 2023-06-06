@@ -20,22 +20,22 @@ const StakingOverview = (props) => {
     let chainIds = Object.keys(chainsmap);
     let chainsdata = [];
     for (let i = 0; i < chainIds.length; i++) {
-      let chainTotalStaked = chainsmap[chainIds[i]]?.delegations?.totalStaked;
+      let decimal = wallet.networks[chainIds[i]]?.network?.config?.currencies[0]?.coinDecimals;
+      let chainTotalStaked = chainsmap[chainIds[i]]?.delegations?.totalStaked / 10 ** decimal;
       let delegations = chainsmap[chainIds[i]]?.delegations?.delegations;
       let validatorstore = chainsmap[chainIds[i]]?.validators;
       let denom;
-
+      
       if (delegations?.delegations?.length === undefined || delegations?.delegations?.length === 0) continue;
-
       let validators = [];
 
       for (let j = 0; j < delegations?.delegations?.length; j++) {
         let validator = delegations.delegations[j].delegation.validator_address;
-        let amount = delegations.delegations[j].balance.amount;
+        let amount = delegations.delegations[j].balance.amount / 10 ** decimal;
         denom = delegations.delegations[j].balance.denom;
         validators.push({
-          validatorName: validatorstore?.active?.[validator]?.description?.moniker ? validatorstore.active[validator]?.description.moniker : (validatorstore?.inActive?.[validator]?.description?.moniker ? validatorstore?.inActive[validator].description.moniker:'unknown'),
-          stakedAmount: amount,
+          validatorName : validatorstore?.active?.[validator]?.description?.moniker || validatorstore?.inActive?.[validator]?.description?.moniker || 'unknown',
+          stakedAmount: +amount,
           rewards: 0,
           apr: 0
         });
