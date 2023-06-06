@@ -50,7 +50,7 @@ export function getProposalComponent(type) {
 
 export function computeVotePercentage(tally, poolInfo) {
   const bonded = poolInfo?.pool?.bonded_tokens || 1;
-  if (tally == null || tally.yes == null) {
+  if (tally == null || tally.yes == null || poolInfo == null) {
     return {
       yes: 0,
       no: 0,
