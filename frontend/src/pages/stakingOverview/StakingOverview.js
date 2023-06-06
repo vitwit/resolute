@@ -26,7 +26,6 @@ const StakingOverview = (props) => {
         let amount = delegations.delegations[j].balance.amount;
         denom = delegations.delegations[j].balance.denom;
         validators.push({
-<<<<<<< HEAD
           validatorName : validator,
           stakedAmount : amount,
           rewards : 0,
@@ -40,40 +39,18 @@ const StakingOverview = (props) => {
         denom : denom,
         rewards : 0,
         validators : validators
-=======
-          validatorName: validator,
-          stakedAmount: amount,
-          rewards: '?',
-          apr: '?'
-        });
-      }
-      let chain = {
-        chainName: chainIds[i],
-        stakedAmount: chainTotalStaked,
-        availableAmount: '?',
-        denom: denom,
-        rewards: '?',
-        validators: validators
->>>>>>> db798f6d10e5918ed32b37421d6477e96be73fae
       }
       chainsdata.push(chain);
     }
     return {
-<<<<<<< HEAD
       totalAmount : 0,
       totalRewards : 0,
       chains : chainsdata,
-=======
-      totalAmount: '?',
-      totalRewards: '?',
-      chains: chainsdata,
->>>>>>> db798f6d10e5918ed32b37421d6477e96be73fae
     }
   };
 
   let dispatch = useDispatch();
   const wallet = useSelector((state) => state.wallet);
-<<<<<<< HEAD
   const stakingInfoChains = useSelector((state)=>state.staking.chains);
   let chainsmap = useSelector((state)=>state.staking.chains);
   const [data, setData] = useState( {
@@ -82,13 +59,6 @@ const StakingOverview = (props) => {
     chains : []
   });
   useEffect(()=>{
-=======
-  const stakingInfoChains = useSelector((state) => state.staking.chains);
-  let chainsmap = useSelector((state) => state.staking.chains);
-  const [data, setData] = useState();
-  useEffect(() => {
-    //console.log("1called.......")
->>>>>>> db798f6d10e5918ed32b37421d6477e96be73fae
     let chainIds = Object.keys(wallet.networks);
     dispatch(resetDefaultState(chainIds));
     for (let i = 0; i < chainIds.length; i++) {
@@ -172,11 +142,7 @@ const StakingOverview = (props) => {
     chains: chains
   }
   return (
-<<<<<<< HEAD
-    <Container sx={{mb:4}}>
-      <Typography color="text.primary" variant="h4" component="h1" align="center" gutterBottom sx={{ mt: 2}}>
-        Staking Overview
-      </Typography>
+    <Container>
       {!(data===undefined || Object.keys(data)===0 || data.chains.length===0) &&  <StakingTotal data={data}/> }
       {!(data===undefined || Object.keys(data)===0 || data.chains.length===0) && 
         <div>
@@ -193,12 +159,6 @@ const StakingOverview = (props) => {
           </div>
         </div>
       }
-=======
-    <>
-      <Container>
-        <StakingTotal data={dummyStakingData} />
-        <StakingDetails chains={dummyStakingData.chains} />
->>>>>>> db798f6d10e5918ed32b37421d6477e96be73fae
       </Container >
   );
 };
