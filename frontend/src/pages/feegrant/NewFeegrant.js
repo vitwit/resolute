@@ -10,16 +10,15 @@ import {
   txFeegrantBasic,
   txGrantFilter,
   txGrantPeriodic,
+  resetFeeBasic,
+  resetFeePeriodic,
 } from "../../features/feegrant/feegrantSlice";
 import { useForm, FormProvider } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { PeriodicFeegrant } from "../../components/PeriodicFeeGrant";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useNavigate } from "react-router-dom";
-import {
-  resetError,
-  setError,
-} from "../../features/common/commonSlice";
+import { useNavigate, useParams } from "react-router-dom";
+import { resetError, setError } from "../../features/common/commonSlice";
 import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import {
   Alert,
@@ -40,18 +39,45 @@ export default function NewFeegrant() {
   const [tab, setTab] = useState(0);
   const [value, setValue] = React.useState("");
 
-  const address = useSelector((state) => state.wallet.address);
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
+  const params = useParams();
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const networks = useSelector((state) => state.wallet.networks);
+  const [currentNetwork, setCurrentNetwork] = React.useState(
+    params?.networkName || selectedNetwork
+  );
+
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  const address =
+    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+
   const dispatch = useDispatch();
   const feegrantTx = useSelector((state) => state.feegrant.tx);
   const feeFilterTxRes = useSelector((state) => state.feegrant.txFilterRes);
+  const feegrantBasicTxRes = useSelector((state) => state.feegrant.txFeegrantBasicRes);
+  const grantPeriodicTxRes = useSelector((state) => state.feegrant.txGrantPeriodicRes);
 
   let navigate = useNavigate();
   useEffect(() => {
     if (feeFilterTxRes?.status === "idle") {
-      navigate(`/feegrant`);
+      navigate(`/${currentNetwork}/feegrant`);
     }
   }, [feeFilterTxRes?.status, navigate]);
+
+  useEffect(() => {
+    if (feegrantBasicTxRes?.status === "idle") {
+      navigate(`/${currentNetwork}/feegrant`);
+    }
+  }, [feegrantBasicTxRes?.status, navigate]);
+
+  useEffect(() => {
+    if (grantPeriodicTxRes?.status === "idle") {
+      navigate(`/${currentNetwork}/feegrant`);
+    }
+  }, [grantPeriodicTxRes?.status, navigate]);
 
   useEffect(() => {
     return () => {
@@ -59,11 +85,22 @@ export default function NewFeegrant() {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetFeeBasic());
+    };
+  },[])
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetFeePeriodic());
+    }
+  },[])
+
   const date = new Date();
   const expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo.config.currencies[0]
-  );
+  const currency =
+    networks[nameToChainIDs[currentNetwork]]?.network.config.currencies[0];
 
   const [msgTxTypes, setMsgTxTypes] = React.useState([]);
 
@@ -97,7 +134,6 @@ export default function NewFeegrant() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-
       })
     );
   };
@@ -199,12 +235,12 @@ export default function NewFeegrant() {
 
   return (
     <>
-      <Typography 
-      variant="h6"
-       textAlign={"left"}
-       color="text.primary"
-       gutterBottom
-       >
+      <Typography
+        variant="h6"
+        textAlign={"left"}
+        color="text.primary"
+        gutterBottom
+      >
         Create Feegrant
       </Typography>
       <Alert
@@ -228,7 +264,11 @@ export default function NewFeegrant() {
         elevation={0}
       >
         <GroupTab
-          tabs={["Basic", "Periodic", "Filtered"]}
+          tabs={[
+            { title: "Basic" },
+            { title: "Periodic" },
+            { title: "Filtered" },
+          ]}
           handleTabChange={handleTabChange}
         />
         <TabPanel value={tab} index={0}>
@@ -348,7 +388,9 @@ export default function NewFeegrant() {
                       )}
                     >
                       {authzMsgTypes().map((a, index) => (
-                        <MenuItem key={index} value={a.typeURL}>{a.label}</MenuItem>
+                        <MenuItem key={index} value={a.typeURL}>
+                          {a.label}
+                        </MenuItem>
                       ))}
                     </Select>
                   </FormControl>

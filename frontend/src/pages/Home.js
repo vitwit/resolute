@@ -22,6 +22,7 @@ import PageMultisigInfo from "./multisig/tx/PageMultisigInfo";
 import PageCreateTx from "./multisig/tx/PageCreateTx";
 import Feegrant from "./feegrant/Feegrant";
 import CreateGroupNewPage from "./group/CreateGroup";
+import NewFeegrant from "./feegrant/NewFeegrant";
 
 export const ContextData = React.createContext();
 
@@ -191,6 +192,9 @@ export default function Home() {
             <CreateGroupNewPage />
           } />
 
+          <Route path="/:networkName/feegrant/new" element={
+            <NewFeegrant />
+          } />
 
           <Route path="*" element={<Page404 />}></Route>
         </Routes>

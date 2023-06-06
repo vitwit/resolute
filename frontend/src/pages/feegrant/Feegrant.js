@@ -47,26 +47,35 @@ export default function Feegrant() {
   const dispatch = useDispatch();
 
   const params = useParams();
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const networks = useSelector((state) => state.wallet.networks);
+  const [currentNetwork, setCurrentNetwork] = React.useState(
+    params?.networkName || selectedNetwork
+  );
+
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
-  const chainInfo = useSelector((state) => state.wallet?.chainInfo);
-  const address = useSelector((state) => state.wallet.address);
+  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  const address =
+    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+
   const errState = useSelector((state) => state.feegrant.errState);
   const txStatus = useSelector((state) => state.feegrant.tx);
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo?.config.currencies[0]
-  );
+  const currency = chainInfo?.config?.currencies[0];
   const [infoOpen, setInfoOpen] = React.useState(false);
   const isNanoLedger = useSelector((state) => state.wallet.isNanoLedger);
-
-
-  const networks = useSelector((state) => state.wallet.networks);
-  const [selectedNetwork, setSelectedNetwork] = React.useState("cosmoshub");
 
   const [selected, setSelected] = React.useState({});
   const handleInfoClose = (value) => {
     setInfoOpen(false);
   };
+
+  useEffect(() => {
+    if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
+    else setCurrentNetwork("cosmoshub");
+  }, [params]);
 
   useEffect(() => {
     if (address && address.length > 0) {
@@ -83,18 +92,7 @@ export default function Feegrant() {
         })
       );
     }
-  }, [address]);
-
-  useEffect(() => {
-    if (params.networkName.length > 0) {
-      const chainID = nameToChainIDs[params.networkName];
-      const a = networks[chainID];
-      console.log(a);
-      console.log(params.networkName);
-      setSelectedNetwork(params.networkName);
-
-    }
-  }, [params]);
+  }, [chainInfo, currentNetwork]);
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
   useEffect(() => {
@@ -183,16 +181,15 @@ export default function Feegrant() {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "end"
+          justifyContent: "end",
         }}
       >
         <SelectNetwork
           onSelect={(name) => {
-            navigate(`/${name}/feegrant`)
+            navigate(`/${name}/feegrant`);
           }}
           networks={Object.keys(nameToChainIDs)}
           defaultNetwork={selectedNetwork.toLowerCase().replace(/ /g, "")}
-
         />
       </Box>
       {selected?.allowance ? (
@@ -218,18 +215,21 @@ export default function Feegrant() {
           sx={{
             textTransform: "none",
           }}
-          onClick={() => navigateTo("/feegrant/new")}
+          onClick={() => navigateTo(`/${currentNetwork}/feegrant/new`)}
         >
           Grant New
         </Button>
       </Box>
       <Paper elevation={0} sx={{ p: 1, mt: 2 }}>
         <GroupTab
-          tabs={[{
-            title: "Granted By Me"
-          }, {
-            title: "Granted To Me"
-          }]}
+          tabs={[
+            {
+              title: "Granted By Me",
+            },
+            {
+              title: "Granted To Me",
+            },
+          ]}
           handleTabChange={handleTabChange}
         />
         <TabPanel value={tab} index={0} key={"by-me"}>
@@ -410,11 +410,10 @@ export default function Feegrant() {
                                             "Feegrant does not support ledger signing",
                                         })
                                       );
-
                                     } else {
                                       if (e.target.checked) {
                                         setFeegrant(row);
-                                        dispatch(setFeegrantState(row))
+                                        dispatch(setFeegrantState(row));
                                       } else {
                                         removeFeegrant();
                                       }
