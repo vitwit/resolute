@@ -34,11 +34,9 @@ export const getProposal = createAsyncThunk(
   "gov/proposal-info",
   async (data, { rejectWithValue }) => {
     try {
-      console.log("dispatch")
       const response = await govService.proposal(data.baseURL, data.proposalId);
       return response.data;
     } catch (error) {
-      console.log("dispatch catch")
       return rejectWithValue(error);
     }
   }

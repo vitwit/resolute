@@ -128,22 +128,7 @@ export default function ProposalInfo() {
     }
   }, [grantsToMe]);
 
-  // useEffect(() => {
-  //   if (proposalState.status === "rejected" && proposalState.error.length > 0) {
-  //     dispatch(
-  //       setError({
-  //         type: "error",
-  //         message: proposalState.error,
-  //       })
-  //     );
-  //   }
-  // }, [proposalState]);
-
-  // const address = useSelector((state) => state.wallet.address);
   const govTx = useSelector((state) => state.gov.tx);
-  // const currency = useSelector(
-  //   (state) => state.wallet.chainInfo?.config?.currencies[0]
-  // );
 
   const walletConnected = useSelector((state) => state.wallet.connected);
 
