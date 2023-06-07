@@ -41,9 +41,9 @@ import {
 import SelectNetwork from "../../components/common/SelectNetwork";
 
 const renderExpiration = (row) => {
-  return (
-    <>
-      {row?.allowance["@type"] === "/cosmos.feegrant.v1beta1.BasicAllowance" ? (
+  switch (row?.allowance["@type"]) {
+    case "/cosmos.feegrant.v1beta1.BasicAllowance":
+      return (
         <>
           {row?.allowance?.expiration ? (
             getLocalTime(row?.allowance?.expiration)
@@ -55,7 +55,10 @@ const renderExpiration = (row) => {
             />
           )}
         </>
-      ) : (
+      );
+
+    case "/cosmos.feegrant.v1beta1.PeriodicAllowance":
+      return (
         <>
           {row?.allowance?.basic?.expiration ? (
             getLocalTime(row?.allowance?.basic?.expiration)
@@ -67,9 +70,23 @@ const renderExpiration = (row) => {
             />
           )}
         </>
-      )}
-    </>
-  );
+      );
+
+    default:
+      return (
+        <>
+          {row?.allowance?.allowance?.basic?.expiration ? (
+            getLocalTime(row?.allowance?.allowance?.basic?.expiration)
+          ) : (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: "&infin;",
+              }}
+            />
+          )}
+        </>
+      );
+  }
 };
 
 export default function Feegrant() {
@@ -230,6 +247,7 @@ export default function Feegrant() {
           displayDenom={currency?.coinDenom}
           open={infoOpen}
           onClose={handleInfoClose}
+          coinDecimals={currency?.coinDecimals}
         />
       ) : (
         <></>
