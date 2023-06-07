@@ -41,6 +41,8 @@ export const Chain = (props) => {
   useEffect(() => {
     dispatch(getDelegatorTotalRewards({chainID:props.chain.chainName, baseURL:chainInfo.network.config.rest, address:chainInfo.walletInfo.bech32Address}));
   }, [distTxStatus.status])
+
+  console.log(props.chain)
   
   return (
     <Card
@@ -53,7 +55,7 @@ export const Chain = (props) => {
       <CardContent>
         <Grid container justifyContent="space-between" alignItems="center">
           <Grid item>
-            <Avatar src={props.chain.imageUrl} sx={{ width: 36, height: 36 }} />
+            <Avatar src={props.chain.imageURL} sx={{ width: 36, height: 36 }} />
             <Typography
               align="left"
               variant="h6"

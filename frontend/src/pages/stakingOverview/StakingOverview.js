@@ -5,6 +5,7 @@ import { StakingTotal } from './StakingTotal';
 import { getDelegations, resetDefaultState, getParams, getAllValidators } from '../../features/staking/stakeSlice';
 import {getDelegatorTotalRewards, resetDefaultState as distributionResetDefaultState} from '../../features/distribution/distributionSlice';
 import { Chain } from './Chain';
+import { getTokenPrice } from "../../features/common/commonSlice";
 
 const StakingOverview = (props) => {
 
@@ -17,8 +18,8 @@ const StakingOverview = (props) => {
     chains: []
   });
   const [rewardData, setRewardData] = useState({
-    totalReward : 0,
-    chains : {},
+    totalReward: 0,
+    chains: {},
   })
 
   let getRewardsObjectForProps = (wallet, rewardchainsMap) => {
@@ -43,8 +44,8 @@ const StakingOverview = (props) => {
         validatorMap[address] = validatorReward;
       }
       chainsData[chainIds[i]] = {
-        totalRewards : totalRewards,
-        validators : validatorMap,
+        totalRewards: totalRewards,
+        validators: validatorMap,
       }
     }
     return chainsData;
@@ -67,9 +68,10 @@ const StakingOverview = (props) => {
         let validator = delegations.delegations[j].delegation.validator_address;
         let amount = delegations.delegations[j].balance.amount / 10 ** decimal;
         denom = delegations.delegations[j].balance.denom;
+        dispatch(getTokenPrice(denom));
         validators.push({
-          validatorAddress : validator,
-          validatorName : validatorstore?.active?.[validator]?.description?.moniker || validatorstore?.inActive?.[validator]?.description?.moniker || 'unknown',
+          validatorAddress: validator,
+          validatorName: validatorstore?.active?.[validator]?.description?.moniker || validatorstore?.inActive?.[validator]?.description?.moniker || 'unknown',
           stakedAmount: +amount,
         });
       }
@@ -77,7 +79,8 @@ const StakingOverview = (props) => {
         chainName: chainIds[i],
         stakedAmount: chainTotalStaked,
         denom: denom,
-        validators: validators
+        validators: validators,
+        imageURL: wallet.networks[chainIds[i]]?.network?.logos.menu,
       }
       chainsdata.push(chain);
     }
