@@ -1,8 +1,47 @@
-import React from 'react';
-import { Grid, Card, CardContent, Typography, Avatar, Button } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Grid, Card, CardContent, Typography, Avatar, Button, CircularProgress } from '@mui/material';
 import { Validators } from './Validators';
+import { useDispatch, useSelector } from 'react-redux';
+import { getDelegatorTotalRewards, txWithdrawAllRewards } from '../../features/distribution/distributionSlice';
 
 export const Chain = (props) => {
+
+  const wallet = useSelector((state) => state.wallet);
+  const feegrant = useSelector((state) => state.common.feegrant);
+  const distTxStatus = useSelector((state) => state.distribution.chains[props.chain.chainName].tx);
+  //const rewards = useSelector((state) => state.distribution.chains[props.chain.chainName].delegatorRewards);
+  const delegations = useSelector((state) => state.staking.chains[props.chain.chainName].delegations);
+  const dispatch = useDispatch();
+  const chainInfo = wallet.networks[props.chain.chainName];
+  const currency = chainInfo.network?.config?.currencies[0];
+
+  const onClickClaim = () => {
+    let delegationPairs = [];
+    delegations.delegations.delegations.forEach((item) => {
+      delegationPairs.push({
+        validator: item.delegation.validator_address,
+        delegator: item.delegation.delegator_address,
+      });
+    });
+    dispatch(
+      txWithdrawAllRewards({
+        msgs: delegationPairs,
+        denom: currency.coinMinimalDenom,
+        chainID: props.chain.chainName,
+        aminoConfig: chainInfo.network.aminoConfig,
+        prefix: chainInfo.network.config.bech32Config.bech32PrefixAccAddr,
+        rest: chainInfo.network.config.rest,
+        feeAmount:
+          chainInfo.network.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant.granter,
+      })
+    );
+  }
+
+  useEffect(() => {
+    dispatch(getDelegatorTotalRewards({chainID:props.chain.chainName, baseURL:chainInfo.network.config.rest, address:chainInfo.walletInfo.bech32Address}));
+  }, [distTxStatus.status])
+  
   return (
     <Card
       sx={{
@@ -35,15 +74,24 @@ export const Chain = (props) => {
             <Button variant="contained" color="primary"
               disableElevation
               size="small"
+              disabled={distTxStatus.status==='pending'}
               sx={{
                 textTransform: "none"
               }}
+              onClick={onClickClaim}
             >
-              Claim:&nbsp;{props.chain.rewards}&nbsp;{props.chain.denom}
+              {distTxStatus.status === "pending"  ? (
+                <>
+                  <CircularProgress size={18} />
+                  &nbsp;&nbsp;Please wait...
+                </>
+              ) : (
+              <>Claim:&nbsp;{props?.chainReward?.totalRewards}&nbsp;{props.chain.denom}</>
+              )}
             </Button>
           </Grid>
         </Grid>
-        <Validators validators={props.chain.validators} denom={props.chain.denom} />
+        <Validators validators={props.chain.validators} rewards={props?.chainReward?.validators} denom={props.chain.denom} />
 
       </CardContent>
     </Card>

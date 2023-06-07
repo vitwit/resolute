@@ -25,7 +25,7 @@ export const StakingTotal = (props) => {
               variant="h6"
               color="text.primary"
             >
-              ${props?.data?.totalAmount}
+              ${props?.totalAmount}
             </Typography>
           </CardContent>
         </Card>
@@ -46,7 +46,7 @@ export const StakingTotal = (props) => {
                   align="left"
                   variant="h6"
                   color="text.primary"
-                >${props?.data?.totalRewards}</Typography>
+                >${props?.totalReward}</Typography>
               </Grid>
               <Grid item>
                 <Button variant="contained" color="primary" disableElevation
@@ -67,8 +67,6 @@ export const StakingTotal = (props) => {
 
 
 StakingTotal.propTypes = {
-  data: PropTypes.shape({
-    totalAmount: PropTypes.number,
-    totalRewards: PropTypes.number,
-  }),
+  totalAmount: PropTypes.number.isRequired,
+  totalReward: PropTypes.number.isRequired, 
 };

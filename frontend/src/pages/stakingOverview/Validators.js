@@ -1,21 +1,22 @@
 import React from 'react';
-import { Typography, Table, TableContainer, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
+import { Typography, Table, TableContainer, TableHead, TableBody } from '@mui/material';
 import { Validator } from './Validator';
+import { StyledTableCell, StyledTableRow } from '../../components/CustomTable';
 
 export const Validators = (props) => {
   return (
       <TableContainer>
         <Table>
           <TableHead>
-            <TableRow >
-              <TableCell>Validator Name</TableCell>
-              <TableCell>Staked Amount</TableCell>
-              <TableCell>Rewards</TableCell>
-            </TableRow>
+            <StyledTableRow >
+              <StyledTableCell>Validator Name</StyledTableCell>
+              <StyledTableCell>Staked Amount</StyledTableCell>
+              <StyledTableCell>Rewards</StyledTableCell>
+            </StyledTableRow>
           </TableHead>
           <TableBody>
             {props.validators.map((validator) => (
-              <Validator validator={validator} key={validator.validatorName} denom={props.denom} />
+              <Validator validator={validator} reward={props?.rewards?.[validator.validatorAddress]} key={validator.validatorName} denom={props.denom} />
             ))}
           </TableBody>
         </Table>
