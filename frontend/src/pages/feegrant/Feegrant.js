@@ -18,6 +18,7 @@ import {
   setError,
   setFeegrant as setFeegrantState,
   resetFeegrant,
+  removeFeegrant as removeFeegrantState
 } from "./../../features/common/commonSlice";
 import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "./../../utils/util";
@@ -123,6 +124,14 @@ export default function Feegrant() {
   };
 
   useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[currentNetwork];
+    dispatch(setFeegrantState({
+      grants: currentChainGrants,
+      chainName: currentNetwork.toLowerCase()
+    }));
+  }, [currentNetwork, params])
+
+  useEffect(() => {
     if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
     else setCurrentNetwork("cosmoshub");
   }, [params]);
@@ -219,7 +228,7 @@ export default function Feegrant() {
   };
 
   const isUsingFeeGrant = (row) => {
-    const grant = getFeegrant();
+    const grant = getFeegrant()?.[currentNetwork];
     if (grant) {
       return row?.granter === grant?.granter;
     }
@@ -444,11 +453,14 @@ export default function Feegrant() {
                                       );
                                     } else {
                                       if (e.target.checked) {
-                                        setFeegrant(row);
-                                        dispatch(setFeegrantState(row));
+                                        setFeegrant(row, currentNetwork);
+                                        dispatch(setFeegrantState({
+                                          grants: row, 
+                                          chainName: currentNetwork
+                                        }));
                                       } else {
-                                        dispatch(resetFeegrant());
-                                        removeFeegrant();
+                                        dispatch(removeFeegrantState(currentNetwork));
+                                        removeFeegrant(currentNetwork);
                                       }
                                     }
                                   }}

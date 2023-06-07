@@ -12,7 +12,7 @@ import GroupPageV1 from "./GroupPageV1";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import Page404 from "./Page404";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import OverviewPage from "./OverviewPage";
 import SendPage from "./SendPage";
 import ProposalInfo from "./gov/ProposalInfo";
@@ -23,6 +23,8 @@ import PageCreateTx from "./multisig/tx/PageCreateTx";
 import Feegrant from "./feegrant/Feegrant";
 import CreateGroupNewPage from "./group/CreateGroup";
 import NewFeegrant from "./feegrant/NewFeegrant";
+import { getFeegrant } from "../utils/localStorage";
+import { setFeegrant as setFeegrantState } from "../features/common/commonSlice";
 
 export const ContextData = React.createContext();
 
@@ -77,6 +79,7 @@ export default function Home() {
   const selectedNetwork = useSelector(state => state.common.selectedNetwork?.chainName || "")
   const [network, setNetwork] = React.useState(selectedNetwork);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const page = location.pathname.split('/')?.[location.pathname.split('/')?.length - 1]
@@ -95,11 +98,21 @@ export default function Home() {
     }
   };
 
+  //get the feegrant details from localstorage for the selectedNetwork and set
+  // into the common slice feegrant 
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[selectedNetwork.toLowerCase()];
+    dispatch(setFeegrantState({
+      grants: currentChainGrants,
+      chainName: selectedNetwork.toLowerCase()
+    }));
+  }, [selectedNetwork, page])
+
 
   useEffect(() => {
     setValue(getTabIndex(page));
   }, []);
-
+  
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>

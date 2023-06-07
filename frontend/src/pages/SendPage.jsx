@@ -8,6 +8,7 @@ import {
   resetFeegrant,
   resetTxHash,
   setError,
+  removeFeegrant as removeFeegrantState,
 } from "./../features/common/commonSlice";
 import { getBalances, txBankSend } from "../features/bank/bankSlice";
 import Send from "../components/Send";
@@ -15,6 +16,7 @@ import Alert from "@mui/material/Alert";
 import FeegranterInfo from "../components/FeegranterInfo";
 import { useParams } from "react-router-dom";
 import { parseBalance } from "../utils/denom";
+import { removeFeegrant as removeFeegrantLocalState } from "../utils/localStorage";
 
 export default function SendPage() {
   const params = useParams();
@@ -41,7 +43,7 @@ export default function SendPage() {
   const [balance, setBalance] = useState({});
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
-  const feegrant = useSelector((state) => state.common.feegrant);
+  const feegrant = useSelector((state) => state.common.feegrant?.[currentNetwork]);
   const selectedAuthz = useSelector((state) => state.authz.selected);
 
   const authzSend = useMemo(
@@ -161,12 +163,13 @@ export default function SendPage() {
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
-    dispatch(resetFeegrant());
+    dispatch(removeFeegrantState(currentNetwork));
+    removeFeegrantLocalState(currentNetwork);
   };
 
   return (
     <>
-      {feegrant.granter.length > 0 ? (
+      {feegrant?.granter?.length > 0 ? (
         <FeegranterInfo
           feegrant={feegrant}
           onRemove={() => {
