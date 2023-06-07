@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableHead from "@mui/material/TableHead";
@@ -92,12 +92,17 @@ const renderExpiration = (row) => {
 };
 
 export default function Feegrant() {
-  const [tab, setTab] = React.useState(0);
+  const [tab, setTab] = useState(0);
+  const [currentGranter, setCurrentGranter] = useState(null);
+  const [usingFeegrant, setUsingFeegrant] = useState();
+
   const grantsToMe = useSelector((state) => state.feegrant.grantsToMe);
   const grantsByMe = useSelector((state) => state.feegrant.grantsByMe);
+
   const dispatch = useDispatch();
 
   const params = useParams();
+
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
@@ -234,6 +239,13 @@ export default function Feegrant() {
     }
     return false;
   };
+
+  const handleCheck = (index, row) => {
+    setCurrentGranter(index);
+    if(!index) {
+      setUsingFeegrant(isUsingFeeGrant(row));
+    }
+  }
 
   return (
     <>
@@ -458,13 +470,16 @@ export default function Feegrant() {
                                           grants: row, 
                                           chainName: currentNetwork
                                         }));
+                                        handleCheck(index, row);
                                       } else {
                                         dispatch(removeFeegrantState(currentNetwork));
                                         removeFeegrant(currentNetwork);
+                                        handleCheck(null, row);
                                       }
                                     }
                                   }}
-                                  defaultChecked={isUsingFeeGrant(row)}
+                                  checked={ isUsingFeeGrant(row) || (index === currentGranter)}
+                                  defaultChecked={usingFeegrant} 
                                 />
                               }
                             />
