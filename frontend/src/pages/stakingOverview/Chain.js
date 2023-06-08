@@ -3,6 +3,7 @@ import { Grid, Card, CardContent, Typography, Avatar, Button, CircularProgress }
 import { Validators } from './Validators';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDelegatorTotalRewards, txWithdrawAllRewards } from '../../features/distribution/distributionSlice';
+import PropTypes from 'prop-types';
 
 export const Chain = (props) => {
 
@@ -14,6 +15,9 @@ export const Chain = (props) => {
   const dispatch = useDispatch();
   const chainInfo = wallet.networks[props.chain.chainName];
   const currency = chainInfo.network?.config?.currencies[0];
+
+  let chainReward = (+props?.chainReward?.totalRewards).toLocaleString();
+  let chainStakedAmount = (+props?.chain?.stakedAmount).toLocaleString();
 
   const onClickClaim = () => {
     let delegationPairs = [];
@@ -67,7 +71,7 @@ export const Chain = (props) => {
               fontWeight={500}
               color="text.primary"
               gutterBottom>
-              Total staked amount:&nbsp;{props.chain.stakedAmount}&nbsp;{props.chain.denom}
+              Total staked amount:&nbsp;{chainStakedAmount}&nbsp;{props.chain.denom}
             </Typography>
           </Grid>
 
@@ -87,7 +91,7 @@ export const Chain = (props) => {
                   &nbsp;&nbsp;Please wait...
                 </>
               ) : (
-              <>Claim:&nbsp;{props?.chainReward?.totalRewards}&nbsp;{props.chain.denom}</>
+              <>Claim:&nbsp;{chainReward}&nbsp;{props.chain.denom}</>
               )}
             </Button>
           </Grid>
@@ -98,3 +102,18 @@ export const Chain = (props) => {
     </Card>
   );
 };
+
+Chain.propTypes = {
+  chain: PropTypes.shape({
+    chainName: PropTypes.string.isRequired,
+    imageURL: PropTypes.string.isRequired,
+    stakedAmount: PropTypes.number.isRequired,
+    denom: PropTypes.string.isRequired,
+    validators: PropTypes.array.isRequired,
+  }).isRequired,
+  chainReward: PropTypes.shape({
+    totalRewards: PropTypes.number.isRequired,
+    validators: PropTypes.array.isRequired,
+  }).isRequired,
+};
+
