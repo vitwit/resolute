@@ -9,7 +9,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SelectNetwork from "./common/SelectNetwork";
 
 Send.propTypes = {
@@ -24,10 +24,16 @@ Send.propTypes = {
 export default function Send(props) {
   const { chainInfo, sendTx, available, onSend, authzTx } = props;
 
+  const params = useParams();
   const navigate = useNavigate();
+  
   const selectNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
+  const [currentNetwork, setCurrentNetwork] = React.useState(
+    params?.networkName || selectNetwork.toLowerCase()
+  );
+  
 
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const currency = chainInfo?.config?.currencies[0];
@@ -63,7 +69,7 @@ export default function Send(props) {
             navigate(`/${name}/transfers`)
           }}
           networks={Object.keys(nameToChainIDs)}
-          defaultNetwork={selectNetwork?.length > 0 ? selectNetwork.toLowerCase().replace(/ /g, "") : "cosmoshub"}
+          defaultNetwork={currentNetwork?.length > 0 ? currentNetwork.toLowerCase().replace(/ /g, "") : "cosmoshub"}
         />
       </Box>
       <Box

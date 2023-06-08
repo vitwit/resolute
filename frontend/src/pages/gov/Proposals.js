@@ -202,7 +202,7 @@ export default function Proposals({
                 setOpen={(pId) => onVoteDialog(pId)}
                 onItemClick={() =>
                   navigate(
-                    `/proposals/${chainName}/${proposal?.proposal_id}`
+                    `/${chainName?.toLowerCase()}/proposals/${proposal?.proposal_id}`
                   )
                 }
                 chainUrl={restEndpoint}

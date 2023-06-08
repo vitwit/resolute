@@ -1,6 +1,7 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import { useSelector } from 'react-redux';
+import GroupPage from './GroupPage';
 
 export default function GroupPageV1() {
     const networks = useSelector((state) => state.wallet.networks);
@@ -8,7 +9,7 @@ export default function GroupPageV1() {
 
     return (
         <div>
-            Group
+            <GroupPage />
         </div>
     )
 }
