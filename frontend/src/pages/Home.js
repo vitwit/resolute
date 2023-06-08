@@ -25,6 +25,7 @@ import CreateGroupNewPage from "./group/CreateGroup";
 import NewFeegrant from "./feegrant/NewFeegrant";
 import { getFeegrant } from "../utils/localStorage";
 import { setFeegrant as setFeegrantState } from "../features/common/commonSlice";
+import StakingOverview from "./stakingOverview/StakingOverview";
 
 export const ContextData = React.createContext();
 
@@ -159,6 +160,11 @@ export default function Home() {
           <Route path="/:networkName/feegrant" element={
             <Feegrant />
           } />
+
+          <Route path="/staking" element={
+            <StakingOverview/>
+          }
+          />
 
           <Route path="/gov" element={
             <ActiveProposals />

@@ -4,42 +4,46 @@ import stakingService from "./stakingService";
 import { setError, setTxHash } from "../common/commonSlice";
 import { SOMETHING_WRONG } from "../multisig/multisigSlice";
 import { signAndBroadcast } from "../../utils/signing";
+import cloneDeep from 'lodash/cloneDeep';
 
 const initialState = {
-  validators: {
-    status: "idle",
-    active: {},
-    inactive: {},
-    activeSorted: [],
-    inactiveSorted: [],
-    errMsg: "",
-    pagination: {
-      next_key: null,
+  chains : {},
+  defaultState : {
+    validators: {
+      status: "idle",
+      active: {},
+      inactive: {},
+      activeSorted: [],
+      inactiveSorted: [],
+      errMsg: "",
+      pagination: {
+        next_key: null,
+      },
+      totalActive: 0,
+      totalInactive: 0,
+      witvalValidator: {},
     },
-    totalActive: 0,
-    totalInactive: 0,
-    witvalValidator: {},
-  },
-  delegations: {
-    status: "idle",
-    delegations: [],
-    errMsg: "",
-    pagination: {},
-    delegatedTo: {},
-    totalStaked: 0.0,
-  },
-  unbonding: {
-    status: "idle",
-    delegations: [],
-    errMsg: "",
-    pagination: {},
-  },
-  params: {},
-  pool: {},
-  tx: {
-    status: "idle",
-    type: "",
-  },
+    delegations: {
+      status: "idle",
+      delegations: [],
+      errMsg: "",
+      pagination: {},
+      delegatedTo: {},
+      totalStaked: 0.0,
+    },
+    unbonding: {
+      status: "idle",
+      delegations: [],
+      errMsg: "",
+      pagination: {},
+    },
+    params: {},
+    pool: {},
+    tx: {
+      status: "idle",
+      type: "",
+    },
+  }
 };
 
 export const txDelegate = createAsyncThunk(
@@ -75,6 +79,7 @@ export const txDelegate = createAsyncThunk(
           getDelegations({
             baseURL: data.baseURL,
             address: data.delegator,
+            chainID : data.chainId
           })
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
@@ -132,6 +137,7 @@ export const txReDelegate = createAsyncThunk(
           getDelegations({
             baseURL: data.baseURL,
             address: data.delegator,
+            chainID : data.chainId
           })
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
@@ -225,7 +231,10 @@ export const getValidators = createAsyncThunk(
         data?.status,
         data.pagination
       );
-      return response.data;
+      return {
+        chainID : data.chainID,
+        data: response.data
+      };
     } catch (error) {
       return rejectWithValue(error?.message || SOMETHING_WRONG);
     }
@@ -256,7 +265,10 @@ export const getAllValidators = createAsyncThunk(
         }
         nextKey = response.data.pagination.next_key;
       }
-      return validators;
+      return {
+        validators : validators,
+        chainID : data.chainID,
+      }
     } catch (error) {
       return rejectWithValue(error?.message || SOMETHING_WRONG);
     }
@@ -265,7 +277,10 @@ export const getAllValidators = createAsyncThunk(
 
 export const getParams = createAsyncThunk("staking/params", async (data) => {
   const response = await stakingService.params(data.baseURL);
-  return response.data;
+  return {
+    data : response.data,
+    chainID : data.chainID
+  };
 });
 
 export const getDelegations = createAsyncThunk(
@@ -292,7 +307,10 @@ export const getDelegations = createAsyncThunk(
         }
         nextKey = response.data.pagination.next_key;
       }
-      return delegations;
+      return {
+        delegations : delegations,
+        chainID : data.chainID
+      }
     } catch (error) {
       return rejectWithValue(error?.message || SOMETHING_WRONG);
     }
@@ -307,7 +325,10 @@ export const getUnbonding = createAsyncThunk(
       data.address,
       data.pagination
     );
-    return response.data;
+    return {
+      data : response.data,
+      chainID : data.chainID
+    };
   }
 );
 
@@ -315,49 +336,65 @@ export const stakeSlice = createSlice({
   name: "staking",
   initialState,
   reducers: {
-    resetTxType: (state, _) => {
-      state.tx.type = "";
+    resetTxType: (state, action) => {
+      let chainID = action.payload.chainID;
+      state.chains[chainID].tx.type = "";
     },
     validators: (state, action) => {
-      state.validators = action.payload;
+      let chainID = action.payload.chainID;
+      let validators = action.payload.validators;
+      state.chains[chainID].validators = validators;
     },
     delegations: (state, action) => {
-      state.delegations = action.payload;
+      let chainID = action.payload.chainID;
+      let delegations = action.payload.delegations;
+      state.chains[chainID].delegations = delegations;
     },
     resetState: (state, action) => {
-      state.validators = initialState.validators;
-      state.delegations = initialState.delegations;
+      let chainID = action.payload.chainID;
+      state.chains[chainID].validators = initialState.defaultState.chains[chainID].validators;
+      state.chains[chainID].delegations = initialState.defaultState.chains[chainID].delegations;
     },
-    resetDelegations: (state) => {
-      state.delegations = initialState.delegations;
+    resetDefaultState : (state, action) => {
+      let chainsMap = {};
+      let chains = action.payload;
+      chains.map ((chainID)=>{chainsMap[chainID]=cloneDeep(initialState.defaultState)});
+      state.chains = chainsMap;
     },
-    sortValidatorsByVotingPower: (state) => {
+    resetDelegations: (state, action) => {
+      let chainID = action.payload.chainID;
+      state.chains[chainID].delegations = initialState.defaultState.chains[chainID].delegations;
+    },
+    sortValidatorsByVotingPower: (state, action) => {
+      let chainID = action.payload.chainID;
       const activeSort = Object.fromEntries(
-        Object.entries(state.validators.active).sort(([, a], [, b]) => {
+        Object.entries(state.chains[chainID].validators.active).sort(([, a], [, b]) => {
           return b.tokens - a.tokens;
         })
       );
 
-      state.validators.activeSorted = Object.keys(activeSort);
+      state.chains[chainID].validators.activeSorted = Object.keys(activeSort);
 
       const inactiveSort = Object.fromEntries(
-        Object.entries(state.validators.inactive).sort(([, a], [, b]) => {
+        Object.entries(state.chains[chainID].validators.inactive).sort(([, a], [, b]) => {
           return b.tokens - a.tokens;
         })
       );
-      state.validators.inactiveSorted = Object.keys(inactiveSort);
+      state.chains[chainID].validators.inactiveSorted = Object.keys(inactiveSort);
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
   // including actions generated by createAsyncThunk or in other slices.
   extraReducers: (builder) => {
     builder
-      .addCase(getValidators.pending, (state) => {
-        state.validators.status = "pending";
-        state.validators.errMsg = "";
+      .addCase(getValidators.pending, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].validators.status = "pending";
+        state.chains[chainID].validators.errMsg = "";
       })
       .addCase(getValidators.fulfilled, (state, action) => {
-        state.validators.status = "idle";
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].validators.status = "idle";
         let result = {};
         result.validators = action.payload.validators;
         const res = action.payload.validators;
@@ -365,187 +402,209 @@ export const stakeSlice = createSlice({
           const element = res[index];
           if (
             element.status === "BOND_STATUS_BONDED" &&
-            !state.validators.active[element.operator_address]
+            !state.chains[chainID].validators.active[element.operator_address]
           ) {
-            state.validators.active[element.operator_address] = element;
-            state.validators.totalActive += 1;
+            state.chains[chainID].validators.active[element.operator_address] = element;
+            state.chains[chainID].validators.totalActive += 1;
             if (element?.description?.moniker === "Witval") {
-              state.validators.witvalValidator = element;
+              state.chains[chainID].validators.witvalValidator = element;
             }
           } else if (
             element.status !== "BOND_STATUS_BONDED" &&
-            !state.validators.inactive[element.operator_address]
+            !state.chains[chainID].validators.inactive[element.operator_address]
           ) {
-            state.validators.inactive[element.operator_address] = element;
-            state.validators.totalInactive += 1;
+            state.chains[chainID].validators.inactive[element.operator_address] = element;
+            state.chains[chainID].validators.totalInactive += 1;
             if (element?.description?.moniker === "Witval") {
-              state.validators.witvalValidator = element;
+              state.chains[chainID].validators.witvalValidator = element;
             }
           }
         }
-        state.validators.pagination = action.payload.pagination;
-        state.validators.errMsg = "";
+        state.chains[chainID].validators.pagination = action.payload.pagination;
+        state.chains[chainID].validators.errMsg = "";
       })
       .addCase(getValidators.rejected, (state, action) => {
-        state.validators.status = "rejected";
-        state.validators.errMsg = action.error.message;
-        let result = initialState.validators;
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].validators.status = "rejected";
+        state.chains[chainID].validators.errMsg = action.error.message;
+        let result = initialState.defaultState.validators;
         result.errMsg = action.error.message;
         result.status = "rejected";
-        state.validators = result;
+        state.chains[chainID].validators = result;
       });
 
     builder
-      .addCase(getAllValidators.pending, (state) => {
-        state.validators.status = "pending";
-        state.validators.errMsg = "";
+      .addCase(getAllValidators.pending, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].validators.status = "pending";
+        state.chains[chainID].validators.errMsg = "";
       })
       .addCase(getAllValidators.fulfilled, (state, action) => {
-        state.validators.status = "idle";
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].validators.status = "idle";
         let result = {};
-        result.validators = action.payload;
-        const res = action.payload;
+        result.validators = action.payload.validators;
+        const res = action.payload.validators;
         for (let index = 0; index < res.length; index++) {
           const element = res[index];
           if (
             element.status === "BOND_STATUS_BONDED" &&
-            !state.validators.active[element.operator_address]
+            !state.chains[chainID].validators.active[element.operator_address]
           ) {
-            state.validators.active[element.operator_address] = element;
-            state.validators.totalActive += 1;
+            state.chains[chainID].validators.active[element.operator_address] = element;
+            state.chains[chainID].validators.totalActive += 1;
             if (element?.description?.moniker === "Witval") {
-              state.validators.witvalValidator = element;
+              state.chains[chainID].validators.witvalValidator = element;
             }
           } else if (
             element.status !== "BOND_STATUS_BONDED" &&
-            !state.validators.inactive[element.operator_address]
+            !state.chains[chainID].validators.inactive[element.operator_address]
           ) {
-            state.validators.inactive[element.operator_address] = element;
-            state.validators.totalInactive += 1;
+            state.chains[chainID].validators.inactive[element.operator_address] = element;
+            state.chains[chainID].validators.totalInactive += 1;
             if (element?.description?.moniker === "Witval") {
-              state.validators.witvalValidator = element;
+              state.chains[chainID].validators.witvalValidator = element;
             }
           }
         }
-        state.validators.errMsg = "";
+        state.chains[chainID].validators.errMsg = "";
 
         const activeSort = Object.fromEntries(
-          Object.entries(state.validators.active).sort(([, a], [, b]) => {
+          Object.entries(state.chains[chainID].validators.active).sort(([, a], [, b]) => {
             return b.tokens - a.tokens;
           })
         );
 
-        state.validators.activeSorted = Object.keys(activeSort);
+        state.chains[chainID].validators.activeSorted = Object.keys(activeSort);
 
         const inactiveSort = Object.fromEntries(
-          Object.entries(state.validators.inactive).sort(([, a], [, b]) => {
+          Object.entries(state.chains[chainID].validators.inactive).sort(([, a], [, b]) => {
             return b.tokens - a.tokens;
           })
         );
-        state.validators.inactiveSorted = Object.keys(inactiveSort);
+        state.chains[chainID].validators.inactiveSorted = Object.keys(inactiveSort);
       })
       .addCase(getAllValidators.rejected, (state, action) => {
-        let result = initialState.validators;
+        let chainID = action.meta?.arg?.chainID;
+        let result = initialState.defaultState.validators;
         result.errMsg = action.error.message;
         result.status = "rejected";
-        state.validators = result;
+        state.chains[chainID].validators = result;
       });
 
     builder
-      .addCase(getDelegations.pending, (state) => {
-        state.delegations.status = "pending";
-        state.delegations.errMsg = "";
+      .addCase(getDelegations.pending, (state, action) => {
+       
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].delegations.status = "pending";
+        state.chains[chainID].delegations.errMsg = "";
       })
       .addCase(getDelegations.fulfilled, (state, action) => {
-        state.delegations.status = "idle";
-        state.delegations.delegations = action.payload;
-        state.delegations.errMsg = "";
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].delegations.status = "idle";
+        state.chains[chainID].delegations.delegations = action.payload;
+        state.chains[chainID].delegations.errMsg = "";
 
         let total = 0.0;
-        for (let i = 0; i < action.payload.length; i++) {
-          const delegation = action.payload[i];
-          state.delegations.delegatedTo[
+        for (let i = 0; i < action.payload.delegations.length; i++) {
+          const delegation = action.payload.delegations[i];
+          state.chains[chainID].delegations.delegatedTo[
             delegation?.delegation?.validator_address
           ] = true;
           total += parseFloat(delegation?.delegation?.shares);
         }
-        state.delegations.totalStaked = total;
+        state.chains[chainID].delegations.totalStaked = total;
       })
       .addCase(getDelegations.rejected, (state, action) => {
-        state.delegations.status = "rejected";
-        state.delegations.errMsg = action.error.message;
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].delegations.status = "rejected";
+        state.chains[chainID].delegations.errMsg = action.error.message;
       });
 
     builder
-      .addCase(getUnbonding.pending, (state) => {
-        state.unbonding.status = "pending";
-        state.unbonding.errMsg = "";
+      .addCase(getUnbonding.pending, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].unbonding.status = "pending";
+        state.chains[chainID].unbonding.errMsg = "";
       })
       .addCase(getUnbonding.fulfilled, (state, action) => {
-        state.unbonding.status = "idle";
-        state.unbonding.delegations = action.payload.unbonding_responses;
-        state.unbonding.pagination = action.payload.pagination;
-        state.unbonding.errMsg = "";
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].unbonding.status = "idle";
+        state.chains[chainID].unbonding.delegations = action.payload.unbonding_responses;
+        state.chains[chainID].unbonding.pagination = action.payload.pagination;
+        state.chains[chainID].unbonding.errMsg = "";
       })
       .addCase(getUnbonding.rejected, (state, action) => {
-        state.unbonding.status = "rejected";
-        state.unbonding.errMsg = action.error.message;
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].unbonding.status = "rejected";
+        state.chains[chainID].unbonding.errMsg = action.error.message;
       });
 
     builder
       .addCase(getParams.pending, (state) => {})
       .addCase(getParams.fulfilled, (state, action) => {
-        state.params = action.payload;
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].params = action.payload;
       })
       .addCase(getParams.rejected, (state, action) => {});
 
     builder
-      .addCase(txDelegate.pending, (state) => {
-        state.tx.status = "pending";
-        state.tx.type = "";
+      .addCase(txDelegate.pending, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = "pending";
+        state.chains[chainID].tx.type = "";
       })
-      .addCase(txDelegate.fulfilled, (state, _) => {
-        state.tx.status = "idle";
-        state.tx.type = "delegate";
+      .addCase(txDelegate.fulfilled, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = "idle";
+        state.chains[chainID].tx.type = "delegate";
       })
-      .addCase(txDelegate.rejected, (state, _) => {
-        state.tx.status = "rejected";
-        state.tx.type = "";
+      .addCase(txDelegate.rejected, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = "rejected";
+        state.chains[chainID].tx.type = "";
       });
 
     builder
-      .addCase(txUnDelegate.pending, (state) => {
-        state.tx.status = "pending";
-        state.tx.type = "";
+      .addCase(txUnDelegate.pending, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = "pending";
+        state.chains[chainID].tx.type = "";
       })
-      .addCase(txUnDelegate.fulfilled, (state, _) => {
-        state.tx.status = "idle";
-        state.tx.type = "undelegate";
+      .addCase(txUnDelegate.fulfilled, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = "idle";
+        state.chains[chainID].tx.type = "undelegate";
       })
-      .addCase(txUnDelegate.rejected, (state, _) => {
-        state.tx.status = "rejected";
-        state.tx.type = "";
+      .addCase(txUnDelegate.rejected, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = "rejected";
+        state.chains[chainID].tx.type = "";
       });
 
     builder
-      .addCase(txReDelegate.pending, (state) => {
-        state.tx.status = "pending";
-        state.tx.type = "";
+      .addCase(txReDelegate.pending, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = "pending";
+        state.chains[chainID].tx.type = "";
       })
-      .addCase(txReDelegate.fulfilled, (state, _) => {
-        state.tx.status = "idle";
-        state.tx.type = "redelegate";
+      .addCase(txReDelegate.fulfilled, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = "idle";
+        state.chains[chainID].tx.type = "redelegate";
       })
-      .addCase(txReDelegate.rejected, (state, _) => {
-        state.tx.status = "rejected";
-        state.tx.type = "";
+      .addCase(txReDelegate.rejected, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = "rejected";
+        state.chains[chainID].tx.type = "";
       });
 
     // pool info
     builder
       .addCase(getPoolInfo.pending, (state) => {})
       .addCase(getPoolInfo.fulfilled, (state, action) => {
-        state.pool[action.payload.chainID] = action.payload.data;
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].pool[action.meta?.arg?.chainID] = action.payload.data;
       })
       .addCase(getPoolInfo.rejected, (state, action) => {});
   },
@@ -556,6 +615,7 @@ export const {
   sortValidatorsByVotingPower,
   resetDelegations,
   resetTxType,
+  resetDefaultState,
 } = stakeSlice.actions;
 
 export default stakeSlice.reducer;
