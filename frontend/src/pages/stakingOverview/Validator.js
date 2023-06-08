@@ -1,9 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 import { Avatar, Box, Typography } from '@mui/material';
 import { StyledTableCell, StyledTableRow } from '../../components/CustomTable';
 
 export const Validator = (props) => {
+  let reward = (+props.reward).toLocaleString();
+  let stake = (+props.validator.stakedAmount).toLocaleString();
   return (
     <StyledTableRow>
       <StyledTableCell size="small">
@@ -12,8 +14,8 @@ export const Validator = (props) => {
           <Typography>{props.validator.validatorName}</Typography>
         </Box>
       </StyledTableCell>
-      <StyledTableCell>{props.validator.stakedAmount}&nbsp;{props.denom}</StyledTableCell>
-      <StyledTableCell>{props.reward}&nbsp;{props.denom}</StyledTableCell>
+      <StyledTableCell>{stake}&nbsp;{props.denom}</StyledTableCell>
+      <StyledTableCell>{reward}&nbsp;{props.denom}</StyledTableCell>
     </StyledTableRow>
   );
 };

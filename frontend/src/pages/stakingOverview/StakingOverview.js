@@ -41,10 +41,10 @@ const StakingOverview = (props) => {
         for(let k = 0; k < rewards.length; k++) {
           validatorReward += ((+rewards[k].amount) / 10 ** decimal);
         }
-        validatorMap[address] = validatorReward;
+        validatorMap[address] = validatorReward.toFixed(3);
       }
       chainsData[chainIds[i]] = {
-        totalRewards: totalRewards,
+        totalRewards: totalRewards.toFixed(3),
         validators: validatorMap,
       }
     }
@@ -59,25 +59,26 @@ const StakingOverview = (props) => {
       let chainTotalStaked = chainsmap[chainIds[i]]?.delegations?.totalStaked / 10 ** decimal;
       let delegations = chainsmap[chainIds[i]]?.delegations?.delegations;
       let validatorstore = chainsmap[chainIds[i]]?.validators;
-      let denom;
+      let denom = wallet.networks[chainIds[i]]?.network?.config?.currencies[0]?.coinDenom;
       
       if (delegations?.delegations?.length === undefined || delegations?.delegations?.length === 0) continue;
       let validators = [];
 
       for (let j = 0; j < delegations?.delegations?.length; j++) {
         let validator = delegations.delegations[j].delegation.validator_address;
-        let amount = delegations.delegations[j].balance.amount / 10 ** decimal;
-        denom = delegations.delegations[j].balance.denom;
+        let amount = delegations.delegations[j].balance.amount / (10 ** decimal);
         dispatch(getTokenPrice(denom));
+        let validatorName = validatorstore?.active?.[validator]?.description?.moniker || validatorstore?.inActive?.[validator]?.description?.moniker || 'unknown';
+        if(validatorName === 'unknown') continue;
         validators.push({
           validatorAddress: validator,
-          validatorName: validatorstore?.active?.[validator]?.description?.moniker || validatorstore?.inActive?.[validator]?.description?.moniker || 'unknown',
+          validatorName: validatorName,
           stakedAmount: +amount,
         });
       }
       let chain = {
         chainName: chainIds[i],
-        stakedAmount: chainTotalStaked,
+        stakedAmount: chainTotalStaked.toFixed(3),
         denom: denom,
         validators: validators,
         imageURL: wallet.networks[chainIds[i]]?.network?.logos.menu,
