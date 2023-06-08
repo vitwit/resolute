@@ -42,7 +42,6 @@ export const Chain = (props) => {
     dispatch(getDelegatorTotalRewards({chainID:props.chain.chainName, baseURL:chainInfo.network.config.rest, address:chainInfo.walletInfo.bech32Address}));
   }, [distTxStatus.status])
 
-  console.log(props.chain)
   
   return (
     <Card
