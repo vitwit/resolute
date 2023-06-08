@@ -9,6 +9,7 @@ import {
   resetTxHash,
   setError,
   removeFeegrant as removeFeegrantState,
+  setFeegrant as setFeegrantState,
 } from "./../features/common/commonSlice";
 import { getBalances, txBankSend } from "../features/bank/bankSlice";
 import Send from "../components/Send";
@@ -16,7 +17,7 @@ import Alert from "@mui/material/Alert";
 import FeegranterInfo from "../components/FeegranterInfo";
 import { useParams } from "react-router-dom";
 import { parseBalance } from "../utils/denom";
-import { removeFeegrant as removeFeegrantLocalState } from "../utils/localStorage";
+import { getFeegrant, removeFeegrant as removeFeegrantLocalState } from "../utils/localStorage";
 
 export default function SendPage() {
   const params = useParams();
@@ -109,6 +110,14 @@ export default function SendPage() {
       );
     }
   }, [chainInfo, currentNetwork]);
+
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[currentNetwork];
+    dispatch(setFeegrantState({
+      grants: currentChainGrants,
+      chainName: currentNetwork.toLowerCase()
+    }));
+  }, [currentNetwork, params])
 
 
   const onSendTx = (data) => {
