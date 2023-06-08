@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableHead from "@mui/material/TableHead";
@@ -17,11 +17,13 @@ import {
   resetTxHash,
   setError,
   setFeegrant as setFeegrantState,
+  resetFeegrant,
+  removeFeegrant as removeFeegrantState
 } from "./../../features/common/commonSlice";
 import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "./../../utils/util";
 import { getLocalTime } from "./../../utils/datetime";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   StyledTableCell,
   StyledTableRow,
@@ -38,20 +40,86 @@ import {
   removeFeegrant,
   setFeegrant,
 } from "../../utils/localStorage";
+import SelectNetwork from "../../components/common/SelectNetwork";
+
+const renderExpiration = (row) => {
+  switch (row?.allowance["@type"]) {
+    case "/cosmos.feegrant.v1beta1.BasicAllowance":
+      return (
+        <>
+          {row?.allowance?.expiration ? (
+            getLocalTime(row?.allowance?.expiration)
+          ) : (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: "&infin;",
+              }}
+            />
+          )}
+        </>
+      );
+
+    case "/cosmos.feegrant.v1beta1.PeriodicAllowance":
+      return (
+        <>
+          {row?.allowance?.basic?.expiration ? (
+            getLocalTime(row?.allowance?.basic?.expiration)
+          ) : (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: "&infin;",
+              }}
+            />
+          )}
+        </>
+      );
+
+    default:
+      return (
+        <>
+          {row?.allowance?.allowance?.basic?.expiration ? (
+            getLocalTime(row?.allowance?.allowance?.basic?.expiration)
+          ) : (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: "&infin;",
+              }}
+            />
+          )}
+        </>
+      );
+  }
+};
 
 export default function Feegrant() {
-  const [tab, setTab] = React.useState(0);
+  const [tab, setTab] = useState(0);
+  const [currentGranter, setCurrentGranter] = useState(null);
+  const [usingFeegrant, setUsingFeegrant] = useState();
+
   const grantsToMe = useSelector((state) => state.feegrant.grantsToMe);
   const grantsByMe = useSelector((state) => state.feegrant.grantsByMe);
+
   const dispatch = useDispatch();
 
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
-  const address = useSelector((state) => state.wallet.address);
+  const params = useParams();
+
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const networks = useSelector((state) => state.wallet.networks);
+  const [currentNetwork, setCurrentNetwork] = React.useState(
+    params?.networkName || selectedNetwork.toLowerCase()
+  );
+
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  const address =
+    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+
   const errState = useSelector((state) => state.feegrant.errState);
   const txStatus = useSelector((state) => state.feegrant.tx);
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo.config.currencies[0]
-  );
+  const currency = chainInfo?.config?.currencies[0];
   const [infoOpen, setInfoOpen] = React.useState(false);
   const isNanoLedger = useSelector((state) => state.wallet.isNanoLedger);
 
@@ -59,6 +127,19 @@ export default function Feegrant() {
   const handleInfoClose = (value) => {
     setInfoOpen(false);
   };
+
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[currentNetwork];
+    dispatch(setFeegrantState({
+      grants: currentChainGrants,
+      chainName: currentNetwork.toLowerCase()
+    }));
+  }, [currentNetwork, params])
+
+  useEffect(() => {
+    if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
+    else setCurrentNetwork("cosmoshub");
+  }, [params]);
 
   useEffect(() => {
     if (address && address.length > 0) {
@@ -75,7 +156,7 @@ export default function Feegrant() {
         })
       );
     }
-  }, [address]);
+  }, [chainInfo, currentNetwork]);
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
   useEffect(() => {
@@ -152,21 +233,43 @@ export default function Feegrant() {
   };
 
   const isUsingFeeGrant = (row) => {
-    const grant = getFeegrant();
+    const grant = getFeegrant()?.[currentNetwork];
     if (grant) {
       return row?.granter === grant?.granter;
     }
     return false;
   };
 
+  const handleCheck = (index, row) => {
+    setCurrentGranter(index);
+    if(!index) {
+      setUsingFeegrant(isUsingFeeGrant(row));
+    }
+  }
+
   return (
     <>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "end",
+        }}
+      >
+        <SelectNetwork
+          onSelect={(name) => {
+            navigate(`/${name}/feegrant`);
+          }}
+          networks={Object.keys(nameToChainIDs)}
+          defaultNetwork={currentNetwork.toLowerCase().replace(/ /g, "")}
+        />
+      </Box>
       {selected?.allowance ? (
         <FeegrantInfo
           authorization={selected}
           displayDenom={currency?.coinDenom}
           open={infoOpen}
           onClose={handleInfoClose}
+          coinDecimals={currency?.coinDecimals}
         />
       ) : (
         <></>
@@ -174,7 +277,7 @@ export default function Feegrant() {
       <Box
         sx={{
           mb: 1,
-          mt: 3,
+          mt: 2,
           textAlign: "right",
         }}
       >
@@ -184,14 +287,21 @@ export default function Feegrant() {
           sx={{
             textTransform: "none",
           }}
-          onClick={() => navigateTo("/feegrant/new")}
+          onClick={() => navigateTo(`/${currentNetwork}/feegrant/new`)}
         >
           Grant New
         </Button>
       </Box>
       <Paper elevation={0} sx={{ p: 1, mt: 2 }}>
         <GroupTab
-          tabs={["Granted By Me", "Granted To Me"]}
+          tabs={[
+            {
+              title: "Granted By Me",
+            },
+            {
+              title: "Granted To Me",
+            },
+          ]}
           handleTabChange={handleTabChange}
         />
         <TabPanel value={tab} index={0} key={"by-me"}>
@@ -244,13 +354,7 @@ export default function Feegrant() {
                             />
                           </StyledTableCell>
                           <StyledTableCell>
-                            {row?.allowance?.expiration ? (
-                              getLocalTime(row?.allowance?.expiration)
-                            ) : (
-                              <span
-                                dangerouslySetInnerHTML={{ __html: "&infin;" }}
-                              />
-                            )}
+                            {renderExpiration(row)}
                           </StyledTableCell>
                           <StyledTableCell>
                             <Link
@@ -334,13 +438,7 @@ export default function Feegrant() {
                             />
                           </StyledTableCell>
                           <StyledTableCell>
-                            {row.allowance.expiration ? (
-                              getLocalTime(row.allowance.expiration)
-                            ) : (
-                              <span
-                                dangerouslySetInnerHTML={{ __html: "&infin;" }}
-                              />
-                            )}
+                            {renderExpiration(row)}
                           </StyledTableCell>
                           <StyledTableCell>
                             <Link
@@ -352,13 +450,6 @@ export default function Feegrant() {
                               Details
                             </Link>
                           </StyledTableCell>
-                          {/* <StyledTableCell>
-                                  <Switch checked={useFeeChecked}
-                                    onChange={(e) => handleOnFeeChecked(e, row)}
-                                    inputProps={{ 'aria-label': 'controlled' }}
-                                    size="small" />
-
-                                </StyledTableCell> */}
                           <StyledTableCell>
                             <FormControlLabel
                               control={
@@ -372,17 +463,23 @@ export default function Feegrant() {
                                             "Feegrant does not support ledger signing",
                                         })
                                       );
-                                      
                                     } else {
                                       if (e.target.checked) {
-                                        setFeegrant(row);
-                                        dispatch(setFeegrantState(row))
+                                        setFeegrant(row, currentNetwork);
+                                        dispatch(setFeegrantState({
+                                          grants: row, 
+                                          chainName: currentNetwork
+                                        }));
+                                        handleCheck(index, row);
                                       } else {
-                                        removeFeegrant();
+                                        dispatch(removeFeegrantState(currentNetwork));
+                                        removeFeegrant(currentNetwork);
+                                        handleCheck(null, row);
                                       }
                                     }
                                   }}
-                                  defaultChecked={isUsingFeeGrant(row)}
+                                  checked={ isUsingFeeGrant(row) || (index === currentGranter)}
+                                  defaultChecked={usingFeegrant} 
                                 />
                               }
                             />

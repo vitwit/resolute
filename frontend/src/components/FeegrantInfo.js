@@ -11,7 +11,7 @@ import { parseSpendLimit } from "../utils/denom";
 import { getLocalTime } from "../utils/datetime";
 import { authzMsgTypes } from "../utils/authorizations";
 
-const renderAuthorization = (authz, displayDenom) => {
+const renderAuthorization = (authz, displayDenom, coinDecimals) => {
   const { allowance, granter, grantee } = authz;
   switch (allowance["@type"]) {
     case "/cosmos.feegrant.v1beta1.BasicAllowance":
@@ -56,7 +56,7 @@ const renderAuthorization = (authz, displayDenom) => {
                 {allowance.spend_limit.length === 0 ? (
                   <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
                 ) : (
-                  `${parseSpendLimit(allowance.spend_limit, 6)}${displayDenom}`
+                  `${parseSpendLimit(allowance.spend_limit, coinDecimals)}${displayDenom}`
                 )}
               </Typography>
             </li>
@@ -120,7 +120,7 @@ const renderAuthorization = (authz, displayDenom) => {
                 ) : (
                   `${parseSpendLimit(
                     allowance.basic.spend_limit,
-                    6
+                    coinDecimals
                   )}${displayDenom}`
                 )}
               </Typography>
@@ -151,7 +151,8 @@ const renderAuthorization = (authz, displayDenom) => {
                 <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
               ) : (
                 `${parseSpendLimit(
-                  allowance.period_spend_limit
+                  allowance.period_spend_limit,
+                  coinDecimals
                 )}${displayDenom}`
               )}
             </li>
@@ -162,7 +163,10 @@ const renderAuthorization = (authz, displayDenom) => {
               {allowance.period_can_spend.length === 0 ? (
                 <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
               ) : (
-                `${parseSpendLimit(allowance.period_can_spend)}${displayDenom}`
+                `${parseSpendLimit(
+                  allowance.period_can_spend,
+                  coinDecimals
+                )}${displayDenom}`
               )}
             </li>
             <li className="inline-space-between">
@@ -257,8 +261,8 @@ const renderAuthorization = (authz, displayDenom) => {
                 Expiration
               </Typography>
               <Typography gutterBottom color="text.primary" variant="body2">
-                {allowance?.allowance?.expiration ? (
-                  getLocalTime(allowance?.allowance?.expiration)
+                {allowance?.allowance?.basic?.expiration ? (
+                  getLocalTime(allowance?.allowance?.basic?.expiration)
                 ) : (
                   <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
                 )}
@@ -294,7 +298,7 @@ const renderAuthorization = (authz, displayDenom) => {
 };
 
 export function FeegrantInfo(props) {
-  const { onClose, open, displayDenom } = props;
+  const { onClose, open, displayDenom, coinDecimals } = props;
 
   const handleClose = () => {
     onClose();
@@ -307,7 +311,7 @@ export function FeegrantInfo(props) {
           m: 3,
         }}
       >
-        {renderAuthorization(props.authorization, displayDenom)}
+        {renderAuthorization(props.authorization, displayDenom, coinDecimals)}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Close</Button>
@@ -321,4 +325,5 @@ FeegrantInfo.propTypes = {
   open: PropTypes.bool.isRequired,
   authorization: PropTypes.object.isRequired,
   displayDenom: PropTypes.string.isRequired,
+  coinDecimals: PropTypes.number.isRequired,
 };

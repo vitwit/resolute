@@ -16,10 +16,7 @@ const initialState = {
     info: {},
     status: "idle",
   },
-  feegrant: {
-    granter: "",
-    grantee: ""
-  },
+  feegrant: {},
   selectedNetwork: {
     chainName: "CosmosHub",
     chainID: "cosmoshub-4",
@@ -80,10 +77,14 @@ export const commonSlice = createSlice({
       state.policyProposals = {};
     },
     setFeegrant: (state, data) => {
-      state.feegrant = data.payload;
+      const chainName = data.payload.chainName;
+      state.feegrant[chainName] = data.payload.grants;
     },
     resetFeegrant: (state) => {
       state.feegrant = initialState.feegrant;
+    },
+    removeFeegrant: (state, data) => {
+      delete state.feegrant[data.payload];
     },
     setSelectedNetwork: (state, data) => {
       state.selectedNetwork = data.payload;
@@ -124,6 +125,7 @@ export const {
   resetFeegrant,
   setSelectedNetwork,
   setAuthzMode,
+  removeFeegrant,
 } = commonSlice.actions;
 
 export default commonSlice.reducer;
