@@ -92,6 +92,11 @@ export default function Authz() {
   };
 
   useEffect(() => {
+    if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
+    else setCurrentNetwork("cosmoshub");
+  }, [params]);
+
+  useEffect(() => {
     if (address !== "" || txAuthzRevokeRes?.status === "idle") {
       dispatch(
         getGrantsByMe({
@@ -101,7 +106,7 @@ export default function Authz() {
         })
       );
     }
-  }, [chainInfo, txAuthzRevokeRes?.status]);
+  }, [params, chainInfo, txAuthzRevokeRes?.status]);
 
   useEffect(() => {
     if (grantsToMe?.errMsg !== "" && grantsToMe?.status === "rejected") {
