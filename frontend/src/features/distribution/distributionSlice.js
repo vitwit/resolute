@@ -3,17 +3,23 @@ import distService from "./service";
 import { WithdrawAllRewardsMsg } from "../../txns/distr";
 import { setError, setTxHash } from "../common/commonSlice";
 import { signAndBroadcast } from "../../utils/signing";
+import cloneDeep from 'lodash/cloneDeep';
 
 const initialState = {
-  delegatorRewards: {
-    list: [],
-    status: "idle",
-    errMsg: "",
-    pagination: {},
-  },
-  tx: {
-    status: "idle",
-    txHash: "",
+
+  chains : {},
+  defaultState : {
+    delegatorRewards: {
+      list: [],
+      totalRewards : 0,
+      status: "idle",
+      errMsg: "",
+      pagination: {},
+    },
+    tx: {
+      status: "idle",
+      txHash: "",
+    },
   },
 };
 
@@ -27,7 +33,7 @@ export const txWithdrawAllRewards = createAsyncThunk(
         msgs.push(WithdrawAllRewardsMsg(msg.delegator, msg.validator));
       }
       const result = await signAndBroadcast(
-        data.chainId,
+        data.chainID,
         data.aminoConfig,
         data.prefix,
         msgs,
@@ -73,7 +79,10 @@ export const getDelegatorTotalRewards = createAsyncThunk(
       data.address,
       data.pagination
     );
-    return response.data;
+    return {
+      data : response.data,
+      chainID : data.chainID,
+    }
   }
 );
 
@@ -81,44 +90,63 @@ export const distSlice = createSlice({
   name: "distribution",
   initialState,
   reducers: {
-    resetTx: (state) => {
-      state.tx = initialState.tx;
+    resetTx: (state, action) => {
+      let chainID = action.payload.chainID;
+      state.chains[chainID].tx = initialState.defaultState.tx;
+    },
+    resetDefaultState : (state, action) => {
+      let chainsMap = {};
+      let chains = action.payload;
+      chains.map ((chainID)=>{chainsMap[chainID]=cloneDeep(initialState.defaultState)});
+      state.chains = chainsMap;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getDelegatorTotalRewards.pending, (state) => {
-        state.delegatorRewards.status = "pending";
-        state.delegatorRewards.errMsg = "";
-        state.delegatorRewards.list = [];
-        state.delegatorRewards.pagination = {};
+      .addCase(getDelegatorTotalRewards.pending, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].delegatorRewards.status = "pending";
+        state.chains[chainID].delegatorRewards.errMsg = "";
+        state.chains[chainID].delegatorRewards.totalRewards = 0;
+        state.chains[chainID].delegatorRewards.list = [];
+        state.chains[chainID].delegatorRewards.pagination = {};
       })
       .addCase(getDelegatorTotalRewards.fulfilled, (state, action) => {
-        state.delegatorRewards.status = "idle";
-        state.delegatorRewards.list = action.payload.rewards;
-        state.delegatorRewards.pagination = action.payload.pagination;
-        state.delegatorRewards.errMsg = "";
+        
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].delegatorRewards.status = "idle";
+        state.chains[chainID].delegatorRewards.list = action.payload.data.rewards;
+        let totalRewardsList = action?.payload?.data?.total;
+        let total = 0;
+        for(let i=0;i<totalRewardsList.length;i++) total += (+totalRewardsList[i].amount);
+        state.chains[chainID].delegatorRewards.totalRewards = total;
+        state.chains[chainID].delegatorRewards.pagination = action.payload.pagination;
+        state.chains[chainID].delegatorRewards.errMsg = "";
       })
       .addCase(getDelegatorTotalRewards.rejected, (state, action) => {
-        state.delegatorRewards.status = "rejected";
-        state.delegatorRewards.errMsg = action.error.message;
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].delegatorRewards.status = "rejected";
+        state.chains[chainID].delegatorRewards.errMsg = action.error.message;
       });
 
     builder
-      .addCase(txWithdrawAllRewards.pending, (state) => {
-        state.tx.status = "pending";
-        state.tx.txHash = "";
+      .addCase(txWithdrawAllRewards.pending, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = "pending";
+        state.chains[chainID].tx.txHash = "";
       })
       .addCase(txWithdrawAllRewards.fulfilled, (state, action) => {
-        state.tx.status = "idle";
-        state.tx.txHash = action.payload.txHash;
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = "idle";
+        state.chains[chainID].tx.txHash = action.payload.txHash;
       })
       .addCase(txWithdrawAllRewards.rejected, (state, action) => {
-        state.tx.status = "rejected";
-        state.txHash = "";
+        let chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = "rejected";
+        state.chains[chainID].txHash = "";
       });
   },
 });
 
-export const { resetTx } = distSlice.actions;
+export const { resetTx, resetDefaultState } = distSlice.actions;
 export default distSlice.reducer;
