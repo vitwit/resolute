@@ -14,6 +14,7 @@ import {
   txAuthzRevoke,
   authzExecHelper,
   setSelectedGranter,
+  resetTxAuthzRes,
 } from "../../features/authz/authzSlice";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Chip from "@mui/material/Chip";
@@ -63,7 +64,7 @@ export default function Authz() {
 
   const grantsByMe = useSelector((state) => state.authz.grantsByMe?.[chainID]);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
-  const txAuthzRevokeRes = useSelector((state) => state.authz.txAuthzRevokeRes);
+  const txAuthzRes = useSelector((state) => state.authz.txAuthzRes);
 
   const handleInfoClose = (value) => {
     setInfoOpen(false);
@@ -97,7 +98,11 @@ export default function Authz() {
   }, [params]);
 
   useEffect(() => {
-    if (address !== "" || txAuthzRevokeRes?.status === "idle") {
+    dispatch(resetTxAuthzRes());
+  },[])
+
+  useEffect(() => {
+    if (address !== "" || txAuthzRes?.status === "idle") {
       dispatch(
         getGrantsByMe({
           baseURL: chainInfo?.config?.rest,
@@ -106,7 +111,7 @@ export default function Authz() {
         })
       );
     }
-  }, [params, chainInfo, txAuthzRevokeRes?.status]);
+  }, [params, chainInfo, txAuthzRes?.status]);
 
   useEffect(() => {
     if (grantsToMe?.errMsg !== "" && grantsToMe?.status === "rejected") {

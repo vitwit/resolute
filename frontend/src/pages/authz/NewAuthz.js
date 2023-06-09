@@ -17,8 +17,7 @@ import {
   txAuthzGeneric,
   txAuthzSend,
   resetAlerts,
-  resetTxAuthzSendRes,
-  resetTxAuthzGenericRes,
+  resetTxAuthzRes,
 } from "../../features/authz/authzSlice";
 import {
   resetError,
@@ -57,10 +56,7 @@ export default function NewAuthz() {
   const feegrant = useSelector(
     (state) => state.common.feegrant?.[currentNetwork]
   );
-  const txAuthzSendRes = useSelector((state) => state.authz.txAuthzSendRes);
-  const txAuthzGenericRes = useSelector(
-    (state) => state.authz.txAuthzGenericRes
-  );
+  const txAuthzRes = useSelector((state) => state.authz.txAuthzRes);
 
   useEffect(() => {
     if (grantsToMe.errMsg !== "" && grantsToMe.status === "rejected") {
@@ -109,33 +105,18 @@ export default function NewAuthz() {
 
   useEffect(() => {
     return () => {
-      dispatch(resetTxAuthzSendRes());
+      dispatch(resetTxAuthzRes());
     };
   }, []);
 
   useEffect(() => {
-    return () => {
-      dispatch(resetTxAuthzGenericRes());
-    };
-  }, []);
-
-  useEffect(() => {
-    if (txAuthzSendRes?.status === "idle") {
+    if (txAuthzRes?.status === "idle") {
       reset();
       setTimeout(() => {
         navigate(`/${currentNetwork}/authz`);
       }, 1300);
     }
-  }, [txAuthzSendRes?.status]);
-
-  useEffect(() => {
-    if (txAuthzGenericRes?.status === "idle") {
-      reset();
-      setTimeout(() => {
-        navigate(`/${currentNetwork}/authz`);
-      }, 1300);
-    }
-  }, [txAuthzGenericRes?.status]);
+  }, [txAuthzRes?.status]);
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
