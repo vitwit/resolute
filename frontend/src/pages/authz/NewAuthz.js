@@ -124,7 +124,7 @@ export default function NewAuthz() {
       reset();
       setTimeout(() => {
         navigate(`/${currentNetwork}/authz`);
-      }, 2000);
+      }, 1300);
     }
   }, [txAuthzSendRes?.status]);
 
@@ -133,7 +133,7 @@ export default function NewAuthz() {
       reset();
       setTimeout(() => {
         navigate(`/${currentNetwork}/authz`);
-      }, 2000);
+      }, 1300);
     }
   }, [txAuthzGenericRes?.status]);
 
