@@ -131,7 +131,7 @@ export function MyDelegations(props) {
               </StyledTableRow>
             </TableHead>
             <TableBody>
-              {delegations?.delegations.map((row, index) => (
+              {delegations?.delegations?.delegations.map((row, index) => (
                 <StyledTableRow
                   key={index}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

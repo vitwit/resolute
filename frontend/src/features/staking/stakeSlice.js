@@ -352,8 +352,7 @@ export const stakeSlice = createSlice({
     },
     resetState: (state, action) => {
       let chainID = action.payload.chainID;
-      state.chains[chainID].validators = initialState.defaultState.chains[chainID].validators;
-      state.chains[chainID].delegations = initialState.defaultState.chains[chainID].delegations;
+      state.chains[chainID] = cloneDeep(initialState.defaultState);
     },
     resetDefaultState : (state, action) => {
       let chainsMap = {};
@@ -544,22 +543,27 @@ export const stakeSlice = createSlice({
       .addCase(getParams.pending, (state) => {})
       .addCase(getParams.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
+        console.log("meow", state.chains, action)
         state.chains[chainID].params = action.payload;
       })
       .addCase(getParams.rejected, (state, action) => {});
 
     builder
       .addCase(txDelegate.pending, (state, action) => {
+        console.log("pending..");
         let chainID = action.meta?.arg?.chainID;
         state.chains[chainID].tx.status = "pending";
         state.chains[chainID].tx.type = "";
+        console.log("pending end..")
       })
       .addCase(txDelegate.fulfilled, (state, action) => {
+        console.log("working..")
         let chainID = action.meta?.arg?.chainID;
         state.chains[chainID].tx.status = "idle";
         state.chains[chainID].tx.type = "delegate";
       })
       .addCase(txDelegate.rejected, (state, action) => {
+        console.log("rejected..");
         let chainID = action.meta?.arg?.chainID;
         state.chains[chainID].tx.status = "rejected";
         state.chains[chainID].tx.type = "";

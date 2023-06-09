@@ -49,24 +49,29 @@ import { FilteredValidators } from "./../components/FilteredValidators";
 import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../components/FeegranterInfo";
 
-export default function Validators() {
+export default function Validators(props) {
+  const {chainID} = props;
+  const dispatch = useDispatch();
   const [type, setType] = useState("delegations");
-
-  const validators = useSelector((state) => state.staking.validators);
-  const stakingParams = useSelector((state) => state.staking.params);
-  const delegations = useSelector((state) => state.staking.delegations);
-  const txStatus = useSelector((state) => state.staking.tx);
-  const distTxStatus = useSelector((state) => state.distribution.tx);
-  const rewards = useSelector((state) => state.distribution.delegatorRewards);
+  const staking = useSelector((state)=>state.staking);
+  const validators = useSelector((state) => state.staking.chains[chainID].validators);
+  const stakingParams = useSelector((state) => state.staking.chains[chainID].params);
+  const delegations = useSelector((state) => state.staking.chains[chainID].delegations);
+  const txStatus = useSelector((state) => state.staking.chains[chainID].tx);
+  const distTxStatus = useSelector((state) => state.distribution.chains[chainID].tx);
+  const rewards = useSelector((state) => state.distribution.chains[chainID].delegatorRewards);
   const wallet = useSelector((state) => state.wallet);
   const balance = useSelector((state) => state.bank.balance);
   const feegrant = useSelector((state) => state.common.feegrant);
 
-  const { chainInfo, address, connected } = wallet;
+  
+  const {connected} = wallet;
+  const chainInfo = wallet.networks[chainID].network;
+  const address = wallet.networks[chainID].walletInfo.bech32Address;
   const currency = useSelector(
-    (state) => state.wallet.chainInfo?.config?.currencies[0]
+    (state) => state.wallet.networks[chainID].network?.config?.currencies[0]
   );
-  const dispatch = useDispatch();
+  
 
   const [selected, setSelected] = React.useState("active");
   const [stakingOpen, setStakingOpen] = React.useState(false);
@@ -179,14 +184,15 @@ export default function Validators() {
 
   useEffect(() => {
     if (connected) {
-      dispatch(resetState());
+      dispatch(resetState(chainID));
       setFilteredVals({
         active: [],
         inactive: [],
       });
-      dispatch(getParams({ baseURL: chainInfo.config.rest }));
+      dispatch(getParams({ baseURL: chainInfo.config.rest, chainID: chainID }));
       dispatch(
         getAllValidators({
+          chainID: chainID,
           baseURL: chainInfo.config.rest,
           status: null,
         })
@@ -215,6 +221,7 @@ export default function Validators() {
 
     dispatch(
       getDelegations({
+        chainID: chainID,
         baseURL: chainInfo.config.rest,
         address: address,
       })
@@ -222,6 +229,7 @@ export default function Validators() {
 
     dispatch(
       getDelegatorTotalRewards({
+        chainID: chainID, 
         baseURL: chainInfo.config.rest,
         address: address,
       })
@@ -232,7 +240,7 @@ export default function Validators() {
     return () => {
       dispatch(resetError());
       dispatch(resetTxHash());
-      dispatch(resetTx());
+      dispatch(resetTx({chainID: chainID}));
     };
   }, []);
 
@@ -240,6 +248,7 @@ export default function Validators() {
     if (distTxStatus.txHash?.length > 0) {
       dispatch(
         getDelegatorTotalRewards({
+          chainID: chainID,
           baseURL: chainInfo.config.rest,
           address: address,
         })
@@ -290,7 +299,7 @@ export default function Validators() {
         txWithdrawAllRewards({
           msgs: delegationPairs,
           denom: currency.coinMinimalDenom,
-          chainId: chainInfo.config.chainId,
+          chainID: chainID,
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           rest: chainInfo.config.rest,
@@ -343,7 +352,7 @@ export default function Validators() {
           validator: data.validator,
           amount: data.amount * 10 ** currency.coinDecimals,
           denom: currency.coinMinimalDenom,
-          chainId: chainInfo.config.chainId,
+          chainId: chainID,
           rpc: chainInfo.config.rpc,
           rest: chainInfo.config.rest,
           aminoConfig: chainInfo.aminoConfig,
@@ -395,7 +404,7 @@ export default function Validators() {
           validator: data.validator,
           amount: data.amount * 10 ** currency.coinDecimals,
           denom: currency.coinMinimalDenom,
-          chainId: chainInfo.config.chainId,
+          chainId: chainID,
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           rest: chainInfo.config.rest,
@@ -413,6 +422,7 @@ export default function Validators() {
         case "delegate":
           dispatch(
             getDelegations({
+              chainID: chainID,
               baseURL: chainInfo.config.rest,
               address: address,
             })
@@ -428,6 +438,7 @@ export default function Validators() {
         case "undelegate":
           dispatch(
             getDelegations({
+              chainID: chainID,
               baseURL: chainInfo.config.rest,
               address: address,
             })
@@ -436,6 +447,7 @@ export default function Validators() {
         case "redelegate":
           dispatch(
             getDelegations({
+              chainID, chainID,
               baseURL: chainInfo.config.rest,
               address: address,
             })
@@ -444,7 +456,7 @@ export default function Validators() {
         default:
           console.log("invalid type");
       }
-      dispatch(resetTxType());
+      dispatch(resetTxType({chainID: chainID}));
       handleDialogClose();
     }
   }, [txStatus]);
@@ -492,7 +504,7 @@ export default function Validators() {
           destVal: data.dest,
           amount: data.amount * 10 ** currency.coinDecimals,
           denom: currency.coinMinimalDenom,
-          chainId: chainInfo.config.chainId,
+          chainId: chainID,
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           rest: chainInfo.config.rest,
@@ -583,7 +595,7 @@ export default function Validators() {
           )
         ) : (
           <>
-            {feegrant.granter.length > 0 ? (
+            {feegrant?.granter?.length > 0 ? (
               <FeegranterInfo
                 feegrant={feegrant}
                 onRemove={() => {
@@ -630,7 +642,7 @@ export default function Validators() {
                 validators={validators}
                 delegations={delegations}
                 currency={currency}
-                rewards={rewards.list}
+                rewards={rewards?.list}
                 onDelegationAction={onMenuAction}
                 onWithdrawAllRewards={onWithdrawAllRewards}
               />
