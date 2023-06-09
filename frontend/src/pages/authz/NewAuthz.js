@@ -17,6 +17,8 @@ import {
   txAuthzGeneric,
   txAuthzSend,
   resetAlerts,
+  resetTxAuthzSendRes,
+  resetTxAuthzGenericRes,
 } from "../../features/authz/authzSlice";
 import {
   resetError,
@@ -52,7 +54,13 @@ export default function NewAuthz() {
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
   const grantsByMe = useSelector((state) => state.authz.grantsByMe);
   const dispatch = useDispatch();
-  const feegrant = useSelector((state) => state.common.feegrant?.[currentNetwork]);
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
+  );
+  const txAuthzSendRes = useSelector((state) => state.authz.txAuthzSendRes);
+  const txAuthzGenericRes = useSelector(
+    (state) => state.authz.txAuthzGenericRes
+  );
 
   useEffect(() => {
     if (grantsToMe.errMsg !== "" && grantsToMe.status === "rejected") {
@@ -99,6 +107,36 @@ export default function NewAuthz() {
     navigate(path);
   }
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetTxAuthzSendRes());
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetTxAuthzGenericRes());
+    };
+  }, []);
+
+  useEffect(() => {
+    if (txAuthzSendRes?.status === "idle") {
+      reset();
+      setTimeout(() => {
+        navigate(`/${currentNetwork}/authz`);
+      }, 2000);
+    }
+  }, [txAuthzSendRes?.status]);
+
+  useEffect(() => {
+    if (txAuthzGenericRes?.status === "idle") {
+      reset();
+      setTimeout(() => {
+        navigate(`/${currentNetwork}/authz`);
+      }, 2000);
+    }
+  }, [txAuthzGenericRes?.status]);
+
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
     dispatch(resetFeegrant());
@@ -108,7 +146,7 @@ export default function NewAuthz() {
   let date = new Date();
   let expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
 
-  const { handleSubmit, control } = useForm({
+  const { handleSubmit, control, reset } = useForm({
     defaultValues: {
       grantee: "",
       spendLimit: 1,

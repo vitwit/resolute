@@ -37,6 +37,9 @@ const initialState = {
   selected: {
     granter: "",
   },
+  txAuthzSendRes: {},
+  txAuthzGenericRes: {},
+  txAuthzRevokeRes: {},
 };
 
 export const getGrantsToMe = createAsyncThunk(
@@ -440,6 +443,15 @@ export const authzSlice = createSlice({
     resetExecTx: (state) => {
       state.execTx.status = "init";
     },
+    resetTxAuthzSendRes: (state) => {
+      state.txAuthzSendRes = {};
+    },
+    resetTxAuthzGenericRes: (state) => {
+      state.txAuthzGenericRes = {};
+    },
+    resetTxAuthzRevokeRes: (state) => {
+      state.txAuthzRevokeRes = {};
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -487,34 +499,43 @@ export const authzSlice = createSlice({
     builder
       .addCase(txAuthzSend.pending, (state) => {
         state.tx.status = `pending`;
+        state.txAuthzSendRes.status = `pending`;
       })
       .addCase(txAuthzSend.fulfilled, (state, _) => {
         state.tx.status = `idle`;
+        state.txAuthzSendRes.status = `idle`;
       })
       .addCase(txAuthzSend.rejected, (state, _) => {
         state.tx.status = `rejected`;
+        state.txAuthzSendRes.status = `rejected`;
       });
 
     builder
       .addCase(txAuthzGeneric.pending, (state) => {
         state.tx.status = `pending`;
+        state.txAuthzGenericRes.status = `pending`;
       })
       .addCase(txAuthzGeneric.fulfilled, (state, _) => {
         state.tx.status = `idle`;
+        state.txAuthzGenericRes.status = `idle`;
       })
       .addCase(txAuthzGeneric.rejected, (state, _) => {
         state.tx.status = `rejected`;
+        state.txAuthzGenericRes.status = `rejected`;
       });
 
     builder
       .addCase(txAuthzRevoke.pending, (state) => {
         state.tx.status = `pending`;
+        state.txAuthzRevokeRes.status = `pending`;
       })
       .addCase(txAuthzRevoke.fulfilled, (state, _) => {
         state.tx.status = `idle`;
+        state.txAuthzRevokeRes.status = `idle`;
       })
       .addCase(txAuthzRevoke.rejected, (state, _) => {
         state.tx.status = `rejected`;
+        state.txAuthzRevokeRes.status = `rejected`;
       });
 
     builder
@@ -530,7 +551,7 @@ export const authzSlice = createSlice({
   },
 });
 
-export const { resetAlerts, setSelectedGranter, resetExecTx, exitAuthzMode } =
+export const { resetAlerts, setSelectedGranter, resetExecTx, resetTxAuthzSendRes, resetTxAuthzGenericRes, resetTxAuthzRevokeRes, exitAuthzMode } =
   authzSlice.actions;
 
 export default authzSlice.reducer;

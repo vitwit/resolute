@@ -63,6 +63,7 @@ export default function Authz() {
 
   const grantsByMe = useSelector((state) => state.authz.grantsByMe?.[chainID]);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
+  const txAuthzRevokeRes = useSelector((state) => state.authz.txAuthzRevokeRes);
 
   const handleInfoClose = (value) => {
     setInfoOpen(false);
@@ -91,7 +92,7 @@ export default function Authz() {
   };
 
   useEffect(() => {
-    if (address !== "") {
+    if (address !== "" || txAuthzRevokeRes?.status === "idle") {
       dispatch(
         getGrantsByMe({
           baseURL: chainInfo?.config?.rest,
@@ -100,7 +101,7 @@ export default function Authz() {
         })
       );
     }
-  }, [chainInfo]);
+  }, [chainInfo, txAuthzRevokeRes?.status]);
 
   useEffect(() => {
     if (grantsToMe?.errMsg !== "" && grantsToMe?.status === "rejected") {
@@ -267,7 +268,7 @@ export default function Authz() {
             onClick={() => {
               dispatch(
                 getGrantsByMe({
-                  baseURL: chainInfo.config.rest,
+                  baseURL: chainInfo?.config?.rest,
                   granter: address,
                   chainID: chainInfo?.config?.chainId,
                 })
@@ -282,7 +283,7 @@ export default function Authz() {
             onClick={() => {
               dispatch(
                 getGrantsToMe({
-                  baseURL: chainInfo.config.rest,
+                  baseURL: chainInfo?.config?.rest,
                   grantee: address,
                   chainID: chainInfo?.config?.chainId,
                 })
