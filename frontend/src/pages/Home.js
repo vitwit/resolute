@@ -6,8 +6,6 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import ActiveProposals from "./gov/ActiveProposals";
 import StakingPage from "./StakingPage";
-import AuthzPage from "./AuthzPage";
-import FeegrantPage from "./FeegrantPage";
 import GroupPageV1 from "./GroupPageV1";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
@@ -25,6 +23,8 @@ import CreateGroupNewPage from "./group/CreateGroup";
 import NewFeegrant from "./feegrant/NewFeegrant";
 import { getFeegrant } from "../utils/localStorage";
 import { setFeegrant as setFeegrantState } from "../features/common/commonSlice";
+import Authz from "./authz/Authz";
+import NewAuthz from "./authz/NewAuthz";
 import StakingOverview from "./stakingOverview/StakingOverview";
 
 export const ContextData = React.createContext();
@@ -154,7 +154,7 @@ export default function Home() {
           } />
 
           <Route path="/:networkName/authz" element={
-            <AuthzPage />
+            <Authz />
           } />
 
           <Route path="/:networkName/feegrant" element={
@@ -213,6 +213,10 @@ export default function Home() {
 
           <Route path="/:networkName/feegrant/new" element={
             <NewFeegrant />
+          } />
+
+          <Route path="/:networkName/authz/new" element={
+            <NewAuthz />
           } />
 
           <Route path="*" element={<Page404 />}></Route>
