@@ -1,11 +1,12 @@
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
+import { Box } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getGrantsToMe,
@@ -17,7 +18,7 @@ import {
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "../../utils/util";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
@@ -35,28 +36,48 @@ import {
 } from "../../utils/authorizations";
 import { AuthzSendDialog } from "../../components/authz/AuthzSend";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import SelectNetwork from "../../components/common/SelectNetwork";
 
 export default function Authz() {
-  const grantsToMe = useSelector((state) => state.authz.grantsToMe);
-  const grantsByMe = useSelector((state) => state.authz.grantsByMe);
   const dispatch = useDispatch();
 
   const [infoOpen, setInfoOpen] = React.useState(false);
   const [selected, setSelected] = React.useState({});
+
+  const params = useParams();
+
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const networks = useSelector((state) => state.wallet.networks);
+  const [currentNetwork, setCurrentNetwork] = React.useState(
+    params?.networkName || selectedNetwork.toLowerCase()
+  );
+
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  const address =
+    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+  const chainID = nameToChainIDs?.[currentNetwork];
+
+  const grantsByMe = useSelector((state) => state.authz.grantsByMe?.[chainID]);
+  const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
+
   const handleInfoClose = (value) => {
     setInfoOpen(false);
   };
 
   const [grantType, setGrantType] = React.useState("by-me");
 
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
-  const address = useSelector((state) => state.wallet.address);
   const authzTx = useSelector((state) => state.authz.tx);
   const execTx = useSelector((state) => state.authz.execTx);
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo?.config?.currencies[0]
+  const currency =
+    networks[nameToChainIDs[currentNetwork]]?.network.config.currencies[0];
+
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
   );
-  const feegrant = useSelector((state) => state.common.feegrant);
 
   useEffect(() => {
     if (execTx.status === "idle") {
@@ -73,8 +94,9 @@ export default function Authz() {
     if (address !== "") {
       dispatch(
         getGrantsByMe({
-          baseURL: chainInfo.config.rest,
+          baseURL: chainInfo?.config?.rest,
           granter: address,
+          chainID: chainInfo?.config?.chainId,
         })
       );
     }
@@ -116,7 +138,7 @@ export default function Authz() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-        feegranter: feegrant.granter,
+        feegranter: feegrant?.granter,
       })
     );
   };
@@ -187,7 +209,7 @@ export default function Authz() {
       ) : (
         <></>
       )}
-      {feegrant.granter.length > 0 ? (
+      {feegrant?.granter?.length > 0 ? (
         <FeegranterInfo
           feegrant={feegrant}
           onRemove={() => {
@@ -195,17 +217,31 @@ export default function Authz() {
           }}
         />
       ) : null}
-      <div
-        style={{
+      <Box
+        sx={{
           display: "flex",
-          marginBottom: 12,
-          flexDirection: "row-reverse",
+          justifyContent: "end",
+        }}
+      >
+        <SelectNetwork
+          onSelect={(name) => {
+            navigate(`/${name}/authz`);
+          }}
+          networks={Object.keys(nameToChainIDs)}
+          defaultNetwork={currentNetwork.toLowerCase().replace(/ /g, "")}
+        />
+      </Box>
+      <Box
+        sx={{
+          mb: 1,
+          mt: 2,
+          textAlign: "right",
         }}
       >
         <Button
           variant="contained"
           size="medium"
-          onClick={() => navigateTo("/authz/new")}
+          onClick={() => navigateTo(`/${currentNetwork}/authz/new`)}
           disableElevation
           sx={{
             textTransform: "none",
@@ -213,7 +249,7 @@ export default function Authz() {
         >
           Grant New
         </Button>
-      </div>
+      </Box>
       <Paper
         elevation={0}
         sx={{
@@ -233,6 +269,7 @@ export default function Authz() {
                 getGrantsByMe({
                   baseURL: chainInfo.config.rest,
                   granter: address,
+                  chainID: chainInfo?.config?.chainId,
                 })
               );
               setGrantType("by-me");
@@ -247,6 +284,7 @@ export default function Authz() {
                 getGrantsToMe({
                   baseURL: chainInfo.config.rest,
                   grantee: address,
+                  chainID: chainInfo?.config?.chainId,
                 })
               );
               setGrantType("to-me");
@@ -289,8 +327,8 @@ export default function Authz() {
                       </StyledTableRow>
                     </TableHead>
                     <TableBody>
-                      {grantsByMe.grants &&
-                        grantsByMe.grants.map((row, index) => (
+                      {grantsByMe?.grants &&
+                        grantsByMe?.grants.map((row, index) => (
                           <StyledTableRow
                             key={index}
                             sx={{
@@ -394,12 +432,11 @@ export default function Authz() {
                         <StyledTableCell>Message</StyledTableCell>
                         <StyledTableCell>Expiration</StyledTableCell>
                         <StyledTableCell>Details</StyledTableCell>
-                        <StyledTableCell>Actions</StyledTableCell>
                       </StyledTableRow>
                     </TableHead>
                     <TableBody>
-                      {grantsToMe.grants &&
-                        grantsToMe.grants.map((row, index) => (
+                      {grantsToMe?.grants &&
+                        grantsToMe?.grants.map((row, index) => (
                           <StyledTableRow
                             key={index}
                             sx={{
@@ -445,15 +482,6 @@ export default function Authz() {
                               >
                                 Details
                               </Link>
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              <Button
-                                size="small"
-                                color="info"
-                                onClick={() => onUseAuthz(row)}
-                              >
-                                Use
-                              </Button>
                             </StyledTableCell>
                           </StyledTableRow>
                         ))}

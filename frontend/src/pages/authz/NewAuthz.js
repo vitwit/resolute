@@ -26,17 +26,33 @@ import {
 } from "../../features/common/commonSlice";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Typography, Alert } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import FeegranterInfo from "../../components/FeegranterInfo";
 
 export default function NewAuthz() {
-  const address = useSelector((state) => state.wallet.address);
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
+  const params = useParams();
+
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const networks = useSelector((state) => state.wallet.networks);
+  const [currentNetwork, setCurrentNetwork] = React.useState(
+    params?.networkName || selectedNetwork.toLowerCase()
+  );
+
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  const address =
+    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+  const currency =
+    networks[nameToChainIDs[currentNetwork]]?.network.config.currencies[0];
+
   const authzTx = useSelector((state) => state.authz.tx);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
   const grantsByMe = useSelector((state) => state.authz.grantsByMe);
   const dispatch = useDispatch();
-  const feegrant = useSelector((state) => state.common.feegrant);
+  const feegrant = useSelector((state) => state.common.feegrant?.[currentNetwork]);
 
   useEffect(() => {
     if (grantsToMe.errMsg !== "" && grantsToMe.status === "rejected") {
@@ -91,9 +107,6 @@ export default function NewAuthz() {
   const [selected, setSelected] = useState("send");
   let date = new Date();
   let expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo.config.currencies[0]
-  );
 
   const { handleSubmit, control } = useForm({
     defaultValues: {
@@ -121,7 +134,7 @@ export default function NewAuthz() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-        feegranter: feegrant.granter,
+        feegranter: feegrant?.granter,
       })
     );
   };
@@ -140,7 +153,7 @@ export default function NewAuthz() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-        feegranter: feegrant.granter,
+        feegranter: feegrant?.granter,
       })
     );
   };
@@ -162,7 +175,7 @@ export default function NewAuthz() {
         Authz does not support ledger signing. Signing transactions through
         ledger will fail.
       </Alert>
-      {feegrant.granter.length > 0 ? (
+      {feegrant?.granter?.length > 0 ? (
         <FeegranterInfo
           feegrant={feegrant}
           onRemove={() => {
