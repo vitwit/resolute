@@ -7,13 +7,13 @@ import PropTypes from 'prop-types';
 
 export const Chain = (props) => {
 
+  const chainID = props?.chain?.chainName;
   const wallet = useSelector((state) => state.wallet);
   const feegrant = useSelector((state) => state.common.feegrant);
-  const distTxStatus = useSelector((state) => state.distribution.chains[props.chain.chainName].tx);
-  //const rewards = useSelector((state) => state.distribution.chains[props.chain.chainName].delegatorRewards);
-  const delegations = useSelector((state) => state.staking.chains[props.chain.chainName].delegations);
+  const distTxStatus = useSelector((state) => state.distribution.chains[chainID].tx);
+  const delegations = useSelector((state) => state.staking.chains[chainID].delegations);
   const dispatch = useDispatch();
-  const chainInfo = wallet.networks[props.chain.chainName];
+  const chainInfo = wallet.networks[chainID];
   const currency = chainInfo.network?.config?.currencies[0];
 
   let chainReward = (+props?.chainReward?.totalRewards).toLocaleString();
@@ -31,7 +31,7 @@ export const Chain = (props) => {
       txWithdrawAllRewards({
         msgs: delegationPairs,
         denom: currency.coinMinimalDenom,
-        chainID: props.chain.chainName,
+        chainID: chainID,
         aminoConfig: chainInfo.network.aminoConfig,
         prefix: chainInfo.network.config.bech32Config.bech32PrefixAccAddr,
         rest: chainInfo.network.config.rest,
@@ -43,10 +43,14 @@ export const Chain = (props) => {
   }
 
   useEffect(() => {
-    dispatch(getDelegatorTotalRewards({chainID:props.chain.chainName, baseURL:chainInfo.network.config.rest, address:chainInfo.walletInfo.bech32Address}));
+    dispatch(getDelegatorTotalRewards({
+      chainID: chainID,
+      baseURL: chainInfo.network.config.rest,
+      address: chainInfo.walletInfo.bech32Address
+    }));
   }, [distTxStatus.status])
 
-  
+
   return (
     <Card
       sx={{
@@ -58,45 +62,58 @@ export const Chain = (props) => {
       <CardContent>
         <Grid container justifyContent="space-between" alignItems="center">
           <Grid item>
-            <Avatar src={props.chain.imageURL} sx={{ width: 36, height: 36 }} />
-            <Typography
-              align="left"
-              variant="h6"
-              gutterBottom
-              color="text.secondary"
+            <div
+              style={{
+                display: "flex"
+              }}
             >
-              {props.chain.chainName}
-            </Typography>
-            <Typography align="left" variant="body1"
+              <Avatar src={props.chain.imageURL} sx={{ width: 36, height: 36 }} />
+              <Typography
+                align="left"
+                variant="h6"
+                gutterBottom
+                color="text.secondary"
+                sx={{
+                  ml: 2
+                }}
+              >
+                {chainInfo?.network?.config?.chainName}
+              </Typography>
+            </div>
+            <Typography align="left" variant="h6"
               fontWeight={500}
               color="text.primary"
               gutterBottom>
-              Total staked amount:&nbsp;{chainStakedAmount}&nbsp;{props.chain.denom}
+              Total staked:&nbsp;{chainStakedAmount}&nbsp;{props.chain.denom}
             </Typography>
-          </Grid>
 
+          </Grid>
           <Grid item>
             <Button variant="contained" color="primary"
               disableElevation
               size="small"
-              disabled={distTxStatus.status==='pending'}
+              disabled={distTxStatus.status === 'pending'}
               sx={{
                 textTransform: "none"
               }}
               onClick={onClickClaim}
             >
-              {distTxStatus.status === "pending"  ? (
+              {distTxStatus.status === "pending" ? (
                 <>
                   <CircularProgress size={18} />
                   &nbsp;&nbsp;Please wait...
                 </>
               ) : (
-              <>Claim:&nbsp;{chainReward}&nbsp;{props.chain.denom}</>
+                <>Claim:&nbsp;{chainReward}&nbsp;{props.chain.denom}</>
               )}
             </Button>
           </Grid>
         </Grid>
-        <Validators validators={props.chain.validators} rewards={props?.chainReward?.validators} denom={props.chain.denom} />
+        <Validators
+          validators={props.chain.validators}
+          rewards={props?.chainReward?.validators}
+          denom={props.chain.denom}
+        />
 
       </CardContent>
     </Card>
