@@ -68,5 +68,5 @@ export const StakingTotal = (props) => {
 
 StakingTotal.propTypes = {
   totalAmount: PropTypes.number.isRequired,
-  totalReward: PropTypes.number.isRequired, 
+  totalReward: PropTypes.number.isRequired,
 };

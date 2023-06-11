@@ -4,8 +4,8 @@ import { styled } from '@mui/material/styles';
 
 export const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.grey[800],
-        color: theme.palette.common.white,
+        backgroundColor: theme.palette.mode === "light" ? theme.palette.grey[300] : theme.palette.grey[800],
+        color: theme.palette.mode === "light" ? theme.palette.grey[800] : theme.palette.grey[300],
     },
     [`&.${tableCellClasses.body}`]: {
         fontSize: 14,
