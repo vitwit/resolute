@@ -43,7 +43,7 @@ export default function MultisigPage() {
                     />
                 </Box>
                 <div sx={{justifyContent: "center",display: "flex",mr: 1,}}>
-                    {Object.keys(stakingChains)?.length > 0 ? <Validators chainID={nameToChainIDs[currentNetwork]}/>:<></>}
+                    {Object.keys(stakingChains)?.length > 0 ? <Validators chainID={nameToChainIDs[currentNetwork]} currentNetwork={currentNetwork} nameToChainIDs={nameToChainIDs}/>:<></>}
                 </div>
             </Paper>
         </div>

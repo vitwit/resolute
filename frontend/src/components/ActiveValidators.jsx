@@ -14,14 +14,13 @@ import { useSelector } from "react-redux";
 import { useTheme } from "@emotion/react";
 
 export function ActiveValidators(props) {
-  const { onMenuAction } = props;
-
-  const validators = useSelector((state) => state.staking.validators);
+  const { onMenuAction, chainID } = props;
+  const validators = useSelector((state) => state.staking.chains[chainID].validators);
   const delegatedTo = useSelector(
-    (state) => state.staking.delegations.delegatedTo
+    (state) => state.staking.chains[chainID].delegations.delegatedTo
   );
   const totalActive = useSelector(
-    (state) => state.staking.validators.totalActive
+    (state) => state.staking.chains[chainID].validators.totalActive
   );
 
   const [activeVals, setActiveVals] = useState(validators.activeSorted);

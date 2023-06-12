@@ -14,8 +14,7 @@ import Box from "@mui/material/Box";
 import { useTheme } from "@emotion/react";
 
 export function MyDelegations(props) {
-  const { delegations, validators, onDelegationAction, currency, rewards } =
-    props;
+  const { delegations, validators, onDelegationAction, currency, rewards } = props;
   const [totalRewards, setTotalRewards] = React.useState(0);
   const distTxStatus = useSelector((state) => state.distribution.tx);
   const [rewardsP, setRewardsP] = React.useState({});
@@ -95,7 +94,7 @@ export function MyDelegations(props) {
           {distTxStatus?.status === "pending" ? (
             <CircularProgress size={25} />
           ) : (
-            `Claim Rewards: ${totalRewards} ${currency?.coinDenom}`
+            `Claim Rewards: ${(+totalRewards).toLocaleString()} ${currency?.coinDenom}`
           )}
         </Button>
       </Box>
@@ -161,11 +160,11 @@ export function MyDelegations(props) {
                     %
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {parseFloat(row.delegation.shares) /
-                      10 ** currency?.coinDecimals}
+                    {(parseFloat(row.delegation.shares) /
+                      10 ** currency?.coinDecimals).toFixed(3).toLocaleString()}
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {rewardsP[row.delegation.validator_address]?.toFixed(6)}
+                    {rewardsP[row.delegation.validator_address]?.toFixed(3).toLocaleString()}
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     <Button

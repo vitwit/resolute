@@ -23,7 +23,7 @@ import {
 } from "../features/distribution/distributionSlice";
 import { parseBalance } from "../utils/denom";
 import { DialogDelegate } from "../components/DialogDelegate";
-import { getBalance } from "../features/bank/bankSlice";
+import { getBalances } from "../features/bank/bankSlice";
 import { DialogUndelegate } from "../components/DialogUndelegate";
 import {
   resetError,
@@ -50,7 +50,7 @@ import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../components/FeegranterInfo";
 
 export default function Validators(props) {
-  const {chainID} = props;
+  const {chainID, nameToChainIDs, currentNetwork} = props;
   const dispatch = useDispatch();
   const [type, setType] = useState("delegations");
   const staking = useSelector((state)=>state.staking);
@@ -61,7 +61,7 @@ export default function Validators(props) {
   const distTxStatus = useSelector((state) => state.distribution.chains[chainID].tx);
   const rewards = useSelector((state) => state.distribution.chains[chainID].delegatorRewards);
   const wallet = useSelector((state) => state.wallet);
-  const balance = useSelector((state) => state.bank.balance);
+  const balance = useSelector((state) => state.bank.balances);
   const feegrant = useSelector((state) => state.common.feegrant);
 
   
@@ -105,7 +105,7 @@ export default function Validators(props) {
         }
         break;
       case "undelegate":
-        if (delegations?.delegations.length > 0) {
+        if (delegations?.delegations?.delegations.length > 0) {
           setUndelegateOpen(true);
         } else {
           dispatch(
@@ -118,12 +118,12 @@ export default function Validators(props) {
         break;
       case "redelegate":
         let isValidRedelegation = false;
-        if (delegations?.delegations.length > 0) {
-          for (let i = 0; i < delegations?.delegations.length; i++) {
-            let item = delegations?.delegations[i];
+        if (delegations?.delegations.delegations.length > 0) {
+          for (let i = 0; i < delegations?.delegations?.delegations.length; i++) {
+            let item = delegations?.delegations?.delegations[i];
             if (
               item.delegation.validator_address ===
-              selectedValidator.operator_address
+              validator.operator_address
             ) {
               isValidRedelegation = true;
               break;
@@ -197,6 +197,27 @@ export default function Validators(props) {
           status: null,
         })
       );
+      dispatch(
+        getDelegations({
+          chainID: chainID,
+          baseURL: chainInfo.config.rest,
+          address: address,
+        })
+      );
+      dispatch(
+        getDelegatorTotalRewards({
+          chainID: chainID, 
+          baseURL: chainInfo.config.rest,
+          address: address,
+        })
+      );
+      dispatch(
+        getBalances({
+          baseURL: chainInfo.config.rest + "/",
+          address: address,
+          chainID: nameToChainIDs[currentNetwork],
+        })
+    );
     }
   }, [chainInfo, connected]);
 
@@ -212,11 +233,11 @@ export default function Validators(props) {
 
   function fetchUserInfo(address) {
     dispatch(
-      getBalance({
-        baseURL: chainInfo.config.rest,
-        address: address,
-        denom: currency.coinMinimalDenom,
-      })
+        getBalances({
+          baseURL: chainInfo.config.rest + "/",
+          address: address,
+          chainID: nameToChainIDs[currentNetwork],
+        })
     );
 
     dispatch(
@@ -270,7 +291,7 @@ export default function Validators(props) {
       return;
     }
     let delegationPairs = [];
-    delegations.delegations.forEach((item) => {
+    delegations?.delegations?.delegations.forEach((item) => {
       delegationPairs.push({
         validator: item.delegation.validator_address,
         delegator: item.delegation.delegator_address,
@@ -428,11 +449,11 @@ export default function Validators(props) {
             })
           );
           dispatch(
-            getBalance({
-              baseURL: chainInfo.config.rest,
-              address: address,
-              denom: currency.coinMinimalDenom,
-            })
+              getBalances({
+                baseURL: chainInfo.config.rest + "/",
+                address: address,
+                chainID: nameToChainIDs[currentNetwork],
+              })
           );
           break;
         case "undelegate":
@@ -519,14 +540,15 @@ export default function Validators(props) {
   const [availableBalance, setAvailableBalance] = useState(0);
   useEffect(() => {
     if (connected && chainInfo.config.currencies.length > 0) {
-      if (balance !== undefined)
+      if (balance?.[chainID]?.list?.[0] !== undefined) {
         setAvailableBalance(
           parseBalance(
-            [balance.balance],
+            [balance[chainID].list[0]],
             currency.coinDecimals,
             currency.coinMinimalDenom
           )
         );
+      }
     }
   }, [balance]);
 
@@ -712,9 +734,10 @@ export default function Validators(props) {
                     theme={theme}
                   />
                 ) : selected === "active" ? (
-                  <ActiveValidators onMenuAction={onMenuAction} />
+                  <ActiveValidators chainID={chainID} onMenuAction={onMenuAction} />
                 ) : (
                   <InActiveValidators
+                    chainID={chainID}
                     onMenuAction={onMenuAction}
                     validators={validators}
                   />
@@ -737,7 +760,8 @@ export default function Validators(props) {
             ) : (
               <></>
             )}
-            {delegations?.delegations.length > 0 ? (
+            {delegations?.delegations?.delegations?.length > 0 ? (
+              
               <>
                 <DialogUndelegate
                   open={undelegateOpen}
@@ -745,7 +769,7 @@ export default function Validators(props) {
                   validator={selectedValidator}
                   params={stakingParams}
                   balance={availableBalance}
-                  delegations={delegations?.delegations}
+                  delegations={delegations?.delegations?.delegations}
                   currency={chainInfo?.config?.currencies[0]}
                   loading={txStatus.status}
                   onUnDelegate={onUndelegateTx}
@@ -760,7 +784,7 @@ export default function Validators(props) {
                   balance={availableBalance}
                   active={validators?.active}
                   inactive={validators?.inactive}
-                  delegations={delegations?.delegations}
+                  delegations={delegations?.delegations?.delegations}
                   currency={chainInfo?.config?.currencies[0]}
                   loading={txStatus.status}
                   onRedelegate={onRedelegateTx}

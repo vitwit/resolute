@@ -74,7 +74,7 @@ export const txDelegate = createAsyncThunk(
             hash: result?.transactionHash,
           })
         );
-        dispatch(resetDelegations());
+        dispatch(resetDelegations({chainID: data.chainId}));
         dispatch(
           getDelegations({
             baseURL: data.baseURL,
@@ -362,7 +362,7 @@ export const stakeSlice = createSlice({
     },
     resetDelegations: (state, action) => {
       let chainID = action.payload.chainID;
-      state.chains[chainID].delegations = initialState.defaultState.chains[chainID].delegations;
+      state.chains[chainID].delegations = initialState.defaultState.delegations;
     },
     sortValidatorsByVotingPower: (state, action) => {
       let chainID = action.payload.chainID;
@@ -543,62 +543,59 @@ export const stakeSlice = createSlice({
       .addCase(getParams.pending, (state) => {})
       .addCase(getParams.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
-        console.log("meow", state.chains, action)
         state.chains[chainID].params = action.payload;
       })
       .addCase(getParams.rejected, (state, action) => {});
 
     builder
       .addCase(txDelegate.pending, (state, action) => {
-        console.log("pending..");
-        let chainID = action.meta?.arg?.chainID;
-        state.chains[chainID].tx.status = "pending";
+        let chainID = action.meta?.arg?.chainId;
+        state.chains[chainID].tx.status = "pending";  
         state.chains[chainID].tx.type = "";
-        console.log("pending end..")
       })
       .addCase(txDelegate.fulfilled, (state, action) => {
-        console.log("working..")
-        let chainID = action.meta?.arg?.chainID;
+        let chainID = action.meta?.arg?.chainId;
         state.chains[chainID].tx.status = "idle";
         state.chains[chainID].tx.type = "delegate";
       })
       .addCase(txDelegate.rejected, (state, action) => {
-        console.log("rejected..");
-        let chainID = action.meta?.arg?.chainID;
+        let chainID = action.meta?.arg?.chainId;
         state.chains[chainID].tx.status = "rejected";
         state.chains[chainID].tx.type = "";
       });
 
     builder
       .addCase(txUnDelegate.pending, (state, action) => {
-        let chainID = action.meta?.arg?.chainID;
+        let chainID = action.meta?.arg?.chainId;
         state.chains[chainID].tx.status = "pending";
         state.chains[chainID].tx.type = "";
       })
       .addCase(txUnDelegate.fulfilled, (state, action) => {
-        let chainID = action.meta?.arg?.chainID;
+        let chainID = action.meta?.arg?.chainId;
         state.chains[chainID].tx.status = "idle";
         state.chains[chainID].tx.type = "undelegate";
       })
       .addCase(txUnDelegate.rejected, (state, action) => {
-        let chainID = action.meta?.arg?.chainID;
+        let chainID = action.meta?.arg?.chainId;
         state.chains[chainID].tx.status = "rejected";
         state.chains[chainID].tx.type = "";
       });
 
     builder
       .addCase(txReDelegate.pending, (state, action) => {
-        let chainID = action.meta?.arg?.chainID;
+        let chainID = action.meta?.arg?.chainId;
         state.chains[chainID].tx.status = "pending";
         state.chains[chainID].tx.type = "";
       })
       .addCase(txReDelegate.fulfilled, (state, action) => {
-        let chainID = action.meta?.arg?.chainID;
+        console.log("doneee", action);
+        let chainID = action.meta?.arg?.chainId;
         state.chains[chainID].tx.status = "idle";
         state.chains[chainID].tx.type = "redelegate";
       })
       .addCase(txReDelegate.rejected, (state, action) => {
-        let chainID = action.meta?.arg?.chainID;
+        console.log("noooo", action);
+        let chainID = action.meta?.arg?.chainId;
         state.chains[chainID].tx.status = "rejected";
         state.chains[chainID].tx.type = "";
       });
