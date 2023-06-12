@@ -1,16 +1,10 @@
 import React, { useState } from "react";
 import {
   Box,
-  Button,
   TextField,
-  Select,
-  MenuItem,
   FormControlLabel,
-  Switch,
-  Typography,
   Grid,
   FormControl,
-  InputLabel,
   FormLabel,
   RadioGroup,
   Radio,
@@ -21,11 +15,9 @@ import { MAX_EXECUTION_PERIOD, PERCENTAGE, THRESHOLD } from "./common";
 
 function CreateGroupPolicy({
   control,
-  register,
   watch,
   errors,
   setValue,
-  handleCancelPolicy,
   members,
   policyUpdate,
   policyMetadataUpdate,
@@ -37,7 +29,6 @@ function CreateGroupPolicy({
     members.reduce((initial, weight) => initial + Number(weight.weight), 0) ||
     0;
 
-  const [threshold, setThreshold] = useState(THRESHOLD);
   const [policyType, setPolicyType] = useState(PERCENTAGE);
   const [asAdmin, setAsAdmin] = useState("gov");
   const [decisionPolicyType, setDecisionPolicyType] = useState(policy_Type)
@@ -253,7 +244,7 @@ function CreateGroupPolicy({
                   rules={{
                     required: "Min Exec Period is required",
                     min: { value: 1, message: "Invalid Min execution period" },
-                    validate: () => Number(getValues("policyMetadata.minExecPeriod")) < (Number(getValues("policyMetadata.votingPeriod")) + MAX_EXECUTION_PERIOD )
+                    validate: () => Number(getValues("policyMetadata.minExecPeriod")) < (Number(getValues("policyMetadata.votingPeriod")) + MAX_EXECUTION_PERIOD)
                   }}
                   render={({ field }) => (
                     <FormControl fullWidth>
@@ -267,7 +258,7 @@ function CreateGroupPolicy({
                         placeholder="Min Execution Period (Days) *"
                         error={errors?.policyMetadata?.minExecPeriod}
                         helperText={
-                          errors?.policyMetadata?.minExecPeriod?.message || (errors?.policyMetadata?.minExecPeriod && errors?.policyMetadata?.minExecPeriod?.type === "validate" && `Min execution period cannot be greater than ${Number(getValues("policyMetadata.votingPeriod"))-1 + MAX_EXECUTION_PERIOD}` ) ||
+                          errors?.policyMetadata?.minExecPeriod?.message || (errors?.policyMetadata?.minExecPeriod && errors?.policyMetadata?.minExecPeriod?.type === "validate" && `Min execution period cannot be greater than ${Number(getValues("policyMetadata.votingPeriod")) - 1 + MAX_EXECUTION_PERIOD}`) ||
                           "A Minimum amount of time that must pass after submission in order for a proposal to potentially be executed."
                         }
                       />

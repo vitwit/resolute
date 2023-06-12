@@ -6,7 +6,7 @@ import { StyledTableCell, StyledTableRow } from '../../components/CustomTable';
 export const Validators = (props) => {
   return (
       <TableContainer>
-        <Table>
+        <Table size="small">
           <TableHead>
             <StyledTableRow >
               <StyledTableCell>Validator Name</StyledTableCell>
