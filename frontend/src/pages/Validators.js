@@ -728,6 +728,7 @@ export default function Validators(props) {
                 {filteredVals.active.length > 0 ||
                 filteredVals.inactive.length > 0 ? (
                   <FilteredValidators
+                    chainID={chainID}
                     onMenuAction={onMenuAction}
                     validators={validators}
                     filtered={filteredVals}
