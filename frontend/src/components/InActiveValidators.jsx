@@ -15,7 +15,9 @@ import { useTheme } from "@emotion/react";
 
 export function InActiveValidators(props) {
   const { onMenuAction, chainID } = props;
-  const validators = useSelector((state) => state.staking.chains[chainID].validators);
+  const validators = useSelector(
+    (state) => state.staking.chains[chainID].validators
+  );
   const totalInactive = useSelector(
     (state) => state.staking.chains[chainID].validators.totalInactive
   );

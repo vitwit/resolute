@@ -15,7 +15,9 @@ import { useTheme } from "@emotion/react";
 
 export function ActiveValidators(props) {
   const { onMenuAction, chainID } = props;
-  const validators = useSelector((state) => state.staking.chains[chainID].validators);
+  const validators = useSelector(
+    (state) => state.staking.chains[chainID].validators
+  );
   const delegatedTo = useSelector(
     (state) => state.staking.chains[chainID].delegations.delegatedTo
   );

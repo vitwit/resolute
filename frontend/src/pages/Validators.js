@@ -50,28 +50,36 @@ import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../components/FeegranterInfo";
 
 export default function Validators(props) {
-  const {chainID, nameToChainIDs, currentNetwork} = props;
+  const { chainID, nameToChainIDs, currentNetwork } = props;
   const dispatch = useDispatch();
   const [type, setType] = useState("delegations");
-  const staking = useSelector((state)=>state.staking);
-  const validators = useSelector((state) => state.staking.chains[chainID].validators);
-  const stakingParams = useSelector((state) => state.staking.chains[chainID].params);
-  const delegations = useSelector((state) => state.staking.chains[chainID].delegations);
+  const staking = useSelector((state) => state.staking);
+  const validators = useSelector(
+    (state) => state.staking.chains[chainID].validators
+  );
+  const stakingParams = useSelector(
+    (state) => state.staking.chains[chainID].params
+  );
+  const delegations = useSelector(
+    (state) => state.staking.chains[chainID].delegations
+  );
   const txStatus = useSelector((state) => state.staking.chains[chainID].tx);
-  const distTxStatus = useSelector((state) => state.distribution.chains[chainID].tx);
-  const rewards = useSelector((state) => state.distribution.chains[chainID].delegatorRewards);
+  const distTxStatus = useSelector(
+    (state) => state.distribution.chains[chainID].tx
+  );
+  const rewards = useSelector(
+    (state) => state.distribution.chains[chainID].delegatorRewards
+  );
   const wallet = useSelector((state) => state.wallet);
   const balance = useSelector((state) => state.bank.balances);
   const feegrant = useSelector((state) => state.common.feegrant);
 
-  
-  const {connected} = wallet;
+  const { connected } = wallet;
   const chainInfo = wallet.networks[chainID].network;
   const address = wallet.networks[chainID].walletInfo.bech32Address;
   const currency = useSelector(
     (state) => state.wallet.networks[chainID].network?.config?.currencies[0]
   );
-  
 
   const [selected, setSelected] = React.useState("active");
   const [stakingOpen, setStakingOpen] = React.useState(false);
@@ -119,11 +127,14 @@ export default function Validators(props) {
       case "redelegate":
         let isValidRedelegation = false;
         if (delegations?.delegations.delegations.length > 0) {
-          for (let i = 0; i < delegations?.delegations?.delegations.length; i++) {
+          for (
+            let i = 0;
+            i < delegations?.delegations?.delegations.length;
+            i++
+          ) {
             let item = delegations?.delegations?.delegations[i];
             if (
-              item.delegation.validator_address ===
-              validator.operator_address
+              item.delegation.validator_address === validator.operator_address
             ) {
               isValidRedelegation = true;
               break;
@@ -206,7 +217,7 @@ export default function Validators(props) {
       );
       dispatch(
         getDelegatorTotalRewards({
-          chainID: chainID, 
+          chainID: chainID,
           baseURL: chainInfo.config.rest,
           address: address,
         })
@@ -217,7 +228,7 @@ export default function Validators(props) {
           address: address,
           chainID: nameToChainIDs[currentNetwork],
         })
-    );
+      );
     }
   }, [chainInfo, connected]);
 
@@ -233,11 +244,11 @@ export default function Validators(props) {
 
   function fetchUserInfo(address) {
     dispatch(
-        getBalances({
-          baseURL: chainInfo.config.rest + "/",
-          address: address,
-          chainID: nameToChainIDs[currentNetwork],
-        })
+      getBalances({
+        baseURL: chainInfo.config.rest + "/",
+        address: address,
+        chainID: nameToChainIDs[currentNetwork],
+      })
     );
 
     dispatch(
@@ -250,7 +261,7 @@ export default function Validators(props) {
 
     dispatch(
       getDelegatorTotalRewards({
-        chainID: chainID, 
+        chainID: chainID,
         baseURL: chainInfo.config.rest,
         address: address,
       })
@@ -261,7 +272,7 @@ export default function Validators(props) {
     return () => {
       dispatch(resetError());
       dispatch(resetTxHash());
-      dispatch(resetTx({chainID: chainID}));
+      dispatch(resetTx({ chainID: chainID }));
     };
   }, []);
 
@@ -449,11 +460,11 @@ export default function Validators(props) {
             })
           );
           dispatch(
-              getBalances({
-                baseURL: chainInfo.config.rest + "/",
-                address: address,
-                chainID: nameToChainIDs[currentNetwork],
-              })
+            getBalances({
+              baseURL: chainInfo.config.rest + "/",
+              address: address,
+              chainID: nameToChainIDs[currentNetwork],
+            })
           );
           break;
         case "undelegate":
@@ -468,7 +479,8 @@ export default function Validators(props) {
         case "redelegate":
           dispatch(
             getDelegations({
-              chainID, chainID,
+              chainID,
+              chainID,
               baseURL: chainInfo.config.rest,
               address: address,
             })
@@ -477,7 +489,7 @@ export default function Validators(props) {
         default:
           console.log("invalid type");
       }
-      dispatch(resetTxType({chainID: chainID}));
+      dispatch(resetTxType({ chainID: chainID }));
       handleDialogClose();
     }
   }, [txStatus]);
@@ -735,7 +747,10 @@ export default function Validators(props) {
                     theme={theme}
                   />
                 ) : selected === "active" ? (
-                  <ActiveValidators chainID={chainID} onMenuAction={onMenuAction} />
+                  <ActiveValidators
+                    chainID={chainID}
+                    onMenuAction={onMenuAction}
+                  />
                 ) : (
                   <InActiveValidators
                     chainID={chainID}
@@ -762,7 +777,6 @@ export default function Validators(props) {
               <></>
             )}
             {delegations?.delegations?.delegations?.length > 0 ? (
-              
               <>
                 <DialogUndelegate
                   open={undelegateOpen}
