@@ -145,6 +145,10 @@ export default function Home() {
             }
           />
 
+          <Route path="/:networkName/overview" element={
+            <OverviewPage />
+          } />
+
           <Route path="/:networkName/transfers" element={
             <SendPage />
           } />
