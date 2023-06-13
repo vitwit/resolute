@@ -21,7 +21,7 @@ import PolicyDetails from "../../components/group/PolicyDetails";
 import UpdatePolicyMetadataDialog from "../../components/group/UpdatePolicyMetadataDialog";
 import { DAYS, PERCENTAGE } from "./common";
 
-function PolicyInfo() {
+function PolicyInfo({ chainInfo, address }) {
   const [policyObj, setPolicyObj] = useState({});
   const [isEditPolicyForm, setEditPolicyForm] = useState(false);
   const [policyMetadataDialog, setPolicyMetadataDialog] = useState(false);
@@ -52,7 +52,7 @@ function PolicyInfo() {
   const getPolicies = () => {
     dispatch(
       getGroupPoliciesById({
-        baseURL: wallet?.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         id: id,
         pagination: {
           key: "",
@@ -99,7 +99,6 @@ function PolicyInfo() {
   }, [updateGroupMetadataRes?.status]);
 
   const handlePolicyMetadata = (newMetadata) => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txUpdateGroupPolicyMetdata({
@@ -115,7 +114,6 @@ function PolicyInfo() {
   };
 
   const handleUpdateAdmin = (newAdmin) => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txUpdateGroupPolicyAdmin({
@@ -133,17 +131,17 @@ function PolicyInfo() {
   const getGroup = () => {
     dispatch(
       getGroupById({
-        baseURL: wallet?.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         id: id,
       })
     );
   };
 
   const groupInfo = useSelector((state) => state.group.groupInfo);
-  const canUpdateGroup = () => groupInfo?.data?.admin === wallet?.address;
+  const canUpdateGroup = () => groupInfo?.data?.admin === address;
 
   const handleSubmitPolicy = (data) => {
-    const chainInfo = wallet?.chainInfo;
+
     const dataObj = {
         admin: policyObj?.admin,
         groupPolicyAddress: policyObj?.address,

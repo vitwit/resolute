@@ -14,8 +14,9 @@ function AdminGroupList() {
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
-  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork);
-
+  const [currentNetwork, setCurrentNetwork] = useState(
+    params?.networkName || selectedNetwork.toLowerCase()
+  );
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
@@ -23,7 +24,7 @@ function AdminGroupList() {
     networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
 
   const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
-  
+
   const groups = useSelector((state) => state.group.groups);
 
   const fetchGroupsByAdmin = (offset = 0, limit = PER_PAGE) => {
@@ -40,9 +41,13 @@ function AdminGroupList() {
   };
 
   useEffect(() => {
-    if (address)
-    fetchGroupsByAdmin(0, PER_PAGE);
-  }, [address]);
+    if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
+    else setCurrentNetwork("cosmoshub");
+  }, [params]);
+
+  useEffect(() => {
+    if (address) fetchGroupsByAdmin(0, PER_PAGE);
+  }, [chainInfo, address]);
 
   useEffect(() => {
     if (Number(groups?.admin?.pagination?.total))
@@ -50,7 +55,7 @@ function AdminGroupList() {
   }, [groups?.admin?.pagination?.total]);
 
   const handlePagination = (page) => {
-    fetchGroupsByAdmin(page*PER_PAGE, PER_PAGE);
+    fetchGroupsByAdmin(page * PER_PAGE, PER_PAGE);
   };
 
   return (

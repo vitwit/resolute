@@ -1,15 +1,25 @@
 import { Paper, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import AddManualTx from "./AddManualTx";
 
 function CreateProposal() {
   const [type, setType] = React.useState(null);
-  const { policyAddress } = useParams();
+  const params = useParams();
+  
+  const { policyAddress } = params;
 
-  const wallet = useSelector((state) => state.wallet);
-  const chainInfo = wallet?.chainInfo;
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const [currentNetwork, setCurrentNetwork] = useState(
+    params?.networkName || selectedNetwork.toLowerCase()
+  );
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
 
   return (
     <>

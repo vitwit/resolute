@@ -38,7 +38,7 @@ import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
 import { DAYS, PERCENTAGE } from "./common";
 
-const GroupPolicies = ({ id, wallet }) => {
+const GroupPolicies = ({ id, chainInfo }) => {
   const LIMIT = 100;
   const dispatch = useDispatch();
   const [showForm, setShowForm] = useState(false);
@@ -60,7 +60,7 @@ const GroupPolicies = ({ id, wallet }) => {
   const getPolicies = () => {
     dispatch(
       getGroupPoliciesById({
-        baseURL: wallet?.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         id: id,
         pagination: { limit: LIMIT, key: "" },
       })
@@ -79,38 +79,42 @@ const GroupPolicies = ({ id, wallet }) => {
   }
 
   const handlePolicy = (data) => {
-    const chainInfo = wallet?.chainInfo;
     const dataObj = {
-        admin: groupInformation?.admin,
-        groupId: id,
-        policyMetadata: data?.policyMetadata,
-        denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
-        chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
-      }
+      admin: groupInformation?.admin,
+      groupId: id,
+      policyMetadata: data?.policyMetadata,
+      denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
+      chainId: chainInfo.config.chainId,
+      rpc: chainInfo.config.rpc,
+      feeAmount: chainInfo.config.gasPriceStep.average,
+    };
 
     if (
       data.policyMetadata.percentage !== 0 ||
       data.policyMetadata.threshold !== 0
     ) {
-
       const getPeriod = (duration, period) => {
         let time;
-        if(duration === DAYS) time = 24 * 60 * 60;
+        if (duration === DAYS) time = 24 * 60 * 60;
         else if (duration === "Hours") time = 60 * 60;
         else if (duration === "Minutes") time = 60;
         else time = 1;
 
         time = time * Number(period);
         return time;
-      }
+      };
 
       if (data?.policyMetadata) {
         dataObj["policyMetadata"] = {
           ...data.policyMetadata,
-          minExecPeriod: getPeriod(data.policyMetadata?.minExecPeriodDuration, data.policyMetadata?.minExecPeriod),
-          votingPeriod: getPeriod(data.policyMetadata?.votingPeriodDuration, data.policyMetadata?.votingPeriod),
+          minExecPeriod: getPeriod(
+            data.policyMetadata?.minExecPeriodDuration,
+            data.policyMetadata?.minExecPeriod
+          ),
+          votingPeriod: getPeriod(
+            data.policyMetadata?.votingPeriodDuration,
+            data.policyMetadata?.votingPeriod
+          ),
         };
       }
 
@@ -119,9 +123,7 @@ const GroupPolicies = ({ id, wallet }) => {
           Number(dataObj.policyMetadata.percentage) / 100.0;
       }
     }
-    dispatch(
-      txAddGroupPolicy(dataObj)
-    );
+    dispatch(txAddGroupPolicy(dataObj));
   };
 
   const {
@@ -264,14 +266,14 @@ const GroupPolicies = ({ id, wallet }) => {
 };
 
 const GroupMembers = (props) => {
-  const { id, wallet, isAdmin, onAddMembers } = props;
+  const { id, wallet, isAdmin, onAddMembers, chainInfo } = props;
 
   const dispatch = useDispatch();
 
   const getGroupmembers = () => {
     dispatch(
       getGroupMembersById({
-        baseURL: wallet?.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         id: id,
         pagination: { limit: 100, key: "" },
       })
@@ -315,7 +317,7 @@ GroupMembers.propTypes = {
 };
 
 const UpdateGroupMember = (props) => {
-  const { id, wallet, members, onCancel } = props;
+  const { id, members, onCancel, chainInfo, address } = props;
   const updateRes = useSelector((state) => state.group.updateGroupRes);
 
   useEffect(() => {
@@ -366,8 +368,6 @@ const UpdateGroupMember = (props) => {
 
   const dispatch = useDispatch();
   const handleUpdate = (allMembers) => {
-    const chainInfo = wallet?.chainInfo;
-
     let membersMap = {};
     for (let i = 0; i < members.length; i++) {
       membersMap[members[i].member.address] = {
@@ -399,7 +399,7 @@ const UpdateGroupMember = (props) => {
     }
 
     const dataObj = {
-      admin: wallet?.address,
+      admin: address,
       groupId: id,
       members: result,
       denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
@@ -565,6 +565,20 @@ function Group() {
   const groupInfo = useSelector((state) => state.group.groupInfo);
 
   const membersInfo = useSelector((state) => state.group.groupMembers);
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const [currentNetwork, setCurrentNetwork] = useState(
+    params?.networkName || selectedNetwork.toLowerCase()
+  );
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const address =
+    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+
+  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+
   const wallet = useSelector((state) => state.wallet);
   const { connected } = wallet;
 
@@ -572,7 +586,7 @@ function Group() {
   const getGroup = () => {
     dispatch(
       getGroupById({
-        baseURL: wallet.chainInfo.config.rest,
+        baseURL: chainInfo?.config?.rest,
         id: params.id,
       })
     );
@@ -581,7 +595,7 @@ function Group() {
   const getMembers = () => {
     dispatch(
       getGroupMembersById({
-        baseURL: wallet.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         id: params.id,
         pagination: { limit: 100, key: "" },
       })
@@ -625,7 +639,7 @@ function Group() {
               handleTabChange={(i) => setTabIndex(i)}
             />
             <TabPanel value={tabIndex} index={0}>
-              {isAdmin(wallet?.address) ? (
+              {isAdmin(address) ? (
                 <>
                   <Box
                     component="div"
@@ -650,8 +664,9 @@ function Group() {
                   {showUpdateMembers ? (
                     <UpdateGroupMember
                       id={params?.id}
-                      wallet={wallet}
                       members={membersInfo.members}
+                      chainInfo={chainInfo}
+                      address={address}
                       onCancel={() => setShowUpdateMembers(!showUpdateMembers)}
                     />
                   ) : null}
@@ -661,13 +676,14 @@ function Group() {
                 <GroupMembers
                   id={params?.id}
                   wallet={wallet}
+                  chainInfo={chainInfo}
                   isAdmin={isAdmin(wallet?.address)}
                   onAddMembers={() => setShowUpdateMembers(true)}
                 />
               ) : null}
             </TabPanel>
             <TabPanel value={tabIndex} index={1}>
-              <GroupPolicies id={params?.id} wallet={wallet} />
+              <GroupPolicies id={params?.id} chainInfo={chainInfo} />
             </TabPanel>
             <TabPanel value={tabIndex} index={2}>
               <ActiveProposals id={params?.id} wallet={wallet} />

@@ -26,6 +26,10 @@ import { setFeegrant as setFeegrantState } from "../features/common/commonSlice"
 import Authz from "./authz/Authz";
 import NewAuthz from "./authz/NewAuthz";
 import StakingOverview from "./stakingOverview/StakingOverview";
+import GroupPage from "./GroupPage";
+import Group from "./group/Group";
+import Policy from "./group/Policy";
+import CreateProposal from "./group/CreateProposal";
 
 export const ContextData = React.createContext();
 
@@ -184,7 +188,7 @@ export default function Home() {
           ></Route>
 
           <Route path="/:networkName/daos" element={
-            <GroupPageV1 />
+            <GroupPage />
           } />
 
           <Route path="/:networkName/multisig" element={
@@ -217,6 +221,18 @@ export default function Home() {
 
           <Route path="/:networkName/authz/new" element={
             <NewAuthz />
+          } />
+
+          <Route path="/:networkName/daos/:id" element={
+            <Group />
+          } />
+
+          <Route path="/:networkName/daos/:id/policies/:policyId" element={
+            <Policy />
+          } />
+
+          <Route path="/:networkName/daos/:id/policies/:policyAddress/proposals" element={
+            <CreateProposal />
           } />
 
           <Route path="*" element={<Page404 />}></Route>

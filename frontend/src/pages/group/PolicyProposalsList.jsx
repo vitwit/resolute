@@ -20,6 +20,7 @@ import { Box } from "@mui/system";
 function PolicyProposalsList(props) {
   const dispatch = useDispatch();
   const params = useParams();
+  const { chainInfo, address } = props;
 
   const proposals = useSelector((state) => state.group?.proposals);
   const wallet = useSelector((state) => state.wallet);
@@ -28,11 +29,12 @@ function PolicyProposalsList(props) {
     (state) => state.group?.groupProposalRes
   );
   const navigate = useNavigate();
+  const { networkName } = params;
 
   const getProposals = () => {
     dispatch(
       getGroupPolicyProposals({
-        baseURL: wallet?.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         address: params?.policyId,
       })
     );
@@ -51,12 +53,11 @@ function PolicyProposalsList(props) {
   };
 
   const onConfirm = (voteObj) => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txGroupProposalVote({
-        admin: wallet?.address,
-        voter: wallet?.address,
+        admin: address,
+        voter: address,
         option: voteObj?.vote,
         proposalId: voteObj?.proposalId,
         chainId: chainInfo?.config?.chainId,
@@ -68,7 +69,6 @@ function PolicyProposalsList(props) {
   };
 
   const onExecute = (proposalId) => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txGroupProposalExecute({
@@ -109,7 +109,7 @@ function PolicyProposalsList(props) {
           disableElevation
           onClick={() => {
             navigate(
-              `/group/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
+              `/${networkName}/daos/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
             );
           }}
         >
@@ -149,7 +149,7 @@ function PolicyProposalsList(props) {
             }}
             onClick={() => {
               navigate(
-                `/group/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
+                `/${networkName}/daos/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
               );
             }}
           >

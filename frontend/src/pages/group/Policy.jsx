@@ -652,7 +652,20 @@ function Policy() {
   const [showEditForm, setShowEditForm] = useState(false);
   const dispatch = useDispatch();
 
-  const wallet = useSelector((state) => state.wallet);
+  const params = useParams();
+
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork);
+
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const address =
+    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+
+  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  
   const updateMetadataRes = useSelector(
     (state) => state.group.updateGroupMetadataRes
   );
@@ -669,7 +682,6 @@ function Policy() {
   }, [updateMetadataRes?.status]);
 
   const handleSubmitPolicy = (policyMetadata) => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txUpdateGroupPolicy({
@@ -685,7 +697,6 @@ function Policy() {
   };
 
   const handlePolicyMetadata = () => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txUpdateGroupPolicyMetdata({
@@ -701,7 +712,6 @@ function Policy() {
   };
 
   const handleUpdateAdmin = () => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txUpdateGroupPolicyAdmin({
@@ -718,9 +728,9 @@ function Policy() {
 
   return (
     <Box>
-      <PolicyInfo />
+      <PolicyInfo chainInfo={chainInfo} address={address} />
       <CreateProposal policyInfo={policyInfo} />
-      <PolicyProposalsList policyInfo={policyInfo} />
+      <PolicyProposalsList chainInfo={chainInfo} address={address} policyInfo={policyInfo} />
     </Box>
   );
 }

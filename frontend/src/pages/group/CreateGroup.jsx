@@ -63,12 +63,12 @@ export default function CreateGroupStepper() {
       admin: address,
       members: data.members.members,
       groupMetaData: data.groupMetaData,
-      chainId: chainInfo.config.chainId,
-      feeAmount: chainInfo.config.gasPriceStep.average,
+      chainId: chainInfo?.config?.chainId,
+      feeAmount: chainInfo?.config?.gasPriceStep.average,
       denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
-      rest: chainInfo.config.rest,
-      aminoConfig: chainInfo.aminoConfig,
-      prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+      rest: chainInfo?.config?.rest,
+      aminoConfig: chainInfo?.aminoConfig,
+      prefix: chainInfo?.config?.bech32Config.bech32PrefixAccAddr,
     };
 
     if (
