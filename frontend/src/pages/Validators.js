@@ -126,13 +126,10 @@ export default function Validators(props) {
         break;
       case "redelegate":
         let isValidRedelegation = false;
-        if (delegations?.delegations.delegations.length > 0) {
-          for (
-            let i = 0;
-            i < delegations?.delegations?.delegations.length;
-            i++
-          ) {
-            let item = delegations?.delegations?.delegations[i];
+        let delegationsList = delegations?.delegations?.delegations;
+        if (delegationsList?.length > 0) {
+          for (let i = 0; i < delegationsList?.length; i++) {
+            let item = delegationsList?.[i];
             if (
               item.delegation.validator_address === validator.operator_address
             ) {

@@ -15,11 +15,7 @@ function parseValidators(active, inactive, validator) {
   let result = [];
 
   for (const v in active) {
-    // if (v !== validator?.operator_address)
-    result.push({
-      addr: v,
-      label: active[v].description.moniker,
-    });
+    result = [...result, { addr: v, label: active[v]?.description?.moniker }];
   }
 
   for (const v in inactive) {
@@ -33,7 +29,7 @@ function parseValidators(active, inactive, validator) {
   return result;
 }
 
-function parseDelegation(delegations, validator, currency) {
+function parseDelegation(delegations = [], validator = {}, currency = {}) {
   let result = 0.0;
   delegations.map((item) => {
     if (item.delegation.validator_address === validator?.operator_address) {
@@ -61,7 +57,6 @@ export function DialogRedelegate(props) {
   } = props;
 
   const targetValidators = parseValidators(active, inactive, validator);
-
   const delegationShare = parseDelegation(delegations, validator, currency);
 
   const handleClose = () => {

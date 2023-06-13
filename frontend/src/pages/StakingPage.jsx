@@ -17,10 +17,12 @@ export default function StakingPage() {
   const navigate = useNavigate();
   const nameToChainIDs = wallet.nameToChainIDs;
   let currentNetwork = params.networkName;
+  const defaultChain = "cosmoshub";
 
   useEffect(() => {
-    dispatch(stakingResetDefaultState(Object.keys(networks)));
-    dispatch(distributionResetDefaultState(Object.keys(networks)));
+    let networkIDs = Object.keys(networks);
+    dispatch(stakingResetDefaultState(networkIDs));
+    dispatch(distributionResetDefaultState(networkIDs));
   }, [wallet]);
 
   const handleOnSelect = (chainName) => {
@@ -42,7 +44,7 @@ export default function StakingPage() {
             defaultNetwork={
               currentNetwork?.length > 0
                 ? currentNetwork.toLowerCase().replace(/ /g, "")
-                : "cosmoshub"
+                : defaultChain
             }
           />
         </Box>

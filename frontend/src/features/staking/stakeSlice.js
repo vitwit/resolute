@@ -481,11 +481,13 @@ export const stakeSlice = createSlice({
         }
         state.chains[chainID].validators.errMsg = "";
 
+        let customSort = ([, a], [, b]) => {
+          return b.tokens - a.tokens;
+        }
+
         const activeSort = Object.fromEntries(
           Object.entries(state.chains[chainID].validators.active).sort(
-            ([, a], [, b]) => {
-              return b.tokens - a.tokens;
-            }
+            customSort
           )
         );
 
@@ -493,9 +495,7 @@ export const stakeSlice = createSlice({
 
         const inactiveSort = Object.fromEntries(
           Object.entries(state.chains[chainID].validators.inactive).sort(
-            ([, a], [, b]) => {
-              return b.tokens - a.tokens;
-            }
+            customSort
           )
         );
         state.chains[chainID].validators.inactiveSorted =
