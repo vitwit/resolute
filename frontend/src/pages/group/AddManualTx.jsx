@@ -149,8 +149,8 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
     dispatch(
       txCreateGroupProposal({
         metadata: data?.metadata,
-        admin: wallet?.address,
-        proposers: [wallet?.address],
+        admin: address,
+        proposers: [address],
         messages: messages,
         groupPolicyAddress: address,
         chainId: chainInfo?.config?.chainId,
