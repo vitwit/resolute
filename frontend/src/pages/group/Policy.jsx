@@ -657,7 +657,7 @@ function Policy() {
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
-  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork);
+  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork.toLowerCase());
 
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
@@ -676,6 +676,11 @@ function Policy() {
   } catch (error) {
     console.log("Errot while getting policy", error?.message);
   }
+
+  useEffect(() => {
+    if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
+    else setCurrentNetwork("cosmoshub");
+  }, [params]);
 
   useEffect(() => {
     if (updateMetadataRes?.status === "idle") setShowMetadataInput(false);

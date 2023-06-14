@@ -20,6 +20,7 @@ import { Decimal } from "@cosmjs/math";
 import {
   getAllValidators,
   getDelegations,
+  resetDefaultState,
 } from "../../features/staking/stakeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -92,24 +93,25 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
   });
   const dispatch = useDispatch();
 
-  const validators = useSelector((state) => state.staking.validators);
+  const validators = null;
   const wallet = useSelector((state) => state.wallet);
 
   useEffect(() => {
     dispatch(
       getAllValidators({
-        baseURL: chainInfo.config.rest,
+        baseURL: chainInfo?.config?.rest,
+        chainID: chainInfo?.config?.chainId,
         status: null,
       })
     );
-
     dispatch(
       getDelegations({
-        baseURL: chainInfo.config.rest,
         address: address,
+        baseURL: chainInfo?.config?.rest,
+        chainID: chainInfo?.config?.chainId,
       })
     );
-  }, []);
+  }, [chainInfo, wallet]);
 
   var createRes = useSelector((state) => state.group.groupProposalRes);
 
@@ -312,7 +314,7 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
                 </Typography>
                 <TxMsgsList
                   onDelete={onDelete}
-                  currency={wallet?.chainInfo?.config?.currencies?.[0]}
+                  currency={currency}
                   messages={messages}
                 />
 

@@ -46,7 +46,7 @@ function PolicyProposalsList(props) {
 
   useEffect(() => {
     getProposals();
-  }, []);
+  }, [chainInfo]);
 
   const onVoteDailogClose = () => {
     setVoteOpen(false);

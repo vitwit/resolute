@@ -37,7 +37,7 @@ const LabelValue = ({ text, toolTip }) => (
 );
 
 const GroupInfo = (props) => {
-  const { id, wallet } = props;
+  const { id, wallet, chainInfo, address } = props;
 
   const dispatch = useDispatch();
   const [showAdminInput, setShowAdminInput] = useState(false);
@@ -55,7 +55,7 @@ const GroupInfo = (props) => {
   const { data, status } = groupInfo;
 
   const canLeaveGroup = membersInfo?.members.some((element) => {
-    if (element?.member?.address === wallet?.address) return true;
+    if (element?.member?.address === address) return true;
     return false;
   });
 
@@ -67,12 +67,12 @@ const GroupInfo = (props) => {
     (state) => state.group.updateGroupMetadataRes
   );
 
-  const canUpdateGroup = () => data?.admin === wallet?.address;
+  const canUpdateGroup = () => data?.admin === address;
 
   const getGroup = () => {
     dispatch(
       getGroupById({
-        baseURL: wallet?.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         id: id,
       })
     );
@@ -93,10 +93,9 @@ const GroupInfo = (props) => {
   }, [updateMetadataRes?.status]);
 
   const handleLeaveGroup = () => {
-    const chainInfo = wallet?.chainInfo;
     dispatch(
       txLeaveGroupMember({
-        admin: wallet?.address,
+        admin: address,
         groupId: id,
         denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
         chainId: chainInfo.config.chainId,
@@ -109,10 +108,9 @@ const GroupInfo = (props) => {
   };
 
   const UpdateAdmin = () => {
-    const chainInfo = wallet?.chainInfo;
     dispatch(
       txUpdateGroupAdmin({
-        signer: wallet?.address,
+        signer: address,
         admin: data?.admin,
         groupId: id,
         newAdmin: admin,
@@ -127,10 +125,9 @@ const GroupInfo = (props) => {
   };
 
   const UpdateMetadata = () => {
-    const chainInfo = wallet?.chainInfo;
     dispatch(
       txUpdateGroupMetadata({
-        signer: wallet?.address,
+        signer: address,
         admin: data?.admin,
         groupId: id,
         metadata,
@@ -414,7 +411,7 @@ const GroupInfo = (props) => {
           </Box>
         ) : null}
       </Paper>
-      {data?.metadata?<UpdateGroupInfoDialog data={data} wallet={wallet} open={open} id={id} dialogCloseHandle={dialogCloseHandle} groupName={JSON.parse(data?.metadata).name} forumUrl={JSON.parse(data?.metadata).forumUrl} description={JSON.parse(data?.metadata).description} />:null}
+      {data?.metadata?<UpdateGroupInfoDialog data={data} chainInfo={chainInfo} address={address} open={open} id={id} dialogCloseHandle={dialogCloseHandle} groupName={JSON.parse(data?.metadata).name} forumUrl={JSON.parse(data?.metadata).forumUrl} description={JSON.parse(data?.metadata).description} />:null}
     </Box>
   );
 };
@@ -422,6 +419,8 @@ const GroupInfo = (props) => {
 GroupInfo.propTypes = {
   id: PropTypes.string.isRequired,
   wallet: PropTypes.object.isRequired,
+  chainInfo: PropTypes.object.isRequired,
+  address: PropTypes.string.isRequired,
 };
 
 export default GroupInfo;

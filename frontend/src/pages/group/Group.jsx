@@ -632,7 +632,12 @@ function Group() {
     <>
       {groupInfo.status === "idle" && groupInfo.data ? (
         <Box>
-          <GroupInfo id={params?.id} wallet={wallet} />
+          <GroupInfo
+            id={params?.id}
+            wallet={wallet}
+            chainInfo={chainInfo}
+            address={address}
+          />
           <Paper sx={{ mt: 2 }} elevation={0}>
             <GroupTab
               tabs={groupInfoTabs}
@@ -677,7 +682,7 @@ function Group() {
                   id={params?.id}
                   wallet={wallet}
                   chainInfo={chainInfo}
-                  isAdmin={isAdmin(wallet?.address)}
+                  isAdmin={isAdmin(address)}
                   onAddMembers={() => setShowUpdateMembers(true)}
                 />
               ) : null}

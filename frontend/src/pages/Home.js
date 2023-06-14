@@ -30,6 +30,8 @@ import GroupPage from "./GroupPage";
 import Group from "./group/Group";
 import Policy from "./group/Policy";
 import CreateProposal from "./group/CreateProposal";
+import AuthzPage from "./AuthzPage";
+import { resetDefaultState } from "../features/staking/stakeSlice";
 
 export const ContextData = React.createContext();
 
@@ -117,6 +119,13 @@ export default function Home() {
   useEffect(() => {
     setValue(getTabIndex(page));
   }, []);
+
+  const wallet = useSelector((state) => state.wallet);
+
+  useEffect(() => {
+    const chainIds = Object.keys(wallet.networks);
+    dispatch(resetDefaultState(chainIds));
+  }, [wallet]);
   
   return (
     <Box>
@@ -145,7 +154,7 @@ export default function Home() {
           <Route
             path="/"
             element={
-              <OverviewPage />
+              <OverviewPage setValue={setValue} />
             }
           />
 
@@ -233,6 +242,10 @@ export default function Home() {
 
           <Route path="/:networkName/daos/:id/policies/:policyAddress/proposals" element={
             <CreateProposal />
+          } />
+
+          <Route path="/daos" element={
+            <GroupPage />
           } />
 
           <Route path="*" element={<Page404 />}></Route>

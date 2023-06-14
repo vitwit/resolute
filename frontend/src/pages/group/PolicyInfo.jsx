@@ -65,7 +65,7 @@ function PolicyInfo({ chainInfo, address }) {
   useEffect(() => {
     getGroup();
     getPolicies();
-  }, []);
+  }, [chainInfo]);
 
   useEffect(() => {
     const data = groupPoliceis?.data?.group_policies || [];

@@ -5,14 +5,16 @@ import { Paper } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import GroupTab, { TabPanel } from "../components/group/GroupTab";
 import CardSkeleton from "../components/group/CardSkeleton";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SelectNetwork from "../components/common/SelectNetwork";
+import { resetDefaultState } from "../features/staking/stakeSlice";
 
 const AdminGroupList = lazy(() => import("./group/AdminGroupList"));
 const MemberGroupList = lazy(() => import("./group/MemberGroupList"));
 
 export default function GroupPage() {
   const [tab, setTab] = useState(0);
+  const dispatch = useDispatch();
 
   const handleTabChange = (value) => {
     setTab(value);

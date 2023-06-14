@@ -1,13 +1,15 @@
 import { Paper, Typography } from "@mui/material";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { resetDefaultState } from "../../features/staking/stakeSlice";
 import AddManualTx from "./AddManualTx";
 
 function CreateProposal() {
   const [type, setType] = React.useState(null);
   const params = useParams();
-  
+  const dispatch = useDispatch();
+
   const { policyAddress } = params;
 
   const selectedNetwork = useSelector(
@@ -18,6 +20,7 @@ function CreateProposal() {
   );
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const stakingChains = useSelector((state) => state.staking.chains);
 
   const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
 
@@ -41,12 +44,15 @@ function CreateProposal() {
         }}
         elevation={0}
       >
-        
-        <AddManualTx
-          address={policyAddress}
-          chainInfo={chainInfo}
-          handleCancel={() => setType(null)}
-        />
+        {Object.keys(stakingChains).length > 0 ? (
+          <AddManualTx
+            address={policyAddress}
+            chainInfo={chainInfo}
+            handleCancel={() => setType(null)}
+          />
+        ) : (
+          <></>
+        )}
       </Paper>
     </>
   );
