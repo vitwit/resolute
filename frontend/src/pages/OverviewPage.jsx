@@ -9,6 +9,7 @@ import { resetDefaultState as stakingResetDefaultState } from "../features/staki
 import Overview from "./Overview";
 
 export default function OverviewPage() {
+  const defaultChainName = "cosmoshub";
   const wallet = useSelector((state) => state.wallet);
   const networks = useSelector((state) => state.wallet.networks);
   const dispatch = useDispatch();
@@ -48,7 +49,7 @@ export default function OverviewPage() {
           defaultNetwork={
             currentNetwork?.length > 0
               ? currentNetwork.toLowerCase().replace(/ /g, "")
-              : "cosmoshub"
+              : defaultChainName
           }
         />
       </Box>
