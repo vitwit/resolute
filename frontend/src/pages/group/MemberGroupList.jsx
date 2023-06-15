@@ -19,13 +19,13 @@ function MemberGroupList() {
   );
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-
+  const chainID = nameToChainIDs[currentNetwork]
   const address =
-    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+    networks[chainID]?.walletInfo.bech32Address;
 
-  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  const chainInfo = networks[chainID]?.network;
 
-  const groups = useSelector((state) => state.group.groups);
+  const groups = useSelector((state) => state.group.groups?.[chainID]);
 
   const fetchGroupsByMember = (offset = 0, limit = PER_PAGE) => {
     dispatch(
@@ -36,6 +36,7 @@ function MemberGroupList() {
           offset,
           limit,
         },
+        chainID: chainID,
       })
     );
   };
@@ -63,8 +64,8 @@ function MemberGroupList() {
       total={memberTotal}
       handlePagination={handlePagination}
       paginationKey={groups?.member?.pagination?.next_key}
-      groups={groups.member.list}
-      status={groups.member.status}
+      groups={groups?.member?.list}
+      status={groups?.member?.status}
       notFoundText="Not part of any group"
       showNotFoundAction={false}
     />

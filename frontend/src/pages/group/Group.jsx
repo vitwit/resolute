@@ -562,7 +562,6 @@ UpdateGroupMember.propTypes = {
 function Group() {
   const params = useParams();
   const [tabIndex, setTabIndex] = useState(0);
-  const groupInfo = useSelector((state) => state.group.groupInfo);
 
   const membersInfo = useSelector((state) => state.group.groupMembers);
   const selectedNetwork = useSelector(
@@ -573,12 +572,13 @@ function Group() {
   );
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-
+  const chainID = nameToChainIDs[currentNetwork];
   const address =
-    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+    networks[chainID]?.walletInfo.bech32Address;
 
-  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  const chainInfo = networks[chainID]?.network;
 
+  const groupInfo = useSelector((state) => state.group.groupInfo?.[chainID]);
   const wallet = useSelector((state) => state.wallet);
   const { connected } = wallet;
 
@@ -588,6 +588,7 @@ function Group() {
       getGroupById({
         baseURL: chainInfo?.config?.rest,
         id: params.id,
+        chainID: chainID,
       })
     );
   };
@@ -598,6 +599,7 @@ function Group() {
         baseURL: chainInfo?.config?.rest,
         id: params.id,
         pagination: { limit: 100, key: "" },
+        chainID: chainID,
       })
     );
   };
@@ -634,9 +636,9 @@ function Group() {
         <Box>
           <GroupInfo
             id={params?.id}
-            wallet={wallet}
             chainInfo={chainInfo}
             address={address}
+            chainID={chainID}
           />
           <Paper sx={{ mt: 2 }} elevation={0}>
             <GroupTab

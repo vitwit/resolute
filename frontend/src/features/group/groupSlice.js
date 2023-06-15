@@ -43,25 +43,11 @@ const initialState = {
     status: "idle",
     type: "",
   },
-  groups: {
-    // admin: {
-    //   list: [],
-    //   pagination: {},
-    //   status: "idle",
-    // },
-    // member: {
-    //   list: [],
-    //   pagination: {},
-    //   status: "idle",
-    // },
-  },
+  groups: {},
   members: {
     data: [],
   },
-  groupInfo: {
-    status: "idle",
-    data: {},
-  },
+  groupInfo: {},
   groupMembers: {
     status: "idle",
     members: [],
@@ -111,7 +97,10 @@ export const getGroupById = createAsyncThunk(
   "group/group-by-id",
   async (data) => {
     const response = await groupService.fetchGroupById(data.baseURL, data.id);
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -123,7 +112,10 @@ export const getGroupMembersById = createAsyncThunk(
       data.id,
       data.pagination
     );
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -170,7 +162,10 @@ export const getGroupsByMember = createAsyncThunk(
       data.address,
       data.pagination
     );
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -902,28 +897,26 @@ export const groupSlice = createSlice({
     builder
       .addCase(getGroupsByAdmin.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID || "";
-        if(chainID.length > 0)  {
-          let result = {
-            admin: {
+        if(chainID.length)  {
+          let admin = {
               list: [],
               pagination: {},
               status: "pending",
             }
-          }
-          state.groups[chainID] = result;
+          const previousState = state.groups[chainID]
+          state.groups[chainID] = {...previousState, admin};
         }
       })
       .addCase(getGroupsByAdmin.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
         if(chainID.length > 0)  {
-          let result = {
-            admin: {
+          let admin = {
               list: action.payload?.data?.groups,
               pagination: action.payload?.data?.pagination,
               status: "idle",
             }
-          }
-          state.groups[chainID] = result;
+          const previousState = state.groups[chainID]
+          state.groups[chainID] = {...previousState, admin};
         }
       })
       .addCase(getGroupsByAdmin.rejected, (state, action) => {
@@ -932,17 +925,32 @@ export const groupSlice = createSlice({
       });
 
     builder
-      .addCase(getGroupsByMember.pending, (state) => {
-        state.groups.member.status = "pending";
-        state.groups.member.list = [];
+      .addCase(getGroupsByMember.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if(chainID.length > 0)  {
+          let member = {
+              list: [],
+              pagination: {},
+              status: "pending",
+            }
+          const previousState = state.groups[chainID]
+          state.groups[chainID] = {...previousState, member};
+        }
       })
       .addCase(getGroupsByMember.fulfilled, (state, action) => {
-        state.groups.member.list = action.payload.groups;
-        state.groups.member.pagination = action.payload.pagination;
-        state.groups.member.status = "idle";
+        const chainID = action.payload?.chainID || "";
+        if(chainID.length > 0)  {
+          let member = {
+              list: action.payload?.data?.groups,
+              pagination: action.payload?.data?.pagination,
+              status: "idle",
+            }
+          const previousState = state.groups[chainID]
+          state.groups[chainID] = {...previousState, member};
+        }
       })
       .addCase(getGroupsByMember.rejected, (state, action) => {
-        state.groups.member.status = "idle";
+        // state.groups.member.status = "idle";
         // TODO: handle error
       });
 
@@ -973,15 +981,28 @@ export const groupSlice = createSlice({
       });
 
     builder
-      .addCase(getGroupById.pending, (state) => {
-        state.groupInfo.status = `pending`;
+      .addCase(getGroupById.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if(chainID.length) {
+          let result = {
+            status: "pending",
+            data: {},
+          }
+          state.groupInfo[chainID] = result;
+        }
       })
       .addCase(getGroupById.fulfilled, (state, action) => {
-        state.groupInfo.status = "idle";
-        state.groupInfo.data = action.payload?.info || {};
+        const chainID = action.payload?.chainID || "";
+        if(chainID.length)  {
+          let result = {
+            status: "idle",
+            data: action.payload?.data?.info || {},
+          }
+          state.groupInfo[chainID] = result;
+        }
       })
       .addCase(getGroupById.rejected, (state, _) => {
-        state.groupInfo.status = `rejected`;
+        // state.groupInfo.status = `rejected`;
       });
 
     builder

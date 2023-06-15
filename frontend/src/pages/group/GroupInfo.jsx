@@ -37,7 +37,7 @@ const LabelValue = ({ text, toolTip }) => (
 );
 
 const GroupInfo = (props) => {
-  const { id, wallet, chainInfo, address } = props;
+  const { id, chainInfo, address, chainID} = props;
 
   const dispatch = useDispatch();
   const [showAdminInput, setShowAdminInput] = useState(false);
@@ -50,7 +50,7 @@ const GroupInfo = (props) => {
     setDialogOpen(!open)
   }
 
-  const groupInfo = useSelector((state) => state.group.groupInfo);
+  const groupInfo = useSelector((state) => state.group.groupInfo?.[chainID]);
   const membersInfo = useSelector((state) => state.group.groupMembers);
   const { data, status } = groupInfo;
 
@@ -74,6 +74,7 @@ const GroupInfo = (props) => {
       getGroupById({
         baseURL: chainInfo?.config?.rest,
         id: id,
+        chainID: chainID,
       })
     );
   };
