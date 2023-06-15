@@ -17,6 +17,7 @@ function ActiveProposals({ id, wallet }) {
       getGroupPolicyProposalsByPage({
         baseURL: wallet?.chainInfo?.config?.rest,
         groupId: id,
+        //chainID: chainID,
       })
     );
   };

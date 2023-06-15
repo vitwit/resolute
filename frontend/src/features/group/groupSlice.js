@@ -214,11 +214,17 @@ export const getGroupPolicyProposalsByPage = createAsyncThunk(
       totalData = [...totalData, ...filteredProposals];
 
       if (response?.data?.pagination?.next_key)
-        return getProposalsPagination(address, {
-          limit: 1,
-          key: response?.data?.pagination?.next_key,
-        });
-      else return totalData;
+        return {
+          data: getProposalsPagination(address, {
+            limit: 1,
+            key: response?.data?.pagination?.next_key,
+          }),
+          chainID: data.chainID,
+        }
+      else return {
+        data: totalData,
+        chainID: data.chainID,
+      }
     };
 
     if (allPolicies?.data?.group_policies?.length) {
@@ -234,8 +240,14 @@ export const getGroupPolicyProposalsByPage = createAsyncThunk(
         }
       }
 
-      return totalData;
-    } else return "";
+      return {
+        data: totalData,
+        chainID: data.chainID,
+      };
+    } else return {
+      data: "",
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -1275,15 +1287,28 @@ export const groupSlice = createSlice({
       });
 
     builder
-      .addCase(getGroupPolicyProposalsByPage.pending, (state) => {
-        state.policyProposals.status = `pending`;
+      .addCase(getGroupPolicyProposalsByPage.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            data: {},
+          };
+          state.policyProposals[chainID] = result;
+        }
       })
       .addCase(getGroupPolicyProposalsByPage.fulfilled, (state, action) => {
-        state.policyProposals.status = "idle";
-        state.policyProposals.data = action?.payload;
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          let result = {
+            data: action.payload?.data,
+            status: "idle",
+          };
+          state.policyProposals[chainID] = result;
+        }
       })
       .addCase(getGroupPolicyProposalsByPage.rejected, (state, _) => {
-        state.policyProposals.status = `rejected`;
+        // state.policyProposals.status = `rejected`;
       });
   },
 });
