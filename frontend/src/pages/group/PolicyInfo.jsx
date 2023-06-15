@@ -46,7 +46,7 @@ function PolicyInfo({ chainInfo, address, chainID }) {
     (state) => state.group.updateGroupMetadataRes
   );
 
-  const groupPoliceis = useSelector((state) => state?.group?.groupPolicies);
+  const groupPoliceis = useSelector((state) => state?.group?.groupPolicies?.[chainID]);
 
   const getPolicies = () => {
     dispatch(
@@ -57,6 +57,7 @@ function PolicyInfo({ chainInfo, address, chainID }) {
           key: "",
           limit: 100,
         },
+        chainID: chainID,
       })
     );
   };

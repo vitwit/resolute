@@ -63,6 +63,7 @@ const GroupPolicies = ({ id, chainInfo, chainID }) => {
         baseURL: chainInfo?.config?.rest,
         id: id,
         pagination: { limit: LIMIT, key: "" },
+        chainID: chainID,
       })
     );
   };
@@ -71,8 +72,9 @@ const GroupPolicies = ({ id, chainInfo, chainID }) => {
   }, []);
 
   let groupPolicies = [];
-  const groupInfo = useSelector((state) => state.group.groupPolicies);
-  const { data, status } = groupInfo;
+  const groupInfo = useSelector((state) => state.group?.groupPolicies?.[chainID]);
+  const data = groupInfo?.data;
+  const status = groupInfo?.status;
 
   if (data) {
     groupPolicies = data?.group_policies;
