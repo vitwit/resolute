@@ -172,7 +172,10 @@ export const getGroupMembers = createAsyncThunk(
       data.baseURL,
       data.groupId
     );
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -963,15 +966,28 @@ export const groupSlice = createSlice({
       });
 
     builder
-      .addCase(getGroupMembers.pending, (state) => {
-        state.members.status = `pending`;
+      .addCase(getGroupMembers.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            data: [],
+          };
+          state.members[chainID] = result;
+        }
       })
       .addCase(getGroupMembers.fulfilled, (state, action) => {
-        state.members.status = "idle";
-        state.members.data = [...state.members.data, action.payload];
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          let result = {
+            data: [...state.members[chainID].data, action.payload?.data],
+            status: "idle",
+          };
+          state.members[chainID] = result;
+        }
       })
       .addCase(getGroupMembers.rejected, (state, _) => {
-        state.members.status = `rejected`;
+        // state.members.status = `rejected`;
       });
 
     builder
