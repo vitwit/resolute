@@ -20,9 +20,9 @@ import { Box } from "@mui/system";
 function PolicyProposalsList(props) {
   const dispatch = useDispatch();
   const params = useParams();
-  const { chainInfo, address } = props;
+  const { chainInfo, address, chainID } = props;
 
-  const proposals = useSelector((state) => state.group?.proposals);
+  const proposals = useSelector((state) => state.group?.proposals?.[chainID]);
   const wallet = useSelector((state) => state.wallet);
   const [voteOpen, setVoteOpen] = useState(false);
   const createProposalRes = useSelector(
@@ -36,6 +36,7 @@ function PolicyProposalsList(props) {
       getGroupPolicyProposals({
         baseURL: chainInfo?.config?.rest,
         address: params?.policyId,
+        chainID: chainID,
       })
     );
   };

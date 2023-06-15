@@ -59,9 +59,7 @@ const initialState = {
     status: "idle",
   },
   leaveGroupRes: {},
-  proposalVotes: {
-    // data: [],
-  },
+  proposalVotes: {},
   groupProposal: {},
   updateGroupPolicyRes: {},
   updateGroupAdminRes: {},
@@ -247,7 +245,10 @@ export const getGroupPolicyProposals = createAsyncThunk(
       data.pagination
     );
 
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -1099,15 +1100,28 @@ export const groupSlice = createSlice({
       });
 
     builder
-      .addCase(getGroupPolicyProposals.pending, (state) => {
-        state.proposals.status = `pending`;
+      .addCase(getGroupPolicyProposals.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            data: {},
+          };
+          state.proposals[chainID] = result;
+        }
       })
       .addCase(getGroupPolicyProposals.fulfilled, (state, action) => {
-        state.proposals.status = "idle";
-        state.proposals.data = action.payload;
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "idle",
+            data: action.payload?.data,
+          };
+          state.proposals[chainID] = result;
+        }
       })
       .addCase(getGroupPolicyProposals.rejected, (state, _) => {
-        state.proposals.status = `rejected`;
+        // state.proposals.status = `rejected`;
       });
 
     builder

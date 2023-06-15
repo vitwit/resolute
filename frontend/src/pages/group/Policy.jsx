@@ -389,6 +389,7 @@ const AllProposals = () => {
       getGroupPolicyProposals({
         baseURL: wallet?.chainInfo?.config?.rest,
         address: params?.policyId,
+        // chainID: chainID,
       })
     );
   };
@@ -736,7 +737,7 @@ function Policy() {
     <Box>
       <PolicyInfo chainInfo={chainInfo} address={address} chainID={chainID} />
       <CreateProposal policyInfo={policyInfo} />
-      <PolicyProposalsList chainInfo={chainInfo} address={address} policyInfo={policyInfo} />
+      <PolicyProposalsList chainInfo={chainInfo} address={address} policyInfo={policyInfo} chainID={chainID} />
     </Box>
   );
 }
