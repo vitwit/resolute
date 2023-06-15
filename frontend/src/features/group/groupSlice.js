@@ -133,7 +133,10 @@ export const getGroupProposalById = createAsyncThunk(
       data.baseURL,
       data.id
     );
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -1181,15 +1184,28 @@ export const groupSlice = createSlice({
       });
 
     builder
-      .addCase(getGroupProposalById.pending, (state) => {
-        state.groupProposal.status = `pending`;
+      .addCase(getGroupProposalById.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            data: {},
+          };
+          state.groupProposal[chainID] = result;
+        }
       })
       .addCase(getGroupProposalById.fulfilled, (state, action) => {
-        state.groupProposal.status = "idle";
-        state.groupProposal.data = action.payload;
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          let result = {
+            data: action.payload?.data,
+            status: "idle",
+          };
+          state.groupProposal[chainID] = result;
+        }
       })
       .addCase(getGroupProposalById.rejected, (state, _) => {
-        state.groupProposal.status = `rejected`;
+        // state.groupProposal.status = `rejected`;
       });
 
     builder
