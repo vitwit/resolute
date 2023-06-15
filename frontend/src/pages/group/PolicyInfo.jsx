@@ -21,7 +21,7 @@ import PolicyDetails from "../../components/group/PolicyDetails";
 import UpdatePolicyMetadataDialog from "../../components/group/UpdatePolicyMetadataDialog";
 import { DAYS, PERCENTAGE } from "./common";
 
-function PolicyInfo({ chainInfo, address }) {
+function PolicyInfo({ chainInfo, address, chainID }) {
   const [policyObj, setPolicyObj] = useState({});
   const [isEditPolicyForm, setEditPolicyForm] = useState(false);
   const [policyMetadataDialog, setPolicyMetadataDialog] = useState(false);
@@ -32,7 +32,6 @@ function PolicyInfo({ chainInfo, address }) {
   const dispatch = useDispatch();
   const { id, policyId } = useParams();
 
-  const wallet = useSelector((state) => state.wallet);
   const updateMetadataRes = useSelector(
     (state) => state.group.updateGroupMetadataRes
   );
@@ -137,7 +136,7 @@ function PolicyInfo({ chainInfo, address }) {
     );
   };
 
-  const groupInfo = useSelector((state) => state.group.groupInfo);
+  const groupInfo = useSelector((state) => state.group.groupInfo?.[chainID]);
   const canUpdateGroup = () => groupInfo?.data?.admin === address;
 
   const handleSubmitPolicy = (data) => {
@@ -245,6 +244,7 @@ function PolicyInfo({ chainInfo, address }) {
               policyObj={policyObj}
               handlePolicy={handleSubmitPolicy}
               handlePolicyClose={() => setEditPolicyForm(false)}
+              chainID={chainID}
             />
           ) : (
             <PolicyDetails
@@ -252,6 +252,7 @@ function PolicyInfo({ chainInfo, address }) {
               handleUpdateAdmin={handleUpdateAdmin}
               policyObj={policyObj}
               canUpdateGroup={canUpdateGroup()}
+              chainID={chainID}
             />
           )}
         </Paper>

@@ -51,10 +51,10 @@ const GroupInfo = (props) => {
   }
 
   const groupInfo = useSelector((state) => state.group.groupInfo?.[chainID]);
-  const membersInfo = useSelector((state) => state.group.groupMembers);
+  const membersInfo = useSelector((state) => state.group.groupMembers?.[chainID]);
   const { data, status } = groupInfo;
 
-  const canLeaveGroup = membersInfo?.members.some((element) => {
+  const canLeaveGroup = membersInfo?.members?.some((element) => {
     if (element?.member?.address === address) return true;
     return false;
   });
@@ -419,7 +419,6 @@ const GroupInfo = (props) => {
 
 GroupInfo.propTypes = {
   id: PropTypes.string.isRequired,
-  wallet: PropTypes.object.isRequired,
   chainInfo: PropTypes.object.isRequired,
   address: PropTypes.string.isRequired,
 };

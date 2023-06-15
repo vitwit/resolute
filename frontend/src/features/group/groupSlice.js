@@ -48,11 +48,7 @@ const initialState = {
     data: [],
   },
   groupInfo: {},
-  groupMembers: {
-    status: "idle",
-    members: [],
-    pagination: {},
-  },
+  groupMembers: {},
   groupPolicies: {},
   groupProposalRes: {
     status: "",
@@ -261,7 +257,6 @@ export const txGroupProposalVote = createAsyncThunk(
         data?.metadata || ""
       );
 
-
       const result = await signAndBroadcastGroupProposalVote(
         data.admin,
         [msg],
@@ -307,7 +302,6 @@ export const txGroupProposalExecute = createAsyncThunk(
     dispatch(setTxLoad());
     try {
       let msg = CreateProposalExecute(data.proposalId, data.executor);
-
 
       const result = await signAndBroadcastGroupProposalExecute(
         data.admin,
@@ -355,7 +349,11 @@ export const txUpdateGroupAdmin = createAsyncThunk(
     dispatch(setTxLoad());
 
     try {
-      const msg = NewMsgUpdateGroupAdmin(data.admin, data.groupId, data.newAdmin);
+      const msg = NewMsgUpdateGroupAdmin(
+        data.admin,
+        data.groupId,
+        data.newAdmin
+      );
 
       const result = await signAndBroadcast(
         data.chainId,
@@ -506,23 +504,23 @@ export const txCreateGroup = createAsyncThunk(
     let msg;
     try {
       if (data?.members?.length > 0) {
-          msg = NewMsgCreateGroupWithPolicy(
-            data.admin,
-            data.groupMetaData,
-            data.members,
-            data.policyData,
-            {
-              name: data.policyData?.name,
-              description:  data.policyData?.description,
-            },
-            data?.policyData?.policyAsAdmin
-          );
+        msg = NewMsgCreateGroupWithPolicy(
+          data.admin,
+          data.groupMetaData,
+          data.members,
+          data.policyData,
+          {
+            name: data.policyData?.name,
+            description: data.policyData?.description,
+          },
+          data?.policyData?.policyAsAdmin
+        );
       } else {
         msg = NewMsgCreateGroup(data.admin, data.groupMetaData, []);
       }
 
       const result = await signAndBroadcast(
-        data.chainId, 
+        data.chainId,
         data.aminoConfig,
         data.prefix,
         [msg],
@@ -572,7 +570,6 @@ export const txUpdateGroupMember = createAsyncThunk(
     dispatch(setTxLoad());
     try {
       msg = UpdateGroupMembers(data.admin, data.members, data.groupId);
-
 
       const result = await signAndBroadcastUpdateGroupMembers(
         data.admin,
@@ -674,7 +671,6 @@ export const txUpdateGroupPolicy = createAsyncThunk(
         data.policyMetadata
       );
 
-
       const result = await signAndBroadcastUpdateGroupPolicy(
         data.admin,
         [msg],
@@ -727,7 +723,6 @@ export const txUpdateGroupPolicyMetdata = createAsyncThunk(
         data.metadata
       );
 
-
       const result = await signAndBroadcastUpdateGroupPolicyMetadata(
         data.admin,
         [msg],
@@ -779,7 +774,6 @@ export const txUpdateGroupPolicyAdmin = createAsyncThunk(
         data.groupPolicyAddress,
         data.newAdmin
       );
-
 
       const result = await signAndBroadcastUpdateGroupPolicyAdmin(
         data.admin,
@@ -897,26 +891,26 @@ export const groupSlice = createSlice({
     builder
       .addCase(getGroupsByAdmin.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID || "";
-        if(chainID.length)  {
+        if (chainID.length) {
           let admin = {
-              list: [],
-              pagination: {},
-              status: "pending",
-            }
-          const previousState = state.groups[chainID]
-          state.groups[chainID] = {...previousState, admin};
+            list: [],
+            pagination: {},
+            status: "pending",
+          };
+          const previousState = state.groups[chainID];
+          state.groups[chainID] = { ...previousState, admin };
         }
       })
       .addCase(getGroupsByAdmin.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
-        if(chainID.length > 0)  {
+        if (chainID.length > 0) {
           let admin = {
-              list: action.payload?.data?.groups,
-              pagination: action.payload?.data?.pagination,
-              status: "idle",
-            }
-          const previousState = state.groups[chainID]
-          state.groups[chainID] = {...previousState, admin};
+            list: action.payload?.data?.groups,
+            pagination: action.payload?.data?.pagination,
+            status: "idle",
+          };
+          const previousState = state.groups[chainID];
+          state.groups[chainID] = { ...previousState, admin };
         }
       })
       .addCase(getGroupsByAdmin.rejected, (state, action) => {
@@ -927,26 +921,26 @@ export const groupSlice = createSlice({
     builder
       .addCase(getGroupsByMember.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID || "";
-        if(chainID.length > 0)  {
+        if (chainID.length > 0) {
           let member = {
-              list: [],
-              pagination: {},
-              status: "pending",
-            }
-          const previousState = state.groups[chainID]
-          state.groups[chainID] = {...previousState, member};
+            list: [],
+            pagination: {},
+            status: "pending",
+          };
+          const previousState = state.groups[chainID];
+          state.groups[chainID] = { ...previousState, member };
         }
       })
       .addCase(getGroupsByMember.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
-        if(chainID.length > 0)  {
+        if (chainID.length > 0) {
           let member = {
-              list: action.payload?.data?.groups,
-              pagination: action.payload?.data?.pagination,
-              status: "idle",
-            }
-          const previousState = state.groups[chainID]
-          state.groups[chainID] = {...previousState, member};
+            list: action.payload?.data?.groups,
+            pagination: action.payload?.data?.pagination,
+            status: "idle",
+          };
+          const previousState = state.groups[chainID];
+          state.groups[chainID] = { ...previousState, member };
         }
       })
       .addCase(getGroupsByMember.rejected, (state, action) => {
@@ -983,21 +977,21 @@ export const groupSlice = createSlice({
     builder
       .addCase(getGroupById.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID || "";
-        if(chainID.length) {
+        if (chainID.length) {
           let result = {
             status: "pending",
             data: {},
-          }
+          };
           state.groupInfo[chainID] = result;
         }
       })
       .addCase(getGroupById.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
-        if(chainID.length)  {
+        if (chainID.length) {
           let result = {
             status: "idle",
             data: action.payload?.data?.info || {},
-          }
+          };
           state.groupInfo[chainID] = result;
         }
       })
@@ -1006,16 +1000,31 @@ export const groupSlice = createSlice({
       });
 
     builder
-      .addCase(getGroupMembersById.pending, (state) => {
-        state.groupMembers.status = `pending`;
+      .addCase(getGroupMembersById.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            members: [],
+            pagination: {},
+            status: "pending",
+          };
+          state.groupMembers[chainID] = result;
+        }
+        // state.groupMembers.status = `pending`;
       })
       .addCase(getGroupMembersById.fulfilled, (state, action) => {
-        state.groupMembers.status = "idle";
-        state.groupMembers.members = action.payload?.members || [];
-        state.groupMembers.pagination = action.payload?.pagination || {};
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "idle",
+            members: action.payload?.data?.members || [],
+            pagination: action.payload?.data?.pagination || {},
+          };
+          state.groupMembers[chainID] = result;
+        }
       })
       .addCase(getGroupMembersById.rejected, (state, _) => {
-        state.groupMembers.status = `rejected`;
+        // state.groupMembers.status = `rejected`;
       });
 
     builder

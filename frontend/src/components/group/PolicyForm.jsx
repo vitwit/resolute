@@ -5,9 +5,9 @@ import CreateGroupPolicy from "../../pages/group/CreateGroupPolicy";
 import { useDispatch, useSelector } from "react-redux";
 import { DAYS, PERCENTAGE, THRESHOLD } from "../../pages/group/common";
 
-function PolicyForm({ handlePolicy, policyObj, handlePolicyClose }) {
+function PolicyForm({ handlePolicy, policyObj, handlePolicyClose, chainID }) {
   const groupMembersInfo = useSelector(
-    (state) => state.group.groupMembers.members
+    (state) => state.group.groupMembers?.[chainID].members
   );
   let groupMembers = [];
   for (let index in groupMembersInfo) {

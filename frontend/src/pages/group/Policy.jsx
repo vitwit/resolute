@@ -661,10 +661,11 @@ function Policy() {
 
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-  const address =
-    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+  const chainID = nameToChainIDs[currentNetwork]
+  const address = 
+    networks[chainID]?.walletInfo.bech32Address;
 
-  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  const chainInfo = networks[chainID]?.network;
   
   const updateMetadataRes = useSelector(
     (state) => state.group.updateGroupMetadataRes
@@ -733,7 +734,7 @@ function Policy() {
 
   return (
     <Box>
-      <PolicyInfo chainInfo={chainInfo} address={address} />
+      <PolicyInfo chainInfo={chainInfo} address={address} chainID={chainID} />
       <CreateProposal policyInfo={policyInfo} />
       <PolicyProposalsList chainInfo={chainInfo} address={address} policyInfo={policyInfo} />
     </Box>
