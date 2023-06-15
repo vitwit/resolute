@@ -19,14 +19,13 @@ function AdminGroupList() {
   );
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-
+  const chainID = nameToChainIDs[currentNetwork];
   const address =
-    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+    networks[chainID]?.walletInfo.bech32Address;
 
-  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  const chainInfo = networks[chainID]?.network;
 
-  const groups = useSelector((state) => state.group.groups);
-
+  const groups = useSelector((state) => state.group.groupsData?.[chainID].groups);
   const fetchGroupsByAdmin = (offset = 0, limit = PER_PAGE) => {
     dispatch(
       getGroupsByAdmin({
@@ -36,6 +35,7 @@ function AdminGroupList() {
           offset,
           limit,
         },
+        chainID: chainID,
       })
     );
   };

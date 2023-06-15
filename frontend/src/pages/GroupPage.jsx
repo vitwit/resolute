@@ -30,6 +30,7 @@ export default function GroupPage() {
   );
 
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const groupsData = useSelector((state) => state.group.groupsData);
 
   const navigate = useNavigate();
   function navigateTo(path) {
@@ -96,7 +97,10 @@ export default function GroupPage() {
 
           <TabPanel value={tab} index={0} key="admin">
             <Suspense fallback={<CardSkeleton />}>
-              <AdminGroupList />
+            {(Object.keys(groupsData).length > 0)?
+              <AdminGroupList />:null
+            }
+              
             </Suspense>
           </TabPanel>
 
