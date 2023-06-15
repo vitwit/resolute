@@ -29,7 +29,7 @@ export default function GroupList(props: GroupsByAdminProps) {
       {status === "pending" ? (
         <CircularProgress sx={{ textAlign: "center" }} />
       ) : null}
-      {status !== "pending" && !groups.length ? (
+      {status !== "pending" && !groups?.length ? (
         <NoData
           title={props.notFoundText}
           showAction={props.showNotFoundAction}

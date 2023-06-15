@@ -7,7 +7,6 @@ import GroupTab, { TabPanel } from "../components/group/GroupTab";
 import CardSkeleton from "../components/group/CardSkeleton";
 import { useDispatch, useSelector } from "react-redux";
 import SelectNetwork from "../components/common/SelectNetwork";
-import { resetDefaultState } from "../features/staking/stakeSlice";
 
 const AdminGroupList = lazy(() => import("./group/AdminGroupList"));
 const MemberGroupList = lazy(() => import("./group/MemberGroupList"));
@@ -30,7 +29,6 @@ export default function GroupPage() {
   );
 
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-  const groupsData = useSelector((state) => state.group.groupsData);
 
   const navigate = useNavigate();
   function navigateTo(path) {
@@ -97,10 +95,7 @@ export default function GroupPage() {
 
           <TabPanel value={tab} index={0} key="admin">
             <Suspense fallback={<CardSkeleton />}>
-            {(Object.keys(groupsData).length > 0)?
-              <AdminGroupList />:null
-            }
-              
+              <AdminGroupList />
             </Suspense>
           </TabPanel>
 

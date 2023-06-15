@@ -32,7 +32,6 @@ import Policy from "./group/Policy";
 import CreateProposal from "./group/CreateProposal";
 import AuthzPage from "./AuthzPage";
 import { resetDefaultState } from "../features/staking/stakeSlice";
-import { resetDefaultGroupsState } from "../features/group/groupSlice";
 
 export const ContextData = React.createContext();
 
@@ -128,11 +127,6 @@ export default function Home() {
     dispatch(resetDefaultState(chainIds));
   }, [wallet]);
 
-  useEffect(() => {
-    const chainIds = Object.keys(wallet.networks);
-    dispatch(resetDefaultGroupsState(chainIds));
-  }, [wallet]);
-  
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
