@@ -404,6 +404,7 @@ function Proposal() {
         baseURL: baseURL,
         id: id,
         pagination: { limit: limit, key: key },
+        chainID: chainID,
       })
     );
   };

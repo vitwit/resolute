@@ -44,9 +44,7 @@ const initialState = {
     type: "",
   },
   groups: {},
-  members: {
-    data: [],
-  },
+  members: {},
   groupInfo: {},
   groupMembers: {},
   groupPolicies: {},
@@ -62,7 +60,7 @@ const initialState = {
   },
   leaveGroupRes: {},
   proposalVotes: {
-    data: [],
+    // data: [],
   },
   groupProposal: {},
   updateGroupPolicyRes: {},
@@ -123,7 +121,10 @@ export const getVotesProposalById = createAsyncThunk(
       data.id,
       data.pagination
     );
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -1047,7 +1048,7 @@ export const groupSlice = createSlice({
 
     builder
       .addCase(getGroupPoliciesById.pending, (state, action) => {
-        const chainID = action.payload?.chainID || "";
+        const chainID = action.meta?.arg?.chainID || "";
         if (chainID.length > 0) {
           let result = {
             status: "pending",
@@ -1073,15 +1074,28 @@ export const groupSlice = createSlice({
       });
 
     builder
-      .addCase(getVotesProposalById.pending, (state) => {
-        state.proposalVotes.status = `pending`;
+      .addCase(getVotesProposalById.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            data: [],
+          };
+          state.proposalVotes[chainID] = result;
+        }
       })
       .addCase(getVotesProposalById.fulfilled, (state, action) => {
-        state.proposalVotes.status = "idle";
-        state.proposalVotes.data = action.payload;
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          let result = {
+            status: "idle",
+            data: action.payload?.data,
+          };
+          state.groupPolicies[chainID] = result;
+        }
       })
       .addCase(getVotesProposalById.rejected, (state, _) => {
-        state.proposalVotes.status = `rejected`;
+        // state.proposalVotes.status = `rejected`;
       });
 
     builder
