@@ -220,13 +220,14 @@ export const getGroupPolicyProposalsByPage = createAsyncThunk(
             key: response?.data?.pagination?.next_key,
           }),
           chainID: data.chainID,
-        }
-      else return {
-        data: totalData,
-        chainID: data.chainID,
-      }
+        };
+      else
+        return {
+          data: totalData,
+          chainID: data.chainID,
+        };
     };
-
+    const resData = data;
     if (allPolicies?.data?.group_policies?.length) {
       let data = allPolicies?.data?.group_policies || [];
       for (let i = 0; i < data.length; i++) {
@@ -242,12 +243,13 @@ export const getGroupPolicyProposalsByPage = createAsyncThunk(
 
       return {
         data: totalData,
+        chainID: resData.chainID,
+      };
+    } else
+      return {
+        data: "",
         chainID: data.chainID,
       };
-    } else return {
-      data: "",
-      chainID: data.chainID,
-    };
   }
 );
 
@@ -1299,7 +1301,9 @@ export const groupSlice = createSlice({
       })
       .addCase(getGroupPolicyProposalsByPage.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
-        if (chainID.length > 0) {
+        console.log("chainID", action.payload?.chainID);
+        console.log("Fullfilled.....",action.payload?.data);
+        if (chainID.length) {
           let result = {
             data: action.payload?.data,
             status: "idle",
@@ -1307,8 +1311,11 @@ export const groupSlice = createSlice({
           state.policyProposals[chainID] = result;
         }
       })
-      .addCase(getGroupPolicyProposalsByPage.rejected, (state, _) => {
-        // state.policyProposals.status = `rejected`;
+      .addCase(getGroupPolicyProposalsByPage.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          state.policyProposals[chainID].status = `rejected`;
+        }
       });
   },
 });

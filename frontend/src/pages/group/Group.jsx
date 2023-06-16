@@ -697,7 +697,7 @@ function Group() {
               <GroupPolicies id={params?.id} chainInfo={chainInfo} chainID={chainID} />
             </TabPanel>
             <TabPanel value={tabIndex} index={2}>
-              <ActiveProposals id={params?.id} wallet={wallet} />
+              <ActiveProposals id={params?.id} wallet={wallet} chainInfo={chainInfo} chainID={chainID} />
             </TabPanel>
           </Paper>
         </Box>

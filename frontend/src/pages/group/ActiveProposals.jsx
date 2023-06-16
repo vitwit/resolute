@@ -6,25 +6,25 @@ import ProposalCard from "../../components/group/ProposalCard";
 import { resetActiveProposals } from "../../features/common/commonSlice";
 import { getGroupPolicyProposalsByPage } from "../../features/group/groupSlice";
 
-function ActiveProposals({ id, wallet }) {
+function ActiveProposals({ id, wallet, chainInfo, chainID }) {
   const dispatch = useDispatch();
 
   var [proposals, setProposals] = useState([]);
-  const proposalsRes = useSelector((state) => state.group?.policyProposals);
+  const proposalsRes = useSelector((state) => state.group?.policyProposals?.[chainID]);
 
   const getProposalByAddress = () => {
     dispatch(
       getGroupPolicyProposalsByPage({
-        baseURL: wallet?.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         groupId: id,
-        //chainID: chainID,
+        chainID: chainID,
       })
     );
   };
 
   useEffect(() => {
     getProposalByAddress();
-  }, []);
+  }, [chainInfo]);
 
   useEffect(() => {
     setProposals([]);
@@ -46,7 +46,7 @@ function ActiveProposals({ id, wallet }) {
         p: 2,
       }}
     >
-      {proposals.length === 0 ? (
+      {proposals?.length === 0 ? (
         <NoData showAction={false} title="No Active Proposals" />
       ) : null}
       {proposalsRes?.status === "pending" ? <CircularProgress /> : null}
