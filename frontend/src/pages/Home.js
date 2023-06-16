@@ -32,6 +32,7 @@ import Policy from "./group/Policy";
 import CreateProposal from "./group/CreateProposal";
 import AuthzPage from "./AuthzPage";
 import { resetDefaultState } from "../features/staking/stakeSlice";
+import Proposal from "./group/Proposal";
 
 export const ContextData = React.createContext();
 
@@ -248,6 +249,10 @@ export default function Home() {
             <GroupPage />
           } />
 
+          <Route path="/:networkName/daos/proposals/:id" element={
+            <Proposal />
+          } />
+          
           <Route path="*" element={<Page404 />}></Route>
         </Routes>
       </ContextData.Provider>

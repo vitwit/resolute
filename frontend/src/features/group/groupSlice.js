@@ -1107,7 +1107,7 @@ export const groupSlice = createSlice({
             status: "idle",
             data: action.payload?.data,
           };
-          state.groupPolicies[chainID] = result;
+          state.proposalVotes[chainID] = result;
         }
       })
       .addCase(getVotesProposalById.rejected, (state, _) => {

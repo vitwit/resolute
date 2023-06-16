@@ -26,27 +26,30 @@ import { parseProposalStatus } from "../../components/group/ProposalCard";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
 
-const ProposalInfo = ({ id, wallet }) => {
+const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
   const [voteOpen, setVoteOpen] = useState(false);
 
   const dispatch = useDispatch();
-  const proposalInfo = useSelector((state) => state.group.groupProposal);
+  const proposalInfo = useSelector((state) => state.group?.groupProposal?.[chainID]);
   const voteRes = useSelector((state) => state.group?.voteRes);
 
-  const { data: { proposal } = {} } = proposalInfo;
+  const proposal = proposalInfo?.data?.proposal;
 
   const getProposal = () => {
-    dispatch(
-      getGroupProposalById({
-        baseURL: wallet?.chainInfo?.config?.rest,
-        id,
-      })
-    );
+    if(chainInfo?.config?.rest && chainID) {
+      dispatch(
+        getGroupProposalById({
+          baseURL: chainInfo?.config?.rest,
+          id,
+          chainID: chainID
+        })
+      );
+    }
   };
 
   useEffect(() => {
     getProposal();
-  }, []);
+  }, [chainInfo]);
 
   useEffect(() => {
     if (voteRes?.status === "idle") setVoteOpen(false);
@@ -57,12 +60,11 @@ const ProposalInfo = ({ id, wallet }) => {
   };
 
   const onConfirm = (voteObj) => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txGroupProposalVote({
-        admin: wallet?.address,
-        voter: wallet?.address,
+        admin: address,
+        voter: address,
         option: voteObj?.vote,
         proposalId: voteObj?.proposalId,
         chainId: chainInfo?.config?.chainId,
@@ -74,13 +76,12 @@ const ProposalInfo = ({ id, wallet }) => {
   };
 
   const onExecute = (proposalId) => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txGroupProposalExecute({
         proposalId: proposalId,
-        admin: wallet?.address,
-        executor: wallet?.address,
+        admin: address,
+        executor: address,
         chainId: chainInfo?.config?.chainId,
         rpc: chainInfo?.config?.rpc,
         denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
@@ -228,7 +229,7 @@ const ProposalInfo = ({ id, wallet }) => {
                   gutterBottom
                 >
                   <Chip
-                    label={shortenAddress(proposal?.group_policy_address, 21)}
+                    label={proposal?.group_policy_address ? shortenAddress(proposal?.group_policy_address, 21) : ""}
                     size="small"
                     deleteIcon={<ContentCopyOutlined />}
                     onDelete={() => {
@@ -253,17 +254,17 @@ const ProposalInfo = ({ id, wallet }) => {
                   }}
                 >
                   {proposal?.proposers?.map((p, index) => (
-                      <Chip
-                        label={shortenAddress(p, 21)}
-                        size="small"
-                        deleteIcon={<ContentCopyOutlined />}
-                        onDelete={() => {
-                          copyToClipboard(p, dispatch);
-                        }}
-                        sx={{
-                          mr: 1,
-                        }}
-                      />
+                    <Chip
+                      label={shortenAddress(p, 21)}
+                      size="small"
+                      deleteIcon={<ContentCopyOutlined />}
+                      onDelete={() => {
+                        copyToClipboard(p, dispatch);
+                      }}
+                      sx={{
+                        mr: 1,
+                      }}
+                    />
                   ))}
                 </Box>
               </Grid>
@@ -398,34 +399,48 @@ function Proposal() {
   const wallet = useSelector((state) => state.wallet);
   const voteRes = useSelector((state) => state.group?.voteRes);
 
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const [currentNetwork, setCurrentNetwork] = useState(
+    params?.networkName || selectedNetwork.toLowerCase()
+  );
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const chainID = nameToChainIDs[currentNetwork];
+  const address = networks[chainID]?.walletInfo.bech32Address;
+  const chainInfo = networks[chainID]?.network;
+
   const fetchVotes = (baseURL, id, limit, key) => {
-    dispatch(
-      getVotesProposalById({
-        baseURL: baseURL,
-        id: id,
-        pagination: { limit: limit, key: key },
-        chainID: chainID,
-      })
-    );
+    if(baseURL && chainID) {
+      dispatch(
+        getVotesProposalById({
+          baseURL: baseURL,
+          id: id,
+          pagination: { limit: limit, key: key },
+          chainID: chainID,
+        })
+      );
+    }
   };
 
   useEffect(() => {
     if (voteRes?.status === "idle")
-      fetchVotes(wallet?.chainInfo?.config?.rest, id, limit, "");
+      fetchVotes(chainInfo?.config?.rest, id, limit, "");
   }, [voteRes?.status]);
 
   useEffect(() => {
-    fetchVotes(wallet?.chainInfo?.config?.rest, id, limit, "");
-  }, []);
+    fetchVotes(chainInfo?.config?.rest, id, limit, "");
+  }, [chainInfo]);
 
   const handleMembersPagination = (number, limit, key) => {
     setLimit(limit);
     setPageNumber(number);
-    fetchVotes(wallet?.chainInfo?.config?.rest, id, limit, key);
+    fetchVotes(chainInfo?.config?.rest, id, limit, key);
   };
-
-  const groupInfo = useSelector((state) => state.group.proposalVotes);
-  const { data, status } = groupInfo;
+  const groupInfo = useSelector((state) => state.group?.proposalVotes?.[chainID]);
+  const data = groupInfo?.data;
+  const status = groupInfo?.status;
 
   useEffect(() => {
     if (Number(data?.pagination?.total))
@@ -437,23 +452,23 @@ function Proposal() {
       <Box>
         <Paper>
           <Box>
-            <ProposalInfo id={id} wallet={wallet} />
+            <ProposalInfo id={id} wallet={wallet} address={address} chainID={chainID} chainInfo={chainInfo} />
           </Box>
         </Paper>
       </Box>
 
       <Box sx={{ mt: 2 }}>
-          {status === "pending" ? <CircularProgress /> : null}
+        {status === "pending" ? <CircularProgress /> : null}
 
-          {status !== "pending" ? (
-            <VotesTable
-              total={total}
-              limit={limit}
-              pageNumber={pageNumber}
-              handleMembersPagination={handleMembersPagination}
-              rows={data}
-            />
-          ) : null}
+        {status !== "pending" ? (
+          <VotesTable
+            total={total}
+            limit={limit}
+            pageNumber={pageNumber}
+            handleMembersPagination={handleMembersPagination}
+            rows={data}
+          />
+        ) : null}
       </Box>
     </Box>
   );

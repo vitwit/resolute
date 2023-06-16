@@ -162,7 +162,7 @@ function PolicyProposalsList(props) {
       <Grid spacing={2} container>
         {proposals?.data?.proposals?.map((p, index) => (
           <Grid item md={6} xs={12} key={index}>
-            <ProposalCard proposal={p} />
+            <ProposalCard proposal={p} networkName={networkName} />
           </Grid>
         ))}
       </Grid>
