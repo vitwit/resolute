@@ -23,6 +23,8 @@ function CreateProposal() {
   const stakingChains = useSelector((state) => state.staking.chains);
 
   const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  const address =
+  networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
 
   return (
     <>
@@ -49,6 +51,7 @@ function CreateProposal() {
             address={policyAddress}
             chainInfo={chainInfo}
             handleCancel={() => setType(null)}
+            adminAddress={address}
           />
         ) : (
           <></>

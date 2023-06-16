@@ -78,7 +78,7 @@ const getAmountInAtomics = (amount, currency) => {
   };
 };
 
-function AddManualTx({ address, chainInfo, handleCancel }) {
+function AddManualTx({ address, chainInfo, handleCancel, adminAddress }) {
   const { policyAddress, id } = useParams();
   var [messages, setMessages] = useState([]);
 
@@ -149,8 +149,8 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
     dispatch(
       txCreateGroupProposal({
         metadata: data?.metadata,
-        admin: address,
-        proposers: [address],
+        admin: adminAddress,
+        proposers: [adminAddress],
         messages: messages,
         groupPolicyAddress: address,
         chainId: chainInfo?.config?.chainId,
