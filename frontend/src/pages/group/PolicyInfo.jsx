@@ -46,7 +46,7 @@ function PolicyInfo({ chainInfo, address, chainID }) {
     (state) => state.group.updateGroupMetadataRes
   );
 
-  const groupPoliceis = useSelector((state) => state?.group?.groupPolicies?.[chainID]);
+  const groupPolicies = useSelector((state) => state?.group?.groupPolicies?.[chainID]);
 
   const getPolicies = () => {
     dispatch(
@@ -68,14 +68,14 @@ function PolicyInfo({ chainInfo, address, chainID }) {
   }, [chainInfo]);
 
   useEffect(() => {
-    const data = groupPoliceis?.data?.group_policies || [];
+    const data = groupPolicies?.data?.group_policies || [];
     if (data?.length) {
       const pArr = data.filter((d) => d.address === policyId);
       if (pArr?.length) {
         setPolicyObj(pArr[0]);
       }
     }
-  }, [groupPoliceis?.status]);
+  }, [groupPolicies?.status]);
 
   useEffect(() => {
     if (updateMetadataRes?.status === "idle") getPolicies();
@@ -198,16 +198,16 @@ function PolicyInfo({ chainInfo, address, chainID }) {
       >
         Policy Information
       </Typography>
-      {groupPoliceis?.status === "pending" ? (
+      {groupPolicies?.status === "pending" ? (
         <Paper variant="outlined">
           <CircularProgress variant="h2" />{" "}
         </Paper>
       ) : null}
-      {groupPoliceis?.status === "idle" && !policyObj?.address && (
+      {groupPolicies?.status === "idle" && !policyObj?.address && (
         <AlertMsg type="error" text="Policy not found" />
       )}
 
-      {groupPoliceis?.status === "idle" && policyObj?.address ? (
+      {groupPolicies?.status === "idle" && policyObj?.address ? (
         <Paper variant="outlined" sx={{ p: 4 }} elevation={0}>
           {(canUpdateGroup() && !isEditPolicyForm) ? (
             <Button

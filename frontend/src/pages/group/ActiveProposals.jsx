@@ -1,6 +1,7 @@
 import { Box, CircularProgress, Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { NoData } from "../../components/group/NoData";
 import ProposalCard from "../../components/group/ProposalCard";
 import { resetActiveProposals } from "../../features/common/commonSlice";
@@ -8,6 +9,15 @@ import { getGroupPolicyProposalsByPage } from "../../features/group/groupSlice";
 
 function ActiveProposals({ id, wallet, chainInfo, chainID }) {
   const dispatch = useDispatch();
+
+  const params = useParams();
+
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const [currentNetwork, setCurrentNetwork] = useState(
+    params?.networkName || selectedNetwork.toLowerCase()
+  );
 
   var [proposals, setProposals] = useState([]);
   const proposalsRes = useSelector((state) => state.group?.policyProposals?.[chainID]);
@@ -54,7 +64,7 @@ function ActiveProposals({ id, wallet, chainInfo, chainID }) {
         <Grid container spacing={2}>
           {proposals?.map((p, index) => (
             <Grid item key={index} md={6} xs={12}>
-              <ProposalCard proposal={p} />
+              <ProposalCard proposal={p} networkName={currentNetwork} />
             </Grid>
           ))}
         </Grid>
