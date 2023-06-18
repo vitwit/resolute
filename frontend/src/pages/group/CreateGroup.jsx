@@ -105,7 +105,6 @@ export default function CreateGroupStepper() {
 
   const [groupMetaData, setGroupMetaData] = useState({});
   const [membersInfo, setMembersInfo] = useState({});
-  const [policyMetaData, setPolicyMetaData] = useState({});
 
   const onSubmitInfo = (data) => {
     setGroupMetaData(data);
@@ -124,6 +123,7 @@ export default function CreateGroupStepper() {
   const {
     control: controlInfo,
     handleSubmit: handleSubmitInfo,
+    getValues: getValuesGroupInfo,
     formState: { errors: errorsInfo },
   } = useForm({
     defaultValues: {
@@ -209,7 +209,7 @@ export default function CreateGroupStepper() {
 
           <form onSubmit={handleSubmitInfo(onSubmitInfo)}>
             <fieldset style={{ border: "none" }}>
-              <CreateGroupInfoForm control={controlInfo} errors={errorsInfo} />
+              <CreateGroupInfoForm control={controlInfo} errors={errorsInfo} getValues={getValuesGroupInfo} />
             </fieldset>
             <Button type="submit">Next</Button>
           </form>
