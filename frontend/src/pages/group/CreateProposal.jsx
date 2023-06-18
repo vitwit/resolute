@@ -52,6 +52,7 @@ function CreateProposal() {
             chainInfo={chainInfo}
             handleCancel={() => setType(null)}
             adminAddress={address}
+            networkName={currentNetwork}
           />
         ) : (
           <></>

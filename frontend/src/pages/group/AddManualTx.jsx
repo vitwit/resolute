@@ -78,7 +78,7 @@ const getAmountInAtomics = (amount, currency) => {
   };
 };
 
-function AddManualTx({ address, chainInfo, handleCancel, adminAddress }) {
+function AddManualTx({ address, chainInfo, handleCancel, adminAddress, networkName }) {
   const { policyAddress, id } = useParams();
   var [messages, setMessages] = useState([]);
 
@@ -134,7 +134,7 @@ function AddManualTx({ address, chainInfo, handleCancel, adminAddress }) {
       );
 
       setTimeout(() => {
-        navigate(`/groups/${id}/policies/${policyAddress}`);
+        navigate(`/${networkName}/daos/${id}/policies/${policyAddress}`);
       }, 200);
     }
   }, [createRes?.status]);

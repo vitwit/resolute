@@ -67,6 +67,7 @@ function AdminGroupList() {
       handlePagination={handlePagination}
       notFoundText="No groups found"
       showNotFoundAction={true}
+      networkName={currentNetwork}
     />
   );
 }

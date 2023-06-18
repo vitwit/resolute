@@ -15,10 +15,11 @@ export interface GroupsByAdminProps {
   paginationKey: string;
   notFoundText: string;
   showNotFoundAction: boolean;
+  networkName: string;
 }
 
 export default function GroupList(props: GroupsByAdminProps) {
-  const { groups, paginationKey, handlePagination, total, status } = props;
+  const { groups, paginationKey, handlePagination, total, status, networkName } = props;
   const navigate = useNavigate();
   function navigateTo(path: string) {
     navigate(path);
@@ -34,7 +35,7 @@ export default function GroupList(props: GroupsByAdminProps) {
           title={props.notFoundText}
           showAction={props.showNotFoundAction}
           onAction={() => {
-            navigateTo("/group/create-group");
+            navigateTo(`/${networkName}/daos/create-group`);
           }}
           actionText="Create group"
         />
