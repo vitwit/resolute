@@ -239,6 +239,7 @@ export default function CreateGroupStepper() {
                     append={append}
                     remove={remove}
                     errors={errorsMemberInfo}
+                    getValues={getValuesMemberInfo}
                   />
                 </fieldset>
               ) : null}
