@@ -42,7 +42,7 @@ export const GeneralOverview = (props) => {
     let totalStakedAmount = 0;
     chainIDs.forEach((chainID) => {
       let denom =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDenom;
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
       let staked = stakingChains?.[chainID]?.delegations?.totalStaked || 0;
       const decimals =
         networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
@@ -51,7 +51,7 @@ export const GeneralOverview = (props) => {
     });
     setTotalDetails({
       totalBalance: totalDetails.totalBalance,
-      totalStaked: totalStakedAmount,
+      totalStaked: totalStakedAmount.toLocaleString(),
       totalRewards: totalDetails.totalRewards,
     });
   }, [stakingChains]);
@@ -60,7 +60,7 @@ export const GeneralOverview = (props) => {
     let totalRewards = 0;
     chainIDs.forEach((chainID) => {
       let denom =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDenom;
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
       let rewards =
         distributionChains?.[chainID]?.delegatorRewards?.totalRewards || 0;
       const decimals =
@@ -71,7 +71,7 @@ export const GeneralOverview = (props) => {
     setTotalDetails({
       totalBalance: totalDetails.totalBalance,
       totalStaked: totalDetails.totalStaked,
-      totalRewards: totalRewards,
+      totalRewards: totalRewards.toLocaleString(),
     });
   }, [distributionChains]);
 
@@ -79,7 +79,7 @@ export const GeneralOverview = (props) => {
     let totalBalance = 0;
     chainIDs.forEach((chainID) => {
       let denom =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDenom;
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
       let balance = balanceChains?.[chainID]?.list?.[0]?.amount || 0;
       const decimals =
         networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
@@ -87,7 +87,7 @@ export const GeneralOverview = (props) => {
       totalBalance += convertToDollars(denom, balance / 10 ** decimals);
     });
     setTotalDetails({
-      totalBalance: totalBalance,
+      totalBalance: totalBalance.toLocaleString(),
       totalStaked: totalDetails.totalStaked,
       totalRewards: totalDetails.totalRewards,
     });
