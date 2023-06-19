@@ -7,8 +7,14 @@ const fetchPriceInfo = (denom: string): Promise<AxiosResponse> => {
   return Axios.get(uri);
 };
 
+const fetchAllTokensPriceInfo = (): Promise<AxiosResponse> => {
+  const uri = `${BASE_URL}tokens-info`;
+  return Axios.get(uri);
+};
+
 const result = {
   tokenInfo: fetchPriceInfo,
+  allTokensInfo : fetchAllTokensPriceInfo,
 };
 
 export default result;
