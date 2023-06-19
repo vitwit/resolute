@@ -1,2 +1,0 @@
-ERROR: 2023/06/19 13:59:02 cron.go:79: failed to fetch price information Get "https://api.coingecko.com/api/v3//simple/price?ids=akash-network,cosmos,juno-network,osmosis,regen,stargaze&vs_currencies=usd": dial tcp: lookup api.coingecko.com: Temporary failure in name resolution
-ERROR: 2023/06/19 13:59:15 cron.go:79: failed to fetch price information Get "https://api.coingecko.com/api/v3//simple/price?ids=akash-network,cosmos,juno-network,osmosis,regen,stargaze&vs_currencies=usd": dial tcp: lookup api.coingecko.com: Temporary failure in name resolution
