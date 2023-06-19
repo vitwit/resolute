@@ -35,7 +35,6 @@ import { filterVoteAuthz } from "./ActiveProposals";
 
 export default function ProposalInfo() {
   const dispatch = useDispatch();
-  const poolInfo = useSelector((state) => state.staking.pool);
   const feegrant = useSelector((state) => state.common.feegrant);
 
   const [authzGrants, setAuthzGrants] = useState({});
@@ -46,6 +45,7 @@ export default function ProposalInfo() {
   const chainID = nameToIDs[networkName];
   const network = useSelector((state) => state.wallet.networks[chainID]);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
+  const poolInfo = useSelector((state) => state.staking.chains?.[chainID]?.pool);
 
   const currency = network?.network?.config?.currencies[0];
   const address = network?.walletInfo?.bech32Address;
@@ -117,7 +117,7 @@ export default function ProposalInfo() {
   useEffect(() => {
     return () => {
       dispatch(resetError());
-      dispatch(resetTx());
+      dispatch(resetTx({chainID: chainID}));
     };
   }, []);
 
@@ -162,12 +162,12 @@ export default function ProposalInfo() {
     if (walletConnected) {
       if (selectedAuthz.granter.length === 0) {
         if (govTx.status === "idle") {
-          dispatch(resetTx());
+          dispatch(resetTx({chainID: chainID}));
           setOpen(false);
         }
       } else {
         if (authzExecTx.status === "idle") {
-          dispatch(resetTx());
+          dispatch(resetTx({chainID: chainID}));
           setOpen(false);
         }
       }
@@ -366,7 +366,7 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(proposalTally[id], poolInfo[chainID])
+                    computeVotePercentage(proposalTally[id], poolInfo?.[chainID])
                       .yes
                   }
                   %
@@ -382,7 +382,7 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(proposalTally[id], poolInfo[chainID])
+                    computeVotePercentage(proposalTally[id], poolInfo?.[chainID])
                       .no
                   }
                   %
@@ -398,7 +398,7 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(proposalTally[id], poolInfo[chainID])
+                    computeVotePercentage(proposalTally[id], poolInfo?.[chainID])
                       .no_with_veto
                   }
                   %
@@ -414,7 +414,7 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(proposalTally[id], poolInfo[chainID])
+                    computeVotePercentage(proposalTally[id], poolInfo?.[chainID])
                       .abstain
                   }
                   %
