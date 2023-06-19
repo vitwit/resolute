@@ -30,6 +30,8 @@ import {
   resetFeegrant,
   resetTxHash,
   setError,
+  removeFeegrant as removeFeegrantState,
+  setFeegrant as setFeegrantState,
 } from "../../features/common/commonSlice";
 import {
   getMsgNameFromAuthz,
@@ -38,6 +40,7 @@ import {
 import { AuthzSendDialog } from "../../components/authz/AuthzSend";
 import FeegranterInfo from "../../components/FeegranterInfo";
 import SelectNetwork from "../../components/common/SelectNetwork";
+import { getFeegrant, removeFeegrant as removeFeegrantLocalState } from "../../utils/localStorage";
 
 export default function Authz() {
   const dispatch = useDispatch();
@@ -89,7 +92,8 @@ export default function Authz() {
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
-    dispatch(resetFeegrant());
+    dispatch(removeFeegrantState(currentNetwork));
+    removeFeegrantLocalState(currentNetwork);
   };
 
   useEffect(() => {
@@ -100,6 +104,14 @@ export default function Authz() {
   useEffect(() => {
     dispatch(resetTxAuthzRes());
   },[])
+
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[currentNetwork];
+    dispatch(setFeegrantState({
+      grants: currentChainGrants,
+      chainName: currentNetwork.toLowerCase()
+    }));
+  }, [currentNetwork, params])
 
   useEffect(() => {
     if (address !== "" || txAuthzRes?.status === "idle") {
