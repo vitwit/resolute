@@ -3,9 +3,7 @@ import { useSelector } from "react-redux";
 import { GeneralOverview } from "./general-overview/GeneralOverview";
 
 export default function OverviewPage() {
-  const [stakingReset, setStakingReset] = useState(false);
-  const [distributionReset, setDistributionReset] = useState(false);
-  const [tokenInfoReset, setTokenInfoReset] = useState(false);
+  const [defaultLoaded, setDefaultLoaded] = useState(false);
   const staking = useSelector((state) => state.staking.chains);
   const distribution = useSelector((state) => state.distribution.chains);
   const networks = useSelector((state) => state.wallet.networks);
@@ -14,28 +12,19 @@ export default function OverviewPage() {
   );
 
   useEffect(() => {
-    if (!stakingReset && Object.keys(staking).length > 0) {
-      setStakingReset(true);
+    if (
+      !defaultLoaded &&
+      Object.keys(staking).length &&
+      Object.keys(distribution).length &&
+      Object.keys(tokenInfo).length
+    ) {
+      setDefaultLoaded(true);
     }
-  }, [staking]);
-
-  useEffect(() => {
-    if (!distributionReset && Object.keys(distribution).length > 0) {
-      setDistributionReset(true);
-    }
-  }, [distribution]);
-
-  useEffect(() => {
-    if (!tokenInfoReset && Object.keys(tokenInfo).length > 0) {
-      setTokenInfoReset(true);
-    }
-  }, [tokenInfo]);
+  }, [staking, distribution, tokenInfo]);
 
   return (
     <div>
-      {stakingReset && distributionReset && tokenInfoReset && (
-        <GeneralOverview chainIDs={Object.keys(networks)} />
-      )}
+      {defaultLoaded && <GeneralOverview chainIDs={Object.keys(networks)} />}
     </div>
   );
 }

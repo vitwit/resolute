@@ -135,18 +135,16 @@ export const commonSlice = createSlice({
         state.allTokensInfoState.error = "";
       })
       .addCase(getAllTokensPrice.fulfilled, (state, action) => {
-        console.log("get", action.payload);
         let data = action.payload.data || [];
-        const TokensPriceInfo = data.reduce((result, tokenInfo) => {
+        const tokensPriceInfo = data.reduce((result, tokenInfo) => {
           result[tokenInfo.denom] = tokenInfo;
           return result;
         }, {});
         state.allTokensInfoState.status = "idle";
         state.allTokensInfoState.error = "";
-        state.allTokensInfoState.info = TokensPriceInfo;
+        state.allTokensInfoState.info = tokensPriceInfo;
       })
       .addCase(getAllTokensPrice.rejected, (state, action) => {
-        console.log("get noo");
         state.allTokensInfoState.status = "rejected";
         state.allTokensInfoState.error = action.payload;
         state.allTokensInfoState.info = {};

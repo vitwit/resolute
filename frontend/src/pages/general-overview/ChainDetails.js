@@ -15,9 +15,12 @@ export const ChainDetails = (props) => {
     (state) => state.staking.chains[chainID].delegations.totalStaked
   );
   const wallet = useSelector((state) => state.wallet);
-  const denom = wallet.networks[chainID].network.config.currencies[0].coinDenom;
+  const denom =
+    wallet.networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDenom;
   const decimals =
-    wallet.networks[chainID].network.config.currencies[0].coinDecimals;
+    wallet.networks?.[chainID]?.network?.config?.currencies?.[0]
+      ?.coinDecimals || 0;
+  const logoURL = wallet?.networks?.[chainID]?.network?.logos?.menu;
 
   return (
     <>
@@ -25,7 +28,7 @@ export const ChainDetails = (props) => {
         <StyledTableRow>
           <StyledTableCell size="small">
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Avatar sx={{ width: 24, height: 24 }} />
+              <Avatar src={logoURL} sx={{ width: 24, height: 24 }} />
               &nbsp;&nbsp;
               <Typography>{chainID}</Typography>
             </Box>

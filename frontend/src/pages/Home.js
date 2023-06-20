@@ -99,8 +99,8 @@ export default function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const page =
-    location.pathname.split("/")?.[location.pathname.split("/")?.length - 1];
+  const pathParts = location.pathname.split("/");
+  const page = pathParts?.[pathParts?.length - 1];
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
