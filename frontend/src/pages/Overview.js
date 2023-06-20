@@ -40,7 +40,7 @@ export default function Overview(props) {
   const priceInfo = useSelector((state) => state.common.tokensInfoState.info);
   const selectedAuthz = useSelector((state) => state.authz.selected);
   const { config } = chainInfo;
-  const coinDecimals = config?.currencies[0].coinDecimals || 1;
+  const coinDecimals = config?.currencies[0].coinDecimals || 0;
   const coinDenom = config?.currencies[0].coinMinimalDenom || "";
   const dispatch = useDispatch();
   const [available, setTotalBalance] = useState(0);
@@ -50,11 +50,9 @@ export default function Overview(props) {
 
   useEffect(() => {
     if (connected && config.currencies.length > 0) {
-      if (balance?.[chainID]?.list?.[0] !== undefined)
         setTotalBalance(
-          parseBalance([balance[chainID].list[0]], coinDecimals, coinDenom)
+          parseBalance(balance?.[chainID]?.list || [], coinDecimals, coinDenom)
         );
-      else setTotalBalance(0);
       setTotalDelegations(delegations.totalStaked / 10.0 ** coinDecimals);
       setTotalRewards(totalRewards(rewards?.list, coinDecimals, coinDenom));
       setTotalUnbonding(totalUnbonding(unbonding.delegations, coinDecimals));
