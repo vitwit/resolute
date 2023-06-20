@@ -13,7 +13,6 @@ import Page404 from "./Page404";
 import { useDispatch, useSelector } from "react-redux";
 import OverviewPage from "./OverviewPage";
 import SendPage from "./SendPage";
-import ProposalInfo from "./gov/ProposalInfo";
 import UnjailPage from "./slashing/UnjailPage";
 import PageMultisig from "./multisig/PageMultisig";
 import PageMultisigInfo from "./multisig/tx/PageMultisigInfo";
@@ -29,6 +28,9 @@ import StakingOverview from "./stakingOverview/StakingOverview";
 import { resetDefaultState as distributionResetDefaultState } from "../features/distribution/distributionSlice";
 import { resetDefaultState as stakingResetDefaultState } from "../features/staking/stakeSlice";
 import { getAllTokensPrice } from "../features/common/commonSlice";
+import { resetDefaultState } from "../features/staking/stakeSlice";
+import { resetDefaultState as resetDistributionDefaultState } from "../features/distribution/distributionSlice";
+import Proposal from "./gov/Proposal";
 
 export const ContextData = React.createContext();
 
@@ -139,6 +141,17 @@ export default function Home() {
     setValue(getTabIndex(page));
   }, []);
 
+<<<<<<< HEAD
+=======
+  const wallet = useSelector((state) => state.wallet);
+
+  useEffect(() => {
+    const chainIds = Object.keys(wallet.networks);
+    dispatch(resetDefaultState(chainIds));
+    dispatch(resetDistributionDefaultState(chainIds))
+  }, [wallet]);
+  
+>>>>>>> ccf32a0f3d5ae7a33e530646228fbf2387324b9c
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -154,6 +167,7 @@ export default function Home() {
         </Tabs>
       </Box>
 
+<<<<<<< HEAD
       <Box
         sx={{
           mt: 2,
@@ -219,6 +233,97 @@ export default function Home() {
             <Route path="*" element={<Page404 />}></Route>
           </Routes>
         </ContextData.Provider>
+=======
+    <Box sx={{
+      mt: 2,
+    }}>
+      <ContextData.Provider value={network} setNetwork={setNetwork}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <OverviewPage />
+            }
+          />
+
+          <Route path="/:networkName/transfers" element={
+            <SendPage />
+          } />
+
+          <Route path="/transfers" element={
+            <SendPage />
+          } />
+
+          <Route path="/:networkName/authz" element={
+            <Authz />
+          } />
+
+          <Route path="/:networkName/feegrant" element={
+            <Feegrant />
+          } />
+
+          <Route path="/staking" element={
+            <StakingOverview/>
+          }
+          />
+
+          <Route path="/gov" element={
+            <ActiveProposals />
+          } />
+
+          <Route path="/:networkName/gov" element={
+            <ActiveProposals />
+          } />
+
+          <Route
+            path="/:networkName/proposals/:id"
+            element={
+              <Suspense fallback={<CircularProgress />}>
+                <Proposal />
+              </Suspense>
+            }
+          ></Route>
+
+          <Route path="/:networkName/daos" element={
+            <GroupPageV1 />
+          } />
+
+          <Route path="/:networkName/multisig" element={
+            <PageMultisig />
+          } />
+
+          <Route path="/:networkName/staking" element={
+            <StakingPage />
+          } />
+
+          <Route path="/:networkName/multisig/:address/txs" element={
+            <PageMultisigInfo />
+          } />
+
+          <Route path="/:networkName/multisig/:address/create-tx" element={
+            <PageCreateTx />
+          } />
+          
+          <Route path="/:networkName/slashing" element={
+            <UnjailPage />
+          } />
+
+          <Route path="/:networkName/daos/create-group" element={
+            <CreateGroupNewPage />
+          } />
+
+          <Route path="/:networkName/feegrant/new" element={
+            <NewFeegrant />
+          } />
+
+          <Route path="/:networkName/authz/new" element={
+            <NewAuthz />
+          } />
+
+          <Route path="*" element={<Page404 />}></Route>
+        </Routes>
+      </ContextData.Provider>
+>>>>>>> ccf32a0f3d5ae7a33e530646228fbf2387324b9c
       </Box>
     </Box>
   );
