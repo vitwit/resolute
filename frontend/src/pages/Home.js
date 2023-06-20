@@ -13,7 +13,6 @@ import Page404 from "./Page404";
 import { useDispatch, useSelector } from "react-redux";
 import OverviewPage from "./OverviewPage";
 import SendPage from "./SendPage";
-import ProposalInfo from "./gov/ProposalInfo";
 import UnjailPage from "./slashing/UnjailPage";
 import PageMultisig from "./multisig/PageMultisig";
 import PageMultisigInfo from "./multisig/tx/PageMultisigInfo";
@@ -26,6 +25,9 @@ import { setFeegrant as setFeegrantState } from "../features/common/commonSlice"
 import Authz from "./authz/Authz";
 import NewAuthz from "./authz/NewAuthz";
 import StakingOverview from "./stakingOverview/StakingOverview";
+import { resetDefaultState } from "../features/staking/stakeSlice";
+import { resetDefaultState as resetDistributionDefaultState } from "../features/distribution/distributionSlice";
+import Proposal from "./gov/Proposal";
 
 export const ContextData = React.createContext();
 
@@ -113,6 +115,14 @@ export default function Home() {
   useEffect(() => {
     setValue(getTabIndex(page));
   }, []);
+
+  const wallet = useSelector((state) => state.wallet);
+
+  useEffect(() => {
+    const chainIds = Object.keys(wallet.networks);
+    dispatch(resetDefaultState(chainIds));
+    dispatch(resetDistributionDefaultState(chainIds))
+  }, [wallet]);
   
   return (
     <Box>
@@ -176,7 +186,7 @@ export default function Home() {
             path="/:networkName/proposals/:id"
             element={
               <Suspense fallback={<CircularProgress />}>
-                <ProposalInfo />
+                <Proposal />
               </Suspense>
             }
           ></Route>
