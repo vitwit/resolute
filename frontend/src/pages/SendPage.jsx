@@ -17,14 +17,58 @@ import Alert from "@mui/material/Alert";
 import FeegranterInfo from "../components/FeegranterInfo";
 import { useParams } from "react-router-dom";
 import { parseBalance } from "../utils/denom";
-import { getFeegrant, removeFeegrant as removeFeegrantLocalState } from "../utils/localStorage";
+import {
+  getFeegrant,
+  removeFeegrant as removeFeegrantLocalState,
+} from "../utils/localStorage";
+import PropTypes from "prop-types";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import MultiTx from "./MultiTx";
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `transfers-tab-${index}`,
+    "aria-controls": `transfers-tabpanel-${index}`,
+  };
+}
 
 export default function SendPage() {
   const params = useParams();
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
-  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork);
+  const [currentNetwork, setCurrentNetwork] = useState(
+    params?.networkName || selectedNetwork
+  );
 
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
@@ -40,11 +84,15 @@ export default function SendPage() {
     networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
 
   const sendTx = useSelector((state) => state.bank.tx);
-  const balances = useSelector((state) => state.bank.balances[nameToChainIDs[currentNetwork]]?.list);
+  const balances = useSelector(
+    (state) => state.bank.balances[nameToChainIDs[currentNetwork]]?.list
+  );
   const [balance, setBalance] = useState({});
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
-  const feegrant = useSelector((state) => state.common.feegrant?.[currentNetwork]);
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
+  );
   const selectedAuthz = useSelector((state) => state.authz.selected);
 
   const authzSend = useMemo(
@@ -57,7 +105,7 @@ export default function SendPage() {
     return () => {
       dispatch(resetError());
       dispatch(resetTxHash());
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -68,19 +116,14 @@ export default function SendPage() {
           setBalance(b);
           break;
         }
-
       }
     }
   }, [balances]);
 
-
-
   useEffect(() => {
-    if (params?.networkName?.length > 0)
-    setCurrentNetwork(params.networkName)
-    else 
-    setCurrentNetwork("cosmoshub")
-  }, [params])
+    if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
+    else setCurrentNetwork("cosmoshub");
+  }, [params]);
 
   useEffect(() => {
     if (chainInfo?.config?.currencies.length > 0 && address.length > 0) {
@@ -97,7 +140,7 @@ export default function SendPage() {
           getBalances({
             baseURL: chainInfo.config.rest + "/",
             address: selectedAuthz.granter,
-            chainID: nameToChainIDs[currentNetwork]
+            chainID: nameToChainIDs[currentNetwork],
           })
         );
       }
@@ -113,12 +156,13 @@ export default function SendPage() {
 
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[currentNetwork];
-    dispatch(setFeegrantState({
-      grants: currentChainGrants,
-      chainName: currentNetwork.toLowerCase()
-    }));
-  }, [currentNetwork, params])
-
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: currentNetwork.toLowerCase(),
+      })
+    );
+  }, [currentNetwork, params]);
 
   const onSendTx = (data) => {
     const amount = Number(data.amount);
@@ -147,7 +191,7 @@ export default function SendPage() {
             feeAmount:
               chainInfo.config.gasPriceStep.average *
               10 ** currency[0].coinDecimals,
-            feegranter: feegrant.granter,
+            feegranter: feegrant?.granter,
           })
         );
       }
@@ -164,8 +208,9 @@ export default function SendPage() {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config.gasPriceStep.average * 10 ** currency[0].coinDecimals,
-        feegranter: feegrant.granter,
+          chainInfo.config.gasPriceStep.average *
+          10 ** currency[0].coinDecimals,
+        feegranter: feegrant?.granter,
       });
     }
   };
@@ -174,6 +219,12 @@ export default function SendPage() {
     // Should we completely remove feegrant or only for this session.
     dispatch(removeFeegrantState(currentNetwork));
     removeFeegrantLocalState(currentNetwork);
+  };
+
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
   };
 
   return (
@@ -186,8 +237,7 @@ export default function SendPage() {
           }}
         />
       ) : null}
-      <Grid container sx={{ mt: 2 }}>
-
+      {/* <Grid container sx={{ mt: 2 }}>
         <Grid item xs={1} md={3}></Grid>
         <Grid item xs={10} md={6}>
           {selectedAuthz.granter.length > 0 &&
@@ -207,7 +257,58 @@ export default function SendPage() {
           }
         </Grid>
         <Grid item xs={1} md={3}></Grid>
-      </Grid>
+      </Grid> */}
+      <Box sx={{ width: "100%" }}>
+        <Box
+          sx={{
+            borderColor: "divider",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Tabs value={value} onChange={handleChange}>
+            <Tab label="Send" {...a11yProps(0)} />
+            <Tab label="Multi Send" {...a11yProps(1)} />
+          </Tabs>
+        </Box>
+        <TabPanel value={value} index={0}>
+          <Grid container sx={{ mt: 2 }}>
+            <Grid item xs={1} md={3}></Grid>
+            <Grid item xs={10} md={6}>
+              {selectedAuthz.granter.length > 0 &&
+              authzSend?.granter !== selectedAuthz.granter ? (
+                <Alert>
+                  You don't have permission to execute this transcation
+                </Alert>
+              ) : (
+                <Send
+                  chainInfo={chainInfo}
+                  available={
+                    currency?.length > 0 && balances?.length > 0
+                      ? parseBalance(
+                          balances,
+                          currency[0].coinDecimals,
+                          currency[0].coinMinimalDenom
+                        )
+                      : 0
+                  }
+                  onSend={onSendTx}
+                  sendTx={sendTx}
+                  authzTx={authzExecTx}
+                />
+              )}
+            </Grid>
+            <Grid item xs={1} md={3}></Grid>
+          </Grid>
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <MultiTx 
+            chainInfo={chainInfo}
+            address={address}
+            currency={currency}
+           />
+        </TabPanel>
+      </Box>
     </>
   );
 }

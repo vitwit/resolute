@@ -26,14 +26,13 @@ export default function Send(props) {
 
   const params = useParams();
   const navigate = useNavigate();
-  
+
   const selectNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
   const [currentNetwork, setCurrentNetwork] = React.useState(
     params?.networkName || selectNetwork.toLowerCase()
   );
-  
 
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const currency = chainInfo?.config?.currencies[0];
@@ -66,10 +65,14 @@ export default function Send(props) {
         </Typography>
         <SelectNetwork
           onSelect={(name) => {
-            navigate(`/${name}/transfers`)
+            navigate(`/${name}/transfers`);
           }}
           networks={Object.keys(nameToChainIDs)}
-          defaultNetwork={currentNetwork?.length > 0 ? currentNetwork.toLowerCase().replace(/ /g, "") : "cosmoshub"}
+          defaultNetwork={
+            currentNetwork?.length > 0
+              ? currentNetwork.toLowerCase().replace(/ /g, "")
+              : "cosmoshub"
+          }
         />
       </Box>
       <Box
@@ -151,3 +154,11 @@ export default function Send(props) {
     </Paper>
   );
 }
+
+Send.propTypes = {
+  chainInfo: PropTypes.object.isRequired,
+  available: PropTypes.object.isRequired,
+  onSend: PropTypes.func.isRequired,
+  sendTx: PropTypes.object.isRequired,
+  authzTx: PropTypes.object.isRequired,
+};

@@ -17,18 +17,29 @@ import { Pagination } from "@mui/material";
 import { Divider } from "@mui/material";
 import { multiTxns } from "../features/bank/bankSlice";
 import { resetError, setError } from "../features/common/commonSlice";
+import PropTypes from "prop-types";
+import SelectNetwork from "../components/common/SelectNetwork";
+import { useNavigate, useParams } from "react-router-dom";
 
 const PER_PAGE = 5;
 const SEND_TEMPLATE = "https://resolute.witval.com/_static/send.csv";
 
-export default function MultiTx() {
-  const wallet = useSelector((state) => state.wallet);
-  const { chainInfo, address } = wallet;
+export default function MultiTx({ chainInfo, address }) {
+  const params = useParams();
+  const navigate = useNavigate();
+
+  const selectNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const [currentNetwork, setCurrentNetwork] = React.useState(
+    params?.networkName || selectNetwork.toLowerCase()
+  );
+  const currency = chainInfo?.config?.currencies[0];
+
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
   const feegrant = useSelector((state) => state.common.feegrant);
   const submitTxStatus = useSelector((state) => state.bank.tx.status);
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo.config.currencies[0]
-  );
 
   const [slicedMsgs, setSlicedMsgs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -52,7 +63,6 @@ export default function MultiTx() {
       alert("no messages");
       return;
     }
-
     dispatch(
       multiTxns({
         msgs: messages,
@@ -96,16 +106,35 @@ export default function MultiTx() {
 
   return (
     <Box>
-      <Typography
-        color="text.primary"
-        variant="h6"
+      {/* <Paper
+        elevation={0}
         sx={{
-          textAlign: "left",
-          p: 1,
+          p: 4,
         }}
-      >
-        Send transactions
-      </Typography>
+      > */}
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Typography
+          color="text.primary"
+          variant="h6"
+          sx={{
+            textAlign: "left",
+            p: 1,
+          }}
+        >
+          Send transactions
+        </Typography>
+        <SelectNetwork
+          onSelect={(name) => {
+            navigate(`/${name}/transfers`);
+          }}
+          networks={Object.keys(nameToChainIDs)}
+          defaultNetwork={
+            currentNetwork?.length > 0
+              ? currentNetwork.toLowerCase().replace(/ /g, "")
+              : "cosmoshub"
+          }
+        />
+      </Box>
       <Grid container spacing={2}>
         <Grid item md={5} xs={12}>
           <Paper
@@ -300,6 +329,12 @@ export default function MultiTx() {
           </Paper>
         </Grid>
       </Grid>
+      {/* </Paper> */}
     </Box>
   );
 }
+
+MultiTx.propTypes = {
+  chainInfo: PropTypes.object.isRequired,
+  address: PropTypes.string.isRequired,
+};
