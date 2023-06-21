@@ -18,7 +18,7 @@ import {
   setError,
   setFeegrant as setFeegrantState,
   resetFeegrant,
-  removeFeegrant as removeFeegrantState
+  removeFeegrant as removeFeegrantState,
 } from "./../../features/common/commonSlice";
 import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "./../../utils/util";
@@ -37,10 +37,11 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import { Box } from "@mui/material";
 import {
   getFeegrant,
-  removeFeegrant,
   setFeegrant,
+  removeFeegrant as removeFeegrantLocalState,
 } from "../../utils/localStorage";
 import SelectNetwork from "../../components/common/SelectNetwork";
+import FeegranterInfo from "../../components/FeegranterInfo";
 
 const renderExpiration = (row) => {
   switch (row?.allowance["@type"]) {
@@ -117,6 +118,9 @@ export default function Feegrant() {
   const address =
     networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
 
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
+  );
   const errState = useSelector((state) => state.feegrant.errState);
   const txStatus = useSelector((state) => state.feegrant.tx);
   const currency = chainInfo?.config?.currencies[0];
@@ -130,11 +134,13 @@ export default function Feegrant() {
 
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[currentNetwork];
-    dispatch(setFeegrantState({
-      grants: currentChainGrants,
-      chainName: currentNetwork.toLowerCase()
-    }));
-  }, [currentNetwork, params])
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: currentNetwork.toLowerCase(),
+      })
+    );
+  }, [currentNetwork, params]);
 
   useEffect(() => {
     if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
@@ -213,6 +219,7 @@ export default function Feegrant() {
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         baseURL: chainInfo.config.rest,
+        feegranter: feegrant?.granter,
       })
     );
   };
@@ -242,13 +249,37 @@ export default function Feegrant() {
 
   const handleCheck = (index, row) => {
     setCurrentGranter(index);
-    if(!index) {
+    if (!index) {
       setUsingFeegrant(isUsingFeeGrant(row));
     }
-  }
+  };
+
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[currentNetwork];
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: currentNetwork.toLowerCase(),
+      })
+    );
+  }, [currentNetwork, params]);
+
+  const removeFeegrant = () => {
+    // Should we completely remove feegrant or only for this session.
+    dispatch(removeFeegrantState(currentNetwork));
+    removeFeegrantLocalState(currentNetwork);
+  };
 
   return (
     <>
+      {feegrant?.granter?.length > 0 ? (
+        <FeegranterInfo
+          feegrant={feegrant}
+          onRemove={() => {
+            removeFeegrant();
+          }}
+        />
+      ) : null}
       <Box
         sx={{
           display: "flex",
@@ -466,20 +497,27 @@ export default function Feegrant() {
                                     } else {
                                       if (e.target.checked) {
                                         setFeegrant(row, currentNetwork);
-                                        dispatch(setFeegrantState({
-                                          grants: row, 
-                                          chainName: currentNetwork
-                                        }));
+                                        dispatch(
+                                          setFeegrantState({
+                                            grants: row,
+                                            chainName: currentNetwork,
+                                          })
+                                        );
                                         handleCheck(index, row);
                                       } else {
-                                        dispatch(removeFeegrantState(currentNetwork));
+                                        dispatch(
+                                          removeFeegrantState(currentNetwork)
+                                        );
                                         removeFeegrant(currentNetwork);
                                         handleCheck(null, row);
                                       }
                                     }
                                   }}
-                                  checked={ isUsingFeeGrant(row) || (index === currentGranter)}
-                                  defaultChecked={usingFeegrant} 
+                                  checked={
+                                    isUsingFeeGrant(row) ||
+                                    index === currentGranter
+                                  }
+                                  defaultChecked={usingFeegrant}
                                 />
                               }
                             />
