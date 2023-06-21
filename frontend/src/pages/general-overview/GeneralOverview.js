@@ -123,7 +123,7 @@ export const GeneralOverview = (props) => {
   }, []);
 
   return (
-    <Paper sx={{ padding: 1, margin: 0, mt: 6 }} elevation={0}>
+    <Paper sx={{ padding: 1, mt: 6 }} elevation={0}>
       <Grid
         container
         sx={{
