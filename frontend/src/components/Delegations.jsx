@@ -14,10 +14,10 @@ import Box from "@mui/material/Box";
 import { useTheme } from "@emotion/react";
 
 export function MyDelegations(props) {
-  const { delegations, validators, onDelegationAction, currency, rewards } =
+  const { chainID, delegations, validators, onDelegationAction, currency, rewards } =
     props;
   const [totalRewards, setTotalRewards] = React.useState(0);
-  const distTxStatus = useSelector((state) => state.distribution.tx);
+  const distTxStatus = useSelector((state) => state.distribution?.chains?.[chainID]?.tx || "");
   const [rewardsP, setRewardsP] = React.useState({});
 
   const theme = useTheme();

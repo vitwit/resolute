@@ -670,6 +670,7 @@ export default function Validators(props) {
             ) : null}
             {type === "delegations" ? (
               <MyDelegations
+                chainID={chainID}
                 validators={validators}
                 delegations={delegations}
                 currency={currency}
