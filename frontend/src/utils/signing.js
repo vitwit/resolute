@@ -403,6 +403,7 @@ async function sign(
       {
         amount: fee.amount,
         gasLimit: fee.gas,
+        granter: fee.granter,
       },
       SignMode.SIGN_MODE_DIRECT
     );
