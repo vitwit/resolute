@@ -13,6 +13,9 @@ const StakingOverview = (props) => {
   const wallet = useSelector((state) => state.wallet);
   const chainsmap = useSelector((state) => state.staking.chains);
   const rewardschainsMap = useSelector((state) => state.distribution.chains);
+  const tokensPriceInfo = useSelector(
+    (state) => state.common.allTokensInfoState.info
+  );
   const [data, setData] = useState({
     totalAmount: 0,
     chains: []
@@ -22,13 +25,21 @@ const StakingOverview = (props) => {
     chains: {},
   })
 
+  const convertToDollars = (denom, amount = 0) => {
+    let price = +tokensPriceInfo?.[denom]?.info?.["usd"] || 0;
+    return amount * price;
+  };
+
   let getRewardsObjectForProps = (wallet, rewardchainsMap) => {
     let chainIds = Object.keys(chainsmap);
     let chainsData = {};
-    chainsData.totalReward = 0;
+    let totalRewardsInDollars = 0;
     for (let i = 0; i < chainIds.length; i++) {
       let decimal = wallet.networks[chainIds[i]]?.network?.config?.currencies[0]?.coinDecimals;
+      let coinMinimalDenom = wallet.networks[chainIds[i]]?.network.config?.currencies?.[0]?.coinMinimalDenom;
       let totalRewards = rewardchainsMap?.[chainIds[i]]?.delegatorRewards?.totalRewards / 10 ** decimal;
+      totalRewardsInDollars += convertToDollars(coinMinimalDenom, +totalRewards);
+
       let validatorRewards = rewardchainsMap?.[chainIds[i]]?.delegatorRewards?.list;
 
       if (!validatorRewards || validatorRewards.length == 0) continue;
@@ -48,19 +59,22 @@ const StakingOverview = (props) => {
         validators: validatorMap,
       }
     }
+    chainsData.totalReward = totalRewardsInDollars;
     return chainsData;
   }
 
   let getStakingObjectForProps = (wallet, chainsmap) => {
     let chainIds = Object.keys(chainsmap);
     let chainsdata = [];
+    let totalStakedInDollars = 0;
     for (let i = 0; i < chainIds.length; i++) {
       let decimal = wallet.networks[chainIds[i]]?.network?.config?.currencies[0]?.coinDecimals;
       let chainTotalStaked = chainsmap[chainIds[i]]?.delegations?.totalStaked / 10 ** decimal;
       let delegations = chainsmap[chainIds[i]]?.delegations?.delegations;
       let validatorstore = chainsmap[chainIds[i]]?.validators;
       let denom = wallet.networks[chainIds[i]]?.network?.config?.currencies[0]?.coinDenom;
-
+      let coinMinimalDenom = wallet.networks[chainIds[i]]?.network?.config?.currencies[0]?.coinMinimalDenom;
+      totalStakedInDollars += convertToDollars(coinMinimalDenom, +chainTotalStaked);
       if (delegations?.delegations?.length === undefined || delegations?.delegations?.length === 0) continue;
       let validators = [];
 
@@ -86,7 +100,7 @@ const StakingOverview = (props) => {
       chainsdata.push(chain);
     }
     return {
-      totalAmount: 0,
+      totalAmount: totalStakedInDollars,
       chains: chainsdata,
     }
   };
