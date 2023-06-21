@@ -123,7 +123,7 @@ export const GeneralOverview = (props) => {
   }, []);
 
   return (
-    <Paper>
+    <Paper sx={{ padding: 1, margin: 0, mt: 6 }} elevation={0}>
       <Grid
         container
         sx={{
@@ -134,7 +134,12 @@ export const GeneralOverview = (props) => {
         <Grid item xs={4} md={4}>
           <Card elevation={0}>
             <CardContent>
-              <Typography align="left" variant="h6" color="text.secondary">
+              <Typography
+                sx={{ fontSize: 17 }}
+                align="left"
+                variant="h6"
+                color="text.secondary"
+              >
                 Total Available Balance
               </Typography>
               <Typography align="left" variant="h6" color="text.primary">
@@ -146,7 +151,12 @@ export const GeneralOverview = (props) => {
         <Grid item xs={4} md={4}>
           <Card elevation={0}>
             <CardContent>
-              <Typography align="left" variant="h6" color="text.secondary">
+              <Typography
+                sx={{ fontSize: 17 }}
+                align="left"
+                variant="h6"
+                color="text.secondary"
+              >
                 Total Staked Balance
               </Typography>
               <Typography align="left" variant="h6" color="text.primary">
@@ -158,7 +168,12 @@ export const GeneralOverview = (props) => {
         <Grid item xs={4} md={4}>
           <Card elevation={0}>
             <CardContent>
-              <Typography align="left" variant="h6" color="text.secondary">
+              <Typography
+                sx={{ fontSize: 17 }}
+                align="left"
+                variant="h6"
+                color="text.secondary"
+              >
                 Total Rewards
               </Typography>
               <Typography align="left" variant="h6" color="text.primary">
