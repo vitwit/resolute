@@ -25,13 +25,23 @@ import { setFeegrant as setFeegrantState } from "../features/common/commonSlice"
 import Authz from "./authz/Authz";
 import NewAuthz from "./authz/NewAuthz";
 import StakingOverview from "./stakingOverview/StakingOverview";
-import { resetDefaultState } from "../features/staking/stakeSlice";
-import { resetDefaultState as resetDistributionDefaultState } from "../features/distribution/distributionSlice";
+import { resetDefaultState as distributionResetDefaultState } from "../features/distribution/distributionSlice";
+import { resetDefaultState as stakingResetDefaultState } from "../features/staking/stakeSlice";
+import { getAllTokensPrice } from "../features/common/commonSlice";
 import Proposal from "./gov/Proposal";
 
 export const ContextData = React.createContext();
 
-const ALL_NETWORKS = ["", "transfers", "gov", "staking", "multisig", "authz", "feegrant", "daos"]
+const ALL_NETWORKS = [
+  "",
+  "transfers",
+  "gov",
+  "staking",
+  "multisig",
+  "authz",
+  "feegrant",
+  "daos",
+];
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -79,13 +89,18 @@ function getTabIndex(path) {
 
 export default function Home() {
   const [value, setValue] = React.useState(0);
-  const selectedNetwork = useSelector(state => state.common.selectedNetwork?.chainName || "")
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork?.chainName || ""
+  );
   const [network, setNetwork] = React.useState(selectedNetwork);
+  const networks = useSelector((state) => state.wallet.networks);
+  const wallet = useSelector((state) => state.wallet);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const page = location.pathname.split('/')?.[location.pathname.split('/')?.length - 1]
+  const pathParts = location.pathname.split("/");
+  const page = pathParts?.[pathParts?.length - 1];
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -101,37 +116,33 @@ export default function Home() {
     }
   };
 
+  // set the defaultState for each chain in staking and distribution to avoid errors when accessing chain Specific details
+  useEffect(() => {
+    dispatch(stakingResetDefaultState(Object.keys(networks)));
+    dispatch(distributionResetDefaultState(Object.keys(networks)));
+    dispatch(getAllTokensPrice());
+  }, [wallet]);
+
   //get the feegrant details from localstorage for the selectedNetwork and set
-  // into the common slice feegrant 
+  // into the common slice feegrant
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[selectedNetwork.toLowerCase()];
-    dispatch(setFeegrantState({
-      grants: currentChainGrants,
-      chainName: selectedNetwork.toLowerCase()
-    }));
-  }, [selectedNetwork, page])
-
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: selectedNetwork.toLowerCase(),
+      })
+    );
+  }, [selectedNetwork, page]);
 
   useEffect(() => {
     setValue(getTabIndex(page));
   }, []);
 
-  const wallet = useSelector((state) => state.wallet);
-
-  useEffect(() => {
-    const chainIds = Object.keys(wallet.networks);
-    dispatch(resetDefaultState(chainIds));
-    dispatch(resetDistributionDefaultState(chainIds))
-  }, [wallet]);
-  
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="menu bar"
-        >
+        <Tabs value={value} onChange={handleChange} aria-label="menu bar">
           <Tab label="Overview" {...a11yProps(0)} />
           <Tab label="Transfers" {...a11yProps(1)} />
           <Tab label="Governance" {...a11yProps(2)} />
@@ -143,95 +154,71 @@ export default function Home() {
         </Tabs>
       </Box>
 
-    <Box sx={{
-      mt: 2,
-    }}>
-      <ContextData.Provider value={network} setNetwork={setNetwork}>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <OverviewPage />
-            }
-          />
+      <Box
+        sx={{
+          mt: 2,
+        }}
+      >
+        <ContextData.Provider value={network} setNetwork={setNetwork}>
+          <Routes>
+            <Route path="/" element={<OverviewPage />} />
 
-          <Route path="/:networkName/transfers" element={
-            <SendPage />
-          } />
+            <Route path="/:networkName/transfers" element={<SendPage />} />
 
-          <Route path="/transfers" element={
-            <SendPage />
-          } />
+            <Route path="/transfers" element={<SendPage />} />
 
-          <Route path="/:networkName/authz" element={
-            <Authz />
-          } />
+            <Route path="/:networkName/authz" element={<Authz />} />
 
-          <Route path="/:networkName/feegrant" element={
-            <Feegrant />
-          } />
+            <Route path="/:networkName/feegrant" element={<Feegrant />} />
 
-          <Route path="/staking" element={
-            <StakingOverview/>
-          }
-          />
+            <Route path="/staking" element={<StakingOverview />} />
 
-          <Route path="/gov" element={
-            <ActiveProposals />
-          } />
+            <Route path="/gov" element={<ActiveProposals />} />
 
-          <Route path="/:networkName/gov" element={
-            <ActiveProposals />
-          } />
+            <Route path="/:networkName/gov" element={<ActiveProposals />} />
 
-          <Route
-            path="/:networkName/proposals/:id"
-            element={
-              <Suspense fallback={<CircularProgress />}>
-                <Proposal />
-              </Suspense>
-            }
-          ></Route>
+            <Route
+              path="/:networkName/proposals/:id"
+              element={
+                <Suspense fallback={<CircularProgress />}>
+                  <Proposal />
+                </Suspense>
+              }
+            ></Route>
 
-          <Route path="/:networkName/daos" element={
-            <GroupPageV1 />
-          } />
+            <Route path="/:networkName/daos" element={<GroupPageV1 />} />
 
-          <Route path="/:networkName/multisig" element={
-            <PageMultisig />
-          } />
+            <Route path="/:networkName/multisig" element={<PageMultisig />} />
 
-          <Route path="/:networkName/staking" element={
-            <StakingPage />
-          } />
+            <Route path="/:networkName/staking" element={<StakingPage />} />
 
-          <Route path="/:networkName/multisig/:address/txs" element={
-            <PageMultisigInfo />
-          } />
+            <Route
+              path="/:networkName/multisig/:address/txs"
+              element={<PageMultisigInfo />}
+            />
 
-          <Route path="/:networkName/multisig/:address/create-tx" element={
-            <PageCreateTx />
-          } />
-          
-          <Route path="/:networkName/slashing" element={
-            <UnjailPage />
-          } />
+            <Route
+              path="/:networkName/multisig/:address/create-tx"
+              element={<PageCreateTx />}
+            />
 
-          <Route path="/:networkName/daos/create-group" element={
-            <CreateGroupNewPage />
-          } />
+            <Route path="/:networkName/slashing" element={<UnjailPage />} />
 
-          <Route path="/:networkName/feegrant/new" element={
-            <NewFeegrant />
-          } />
+            <Route
+              path="/:networkName/daos/create-group"
+              element={<CreateGroupNewPage />}
+            />
 
-          <Route path="/:networkName/authz/new" element={
-            <NewAuthz />
-          } />
+            <Route
+              path="/:networkName/feegrant/new"
+              element={<NewFeegrant />}
+            />
 
-          <Route path="*" element={<Page404 />}></Route>
-        </Routes>
-      </ContextData.Provider>
+            <Route path="/:networkName/authz/new" element={<NewAuthz />} />
+
+            <Route path="*" element={<Page404 />}></Route>
+          </Routes>
+        </ContextData.Provider>
       </Box>
     </Box>
   );
