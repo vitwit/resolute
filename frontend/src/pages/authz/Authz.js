@@ -40,7 +40,10 @@ import {
 import { AuthzSendDialog } from "../../components/authz/AuthzSend";
 import FeegranterInfo from "../../components/FeegranterInfo";
 import SelectNetwork from "../../components/common/SelectNetwork";
-import { getFeegrant, removeFeegrant as removeFeegrantLocalState } from "../../utils/localStorage";
+import {
+  getFeegrant,
+  removeFeegrant as removeFeegrantLocalState,
+} from "../../utils/localStorage";
 
 export default function Authz() {
   const dispatch = useDispatch();
@@ -103,15 +106,17 @@ export default function Authz() {
 
   useEffect(() => {
     dispatch(resetTxAuthzRes());
-  },[])
+  }, []);
 
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[currentNetwork];
-    dispatch(setFeegrantState({
-      grants: currentChainGrants,
-      chainName: currentNetwork.toLowerCase()
-    }));
-  }, [currentNetwork, params])
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: currentNetwork.toLowerCase(),
+      })
+    );
+  }, [currentNetwork, params]);
 
   useEffect(() => {
     if (address !== "" || txAuthzRes?.status === "idle") {
@@ -216,7 +221,7 @@ export default function Authz() {
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
         chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-      feegranter: feegrant.granter,
+      feegranter: feegrant?.granter,
     });
   };
 
