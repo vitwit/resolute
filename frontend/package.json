@@ -161,7 +161,7 @@
     ]
   },
   "devDependencies": {
-    "webpack-bundle-analyzer": "^4.8.0"
+    "webpack-bundle-analyzer": "^4.9.0"
   },
   "resolutions": {
     "libsodium": "file:./etc/noop",
