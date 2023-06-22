@@ -143,7 +143,14 @@ export const bankSlice = createSlice({
           state.balances[chainID] = result;
         }
       })
-      .addCase(getBalances.rejected, (state, action) => {});
+      .addCase(getBalances.rejected, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        state.balances[chainID] = {
+          status: "idle",
+          errMsg: action?.error?.message || "",
+          list: [],
+        };
+      });
 
     builder
       .addCase(getBalance.pending, (state) => {

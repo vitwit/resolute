@@ -18,12 +18,13 @@ import {
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 
 export const GeneralOverview = (props) => {
-  const { chainIDs } = props;
+  const { chainNames } = props;
   const dispatch = useDispatch();
   const networks = useSelector((state) => state.wallet.networks);
   const stakingChains = useSelector((state) => state.staking.chains);
   const distributionChains = useSelector((state) => state.distribution.chains);
   const balanceChains = useSelector((state) => state.bank.balances);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const tokensPriceInfo = useSelector(
     (state) => state.common.allTokensInfoState.info
   );
@@ -32,6 +33,9 @@ export const GeneralOverview = (props) => {
     totalBalance: 0,
     totalRewards: 0,
   });
+
+  const chainIDs = [];
+  chainNames.forEach((chainName) => chainIDs.push(nameToChainIDs[chainName]));
 
   const convertToDollars = (denom, amount = 0) => {
     let price = +tokensPriceInfo?.[denom]?.info?.["usd"] || 0;
@@ -94,13 +98,15 @@ export const GeneralOverview = (props) => {
   }, [balanceChains]);
 
   useEffect(() => {
+    console.log("now", networks);
     chainIDs.forEach((chainID) => {
       const chainInfo = networks[chainID]?.network;
-      const address = networks[chainID]?.walletInfo.bech32Address;
+      console.log("chainInfo", chainID, chainInfo);
+      const address = networks[chainID]?.walletInfo?.bech32Address;
 
       dispatch(
         getBalances({
-          baseURL: chainInfo.config.rest + "/",
+          baseURL: chainInfo?.config?.rest + "/",
           address: address,
           chainID: chainID,
         })
@@ -123,7 +129,7 @@ export const GeneralOverview = (props) => {
   }, []);
 
   return (
-    <Paper>
+    <Paper sx={{ padding: 1, mt: 6 }} elevation={0}>
       <Grid
         container
         sx={{
@@ -134,7 +140,12 @@ export const GeneralOverview = (props) => {
         <Grid item xs={4} md={4}>
           <Card elevation={0}>
             <CardContent>
-              <Typography align="left" variant="h6" color="text.secondary">
+              <Typography
+                sx={{ fontSize: 17 }}
+                align="left"
+                variant="h6"
+                color="text.secondary"
+              >
                 Total Available Balance
               </Typography>
               <Typography align="left" variant="h6" color="text.primary">
@@ -146,7 +157,12 @@ export const GeneralOverview = (props) => {
         <Grid item xs={4} md={4}>
           <Card elevation={0}>
             <CardContent>
-              <Typography align="left" variant="h6" color="text.secondary">
+              <Typography
+                sx={{ fontSize: 17 }}
+                align="left"
+                variant="h6"
+                color="text.secondary"
+              >
                 Total Staked Balance
               </Typography>
               <Typography align="left" variant="h6" color="text.primary">
@@ -158,7 +174,12 @@ export const GeneralOverview = (props) => {
         <Grid item xs={4} md={4}>
           <Card elevation={0}>
             <CardContent>
-              <Typography align="left" variant="h6" color="text.secondary">
+              <Typography
+                sx={{ fontSize: 17 }}
+                align="left"
+                variant="h6"
+                color="text.secondary"
+              >
                 Total Rewards
               </Typography>
               <Typography align="left" variant="h6" color="text.primary">

@@ -11,9 +11,9 @@ import { formatValidatorStatus } from "../utils/util";
 import { useSelector } from "react-redux";
 
 export function FilteredValidators(props) {
-  const { validators, filtered, onMenuAction, theme } = props;
+  const { validators, filtered, onMenuAction, theme, chainID } = props;
   const delegatedTo = useSelector(
-    (state) => state.staking.delegations.delegatedTo
+    (state) => state.staking.chains[chainID].delegations.delegatedTo
   );
 
   return (

@@ -161,7 +161,9 @@ export default function Home() {
       >
         <ContextData.Provider value={network} setNetwork={setNetwork}>
           <Routes>
-            <Route path="/" element={<OverviewPage />} />
+            <Route path="/" element={<OverviewPage />}>
+              <Route path=":networkName/overview" element={<OverviewPage />} />
+            </Route>
 
             <Route path="/:networkName/transfers" element={<SendPage />} />
 
