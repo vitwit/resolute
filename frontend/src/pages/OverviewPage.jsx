@@ -1,37 +1,37 @@
-import { Paper, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectNetwork from "../components/common/SelectNetwork";
-import { resetDefaultState as distributionResetDefaultState } from "../features/distribution/distributionSlice";
-import { resetDefaultState as stakingResetDefaultState } from "../features/staking/stakeSlice";
 import Overview from "./Overview";
+import { GeneralOverview } from "./general-overview/GeneralOverview";
 
 export default function OverviewPage() {
+  const [defaultLoaded, setDefaultLoaded] = useState(false);
+  const staking = useSelector((state) => state.staking.chains);
+  const distribution = useSelector((state) => state.distribution.chains);
+  const networks = useSelector((state) => state.wallet.networks);
+  const tokenInfo = useSelector(
+    (state) => state.common.allTokensInfoState.info
+  );
+
+  useEffect(() => {
+    if (
+      !defaultLoaded &&
+      Object.keys(staking).length &&
+      Object.keys(distribution).length &&
+      Object.keys(tokenInfo).length
+    ) {
+      setDefaultLoaded(true);
+    }
+  }, [staking, distribution, tokenInfo]);
+
   const defaultChainName = "cosmoshub";
   const wallet = useSelector((state) => state.wallet);
-  const networks = useSelector((state) => state.wallet.networks);
-  const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
   const nameToChainIDs = wallet.nameToChainIDs;
   let currentNetwork = params.networkName;
-
-  // when "/:network/overview" is directly accessed or reloaded, It won't be rendered properly. So we do this!
-  const [loaded, setLoaded] = useState(false);
-  useEffect(() => {
-    if (currentNetwork && !loaded) {
-      navigate(`/`);
-    } else if (!currentNetwork) {
-      setLoaded(true);
-    }
-  }, [currentNetwork]);
-
-  useEffect(() => {
-    dispatch(stakingResetDefaultState(Object.keys(networks)));
-    dispatch(distributionResetDefaultState(Object.keys(networks)));
-  }, [wallet]);
 
   const handleOnSelect = (chainName) => {
     navigate(`/${chainName}/overview`);
@@ -53,11 +53,15 @@ export default function OverviewPage() {
           }
         />
       </Box>
-      {currentNetwork?.length > 0 && Object.keys(nameToChainIDs).length > 0 && (
+      {currentNetwork?.length > 0 && defaultLoaded ? (
         <Overview
           chainID={nameToChainIDs[currentNetwork]}
           chainName={currentNetwork}
         />
+      ) : (
+        defaultLoaded && (
+          <GeneralOverview chainNames={Object.keys(nameToChainIDs)} />
+        )
       )}
     </div>
   );
