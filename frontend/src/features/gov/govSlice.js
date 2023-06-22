@@ -245,9 +245,23 @@ export const proposalsSlice = createSlice({
       .addCase(getProposal.pending, (state) => {
         state.proposalInfo.status = "pending";
       })
-      .addCase(getProposal.fulfilled, (state, payload) => {
+      .addCase(getProposal.fulfilled, (state, action) => {
         state.proposalInfo.status = "idle";
-        state.proposalInfo.proposalInfo = payload.payload.proposal;
+        const chainID = action.meta.arg?.chainID || "";
+        if (chainID.length > 0) {
+          const old = state.active[chainID];
+          if (old?.proposals?.length > 0) {
+            old.proposals = [action.payload.proposal]
+            state.active[chainID] = old;
+          } else {
+            state.active[chainID] = {
+              status: "idle",
+              errMsg: "",
+              proposals: [action.payload?.proposal],
+              pagination: {}
+            }
+          }
+        }
       })
       .addCase(getProposal.rejected, (state, payload) => {
         state.proposalInfo.status = "rejected";

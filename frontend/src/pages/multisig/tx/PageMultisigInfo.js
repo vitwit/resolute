@@ -25,7 +25,13 @@ import { copyToClipboard } from "../../../utils/clipboard";
 
 export default function PageMultisigInfo() {
   const dispatch = useDispatch();
-  const { address: multisigAddress } = useParams();
+  const params = useParams()
+  const { address: multisigAddress } = params;
+
+  const [chainInfo, setChainInfo] = useState({});
+  const [currency, setCurrency] = useState();
+  const [currentNetwork, setCurrentNetwork] = useState('');
+
   const multisigAccountDetails = useSelector(
     (state) => state.multisig.multisigAccount
   );
@@ -33,9 +39,10 @@ export default function PageMultisigInfo() {
   const members = multisigAccountDetails?.pubkeys || [];
   const multisigBal = useSelector((state) => state.multisig.balance);
   const multisigDel = useSelector((state) => state.staking.delegations);
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo?.config?.currencies[0]
-  );
+  const wallet = useSelector((state) => state.wallet);
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
   const [totalStake, setTotalStaked] = useState(0);
 
   useEffect(() => {
@@ -50,19 +57,27 @@ export default function PageMultisigInfo() {
     setTotalStaked(total?.toFixed(6));
   }, [multisigDel]);
 
-  const wallet = useSelector((state) => state.wallet);
-  const { chainInfo, connected } = wallet;
+  const { connected } = wallet;
 
   useEffect(() => {
-    dispatch(multisigByAddress(multisigAddress));
-  }, []);
+    const network = params.networkName;
+    setCurrentNetwork(network);
+    if(network.length > 0 && connected) {
+      const chainId = nameToChainIDs[network];
+      if (chainId?.length > 0) {
+        setChainInfo(networks[chainId]);
+        setCurrency(networks[chainId]?.network.config.currencies[0]);
+        dispatch(multisigByAddress(multisigAddress));
+      }
+  }
+  }, [params, connected]);
 
   const navigate = useNavigate();
   useEffect(() => {
     if (connected) {
       dispatch(
         getMultisigBalance({
-          baseURL: chainInfo.config.rest,
+          baseURL: chainInfo?.config?.rest,
           address: multisigAddress,
           denom: chainInfo?.config?.currencies[0].coinMinimalDenom,
         })
@@ -70,14 +85,14 @@ export default function PageMultisigInfo() {
 
       dispatch(
         getDelegations({
-          baseURL: chainInfo.config.rest,
+          baseURL: chainInfo?.config?.rest,
           address: multisigAddress,
         })
       );
 
       dispatch(
         getAllValidators({
-          baseURL: chainInfo.config.rest,
+          baseURL: chainInfo?.config?.rest,
           status: null,
         })
       );
@@ -222,7 +237,7 @@ export default function PageMultisigInfo() {
           }}
         >
           <Button
-            onClick={() => navigate(`/multisig/${multisigAddress}/create-tx`)}
+            onClick={() => navigate(`/${currentNetwork}/multisig/${multisigAddress}/create-tx`)}
             disableElevation
             variant="contained"
             sx={{

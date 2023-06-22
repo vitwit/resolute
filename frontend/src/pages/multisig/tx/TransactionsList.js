@@ -56,6 +56,7 @@ import {
   SEND_TYPE_URL,
   UNDELEGATE_TYPE_URL,
 } from "./utils";
+import { useParams } from "react-router-dom";
 
 const mapTxns = {
   "/cosmos.staking.v1beta1.MsgDelegate": "Delegate",
@@ -149,11 +150,15 @@ const getTxStatusComponent = (status, onShowError) => {
 
 const TableRowComponent = (props) => {
   const { tx, type, onShowError, onShowMoreTxns, multisigAccount } = props;
+  const { networkName } = useParams();
 
   const threshold = multisigAccount?.account?.threshold || 0;
 
-  const walletAddress = useSelector((state) => state.wallet.address);
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const walletAddress = networks[nameToChainIDs[networkName]]?.walletInfo?.bech32Address;
+  const chainInfo = networks[nameToChainIDs[networkName]]?.network;
 
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();

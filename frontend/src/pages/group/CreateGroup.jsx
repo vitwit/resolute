@@ -11,14 +11,29 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { resetGroupTx, txCreateGroup } from "../../features/group/groupSlice";
 import { Grid } from "@mui/material";
+import CreateGroupInfoForm from "./CreateGroupInfoForm";
+import { useParams } from "react-router-dom";
+import { DAYS, PERCENTAGE } from "./common";
 
 const steps = ["Group information", "Add members", "Attach policy"];
 
 export default function CreateGroupStepper() {
+  const params = useParams();
   const [showAddPolicyForm, setShowAddPolicyForm] = useState(null);
 
-  const wallet = useSelector((state) => state.wallet);
-  const { chainInfo, address } = wallet;
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork);
+
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const address =
+    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+
+  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  
   const navigate = useNavigate();
   const txCreateGroupRes = useSelector(
     (state) => state?.group?.txCreateGroupRes
@@ -32,22 +47,22 @@ export default function CreateGroupStepper() {
 
   useEffect(() => {
     if (txCreateGroupRes?.status === "idle") {
-      navigate(`/group`);
+      navigate(`/${currentNetwork}/daos`);
     }
   }, [txCreateGroupRes?.status]);
 
   const dispatch = useDispatch();
 
-  const onSubmit = (data) => {
-    const groupMetaData = {
-      name: data?.name,
-      description: data?.description,
-      forumUrl: data?.forumUrl,
+  const createGroup = (policyMetadata) => {
+    const data = {
+      "groupMetaData": groupMetaData,
+      "policyMetadata": policyMetadata,
+      "members": membersInfo,
     };
     const dataObj = {
       admin: address,
-      members: data.members,
-      groupMetaData: groupMetaData,
+      members: data.members.members,
+      groupMetaData: data.groupMetaData,
       chainId: chainInfo.config.chainId,
       feeAmount: chainInfo.config.gasPriceStep.average,
       denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
@@ -60,65 +75,69 @@ export default function CreateGroupStepper() {
       data.policyMetadata.percentage !== 0 ||
       data.policyMetadata.threshold !== 0
     ) {
-      const getMinExecPeriod = (policyData) => {
+
+      const getPeriod = (duration, period) => {
         let time;
-        if (policyData?.minExecPeriodDuration === "Days") time = 24 * 60 * 60;
-        else if (policyData?.minExecPeriodDuration === "Hours") time = 60 * 60;
-        else if (policyData?.minExecPeriodDuration === "Minutes") time = 60;
+        if(duration === DAYS) time = 24 * 60 * 60;
         else time = 1;
 
-        time = time * Number(policyData?.minExecPeriod);
+        time = time * Number(period);
         return time;
-      };
-
-      const getVotingPeriod = (policyData) => {
-        let time;
-        if (policyData?.votingPeriodDuration === "Days") time = 24 * 60 * 60;
-        else if (policyData?.votingPeriodDuration === "Hours") time = 60 * 60;
-        else if (policyData?.votingPeriodDuration === "Minutes") time = 60;
-        else time = 1;
-
-        time = time * Number(policyData?.votingPeriod);
-        return time;
-      };
+      }
 
       if (data?.policyMetadata) {
         dataObj["policyData"] = {
           ...data.policyMetadata,
-          minExecPeriod: getMinExecPeriod(data.policyMetadata),
-          votingPeriod: getVotingPeriod(data.policyMetadata),
+          minExecPeriod: getPeriod(data.policyMetadata?.minExecPeriodDuration, data.policyMetadata?.minExecPeriod),
+          votingPeriod: getPeriod(data.policyMetadata?.votingPeriodDuration, data.policyMetadata?.votingPeriod),
         };
       }
 
-      if (dataObj?.policyData?.decisionPolicy === "percentage") {
+      if (dataObj?.policyData?.decisionPolicy === PERCENTAGE) {
         dataObj.policyData.percentage =
           Number(dataObj.policyData.percentage) / 100.0;
       }
     }
-
     dispatch(txCreateGroup(dataObj));
   };
 
   const [activeStep, setActiveStep] = React.useState(0);
-  const [groupNameError, setGroupNameError] = useState("");
-  const [groupDescError, setGroupDescError] = useState("");
-  const [groupForumError, setGroupForumError] = useState("");
-  const [memberInfoError, setMemberInfoError] = useState("");
-  const groupInfoErrors = {
-    nameErrors: ["name cannot be empty","name cannot contain more than 25 characters"],
-    descErrors: ["description cannot be empty","description cannot contain more than 100 characters"],
-    forumErrors: ["forum URL cannot be empty","forum URL cannot contain more than 70 characters"]
-  }
+
+  const [groupMetaData, setGroupMetaData] = useState({});
+  const [membersInfo, setMembersInfo] = useState({});
+  const [policyMetaData, setPolicyMetaData] = useState({});
+
+  const onSubmitInfo = (data) => {
+    setGroupMetaData(data);
+    setActiveStep(activeStep + 1);
+  };
+
+  const onSubmitMemberInfo = (data) => {
+    setMembersInfo(data);
+    setActiveStep(activeStep + 1);
+  };
+
+  const onSubmitPolicyInfo = (data) => {    
+    createGroup(data.policyMetadata);
+  };
 
   const {
-    register,
-    control,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-    reset,
-    getValues,
+    control: controlInfo,
+    handleSubmit: handleSubmitInfo,
+    formState: { errors: errorsInfo },
+  } = useForm({
+    defaultValues: {
+      name: "",
+      forumUrl: "",
+      description: "",
+    },
+  });
+
+  const {
+    control: controlMemberInfo,
+    handleSubmit: handleSubmitMemberInfo,
+    getValues: getValuesMemberInfo,
+    formState: { errors: errorsMemberInfo },
   } = useForm({
     defaultValues: {
       members: [
@@ -128,271 +147,40 @@ export default function CreateGroupStepper() {
           metadata: "",
         },
       ],
-      policyMetadata: {
-        name: "",
-        description: "",
-        decisionPolicy: "threshold",
-        percentage: 1,
-        threshold: 0,
-        policyAsAdmin: false
-      },
     },
   });
 
   const { fields, append, remove } = useFieldArray({
-    control,
+    control: controlMemberInfo,
     name: "members",
     rules: { minLength: 1 },
   });
 
-  const watchAllFields = watch();
+  const {
+    control: controlPolicyInfo,
+    handleSubmit: handleSubmitPolicyInfo,
+    formState: { errors: errorsPolicyInfo },
+    watch: watchPolicyInfo,
+    setValue: setValuePolicyInfo,
+    getValues: getValuesPolicyInfo,
+  } = useForm({
+    defaultValues: {
+      policyMetadata: {
+        name: "",
+        description: "",
+        decisionPolicy: PERCENTAGE,
+        percentage: 1,
+        threshold: 1,
+        policyAsAdmin: false,
+        minExecPeriodDuration: DAYS,
+        votingPeriodDuration: DAYS,
+      },
+    },
+  });
 
-  const validateGroupInfo = () => {
-    if (
-      !watchAllFields.name?.trim().length ||
-      !watchAllFields.description?.trim().length ||
-      !watchAllFields.forumUrl?.trim().length
-    ) {
-      setGroupNameError(groupInfoErrors.nameErrors[0]);
-      setGroupDescError(groupInfoErrors.descErrors[0]);
-      setGroupForumError(groupInfoErrors.forumErrors[0]);
-      return 0;
-    }
-    if (
-      watchAllFields.name?.trim().length > 25 ||
-      watchAllFields.description?.trim().length > 100 ||
-      watchAllFields.forumUrl?.trim().length > 70
-    ) {
-      setGroupNameError(groupInfoErrors.nameErrors[1]);
-      setGroupDescError(groupInfoErrors.descErrors[1]);
-      setGroupForumError(groupInfoErrors.forumErrors[1]);
-      return 0;
-    }
-    setGroupNameError("");
-    setGroupDescError("");
-    setGroupForumError("");
-    return 1;
-  };
-
-  const validateMembersInfo = () => {
-    const members = watchAllFields.members;
-    for (let index in members) {
-      if (
-        !members[index].address?.trim().length ||
-        !members[index].metadata?.trim().length ||
-        !members[index].weight?.toString().trim().length
-      ) {
-        setMemberInfoError("fields cannot be empty");
-        return 0;
-      }
-      if (
-        members[index].metadata?.trim().length > 25
-      ) {
-        setMemberInfoError("name length cannot be more than 25 characters");
-        return 0;
-      }
-      if (
-        members[index].weight <= 0
-      ) {
-        setMemberInfoError("weight must be greater than zero");
-        return 0;
-      }
-    }
-    setMemberInfoError("");
-    return 1;
-  };
-
-  return (
-    <Box sx={{ width: "100%" }}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stepper activeStep={activeStep} alternativeLabel>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        {activeStep === 0 ? (
-          <>
-            {/* group info section start */}
-            <Paper
-              elevation={0}
-              sx={{
-                p: 4,
-              }}
-            >
-              <Grid container spacing={2}>
-                <Grid item md={6} xs={12}>
-                  <Controller
-                    name="name"
-                    control={control}
-                    rules={{ required: "Name is required", maxLength: 25 }}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        required
-                        label="Name"
-                        size="small"
-                        name="Group name"
-                        fullWidth
-                        sx={{
-                          mb: 2,
-                        }}
-                        error={groupNameError}
-                        helperText={
-                          watchAllFields.name?.trim().length <= 25 &&
-                          watchAllFields.name?.trim().length > 0
-                            ? setGroupNameError("")
-                            : groupNameError ||
-                              watchAllFields.name?.trim().length === 0 ||
-                              !watchAllFields.name?.trim().length
-                            ? groupNameError
-                            : watchAllFields.name?.trim().length <= 25
-                            ? setGroupNameError("")
-                            : setGroupNameError(groupInfoErrors.nameErrors[1])
-                        }
-                      />
-                    )}
-                  />
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <Controller
-                    name="forumUrl"
-                    control={control}
-                    rules={{ required: "Forum url is required", maxLength: 70 }}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        required
-                        label="Forum URL"
-                        size="small"
-                        name="Group forum"
-                        fullWidth
-                        sx={{
-                          mb: 2,
-                        }}
-                        error={groupForumError}
-                        helperText={
-                          watchAllFields.forumUrl?.trim().length <= 70 &&
-                          watchAllFields.forumUrl?.trim().length > 0
-                            ? setGroupForumError("")
-                            : groupForumError ||
-                              watchAllFields.forumUrl?.trim().length === 0 ||
-                              !watchAllFields.forumUrl?.trim().length
-                            ? groupForumError
-                            : watchAllFields.forumUrl?.trim().length <= 70
-                            ? setGroupForumError("")
-                            : setGroupForumError(groupInfoErrors.forumErrors[1])
-                        }
-                      />
-                    )}
-                  />
-                </Grid>
-              </Grid>
-              <div>
-                <Controller
-                  name="description"
-                  control={control}
-                  rules={{
-                    required: "Description is required",
-                    maxLength: 100,
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      required
-                      label="Description"
-                      multiline
-                      size="small"
-                      name="Group description"
-                      fullWidth
-                      sx={{
-                        mb: 2,
-                      }}
-                      error={groupDescError}
-                      helperText={
-                        watchAllFields.description?.trim().length <= 100 &&
-                        watchAllFields.description?.trim().length > 0
-                          ? setGroupDescError("")
-                          : groupDescError ||
-                            watchAllFields.description?.trim().length === 0 ||
-                            !watchAllFields.description?.trim().length
-                          ? groupDescError
-                          : watchAllFields.description?.trim().length <= 100
-                          ? setGroupDescError("")
-                          : setGroupDescError(groupInfoErrors.descErrors[1])
-                      }
-                    />
-                  )}
-                />
-              </div>
-            </Paper>
-            {/* group info section end */}
-          </>
-        ) : activeStep === 1 ? (
-          <Paper
-            elevation={0}
-            sx={{
-              p: 4,
-            }}
-          >
-            <Typography color="error">{memberInfoError}</Typography>
-            {/* group members section start */}
-            {fields.length ? (
-              <fieldset
-                style={{
-                  border:"none"
-                }}
-              >
-                <CreateGroupMembersForm
-                  fields={fields}
-                  control={control}
-                  append={append}
-                  remove={remove}
-                  validateMembersInfo={validateMembersInfo}
-                />
-              </fieldset>
-            ) : null}
-
-            {/* group members section end */}
-          </Paper>
-        ) : activeStep === 2 ? (
-          <Paper
-            elevation={0}
-            sx={{
-              p: 4,
-            }}
-          >
-            {/* group policy section start */}
-            {(fields.length && (
-              <fieldset
-                style={{
-                  border:"none"
-                }}
-              >
-                <CreateGroupPolicy
-                  handleCancelPolicy={() => {
-                    setValue("policyMetadata", null);
-                    setShowAddPolicyForm(false);
-                  }}
-                  setValue={setValue}
-                  reset={reset}
-                  register={register}
-                  errors={errors}
-                  fields={fields}
-                  watch={watch}
-                  control={control}
-                  members={getValues("members")}
-                />
-              </fieldset>
-            )) ||
-              null}
-
-            {/* group policy section end */}
-          </Paper>
-        ) : (
-          <></>
-        )}
+  const BackButton = () => {
+    return (
+      <>
         {activeStep !== 0 ? (
           <Button
             onClick={() => setActiveStep(activeStep === 0 ? 0 : activeStep - 1)}
@@ -402,24 +190,109 @@ export default function CreateGroupStepper() {
         ) : (
           <></>
         )}
-        {activeStep !== 2 ? (
-          <Button
-            onClick={() => {
-              if (activeStep === 0 && validateGroupInfo()) {
-                setActiveStep(activeStep === 2 ? 0 : activeStep + 1);
-              }
-              if (activeStep === 1 && validateMembersInfo()) {
-                setActiveStep(activeStep === 2 ? 0 : activeStep + 1);
-              }
-            }}
-          >
-            Next
-          </Button>
-        ) : (
-          <></>
-        )}
-        {activeStep === 2 ? <Button type="submit">Create Group</Button> : <></>}
-      </form>
+      </>
+    );
+  };
+
+  return (
+    <Box sx={{ width: "100%" }}>
+      <Stepper activeStep={activeStep} alternativeLabel>
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+      {activeStep === 0 ? (
+        <>
+          {/* group info section start */}
+
+          <form onSubmit={handleSubmitInfo(onSubmitInfo)}>
+            <fieldset style={{ border: "none" }}>
+              <CreateGroupInfoForm control={controlInfo} errors={errorsInfo} />
+            </fieldset>
+            <Button type="submit">Next</Button>
+          </form>
+
+          {/* group info section end */}
+        </>
+      ) : activeStep === 1 ? (
+        <>
+          {/* group members section start */}
+
+          <form onSubmit={handleSubmitMemberInfo(onSubmitMemberInfo)}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 4,
+              }}
+            >
+              {fields.length ? (
+                <fieldset
+                  style={{
+                    border: "none",
+                  }}
+                >
+                  <CreateGroupMembersForm
+                    fields={fields}
+                    control={controlMemberInfo}
+                    append={append}
+                    remove={remove}
+                    errors={errorsMemberInfo}
+                  />
+                </fieldset>
+              ) : null}
+            </Paper>
+            <BackButton />
+            <Button type="submit">Next</Button>
+          </form>
+
+          {/* group members section end */}
+        </>
+      ) : activeStep === 2 ? (
+        <>
+          {/* group policy section start */}
+
+          <form onSubmit={handleSubmitPolicyInfo(onSubmitPolicyInfo)}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 4,
+              }}
+            >
+              {(fields.length && (
+                <fieldset
+                  style={{
+                    border: "none",
+                  }}
+                >
+                  <CreateGroupPolicy
+                    handleCancelPolicy={() => {
+                      setValuePolicyInfo("policyMetadata", null);
+                      setShowAddPolicyForm(false);
+                    }}
+                    policyUpdate={false}
+                    setValue={setValuePolicyInfo}
+                    errors={errorsPolicyInfo}
+                    fields={fields}
+                    watch={watchPolicyInfo}
+                    control={controlPolicyInfo}
+                    members={getValuesMemberInfo("members")}
+                    getValues={getValuesPolicyInfo}
+                  />
+                </fieldset>
+              )) ||
+                null}
+            </Paper>
+            <BackButton />
+            <Button type="submit">Create Group</Button>
+          </form>
+
+          {/* group policy section end */}
+        </>
+      ) : (
+        <></>
+      )}
     </Box>
   );
 }

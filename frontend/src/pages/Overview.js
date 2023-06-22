@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getBalance } from "../features/bank/bankSlice";
+import { getBalances } from "../features/bank/bankSlice";
 import { getDelegations, getUnbonding } from "../features/staking/stakeSlice";
 import { getDelegatorTotalRewards } from "../features/distribution/distributionSlice";
 import { parseBalance } from "../utils/denom";
@@ -19,32 +19,40 @@ import { useNavigate } from "react-router-dom";
 import { copyToClipboard } from "../utils/clipboard";
 import { getTokenPrice } from "../features/common/commonSlice";
 
-export default function Overview() {
+export default function Overview(props) {
+  const { chainID, chainName } = props;
   const wallet = useSelector((state) => state.wallet);
-  const { chainInfo, connected, address } = wallet;
-  const balance = useSelector((state) => state.bank.balance);
-  const delegations = useSelector((state) => state.staking.delegations);
-  const rewards = useSelector((state) => state.distribution.delegatorRewards);
-  const unbonding = useSelector((state) => state.staking.unbonding);
+  const { connected } = wallet;
+  const address = wallet.networks[chainID].walletInfo.bech32Address;
+  const chainInfo = wallet.networks[chainID].network;
+  const pubkey = wallet.networks[chainID].walletInfo.pubKey;
+  const balance = useSelector((state) => state.bank.balances);
+  const delegations = useSelector(
+    (state) => state.staking.chains[chainID].delegations
+  );
+  const rewards = useSelector(
+    (state) => state.distribution.chains[chainID].delegatorRewards
+  );
+  const unbonding = useSelector(
+    (state) => state.staking.chains[chainID].unbonding
+  );
   const account = useSelector((state) => state.auth.accountInfo);
   const priceInfo = useSelector((state) => state.common.tokensInfoState.info);
-
   const selectedAuthz = useSelector((state) => state.authz.selected);
-
+  const { config } = chainInfo;
+  const coinDecimals = config?.currencies[0].coinDecimals || 0;
+  const coinDenom = config?.currencies[0].coinMinimalDenom || "";
+  const dispatch = useDispatch();
   const [available, setTotalBalance] = useState(0);
   const [delegated, setTotalDelegations] = useState(0);
   const [pendingRewards, setTotalRewards] = useState(0);
   const [unbondingDel, setTotalUnbonding] = useState(0);
 
-  const dispatch = useDispatch();
-
-  const { config } = chainInfo;
-  const coinDecimals = config?.currencies[0].coinDecimals || 1;
-  const coinDenom = config?.currencies[0].coinMinimalDenom || "";
-
   useEffect(() => {
     if (connected && config.currencies.length > 0) {
-      setTotalBalance(parseBalance([balance.balance], coinDecimals, coinDenom));
+        setTotalBalance(
+          parseBalance(balance?.[chainID]?.list || [], coinDecimals, coinDenom)
+        );
       setTotalDelegations(delegations.totalStaked / 10.0 ** coinDecimals);
       setTotalRewards(totalRewards(rewards?.list, coinDecimals, coinDenom));
       setTotalUnbonding(totalUnbonding(unbonding.delegations, coinDecimals));
@@ -54,20 +62,20 @@ export default function Overview() {
   useEffect(() => {
     if (connected && selectedAuthz.granter.length === 0) {
       if (address.length > 0 && config.currencies.length > 0) {
-        fetchDetails(address);
+        fetchDetails(address, chainID);
       }
     }
   }, [address]);
 
   useEffect(() => {
     if (selectedAuthz.granter.length > 0) {
-      fetchDetails(selectedAuthz.granter);
+      fetchDetails(selectedAuthz.granter, chainID);
     } else if (address?.length > 0) {
-      fetchDetails(address);
+      fetchDetails(address, chainID);
     }
   }, [selectedAuthz]);
 
-  const fetchDetails = (address) => {
+  const fetchDetails = (address, chainID) => {
     dispatch(
       getAccountInfo({
         baseURL: config.rest,
@@ -76,15 +84,16 @@ export default function Overview() {
     );
 
     dispatch(
-      getBalance({
-        baseURL: config.rest,
+      getBalances({
+        baseURL: config.rest + "/",
         address: address,
-        denom: coinDenom,
+        chainID: chainID,
       })
     );
 
     dispatch(
       getDelegations({
+        chainID: chainID,
         baseURL: config.rest,
         address: address,
       })
@@ -92,6 +101,7 @@ export default function Overview() {
 
     dispatch(
       getDelegatorTotalRewards({
+        chainID: chainID,
         baseURL: config.rest,
         address: address,
       })
@@ -99,6 +109,7 @@ export default function Overview() {
 
     dispatch(
       getUnbonding({
+        chainID: chainID,
         baseURL: config.rest,
         address: address,
       })
@@ -116,6 +127,8 @@ export default function Overview() {
           <AccountInfo
             wallet={wallet}
             account={account}
+            address={address}
+            pubkey={pubkey}
             onCopy={(msg) => {
               copyToClipboard(msg, dispatch);
             }}
@@ -164,7 +177,7 @@ export default function Overview() {
                   variant="contained"
                   disableElevation
                   size="small"
-                  onClick={() => navigate("/send")}
+                  onClick={() => navigate(`/${chainName}/transfers`)}
                 >
                   Send
                 </Button>
@@ -419,7 +432,7 @@ export default function Overview() {
 }
 
 const AccountInfo = (props) => {
-  const { wallet, account } = props;
+  const { wallet, account, address, pubkey } = props;
   return (
     <Box
       component="div"
@@ -462,11 +475,11 @@ const AccountInfo = (props) => {
               Address
             </Typography>
             <Chip
-              label={shortenAddress(wallet.address, 24)}
+              label={shortenAddress(address, 24)}
               size="small"
               deleteIcon={<ContentCopyOutlined />}
               onDelete={() => {
-                props.onCopy(wallet.address);
+                props.onCopy(address);
               }}
             />
           </Grid>
@@ -487,11 +500,11 @@ const AccountInfo = (props) => {
               Public Key
             </Typography>
             <Chip
-              label={wallet.pubKey ? shortenPubKey(wallet.pubKey, 24) : "-"}
+              label={pubkey ? shortenPubKey(pubkey, 24) : "-"}
               size="small"
               deleteIcon={<ContentCopyOutlined />}
               onDelete={() => {
-                props.onCopy(wallet.pubKey);
+                props.onCopy(pubkey);
               }}
             />
           </Grid>
@@ -545,6 +558,7 @@ AccountInfo.propTypes = {
   wallet: PropTypes.object.isRequired,
   account: PropTypes.object.isRequired,
   onCopy: PropTypes.func.isRequired,
+  address: PropTypes.string.isRequired,
 };
 
 const getDisplayAmount = (amount, decimals) => {

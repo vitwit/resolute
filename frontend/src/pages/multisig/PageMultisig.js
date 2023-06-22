@@ -27,7 +27,6 @@ import { copyToClipboard } from "../../utils/clipboard";
 export default function PageMultisig() {
   const [open, setOpen] = useState(false);
   const params = useParams();
-  const [selectedNetwork, setCurrentNetwork] = useState(params?.networkName);
   const [chainInfo, setChainInfo] = useState({});
 
   const navigate = useNavigate();
@@ -50,20 +49,22 @@ export default function PageMultisig() {
 
 
   const dispatch = useDispatch();
-
+  const [currentNetwork, setCurrentNetwork] = useState();
   useEffect(() => {
     const network = params.networkName;
+    setCurrentNetwork(network);
     if (network.length > 0 && connected) {
       const chainId = nameToChainIDs[network];
       if (chainId?.length > 0) {
+        const chain = networks[chainId];
         setChainInfo(networks[chainId]);
-        dispatch(getMultisigAccounts(walletInfo?.bech32Address));
+        dispatch(getMultisigAccounts(chain?.walletInfo?.bech32Address));
       } else {
         throw new Error("you shouldn't be here");
       }
     }
 
-  }, [params, connected, networks]);
+  }, [params, connected]);
 
   useEffect(() => {
     if (createMultiAccRes.status === "idle") {
@@ -90,13 +91,12 @@ export default function PageMultisig() {
         </Typography>
         <SelectNetwork
           onSelect={(name) => {
-            setCurrentNetwork(name);
             navigate(`/${name}/multisig`);
           }}
           networks={Object.keys(nameToChainIDs)}
           defaultNetwork={
-            selectedNetwork?.length > 0
-              ? selectedNetwork.toLowerCase().replace(/ /g, "")
+            params.networkName?.length > 0
+              ? params.networkName.toLowerCase().replace(/ /g, "")
               : "cosmoshub"
           }
         />
@@ -184,14 +184,14 @@ export default function PageMultisig() {
                   >
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/multisig/${row.address}/txs`);
+                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
                       }}
                     >
                       {row?.name}
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/multisig/${row.address}/txs`);
+                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
                       }}
                     >
                       <Chip
@@ -206,21 +206,21 @@ export default function PageMultisig() {
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/multisig/${row.address}/txs`);
+                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
                       }}
                     >
                       {row?.threshold || 0}
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/multisig/${row.address}/txs`);
+                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
                       }}
                     >
                       <strong> {pendingTxns[row?.address] || 0} </strong> txns
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/multisig/${row.address}/txs`);
+                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
                       }}
                     >
                       {getLocalTime(row?.created_at)}

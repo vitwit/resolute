@@ -6,21 +6,42 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import ActiveProposals from "./gov/ActiveProposals";
 import StakingPage from "./StakingPage";
-import AuthzPage from "./AuthzPage";
-import FeegrantPage from "./FeegrantPage";
 import GroupPageV1 from "./GroupPageV1";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import Page404 from "./Page404";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import OverviewPage from "./OverviewPage";
 import SendPage from "./SendPage";
-import ProposalInfo from "./gov/ProposalInfo";
+import UnjailPage from "./slashing/UnjailPage";
 import PageMultisig from "./multisig/PageMultisig";
+import PageMultisigInfo from "./multisig/tx/PageMultisigInfo";
+import PageCreateTx from "./multisig/tx/PageCreateTx";
+import Feegrant from "./feegrant/Feegrant";
+import CreateGroupNewPage from "./group/CreateGroup";
+import NewFeegrant from "./feegrant/NewFeegrant";
+import { getFeegrant } from "../utils/localStorage";
+import { setFeegrant as setFeegrantState } from "../features/common/commonSlice";
+import Authz from "./authz/Authz";
+import NewAuthz from "./authz/NewAuthz";
+import StakingOverview from "./stakingOverview/StakingOverview";
+import { resetDefaultState as distributionResetDefaultState } from "../features/distribution/distributionSlice";
+import { resetDefaultState as stakingResetDefaultState } from "../features/staking/stakeSlice";
+import { getAllTokensPrice } from "../features/common/commonSlice";
+import Proposal from "./gov/Proposal";
 
 export const ContextData = React.createContext();
 
-const ALL_NETWORKS = ["", "transfers", "gov", "staking", "multisig", "authz", "feegrant", "daos"]
+const ALL_NETWORKS = [
+  "",
+  "transfers",
+  "gov",
+  "staking",
+  "multisig",
+  "authz",
+  "feegrant",
+  "daos",
+];
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -68,12 +89,18 @@ function getTabIndex(path) {
 
 export default function Home() {
   const [value, setValue] = React.useState(0);
-  const selectedNetwork = useSelector(state => state.common.selectedNetwork?.chainName || "")
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork?.chainName || ""
+  );
   const [network, setNetwork] = React.useState(selectedNetwork);
+  const networks = useSelector((state) => state.wallet.networks);
+  const wallet = useSelector((state) => state.wallet);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const page = location.pathname.split('/')?.[location.pathname.split('/')?.length - 1]
+  const pathParts = location.pathname.split("/");
+  const page = pathParts?.[pathParts?.length - 1];
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -89,6 +116,24 @@ export default function Home() {
     }
   };
 
+  // set the defaultState for each chain in staking and distribution to avoid errors when accessing chain Specific details
+  useEffect(() => {
+    dispatch(stakingResetDefaultState(Object.keys(networks)));
+    dispatch(distributionResetDefaultState(Object.keys(networks)));
+    dispatch(getAllTokensPrice());
+  }, [wallet]);
+
+  //get the feegrant details from localstorage for the selectedNetwork and set
+  // into the common slice feegrant
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[selectedNetwork.toLowerCase()];
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: selectedNetwork.toLowerCase(),
+      })
+    );
+  }, [selectedNetwork, page]);
 
   useEffect(() => {
     setValue(getTabIndex(page));
@@ -97,11 +142,7 @@ export default function Home() {
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="menu bar"
-        >
+        <Tabs value={value} onChange={handleChange} aria-label="menu bar">
           <Tab label="Overview" {...a11yProps(0)} />
           <Tab label="Transfers" {...a11yProps(1)} />
           <Tab label="Governance" {...a11yProps(2)} />
@@ -112,65 +153,75 @@ export default function Home() {
           <Tab label="DAOs" {...a11yProps(7)} />
         </Tabs>
       </Box>
-      <TabPanel value={value} index={getTabIndex(location.pathname)}></TabPanel>
 
-      <ContextData.Provider value={network} setNetwork={setNetwork}>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <OverviewPage />
-            }
-          />
+      <Box
+        sx={{
+          mt: 2,
+        }}
+      >
+        <ContextData.Provider value={network} setNetwork={setNetwork}>
+          <Routes>
+            <Route path="/" element={<OverviewPage />}>
+              <Route path=":networkName/overview" element={<OverviewPage />} />
+            </Route>
 
-          <Route path="/:networkName/transfers" element={
-            <SendPage />
-          } />
+            <Route path="/:networkName/transfers" element={<SendPage />} />
 
-          <Route path="/transfers" element={
-            <SendPage />
-          } />
+            <Route path="/transfers" element={<SendPage />} />
 
-          <Route path="/:networkName/authz" element={
-            <AuthzPage />
-          } />
+            <Route path="/:networkName/authz" element={<Authz />} />
 
-          <Route path="/:networkName/feegrant" element={
-            <FeegrantPage />
-          } />
+            <Route path="/:networkName/feegrant" element={<Feegrant />} />
 
-          <Route path="/gov" element={
-            <ActiveProposals />
-          } />
+            <Route path="/staking" element={<StakingOverview />} />
 
-          <Route path="/:networkName/gov" element={
-            <ActiveProposals />
-          } />
+            <Route path="/gov" element={<ActiveProposals />} />
 
-          <Route
-            path="/:networkName/proposals/:id"
-            element={
-              <Suspense fallback={<CircularProgress />}>
-                <ProposalInfo />
-              </Suspense>
-            }
-          ></Route>
+            <Route path="/:networkName/gov" element={<ActiveProposals />} />
 
-          <Route path="/:networkName/daos" element={
-            <GroupPageV1 />
-          } />
+            <Route
+              path="/:networkName/proposals/:id"
+              element={
+                <Suspense fallback={<CircularProgress />}>
+                  <Proposal />
+                </Suspense>
+              }
+            ></Route>
 
-          <Route path="/:networkName/multisig" element={
-            <PageMultisig />
-          } />
+            <Route path="/:networkName/daos" element={<GroupPageV1 />} />
 
-          <Route path="/:networkName/staking" element={
-            <StakingPage />
-          } />
+            <Route path="/:networkName/multisig" element={<PageMultisig />} />
 
-          <Route path="*" element={<Page404 />}></Route>
-        </Routes>
-      </ContextData.Provider>
+            <Route path="/:networkName/staking" element={<StakingPage />} />
+
+            <Route
+              path="/:networkName/multisig/:address/txs"
+              element={<PageMultisigInfo />}
+            />
+
+            <Route
+              path="/:networkName/multisig/:address/create-tx"
+              element={<PageCreateTx />}
+            />
+
+            <Route path="/:networkName/slashing" element={<UnjailPage />} />
+
+            <Route
+              path="/:networkName/daos/create-group"
+              element={<CreateGroupNewPage />}
+            />
+
+            <Route
+              path="/:networkName/feegrant/new"
+              element={<NewFeegrant />}
+            />
+
+            <Route path="/:networkName/authz/new" element={<NewAuthz />} />
+
+            <Route path="*" element={<Page404 />}></Route>
+          </Routes>
+        </ContextData.Provider>
+      </Box>
     </Box>
   );
 }

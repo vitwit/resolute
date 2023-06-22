@@ -32,6 +32,8 @@ const initialState = {
     type: "",
   },
   txFilterRes: {},
+  txFeegrantBasicRes: {},
+  txGrantPeriodicRes: {},
 };
 
 export const getGrantsToMe = createAsyncThunk(
@@ -287,11 +289,18 @@ export const feegrantSlice = createSlice({
     resetFeeFilter: (state) => {
       state.txFilterRes = {};
     },
+    resetFeeBasic: (state) => {
+      state.txFeegrantBasicRes = {};
+    },
+    resetFeePeriodic: (state) => {
+      state.txGrantPeriodicRes = {};
+    }
   },
   extraReducers: (builder) => {
     builder
       .addCase(getGrantsToMe.pending, (state) => {
         state.grantsToMe.status = "pending";
+        state.grantsToMe.grants = [];
         state.errState = {
           message: "",
           type: "",
@@ -308,6 +317,7 @@ export const feegrantSlice = createSlice({
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
         state.grantsToMe.status = "rejected";
+        state.grantsToMe.grants = [];
         state.errState = {
           message: action.error.message,
           type: "error",
@@ -344,28 +354,34 @@ export const feegrantSlice = createSlice({
       .addCase(txFeegrantBasic.pending, (state) => {
         state.tx.status = `pending`;
         state.tx.type = `basic`;
+        state.txFeegrantBasicRes.status = `pending`;
       })
       .addCase(txFeegrantBasic.fulfilled, (state, _) => {
         state.tx.status = `idle`;
         state.tx.type = `basic`;
+        state.txFeegrantBasicRes.status = `idle`;
       })
       .addCase(txFeegrantBasic.rejected, (state, _) => {
         state.tx.status = `rejected`;
         state.tx.type = "basic";
+        state.txFeegrantBasicRes.status = `rejected`;
       });
 
     builder
       .addCase(txGrantPeriodic.pending, (state) => {
         state.tx.status = `pending`;
         state.tx.type = `periodic`;
+        state.txGrantPeriodicRes.status = `pending`;
       })
       .addCase(txGrantPeriodic.fulfilled, (state, _) => {
         state.tx.status = `idle`;
         state.tx.type = `periodic`;
+        state.txGrantPeriodicRes.status = `idle`;
       })
       .addCase(txGrantPeriodic.rejected, (state, _) => {
         state.tx.status = `rejected`;
         state.tx.type = "periodic";
+        state.txGrantPeriodicRes.status = `rejected`;
       });
 
     builder
@@ -395,6 +411,6 @@ export const feegrantSlice = createSlice({
   },
 });
 
-export const { resetAlerts, resetFeeFilter } = feegrantSlice.actions;
+export const { resetAlerts, resetFeeFilter, resetFeeBasic, resetFeePeriodic } = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;

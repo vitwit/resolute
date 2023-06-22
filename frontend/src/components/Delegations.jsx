@@ -14,10 +14,10 @@ import Box from "@mui/material/Box";
 import { useTheme } from "@emotion/react";
 
 export function MyDelegations(props) {
-  const { delegations, validators, onDelegationAction, currency, rewards } =
+  const { chainID, delegations, validators, onDelegationAction, currency, rewards } =
     props;
   const [totalRewards, setTotalRewards] = React.useState(0);
-  const distTxStatus = useSelector((state) => state.distribution.tx);
+  const distTxStatus = useSelector((state) => state.distribution?.chains?.[chainID]?.tx || "");
   const [rewardsP, setRewardsP] = React.useState({});
 
   const theme = useTheme();
@@ -95,18 +95,20 @@ export function MyDelegations(props) {
           {distTxStatus?.status === "pending" ? (
             <CircularProgress size={25} />
           ) : (
-            `Claim Rewards: ${totalRewards} ${currency?.coinDenom}`
+            `Claim Rewards: ${(+totalRewards).toLocaleString()} ${
+              currency?.coinDenom
+            }`
           )}
         </Button>
       </Box>
       <TableContainer component={Paper} elevation={0}>
         {delegations?.status === "pending" ? (
-          delegations?.delegations.length === 0 ? (
+          delegations?.delegations?.length === 0 ? (
             <CircularProgress />
           ) : (
             <></>
           )
-        ) : delegations?.delegations.length === 0 ? (
+        ) : delegations?.delegations?.length === 0 ? (
           <Typography
             variant="h6"
             color="text.primary"
@@ -131,7 +133,7 @@ export function MyDelegations(props) {
               </StyledTableRow>
             </TableHead>
             <TableBody>
-              {delegations?.delegations.map((row, index) => (
+              {delegations?.delegations?.delegations.map((row, index) => (
                 <StyledTableRow
                   key={index}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -141,31 +143,37 @@ export function MyDelegations(props) {
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {
-                      validators?.active[row.delegation.validator_address]
+                      validators?.active[row?.delegation?.validator_address]
                         ?.description.moniker
                     }
                     <br />
-                    {validators.active[row.delegation.validator_address]?.jailed
+                    {validators.active[row?.delegation?.validator_address]?.jailed
                       ? formatValidatorStatus(true, null)
                       : formatValidatorStatus(
                           false,
-                          validators.active[row.delegation.validator_address]
+                          validators.active[row?.delegation?.validator_address]
                             ?.status
                         )}
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {(
-                      validators?.active[row.delegation.validator_address]
-                        ?.commission.commission_rates.rate * 100
+                      validators?.active[row?.delegation?.validator_address]
+                        ?.commission?.commission_rates.rate * 100
                     ).toFixed(2)}
                     %
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {parseFloat(row.delegation.shares) /
-                      10 ** currency?.coinDecimals}
+                    {(
+                      parseFloat(row?.delegation?.shares) /
+                      10 ** currency?.coinDecimals
+                    )
+                      .toFixed(3)
+                      .toLocaleString()}
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {rewardsP[row.delegation.validator_address]?.toFixed(6)}
+                    {rewardsP[row?.delegation?.validator_address]
+                      ?.toFixed(3)
+                      .toLocaleString()}
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     <Button
