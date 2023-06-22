@@ -18,7 +18,6 @@ import { Divider } from "@mui/material";
 import { multiTxns } from "../features/bank/bankSlice";
 import { resetError, setError } from "../features/common/commonSlice";
 import PropTypes from "prop-types";
-import SelectNetwork from "../components/common/SelectNetwork";
 import { useNavigate, useParams } from "react-router-dom";
 
 const PER_PAGE = 5;
@@ -26,7 +25,6 @@ const SEND_TEMPLATE = "https://resolute.witval.com/_static/send.csv";
 
 export default function MultiTx({ chainInfo, address }) {
   const params = useParams();
-  const navigate = useNavigate();
 
   const selectNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
@@ -36,9 +34,9 @@ export default function MultiTx({ chainInfo, address }) {
   );
   const currency = chainInfo?.config?.currencies[0];
 
-  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-
-  const feegrant = useSelector((state) => state.common.feegrant);
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
+  );
   const submitTxStatus = useSelector((state) => state.bank.tx.status);
 
   const [slicedMsgs, setSlicedMsgs] = useState([]);
@@ -73,7 +71,7 @@ export default function MultiTx({ chainInfo, address }) {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-        feegranter: feegrant.granter,
+        feegranter: feegrant?.granter,
         memo: memo,
       })
     );
@@ -106,13 +104,7 @@ export default function MultiTx({ chainInfo, address }) {
 
   return (
     <Box>
-      {/* <Paper
-        elevation={0}
-        sx={{
-          p: 4,
-        }}
-      > */}
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Box>
         <Typography
           color="text.primary"
           variant="h6"
@@ -123,17 +115,6 @@ export default function MultiTx({ chainInfo, address }) {
         >
           Send transactions
         </Typography>
-        <SelectNetwork
-          onSelect={(name) => {
-            navigate(`/${name}/transfers`);
-          }}
-          networks={Object.keys(nameToChainIDs)}
-          defaultNetwork={
-            currentNetwork?.length > 0
-              ? currentNetwork.toLowerCase().replace(/ /g, "")
-              : "cosmoshub"
-          }
-        />
       </Box>
       <Grid container spacing={2}>
         <Grid item md={5} xs={12}>
@@ -329,7 +310,6 @@ export default function MultiTx({ chainInfo, address }) {
           </Paper>
         </Grid>
       </Grid>
-      {/* </Paper> */}
     </Box>
   );
 }

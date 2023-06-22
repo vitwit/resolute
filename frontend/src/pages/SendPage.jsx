@@ -15,54 +15,21 @@ import { getBalances, txBankSend } from "../features/bank/bankSlice";
 import Send from "../components/Send";
 import Alert from "@mui/material/Alert";
 import FeegranterInfo from "../components/FeegranterInfo";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { parseBalance } from "../utils/denom";
 import {
   getFeegrant,
   removeFeegrant as removeFeegrantLocalState,
 } from "../utils/localStorage";
-import PropTypes from "prop-types";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import MultiTx from "./MultiTx";
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `transfers-tab-${index}`,
-    "aria-controls": `transfers-tabpanel-${index}`,
-  };
-}
+import SelectNetwork from "../components/common/SelectNetwork";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import { Button } from "@mui/material";
 
 export default function SendPage() {
   const params = useParams();
+  const navigate = useNavigate();
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
@@ -99,6 +66,8 @@ export default function SendPage() {
     () => getSendAuthz(grantsToMe.grants, selectedAuthz.granter),
     [grantsToMe.grants]
   );
+
+  const [sendType, setSendType] = useState("send");
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -221,12 +190,6 @@ export default function SendPage() {
     removeFeegrantLocalState(currentNetwork);
   };
 
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
   return (
     <>
       {feegrant?.granter?.length > 0 ? (
@@ -237,77 +200,98 @@ export default function SendPage() {
           }}
         />
       ) : null}
-      {/* <Grid container sx={{ mt: 2 }}>
-        <Grid item xs={1} md={3}></Grid>
-        <Grid item xs={10} md={6}>
-          {selectedAuthz.granter.length > 0 &&
-            authzSend?.granter !== selectedAuthz.granter ? (
-            <Alert>You don't have permission to execute this transcation</Alert>
-          ) :
-            (
-              <Send
-                chainInfo={chainInfo}
-                available={currency?.length > 0 && balances?.length > 0 ? parseBalance(balances, currency[0].coinDecimals, currency[0].coinMinimalDenom) : 0}
-                onSend={onSendTx}
-                sendTx={sendTx}
-                authzTx={authzExecTx}
-
-              />
-            )
-          }
-        </Grid>
-        <Grid item xs={1} md={3}></Grid>
-      </Grid> */}
       <Box sx={{ width: "100%" }}>
-        <Box
-          sx={{
-            borderColor: "divider",
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <Tabs value={value} onChange={handleChange}>
-            <Tab label="Send" {...a11yProps(0)} />
-            <Tab label="Multi Send" {...a11yProps(1)} />
-          </Tabs>
-        </Box>
-        <TabPanel value={value} index={0}>
-          <Grid container sx={{ mt: 2 }}>
-            <Grid item xs={1} md={3}></Grid>
-            <Grid item xs={10} md={6}>
-              {selectedAuthz.granter.length > 0 &&
-              authzSend?.granter !== selectedAuthz.granter ? (
-                <Alert>
-                  You don't have permission to execute this transcation
-                </Alert>
-              ) : (
-                <Send
-                  chainInfo={chainInfo}
-                  available={
-                    currency?.length > 0 && balances?.length > 0
-                      ? parseBalance(
-                          balances,
-                          currency[0].coinDecimals,
-                          currency[0].coinMinimalDenom
-                        )
-                      : 0
-                  }
-                  onSend={onSendTx}
-                  sendTx={sendTx}
-                  authzTx={authzExecTx}
-                />
-              )}
-            </Grid>
-            <Grid item xs={1} md={3}></Grid>
+        <Grid container sx={{ mt: 2 }}>
+          <Grid item xs={1} md={3}></Grid>
+          <Grid
+            item
+            xs={10}
+            md={6}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <ButtonGroup
+              variant="outlined"
+              aria-label="validators"
+              sx={{ display: "flex", mb: 1 }}
+              disableElevation
+            >
+              <Button
+                variant={sendType === "send" ? "contained" : "outlined"}
+                onClick={() => {
+                  setSendType("send");
+                }}
+              >
+                Send
+              </Button>
+              <Button
+                variant={sendType === "multi-send" ? "contained" : "outlined"}
+                onClick={() => {
+                  setSendType("multi-send");
+                }}
+              >
+                Multi Send
+              </Button>
+            </ButtonGroup>
           </Grid>
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-          <MultiTx 
-            chainInfo={chainInfo}
-            address={address}
-            currency={currency}
-           />
-        </TabPanel>
+          <Grid
+            item
+            xs={1}
+            md={3}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <SelectNetwork
+              onSelect={(name) => {
+                navigate(`/${name}/transfers`);
+              }}
+              networks={Object.keys(nameToChainIDs)}
+              defaultNetwork={
+                currentNetwork?.length > 0
+                  ? currentNetwork.toLowerCase().replace(/ /g, "")
+                  : "cosmoshub"
+              }
+            />
+          </Grid>
+        </Grid>
+        {sendType === "send" ? (
+          <>
+            <Grid container sx={{ mt: 2 }}>
+              <Grid item xs={1} md={3}></Grid>
+              <Grid item xs={10} md={6}>
+                {selectedAuthz.granter.length > 0 &&
+                authzSend?.granter !== selectedAuthz.granter ? (
+                  <Alert>
+                    You don't have permission to execute this transcation
+                  </Alert>
+                ) : (
+                  <Send
+                    chainInfo={chainInfo}
+                    available={
+                      currency?.length > 0 && balances?.length > 0
+                        ? parseBalance(
+                            balances,
+                            currency[0].coinDecimals,
+                            currency[0].coinMinimalDenom
+                          )
+                        : 0
+                    }
+                    onSend={onSendTx}
+                    sendTx={sendTx}
+                    authzTx={authzExecTx}
+                  />
+                )}
+              </Grid>
+              <Grid item xs={1} md={3}></Grid>
+            </Grid>
+          </>
+        ) : (
+          <>
+            <MultiTx
+              chainInfo={chainInfo}
+              address={address}
+              currency={currency}
+            />
+          </>
+        )}
       </Box>
     </>
   );
