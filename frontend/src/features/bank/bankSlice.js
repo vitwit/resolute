@@ -146,7 +146,7 @@ export const bankSlice = createSlice({
         const chainID = action.meta.arg.chainID;
         state.balances[chainID] = {
           status: "idle",
-          errMsg: "",
+          errMsg: action?.error?.message || "",
           list: [],
         };
       });
