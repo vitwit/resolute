@@ -18,12 +18,13 @@ import {
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 
 export const GeneralOverview = (props) => {
-  const { chainIDs } = props;
+  const { chainNames } = props;
   const dispatch = useDispatch();
   const networks = useSelector((state) => state.wallet.networks);
   const stakingChains = useSelector((state) => state.staking.chains);
   const distributionChains = useSelector((state) => state.distribution.chains);
   const balanceChains = useSelector((state) => state.bank.balances);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const tokensPriceInfo = useSelector(
     (state) => state.common.allTokensInfoState.info
   );
@@ -32,6 +33,9 @@ export const GeneralOverview = (props) => {
     totalBalance: 0,
     totalRewards: 0,
   });
+
+  const chainIDs = [];
+  chainNames.forEach((chainName) => chainIDs.push(nameToChainIDs[chainName]));
 
   const convertToDollars = (denom, amount = 0) => {
     let price = +tokensPriceInfo?.[denom]?.info?.["usd"] || 0;
@@ -94,13 +98,15 @@ export const GeneralOverview = (props) => {
   }, [balanceChains]);
 
   useEffect(() => {
+    console.log("now", networks);
     chainIDs.forEach((chainID) => {
       const chainInfo = networks[chainID]?.network;
-      const address = networks[chainID]?.walletInfo.bech32Address;
+      console.log("chainInfo", chainID, chainInfo);
+      const address = networks[chainID]?.walletInfo?.bech32Address;
 
       dispatch(
         getBalances({
-          baseURL: chainInfo.config.rest + "/",
+          baseURL: chainInfo?.config?.rest + "/",
           address: address,
           chainID: chainID,
         })

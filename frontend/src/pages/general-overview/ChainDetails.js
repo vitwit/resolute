@@ -5,15 +5,17 @@ import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 import { parseBalance } from "../../utils/denom";
 
 export const ChainDetails = (props) => {
+  const state = useSelector((state)=> state);
+  console.log("state", state);
   const { chainID } = props;
   const balance = useSelector(
     (state) => state.bank.balances?.[chainID]?.list || []
   );
   const rewards = useSelector(
-    (state) => state.distribution.chains[chainID].delegatorRewards.totalRewards
+    (state) => state.distribution?.chains?.[chainID]?.delegatorRewards?.totalRewards || 0
   );
   const staked = useSelector(
-    (state) => state.staking.chains[chainID].delegations.totalStaked
+    (state) => state.staking?.chains?.[chainID]?.delegations?.totalStaked || 0
   );
   const wallet = useSelector((state) => state.wallet);
   const denom =
