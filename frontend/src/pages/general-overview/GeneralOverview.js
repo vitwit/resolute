@@ -26,7 +26,7 @@ export const GeneralOverview = (props) => {
   const balanceChains = useSelector((state) => state.bank.balances);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const tokensPriceInfo = useSelector(
-    (state) => state.common.allTokensInfoState.info
+    (state) => state.common?.allTokensInfoState?.info
   );
   const [totalDetails, setTotalDetails] = useState({
     totalStaked: 0,
@@ -98,10 +98,8 @@ export const GeneralOverview = (props) => {
   }, [balanceChains]);
 
   useEffect(() => {
-    console.log("now", networks);
     chainIDs.forEach((chainID) => {
       const chainInfo = networks[chainID]?.network;
-      console.log("chainInfo", chainID, chainInfo);
       const address = networks[chainID]?.walletInfo?.bech32Address;
 
       dispatch(
