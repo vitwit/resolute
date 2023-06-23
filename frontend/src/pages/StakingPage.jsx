@@ -7,6 +7,7 @@ import { Paper, Typography } from "@mui/material";
 import Validators from "./Validators";
 import { resetDefaultState as stakingResetDefaultState } from "../features/staking/stakeSlice";
 import { resetDefaultState as distributionResetDefaultState } from "../features/distribution/distributionSlice";
+import StakingOverview from "./stakingOverview/StakingOverview";
 
 export default function StakingPage() {
   const wallet = useSelector((state) => state.wallet);
@@ -48,6 +49,7 @@ export default function StakingPage() {
             }
           />
         </Box>
+        {currentNetwork ? 
         <div sx={{ justifyContent: "center", display: "flex", mr: 1 }}>
           {Object.keys(stakingChains)?.length > 0 ? (
             <Validators
@@ -58,7 +60,7 @@ export default function StakingPage() {
           ) : (
             <></>
           )}
-        </div>
+        </div> : <StakingOverview/> }
       </Paper>
     </div>
   );

@@ -104,7 +104,7 @@ export default function Home() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    if (newValue === 0 || newValue === 2) {
+    if (newValue === 0 || newValue === 2 || newValue === 3) {
       navigate(ALL_NETWORKS[newValue]);
     } else {
       if (selectedNetwork === "") {
@@ -173,7 +173,9 @@ export default function Home() {
 
             <Route path="/:networkName/feegrant" element={<Feegrant />} />
 
-            <Route path="/staking" element={<StakingOverview />} />
+            <Route path="/staking" element={<StakingPage />}>
+              <Route path=":networkName/staking" element={<StakingPage />} />
+            </Route>
 
             <Route path="/gov" element={<ActiveProposals />} />
 
