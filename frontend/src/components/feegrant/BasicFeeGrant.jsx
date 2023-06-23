@@ -1,14 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { FormControl, InputAdornment, TextField } from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Controller, useFormContext } from "react-hook-form";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
 function BasicFeeGrant() {
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo.config.currencies[0]
+  const params = useParams();
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
   );
+  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork);
+
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const currency =
+    networks[nameToChainIDs[currentNetwork]]?.network.config.currencies;
+
 
   const { control } = useFormContext();
 

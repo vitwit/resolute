@@ -37,6 +37,7 @@ const initialState = {
   selected: {
     granter: "",
   },
+  txAuthzRes: {},
 };
 
 export const getGrantsToMe = createAsyncThunk(
@@ -440,6 +441,9 @@ export const authzSlice = createSlice({
     resetExecTx: (state) => {
       state.execTx.status = "init";
     },
+    resetTxAuthzRes: (state) => {
+      state.txAuthzRes = {};
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -487,34 +491,43 @@ export const authzSlice = createSlice({
     builder
       .addCase(txAuthzSend.pending, (state) => {
         state.tx.status = `pending`;
+        state.txAuthzRes.status = `pending`;
       })
       .addCase(txAuthzSend.fulfilled, (state, _) => {
         state.tx.status = `idle`;
+        state.txAuthzRes.status = `idle`;
       })
       .addCase(txAuthzSend.rejected, (state, _) => {
         state.tx.status = `rejected`;
+        state.txAuthzRes.status = `rejected`;
       });
 
     builder
       .addCase(txAuthzGeneric.pending, (state) => {
         state.tx.status = `pending`;
+        state.txAuthzRes.status = `pending`;
       })
       .addCase(txAuthzGeneric.fulfilled, (state, _) => {
         state.tx.status = `idle`;
+        state.txAuthzRes.status = `idle`;
       })
       .addCase(txAuthzGeneric.rejected, (state, _) => {
         state.tx.status = `rejected`;
+        state.txAuthzRes.status = `rejected`;
       });
 
     builder
       .addCase(txAuthzRevoke.pending, (state) => {
         state.tx.status = `pending`;
+        state.txAuthzRes.status = `pending`;
       })
       .addCase(txAuthzRevoke.fulfilled, (state, _) => {
         state.tx.status = `idle`;
+        state.txAuthzRes.status = `idle`;
       })
       .addCase(txAuthzRevoke.rejected, (state, _) => {
         state.tx.status = `rejected`;
+        state.txAuthzRes.status = `rejected`;
       });
 
     builder
@@ -530,7 +543,7 @@ export const authzSlice = createSlice({
   },
 });
 
-export const { resetAlerts, setSelectedGranter, resetExecTx, exitAuthzMode } =
+export const { resetAlerts, setSelectedGranter, resetExecTx, resetTxAuthzRes, exitAuthzMode } =
   authzSlice.actions;
 
 export default authzSlice.reducer;

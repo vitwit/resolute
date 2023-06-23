@@ -24,7 +24,7 @@ const mainNets: Network[] = [
       gasPriceStep: { low: 0.01, average: 0.025, high: 0.03 },
       chainId: "cosmoshub-4",
       chainName: "CosmosHub",
-      rest: "https://resolute.witval.com/cosmos_api",
+      rest: "https://lcd-cosmoshub.blockapsis.com",
       rpc: "https://resolute.witval.com/cosmos_rpc/",
       currencies: [
         {
@@ -131,7 +131,7 @@ const mainNets: Network[] = [
     config: {
       chainId: "regen-1",
       chainName: "Regen",
-      rest: "https://resolute.witval.com/regen_api",
+      rest: "https://regen.stakesystems.io/",
       rpc: "https://resolute.witval.com/regen_rpc/",
       gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 },
       currencies: [
@@ -170,7 +170,7 @@ const mainNets: Network[] = [
     config: {
       chainId: "akashnet-2",
       chainName: "Akash",
-      rest: " https://resolute.witval.com/akash_api",
+      rest: "https://akash-api.polkachu.com",
       rpc: "https://resolute.witval.com/akash_rpc/",
       currencies: [
         {
@@ -211,7 +211,7 @@ const mainNets: Network[] = [
     config: {
       chainId: "osmosis-1",
       chainName: "Osmosis",
-      rest: "https://resolute.witval.com/osmosis_api",
+      rest: "https://osmosis-api.polkachu.com",
       rpc: "https://resolute.witval.com/osmosis_rpc/",
       currencies: [
         {
@@ -252,7 +252,7 @@ const mainNets: Network[] = [
     config: {
       chainId: "juno-1",
       chainName: "Juno",
-      rest: "https://resolute.witval.com/juno_api",
+      rest: "https://juno-api.polkachu.com",
       rpc: "https://resolute.witval.com/juno_rpc/",
       currencies: [
         {
@@ -327,7 +327,7 @@ const mainNets: Network[] = [
     config: {
       chainId: "stargaze-1",
       chainName: "Stargaze",
-      rest: "https://resolute.witval.com/stargaze_api",
+      rest: "https://api.stargaze.silentvalidator.com",
       rpc: "https://resolute.witval.com/stargaze_rpc/",
       currencies: [
         {

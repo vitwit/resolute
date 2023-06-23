@@ -64,7 +64,6 @@ export default function GroupCard({ group }: GroupCardProps) {
           fontWeight={500}
           component="span"
         >
-          &nbsp;
           {!showFullText && groupMetadata?.name?.substring(0, 30)}
           {showFullText && groupMetadata?.name}
           {groupMetadata?.name?.length > 40 ? (

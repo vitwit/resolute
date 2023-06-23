@@ -46,7 +46,7 @@ export const multiTxns = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         data.msgs,
-        null,
+        260000,
         data.memo,
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -142,7 +142,14 @@ export const bankSlice = createSlice({
           state.balances[chainID] = result;
         }
       })
-      .addCase(getBalances.rejected, (state, action) => {});
+      .addCase(getBalances.rejected, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        state.balances[chainID] = {
+          status: "idle",
+          errMsg: action?.error?.message || "",
+          list: [],
+        };
+      });
 
     builder
       .addCase(getBalance.pending, (state) => {

@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import EditIcon from "@mui/icons-material/Edit";
 import PropTypes from "prop-types";
 import Link from "@mui/material/Link";
+import UpdateGroupInfoDialog from "./UpdateGroupInfoDialog";
 
 import {
   getGroupById,
@@ -43,6 +44,11 @@ const GroupInfo = (props) => {
   const [admin, setAdmin] = useState("");
   const [metadata, setMetadata] = useState("");
   const [showMetadataInput, setShowMetadataInput] = useState(false);
+
+  const[open, setDialogOpen] = useState(false);
+  const dialogCloseHandle = () => {
+    setDialogOpen(!open)
+  }
 
   const groupInfo = useSelector((state) => state.group.groupInfo);
   const membersInfo = useSelector((state) => state.group.groupMembers);
@@ -176,7 +182,6 @@ const GroupInfo = (props) => {
                   : "Leave Group"}
               </Button>
             ) : null}
-            {!showMetadataInput ? (
               <>
                 <Typography
                   textAlign={"left"}
@@ -188,62 +193,25 @@ const GroupInfo = (props) => {
                   {JSON.parse(data?.metadata)?.name}
                   &nbsp;
                   {canUpdateGroup() ? (
-                    <IconButton
+                    <Button
+                      variant="contained"
                       onClick={() => {
                         setMetadata(data?.metadata);
-                        setShowMetadataInput(!showMetadataInput);
+                        setShowMetadataInput(!showMetadataInput)
+                        setDialogOpen(true);
                       }}
-                      color="primary"
+                      sx={{
+                        float: "right",
+                        textTransform: "none",
+                      }}
                       size="small"
-                      aria-label="edit metadata"
-                      component="label"
+                      disableElevation
                     >
-                      <EditIcon />
-                    </IconButton>
+                      Update Group Info
+                    </Button>
                   ) : null}
                 </Typography>
               </>
-            ) : (
-              <>
-                <TextField
-                  sx={{ mt: 2 }}
-                  name="groupMetadata"
-                  value={JSON.parse(data?.metadata)?.name}
-                  size="small"
-                  fullWidth
-                  label={"Group Metadata"}
-                  onChange={(e) => {
-                    setMetadata(e.target.value);
-                  }}
-                />
-                <Box sx={{ float: "right", mt: 2 }}>
-                  <Button
-                    size="small"
-                    color="error"
-                    sx={{ mr: 2, textTransform: "none" }}
-                    onClick={() => {
-                      setShowMetadataInput(false);
-                    }}
-                    variant="outlined"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    size="small"
-                    onClick={() => UpdateMetadata()}
-                    disabled={updateMetadataRes?.status === "pending"}
-                    variant="outlined"
-                    sx={{
-                      textTransform: "none",
-                    }}
-                  >
-                    {updateMetadataRes?.status === "pending"
-                      ? "Submitting..."
-                      : "Update"}
-                  </Button>
-                </Box>
-              </>
-            )}
 
             <Grid container sx={{my: "16px"}}>
               <Grid item>
@@ -446,6 +414,7 @@ const GroupInfo = (props) => {
           </Box>
         ) : null}
       </Paper>
+      {data?.metadata?<UpdateGroupInfoDialog data={data} wallet={wallet} open={open} id={id} dialogCloseHandle={dialogCloseHandle} groupName={JSON.parse(data?.metadata).name} forumUrl={JSON.parse(data?.metadata).forumUrl} description={JSON.parse(data?.metadata).description} />:null}
     </Box>
   );
 };

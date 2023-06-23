@@ -54,7 +54,7 @@ export default function GroupList(props: GroupsByAdminProps) {
         <PaginationElement
           handlePagination={handlePagination}
           paginationKey={paginationKey}
-          total={total}
+          total={total/PER_PAGE}
         />
       )}
     </>

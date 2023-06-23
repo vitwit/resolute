@@ -8,20 +8,34 @@ import {
   resetFeegrant,
   resetTxHash,
   setError,
+  removeFeegrant as removeFeegrantState,
+  setFeegrant as setFeegrantState,
 } from "./../features/common/commonSlice";
 import { getBalances, txBankSend } from "../features/bank/bankSlice";
 import Send from "../components/Send";
 import Alert from "@mui/material/Alert";
 import FeegranterInfo from "../components/FeegranterInfo";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { parseBalance } from "../utils/denom";
+import {
+  getFeegrant,
+  removeFeegrant as removeFeegrantLocalState,
+} from "../utils/localStorage";
+import Box from "@mui/material/Box";
+import MultiTx from "./MultiTx";
+import SelectNetwork from "../components/common/SelectNetwork";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import { Button } from "@mui/material";
 
 export default function SendPage() {
   const params = useParams();
+  const navigate = useNavigate();
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
-  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork);
+  const [currentNetwork, setCurrentNetwork] = useState(
+    params?.networkName || selectedNetwork
+  );
 
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
@@ -37,11 +51,15 @@ export default function SendPage() {
     networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
 
   const sendTx = useSelector((state) => state.bank.tx);
-  const balances = useSelector((state) => state.bank.balances[nameToChainIDs[currentNetwork]]?.list);
+  const balances = useSelector(
+    (state) => state.bank.balances[nameToChainIDs[currentNetwork]]?.list
+  );
   const [balance, setBalance] = useState({});
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
-  const feegrant = useSelector((state) => state.common.feegrant);
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
+  );
   const selectedAuthz = useSelector((state) => state.authz.selected);
 
   const authzSend = useMemo(
@@ -49,12 +67,14 @@ export default function SendPage() {
     [grantsToMe.grants]
   );
 
+  const [sendType, setSendType] = useState("send");
+
   const dispatch = useDispatch();
   useEffect(() => {
     return () => {
       dispatch(resetError());
       dispatch(resetTxHash());
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -65,19 +85,14 @@ export default function SendPage() {
           setBalance(b);
           break;
         }
-
       }
     }
   }, [balances]);
 
-
-
   useEffect(() => {
-    if (params?.networkName?.length > 0)
-    setCurrentNetwork(params.networkName)
-    else 
-    setCurrentNetwork("cosmoshub")
-  }, [params])
+    if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
+    else setCurrentNetwork("cosmoshub");
+  }, [params]);
 
   useEffect(() => {
     if (chainInfo?.config?.currencies.length > 0 && address.length > 0) {
@@ -94,7 +109,7 @@ export default function SendPage() {
           getBalances({
             baseURL: chainInfo.config.rest + "/",
             address: selectedAuthz.granter,
-            chainID: nameToChainIDs[currentNetwork]
+            chainID: nameToChainIDs[currentNetwork],
           })
         );
       }
@@ -108,6 +123,15 @@ export default function SendPage() {
     }
   }, [chainInfo, currentNetwork]);
 
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[currentNetwork];
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: currentNetwork.toLowerCase(),
+      })
+    );
+  }, [currentNetwork, params]);
 
   const onSendTx = (data) => {
     const amount = Number(data.amount);
@@ -136,7 +160,7 @@ export default function SendPage() {
             feeAmount:
               chainInfo.config.gasPriceStep.average *
               10 ** currency[0].coinDecimals,
-            feegranter: feegrant.granter,
+            feegranter: feegrant?.granter,
           })
         );
       }
@@ -153,20 +177,22 @@ export default function SendPage() {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config.gasPriceStep.average * 10 ** currency[0].coinDecimals,
-        feegranter: feegrant.granter,
+          chainInfo.config.gasPriceStep.average *
+          10 ** currency[0].coinDecimals,
+        feegranter: feegrant?.granter,
       });
     }
   };
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
-    dispatch(resetFeegrant());
+    dispatch(removeFeegrantState(currentNetwork));
+    removeFeegrantLocalState(currentNetwork);
   };
 
   return (
     <>
-      {feegrant.granter.length > 0 ? (
+      {feegrant?.granter?.length > 0 ? (
         <FeegranterInfo
           feegrant={feegrant}
           onRemove={() => {
@@ -174,28 +200,99 @@ export default function SendPage() {
           }}
         />
       ) : null}
-      <Grid container sx={{ mt: 2 }}>
-
-        <Grid item xs={1} md={3}></Grid>
-        <Grid item xs={10} md={6}>
-          {selectedAuthz.granter.length > 0 &&
-            authzSend?.granter !== selectedAuthz.granter ? (
-            <Alert>You don't have permission to execute this transcation</Alert>
-          ) :
-            (
-              <Send
-                chainInfo={chainInfo}
-                available={currency?.length > 0 && balances?.length > 0 ? parseBalance(balances, currency[0].coinDecimals, currency[0].coinMinimalDenom) : 0}
-                onSend={onSendTx}
-                sendTx={sendTx}
-                authzTx={authzExecTx}
-
-              />
-            )
-          }
+      <Box sx={{ width: "100%" }}>
+        <Grid container sx={{ mt: 2 }}>
+          <Grid item xs={1} md={3}></Grid>
+          <Grid
+            item
+            xs={10}
+            md={6}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <ButtonGroup
+              variant="outlined"
+              aria-label="validators"
+              sx={{ display: "flex", mb: 1 }}
+              disableElevation
+            >
+              <Button
+                variant={sendType === "send" ? "contained" : "outlined"}
+                onClick={() => {
+                  setSendType("send");
+                }}
+              >
+                Send
+              </Button>
+              <Button
+                variant={sendType === "multi-send" ? "contained" : "outlined"}
+                onClick={() => {
+                  setSendType("multi-send");
+                }}
+              >
+                Multi Send
+              </Button>
+            </ButtonGroup>
+          </Grid>
+          <Grid
+            item
+            xs={1}
+            md={3}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <SelectNetwork
+              onSelect={(name) => {
+                navigate(`/${name}/transfers`);
+              }}
+              networks={Object.keys(nameToChainIDs)}
+              defaultNetwork={
+                currentNetwork?.length > 0
+                  ? currentNetwork.toLowerCase().replace(/ /g, "")
+                  : "cosmoshub"
+              }
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={1} md={3}></Grid>
-      </Grid>
+        {sendType === "send" ? (
+          <>
+            <Grid container sx={{ mt: 2 }}>
+              <Grid item xs={1} md={3}></Grid>
+              <Grid item xs={10} md={6}>
+                {selectedAuthz.granter.length > 0 &&
+                authzSend?.granter !== selectedAuthz.granter ? (
+                  <Alert>
+                    You don't have permission to execute this transcation
+                  </Alert>
+                ) : (
+                  <Send
+                    chainInfo={chainInfo}
+                    available={
+                      currency?.length > 0 && balances?.length > 0
+                        ? parseBalance(
+                            balances,
+                            currency[0].coinDecimals,
+                            currency[0].coinMinimalDenom
+                          )
+                        : 0
+                    }
+                    onSend={onSendTx}
+                    sendTx={sendTx}
+                    authzTx={authzExecTx}
+                  />
+                )}
+              </Grid>
+              <Grid item xs={1} md={3}></Grid>
+            </Grid>
+          </>
+        ) : (
+          <>
+            <MultiTx
+              chainInfo={chainInfo}
+              address={address}
+              currency={currency}
+            />
+          </>
+        )}
+      </Box>
     </>
   );
 }
