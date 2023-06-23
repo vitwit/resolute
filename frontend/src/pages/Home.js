@@ -108,8 +108,8 @@ export default function Home() {
       navigate(ALL_NETWORKS[newValue]);
     } else {
       if (selectedNetwork === "") {
-        setNetwork("simapp");
-        navigate(`simapp/${ALL_NETWORKS[newValue]}`);
+        setNetwork("cosmoshub");
+        navigate(`cosmoshub/${ALL_NETWORKS[newValue]}`);
       } else {
         navigate(`${selectedNetwork.toLowerCase()}/${ALL_NETWORKS[newValue]}`);
       }
