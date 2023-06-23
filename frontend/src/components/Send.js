@@ -10,7 +10,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import SelectNetwork from "./common/SelectNetwork";
 
 Send.propTypes = {
   onSend: PropTypes.func.isRequired,
@@ -25,17 +24,11 @@ export default function Send(props) {
   const { chainInfo, sendTx, available, onSend, authzTx } = props;
 
   const params = useParams();
-  const navigate = useNavigate();
-  
+
   const selectNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
-  const [currentNetwork, setCurrentNetwork] = React.useState(
-    params?.networkName || selectNetwork.toLowerCase()
-  );
-  
 
-  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const currency = chainInfo?.config?.currencies[0];
 
   const { handleSubmit, control, setValue } = useForm({
@@ -60,17 +53,10 @@ export default function Send(props) {
         p: 4,
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Box>
         <Typography color="text.primary" variant="h6" fontWeight={600}>
           Send
         </Typography>
-        <SelectNetwork
-          onSelect={(name) => {
-            navigate(`/${name}/transfers`)
-          }}
-          networks={Object.keys(nameToChainIDs)}
-          defaultNetwork={currentNetwork?.length > 0 ? currentNetwork.toLowerCase().replace(/ /g, "") : "cosmoshub"}
-        />
       </Box>
       <Box
         noValidate
@@ -151,3 +137,11 @@ export default function Send(props) {
     </Paper>
   );
 }
+
+Send.propTypes = {
+  chainInfo: PropTypes.object.isRequired,
+  available: PropTypes.object.isRequired,
+  onSend: PropTypes.func.isRequired,
+  sendTx: PropTypes.object.isRequired,
+  authzTx: PropTypes.object.isRequired,
+};
