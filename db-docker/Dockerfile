@@ -1,10 +1,10 @@
 FROM postgres:latest
 
-ENV POSTGRES_USER alice
-ENV POSTGRES_PASSWORD password
-ENV POSTGRES_DB multisig
+COPY .env /tmp/.env
 
-COPY schema.sql /docker-entrypoint-initdb.d/
+ENV $(cat /tmp/.env | xargs)
+
+COPY ../server/schema/schema.sql /docker-entrypoint-initdb.d/
 
 VOLUME /var/lib/postgresql/data
 
