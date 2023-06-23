@@ -46,7 +46,6 @@ export const multiTxns = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         data.msgs,
-        // null,
         260000,
         data.memo,
         `${data.feeAmount}${data.denom}`,
