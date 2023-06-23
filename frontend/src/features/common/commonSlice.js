@@ -23,8 +23,8 @@ const initialState = {
   },
   feegrant: {},
   selectedNetwork: {
-    chainName: "CosmosHub",
-    chainID: "cosmoshub-4",
+    chainName: "",
+    chainID: "",
   },
   authzMode: false,
 };

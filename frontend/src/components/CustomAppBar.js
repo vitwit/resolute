@@ -108,7 +108,7 @@ export function CustomAppBar(props) {
           aria-expanded={anchorEl ? "true" : undefined}
           onClick={handleClick}
         >
-          {selectNetwork}
+          {selectNetwork || "Select Network"}
         </Button>
         <Menu
           id="demo-positioned-menu"
