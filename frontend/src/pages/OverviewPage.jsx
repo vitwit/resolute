@@ -19,8 +19,7 @@ export default function OverviewPage() {
     if (
       !defaultLoaded &&
       Object.keys(staking).length &&
-      Object.keys(distribution).length &&
-      Object.keys(tokenInfo).length
+      Object.keys(distribution).length
     ) {
       setDefaultLoaded(true);
     }

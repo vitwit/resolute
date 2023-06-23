@@ -606,13 +606,11 @@ export const stakeSlice = createSlice({
         state.chains[chainID].tx.type = "";
       })
       .addCase(txReDelegate.fulfilled, (state, action) => {
-        console.log("doneee", action);
         let chainID = action.meta?.arg?.chainId;
         state.chains[chainID].tx.status = "idle";
         state.chains[chainID].tx.type = "redelegate";
       })
       .addCase(txReDelegate.rejected, (state, action) => {
-        console.log("noooo", action);
         let chainID = action.meta?.arg?.chainId;
         state.chains[chainID].tx.status = "rejected";
         state.chains[chainID].tx.type = "";
