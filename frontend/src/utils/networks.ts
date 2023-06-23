@@ -131,7 +131,7 @@ const mainNets: Network[] = [
     config: {
       chainId: "regen-1",
       chainName: "Regen",
-      rest: "http://public-rpc.regen.vitwit.com:1317/",
+      rest: "https://regen.stakesystems.io/",
       rpc: "https://resolute.witval.com/regen_rpc/",
       gasPriceStep: { low: 0.015, average: 0.03, high: 0.04 },
       currencies: [
