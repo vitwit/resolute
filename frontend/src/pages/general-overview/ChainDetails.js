@@ -5,8 +5,6 @@ import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 import { parseBalance } from "../../utils/denom";
 
 export const ChainDetails = (props) => {
-  const state = useSelector((state)=> state);
-  console.log("state", state);
   const { chainID } = props;
   const balance = useSelector(
     (state) => state.bank.balances?.[chainID]?.list || []
@@ -39,9 +37,18 @@ export const ChainDetails = (props) => {
         <StyledTableRow>
           <StyledTableCell size="small">
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Avatar src={logoURL} sx={{ width: 24, height: 24 }} />
+              <Avatar
+                src={logoURL}
+                sx={{
+                  width: 24,
+                  height: 24
+                }} />
               &nbsp;&nbsp;
-              <Typography>{chainIdToNames[chainID]}</Typography>
+              <Typography
+                sx={{
+                  textTransform: "capitalize"
+                }}
+              >{chainIdToNames[chainID]}</Typography>
             </Box>
           </StyledTableCell>
           <StyledTableCell>
