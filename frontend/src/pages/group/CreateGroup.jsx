@@ -63,12 +63,12 @@ export default function CreateGroupStepper() {
       admin: address,
       members: data.members.members,
       groupMetaData: data.groupMetaData,
-      chainId: chainInfo.config.chainId,
-      feeAmount: chainInfo.config.gasPriceStep.average,
+      chainId: chainInfo?.config?.chainId,
+      feeAmount: chainInfo?.config?.gasPriceStep.average,
       denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
-      rest: chainInfo.config.rest,
-      aminoConfig: chainInfo.aminoConfig,
-      prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+      rest: chainInfo?.config?.rest,
+      aminoConfig: chainInfo?.aminoConfig,
+      prefix: chainInfo?.config?.bech32Config.bech32PrefixAccAddr,
     };
 
     if (
@@ -105,7 +105,6 @@ export default function CreateGroupStepper() {
 
   const [groupMetaData, setGroupMetaData] = useState({});
   const [membersInfo, setMembersInfo] = useState({});
-  const [policyMetaData, setPolicyMetaData] = useState({});
 
   const onSubmitInfo = (data) => {
     setGroupMetaData(data);
@@ -124,6 +123,7 @@ export default function CreateGroupStepper() {
   const {
     control: controlInfo,
     handleSubmit: handleSubmitInfo,
+    getValues: getValuesGroupInfo,
     formState: { errors: errorsInfo },
   } = useForm({
     defaultValues: {
@@ -209,7 +209,7 @@ export default function CreateGroupStepper() {
 
           <form onSubmit={handleSubmitInfo(onSubmitInfo)}>
             <fieldset style={{ border: "none" }}>
-              <CreateGroupInfoForm control={controlInfo} errors={errorsInfo} />
+              <CreateGroupInfoForm control={controlInfo} errors={errorsInfo} getValues={getValuesGroupInfo} />
             </fieldset>
             <Button type="submit">Next</Button>
           </form>
@@ -239,6 +239,7 @@ export default function CreateGroupStepper() {
                     append={append}
                     remove={remove}
                     errors={errorsMemberInfo}
+                    getValues={getValuesMemberInfo}
                   />
                 </fieldset>
               ) : null}

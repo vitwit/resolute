@@ -4,7 +4,7 @@ import { Controller } from "react-hook-form";
 import { Grid } from "@mui/material";
 
 export function CreateGroupInfoForm(props) {
-  const { control, errors, groupName, forumUrl, description } = props;
+  const { control, errors, groupName, forumUrl, description, getValues } = props;
 
   return (
     <>
@@ -27,6 +27,7 @@ export function CreateGroupInfoForm(props) {
                   value: 25,
                   message: "Name length cannot be more than 25 characters",
                 },
+                validate: () => getValues('name').trim().length > 0
               }}
               render={({ field }) => (
                 <TextField
@@ -40,7 +41,7 @@ export function CreateGroupInfoForm(props) {
                     mb: 2,
                   }}
                   error={errors?.name}
-                  helperText={errors?.name?.message}
+                  helperText={errors?.name?.message || (errors?.name?.type === "validate" && "Name is required")}
                 />
               )}
             />
@@ -56,6 +57,7 @@ export function CreateGroupInfoForm(props) {
                   value: 70,
                   message: "Forum URL length cannot be more than 70 characters",
                 },
+                validate: () => getValues('forumUrl').trim().length > 0
               }}
               render={({ field }) => (
                 <TextField
@@ -70,7 +72,7 @@ export function CreateGroupInfoForm(props) {
                     mb: 2,
                   }}
                   error={errors?.forumUrl}
-                  helperText={errors?.forumUrl?.message}
+                  helperText={errors?.forumUrl?.message || (errors?.forumUrl?.type === "validate" && "Forum url is required")}
                 />
               )}
             />
@@ -87,6 +89,7 @@ export function CreateGroupInfoForm(props) {
                   value: 100,
                   message: "Description length cannot be more than 100 characters",
                 },
+                validate: () => getValues('description').trim().length > 0
             }}
             render={({ field }) => (
               <TextField
@@ -102,7 +105,7 @@ export function CreateGroupInfoForm(props) {
                   mb: 2,
                 }}
                 error={errors?.description}
-                helperText={errors?.description?.message}
+                helperText={errors?.description?.message || (errors?.description?.type === "validate" && "Description is required")}
               />
             )}
           />

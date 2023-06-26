@@ -31,7 +31,7 @@ function CreateGroupPolicy({
 
   const [policyType, setPolicyType] = useState(PERCENTAGE);
   const [asAdmin, setAsAdmin] = useState("gov");
-  const [decisionPolicyType, setDecisionPolicyType] = useState(policy_Type)
+  const [decisionPolicyType, setDecisionPolicyType] = useState(policy_Type);
 
   return (
     <>
@@ -50,7 +50,9 @@ function CreateGroupPolicy({
                 name={`policyMetadata.name`}
                 control={control}
                 rules={{
-                  required: "Metadata is required",
+                  required: "Name is required",
+                  validate: () =>
+                    getValues("policyMetadata.name").trim().length > 0,
                 }}
                 render={({ field }) => (
                   <TextField
@@ -60,6 +62,12 @@ function CreateGroupPolicy({
                     label="Name"
                     name="name"
                     fullWidth
+                    error={errors?.policyMetadata?.name}
+                    helperText={
+                      errors?.policyMetadata?.name?.message ||
+                      (errors?.policyMetadata?.name?.type === "validate" &&
+                        "Name is required")
+                    }
                   />
                 )}
               />
@@ -70,7 +78,9 @@ function CreateGroupPolicy({
                 name={`policyMetadata.description`}
                 control={control}
                 rules={{
-                  required: "Metadata is required",
+                  required: "Description is required",
+                  validate: () =>
+                    getValues("policyMetadata.description").trim().length > 0,
                 }}
                 render={({ field }) => (
                   <TextField
@@ -80,6 +90,13 @@ function CreateGroupPolicy({
                     label="Description"
                     name="description"
                     fullWidth
+                    error={errors?.policyMetadata?.description}
+                    helperText={
+                      errors?.policyMetadata?.description?.message ||
+                      (errors?.policyMetadata?.description?.type ===
+                        "validate" &&
+                        "Description is required")
+                    }
                   />
                 )}
               />
@@ -244,7 +261,10 @@ function CreateGroupPolicy({
                   rules={{
                     required: "Min Exec Period is required",
                     min: { value: 1, message: "Invalid Min execution period" },
-                    validate: () => Number(getValues("policyMetadata.minExecPeriod")) < (Number(getValues("policyMetadata.votingPeriod")) + MAX_EXECUTION_PERIOD)
+                    validate: () =>
+                      Number(getValues("policyMetadata.minExecPeriod")) <
+                      Number(getValues("policyMetadata.votingPeriod")) +
+                        MAX_EXECUTION_PERIOD,
                   }}
                   render={({ field }) => (
                     <FormControl fullWidth>
@@ -258,7 +278,15 @@ function CreateGroupPolicy({
                         placeholder="Min Execution Period (Days) *"
                         error={errors?.policyMetadata?.minExecPeriod}
                         helperText={
-                          errors?.policyMetadata?.minExecPeriod?.message || (errors?.policyMetadata?.minExecPeriod && errors?.policyMetadata?.minExecPeriod?.type === "validate" && `Min execution period cannot be greater than ${Number(getValues("policyMetadata.votingPeriod")) - 1 + MAX_EXECUTION_PERIOD}`) ||
+                          errors?.policyMetadata?.minExecPeriod?.message ||
+                          (errors?.policyMetadata?.minExecPeriod &&
+                            errors?.policyMetadata?.minExecPeriod?.type ===
+                              "validate" &&
+                            `Min execution period cannot be greater than ${
+                              Number(getValues("policyMetadata.votingPeriod")) -
+                              1 +
+                              MAX_EXECUTION_PERIOD
+                            }`) ||
                           "A Minimum amount of time that must pass after submission in order for a proposal to potentially be executed."
                         }
                       />

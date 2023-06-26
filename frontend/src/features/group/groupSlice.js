@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { arg } from "mathjs";
 import {
   fee,
   signAndBroadcastAddGroupPolicy,
@@ -42,30 +43,10 @@ const initialState = {
     status: "idle",
     type: "",
   },
-  groups: {
-    admin: {
-      list: [],
-      pagination: {},
-      status: "idle",
-    },
-    member: {
-      list: [],
-      pagination: {},
-      status: "idle",
-    },
-  },
-  members: {
-    data: [],
-  },
-  groupInfo: {
-    status: "idle",
-    data: {},
-  },
-  groupMembers: {
-    status: "idle",
-    members: [],
-    pagination: {},
-  },
+  groups: {},
+  members: {},
+  groupInfo: {},
+  groupMembers: {},
   groupPolicies: {},
   groupProposalRes: {
     status: "",
@@ -78,9 +59,7 @@ const initialState = {
     status: "idle",
   },
   leaveGroupRes: {},
-  proposalVotes: {
-    data: [],
-  },
+  proposalVotes: {},
   groupProposal: {},
   updateGroupPolicyRes: {},
   updateGroupAdminRes: {},
@@ -99,7 +78,10 @@ export const getGroupsByAdmin = createAsyncThunk(
       data.admin,
       data.pagination
     );
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -107,7 +89,10 @@ export const getGroupById = createAsyncThunk(
   "group/group-by-id",
   async (data) => {
     const response = await groupService.fetchGroupById(data.baseURL, data.id);
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -119,7 +104,10 @@ export const getGroupMembersById = createAsyncThunk(
       data.id,
       data.pagination
     );
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -131,7 +119,10 @@ export const getVotesProposalById = createAsyncThunk(
       data.id,
       data.pagination
     );
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -142,7 +133,10 @@ export const getGroupProposalById = createAsyncThunk(
       data.baseURL,
       data.id
     );
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -154,7 +148,10 @@ export const getGroupPoliciesById = createAsyncThunk(
       data.id,
       data.pagination
     );
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -166,7 +163,10 @@ export const getGroupsByMember = createAsyncThunk(
       data.address,
       data.pagination
     );
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -177,7 +177,10 @@ export const getGroupMembers = createAsyncThunk(
       data.baseURL,
       data.groupId
     );
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -211,13 +214,20 @@ export const getGroupPolicyProposalsByPage = createAsyncThunk(
       totalData = [...totalData, ...filteredProposals];
 
       if (response?.data?.pagination?.next_key)
-        return getProposalsPagination(address, {
-          limit: 1,
-          key: response?.data?.pagination?.next_key,
-        });
-      else return totalData;
+        return {
+          data: getProposalsPagination(address, {
+            limit: 1,
+            key: response?.data?.pagination?.next_key,
+          }),
+          chainID: data.chainID,
+        };
+      else
+        return {
+          data: totalData,
+          chainID: data.chainID,
+        };
     };
-
+    const resData = data;
     if (allPolicies?.data?.group_policies?.length) {
       let data = allPolicies?.data?.group_policies || [];
       for (let i = 0; i < data.length; i++) {
@@ -231,8 +241,15 @@ export const getGroupPolicyProposalsByPage = createAsyncThunk(
         }
       }
 
-      return totalData;
-    } else return "";
+      return {
+        data: totalData,
+        chainID: resData.chainID,
+      };
+    } else
+      return {
+        data: "",
+        chainID: data.chainID,
+      };
   }
 );
 
@@ -245,7 +262,10 @@ export const getGroupPolicyProposals = createAsyncThunk(
       data.pagination
     );
 
-    return response.data;
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
   }
 );
 
@@ -261,7 +281,6 @@ export const txGroupProposalVote = createAsyncThunk(
         data.option,
         data?.metadata || ""
       );
-
 
       const result = await signAndBroadcastGroupProposalVote(
         data.admin,
@@ -309,7 +328,6 @@ export const txGroupProposalExecute = createAsyncThunk(
     try {
       let msg = CreateProposalExecute(data.proposalId, data.executor);
 
-
       const result = await signAndBroadcastGroupProposalExecute(
         data.admin,
         [msg],
@@ -356,7 +374,11 @@ export const txUpdateGroupAdmin = createAsyncThunk(
     dispatch(setTxLoad());
 
     try {
-      const msg = NewMsgUpdateGroupAdmin(data.admin, data.groupId, data.newAdmin);
+      const msg = NewMsgUpdateGroupAdmin(
+        data.admin,
+        data.groupId,
+        data.newAdmin
+      );
 
       const result = await signAndBroadcast(
         data.chainId,
@@ -507,23 +529,23 @@ export const txCreateGroup = createAsyncThunk(
     let msg;
     try {
       if (data?.members?.length > 0) {
-          msg = NewMsgCreateGroupWithPolicy(
-            data.admin,
-            data.groupMetaData,
-            data.members,
-            data.policyData,
-            {
-              name: data.policyData?.name,
-              description:  data.policyData?.description,
-            },
-            data?.policyData?.policyAsAdmin
-          );
+        msg = NewMsgCreateGroupWithPolicy(
+          data.admin,
+          data.groupMetaData,
+          data.members,
+          data.policyData,
+          {
+            name: data.policyData?.name,
+            description: data.policyData?.description,
+          },
+          data?.policyData?.policyAsAdmin
+        );
       } else {
         msg = NewMsgCreateGroup(data.admin, data.groupMetaData, []);
       }
 
       const result = await signAndBroadcast(
-        data.chainId, 
+        data.chainId,
         data.aminoConfig,
         data.prefix,
         [msg],
@@ -573,7 +595,6 @@ export const txUpdateGroupMember = createAsyncThunk(
     dispatch(setTxLoad());
     try {
       msg = UpdateGroupMembers(data.admin, data.members, data.groupId);
-
 
       const result = await signAndBroadcastUpdateGroupMembers(
         data.admin,
@@ -675,7 +696,6 @@ export const txUpdateGroupPolicy = createAsyncThunk(
         data.policyMetadata
       );
 
-
       const result = await signAndBroadcastUpdateGroupPolicy(
         data.admin,
         [msg],
@@ -728,7 +748,6 @@ export const txUpdateGroupPolicyMetdata = createAsyncThunk(
         data.metadata
       );
 
-
       const result = await signAndBroadcastUpdateGroupPolicyMetadata(
         data.admin,
         [msg],
@@ -780,7 +799,6 @@ export const txUpdateGroupPolicyAdmin = createAsyncThunk(
         data.groupPolicyAddress,
         data.newAdmin
       );
-
 
       const result = await signAndBroadcastUpdateGroupPolicyAdmin(
         data.admin,
@@ -896,33 +914,75 @@ export const groupSlice = createSlice({
   // including actions generated by createAsyncThunk or in other slices.
   extraReducers: (builder) => {
     builder
-      .addCase(getGroupsByAdmin.pending, (state) => {
-        state.groups.admin.list = [];
-        state.groups.admin.status = "pending";
+      .addCase(getGroupsByAdmin.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let admin = {
+            list: [],
+            pagination: {},
+            status: "pending",
+          };
+          const previousState = state.groups[chainID];
+          state.groups[chainID] = { ...previousState, admin };
+        }
       })
       .addCase(getGroupsByAdmin.fulfilled, (state, action) => {
-        state.groups.admin.list = action.payload.groups;
-        state.groups.admin.pagination = action.payload.pagination;
-        state.groups.admin.status = "idle";
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length) {
+          let admin = {
+            list: action.payload?.data?.groups,
+            pagination: action.payload?.data?.pagination,
+            status: "idle",
+          };
+          const previousState = state.groups[chainID];
+          state.groups[chainID] = { ...previousState, admin };
+        }
       })
       .addCase(getGroupsByAdmin.rejected, (state, action) => {
-        state.groups.admin.status = "idle";
-        // TODO: handle error
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let admin = {
+            status: "rejected",
+          };
+          const previousState = state.groups[chainID];
+          state.groups[chainID] = { ...previousState, admin };
+        }
       });
 
     builder
-      .addCase(getGroupsByMember.pending, (state) => {
-        state.groups.member.status = "pending";
-        state.groups.member.list = [];
+      .addCase(getGroupsByMember.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let member = {
+            list: [],
+            pagination: {},
+            status: "pending",
+          };
+          const previousState = state.groups[chainID];
+          state.groups[chainID] = { ...previousState, member };
+        }
       })
       .addCase(getGroupsByMember.fulfilled, (state, action) => {
-        state.groups.member.list = action.payload.groups;
-        state.groups.member.pagination = action.payload.pagination;
-        state.groups.member.status = "idle";
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length) {
+          let member = {
+            list: action.payload?.data?.groups,
+            pagination: action.payload?.data?.pagination,
+            status: "idle",
+          };
+          const previousState = state.groups[chainID];
+          state.groups[chainID] = { ...previousState, member };
+        }
       })
       .addCase(getGroupsByMember.rejected, (state, action) => {
-        state.groups.member.status = "idle";
-        // TODO: handle error
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let member = {
+            status: "rejected",
+          };
+          const previousState = state.groups[chainID];
+          state.groups[chainID] = { ...previousState, member };
+        }
       });
 
     builder
@@ -940,76 +1000,191 @@ export const groupSlice = createSlice({
       });
 
     builder
-      .addCase(getGroupMembers.pending, (state) => {
-        state.members.status = `pending`;
+      .addCase(getGroupMembers.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            data: [],
+          };
+          state.members[chainID] = result;
+        }
       })
       .addCase(getGroupMembers.fulfilled, (state, action) => {
-        state.members.status = "idle";
-        state.members.data = [...state.members.data, action.payload];
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            data: [...state.members[chainID].data, action.payload?.data],
+            status: "idle",
+          };
+          state.members[chainID] = result;
+        }
       })
-      .addCase(getGroupMembers.rejected, (state, _) => {
-        state.members.status = `rejected`;
+      .addCase(getGroupMembers.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "rejected",
+          };
+          state.members[chainID] = result;
+        }
       });
 
     builder
-      .addCase(getGroupById.pending, (state) => {
-        state.groupInfo.status = `pending`;
+      .addCase(getGroupById.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            data: {},
+          };
+          state.groupInfo[chainID] = result;
+        }
       })
       .addCase(getGroupById.fulfilled, (state, action) => {
-        state.groupInfo.status = "idle";
-        state.groupInfo.data = action.payload?.info || {};
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "idle",
+            data: action.payload?.data?.info || {},
+          };
+          state.groupInfo[chainID] = result;
+        }
       })
-      .addCase(getGroupById.rejected, (state, _) => {
-        state.groupInfo.status = `rejected`;
+      .addCase(getGroupById.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "rejected",
+          };
+          state.groupInfo[chainID] = result;
+        }
       });
 
     builder
-      .addCase(getGroupMembersById.pending, (state) => {
-        state.groupMembers.status = `pending`;
+      .addCase(getGroupMembersById.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            members: [],
+            pagination: {},
+            status: "pending",
+          };
+          state.groupMembers[chainID] = result;
+        }
       })
       .addCase(getGroupMembersById.fulfilled, (state, action) => {
-        state.groupMembers.status = "idle";
-        state.groupMembers.members = action.payload?.members || [];
-        state.groupMembers.pagination = action.payload?.pagination || {};
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "idle",
+            members: action.payload?.data?.members || [],
+            pagination: action.payload?.data?.pagination || {},
+          };
+          state.groupMembers[chainID] = result;
+        }
       })
-      .addCase(getGroupMembersById.rejected, (state, _) => {
-        state.groupMembers.status = `rejected`;
+      .addCase(getGroupMembersById.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "rejected",
+          };
+          state.groupMembers[chainID] = result;
+        }
       });
 
     builder
-      .addCase(getGroupPoliciesById.pending, (state) => {
-        state.groupPolicies.status = `pending`;
+      .addCase(getGroupPoliciesById.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            data: {},
+          };
+          state.groupPolicies[chainID] = result;
+        }
       })
       .addCase(getGroupPoliciesById.fulfilled, (state, action) => {
-        state.groupPolicies.status = "idle";
-        state.groupPolicies.data = action.payload;
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          let result = {
+            status: "idle",
+            data: action.payload?.data,
+          };
+          state.groupPolicies[chainID] = result;
+        }
       })
-      .addCase(getGroupPoliciesById.rejected, (state, _) => {
-        state.groupPolicies.status = `rejected`;
+      .addCase(getGroupPoliciesById.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "rejected",
+          };
+          state.groupPolicies[chainID] = result;
+        }
       });
 
     builder
-      .addCase(getVotesProposalById.pending, (state) => {
-        state.proposalVotes.status = `pending`;
+      .addCase(getVotesProposalById.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            data: [],
+          };
+          state.proposalVotes[chainID] = result;
+        }
       })
       .addCase(getVotesProposalById.fulfilled, (state, action) => {
-        state.proposalVotes.status = "idle";
-        state.proposalVotes.data = action.payload;
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          let result = {
+            status: "idle",
+            data: action.payload?.data,
+          };
+          state.proposalVotes[chainID] = result;
+        }
       })
-      .addCase(getVotesProposalById.rejected, (state, _) => {
-        state.proposalVotes.status = `rejected`;
+      .addCase(getVotesProposalById.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "rejected",
+          };
+          state.proposalVotes[chainID] = result;
+        }
       });
 
     builder
-      .addCase(getGroupPolicyProposals.pending, (state) => {
-        state.proposals.status = `pending`;
+      .addCase(getGroupPolicyProposals.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            data: {},
+          };
+          state.proposals[chainID] = result;
+        }
       })
       .addCase(getGroupPolicyProposals.fulfilled, (state, action) => {
-        state.proposals.status = "idle";
-        state.proposals.data = action.payload;
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "idle",
+            data: action.payload?.data,
+          };
+          state.proposals[chainID] = result;
+        }
       })
-      .addCase(getGroupPolicyProposals.rejected, (state, _) => {
-        state.proposals.status = `rejected`;
+      .addCase(getGroupPolicyProposals.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "rejected",
+          };
+          state.proposals[chainID] = result;
+        }
       });
 
     builder
@@ -1069,15 +1244,34 @@ export const groupSlice = createSlice({
       });
 
     builder
-      .addCase(getGroupProposalById.pending, (state) => {
-        state.groupProposal.status = `pending`;
+      .addCase(getGroupProposalById.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            data: {},
+          };
+          state.groupProposal[chainID] = result;
+        }
       })
       .addCase(getGroupProposalById.fulfilled, (state, action) => {
-        state.groupProposal.status = "idle";
-        state.groupProposal.data = action.payload;
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          let result = {
+            data: action.payload?.data,
+            status: "idle",
+          };
+          state.groupProposal[chainID] = result;
+        }
       })
-      .addCase(getGroupProposalById.rejected, (state, _) => {
-        state.groupProposal.status = `rejected`;
+      .addCase(getGroupProposalById.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "rejected",
+          };
+          state.groupProposal[chainID] = result;
+        }
       });
 
     builder
@@ -1147,15 +1341,34 @@ export const groupSlice = createSlice({
       });
 
     builder
-      .addCase(getGroupPolicyProposalsByPage.pending, (state) => {
-        state.policyProposals.status = `pending`;
+      .addCase(getGroupPolicyProposalsByPage.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            data: {},
+          };
+          state.policyProposals[chainID] = result;
+        }
       })
       .addCase(getGroupPolicyProposalsByPage.fulfilled, (state, action) => {
-        state.policyProposals.status = "idle";
-        state.policyProposals.data = action?.payload;
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            data: action.payload?.data,
+            status: "idle",
+          };
+          state.policyProposals[chainID] = result;
+        }
       })
-      .addCase(getGroupPolicyProposalsByPage.rejected, (state, _) => {
-        state.policyProposals.status = `rejected`;
+      .addCase(getGroupPolicyProposalsByPage.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "rejected",
+          };
+          state.policyProposals[chainID] = result;
+        }
       });
   },
 });

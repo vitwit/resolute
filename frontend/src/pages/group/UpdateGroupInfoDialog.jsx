@@ -19,8 +19,9 @@ export default function UpdateGroupInfoDialog(props) {
     forumUrl,
     description,
     id,
-    wallet,
     data,
+    chainInfo,
+    address,
   } = props;
 
   const dispatch = useDispatch();
@@ -29,10 +30,9 @@ export default function UpdateGroupInfoDialog(props) {
   );
 
   const UpdateMetadata = () => {
-    const chainInfo = wallet?.chainInfo;
     dispatch(
       txUpdateGroupMetadata({
-        signer: wallet?.address,
+        signer: address,
         admin: data?.admin,
         groupId: id,
         metadata: JSON.stringify({
