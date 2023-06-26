@@ -339,7 +339,6 @@ export default function SendPage() {
             <MultiTx
               chainInfo={chainInfo}
               address={address}
-              currency={currency}
             />
           </>
         )}
