@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import { Container } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import { StakingTotal } from './StakingTotal';
-import { getDelegations, resetDefaultState, getAllValidators } from '../../features/staking/stakeSlice';
-import { getDelegatorTotalRewards, resetDefaultState as distributionResetDefaultState } from '../../features/distribution/distributionSlice';
+import { getDelegations, getAllValidators } from '../../features/staking/stakeSlice';
+import { getDelegatorTotalRewards } from '../../features/distribution/distributionSlice';
 import { Chain } from './Chain';
 import { getTokenPrice } from "../../features/common/commonSlice";
 
@@ -107,8 +107,6 @@ const StakingOverview = (props) => {
 
   useEffect(() => {
     let chainIds = Object.keys(wallet.networks);
-    dispatch(resetDefaultState(chainIds));
-    dispatch(distributionResetDefaultState(chainIds));
     for (let i = 0; i < chainIds.length; i++) {
       let chainnetwork = wallet.networks[chainIds[i]];
       let address = chainnetwork?.walletInfo?.bech32Address;
@@ -143,7 +141,13 @@ const StakingOverview = (props) => {
           </div>
         </>
         :
-        <></>
+        <Typography
+            variant="h6"
+            color="text.primary"
+            style={{ display: "flex", justifyContent: "center", padding: 16 }}
+          >
+            No delegations
+          </Typography>
       }
     </Container >
   );
