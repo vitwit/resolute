@@ -1,18 +1,18 @@
 import { Avatar, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 import { parseBalance } from "../../utils/denom";
 
 export const ChainDetails = (props) => {
-  const state = useSelector((state)=> state);
-  console.log("state", state);
-  const { chainID } = props;
+  const { chainID, chainName } = props;
   const balance = useSelector(
     (state) => state.bank.balances?.[chainID]?.list || []
   );
   const rewards = useSelector(
-    (state) => state.distribution?.chains?.[chainID]?.delegatorRewards?.totalRewards || 0
+    (state) =>
+      state.distribution?.chains?.[chainID]?.delegatorRewards?.totalRewards || 0
   );
   const staked = useSelector(
     (state) => state.staking?.chains?.[chainID]?.delegations?.totalStaked || 0
@@ -27,11 +27,11 @@ export const ChainDetails = (props) => {
     wallet.networks?.[chainID]?.network?.config?.currencies?.[0]
       ?.coinDecimals || 0;
   const logoURL = wallet?.networks?.[chainID]?.network?.logos?.menu;
-  const nameToChainIds = useSelector((state) => state.wallet.nameToChainIDs);
-  const chainIdToNames = {};
-  for (let key in nameToChainIds) {
-    chainIdToNames[nameToChainIds[key]] = key;
-  }
+  const navigate = useNavigate();
+
+  const handleOnClick = (chainName) => {
+    navigate(`/${chainName}/overview`);
+  };
 
   return (
     <>
@@ -39,9 +39,31 @@ export const ChainDetails = (props) => {
         <StyledTableRow>
           <StyledTableCell size="small">
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Avatar src={logoURL} sx={{ width: 24, height: 24 }} />
+              <Avatar
+                src={logoURL}
+                sx={{
+                  width: 24,
+                  height: 24,
+                  "&:hover": {
+                    backgroundColor: "white",
+                    cursor: "pointer",
+                  },
+                }}
+                onClick={() => handleOnClick(chainName)}
+              />
               &nbsp;&nbsp;
-              <Typography>{chainIdToNames[chainID]}</Typography>
+              <Typography
+                sx={{
+                  textTransform: "capitalize",
+                  "&:hover": {
+                    cursor: "pointer",
+                    color: "purple",
+                  },
+                }}
+                onClick={() => handleOnClick(chainName)}
+              >
+                {chainName}
+              </Typography>
             </Box>
           </StyledTableCell>
           <StyledTableCell>
