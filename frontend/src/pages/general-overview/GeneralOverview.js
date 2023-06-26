@@ -37,6 +37,11 @@ export const GeneralOverview = (props) => {
   const chainIDs = [];
   chainNames.forEach((chainName) => chainIDs.push(nameToChainIDs[chainName]));
 
+  const chainIdToNames = {};
+  for (let key in nameToChainIDs) {
+    chainIdToNames[nameToChainIDs[key]] = key;
+  }
+
   const convertToDollars = (denom, amount = 0) => {
     let price = +tokensPriceInfo?.[denom]?.info?.["usd"] || 0;
     return amount * price;
@@ -199,7 +204,11 @@ export const GeneralOverview = (props) => {
           </TableHead>
           <TableBody>
             {chainIDs.map((chainID) => (
-              <ChainDetails key={chainID} chainID={chainID} />
+              <ChainDetails
+                key={chainID}
+                chainID={chainID}
+                chainName={chainIdToNames[chainID]}
+              />
             ))}
           </TableBody>
         </Table>
