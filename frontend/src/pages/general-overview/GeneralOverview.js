@@ -127,22 +127,22 @@ export const GeneralOverview = (props) => {
   }, []);
 
   return (
-    <Paper sx={{ padding: 1, mt: 6 }} elevation={0}>
+    <Paper sx={{ p: 2, mt: 2 }} elevation={0}>
       <Grid
         container
         sx={{
-          mb: 3,
+          mb: 2,
         }}
         spacing={1}
       >
-        <Grid item xs={4} md={4}>
+        <Grid item xs={6} md={4}>
           <Card elevation={0}>
             <CardContent>
               <Typography
-                sx={{ fontSize: 17 }}
                 align="left"
-                variant="h6"
+                variant="body1"
                 color="text.secondary"
+                fontWeight={500}
               >
                 Total Available Balance
               </Typography>
@@ -152,14 +152,14 @@ export const GeneralOverview = (props) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={4} md={4}>
+        <Grid item xs={6} md={4}>
           <Card elevation={0}>
             <CardContent>
               <Typography
-                sx={{ fontSize: 17 }}
                 align="left"
-                variant="h6"
+                variant="body1"
                 color="text.secondary"
+                fontWeight={500}
               >
                 Total Staked Balance
               </Typography>
@@ -169,14 +169,14 @@ export const GeneralOverview = (props) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={4} md={4}>
+        <Grid item xs={6} md={4}>
           <Card elevation={0}>
             <CardContent>
               <Typography
-                sx={{ fontSize: 17 }}
                 align="left"
-                variant="h6"
+                variant="body1"
                 color="text.secondary"
+                fontWeight={500}
               >
                 Total Rewards
               </Typography>
