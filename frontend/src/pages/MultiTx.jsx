@@ -17,18 +17,27 @@ import { Pagination } from "@mui/material";
 import { Divider } from "@mui/material";
 import { multiTxns } from "../features/bank/bankSlice";
 import { resetError, setError } from "../features/common/commonSlice";
+import PropTypes from "prop-types";
+import { useNavigate, useParams } from "react-router-dom";
 
 const PER_PAGE = 5;
 const SEND_TEMPLATE = "https://resolute.witval.com/_static/send.csv";
 
-export default function MultiTx() {
-  const wallet = useSelector((state) => state.wallet);
-  const { chainInfo, address } = wallet;
-  const feegrant = useSelector((state) => state.common.feegrant);
-  const submitTxStatus = useSelector((state) => state.bank.tx.status);
-  const currency = useSelector(
-    (state) => state.wallet.chainInfo.config.currencies[0]
+export default function MultiTx({ chainInfo, address }) {
+  const params = useParams();
+
+  const selectNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
   );
+  const [currentNetwork, setCurrentNetwork] = React.useState(
+    params?.networkName || selectNetwork.toLowerCase()
+  );
+  const currency = chainInfo?.config?.currencies[0];
+
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
+  );
+  const submitTxStatus = useSelector((state) => state.bank.tx.status);
 
   const [slicedMsgs, setSlicedMsgs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -52,7 +61,6 @@ export default function MultiTx() {
       alert("no messages");
       return;
     }
-
     dispatch(
       multiTxns({
         msgs: messages,
@@ -63,7 +71,7 @@ export default function MultiTx() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-        feegranter: feegrant.granter,
+        feegranter: feegrant?.granter,
         memo: memo,
       })
     );
@@ -96,16 +104,18 @@ export default function MultiTx() {
 
   return (
     <Box>
-      <Typography
-        color="text.primary"
-        variant="h6"
-        sx={{
-          textAlign: "left",
-          p: 1,
-        }}
-      >
-        Send transactions
-      </Typography>
+      <Box>
+        <Typography
+          color="text.primary"
+          variant="h6"
+          sx={{
+            textAlign: "left",
+            p: 1,
+          }}
+        >
+          Send transactions
+        </Typography>
+      </Box>
       <Grid container spacing={2}>
         <Grid item md={5} xs={12}>
           <Paper
@@ -303,3 +313,8 @@ export default function MultiTx() {
     </Box>
   );
 }
+
+MultiTx.propTypes = {
+  chainInfo: PropTypes.object.isRequired,
+  address: PropTypes.string.isRequired,
+};

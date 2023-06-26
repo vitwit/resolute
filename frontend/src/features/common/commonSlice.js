@@ -16,10 +16,15 @@ const initialState = {
     info: {},
     status: "idle",
   },
+  allTokensInfoState: {
+    error: "",
+    info: {},
+    status: "idle",
+  },
   feegrant: {},
   selectedNetwork: {
-    chainName: "CosmosHub",
-    chainID: "cosmoshub-4",
+    chainName: "",
+    chainID: "",
   },
   authzMode: false,
 };
@@ -29,6 +34,20 @@ export const getTokenPrice = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await commonService.tokenInfo(data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data?.message || error?.message || SOMETHING_WRONG
+      );
+    }
+  }
+);
+
+export const getAllTokensPrice = createAsyncThunk(
+  "common/getAllTokensPrice",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await commonService.allTokensInfo();
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -90,8 +109,8 @@ export const commonSlice = createSlice({
       state.selectedNetwork = data.payload;
     },
     setAuthzMode: (state, data) => {
-      state.authzMode = data.payload
-    }
+      state.authzMode = data.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -108,6 +127,27 @@ export const commonSlice = createSlice({
         state.tokensInfoState.status = "rejected";
         state.tokensInfoState.error = action.payload;
         state.tokensInfoState.info = {};
+      });
+
+    builder
+      .addCase(getAllTokensPrice.pending, (state) => {
+        state.allTokensInfoState.status = "pending";
+        state.allTokensInfoState.error = "";
+      })
+      .addCase(getAllTokensPrice.fulfilled, (state, action) => {
+        let data = action.payload.data || [];
+        const tokensPriceInfo = data.reduce((result, tokenInfo) => {
+          result[tokenInfo.denom] = tokenInfo;
+          return result;
+        }, {});
+        state.allTokensInfoState.status = "idle";
+        state.allTokensInfoState.error = "";
+        state.allTokensInfoState.info = tokensPriceInfo;
+      })
+      .addCase(getAllTokensPrice.rejected, (state, action) => {
+        state.allTokensInfoState.status = "rejected";
+        state.allTokensInfoState.error = action.payload;
+        state.allTokensInfoState.info = {};
       });
   },
 });
