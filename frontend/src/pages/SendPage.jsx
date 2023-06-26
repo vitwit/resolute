@@ -248,29 +248,31 @@ export default function SendPage() {
             md={6}
             sx={{ display: "flex", justifyContent: "center" }}
           >
-            <ButtonGroup
-              variant="outlined"
-              aria-label="validators"
-              sx={{ display: "flex", mb: 1 }}
-              disableElevation
-            >
-              <Button
-                variant={sendType === "send" ? "contained" : "outlined"}
-                onClick={() => {
-                  setSendType("send");
-                }}
+            {!isAuthzMode ? (
+              <ButtonGroup
+                variant="outlined"
+                aria-label="validators"
+                sx={{ display: "flex", mb: 1 }}
+                disableElevation
               >
-                Send
-              </Button>
-              <Button
-                variant={sendType === "multi-send" ? "contained" : "outlined"}
-                onClick={() => {
-                  setSendType("multi-send");
-                }}
-              >
-                Multi Send
-              </Button>
-            </ButtonGroup>
+                <Button
+                  variant={sendType === "send" ? "contained" : "outlined"}
+                  onClick={() => {
+                    setSendType("send");
+                  }}
+                >
+                  Send
+                </Button>
+                <Button
+                  variant={sendType === "multi-send" ? "contained" : "outlined"}
+                  onClick={() => {
+                    setSendType("multi-send");
+                  }}
+                >
+                  Multi Send
+                </Button>
+              </ButtonGroup>
+            ) : null}
           </Grid>
           <Grid
             item
@@ -336,10 +338,7 @@ export default function SendPage() {
           </>
         ) : (
           <>
-            <MultiTx
-              chainInfo={chainInfo}
-              address={address}
-            />
+            <MultiTx chainInfo={chainInfo} address={address} />
           </>
         )}
       </Box>
