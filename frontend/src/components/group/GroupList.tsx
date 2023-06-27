@@ -15,10 +15,11 @@ export interface GroupsByAdminProps {
   paginationKey: string;
   notFoundText: string;
   showNotFoundAction: boolean;
+  networkName: string;
 }
 
 export default function GroupList(props: GroupsByAdminProps) {
-  const { groups, paginationKey, handlePagination, total, status } = props;
+  const { groups, paginationKey, handlePagination, total, status, networkName } = props;
   const navigate = useNavigate();
   function navigateTo(path: string) {
     navigate(path);
@@ -29,12 +30,12 @@ export default function GroupList(props: GroupsByAdminProps) {
       {status === "pending" ? (
         <CircularProgress sx={{ textAlign: "center" }} />
       ) : null}
-      {status !== "pending" && !groups.length ? (
+      {status !== "pending" && !groups?.length ? (
         <NoData
           title={props.notFoundText}
           showAction={props.showNotFoundAction}
           onAction={() => {
-            navigateTo("/group/create-group");
+            navigateTo(`/${networkName}/daos/create-group`);
           }}
           actionText="Create group"
         />

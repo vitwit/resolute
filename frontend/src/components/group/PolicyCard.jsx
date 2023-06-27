@@ -4,7 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Chip, Grid, Paper } from "@mui/material";
 import { setLocalStorage, shortenAddress } from "../../utils/util";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
 import { useDispatch } from "react-redux";
@@ -17,6 +17,8 @@ const policyType = {
 export default function PolicyCard({ obj }) {
   const navigate = useNavigate();
 
+  const {networkName} = useParams();
+
   const dispatch = useDispatch();
 
   const policyMetadata = JSON.parse(obj?.metadata)
@@ -27,7 +29,7 @@ export default function PolicyCard({ obj }) {
       variant={"outlined"}
       onClick={() => {
         setLocalStorage("policy", obj, "object");
-        navigate(`/groups/${obj?.group_id}/policies/${obj?.address}`);
+        navigate(`/${networkName}/daos/${obj?.group_id}/policies/${obj?.address}`);
       }}
       sx={{
         p: 1,

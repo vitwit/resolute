@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import Autocomplete from "@mui/material/Autocomplete";
 
 import { Controller, useFormContext } from "react-hook-form";
+import { useParams } from "react-router-dom";
 
 Delegate.propTypes = {
   currency: PropTypes.object.isRequired,
@@ -12,7 +13,13 @@ Delegate.propTypes = {
 
 export default function Delegate(props) {
   const { currency } = props;
-
+  const params = useParams();
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork.toLowerCase());
+  
   const {
     control,
     formState: { errors },
@@ -22,8 +29,7 @@ export default function Delegate(props) {
       validator: null,
     },
   });
-
-  var validators = useSelector((state) => state.staking.validators);
+  var validators = useSelector((state) => state.staking.chains[nameToChainIDs[currentNetwork]]?.validators);
   var [data, setData] = useState([]);
 
   useEffect(() => {

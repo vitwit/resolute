@@ -5,7 +5,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/system/Box";
 import { shortenAddress } from "../../utils/util";
 import { getFormatDate } from "../../utils/datetime";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface GroupCardProps {
   group: any;
@@ -44,7 +44,7 @@ export default function GroupCard({ group }: GroupCardProps) {
   const navigate = useNavigate();
   const [showFullText, setShowFullText] = React.useState(false);
   const groupMetadata = JSON.parse(group.metadata)
-
+  const { networkName } = useParams();
   return (
     <Paper elevation={0} variant="outlined" square>
       <CardContent
@@ -54,7 +54,7 @@ export default function GroupCard({ group }: GroupCardProps) {
           },
           textAlign: "left",
         }}
-        onClick={() => navigate(`/groups/${group?.id}`)}
+        onClick={() => navigate(`/${networkName}/daos/${group?.id}`)}
         component="div"
       >
         <Typography

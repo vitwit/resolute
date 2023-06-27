@@ -14,18 +14,18 @@ function AdminGroupList() {
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
-  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork);
-
+  const [currentNetwork, setCurrentNetwork] = useState(
+    params?.networkName || selectedNetwork.toLowerCase()
+  );
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-
+  const chainID = nameToChainIDs[currentNetwork];
   const address =
-    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+    networks[chainID]?.walletInfo.bech32Address;
 
-  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
-  
-  const groups = useSelector((state) => state.group.groups);
+  const chainInfo = networks[chainID]?.network;
 
+  const groups = useSelector((state) => state.group.groups?.[chainID]);
   const fetchGroupsByAdmin = (offset = 0, limit = PER_PAGE) => {
     dispatch(
       getGroupsByAdmin({
@@ -35,14 +35,19 @@ function AdminGroupList() {
           offset,
           limit,
         },
+        chainID: chainID,
       })
     );
   };
 
   useEffect(() => {
-    if (address)
-    fetchGroupsByAdmin(0, PER_PAGE);
-  }, [address]);
+    if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
+    else setCurrentNetwork("cosmoshub");
+  }, [params]);
+
+  useEffect(() => {
+    if (address) fetchGroupsByAdmin(0, PER_PAGE);
+  }, [chainInfo, address]);
 
   useEffect(() => {
     if (Number(groups?.admin?.pagination?.total))
@@ -50,18 +55,19 @@ function AdminGroupList() {
   }, [groups?.admin?.pagination?.total]);
 
   const handlePagination = (page) => {
-    fetchGroupsByAdmin(page*PER_PAGE, PER_PAGE);
+    fetchGroupsByAdmin(page * PER_PAGE, PER_PAGE);
   };
 
   return (
     <GroupList
       total={adminTotal}
-      groups={groups.admin.list}
-      status={groups.admin.status}
+      groups={groups?.admin?.list}
+      status={groups?.admin?.status}
       paginationKey={groups?.admin?.pagination?.next_key}
       handlePagination={handlePagination}
       notFoundText="No groups found"
       showNotFoundAction={true}
+      networkName={currentNetwork}
     />
   );
 }

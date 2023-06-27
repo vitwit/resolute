@@ -21,7 +21,7 @@ import PolicyDetails from "../../components/group/PolicyDetails";
 import UpdatePolicyMetadataDialog from "../../components/group/UpdatePolicyMetadataDialog";
 import { DAYS, PERCENTAGE } from "./common";
 
-function PolicyInfo() {
+function PolicyInfo({ chainInfo, address, chainID }) {
   const [policyObj, setPolicyObj] = useState({});
   const [isEditPolicyForm, setEditPolicyForm] = useState(false);
   const [policyMetadataDialog, setPolicyMetadataDialog] = useState(false);
@@ -32,7 +32,6 @@ function PolicyInfo() {
   const dispatch = useDispatch();
   const { id, policyId } = useParams();
 
-  const wallet = useSelector((state) => state.wallet);
   const updateMetadataRes = useSelector(
     (state) => state.group.updateGroupMetadataRes
   );
@@ -47,17 +46,18 @@ function PolicyInfo() {
     (state) => state.group.updateGroupMetadataRes
   );
 
-  const groupPoliceis = useSelector((state) => state?.group?.groupPolicies);
+  const groupPolicies = useSelector((state) => state?.group?.groupPolicies?.[chainID]);
 
   const getPolicies = () => {
     dispatch(
       getGroupPoliciesById({
-        baseURL: wallet?.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         id: id,
         pagination: {
           key: "",
           limit: 100,
         },
+        chainID: chainID,
       })
     );
   };
@@ -65,17 +65,17 @@ function PolicyInfo() {
   useEffect(() => {
     getGroup();
     getPolicies();
-  }, []);
+  }, [chainInfo]);
 
   useEffect(() => {
-    const data = groupPoliceis?.data?.group_policies || [];
+    const data = groupPolicies?.data?.group_policies || [];
     if (data?.length) {
       const pArr = data.filter((d) => d.address === policyId);
       if (pArr?.length) {
         setPolicyObj(pArr[0]);
       }
     }
-  }, [groupPoliceis?.status]);
+  }, [groupPolicies?.status]);
 
   useEffect(() => {
     if (updateMetadataRes?.status === "idle") getPolicies();
@@ -99,7 +99,6 @@ function PolicyInfo() {
   }, [updateGroupMetadataRes?.status]);
 
   const handlePolicyMetadata = (newMetadata) => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txUpdateGroupPolicyMetdata({
@@ -115,7 +114,6 @@ function PolicyInfo() {
   };
 
   const handleUpdateAdmin = (newAdmin) => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txUpdateGroupPolicyAdmin({
@@ -133,17 +131,17 @@ function PolicyInfo() {
   const getGroup = () => {
     dispatch(
       getGroupById({
-        baseURL: wallet?.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         id: id,
       })
     );
   };
 
-  const groupInfo = useSelector((state) => state.group.groupInfo);
-  const canUpdateGroup = () => groupInfo?.data?.admin === wallet?.address;
+  const groupInfo = useSelector((state) => state.group.groupInfo?.[chainID]);
+  const canUpdateGroup = () => groupInfo?.data?.admin === address;
 
   const handleSubmitPolicy = (data) => {
-    const chainInfo = wallet?.chainInfo;
+
     const dataObj = {
         admin: policyObj?.admin,
         groupPolicyAddress: policyObj?.address,
@@ -200,16 +198,16 @@ function PolicyInfo() {
       >
         Policy Information
       </Typography>
-      {groupPoliceis?.status === "pending" ? (
+      {groupPolicies?.status === "pending" ? (
         <Paper variant="outlined">
           <CircularProgress variant="h2" />{" "}
         </Paper>
       ) : null}
-      {groupPoliceis?.status === "idle" && !policyObj?.address && (
+      {groupPolicies?.status === "idle" && !policyObj?.address && (
         <AlertMsg type="error" text="Policy not found" />
       )}
 
-      {groupPoliceis?.status === "idle" && policyObj?.address ? (
+      {groupPolicies?.status === "idle" && policyObj?.address ? (
         <Paper variant="outlined" sx={{ p: 4 }} elevation={0}>
           {(canUpdateGroup() && !isEditPolicyForm) ? (
             <Button
@@ -247,6 +245,7 @@ function PolicyInfo() {
               policyObj={policyObj}
               handlePolicy={handleSubmitPolicy}
               handlePolicyClose={() => setEditPolicyForm(false)}
+              chainID={chainID}
             />
           ) : (
             <PolicyDetails
@@ -254,6 +253,7 @@ function PolicyInfo() {
               handleUpdateAdmin={handleUpdateAdmin}
               policyObj={policyObj}
               canUpdateGroup={canUpdateGroup()}
+              chainID={chainID}
             />
           )}
         </Paper>

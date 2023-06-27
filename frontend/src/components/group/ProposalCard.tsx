@@ -19,9 +19,10 @@ function stringAvatar(name: string) {
 
 interface ProposalCardProps {
   proposal: any;
+  networkName: string;
 }
 
-function ProposalCard({ proposal }: ProposalCardProps): JSX.Element {
+function ProposalCard({ proposal, networkName }: ProposalCardProps): JSX.Element {
   const yes = parseFloat(proposal?.final_tally_result?.yes_count);
   const no = parseFloat(proposal?.final_tally_result?.no_count);
   const abstain = parseFloat(proposal?.final_tally_result?.abstain_count);
@@ -38,7 +39,7 @@ function ProposalCard({ proposal }: ProposalCardProps): JSX.Element {
   return (
     <Paper
       onClick={() => {
-        navigate(`/groups/proposals/${proposal?.id}`);
+        navigate(`/${networkName}/daos/proposals/${proposal?.id}`);
       }}
       sx={{ p: 2, textAlign: "left" }}
       variant="outlined"

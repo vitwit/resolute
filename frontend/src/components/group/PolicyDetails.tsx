@@ -339,11 +339,11 @@ function PolicyDetails({
           <LabelText text="Voting Period" />
           <LabelValue
             text={
-              parseFloat(
+              parseInt(
                 policyObj?.decision_policy?.windows?.voting_period || 0
               ).toFixed(2) + " Sec"
             }
-            toolTip={parseFloat(
+            toolTip={parseInt(
               policyObj?.decision_policy?.windows?.voting_period || 0
             ).toFixed(2)}
           />
@@ -359,11 +359,11 @@ function PolicyDetails({
           <LabelText text="Min Execution Period" />
           <LabelValue
             text={
-              parseFloat(
+              parseInt(
                 policyObj?.decision_policy?.windows?.min_execution_period
               ).toFixed(2) + " Sec"
             }
-            toolTip={parseFloat(
+            toolTip={parseInt(
               policyObj?.decision_policy?.windows?.min_execution_period
             ).toFixed(2)}
           />

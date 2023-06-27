@@ -31,7 +31,7 @@ const MembersTable = (props) => {
           <StyledTableRow>
             <StyledTableCell>Address</StyledTableCell>
             <StyledTableCell align="left">Weight</StyledTableCell>
-            <StyledTableCell align="left">Metadata</StyledTableCell>
+            <StyledTableCell align="left">Name</StyledTableCell>
             {/* <StyledTableCell align="right">Action</StyledTableCell> */}
           </StyledTableRow>
         </TableHead>

@@ -38,17 +38,17 @@ import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
 import { DAYS, PERCENTAGE } from "./common";
 
-const GroupPolicies = ({ id, wallet }) => {
+const GroupPolicies = ({ id, chainInfo, chainID }) => {
   const LIMIT = 100;
   const dispatch = useDispatch();
   const [showForm, setShowForm] = useState(false);
 
-  const groupDetails = useSelector((state) => state.group.groupInfo);
+  const groupDetails = useSelector((state) => state.group.groupInfo?.[chainID]);
   const { data: groupInformation } = groupDetails;
 
   const addPolicyRes = useSelector((state) => state.group.addGroupPolicyRes);
 
-  const groupMembers = useSelector((state) => state.group.groupMembers);
+  const groupMembers = useSelector((state) => state.group.groupMembers?.[chainID]);
 
   useEffect(() => {
     if (addPolicyRes?.status === "idle") {
@@ -60,9 +60,10 @@ const GroupPolicies = ({ id, wallet }) => {
   const getPolicies = () => {
     dispatch(
       getGroupPoliciesById({
-        baseURL: wallet?.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         id: id,
         pagination: { limit: LIMIT, key: "" },
+        chainID: chainID,
       })
     );
   };
@@ -71,46 +72,51 @@ const GroupPolicies = ({ id, wallet }) => {
   }, []);
 
   let groupPolicies = [];
-  const groupInfo = useSelector((state) => state.group.groupPolicies);
-  const { data, status } = groupInfo;
+  const groupInfo = useSelector((state) => state.group?.groupPolicies?.[chainID]);
+  const data = groupInfo?.data;
+  const status = groupInfo?.status;
 
   if (data) {
     groupPolicies = data?.group_policies;
   }
 
   const handlePolicy = (data) => {
-    const chainInfo = wallet?.chainInfo;
     const dataObj = {
-        admin: groupInformation?.admin,
-        groupId: id,
-        policyMetadata: data?.policyMetadata,
-        denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
-        chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
-      }
+      admin: groupInformation?.admin,
+      groupId: id,
+      policyMetadata: data?.policyMetadata,
+      denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
+      chainId: chainInfo.config.chainId,
+      rpc: chainInfo.config.rpc,
+      feeAmount: chainInfo.config.gasPriceStep.average,
+    };
 
     if (
       data.policyMetadata.percentage !== 0 ||
       data.policyMetadata.threshold !== 0
     ) {
-
       const getPeriod = (duration, period) => {
         let time;
-        if(duration === DAYS) time = 24 * 60 * 60;
+        if (duration === DAYS) time = 24 * 60 * 60;
         else if (duration === "Hours") time = 60 * 60;
         else if (duration === "Minutes") time = 60;
         else time = 1;
 
         time = time * Number(period);
         return time;
-      }
+      };
 
       if (data?.policyMetadata) {
         dataObj["policyMetadata"] = {
           ...data.policyMetadata,
-          minExecPeriod: getPeriod(data.policyMetadata?.minExecPeriodDuration, data.policyMetadata?.minExecPeriod),
-          votingPeriod: getPeriod(data.policyMetadata?.votingPeriodDuration, data.policyMetadata?.votingPeriod),
+          minExecPeriod: getPeriod(
+            data.policyMetadata?.minExecPeriodDuration,
+            data.policyMetadata?.minExecPeriod
+          ),
+          votingPeriod: getPeriod(
+            data.policyMetadata?.votingPeriodDuration,
+            data.policyMetadata?.votingPeriod
+          ),
         };
       }
 
@@ -119,9 +125,7 @@ const GroupPolicies = ({ id, wallet }) => {
           Number(dataObj.policyMetadata.percentage) / 100.0;
       }
     }
-    dispatch(
-      txAddGroupPolicy(dataObj)
-    );
+    dispatch(txAddGroupPolicy(dataObj));
   };
 
   const {
@@ -264,16 +268,17 @@ const GroupPolicies = ({ id, wallet }) => {
 };
 
 const GroupMembers = (props) => {
-  const { id, wallet, isAdmin, onAddMembers } = props;
+  const { id, isAdmin, onAddMembers, chainInfo, chainID } = props;
 
   const dispatch = useDispatch();
 
   const getGroupmembers = () => {
     dispatch(
       getGroupMembersById({
-        baseURL: wallet?.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         id: id,
         pagination: { limit: 100, key: "" },
+        chainID: chainID,
       })
     );
   };
@@ -284,7 +289,7 @@ const GroupMembers = (props) => {
     getGroupmembers();
   }, [updateGroupRes?.status]);
 
-  const membersInfo = useSelector((state) => state.group.groupMembers);
+  const membersInfo = useSelector((state) => state.group.groupMembers?.[chainID]);
   const { members, pagination, status } = membersInfo;
 
   return (
@@ -315,7 +320,7 @@ GroupMembers.propTypes = {
 };
 
 const UpdateGroupMember = (props) => {
-  const { id, wallet, members, onCancel } = props;
+  const { id, members, onCancel, chainInfo, address } = props;
   const updateRes = useSelector((state) => state.group.updateGroupRes);
 
   useEffect(() => {
@@ -366,8 +371,6 @@ const UpdateGroupMember = (props) => {
 
   const dispatch = useDispatch();
   const handleUpdate = (allMembers) => {
-    const chainInfo = wallet?.chainInfo;
-
     let membersMap = {};
     for (let i = 0; i < members.length; i++) {
       membersMap[members[i].member.address] = {
@@ -399,7 +402,7 @@ const UpdateGroupMember = (props) => {
     }
 
     const dataObj = {
-      admin: wallet?.address,
+      admin: address,
       groupId: id,
       members: result,
       denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
@@ -562,9 +565,23 @@ UpdateGroupMember.propTypes = {
 function Group() {
   const params = useParams();
   const [tabIndex, setTabIndex] = useState(0);
-  const groupInfo = useSelector((state) => state.group.groupInfo);
 
-  const membersInfo = useSelector((state) => state.group.groupMembers);
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const [currentNetwork, setCurrentNetwork] = useState(
+    params?.networkName || selectedNetwork.toLowerCase()
+  );
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const chainID = nameToChainIDs[currentNetwork];
+  const address =
+    networks[chainID]?.walletInfo.bech32Address;
+
+  const chainInfo = networks[chainID]?.network;
+
+  const membersInfo = useSelector((state) => state.group.groupMembers?.[chainID]);
+  const groupInfo = useSelector((state) => state.group.groupInfo?.[chainID]);
   const wallet = useSelector((state) => state.wallet);
   const { connected } = wallet;
 
@@ -572,8 +589,9 @@ function Group() {
   const getGroup = () => {
     dispatch(
       getGroupById({
-        baseURL: wallet.chainInfo.config.rest,
+        baseURL: chainInfo?.config?.rest,
         id: params.id,
+        chainID: chainID,
       })
     );
   };
@@ -581,9 +599,10 @@ function Group() {
   const getMembers = () => {
     dispatch(
       getGroupMembersById({
-        baseURL: wallet.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         id: params.id,
         pagination: { limit: 100, key: "" },
+        chainID: chainID,
       })
     );
   };
@@ -602,11 +621,11 @@ function Group() {
     },
     {
       title: "Decision Policies",
-      disabled: membersInfo.members.length === 0,
+      disabled: membersInfo?.members?.length === 0,
     },
     {
       title: "Active Proposals",
-      disabled: membersInfo.members.length === 0,
+      disabled: membersInfo?.members?.length === 0,
     },
   ];
 
@@ -616,16 +635,21 @@ function Group() {
 
   return (
     <>
-      {groupInfo.status === "idle" && groupInfo.data ? (
+      {groupInfo?.status === "idle" && groupInfo?.data ? (
         <Box>
-          <GroupInfo id={params?.id} wallet={wallet} />
+          <GroupInfo
+            id={params?.id}
+            chainInfo={chainInfo}
+            address={address}
+            chainID={chainID}
+          />
           <Paper sx={{ mt: 2 }} elevation={0}>
             <GroupTab
               tabs={groupInfoTabs}
               handleTabChange={(i) => setTabIndex(i)}
             />
             <TabPanel value={tabIndex} index={0}>
-              {isAdmin(wallet?.address) ? (
+              {isAdmin(address) ? (
                 <>
                   <Box
                     component="div"
@@ -633,7 +657,7 @@ function Group() {
                       textAlign: "right",
                     }}
                   >
-                    {!showUpdateMembers && membersInfo.members.length > 0 ? (
+                    {!showUpdateMembers && membersInfo?.members?.length > 0 ? (
                       <Button
                         variant="contained"
                         sx={{
@@ -650,8 +674,9 @@ function Group() {
                   {showUpdateMembers ? (
                     <UpdateGroupMember
                       id={params?.id}
-                      wallet={wallet}
                       members={membersInfo.members}
+                      chainInfo={chainInfo}
+                      address={address}
                       onCancel={() => setShowUpdateMembers(!showUpdateMembers)}
                     />
                   ) : null}
@@ -661,16 +686,18 @@ function Group() {
                 <GroupMembers
                   id={params?.id}
                   wallet={wallet}
-                  isAdmin={isAdmin(wallet?.address)}
+                  chainInfo={chainInfo}
+                  isAdmin={isAdmin(address)}
                   onAddMembers={() => setShowUpdateMembers(true)}
+                  chainID={chainID}
                 />
               ) : null}
             </TabPanel>
             <TabPanel value={tabIndex} index={1}>
-              <GroupPolicies id={params?.id} wallet={wallet} />
+              <GroupPolicies id={params?.id} chainInfo={chainInfo} chainID={chainID} />
             </TabPanel>
             <TabPanel value={tabIndex} index={2}>
-              <ActiveProposals id={params?.id} wallet={wallet} />
+              <ActiveProposals id={params?.id} wallet={wallet} chainInfo={chainInfo} chainID={chainID} />
             </TabPanel>
           </Paper>
         </Box>
