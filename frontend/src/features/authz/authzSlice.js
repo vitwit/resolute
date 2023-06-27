@@ -16,18 +16,8 @@ import { AuthzExecMsgUnjail } from "../../txns/authz/exec";
 import { signAndBroadcast } from "../../utils/signing";
 
 const initialState = {
-  grantsToMe: {
-    status: "idle",
-    errMsg: "",
-    grants: [],
-    pagination: {},
-  },
-  grantsByMe: {
-    status: "idle",
-    errMsg: "",
-    grants: [],
-    pagination: {},
-  },
+  grantsToMe: {},
+  grantsByMe: {},
   tx: {
     status: "idle",
   },
@@ -50,7 +40,7 @@ export const getGrantsToMe = createAsyncThunk(
     );
     return {
       chainID: data.chainID,
-      data: response.data
+      data: response.data,
     };
   }
 );
@@ -65,7 +55,7 @@ export const getGrantsByMe = createAsyncThunk(
     );
     return {
       chainID: data.chainID,
-      data: response.data
+      data: response.data,
     };
   }
 );
@@ -212,7 +202,7 @@ export const authzExecHelper = (dispatch, data) => {
           prefix: data.prefix,
           chainId: data.chainId,
           feegranter: data.feegranter,
-          metadata: data.metadata
+          metadata: data.metadata,
         })
       );
       break;
@@ -447,45 +437,71 @@ export const authzSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getGrantsToMe.pending, (state) => {
-        state.grantsToMe.status = "pending";
-        state.grantsToMe.errMsg = "";
+      .addCase(getGrantsToMe.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            errMsg: "",
+            grants: [],
+            pagination: {},
+          };
+          state.grantsToMe[chainID] = result;
+        }
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
-        let result = {
-          status: "idle",
-          errMsg: "",
-          grants: action.payload.data.grants,
-          pagination: action.payload.data.pagination
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "idle",
+            errMsg: "",
+            grants: action.payload.data.grants,
+            pagination: action.payload.data.pagination,
+          };
+          state.grantsToMe[chainID] = result;
         }
-        state.grantsToMe[action.payload.chainID] = result;
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
-        state.grantsToMe.status = "rejected";
-        state.grantsToMe.grants = [];
-        state.grantsToMe.pagination = {};
-        state.grantsToMe.errMsg = action.error.message;
+        const chainID = action.meta.arg.chainID;
+        if(chainID.length) {
+          state.grantsToMe[chainID].status = "rejected";
+          state.grantsToMe[chainID].grants = [];
+          state.grantsToMe[chainID].pagination = {};
+          state.grantsToMe[chainID].errMsg = action.error.message;
+        }
       });
 
     builder
-      .addCase(getGrantsByMe.pending, (state) => {
-        state.grantsByMe.status = "pending";
-        state.grantsByMe.errMsg = "";
+      .addCase(getGrantsByMe.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            errMsg: "",
+            grants: [],
+            pagination: {},
+          };
+          state.grantsByMe[chainID] = result;
+        }
       })
       .addCase(getGrantsByMe.fulfilled, (state, action) => {
+        const chainID = action.payload.chainID;
         let result = {
           status: "idle",
           errMsg: "",
           grants: action.payload.data.grants,
-          pagination: action.payload.data.pagination
-        }
-        state.grantsByMe[action.payload.chainID] = result;
+          pagination: action.payload.data.pagination,
+        };
+        state.grantsByMe[chainID] = result;
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
-        state.grantsByMe.status = "rejected";
-        state.grantsByMe.grants = [];
-        state.grantsByMe.pagination = {};
-        state.grantsByMe.errMsg = action.error.message;
+        const chainID = action.meta.arg.chainID;
+        if(chainID.length) {
+          state.grantsByMe[chainID].status = "rejected";
+          state.grantsByMe[chainID].grants = [];
+          state.grantsByMe[chainID].pagination = {};
+          state.grantsByMe[chainID].errMsg = action.error.message;
+        }
       });
 
     builder
@@ -543,7 +559,12 @@ export const authzSlice = createSlice({
   },
 });
 
-export const { resetAlerts, setSelectedGranter, resetExecTx, resetTxAuthzRes, exitAuthzMode } =
-  authzSlice.actions;
+export const {
+  resetAlerts,
+  setSelectedGranter,
+  resetExecTx,
+  resetTxAuthzRes,
+  exitAuthzMode,
+} = authzSlice.actions;
 
 export default authzSlice.reducer;

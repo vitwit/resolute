@@ -10,6 +10,10 @@ import CircularProgress from "@mui/material/CircularProgress";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { FormControl } from "@mui/material";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 
 Send.propTypes = {
   onSend: PropTypes.func.isRequired,
@@ -18,16 +22,22 @@ Send.propTypes = {
   available: PropTypes.number.isRequired,
   authzTx: PropTypes.object.isRequired,
   networkName: PropTypes.string.isRequired,
+  authzMode: PropTypes.bool.isRequired,
+  grantsToMe: PropTypes.array.isRequired,
 };
 
 export default function Send(props) {
-  const { chainInfo, sendTx, available, onSend, authzTx } = props;
-
-  const params = useParams();
-
-  const selectNetwork = useSelector(
-    (state) => state.common.selectedNetwork.chainName
-  );
+  const {
+    chainInfo,
+    sendTx,
+    available,
+    onSend,
+    authzTx,
+    isAuthzMode,
+    grantsToMe,
+    setGranter,
+    granter
+  } = props;
 
   const currency = chainInfo?.config?.currencies[0];
 
@@ -43,6 +53,7 @@ export default function Send(props) {
       to: data.recipient,
       amount: Number(data.amount) * 10 ** currency.coinDecimals,
       denom: currency.coinMinimalDenom,
+      granter: granter,
     });
   };
 
@@ -67,6 +78,32 @@ export default function Send(props) {
         }}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
+        {isAuthzMode && grantsToMe?.length > 0 ? (
+            <FormControl
+              fullWidth
+              sx={{
+                mt: 1,
+              }}
+            >
+              <InputLabel id="granter-label">From *</InputLabel>
+              <Select
+                labelId="granter-label"
+                id="granter-select"
+                value={granter}
+                label="From *"
+                onChange={(e) => {
+                  setGranter(e.target.value);
+                }}
+                size="small"
+              >
+                {grantsToMe.map((granter, index) => (
+                  <MenuItem id={index} value={granter}>
+                    {granter}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ) : null}
           <div>
             <Controller
               name="recipient"

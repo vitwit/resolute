@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { authzExecHelper, getGrantsToMe } from "../features/authz/authzSlice";
 import {
   resetError,
-  resetFeegrant,
   resetTxHash,
   setError,
   removeFeegrant as removeFeegrantState,
@@ -25,7 +24,28 @@ import Box from "@mui/material/Box";
 import MultiTx from "./MultiTx";
 import SelectNetwork from "../components/common/SelectNetwork";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
+
+export const filterSendAuthz = (authzs) => {
+  const result = {};
+  
+  for (const chainID in authzs) {
+    const granters = [];
+    const grants = authzs[chainID]?.grants || [];
+    for (const grant of grants) {
+      const authorizationType = grant?.authorization["@type"];
+      const isGenericAuthorization = authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
+      const isSendAuthorization = authorizationType === "/cosmos.bank.v1beta1.SendAuthorization";
+      const isMsgSend = grant?.authorization.msg === "/cosmos.bank.v1beta1.MsgSend";
+      if (isGenericAuthorization && isMsgSend || isSendAuthorization) {
+        granters.push(grant.granter);
+      }
+    }
+    result[chainID] = granters;
+  }
+
+  return result;
+};
 
 export default function SendPage() {
   const params = useParams();
@@ -34,7 +54,7 @@ export default function SendPage() {
     (state) => state.common.selectedNetwork.chainName
   );
   const [currentNetwork, setCurrentNetwork] = useState(
-    params?.networkName || selectedNetwork
+    params?.networkName || selectedNetwork.toLowerCase()
   );
 
   const networks = useSelector((state) => state.wallet.networks);
@@ -45,7 +65,7 @@ export default function SendPage() {
 
   const currency =
     networks[nameToChainIDs[currentNetwork]]?.network.config.currencies;
-
+  const chainID = nameToChainIDs[currentNetwork];
   const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
   const address =
     networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
@@ -61,14 +81,19 @@ export default function SendPage() {
     (state) => state.common.feegrant?.[currentNetwork]
   );
   const selectedAuthz = useSelector((state) => state.authz.selected);
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
 
   const authzSend = useMemo(
     () => getSendAuthz(grantsToMe.grants, selectedAuthz.granter),
     [grantsToMe.grants]
   );
+  const [granter, setGranter] = React.useState(
+    grantsToMe?.length > 0 ? grantsToMe[0] : ""
+  );
 
   const [sendType, setSendType] = useState("send");
-
+  const [isNoAuthzs, setNoAuthzs] = useState(false);
+  const [authzGrants, setAuthzGrants] = useState({});
   const dispatch = useDispatch();
   useEffect(() => {
     return () => {
@@ -76,6 +101,16 @@ export default function SendPage() {
       dispatch(resetTxHash());
     };
   }, []);
+
+  useEffect(() => {
+    const result = filterSendAuthz(grantsToMe);
+    if (result?.[chainID]?.length === 0) {
+      setNoAuthzs(true);
+    } else {
+      setNoAuthzs(false);
+      setAuthzGrants(result);
+    }
+  }, [grantsToMe]);
 
   useEffect(() => {
     if (balances?.length > 0) {
@@ -96,7 +131,7 @@ export default function SendPage() {
 
   useEffect(() => {
     if (chainInfo?.config?.currencies.length > 0 && address.length > 0) {
-      if (selectedAuthz.granter.length === 0) {
+      if (!isAuthzMode) {
         dispatch(
           getBalances({
             baseURL: chainInfo.config.rest + "/",
@@ -108,7 +143,7 @@ export default function SendPage() {
         dispatch(
           getBalances({
             baseURL: chainInfo.config.rest + "/",
-            address: selectedAuthz.granter,
+            address: granter,
             chainID: nameToChainIDs[currentNetwork],
           })
         );
@@ -121,7 +156,7 @@ export default function SendPage() {
         })
       );
     }
-  }, [chainInfo, currentNetwork]);
+  }, [chainInfo, currentNetwork, granter, isAuthzMode, sendTx?.status]);
 
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[currentNetwork];
@@ -135,7 +170,7 @@ export default function SendPage() {
 
   const onSendTx = (data) => {
     const amount = Number(data.amount);
-    if (selectedAuthz.granter.length === 0) {
+    if (!isAuthzMode) {
       if (
         Number(balance) <
         amount + Number(25000 / 10 ** currency[0].coinDecimals)
@@ -168,7 +203,7 @@ export default function SendPage() {
       authzExecHelper(dispatch, {
         type: "send",
         from: address,
-        granter: selectedAuthz.granter,
+        granter: data.granter,
         recipient: data.to,
         amount: amount,
         denom: currency[0].coinMinimalDenom,
@@ -209,29 +244,31 @@ export default function SendPage() {
             md={6}
             sx={{ display: "flex", justifyContent: "center" }}
           >
-            <ButtonGroup
-              variant="outlined"
-              aria-label="validators"
-              sx={{ display: "flex", mb: 1 }}
-              disableElevation
-            >
-              <Button
-                variant={sendType === "send" ? "contained" : "outlined"}
-                onClick={() => {
-                  setSendType("send");
-                }}
+            {!isAuthzMode ? (
+              <ButtonGroup
+                variant="outlined"
+                aria-label="validators"
+                sx={{ display: "flex", mb: 1 }}
+                disableElevation
               >
-                Send
-              </Button>
-              <Button
-                variant={sendType === "multi-send" ? "contained" : "outlined"}
-                onClick={() => {
-                  setSendType("multi-send");
-                }}
-              >
-                Multi Send
-              </Button>
-            </ButtonGroup>
+                <Button
+                  variant={sendType === "send" ? "contained" : "outlined"}
+                  onClick={() => {
+                    setSendType("send");
+                  }}
+                >
+                  Send
+                </Button>
+                <Button
+                  variant={sendType === "multi-send" ? "contained" : "outlined"}
+                  onClick={() => {
+                    setSendType("multi-send");
+                  }}
+                >
+                  Multi Send
+                </Button>
+              </ButtonGroup>
+            ) : null}
           </Grid>
           <Grid
             item
@@ -252,7 +289,11 @@ export default function SendPage() {
             />
           </Grid>
         </Grid>
-        {sendType === "send" ? (
+        {isAuthzMode && isNoAuthzs ? (
+          <>
+            <Typography>You don't have authz permission.</Typography>
+          </>
+        ) : sendType === "send" ? (
           <>
             <Grid container sx={{ mt: 2 }}>
               <Grid item xs={1} md={3}></Grid>
@@ -277,6 +318,14 @@ export default function SendPage() {
                     onSend={onSendTx}
                     sendTx={sendTx}
                     authzTx={authzExecTx}
+                    isAuthzMode={isAuthzMode}
+                    grantsToMe={
+                      authzGrants[
+                        networks[chainID]?.network?.config?.chainId
+                      ] || []
+                    }
+                    setGranter={setGranter}
+                    granter={granter}
                   />
                 )}
               </Grid>
@@ -285,11 +334,7 @@ export default function SendPage() {
           </>
         ) : (
           <>
-            <MultiTx
-              chainInfo={chainInfo}
-              address={address}
-              currency={currency}
-            />
+            <MultiTx chainInfo={chainInfo} address={address} />
           </>
         )}
       </Box>
