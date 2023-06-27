@@ -48,7 +48,6 @@ export function CustomAppBar(props) {
 
   useEffect(() => {
     if (isAuthzMode) {
-      console.log("callllled");
       Object.keys(networks).map((key, _) => {
         const network = networks[key];
         dispatch(getGrantsToMe({

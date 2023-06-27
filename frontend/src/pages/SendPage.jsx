@@ -153,6 +153,7 @@ export default function SendPage() {
         getGrantsToMe({
           baseURL: chainInfo.config.rest + "/",
           grantee: address,
+          chainID: chainID,
         })
       );
     }

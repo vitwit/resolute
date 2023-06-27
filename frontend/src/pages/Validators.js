@@ -50,7 +50,8 @@ import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../components/FeegranterInfo";
 
 export default function Validators(props) {
-  const { chainID, nameToChainIDs, currentNetwork } = props;
+  const { chainID, nameToChainIDs, currentNetwork, delegateGrantsToMe, isAuthzMode, isNoDelegateAuthzs } = props;
+
   const dispatch = useDispatch();
   const [type, setType] = useState("delegations");
   const staking = useSelector((state) => state.staking);
@@ -85,6 +86,9 @@ export default function Validators(props) {
   const [stakingOpen, setStakingOpen] = React.useState(false);
   const [undelegateOpen, setUndelegateOpen] = React.useState(false);
   const [redelegateOpen, setRedelegateOpen] = React.useState(false);
+  const [delegateGranter, setDelegateGranter] = React.useState(
+    delegateGrantsToMe?.length > 0 ? delegateGrantsToMe[0] : ""
+  );
 
   const theme = useTheme();
 
@@ -219,15 +223,25 @@ export default function Validators(props) {
           address: address,
         })
       );
-      dispatch(
-        getBalances({
-          baseURL: chainInfo.config.rest + "/",
-          address: address,
-          chainID: nameToChainIDs[currentNetwork],
-        })
-      );
+      if (!isAuthzMode) {
+        dispatch(
+          getBalances({
+            baseURL: chainInfo.config.rest + "/",
+            address: address,
+            chainID: nameToChainIDs[currentNetwork],
+          })
+        );
+      } else {
+        dispatch(
+          getBalances({
+            baseURL: chainInfo.config.rest + "/",
+            address: delegateGranter,
+            chainID: nameToChainIDs[currentNetwork],
+          })
+        );
+      }
     }
-  }, [chainInfo, connected]);
+  }, [chainInfo, connected, isAuthzMode, delegateGranter]);
 
   useEffect(() => {
     if (connected) {
@@ -770,6 +784,11 @@ export default function Validators(props) {
                 loading={txStatus.status}
                 displayDenom={currency.coinDenom}
                 authzLoading={authzExecTx?.status}
+                isNoDelegateAuthzs={isNoDelegateAuthzs}
+                isAuthzMode={isAuthzMode}
+                delegateGrantsToMe={delegateGrantsToMe}
+                setDelegateGranter={setDelegateGranter}
+                delegateGranter={delegateGranter}
               />
             ) : (
               <></>
