@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { authzExecHelper, getGrantsToMe } from "../features/authz/authzSlice";
 import {
   resetError,
-  resetFeegrant,
   resetTxHash,
   setError,
   removeFeegrant as removeFeegrantState,
@@ -29,19 +28,16 @@ import { Button, Typography } from "@mui/material";
 
 export const filterSendAuthz = (authzs) => {
   const result = {};
-  const ids = Object.keys(authzs);
-  for (let i = 0; i < ids.length; i++) {
+  
+  for (const chainID in authzs) {
     const granters = [];
-    const chainID = ids[i];
-    for (let j = 0; j < authzs[chainID]?.grants?.length; j++) {
-      const grant = authzs[chainID]?.grants[j];
-      if (
-        (grant?.authorization["@type"] ===
-          "/cosmos.authz.v1beta1.GenericAuthorization" &&
-          grant?.authorization.msg === "/cosmos.bank.v1beta1.MsgSend") ||
-        grant?.authorization["@type"] ===
-          "/cosmos.bank.v1beta1.SendAuthorization"
-      ) {
+    const grants = authzs[chainID]?.grants || [];
+    for (const grant of grants) {
+      const authorizationType = grant?.authorization["@type"];
+      const isGenericAuthorization = authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
+      const isSendAuthorization = authorizationType === "/cosmos.bank.v1beta1.SendAuthorization";
+      const isMsgSend = grant?.authorization.msg === "/cosmos.bank.v1beta1.MsgSend";
+      if (isGenericAuthorization && isMsgSend || isSendAuthorization) {
         granters.push(grant.granter);
       }
     }

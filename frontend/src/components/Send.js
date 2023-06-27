@@ -39,10 +39,6 @@ export default function Send(props) {
     granter
   } = props;
 
-  // const [granter, setGranter] = React.useState(
-  //   grantsToMe?.length > 0 ? grantsToMe[0] : ""
-  // );
-
   const currency = chainInfo?.config?.currencies[0];
 
   const { handleSubmit, control, setValue } = useForm({

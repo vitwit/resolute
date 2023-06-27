@@ -16,18 +16,8 @@ import { AuthzExecMsgUnjail } from "../../txns/authz/exec";
 import { signAndBroadcast } from "../../utils/signing";
 
 const initialState = {
-  grantsToMe: {
-    // status: "idle",
-    // errMsg: "",
-    // grants: [],
-    // pagination: {},
-  },
-  grantsByMe: {
-    status: "idle",
-    errMsg: "",
-    grants: [],
-    pagination: {},
-  },
+  grantsToMe: {},
+  grantsByMe: {},
   tx: {
     status: "idle",
   },
@@ -456,7 +446,7 @@ export const authzSlice = createSlice({
             grants: [],
             pagination: {},
           };
-          state.grantsToMe[action.meta.arg.chainID] = result;
+          state.grantsToMe[chainID] = result;
         }
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
@@ -468,35 +458,50 @@ export const authzSlice = createSlice({
             grants: action.payload.data.grants,
             pagination: action.payload.data.pagination,
           };
-          state.grantsToMe[action.payload.chainID] = result;
+          state.grantsToMe[chainID] = result;
         }
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
-        state.grantsToMe[action.meta.arg.chainID].status = "rejected";
-        state.grantsToMe[action.meta.arg.chainID].grants = [];
-        state.grantsToMe[action.meta.arg.chainID].pagination = {};
-        state.grantsToMe[action.meta.arg.chainID].errMsg = action.error.message;
+        const chainID = action.meta.arg.chainID;
+        if(chainID.length) {
+          state.grantsToMe[chainID].status = "rejected";
+          state.grantsToMe[chainID].grants = [];
+          state.grantsToMe[chainID].pagination = {};
+          state.grantsToMe[chainID].errMsg = action.error.message;
+        }
       });
 
     builder
-      .addCase(getGrantsByMe.pending, (state) => {
-        state.grantsByMe.status = "pending";
-        state.grantsByMe.errMsg = "";
+      .addCase(getGrantsByMe.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            errMsg: "",
+            grants: [],
+            pagination: {},
+          };
+          state.grantsByMe[chainID] = result;
+        }
       })
       .addCase(getGrantsByMe.fulfilled, (state, action) => {
+        const chainID = action.payload.chainID;
         let result = {
           status: "idle",
           errMsg: "",
           grants: action.payload.data.grants,
           pagination: action.payload.data.pagination,
         };
-        state.grantsByMe[action.payload.chainID] = result;
+        state.grantsByMe[chainID] = result;
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
-        state.grantsByMe.status = "rejected";
-        state.grantsByMe.grants = [];
-        state.grantsByMe.pagination = {};
-        state.grantsByMe.errMsg = action.error.message;
+        const chainID = action.meta.arg.chainID;
+        if(chainID.length) {
+          state.grantsByMe[chainID].status = "rejected";
+          state.grantsByMe[chainID].grants = [];
+          state.grantsByMe[chainID].pagination = {};
+          state.grantsByMe[chainID].errMsg = action.error.message;
+        }
       });
 
     builder
