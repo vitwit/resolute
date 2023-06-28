@@ -96,7 +96,7 @@ function getTabIndex(path) {
 }
 
 export default function Home() {
-  const authzEnabled = useSelector((state) => state.common.authzMode)
+  const authzEnabled = useSelector((state) => state.common.authzMode);
   const [value, setValue] = React.useState(0);
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork?.chainName || ""
@@ -113,10 +113,9 @@ export default function Home() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    if(newValue===8) {
-      navigate('/airdrop-check');
-    }
-    else if (newValue === 0 || newValue === 2 || newValue === 3) {
+    if (newValue === 8) {
+      navigate("/airdrop-check");
+    } else if (newValue === 0 || newValue === 2 || newValue === 3) {
       navigate(ALL_NETWORKS[newValue]);
     } else {
       if (selectedNetwork === "") {
@@ -254,10 +253,7 @@ export default function Home() {
               path="/:networkName/daos/proposals/:id"
               element={<GroupProposal />}
             />
-             <Route
-                  path="/airdrop-check"
-                  element={<AirdropEligibility />}
-              />
+            <Route path="/airdrop-check" element={<AirdropEligibility />} />
 
             <Route path="*" element={<Page404 />}></Route>
           </Routes>
