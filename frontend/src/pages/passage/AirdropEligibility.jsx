@@ -67,13 +67,14 @@ function getPassageAddress(address) {
 }
 
 export default function AirdropEligibility() {
+  const defaultChainID = "passage-1";
   const claimRecords = useSelector((state) => state.airdrop.claimRecords);
   const params = useSelector((state) => state.airdrop.params);
   const [chainInfo, _] = useState(getPasgNetwork());
   const status = useSelector((state) => state.airdrop.claimStatus);
   const errMsg = useSelector((state) => state.airdrop.errMsg);
   const txStatus = useSelector((state) => state.airdrop.tx.status);
-  const walletAddress = useSelector((state) => state.wallet.address);
+  const walletAddress = useSelector((state) => state.wallet.networks?.[defaultChainID]?.walletInfo?.bech32Address);
   const currency = chainInfo.config.currencies[0];
 
   const { handleSubmit, control, setValue, getValues } = useForm({

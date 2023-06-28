@@ -34,6 +34,7 @@ import { resetDefaultState as distributionResetDefaultState } from "../features/
 import { resetDefaultState as stakingResetDefaultState } from "../features/staking/stakeSlice";
 import { getAllTokensPrice } from "../features/common/commonSlice";
 import GroupProposal from "./gov/Proposal";
+import AirdropEligibility from "./passage/AirdropEligibility";
 
 export const ContextData = React.createContext();
 
@@ -246,6 +247,10 @@ export default function Home() {
               path="/:networkName/daos/proposals/:id"
               element={<GroupProposal />}
             />
+             <Route
+                  path="/airdrop-check"
+                  element={<AirdropEligibility />}
+              />
 
             <Route path="*" element={<Page404 />}></Route>
           </Routes>
