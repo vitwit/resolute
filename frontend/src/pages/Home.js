@@ -47,6 +47,7 @@ const ALL_NETWORKS = [
   "authz",
   "feegrant",
   "daos",
+  "airdrop-check",
 ];
 
 function TabPanel(props) {
@@ -90,10 +91,13 @@ function getTabIndex(path) {
   else if (path.includes("authz")) return 5;
   else if (path.includes("feegrant")) return 6;
   else if (path.includes("daos")) return 7;
+  else if (path.includes("airdrop-check")) return 8;
   else return 0;
 }
 
 export default function Home() {
+  const authzEnabled = useSelector((state) => state.common.authzMode)
+  console.log("authz", authzEnabled);
   const [value, setValue] = React.useState(0);
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork?.chainName || ""
@@ -110,7 +114,10 @@ export default function Home() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    if (newValue === 0 || newValue === 2 || newValue === 3) {
+    if(newValue===8) {
+      navigate('/airdrop-check');
+    }
+    else if (newValue === 0 || newValue === 2 || newValue === 3) {
       navigate(ALL_NETWORKS[newValue]);
     } else {
       if (selectedNetwork === "") {
@@ -158,10 +165,11 @@ export default function Home() {
           <Tab label="Transfers" {...a11yProps(1)} />
           <Tab label="Governance" {...a11yProps(2)} />
           <Tab label="Staking" {...a11yProps(3)} />
-          <Tab label="Multisig" {...a11yProps(4)} />
-          <Tab label="Authz" {...a11yProps(5)} />
+          {!authzEnabled && <Tab label="Multisig" {...a11yProps(4)} />}
+          {!authzEnabled && <Tab label="Authz" {...a11yProps(5)} />}
           <Tab label="Feegrant" {...a11yProps(6)} />
           <Tab label="DAOs" {...a11yProps(7)} />
+          {!authzEnabled && <Tab label="Airdrop" {...a11yProps(8)} />}
         </Tabs>
       </Box>
 
