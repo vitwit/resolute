@@ -97,7 +97,6 @@ function getTabIndex(path) {
 
 export default function Home() {
   const authzEnabled = useSelector((state) => state.common.authzMode)
-  console.log("authz", authzEnabled);
   const [value, setValue] = React.useState(0);
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork?.chainName || ""
