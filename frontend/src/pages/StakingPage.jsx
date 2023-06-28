@@ -5,10 +5,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Paper, Typography } from "@mui/material";
 import Validators from "./Validators";
 import StakingOverview from "./stakingOverview/StakingOverview";
+import StakingAuthz from "./stakingOverview/StakingAuthz";
+import { useEffect } from "react";
 
 export default function StakingPage() {
   const wallet = useSelector((state) => state.wallet);
   const stakingChains = useSelector((state) => state.staking.chains);
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
   const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
@@ -20,38 +23,51 @@ export default function StakingPage() {
     navigate(`/${chainName}/staking`);
   };
 
+  useEffect(() => {
+    if (isAuthzMode) {
+      navigate(`/staking`);
+    }
+  }, [isAuthzMode]);
+
   return (
     <div>
-      <Paper elevation={0} sx={{ p: 4 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 5 }}>
-          <Typography color="text.primary" variant="h6" fontWeight={600}>
-            STAKING
-          </Typography>
-          <SelectNetwork
-            onSelect={(name) => {
-              handleOnSelect(name);
-            }}
-            networks={Object.keys(nameToChainIDs)}
-            defaultNetwork={
-              currentNetwork?.length > 0
-                ? currentNetwork.toLowerCase().replace(/ /g, "")
-                : defaultChain
-            }
-          />
-        </Box>
-        {currentNetwork ? 
-        <div sx={{ justifyContent: "center", display: "flex", mr: 1 }}>
-          {Object.keys(stakingChains)?.length > 0 ? (
-            <Validators
-              chainID={nameToChainIDs[currentNetwork]}
-              currentNetwork={currentNetwork}
-              nameToChainIDs={nameToChainIDs}
+      {!isAuthzMode ? (
+        <Paper elevation={0} sx={{ p: 4 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 5 }}>
+            <Typography color="text.primary" variant="h6" fontWeight={600}>
+              STAKING
+            </Typography>
+            <SelectNetwork
+              onSelect={(name) => {
+                handleOnSelect(name);
+              }}
+              networks={Object.keys(nameToChainIDs)}
+              defaultNetwork={
+                currentNetwork?.length > 0
+                  ? currentNetwork.toLowerCase().replace(/ /g, "")
+                  : defaultChain
+              }
             />
+          </Box>
+          {currentNetwork ? (
+            <div sx={{ justifyContent: "center", display: "flex", mr: 1 }}>
+              {Object.keys(stakingChains)?.length > 0 ? (
+                <Validators
+                  chainID={nameToChainIDs[currentNetwork]}
+                  currentNetwork={currentNetwork}
+                  nameToChainIDs={nameToChainIDs}
+                />
+              ) : (
+                <></>
+              )}
+            </div>
           ) : (
-            <></>
+            <StakingOverview />
           )}
-        </div> : <StakingOverview/> }
-      </Paper>
+        </Paper>
+      ) : (
+        <>{Object.keys(stakingChains)?.length > 0 ? <StakingAuthz /> : <></>}</>
+      )}
     </div>
   );
 }
