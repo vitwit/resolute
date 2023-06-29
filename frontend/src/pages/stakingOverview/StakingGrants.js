@@ -3,6 +3,8 @@ import { Typography, Avatar, Box, Button, Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getGrantsToMe } from "../../features/authz/authzSlice";
+import AuthzDelegations from "./AuthzDelegations";
+import StakingGranter from "./StakingGranter";
 
 export const filterDelegateAuthz = (grantsToMe) => {
   const granters = [];
@@ -51,7 +53,7 @@ function StakingGrants(props) {
 
   const [noDelegateAuthz, setNoDelegateAuthz] = useState(true);
   const [noUndelegateAuthz, setNoUndelegateAuthz] = useState(true);
-  const [allGranters, setAllGranters] = useState([]);
+  // const [allGranters, setAllGranters] = useState([]);
 
   const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
 
@@ -77,10 +79,11 @@ function StakingGrants(props) {
     if (undelegateAuthzGrants?.length) {
       setNoUndelegateAuthz(false);
     }
-    setAllGranters([
-      ...new Set([...delegateAuthzGrants, ...undelegateAuthzGrants]),
-    ]);
   }, [delegateAuthzGrants, undelegateAuthzGrants]);
+
+  const allGranters = [
+    ...new Set([...delegateAuthzGrants, ...undelegateAuthzGrants]),
+  ];
 
   return (
     <>
@@ -101,54 +104,14 @@ function StakingGrants(props) {
               {chainName}
             </Typography>
           </div>
-          {allGranters.map((granter, index) => (
+          {allGranters?.map((granter, index) => (
             <>
               <div key={index}>
-                <Grid
-                  container
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Grid item>
-                    <Typography
-                      fontWeight={500}
-                      color="text.primary"
-                      gutterBottom
-                    >
-                      Granter: {granter}
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      variant={
-                        theme.palette?.mode === "light"
-                          ? "outlined"
-                          : "contained"
-                      }
-                      className="button-capitalize-title"
-                      size="small"
-                      sx={{
-                        textTransform: "none",
-                        mr: 1,
-                      }}
-                      disableElevation
-                      disabled={!delegateAuthzGrants?.includes(granter)}
-                    >
-                      Delegate
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      disableElevation
-                      size="small"
-                      sx={{
-                        textTransform: "none",
-                      }}
-                    >
-                      Claim Rewards: 0
-                    </Button>
-                  </Grid>
-                </Grid>
+                <StakingGranter
+                  granter={granter}
+                  delegateAuthzGrants={delegateAuthzGrants}
+                  chainInfo={chainInfo}
+                />
               </div>
             </>
           ))}
