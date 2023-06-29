@@ -7,7 +7,7 @@ import { getAuthzDelegations } from "../../features/staking/stakeSlice";
 import { getAuthzDelegatorTotalRewards } from "../../features/distribution/distributionSlice";
 
 function StakingGranter(props) {
-  const { chainInfo, granter, delegateAuthzGrants, undelegateAuthzGrants } =
+  const { chainInfo, granter, delegateAuthzGrants, undelegateAuthzGrants, redelegateAuthzGrants } =
     props;
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -26,6 +26,8 @@ function StakingGranter(props) {
     (state) =>
       state.distribution.chains[chainID].authzDelegatorRewards?.[granter]
   );
+
+  const [totalRewards, setTotalRewards] = React.useState(0);
 
   useEffect(() => {
     dispatch(
@@ -78,7 +80,7 @@ function StakingGranter(props) {
               textTransform: "none",
             }}
           >
-            Claim Rewards: 0
+            Claim Rewards: {totalRewards}
           </Button>
         </Grid>
       </Grid>
@@ -88,8 +90,11 @@ function StakingGranter(props) {
         delegations={delegations}
         validators={validators}
         undelegateAuthzGrants={undelegateAuthzGrants}
+        redelegateAuthzGrants={redelegateAuthzGrants}
         granter={granter}
         rewards={rewards?.list}
+        setTotalRewards={setTotalRewards}
+        totalRewards={totalRewards}
       />
     </>
   );

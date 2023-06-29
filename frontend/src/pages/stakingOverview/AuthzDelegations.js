@@ -19,13 +19,15 @@ function AuthzDelegations(props) {
     validators,
     currency,
     undelegateAuthzGrants,
+    redelegateAuthzGrants,
     granter,
     rewards,
+    setTotalRewards,
+    totalRewards
   } = props;
 
   const theme = useTheme();
 
-  const [totalRewards, setTotalRewards] = React.useState(0);
   const [rewardsP, setRewardsP] = React.useState({});
 
   useEffect(() => {
@@ -171,6 +173,7 @@ function AuthzDelegations(props) {
                           textTransform: "none",
                         }}
                         disableElevation
+                        disabled={!redelegateAuthzGrants?.includes(granter)}
                       >
                         Redelegate
                       </Button>

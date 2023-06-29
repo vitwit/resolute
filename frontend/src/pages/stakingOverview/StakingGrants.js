@@ -6,7 +6,7 @@ import { getGrantsToMe } from "../../features/authz/authzSlice";
 import AuthzDelegations from "./AuthzDelegations";
 import StakingGranter from "./StakingGranter";
 
-export const filterDelegateAuthz = (grantsToMe) => {
+const filterDelegateAuthz = (grantsToMe) => {
   const granters = [];
   const grants = grantsToMe?.grants || [];
   for (const grant of grants) {
@@ -22,7 +22,7 @@ export const filterDelegateAuthz = (grantsToMe) => {
   return granters;
 };
 
-export const filterUndelegateAuthz = (grantsToMe) => {
+const filterUndelegateAuthz = (grantsToMe) => {
   const granters = [];
   const grants = grantsToMe?.grants || [];
   for (const grant of grants) {
@@ -32,6 +32,22 @@ export const filterUndelegateAuthz = (grantsToMe) => {
     const isMsgUndelegate =
       grant?.authorization.msg === "/cosmos.staking.v1beta1.MsgUndelegate";
     if (isGenericAuthorization && isMsgUndelegate) {
+      granters.push(grant.granter);
+    }
+  }
+  return granters;
+};
+
+const filterRedelegateAuthz = (grantsToMe) => {
+  const granters = [];
+  const grants = grantsToMe?.grants || [];
+  for (const grant of grants) {
+    const authorizationType = grant?.authorization["@type"];
+    const isGenericAuthorization =
+      authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
+    const isMsgBeginRedelegate =
+      grant?.authorization.msg === "/cosmos.staking.v1beta1.MsgBeginRedelegate";
+    if (isGenericAuthorization && isMsgBeginRedelegate) {
       granters.push(grant.granter);
     }
   }
@@ -51,14 +67,11 @@ function StakingGrants(props) {
   const chainLogo = chainInfo?.logos?.menu;
   const address = networks[chainID]?.walletInfo.bech32Address;
 
-  const [noDelegateAuthz, setNoDelegateAuthz] = useState(true);
-  const [noUndelegateAuthz, setNoUndelegateAuthz] = useState(true);
-  // const [allGranters, setAllGranters] = useState([]);
-
   const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
 
   const delegateAuthzGrants = filterDelegateAuthz(grantsToMe);
   const undelegateAuthzGrants = filterUndelegateAuthz(grantsToMe);
+  const redelegateAuthzGrants = filterRedelegateAuthz(grantsToMe);
 
   useEffect(() => {
     if (address.length > 0) {
@@ -72,17 +85,8 @@ function StakingGrants(props) {
     }
   }, [address]);
 
-  useEffect(() => {
-    if (delegateAuthzGrants?.length) {
-      setNoDelegateAuthz(false);
-    }
-    if (undelegateAuthzGrants?.length) {
-      setNoUndelegateAuthz(false);
-    }
-  }, [delegateAuthzGrants, undelegateAuthzGrants]);
-
   const allGranters = [
-    ...new Set([...delegateAuthzGrants, ...undelegateAuthzGrants]),
+    ...new Set([...delegateAuthzGrants, ...undelegateAuthzGrants, ...redelegateAuthzGrants]),
   ];
 
   return (
@@ -111,6 +115,7 @@ function StakingGrants(props) {
                   granter={granter}
                   delegateAuthzGrants={delegateAuthzGrants}
                   undelegateAuthzGrants={undelegateAuthzGrants}
+                  redelegateAuthzGrants={redelegateAuthzGrants}
                   chainInfo={chainInfo}
                 />
               </div>
