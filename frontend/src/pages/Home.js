@@ -29,11 +29,11 @@ import GroupPage from "./GroupPage";
 import Group from "./group/Group";
 import Policy from "./group/Policy";
 import CreateProposal from "./group/CreateProposal";
-import Proposal from "./group/Proposal";
+import GroupProposal from "./group/Proposal";
 import { resetDefaultState as distributionResetDefaultState } from "../features/distribution/distributionSlice";
 import { resetDefaultState as stakingResetDefaultState } from "../features/staking/stakeSlice";
 import { getAllTokensPrice } from "../features/common/commonSlice";
-import GroupProposal from "./gov/Proposal";
+import Proposal from "./gov/Proposal";
 import AirdropEligibility from "./passage/AirdropEligibility";
 
 export const ContextData = React.createContext();
