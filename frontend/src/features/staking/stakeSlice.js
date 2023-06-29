@@ -619,7 +619,7 @@ export const stakeSlice = createSlice({
         const result = {
           status: "rejected",
           delegations: [],
-          errMsg: "",
+          errMsg: action.error.message,
           pagination: {},
           delegatedTo: {},
           totalStaked: 0.0,

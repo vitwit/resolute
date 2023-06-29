@@ -110,6 +110,7 @@ function StakingGrants(props) {
                 <StakingGranter
                   granter={granter}
                   delegateAuthzGrants={delegateAuthzGrants}
+                  undelegateAuthzGrants={undelegateAuthzGrants}
                   chainInfo={chainInfo}
                 />
               </div>

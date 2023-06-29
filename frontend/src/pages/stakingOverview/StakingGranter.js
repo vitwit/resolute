@@ -4,8 +4,11 @@ import AuthzDelegations from "./AuthzDelegations";
 import { useTheme } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAuthzDelegations } from "../../features/staking/stakeSlice";
+import { getAuthzDelegatorTotalRewards } from "../../features/distribution/distributionSlice";
 
-function StakingGranter({ granter, delegateAuthzGrants, chainInfo }) {
+function StakingGranter(props) {
+  const { chainInfo, granter, delegateAuthzGrants, undelegateAuthzGrants } =
+    props;
   const theme = useTheme();
   const dispatch = useDispatch();
 
@@ -19,10 +22,24 @@ function StakingGranter({ granter, delegateAuthzGrants, chainInfo }) {
   const currency = useSelector(
     (state) => state.wallet.networks[chainID].network?.config?.currencies[0]
   );
+  const rewards = useSelector(
+    (state) =>
+      state.distribution.chains[chainID].authzDelegatorRewards?.[granter]
+  );
 
   useEffect(() => {
     dispatch(
       getAuthzDelegations({
+        baseURL: chainInfo?.config?.rest,
+        chainID: chainInfo?.config?.chainId,
+        address: granter,
+      })
+    );
+  }, []);
+
+  useEffect(() => {
+    dispatch(
+      getAuthzDelegatorTotalRewards({
         baseURL: chainInfo?.config?.rest,
         chainID: chainInfo?.config?.chainId,
         address: granter,
@@ -70,6 +87,9 @@ function StakingGranter({ granter, delegateAuthzGrants, chainInfo }) {
         currency={currency}
         delegations={delegations}
         validators={validators}
+        undelegateAuthzGrants={undelegateAuthzGrants}
+        granter={granter}
+        rewards={rewards?.list}
       />
     </>
   );
