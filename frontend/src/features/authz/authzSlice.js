@@ -451,11 +451,26 @@ export const authzSlice = createSlice({
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
+        const { haveVoteGrants, setHaveVoteGrants, changeVoteGrants } =
+          action.meta?.arg;
+
         if (chainID.length) {
+          let grants = action.payload.data.grants;
+          if (changeVoteGrants && !haveVoteGrants) {
+            for (let i = 0; i < grants.length; i++) {
+              let grant = grants[i];
+              let msgType = grant?.authorization?.msg || "";
+              let msgTypeParts = msgType.split(".");
+              if (msgTypeParts[msgTypeParts.length - 1] === "MsgVote") {
+                setHaveVoteGrants(true);
+                break;
+              }
+            }
+          }
           let result = {
             status: "idle",
             errMsg: "",
-            grants: action.payload.data.grants,
+            grants: grants,
             pagination: action.payload.data.pagination,
           };
           state.grantsToMe[chainID] = result;
@@ -463,7 +478,7 @@ export const authzSlice = createSlice({
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
         const chainID = action.meta.arg.chainID;
-        if(chainID.length) {
+        if (chainID.length) {
           state.grantsToMe[chainID].status = "rejected";
           state.grantsToMe[chainID].grants = [];
           state.grantsToMe[chainID].pagination = {};
@@ -496,7 +511,7 @@ export const authzSlice = createSlice({
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
         const chainID = action.meta.arg.chainID;
-        if(chainID.length) {
+        if (chainID.length) {
           state.grantsByMe[chainID].status = "rejected";
           state.grantsByMe[chainID].grants = [];
           state.grantsByMe[chainID].pagination = {};

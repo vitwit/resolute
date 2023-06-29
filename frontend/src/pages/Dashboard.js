@@ -1,10 +1,15 @@
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
-import { getMainNetworks, getSelectedNetwork, getTestNetworks, saveSelectedNetwork } from "./../utils/networks";
+import {
+  getMainNetworks,
+  getSelectedNetwork,
+  getTestNetworks,
+  saveSelectedNetwork,
+} from "./../utils/networks";
 import Link from "@mui/material/Link";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -57,6 +62,8 @@ function DashboardContent() {
     setSnackOpen(value);
   };
 
+  const [haveVoteGrants, setHaveVoteGrants] = useState(false);
+
   const [darkMode, setDarkMode] = useState(isDarkMode());
   const onModeChange = () => {
     localStorage.setItem("DARK_MODE", !darkMode);
@@ -73,7 +80,6 @@ function DashboardContent() {
   const mainnets = getMainNetworks();
   const testnets = getTestNetworks();
   useEffect(() => {
-
     setTimeout(() => {
       dispatch(
         connectKeplrWalletV1({
@@ -82,7 +88,7 @@ function DashboardContent() {
         })
       );
     }, 1000);
-    
+
     const listener = () => {
       setTimeout(() => {
         dispatch(
@@ -122,13 +128,14 @@ function DashboardContent() {
     }
   }, [txSuccess]);
 
-
   return (
     <ThemeProvider
       theme={mdTheme(darkMode, defaultPallet.primary, defaultPallet.secondary)}
     >
       <>
         <CustomAppBar
+          haveVoteGrants={haveVoteGrants}
+          setHaveVoteGrants={setHaveVoteGrants}
           darkMode={darkMode}
           onModeChange={() => onModeChange()}
         />
@@ -146,10 +153,9 @@ function DashboardContent() {
               overflow: "auto",
             }}
           >
-
             <Toolbar />
             <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
-              <Home />
+              <Home haveVoteGrants={haveVoteGrants} />
               {/* <Routes>
                 <Route path="/" element={<Home />} />
                 <>
@@ -321,7 +327,6 @@ function DashboardContent() {
         <Footer />
       </>
 
-
       {errState?.message?.length > 0 ? (
         <Snackbar
           open={
@@ -410,12 +415,11 @@ function DashboardContent() {
 }
 
 export default function Dashboard() {
-
   return (
     <>
       <DashboardContent key={1} />
     </>
-  )
+  );
 }
 
 const Footer = () => {

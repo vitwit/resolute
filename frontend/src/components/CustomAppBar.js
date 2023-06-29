@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
 import Toolbar from "@mui/material/Toolbar";
@@ -19,6 +19,8 @@ import { getGrantsToMe } from "../features/authz/authzSlice";
 import { useNavigate } from "react-router-dom";
 
 export function CustomAppBar(props) {
+  const { haveVoteGrants, setHaveVoteGrants } = props;
+  const [resetAuthzMode, setResetAuthzMode] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -27,7 +29,9 @@ export function CustomAppBar(props) {
   const chainIDs = Object.keys(networks);
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
-  const selectNetwork = useSelector((state) => state.common.selectedNetwork.chainName)
+  const selectNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const switchHandler = (event) => {
@@ -44,19 +48,31 @@ export function CustomAppBar(props) {
 
   const navigateTo = (path) => {
     navigate(path);
-  }
+  };
+
+  useEffect(() => {
+    if (resetAuthzMode && !haveVoteGrants) {
+      setResetAuthzMode(false);
+      Object.keys(networks).map((key, _) => {
+        const network = networks[key];
+        dispatch(
+          getGrantsToMe({
+            baseURL: network.network?.config?.rest,
+            grantee: network.walletInfo?.bech32Address,
+            chainID: network.network?.config?.chainId,
+            haveVoteGrants,
+            setHaveVoteGrants,
+            changeVoteGrants: true,
+          })
+        );
+      });
+    }
+  }, [haveVoteGrants, resetAuthzMode]);
 
   useEffect(() => {
     if (isAuthzMode) {
-      console.log("callllled");
-      Object.keys(networks).map((key, _) => {
-        const network = networks[key];
-        dispatch(getGrantsToMe({
-          baseURL: network.network?.config?.rest,
-          grantee: network.walletInfo?.bech32Address,
-          chainID: network.network?.config?.chainId
-        }))
-      })
+      setResetAuthzMode(true);
+      setHaveVoteGrants(false);
     }
   }, [isAuthzMode]);
 
@@ -97,8 +113,7 @@ export function CustomAppBar(props) {
               color="secondary"
             />
           }
-        >
-        </FormControlLabel>
+        ></FormControlLabel>
         <Button
           id="demo-positioned-button"
           color="inherit"
@@ -125,19 +140,23 @@ export function CustomAppBar(props) {
             horizontal: "left",
           }}
         >
-          {chainIDs.map(chain => (
+          {chainIDs.map((chain) => (
             <MenuItem
               key={chain}
               onClick={() => {
                 setAnchorEl(null);
-                dispatch(setSelectedNetwork({
-                  chainName: networks[chain].network.config.chainName,
-                  chainID: networks[chain].network.config.chainId
-                }));
-                navigateTo('/');
+                dispatch(
+                  setSelectedNetwork({
+                    chainName: networks[chain].network.config.chainName,
+                    chainID: networks[chain].network.config.chainId,
+                  })
+                );
+                navigateTo("/");
               }}
             >
-              <ListItemText>{networks[chain].network.config.chainName}</ListItemText>
+              <ListItemText>
+                {networks[chain].network.config.chainName}
+              </ListItemText>
             </MenuItem>
           ))}
         </Menu>
