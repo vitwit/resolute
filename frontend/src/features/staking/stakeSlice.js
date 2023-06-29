@@ -31,14 +31,7 @@ const initialState = {
       delegatedTo: {},
       totalStaked: 0.0,
     },
-    authzDelegations: {
-      // status: "idle",
-      // delegations: [],
-      // errMsg: "",
-      // pagination: {},
-      // delegatedTo: {},
-      // totalStaked: 0.0,
-    },
+    authzDelegations: {},
     unbonding: {
       status: "idle",
       delegations: [],
@@ -585,7 +578,6 @@ export const stakeSlice = createSlice({
         let granter = action.meta?.arg?.address || "";
         if (chainID.length && granter.length) {
           const result = {
-            granter: granter,
             status: "pending",
             delegations: [],
             errMsg: "",
@@ -593,7 +585,7 @@ export const stakeSlice = createSlice({
             delegatedTo: {},
             totalStaked: 0.0,
           };
-          state.chains[chainID].delegations = result;
+          state.chains[chainID].authzDelegations[granter] = result;
         }
       })
       .addCase(getAuthzDelegations.fulfilled, (state, action) => {
@@ -601,7 +593,6 @@ export const stakeSlice = createSlice({
         let granter = action.meta?.arg?.address;
         if (chainID.length && granter.length) {
           const result = {
-            granter: granter,
             status: "idle",
             delegations: action.payload,
             errMsg: "",
@@ -619,16 +610,13 @@ export const stakeSlice = createSlice({
             total += parseFloat(delegation?.delegation?.shares);
           }
           result.totalStaked = total;
-          console.log("result..........", result);
-          console.log("payload.......", action.payload);
-          state.chains[chainID].delegations = result;
+          state.chains[chainID].authzDelegations[granter] = result;
         }
       })
       .addCase(getAuthzDelegations.rejected, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
         let granter = action.meta?.arg?.address;
         const result = {
-          granter: granter,
           status: "rejected",
           delegations: [],
           errMsg: "",
@@ -636,7 +624,7 @@ export const stakeSlice = createSlice({
           delegatedTo: {},
           totalStaked: 0.0,
         };
-        state.chains[chainID].delegations = result;
+        state.chains[chainID].authzDelegations[granter] = result;
       });
 
     builder

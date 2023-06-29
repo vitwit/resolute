@@ -10,8 +10,15 @@ function StakingGranter({ granter, delegateAuthzGrants, chainInfo }) {
   const dispatch = useDispatch();
 
   const chainID = chainInfo?.config?.chainId;
-
-  const test = useSelector((state) => state.staking.chains?.[chainID]?.authzDelegations)
+  const validators = useSelector(
+    (state) => state.staking.chains[chainID].validators
+  );
+  const delegations = useSelector(
+    (state) => state.staking.chains?.[chainID]?.authzDelegations?.[granter]
+  );
+  const currency = useSelector(
+    (state) => state.wallet.networks[chainID].network?.config?.currencies[0]
+  );
 
   useEffect(() => {
     dispatch(
@@ -21,7 +28,7 @@ function StakingGranter({ granter, delegateAuthzGrants, chainInfo }) {
         address: granter,
       })
     );
-  }, [])
+  }, []);
 
   return (
     <>
@@ -58,7 +65,12 @@ function StakingGranter({ granter, delegateAuthzGrants, chainInfo }) {
           </Button>
         </Grid>
       </Grid>
-      <AuthzDelegations />
+      <AuthzDelegations
+        chainID={chainID}
+        currency={currency}
+        delegations={delegations}
+        validators={validators}
+      />
     </>
   );
 }
