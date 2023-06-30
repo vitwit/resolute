@@ -14,9 +14,21 @@ import {
 import { setError, setTxHash } from "../common/commonSlice";
 import { AuthzExecMsgUnjail } from "../../txns/authz/exec";
 import { signAndBroadcast } from "../../utils/signing";
+import { getAuthzTabs } from "../../utils/authorizations";
 
 const initialState = {
-  grantsToMe: {},
+  grantsToMe: {
+    tabs: {
+      airdropEnabled: false,
+      authzEnabled: false,
+      daosEnabled: false,
+      feegrantEnabled: false,
+      govEnabled: false,
+      multisigEnabled: false,
+      sendEnabled: false,
+      stakingEnabled: false,  
+    }
+  },
   grantsByMe: {},
   tx: {
     status: "idle",
@@ -474,6 +486,17 @@ export const authzSlice = createSlice({
             pagination: action.payload.data.pagination,
           };
           state.grantsToMe[chainID] = result;
+          const existingTabs = state.grantsToMe.tabs;
+          const updatedTabs = getAuthzTabs(grants);
+          // TODO: update with actual values
+          state.grantsToMe.tabs.airdropEnabled = false
+          state.grantsToMe.tabs.authzEnabled = false
+          state.grantsToMe.tabs.daosEnabled = false
+          state.grantsToMe.tabs.feegrantEnabled = false
+          state.grantsToMe.tabs.govEnabled = false
+          state.grantsToMe.tabs.multisigEnabled = false
+          state.grantsToMe.tabs.sendEnabled = true
+          state.grantsToMe.tabs.stakingEnabled = false
         }
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
