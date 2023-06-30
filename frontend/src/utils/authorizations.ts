@@ -5,6 +5,9 @@ interface AuthzMenuItem {
   typeURL: string;
 }
 
+const SEND_TYPEURL = "/cosmos.bank.v1beta1.MsgSend"
+const VOTE_V1BETA1_TYPEURL = "/cosmos.gov.v1beta1.MsgVote"
+
 export function authzMsgTypes(): AuthzMenuItem[] {
   return [
     {
@@ -103,7 +106,7 @@ export function getSendAuthz(grants: any, granter: string): null | any {
     if (
       (grants[i]?.authorization?.msg === "/cosmos.bank.v1beta1.MsgSend" ||
         grants[i]?.authorization["@type"] ===
-          "/cosmos.bank.v1beta1.SendAuthorization") &&
+        "/cosmos.bank.v1beta1.SendAuthorization") &&
       grants[i]?.granter === granter
     ) {
       return grants[i];
@@ -141,7 +144,7 @@ export function getWithdrawRewardsAuthz(
   for (let i = 0; i < grants.length; i++) {
     if (
       grants[i]?.authorization?.msg ===
-        "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward" &&
+      "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward" &&
       grants[i]?.granter === granter
     ) {
       return grants[i];
@@ -176,7 +179,7 @@ export function getUnDelegateAuthz(grants: any, granter: string): null | any {
   for (let i = 0; i < grants.length; i++) {
     if (
       grants[i]?.authorization?.msg ===
-        "/cosmos.staking.v1beta1.MsgUndelegate" &&
+      "/cosmos.staking.v1beta1.MsgUndelegate" &&
       grants[i]?.granter === granter
     ) {
       return grants[i];
@@ -194,7 +197,7 @@ export function getReDelegateAuthz(grants: any, granter: string): null | any {
   for (let i = 0; i < grants.length; i++) {
     if (
       grants[i]?.authorization?.msg ===
-        "/cosmos.staking.v1beta1.MsgBeginRedelegate" &&
+      "/cosmos.staking.v1beta1.MsgBeginRedelegate" &&
       grants[i]?.granter === granter
     ) {
       return grants[i];
@@ -213,4 +216,50 @@ export function getMsgNameFromAuthz(authorization: any): string {
     default:
       return "Unknown";
   }
+}
+
+
+export interface AuthzTabs {
+  sendEnabled: boolean
+  govEnabled: boolean
+  stakingEnabled: boolean
+  daosEnabled: boolean
+  feegrantEnabled: boolean
+  multisigEnabled: boolean
+  authzEnabled: boolean
+  airdropEnabled: boolean
+}
+
+const SEND_AUTHZ = "/cosmos.bank.v1beta1.SendAuthorization"
+const GENERIC_AUTHZ = "/cosmos.authz.v1beta1.GenericAuthorization"
+
+export function getAuthzTabs(authorizations: any[]): AuthzTabs {
+  let result: AuthzTabs = {
+    airdropEnabled: false,
+    authzEnabled: false,
+    daosEnabled: false,
+    feegrantEnabled: false,
+    govEnabled: false,
+    multisigEnabled: false,
+    sendEnabled: false,
+    stakingEnabled: false,
+  }
+  for (let i = 0; i < authorizations.length; i++) {
+    console.log(authorizations[i])
+    if (authorizations[i].authorization["@type"] === SEND_AUTHZ ||
+      (authorizations[i].authorization["@type"] === GENERIC_AUTHZ && authorizations[i].authorization?.msg === SEND_AUTHZ)
+    ) {
+
+    } else if (authorizations[i].authorization["@type"] === GENERIC_AUTHZ) {
+      switch (authorizations[i].authorization?.msg) { // ignore
+        case VOTE_V1BETA1_TYPEURL:
+          result.govEnabled = true
+          break
+        // TODO: handle other types
+
+      }
+    }
+  }
+
+  return result
 }

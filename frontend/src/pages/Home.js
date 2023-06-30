@@ -112,6 +112,9 @@ export default function Home(props) {
   const pathParts = location.pathname.split("/");
   const page = pathParts?.[pathParts?.length - 1];
 
+  const authzTabs = useSelector((state) => state.authz.grantsToMe.tabs);
+
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
     if (newValue === 8) {
@@ -161,17 +164,21 @@ export default function Home(props) {
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange} aria-label="menu bar">
           <Tab label="Overview" {...a11yProps(0)} value={0} />
-          <Tab label="Transfers" {...a11yProps(1)} value={1} />
+          <Tab label="Transfers" {...a11yProps(1)} value={1} 
+            disabled={authzEnabled &&  !authzTabs?.sendEnabled}
+          />
           <Tab
             label="Governance"
             {...a11yProps(2)}
             value={2}
-            disabled={authzEnabled && !haveVoteGrants}
+            disabled={authzEnabled && !authzTabs?.govEnabled}
           />
           <Tab label="Staking" {...a11yProps(3)} value={3} />
-          {!authzEnabled && (
+          {!authzEnabled && authzTabs?.multisigEnabled  ?
             <Tab label="Multisig" {...a11yProps(4)} value={4} />
-          )}
+            :
+            null
+          }
           {!authzEnabled && <Tab label="Authz" {...a11yProps(5)} value={5} />}
           <Tab label="Feegrant" {...a11yProps(6)} value={6} />
           <Tab label="DAOs" {...a11yProps(7)} value={7} />
