@@ -23,7 +23,7 @@ function AuthzDelegations(props) {
     granter,
     rewards,
     setTotalRewards,
-    totalRewards
+    totalRewards,
   } = props;
 
   const theme = useTheme();
@@ -61,16 +61,16 @@ function AuthzDelegations(props) {
     <>
       <TableContainer component={Paper} elevation={0}>
         {delegations?.status === "pending" ? (
-          delegations?.delegations?.length === 0 ? (
+          delegations?.delegations?.delegations?.length === 0 ? (
             <CircularProgress />
           ) : (
             <></>
           )
-        ) : delegations?.delegations?.length === 0 ? (
+        ) : delegations?.delegations?.delegations?.length === 0 ? (
           <Typography
             variant="h6"
             color="text.primary"
-            style={{ display: "flex", justifyContent: "center", padding: 16 }}
+            style={{ display: "flex", justifyContent: "center", padding: 4 }}
           >
             No delegations
           </Typography>
@@ -132,10 +132,10 @@ function AuthzDelegations(props) {
                         .toLocaleString()}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                    {rewardsP[row?.delegation?.validator_address]
-                      ?.toFixed(3)
-                      .toLocaleString()}
-                  </StyledTableCell>
+                      {rewardsP[row?.delegation?.validator_address]
+                        ?.toFixed(3)
+                        .toLocaleString()}
+                    </StyledTableCell>
                     <StyledTableCell align="center">
                       <Button
                         variant={

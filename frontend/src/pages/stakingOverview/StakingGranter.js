@@ -1,14 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Button, Grid } from "@mui/material";
 import AuthzDelegations from "./AuthzDelegations";
 import { useTheme } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAuthzDelegations } from "../../features/staking/stakeSlice";
 import { getAuthzDelegatorTotalRewards } from "../../features/distribution/distributionSlice";
+import { getBalances } from "../../features/bank/bankSlice";
+import { parseBalance } from "../../utils/denom";
+import { DialogDelegate } from "../../components/DialogDelegate";
+import { setError } from "../../features/common/commonSlice";
 
 function StakingGranter(props) {
-  const { chainInfo, granter, delegateAuthzGrants, undelegateAuthzGrants, redelegateAuthzGrants, withdrawAuthzGranters } =
-    props;
+  const {
+    chainInfo,
+    granter,
+    delegateAuthzGrants,
+    undelegateAuthzGrants,
+    redelegateAuthzGrants,
+    withdrawAuthzGranters,
+  } = props;
   const theme = useTheme();
   const dispatch = useDispatch();
 
@@ -26,32 +36,75 @@ function StakingGranter(props) {
     (state) =>
       state.distribution.chains[chainID].authzDelegatorRewards?.[granter]
   );
+  const stakingParams = useSelector(
+    (state) => state.staking.chains[chainID].params
+  );
+  const txStatus = useSelector((state) => state.staking.chains[chainID].tx);
+  const authzExecTx = useSelector((state) => state.authz.execTx);
+
+  const balances = useSelector((state) => state.bank.balances);
 
   const [totalRewards, setTotalRewards] = React.useState(0);
+  const [availableBalance, setAvailableBalance] = useState(0);
+  const [stakingOpen, setStakingOpen] = React.useState(false);
+
+  const handleDialogClose = () => {
+    setStakingOpen(false);
+  };
 
   useEffect(() => {
     dispatch(
       getAuthzDelegations({
         baseURL: chainInfo?.config?.rest,
-        chainID: chainInfo?.config?.chainId,
+        chainID: chainID,
+        address: granter,
+      })
+    );
+    dispatch(
+      getAuthzDelegatorTotalRewards({
+        baseURL: chainInfo?.config?.rest,
+        chainID: chainID,
         address: granter,
       })
     );
   }, []);
 
   useEffect(() => {
+    if (chainInfo.config.currencies.length > 0) {
+      if (balances?.[chainID]?.list?.[0] !== undefined) {
+        setAvailableBalance(
+          parseBalance(
+            [balances[chainID].list[0]],
+            currency.coinDecimals,
+            currency.coinMinimalDenom
+          )
+        );
+      }
+    }
+  }, [balances]);
+
+  const getAuthzBalances = () => {
     dispatch(
-      getAuthzDelegatorTotalRewards({
-        baseURL: chainInfo?.config?.rest,
-        chainID: chainInfo?.config?.chainId,
+      getBalances({
+        baseURL: chainInfo.config.rest + "/",
         address: granter,
+        chainID: chainID,
       })
     );
-  }, []);
+  };
+
+  const onMenuAction = () => {
+
+  }
 
   return (
     <>
-      <Grid container justifyContent="space-between" alignItems="center" sx={{mt: 1, mb: 1}}>
+      <Grid
+        container
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ mt: 1, mb: 1 }}
+      >
         <Grid item>
           <Typography fontWeight={500} color="text.primary">
             Granter: {granter}
@@ -68,6 +121,10 @@ function StakingGranter(props) {
             }}
             disableElevation
             disabled={!delegateAuthzGrants?.includes(granter)}
+            onClick={() => {
+              getAuthzBalances();
+              setStakingOpen(true)
+            }}
           >
             Delegate
           </Button>
@@ -96,7 +153,25 @@ function StakingGranter(props) {
         rewards={rewards?.list}
         setTotalRewards={setTotalRewards}
         totalRewards={totalRewards}
+        onDelegationAction={onMenuAction}
       />
+
+      {availableBalance > 0 ? (
+        <DialogDelegate
+          open={stakingOpen}
+          onClose={handleDialogClose}
+          validator={null}
+          params={stakingParams}
+          balance={availableBalance}
+          onDelegate={null}
+          loading={txStatus.status}
+          displayDenom={currency.coinDenom}
+          authzLoading={authzExecTx?.status}
+          validators={validators}
+        />
+      ) : (
+        <></>
+      )}
     </>
   );
 }

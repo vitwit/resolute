@@ -10,6 +10,8 @@ import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useForm, Controller } from "react-hook-form";
+import { Autocomplete } from "@mui/material";
+import { useSelector } from "react-redux";
 
 export function DialogDelegate(props) {
   const {
@@ -22,7 +24,10 @@ export function DialogDelegate(props) {
     loading,
     displayDenom,
     authzLoading,
+    validators,
   } = props;
+
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
 
   const handleClose = () => {
     onClose();
@@ -45,6 +50,20 @@ export function DialogDelegate(props) {
       amount: data.amount,
     });
   };
+
+  let ValidatorsMenuItems = [];
+  if(validators?.activeSorted?.length && isAuthzMode) {
+    const activevals = validators.activeSorted;
+    for (let index in activevals) {
+      ValidatorsMenuItems = [
+        ...ValidatorsMenuItems,
+        {
+          val_address: activevals[index],
+          label: validators.active?.[activevals[index]].description.moniker,
+        },
+      ];
+    }
+  }
 
   return (
     <>
@@ -96,6 +115,44 @@ export function DialogDelegate(props) {
             >
               {balance}
             </Typography>
+            {validators?.activeSorted?.length && isAuthzMode ? (
+              <Controller
+              name="typeURL"
+              control={control}
+              defaultValue={null}
+              rules={{ required: "Message type is required" }}
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => (
+                <Autocomplete
+                  disablePortal
+                  fullWidth
+                  variant="outlined"
+                  required
+                  options={ValidatorsMenuItems}
+                  isOptionEqualToValue={(option, value) =>
+                    option.typeUrl === value.typeUrl
+                  }
+                  label="Type"
+                  value={value}
+                  onChange={(event, item) => {
+                    onChange(item);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      error={!!error}
+                      required
+                      placeholder="Select Validator"
+                      helperText={error ? error.message : null}
+                    />
+                  )}
+                />
+              )}
+            />
+            ): null}
+
             <div style={{ marginTop: 16 }}>
               <Controller
                 name="amount"
