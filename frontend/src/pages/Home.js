@@ -24,7 +24,6 @@ import { getFeegrant } from "../utils/localStorage";
 import { setFeegrant as setFeegrantState } from "../features/common/commonSlice";
 import Authz from "./authz/Authz";
 import NewAuthz from "./authz/NewAuthz";
-import StakingOverview from "./stakingOverview/StakingOverview";
 import GroupPage from "./GroupPage";
 import Group from "./group/Group";
 import Policy from "./group/Policy";

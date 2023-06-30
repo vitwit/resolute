@@ -132,7 +132,10 @@ export const GeneralOverview = (props) => {
   }, []);
 
   return (
-    <Paper sx={{ p: 2, mt: 2 }} elevation={0}>
+    <Paper
+      sx={{ p: 2, mt: 2 }}
+      elevation={0}
+    >
       <Grid
         container
         sx={{
@@ -151,7 +154,11 @@ export const GeneralOverview = (props) => {
               >
                 Total Available Balance
               </Typography>
-              <Typography align="left" variant="h6" color="text.primary">
+              <Typography
+                align="left"
+                variant="h6"
+                color="text.primary"
+              >
                 ${totalDetails.totalBalance}
               </Typography>
             </CardContent>
@@ -168,7 +175,11 @@ export const GeneralOverview = (props) => {
               >
                 Total Staked Balance
               </Typography>
-              <Typography align="left" variant="h6" color="text.primary">
+              <Typography
+                align="left"
+                variant="h6"
+                color="text.primary"
+              >
                 ${totalDetails.totalStaked}
               </Typography>
             </CardContent>
@@ -185,7 +196,11 @@ export const GeneralOverview = (props) => {
               >
                 Total Rewards
               </Typography>
-              <Typography align="left" variant="h6" color="text.primary">
+              <Typography
+                align="left"
+                variant="h6"
+                color="text.primary"
+              >
                 ${totalDetails.totalRewards}
               </Typography>
             </CardContent>
@@ -193,13 +208,21 @@ export const GeneralOverview = (props) => {
         </Grid>
       </Grid>
       <TableContainer>
-        <Table size="small">
+        <Table>
           <TableHead>
             <StyledTableRow>
-              <StyledTableCell>Network Name</StyledTableCell>
-              <StyledTableCell>Available Balance</StyledTableCell>
-              <StyledTableCell>Staked Amount</StyledTableCell>
-              <StyledTableCell>Rewards</StyledTableCell>
+              <StyledTableCell>
+                Network Name
+              </StyledTableCell>
+              <StyledTableCell>
+                Available Balance
+              </StyledTableCell>
+              <StyledTableCell>
+                Staked Amount
+              </StyledTableCell>
+              <StyledTableCell>
+                Rewards
+              </StyledTableCell>
             </StyledTableRow>
           </TableHead>
           <TableBody>
