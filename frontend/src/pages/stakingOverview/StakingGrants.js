@@ -1,9 +1,7 @@
-import { useTheme } from "@emotion/react";
-import { Typography, Avatar, Box, Button, Grid } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Typography, Avatar, Box } from "@mui/material";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getGrantsToMe } from "../../features/authz/authzSlice";
-import AuthzDelegations from "./AuthzDelegations";
 import StakingGranter from "./StakingGranter";
 
 const filterDelegateAuthz = (grantsToMe) => {
@@ -54,10 +52,26 @@ const filterRedelegateAuthz = (grantsToMe) => {
   return granters;
 };
 
+const filterWithdrawAuthz = (grantsToMe) => {
+  const granters = [];
+  const grants = grantsToMe?.grants || [];
+  for (const grant of grants) {
+    const authorizationType = grant?.authorization["@type"];
+    const isGenericAuthorization =
+      authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
+    const isMsgWithdrawDelegatorReward =
+      grant?.authorization.msg ===
+      "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward";
+    if (isGenericAuthorization && isMsgWithdrawDelegatorReward) {
+      granters.push(grant.granter);
+    }
+  }
+  return granters;
+};
+
 function StakingGrants(props) {
   const { chainName } = props;
   const dispatch = useDispatch();
-  const theme = useTheme();
 
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const networks = useSelector((state) => state.wallet.networks);
@@ -72,6 +86,7 @@ function StakingGrants(props) {
   const delegateAuthzGrants = filterDelegateAuthz(grantsToMe);
   const undelegateAuthzGrants = filterUndelegateAuthz(grantsToMe);
   const redelegateAuthzGrants = filterRedelegateAuthz(grantsToMe);
+  const withdrawAuthzGranters = filterWithdrawAuthz(grantsToMe);
 
   useEffect(() => {
     if (address.length > 0) {
@@ -86,20 +101,25 @@ function StakingGrants(props) {
   }, [address]);
 
   const allGranters = [
-    ...new Set([...delegateAuthzGrants, ...undelegateAuthzGrants, ...redelegateAuthzGrants]),
+    ...new Set([
+      ...delegateAuthzGrants,
+      ...undelegateAuthzGrants,
+      ...redelegateAuthzGrants,
+      ...withdrawAuthzGranters,
+    ]),
   ];
 
   return (
     <>
       {allGranters?.length ? (
         <>
-          <div style={{ display: "flex" }}>
+          <Box sx={{ display: "flex", mt: 1 }}>
             <Avatar src={chainLogo} sx={{ width: 36, height: 36 }} />
             <Typography
               align="left"
               variant="h6"
               gutterBottom
-              color="text.secondary"
+              color="text.primary"
               sx={{
                 ml: 2,
                 textTransform: "capitalize",
@@ -107,7 +127,7 @@ function StakingGrants(props) {
             >
               {chainName}
             </Typography>
-          </div>
+          </Box>
           {allGranters?.map((granter, index) => (
             <>
               <div key={index}>
@@ -116,6 +136,7 @@ function StakingGrants(props) {
                   delegateAuthzGrants={delegateAuthzGrants}
                   undelegateAuthzGrants={undelegateAuthzGrants}
                   redelegateAuthzGrants={redelegateAuthzGrants}
+                  withdrawAuthzGranters={withdrawAuthzGranters}
                   chainInfo={chainInfo}
                 />
               </div>

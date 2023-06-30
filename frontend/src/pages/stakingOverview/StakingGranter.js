@@ -7,7 +7,7 @@ import { getAuthzDelegations } from "../../features/staking/stakeSlice";
 import { getAuthzDelegatorTotalRewards } from "../../features/distribution/distributionSlice";
 
 function StakingGranter(props) {
-  const { chainInfo, granter, delegateAuthzGrants, undelegateAuthzGrants, redelegateAuthzGrants } =
+  const { chainInfo, granter, delegateAuthzGrants, undelegateAuthzGrants, redelegateAuthzGrants, withdrawAuthzGranters } =
     props;
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -51,9 +51,9 @@ function StakingGranter(props) {
 
   return (
     <>
-      <Grid container justifyContent="space-between" alignItems="center">
+      <Grid container justifyContent="space-between" alignItems="center" sx={{mt: 1, mb: 1}}>
         <Grid item>
-          <Typography fontWeight={500} color="text.primary" gutterBottom>
+          <Typography fontWeight={500} color="text.primary">
             Granter: {granter}
           </Typography>
         </Grid>
@@ -79,6 +79,7 @@ function StakingGranter(props) {
             sx={{
               textTransform: "none",
             }}
+            disabled={!withdrawAuthzGranters.includes(granter)}
           >
             Claim Rewards: {totalRewards}
           </Button>
