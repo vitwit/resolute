@@ -17,18 +17,18 @@ import { signAndBroadcast } from "../../utils/signing";
 import { getAuthzTabs } from "../../utils/authorizations";
 
 const initialState = {
-  grantsToMe: {
-    tabs: {
-      airdropEnabled: false,
-      authzEnabled: false,
-      daosEnabled: false,
-      feegrantEnabled: false,
-      govEnabled: false,
-      multisigEnabled: false,
-      sendEnabled: false,
-      stakingEnabled: false,  
-    }
+  tabResetStatus: false,
+  tabs: {
+    airdropEnabled: false,
+    authzEnabled: false,
+    daosEnabled: false,
+    feegrantEnabled: false,
+    govEnabled: false,
+    multisigEnabled: false,
+    sendEnabled: false,
+    stakingEnabled: false,
   },
+  grantsToMe: {},
   grantsByMe: {},
   tx: {
     status: "idle",
@@ -148,6 +148,7 @@ export const txAuthzRevoke = createAsyncThunk(
           getGrantsByMe({
             baseURL: data.baseURL,
             granter: data.granter,
+            chainID: data.chainID,
           })
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
@@ -446,6 +447,14 @@ export const authzSlice = createSlice({
     resetTxAuthzRes: (state) => {
       state.txAuthzRes = {};
     },
+    resetTabs: (state) => {
+      state.tabs = {...initialState.tabs};
+      state.tabResetStatus = true;
+    },
+    resetTabResetStatus: (state) => {
+      state.tabResetStatus = false;
+    }
+
   },
   extraReducers: (builder) => {
     builder
@@ -463,21 +472,18 @@ export const authzSlice = createSlice({
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
-        const { haveVoteGrants, setHaveVoteGrants, changeVoteGrants } =
-          action.meta?.arg;
+        const { changeAuthzTab } = action.meta?.arg;
 
-        if (chainID.length) {
+        if (chainID?.length) {
           let grants = action.payload.data.grants;
-          if (changeVoteGrants && !haveVoteGrants) {
-            for (let i = 0; i < grants.length; i++) {
-              let grant = grants[i];
-              let msgType = grant?.authorization?.msg || "";
-              let msgTypeParts = msgType.split(".");
-              if (msgTypeParts[msgTypeParts.length - 1] === "MsgVote") {
-                setHaveVoteGrants(true);
-                break;
-              }
+          if (changeAuthzTab) {
+            const existingTabs = state.tabs;
+            const updatedTabs = getAuthzTabs(grants);
+            for (let tabIndex in updatedTabs) {
+              updatedTabs[tabIndex] =
+                updatedTabs[tabIndex] || existingTabs[tabIndex];
             }
+            state.tabs = updatedTabs;
           }
           let result = {
             status: "idle",
@@ -486,17 +492,6 @@ export const authzSlice = createSlice({
             pagination: action.payload.data.pagination,
           };
           state.grantsToMe[chainID] = result;
-          const existingTabs = state.grantsToMe.tabs;
-          const updatedTabs = getAuthzTabs(grants);
-          // TODO: update with actual values
-          state.grantsToMe.tabs.airdropEnabled = false
-          state.grantsToMe.tabs.authzEnabled = false
-          state.grantsToMe.tabs.daosEnabled = false
-          state.grantsToMe.tabs.feegrantEnabled = false
-          state.grantsToMe.tabs.govEnabled = false
-          state.grantsToMe.tabs.multisigEnabled = false
-          state.grantsToMe.tabs.sendEnabled = true
-          state.grantsToMe.tabs.stakingEnabled = false
         }
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
@@ -534,7 +529,7 @@ export const authzSlice = createSlice({
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
         const chainID = action.meta.arg.chainID;
-        if (chainID.length) {
+        if (chainID?.length) {
           state.grantsByMe[chainID].status = "rejected";
           state.grantsByMe[chainID].grants = [];
           state.grantsByMe[chainID].pagination = {};
@@ -602,7 +597,9 @@ export const {
   setSelectedGranter,
   resetExecTx,
   resetTxAuthzRes,
+  resetTabs,
   exitAuthzMode,
+  resetTabResetStatus,
 } = authzSlice.actions;
 
 export default authzSlice.reducer;

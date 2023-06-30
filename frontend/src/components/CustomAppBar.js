@@ -17,10 +17,10 @@ import Button from "@mui/material/Button";
 import { setSelectedNetwork } from "../features/common/commonSlice";
 import { getGrantsToMe } from "../features/authz/authzSlice";
 import { useNavigate } from "react-router-dom";
+import { resetTabs, resetTabResetStatus } from "../features/authz/authzSlice";
 
 export function CustomAppBar(props) {
-  const { haveVoteGrants, setHaveVoteGrants } = props;
-  const [resetAuthzMode, setResetAuthzMode] = useState(false);
+  const tabResetStatus = useSelector((state) => state.authz.tabResetStatus);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -51,8 +51,8 @@ export function CustomAppBar(props) {
   };
 
   useEffect(() => {
-    if (resetAuthzMode && !haveVoteGrants) {
-      setResetAuthzMode(false);
+    if (tabResetStatus) {
+      dispatch(resetTabResetStatus());
       Object.keys(networks).map((key, _) => {
         const network = networks[key];
         dispatch(
@@ -60,19 +60,16 @@ export function CustomAppBar(props) {
             baseURL: network.network?.config?.rest,
             grantee: network.walletInfo?.bech32Address,
             chainID: network.network?.config?.chainId,
-            haveVoteGrants,
-            setHaveVoteGrants,
-            changeVoteGrants: true,
+            changeAuthzTab: true,
           })
         );
       });
     }
-  }, [haveVoteGrants, resetAuthzMode]);
+  }, [tabResetStatus]);
 
   useEffect(() => {
     if (isAuthzMode) {
-      setResetAuthzMode(true);
-      setHaveVoteGrants(false);
+      dispatch(resetTabs());
     }
   }, [isAuthzMode]);
 

@@ -62,8 +62,6 @@ function DashboardContent() {
     setSnackOpen(value);
   };
 
-  const [haveVoteGrants, setHaveVoteGrants] = useState(false);
-
   const [darkMode, setDarkMode] = useState(isDarkMode());
   const onModeChange = () => {
     localStorage.setItem("DARK_MODE", !darkMode);
@@ -133,12 +131,7 @@ function DashboardContent() {
       theme={mdTheme(darkMode, defaultPallet.primary, defaultPallet.secondary)}
     >
       <>
-        <CustomAppBar
-          haveVoteGrants={haveVoteGrants}
-          setHaveVoteGrants={setHaveVoteGrants}
-          darkMode={darkMode}
-          onModeChange={() => onModeChange()}
-        />
+        <CustomAppBar darkMode={darkMode} onModeChange={() => onModeChange()} />
 
         <Box sx={{ display: "flex" }}>
           <Box
@@ -155,7 +148,7 @@ function DashboardContent() {
           >
             <Toolbar />
             <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
-              <Home haveVoteGrants={haveVoteGrants} />
+              <Home />
               {/* <Routes>
                 <Route path="/" element={<Home />} />
                 <>
