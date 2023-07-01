@@ -177,9 +177,9 @@ function AuthzDelegations(props) {
                         className="button-capitalize-title"
                         style={{ marginLeft: 4 }}
                         size="small"
-                        // onClick={(e) =>
-                        //   handleClick(e, "redelegate", row.delegation)
-                        // }
+                        onClick={(e) =>
+                          handleClick(e, "redelegate", row.delegation)
+                        }
                         sx={{
                           textTransform: "none",
                         }}

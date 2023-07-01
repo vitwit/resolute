@@ -11,6 +11,7 @@ import { DialogDelegate } from "../../components/DialogDelegate";
 import { authzExecHelper } from "../../features/authz/authzSlice";
 import { setError } from "../../features/common/commonSlice";
 import { DialogUndelegate } from "../../components/DialogUndelegate";
+import { DialogRedelegate } from "../../components/DialogRedelegate";
 
 function StakingGranter(props) {
   const {
@@ -53,10 +54,12 @@ function StakingGranter(props) {
   const [stakingOpen, setStakingOpen] = React.useState(false);
   const [undelegateOpen, setUndelegateOpen] = React.useState(false);
   const [selectedValidator, setSelectedValidator] = useState({});
+  const [redelegateOpen, setRedelegateOpen] = React.useState(false);
 
   const handleDialogClose = () => {
     setStakingOpen(false);
     setUndelegateOpen(false);
+    setRedelegateOpen(false);
   };
 
   const getAuthzBalances = () => {
@@ -116,6 +119,26 @@ function StakingGranter(props) {
     });
   };
 
+  const onAuthzRedelegateTx = (data) => {
+    authzExecHelper(dispatch, {
+      type: "redelegate",
+      address: address,
+      baseURL: chainInfo.config.rest,
+      delegator: granter,
+      srcVal: data.src,
+      destVal: data.dest,
+      amount: data.amount * 10 ** currency.coinDecimals,
+      denom: currency.coinMinimalDenom,
+      chainId: chainInfo.config.chainId,
+      rest: chainInfo.config.rest,
+      aminoConfig: chainInfo.aminoConfig,
+      prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+      feeAmount:
+        chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+      feegranter: feegrant.granter,
+    });
+  }
+
   const onMenuAction = (e, type, validator) => {
     setSelectedValidator(validator);
     switch (type) {
@@ -131,6 +154,40 @@ function StakingGranter(props) {
           );
         }
         break;
+      
+        case "redelegate":
+          let isValidRedelegation = false;
+          let delegationsList = delegations?.delegations?.delegations;
+          if (delegationsList?.length > 0) {
+            for (let i = 0; i < delegationsList?.length; i++) {
+              let item = delegationsList?.[i];
+              if (
+                item.delegation.validator_address === validator.operator_address
+              ) {
+                isValidRedelegation = true;
+                break;
+              }
+            }
+            if (isValidRedelegation) {
+              setRedelegateOpen(true);
+            } else {
+              dispatch(
+                setError({
+                  type: "error",
+                  message: "invalid redelegation",
+                })
+              );
+            }
+          } else {
+            dispatch(
+              setError({
+                type: "error",
+                message: "no delegations present",
+              })
+            );
+          }
+          break;
+
       default:
         console.log("unsupported type");
     }
@@ -259,10 +316,23 @@ function StakingGranter(props) {
             onAuthzUndelegateTx={onAuthzUndelegateTx}
             authzLoading={authzExecTx?.status}
           />
+
+          <DialogRedelegate
+            open={redelegateOpen}
+            onClose={handleDialogClose}
+            validator={selectedValidator}
+            params={stakingParams}
+            balance={availableBalance}
+            active={validators?.active}
+            inactive={validators?.inactive}
+            delegations={delegations?.delegations?.delegations}
+            currency={chainInfo?.config?.currencies[0]}
+            loading={txStatus.status}
+            onRedelegate={onAuthzRedelegateTx}
+            authzLoading={authzExecTx?.status}
+          />
         </>
-      ) : (
-        <></>
-      )}
+      ) : null}
     </>
   );
 }
