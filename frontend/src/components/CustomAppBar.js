@@ -48,7 +48,6 @@ export function CustomAppBar(props) {
 
   useEffect(() => {
     if (isAuthzMode) {
-      console.log("callllled");
       Object.keys(networks).map((key, _) => {
         const network = networks[key];
         dispatch(getGrantsToMe({
@@ -137,7 +136,9 @@ export function CustomAppBar(props) {
                 navigateTo('/');
               }}
             >
-              <ListItemText>{networks[chain].network.config.chainName}</ListItemText>
+              <ListItemText>
+                {networks[chain].network.config.chainName}
+              </ListItemText>
             </MenuItem>
           ))}
         </Menu>
