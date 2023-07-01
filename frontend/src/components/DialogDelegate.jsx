@@ -25,6 +25,7 @@ export function DialogDelegate(props) {
     displayDenom,
     authzLoading,
     validators,
+    onAuthzDelegateTx,
   } = props;
 
   const isAuthzMode = useSelector((state) => state.common.authzMode);
@@ -45,20 +46,30 @@ export function DialogDelegate(props) {
   });
 
   const onSubmit = (data) => {
-    onDelegate({
-      validator: validator.operator_address,
-      amount: data.amount,
-    });
+    let selectedValidator;
+    if (isAuthzMode) {
+      selectedValidator = data.validator.operator_address;
+      onAuthzDelegateTx({
+        validator: selectedValidator,
+        amount: data.amount,
+      });
+    } else {
+      selectedValidator = validator.operator_address;
+      onDelegate({
+        validator: selectedValidator,
+        amount: data.amount,
+      });
+    }
   };
 
   let ValidatorsMenuItems = [];
-  if(validators?.activeSorted?.length && isAuthzMode) {
+  if (validators?.activeSorted?.length && isAuthzMode) {
     const activevals = validators.activeSorted;
     for (let index in activevals) {
       ValidatorsMenuItems = [
         ...ValidatorsMenuItems,
         {
-          val_address: activevals[index],
+          operator_address: activevals[index],
           label: validators.active?.[activevals[index]].description.moniker,
         },
       ];
@@ -97,61 +108,62 @@ export function DialogDelegate(props) {
               )}{" "}
               days to complete.
             </Alert>
-
-            <Typography
-              color="text.primary"
-              fontWeight={600}
-              style={{ marginTop: 16 }}
-            >
-              Available Balance
-            </Typography>
-            <Typography
-              color="text.primary"
-              variant="body1"
-              className="hover-link"
-              onClick={() => {
-                setValue("amount", balance);
-              }}
-            >
-              {balance}
-            </Typography>
+            <div style={{ marginBottom: "8px" }}>
+              <Typography
+                color="text.primary"
+                fontWeight={600}
+                style={{ marginTop: 16 }}
+              >
+                Available Balance
+              </Typography>
+              <Typography
+                color="text.primary"
+                variant="body1"
+                className="hover-link"
+                onClick={() => {
+                  setValue("amount", balance);
+                }}
+              >
+                {balance}
+              </Typography>
+            </div>
             {validators?.activeSorted?.length && isAuthzMode ? (
               <Controller
-              name="typeURL"
-              control={control}
-              defaultValue={null}
-              rules={{ required: "Message type is required" }}
-              render={({
-                field: { onChange, value },
-                fieldState: { error },
-              }) => (
-                <Autocomplete
-                  disablePortal
-                  fullWidth
-                  variant="outlined"
-                  required
-                  options={ValidatorsMenuItems}
-                  isOptionEqualToValue={(option, value) =>
-                    option.typeUrl === value.typeUrl
-                  }
-                  label="Type"
-                  value={value}
-                  onChange={(event, item) => {
-                    onChange(item);
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      error={!!error}
-                      required
-                      placeholder="Select Validator"
-                      helperText={error ? error.message : null}
-                    />
-                  )}
-                />
-              )}
-            />
-            ): null}
+                name="validator"
+                control={control}
+                defaultValue={null}
+                rules={{ required: "Validator type is required" }}
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => (
+                  <Autocomplete
+                    disablePortal
+                    fullWidth
+                    variant="outlined"
+                    required
+                    options={ValidatorsMenuItems}
+                    isOptionEqualToValue={(option, value) =>
+                      option.validator === value.validator
+                    }
+                    label="Type"
+                    value={value}
+                    onChange={(event, item) => {
+                      onChange(item);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        error={!!error}
+                        required
+                        placeholder="Select Validator"
+                        helperText={error ? error.message : null}
+                      />
+                    )}
+                  />
+                )}
+              />
+            ) : null}
 
             <div style={{ marginTop: 16 }}>
               <Controller

@@ -138,6 +138,7 @@ function StakingGrants(props) {
                   redelegateAuthzGrants={redelegateAuthzGrants}
                   withdrawAuthzGranters={withdrawAuthzGranters}
                   chainInfo={chainInfo}
+                  address={address}
                 />
               </div>
             </>
