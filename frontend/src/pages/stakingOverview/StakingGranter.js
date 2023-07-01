@@ -57,7 +57,7 @@ function StakingGranter(props) {
   };
 
   useEffect(() => {
-    fetchGranterInfo();
+    fetchGranterDelegationsInfo();
   }, []);
 
   useEffect(() => {
@@ -76,7 +76,7 @@ function StakingGranter(props) {
 
   useEffect(() => {
     if (authzExecTx.status === "idle") {
-      fetchGranterInfo();
+      fetchGranterDelegationsInfo();
       setStakingOpen(false);
     }
   }, [authzExecTx]);
@@ -91,7 +91,7 @@ function StakingGranter(props) {
     );
   };
 
-  const fetchGranterInfo = () => {
+  const fetchGranterDelegationsInfo = () => {
     dispatch(
       getAuthzDelegations({
         baseURL: chainInfo?.config?.rest,
@@ -99,6 +99,9 @@ function StakingGranter(props) {
         address: granter,
       })
     );
+  }
+
+  useEffect(() => {
     dispatch(
       getAuthzDelegatorTotalRewards({
         baseURL: chainInfo?.config?.rest,
@@ -106,7 +109,7 @@ function StakingGranter(props) {
         address: granter,
       })
     );
-  }
+  },[])
 
   const onAuthzDelegateTx = (data) => {
     authzExecHelper(dispatch, {
