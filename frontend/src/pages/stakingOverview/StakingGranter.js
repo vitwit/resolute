@@ -9,6 +9,8 @@ import { getBalances } from "../../features/bank/bankSlice";
 import { parseBalance } from "../../utils/denom";
 import { DialogDelegate } from "../../components/DialogDelegate";
 import { authzExecHelper } from "../../features/authz/authzSlice";
+import { setError } from "../../features/common/commonSlice";
+import { DialogUndelegate } from "../../components/DialogUndelegate";
 
 function StakingGranter(props) {
   const {
@@ -44,16 +46,94 @@ function StakingGranter(props) {
   const txStatus = useSelector((state) => state.staking.chains[chainID].tx);
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const balances = useSelector((state) => state.bank.balances);
-  const feegrant = useSelector(
-    (state) => state.common.feegrant
-  );
+  const feegrant = useSelector((state) => state.common.feegrant);
 
   const [totalRewards, setTotalRewards] = React.useState(0);
   const [availableBalance, setAvailableBalance] = useState(0);
   const [stakingOpen, setStakingOpen] = React.useState(false);
+  const [undelegateOpen, setUndelegateOpen] = React.useState(false);
+  const [selectedValidator, setSelectedValidator] = useState({});
 
   const handleDialogClose = () => {
     setStakingOpen(false);
+    setUndelegateOpen(false);
+  };
+
+  const getAuthzBalances = () => {
+    dispatch(
+      getBalances({
+        baseURL: chainInfo.config.rest + "/",
+        address: granter,
+        chainID: chainID,
+      })
+    );
+  };
+
+  const fetchGranterDelegationsInfo = () => {
+    dispatch(
+      getAuthzDelegations({
+        baseURL: chainInfo?.config?.rest,
+        chainID: chainID,
+        address: granter,
+      })
+    );
+  };
+
+  const onAuthzDelegateTx = (data) => {
+    authzExecHelper(dispatch, {
+      type: "delegate",
+      address: address,
+      baseURL: chainInfo.config.rest,
+      delegator: granter,
+      validator: data.validator,
+      amount: data.amount * 10 ** currency.coinDecimals,
+      denom: currency.coinMinimalDenom,
+      chainId: chainInfo.config.chainId,
+      rest: chainInfo.config.rest,
+      aminoConfig: chainInfo.aminoConfig,
+      prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+      feeAmount:
+        chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+      feegranter: feegrant?.granter,
+    });
+  };
+
+  const onAuthzUndelegateTx = (data) => {
+    authzExecHelper(dispatch, {
+      type: "undelegate",
+      address: address,
+      delegator: granter,
+      validator: data.validator,
+      amount: data.amount * 10 ** currency.coinDecimals,
+      denom: currency.coinMinimalDenom,
+      chainId: chainInfo.config.chainId,
+      rest: chainInfo.config.rest,
+      aminoConfig: chainInfo.aminoConfig,
+      prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+      feeAmount:
+        chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+      feegranter: feegrant.granter,
+    });
+  };
+
+  const onMenuAction = (e, type, validator) => {
+    setSelectedValidator(validator);
+    switch (type) {
+      case "undelegate":
+        if (delegations?.delegations?.delegations.length > 0) {
+          setUndelegateOpen(true);
+        } else {
+          dispatch(
+            setError({
+              type: "error",
+              message: "no delegations",
+            })
+          );
+        }
+        break;
+      default:
+        console.log("unsupported type");
+    }
   };
 
   useEffect(() => {
@@ -78,28 +158,9 @@ function StakingGranter(props) {
     if (authzExecTx.status === "idle") {
       fetchGranterDelegationsInfo();
       setStakingOpen(false);
+      setUndelegateOpen(false);
     }
   }, [authzExecTx]);
-
-  const getAuthzBalances = () => {
-    dispatch(
-      getBalances({
-        baseURL: chainInfo.config.rest + "/",
-        address: granter,
-        chainID: chainID,
-      })
-    );
-  };
-
-  const fetchGranterDelegationsInfo = () => {
-    dispatch(
-      getAuthzDelegations({
-        baseURL: chainInfo?.config?.rest,
-        chainID: chainID,
-        address: granter,
-      })
-    );
-  }
 
   useEffect(() => {
     dispatch(
@@ -109,26 +170,7 @@ function StakingGranter(props) {
         address: granter,
       })
     );
-  },[])
-
-  const onAuthzDelegateTx = (data) => {
-    authzExecHelper(dispatch, {
-      type: "delegate",
-      address: address,
-      baseURL: chainInfo.config.rest,
-      delegator: granter,
-      validator: data.validator,
-      amount: data.amount * 10 ** currency.coinDecimals,
-      denom: currency.coinMinimalDenom,
-      chainId: chainInfo.config.chainId,
-      rest: chainInfo.config.rest,
-      aminoConfig: chainInfo.aminoConfig,
-      prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-      feeAmount:
-        chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-      feegranter: feegrant?.granter,
-    });
-  }
+  }, []);
 
   return (
     <>
@@ -156,7 +198,7 @@ function StakingGranter(props) {
             disabled={!delegateAuthzGrants?.includes(granter)}
             onClick={() => {
               getAuthzBalances();
-              setStakingOpen(true)
+              setStakingOpen(true);
             }}
           >
             Delegate
@@ -186,22 +228,38 @@ function StakingGranter(props) {
         rewards={rewards?.list}
         setTotalRewards={setTotalRewards}
         totalRewards={totalRewards}
+        onDelegationAction={onMenuAction}
       />
 
       {availableBalance > 0 ? (
         <DialogDelegate
           open={stakingOpen}
           onClose={handleDialogClose}
-          validator={null}
           params={stakingParams}
           balance={availableBalance}
-          onAuthzDelegate={null}
           loading={txStatus.status}
           displayDenom={currency.coinDenom}
           authzLoading={authzExecTx?.status}
           validators={validators}
           onAuthzDelegateTx={onAuthzDelegateTx}
         />
+      ) : null}
+
+      {delegations?.delegations?.delegations?.length > 0 ? (
+        <>
+          <DialogUndelegate
+            open={undelegateOpen}
+            onClose={handleDialogClose}
+            validator={selectedValidator}
+            params={stakingParams}
+            balance={availableBalance}
+            delegations={delegations?.delegations?.delegations}
+            currency={chainInfo?.config?.currencies[0]}
+            loading={txStatus.status}
+            onAuthzUndelegateTx={onAuthzUndelegateTx}
+            authzLoading={authzExecTx?.status}
+          />
+        </>
       ) : (
         <></>
       )}

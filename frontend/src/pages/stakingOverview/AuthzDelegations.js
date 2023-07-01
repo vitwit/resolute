@@ -24,6 +24,7 @@ function AuthzDelegations(props) {
     rewards,
     setTotalRewards,
     totalRewards,
+    onDelegationAction,
   } = props;
 
   const theme = useTheme();
@@ -56,6 +57,16 @@ function AuthzDelegations(props) {
 
     setTotalRewards(total.toFixed(5));
   }, [rewards]);
+
+  const handleClick = (event, type, delegation) => {
+    let val = {};
+    if (delegation.validator_address in validators?.active) {
+      val = validators?.active[delegation.validator_address];
+    } else {
+      val = validators?.inactive[delegation.validator_address];
+    }
+    onDelegationAction(event, type, val);
+  };
 
   return (
     <>
@@ -146,9 +157,9 @@ function AuthzDelegations(props) {
                         style={{ marginLeft: 4 }}
                         className="button-capitalize-title"
                         size="small"
-                        // onClick={(e) =>
-                        //   handleClick(e, "undelegate", row.delegation)
-                        // }
+                        onClick={(e) =>
+                          handleClick(e, "undelegate", row.delegation)
+                        }
                         sx={{
                           textTransform: "none",
                         }}
