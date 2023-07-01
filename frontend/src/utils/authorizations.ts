@@ -240,7 +240,9 @@ export interface AuthzTabs {
   airdropEnabled: boolean;
 }
 
+const SEND_AUTHZ = "/cosmos.authz.v1beta1.SendAuthorization";
 const GENERIC_AUTHZ = "/cosmos.authz.v1beta1.GenericAuthorization";
+const STAKE_AUTHZ =  "/cosmos.authz.v1beta1.StakeAuthorization";
 
 export function getAuthzTabs(authorizations: any[]): AuthzTabs {
   let result: AuthzTabs = {
@@ -254,9 +256,12 @@ export function getAuthzTabs(authorizations: any[]): AuthzTabs {
     stakingEnabled: false,
   };
   for (let i = 0; i < authorizations.length; i++) {
-    if (authorizations[i].authorization["@type"] === SEND_V1BETA1_TYPEURL) {
+    if (authorizations[i].authorization["@type"] === SEND_AUTHZ) {
       result.sendEnabled = true;
-    } else if (authorizations[i].authorization["@type"] === GENERIC_AUTHZ) {
+    } else if (authorizations[i].authorization["@type"] === STAKE_AUTHZ) {
+      result.stakingEnabled = true;
+    }
+    else if (authorizations[i].authorization["@type"] === GENERIC_AUTHZ) {
       switch (authorizations[i].authorization?.msg) {
         case SEND_V1BETA1_TYPEURL:
           result.sendEnabled = true;
