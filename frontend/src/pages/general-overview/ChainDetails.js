@@ -1,8 +1,12 @@
-import { Avatar, Typography } from "@mui/material";
+import { Avatar, Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
+import { txWithdrawAllRewards } from "../../features/distribution/distributionSlice";
+import { txSignAndBroadcast } from "../../features/staking/stakeSlice";
+import { WithdrawAllRewardsMsg } from "../../txns/distr";
+import { Delegate } from "../../txns/staking";
 import { parseBalance } from "../../utils/denom";
 
 export const ChainDetails = (props) => {
@@ -10,28 +14,65 @@ export const ChainDetails = (props) => {
   const balance = useSelector(
     (state) => state.bank.balances?.[chainID]?.list || []
   );
-  const rewards = useSelector(
+  const totalRewards = useSelector(
     (state) =>
       state.distribution?.chains?.[chainID]?.delegatorRewards?.totalRewards || 0
+  );
+  const delegatorRewards = useSelector(
+    (state) =>
+      state.distribution?.chains?.[chainID]?.delegatorRewards || {}
   );
   const staked = useSelector(
     (state) => state.staking?.chains?.[chainID]?.delegations?.totalStaked || 0
   );
   const wallet = useSelector((state) => state.wallet);
-  const denom =
-    wallet.networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDenom;
+  const chainInfo = wallet?.networks?.[chainID];
+  const denom = chainInfo?.network?.config?.currencies?.[0]?.coinDenom;
   const minimalDenom =
-    wallet.networks?.[chainID]?.network?.config?.currencies?.[0]
+    chainInfo?.network?.config?.currencies?.[0]
       ?.coinMinimalDenom;
   const decimals =
-    wallet.networks?.[chainID]?.network?.config?.currencies?.[0]
+    chainInfo?.network?.config?.currencies?.[0]
       ?.coinDecimals || 0;
-  const logoURL = wallet?.networks?.[chainID]?.network?.logos?.menu;
+  const logoURL = chainInfo?.network?.logos?.menu;
   const navigate = useNavigate();
 
   const handleOnClick = (chainName) => {
     navigate(`/${chainName}/overview`);
   };
+
+  const dispatch = useDispatch();
+
+  const actionClaimAndStake = () => {
+    const msgs = [];
+    const delegator = chainInfo?.walletInfo?.bech32Address;
+    for (let index = 0; index < delegatorRewards?.list.length; index++) {
+      const delegation = delegatorRewards.list[index];
+      for (let i = 0; i < delegation.reward.length; i++) {
+        const reward = delegation.reward[i];
+        if (reward.denom === minimalDenom) {
+          // msgs.push(WithdrawAllRewardsMsg(delegator, delegation.validator_address));
+          msgs.push(Delegate(delegator, delegation.validator_address, reward.amount, minimalDenom));
+        }
+      }
+    }
+
+    console.log(msgs);
+
+    dispatch(txSignAndBroadcast({
+      msgs: msgs,
+      chainId: chainID,
+
+      denom: minimalDenom,
+          chainId: chainID,
+          rest: chainInfo?.network?.config?.rest,
+          aminoConfig: chainInfo?.network?.aminoConfig,
+          prefix: chainInfo?.network?.config?.bech32Config.bech32PrefixAccAddr,
+          feeAmount: chainInfo?.network?.config?.gasPriceStep.average * 10 ** decimals,
+          feegranter: null,
+          memo: "Delegate(rewards)"
+    }));
+  }
 
   return (
     <>
@@ -75,7 +116,25 @@ export const ChainDetails = (props) => {
             {(+staked / 10 ** decimals).toLocaleString()}&nbsp;{denom}
           </StyledTableCell>
           <StyledTableCell>
-            {(+rewards / 10 ** decimals).toLocaleString()}&nbsp;{denom}
+            {(+totalRewards / 10 ** decimals).toLocaleString()}&nbsp;{denom}
+          </StyledTableCell>
+          <StyledTableCell>
+            <Button
+              color="primary"
+              disableElevation
+              variant="contained"
+              size="small"
+              sx={{
+                textTransform: "none"
+              }}
+              disabled={totalRewards <= 0}
+              onClick={
+                
+                () => actionClaimAndStake()
+              }
+            >
+              Claim&nbsp;&&nbsp;Stake
+            </Button>
           </StyledTableCell>
         </StyledTableRow>
       ) : null}

@@ -14,6 +14,7 @@ import {
   TableContainer,
   TableHead,
   Typography,
+  Button,
 } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 
@@ -222,6 +223,9 @@ export const GeneralOverview = (props) => {
               </StyledTableCell>
               <StyledTableCell>
                 Rewards
+              </StyledTableCell>
+              <StyledTableCell>
+                Action
               </StyledTableCell>
             </StyledTableRow>
           </TableHead>

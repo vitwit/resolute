@@ -46,6 +46,60 @@ const initialState = {
   },
 };
 
+export const txSignAndBroadcast = createAsyncThunk(
+  "staking/restake",
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+
+    console.log(data);
+    try {
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
+        data.msgs,
+        260000,
+        data.memo,
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        // dispatch(resetDelegations({ chainID: data.chainId }));
+        // dispatch(
+        //   getDelegations({
+        //     baseURL: data.baseURL,
+        //     address: data.delegator,
+        //     chainID: data.chainId,
+        //   })
+        // );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.response);
+    }
+  }
+);
+
 export const txDelegate = createAsyncThunk(
   "staking/delegate",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
