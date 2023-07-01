@@ -184,7 +184,12 @@ export default function Home(props) {
           ) : null}
           {!authzEnabled && <Tab label="Authz" {...a11yProps(5)} value={5} />}
           <Tab label="Feegrant" {...a11yProps(6)} value={6} />
-          <Tab label="DAOs" {...a11yProps(7)} value={7} />
+          <Tab
+            label="DAOs"
+            {...a11yProps(7)}
+            value={7}
+            disabled={authzEnabled && !authzTabs?.daosEnabled}
+          />
           {!authzEnabled && <Tab label="Airdrop" {...a11yProps(8)} value={8} />}
         </Tabs>
       </Box>

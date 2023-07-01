@@ -283,6 +283,9 @@ export function getAuthzTabs(authorizations: any[]): AuthzTabs {
           result.feegrantEnabled = true;
           break;
       }
+      if(authorizations[i].authorization?.msg.includes("cosmos.group.")) {
+        result.daosEnabled = true;
+      }
     }
   }
   return result;
