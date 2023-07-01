@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Table, TableContainer, TableHead, TableBody } from '@mui/material';
+import { Table, TableContainer, TableHead, TableBody } from '@mui/material';
 import { Validator } from './Validator';
 import { StyledTableCell, StyledTableRow } from '../../components/CustomTable';
 
