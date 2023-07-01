@@ -216,6 +216,7 @@ function StakingGranter(props) {
       fetchGranterDelegationsInfo();
       setStakingOpen(false);
       setUndelegateOpen(false);
+      setRedelegateOpen(false);
     }
   }, [authzExecTx]);
 
