@@ -4,28 +4,17 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
-import {
-  getMainNetworks,
-  getSelectedNetwork,
-  getTestNetworks,
-  saveSelectedNetwork,
-} from "./../utils/networks";
+import { getMainNetworks, getTestNetworks } from "./../utils/networks";
 import Link from "@mui/material/Link";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  connectKeplrWallet,
-  setNetwork,
   connectKeplrWalletV1,
 } from "./../features/wallet/walletSlice";
-import { useNavigate } from "react-router-dom";
 import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
-import Overview from "./Overview";
 import { CustomAppBar } from "../components/CustomAppBar";
 import {
-  resetFeegrant,
   resetTxLoad,
-  setFeegrant,
 } from "../features/common/commonSlice";
 import { Alert } from "../components/Alert";
 import { isDarkMode, mdTheme } from "../utils/theme";
@@ -33,30 +22,7 @@ import { Paper, Typography } from "@mui/material";
 import Home from "./Home";
 import { defaultPallet } from "../utils/pallet";
 
-// const GroupPage = lazy(() => import("./GroupPage"));
-// const Group = lazy(() => import("./group/Group"));
-// const Policy = lazy(() => import("./group/Policy"));
-// const CreateGroupNewPage = lazy(() => import("./group/CreateGroup"));
-// const Proposal = lazy(() => import("./group/Proposal"));
-// const CreateProposal = lazy(() => import("./group/CreateProposal"));
-
-// const Authz = lazy(() => import("./authz/Authz"));
-// const Validators = lazy(() => import("./Validators"));
-// const Proposals = lazy(() => import("./gov/Proposals"));
-// const NewAuthz = lazy(() => import("./authz/NewAuthz"));
-// const AirdropEligibility = lazy(() => import("./passage/AirdropEligibility"));
-// const PageMultisig = lazy(() => import("./multisig/PageMultisig"));
-// const PageMultisigInfo = lazy(() => import("./multisig/tx/PageMultisigInfo"));
-// const SendPage = lazy(() => import("./SendPage"));
-// const UnjailPage = lazy(() => import("./slashing/UnjailPage"));
-// const ProposalInfo = lazy(() => import("./gov/ProposalInfo"));
-// const PageCreateTx = lazy(() => import("./multisig/tx/PageCreateTx"));
-// const MultiTx = lazy(() => import("./MultiTx"));
-
-// const Feegrant = lazy(() => import("./feegrant/Feegrant"));
-// const NewFeegrant = lazy(() => import("./feegrant/NewFeegrant"));
-
-function DashboardContent() {
+export default function Dashboard() {
   const [snackOpen, setSnackOpen] = useState(false);
   const showSnack = (value) => {
     setSnackOpen(value);
@@ -147,173 +113,14 @@ function DashboardContent() {
             }}
           >
             <Toolbar />
-            <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
+            <Container
+              maxWidth="lg"
+              sx={{
+                mt: 1,
+                mb: 2
+              }}
+            >
               <Home />
-              {/* <Routes>
-                <Route path="/" element={<Home />} />
-                <>
-                  <Route
-                    path="/feegrant"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Feegrant />
-                      </Suspense>
-                    }
-                  ></Route>
-                  <Route
-                    path="/feegrant/new"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <NewFeegrant />
-                      </Suspense>
-                    }
-                  ></Route>
-                </>
-
-                <>
-                  <Route
-                    path="/authz"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <Authz />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/authz/new"
-                    element={
-                      <Suspense fallback={<CircularProgress />}>
-                        <NewAuthz />
-                      </Suspense>
-                    }
-                  ></Route>
-                </>
-                <Route
-                  path="/slashing"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <UnjailPage />
-                    </Suspense>
-                  }
-                ></Route>
-                <Route
-                  path="/staking"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <Validators />
-                    </Suspense>
-                  }
-                ></Route>
-                <Route
-                  path="/governance"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <Proposals />
-                    </Suspense>
-                  }
-                ></Route>
-                <Route
-                  path="/proposals/:chainName/:id"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <ProposalInfo />
-                    </Suspense>
-                  }
-                ></Route>
-                <Route
-                  path="/send"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <SendPage />
-                    </Suspense>
-                  }
-                ></Route>
-
-                <Route
-                  path="/airdrop-check"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <AirdropEligibility />
-                    </Suspense>
-                  }
-                ></Route>
-                <Route
-                  path="/multisig"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <PageMultisig />
-                    </Suspense>
-                  }
-                ></Route>
-
-                <Route
-                  path="/multisig/:address/txs"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <PageMultisigInfo />
-                    </Suspense>
-                  }
-                ></Route>
-
-                <Route
-                  path="/multisig/:address/create-tx"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <PageCreateTx />
-                    </Suspense>
-                  }
-                ></Route>
-                <Route
-                  path="/group"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <GroupPage />
-                    </Suspense>
-                  }
-                ></Route>
-                <Route
-                  path="/groups/:id"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <Group />
-                    </Suspense>
-                  }
-                ></Route>
-                <Route
-                  path="/groups/proposals/:id"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <Proposal />
-                    </Suspense>
-                  }
-                ></Route>
-                <Route
-                  path="/groups/:id/policies/:policyId"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <Policy />
-                    </Suspense>
-                  }
-                ></Route>
-                <Route
-                  path="/group/:id/policies/:policyAddress/proposals"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <CreateProposal />
-                    </Suspense>
-                  }
-                ></Route>
-                <Route
-                  path="/group/create-group"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <CreateGroupNewPage />
-                    </Suspense>
-                  }
-                ></Route>
-
-                <Route path="*" element={<Page404 />}></Route>
-              </Routes> */}
             </Container>
           </Box>
         </Box>
@@ -407,13 +214,6 @@ function DashboardContent() {
   );
 }
 
-export default function Dashboard() {
-  return (
-    <>
-      <DashboardContent key={1} />
-    </>
-  );
-}
 
 const Footer = () => {
   return (
