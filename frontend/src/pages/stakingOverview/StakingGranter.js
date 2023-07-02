@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Grid } from "@mui/material";
+import { Typography, Button, Grid, CircularProgress } from "@mui/material";
 import AuthzDelegations from "./AuthzDelegations";
 import { useTheme } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,6 +44,9 @@ function StakingGranter(props) {
   const stakingParams = useSelector(
     (state) => state.staking.chains[chainID].params
   );
+  const distTxStatus = useSelector(
+    (state) => state.distribution.chains[chainID].tx
+  );
   const txStatus = useSelector((state) => state.staking.chains[chainID].tx);
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const balances = useSelector((state) => state.bank.balances);
@@ -75,6 +78,16 @@ function StakingGranter(props) {
   const fetchGranterDelegationsInfo = () => {
     dispatch(
       getAuthzDelegations({
+        baseURL: chainInfo?.config?.rest,
+        chainID: chainID,
+        address: granter,
+      })
+    );
+  };
+
+  const fetchAuthzDelegatorTotalRewards = () => {
+    dispatch(
+      getAuthzDelegatorTotalRewards({
         baseURL: chainInfo?.config?.rest,
         chainID: chainID,
         address: granter,
@@ -137,7 +150,31 @@ function StakingGranter(props) {
         chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
       feegranter: feegrant.granter,
     });
-  }
+  };
+
+  const onAuthzWithdrawAllRewards = () => {
+    let delegationPairs = [];
+    delegations?.delegations?.delegations.forEach((item) => {
+      delegationPairs.push({
+        validator: item.delegation.validator_address,
+        delegator: item.delegation.delegator_address,
+      });
+    });
+
+    authzExecHelper(dispatch, {
+      type: "withdraw",
+      from: address,
+      payload: delegationPairs,
+      denom: currency.coinMinimalDenom,
+      chainId: chainInfo.config.chainId,
+      rest: chainInfo.config.rest,
+      aminoConfig: chainInfo.aminoConfig,
+      prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+      feeAmount:
+        chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+      feegranter: feegrant.granter,
+    });
+  };
 
   const onMenuAction = (e, type, validator) => {
     setSelectedValidator(validator);
@@ -154,39 +191,39 @@ function StakingGranter(props) {
           );
         }
         break;
-      
-        case "redelegate":
-          let isValidRedelegation = false;
-          let delegationsList = delegations?.delegations?.delegations;
-          if (delegationsList?.length > 0) {
-            for (let i = 0; i < delegationsList?.length; i++) {
-              let item = delegationsList?.[i];
-              if (
-                item.delegation.validator_address === validator.operator_address
-              ) {
-                isValidRedelegation = true;
-                break;
-              }
+
+      case "redelegate":
+        let isValidRedelegation = false;
+        let delegationsList = delegations?.delegations?.delegations;
+        if (delegationsList?.length > 0) {
+          for (let i = 0; i < delegationsList?.length; i++) {
+            let item = delegationsList?.[i];
+            if (
+              item.delegation.validator_address === validator.operator_address
+            ) {
+              isValidRedelegation = true;
+              break;
             }
-            if (isValidRedelegation) {
-              setRedelegateOpen(true);
-            } else {
-              dispatch(
-                setError({
-                  type: "error",
-                  message: "invalid redelegation",
-                })
-              );
-            }
+          }
+          if (isValidRedelegation) {
+            setRedelegateOpen(true);
           } else {
             dispatch(
               setError({
                 type: "error",
-                message: "no delegations present",
+                message: "invalid redelegation",
               })
             );
           }
-          break;
+        } else {
+          dispatch(
+            setError({
+              type: "error",
+              message: "no delegations present",
+            })
+          );
+        }
+        break;
 
       default:
         console.log("unsupported type");
@@ -195,6 +232,7 @@ function StakingGranter(props) {
 
   useEffect(() => {
     fetchGranterDelegationsInfo();
+    fetchAuthzDelegatorTotalRewards();
   }, []);
 
   useEffect(() => {
@@ -217,18 +255,11 @@ function StakingGranter(props) {
       setStakingOpen(false);
       setUndelegateOpen(false);
       setRedelegateOpen(false);
+      setTimeout(() => {
+        fetchAuthzDelegatorTotalRewards();
+      }, 3000);
     }
   }, [authzExecTx]);
-
-  useEffect(() => {
-    dispatch(
-      getAuthzDelegatorTotalRewards({
-        baseURL: chainInfo?.config?.rest,
-        chainID: chainID,
-        address: granter,
-      })
-    );
-  }, []);
 
   return (
     <>
@@ -263,15 +294,21 @@ function StakingGranter(props) {
           </Button>
           <Button
             variant="contained"
-            color="primary"
             disableElevation
             size="small"
             sx={{
               textTransform: "none",
             }}
-            disabled={!withdrawAuthzGranters.includes(granter)}
+            onClick={() => onAuthzWithdrawAllRewards()}
+            disabled={!withdrawAuthzGranters.includes(granter) || authzExecTx?.status === "pending" || Number(totalRewards) === 0}
           >
-            Claim Rewards: {totalRewards}
+            {authzExecTx?.status === "pending" ? (
+              <CircularProgress size={25} />
+            ) : (
+              `Claim Rewards: ${(+totalRewards).toLocaleString()} ${
+                currency?.coinDenom
+              }`
+            )}
           </Button>
         </Grid>
       </Grid>
