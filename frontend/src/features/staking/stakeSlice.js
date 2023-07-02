@@ -44,20 +44,21 @@ const initialState = {
       type: "",
     },
   },
+  overviewTx: {
+    status: "",
+  }
 };
 
-export const txSignAndBroadcast = createAsyncThunk(
+export const txRestake = createAsyncThunk(
   "staking/restake",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
-
-    console.log(data);
     try {
       const result = await signAndBroadcast(
         data.chainId,
         data.aminoConfig,
         data.prefix,
         data.msgs,
-        260000,
+        368995,
         data.memo,
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -69,14 +70,6 @@ export const txSignAndBroadcast = createAsyncThunk(
             hash: result?.transactionHash,
           })
         );
-        // dispatch(resetDelegations({ chainID: data.chainId }));
-        // dispatch(
-        //   getDelegations({
-        //     baseURL: data.baseURL,
-        //     address: data.delegator,
-        //     chainID: data.chainId,
-        //   })
-        // );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         dispatch(
@@ -88,7 +81,6 @@ export const txSignAndBroadcast = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-      console.log(error);
       dispatch(
         setError({
           type: "error",
@@ -390,6 +382,9 @@ export const stakeSlice = createSlice({
   name: "staking",
   initialState,
   reducers: {
+    resetRestakeTx: (state) => {
+      state.overviewTx.status = "idle";
+    },
     resetTxType: (state, action) => {
       let chainID = action.payload.chainID;
       state.chains[chainID].tx.type = "";
@@ -679,6 +674,18 @@ export const stakeSlice = createSlice({
           action.payload.data;
       })
       .addCase(getPoolInfo.rejected, (state, action) => {});
+
+      // restake transaction
+      builder
+      .addCase(txRestake.pending, (state) => {
+        state.overviewTx.status = "pending";
+      })
+      .addCase(txRestake.fulfilled, (state) => {
+        state.overviewTx.status = "idle";
+      })
+      .addCase(txRestake.rejected, (state) => {
+        state.overviewTx.status = "rejected";
+      });
   },
 });
 
@@ -688,6 +695,7 @@ export const {
   resetDelegations,
   resetTxType,
   resetDefaultState,
+  resetRestakeTx,
 } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

@@ -1,11 +1,10 @@
 import { Avatar, Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
-import { txWithdrawAllRewards } from "../../features/distribution/distributionSlice";
-import { txSignAndBroadcast } from "../../features/staking/stakeSlice";
-import { WithdrawAllRewardsMsg } from "../../txns/distr";
+import { resetRestakeTx, txRestake } from "../../features/staking/stakeSlice";
 import { Delegate } from "../../txns/staking";
 import { parseBalance } from "../../utils/denom";
 
@@ -25,6 +24,9 @@ export const ChainDetails = (props) => {
   const staked = useSelector(
     (state) => state.staking?.chains?.[chainID]?.delegations?.totalStaked || 0
   );
+
+  const txRestakeStatus = useSelector(state => state.staking.overviewTx.status);
+
   const wallet = useSelector((state) => state.wallet);
   const chainInfo = wallet?.networks?.[chainID];
   const denom = chainInfo?.network?.config?.currencies?.[0]?.coinDenom;
@@ -33,15 +35,27 @@ export const ChainDetails = (props) => {
       ?.coinMinimalDenom;
   const decimals =
     chainInfo?.network?.config?.currencies?.[0]
-      ?.coinDecimals || 0;
+      ?.coinDecimals || 1;
   const logoURL = chainInfo?.network?.logos?.menu;
   const navigate = useNavigate();
+  const feegrant = useSelector((state) => state.common.feegrant);
 
   const handleOnClick = (chainName) => {
     navigate(`/${chainName}/overview`);
   };
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (txRestakeStatus === "idle") {
+      // TODO: reset rewards
+      // TODO: add rewards to delegation and update validator VP
+    }
+  }, [txRestakeStatus]);
+
+  useEffect(() => {
+    dispatch(resetRestakeTx());
+  }, []);
 
   const actionClaimAndStake = () => {
     const msgs = [];
@@ -51,27 +65,27 @@ export const ChainDetails = (props) => {
       for (let i = 0; i < delegation.reward.length; i++) {
         const reward = delegation.reward[i];
         if (reward.denom === minimalDenom) {
-          // msgs.push(WithdrawAllRewardsMsg(delegator, delegation.validator_address));
-          msgs.push(Delegate(delegator, delegation.validator_address, reward.amount, minimalDenom));
+          msgs.push(Delegate(delegator, delegation.validator_address, parseInt(reward.amount), minimalDenom));
         }
       }
     }
 
-    console.log(msgs);
-
-    dispatch(txSignAndBroadcast({
+    dispatch(txRestake({
       msgs: msgs,
       chainId: chainID,
-
       denom: minimalDenom,
-          chainId: chainID,
-          rest: chainInfo?.network?.config?.rest,
-          aminoConfig: chainInfo?.network?.aminoConfig,
-          prefix: chainInfo?.network?.config?.bech32Config.bech32PrefixAccAddr,
-          feeAmount: chainInfo?.network?.config?.gasPriceStep.average * 10 ** decimals,
-          feegranter: null,
-          memo: "Delegate(rewards)"
+      chainId: chainID,
+      rest: chainInfo?.network?.config?.rest,
+      aminoConfig: chainInfo?.network?.aminoConfig,
+      prefix: chainInfo?.network?.config?.bech32Config.bech32PrefixAccAddr,
+      feeAmount: chainInfo?.network?.config?.gasPriceStep.average * 10 ** decimals,
+      feegranter: feegrant?.granter,
+      memo: "Delegate(rewards)"
     }));
+  }
+
+  const claimRewards = () => {
+    // TODO: dispatch claim all rewards transaction
   }
 
   return (
@@ -127,13 +141,23 @@ export const ChainDetails = (props) => {
               sx={{
                 textTransform: "none"
               }}
-              disabled={totalRewards <= 0}
-              onClick={
-                
-                () => actionClaimAndStake()
-              }
+              disabled={totalRewards <= 0 || txRestakeStatus === "pending"}
+              onClick={actionClaimAndStake}
             >
               Claim&nbsp;&&nbsp;Stake
+            </Button>
+            <Button
+              color="primary"
+              disableElevation
+              variant="contained"
+              size="small"
+              sx={{
+                textTransform: "none",
+                ml: 1,
+              }}
+              onClick={claimRewards}
+            >
+              Claim
             </Button>
           </StyledTableCell>
         </StyledTableRow>

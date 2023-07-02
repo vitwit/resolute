@@ -157,16 +157,56 @@ export default function Home() {
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} onChange={handleChange} aria-label="menu bar">
-          <Tab label="Overview" {...a11yProps(0)} />
-          <Tab label="Transfers" {...a11yProps(1)} />
-          <Tab label="Governance" {...a11yProps(2)} />
-          <Tab label="Staking" {...a11yProps(3)} />
-          {!authzEnabled && <Tab label="Multisig" {...a11yProps(4)} />}
-          {!authzEnabled && <Tab label="Authz" {...a11yProps(5)} />}
-          <Tab label="Feegrant" {...a11yProps(6)} />
-          <Tab label="DAOs" {...a11yProps(7)} />
-          {!authzEnabled && <Tab label="Airdrop" {...a11yProps(8)} />}
+        <Tabs value={value} onChange={handleChange} aria-label="menu bar"
+        >
+          <Tab
+            label="Overview"
+            {...a11yProps(0)}
+          />
+          <Tab
+            label="Transfers"
+            {...a11yProps(1)}
+          />
+          <Tab
+            label="Governance"
+            {...a11yProps(2)}
+          />
+          <Tab
+            label="Staking"
+            {...a11yProps(3)}
+          />
+          {
+            !authzEnabled ?
+              <Tab
+                label="Multisig"
+                {...a11yProps(4)}
+              />
+              :
+              null
+          }
+          {!authzEnabled ?
+            <Tab
+              label="Authz"
+              {...a11yProps(5)} />
+            :
+            null
+          }
+          <Tab
+            label="Feegrant"
+            {...a11yProps(6)}
+          />
+          <Tab
+            label="DAOs"
+            {...a11yProps(7)}
+          />
+          {!authzEnabled ?
+            <Tab
+              label="Airdrop"
+              {...a11yProps(8)}
+            />
+            :
+            null
+          }
         </Tabs>
       </Box>
 

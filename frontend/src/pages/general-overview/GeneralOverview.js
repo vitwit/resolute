@@ -225,7 +225,7 @@ export const GeneralOverview = (props) => {
                 Rewards
               </StyledTableCell>
               <StyledTableCell>
-                Action
+                &nbsp;Actions
               </StyledTableCell>
             </StyledTableRow>
           </TableHead>
