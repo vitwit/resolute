@@ -4,9 +4,9 @@ import { Validators } from './Validators';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDelegatorTotalRewards, txWithdrawAllRewards } from '../../features/distribution/distributionSlice';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 export const Chain = (props) => {
-
   const chainID = props?.chain?.chainName;
   const wallet = useSelector((state) => state.wallet);
   const feegrant = useSelector((state) => state.common.feegrant);
@@ -18,6 +18,8 @@ export const Chain = (props) => {
 
   let chainReward = (+props?.chainReward?.totalRewards).toLocaleString();
   let chainStakedAmount = (+props?.chain?.stakedAmount).toLocaleString();
+
+  const navigate = useNavigate();
 
   const onClickClaim = () => {
     let delegationPairs = [];
@@ -54,33 +56,50 @@ export const Chain = (props) => {
   return (
     <Card
       sx={{
-        mb: 2,
-        p: 1,
+        mb: 1,
       }}
       elevation={0}
     >
       <CardContent>
-        <Grid container justifyContent="space-between" alignItems="center">
+        <Grid
+          container
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Grid item>
             <div
               style={{
                 display: "flex"
               }}
             >
-              <Avatar src={props.chain.imageURL} sx={{ width: 36, height: 36 }} />
+              <Avatar
+                src={props.chain.imageURL}
+                sx={{
+                  width: 36,
+                  height: 36
+                }}
+              />
               <Typography
                 align="left"
                 variant="h6"
                 gutterBottom
                 color="text.secondary"
                 sx={{
-                  ml: 2
+                  ml: 1,
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
                 }}
+                onClick={() =>
+                  navigate(`/${chainInfo?.network?.config?.chainName.toLowerCase()}/staking`)
+                }
               >
                 {chainInfo?.network?.config?.chainName}
               </Typography>
             </div>
-            <Typography align="left" variant="h6"
+            <Typography
+              align="left"
+              variant="body1"
               fontWeight={500}
               color="text.primary"
               gutterBottom>
@@ -89,7 +108,9 @@ export const Chain = (props) => {
 
           </Grid>
           <Grid item>
-            <Button variant="contained" color="primary"
+            <Button
+              variant="contained"
+              color="primary"
               disableElevation
               size="small"
               disabled={distTxStatus.status === 'pending'}
@@ -104,7 +125,9 @@ export const Chain = (props) => {
                   &nbsp;&nbsp;Please wait...
                 </>
               ) : (
-                <>Claim:&nbsp;{chainReward}&nbsp;{props.chain.denom}</>
+                <>
+                  Claim:&nbsp;{chainReward}&nbsp;{props.chain.denom}
+                </>
               )}
             </Button>
           </Grid>
