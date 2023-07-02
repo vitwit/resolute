@@ -18,17 +18,11 @@ export function InActiveValidators(props) {
   const validators = useSelector(
     (state) => state.staking.chains[chainID].validators
   );
-  const totalInactive = useSelector(
-    (state) => state.staking.chains[chainID].validators.totalInactive
-  );
   const delegatedTo = useSelector(
     (state) => state.staking.chains[chainID].delegations.delegatedTo
   );
 
   const [inactiveVals, setInactiveVals] = useState(validators.inactiveSorted);
-
-  const perPage = 10;
-  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     setInactiveVals(validators.inactiveSorted);
@@ -52,14 +46,13 @@ export function InActiveValidators(props) {
           </TableHead>
           <TableBody>
             {inactiveVals
-              .slice((currentPage - 1) * perPage, currentPage * perPage)
               .map((keyName, index) => (
                 <StyledTableRow
                   key={index + 1}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <StyledTableCell component="th" scope="row">
-                    {index + 1 + (currentPage - 1) * 10}
+                    {index + 1}
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     {validators.inactive[keyName]?.description.moniker}
@@ -78,9 +71,9 @@ export function InActiveValidators(props) {
                     {validators.inactive[keyName]?.jailed
                       ? formatValidatorStatus(true, null)
                       : formatValidatorStatus(
-                          false,
-                          validators.inactive[keyName]?.status
-                        )}
+                        false,
+                        validators.inactive[keyName]?.status
+                      )}
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {validators.inactive[keyName]?.jailed ? (
@@ -167,25 +160,6 @@ export function InActiveValidators(props) {
           </TableBody>
         </Table>
       </TableContainer>
-      {totalInactive > 0 ? (
-        <Box
-          component="div"
-          sx={{
-            textAlign: "center",
-            p: 1,
-          }}
-        >
-          <Pagination
-            count={Math.ceil(totalInactive / perPage)}
-            shape="circular"
-            onChange={(_, v) => {
-              setCurrentPage(v);
-            }}
-          />
-        </Box>
-      ) : (
-        <></>
-      )}
     </>
   );
 }
