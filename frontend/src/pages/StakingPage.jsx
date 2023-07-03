@@ -22,35 +22,49 @@ export default function StakingPage() {
 
   return (
     <div>
-      <Paper elevation={0} sx={{ p: 4 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 5 }}>
-          <Typography color="text.primary" variant="h6" fontWeight={600}>
-            STAKING
-          </Typography>
-          <SelectNetwork
-            onSelect={(name) => {
-              handleOnSelect(name);
-            }}
-            networks={Object.keys(nameToChainIDs)}
-            defaultNetwork={
-              currentNetwork?.length > 0
-                ? currentNetwork.toLowerCase().replace(/ /g, "")
-                : defaultChain
-            }
-          />
+      <Paper
+        elevation={0}
+        sx={{
+          p: 2
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          {
+            currentNetwork?.length > 0 ?
+              <SelectNetwork
+                onSelect={(name) => {
+                  handleOnSelect(name);
+                }}
+                networks={Object.keys(nameToChainIDs)}
+                defaultNetwork={
+                  currentNetwork?.length > 0
+                    ? currentNetwork.toLowerCase().replace(/ /g, "")
+                    : defaultChain
+                }
+              />
+              :
+              null
+          }
         </Box>
-        {currentNetwork ? 
-        <div sx={{ justifyContent: "center", display: "flex", mr: 1 }}>
-          {Object.keys(stakingChains)?.length > 0 ? (
-            <Validators
-              chainID={nameToChainIDs[currentNetwork]}
-              currentNetwork={currentNetwork}
-              nameToChainIDs={nameToChainIDs}
-            />
-          ) : (
-            <></>
-          )}
-        </div> : <StakingOverview/> }
+        {currentNetwork ?
+          <div 
+          sx={{ justifyContent: "center", display: "flex", mr: 1 }}>
+            {Object.keys(stakingChains)?.length > 0 ? (
+              <Validators
+                chainID={nameToChainIDs[currentNetwork]}
+                currentNetwork={currentNetwork}
+                nameToChainIDs={nameToChainIDs}
+              />
+            ) : (
+              <></>
+            )}
+          </div> : 
+          <StakingOverview />}
       </Paper>
     </div>
   );

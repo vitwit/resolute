@@ -131,23 +131,32 @@ const StakingOverview = (props) => {
     <Container>
       {data?.chains?.length > 0 ?
         <>
-          <StakingTotal totalAmount={data.totalAmount} totalReward={rewardData.totalReward} />
-          <div>
-            {
-              data.chains.map((chain) =>
-                <Chain chain={chain} key={chain.chainName} chainReward={rewardData?.[chain.chainName]} />
-              )
-            }
-          </div>
+          <StakingTotal
+            totalAmount={data.totalAmount}
+            totalReward={rewardData.totalReward}
+          />
+          {
+            data.chains.map((chain) =>
+              <Chain
+                chain={chain}
+                key={chain.chainName}
+                chainReward={rewardData?.[chain.chainName]}
+              />
+            )
+          }
         </>
         :
         <Typography
-            variant="h6"
-            color="text.primary"
-            style={{ display: "flex", justifyContent: "center", padding: 16 }}
-          >
-            No delegations
-          </Typography>
+          variant="h6"
+          color="text.primary"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 3,
+          }}
+        >
+          No delegations
+        </Typography>
       }
     </Container >
   );
