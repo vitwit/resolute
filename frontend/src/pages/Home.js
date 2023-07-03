@@ -94,7 +94,7 @@ function getTabIndex(path) {
   else return 0;
 }
 
-export default function Home() {
+export default function Home(props) {
   const authzEnabled = useSelector((state) => state.common.authzMode);
   const [value, setValue] = React.useState(0);
   const selectedNetwork = useSelector(
@@ -109,6 +109,8 @@ export default function Home() {
   const location = useLocation();
   const pathParts = location.pathname.split("/");
   const page = pathParts?.[pathParts?.length - 1];
+
+  const authzTabs = useSelector((state) => state.authz.tabs);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -153,15 +155,37 @@ export default function Home() {
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange} aria-label="menu bar">
-          <Tab label="Overview" {...a11yProps(0)} />
-          <Tab label="Transfers" {...a11yProps(1)} />
-          <Tab label="Governance" {...a11yProps(2)} />
-          <Tab label="Staking" {...a11yProps(3)} />
-          {!authzEnabled && <Tab label="Multisig" {...a11yProps(4)} />}
-          {!authzEnabled && <Tab label="Authz" {...a11yProps(5)} />}
-          <Tab label="Feegrant" {...a11yProps(6)} />
-          <Tab label="DAOs" {...a11yProps(7)} />
-          {!authzEnabled && <Tab label="Airdrop" {...a11yProps(8)} />}
+          <Tab label="Overview" {...a11yProps(0)} value={0} />
+          <Tab
+            label="Transfers"
+            {...a11yProps(1)}
+            value={1}
+            disabled={authzEnabled && !authzTabs?.sendEnabled}
+          />
+          <Tab
+            label="Governance"
+            {...a11yProps(2)}
+            value={2}
+            disabled={authzEnabled && !authzTabs?.govEnabled}
+          />
+          <Tab
+            label="Staking"
+            {...a11yProps(3)}
+            value={3}
+            disabled={authzEnabled && !authzTabs?.stakingEnabled}
+          />
+          {!authzEnabled && authzTabs?.multisigEnabled ? (
+            <Tab label="Multisig" {...a11yProps(4)} value={4} />
+          ) : null}
+          {!authzEnabled && <Tab label="Authz" {...a11yProps(5)} value={5} />}
+          <Tab label="Feegrant" {...a11yProps(6)} value={6} />
+          <Tab
+            label="DAOs"
+            {...a11yProps(7)}
+            value={7}
+            disabled={authzEnabled && !authzTabs?.daosEnabled}
+          />
+          {!authzEnabled && <Tab label="Airdrop" {...a11yProps(8)} value={8} />}
         </Tabs>
       </Box>
 
