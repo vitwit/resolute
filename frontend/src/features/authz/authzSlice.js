@@ -14,8 +14,20 @@ import {
 import { setError, setTxHash } from "../common/commonSlice";
 import { AuthzExecMsgUnjail } from "../../txns/authz/exec";
 import { signAndBroadcast } from "../../utils/signing";
+import { getAuthzTabs } from "../../utils/authorizations";
 
 const initialState = {
+  tabResetStatus: false,
+  tabs: {
+    airdropEnabled: false,
+    authzEnabled: false,
+    daosEnabled: false,
+    feegrantEnabled: false,
+    govEnabled: false,
+    multisigEnabled: false,
+    sendEnabled: false,
+    stakingEnabled: false,
+  },
   grantsToMe: {},
   grantsByMe: {},
   tx: {
@@ -136,6 +148,7 @@ export const txAuthzRevoke = createAsyncThunk(
           getGrantsByMe({
             baseURL: data.baseURL,
             granter: data.granter,
+            chainID: data.chainID,
           })
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
@@ -434,6 +447,14 @@ export const authzSlice = createSlice({
     resetTxAuthzRes: (state) => {
       state.txAuthzRes = {};
     },
+    resetTabs: (state) => {
+      state.tabs = {...initialState.tabs};
+      state.tabResetStatus = true;
+    },
+    resetTabResetStatus: (state) => {
+      state.tabResetStatus = false;
+    }
+
   },
   extraReducers: (builder) => {
     builder
@@ -451,11 +472,23 @@ export const authzSlice = createSlice({
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
-        if (chainID.length) {
+        const { changeAuthzTab } = action.meta?.arg;
+
+        if (chainID?.length) {
+          let grants = action.payload.data.grants;
+          if (changeAuthzTab) {
+            const existingTabs = state.tabs;
+            const updatedTabs = getAuthzTabs(grants);
+            for (let tabIndex in updatedTabs) {
+              updatedTabs[tabIndex] =
+                updatedTabs[tabIndex] || existingTabs[tabIndex];
+            }
+            state.tabs = updatedTabs;
+          }
           let result = {
             status: "idle",
             errMsg: "",
-            grants: action.payload.data.grants,
+            grants: grants,
             pagination: action.payload.data.pagination,
           };
           state.grantsToMe[chainID] = result;
@@ -463,7 +496,7 @@ export const authzSlice = createSlice({
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
         const chainID = action.meta.arg.chainID;
-        if(chainID.length) {
+        if (chainID.length) {
           state.grantsToMe[chainID].status = "rejected";
           state.grantsToMe[chainID].grants = [];
           state.grantsToMe[chainID].pagination = {};
@@ -496,7 +529,7 @@ export const authzSlice = createSlice({
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
         const chainID = action.meta.arg.chainID;
-        if(chainID.length) {
+        if (chainID?.length) {
           state.grantsByMe[chainID].status = "rejected";
           state.grantsByMe[chainID].grants = [];
           state.grantsByMe[chainID].pagination = {};
@@ -564,7 +597,9 @@ export const {
   setSelectedGranter,
   resetExecTx,
   resetTxAuthzRes,
+  resetTabs,
   exitAuthzMode,
+  resetTabResetStatus,
 } = authzSlice.actions;
 
 export default authzSlice.reducer;
