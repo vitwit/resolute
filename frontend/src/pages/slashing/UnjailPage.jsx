@@ -67,13 +67,6 @@ export default function Unjail() {
   const [authzGrants, setAuthzGrants] = useState();
   const [granter, setGranter] = useState("");
 
-  // const selectedAuthz = useSelector((state) => state.authz.selected);
-
-  // const authzUnjail = useMemo(
-  //   () => getUnjailAuthz(grantsToMe.grants, selectedAuthz.granter),
-  //   [grantsToMe.grants]
-  // );
-
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(resetError());
@@ -157,111 +150,116 @@ export default function Unjail() {
         mt: 6,
       }}
     >
-      {feegrant?.granter?.length > 0 ? (
-        <FeegranterInfo
-          feegrant={feegrant}
-          onRemove={() => {
-            removeFeegrant();
-          }}
-        />
-      ) : null}
-      {/* {authzGrants?.length > 0 &&
-      authzUnjail?.granter !== selectedAuthz.granter ? (
-        <Alert>You don't have permission to execute this transcation</Alert>
-      ) : ( */}
-        <Grid container>
-          <Grid item md={3} xs={12}></Grid>
-          <Grid item md={6} xs={12}>
-            <Paper
-              elevation={0}
-              sx={{
-                p: 3,
+      {isAuthzMode && isNoAuthzs ? (
+        <>
+          <Typography variant="h5">
+            You don't have permission to execute this transcation
+          </Typography>
+        </>
+      ) : (
+        <>
+          {feegrant?.granter?.length > 0 ? (
+            <FeegranterInfo
+              feegrant={feegrant}
+              onRemove={() => {
+                removeFeegrant();
               }}
-            >
-              <Typography
-                variant="h6"
-                color="text.primary"
-                fontWeight={500}
-                gutterBottom
+            />
+          ) : null}
+          <Grid container>
+            <Grid item md={3} xs={12}></Grid>
+            <Grid item md={6} xs={12}>
+              <Paper
+                elevation={0}
                 sx={{
-                  mb: 2,
+                  p: 3,
                 }}
               >
-                Unjail
-              </Typography>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div>
-                  <Controller
-                    name="validator"
-                    control={control}
-                    rules={{ required: "Validator is required" }}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        required
-                        label="Validator"
-                        fullWidth
-                        sx={{
-                          mb: 2,
-                        }}
-                      />
-                    )}
-                  />
-                </div>
-                {isAuthzMode && authzGrants?.length > 0 ? (
-                  <FormControl
-                    fullWidth
-                    sx={{
-                      mt: 1,
-                    }}
-                    required
-                  >
-                    <InputLabel id="granter-label">Granter</InputLabel>
-                    <Select
-                      labelId="granter-label"
-                      id="granter-select"
-                      value={granter}
-                      label="Granter"
-                      onChange={(e) => {
-                        setGranter(e.target.value);
-                      }}
-                      size="small"
-                    >
-                      {authzGrants.map((granter, index) => (
-                        <MenuItem id={index} value={granter}>
-                          {granter}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                ) : null}
-                <Button
-                  disableElevation
+                <Typography
+                  variant="h6"
+                  color="text.primary"
+                  fontWeight={500}
+                  gutterBottom
                   sx={{
-                    textTransform: "none",
-                    mt: 2,
+                    mb: 2,
                   }}
-                  variant="contained"
-                  // onClick={() => onUnjailTx()}
-                  type="submit"
-                  disabled={
-                    slashingTx.status === "pending" ||
-                    authzExecTx.status === "pending"
-                  }
                 >
-                  {slashingTx.status === "pending" ||
-                  authzExecTx.status === "pending" ? (
-                    <CircularProgress size={25} />
-                  ) : (
-                    "Unjail"
-                  )}
-                </Button>
-              </form>
-            </Paper>
+                  Unjail
+                </Typography>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div>
+                    <Controller
+                      name="validator"
+                      control={control}
+                      rules={{ required: "Validator is required" }}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          required
+                          label="Validator"
+                          fullWidth
+                          sx={{
+                            mb: 2,
+                          }}
+                        />
+                      )}
+                    />
+                  </div>
+                  {isAuthzMode && authzGrants?.length > 0 ? (
+                    <FormControl
+                      fullWidth
+                      sx={{
+                        mt: 1,
+                      }}
+                      required
+                    >
+                      <InputLabel id="granter-label">Granter</InputLabel>
+                      <Select
+                        labelId="granter-label"
+                        id="granter-select"
+                        value={granter}
+                        label="Granter"
+                        onChange={(e) => {
+                          setGranter(e.target.value);
+                        }}
+                        size="small"
+                      >
+                        {authzGrants.map((granter, index) => (
+                          <MenuItem id={index} value={granter}>
+                            {granter}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  ) : null}
+                  <Button
+                    disableElevation
+                    sx={{
+                      textTransform: "none",
+                      mt: 2,
+                    }}
+                    variant="contained"
+                    // onClick={() => onUnjailTx()}
+                    type="submit"
+                    disabled={
+                      slashingTx.status === "pending" ||
+                      authzExecTx.status === "pending"
+                    }
+                  >
+                    {slashingTx.status === "pending" ||
+                    authzExecTx.status === "pending" ? (
+                      <CircularProgress size={25} />
+                    ) : (
+                      "Unjail"
+                    )}
+                  </Button>
+                </form>
+              </Paper>
+            </Grid>
+            <Grid item md={3} xs={12}></Grid>
           </Grid>
-          <Grid item md={3} xs={12}></Grid>
-        </Grid>
-      {/* )} */}
+        </>
+      )}
     </Box>
   );
 }
