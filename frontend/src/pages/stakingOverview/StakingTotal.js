@@ -1,25 +1,28 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Grid, Card, CardContent, Typography, Button } from '@mui/material';
+import React from "react";
+import PropTypes from "prop-types";
+import { Grid, Card, CardContent, Typography } from "@mui/material";
 
 export const StakingTotal = (props) => {
   return (
     <Grid container
       sx={{
-        mb: 3,
+        mb: 1,
       }}
       spacing={1}
     >
-      <Grid item xs={6} md={6}>
+      <Grid item xs={6} md={4}>
         <Card
           elevation={0}
         >
           <CardContent>
             <Typography
               align="left"
-              variant='h6'
+              variant="body1"
+              fontWeight={500}
               color="text.secondary"
-            >Total Staked Balance</Typography>
+            >
+              Total Staked Balance
+            </Typography>
             <Typography
               align="left"
               variant="h6"
@@ -30,37 +33,51 @@ export const StakingTotal = (props) => {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={6} md={6}>
+      <Grid item xs={6} md={4}>
         <Card
           elevation={0}
         >
           <CardContent>
-            <Grid container justifyContent="space-between" alignItems="center">
-              <Grid item>
-                <Typography
-                  align="left"
-                  variant='h6'
-                  color="text.secondary"
-                >Total Staking Rewards</Typography>
-                <Typography
-                  align="left"
-                  variant="h6"
-                  color="text.primary"
-                >${props?.totalReward}</Typography>
-              </Grid>
-              <Grid item>
-                <Button variant="contained" color="primary" disableElevation
-                  sx={{
-                    textTransform: "none"
-                  }}
-                >
-                  Claim
-                </Button>
-              </Grid>
-            </Grid>
+            <Typography
+              align="left"
+              variant="body1"
+              fontWeight={500}
+              color="text.secondary"
+            >Total Staking Rewards</Typography>
+            <Typography
+              align="left"
+              variant="h6"
+              color="text.primary"
+            >${props?.totalReward}</Typography>
+
           </CardContent>
         </Card>
       </Grid>
+      {
+        /* 
+          TODO: add claim all networks rewards 
+        */
+      }
+      {/* <Grid
+        item
+        sx={{
+          margin: "auto"
+        }}
+        md={4}
+        xs={6}
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          disableElevation
+          size="small"
+          sx={{
+            textTransform: "none",
+          }}
+        >
+          Claim
+        </Button>
+      </Grid> */}
     </Grid>
   );
 };

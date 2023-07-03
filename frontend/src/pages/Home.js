@@ -149,11 +149,6 @@ export default function Home() {
     setValue(getTabIndex(page));
   }, []);
 
-  useEffect(() => {
-    const chainIds = Object.keys(wallet.networks);
-    dispatch(stakingResetDefaultState(chainIds));
-  }, [wallet]);
-
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>

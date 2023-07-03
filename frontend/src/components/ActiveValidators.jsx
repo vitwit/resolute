@@ -8,8 +8,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import { formatVotingPower } from "../utils/denom";
 import { formatValidatorStatus } from "../utils/util";
-import { Pagination } from "@mui/material";
-import { Box } from "@mui/system";
 import { useSelector } from "react-redux";
 import { useTheme } from "@emotion/react";
 
@@ -21,14 +19,8 @@ export function ActiveValidators(props) {
   const delegatedTo = useSelector(
     (state) => state.staking.chains[chainID].delegations.delegatedTo
   );
-  const totalActive = useSelector(
-    (state) => state.staking.chains[chainID].validators.totalActive
-  );
 
   const [activeVals, setActiveVals] = useState(validators.activeSorted);
-
-  const perPage = 10;
-  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     setActiveVals(validators.activeSorted);
@@ -52,14 +44,13 @@ export function ActiveValidators(props) {
           </TableHead>
           <TableBody>
             {activeVals
-              .slice((currentPage - 1) * perPage, currentPage * perPage)
               .map((keyName, index) => (
                 <StyledTableRow
                   key={index + 1}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <StyledTableCell component="th" scope="row">
-                    {index + 1 + (currentPage - 1) * perPage}
+                    {index + 1}
                   </StyledTableCell>
                   <StyledTableCell align="left">
                     {validators.active[keyName]?.description.moniker}
@@ -71,9 +62,9 @@ export function ActiveValidators(props) {
                     {validators.active[keyName]?.jailed
                       ? formatValidatorStatus(true, null)
                       : formatValidatorStatus(
-                          false,
-                          validators.active[keyName]?.status
-                        )}
+                        false,
+                        validators.active[keyName]?.status
+                      )}
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {(
@@ -159,25 +150,6 @@ export function ActiveValidators(props) {
           </TableBody>
         </Table>
       </TableContainer>
-      {totalActive > 0 ? (
-        <Box
-          component="div"
-          sx={{
-            textAlign: "center",
-            p: 1,
-          }}
-        >
-          <Pagination
-            count={Math.ceil(totalActive / perPage)}
-            shape="circular"
-            onChange={(_, v) => {
-              setCurrentPage(v);
-            }}
-          />
-        </Box>
-      ) : (
-        <></>
-      )}
     </>
   );
 }
