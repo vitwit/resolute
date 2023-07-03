@@ -21,6 +21,7 @@ import { isDarkMode, mdTheme } from "../utils/theme";
 import { Paper, Typography } from "@mui/material";
 import Home from "./Home";
 import { defaultPallet } from "../utils/pallet";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const [snackOpen, setSnackOpen] = useState(false);
@@ -43,6 +44,7 @@ export default function Dashboard() {
 
   const mainnets = getMainNetworks();
   const testnets = getTestNetworks();
+  const navigate = useNavigate()
   useEffect(() => {
 
     setTimeout(() => {
@@ -53,8 +55,9 @@ export default function Dashboard() {
         })
       );
     }, 1000);
-
     const listener = () => {
+      navigate('/');
+      window.location.reload()
       setTimeout(() => {
         dispatch(
           connectKeplrWalletV1({
