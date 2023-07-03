@@ -3,7 +3,7 @@ import { Typography, Button, Grid, CircularProgress } from "@mui/material";
 import AuthzDelegations from "./AuthzDelegations";
 import { useTheme } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAuthzDelegations } from "../../features/staking/stakeSlice";
+import { getAllValidators, getAuthzDelegations } from "../../features/staking/stakeSlice";
 import { getAuthzDelegatorTotalRewards } from "../../features/distribution/distributionSlice";
 import { getBalances } from "../../features/bank/bankSlice";
 import { parseBalance } from "../../utils/denom";
@@ -231,6 +231,13 @@ export default function StakingGranter(props) {
   useEffect(() => {
     fetchGranterDelegationsInfo();
     fetchAuthzDelegatorTotalRewards();
+    dispatch(
+      getAllValidators({
+        chainID: chainID,
+        baseURL: chainInfo.config.rest,
+        status: null,
+      })
+    );
   }, []);
 
   useEffect(() => {
