@@ -3,73 +3,30 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getGrantsToMe } from "../../features/authz/authzSlice";
 import StakingGranter from "./StakingGranter";
+import PropTypes from "prop-types";
+import {
+  GENERIC_AUTHORIZATION,
+  MSG_BEGIN_REDELEGATE,
+  MSG_DELEGATE,
+  MSG_WITHDRAW_DELEGATOR_REWARD,
+  MSG_UNDELEGATE,
+} from "./common";
 
-const filterDelegateAuthz = (grantsToMe) => {
+const filterAuthzStaking = (grantsToMe, MsgType) => {
   const granters = [];
   const grants = grantsToMe?.grants || [];
   for (const grant of grants) {
     const authorizationType = grant?.authorization["@type"];
-    const isGenericAuthorization =
-      authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
-    const isMsgDelegate =
-      grant?.authorization.msg === "/cosmos.staking.v1beta1.MsgDelegate";
-    if (isGenericAuthorization && isMsgDelegate) {
+    const isGenericAuthorization = authorizationType === GENERIC_AUTHORIZATION;
+    const isMsgAuthzStaking = grant?.authorization.msg === MsgType;
+    if (isGenericAuthorization && isMsgAuthzStaking) {
       granters.push(grant.granter);
     }
   }
   return granters;
 };
 
-const filterUndelegateAuthz = (grantsToMe) => {
-  const granters = [];
-  const grants = grantsToMe?.grants || [];
-  for (const grant of grants) {
-    const authorizationType = grant?.authorization["@type"];
-    const isGenericAuthorization =
-      authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
-    const isMsgUndelegate =
-      grant?.authorization.msg === "/cosmos.staking.v1beta1.MsgUndelegate";
-    if (isGenericAuthorization && isMsgUndelegate) {
-      granters.push(grant.granter);
-    }
-  }
-  return granters;
-};
-
-const filterRedelegateAuthz = (grantsToMe) => {
-  const granters = [];
-  const grants = grantsToMe?.grants || [];
-  for (const grant of grants) {
-    const authorizationType = grant?.authorization["@type"];
-    const isGenericAuthorization =
-      authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
-    const isMsgBeginRedelegate =
-      grant?.authorization.msg === "/cosmos.staking.v1beta1.MsgBeginRedelegate";
-    if (isGenericAuthorization && isMsgBeginRedelegate) {
-      granters.push(grant.granter);
-    }
-  }
-  return granters;
-};
-
-const filterWithdrawAuthz = (grantsToMe) => {
-  const granters = [];
-  const grants = grantsToMe?.grants || [];
-  for (const grant of grants) {
-    const authorizationType = grant?.authorization["@type"];
-    const isGenericAuthorization =
-      authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
-    const isMsgWithdrawDelegatorReward =
-      grant?.authorization.msg ===
-      "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward";
-    if (isGenericAuthorization && isMsgWithdrawDelegatorReward) {
-      granters.push(grant.granter);
-    }
-  }
-  return granters;
-};
-
-function StakingGrants(props) {
+export default function StakingGrants(props) {
   const { chainName } = props;
   const dispatch = useDispatch();
 
@@ -83,10 +40,16 @@ function StakingGrants(props) {
 
   const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
 
-  const delegateAuthzGrants = filterDelegateAuthz(grantsToMe);
-  const undelegateAuthzGrants = filterUndelegateAuthz(grantsToMe);
-  const redelegateAuthzGrants = filterRedelegateAuthz(grantsToMe);
-  const withdrawAuthzGranters = filterWithdrawAuthz(grantsToMe);
+  const delegateAuthzGrants = filterAuthzStaking(grantsToMe, MSG_DELEGATE);
+  const undelegateAuthzGrants = filterAuthzStaking(grantsToMe, MSG_UNDELEGATE);
+  const redelegateAuthzGrants = filterAuthzStaking(
+    grantsToMe,
+    MSG_BEGIN_REDELEGATE
+  );
+  const withdrawAuthzGranters = filterAuthzStaking(
+    grantsToMe,
+    MSG_WITHDRAW_DELEGATOR_REWARD
+  );
 
   useEffect(() => {
     if (address.length > 0) {
@@ -149,4 +112,6 @@ function StakingGrants(props) {
   );
 }
 
-export default StakingGrants;
+StakingGrants.propTypes = {
+  chainName: PropTypes.string.isRequired,
+};

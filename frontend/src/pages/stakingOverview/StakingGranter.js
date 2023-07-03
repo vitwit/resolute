@@ -12,8 +12,9 @@ import { authzExecHelper } from "../../features/authz/authzSlice";
 import { setError } from "../../features/common/commonSlice";
 import { DialogUndelegate } from "../../components/DialogUndelegate";
 import { DialogRedelegate } from "../../components/DialogRedelegate";
+import PropTypes from "prop-types";
 
-function StakingGranter(props) {
+export default function StakingGranter(props) {
   const {
     chainInfo,
     granter,
@@ -43,9 +44,6 @@ function StakingGranter(props) {
   );
   const stakingParams = useSelector(
     (state) => state.staking.chains[chainID].params
-  );
-  const distTxStatus = useSelector(
-    (state) => state.distribution.chains[chainID].tx
   );
   const txStatus = useSelector((state) => state.staking.chains[chainID].tx);
   const authzExecTx = useSelector((state) => state.authz.execTx);
@@ -300,7 +298,11 @@ function StakingGranter(props) {
               textTransform: "none",
             }}
             onClick={() => onAuthzWithdrawAllRewards()}
-            disabled={!withdrawAuthzGranters.includes(granter) || authzExecTx?.status === "pending" || Number(totalRewards) === 0}
+            disabled={
+              !withdrawAuthzGranters.includes(granter) ||
+              authzExecTx?.status === "pending" ||
+              Number(totalRewards) === 0
+            }
           >
             {authzExecTx?.status === "pending" ? (
               <CircularProgress size={25} />
@@ -313,7 +315,6 @@ function StakingGranter(props) {
         </Grid>
       </Grid>
       <AuthzDelegations
-        chainID={chainID}
         currency={currency}
         delegations={delegations}
         validators={validators}
@@ -322,7 +323,6 @@ function StakingGranter(props) {
         granter={granter}
         rewards={rewards?.list}
         setTotalRewards={setTotalRewards}
-        totalRewards={totalRewards}
         onDelegationAction={onMenuAction}
       />
 
@@ -375,4 +375,12 @@ function StakingGranter(props) {
   );
 }
 
-export default StakingGranter;
+StakingGranter.propTypes = {
+  granter: PropTypes.string.isRequired,
+  delegateAuthzGrants: PropTypes.array.isRequired,
+  undelegateAuthzGrants: PropTypes.array.isRequired,
+  redelegateAuthzGrants: PropTypes.array.isRequired,
+  withdrawAuthzGranters: PropTypes.array.isRequired,
+  chainInfo: PropTypes.object.isRequired,
+  address: PropTypes.string.isRequired,
+};

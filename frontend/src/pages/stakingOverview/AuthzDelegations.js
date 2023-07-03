@@ -10,11 +10,10 @@ import { formatValidatorStatus } from "../../utils/util";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@emotion/react";
 import { CircularProgress } from "@mui/material";
-import { useSelector } from "react-redux";
+import PropTypes from "prop-types";
 
-function AuthzDelegations(props) {
+export default function AuthzDelegations(props) {
   const {
-    chainID,
     delegations,
     validators,
     currency,
@@ -23,7 +22,6 @@ function AuthzDelegations(props) {
     granter,
     rewards,
     setTotalRewards,
-    totalRewards,
     onDelegationAction,
   } = props;
 
@@ -200,4 +198,14 @@ function AuthzDelegations(props) {
   );
 }
 
-export default AuthzDelegations;
+AuthzDelegations.propTypes = {
+  currency: PropTypes.object.isRequired,
+  delegations: PropTypes.object.isRequired,
+  validators: PropTypes.object.isRequired,
+  undelegateAuthzGrants: PropTypes.array.isRequired,
+  redelegateAuthzGrants: PropTypes.array.isRequired,
+  granter: PropTypes.string.isRequired,
+  rewards: PropTypes.array.isRequired,
+  setTotalRewards: PropTypes.func.isRequired,
+  onDelegationAction: PropTypes.func.isRequired,
+};
