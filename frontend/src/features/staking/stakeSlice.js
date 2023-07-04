@@ -5,6 +5,7 @@ import { setError, setTxHash } from "../common/commonSlice";
 import { SOMETHING_WRONG } from "../multisig/multisigSlice";
 import { signAndBroadcast } from "../../utils/signing";
 import cloneDeep from "lodash/cloneDeep";
+import { getDenomBalance } from "../../utils/denom";
 
 const initialState = {
   chains: {},
@@ -46,7 +47,7 @@ const initialState = {
   },
   overviewTx: {
     status: "",
-  }
+  },
 };
 
 export const txRestake = createAsyncThunk(
@@ -383,7 +384,7 @@ export const stakeSlice = createSlice({
   initialState,
   reducers: {
     resetRestakeTx: (state) => {
-      state.overviewTx.status = "idle";
+      state.overviewTx.status = "";
     },
     resetTxType: (state, action) => {
       let chainID = action.payload.chainID;
@@ -414,6 +415,33 @@ export const stakeSlice = createSlice({
     resetDelegations: (state, action) => {
       let chainID = action.payload.chainID;
       state.chains[chainID].delegations = initialState.defaultState.delegations;
+    },
+    addRewardsToDelegations: (state, action) => {
+      let { chainID, rewardsList, totalRewards } = action.payload;
+      let rewardsMap = new Map();
+      for (let i = 0; i < rewardsList.length; i++) {
+        rewardsMap[rewardsList[i].validator_address] = rewardsList[i].reward;
+      }
+
+      for (
+        let i = 0;
+        i <
+        state?.chains?.[chainID]?.delegations?.delegations?.delegations?.length;
+        i++
+      ) {
+        let delegation =
+          state.chains[chainID].delegations.delegations.delegations[i];
+        let validatorReward =
+          rewardsMap[delegation?.delegation?.validator_address];
+        if (!validatorReward) continue;
+        let amount = getDenomBalance(validatorReward, delegation.balance.denom);
+        delegation.delegation.shares = +delegation.delegation.shares + amount;
+        delegation.balance.amount = +delegation.balance.amount + amount;
+        state.chains[chainID].delegations.delegations.delegations[i] =
+          delegation;
+      }
+      state.chains[chainID].delegations.totalStaked =
+        +state.chains[chainID].delegations.totalStaked + +totalRewards;
     },
     sortValidatorsByVotingPower: (state, action) => {
       let chainID = action.payload.chainID;
@@ -532,7 +560,7 @@ export const stakeSlice = createSlice({
 
         let customSort = ([, a], [, b]) => {
           return b.tokens - a.tokens;
-        }
+        };
 
         const activeSort = Object.fromEntries(
           Object.entries(state.chains[chainID].validators.active).sort(
@@ -675,8 +703,8 @@ export const stakeSlice = createSlice({
       })
       .addCase(getPoolInfo.rejected, (state, action) => {});
 
-      // restake transaction
-      builder
+    // restake transaction
+    builder
       .addCase(txRestake.pending, (state) => {
         state.overviewTx.status = "pending";
       })
@@ -696,6 +724,7 @@ export const {
   resetTxType,
   resetDefaultState,
   resetRestakeTx,
+  addRewardsToDelegations,
 } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

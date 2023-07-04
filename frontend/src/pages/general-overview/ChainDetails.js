@@ -1,10 +1,20 @@
-import { Avatar, Button, Typography } from "@mui/material";
+import { Avatar, Button, CircularProgress, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
-import { resetRestakeTx, txRestake } from "../../features/staking/stakeSlice";
+import { claimRewardInBank } from "../../features/bank/bankSlice";
+import {
+  getDelegatorTotalRewards,
+  resetChainRewards,
+  txWithdrawAllRewards,
+} from "../../features/distribution/distributionSlice";
+import {
+  addRewardsToDelegations,
+  resetRestakeTx,
+  txRestake,
+} from "../../features/staking/stakeSlice";
 import { Delegate } from "../../txns/staking";
 import { parseBalance } from "../../utils/denom";
 
@@ -17,25 +27,31 @@ export const ChainDetails = (props) => {
     (state) =>
       state.distribution?.chains?.[chainID]?.delegatorRewards?.totalRewards || 0
   );
+  const distTxStatus = useSelector(
+    (state) => state.distribution.chains[chainID].tx
+  );
   const delegatorRewards = useSelector(
-    (state) =>
-      state.distribution?.chains?.[chainID]?.delegatorRewards || {}
+    (state) => state.distribution?.chains?.[chainID]?.delegatorRewards || {}
   );
   const staked = useSelector(
-    (state) => state.staking?.chains?.[chainID]?.delegations?.totalStaked || 0
+    (state) => state.staking.chains[chainID].delegations.totalStaked
   );
 
-  const txRestakeStatus = useSelector(state => state.staking.overviewTx.status);
+  const delegations = useSelector(
+    (state) => state.staking?.chains?.[chainID]?.delegations || []
+  );
+
+  const txRestakeStatus = useSelector(
+    (state) => state.staking.overviewTx.status
+  );
 
   const wallet = useSelector((state) => state.wallet);
   const chainInfo = wallet?.networks?.[chainID];
   const denom = chainInfo?.network?.config?.currencies?.[0]?.coinDenom;
   const minimalDenom =
-    chainInfo?.network?.config?.currencies?.[0]
-      ?.coinMinimalDenom;
+    chainInfo?.network?.config?.currencies?.[0]?.coinMinimalDenom;
   const decimals =
-    chainInfo?.network?.config?.currencies?.[0]
-      ?.coinDecimals || 1;
+    chainInfo?.network?.config?.currencies?.[0]?.coinDecimals || 1;
   const logoURL = chainInfo?.network?.logos?.menu;
   const navigate = useNavigate();
   const feegrant = useSelector((state) => state.common.feegrant);
@@ -48,10 +64,25 @@ export const ChainDetails = (props) => {
 
   useEffect(() => {
     if (txRestakeStatus === "idle") {
-      // TODO: reset rewards
-      // TODO: add rewards to delegation and update validator VP
+      dispatch(resetRestakeTx());
+      dispatch(
+        addRewardsToDelegations({
+          chainID,
+          totalRewards,
+          decimals,
+          rewardsList: delegatorRewards.list,
+        })
+      );
+      dispatch(resetChainRewards({ chainID }));
     }
   }, [txRestakeStatus]);
+
+  useEffect(() => {
+    if (distTxStatus.status === "idle") {
+      dispatch(claimRewardInBank({ chainID, totalRewards, minimalDenom }));
+      dispatch(resetChainRewards({ chainID }));
+    }
+  }, [distTxStatus.status]);
 
   useEffect(() => {
     dispatch(resetRestakeTx());
@@ -65,28 +96,57 @@ export const ChainDetails = (props) => {
       for (let i = 0; i < delegation.reward.length; i++) {
         const reward = delegation.reward[i];
         if (reward.denom === minimalDenom) {
-          msgs.push(Delegate(delegator, delegation.validator_address, parseInt(reward.amount), minimalDenom));
+          msgs.push(
+            Delegate(
+              delegator,
+              delegation.validator_address,
+              parseInt(reward.amount),
+              minimalDenom
+            )
+          );
         }
       }
     }
 
-    dispatch(txRestake({
-      msgs: msgs,
-      chainId: chainID,
-      denom: minimalDenom,
-      chainId: chainID,
-      rest: chainInfo?.network?.config?.rest,
-      aminoConfig: chainInfo?.network?.aminoConfig,
-      prefix: chainInfo?.network?.config?.bech32Config.bech32PrefixAccAddr,
-      feeAmount: chainInfo?.network?.config?.gasPriceStep.average * 10 ** decimals,
-      feegranter: feegrant?.granter,
-      memo: "Delegate(rewards)"
-    }));
-  }
+    dispatch(
+      txRestake({
+        msgs: msgs,
+        chainId: chainID,
+        denom: minimalDenom,
+        chainId: chainID,
+        rest: chainInfo?.network?.config?.rest,
+        aminoConfig: chainInfo?.network?.aminoConfig,
+        prefix: chainInfo?.network?.config?.bech32Config.bech32PrefixAccAddr,
+        feeAmount:
+          chainInfo?.network?.config?.gasPriceStep.average * 10 ** decimals,
+        feegranter: feegrant?.granter,
+        memo: "Delegate(rewards)",
+      })
+    );
+  };
 
   const claimRewards = () => {
-    // TODO: dispatch claim all rewards transaction
-  }
+    let delegationPairs = [];
+    delegations.delegations.delegations.forEach((item) => {
+      delegationPairs.push({
+        validator: item.delegation.validator_address,
+        delegator: item.delegation.delegator_address,
+      });
+    });
+    dispatch(
+      txWithdrawAllRewards({
+        msgs: delegationPairs,
+        denom: minimalDenom,
+        chainID: chainID,
+        aminoConfig: chainInfo.network.aminoConfig,
+        prefix: chainInfo.network.config.bech32Config.bech32PrefixAccAddr,
+        rest: chainInfo.network.config.rest,
+        feeAmount:
+          chainInfo.network.config.gasPriceStep.average * 10 ** decimals,
+        feegranter: feegrant.granter,
+      })
+    );
+  };
 
   return (
     <>
@@ -139,9 +199,13 @@ export const ChainDetails = (props) => {
               variant="contained"
               size="small"
               sx={{
-                textTransform: "none"
+                textTransform: "none",
               }}
-              disabled={totalRewards <= 0 || txRestakeStatus === "pending"}
+              disabled={
+                totalRewards <= 0 ||
+                txRestakeStatus === "pending" ||
+                distTxStatus.status === "pending"
+              }
               onClick={actionClaimAndStake}
             >
               Claim&nbsp;&&nbsp;Stake
@@ -155,9 +219,21 @@ export const ChainDetails = (props) => {
                 textTransform: "none",
                 ml: 1,
               }}
+              disabled={
+                totalRewards <= 0 ||
+                txRestakeStatus === "pending" ||
+                distTxStatus.status === "pending"
+              }
               onClick={claimRewards}
             >
-              Claim
+              {distTxStatus.status === "pending" ? (
+                <>
+                  <CircularProgress size={18} />
+                  &nbsp;&nbsp;Please wait...
+                </>
+              ) : (
+                <>Claim</>
+              )}
             </Button>
           </StyledTableCell>
         </StyledTableRow>
