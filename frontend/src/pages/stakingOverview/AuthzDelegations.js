@@ -29,6 +29,8 @@ export default function AuthzDelegations(props) {
 
   const [rewardsP, setRewardsP] = React.useState({});
 
+  const delegationsList = delegations?.delegations?.delegations;
+
   useEffect(() => {
     let total = 0.0;
     if (rewards?.length > 0) {
@@ -70,12 +72,12 @@ export default function AuthzDelegations(props) {
     <>
       <TableContainer component={Paper} elevation={0}>
         {delegations?.status === "pending" ? (
-          delegations?.delegations?.delegations?.length === 0 ? (
+          delegationsList?.length === 0 ? (
             <CircularProgress />
           ) : (
             <></>
           )
-        ) : delegations?.delegations?.delegations?.length === 0 ? (
+        ) : delegationsList?.length === 0 ? (
           <Typography
             variant="h6"
             color="text.primary"
@@ -99,7 +101,7 @@ export default function AuthzDelegations(props) {
               </StyledTableRow>
             </TableHead>
             <TableBody>
-              {delegations?.delegations?.delegations.map((row, index) => {
+              {delegationsList?.map((row, index) => {
                 return (
                   <StyledTableRow
                     key={index}

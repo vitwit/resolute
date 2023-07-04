@@ -92,19 +92,17 @@ export default function StakingGrants(props) {
             </Typography>
           </Box>
           {allGranters?.map((granter, index) => (
-            <>
-              <div key={index}>
-                <StakingGranter
-                  granter={granter}
-                  delegateAuthzGrants={delegateAuthzGrants}
-                  undelegateAuthzGrants={undelegateAuthzGrants}
-                  redelegateAuthzGrants={redelegateAuthzGrants}
-                  withdrawAuthzGranters={withdrawAuthzGranters}
-                  chainInfo={chainInfo}
-                  address={address}
-                />
-              </div>
-            </>
+            <div key={index}>
+              <StakingGranter
+                granter={granter}
+                delegateAuthzGrants={delegateAuthzGrants}
+                undelegateAuthzGrants={undelegateAuthzGrants}
+                redelegateAuthzGrants={redelegateAuthzGrants}
+                withdrawAuthzGranters={withdrawAuthzGranters}
+                chainInfo={chainInfo}
+                address={address}
+              />
+            </div>
           ))}
         </>
       ) : null}
