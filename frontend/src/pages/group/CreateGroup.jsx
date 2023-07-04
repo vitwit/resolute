@@ -3,14 +3,13 @@ import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import { Button, Paper, TextField, Typography } from "@mui/material";
-import { Controller, useForm, useFieldArray } from "react-hook-form";
+import { Button, Paper } from "@mui/material";
+import { useForm, useFieldArray } from "react-hook-form";
 import CreateGroupMembersForm from "./CreateGroupMembersForm";
 import CreateGroupPolicy from "./CreateGroupPolicy";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { resetGroupTx, txCreateGroup } from "../../features/group/groupSlice";
-import { Grid } from "@mui/material";
 import CreateGroupInfoForm from "./CreateGroupInfoForm";
 import { useParams } from "react-router-dom";
 import { DAYS, PERCENTAGE } from "./common";
@@ -19,13 +18,12 @@ const steps = ["Group information", "Add members", "Attach policy"];
 
 export default function CreateGroupStepper() {
   const params = useParams();
-  const [showAddPolicyForm, setShowAddPolicyForm] = useState(null);
 
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
-  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork);
 
+  const currentNetwork = params?.networkName || selectedNetwork;
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
@@ -33,7 +31,7 @@ export default function CreateGroupStepper() {
     networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
 
   const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
-  
+
   const navigate = useNavigate();
   const txCreateGroupRes = useSelector(
     (state) => state?.group?.txCreateGroupRes
@@ -78,7 +76,7 @@ export default function CreateGroupStepper() {
 
       const getPeriod = (duration, period) => {
         let time;
-        if(duration === DAYS) time = 24 * 60 * 60;
+        if (duration === DAYS) time = 24 * 60 * 60;
         else time = 1;
 
         time = time * Number(period);
@@ -116,7 +114,7 @@ export default function CreateGroupStepper() {
     setActiveStep(activeStep + 1);
   };
 
-  const onSubmitPolicyInfo = (data) => {    
+  const onSubmitPolicyInfo = (data) => {
     createGroup(data.policyMetadata);
   };
 
@@ -183,6 +181,12 @@ export default function CreateGroupStepper() {
       <>
         {activeStep !== 0 ? (
           <Button
+            sx={{
+              mt: 1,
+            }}
+            variant="outlined"
+            disableElevation
+            size="small"
             onClick={() => setActiveStep(activeStep === 0 ? 0 : activeStep - 1)}
           >
             Back
@@ -196,7 +200,11 @@ export default function CreateGroupStepper() {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Stepper activeStep={activeStep} alternativeLabel>
+      <Stepper activeStep={activeStep} alternativeLabel
+        sx={{
+          mb: 1,
+        }}
+      >
         {steps.map((label) => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
@@ -211,7 +219,13 @@ export default function CreateGroupStepper() {
             <fieldset style={{ border: "none" }}>
               <CreateGroupInfoForm control={controlInfo} errors={errorsInfo} getValues={getValuesGroupInfo} />
             </fieldset>
-            <Button type="submit">Next</Button>
+            <Button type="submit"
+              variant="outlined"
+              disableElevation
+              size="small"
+            >
+              Next
+              </Button>
           </form>
 
           {/* group info section end */}
@@ -245,7 +259,17 @@ export default function CreateGroupStepper() {
               ) : null}
             </Paper>
             <BackButton />
-            <Button type="submit">Next</Button>
+            <Button type="submit"
+            variant="outlined"
+            disableElevation
+            sx={{
+              mt: 1,
+              ml: 1,
+            }}
+            size="small"
+            >
+              Next
+            </Button>
           </form>
 
           {/* group members section end */}
@@ -270,7 +294,6 @@ export default function CreateGroupStepper() {
                   <CreateGroupPolicy
                     handleCancelPolicy={() => {
                       setValuePolicyInfo("policyMetadata", null);
-                      setShowAddPolicyForm(false);
                     }}
                     policyUpdate={false}
                     setValue={setValuePolicyInfo}
@@ -286,7 +309,15 @@ export default function CreateGroupStepper() {
                 null}
             </Paper>
             <BackButton />
-            <Button type="submit">Create Group</Button>
+            <Button type="submit"
+            variant="outlined"
+            disableElevation
+            sx={{
+              mt: 1,
+              ml: 1,
+            }}
+            size="small"
+            >Create Group</Button>
           </form>
 
           {/* group policy section end */}
