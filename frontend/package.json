@@ -35,7 +35,7 @@
     "case-sensitive-paths-webpack-plugin": "^2.4.0",
     "cosmjs-types": "^0.7.2",
     "css-loader": "^6.8.1",
-    "css-minimizer-webpack-plugin": "^4.2.2",
+    "css-minimizer-webpack-plugin": "^5.0.1",
     "date-fns": "^2.30.0",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
