@@ -91,7 +91,6 @@ export default function AuthzDelegations(props) {
           >
             <TableHead>
               <StyledTableRow>
-                <StyledTableCell>Rank</StyledTableCell>
                 <StyledTableCell align="center">Validator</StyledTableCell>
                 <StyledTableCell align="center">Commission</StyledTableCell>
                 <StyledTableCell align="center">Delegated</StyledTableCell>
@@ -106,9 +105,6 @@ export default function AuthzDelegations(props) {
                     key={index}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
-                    <StyledTableCell component="th" scope="row">
-                      {index + 1}
-                    </StyledTableCell>
                     <StyledTableCell align="center">
                       {
                         validators?.active[row?.delegation?.validator_address]
