@@ -306,7 +306,7 @@ export const authzExecHelper = (dispatch, data) => {
     }
     case "unjail":
       {
-        const msg = AuthzExecMsgUnjail(data.validator, data.address);
+        const msg = AuthzExecMsgUnjail(data.validator, data.from);
         dispatch(
           txAuthzExec({
             msgs: [msg],
