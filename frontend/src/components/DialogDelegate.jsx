@@ -47,16 +47,14 @@ export function DialogDelegate(props) {
 
   const onSubmit = (data) => {
     if (isAuthzMode) {
-      let selectedValidator = data.validator.operator_address;
       onAuthzDelegateTx({
-        validator: selectedValidator,
-        amount: data.amount,
+        validator: data?.validator?.operator_address || "",
+        amount: data?.amount || 0,
       });
     } else {
-      let selectedValidator = validator.operator_address;
       onDelegate({
-        validator: selectedValidator,
-        amount: data.amount,
+        validator: validator?.operator_address || "",
+        amount: data?.amount || 0,
       });
     }
   };
