@@ -44,7 +44,6 @@ export default function Dashboard() {
   const mainnets = getMainNetworks();
   const testnets = getTestNetworks();
   useEffect(() => {
-
     setTimeout(() => {
       dispatch(
         connectKeplrWalletV1({
@@ -93,16 +92,12 @@ export default function Dashboard() {
     }
   }, [txSuccess]);
 
-
   return (
     <ThemeProvider
       theme={mdTheme(darkMode, defaultPallet.primary, defaultPallet.secondary)}
     >
       <>
-        <CustomAppBar
-          darkMode={darkMode}
-          onModeChange={() => onModeChange()}
-        />
+        <CustomAppBar darkMode={darkMode} onModeChange={() => onModeChange()} />
 
         <Box sx={{ display: "flex" }}>
           <Box
@@ -117,7 +112,6 @@ export default function Dashboard() {
               overflow: "auto",
             }}
           >
-
             <Toolbar />
             <Container
               maxWidth="lg"
@@ -132,7 +126,6 @@ export default function Dashboard() {
         </Box>
         <Footer />
       </>
-
 
       {errState?.message?.length > 0 ? (
         <Snackbar

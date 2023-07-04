@@ -138,17 +138,15 @@ const StakingOverview = () => {
             totalAmount={data.totalAmount}
             totalReward={rewardData.totalReward}
           />
-          <div>
-            {
-              data.chains.map((chain) =>
-                <Chain
-                  chain={chain}
-                  key={chain.chainName}
-                  chainReward={rewardData?.[chain.chainName]}
-                />
-              )
-            }
-          </div>
+          {
+            data.chains.map((chain) =>
+              <Chain
+                chain={chain}
+                key={chain.chainName}
+                chainReward={rewardData?.[chain.chainName]}
+              />
+            )
+          }
         </>
         :
         <Typography
@@ -157,7 +155,7 @@ const StakingOverview = () => {
           sx={{
             display: "flex",
             justifyContent: "center",
-            p: 2,
+            mt: 3,
           }}
         >
           No delegations
