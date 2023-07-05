@@ -1,30 +1,41 @@
-import { Paper, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getGrantsToMe } from "../../features/authz/authzSlice";
+import { CircularProgress, Paper } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import StakingGrants from "./StakingGrants";
-import {
-  GENERIC_AUTHORIZATION,
-  MSG_BEGIN_REDELEGATE,
-  MSG_DELEGATE,
-  MSG_WITHDRAW_DELEGATOR_REWARD,
-  MSG_UNDELEGATE,
-} from "./common";
 
 export default function StakingAuthz() {
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
   const chains = Object.keys(nameToChainIDs);
 
+  const grantsToMe = useSelector((state) => state.authz.grantsToMe);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    for (let chainName in nameToChainIDs) {
+      const chainID = nameToChainIDs[chainName];
+      if (grantsToMe?.[chainID]?.status === "idle") {
+        setLoading(false);
+      }
+    }
+  }, []);
+
   return (
     <>
-      <Paper elevation={0} sx={{ p: 4 }}>
-        {chains?.map((chainName, key) => (
-          <>
-            <StakingGrants key={key} chainName={chainName} />
-          </>
-        ))}
-      </Paper>
+      {loading ? (
+        <>
+          <CircularProgress />
+        </>
+      ) : (
+        <Paper elevation={0} sx={{ p: 4 }}>
+          {chains?.map((chainName, key) => (
+            <>
+              <StakingGrants key={key} chainName={chainName} />
+            </>
+          ))}
+        </Paper>
+      )}
     </>
   );
 }

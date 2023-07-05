@@ -87,7 +87,7 @@ export default function AuthzDelegations(props) {
           </Typography>
         ) : (
           <Table
-            sx={{ minWidth: 500, p: 10 }}
+            sx={{ minWidth: 500 }}
             aria-label="simple table"
             size="small"
           >

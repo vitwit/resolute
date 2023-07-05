@@ -109,7 +109,7 @@ export function DialogDelegate(props) {
               <Typography
                 color="text.primary"
                 fontWeight={600}
-                style={{ marginTop: 16 }}
+                sx={{ mt: 2 }}
               >
                 Available Balance
               </Typography>
