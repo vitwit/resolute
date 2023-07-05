@@ -2,6 +2,7 @@ import { MsgExec } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
+import { MsgGrantAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
 import { VoteOption } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import { MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
 import {
@@ -199,6 +200,18 @@ export function AuthzExecMsgUnjail(validator: string, grantee: string): Msg {
             validatorAddr: validator,
           }).finish(),
         },
+      ],
+    }),
+  };
+}
+
+export function AuthzExecMsgFeegrant(feegrant: Msg, grantee: string): Msg {
+  return {
+    typeUrl: msgAuthzExecypeUrl,
+    value: MsgExec.fromPartial({
+      grantee: grantee,
+      msgs: [
+        feegrant,
       ],
     }),
   };

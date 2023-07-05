@@ -34,7 +34,7 @@ import {
 import { Box } from "@mui/system";
 import BasicFeeGrant from "../../components/feegrant/BasicFeeGrant";
 import { authzMsgTypes } from "./../../utils/authorizations";
-import { getGrantsToMe } from "../../features/authz/authzSlice";
+import { authzExecHelper, getGrantsToMe } from "../../features/authz/authzSlice";
 
 const filterAuthzFeegrant = (grantsToMe) => {
   const granters = [];
@@ -141,9 +141,33 @@ export default function NewFeegrant() {
   };
 
   const onBasicSubmit = (data) => {
-    dispatch(
-      txFeegrantBasic({
-        granter: address,
+    if (!isAuthzMode) {
+      dispatch(
+        txFeegrantBasic({
+          granter: address,
+          grantee: data.grantee,
+          spendLimit:
+            Number(data.spendLimit) === 0
+              ? null
+              : Number(data.spendLimit) * 10 ** currency.coinDecimals,
+          expiration:
+            data.expiration === null
+              ? data.expiration
+              : data.expiration.toISOString(),
+          denom: currency.coinMinimalDenom,
+          chainId: chainInfo.config.chainId,
+          rest: chainInfo.config.rest,
+          aminoConfig: chainInfo.aminoConfig,
+          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        })
+      );
+    } else {
+      authzExecHelper(dispatch, {
+        type: "feegrantBasic",
+        from: address,
+        granter: granter,
         grantee: data.grantee,
         spendLimit:
           Number(data.spendLimit) === 0
@@ -160,8 +184,8 @@ export default function NewFeegrant() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-      })
-    );
+      });
+    }
   };
 
   const onPeriodicGrant = (data) => {
@@ -325,7 +349,11 @@ export default function NewFeegrant() {
             <Grid item xs={10} md={6}>
               <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(onBasicSubmit)}>
-                  <BasicFeeGrant granters={authzGrants} setGranter={setGranter} granter={granter} />
+                  <BasicFeeGrant
+                    granters={authzGrants}
+                    setGranter={setGranter}
+                    granter={granter}
+                  />
                   <Button
                     sx={{ mt: 4 }}
                     variant="contained"
@@ -446,7 +474,14 @@ export default function NewFeegrant() {
                     </Select>
                   </FormControl>
 
-                  {(value === "Basic" && <BasicFeeGrant granters={authzGrants} setGranter={setGranter} granter={granter} />) || null}
+                  {(value === "Basic" && (
+                    <BasicFeeGrant
+                      granters={authzGrants}
+                      setGranter={setGranter}
+                      granter={granter}
+                    />
+                  )) ||
+                    null}
                   {(value === "Periodic" && (
                     <PeriodicFeegrant
                       loading={feegrantTx.status}

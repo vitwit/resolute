@@ -11,8 +11,16 @@ import {
   AuthzExecReDelegateMsg,
   AuthzExecUnDelegateMsg,
 } from "../../txns/authz";
+import {
+  FeegrantBasicMsg,
+  FeegrantPeriodicMsg,
+  FeegrantRevokeMsg,
+} from "../../txns/feegrant";
 import { setError, setTxHash } from "../common/commonSlice";
-import { AuthzExecMsgUnjail } from "../../txns/authz/exec";
+import {
+  AuthzExecMsgFeegrant,
+  AuthzExecMsgUnjail,
+} from "../../txns/authz/exec";
 import { signAndBroadcast } from "../../utils/signing";
 import { getAuthzTabs } from "../../utils/authorizations";
 
@@ -245,6 +253,7 @@ export const authzExecHelper = (dispatch, data) => {
         data.amount,
         data.denom
       );
+      console.log("msg...", msg);
       dispatch(
         txAuthzExec({
           msgs: [msg],
@@ -304,23 +313,45 @@ export const authzExecHelper = (dispatch, data) => {
       );
       break;
     }
-    case "unjail":
-      {
-        const msg = AuthzExecMsgUnjail(data.validator, data.from);
-        dispatch(
-          txAuthzExec({
-            msgs: [msg],
-            denom: data.denom,
-            rest: data.rest,
-            aminoConfig: data.aminoConfig,
-            feeAmount: data.feeAmount,
-            prefix: data.prefix,
-            chainId: data.chainId,
-            feegranter: data.feegranter,
-          })
-        );
-      }
+    case "unjail": {
+      const msg = AuthzExecMsgUnjail(data.validator, data.from);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
       break;
+    }
+    case "feegrantBasic": {
+      const feegrantBasicMsg = FeegrantBasicMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.expiration
+      );
+      const msg = AuthzExecMsgFeegrant(feegrantBasicMsg, data.from);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
     default:
       alert("not supported");
   }
@@ -448,13 +479,12 @@ export const authzSlice = createSlice({
       state.txAuthzRes = {};
     },
     resetTabs: (state) => {
-      state.tabs = {...initialState.tabs};
+      state.tabs = { ...initialState.tabs };
       state.tabResetStatus = true;
     },
     resetTabResetStatus: (state) => {
       state.tabResetStatus = false;
-    }
-
+    },
   },
   extraReducers: (builder) => {
     builder
