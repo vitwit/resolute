@@ -79,10 +79,7 @@ function ActiveProposals() {
 
   return (
     <>
-    {console.log("cc", loading, defaultLoading)}
-      { 
-      
-      (loading || defaultLoading) && (
+      {(loading || defaultLoading) && (
         <Box
           sx={{
             display: "flex",
