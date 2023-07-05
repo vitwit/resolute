@@ -48,7 +48,7 @@
     "html-webpack-plugin": "^5.5.3",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.4.3",
-    "jest-resolve": "^29.5.0",
+    "jest-resolve": "^29.6.0",
     "jest-watch-typeahead": "^2.2.2",
     "lodash": "^4.17.21",
     "mathjs": "^11.8.2",
