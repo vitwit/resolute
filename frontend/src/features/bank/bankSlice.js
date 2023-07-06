@@ -130,7 +130,7 @@ export const bankSlice = createSlice({
   initialState,
   reducers: {
     claimRewardInBank: (state, action) => {
-      let { chainID, totalRewards, minimalDenom } = action.payload;
+      const { chainID, totalRewards, minimalDenom } = action.payload;
       for (let i = 0; i < state?.balances?.[chainID]?.list?.length; i++) {
         if (state.balances[chainID]?.list?.[i]?.denom === minimalDenom) {
           state.balances[chainID].list[i].amount =
