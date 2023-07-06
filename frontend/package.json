@@ -65,7 +65,7 @@
     "react-dev-utils": "^12.0.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.44.3",
-    "react-redux": "^8.0.5",
+    "react-redux": "^8.1.1",
     "react-refresh": "^0.14.0",
     "react-router-dom": "^6.11.2",
     "resolve": "^1.22.1",
