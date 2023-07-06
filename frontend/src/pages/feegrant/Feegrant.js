@@ -496,6 +496,7 @@ export default function Feegrant() {
                                       );
                                     } else {
                                       if (e.target.checked) {
+                                        console.log(row, currentNetwork)
                                         setFeegrant(row, currentNetwork);
                                         dispatch(
                                           setFeegrantState({

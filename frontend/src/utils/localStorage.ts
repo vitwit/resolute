@@ -32,14 +32,14 @@ export function getFeegrant(): ChainWiseGrants | any {
 
 export function setFeegrant(grant: Grant, chainName: string) {
   let data: ChainWiseGrants;
-  data = getFeegrant();
+  data = getFeegrant() || {};
   data[chainName] = grant;
   localStorage.setItem(TYPE_FEEGRANT, JSON.stringify(data));
 }
 
 export function removeFeegrant(chainName: string) {
   let data: ChainWiseGrants;
-  data = getFeegrant();
+  data = getFeegrant() || {};
   delete data[chainName];
   localStorage.setItem(TYPE_FEEGRANT, JSON.stringify(data));
 }
