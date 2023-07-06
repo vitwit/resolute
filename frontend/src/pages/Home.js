@@ -24,11 +24,16 @@ import { getFeegrant } from "../utils/localStorage";
 import { setFeegrant as setFeegrantState } from "../features/common/commonSlice";
 import Authz from "./authz/Authz";
 import NewAuthz from "./authz/NewAuthz";
-import StakingOverview from "./stakingOverview/StakingOverview";
+import GroupPage from "./GroupPage";
+import Group from "./group/Group";
+import Policy from "./group/Policy";
+import CreateProposal from "./group/CreateProposal";
+import GroupProposal from "./group/Proposal";
 import { resetDefaultState as distributionResetDefaultState } from "../features/distribution/distributionSlice";
 import { resetDefaultState as stakingResetDefaultState } from "../features/staking/stakeSlice";
 import { getAllTokensPrice } from "../features/common/commonSlice";
 import Proposal from "./gov/Proposal";
+import AirdropEligibility from "./passage/AirdropEligibility";
 
 export const ContextData = React.createContext();
 
@@ -41,6 +46,7 @@ const ALL_NETWORKS = [
   "authz",
   "feegrant",
   "daos",
+  "airdrop-check",
 ];
 
 function TabPanel(props) {
@@ -84,10 +90,12 @@ function getTabIndex(path) {
   else if (path.includes("authz")) return 5;
   else if (path.includes("feegrant")) return 6;
   else if (path.includes("daos")) return 7;
+  else if (path.includes("airdrop-check")) return 8;
   else return 0;
 }
 
-export default function Home() {
+export default function Home(props) {
+  const authzEnabled = useSelector((state) => state.common.authzMode);
   const [value, setValue] = React.useState(0);
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork?.chainName || ""
@@ -102,14 +110,18 @@ export default function Home() {
   const pathParts = location.pathname.split("/");
   const page = pathParts?.[pathParts?.length - 1];
 
+  const authzTabs = useSelector((state) => state.authz.tabs);
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    if (newValue === 0 || newValue === 2) {
+    if (newValue === 8) {
+      navigate("/airdrop-check");
+    } else if (newValue === 0 || newValue === 2 || newValue === 3) {
       navigate(ALL_NETWORKS[newValue]);
     } else {
       if (selectedNetwork === "") {
-        setNetwork("simapp");
-        navigate(`simapp/${ALL_NETWORKS[newValue]}`);
+        setNetwork("cosmoshub");
+        navigate(`cosmoshub/${ALL_NETWORKS[newValue]}`);
       } else {
         navigate(`${selectedNetwork.toLowerCase()}/${ALL_NETWORKS[newValue]}`);
       }
@@ -143,14 +155,37 @@ export default function Home() {
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange} aria-label="menu bar">
-          <Tab label="Overview" {...a11yProps(0)} />
-          <Tab label="Transfers" {...a11yProps(1)} />
-          <Tab label="Governance" {...a11yProps(2)} />
-          <Tab label="Staking" {...a11yProps(3)} />
-          <Tab label="Multisig" {...a11yProps(4)} />
-          <Tab label="Authz" {...a11yProps(5)} />
-          <Tab label="Feegrant" {...a11yProps(6)} />
-          <Tab label="DAOs" {...a11yProps(7)} />
+          <Tab label="Overview" {...a11yProps(0)} value={0} />
+          <Tab
+            label="Transfers"
+            {...a11yProps(1)}
+            value={1}
+            disabled={authzEnabled && !authzTabs?.sendEnabled}
+          />
+          <Tab
+            label="Governance"
+            {...a11yProps(2)}
+            value={2}
+            disabled={authzEnabled && !authzTabs?.govEnabled}
+          />
+          <Tab
+            label="Staking"
+            {...a11yProps(3)}
+            value={3}
+            disabled={authzEnabled && !authzTabs?.stakingEnabled}
+          />
+          {!authzEnabled && authzTabs?.multisigEnabled ? (
+            <Tab label="Multisig" {...a11yProps(4)} value={4} />
+          ) : null}
+          {!authzEnabled && <Tab label="Authz" {...a11yProps(5)} value={5} />}
+          <Tab label="Feegrant" {...a11yProps(6)} value={6} />
+          <Tab
+            label="DAOs"
+            {...a11yProps(7)}
+            value={7}
+            disabled={authzEnabled && !authzTabs?.daosEnabled}
+          />
+          {!authzEnabled && <Tab label="Airdrop" {...a11yProps(8)} value={8} />}
         </Tabs>
       </Box>
 
@@ -173,7 +208,9 @@ export default function Home() {
 
             <Route path="/:networkName/feegrant" element={<Feegrant />} />
 
-            <Route path="/staking" element={<StakingOverview />} />
+            <Route path="/staking" element={<StakingPage />} />
+
+            <Route path="/:networkName/staking" element={<StakingPage />} />
 
             <Route path="/gov" element={<ActiveProposals />} />
 
@@ -191,8 +228,6 @@ export default function Home() {
             <Route path="/:networkName/daos" element={<GroupPageV1 />} />
 
             <Route path="/:networkName/multisig" element={<PageMultisig />} />
-
-            <Route path="/:networkName/staking" element={<StakingPage />} />
 
             <Route
               path="/:networkName/multisig/:address/txs"
@@ -217,6 +252,26 @@ export default function Home() {
             />
 
             <Route path="/:networkName/authz/new" element={<NewAuthz />} />
+
+            <Route path="/:networkName/daos/:id" element={<Group />} />
+
+            <Route
+              path="/:networkName/daos/:id/policies/:policyId"
+              element={<Policy />}
+            />
+
+            <Route
+              path="/:networkName/daos/:id/policies/:policyAddress/proposals"
+              element={<CreateProposal />}
+            />
+
+            <Route path="/daos" element={<GroupPage />} />
+
+            <Route
+              path="/:networkName/daos/proposals/:id"
+              element={<GroupProposal />}
+            />
+            <Route path="/airdrop-check" element={<AirdropEligibility />} />
 
             <Route path="*" element={<Page404 />}></Route>
           </Routes>

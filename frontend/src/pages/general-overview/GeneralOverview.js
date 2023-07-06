@@ -26,7 +26,7 @@ export const GeneralOverview = (props) => {
   const balanceChains = useSelector((state) => state.bank.balances);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const tokensPriceInfo = useSelector(
-    (state) => state.common.allTokensInfoState.info
+    (state) => state.common?.allTokensInfoState?.info
   );
   const [totalDetails, setTotalDetails] = useState({
     totalStaked: 0,
@@ -36,6 +36,11 @@ export const GeneralOverview = (props) => {
 
   const chainIDs = [];
   chainNames.forEach((chainName) => chainIDs.push(nameToChainIDs[chainName]));
+
+  const chainIdToNames = {};
+  for (let key in nameToChainIDs) {
+    chainIdToNames[nameToChainIDs[key]] = key;
+  }
 
   const convertToDollars = (denom, amount = 0) => {
     let price = +tokensPriceInfo?.[denom]?.info?.["usd"] || 0;
@@ -98,10 +103,8 @@ export const GeneralOverview = (props) => {
   }, [balanceChains]);
 
   useEffect(() => {
-    console.log("now", networks);
     chainIDs.forEach((chainID) => {
       const chainInfo = networks[chainID]?.network;
-      console.log("chainInfo", chainID, chainInfo);
       const address = networks[chainID]?.walletInfo?.bech32Address;
 
       dispatch(
@@ -129,60 +132,75 @@ export const GeneralOverview = (props) => {
   }, []);
 
   return (
-    <Paper sx={{ padding: 1, mt: 6 }} elevation={0}>
+    <Paper
+      sx={{ p: 2, mt: 2 }}
+      elevation={0}
+    >
       <Grid
         container
         sx={{
-          mb: 3,
+          mb: 2,
         }}
         spacing={1}
       >
-        <Grid item xs={4} md={4}>
+        <Grid item xs={6} md={4}>
           <Card elevation={0}>
             <CardContent>
               <Typography
-                sx={{ fontSize: 17 }}
                 align="left"
-                variant="h6"
+                variant="body1"
                 color="text.secondary"
+                fontWeight={500}
               >
                 Total Available Balance
               </Typography>
-              <Typography align="left" variant="h6" color="text.primary">
+              <Typography
+                align="left"
+                variant="h6"
+                color="text.primary"
+              >
                 ${totalDetails.totalBalance}
               </Typography>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={4} md={4}>
+        <Grid item xs={6} md={4}>
           <Card elevation={0}>
             <CardContent>
               <Typography
-                sx={{ fontSize: 17 }}
                 align="left"
-                variant="h6"
+                variant="body1"
                 color="text.secondary"
+                fontWeight={500}
               >
                 Total Staked Balance
               </Typography>
-              <Typography align="left" variant="h6" color="text.primary">
+              <Typography
+                align="left"
+                variant="h6"
+                color="text.primary"
+              >
                 ${totalDetails.totalStaked}
               </Typography>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={4} md={4}>
+        <Grid item xs={6} md={4}>
           <Card elevation={0}>
             <CardContent>
               <Typography
-                sx={{ fontSize: 17 }}
                 align="left"
-                variant="h6"
+                variant="body1"
                 color="text.secondary"
+                fontWeight={500}
               >
                 Total Rewards
               </Typography>
-              <Typography align="left" variant="h6" color="text.primary">
+              <Typography
+                align="left"
+                variant="h6"
+                color="text.primary"
+              >
                 ${totalDetails.totalRewards}
               </Typography>
             </CardContent>
@@ -190,18 +208,30 @@ export const GeneralOverview = (props) => {
         </Grid>
       </Grid>
       <TableContainer>
-        <Table size="small">
+        <Table>
           <TableHead>
             <StyledTableRow>
-              <StyledTableCell>Network Name</StyledTableCell>
-              <StyledTableCell>Available Balance</StyledTableCell>
-              <StyledTableCell>Staked Amount</StyledTableCell>
-              <StyledTableCell>Rewards</StyledTableCell>
+              <StyledTableCell>
+                Network Name
+              </StyledTableCell>
+              <StyledTableCell>
+                Available Balance
+              </StyledTableCell>
+              <StyledTableCell>
+                Staked Amount
+              </StyledTableCell>
+              <StyledTableCell>
+                Rewards
+              </StyledTableCell>
             </StyledTableRow>
           </TableHead>
           <TableBody>
             {chainIDs.map((chainID) => (
-              <ChainDetails key={chainID} chainID={chainID} />
+              <ChainDetails
+                key={chainID}
+                chainID={chainID}
+                chainName={chainIdToNames[chainID]}
+              />
             ))}
           </TableBody>
         </Table>

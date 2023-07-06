@@ -20,6 +20,7 @@ import { Decimal } from "@cosmjs/math";
 import {
   getAllValidators,
   getDelegations,
+  resetDefaultState,
 } from "../../features/staking/stakeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -77,7 +78,7 @@ const getAmountInAtomics = (amount, currency) => {
   };
 };
 
-function AddManualTx({ address, chainInfo, handleCancel }) {
+function AddManualTx({ address, chainInfo, handleCancel, adminAddress, networkName }) {
   const { policyAddress, id } = useParams();
   var [messages, setMessages] = useState([]);
 
@@ -92,24 +93,25 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
   });
   const dispatch = useDispatch();
 
-  const validators = useSelector((state) => state.staking.validators);
+  const validators = null;
   const wallet = useSelector((state) => state.wallet);
 
   useEffect(() => {
     dispatch(
       getAllValidators({
-        baseURL: chainInfo.config.rest,
+        baseURL: chainInfo?.config?.rest,
+        chainID: chainInfo?.config?.chainId,
         status: null,
       })
     );
-
     dispatch(
       getDelegations({
-        baseURL: chainInfo.config.rest,
         address: address,
+        baseURL: chainInfo?.config?.rest,
+        chainID: chainInfo?.config?.chainId,
       })
     );
-  }, []);
+  }, [chainInfo, wallet]);
 
   var createRes = useSelector((state) => state.group.groupProposalRes);
 
@@ -132,7 +134,7 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
       );
 
       setTimeout(() => {
-        navigate(`/groups/${id}/policies/${policyAddress}`);
+        navigate(`/${networkName}/daos/${id}/policies/${policyAddress}`);
       }, 200);
     }
   }, [createRes?.status]);
@@ -147,8 +149,8 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
     dispatch(
       txCreateGroupProposal({
         metadata: data?.metadata,
-        admin: wallet?.address,
-        proposers: [wallet?.address],
+        admin: adminAddress,
+        proposers: [adminAddress],
         messages: messages,
         groupPolicyAddress: address,
         chainId: chainInfo?.config?.chainId,
@@ -312,7 +314,7 @@ function AddManualTx({ address, chainInfo, handleCancel }) {
                 </Typography>
                 <TxMsgsList
                   onDelete={onDelete}
-                  currency={wallet?.chainInfo?.config?.currencies?.[0]}
+                  currency={currency}
                   messages={messages}
                 />
 

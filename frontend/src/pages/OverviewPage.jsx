@@ -5,24 +5,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import SelectNetwork from "../components/common/SelectNetwork";
 import Overview from "./Overview";
 import { GeneralOverview } from "./general-overview/GeneralOverview";
+import { CircularProgress } from "@mui/material";
 
 export default function OverviewPage() {
-  const [defaultLoaded, setDefaultLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const staking = useSelector((state) => state.staking.chains);
   const distribution = useSelector((state) => state.distribution.chains);
-  const networks = useSelector((state) => state.wallet.networks);
   const tokenInfo = useSelector(
     (state) => state.common.allTokensInfoState.info
   );
 
   useEffect(() => {
     if (
-      !defaultLoaded &&
+      isLoading &&
       Object.keys(staking).length &&
-      Object.keys(distribution).length &&
-      Object.keys(tokenInfo).length
+      Object.keys(distribution).length
     ) {
-      setDefaultLoaded(true);
+      setIsLoading(false);
     }
   }, [staking, distribution, tokenInfo]);
 
@@ -38,31 +37,56 @@ export default function OverviewPage() {
   };
 
   return (
-    <div>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 5 }}>
-        <div></div>
-        <SelectNetwork
-          onSelect={(name) => {
-            handleOnSelect(name);
+    <>
+      {isLoading ?
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center"
           }}
-          networks={Object.keys(nameToChainIDs)}
-          defaultNetwork={
-            currentNetwork?.length > 0
-              ? currentNetwork.toLowerCase().replace(/ /g, "")
-              : defaultChainName
-          }
-        />
-      </Box>
-      {currentNetwork?.length > 0 && defaultLoaded ? (
-        <Overview
-          chainID={nameToChainIDs[currentNetwork]}
-          chainName={currentNetwork}
-        />
-      ) : (
-        defaultLoaded && (
-          <GeneralOverview chainNames={Object.keys(nameToChainIDs)} />
-        )
-      )}
-    </div>
+        >
+          <CircularProgress
+            sx={{
+              mt: 4,
+            }}
+          />
+        </Box>
+        :
+        currentNetwork?.length > 0 ? (
+          <>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "end"
+              }}
+            >
+              <SelectNetwork
+                style={{
+                  justifyContent: "center"
+                }}
+                onSelect={(name) => {
+                  handleOnSelect(name);
+                }}
+                networks={Object.keys(nameToChainIDs)}
+                defaultNetwork={
+                  currentNetwork?.length > 0
+                    ? currentNetwork.toLowerCase().replace(/ /g, "")
+                    : defaultChainName
+                }
+              />
+            </Box>
+            <Overview
+              chainID={nameToChainIDs[currentNetwork]}
+              chainName={currentNetwork}
+            />
+          </>
+        ) : (
+          <GeneralOverview
+            chainNames={Object.keys(nameToChainIDs)}
+          />
+        )}
+    </>
   );
 }

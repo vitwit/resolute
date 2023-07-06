@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
 import Toolbar from "@mui/material/Toolbar";
@@ -17,8 +17,10 @@ import Button from "@mui/material/Button";
 import { setSelectedNetwork } from "../features/common/commonSlice";
 import { getGrantsToMe } from "../features/authz/authzSlice";
 import { useNavigate } from "react-router-dom";
+import { resetTabs, resetTabResetStatus } from "../features/authz/authzSlice";
 
 export function CustomAppBar(props) {
+  const tabResetStatus = useSelector((state) => state.authz.tabResetStatus);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -27,7 +29,9 @@ export function CustomAppBar(props) {
   const chainIDs = Object.keys(networks);
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
-  const selectNetwork = useSelector((state) => state.common.selectedNetwork.chainName)
+  const selectNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const switchHandler = (event) => {
@@ -44,19 +48,28 @@ export function CustomAppBar(props) {
 
   const navigateTo = (path) => {
     navigate(path);
-  }
+  };
+
+  useEffect(() => {
+    if (tabResetStatus) {
+      dispatch(resetTabResetStatus());
+      Object.keys(networks).map((key, _) => {
+        const network = networks[key];
+        dispatch(
+          getGrantsToMe({
+            baseURL: network.network?.config?.rest,
+            grantee: network.walletInfo?.bech32Address,
+            chainID: network.network?.config?.chainId,
+            changeAuthzTab: true,
+          })
+        );
+      });
+    }
+  }, [tabResetStatus]);
 
   useEffect(() => {
     if (isAuthzMode) {
-      console.log("callllled");
-      Object.keys(networks).map((key, _) => {
-        const network = networks[key];
-        dispatch(getGrantsToMe({
-          baseURL: network.network?.config?.rest,
-          grantee: network.walletInfo?.bech32Address,
-          chainID: network.network?.config?.chainId
-        }))
-      })
+      dispatch(resetTabs());
     }
   }, [isAuthzMode]);
 
@@ -97,8 +110,7 @@ export function CustomAppBar(props) {
               color="secondary"
             />
           }
-        >
-        </FormControlLabel>
+        ></FormControlLabel>
         <Button
           id="demo-positioned-button"
           color="inherit"
@@ -108,7 +120,7 @@ export function CustomAppBar(props) {
           aria-expanded={anchorEl ? "true" : undefined}
           onClick={handleClick}
         >
-          {selectNetwork}
+          {selectNetwork || "Select Network"}
         </Button>
         <Menu
           id="demo-positioned-menu"
@@ -125,19 +137,23 @@ export function CustomAppBar(props) {
             horizontal: "left",
           }}
         >
-          {chainIDs.map(chain => (
+          {chainIDs.map((chain) => (
             <MenuItem
               key={chain}
               onClick={() => {
                 setAnchorEl(null);
-                dispatch(setSelectedNetwork({
-                  chainName: networks[chain].network.config.chainName,
-                  chainID: networks[chain].network.config.chainId
-                }));
-                navigateTo('/');
+                dispatch(
+                  setSelectedNetwork({
+                    chainName: networks[chain].network.config.chainName,
+                    chainID: networks[chain].network.config.chainId,
+                  })
+                );
+                navigateTo("/");
               }}
             >
-              <ListItemText>{networks[chain].network.config.chainName}</ListItemText>
+              <ListItemText>
+                {networks[chain].network.config.chainName}
+              </ListItemText>
             </MenuItem>
           ))}
         </Menu>

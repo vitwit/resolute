@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import SelectNetwork from "../components/common/SelectNetwork";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Paper, Typography } from "@mui/material";
 import Validators from "./Validators";
-import { resetDefaultState as stakingResetDefaultState } from "../features/staking/stakeSlice";
-import { resetDefaultState as distributionResetDefaultState } from "../features/distribution/distributionSlice";
+import StakingOverview from "./stakingOverview/StakingOverview";
+import StakingAuthz from "./stakingOverview/StakingAuthz";
+import { useEffect } from "react";
 
 export default function StakingPage() {
   const wallet = useSelector((state) => state.wallet);
   const stakingChains = useSelector((state) => state.staking.chains);
-  const networks = useSelector((state) => state.wallet.networks);
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
   const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
@@ -19,47 +19,64 @@ export default function StakingPage() {
   let currentNetwork = params.networkName;
   const defaultChain = "cosmoshub";
 
-  useEffect(() => {
-    let networkIDs = Object.keys(networks);
-    dispatch(stakingResetDefaultState(networkIDs));
-    dispatch(distributionResetDefaultState(networkIDs));
-  }, [wallet]);
-
   const handleOnSelect = (chainName) => {
     navigate(`/${chainName}/staking`);
   };
 
+  useEffect(() => {
+    if (isAuthzMode) {
+      navigate(`/staking`);
+    }
+  }, [isAuthzMode]);
+
   return (
     <div>
-      <Paper elevation={0} sx={{ p: 4 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 5 }}>
-          <Typography color="text.primary" variant="h6" fontWeight={600}>
-            STAKING
-          </Typography>
-          <SelectNetwork
-            onSelect={(name) => {
-              handleOnSelect(name);
+      {!isAuthzMode ? (
+        <Paper
+          elevation={0}
+          sx={{
+            p: 2,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
             }}
-            networks={Object.keys(nameToChainIDs)}
-            defaultNetwork={
-              currentNetwork?.length > 0
-                ? currentNetwork.toLowerCase().replace(/ /g, "")
-                : defaultChain
-            }
-          />
-        </Box>
-        <div sx={{ justifyContent: "center", display: "flex", mr: 1 }}>
-          {Object.keys(stakingChains)?.length > 0 ? (
-            <Validators
-              chainID={nameToChainIDs[currentNetwork]}
-              currentNetwork={currentNetwork}
-              nameToChainIDs={nameToChainIDs}
-            />
+          >
+            {currentNetwork?.length > 0 ? (
+              <SelectNetwork
+                onSelect={(name) => {
+                  handleOnSelect(name);
+                }}
+                networks={Object.keys(nameToChainIDs)}
+                defaultNetwork={
+                  currentNetwork?.length > 0
+                    ? currentNetwork.toLowerCase().replace(/ /g, "")
+                    : defaultChain
+                }
+              />
+            ) : null}
+          </Box>
+          {currentNetwork ? (
+            <div sx={{ justifyContent: "center", display: "flex", mr: 1 }}>
+              {Object.keys(stakingChains)?.length > 0 ? (
+                <Validators
+                  chainID={nameToChainIDs[currentNetwork]}
+                  currentNetwork={currentNetwork}
+                  nameToChainIDs={nameToChainIDs}
+                />
+              ) : (
+                <></>
+              )}
+            </div>
           ) : (
-            <></>
+            <StakingOverview />
           )}
-        </div>
-      </Paper>
+        </Paper>
+      ) : (
+        <>{Object.keys(stakingChains)?.length > 0 ? <StakingAuthz /> : <></>}</>
+      )}
     </div>
   );
 }

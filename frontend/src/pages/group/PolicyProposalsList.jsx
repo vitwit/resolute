@@ -20,20 +20,23 @@ import { Box } from "@mui/system";
 function PolicyProposalsList(props) {
   const dispatch = useDispatch();
   const params = useParams();
+  const { chainInfo, address, chainID } = props;
 
-  const proposals = useSelector((state) => state.group?.proposals);
+  const proposals = useSelector((state) => state.group?.proposals?.[chainID]);
   const wallet = useSelector((state) => state.wallet);
   const [voteOpen, setVoteOpen] = useState(false);
   const createProposalRes = useSelector(
     (state) => state.group?.groupProposalRes
   );
   const navigate = useNavigate();
+  const { networkName } = params;
 
   const getProposals = () => {
     dispatch(
       getGroupPolicyProposals({
-        baseURL: wallet?.chainInfo?.config?.rest,
+        baseURL: chainInfo?.config?.rest,
         address: params?.policyId,
+        chainID: chainID,
       })
     );
   };
@@ -44,19 +47,18 @@ function PolicyProposalsList(props) {
 
   useEffect(() => {
     getProposals();
-  }, []);
+  }, [chainInfo]);
 
   const onVoteDailogClose = () => {
     setVoteOpen(false);
   };
 
   const onConfirm = (voteObj) => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txGroupProposalVote({
-        admin: wallet?.address,
-        voter: wallet?.address,
+        admin: address,
+        voter: address,
         option: voteObj?.vote,
         proposalId: voteObj?.proposalId,
         chainId: chainInfo?.config?.chainId,
@@ -68,7 +70,6 @@ function PolicyProposalsList(props) {
   };
 
   const onExecute = (proposalId) => {
-    const chainInfo = wallet?.chainInfo;
 
     dispatch(
       txGroupProposalExecute({
@@ -109,7 +110,7 @@ function PolicyProposalsList(props) {
           disableElevation
           onClick={() => {
             navigate(
-              `/group/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
+              `/${networkName}/daos/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
             );
           }}
         >
@@ -149,7 +150,7 @@ function PolicyProposalsList(props) {
             }}
             onClick={() => {
               navigate(
-                `/group/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
+                `/${networkName}/daos/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
               );
             }}
           >
@@ -161,7 +162,7 @@ function PolicyProposalsList(props) {
       <Grid spacing={2} container>
         {proposals?.data?.proposals?.map((p, index) => (
           <Grid item md={6} xs={12} key={index}>
-            <ProposalCard proposal={p} />
+            <ProposalCard proposal={p} networkName={networkName} />
           </Grid>
         ))}
       </Grid>

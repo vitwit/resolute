@@ -14,20 +14,22 @@ import {
 import { setError, setTxHash } from "../common/commonSlice";
 import { AuthzExecMsgUnjail } from "../../txns/authz/exec";
 import { signAndBroadcast } from "../../utils/signing";
+import { getAuthzTabs } from "../../utils/authorizations";
 
 const initialState = {
-  grantsToMe: {
-    status: "idle",
-    errMsg: "",
-    grants: [],
-    pagination: {},
+  tabResetStatus: false,
+  tabs: {
+    airdropEnabled: false,
+    authzEnabled: false,
+    daosEnabled: false,
+    feegrantEnabled: false,
+    govEnabled: false,
+    multisigEnabled: false,
+    sendEnabled: false,
+    stakingEnabled: false,
   },
-  grantsByMe: {
-    status: "idle",
-    errMsg: "",
-    grants: [],
-    pagination: {},
-  },
+  grantsToMe: {},
+  grantsByMe: {},
   tx: {
     status: "idle",
   },
@@ -50,7 +52,7 @@ export const getGrantsToMe = createAsyncThunk(
     );
     return {
       chainID: data.chainID,
-      data: response.data
+      data: response.data,
     };
   }
 );
@@ -65,7 +67,7 @@ export const getGrantsByMe = createAsyncThunk(
     );
     return {
       chainID: data.chainID,
-      data: response.data
+      data: response.data,
     };
   }
 );
@@ -146,6 +148,7 @@ export const txAuthzRevoke = createAsyncThunk(
           getGrantsByMe({
             baseURL: data.baseURL,
             granter: data.granter,
+            chainID: data.chainID,
           })
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
@@ -212,7 +215,7 @@ export const authzExecHelper = (dispatch, data) => {
           prefix: data.prefix,
           chainId: data.chainId,
           feegranter: data.feegranter,
-          metadata: data.metadata
+          metadata: data.metadata,
         })
       );
       break;
@@ -303,7 +306,7 @@ export const authzExecHelper = (dispatch, data) => {
     }
     case "unjail":
       {
-        const msg = AuthzExecMsgUnjail(data.validator, data.address);
+        const msg = AuthzExecMsgUnjail(data.validator, data.from);
         dispatch(
           txAuthzExec({
             msgs: [msg],
@@ -444,48 +447,94 @@ export const authzSlice = createSlice({
     resetTxAuthzRes: (state) => {
       state.txAuthzRes = {};
     },
+    resetTabs: (state) => {
+      state.tabs = {...initialState.tabs};
+      state.tabResetStatus = true;
+    },
+    resetTabResetStatus: (state) => {
+      state.tabResetStatus = false;
+    }
+
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getGrantsToMe.pending, (state) => {
-        state.grantsToMe.status = "pending";
-        state.grantsToMe.errMsg = "";
+      .addCase(getGrantsToMe.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            errMsg: "",
+            grants: [],
+            pagination: {},
+          };
+          state.grantsToMe[chainID] = result;
+        }
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
-        let result = {
-          status: "idle",
-          errMsg: "",
-          grants: action.payload.data.grants,
-          pagination: action.payload.data.pagination
+        const chainID = action.payload?.chainID || "";
+        const { changeAuthzTab } = action.meta?.arg;
+
+        if (chainID?.length) {
+          let grants = action.payload.data.grants;
+          if (changeAuthzTab) {
+            const existingTabs = state.tabs;
+            const updatedTabs = getAuthzTabs(grants);
+            for (let tabIndex in updatedTabs) {
+              updatedTabs[tabIndex] =
+                updatedTabs[tabIndex] || existingTabs[tabIndex];
+            }
+            state.tabs = updatedTabs;
+          }
+          let result = {
+            status: "idle",
+            errMsg: "",
+            grants: grants,
+            pagination: action.payload.data.pagination,
+          };
+          state.grantsToMe[chainID] = result;
         }
-        state.grantsToMe[action.payload.chainID] = result;
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
-        state.grantsToMe.status = "rejected";
-        state.grantsToMe.grants = [];
-        state.grantsToMe.pagination = {};
-        state.grantsToMe.errMsg = action.error.message;
+        const chainID = action.meta.arg.chainID;
+        if (chainID.length) {
+          state.grantsToMe[chainID].status = "rejected";
+          state.grantsToMe[chainID].grants = [];
+          state.grantsToMe[chainID].pagination = {};
+          state.grantsToMe[chainID].errMsg = action.error.message;
+        }
       });
 
     builder
-      .addCase(getGrantsByMe.pending, (state) => {
-        state.grantsByMe.status = "pending";
-        state.grantsByMe.errMsg = "";
+      .addCase(getGrantsByMe.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            status: "pending",
+            errMsg: "",
+            grants: [],
+            pagination: {},
+          };
+          state.grantsByMe[chainID] = result;
+        }
       })
       .addCase(getGrantsByMe.fulfilled, (state, action) => {
+        const chainID = action.payload.chainID;
         let result = {
           status: "idle",
           errMsg: "",
           grants: action.payload.data.grants,
-          pagination: action.payload.data.pagination
-        }
-        state.grantsByMe[action.payload.chainID] = result;
+          pagination: action.payload.data.pagination,
+        };
+        state.grantsByMe[chainID] = result;
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
-        state.grantsByMe.status = "rejected";
-        state.grantsByMe.grants = [];
-        state.grantsByMe.pagination = {};
-        state.grantsByMe.errMsg = action.error.message;
+        const chainID = action.meta.arg.chainID;
+        if (chainID?.length) {
+          state.grantsByMe[chainID].status = "rejected";
+          state.grantsByMe[chainID].grants = [];
+          state.grantsByMe[chainID].pagination = {};
+          state.grantsByMe[chainID].errMsg = action.error.message;
+        }
       });
 
     builder
@@ -543,7 +592,14 @@ export const authzSlice = createSlice({
   },
 });
 
-export const { resetAlerts, setSelectedGranter, resetExecTx, resetTxAuthzRes, exitAuthzMode } =
-  authzSlice.actions;
+export const {
+  resetAlerts,
+  setSelectedGranter,
+  resetExecTx,
+  resetTxAuthzRes,
+  resetTabs,
+  exitAuthzMode,
+  resetTabResetStatus,
+} = authzSlice.actions;
 
 export default authzSlice.reducer;

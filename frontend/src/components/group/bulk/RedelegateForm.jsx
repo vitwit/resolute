@@ -7,6 +7,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { Redelegate } from "../../../txns/staking";
 
 import { Controller, useFormContext } from "react-hook-form";
+import { useParams } from "react-router-dom";
 
 RedelegateForm.propTypes = {
   chainInfo: PropTypes.object.isRequired,
@@ -22,9 +23,19 @@ function parseDelegation(delegation, currency) {
 }
 
 export default function RedelegateForm(props) {
-  const wallet = useSelector((state) => state?.wallet);
+  const params = useParams();
 
-  const { chainInfo } = wallet;
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const [currentNetwork, setCurrentNetwork] = useState(
+    params?.networkName || selectedNetwork.toLowerCase()
+  );
+  const networks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const chainID = nameToChainIDs[currentNetwork];
+  const chainInfo = networks[chainID]?.network;
 
   const {
     control,
@@ -37,9 +48,9 @@ export default function RedelegateForm(props) {
     },
   });
 
-  var validators = useSelector((state) => state.staking.validators);
+  var validators = useSelector((state) => state.staking.chains[nameToChainIDs[currentNetwork]]?.validators);
   const delegations = useSelector(
-    (state) => state.staking.delegations.delegations
+    (state) => state.staking.chains?.[chainID].delegations?.delegations
   );
 
   var [data, setData] = useState([]);
