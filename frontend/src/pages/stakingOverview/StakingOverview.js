@@ -7,8 +7,7 @@ import { getDelegatorTotalRewards } from '../../features/distribution/distributi
 import { Chain } from './Chain';
 import { getTokenPrice } from "../../features/common/commonSlice";
 
-const StakingOverview = (props) => {
-
+const StakingOverview = () => {
   const dispatch = useDispatch();
   const wallet = useSelector((state) => state.wallet);
   const chainsmap = useSelector((state) => state.staking.chains);
@@ -40,25 +39,29 @@ const StakingOverview = (props) => {
       let totalRewards = rewardchainsMap?.[chainIds[i]]?.delegatorRewards?.totalRewards / 10 ** decimal;
       totalRewardsInDollars += convertToDollars(coinMinimalDenom, +totalRewards);
 
-      let validatorRewards = rewardchainsMap?.[chainIds[i]]?.delegatorRewards?.list;
+      const validatorRewards = rewardchainsMap?.[chainIds[i]]?.delegatorRewards?.list;
 
-      if (!validatorRewards || validatorRewards.length == 0) continue;
+      if (!validatorRewards || validatorRewards.length === 0) continue;
       let validatorMap = {};
 
       for (let j = 0; j < validatorRewards.length; j++) {
         let address = validatorRewards?.[j]?.validator_address;
         let rewards = validatorRewards?.[j].reward;
         let validatorReward = 0;
+
         for (let k = 0; k < rewards.length; k++) {
           validatorReward += ((+rewards[k].amount) / 10 ** decimal);
         }
+
         validatorMap[address] = validatorReward.toFixed(3);
       }
+
       chainsData[chainIds[i]] = {
         totalRewards: totalRewards.toFixed(3),
         validators: validatorMap,
       }
     }
+
     chainsData.totalReward = totalRewardsInDollars;
     return chainsData;
   }
