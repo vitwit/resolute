@@ -32,6 +32,7 @@ const initialState = {
       delegatedTo: {},
       totalStaked: 0.0,
     },
+    authzDelegations: {},
     unbonding: {
       status: "idle",
       delegations: [],
@@ -364,6 +365,40 @@ export const getDelegations = createAsyncThunk(
   }
 );
 
+export const getAuthzDelegations = createAsyncThunk(
+  "staking/authz-delegations",
+  async (data, { rejectWithValue }) => {
+    try {
+      const delegations = [];
+      let nextKey = null;
+      const limit = 100;
+      while (true) {
+        const response = await stakingService.delegations(
+          data.baseURL,
+          data.address,
+          nextKey
+            ? {
+                key: nextKey,
+                limit: limit,
+              }
+            : {}
+        );
+        delegations.push(...(response.data?.delegation_responses || []));
+        if (!response.data.pagination?.next_key) {
+          break;
+        }
+        nextKey = response.data.pagination.next_key;
+      }
+      return {
+        delegations: delegations,
+        chainID: data.chainID,
+      };
+    } catch (error) {
+      return rejectWithValue(error?.message || SOMETHING_WRONG);
+    }
+  }
+);
+
 export const getUnbonding = createAsyncThunk(
   "staking/unbonding",
   async (data) => {
@@ -612,6 +647,61 @@ export const stakeSlice = createSlice({
         let chainID = action.meta?.arg?.chainID;
         state.chains[chainID].delegations.status = "rejected";
         state.chains[chainID].delegations.errMsg = action.error.message;
+      });
+
+    builder
+      .addCase(getAuthzDelegations.pending, (state, action) => {
+        let chainID = action.meta?.arg?.chainID || "";
+        let granter = action.meta?.arg?.address || "";
+        if (chainID.length && granter.length) {
+          const result = {
+            status: "pending",
+            delegations: [],
+            errMsg: "",
+            pagination: {},
+            delegatedTo: {},
+            totalStaked: 0.0,
+          };
+          state.chains[chainID].authzDelegations[granter] = result;
+        }
+      })
+      .addCase(getAuthzDelegations.fulfilled, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        let granter = action.meta?.arg?.address;
+        if (chainID.length && granter.length) {
+          const result = {
+            status: "idle",
+            delegations: action.payload,
+            errMsg: "",
+            pagination: {},
+            delegatedTo: {},
+            totalStaked: 0.0,
+          };
+
+          let total = 0.0;
+          for (let i = 0; i < action.payload.delegations.length; i++) {
+            const delegation = action.payload.delegations[i];
+            result.delegatedTo[
+              delegation?.delegation?.validator_address
+            ] = true;
+            total += parseFloat(delegation?.delegation?.shares);
+          }
+          result.totalStaked = total;
+          state.chains[chainID].authzDelegations[granter] = result;
+        }
+      })
+      .addCase(getAuthzDelegations.rejected, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        let granter = action.meta?.arg?.address;
+        const result = {
+          status: "rejected",
+          delegations: [],
+          errMsg: action.error.message,
+          pagination: {},
+          delegatedTo: {},
+          totalStaked: 0.0,
+        };
+        state.chains[chainID].authzDelegations[granter] = result;
       });
 
     builder

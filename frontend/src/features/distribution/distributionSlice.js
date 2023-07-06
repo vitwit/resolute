@@ -15,6 +15,7 @@ const initialState = {
       errMsg: "",
       pagination: {},
     },
+    authzDelegatorRewards: {},
     tx: {
       status: "idle",
       txHash: "",
@@ -85,6 +86,21 @@ export const getDelegatorTotalRewards = createAsyncThunk(
   }
 );
 
+export const getAuthzDelegatorTotalRewards = createAsyncThunk(
+  "distribution/authz-totalRewards",
+  async (data) => {
+    const response = await distService.delegatorRewards(
+      data.baseURL,
+      data.address,
+      data.pagination
+    );
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
+  }
+);
+
 export const distSlice = createSlice({
   name: "distribution",
   initialState,
@@ -137,6 +153,49 @@ export const distSlice = createSlice({
         let chainID = action.meta?.arg?.chainID;
         state.chains[chainID].delegatorRewards.status = "rejected";
         state.chains[chainID].delegatorRewards.errMsg = action.error.message;
+      });
+
+    builder
+      .addCase(getAuthzDelegatorTotalRewards.pending, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        let granter = action.meta?.arg?.address;
+        const result = {
+          list: [],
+          totalRewards: 0,
+          status: "pending",
+          errMsg: "",
+          pagination: {},
+        };
+        state.chains[chainID].authzDelegatorRewards[granter] = result;
+      })
+      .addCase(getAuthzDelegatorTotalRewards.fulfilled, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        let granter = action.meta?.arg?.address;
+        const result = {
+          list: action.payload.data.rewards,
+          totalRewards: 0,
+          status: "idle",
+          errMsg: "",
+          pagination: {},
+        };
+        let totalRewardsList = action?.payload?.data?.total;
+        let total = 0;
+        for (let i = 0; i < totalRewardsList.length; i++)
+          total += +totalRewardsList[i].amount;
+        result.totalRewards = total;
+        state.chains[chainID].authzDelegatorRewards[granter] = result;
+      })
+      .addCase(getAuthzDelegatorTotalRewards.rejected, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        let granter = action.meta?.arg?.address;
+        let result = {
+          list: [],
+          totalRewards: 0,
+          status: action.error.message,
+          errMsg: "",
+          pagination: {},
+        };
+        state.chains[chainID].authzDelegatorRewards[granter] = result;
       });
 
     builder
