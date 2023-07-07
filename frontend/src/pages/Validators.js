@@ -559,15 +559,13 @@ export default function Validators(props) {
   const [availableBalance, setAvailableBalance] = useState(0);
   useEffect(() => {
     if (connected && chainInfo.config.currencies.length > 0) {
-      if (balance?.[chainID]?.list?.[0] !== undefined) {
-        setAvailableBalance(
-          parseBalance(
-            [balance[chainID].list[0]],
-            currency.coinDecimals,
-            currency.coinMinimalDenom
-          )
-        );
-      }
+      setAvailableBalance(
+        parseBalance(
+          balance[chainID]?.list?.[0] ? [balance[chainID]?.list?.[0]] : [],
+          currency.coinDecimals,
+          currency.coinMinimalDenom
+        )
+      );
     }
   }, [balance]);
 
