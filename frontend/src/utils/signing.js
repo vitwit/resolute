@@ -27,7 +27,7 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js";
 import { makeSignDoc, Registry } from "@cosmjs/proto-signing";
 import { slashingAminoConverter } from "../features/slashing/slashing";
 import { MsgUnjail } from "../txns/slashing/tx";
-import { MsgCreateGroup, MsgCreateGroupPolicy, MsgCreateGroupWithPolicy, MsgExec, MsgLeaveGroup, MsgSubmitProposal, MsgUpdateGroupAdmin, MsgUpdateGroupMembers, MsgUpdateGroupMetadata, MsgUpdateGroupPolicyAdmin, MsgUpdateGroupPolicyDecisionPolicy, MsgUpdateGroupPolicyMetadata, MsgVote } from "../txns/group/v1/tx";
+import { MsgCreateGroup, MsgCreateGroupPolicy, MsgCreateGroupWithPolicy, MsgExec, MsgLeaveGroup, MsgSubmitProposal, MsgUpdateGroupAdmin, MsgUpdateGroupMembers, MsgUpdateGroupMetadata, MsgUpdateGroupPolicyAdmin, MsgUpdateGroupPolicyDecisionPolicy, MsgUpdateGroupPolicyMetadata, MsgVote } from "cosmjs-types/cosmos/group/v1/tx";
 
 const canUseAmino = (aminoConfig, messages) => {
   for (let i = 0; i < messages.length; i++) {
