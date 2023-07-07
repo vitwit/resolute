@@ -5,7 +5,7 @@ import { setError, setTxHash } from "../common/commonSlice";
 import govService from "./govService";
 
 const initialState = {
-  loading : false,
+  loading : 0,
   active: {
     proposals: {},
     status: "idle",
@@ -155,8 +155,9 @@ export const proposalsSlice = createSlice({
   name: "gov",
   initialState,
   reducers: {
-    resetLoading: (state) => {
-      state.loading = true;
+    resetLoading: (state, action) => {
+      const {chainsCount} = action.payload;
+      state.loading += chainsCount;
     },
     resetTx: (state) => {
       state.tx = {
@@ -172,7 +173,6 @@ export const proposalsSlice = createSlice({
         chainData.status = "pending";
         chainData.errMsg = "";
         state.active[chainID] = chainData;
-        state.loading = false;
       })
       .addCase(getProposals.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
@@ -185,15 +185,16 @@ export const proposalsSlice = createSlice({
 
           }
           state.active[chainID] = result;
-          state.loading = false;
+          state.loading--;
         }
       })
       .addCase(getProposals.rejected, (state, action) => {
-        const chainID = action.payload?.chainID;
+        const chainID = action.meta?.arg?.chainID;
         const chainData = state.active[chainID] || {};
         chainData.status = "rejected";
         chainData.errMsg = action.error.message;
         state.active[chainID] = chainData;
+        state.loading--;
       });
 
     // tally

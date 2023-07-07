@@ -172,7 +172,6 @@ const StakingOverview = (props) => {
 
   useEffect(() => {
     if (Object.keys(chainsmap).length !== 0) {
-      console.log("staking", chainsmap, isLoading);
       setData(getStakingObjectForProps(wallet, chainsmap));
     }
   }, [chainsmap]);

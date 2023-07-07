@@ -47,11 +47,13 @@ function ActiveProposals() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(resetLoading());
-  }, []);
+    dispatch(resetLoading({ chainsCount: Object.keys(networks).length }));
+  }, [networks]);
 
   useEffect(() => {
-    if (loading) setDefaultLoading(false);
+    if (loading && defaultLoading) {
+      setDefaultLoading(false);
+    }
   }, [loading]);
 
   useEffect(() => {
@@ -79,20 +81,6 @@ function ActiveProposals() {
 
   return (
     <>
-      {(loading || defaultLoading) && (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <CircularProgress
-            sx={{
-              mt: 4,
-            }}
-          />
-        </Box>
-      )}
       <>
         {walletConnected ? (
           <>
@@ -124,30 +112,51 @@ function ActiveProposals() {
                 id={1}
               />
             ) : (
-              Object.keys(networks).map((key, index) => (
-                <Proposals
-                  restEndpoint={networks[key].network?.config?.rest}
-                  chainName={networks[key].network?.config?.chainName}
-                  chainLogo={networks[key]?.network?.logos?.menu}
-                  signer={networks[key].walletInfo?.bech32Address}
-                  gasPriceStep={networks[key].network?.config?.gasPriceStep}
-                  aminoConfig={networks[key].network.aminoConfig}
-                  bech32Config={networks[key].network?.config.bech32Config}
-                  chainID={networks[key].network?.config?.chainId}
-                  currencies={networks[key].network?.config?.currencies}
-                  authzMode={isAuthzMode}
-                  grantsToMe={
-                    authzGrants[networks[key].network?.config?.chainId] || []
-                  }
-                  id={index}
-                />
-              ))
+              <>
+                {defaultLoading ? (
+                  <></>
+                ) : (
+                  Object.keys(networks).map((key, index) => (
+                    <Proposals
+                      restEndpoint={networks[key].network?.config?.rest}
+                      chainName={networks[key].network?.config?.chainName}
+                      chainLogo={networks[key]?.network?.logos?.menu}
+                      signer={networks[key].walletInfo?.bech32Address}
+                      gasPriceStep={networks[key].network?.config?.gasPriceStep}
+                      aminoConfig={networks[key].network.aminoConfig}
+                      bech32Config={networks[key].network?.config.bech32Config}
+                      chainID={networks[key].network?.config?.chainId}
+                      currencies={networks[key].network?.config?.currencies}
+                      authzMode={isAuthzMode}
+                      grantsToMe={
+                        authzGrants[networks[key].network?.config?.chainId] ||
+                        []
+                      }
+                      id={index}
+                    />
+                  ))
+                )}
+              </>
             )}
           </>
         ) : (
           <ConnectWallet />
         )}
       </>
+      {(loading || defaultLoading) && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress
+            sx={{
+              mt: 4,
+            }}
+          />
+        </Box>
+      )}
     </>
   );
 }
