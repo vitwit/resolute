@@ -421,6 +421,7 @@ const AllProposals = () => {
         feeAmount: chainInfo?.config?.gasPriceStep?.average,
       })
     );
+    console.log("vote objj", voteObj);
   };
 
   const onExecute = (proposalId) => {

@@ -14,17 +14,6 @@ import { Grid } from "@mui/material";
 import CreateGroupInfoForm from "./CreateGroupInfoForm";
 import { useParams } from "react-router-dom";
 import { DAYS, PERCENTAGE } from "./common";
-import {
-  resetError,
-  resetTxHash,
-  removeFeegrant as removeFeegrantState,
-  setFeegrant as setFeegrantState,
-} from "../../features/common/commonSlice";
-import {
-  getFeegrant,
-  removeFeegrant as removeFeegrantLocalState,
-} from "../../utils/localStorage";
-import FeegranterInfo from "../../components/FeegranterInfo";
 
 const steps = ["Group information", "Add members", "Attach policy"];
 
@@ -35,20 +24,16 @@ export default function CreateGroupStepper() {
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
-  const [currentNetwork, setCurrentNetwork] = useState(
-    params?.networkName || selectedNetwork
-  );
+  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork);
 
-  const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
-  );
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
   const address =
     networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
-  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
 
+  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
+  
   const navigate = useNavigate();
   const txCreateGroupRes = useSelector(
     (state) => state?.group?.txCreateGroupRes
@@ -66,36 +51,13 @@ export default function CreateGroupStepper() {
     }
   }, [txCreateGroupRes?.status]);
 
-  useEffect(() => {
-    return () => {
-      dispatch(resetError());
-      dispatch(resetTxHash());
-    };
-  }, []);
-
-  useEffect(() => {
-    const currentChainGrants = getFeegrant()?.[currentNetwork];
-    dispatch(
-      setFeegrantState({
-        grants: currentChainGrants,
-        chainName: currentNetwork.toLowerCase(),
-      })
-    );
-  }, [currentNetwork, params]);
-
-  const removeFeegrant = () => {
-    // Should we completely remove feegrant or only for this session.
-    dispatch(removeFeegrantState(currentNetwork));
-    removeFeegrantLocalState(currentNetwork);
-  };
-
   const dispatch = useDispatch();
 
   const createGroup = (policyMetadata) => {
     const data = {
-      groupMetaData: groupMetaData,
-      policyMetadata: policyMetadata,
-      members: membersInfo,
+      "groupMetaData": groupMetaData,
+      "policyMetadata": policyMetadata,
+      "members": membersInfo,
     };
     const dataObj = {
       admin: address,
@@ -107,33 +69,27 @@ export default function CreateGroupStepper() {
       rest: chainInfo?.config?.rest,
       aminoConfig: chainInfo?.aminoConfig,
       prefix: chainInfo?.config?.bech32Config.bech32PrefixAccAddr,
-      feegranter: feegrant?.granter,
     };
 
     if (
       data.policyMetadata.percentage !== 0 ||
       data.policyMetadata.threshold !== 0
     ) {
+
       const getPeriod = (duration, period) => {
         let time;
-        if (duration === DAYS) time = 24 * 60 * 60;
+        if(duration === DAYS) time = 24 * 60 * 60;
         else time = 1;
 
         time = time * Number(period);
         return time;
-      };
+      }
 
       if (data?.policyMetadata) {
         dataObj["policyData"] = {
           ...data.policyMetadata,
-          minExecPeriod: getPeriod(
-            data.policyMetadata?.minExecPeriodDuration,
-            data.policyMetadata?.minExecPeriod
-          ),
-          votingPeriod: getPeriod(
-            data.policyMetadata?.votingPeriodDuration,
-            data.policyMetadata?.votingPeriod
-          ),
+          minExecPeriod: getPeriod(data.policyMetadata?.minExecPeriodDuration, data.policyMetadata?.minExecPeriod),
+          votingPeriod: getPeriod(data.policyMetadata?.votingPeriodDuration, data.policyMetadata?.votingPeriod),
         };
       }
 
@@ -160,7 +116,7 @@ export default function CreateGroupStepper() {
     setActiveStep(activeStep + 1);
   };
 
-  const onSubmitPolicyInfo = (data) => {
+  const onSubmitPolicyInfo = (data) => {    
     createGroup(data.policyMetadata);
   };
 
@@ -240,14 +196,6 @@ export default function CreateGroupStepper() {
 
   return (
     <Box sx={{ width: "100%" }}>
-      {feegrant?.granter?.length > 0 ? (
-        <FeegranterInfo
-          feegrant={feegrant}
-          onRemove={() => {
-            removeFeegrant();
-          }}
-        />
-      ) : null}
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => (
           <Step key={label}>
@@ -261,11 +209,7 @@ export default function CreateGroupStepper() {
 
           <form onSubmit={handleSubmitInfo(onSubmitInfo)}>
             <fieldset style={{ border: "none" }}>
-              <CreateGroupInfoForm
-                control={controlInfo}
-                errors={errorsInfo}
-                getValues={getValuesGroupInfo}
-              />
+              <CreateGroupInfoForm control={controlInfo} errors={errorsInfo} getValues={getValuesGroupInfo} />
             </fieldset>
             <Button type="submit">Next</Button>
           </form>

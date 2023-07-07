@@ -30,8 +30,6 @@ import {
   resetFeegrant,
   resetTxHash,
   setError,
-  removeFeegrant as removeFeegrantState,
-  setFeegrant as setFeegrantState,
 } from "./../features/common/commonSlice";
 import { DialogRedelegate } from "../components/DialogRedelegate";
 import { WitvalValidator } from "../components/WitvalValidator";
@@ -50,15 +48,9 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { FilteredValidators } from "./../components/FilteredValidators";
 import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../components/FeegranterInfo";
-import {
-  getFeegrant,
-  removeFeegrant as removeFeegrantLocalState,
-} from "../utils/localStorage";
-import { useParams } from "react-router-dom";
 
 export default function Validators(props) {
   const { chainID, nameToChainIDs, currentNetwork } = props;
-  const params = useParams();
   const dispatch = useDispatch();
   const [type, setType] = useState("delegations");
   const staking = useSelector((state) => state.staking);
@@ -80,9 +72,7 @@ export default function Validators(props) {
   );
   const wallet = useSelector((state) => state.wallet);
   const balance = useSelector((state) => state.bank.balances);
-  const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
-  );
+  const feegrant = useSelector((state) => state.common.feegrant);
 
   const { connected } = wallet;
   const chainInfo = wallet.networks[chainID].network;
@@ -331,7 +321,7 @@ export default function Validators(props) {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-        feegranter: feegrant?.granter,
+        feegranter: feegrant.granter,
       });
     } else {
       dispatch(
@@ -344,7 +334,7 @@ export default function Validators(props) {
           rest: chainInfo.config.rest,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-          feegranter: feegrant?.granter,
+          feegranter: feegrant.granter,
         })
       );
     }
@@ -381,7 +371,7 @@ export default function Validators(props) {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-        feegranter: feegrant?.granter,
+        feegranter: feegrant.granter,
       });
     } else {
       dispatch(
@@ -398,7 +388,7 @@ export default function Validators(props) {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-          feegranter: feegrant?.granter,
+          feegranter: feegrant.granter,
         })
       );
     }
@@ -434,7 +424,7 @@ export default function Validators(props) {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-        feegranter: feegrant?.granter,
+        feegranter: feegrant.granter,
       });
     } else {
       dispatch(
@@ -449,7 +439,7 @@ export default function Validators(props) {
           rest: chainInfo.config.rest,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-          feegranter: feegrant?.granter,
+          feegranter: feegrant.granter,
         })
       );
     }
@@ -533,7 +523,7 @@ export default function Validators(props) {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-        feegranter: feegrant?.granter,
+        feegranter: feegrant.granter,
       });
     } else {
       dispatch(
@@ -550,7 +540,7 @@ export default function Validators(props) {
           rest: chainInfo.config.rest,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-          feegranter: feegrant?.granter,
+          feegranter: feegrant.granter,
         })
       );
     }
@@ -619,20 +609,9 @@ export default function Validators(props) {
     inactive: [],
   });
 
-  useEffect(() => {
-    const currentChainGrants = getFeegrant()?.[currentNetwork];
-    dispatch(
-      setFeegrantState({
-        grants: currentChainGrants,
-        chainName: currentNetwork.toLowerCase(),
-      })
-    );
-  }, [currentNetwork, params]);
-
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
-    dispatch(removeFeegrantState(currentNetwork));
-    removeFeegrantLocalState(currentNetwork);
+    dispatch(resetFeegrant());
   };
 
   return (

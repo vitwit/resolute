@@ -469,6 +469,6 @@ export const feegrantSlice = createSlice({
   },
 });
 
-export const { resetAlerts, resetFeeFilter, resetFeeBasic, resetFeePeriodic, resetFeegrantState } = feegrantSlice.actions;
+export const { resetAlerts, resetFeeFilter, resetFeeBasic, resetFeePeriodic } = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;

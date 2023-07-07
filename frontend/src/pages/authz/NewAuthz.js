@@ -24,14 +24,11 @@ import {
   resetFeegrant,
   resetTxHash,
   setError,
-  removeFeegrant as removeFeegrantState,
-  setFeegrant as setFeegrantState,
 } from "../../features/common/commonSlice";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Typography, Alert } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import FeegranterInfo from "../../components/FeegranterInfo";
-import { getFeegrant, removeFeegrant as removeFeegrantLocalState } from "../../utils/localStorage";
 
 export default function NewAuthz() {
   const params = useParams();
@@ -121,18 +118,9 @@ export default function NewAuthz() {
     }
   }, [txAuthzRes?.status]);
 
-  useEffect(() => {
-    const currentChainGrants = getFeegrant()?.[currentNetwork];
-    dispatch(setFeegrantState({
-      grants: currentChainGrants,
-      chainName: currentNetwork.toLowerCase()
-    }));
-  }, [currentNetwork, params])
-
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
-    dispatch(removeFeegrantState(currentNetwork));
-    removeFeegrantLocalState(currentNetwork);
+    dispatch(resetFeegrant());
   };
 
   const [selected, setSelected] = useState("send");
