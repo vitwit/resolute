@@ -11,6 +11,7 @@ import {
   getGrantsByMe,
   txRevoke,
   resetAlerts,
+  getAuthzGrants,
 } from "./../../features/feegrant/feegrantSlice";
 import {
   resetError,
@@ -18,7 +19,7 @@ import {
   setError,
   setFeegrant as setFeegrantState,
   resetFeegrant,
-  removeFeegrant as removeFeegrantState
+  removeFeegrant as removeFeegrantState,
 } from "./../../features/common/commonSlice";
 import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "./../../utils/util";
@@ -91,13 +92,26 @@ const renderExpiration = (row) => {
   }
 };
 
+export const filterAuthzFeegrant = (grantsToMe) => {
+  const granters = [];
+  const grants = grantsToMe?.grants || [];
+  for (const grant of grants) {
+    const authorizationType = grant?.authorization["@type"];
+    const isGenericAuthorization =
+      authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
+    const isMsgGrantAllowance =
+      grant?.authorization.msg === "/cosmos.feegrant.v1beta1.MsgGrantAllowance";
+    if (isGenericAuthorization && isMsgGrantAllowance) {
+      granters.push(grant.granter);
+    }
+  }
+  return granters;
+};
+
 export default function Feegrant() {
   const [tab, setTab] = useState(0);
   const [currentGranter, setCurrentGranter] = useState(null);
   const [usingFeegrant, setUsingFeegrant] = useState();
-
-  const grantsToMe = useSelector((state) => state.feegrant.grantsToMe);
-  const grantsByMe = useSelector((state) => state.feegrant.grantsByMe);
 
   const dispatch = useDispatch();
 
@@ -112,11 +126,15 @@ export default function Feegrant() {
   );
 
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
 
-  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
-  const address =
-    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+  const chainID = nameToChainIDs[currentNetwork];
+  const chainInfo = networks[chainID]?.network;
+  const address = networks[chainID]?.walletInfo.bech32Address;
 
+  const authzGrantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
+  const grantsToMe = useSelector((state) => state.feegrant.grantsToMe);
+  const grantsByMe = useSelector((state) => state.feegrant.grantsByMe);
   const errState = useSelector((state) => state.feegrant.errState);
   const txStatus = useSelector((state) => state.feegrant.tx);
   const currency = chainInfo?.config?.currencies[0];
@@ -124,17 +142,22 @@ export default function Feegrant() {
   const isNanoLedger = useSelector((state) => state.wallet.isNanoLedger);
 
   const [selected, setSelected] = React.useState({});
+  const [isNoAuthzs, setNoAuthzs] = useState(false);
+  const [authzGrants, setAuthzGrants] = useState();
+
   const handleInfoClose = (value) => {
     setInfoOpen(false);
   };
 
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[currentNetwork];
-    dispatch(setFeegrantState({
-      grants: currentChainGrants,
-      chainName: currentNetwork.toLowerCase()
-    }));
-  }, [currentNetwork, params])
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: currentNetwork.toLowerCase(),
+      })
+    );
+  }, [currentNetwork, params]);
 
   useEffect(() => {
     if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
@@ -242,10 +265,31 @@ export default function Feegrant() {
 
   const handleCheck = (index, row) => {
     setCurrentGranter(index);
-    if(!index) {
+    if (!index) {
       setUsingFeegrant(isUsingFeeGrant(row));
     }
-  }
+  };
+
+  useEffect(() => {
+    if(isAuthzMode && authzGrants?.length) {
+      dispatch(
+        getAuthzGrants({
+          baseURL: chainInfo.config.rest,
+          granter: authzGrants[0],
+        })
+      );
+    }
+  }, [isAuthzMode, authzGrants]);
+
+  useEffect(() => {
+    const result = filterAuthzFeegrant(authzGrantsToMe);
+    if (result?.length === 0) {
+      setNoAuthzs(true);
+    } else {
+      setNoAuthzs(false);
+      setAuthzGrants(result);
+    }
+  }, [authzGrantsToMe]);
 
   return (
     <>
@@ -292,207 +336,218 @@ export default function Feegrant() {
           Grant New
         </Button>
       </Box>
-      <Paper elevation={0} sx={{ p: 1, mt: 2 }}>
-        <GroupTab
-          tabs={[
-            {
-              title: "Granted By Me",
-            },
-            {
-              title: "Granted To Me",
-            },
-          ]}
-          handleTabChange={handleTabChange}
-        />
-        <TabPanel value={tab} index={0} key={"by-me"}>
-          <>
-            {grantsByMe && grantsByMe?.grants.length === 0 ? (
-              <Typography
-                variant="h6"
-                color="text.primary"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  padding: 16,
-                }}
-              >
-                No Feegrant found
-              </Typography>
-            ) : (
-              <>
-                <Table
-                  sx={{ minWidth: 650 }}
-                  aria-label="simple table"
-                  size="small"
+      {!isAuthzMode ? (
+        <Paper elevation={0} sx={{ p: 1, mt: 2 }}>
+          <GroupTab
+            tabs={[
+              {
+                title: "Granted By Me",
+              },
+              {
+                title: "Granted To Me",
+              },
+            ]}
+            handleTabChange={handleTabChange}
+          />
+          <TabPanel value={tab} index={0} key={"by-me"}>
+            <>
+              {grantsByMe && grantsByMe?.grants.length === 0 ? (
+                <Typography
+                  variant="h6"
+                  color="text.primary"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    padding: 16,
+                  }}
                 >
-                  <TableHead>
-                    <StyledTableRow>
-                      <StyledTableCell>Grantee</StyledTableCell>
-                      <StyledTableCell>Type</StyledTableCell>
-                      <StyledTableCell>Expiration</StyledTableCell>
-                      <StyledTableCell>Details</StyledTableCell>
-                      <StyledTableCell>Action</StyledTableCell>
-                    </StyledTableRow>
-                  </TableHead>
-                  <TableBody>
-                    {grantsByMe &&
-                      grantsByMe?.grants?.map((row, index) => (
-                        <StyledTableRow
-                          key={index}
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                          }}
-                        >
-                          <StyledTableCell component="th" scope="row">
-                            {shortenAddress(row.grantee, 21)}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            <Chip
-                              label={getTypeURLName(row.allowance["@type"])}
-                              variant="filled"
-                              size="medium"
-                            />
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {renderExpiration(row)}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            <Link
-                              onClick={() => {
-                                setSelected(row);
-                                setInfoOpen(true);
-                              }}
-                            >
-                              Details
-                            </Link>
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            <Button
-                              variant="outlined"
-                              color="error"
-                              size="small"
-                              disableElevation
-                              disabled={
-                                txStatus?.status === "pending" ? true : false
-                              }
-                              onClick={() => revoke(row)}
-                            >
-                              Revoke
-                            </Button>
-                          </StyledTableCell>
-                        </StyledTableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </>
-            )}
-          </>
-        </TabPanel>
-        <TabPanel value={tab} index={1} key="to-me">
-          <>
-            {grantsToMe && grantsToMe.grants?.length === 0 ? (
-              <Typography
-                variant="h6"
-                color="text.primary"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  padding: 16,
-                }}
-              >
-                No Feegrant found
-              </Typography>
-            ) : (
-              <>
-                <Table
-                  sx={{ minWidth: 650 }}
-                  aria-label="simple table"
-                  size="small"
+                  No Feegrant found
+                </Typography>
+              ) : (
+                <>
+                  <Table
+                    sx={{ minWidth: 650 }}
+                    aria-label="simple table"
+                    size="small"
+                  >
+                    <TableHead>
+                      <StyledTableRow>
+                        <StyledTableCell>Grantee</StyledTableCell>
+                        <StyledTableCell>Type</StyledTableCell>
+                        <StyledTableCell>Expiration</StyledTableCell>
+                        <StyledTableCell>Details</StyledTableCell>
+                        <StyledTableCell>Action</StyledTableCell>
+                      </StyledTableRow>
+                    </TableHead>
+                    <TableBody>
+                      {grantsByMe &&
+                        grantsByMe?.grants?.map((row, index) => (
+                          <StyledTableRow
+                            key={index}
+                            sx={{
+                              "&:last-child td, &:last-child th": { border: 0 },
+                            }}
+                          >
+                            <StyledTableCell component="th" scope="row">
+                              {shortenAddress(row.grantee, 21)}
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              <Chip
+                                label={getTypeURLName(row.allowance["@type"])}
+                                variant="filled"
+                                size="medium"
+                              />
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              {renderExpiration(row)}
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              <Link
+                                onClick={() => {
+                                  setSelected(row);
+                                  setInfoOpen(true);
+                                }}
+                              >
+                                Details
+                              </Link>
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              <Button
+                                variant="outlined"
+                                color="error"
+                                size="small"
+                                disableElevation
+                                disabled={
+                                  txStatus?.status === "pending" ? true : false
+                                }
+                                onClick={() => revoke(row)}
+                              >
+                                Revoke
+                              </Button>
+                            </StyledTableCell>
+                          </StyledTableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </>
+              )}
+            </>
+          </TabPanel>
+          <TabPanel value={tab} index={1} key="to-me">
+            <>
+              {grantsToMe && grantsToMe.grants?.length === 0 ? (
+                <Typography
+                  variant="h6"
+                  color="text.primary"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    padding: 16,
+                  }}
                 >
-                  <TableHead>
-                    <StyledTableRow>
-                      <StyledTableCell>Granter</StyledTableCell>
-                      <StyledTableCell>Type</StyledTableCell>
-                      <StyledTableCell>Expiration</StyledTableCell>
-                      <StyledTableCell>Details</StyledTableCell>
-                      <StyledTableCell>Use Feegrant</StyledTableCell>
-                    </StyledTableRow>
-                  </TableHead>
-                  <TableBody>
-                    {grantsToMe &&
-                      grantsToMe.grants?.map((row, index) => (
-                        <StyledTableRow
-                          key={index}
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                          }}
-                        >
-                          <StyledTableCell component="th" scope="row">
-                            {shortenAddress(row.granter, 21)}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            <Chip
-                              label={getTypeURLName(row.allowance["@type"])}
-                              variant="filled"
-                              size="medium"
-                            />
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            {renderExpiration(row)}
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            <Link
-                              onClick={() => {
-                                setSelected(row);
-                                setInfoOpen(true);
-                              }}
-                            >
-                              Details
-                            </Link>
-                          </StyledTableCell>
-                          <StyledTableCell>
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  onChange={(e) => {
-                                    if (isNanoLedger) {
-                                      dispatch(
-                                        setError({
-                                          type: "info",
-                                          message:
-                                            "Feegrant does not support ledger signing",
-                                        })
-                                      );
-                                    } else {
-                                      if (e.target.checked) {
-                                        setFeegrant(row, currentNetwork);
-                                        dispatch(setFeegrantState({
-                                          grants: row, 
-                                          chainName: currentNetwork
-                                        }));
-                                        handleCheck(index, row);
+                  No Feegrant found
+                </Typography>
+              ) : (
+                <>
+                  <Table
+                    sx={{ minWidth: 650 }}
+                    aria-label="simple table"
+                    size="small"
+                  >
+                    <TableHead>
+                      <StyledTableRow>
+                        <StyledTableCell>Granter</StyledTableCell>
+                        <StyledTableCell>Type</StyledTableCell>
+                        <StyledTableCell>Expiration</StyledTableCell>
+                        <StyledTableCell>Details</StyledTableCell>
+                        <StyledTableCell>Use Feegrant</StyledTableCell>
+                      </StyledTableRow>
+                    </TableHead>
+                    <TableBody>
+                      {grantsToMe &&
+                        grantsToMe.grants?.map((row, index) => (
+                          <StyledTableRow
+                            key={index}
+                            sx={{
+                              "&:last-child td, &:last-child th": { border: 0 },
+                            }}
+                          >
+                            <StyledTableCell component="th" scope="row">
+                              {shortenAddress(row.granter, 21)}
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              <Chip
+                                label={getTypeURLName(row.allowance["@type"])}
+                                variant="filled"
+                                size="medium"
+                              />
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              {renderExpiration(row)}
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              <Link
+                                onClick={() => {
+                                  setSelected(row);
+                                  setInfoOpen(true);
+                                }}
+                              >
+                                Details
+                              </Link>
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    onChange={(e) => {
+                                      if (isNanoLedger) {
+                                        dispatch(
+                                          setError({
+                                            type: "info",
+                                            message:
+                                              "Feegrant does not support ledger signing",
+                                          })
+                                        );
                                       } else {
-                                        dispatch(removeFeegrantState(currentNetwork));
-                                        removeFeegrant(currentNetwork);
-                                        handleCheck(null, row);
+                                        if (e.target.checked) {
+                                          setFeegrant(row, currentNetwork);
+                                          dispatch(
+                                            setFeegrantState({
+                                              grants: row,
+                                              chainName: currentNetwork,
+                                            })
+                                          );
+                                          handleCheck(index, row);
+                                        } else {
+                                          dispatch(
+                                            removeFeegrantState(currentNetwork)
+                                          );
+                                          removeFeegrant(currentNetwork);
+                                          handleCheck(null, row);
+                                        }
                                       }
+                                    }}
+                                    checked={
+                                      isUsingFeeGrant(row) ||
+                                      index === currentGranter
                                     }
-                                  }}
-                                  checked={ isUsingFeeGrant(row) || (index === currentGranter)}
-                                  defaultChecked={usingFeegrant} 
-                                />
-                              }
-                            />
-                          </StyledTableCell>
-                        </StyledTableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </>
-            )}
-          </>
-        </TabPanel>
-      </Paper>
+                                    defaultChecked={usingFeegrant}
+                                  />
+                                }
+                              />
+                            </StyledTableCell>
+                          </StyledTableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </>
+              )}
+            </>
+          </TabPanel>
+        </Paper>
+      ) : (
+        <>{JSON.stringify(authzGrants)}</>
+      )}
     </>
   );
 }
