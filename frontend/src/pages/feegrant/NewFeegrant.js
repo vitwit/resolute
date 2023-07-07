@@ -18,7 +18,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { PeriodicFeegrant } from "../../components/PeriodicFeeGrant";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate, useParams } from "react-router-dom";
-import { resetError, setError } from "../../features/common/commonSlice";
+import {
+  resetError,
+  setError,
+  setFeegrant as setFeegrantState,
+  removeFeegrant as removeFeegrantState,
+} from "../../features/common/commonSlice";
 import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import {
   Alert,
@@ -35,6 +40,11 @@ import { Box } from "@mui/system";
 import BasicFeeGrant from "../../components/feegrant/BasicFeeGrant";
 import { authzMsgTypes } from "./../../utils/authorizations";
 import { getGrantsToMe } from "../../features/authz/authzSlice";
+import FeegranterInfo from "../../components/FeegranterInfo";
+import {
+  getFeegrant,
+  removeFeegrant as removeFeegrantLocalState,
+} from "../../utils/localStorage";
 
 const filterAuthzFeegrant = (grantsToMe) => {
   const granters = [];
@@ -82,6 +92,9 @@ export default function NewFeegrant() {
     (state) => state.feegrant.txGrantPeriodicRes
   );
   const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
+  );
 
   let navigate = useNavigate();
   useEffect(() => {
@@ -119,6 +132,22 @@ export default function NewFeegrant() {
       dispatch(resetFeePeriodic());
     };
   }, []);
+
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[currentNetwork];
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: currentNetwork.toLowerCase(),
+      })
+    );
+  }, [currentNetwork, params]);
+
+  const removeFeegrant = () => {
+    // Should we completely remove feegrant or only for this session.
+    dispatch(removeFeegrantState(currentNetwork));
+    removeFeegrantLocalState(currentNetwork);
+  };
 
   const date = new Date();
   const expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
@@ -160,6 +189,7 @@ export default function NewFeegrant() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant?.granter,
       })
     );
   };
@@ -283,6 +313,14 @@ export default function NewFeegrant() {
 
   return (
     <>
+      {feegrant?.granter?.length > 0 ? (
+        <FeegranterInfo
+          feegrant={feegrant}
+          onRemove={() => {
+            removeFeegrant();
+          }}
+        />
+      ) : null}
       <Typography
         variant="h6"
         textAlign={"left"}
@@ -325,7 +363,11 @@ export default function NewFeegrant() {
             <Grid item xs={10} md={6}>
               <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(onBasicSubmit)}>
-                  <BasicFeeGrant granters={authzGrants} setGranter={setGranter} granter={granter} />
+                  <BasicFeeGrant
+                    granters={authzGrants}
+                    setGranter={setGranter}
+                    granter={granter}
+                  />
                   <Button
                     sx={{ mt: 4 }}
                     variant="contained"
@@ -446,7 +488,14 @@ export default function NewFeegrant() {
                     </Select>
                   </FormControl>
 
-                  {(value === "Basic" && <BasicFeeGrant granters={authzGrants} setGranter={setGranter} granter={granter} />) || null}
+                  {(value === "Basic" && (
+                    <BasicFeeGrant
+                      granters={authzGrants}
+                      setGranter={setGranter}
+                      granter={granter}
+                    />
+                  )) ||
+                    null}
                   {(value === "Periodic" && (
                     <PeriodicFeegrant
                       loading={feegrantTx.status}
