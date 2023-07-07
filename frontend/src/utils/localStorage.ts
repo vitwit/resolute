@@ -43,3 +43,7 @@ export function removeFeegrant(chainName: string) {
   delete data[chainName];
   localStorage.setItem(TYPE_FEEGRANT, JSON.stringify(data));
 }
+
+export function removeAllFeegrants() {
+  localStorage.removeItem("feegrant");
+}

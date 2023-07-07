@@ -162,7 +162,7 @@ export default function Feegrant() {
         })
       );
     }
-  }, [chainInfo, currentNetwork]);
+  }, [chainInfo, currentNetwork, address]);
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
   useEffect(() => {
