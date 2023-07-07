@@ -117,13 +117,6 @@ export const distSlice = createSlice({
       });
       state.chains = chainsMap;
     },
-    resetChainRewards: (state, action) => {
-      let chainID = action.payload.chainID;
-      state.chains[chainID].delegatorRewards.list = [];
-      state.chains[chainID].delegatorRewards.totalRewards = 0;
-      state.chains[chainID].delegatorRewards.status = "idle";
-      state.chains[chainID].delegatorRewards.errMsg = "";
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -217,6 +210,5 @@ export const distSlice = createSlice({
   },
 });
 
-export const { resetTx, resetDefaultState, resetChainRewards } =
-  distSlice.actions;
+export const { resetTx, resetDefaultState } = distSlice.actions;
 export default distSlice.reducer;

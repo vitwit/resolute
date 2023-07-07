@@ -48,13 +48,3 @@ export function parseBalance(
 
   return 0.0;
 }
-
-export function getDenomBalance(tokens: Coin[], denom: string): number {
-  if (tokens.length === 0) {
-    return 0.0;
-  }
-  for (let i = 0; i < tokens.length; i++) {
-    if (tokens[i].denom === denom) return parseFloat(tokens[i].amount);
-  }
-  return 0.0;
-}
