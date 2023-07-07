@@ -615,7 +615,7 @@ export const stakeSlice = createSlice({
       })
       .addCase(getAllValidators.rejected, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
-        let result = initialState.defaultState.validators;
+        let result = cloneDeep(initialState.defaultState.validators);
         result.errMsg = action.error.message;
         result.status = "rejected";
         state.chains[chainID].validators = result;
