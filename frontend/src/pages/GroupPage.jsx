@@ -7,6 +7,17 @@ import GroupTab, { TabPanel } from "../components/group/GroupTab";
 import CardSkeleton from "../components/group/CardSkeleton";
 import { useDispatch, useSelector } from "react-redux";
 import SelectNetwork from "../components/common/SelectNetwork";
+import {
+  resetError,
+  resetTxHash,
+  removeFeegrant as removeFeegrantState,
+  setFeegrant as setFeegrantState,
+} from "../features/common/commonSlice";
+import {
+  getFeegrant,
+  removeFeegrant as removeFeegrantLocalState,
+} from "../utils/localStorage";
+import FeegranterInfo from "../components/FeegranterInfo";
 
 const AdminGroupList = lazy(() => import("./group/AdminGroupList"));
 const MemberGroupList = lazy(() => import("./group/MemberGroupList"));
@@ -29,6 +40,9 @@ export default function GroupPage() {
   );
 
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
+  );
 
   const navigate = useNavigate();
   function navigateTo(path) {
@@ -40,8 +54,39 @@ export default function GroupPage() {
     else setCurrentNetwork("cosmoshub");
   }, [params]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetError());
+      dispatch(resetTxHash());
+    };
+  }, []);
+
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[currentNetwork];
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: currentNetwork.toLowerCase(),
+      })
+    );
+  }, [currentNetwork, params]);
+
+  const removeFeegrant = () => {
+    // Should we completely remove feegrant or only for this session.
+    dispatch(removeFeegrantState(currentNetwork));
+    removeFeegrantLocalState(currentNetwork);
+  };
+
   return (
     <Box sx={{ p: 1 }}>
+      {feegrant?.granter?.length > 0 ? (
+        <FeegranterInfo
+          feegrant={feegrant}
+          onRemove={() => {
+            removeFeegrant();
+          }}
+        />
+      ) : null}
       <Box
         sx={{
           display: "flex",
