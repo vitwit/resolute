@@ -18,12 +18,15 @@ import {
   resetError,
   resetFeegrant,
   resetTxHash,
+  removeFeegrant as removeFeegrantState,
+  setFeegrant as setFeegrantState,
 } from "../../features/common/commonSlice";
 import { txUnjail } from "../../features/slashing/slashingSlice";
 import { getUnjailAuthz } from "../../utils/authorizations";
 import TextField from "@mui/material/TextField";
 import FeegranterInfo from "../../components/FeegranterInfo";
 import { useParams } from "react-router-dom";
+import { getFeegrant, removeFeegrant as removeFeegrantLocalState } from "../../utils/localStorage";
 import { FormControl } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -50,7 +53,6 @@ export default function Unjail() {
 
   const slashingTx = useSelector((state) => state.slashing.tx);
   const authzExecTx = useSelector((state) => state.authz.execTx);
-  const feegrant = useSelector((state) => state.common.feegrant);
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const isAuthzMode = useSelector((state) => state.common.authzMode);
@@ -61,6 +63,8 @@ export default function Unjail() {
   const chainInfo = networks[chainID]?.network;
   const currency = networks[chainID]?.network.config.currencies[0];
 
+  const selectedAuthz = useSelector((state) => state.authz.selected);
+  const feegrant = useSelector((state) => state.common.feegrant?.[selectedNetwork]);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
 
   const [isNoAuthzs, setNoAuthzs] = useState(false);
@@ -95,7 +99,7 @@ export default function Unjail() {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
             chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-          feegranter: feegrant.granter,
+          feegranter: feegrant?.granter,
         })
       );
     } else {
@@ -111,7 +115,7 @@ export default function Unjail() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-        feegranter: feegrant.granter,
+        feegranter: feegrant?.granter,
       });
     }
   };
@@ -140,8 +144,17 @@ export default function Unjail() {
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
-    dispatch(resetFeegrant());
+    dispatch(removeFeegrantState(selectedNetwork));
+    removeFeegrantLocalState(selectedNetwork);
   };
+
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[selectedNetwork];
+    dispatch(setFeegrantState({
+      grants: currentChainGrants,
+      chainName: selectedNetwork.toLowerCase()
+    }));
+  }, [selectedNetwork, params])
 
   return (
     <Box

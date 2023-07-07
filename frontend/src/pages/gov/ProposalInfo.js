@@ -21,6 +21,8 @@ import {
   resetError,
   resetFeegrant,
   setError,
+  removeFeegrant as removeFeegrantState,
+  setFeegrant as setFeegrantState,
 } from "../../features/common/commonSlice";
 import { resetTx } from "../../features/distribution/distributionSlice";
 import { getVoteAuthz } from "../../utils/authorizations";
@@ -32,10 +34,11 @@ import FeegranterInfo from "../../components/FeegranterInfo";
 import { getMainNetworks } from "../../utils/networks";
 import "./../common.css";
 import { filterVoteAuthz } from "./ActiveProposals";
+import { getFeegrant, removeFeegrant as removeFeegrantLocalState } from "../../utils/localStorage";
 
 export default function ProposalInfo() {
   const dispatch = useDispatch();
-  const feegrant = useSelector((state) => state.common.feegrant);
+  const params = useParams();
 
   const [authzGrants, setAuthzGrants] = useState({});
   const proposalInfoRes = useSelector((state) => state.gov.proposalInfo);
@@ -64,6 +67,8 @@ export default function ProposalInfo() {
   const chainInfo = network?.network;
 
   const [proposal, setProposal] = useState({});
+
+  const feegrant = useSelector((state) => state.common.feegrant?.[networkName]);
 
   useEffect(() => {
     const chainID = nameToIDs[networkName];
@@ -172,6 +177,14 @@ export default function ProposalInfo() {
     }
   }, [govTx, authzExecTx]);
 
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[networkName];
+    dispatch(setFeegrantState({
+      grants: currentChainGrants,
+      chainName: networkName.toLowerCase()
+    }));
+  }, [networkName, params])
+
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
     dispatch(resetFeegrant());
@@ -255,14 +268,14 @@ export default function ProposalInfo() {
           >
             Proposal Details
           </Typography>
-          {/* {feegrant.granter.length > 0 ? (
+          {feegrant?.granter?.length > 0 ? (
             <FeegranterInfo
               feegrant={feegrant}
               onRemove={() => {
                 removeFeegrant();
               }}
             />
-          ) : null} */}
+          ) : null}
           <Paper
             sx={{
               borderRadius: 0,
