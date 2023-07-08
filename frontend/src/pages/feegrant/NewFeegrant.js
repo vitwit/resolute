@@ -45,6 +45,23 @@ import {
   removeFeegrant as removeFeegrantLocalState,
 } from "../../utils/localStorage";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import { getGrantsToMe } from "../../features/authz/authzSlice";
+
+const filterAuthzFeegrant = (grantsToMe) => {
+  const granters = [];
+  const grants = grantsToMe?.grants || [];
+  for (const grant of grants) {
+    const authorizationType = grant?.authorization["@type"];
+    const isGenericAuthorization =
+      authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
+    const isMsgGrantAllowance =
+      grant?.authorization.msg === "/cosmos.feegrant.v1beta1.MsgGrantAllowance";
+    if (isGenericAuthorization && isMsgGrantAllowance) {
+      granters.push(grant.granter);
+    }
+  }
+  return granters;
+};
 
 export default function NewFeegrant() {
   const [tab, setTab] = useState(0);
@@ -59,11 +76,12 @@ export default function NewFeegrant() {
     params?.networkName || selectedNetwork
   );
 
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
-  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
-  const address =
-    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+  const chainID = nameToChainIDs[currentNetwork];
+  const chainInfo = networks[chainID]?.network;
+  const address = networks[chainID]?.walletInfo.bech32Address;
 
   const dispatch = useDispatch();
   const feegrantTx = useSelector((state) => state.feegrant.tx);
@@ -77,6 +95,7 @@ export default function NewFeegrant() {
   const feegrant = useSelector(
     (state) => state.common.feegrant?.[currentNetwork]
   );
+  const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
 
   let navigate = useNavigate();
   useEffect(() => {
@@ -137,6 +156,9 @@ export default function NewFeegrant() {
     networks[nameToChainIDs[currentNetwork]]?.network.config.currencies[0];
 
   const [msgTxTypes, setMsgTxTypes] = React.useState([]);
+  const [isNoAuthzs, setNoAuthzs] = useState(false);
+  const [authzGrants, setAuthzGrants] = useState();
+  const [granter, setGranter] = useState("");
 
   const handleChange = (event) => {
     const {
@@ -268,6 +290,30 @@ export default function NewFeegrant() {
     return (arrSplit && arrSplit[arrSplit?.length - 1]) || "";
   };
 
+  useEffect(() => {
+    if (isAuthzMode) {
+      dispatch(
+        getGrantsToMe({
+          baseURL: chainInfo.config.rest + "/",
+          grantee: address,
+          chainID: chainID,
+        })
+      );
+    }
+  }, [isAuthzMode, chainInfo]);
+
+  useEffect(() => {
+    const result = filterAuthzFeegrant(grantsToMe);
+    if (result?.length === 0) {
+      setNoAuthzs(true);
+    } else {
+      setNoAuthzs(false);
+      setAuthzGrants(result);
+    }
+  }, [grantsToMe]);
+
+  console.log(grantsToMe);
+
   return (
     <>
       {feegrant?.granter?.length > 0 ? (
@@ -320,7 +366,11 @@ export default function NewFeegrant() {
             <Grid item xs={10} md={6}>
               <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(onBasicSubmit)}>
-                  <BasicFeeGrant />
+                  <BasicFeeGrant
+                    granters={authzGrants}
+                    setGranter={setGranter}
+                    granter={granter}
+                  />
                   <Button
                     sx={{ mt: 4 }}
                     variant="contained"
@@ -350,6 +400,9 @@ export default function NewFeegrant() {
                     loading={feegrantTx.status}
                     onGrant={onPeriodicGrant}
                     currency={currency}
+                    granters={authzGrants}
+                    setGranter={setGranter}
+                    granter={granter}
                   />
 
                   <Button
@@ -438,12 +491,22 @@ export default function NewFeegrant() {
                     </Select>
                   </FormControl>
 
-                  {(value === "Basic" && <BasicFeeGrant />) || null}
+                  {(value === "Basic" && (
+                    <BasicFeeGrant
+                      granters={authzGrants}
+                      setGranter={setGranter}
+                      granter={granter}
+                    />
+                  )) ||
+                    null}
                   {(value === "Periodic" && (
                     <PeriodicFeegrant
                       loading={feegrantTx.status}
                       onGrant={onPeriodicGrant}
                       currency={currency}
+                      granters={authzGrants}
+                      setGranter={setGranter}
+                      granter={granter}
                     />
                   )) ||
                     null}
