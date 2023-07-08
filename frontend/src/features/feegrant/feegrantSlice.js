@@ -312,8 +312,10 @@ export const feegrantSlice = createSlice({
       state.txGrantPeriodicRes = {};
     },
     resetFeegrantState: (state) => {
-      console.log("called reset....");
       state = initialState;
+    },
+    resetAuthzGrants: (state) => {
+      state.authzGrants = {};
     }
   },
   extraReducers: (builder) => {
@@ -470,6 +472,6 @@ export const feegrantSlice = createSlice({
   },
 });
 
-export const { resetAlerts, resetFeeFilter, resetFeeBasic, resetFeePeriodic, resetFeegrantState } = feegrantSlice.actions;
+export const { resetAlerts, resetFeeFilter, resetFeeBasic, resetFeePeriodic, resetFeegrantState, resetAuthzGrants } = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;
