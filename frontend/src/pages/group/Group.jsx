@@ -338,29 +338,24 @@ const UpdateGroupMember = (props) => {
   const [removedMembers, setRemovedMembers] = useState([]);
 
   const {
-    register,
     control,
     handleSubmit,
-    watch,
     formState: { errors },
-    reset,
-    trigger,
-    setError,
   } = useForm({
     defaultValues: {
       members:
         members.length > 0
           ? members.map((m) => ({
-              ...m.member,
-              disabled: true,
-            }))
+            ...m.member,
+            disabled: true,
+          }))
           : [
-              {
-                address: "",
-                weight: "0",
-                metadata: "",
-              },
-            ],
+            {
+              address: "",
+              weight: "0",
+              metadata: "",
+            },
+          ],
     },
   });
 
@@ -459,7 +454,7 @@ const UpdateGroupMember = (props) => {
               <TableRow>
                 <StyledTableCell>Address</StyledTableCell>
                 <StyledTableCell>Weight</StyledTableCell>
-                <StyledTableCell>Metadata</StyledTableCell>
+                <StyledTableCell>Name</StyledTableCell>
                 <StyledTableCell>Actions</StyledTableCell>
               </TableRow>
             </TableHead>

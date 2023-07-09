@@ -13,8 +13,10 @@ import { resetGroupTx, txCreateGroup } from "../../features/group/groupSlice";
 import CreateGroupInfoForm from "./CreateGroupInfoForm";
 import { useParams } from "react-router-dom";
 import { DAYS, PERCENTAGE } from "./common";
+import NavigateNextOutlinedIcon from '@mui/icons-material/NavigateNextOutlined';
+import ArrowBackIosOutlinedIcon from '@mui/icons-material/ArrowBackIosOutlined';
 
-const steps = ["Group information", "Add members", "Attach policy"];
+const steps = ["DAO details", "Members", "DAO Policy"];
 
 export default function CreateGroupStepper() {
   const params = useParams();
@@ -29,6 +31,8 @@ export default function CreateGroupStepper() {
 
   const address =
     networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+  const name =
+    networks[nameToChainIDs[currentNetwork]]?.walletInfo.name;
 
   const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
 
@@ -96,6 +100,8 @@ export default function CreateGroupStepper() {
           Number(dataObj.policyData.percentage) / 100.0;
       }
     }
+
+    console.log(dataObj);
     dispatch(txCreateGroup(dataObj));
   };
 
@@ -118,6 +124,7 @@ export default function CreateGroupStepper() {
     createGroup(data.policyMetadata);
   };
 
+
   const {
     control: controlInfo,
     handleSubmit: handleSubmitInfo,
@@ -131,22 +138,30 @@ export default function CreateGroupStepper() {
     },
   });
 
+
+
   const {
     control: controlMemberInfo,
     handleSubmit: handleSubmitMemberInfo,
     getValues: getValuesMemberInfo,
     formState: { errors: errorsMemberInfo },
+    setValue,
   } = useForm({
     defaultValues: {
-      members: [
-        {
-          address: "",
-          weight: 0,
-          metadata: "",
-        },
-      ],
+      members: [{
+        address: "",
+        weight: "1",
+        metadata: ""
+      }],
     },
   });
+
+  useEffect(() => {
+    setValue(`members.${0}.address`, address);
+    setValue(`members.${0}.metadata`, name);
+    setValue(`members.${0}.weight`, "1");
+  }, [address, name]);
+
 
   const { fields, append, remove } = useFieldArray({
     control: controlMemberInfo,
@@ -188,6 +203,7 @@ export default function CreateGroupStepper() {
             disableElevation
             size="small"
             onClick={() => setActiveStep(activeStep === 0 ? 0 : activeStep - 1)}
+            startIcon={<ArrowBackIosOutlinedIcon />}
           >
             Back
           </Button>
@@ -199,7 +215,12 @@ export default function CreateGroupStepper() {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box
+      sx={{
+        m: 2,
+        pb: 2,
+      }}
+    >
       <Stepper activeStep={activeStep} alternativeLabel
         sx={{
           mb: 1,
@@ -216,16 +237,23 @@ export default function CreateGroupStepper() {
           {/* group info section start */}
 
           <form onSubmit={handleSubmitInfo(onSubmitInfo)}>
-            <fieldset style={{ border: "none" }}>
-              <CreateGroupInfoForm control={controlInfo} errors={errorsInfo} getValues={getValuesGroupInfo} />
-            </fieldset>
+              <CreateGroupInfoForm
+                control={controlInfo}
+                errors={errorsInfo}
+                getValues={getValuesGroupInfo}
+              />
             <Button type="submit"
               variant="outlined"
               disableElevation
+              sx={{
+                mb: 2,
+                mt: 1,
+              }}
               size="small"
+              endIcon={<NavigateNextOutlinedIcon />}
             >
               Next
-              </Button>
+            </Button>
           </form>
 
           {/* group info section end */}
@@ -234,7 +262,9 @@ export default function CreateGroupStepper() {
         <>
           {/* group members section start */}
 
-          <form onSubmit={handleSubmitMemberInfo(onSubmitMemberInfo)}>
+          <form
+            onSubmit={handleSubmitMemberInfo(onSubmitMemberInfo)}
+          >
             <Paper
               elevation={0}
               sx={{
@@ -254,19 +284,22 @@ export default function CreateGroupStepper() {
                     remove={remove}
                     errors={errorsMemberInfo}
                     getValues={getValuesMemberInfo}
+                    address={address}
+                    name={name}
                   />
                 </fieldset>
               ) : null}
             </Paper>
             <BackButton />
             <Button type="submit"
-            variant="outlined"
-            disableElevation
-            sx={{
-              mt: 1,
-              ml: 1,
-            }}
-            size="small"
+              variant="outlined"
+              disableElevation
+              sx={{
+                mt: 1,
+                ml: 1,
+              }}
+              size="small"
+              endIcon={<NavigateNextOutlinedIcon />}
             >
               Next
             </Button>
@@ -278,7 +311,9 @@ export default function CreateGroupStepper() {
         <>
           {/* group policy section start */}
 
-          <form onSubmit={handleSubmitPolicyInfo(onSubmitPolicyInfo)}>
+          <form
+            onSubmit={handleSubmitPolicyInfo(onSubmitPolicyInfo)}
+          >
             <Paper
               elevation={0}
               sx={{
@@ -295,7 +330,6 @@ export default function CreateGroupStepper() {
                     handleCancelPolicy={() => {
                       setValuePolicyInfo("policyMetadata", null);
                     }}
-                    policyUpdate={false}
                     setValue={setValuePolicyInfo}
                     errors={errorsPolicyInfo}
                     fields={fields}
@@ -310,14 +344,22 @@ export default function CreateGroupStepper() {
             </Paper>
             <BackButton />
             <Button type="submit"
-            variant="outlined"
-            disableElevation
-            sx={{
-              mt: 1,
-              ml: 1,
-            }}
-            size="small"
-            >Create Group</Button>
+              variant="outlined"
+              disableElevation
+              sx={{
+                mt: 1,
+                ml: 1,
+              }}
+              size="small"
+              disabled={txCreateGroupRes?.status === "pending"}
+            >
+              {
+                txCreateGroupRes?.status === "pending" ?
+                  "Please wait..."
+                  :
+                  "Create Group"
+              }
+            </Button>
           </form>
 
           {/* group policy section end */}

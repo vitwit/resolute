@@ -61,7 +61,7 @@ export default function GroupPage() {
         />
       </Box>
 
-      <Paper sx={{ mt: 1 }} variant={"outlined"} elevation={0}>
+      <Paper variant={"outlined"} elevation={0} >
         <GroupTab
           tabs={[
             {

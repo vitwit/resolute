@@ -11,8 +11,13 @@ export function CreateGroupMembersForm({
   errors,
   getValues,
 }) {
+
   return (
-    <Box>
+    <Box
+      sx={{
+        p: 1,
+      }}
+    >
       {(fields?.length && (
         <>
           {fields.map((item, index) => {
@@ -21,7 +26,9 @@ export function CreateGroupMembersForm({
                 key={item?.id}
                 container
                 columnSpacing={{ md: 2, xs: 2 }}
-                sx={{ marginY: "12px" }}
+                sx={{
+                  mt: 1.5,
+                }}
               >
                 <Grid item md={4} xs={4.5}>
                   <Controller
@@ -35,15 +42,14 @@ export function CreateGroupMembersForm({
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        required
                         label="Address"
                         name="address"
                         size="small"
                         fullWidth
-                        error={errors?.members?.[index].address}
+                        error={errors?.members?.[index]?.address}
                         helperText={
-                          errors?.members?.[index].address?.type ===
-                            "validate" && "Address is required"
+                          errors?.members?.[index]?.address?.type ===
+                          "required" && "Address is required"
                         }
                       />
                     )}
@@ -64,12 +70,11 @@ export function CreateGroupMembersForm({
                       <TextField
                         type={"number"}
                         {...field}
-                        required
                         label="Weight"
                         size="small"
                         name="weight"
                         fullWidth
-                        error={errors?.members?.[index].weight}
+                        error={errors?.members?.[index]?.weight}
                         helperText={errors?.members?.[index]?.weight?.message}
                       />
                     )}
@@ -80,7 +85,7 @@ export function CreateGroupMembersForm({
                     name={`members.${index}.metadata`}
                     control={control}
                     rules={{
-                      required: "Metadata is required",
+                      required: "Name is required",
                       validate: () =>
                         getValues(`members.${index}.metadata`).trim().length >
                         0,
@@ -88,11 +93,12 @@ export function CreateGroupMembersForm({
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        required
                         label="Name"
                         size="small"
                         name="metadata"
                         fullWidth
+                        error={errors?.members?.[index]?.metadata}
+                        helperText={errors?.members?.[index]?.metadata?.message}
                       />
                     )}
                   />
@@ -115,9 +121,9 @@ export function CreateGroupMembersForm({
                   <Button
                     size="small"
                     onClick={() => {
-                      append({ address: "", metadata: "", weight: 0 });
+                      append({ address: "", metadata: "", weight: 1 });
                     }}
-                    sx={{ ml: "auto", textTransform: "none", mt: "12px" }}
+                    sx={{ ml: "auto", textTransform: "none", mt: 1 }}
                     variant="outlined"
                   >
                     Add Another Member
