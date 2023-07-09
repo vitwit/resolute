@@ -21,6 +21,8 @@ import { isDarkMode, mdTheme } from "../utils/theme";
 import { Paper, Typography } from "@mui/material";
 import Home from "./Home";
 import { defaultPallet } from "../utils/pallet";
+import { removeAllFeegrants } from "../utils/localStorage";
+import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
 
 export default function Dashboard() {
   const [snackOpen, setSnackOpen] = useState(false);
@@ -62,6 +64,8 @@ export default function Dashboard() {
           })
         );
       }, 1000);
+      removeAllFeegrants();
+      dispatch(resetFeegrantState());
     };
     window.addEventListener("keplr_keystorechange", listener);
 

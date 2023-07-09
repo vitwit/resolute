@@ -34,12 +34,16 @@ const GroupInfo = (props) => {
   const [showAdminInput, setShowAdminInput] = useState(false);
   const [admin, setAdmin] = useState("");
   const [showMetadataInput, setShowMetadataInput] = useState(false);
+  const currentNetwork = chainInfo?.config?.chainName.toLowerCase();
 
   const [open, setDialogOpen] = useState(false);
   const dialogCloseHandle = () => {
     setDialogOpen(!open)
   }
 
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
+  );
   const groupInfo = useSelector((state) => state.group.groupInfo?.[chainID]);
   const membersInfo = useSelector((state) => state.group.groupMembers?.[chainID]);
   let { data, status } = groupInfo;
@@ -94,6 +98,7 @@ const GroupInfo = (props) => {
         rest: chainInfo.config.rest,
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+        feegranter: feegrant?.granter,
       })
     );
   };
@@ -111,6 +116,7 @@ const GroupInfo = (props) => {
         rest: chainInfo.config.rest,
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+        feegranter: feegrant?.granter,
       })
     );
   };

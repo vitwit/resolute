@@ -12,7 +12,7 @@ import {
   MsgCreateGroupPolicy,
   MsgUpdateGroupPolicyMetadata,
   MsgUpdateGroupPolicyAdmin,
-} from "./v1/tx";
+} from "cosmjs-types/cosmos/group/v1/tx";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import { Duration } from "cosmjs-types/google/protobuf/duration";
@@ -22,7 +22,7 @@ import {
   DecisionPolicyWindows,
   Member,
   MemberRequest,
-} from "./v1/types";
+} from "cosmjs-types/cosmos/group/v1/types";
 import Long from "long";
 import { Msg } from "../types";
 

@@ -20,7 +20,7 @@ import {
   MsgUpdateGroupPolicyDecisionPolicy,
   MsgUpdateGroupPolicyMetadata,
   MsgVote,
-} from "./group/v1/tx";
+} from "cosmjs-types/cosmos/group/v1/tx";
 import { AirdropAminoConverter } from "../features/airdrop/amino";
 import { MsgUnjail } from "./slashing/tx";
 

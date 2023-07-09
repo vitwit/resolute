@@ -94,10 +94,10 @@ export function AuthzExecWithdrawRewardsMsg(
   }
   return {
     typeUrl: msgAuthzExecypeUrl,
-    value: MsgExec.encode({
+    value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: msgs,
-    }).finish(),
+    }),
   };
 }
 

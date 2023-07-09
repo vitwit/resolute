@@ -5,10 +5,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Paper, Typography } from "@mui/material";
 import Validators from "./Validators";
 import StakingOverview from "./stakingOverview/StakingOverview";
+import StakingAuthz from "./stakingOverview/StakingAuthz";
+import { useEffect } from "react";
 
 export default function StakingPage() {
   const wallet = useSelector((state) => state.wallet);
   const stakingChains = useSelector((state) => state.staking.chains);
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
   const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
@@ -20,22 +23,28 @@ export default function StakingPage() {
     navigate(`/${chainName}/staking`);
   };
 
+  useEffect(() => {
+    if (isAuthzMode) {
+      navigate(`/staking`);
+    }
+  }, [isAuthzMode]);
+
   return (
     <div>
-      <Paper
-        elevation={0}
-        sx={{
-          p: 2
-        }}
-      >
-        <Box
+      {!isAuthzMode ? (
+        <Paper
+          elevation={0}
           sx={{
-            display: "flex",
-            justifyContent: "flex-end",
+            p: 2,
           }}
         >
-          {
-            currentNetwork?.length > 0 ?
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            {currentNetwork?.length > 0 ? (
               <SelectNetwork
                 onSelect={(name) => {
                   handleOnSelect(name);
@@ -47,25 +56,27 @@ export default function StakingPage() {
                     : defaultChain
                 }
               />
-              :
-              null
-          }
-        </Box>
-        {currentNetwork ?
-          <div 
-          sx={{ justifyContent: "center", display: "flex", mr: 1 }}>
-            {Object.keys(stakingChains)?.length > 0 ? (
-              <Validators
-                chainID={nameToChainIDs[currentNetwork]}
-                currentNetwork={currentNetwork}
-                nameToChainIDs={nameToChainIDs}
-              />
-            ) : (
-              <></>
-            )}
-          </div> : 
-          <StakingOverview />}
-      </Paper>
+            ) : null}
+          </Box>
+          {currentNetwork ? (
+            <div sx={{ justifyContent: "center", display: "flex", mr: 1 }}>
+              {Object.keys(stakingChains)?.length > 0 ? (
+                <Validators
+                  chainID={nameToChainIDs[currentNetwork]}
+                  currentNetwork={currentNetwork}
+                  nameToChainIDs={nameToChainIDs}
+                />
+              ) : (
+                <></>
+              )}
+            </div>
+          ) : (
+            <StakingOverview />
+          )}
+        </Paper>
+      ) : (
+        <>{Object.keys(stakingChains)?.length > 0 ? <StakingAuthz /> : <></>}</>
+      )}
     </div>
   );
 }

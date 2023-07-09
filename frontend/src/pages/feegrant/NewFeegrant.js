@@ -18,7 +18,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { PeriodicFeegrant } from "../../components/PeriodicFeeGrant";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate, useParams } from "react-router-dom";
-import { resetError, setError } from "../../features/common/commonSlice";
+import {
+  resetError,
+  setError,
+  setFeegrant as setFeegrantState,
+  removeFeegrant as removeFeegrantState,
+} from "../../features/common/commonSlice";
 import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import {
   Alert,
@@ -34,6 +39,12 @@ import {
 import { Box } from "@mui/system";
 import BasicFeeGrant from "../../components/feegrant/BasicFeeGrant";
 import { authzMsgTypes } from "./../../utils/authorizations";
+import {
+  getFeegrant,
+  setFeegrant,
+  removeFeegrant as removeFeegrantLocalState,
+} from "../../utils/localStorage";
+import FeegranterInfo from "../../components/FeegranterInfo";
 
 export default function NewFeegrant() {
   const [tab, setTab] = useState(0);
@@ -57,8 +68,15 @@ export default function NewFeegrant() {
   const dispatch = useDispatch();
   const feegrantTx = useSelector((state) => state.feegrant.tx);
   const feeFilterTxRes = useSelector((state) => state.feegrant.txFilterRes);
-  const feegrantBasicTxRes = useSelector((state) => state.feegrant.txFeegrantBasicRes);
-  const grantPeriodicTxRes = useSelector((state) => state.feegrant.txGrantPeriodicRes);
+  const feegrantBasicTxRes = useSelector(
+    (state) => state.feegrant.txFeegrantBasicRes
+  );
+  const grantPeriodicTxRes = useSelector(
+    (state) => state.feegrant.txGrantPeriodicRes
+  );
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
+  );
 
   let navigate = useNavigate();
   useEffect(() => {
@@ -89,13 +107,29 @@ export default function NewFeegrant() {
     return () => {
       dispatch(resetFeeBasic());
     };
-  },[])
+  }, []);
 
   useEffect(() => {
     return () => {
       dispatch(resetFeePeriodic());
-    }
-  },[])
+    };
+  }, []);
+
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[currentNetwork];
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: currentNetwork.toLowerCase(),
+      })
+    );
+  }, [currentNetwork, params]);
+
+  const removeFeegrant = () => {
+    // Should we completely remove feegrant or only for this session.
+    dispatch(removeFeegrantState(currentNetwork));
+    removeFeegrantLocalState(currentNetwork);
+  };
 
   const date = new Date();
   const expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
@@ -134,6 +168,7 @@ export default function NewFeegrant() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        feegranter: feegrant?.granter,
       })
     );
   };
@@ -235,6 +270,14 @@ export default function NewFeegrant() {
 
   return (
     <>
+      {feegrant?.granter?.length > 0 ? (
+        <FeegranterInfo
+          feegrant={feegrant}
+          onRemove={() => {
+            removeFeegrant();
+          }}
+        />
+      ) : null}
       <Typography
         variant="h6"
         textAlign={"left"}

@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import CreateGroupInfoForm from "./CreateGroupInfoForm";
 import { txUpdateGroupMetadata } from "../../features/group/groupSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
 export default function UpdateGroupInfoDialog(props) {
   const {
@@ -23,8 +24,21 @@ export default function UpdateGroupInfoDialog(props) {
   } = props;
 
   const dispatch = useDispatch();
+  const params = useParams();
+
   const updateMetadataRes = useSelector(
     (state) => state.group.updateGroupMetadataRes
+  );
+
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const [currentNetwork, setCurrentNetwork] = useState(
+    params?.networkName || selectedNetwork
+  );
+
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
   );
 
   const UpdateMetadata = () => {
@@ -44,6 +58,7 @@ export default function UpdateGroupInfoDialog(props) {
         rest: chainInfo.config.rest,
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+        feegranter: feegrant?.granter,
       })
     );
   };

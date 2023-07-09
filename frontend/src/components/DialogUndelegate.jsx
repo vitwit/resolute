@@ -11,6 +11,7 @@ import PropTypes from "prop-types";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import { useForm, Controller } from "react-hook-form";
+import { useSelector } from "react-redux";
 
 function parseDelegation(delegations, validator, currency) {
   let result = 0.0;
@@ -36,9 +37,12 @@ export function DialogUndelegate(props) {
     onUnDelegate,
     loading,
     authzLoading,
+    onAuthzUndelegateTx,
   } = props;
 
   const delegationShare = parseDelegation(delegations, validator, currency);
+
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
 
   const handleClose = () => {
     onClose();
@@ -56,10 +60,15 @@ export function DialogUndelegate(props) {
   });
 
   const onSubmit = (data) => {
-    onUnDelegate({
+    const undelegateInfo = {
       validator: validator.operator_address,
       amount: data.amount,
-    });
+    };
+    if (isAuthzMode) {
+      onAuthzUndelegateTx(undelegateInfo);
+    } else {
+      onUnDelegate(undelegateInfo);
+    }
   };
 
   return (
