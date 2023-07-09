@@ -4,7 +4,7 @@ import { Paper } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import GroupTab, { TabPanel } from "../components/group/GroupTab";
 import CardSkeleton from "../components/group/CardSkeleton";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SelectNetwork from "../components/common/SelectNetwork";
 import {
   resetError,
@@ -33,6 +33,7 @@ export default function GroupPage() {
   };
 
   const params = useParams();
+  const dispatch = useDispatch();
 
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
@@ -90,13 +91,13 @@ export default function GroupPage() {
         component="div"
       >
         {feegrant?.granter?.length > 0 ? (
-        <FeegranterInfo
-          feegrant={feegrant}
-          onRemove={() => {
-            removeFeegrant();
-          }}
-        />
-      ) : null}
+          <FeegranterInfo
+            feegrant={feegrant}
+            onRemove={() => {
+              removeFeegrant();
+            }}
+          />
+        ) : null}
         <SelectNetwork
           onSelect={(name) => {
             navigate(`/${name}/daos`);

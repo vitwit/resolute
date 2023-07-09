@@ -27,7 +27,7 @@ import {
 } from "../../utils/localStorage";
 import FeegranterInfo from "../../components/FeegranterInfo";
 
-const steps = ["DAO details", "Members", "DAO Policy"];
+const steps = ["Group details", "Members", "Group Policy"];
 
 export default function CreateGroupStepper() {
   const params = useParams();
