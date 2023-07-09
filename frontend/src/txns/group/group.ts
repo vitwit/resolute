@@ -20,7 +20,6 @@ import {
   PercentageDecisionPolicy,
   ThresholdDecisionPolicy,
   DecisionPolicyWindows,
-  Member,
   MemberRequest,
 } from "cosmjs-types/cosmos/group/v1/types";
 import Long from "long";
@@ -259,8 +258,8 @@ export function CreateGroupPolicy(
     typeUrl: msgAddGroupPolicy,
     value: MsgCreateGroupPolicy.fromPartial({
       metadata: JSON.stringify({
-        name:policyMetadata?.name,
-        description:policyMetadata?.description
+        name: policyMetadata?.name,
+        description: policyMetadata?.description
       }) || "",
       admin: admin,
       groupId,

@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import CreateGroupInfoForm from "./CreateGroupInfoForm";
 import { txUpdateGroupMetadata } from "../../features/group/groupSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -122,7 +120,12 @@ export default function UpdateGroupInfoDialog(props) {
     <div>
       <Dialog open={open} onClose={dialogCloseHandle}>
         <DialogTitle>Update Group Info</DialogTitle>
-        <DialogContent>
+        <DialogContent
+          sx={{
+            p: 0,
+            pb: 1,
+          }}
+        >
           <CreateGroupInfoForm
             control={control}
             setGroupDescError={setGroupDescError}
@@ -137,7 +140,12 @@ export default function UpdateGroupInfoDialog(props) {
             forumUrl={forumUrl}
           />
           <DialogActions>
-            <Button onClick={dialogCloseHandle}>Cancel</Button>
+            <Button
+              onClick={dialogCloseHandle}
+              variant="outlined"
+            >
+              Cancel
+            </Button>
             <Button
               variant="contained"
               disabled={updateMetadataRes?.status === "pending"}
@@ -146,6 +154,7 @@ export default function UpdateGroupInfoDialog(props) {
                   UpdateMetadata();
                 }
               }}
+              disableElevation
             >
               {updateMetadataRes?.status === "pending"
                 ? "Updating..."
