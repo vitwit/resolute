@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Paper, TextField } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { Grid } from "@mui/material";
@@ -12,11 +12,11 @@ export function CreateGroupInfoForm(props) {
       <Paper
         elevation={0}
         sx={{
-          p: 4,
+          p: 5,
         }}
       >
         <Grid container spacing={2}>
-          <Grid item md={6} xs={12}>
+          <Grid item md={5} xs={12}>
             <Controller
               defaultValue={groupName}
               name="name"
@@ -46,7 +46,7 @@ export function CreateGroupInfoForm(props) {
               )}
             />
           </Grid>
-          <Grid item md={6} xs={12}>
+          <Grid item md={7} xs={12}>
             <Controller
               defaultValue={forumUrl}
               name="forumUrl"
@@ -86,10 +86,10 @@ export function CreateGroupInfoForm(props) {
             rules={{
               required: "Description is required",
               maxLength: {
-                  value: 100,
-                  message: "Description length cannot be more than 100 characters",
-                },
-                validate: () => getValues('description').trim().length > 0
+                value: 100,
+                message: "Description length cannot be more than 100 characters",
+              },
+              validate: () => getValues('description').trim().length > 0
             }}
             render={({ field }) => (
               <TextField
@@ -101,9 +101,6 @@ export function CreateGroupInfoForm(props) {
                 size="small"
                 name="Group description"
                 fullWidth
-                sx={{
-                  mb: 2,
-                }}
                 error={errors?.description}
                 helperText={errors?.description?.message || (errors?.description?.type === "validate" && "Description is required")}
               />

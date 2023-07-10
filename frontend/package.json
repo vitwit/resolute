@@ -7,7 +7,7 @@
     "@babel/core": "^7.21.8",
     "@cosmjs/encoding": "^0.29.5",
     "@cosmjs/proto-signing": "^0.29.4",
-    "@cosmjs/stargate": "^0.29.3",
+    "@cosmjs/stargate": "^0.31.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.16",
@@ -77,7 +77,7 @@
     "tailwindcss": "^3.3.2",
     "terser-webpack-plugin": "^5.3.8",
     "typescript": "^5.1.6",
-    "webpack": "^5.82.1",
+    "webpack": "^5.88.1",
     "webpack-dev-server": "^4.11.1",
     "webpack-manifest-plugin": "^5.0.0",
     "workbox-webpack-plugin": "^6.5.4"
