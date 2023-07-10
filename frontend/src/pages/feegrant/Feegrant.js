@@ -40,7 +40,7 @@ import { FeegrantInfo } from "./../../components/FeegrantInfo";
 import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import {
   getFeegrant,
   setFeegrant,
@@ -313,7 +313,7 @@ export default function Feegrant() {
         })
       );
     }
-  }
+  };
 
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[currentNetwork];
@@ -363,7 +363,7 @@ export default function Feegrant() {
 
   const [allFeegrants, setAllFeegrants] = useState({});
   useEffect(() => {
-      setAllFeegrants(authzFeegrants);
+    setAllFeegrants(authzFeegrants);
   }, [authzFeegrants]);
 
   useEffect(() => {
@@ -371,7 +371,7 @@ export default function Feegrant() {
       setAllFeegrants(authzFeegrants);
       fetchAuthzGrants();
     }
-  }, [authzExecTx])
+  }, [authzExecTx]);
 
   return (
     <>
@@ -691,11 +691,15 @@ export default function Feegrant() {
                                 size="small"
                                 disableElevation
                                 disabled={
-                                  txStatus?.status === "pending" ? true : false
+                                  authzExecTx?.status === "pending" ? true : false
                                 }
                                 onClick={() => revoke(row)}
                               >
-                                Revoke
+                                {authzExecTx?.status === "pending" ? (
+                                  <CircularProgress size={25} />
+                                ) : (
+                                  `Revoke`
+                                )}
                               </Button>
                             </StyledTableCell>
                           </StyledTableRow>
