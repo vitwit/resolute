@@ -308,7 +308,6 @@ export const authzExecHelper = (dispatch, data) => {
     case "unjail":
       {
         const msg = AuthzExecMsgUnjail(data.validator, data.from);
-        console.log("unail....", msg);
         dispatch(
           txAuthzExec({
             msgs: [msg],
@@ -324,13 +323,11 @@ export const authzExecHelper = (dispatch, data) => {
       }
       break;
     case "revoke": {
-      const feegrantRevokeMsg = AuthzFeegrantRevokeMsg(data.granter, data.grantee, data.granter);
-      console.log("msg...", feegrantRevokeMsg);
+      const feegrantRevokeMsg = AuthzFeegrantRevokeMsg(data.granter, data.grantee);
       const msg = AuthzExecMsgRevoke(
         feegrantRevokeMsg,
         data.from,
       );
-      console.log("1231...", msg);
       dispatch(
         txAuthzExec({
           msgs: [msg],
