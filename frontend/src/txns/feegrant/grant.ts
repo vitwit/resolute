@@ -49,14 +49,14 @@ export function FeegrantBasicMsg(
 
   return {
     typeUrl: msgFeegrantGrantTypeUrl,
-    value: MsgGrantAllowance.fromPartial({
+    value: MsgGrantAllowance.encode({
       allowance: {
         typeUrl: "/cosmos.feegrant.v1beta1.BasicAllowance",
         value: basicValue,
       },
       grantee: grantee,
       granter: granter,
-    }),
+    }).finish(),
   };
 }
 

@@ -12,10 +12,11 @@ import {
   AuthzExecUnDelegateMsg,
 } from "../../txns/authz";
 import { setError, setTxHash } from "../common/commonSlice";
-import { AuthzExecMsgRevoke, AuthzExecMsgUnjail } from "../../txns/authz/exec";
+import { AuthzExecMsgFeegrant, AuthzExecMsgRevoke, AuthzExecMsgUnjail } from "../../txns/authz/exec";
 import { signAndBroadcast } from "../../utils/signing";
 import { getAuthzTabs } from "../../utils/authorizations";
 import { AuthzFeegrantRevokeMsg } from "../../txns/feegrant/revoke";
+import { FeegrantBasicMsg } from "../../txns/feegrant";
 
 const initialState = {
   tabResetStatus: false,
@@ -328,6 +329,32 @@ export const authzExecHelper = (dispatch, data) => {
         feegrantRevokeMsg,
         data.from,
       );
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
+
+    case "feegrantBasic": {
+      const feegrantBasicMsg = FeegrantBasicMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.expiration
+      );
+      console.log("msg...", feegrantBasicMsg);
+      const msg = AuthzExecMsgFeegrant(feegrantBasicMsg, data.from);
+      console.log("message....", msg);
       dispatch(
         txAuthzExec({
           msgs: [msg],

@@ -215,3 +215,15 @@ export function AuthzExecMsgRevoke(feegrant: Msg, grantee: string): Msg {
     }),
   };
 }
+
+export function AuthzExecMsgFeegrant(feegrant: Msg, grantee: string): Msg {
+  return {
+    typeUrl: msgAuthzExecypeUrl,
+    value: MsgExec.fromPartial({
+      grantee: grantee,
+      msgs: [
+        feegrant,
+      ],
+    }),
+  };
+}

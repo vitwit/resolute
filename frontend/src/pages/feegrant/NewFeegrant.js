@@ -45,25 +45,47 @@ import {
   removeFeegrant as removeFeegrantLocalState,
 } from "../../utils/localStorage";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import { authzExecHelper, getGrantsToMe } from "../../features/authz/authzSlice";
+
+const filterAuthzFeegrant = (grantsToMe) => {
+  const granters = [];
+  const grants = grantsToMe?.grants || [];
+  for (const grant of grants) {
+    const authorizationType = grant?.authorization["@type"];
+    const isGenericAuthorization =
+      authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
+    const isMsgGrantAllowance =
+      grant?.authorization.msg === "/cosmos.feegrant.v1beta1.MsgGrantAllowance";
+    if (isGenericAuthorization && isMsgGrantAllowance) {
+      granters.push(grant.granter);
+    }
+  }
+  return granters;
+};
 
 export default function NewFeegrant() {
   const [tab, setTab] = useState(0);
   const [value, setValue] = React.useState("");
 
   const params = useParams();
+
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
   const networks = useSelector((state) => state.wallet.networks);
+
   const [currentNetwork, setCurrentNetwork] = React.useState(
     params?.networkName || selectedNetwork
   );
+  const chainID = nameToChainIDs[currentNetwork];
 
-  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
 
-  const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
-  const address =
-    networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+  const chainInfo = networks[chainID]?.network;
+  const address = networks[chainID]?.walletInfo.bech32Address;
 
   const dispatch = useDispatch();
   const feegrantTx = useSelector((state) => state.feegrant.tx);
@@ -137,6 +159,9 @@ export default function NewFeegrant() {
     networks[nameToChainIDs[currentNetwork]]?.network.config.currencies[0];
 
   const [msgTxTypes, setMsgTxTypes] = React.useState([]);
+  const [isNoAuthzs, setNoAuthzs] = useState(false);
+  const [authzGrants, setAuthzGrants] = useState();
+  const [granter, setGranter] = useState("");
 
   const handleChange = (event) => {
     const {
@@ -149,9 +174,33 @@ export default function NewFeegrant() {
   };
 
   const onBasicSubmit = (data) => {
-    dispatch(
-      txFeegrantBasic({
-        granter: address,
+    if (!isAuthzMode) {
+      dispatch(
+        txFeegrantBasic({
+          granter: address,
+          grantee: data.grantee,
+          spendLimit:
+            Number(data.spendLimit) === 0
+              ? null
+              : Number(data.spendLimit) * 10 ** currency.coinDecimals,
+          expiration:
+            data.expiration === null
+              ? data.expiration
+              : data.expiration.toISOString(),
+          denom: currency.coinMinimalDenom,
+          chainId: chainInfo.config.chainId,
+          rest: chainInfo.config.rest,
+          aminoConfig: chainInfo.aminoConfig,
+          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        })
+      );
+    } else {
+      authzExecHelper(dispatch, {
+        type: "feegrantBasic",
+        from: address,
+        granter: granter,
         grantee: data.grantee,
         spendLimit:
           Number(data.spendLimit) === 0
@@ -168,9 +217,8 @@ export default function NewFeegrant() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-        feegranter: feegrant?.granter,
-      })
-    );
+      });
+    }
   };
 
   const onPeriodicGrant = (data) => {
@@ -268,6 +316,28 @@ export default function NewFeegrant() {
     return (arrSplit && arrSplit[arrSplit?.length - 1]) || "";
   };
 
+  useEffect(() => {
+    if (isAuthzMode) {
+      dispatch(
+        getGrantsToMe({
+          baseURL: chainInfo.config.rest + "/",
+          grantee: address,
+          chainID: chainID,
+        })
+      );
+    }
+  }, [isAuthzMode, chainInfo]);
+
+  useEffect(() => {
+    const result = filterAuthzFeegrant(grantsToMe);
+    if (result?.length === 0) {
+      setNoAuthzs(true);
+    } else {
+      setNoAuthzs(false);
+      setAuthzGrants(result);
+    }
+  }, [grantsToMe]);
+
   return (
     <>
       {feegrant?.granter?.length > 0 ? (
@@ -320,7 +390,11 @@ export default function NewFeegrant() {
             <Grid item xs={10} md={6}>
               <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(onBasicSubmit)}>
-                  <BasicFeeGrant />
+                  <BasicFeeGrant
+                    granters={authzGrants}
+                    setGranter={setGranter}
+                    granter={granter}
+                  />
                   <Button
                     sx={{ mt: 4 }}
                     variant="contained"
@@ -438,7 +512,14 @@ export default function NewFeegrant() {
                     </Select>
                   </FormControl>
 
-                  {(value === "Basic" && <BasicFeeGrant />) || null}
+                  {(value === "Basic" && (
+                    <BasicFeeGrant
+                      granters={authzGrants}
+                      setGranter={setGranter}
+                      granter={granter}
+                    />
+                  )) ||
+                    null}
                   {(value === "Periodic" && (
                     <PeriodicFeegrant
                       loading={feegrantTx.status}
