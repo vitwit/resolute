@@ -15,6 +15,8 @@ import { FeegrantFilterMsg } from "../../txns/feegrant/grant";
 import { signAndBroadcast } from "../../utils/signing";
 
 const initialState = {
+  allGrantsToMe: {},
+  allGrantsByMe: {},
   grantsToMe: {
     status: "idle",
     grants: [],
@@ -296,61 +298,82 @@ export const feegrantSlice = createSlice({
       state.txGrantPeriodicRes = {};
     },
     resetFeegrantState: (state) => {
-      console.log("called reset....");
       state = initialState;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getGrantsToMe.pending, (state) => {
-        state.grantsToMe.status = "pending";
-        state.grantsToMe.grants = [];
-        state.errState = {
-          message: "",
-          type: "",
-        };
+      .addCase(getGrantsToMe.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (!chainID) {
+          state.grantsToMe.status = "pending";
+          state.grantsToMe.grants = [];
+          state.errState = {
+            message: "",
+            type: "",
+          };
+        }
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
-        state.grantsToMe.status = "idle";
-        state.grantsToMe.grants = action.payload?.allowances;
-        state.grantsToMe.pagination = action.payload?.pagination;
-        state.errState = {
-          message: "",
-          type: "",
-        };
+        const chainID = action.meta?.arg?.chainID;
+        if (chainID) {
+          state.allGrantsToMe[chainID] = action.payload?.allowances;
+        } else {
+          state.grantsToMe.status = "idle";
+          state.grantsToMe.grants = action.payload?.allowances;
+          state.grantsToMe.pagination = action.payload?.pagination;
+          state.errState = {
+            message: "",
+            type: "",
+          };
+        }
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
-        state.grantsToMe.status = "rejected";
-        state.grantsToMe.grants = [];
-        state.errState = {
-          message: action.error.message,
-          type: "error",
-        };
+        const chainID = action.meta?.arg?.chainID;
+        if (!chainID) {
+          state.grantsToMe.status = "rejected";
+          state.grantsToMe.grants = [];
+          state.errState = {
+            message: action.error.message,
+            type: "error",
+          };
+        }
       });
 
     builder
-      .addCase(getGrantsByMe.pending, (state) => {
-        state.grantsByMe.status = "pending";
-        state.errState = {
-          message: "",
-          type: "",
-        };
+      .addCase(getGrantsByMe.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (!chainID) {
+          state.grantsByMe.status = "pending";
+          state.errState = {
+            message: "",
+            type: "",
+          };
+        }
       })
       .addCase(getGrantsByMe.fulfilled, (state, action) => {
-        state.grantsByMe.status = "idle";
-        state.grantsByMe.grants = action.payload?.allowances;
-        state.grantsByMe.pagination = action.payload?.pagination;
-        state.errState = {
-          message: "",
-          type: "",
-        };
+        const chainID = action.meta?.arg?.chainID;
+        if (chainID) {
+          state.allGrantsByMe[chainID] = action.payload?.allowances;
+        } else {
+          state.grantsByMe.status = "idle";
+          state.grantsByMe.grants = action.payload?.allowances;
+          state.grantsByMe.pagination = action.payload?.pagination;
+          state.errState = {
+            message: "",
+            type: "",
+          };
+        }
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
-        state.grantsByMe.status = "rejected";
-        state.errState = {
-          message: action.error.message,
-          type: "error",
-        };
+        const chainID = action.meta?.arg?.chainID;
+        if (!chainID) {
+          state.grantsByMe.status = "rejected";
+          state.errState = {
+            message: action.error.message,
+            type: "error",
+          };
+        }
       });
 
     // txns
@@ -415,6 +438,12 @@ export const feegrantSlice = createSlice({
   },
 });
 
-export const { resetAlerts, resetFeeFilter, resetFeeBasic, resetFeePeriodic, resetFeegrantState } = feegrantSlice.actions;
+export const {
+  resetAlerts,
+  resetFeeFilter,
+  resetFeeBasic,
+  resetFeePeriodic,
+  resetFeegrantState,
+} = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;
