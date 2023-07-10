@@ -12,9 +12,10 @@ import {
   AuthzExecUnDelegateMsg,
 } from "../../txns/authz";
 import { setError, setTxHash } from "../common/commonSlice";
-import { AuthzExecMsgUnjail } from "../../txns/authz/exec";
+import { AuthzExecMsgRevoke, AuthzExecMsgUnjail } from "../../txns/authz/exec";
 import { signAndBroadcast } from "../../utils/signing";
 import { getAuthzTabs } from "../../utils/authorizations";
+import { AuthzFeegrantRevokeMsg } from "../../txns/feegrant/revoke";
 
 const initialState = {
   tabResetStatus: false,
@@ -307,6 +308,7 @@ export const authzExecHelper = (dispatch, data) => {
     case "unjail":
       {
         const msg = AuthzExecMsgUnjail(data.validator, data.from);
+        console.log("unail....", msg);
         dispatch(
           txAuthzExec({
             msgs: [msg],
@@ -321,6 +323,28 @@ export const authzExecHelper = (dispatch, data) => {
         );
       }
       break;
+    case "revoke": {
+      const feegrantRevokeMsg = AuthzFeegrantRevokeMsg(data.granter, data.grantee, data.granter);
+      console.log("msg...", feegrantRevokeMsg);
+      const msg = AuthzExecMsgRevoke(
+        feegrantRevokeMsg,
+        data.from,
+      );
+      console.log("1231...", msg);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
     default:
       alert("not supported");
   }
@@ -448,13 +472,12 @@ export const authzSlice = createSlice({
       state.txAuthzRes = {};
     },
     resetTabs: (state) => {
-      state.tabs = {...initialState.tabs};
+      state.tabs = { ...initialState.tabs };
       state.tabResetStatus = true;
     },
     resetTabResetStatus: (state) => {
       state.tabResetStatus = false;
-    }
-
+    },
   },
   extraReducers: (builder) => {
     builder

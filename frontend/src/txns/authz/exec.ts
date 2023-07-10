@@ -203,3 +203,16 @@ export function AuthzExecMsgUnjail(validator: string, grantee: string): Msg {
     }),
   };
 }
+
+export function AuthzExecMsgRevoke(feegrant: Msg, grantee: string): Msg {
+  console.log("message....", feegrant)
+  return {
+    typeUrl: msgAuthzExecypeUrl,
+    value: MsgExec.fromPartial({
+      grantee: grantee,
+      msgs: [
+        feegrant,
+      ],
+    }),
+  };
+}

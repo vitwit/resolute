@@ -14,7 +14,10 @@ import {
   getAuthzGrants,
   resetAuthzGrants,
 } from "./../../features/feegrant/feegrantSlice";
-import { authzExecHelper, getGrantsToMe as getAuthzGrantsToMe } from "../../features/authz/authzSlice";
+import {
+  authzExecHelper,
+  getGrantsToMe as getAuthzGrantsToMe,
+} from "../../features/authz/authzSlice";
 import {
   resetError,
   resetTxHash,
@@ -235,7 +238,7 @@ export default function Feegrant() {
   }, [grantsByMe]);
 
   const revoke = (a) => {
-    if(!isAuthzMode) {
+    if (!isAuthzMode) {
       dispatch(
         txRevoke({
           granter: a.granter,
@@ -251,9 +254,22 @@ export default function Feegrant() {
           feegranter: feegrant?.granter,
         })
       );
-    } 
-    else {
-      // authzExecHelper(dispatch, )
+    } else {
+      authzExecHelper(dispatch, {
+        type: "revoke",
+        from: address,
+        granter: a.granter,
+        grantee: a.grantee,
+        denom: currency.coinMinimalDenom,
+        chainId: chainInfo.config.chainId,
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        baseURL: chainInfo.config.rest,
+        feegranter: feegrant?.granter,
+      });
     }
   };
 
