@@ -1,21 +1,9 @@
-import { Avatar, Chip, Grid, Paper, Stack, Typography } from "@mui/material";
-import { teal } from "@mui/material/colors";
-import { Box } from "@mui/system";
 import React from "react";
+import { Chip, Grid, Paper, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { getLocalTime } from "../../utils/datetime";
+import { getJustDate } from "../../utils/datetime";
 import { shortenAddress } from "../../utils/util";
 
-function stringAvatar(name: string) {
-  return {
-    sx: {
-      color: "#000000",
-      bgcolor: teal[100],
-      fontSize: 16,
-    },
-    children: `${name}`,
-  };
-}
 
 interface ProposalCardProps {
   proposal: any;
@@ -23,96 +11,132 @@ interface ProposalCardProps {
 }
 
 function ProposalCard({ proposal, networkName }: ProposalCardProps): JSX.Element {
-  const yes = parseFloat(proposal?.final_tally_result?.yes_count);
-  const no = parseFloat(proposal?.final_tally_result?.no_count);
-  const abstain = parseFloat(proposal?.final_tally_result?.abstain_count);
-  const veto = parseFloat(proposal?.final_tally_result?.no_with_veto_count);
-
-  const sum = yes + no + abstain + veto;
-  const yesP = (yes / sum).toFixed(2);
-  const noP = (no / sum).toFixed(2);
-  const abP = (abstain / sum).toFixed(2);
-  const vetoP = (veto / sum).toFixed(2);
-
   const navigate = useNavigate();
+
+  let proposalMetadata: any = proposal?.metadata;
+  try {
+    proposalMetadata = JSON.parse(proposal?.metadata);
+  } catch (e) {
+    console.warn(e);
+  }
 
   return (
     <Paper
       onClick={() => {
         navigate(`/${networkName}/daos/proposals/${proposal?.id}`);
       }}
-      sx={{ p: 2, textAlign: "left" }}
+      sx={{
+        p: 2,
+        textAlign: "left",
+        ":hover": { cursor: "pointer" },
+      }}
       variant="outlined"
       elevation={0}
     >
-      <Stack direction="row" mb={2} spacing={2}>
-        <Avatar {...stringAvatar(proposal?.id)} />
-        <Typography gutterBottom variant="h6" textAlign={"left"}>
-          {proposal?.metadata || "-"}
-        </Typography>
-      </Stack>
-
-      {parseProposalStatus(proposal.status)}
-
-      <Grid
-        container
+      <Typography
+        variant="h6"
+        color="text.primary"
         sx={{
-          mt: 2,
-          textAlign: "left",
+          textAlign: "center"
         }}
-        spacing={2}
       >
-        <Grid item md={6} xs={6}>
-          <Typography color="text.secondary" variant="subtitle2">
+        #{proposal?.id}&nbsp;{proposalMetadata?.title || proposalMetadata}
+      </Typography>
+      {
+        proposalMetadata?.summary ?
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            fontWeight={600}
+            sx={{
+              textAlign: "center"
+            }}
+          >
+            {proposalMetadata?.summary}
+          </Typography>
+          :
+          null
+      }
+
+      <Grid container spacing={2}
+        sx={{
+          mt: 1,
+        }}
+      >
+        <Grid item xs={6} md={6}>
+          <Typography
+            variant="body2"
+            fontWeight={600}
+            color="text.secondary"
+          >
+            Status
+          </Typography>
+          {parseProposalStatus(proposal.status)}
+        </Grid>
+        <Grid item xs={6} md={6}>
+          <Typography
+            variant="body2"
+            fontWeight={600}
+            color="text.secondary"
+          >
+            Policy Address
+          </Typography>
+          <Typography
+            fontWeight={500}
+            variant="body1"
+          >
+            {shortenAddress(proposal?.group_policy_address, 21)}
+          </Typography>
+        </Grid>
+        <Grid item xs={6} md={6}>
+          <Typography
+            variant="body2"
+            fontWeight={600}
+            color="text.secondary"
+          >
+            Submit Time
+          </Typography>
+          <Typography
+            fontWeight={500}
+            variant="body1"
+          >
+            {getJustDate(proposal?.submit_time)}
+          </Typography>
+        </Grid>
+        <Grid item xs={6} md={6}>
+          <Typography
+            variant="body2"
+            fontWeight={600}
+            color="text.secondary"
+          >
+            Voting End
+          </Typography>
+          <Typography
+            fontWeight={500}
+            variant="body1"
+          >
+            {getJustDate(proposal?.voting_period_end)}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} md={12}>
+          <Typography
+            variant="body2"
+            fontWeight={600}
+            color="text.secondary"
+          >
             Proposers
           </Typography>
-
           {proposal?.proposers?.map((p: string) => (
-            <Typography fontWeight={500} variant="subtitle1">
+            <Typography
+
+              fontWeight={500}
+              variant="body1"
+            >
               {p && shortenAddress(p, 21)}
             </Typography>
           ))}
         </Grid>
-        <Grid item md={6} xs={6}>
-          <Typography color="text.secondary" variant="subtitle2">
-            Policy Address
-          </Typography>
-          <Typography fontWeight={500} variant="subtitle1">
-            {proposal?.group_policy_address &&
-              shortenAddress(proposal?.group_policy_address, 21)}
-          </Typography>
-        </Grid>
-        <Grid item md={6} xs={6}>
-          <Typography color="text.secondary" variant="subtitle2">
-            Voting End Time
-          </Typography>
-
-          <Typography fontWeight={500} variant="subtitle1">
-            {getLocalTime(proposal?.voting_period_end)}
-          </Typography>
-        </Grid>
-        <Grid item md={6} xs={6}>
-          <Typography color="text.secondary" variant="subtitle2">
-            Created At
-          </Typography>
-
-          <Typography fontWeight={500} variant="subtitle1">
-            {getLocalTime(proposal?.submit_time)}
-          </Typography>
-        </Grid>
       </Grid>
-      <Box sx={{ display: "flex", mt: 3 }}>
-        <Box
-          sx={{
-            background: "blue",
-            height: 3,
-            width: sum ? `${yesP}%` : "100%",
-          }}
-        ></Box>
-        <Box sx={{ background: "red", height: 3, width: `${noP}%` }}></Box>
-        <Box sx={{ background: "organe", height: 3, width: `${abP}%` }}></Box>
-        <Box sx={{ background: "yellow", height: 3, width: `${vetoP}` }}></Box>
-      </Box>
     </Paper>
   );
 }

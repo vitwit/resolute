@@ -16,3 +16,11 @@ export function getDaysLeft(end_date) {
 export function getYearAndMonth(value) {
     return moment(value).format("YYYY-MM")
 }
+
+export function getJustDate(value) {
+    return moment(value).format("YYYY-MM-D")
+}
+
+export function getJustDay(value) {
+    return moment(value).format("D")
+}
