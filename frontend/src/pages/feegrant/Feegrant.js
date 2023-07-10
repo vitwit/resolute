@@ -14,7 +14,7 @@ import {
   getAuthzGrants,
   resetAuthzGrants,
 } from "./../../features/feegrant/feegrantSlice";
-import { getGrantsToMe as getAuthzGrantsToMe } from "../../features/authz/authzSlice";
+import { authzExecHelper, getGrantsToMe as getAuthzGrantsToMe } from "../../features/authz/authzSlice";
 import {
   resetError,
   resetTxHash,
@@ -103,7 +103,8 @@ export const filterAuthzFeegrant = (grantsToMe) => {
     const isGenericAuthorization =
       authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
     const isMsgGrantAllowance =
-      grant?.authorization.msg === "/cosmos.feegrant.v1beta1.MsgRevokeAllowance";
+      grant?.authorization.msg ===
+      "/cosmos.feegrant.v1beta1.MsgRevokeAllowance";
     if (isGenericAuthorization && isMsgGrantAllowance) {
       granters.push(grant.granter);
     }
@@ -234,21 +235,26 @@ export default function Feegrant() {
   }, [grantsByMe]);
 
   const revoke = (a) => {
-    dispatch(
-      txRevoke({
-        granter: a.granter,
-        grantee: a.grantee,
-        denom: currency.coinMinimalDenom,
-        chainId: chainInfo.config.chainId,
-        rest: chainInfo.config.rest,
-        aminoConfig: chainInfo.aminoConfig,
-        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-        feeAmount:
-          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-        baseURL: chainInfo.config.rest,
-        feegranter: feegrant?.granter,
-      })
-    );
+    if(!isAuthzMode) {
+      dispatch(
+        txRevoke({
+          granter: a.granter,
+          grantee: a.grantee,
+          denom: currency.coinMinimalDenom,
+          chainId: chainInfo.config.chainId,
+          rest: chainInfo.config.rest,
+          aminoConfig: chainInfo.aminoConfig,
+          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          baseURL: chainInfo.config.rest,
+          feegranter: feegrant?.granter,
+        })
+      );
+    } 
+    else {
+      // authzExecHelper(dispatch, )
+    }
   };
 
   let navigate = useNavigate();
@@ -333,6 +339,12 @@ export default function Feegrant() {
       setAuthzGrants(result);
     }
   }, [authzGrantsToMe, address]);
+
+  const [allFeegrants, setAllFeegrants] = useState({});
+  useEffect(() => {
+    if (authzGrants?.length === Object.keys(authzFeegrants)?.length)
+      setAllFeegrants(authzFeegrants);
+  }, [authzFeegrants]);
 
   return (
     <>
@@ -587,28 +599,32 @@ export default function Feegrant() {
         </Paper>
       ) : (
         <>
-          {!authzFeegrants
-            ? null
-            : Object.keys(authzFeegrants).map((item) => (
-                <>
-                  <Table
-                    sx={{ minWidth: 650 }}
-                    aria-label="simple table"
-                    size="small"
-                  >
-                    <TableHead>
-                      <StyledTableRow>
-                        <StyledTableCell>Granter</StyledTableCell>
-                        <StyledTableCell>Grantee</StyledTableCell>
-                        <StyledTableCell>Type</StyledTableCell>
-                        <StyledTableCell>Expiration</StyledTableCell>
-                        <StyledTableCell>Details</StyledTableCell>
-                        <StyledTableCell>Action</StyledTableCell>
-                      </StyledTableRow>
-                    </TableHead>
+          {!Object.keys(allFeegrants).length ? (
+            <>
+              <Typography>You don't have authz permission.</Typography>
+            </>
+          ) : (
+            <>
+              <Table
+                sx={{ minWidth: 650 }}
+                aria-label="simple table"
+                size="small"
+              >
+                <TableHead>
+                  <StyledTableRow>
+                    <StyledTableCell>Granter</StyledTableCell>
+                    <StyledTableCell>Grantee</StyledTableCell>
+                    <StyledTableCell>Type</StyledTableCell>
+                    <StyledTableCell>Expiration</StyledTableCell>
+                    <StyledTableCell>Details</StyledTableCell>
+                    <StyledTableCell>Action</StyledTableCell>
+                  </StyledTableRow>
+                </TableHead>
+                {Object.keys(allFeegrants).map((item) => (
+                  <>
                     <TableBody>
-                      {authzFeegrants?.[item] &&
-                        authzFeegrants?.[item]?.grants?.map((row, index) => (
+                      {allFeegrants?.[item] &&
+                        allFeegrants?.[item]?.grants?.map((row, index) => (
                           <StyledTableRow
                             key={index}
                             sx={{
@@ -658,9 +674,11 @@ export default function Feegrant() {
                           </StyledTableRow>
                         ))}
                     </TableBody>
-                  </Table>
-                </>
-              ))}
+                  </>
+                ))}
+              </Table>
+            </>
+          )}
         </>
       )}
     </>
