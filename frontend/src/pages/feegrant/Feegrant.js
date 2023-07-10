@@ -103,7 +103,7 @@ export const filterAuthzFeegrant = (grantsToMe) => {
     const isGenericAuthorization =
       authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
     const isMsgGrantAllowance =
-      grant?.authorization.msg === "/cosmos.feegrant.v1beta1.MsgGrantAllowance";
+      grant?.authorization.msg === "/cosmos.feegrant.v1beta1.MsgRevokeAllowance";
     if (isGenericAuthorization && isMsgGrantAllowance) {
       granters.push(grant.granter);
     }
@@ -598,6 +598,7 @@ export default function Feegrant() {
                   >
                     <TableHead>
                       <StyledTableRow>
+                        <StyledTableCell>Granter</StyledTableCell>
                         <StyledTableCell>Grantee</StyledTableCell>
                         <StyledTableCell>Type</StyledTableCell>
                         <StyledTableCell>Expiration</StyledTableCell>
@@ -614,6 +615,9 @@ export default function Feegrant() {
                               "&:last-child td, &:last-child th": { border: 0 },
                             }}
                           >
+                            <StyledTableCell component="th" scope="row">
+                              {shortenAddress(item, 21)}
+                            </StyledTableCell>
                             <StyledTableCell component="th" scope="row">
                               {shortenAddress(row.grantee, 21)}
                             </StyledTableCell>
