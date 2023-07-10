@@ -143,20 +143,20 @@ function PolicyInfo({ chainInfo, address, chainID }) {
   const handleSubmitPolicy = (data) => {
 
     const dataObj = {
-        admin: policyObj?.admin,
-        groupPolicyAddress: policyObj?.address,
-        denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
-        chainId: chainInfo.config.chainId,
-        rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
-      }
+      admin: policyObj?.admin,
+      groupPolicyAddress: policyObj?.address,
+      denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
+      chainId: chainInfo.config.chainId,
+      rpc: chainInfo.config.rpc,
+      feeAmount: chainInfo.config.gasPriceStep.average,
+    }
     if (
       data.policyMetadata.percentage !== 0 ||
       data.policyMetadata.threshold !== 0
     ) {
       const getPeriod = (duration, period) => {
         let time;
-        if(duration === DAYS) time = 24 * 60 * 60;
+        if (duration === DAYS) time = 24 * 60 * 60;
         else if (duration === "Hours") time = 60 * 60;
         else if (duration === "Minutes") time = 60;
         else time = 1;
@@ -254,6 +254,7 @@ function PolicyInfo({ chainInfo, address, chainID }) {
               policyObj={policyObj}
               canUpdateGroup={canUpdateGroup()}
               chainID={chainID}
+              totalWeight={groupInfo?.total_weight || 1}
             />
           )}
         </Paper>

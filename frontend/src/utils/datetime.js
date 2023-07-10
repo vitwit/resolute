@@ -12,3 +12,15 @@ export function getDaysLeft(end_date) {
     const end = moment(end_date,"YYYY-MM-DD")
     return end.diff(moment(), 'days') + 1
 }
+
+export function getYearAndMonth(value) {
+    return moment(value).format("YYYY-MM")
+}
+
+export function getJustDate(value) {
+    return moment(value).format("YYYY-MM-D")
+}
+
+export function getJustDay(value) {
+    return moment(value).format("D")
+}

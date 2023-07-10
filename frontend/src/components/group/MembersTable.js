@@ -8,6 +8,10 @@ import TablePagination from "@mui/material/TablePagination";
 import PropTypes from "prop-types";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "./../CustomTable";
+import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
+import { Chip } from "@mui/material";
+import { copyToClipboard } from "../../utils/clipboard";
+import { useDispatch } from "react-redux";
 
 const MembersTable = (props) => {
   const { members } = props;
@@ -15,6 +19,8 @@ const MembersTable = (props) => {
   const total = members.length || 0;
   const [perPage, setPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
+
+  const dispatch = useDispatch();
 
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
@@ -41,7 +47,15 @@ const MembersTable = (props) => {
             .map((row, index) => (
               <StyledTableRow key={index * (currentPage + 1)}>
                 <StyledTableCell component="th" scope="row">
-                  {shortenAddress(row?.member?.address, 26) || "-"}
+                  {/* {shortenAddress(row?.member?.address, 26) || "-"} */}
+                  <Chip
+                      label={shortenAddress(row?.member?.address, 24)}
+                      size="small"
+                      deleteIcon={<ContentCopyOutlined />}
+                      onDelete={() => {
+                        copyToClipboard(row?.member?.address, dispatch);
+                      }}
+                    />
                 </StyledTableCell>
                 <StyledTableCell align="left">
                   &nbsp;&nbsp;{row?.member?.weight || "-"}

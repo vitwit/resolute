@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { CircularProgress, Grid } from "@mui/material";
 import GroupCard from "./GroupCard";
 import PaginationElement from "./PaginationElement";
@@ -7,7 +7,7 @@ import { PER_PAGE } from "../../pages/group/common";
 import { NoData } from "./NoData";
 
 export interface GroupsByAdminProps {
-  groups: any;
+  groups: any[];
   status: string;
   total: number;
   handlePagination: (key: number) => void;
@@ -21,6 +21,7 @@ export interface GroupsByAdminProps {
 export default function GroupList(props: GroupsByAdminProps) {
   const { groups, paginationKey, handlePagination, total, status, networkName } = props;
   const navigate = useNavigate();
+
   function navigateTo(path: string) {
     navigate(path);
   }
@@ -42,7 +43,7 @@ export default function GroupList(props: GroupsByAdminProps) {
       ) : null}
 
       {status !== "pending" && groups?.length > 0 ? (
-        <Grid container spacing={{ xs: 2 }}>
+        <Grid container spacing={2}>
           {groups?.map((group: any, index: number) => (
             <Grid item xs={12} sm={12} lg={4} md={4} key={index}>
               <GroupCard group={group} />
@@ -55,7 +56,7 @@ export default function GroupList(props: GroupsByAdminProps) {
         <PaginationElement
           handlePagination={handlePagination}
           paginationKey={paginationKey}
-          total={total/PER_PAGE}
+          total={total / PER_PAGE}
         />
       )}
     </>

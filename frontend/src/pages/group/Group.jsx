@@ -271,9 +271,12 @@ const GroupPolicies = ({ id, chainInfo, chainID }) => {
             mt: 2,
           }}
         >
-          {groupPolicies.map((p, index) => (
-            <Grid item md={4} xs={12} sm={12} lg={4} xl={3} key={index}>
-              <PolicyCard obj={p} />
+          {groupPolicies.map((policy, index) => (
+            <Grid item md={4} xs={6} sm={12} lg={4} xl={3} key={index}>
+              <PolicyCard
+                policyInfo={policy}
+                totalWeight={groupDetails?.data?.total_weight || 0}
+              />
             </Grid>
           ))}
         </Grid>
@@ -355,29 +358,24 @@ const UpdateGroupMember = (props) => {
   const [removedMembers, setRemovedMembers] = useState([]);
 
   const {
-    register,
     control,
     handleSubmit,
-    watch,
     formState: { errors },
-    reset,
-    trigger,
-    setError,
   } = useForm({
     defaultValues: {
       members:
         members.length > 0
           ? members.map((m) => ({
-              ...m.member,
-              disabled: true,
-            }))
+            ...m.member,
+            disabled: true,
+          }))
           : [
-              {
-                address: "",
-                weight: "0",
-                metadata: "",
-              },
-            ],
+            {
+              address: "",
+              weight: "0",
+              metadata: "",
+            },
+          ],
     },
   });
 
@@ -476,7 +474,7 @@ const UpdateGroupMember = (props) => {
               <TableRow>
                 <StyledTableCell>Address</StyledTableCell>
                 <StyledTableCell>Weight</StyledTableCell>
-                <StyledTableCell>Metadata</StyledTableCell>
+                <StyledTableCell>Name</StyledTableCell>
                 <StyledTableCell>Actions</StyledTableCell>
               </TableRow>
             </TableHead>
