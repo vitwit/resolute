@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Button,
   CircularProgress,
@@ -7,7 +6,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,13 +15,11 @@ import {
 } from "../../features/authz/authzSlice";
 import {
   resetError,
-  resetFeegrant,
   resetTxHash,
   removeFeegrant as removeFeegrantState,
   setFeegrant as setFeegrantState,
 } from "../../features/common/commonSlice";
 import { txUnjail } from "../../features/slashing/slashingSlice";
-import { getUnjailAuthz } from "../../utils/authorizations";
 import TextField from "@mui/material/TextField";
 import FeegranterInfo from "../../components/FeegranterInfo";
 import { useParams } from "react-router-dom";
@@ -260,7 +257,7 @@ export default function Unjail() {
                     }
                   >
                     {slashingTx.status === "pending" ||
-                    authzExecTx.status === "pending" ? (
+                      authzExecTx.status === "pending" ? (
                       <CircularProgress size={25} />
                     ) : (
                       "Unjail"
