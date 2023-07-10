@@ -149,6 +149,7 @@ export default function Feegrant() {
   const feegrant = useSelector(
     (state) => state.common.feegrant?.[currentNetwork]
   );
+  const authzExecTx = useSelector((state) => state.authz.execTx);
   const errState = useSelector((state) => state.feegrant.errState);
   const txStatus = useSelector((state) => state.feegrant.tx);
   const currency = chainInfo?.config?.currencies[0];
@@ -303,6 +304,17 @@ export default function Feegrant() {
     }
   };
 
+  const fetchAuthzGrants = () => {
+    for (let granter in authzGrants) {
+      dispatch(
+        getAuthzGrants({
+          baseURL: chainInfo.config.rest,
+          granter: authzGrants[granter],
+        })
+      );
+    }
+  }
+
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[currentNetwork];
     dispatch(
@@ -321,14 +333,7 @@ export default function Feegrant() {
 
   useEffect(() => {
     if (isAuthzMode) {
-      for (let granter in authzGrants) {
-        dispatch(
-          getAuthzGrants({
-            baseURL: chainInfo.config.rest,
-            granter: authzGrants[granter],
-          })
-        );
-      }
+      fetchAuthzGrants();
     }
   }, [isAuthzMode, authzGrants, address]);
 
@@ -358,9 +363,15 @@ export default function Feegrant() {
 
   const [allFeegrants, setAllFeegrants] = useState({});
   useEffect(() => {
-    if (authzGrants?.length === Object.keys(authzFeegrants)?.length)
       setAllFeegrants(authzFeegrants);
   }, [authzFeegrants]);
+
+  useEffect(() => {
+    if (authzExecTx.status === "idle") {
+      setAllFeegrants(authzFeegrants);
+      fetchAuthzGrants();
+    }
+  }, [authzExecTx])
 
   return (
     <>
