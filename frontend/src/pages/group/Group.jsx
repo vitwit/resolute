@@ -271,9 +271,12 @@ const GroupPolicies = ({ id, chainInfo, chainID }) => {
             mt: 2,
           }}
         >
-          {groupPolicies.map((p, index) => (
-            <Grid item md={4} xs={12} sm={12} lg={4} xl={3} key={index}>
-              <PolicyCard obj={p} />
+          {groupPolicies.map((policy, index) => (
+            <Grid item md={4} xs={6} sm={12} lg={4} xl={3} key={index}>
+              <PolicyCard
+                policyInfo={policy}
+                totalWeight={groupDetails?.data?.total_weight || 0}
+              />
             </Grid>
           ))}
         </Grid>
