@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
-import { getMainNetworks, getTestNetworks } from "./../utils/networks";
 import Link from "@mui/material/Link";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -23,6 +22,7 @@ import Home from "./Home";
 import { defaultPallet } from "../utils/pallet";
 import { removeAllFeegrants } from "../utils/localStorage";
 import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
+import { networks } from "../utils/chainsInfo";
 
 export default function Dashboard() {
   const [snackOpen, setSnackOpen] = useState(false);
@@ -43,14 +43,12 @@ export default function Dashboard() {
     setSnackTxClose(value);
   };
 
-  const mainnets = getMainNetworks();
-  const testnets = getTestNetworks();
   useEffect(() => {
     setTimeout(() => {
       dispatch(
         connectKeplrWalletV1({
-          mainnets: mainnets,
-          testnets: testnets,
+          mainnets: networks,
+          testnets: [],
         })
       );
     }, 1000);
@@ -59,8 +57,8 @@ export default function Dashboard() {
       setTimeout(() => {
         dispatch(
           connectKeplrWalletV1({
-            mainnets: mainnets,
-            testnets: testnets,
+            mainnets: networks,
+            testnets: [],
           })
         );
       }, 1000);

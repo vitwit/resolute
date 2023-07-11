@@ -34,6 +34,7 @@ import { resetDefaultState as stakingResetDefaultState } from "../features/staki
 import { getAllTokensPrice } from "../features/common/commonSlice";
 import Proposal from "./gov/Proposal";
 import AirdropEligibility from "./passage/AirdropEligibility";
+import { FeegrantOverview } from "./feegrant/FeegrantOverview";
 
 export const ContextData = React.createContext();
 
@@ -116,7 +117,12 @@ export default function Home(props) {
     setValue(newValue);
     if (newValue === 8) {
       navigate("/airdrop-check");
-    } else if (newValue === 0 || newValue === 2 || newValue === 3) {
+    } else if (
+      newValue === 0 ||
+      newValue === 2 ||
+      newValue === 3 ||
+      newValue === 6
+    ) {
       navigate(ALL_NETWORKS[newValue]);
     } else {
       if (selectedNetwork === "") {
@@ -205,6 +211,8 @@ export default function Home(props) {
             <Route path="/transfers" element={<SendPage />} />
 
             <Route path="/:networkName/authz" element={<Authz />} />
+
+            <Route path="/feegrant" element={<FeegrantOverview />} />
 
             <Route path="/:networkName/feegrant" element={<Feegrant />} />
 

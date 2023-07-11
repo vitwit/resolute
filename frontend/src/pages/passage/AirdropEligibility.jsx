@@ -16,7 +16,6 @@ import {
   txClaimAction,
   resetClaimRecords,
 } from "../../features/airdrop/airdropSlice";
-import { getMainNetworks, getTestNetworks } from "../../utils/networks";
 import { useNavigate } from "react-router-dom";
 import { resetError, setError } from "../../features/common/commonSlice";
 import AirdropProgress from "../../components/passage/AirdropProgress";
@@ -24,19 +23,11 @@ import { fromBech32, toHex, toBech32, fromHex } from "@cosmjs/encoding";
 import AlertTitle from "@mui/material/AlertTitle";
 import CustomizedDialogs from "../../components/passage/disclaimer";
 import "./../common.css";
+import { networks } from "../../utils/chainsInfo";
 
 function getPasgNetwork() {
-  const mainNetworks = getMainNetworks();
-  for (let i = 0; i < mainNetworks.length; i++) {
-    const network = mainNetworks[i];
-    if (network.config.currencies[0].coinMinimalDenom === "upasg") {
-      return network;
-    }
-  }
-
-  const testNetworks = getTestNetworks();
-  for (let i = 0; i < testNetworks.length; i++) {
-    const network = testNetworks[i];
+  for (let i = 0; i < networks.length; i++) {
+    const network = networks[i];
     if (network.config.currencies[0].coinMinimalDenom === "upasg") {
       return network;
     }
@@ -163,9 +154,8 @@ export default function AirdropEligibility() {
       total += parseFloat(record.amount / 10.0 ** currency.coinDecimals);
     }
 
-    return `${parseFloat(total.toFixed(6))?.toLocaleString()} ${
-      currency.coinDenom
-    }`;
+    return `${parseFloat(total.toFixed(6))?.toLocaleString()} ${currency.coinDenom
+      }`;
   };
 
   const calculateBonus = (records) => {
@@ -177,9 +167,8 @@ export default function AirdropEligibility() {
 
     const bonus = total + total / 2.0;
 
-    return `${parseFloat(bonus.toFixed(6))?.toLocaleString()} ${
-      currency.coinDenom
-    }`;
+    return `${parseFloat(bonus.toFixed(6))?.toLocaleString()} ${currency.coinDenom
+      }`;
   };
 
   const txAction1 = () => {
@@ -348,7 +337,7 @@ export default function AirdropEligibility() {
       )}
       {walletAddress?.length > 0 ? (
         claimRecords?.address === getValues().address &&
-        chainInfo.airdropActions?.length > 0 ? (
+          chainInfo.airdropActions?.length > 0 ? (
           <>
             <br />
             <Paper style={{ padding: 16, textAlign: "left" }} elevation={0}>
@@ -392,7 +381,7 @@ export default function AirdropEligibility() {
                       }
                     >
                       {claimRecords?.action_completed.length >= index &&
-                      claimRecords?.action_completed[index] === true ? (
+                        claimRecords?.action_completed[index] === true ? (
                         `Claimed`
                       ) : txStatus === "pending" ? (
                         <CircularProgress size={25} />
@@ -422,7 +411,7 @@ export default function AirdropEligibility() {
                       }
                     >
                       {claimRecords?.action_completed.length >= index &&
-                      claimRecords?.action_completed[index] === true
+                        claimRecords?.action_completed[index] === true
                         ? `Claimed`
                         : `Claim`}
                     </Button>

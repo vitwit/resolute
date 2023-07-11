@@ -50,7 +50,7 @@ import {
 import SelectNetwork from "../../components/common/SelectNetwork";
 import FeegranterInfo from "../../components/FeegranterInfo";
 
-const renderExpiration = (row) => {
+export const renderExpiration = (row) => {
   const PERIODIC_ALLOWANCE = "/cosmos.feegrant.v1beta1.PeriodicAllowance";
   const BASIC_ALLOWANCE = "/cosmos.feegrant.v1beta1.BasicAllowance";
   switch (row?.allowance["@type"]) {

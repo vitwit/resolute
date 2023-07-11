@@ -21,7 +21,6 @@ import {
   resetError,
   resetFeegrant,
   setError,
-  removeFeegrant as removeFeegrantState,
   setFeegrant as setFeegrantState,
 } from "../../features/common/commonSlice";
 import { resetTx } from "../../features/distribution/distributionSlice";
@@ -31,10 +30,9 @@ import VoteDialog from "../../components/Vote";
 import { getPoolInfo } from "../../features/staking/stakeSlice";
 import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../../components/FeegranterInfo";
-import { getMainNetworks } from "../../utils/networks";
 import "./../common.css";
 import { filterVoteAuthz } from "./ActiveProposals";
-import { getFeegrant, removeFeegrant as removeFeegrantLocalState } from "../../utils/localStorage";
+import { getFeegrant } from "../../utils/localStorage";
 
 export default function ProposalInfo() {
   const dispatch = useDispatch();
