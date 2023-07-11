@@ -259,7 +259,7 @@ export const txRevoke = createAsyncThunk(
           })
         )
         dispatch(
-          revokeGrantSuccess({
+          removeGrant({
             chainID: data.chainId,
             granter: data.granter,
             grantee: data.grantee,
@@ -312,7 +312,7 @@ export const feegrantSlice = createSlice({
     resetFeegrantState: (state) => {
       state = initialState;
     },
-    revokeGrantSuccess: (state, action) => {
+    removeGrant: (state, action) => {
       const {granter, grantee, chainID} = action.payload;
       const chainGrantsByMe = state.allGrantsByMe?.[chainID] || [];
       delete state.allGrantsByMe[chainID]
@@ -474,7 +474,7 @@ export const {
   resetFeeBasic,
   resetFeePeriodic,
   resetFeegrantState,
-  revokeGrantSuccess,
+  removeGrant,
 } = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;
