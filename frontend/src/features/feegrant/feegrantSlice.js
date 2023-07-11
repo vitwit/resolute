@@ -253,6 +253,11 @@ export const txRevoke = createAsyncThunk(
             granter: data.granter,
           })
         );
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        )
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         dispatch(
