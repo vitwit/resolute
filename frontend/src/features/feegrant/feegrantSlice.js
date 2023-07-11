@@ -258,6 +258,13 @@ export const txRevoke = createAsyncThunk(
             hash: result?.transactionHash,
           })
         )
+        dispatch(
+          revokeGrantSuccess({
+            chainID: data.chainId,
+            granter: data.granter,
+            grantee: data.grantee,
+          })
+        )
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         dispatch(
@@ -305,6 +312,20 @@ export const feegrantSlice = createSlice({
     resetFeegrantState: (state) => {
       state = initialState;
     },
+    revokeGrantSuccess: (state, action) => {
+      const {granter, grantee, chainID} = action.payload;
+      const chainGrantsByMe = state.allGrantsByMe?.[chainID] || [];
+      delete state.allGrantsByMe[chainID]
+      for( let i=0; i<chainGrantsByMe.length; i++) {
+        if(chainGrantsByMe[i].grantee === grantee && chainGrantsByMe[i].granter === granter) {
+          chainGrantsByMe.splice(i, 1);
+          if(chainGrantsByMe.length > 0) {
+            state.allGrantsByMe[chainID] = chainGrantsByMe;
+          }
+          break;
+        }
+      }
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -322,7 +343,9 @@ export const feegrantSlice = createSlice({
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
         if (chainID) {
-          state.allGrantsToMe[chainID] = action.payload?.allowances;
+          if(action.payload?.allowances?.length > 0) {
+            state.allGrantsToMe[chainID] = action.payload?.allowances;
+          }
         } else {
           state.grantsToMe.status = "idle";
           state.grantsToMe.grants = action.payload?.allowances;
@@ -359,7 +382,9 @@ export const feegrantSlice = createSlice({
       .addCase(getGrantsByMe.fulfilled, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
         if (chainID) {
-          state.allGrantsByMe[chainID] = action.payload?.allowances;
+          if(action.payload?.allowances?.length > 0) {
+            state.allGrantsByMe[chainID] = action.payload?.allowances;
+          }
         } else {
           state.grantsByMe.status = "idle";
           state.grantsByMe.grants = action.payload?.allowances;
@@ -421,7 +446,7 @@ export const feegrantSlice = createSlice({
         state.tx.status = `pending`;
         state.tx.type = `revoke`;
       })
-      .addCase(txRevoke.fulfilled, (state, _) => {
+      .addCase(txRevoke.fulfilled, (state, action) => {
         state.tx.status = `idle`;
         state.tx.type = `revoke`;
       })
@@ -449,6 +474,7 @@ export const {
   resetFeeBasic,
   resetFeePeriodic,
   resetFeegrantState,
+  revokeGrantSuccess,
 } = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;

@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Button,
   Card,
   CardContent,
   Chip,
@@ -17,10 +18,12 @@ import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import { shortenAddress, getTypeURLName } from "../../utils/util";
 import { renderExpiration } from "./Feegrant";
 import { FeegrantInfo } from "../../components/FeegrantInfo";
+import { txRevoke } from "../../features/feegrant/feegrantSlice";
 
 export const ChainGrants = (props) => {
   const { chainName, chainID } = props;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const chainGrantsToMe = useSelector(
     (state) => state.feegrant.allGrantsToMe?.[chainID]
   );
@@ -30,6 +33,8 @@ export const ChainGrants = (props) => {
   const chainInfo = useSelector(
     (state) => state.wallet?.networks?.[chainID]?.network
   );
+  const feegrant = useSelector((state) => state.common.feegrant?.[chainName]);
+  const txStatus = useSelector((state) => state.feegrant.tx);
   const currency = chainInfo?.config?.currencies[0];
   const [tab, setTab] = useState(0);
   const [selected, setSelected] = React.useState({});
@@ -40,6 +45,24 @@ export const ChainGrants = (props) => {
   };
   const handleInfoClose = (value) => {
     setInfoOpen(false);
+  };
+
+  const revoke = (a) => {
+    dispatch(
+      txRevoke({
+        granter: a.granter,
+        grantee: a.grantee,
+        denom: currency.coinMinimalDenom,
+        chainId: chainInfo.config.chainId,
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+        feeAmount:
+          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        baseURL: chainInfo.config.rest,
+        feegranter: feegrant?.granter,
+      })
+    );
   };
 
   return chainGrantsByMe?.length || chainGrantsToMe?.length ? (
@@ -127,6 +150,7 @@ export const ChainGrants = (props) => {
                     <StyledTableCell>Type</StyledTableCell>
                     <StyledTableCell>Expiration</StyledTableCell>
                     <StyledTableCell>Details</StyledTableCell>
+                    <StyledTableCell>Action</StyledTableCell>
                   </StyledTableRow>
                 </TableHead>
                 <TableBody>
@@ -157,6 +181,20 @@ export const ChainGrants = (props) => {
                         >
                           Details
                         </Link>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          size="small"
+                          disableElevation
+                          disabled={
+                            txStatus?.status === "pending" ? true : false
+                          }
+                          onClick={() => revoke(row)}
+                        >
+                          Revoke
+                        </Button>
                       </StyledTableCell>
                     </StyledTableRow>
                   ))}
