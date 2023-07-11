@@ -9,17 +9,17 @@ Supported features:
 - [x] Airdrops
 - [x] Multisig
 - [x] Feegrant
+- [x] Groups
 - [ ] IBC Transfer
-- [ ] Groups
 - [ ] ICA
 
 ## Adding new network
 
-To add mainet use one of template from the `example` directory and add it to the `mainNets` object in `src/utils/networks.ts`.
-To add testnet use one of template from the `example` directory and add it to the `testNets` object in `src/utils/networks.ts`.
+To add a new network to Resolute, please follow these steps:
 
-* If your network is already registered with Keplr use `example/chain.json` template.
-* To register your network with keplr use `example/experimental.json` template.
+1. Open the frontend/chains directory. 
+2. Create a new `<chainname>.json` file. You can refer to the existing examples in the `frontend/chains` folder.
+
 
 ## Install deps 
 ```bash
@@ -27,6 +27,7 @@ To add testnet use one of template from the `example` directory and add it to th
 $ git clone https://github.com/vitwit/resolute.git
 $ cd resolute
 $ git checkout master
+$ cd frontend
 $ yarn
 ```
 
@@ -38,11 +39,13 @@ Create .env file and set multisig backend URI `REACT_APP_API_URI`
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 ```bash
+$ cd frontend
 $ yarn start
 ```
 
 ## Testing 
 ```bash 
+$ cd frontend
 $ yarn test
 ```
 Launches the test runner in the interactive watch mode.<br />
@@ -50,6 +53,7 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 
 ## Production Build 
 ```bash
+$ cd frontend
 $ yarn build
 ```
 

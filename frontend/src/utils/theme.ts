@@ -1,8 +1,8 @@
 import { getPalletByNetwork } from '../utils/pallet';
 import { createTheme } from '@mui/material/styles';
-import { getSelectedNetwork } from './networks';
+import { networks } from './chainsInfo';
 
-export function isDarkMode() : boolean{
+export function isDarkMode(): boolean {
     const mode = localStorage.getItem("DARK_MODE");
     if (mode === "false") {
         return false;
@@ -12,7 +12,8 @@ export function isDarkMode() : boolean{
 }
 
 export function getPallet() {
-    const network = getSelectedNetwork();
+    // const network = getSelectedNetwork();
+    const network = networks[0];
     const pallet = getPalletByNetwork(network?.config.chainName);
     return pallet
 }
