@@ -17,6 +17,7 @@ import {
 import {
   authzExecHelper,
   getGrantsToMe as getAuthzGrantsToMe,
+  resetExecTx,
 } from "../../features/authz/authzSlice";
 import {
   resetError,
@@ -80,7 +81,7 @@ const renderExpiration = (row) => {
           )}
         </>
       );
-    
+
     case "/cosmos.feegrant.v1beta1.AllowedMsgAllowance":
       return (
         <>
@@ -385,6 +386,7 @@ export default function Feegrant() {
     if (authzExecTx.status === "idle") {
       setAllFeegrants(authzFeegrants);
       fetchAuthzGrants();
+      dispatch(resetExecTx());
     }
   }, [authzExecTx]);
 
@@ -643,7 +645,9 @@ export default function Feegrant() {
         <>
           {!Object.keys(allFeegrants).length ? (
             <>
-              <Typography>You don't have authz permission.</Typography>
+              <Typography color="text.primary">
+                You don't have authz permission.
+              </Typography>
             </>
           ) : (
             <>
@@ -706,7 +710,9 @@ export default function Feegrant() {
                                 size="small"
                                 disableElevation
                                 disabled={
-                                  authzExecTx?.status === "pending" ? true : false
+                                  authzExecTx?.status === "pending"
+                                    ? true
+                                    : false
                                 }
                                 onClick={() => revoke(row)}
                               >

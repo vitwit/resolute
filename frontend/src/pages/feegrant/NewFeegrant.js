@@ -48,6 +48,8 @@ import FeegranterInfo from "../../components/FeegranterInfo";
 import {
   authzExecHelper,
   getGrantsToMe,
+  resetExecTx,
+  resetTxAuthzRes,
 } from "../../features/authz/authzSlice";
 
 const filterAuthzFeegrant = (grantsToMe) => {
@@ -102,6 +104,7 @@ export default function NewFeegrant() {
   const feegrant = useSelector(
     (state) => state.common.feegrant?.[currentNetwork]
   );
+  const authzExecTx = useSelector((state) => state.authz.execTx);
 
   let navigate = useNavigate();
   useEffect(() => {
@@ -121,6 +124,12 @@ export default function NewFeegrant() {
       navigate(`/${currentNetwork}/feegrant`);
     }
   }, [grantPeriodicTxRes?.status, navigate]);
+
+  useEffect(() => {
+    if (authzExecTx?.status === "idle") {
+      navigate(`/${currentNetwork}/feegrant`);
+    }
+  }, [authzExecTx?.status, navigate]);
 
   useEffect(() => {
     return () => {
@@ -225,7 +234,7 @@ export default function NewFeegrant() {
   };
 
   const onPeriodicGrant = (data) => {
-    if(!isAuthzMode) {
+    if (!isAuthzMode) {
       dispatch(
         txGrantPeriodic({
           granter: address,
@@ -277,7 +286,7 @@ export default function NewFeegrant() {
   };
 
   const onFilteredTx = (data) => {
-    if(!isAuthzMode) {
+    if (!isAuthzMode) {
       dispatch(
         txGrantFilter({
           granter: address,
@@ -395,226 +404,264 @@ export default function NewFeegrant() {
     }
   }, [grantsToMe]);
 
+  useEffect(() => {
+    if (isAuthzMode && isNoAuthzs) {
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    }
+  }, [isAuthzMode, isNoAuthzs]);
+
   return (
     <>
-      {feegrant?.granter?.length > 0 ? (
-        <FeegranterInfo
-          feegrant={feegrant}
-          onRemove={() => {
-            removeFeegrant();
-          }}
-        />
-      ) : null}
-      <Typography
-        variant="h6"
-        textAlign={"left"}
-        color="text.primary"
-        gutterBottom
-      >
-        Create Feegrant
-      </Typography>
-      <Alert
-        variant="standard"
-        severity="info"
-        sx={{
-          textAlign: "left",
-          mb: 2,
-          mt: 1,
-        }}
-      >
-        Feegrant does not support ledger signing. Signing transactions through
-        ledger will fail.
-      </Alert>
+      {isAuthzMode && isNoAuthzs ? (
+        <>
+          {" "}
+          <Typography color="text.primary">
+            You don't have authz permission.
+          </Typography>
+        </>
+      ) : (
+        <>
+          {feegrant?.granter?.length > 0 ? (
+            <FeegranterInfo
+              feegrant={feegrant}
+              onRemove={() => {
+                removeFeegrant();
+              }}
+            />
+          ) : null}
+          <Typography
+            variant="h6"
+            textAlign={"left"}
+            color="text.primary"
+            gutterBottom
+          >
+            Create Feegrant
+          </Typography>
+          <Alert
+            variant="standard"
+            severity="info"
+            sx={{
+              textAlign: "left",
+              mb: 2,
+              mt: 1,
+            }}
+          >
+            Feegrant does not support ledger signing. Signing transactions
+            through ledger will fail.
+          </Alert>
 
-      <Paper
-        variant="elevation"
-        sx={{
-          mt: 1,
-        }}
-        elevation={0}
-      >
-        <GroupTab
-          tabs={[
-            { title: "Basic" },
-            { title: "Periodic" },
-            { title: "Filtered" },
-          ]}
-          handleTabChange={handleTabChange}
-        />
-        <TabPanel value={tab} index={0}>
-          <Grid container>
-            <Grid item xs={1} md={3}></Grid>
-            <Grid item xs={10} md={6}>
-              <FormProvider {...methods}>
-                <form onSubmit={methods.handleSubmit(onBasicSubmit)}>
-                  <BasicFeeGrant
-                    granters={authzGrants}
-                    setGranter={setGranter}
-                    granter={granter}
-                  />
-                  <Button
-                    sx={{ mt: 4 }}
-                    variant="contained"
-                    type="submit"
-                    disableElevation
-                    disabled={feegrantTx?.status === "pending"}
-                  >
-                    {feegrantTx?.status === "pending" ? (
-                      <CircularProgress size={25} />
-                    ) : (
-                      "Grant"
-                    )}
-                  </Button>
-                </form>
-              </FormProvider>
-            </Grid>
-            <Grid item xs={1} md={3} />
-          </Grid>
-        </TabPanel>
-        <TabPanel value={tab} index={1}>
-          <Grid container>
-            <Grid item xs={1} md={3}></Grid>
-            <Grid item xs={10} md={6}>
-              <FormProvider {...methods}>
-                <form onSubmit={methods.handleSubmit(onPeriodicGrant)}>
-                  <PeriodicFeegrant
-                    loading={feegrantTx.status}
-                    onGrant={onPeriodicGrant}
-                    currency={currency}
-                    granters={authzGrants}
-                    setGranter={setGranter}
-                    granter={granter}
-                  />
+          <Paper
+            variant="elevation"
+            sx={{
+              mt: 1,
+            }}
+            elevation={0}
+          >
+            <GroupTab
+              tabs={[
+                { title: "Basic" },
+                { title: "Periodic" },
+                { title: "Filtered" },
+              ]}
+              handleTabChange={handleTabChange}
+            />
+            <TabPanel value={tab} index={0}>
+              <Grid container>
+                <Grid item xs={1} md={3}></Grid>
+                <Grid item xs={10} md={6}>
+                  <FormProvider {...methods}>
+                    <form onSubmit={methods.handleSubmit(onBasicSubmit)}>
+                      <BasicFeeGrant
+                        granters={authzGrants}
+                        setGranter={setGranter}
+                        granter={granter}
+                      />
+                      <Button
+                        sx={{ mt: 4 }}
+                        variant="contained"
+                        type="submit"
+                        disableElevation
+                        disabled={
+                          feegrantTx?.status === "pending" ||
+                          authzExecTx?.status === "pending"
+                        }
+                      >
+                        {feegrantTx?.status === "pending" ||
+                        authzExecTx?.status === "pending" ? (
+                          <CircularProgress size={25} />
+                        ) : (
+                          "Grant"
+                        )}
+                      </Button>
+                    </form>
+                  </FormProvider>
+                </Grid>
+                <Grid item xs={1} md={3} />
+              </Grid>
+            </TabPanel>
+            <TabPanel value={tab} index={1}>
+              <Grid container>
+                <Grid item xs={1} md={3}></Grid>
+                <Grid item xs={10} md={6}>
+                  <FormProvider {...methods}>
+                    <form onSubmit={methods.handleSubmit(onPeriodicGrant)}>
+                      <PeriodicFeegrant
+                        loading={feegrantTx.status}
+                        onGrant={onPeriodicGrant}
+                        currency={currency}
+                        granters={authzGrants}
+                        setGranter={setGranter}
+                        granter={granter}
+                      />
 
-                  <Button
-                    sx={{ mt: 4 }}
-                    variant="contained"
-                    disableElevation
-                    type="submit"
-                    disabled={feegrantTx.status === "pending"}
-                  >
-                    {feegrantTx.status === "pending" ? (
-                      <CircularProgress size={25} />
-                    ) : (
-                      "Grant"
-                    )}
-                  </Button>
-                </form>
-              </FormProvider>
-            </Grid>
-            <Grid item xs={1} md={3} />
-          </Grid>
-        </TabPanel>
-        <TabPanel value={tab} index={2}>
-          <Grid container>
-            <Grid item xs={1} md={3}></Grid>
-            <Grid item xs={10} md={6}>
-              <FormControl sx={{ float: "left", mb: 2, mt: 1 }}>
-                <FormLabel
-                  sx={{ textAlign: "left" }}
-                  id="row-radio-buttons-group-label"
-                >
-                  Feegrant type
-                </FormLabel>
-                <RadioGroup
-                  row
-                  onChange={(e) => setValue(e.target.value)}
-                  aria-labelledby="allowance-group"
-                  name="row-radio-allowance-group"
-                >
-                  <FormControlLabel
-                    value="Basic"
-                    control={<Radio />}
-                    label="Basic"
-                  />
-                  <FormControlLabel
-                    value="Periodic"
-                    control={<Radio />}
-                    label="Periodic"
-                  />
-                </RadioGroup>
-              </FormControl>
-
-              <FormProvider {...methods}>
-                <form onSubmit={methods.handleSubmit(onFilteredTx)}>
-                  <FormControl sx={{ mb: 2 }} fullWidth>
-                    <InputLabel id="demo-multiple-chip-label">
-                      Select Transaction
-                    </InputLabel>
-                    <Select
-                      required
-                      labelId="demo-multiple-chip-label"
-                      id="demo-multiple-chip"
-                      multiple
-                      value={msgTxTypes}
-                      onChange={handleChange}
-                      input={
-                        <OutlinedInput
-                          id="select-multiple-chip"
-                          label="Select Transaction"
-                        />
-                      }
-                      renderValue={(selected) => (
-                        <Box
-                          sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}
-                        >
-                          {selected.map((value) => (
-                            <Chip key={value} label={getLabelValue(value)} />
-                          ))}
-                        </Box>
-                      )}
+                      <Button
+                        sx={{ mt: 4 }}
+                        variant="contained"
+                        disableElevation
+                        type="submit"
+                        disabled={
+                          feegrantTx.status === "pending" ||
+                          authzExecTx?.status === "pending"
+                        }
+                      >
+                        {feegrantTx.status === "pending" ||
+                        authzExecTx?.status === "pending" ? (
+                          <CircularProgress size={25} />
+                        ) : (
+                          "Grant"
+                        )}
+                      </Button>
+                    </form>
+                  </FormProvider>
+                </Grid>
+                <Grid item xs={1} md={3} />
+              </Grid>
+            </TabPanel>
+            <TabPanel value={tab} index={2}>
+              <Grid container>
+                <Grid item xs={1} md={3}></Grid>
+                <Grid item xs={10} md={6}>
+                  <FormControl sx={{ float: "left", mb: 2, mt: 1 }}>
+                    <FormLabel
+                      sx={{ textAlign: "left" }}
+                      id="row-radio-buttons-group-label"
                     >
-                      {authzMsgTypes().map((a, index) => (
-                        <MenuItem key={index} value={a.typeURL}>
-                          {a.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
+                      Feegrant type
+                    </FormLabel>
+                    <RadioGroup
+                      row
+                      onChange={(e) => setValue(e.target.value)}
+                      aria-labelledby="allowance-group"
+                      name="row-radio-allowance-group"
+                    >
+                      <FormControlLabel
+                        value="Basic"
+                        control={<Radio />}
+                        label="Basic"
+                      />
+                      <FormControlLabel
+                        value="Periodic"
+                        control={<Radio />}
+                        label="Periodic"
+                      />
+                    </RadioGroup>
                   </FormControl>
 
-                  {(value === "Basic" && (
-                    <BasicFeeGrant
-                      granters={authzGrants}
-                      setGranter={setGranter}
-                      granter={granter}
-                    />
-                  )) ||
-                    null}
-                  {(value === "Periodic" && (
-                    <PeriodicFeegrant
-                      loading={feegrantTx.status}
-                      onGrant={onPeriodicGrant}
-                      currency={currency}
-                      granters={authzGrants}
-                      setGranter={setGranter}
-                      granter={granter}
-                    />
-                  )) ||
-                    null}
+                  <FormProvider {...methods}>
+                    <form onSubmit={methods.handleSubmit(onFilteredTx)}>
+                      <FormControl sx={{ mb: 2 }} fullWidth>
+                        <InputLabel id="demo-multiple-chip-label">
+                          Select Transaction
+                        </InputLabel>
+                        <Select
+                          required
+                          labelId="demo-multiple-chip-label"
+                          id="demo-multiple-chip"
+                          multiple
+                          value={msgTxTypes}
+                          onChange={handleChange}
+                          input={
+                            <OutlinedInput
+                              id="select-multiple-chip"
+                              label="Select Transaction"
+                            />
+                          }
+                          renderValue={(selected) => (
+                            <Box
+                              sx={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                gap: 0.5,
+                              }}
+                            >
+                              {selected.map((value) => (
+                                <Chip
+                                  key={value}
+                                  label={getLabelValue(value)}
+                                />
+                              ))}
+                            </Box>
+                          )}
+                        >
+                          {authzMsgTypes().map((a, index) => (
+                            <MenuItem key={index} value={a.typeURL}>
+                              {a.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
 
-                  {(value && (
-                    <Button
-                      sx={{ mt: 4 }}
-                      variant="contained"
-                      type="submit"
-                      disableElevation
-                      disabled={feeFilterTxRes.status === "pending"}
-                    >
-                      {feeFilterTxRes.status === "pending" ? (
-                        <CircularProgress size={25} />
-                      ) : (
-                        "Grant"
-                      )}
-                    </Button>
-                  )) ||
-                    null}
-                </form>
-              </FormProvider>
-            </Grid>
-            <Grid item xs={1} md={3} />
-          </Grid>
-        </TabPanel>
-      </Paper>
+                      {(value === "Basic" && (
+                        <BasicFeeGrant
+                          granters={authzGrants}
+                          setGranter={setGranter}
+                          granter={granter}
+                        />
+                      )) ||
+                        null}
+                      {(value === "Periodic" && (
+                        <PeriodicFeegrant
+                          loading={feegrantTx.status}
+                          onGrant={onPeriodicGrant}
+                          currency={currency}
+                          granters={authzGrants}
+                          setGranter={setGranter}
+                          granter={granter}
+                        />
+                      )) ||
+                        null}
+
+                      {(value && (
+                        <Button
+                          sx={{ mt: 4 }}
+                          variant="contained"
+                          type="submit"
+                          disableElevation
+                          disabled={
+                            feeFilterTxRes.status === "pending" ||
+                            authzExecTx?.status === "pending"
+                          }
+                        >
+                          {feeFilterTxRes.status === "pending" ||
+                          authzExecTx?.status === "pending" ? (
+                            <CircularProgress size={25} />
+                          ) : (
+                            "Grant"
+                          )}
+                        </Button>
+                      )) ||
+                        null}
+                    </form>
+                  </FormProvider>
+                </Grid>
+                <Grid item xs={1} md={3} />
+              </Grid>
+            </TabPanel>
+          </Paper>
+        </>
+      )}
     </>
   );
 }
