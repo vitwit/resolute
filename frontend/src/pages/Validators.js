@@ -561,7 +561,7 @@ export default function Validators(props) {
     if (connected && chainInfo.config.currencies.length > 0) {
       setAvailableBalance(
         parseBalance(
-          balance[chainID]?.list?.[0] ? [balance[chainID]?.list?.[0]] : [],
+          balance[chainID]?.list?.length ? balance[chainID].list : [],
           currency.coinDecimals,
           currency.coinMinimalDenom
         )
