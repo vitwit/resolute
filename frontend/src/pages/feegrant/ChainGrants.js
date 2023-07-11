@@ -129,10 +129,10 @@ export const ChainGrants = (props) => {
             <Typography
               variant="h6"
               color="text.primary"
-              style={{
+              sx={{
                 display: "flex",
                 justifyContent: "center",
-                padding: 16,
+                p: 2,
               }}
             >
               No Feegrant found
