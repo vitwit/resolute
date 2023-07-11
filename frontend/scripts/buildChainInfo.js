@@ -42,7 +42,6 @@ const chainInfoFiles = fs.readdirSync(chainInfoDir);
 const allChainInfo = [];
 
 chainInfoFiles.forEach(file => {
-    console.log(chainInfoDir)
     if (process.env.INCLUDE_SIMAPP === "true" && file == "simapp.json") {
         const chainInfoPath = path.join(chainInfoDir, "simapp.json");
         const chainInfo = require(path.resolve(__dirname, "..", chainInfoPath));
@@ -58,5 +57,5 @@ chainInfoFiles.forEach(file => {
 
 const typeScriptCode = generateTypeScriptCode(allChainInfo);
 
-const outputFilename = path.join(__dirname, "..", 'src', 'utils','chainsInfo.ts');
+const outputFilename = path.join(__dirname, "..", 'src', 'utils', 'chainsInfo.ts');
 fs.writeFileSync(outputFilename, typeScriptCode);
