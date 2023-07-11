@@ -1,0 +1,65 @@
+{
+    "enable_modules": {
+        "authz": true,
+        "feegrant": true,
+        "group": false
+    },
+    "amino_config": {
+        "authz": false,
+        "feegrant": false,
+        "group": false
+    },
+    "show_airdrop": true,
+    "logos": {
+        "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
+        "menu": "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png"
+    },
+    "experimental": true,
+    "is_testnet": false,
+    "explorer_tx_hash_endpoint": "https://passage.aneka.io/txs/",
+    "config": {
+        "gas_price_step": {
+            "low": 0.0,
+            "average": 0.0,
+            "high": 0.01
+        },
+        "chain_id": "passage-1",
+        "chain_name": "Passage",
+        "rest": "https://api.passage.vitwit.com/",
+        "rpc": "https://rpc.passage.vitwit.com",
+        "bip44": {
+            "coin_type": 118
+        },
+        "currencies": [
+            {
+                "coin_denom": "PASG",
+                "coin_minimal_denom": "upasg",
+                "coin_decimals": 6,
+                "coin_gecko_id": "passage"
+            }
+        ],
+        "coin_type": 118,
+        "wallet_url_for_staking": "https://resolute.vitwit.com/passage/staking",
+        "bech32_config": {
+            "bech32_prefix_acc_addr": "passage",
+            "bech32_prefix_acc_pub": "passagepub",
+            "bech32_prefix_val_addr": "passagevaloper",
+            "bech32_prefix_val_pub": "passagevaloperpub",
+            "bech32_prefix_cons_addr": "passagegvalcons",
+            "bech32_prefix_cons_pub": "passagevalconspub"
+        },
+        "fee_currencies": [
+            {
+                "coin_denom": "PASG",
+                "coin_minimal_denom": "upasg",
+                "coin_decimals": 6,
+                "coin_gecko_id": "passage",
+                "gas_price_step": {
+                    "low": 0.0,
+                    "average": 0.0,
+                    "high": 0.01
+                }
+            }
+        ]
+    }
+}

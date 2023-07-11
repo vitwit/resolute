@@ -6,7 +6,7 @@
   "dependencies": {
     "@babel/core": "^7.21.8",
     "@cosmjs/encoding": "^0.29.5",
-    "@cosmjs/proto-signing": "^0.29.4",
+    "@cosmjs/proto-signing": "^0.31.0",
     "@cosmjs/stargate": "^0.31.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.11.0",
@@ -15,7 +15,7 @@
     "@mui/x-date-pickers": "^5.0.4",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@reduxjs/toolkit": "^1.9.2",
-    "@svgr/webpack": "^6.5.1",
+    "@svgr/webpack": "^8.0.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -39,7 +39,7 @@
     "date-fns": "^2.30.0",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
-    "eslint": "^8.35.0",
+    "eslint": "^8.44.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-webpack-plugin": "^4.0.1",
     "file-loader": "^6.2.0",
@@ -85,8 +85,10 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "node scripts/start.js",
-    "build": "GENERATE_SOURCEMAP=false CI=false node scripts/build.js",
+    "buildchains": "node scripts/buildChainInfo.js",
+    "start": "INCLUDE_SIMAPP=true yarn buildchains && node scripts/start.js",
+    "generate-build": "yarn buildchains && node scripts/build.js",
+    "build": "GENERATE_SOURCEMAP=false CI=false yarn generate-build",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
