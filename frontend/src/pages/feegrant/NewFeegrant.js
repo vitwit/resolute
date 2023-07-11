@@ -45,7 +45,10 @@ import {
   removeFeegrant as removeFeegrantLocalState,
 } from "../../utils/localStorage";
 import FeegranterInfo from "../../components/FeegranterInfo";
-import { authzExecHelper, getGrantsToMe } from "../../features/authz/authzSlice";
+import {
+  authzExecHelper,
+  getGrantsToMe,
+} from "../../features/authz/authzSlice";
 
 const filterAuthzFeegrant = (grantsToMe) => {
   const granters = [];
@@ -222,9 +225,35 @@ export default function NewFeegrant() {
   };
 
   const onPeriodicGrant = (data) => {
-    dispatch(
-      txGrantPeriodic({
-        granter: address,
+    if(!isAuthzMode) {
+      dispatch(
+        txGrantPeriodic({
+          granter: address,
+          grantee: data.grantee,
+          spendLimit:
+            Number(data.spendLimit) === 0
+              ? null
+              : Number(data.spendLimit) * 10 ** currency.coinDecimals,
+          expiration:
+            data.expiration === null
+              ? new Date(data.expiration).toISOString()
+              : new Date(data.expiration).toISOString(),
+          period: data.period,
+          periodSpendLimit: data.periodSpendLimit,
+          denom: currency.coinMinimalDenom,
+          chainId: chainInfo.config.chainId,
+          rest: chainInfo.config.rest,
+          aminoConfig: chainInfo.aminoConfig,
+          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+        })
+      );
+    } else {
+      authzExecHelper(dispatch, {
+        type: "feegrantPeriodic",
+        from: address,
+        granter: granter,
         grantee: data.grantee,
         spendLimit:
           Number(data.spendLimit) === 0
@@ -243,14 +272,42 @@ export default function NewFeegrant() {
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
-      })
-    );
+      });
+    }
   };
 
   const onFilteredTx = (data) => {
-    dispatch(
-      txGrantFilter({
-        granter: address,
+    if(!isAuthzMode) {
+      dispatch(
+        txGrantFilter({
+          granter: address,
+          grantee: data.grantee,
+          spendLimit:
+            Number(data.spendLimit) === 0
+              ? null
+              : Number(data.spendLimit) * 10 ** currency.coinDecimals,
+          expiration:
+            data.expiration === null
+              ? new Date(data.expiration).toISOString()
+              : new Date(data.expiration).toISOString(),
+          period: data.period,
+          periodSpendLimit: data.periodSpendLimit,
+          denom: currency.coinMinimalDenom,
+          chainId: chainInfo.config.chainId,
+          rest: chainInfo.config.rest,
+          aminoConfig: chainInfo.aminoConfig,
+          prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+          feeAmount:
+            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          allowanceType: value,
+          txType: msgTxTypes,
+        })
+      );
+    } else {
+      authzExecHelper(dispatch, {
+        type: "feegrantFiltered",
+        from: address,
+        granter: granter,
         grantee: data.grantee,
         spendLimit:
           Number(data.spendLimit) === 0
@@ -271,8 +328,8 @@ export default function NewFeegrant() {
           chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
         allowanceType: value,
         txType: msgTxTypes,
-      })
-    );
+      });
+    }
   };
 
   function navigateTo(path) {
@@ -424,6 +481,9 @@ export default function NewFeegrant() {
                     loading={feegrantTx.status}
                     onGrant={onPeriodicGrant}
                     currency={currency}
+                    granters={authzGrants}
+                    setGranter={setGranter}
+                    granter={granter}
                   />
 
                   <Button
@@ -525,6 +585,9 @@ export default function NewFeegrant() {
                       loading={feegrantTx.status}
                       onGrant={onPeriodicGrant}
                       currency={currency}
+                      granters={authzGrants}
+                      setGranter={setGranter}
+                      granter={granter}
                     />
                   )) ||
                     null}

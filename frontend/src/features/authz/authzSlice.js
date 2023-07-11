@@ -12,11 +12,16 @@ import {
   AuthzExecUnDelegateMsg,
 } from "../../txns/authz";
 import { setError, setTxHash } from "../common/commonSlice";
-import { AuthzExecMsgFeegrant, AuthzExecMsgRevoke, AuthzExecMsgUnjail } from "../../txns/authz/exec";
+import {
+  AuthzExecMsgFeegrant,
+  AuthzExecMsgRevoke,
+  AuthzExecMsgUnjail,
+} from "../../txns/authz/exec";
 import { signAndBroadcast } from "../../utils/signing";
 import { getAuthzTabs } from "../../utils/authorizations";
 import { AuthzFeegrantRevokeMsg } from "../../txns/feegrant/revoke";
-import { FeegrantBasicMsg } from "../../txns/feegrant";
+import { FeegrantBasicMsg, FeegrantPeriodicMsg } from "../../txns/feegrant";
+import { FeegrantFilterMsg } from "../../txns/feegrant/grant";
 
 const initialState = {
   tabResetStatus: false,
@@ -324,11 +329,11 @@ export const authzExecHelper = (dispatch, data) => {
       }
       break;
     case "revoke": {
-      const feegrantRevokeMsg = AuthzFeegrantRevokeMsg(data.granter, data.grantee);
-      const msg = AuthzExecMsgRevoke(
-        feegrantRevokeMsg,
-        data.from,
+      const feegrantRevokeMsg = AuthzFeegrantRevokeMsg(
+        data.granter,
+        data.grantee
       );
+      const msg = AuthzExecMsgRevoke(feegrantRevokeMsg, data.from);
       dispatch(
         txAuthzExec({
           msgs: [msg],
@@ -343,18 +348,72 @@ export const authzExecHelper = (dispatch, data) => {
       );
       break;
     }
-
     case "feegrantBasic": {
       const feegrantBasicMsg = FeegrantBasicMsg(
         data.granter,
         data.grantee,
         data.denom,
         data.spendLimit,
-        data.expiration
+        data.expiration,
+        true
       );
-      console.log("msg...", feegrantBasicMsg);
       const msg = AuthzExecMsgFeegrant(feegrantBasicMsg, data.from);
-      console.log("message....", msg);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
+    case "feegrantPeriodic": {
+      const feegrantPeriodicMsg = FeegrantPeriodicMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.period,
+        data.periodSpendLimit,
+        data.expiration,
+        true
+      );
+      const msg = AuthzExecMsgFeegrant(feegrantPeriodicMsg, data.from);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
+    case "feegrantFiltered": {
+      const feegrantFilteredMsg = FeegrantFilterMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.period,
+        data.periodSpendLimit,
+        data.expiration,
+        data.txType || [],
+        data.allowanceType,
+        true
+      );
+      console.log("message....", feegrantFilteredMsg);
+      const msg = AuthzExecMsgFeegrant(feegrantFilteredMsg, data.from);
+      console.log("msg....", msg);
       dispatch(
         txAuthzExec({
           msgs: [msg],

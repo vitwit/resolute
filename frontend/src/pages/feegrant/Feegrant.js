@@ -80,6 +80,21 @@ const renderExpiration = (row) => {
           )}
         </>
       );
+    
+    case "/cosmos.feegrant.v1beta1.AllowedMsgAllowance":
+      return (
+        <>
+          {row?.allowance?.allowance?.expiration ? (
+            getLocalTime(row?.allowance?.allowance?.expiration)
+          ) : (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: "&infin;",
+              }}
+            />
+          )}
+        </>
+      );
 
     default:
       return (

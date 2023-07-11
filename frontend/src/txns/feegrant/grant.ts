@@ -10,6 +10,7 @@ import {
 import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
 import { Msg } from "../types";
 import { MsgGrantAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
+import { i } from "mathjs";
 
 const msgFeegrantGrantTypeUrl = "/cosmos.feegrant.v1beta1.MsgGrantAllowance";
 
@@ -18,7 +19,8 @@ export function FeegrantBasicMsg(
   grantee: string,
   denom: string,
   spendLimit?: string,
-  expiration?: string
+  expiration?: string,
+  isAuthzMode?: boolean
 ): Msg {
   let exp: Timestamp | undefined;
   if (expiration) {
@@ -47,16 +49,29 @@ export function FeegrantBasicMsg(
     })
   ).finish();
 
+  if(isAuthzMode) {
+    return {
+      typeUrl: msgFeegrantGrantTypeUrl,
+      value: MsgGrantAllowance.encode({
+        allowance: {
+          typeUrl: "/cosmos.feegrant.v1beta1.BasicAllowance",
+          value: basicValue,
+        },
+        grantee: grantee,
+        granter: granter,
+      }).finish(),
+    };
+  }
   return {
     typeUrl: msgFeegrantGrantTypeUrl,
-    value: MsgGrantAllowance.encode({
+    value: MsgGrantAllowance.fromPartial({
       allowance: {
         typeUrl: "/cosmos.feegrant.v1beta1.BasicAllowance",
         value: basicValue,
       },
       grantee: grantee,
       granter: granter,
-    }).finish(),
+    }),
   };
 }
 
@@ -67,7 +82,8 @@ export function FeegrantPeriodicMsg(
   spendLimit: number,
   period: number,
   periodSpendLimit: number,
-  expiration?: string
+  expiration?: string,
+  isAuthzMode?: boolean
 ) {
   try {
     const now = new Date();
@@ -130,6 +146,20 @@ export function FeegrantPeriodicMsg(
       ],
     }).finish();
 
+    if(isAuthzMode) {
+      return {
+        typeUrl: msgFeegrantGrantTypeUrl,
+        value: MsgGrantAllowance.encode({
+          allowance: {
+            typeUrl: "/cosmos.feegrant.v1beta1.PeriodicAllowance",
+            value: periodicValue,
+          },
+          grantee: grantee,
+          granter: granter,
+        }).finish(),
+      };
+    }
+
     return {
       typeUrl: msgFeegrantGrantTypeUrl,
       value: MsgGrantAllowance.fromPartial({
@@ -156,7 +186,8 @@ export function FeegrantFilterMsg(
   periodSpendLimit: number,
   expiration?: string,
   txMsg?: Array<string>,
-  allowanceType?: string
+  allowanceType?: string,
+  isAuthzMode?: boolean
 ) {
   try {
     const now = new Date();
@@ -245,6 +276,19 @@ export function FeegrantFilterMsg(
       }).finish();
     }
 
+    if(isAuthzMode) {
+      return {
+        typeUrl: msgFeegrantGrantTypeUrl,
+        value: MsgGrantAllowance.encode({
+          allowance: {
+            typeUrl: "/cosmos.feegrant.v1beta1.AllowedMsgAllowance",
+            value: obj,
+          },
+          grantee: grantee,
+          granter: granter,
+        }).finish(),
+      };
+    }
     return {
       typeUrl: msgFeegrantGrantTypeUrl,
       value: MsgGrantAllowance.fromPartial({
