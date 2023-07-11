@@ -51,6 +51,8 @@ import SelectNetwork from "../../components/common/SelectNetwork";
 import FeegranterInfo from "../../components/FeegranterInfo";
 
 const renderExpiration = (row) => {
+  const PERIODIC_ALLOWANCE = "/cosmos.feegrant.v1beta1.PeriodicAllowance";
+  const BASIC_ALLOWANCE = "/cosmos.feegrant.v1beta1.BasicAllowance";
   switch (row?.allowance["@type"]) {
     case "/cosmos.feegrant.v1beta1.BasicAllowance":
       return (
@@ -85,14 +87,14 @@ const renderExpiration = (row) => {
     case "/cosmos.feegrant.v1beta1.AllowedMsgAllowance":
       return (
         <>
-          {row?.allowance?.allowance?.expiration ? (
+          {row?.allowance?.allowance?.["@type"] === PERIODIC_ALLOWANCE &&
+          row?.allowance?.allowance?.basic?.expiration ? (
+            getLocalTime(row?.allowance?.allowance?.basic?.expiration)
+          ) : row?.allowance?.allowance?.["@type"] === BASIC_ALLOWANCE &&
+            row?.allowance?.allowance?.expiration ? (
             getLocalTime(row?.allowance?.allowance?.expiration)
           ) : (
-            <span
-              dangerouslySetInnerHTML={{
-                __html: "&infin;",
-              }}
-            />
+            <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
           )}
         </>
       );

@@ -10,7 +10,6 @@ import {
 import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
 import { Msg } from "../types";
 import { MsgGrantAllowance } from "cosmjs-types/cosmos/feegrant/v1beta1/tx";
-import { i } from "mathjs";
 
 const msgFeegrantGrantTypeUrl = "/cosmos.feegrant.v1beta1.MsgGrantAllowance";
 

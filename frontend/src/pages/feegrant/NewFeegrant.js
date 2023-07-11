@@ -392,7 +392,7 @@ export default function NewFeegrant() {
         })
       );
     }
-  }, [isAuthzMode, chainInfo]);
+  }, [isAuthzMode, chainInfo, address]);
 
   useEffect(() => {
     const result = filterAuthzFeegrant(grantsToMe);
@@ -403,14 +403,6 @@ export default function NewFeegrant() {
       setAuthzGrants(result);
     }
   }, [grantsToMe]);
-
-  useEffect(() => {
-    if (isAuthzMode && isNoAuthzs) {
-      setTimeout(() => {
-        navigate("/");
-      }, 1500);
-    }
-  }, [isAuthzMode, isNoAuthzs]);
 
   return (
     <>
