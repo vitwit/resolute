@@ -414,6 +414,17 @@ export default function Feegrant() {
           defaultNetwork={currentNetwork.toLowerCase().replace(/ /g, "")}
         />
       </Box>
+      {selected?.allowance ? (
+        <FeegrantInfo
+          authorization={selected}
+          displayDenom={currency?.coinDenom}
+          open={infoOpen}
+          onClose={handleInfoClose}
+          coinDecimals={currency?.coinDecimals}
+        />
+      ) : (
+        <></>
+      )}
       <Box
         sx={{
           mb: 1,
