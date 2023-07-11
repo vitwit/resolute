@@ -411,9 +411,7 @@ export const authzExecHelper = (dispatch, data) => {
         data.allowanceType,
         true
       );
-      console.log("message....", feegrantFilteredMsg);
       const msg = AuthzExecMsgFeegrant(feegrantFilteredMsg, data.from);
-      console.log("msg....", msg);
       dispatch(
         txAuthzExec({
           msgs: [msg],
