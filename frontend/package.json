@@ -85,8 +85,9 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "node scripts/start.js",
-    "build": "GENERATE_SOURCEMAP=false CI=false node scripts/build.js",
+    "buildchains": "node scripts/buildChainInfo.js",
+    "start": "INCLUDE_SIMAPP=true yarn buildchains && node scripts/start.js",
+    "build": "GENERATE_SOURCEMAP=false CI=false  yarn buildchains && node scripts/build.js",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
