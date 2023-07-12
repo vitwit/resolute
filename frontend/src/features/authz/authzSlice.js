@@ -561,7 +561,6 @@ export const authzSlice = createSlice({
     resetTabResetStatus: (state) => {
       state.tabResetStatus = false;
     },
-<<<<<<< HEAD
     removeAuthzGrant: (state, action) => {
       const {granter, grantee, chainID} = action.payload;
       const chainAuthzGrantsByMe = state.grantsByMe?.[chainID].grants || [];
@@ -574,9 +573,6 @@ export const authzSlice = createSlice({
         }
       }
     },
-
-=======
->>>>>>> 6c1810d4c323ab9512ea5163ea8a4d17a80420f3
   },
   extraReducers: (builder) => {
     builder
