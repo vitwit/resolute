@@ -12,9 +12,16 @@ import {
   AuthzExecUnDelegateMsg,
 } from "../../txns/authz";
 import { setError, setTxHash } from "../common/commonSlice";
-import { AuthzExecMsgUnjail } from "../../txns/authz/exec";
+import {
+  AuthzExecMsgFeegrant,
+  AuthzExecMsgRevoke,
+  AuthzExecMsgUnjail,
+} from "../../txns/authz/exec";
 import { signAndBroadcast } from "../../utils/signing";
 import { getAuthzTabs } from "../../utils/authorizations";
+import { AuthzFeegrantRevokeMsg } from "../../txns/feegrant/revoke";
+import { FeegrantBasicMsg, FeegrantPeriodicMsg } from "../../txns/feegrant";
+import { FeegrantFilterMsg } from "../../txns/feegrant/grant";
 
 const initialState = {
   tabResetStatus: false,
@@ -323,6 +330,104 @@ export const authzExecHelper = (dispatch, data) => {
         );
       }
       break;
+    case "revoke": {
+      const feegrantRevokeMsg = AuthzFeegrantRevokeMsg(
+        data.granter,
+        data.grantee
+      );
+      const msg = AuthzExecMsgRevoke(feegrantRevokeMsg, data.from);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
+    case "feegrantBasic": {
+      const feegrantBasicMsg = FeegrantBasicMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.expiration,
+        true
+      );
+      const msg = AuthzExecMsgFeegrant(feegrantBasicMsg, data.from);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
+    case "feegrantPeriodic": {
+      const feegrantPeriodicMsg = FeegrantPeriodicMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.period,
+        data.periodSpendLimit,
+        data.expiration,
+        true
+      );
+      const msg = AuthzExecMsgFeegrant(feegrantPeriodicMsg, data.from);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
+    case "feegrantFiltered": {
+      const feegrantFilteredMsg = FeegrantFilterMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.period,
+        data.periodSpendLimit,
+        data.expiration,
+        data.txType || [],
+        data.allowanceType,
+        true
+      );
+      const msg = AuthzExecMsgFeegrant(feegrantFilteredMsg, data.from);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
     default:
       alert("not supported");
   }
@@ -450,12 +555,13 @@ export const authzSlice = createSlice({
       state.txAuthzRes = {};
     },
     resetTabs: (state) => {
-      state.tabs = {...initialState.tabs};
+      state.tabs = { ...initialState.tabs };
       state.tabResetStatus = true;
     },
     resetTabResetStatus: (state) => {
       state.tabResetStatus = false;
     },
+<<<<<<< HEAD
     removeAuthzGrant: (state, action) => {
       const {granter, grantee, chainID} = action.payload;
       const chainAuthzGrantsByMe = state.grantsByMe?.[chainID].grants || [];
@@ -469,6 +575,8 @@ export const authzSlice = createSlice({
       }
     },
 
+=======
+>>>>>>> 6c1810d4c323ab9512ea5163ea8a4d17a80420f3
   },
   extraReducers: (builder) => {
     builder
