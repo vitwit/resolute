@@ -29,6 +29,7 @@ const initialState = {
     status: "idle",
     grants: [],
   },
+  authzGrants: {},
   tx: {
     status: "idle",
     type: "",
@@ -59,6 +60,21 @@ export const getGrantsByMe = createAsyncThunk(
       data.pagination
     );
     return response.data;
+  }
+);
+
+export const getAuthzGrants = createAsyncThunk(
+  "feegrant/authzGrants",
+  async (data) => {
+    const response = await feegrantService.grantsByMe(
+      data.baseURL,
+      data.granter,
+      data.pagination
+    );
+    return {
+      data: response.data,
+      granter: data.granter,
+    };
   }
 );
 
@@ -312,6 +328,9 @@ export const feegrantSlice = createSlice({
     resetFeegrantState: (state) => {
       state = initialState;
     },
+    resetAuthzGrants: (state) => {
+      state.authzGrants = {};
+    },
     removeGrant: (state, action) => {
       const {granter, grantee, chainID} = action.payload;
       const chainGrantsByMe = state.allGrantsByMe?.[chainID] || [];
@@ -406,6 +425,45 @@ export const feegrantSlice = createSlice({
         }
       });
 
+      builder
+      .addCase(getAuthzGrants.pending, (state, action) => {
+        const granter = action.meta?.arg?.granter;
+        const result = {
+          grants: [],
+          status: "pending",
+          errState: {
+            message: "",
+            type: "",
+          },
+        };
+        state.authzGrants[granter] = result;
+      })
+      .addCase(getAuthzGrants.fulfilled, (state, action) => {
+        const granter = action.payload?.granter;
+        const result = {
+          grants: action.payload?.data?.allowances,
+          status: "idle",
+          errState: {
+            message: "",
+            type: "",
+          },
+          pagination: action.payload?.data?.pagination,
+        };
+        state.authzGrants[granter] = result;
+      })
+      .addCase(getAuthzGrants.rejected, (state, action) => {
+        const granter = action.meta?.arg?.granter;
+        const result = {
+          grants: [],
+          status: "rejected",
+          errState: {
+            message: "",
+            type: "",
+          },
+        };
+        state.authzGrants[granter] = result;
+      });
+
     // txns
     builder
       .addCase(txFeegrantBasic.pending, (state) => {
@@ -475,6 +533,7 @@ export const {
   resetFeePeriodic,
   resetFeegrantState,
   removeGrant,
+  resetAuthzGrants,
 } = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;
