@@ -5,8 +5,8 @@
         "group": true
     },
     "amino_config": {
-        "authz": true,
-        "feegrant": true,
+        "authz": false,
+        "feegrant": false,
         "group": false
     },
     "show_airdrop": false,
