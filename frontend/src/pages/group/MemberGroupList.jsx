@@ -30,7 +30,7 @@ function MemberGroupList() {
   const fetchGroupsByMember = (offset = 0, limit = PER_PAGE) => {
     dispatch(
       getGroupsByMember({
-        baseURL: chainInfo.config.rest,
+        baseURL: chainInfo?.config?.rest,
         address: address,
         pagination: {
           offset,

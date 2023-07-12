@@ -5,7 +5,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
-import { ListItemButton } from "@mui/material";
+import { FormControl, ListItemButton, TextField } from "@mui/material";
 
 const options = [
   {
@@ -33,6 +33,7 @@ const options = [
 interface voteprops {
   vote: number;
   proposalId: string;
+  justification: string;
 }
 export interface SimpleDialogProps {
   open: boolean;
@@ -47,6 +48,7 @@ export default function DailogVote(props: SimpleDialogProps) {
   const { onClose, voteRes, proposalId, onConfirm, selectedValue, open } =
     props;
   const [vote, setVote] = React.useState(0);
+  const [justification, setJustification] = React.useState("");
 
   const handleClose = () => {
     onClose(selectedValue);
@@ -83,13 +85,41 @@ export default function DailogVote(props: SimpleDialogProps) {
             <ListItemText primary={option?.label} />
           </ListItem>
         ))}
-        <ListItem>
+        <ListItem
+          sx={{
+            m: 1,
+            borderRadius: "5px",
+          }}
+        >
+          <FormControl
+            fullWidth
+            sx={{
+              mt: 1,
+            }}
+          >
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="justification"
+              value={justification}
+              onChange={(e) => {
+                setJustification(e.target.value);
+              }}
+            />
+          </FormControl>
+        </ListItem>
+        <ListItem
+          sx={{
+            m: 1,
+          }}
+        >
           <ListItemButton sx={{ justifyContent: "right" }}>
             <Button
               onClick={() => {
                 onConfirm({
                   vote: vote,
                   proposalId: proposalId,
+                  justification: justification,
                 });
               }}
               variant="outlined"
