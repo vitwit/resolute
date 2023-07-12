@@ -35,6 +35,7 @@ import { getAllTokensPrice } from "../features/common/commonSlice";
 import Proposal from "./gov/Proposal";
 import AirdropEligibility from "./passage/AirdropEligibility";
 import { FeegrantOverview } from "./feegrant/FeegrantOverview";
+import { AuthzOverview } from "./authz/AuthzOverview";
 
 export const ContextData = React.createContext();
 
@@ -121,7 +122,8 @@ export default function Home(props) {
       newValue === 0 ||
       newValue === 2 ||
       newValue === 3 ||
-      newValue === 6
+      newValue === 6 ||
+      newValue === 5
     ) {
       navigate(ALL_NETWORKS[newValue]);
     } else {
@@ -209,6 +211,8 @@ export default function Home(props) {
             <Route path="/:networkName/transfers" element={<SendPage />} />
 
             <Route path="/transfers" element={<SendPage />} />
+
+            <Route path="/authz" element={<AuthzOverview/>}/>
 
             <Route path="/:networkName/authz" element={<Authz />} />
 
