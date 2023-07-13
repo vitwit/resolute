@@ -16,8 +16,8 @@ export const Chain = (props) => {
   const chainInfo = wallet.networks[chainID];
   const currency = chainInfo.network?.config?.currencies[0];
 
-  let chainReward = (+props?.chainReward?.totalRewards).toLocaleString();
-  let chainStakedAmount = (+props?.chain?.stakedAmount).toLocaleString();
+  let chainReward = (+props?.chainReward?.totalRewards || 0).toLocaleString();
+  let chainStakedAmount = (+props?.chain?.stakedAmount || 0).toLocaleString();
 
   const navigate = useNavigate();
 
@@ -153,7 +153,7 @@ Chain.propTypes = {
   }).isRequired,
   chainReward: PropTypes.shape({
     totalRewards: PropTypes.number.isRequired,
-    validators: PropTypes.array.isRequired,
+    validators: PropTypes.object.isRequired,
   }).isRequired,
 };
 
