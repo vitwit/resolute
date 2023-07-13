@@ -44,8 +44,6 @@
         "gasPriceStep": { "low": 0.0, "average": 0.0, "high": 0.0 }
       }
     ],
-    "coinType": 118,
-    
     "walletUrlForStaking": "https://airdrop.passage3d.com/staking"
   }
 }
