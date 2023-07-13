@@ -151,8 +151,10 @@ export const distSlice = createSlice({
       })
       .addCase(getDelegatorTotalRewards.rejected, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
-        state.chains[chainID].delegatorRewards.status = "rejected";
-        state.chains[chainID].delegatorRewards.errMsg = action.error.message;
+        if (state.chains[chainID]) {
+          state.chains[chainID].delegatorRewards.status = "rejected";
+          state.chains[chainID].delegatorRewards.errMsg = action.error.message;
+        }
       });
 
     builder
