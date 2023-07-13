@@ -17,6 +17,7 @@ import {
   Button,
 } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
+import { parseBalance } from "../../utils/denom";
 
 export const GeneralOverview = (props) => {
   const { chainNames } = props;
@@ -90,7 +91,7 @@ export const GeneralOverview = (props) => {
     chainIDs.forEach((chainID) => {
       let denom =
         networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
-      let balance = balanceChains?.[chainID]?.list?.[0]?.amount || 0;
+      let balance = parseBalance(balanceChains?.[chainID]?.list || []);
       const decimals =
         networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
         0;
@@ -133,10 +134,7 @@ export const GeneralOverview = (props) => {
   }, []);
 
   return (
-    <Paper
-      sx={{ p: 2, mt: 2 }}
-      elevation={0}
-    >
+    <Paper sx={{ p: 2, mt: 2 }} elevation={0}>
       <Grid
         container
         sx={{
@@ -155,11 +153,7 @@ export const GeneralOverview = (props) => {
               >
                 Total Available Balance
               </Typography>
-              <Typography
-                align="left"
-                variant="h6"
-                color="text.primary"
-              >
+              <Typography align="left" variant="h6" color="text.primary">
                 ${totalDetails.totalBalance}
               </Typography>
             </CardContent>
@@ -176,11 +170,7 @@ export const GeneralOverview = (props) => {
               >
                 Total Staked Balance
               </Typography>
-              <Typography
-                align="left"
-                variant="h6"
-                color="text.primary"
-              >
+              <Typography align="left" variant="h6" color="text.primary">
                 ${totalDetails.totalStaked}
               </Typography>
             </CardContent>
@@ -197,11 +187,7 @@ export const GeneralOverview = (props) => {
               >
                 Total Rewards
               </Typography>
-              <Typography
-                align="left"
-                variant="h6"
-                color="text.primary"
-              >
+              <Typography align="left" variant="h6" color="text.primary">
                 ${totalDetails.totalRewards}
               </Typography>
             </CardContent>
@@ -212,21 +198,11 @@ export const GeneralOverview = (props) => {
         <Table>
           <TableHead>
             <StyledTableRow>
-              <StyledTableCell>
-                Network Name
-              </StyledTableCell>
-              <StyledTableCell>
-                Available Balance
-              </StyledTableCell>
-              <StyledTableCell>
-                Staked Amount
-              </StyledTableCell>
-              <StyledTableCell>
-                Rewards
-              </StyledTableCell>
-              <StyledTableCell>
-                &nbsp;Actions
-              </StyledTableCell>
+              <StyledTableCell>Network Name</StyledTableCell>
+              <StyledTableCell>Available Balance</StyledTableCell>
+              <StyledTableCell>Staked Amount</StyledTableCell>
+              <StyledTableCell>Rewards</StyledTableCell>
+              <StyledTableCell>&nbsp;Actions</StyledTableCell>
             </StyledTableRow>
           </TableHead>
           <TableBody>
