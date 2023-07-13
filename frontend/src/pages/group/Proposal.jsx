@@ -4,6 +4,7 @@ import {
   Chip,
   CircularProgress,
   Grid,
+  Link,
   Paper,
   Typography,
 } from "@mui/material";
@@ -30,18 +31,20 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
   const [voteOpen, setVoteOpen] = useState(false);
 
   const dispatch = useDispatch();
-  const proposalInfo = useSelector((state) => state.group?.groupProposal?.[chainID]);
+  const proposalInfo = useSelector(
+    (state) => state.group?.groupProposal?.[chainID]
+  );
   const voteRes = useSelector((state) => state.group?.voteRes);
 
   const proposal = proposalInfo?.data?.proposal;
 
   const getProposal = () => {
-    if(chainInfo?.config?.rest && chainID) {
+    if (chainInfo?.config?.rest && chainID) {
       dispatch(
         getGroupProposalById({
           baseURL: chainInfo?.config?.rest,
           id,
-          chainID: chainID
+          chainID: chainID,
         })
       );
     }
@@ -60,13 +63,15 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
   };
 
   const onConfirm = (voteObj) => {
-
     dispatch(
       txGroupProposalVote({
         admin: address,
         voter: address,
         option: voteObj?.vote,
         proposalId: voteObj?.proposalId,
+        metadata: JSON.stringify({
+          justification: voteObj?.justification,
+        }),
         chainId: chainInfo?.config?.chainId,
         rpc: chainInfo?.config?.rpc,
         denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
@@ -76,7 +81,6 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
   };
 
   const onExecute = (proposalId) => {
-
     dispatch(
       txGroupProposalExecute({
         proposalId: proposalId,
@@ -135,48 +139,105 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
                 {parseProposalStatus(proposal.status)}
               </Grid>
               <Grid item md={12} xs={12}>
-                <Typography
-                  gutterBottom
-                  textAlign={"left"}
-                  variant="body1"
-                  fontWeight={500}
-                >
-                  {proposal?.metadata || "-"}
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                md={12}
-                sx={{
-                  textAlign: "right",
-                  mb: 1,
-                }}
-              >
-                {proposal?.status === "PROPOSAL_STATUS_SUBMITTED" ? (
-                  <Button
-                    variant="contained"
-                    disableElevation
+                <Grid sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <Grid item md={6} xs={12}>
+                    {JSON.parse(proposal?.metadata)?.title ? (
+                      <>
+                        <Typography
+                          variant="h5"
+                          color="text.primary"
+                          fontWeight={600}
+                          sx={{
+                            textAlign: "left",
+                          }}
+                          gutterBottom
+                        >
+                          {JSON.parse(proposal?.metadata)?.title || "-"}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          color="text.secondary"
+                          gutterBottom
+                          sx={{
+                            textAlign: "left",
+                          }}
+                        >
+                          {JSON.parse(proposal?.metadata)?.summary || "-"}
+                        </Typography>
+                      </>
+                    ) : (
+                      <>
+                        <Typography
+                          variant="h5"
+                          color="text.primary"
+                          fontWeight={600}
+                          sx={{
+                            textAlign: "left",
+                          }}
+                          gutterBottom
+                        >
+                          {JSON.parse(proposal?.metadata)}
+                        </Typography>
+                      </>
+                    )}
+                  </Grid>
+                  <Grid
+                    item
+                    md={6}
                     sx={{
-                      textTransform: "none",
+                      textAlign: "right",
+                      mb: 1,
                     }}
-                    onClick={() => setVoteOpen(true)}
                   >
-                    Vote
-                  </Button>
-                ) : null}
+                    {proposal?.status === "PROPOSAL_STATUS_SUBMITTED" ? (
+                      <Button
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                          textTransform: "none",
+                        }}
+                        onClick={() => setVoteOpen(true)}
+                      >
+                        Vote
+                      </Button>
+                    ) : null}
 
-                {proposal?.status === "PROPOSAL_STATUS_ACCEPTED" ? (
-                  <Button
-                    variant="contained"
-                    disableElevation
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    onClick={() => onExecute(proposal?.id)}
-                  >
-                    Execute
-                  </Button>
-                ) : null}
+                    {proposal?.status === "PROPOSAL_STATUS_ACCEPTED" ? (
+                      <Button
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                          textTransform: "none",
+                        }}
+                        onClick={() => onExecute(proposal?.id)}
+                      >
+                        Execute
+                      </Button>
+                    ) : null}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item md={12} xs={12}>
+                <Grid>
+                  <Grid item md={6} xs={12}>
+                    <Typography
+                      textAlign={"left"}
+                      variant="body1"
+                      color="text.secondary"
+                    >
+                      Details
+                    </Typography>
+                    <Typography
+                      textAlign={"left"}
+                      fontWeight={500}
+                      variant="body1"
+                      gutterBottom
+                    >
+                      {JSON.parse(proposal?.metadata)?.details || "-"}
+                    </Typography>
+                  </Grid>
+                  <Grid item md={4} xs={12}></Grid>
+                </Grid>
               </Grid>
               <Grid item md={4} xs={12}>
                 <Typography
@@ -229,7 +290,11 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
                   gutterBottom
                 >
                   <Chip
-                    label={proposal?.group_policy_address ? shortenAddress(proposal?.group_policy_address, 21) : ""}
+                    label={
+                      proposal?.group_policy_address
+                        ? shortenAddress(proposal?.group_policy_address, 21)
+                        : ""
+                    }
                     size="small"
                     deleteIcon={<ContentCopyOutlined />}
                     onDelete={() => {
@@ -237,6 +302,35 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
                     }}
                   />
                 </Typography>
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <Typography
+                  textAlign={"left"}
+                  variant="body1"
+                  color="text.secondary"
+                  gutterBottom
+                >
+                  Forum
+                </Typography>
+                <Box
+                  sx={{
+                    textAlign: "left",
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    color="text.primary"
+                    fontWeight={500}
+                  >
+                    <Link
+                      href={JSON.parse(proposal?.metadata)?.forumurl || "#"}
+                      target="_blank"
+                    >
+                      {JSON.parse(proposal?.metadata)?.forumurl || "-"}
+                    </Link>
+                  </Typography>
+                </Box>
               </Grid>
 
               <Grid item xs={12} md={6}>
@@ -371,7 +465,7 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
                       <>
                         <Typography sx={{ fontSize: 18, textAlign: "left" }}>
                           <strong>Delegate</strong> &nbsp;
-                          {p?.amount?.amount} &?.[0]nbsp;
+                          {p?.amount?.amount} &nbsp;
                           {p?.amount?.denom} &nbsp;
                           <strong> to </strong> &nbsp;
                           {p?.validator_address}
@@ -412,7 +506,7 @@ function Proposal() {
   const chainInfo = networks[chainID]?.network;
 
   const fetchVotes = (baseURL, id, limit, key) => {
-    if(baseURL && chainID) {
+    if (baseURL && chainID) {
       dispatch(
         getVotesProposalById({
           baseURL: baseURL,
@@ -438,7 +532,9 @@ function Proposal() {
     setPageNumber(number);
     fetchVotes(chainInfo?.config?.rest, id, limit, key);
   };
-  const groupInfo = useSelector((state) => state.group?.proposalVotes?.[chainID]);
+  const groupInfo = useSelector(
+    (state) => state.group?.proposalVotes?.[chainID]
+  );
   const data = groupInfo?.data;
   const status = groupInfo?.status;
 
@@ -452,7 +548,13 @@ function Proposal() {
       <Box>
         <Paper>
           <Box>
-            <ProposalInfo id={id} wallet={wallet} address={address} chainID={chainID} chainInfo={chainInfo} />
+            <ProposalInfo
+              id={id}
+              wallet={wallet}
+              address={address}
+              chainID={chainID}
+              chainInfo={chainInfo}
+            />
           </Box>
         </Paper>
       </Box>

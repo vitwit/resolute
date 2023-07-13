@@ -29,7 +29,7 @@ function AdminGroupList() {
   const fetchGroupsByAdmin = (offset = 0, limit = PER_PAGE) => {
     dispatch(
       getGroupsByAdmin({
-        baseURL: chainInfo.config.rest,
+        baseURL: chainInfo?.config?.rest,
         admin: address,
         pagination: {
           offset,
