@@ -33,7 +33,7 @@ const BootstrapButton = styled(Button)({
 function FeeComponent({ chainInfo, onSetFeeChange }) {
   const [active, setActive] = useState("average");
   const { config } = chainInfo;
-  const { gasPriceStep = {} } = config;
+  const { gasPriceStep = {} } = config.feeCurrencies[0];
 
   return (
     <Box>

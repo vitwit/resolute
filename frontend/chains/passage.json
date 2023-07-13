@@ -18,11 +18,6 @@
     "is_testnet": false,
     "explorer_tx_hash_endpoint": "https://passage.aneka.io/txs/",
     "config": {
-        "gas_price_step": {
-            "low": 0.0,
-            "average": 0.0,
-            "high": 0.01
-        },
         "chain_id": "passage-1",
         "chain_name": "Passage",
         "rest": "https://api.passage.vitwit.com/",
@@ -38,7 +33,6 @@
                 "coin_gecko_id": "passage"
             }
         ],
-        "coin_type": 118,
         "wallet_url_for_staking": "https://resolute.vitwit.com/passage/staking",
         "bech32_config": {
             "bech32_prefix_acc_addr": "passage",

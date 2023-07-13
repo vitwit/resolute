@@ -197,7 +197,7 @@ export default function SendPage() {
             aminoConfig: chainInfo.aminoConfig,
             prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
             feeAmount:
-              chainInfo.config.gasPriceStep.average *
+              chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
               10 ** currency[0].coinDecimals,
             feegranter: feegrant?.granter,
           })
@@ -216,7 +216,7 @@ export default function SendPage() {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config.gasPriceStep.average *
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
           10 ** currency[0].coinDecimals,
         feegranter: feegrant?.granter,
       });

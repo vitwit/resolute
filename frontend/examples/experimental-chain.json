@@ -40,11 +40,12 @@
         "coinDenom": "PASG",
         "coinMinimalDenom": "upasg",
         "coinDecimals": 6,
-        "coinGeckoId": "passage"
+        "coinGeckoId": "passage",
+        "gasPriceStep": { "low": 0.0, "average": 0.0, "high": 0.0 }
       }
     ],
     "coinType": 118,
-    "gasPriceStep": { "low": 0.0, "average": 0.0, "high": 0.0 },
+    
     "walletUrlForStaking": "https://airdrop.passage3d.com/staking"
   }
 }
