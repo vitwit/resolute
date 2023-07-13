@@ -35,6 +35,8 @@ const initialState = {
     sendEnabled: false,
     stakingEnabled: false,
   },
+  grantsByMeCount: 0,
+  grantsToMeCount: 0,
   grantsToMe: {},
   grantsByMe: {},
   tx: {
@@ -155,7 +157,7 @@ export const txAuthzRevoke = createAsyncThunk(
           getGrantsByMe({
             baseURL: data.baseURL,
             granter: data.granter,
-            chainID: data.chainID,
+            chainID: data.chainId,
           })
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
@@ -559,6 +561,18 @@ export const authzSlice = createSlice({
     resetTabResetStatus: (state) => {
       state.tabResetStatus = false;
     },
+    removeAuthzGrant: (state, action) => {
+      const {granter, grantee, chainID} = action.payload;
+      const chainAuthzGrantsByMe = state.grantsByMe?.[chainID].grants || [];
+      for( let i=0; i<chainAuthzGrantsByMe.length; i++) {
+        if(chainAuthzGrantsByMe[i].grantee === grantee && chainAuthzGrantsByMe[i].granter === granter) {
+          chainAuthzGrantsByMe.splice(i, 1);
+            state.grantsByMe[chainID] = chainAuthzGrantsByMe;
+            state.grantsByMeCount--;
+          break;
+        }
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -596,6 +610,7 @@ export const authzSlice = createSlice({
             pagination: action.payload.data.pagination,
           };
           state.grantsToMe[chainID] = result;
+          state.grantsByMeCount = calculateAuthzCount(state.grantsByMe);
         }
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
@@ -603,6 +618,7 @@ export const authzSlice = createSlice({
         if (chainID.length) {
           state.grantsToMe[chainID].status = "rejected";
           state.grantsToMe[chainID].grants = [];
+          state.grantsToMeCount = calculateAuthzCount(state.grantsToMe)
           state.grantsToMe[chainID].pagination = {};
           state.grantsToMe[chainID].errMsg = action.error.message;
         }
@@ -630,12 +646,14 @@ export const authzSlice = createSlice({
           pagination: action.payload.data.pagination,
         };
         state.grantsByMe[chainID] = result;
+        state.grantsByMeCount = calculateAuthzCount(state.grantsByMe)
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
         const chainID = action.meta.arg.chainID;
         if (chainID?.length) {
           state.grantsByMe[chainID].status = "rejected";
           state.grantsByMe[chainID].grants = [];
+          state.grantsByMeCount = calculateAuthzCount(state.grantsByMe)
           state.grantsByMe[chainID].pagination = {};
           state.grantsByMe[chainID].errMsg = action.error.message;
         }
@@ -696,6 +714,15 @@ export const authzSlice = createSlice({
   },
 });
 
+const calculateAuthzCount = (authzGrants) => {
+  let authzGrantCount = 0;
+  let chainIds = Object.keys(authzGrants);
+  for(let chainId of chainIds) {
+    authzGrantCount += authzGrants[chainId]?.grants?.length || 0;
+  }
+  return authzGrantCount;
+}
+
 export const {
   resetAlerts,
   setSelectedGranter,
@@ -704,6 +731,7 @@ export const {
   resetTabs,
   exitAuthzMode,
   resetTabResetStatus,
+  removeAuthzGrant,
 } = authzSlice.actions;
 
 export default authzSlice.reducer;
