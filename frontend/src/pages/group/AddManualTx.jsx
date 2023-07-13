@@ -99,10 +99,14 @@ function AddManualTx({
         title: "",
         details: "",
         summary: "",
-        forumurl: ""
-      }
+        forumurl: "",
+      },
     },
   });
+  const {
+    getValues,
+    formState: { errors: errors },
+  } = methods;
   const dispatch = useDispatch();
 
   const validators = null;
@@ -303,15 +307,30 @@ function AddManualTx({
                 <Controller
                   name="metadata.title"
                   control={methods.control}
+                  rules={{
+                    required: "Title is required",
+                    maxLength: {
+                      value: 30,
+                      message: "Title length cannot be more than 30 characters",
+                    },
+                    validate: () =>
+                      getValues("metadata.title").trim().length > 0,
+                  }}
                   render={({ field }) => (
                     <TextField
                       sx={{
                         mt: 1,
                       }}
                       {...field}
-                      label="Proposal Title"
+                      label="Proposal Title *"
                       fullWidth
                       size="small"
+                      error={errors?.metadata?.title}
+                      helperText={
+                        errors?.metadata?.title?.message ||
+                        (errors?.metadata?.title?.type === "validate" &&
+                          "Title is required")
+                      }
                     />
                   )}
                 />
@@ -319,6 +338,12 @@ function AddManualTx({
                 <Controller
                   name="metadata.details"
                   control={methods.control}
+                  rules={{
+                    maxLength: {
+                      value: 70,
+                      message: "Details length cannot be more than 80 characters",
+                    }
+                  }}
                   render={({ field }) => (
                     <TextField
                       sx={{
@@ -328,6 +353,9 @@ function AddManualTx({
                       label="Details"
                       fullWidth
                       size="small"
+                      multiline
+                      error={errors?.metadata?.details}
+                      helperText={errors?.metadata?.details?.message}
                     />
                   )}
                 />
@@ -335,6 +363,12 @@ function AddManualTx({
                 <Controller
                   name="metadata.summary"
                   control={methods.control}
+                  rules={{
+                    maxLength: {
+                      value: 100,
+                      message: "Summary length cannot be more than 100 characters",
+                    }
+                  }}
                   render={({ field }) => (
                     <TextField
                       sx={{
@@ -344,6 +378,9 @@ function AddManualTx({
                       label="Summary"
                       fullWidth
                       size="small"
+                      multiline
+                      error={errors?.metadata?.summary}
+                      helperText={errors?.metadata?.summary?.message}
                     />
                   )}
                 />
@@ -351,6 +388,12 @@ function AddManualTx({
                 <Controller
                   name="metadata.forumurl"
                   control={methods.control}
+                  rules={{
+                    maxLength: {
+                      value: 40,
+                      message: "Forum URL length cannot be more than 30 characters",
+                    }
+                  }}
                   render={({ field }) => (
                     <TextField
                       sx={{
@@ -360,6 +403,8 @@ function AddManualTx({
                       label="Forum URL"
                       fullWidth
                       size="small"
+                      error={errors?.metadata?.forumurl}
+                      helperText={errors?.metadata?.forumurl?.message}
                     />
                   )}
                 />
