@@ -287,7 +287,7 @@ export const txGroupProposalVote = createAsyncThunk(
         [msg],
         fee(data.denom, data.feeAmount, 260000),
         data.chainId,
-        data.rpc
+        data.rpc,
       );
 
       dispatch(resetTxLoad());

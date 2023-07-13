@@ -4,13 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { getJustDate } from "../../utils/datetime";
 import { shortenAddress } from "../../utils/util";
 
-
 interface ProposalCardProps {
   proposal: any;
   networkName: string;
 }
 
-function ProposalCard({ proposal, networkName }: ProposalCardProps): JSX.Element {
+function ProposalCard({
+  proposal,
+  networkName,
+}: ProposalCardProps): JSX.Element {
   const navigate = useNavigate();
 
   let proposalMetadata: any = proposal?.metadata;
@@ -37,101 +39,68 @@ function ProposalCard({ proposal, networkName }: ProposalCardProps): JSX.Element
         variant="h6"
         color="text.primary"
         sx={{
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
         #{proposal?.id}&nbsp;{proposalMetadata?.title || proposalMetadata}
       </Typography>
-      {
-        proposalMetadata?.summary ?
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            fontWeight={600}
-            sx={{
-              textAlign: "center"
-            }}
-          >
-            {proposalMetadata?.summary}
-          </Typography>
-          :
-          null
-      }
+      {proposalMetadata?.summary ? (
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          fontWeight={600}
+          sx={{
+            textAlign: "center",
+          }}
+          style={{ wordWrap: "break-word", lineClamp: 2 }}
+        >
+          {proposalMetadata?.summary}
+        </Typography>
+      ) : null}
 
-      <Grid container spacing={2}
+      <Grid
+        container
+        spacing={2}
         sx={{
           mt: 1,
         }}
       >
         <Grid item xs={6} md={6}>
-          <Typography
-            variant="body2"
-            fontWeight={600}
-            color="text.secondary"
-          >
+          <Typography variant="body2" fontWeight={600} color="text.secondary">
             Status
           </Typography>
           {parseProposalStatus(proposal.status)}
         </Grid>
         <Grid item xs={6} md={6}>
-          <Typography
-            variant="body2"
-            fontWeight={600}
-            color="text.secondary"
-          >
+          <Typography variant="body2" fontWeight={600} color="text.secondary">
             Policy Address
           </Typography>
-          <Typography
-            fontWeight={500}
-            variant="body1"
-          >
+          <Typography fontWeight={500} variant="body1">
             {shortenAddress(proposal?.group_policy_address, 21)}
           </Typography>
         </Grid>
         <Grid item xs={6} md={6}>
-          <Typography
-            variant="body2"
-            fontWeight={600}
-            color="text.secondary"
-          >
+          <Typography variant="body2" fontWeight={600} color="text.secondary">
             Submit Time
           </Typography>
-          <Typography
-            fontWeight={500}
-            variant="body1"
-          >
+          <Typography fontWeight={500} variant="body1">
             {getJustDate(proposal?.submit_time)}
           </Typography>
         </Grid>
         <Grid item xs={6} md={6}>
-          <Typography
-            variant="body2"
-            fontWeight={600}
-            color="text.secondary"
-          >
+          <Typography variant="body2" fontWeight={600} color="text.secondary">
             Voting End
           </Typography>
-          <Typography
-            fontWeight={500}
-            variant="body1"
-          >
+          <Typography fontWeight={500} variant="body1">
             {getJustDate(proposal?.voting_period_end)}
           </Typography>
         </Grid>
         <Grid item xs={12} md={12}>
-          <Typography
-            variant="body2"
-            fontWeight={600}
-            color="text.secondary"
-          >
+          <Typography variant="body2" fontWeight={600} color="text.secondary">
             Proposers
           </Typography>
           {proposal?.proposers?.map((p: string) => (
-            <Typography
-
-              fontWeight={500}
-              variant="body1"
-            >
+            <Typography fontWeight={500} variant="body1">
               {p && shortenAddress(p, 21)}
             </Typography>
           ))}
