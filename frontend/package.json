@@ -52,7 +52,7 @@
     "jest-watch-typeahead": "^2.2.2",
     "lodash": "^4.17.21",
     "mathjs": "^11.8.2",
-    "mini-css-extract-plugin": "^2.7.5",
+    "mini-css-extract-plugin": "^2.7.6",
     "moment": "^2.29.4",
     "postcss": "^8.4.21",
     "postcss-flexbugs-fixes": "^5.0.2",
