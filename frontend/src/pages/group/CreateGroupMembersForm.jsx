@@ -121,7 +121,7 @@ export function CreateGroupMembersForm({
                   <Button
                     size="small"
                     onClick={() => {
-                      append({ address: "", metadata: "", weight: 1 });
+                      append({ address: "", metadata: "", weight: "1" });
                     }}
                     sx={{ ml: "auto", textTransform: "none", mt: 1 }}
                     variant="outlined"

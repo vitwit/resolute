@@ -27,6 +27,7 @@ export default function UpdatePolicyMetadataDialog(props) {
     handleSubmit,
     handleCancelPolicy,
     formState: { errors },
+    getValues,
   } = useForm({});
 
   return (
@@ -45,6 +46,7 @@ export default function UpdatePolicyMetadataDialog(props) {
                 watch={watch}
                 errors={errors}
                 setValue={setValue}
+                getValues={getValues}
                 handleCancelPolicy={handleCancelPolicy}
                 members={[]}
                 policyUpdate={false}
@@ -58,6 +60,7 @@ export default function UpdatePolicyMetadataDialog(props) {
                 variant="contained"
                 disabled={updatePolicyMetadataRes?.status === "pending"}
                 type="submit"
+                disableElevation
               >
                 {updatePolicyMetadataRes?.status === "pending"
                   ? "Updating..."

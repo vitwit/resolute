@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  Grid,
-  IconButton,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Grid, IconButton, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import EditIcon from "@mui/icons-material/Edit";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { getFormatDate, getJustDay, getLocalTime } from "../../utils/datetime";
 import CheckIcon from "@mui/icons-material/Check";
 import { useSelector } from "react-redux";
-import {
-  shortenAddress,
-  ThresholdDecisionPolicy,
-} from "../../utils/util";
+import { shortenAddress, ThresholdDecisionPolicy } from "../../utils/util";
+import moment from "moment";
 
 interface GridItemProps {
   label: string;
@@ -51,7 +44,6 @@ const LabelValue = ({ text }: TextProps) => (
     {text}
   </Typography>
 );
-
 
 const GridItemEdit = ({
   label,
@@ -193,22 +185,24 @@ function PolicyDetails({
         >
           {policyMetadata?.name || policyMetadata}
         </Typography>
-        <Typography variant="body2" color="text.secondary" fontWeight={600} gutterBottom>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          fontWeight={600}
+          gutterBottom
+        >
           {policyMetadata?.description || ""}
         </Typography>
       </Box>
 
-      <Grid container
+      <Grid
+        container
         sx={{
           mt: 2,
         }}
         spacing={2}
       >
-        <Grid
-          item
-          md={4}
-          xs={12}
-        >
+        <Grid item md={4} xs={12}>
           <GridItemEdit
             handleUpdate={handleUpdateAdmin}
             disabledSubmit={updatePolicyAdminRes?.status === "pending"}
@@ -218,57 +212,61 @@ function PolicyDetails({
             canEdit={canUpdateGroup}
           />
         </Grid>
-        <Grid
-          item
-          md={4}
-          xs={6}
-        >
+        <Grid item md={4} xs={6}>
           <LabelText text="Quorum" />
           {policyObj?.decision_policy["@type"] === ThresholdDecisionPolicy ? (
             <LabelValue
-              text={`${((parseFloat(policyObj?.decision_policy?.threshold) / totalWeight) * 100.0).toFixed(0)}%` || "0%"}
+              text={
+                `${(
+                  (parseFloat(policyObj?.decision_policy?.threshold) /
+                    totalWeight) *
+                  100.0
+                ).toFixed(0)}%` || "0%"
+              }
             />
           ) : (
             <LabelValue
-              text={`${(parseFloat(policyObj?.decision_policy?.percentage) * 100.0).toFixed(0)}%` || "0%"}
+              text={
+                `${(
+                  parseFloat(policyObj?.decision_policy?.percentage) * 100.0
+                ).toFixed(0)}%` || "0%"
+              }
             />
           )}
         </Grid>
-        <Grid
-          item
-          md={4}
-          xs={6}
-        >
+        <Grid item md={4} xs={6}>
           <LabelText text="Created At" />
           <LabelValue
             text={getFormatDate(policyObj?.created_at)}
             toolTip={getLocalTime(policyObj?.created_at)}
           />
         </Grid>
-        <Grid
-          item
-          md={4}
-          xs={6}
-        >
+        <Grid item md={4} xs={6}>
           <LabelText text="Voting Period" />
           <LabelValue
             text={
-
-              getJustDay(parseInt(policyObj?.decision_policy?.windows?.voting_period || 0))
-              + " Days"
+              moment
+                .utc(
+                  parseInt(
+                    policyObj?.decision_policy?.windows?.voting_period || 0
+                  ) * 1000
+                )
+                .format("D") + " Days"
             }
           />
         </Grid>
-        <Grid
-          item
-          md={4}
-          xs={6}
-        >
+        <Grid item md={4} xs={6}>
           <LabelText text="Execution Delay" />
           <LabelValue
             text={
-              getJustDay(parseInt(policyObj?.decision_policy?.windows?.min_execution_period || 0))
-              + " Days"
+              moment
+                .utc(
+                  parseInt(
+                    policyObj?.decision_policy?.windows?.min_execution_period ||
+                      0
+                  ) * 1000
+                )
+                .format("D") + " Days"
             }
           />
         </Grid>

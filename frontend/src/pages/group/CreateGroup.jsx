@@ -231,6 +231,8 @@ export default function CreateGroupStepper() {
         policyAsAdmin: false,
         minExecPeriodDuration: DAYS,
         votingPeriodDuration: DAYS,
+        votingPeriod: 21,
+        minExecPeriod: 7,
       },
     },
   });
