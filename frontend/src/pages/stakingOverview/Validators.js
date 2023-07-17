@@ -24,7 +24,7 @@ export const Validators = (props) => {
           {props.validators.map((validator) => (
             <Validator
               validator={validator}
-              reward={props?.rewards?.[validator.validatorAddress]}
+              reward={props?.rewards?.[validator.validatorAddress]?.toFixed(3) || 0}
               key={validator.validatorName}
               denom={props.denom}
             />

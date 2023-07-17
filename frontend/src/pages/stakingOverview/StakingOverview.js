@@ -36,7 +36,7 @@ const StakingOverview = (props) => {
 
   let getRewardsObjectForProps = (wallet, rewardchainsMap) => {
     let chainIds = Object.keys(chainsmap);
-    let chainsData = {};
+    let chainsData = { chains: {} };
     let totalRewardsInDollars = 0;
     for (let i = 0; i < chainIds.length; i++) {
       let decimal =
@@ -68,11 +68,11 @@ const StakingOverview = (props) => {
           validatorReward += +rewards[k].amount / 10 ** decimal;
         }
 
-        validatorMap[address] = validatorReward.toFixed(3);
+        validatorMap[address] = validatorReward || 0;
       }
 
-      chainsData[chainIds[i]] = {
-        totalRewards: totalRewards.toFixed(3),
+      chainsData.chains[chainIds[i]] = {
+        totalRewards: totalRewards || 0,
         validators: validatorMap,
       };
     }
@@ -126,7 +126,7 @@ const StakingOverview = (props) => {
       }
       let chain = {
         chainName: chainIds[i],
-        stakedAmount: chainTotalStaked.toFixed(3),
+        stakedAmount: chainTotalStaked,
         denom: denom,
         validators: validators,
         imageURL: wallet.networks[chainIds[i]]?.network?.logos.menu,
@@ -187,14 +187,19 @@ const StakingOverview = (props) => {
       {data?.chains?.length > 0 ? (
         <>
           <StakingTotal
-            totalAmount={data.totalAmount}
-            totalReward={rewardData.totalReward}
+            totalAmount={data?.totalAmount || 0}
+            totalReward={rewardData?.totalReward || 0}
           />
           {data.chains.map((chain) => (
             <Chain
               chain={chain}
               key={chain.chainName}
-              chainReward={rewardData?.[chain.chainName]}
+              chainReward={
+                rewardData?.chains[chain.chainName] || {
+                  totalRewards: 0,
+                  validators: {},
+                }
+              }
             />
           ))}
         </>

@@ -618,7 +618,9 @@ export const stakeSlice = createSlice({
         let result = cloneDeep(initialState.defaultState.validators);
         result.errMsg = action.error.message;
         result.status = "rejected";
-        state.chains[chainID].validators = result;
+        if (state.chains[chainID]) {
+          state.chains[chainID].validators = result;
+        }
       });
 
     builder
@@ -645,8 +647,10 @@ export const stakeSlice = createSlice({
       })
       .addCase(getDelegations.rejected, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
-        state.chains[chainID].delegations.status = "rejected";
-        state.chains[chainID].delegations.errMsg = action.error.message;
+        if (state.chains[chainID]) {
+          state.chains[chainID].delegations.status = "rejected";
+          state.chains[chainID].delegations.errMsg = action.error.message;
+        }
       });
 
     builder
