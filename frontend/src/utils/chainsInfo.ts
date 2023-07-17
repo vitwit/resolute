@@ -322,7 +322,7 @@ export const networks: Network[] = [
       chainId: "testnet",
       chainName: "Simapp",
       rest: "http://127.0.0.1:1317",
-      rpc: "https://127.0.0.1:26657",
+      rpc: "http://127.0.0.1:26657",
       currencies: [
         {
           coinDenom: "STAKE",

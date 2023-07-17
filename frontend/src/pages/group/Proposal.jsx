@@ -375,7 +375,7 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
               </Grid>
             </Grid>
 
-            <VotingDetails proposal={proposal} rows={data} total={total} />
+            <VotingDetails proposal={proposal} rows={data} />
 
             <Box
               sx={{
