@@ -233,7 +233,7 @@ export const getGroupPolicyProposalsByPage = createAsyncThunk(
       for (let i = 0; i < data.length; i++) {
         try {
           await getProposalsPagination(data[i]?.address, {
-            limit: 1,
+            limit: 100,
             key: "",
           });
         } catch (error) {
