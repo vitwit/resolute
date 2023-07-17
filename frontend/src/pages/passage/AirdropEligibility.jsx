@@ -179,7 +179,7 @@ export default function AirdropEligibility() {
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
           rpc: chainInfo.config.rpc,
-          feeAmount: chainInfo.config.gasPriceStep.average * (10 ** currency.coinDecimals),
+          feeAmount: chainInfo.config.feeCurrencies[0].gasPriceStep.average * (10 ** currency.coinDecimals),
           baseURL: chainInfo.config.rest,
           memo: "I agree to the passage airdrop terms and conditions",
         })

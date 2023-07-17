@@ -75,7 +75,7 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
         chainId: chainInfo?.config?.chainId,
         rpc: chainInfo?.config?.rpc,
         denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
-        feeAmount: chainInfo?.config?.gasPriceStep?.average,
+        feeAmount: chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average,
       })
     );
   };
@@ -89,7 +89,7 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
         chainId: chainInfo?.config?.chainId,
         rpc: chainInfo?.config?.rpc,
         denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
-        feeAmount: chainInfo?.config?.gasPriceStep?.average,
+        feeAmount: chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average,
       })
     );
   };

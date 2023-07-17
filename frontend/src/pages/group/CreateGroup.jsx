@@ -104,7 +104,7 @@ export default function CreateGroupStepper() {
       members: data.members.members,
       groupMetaData: data.groupMetaData,
       chainId: chainInfo?.config?.chainId,
-      feeAmount: chainInfo?.config?.gasPriceStep.average,
+      feeAmount: chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep.average,
       denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
       rest: chainInfo?.config?.rest,
       aminoConfig: chainInfo?.aminoConfig,

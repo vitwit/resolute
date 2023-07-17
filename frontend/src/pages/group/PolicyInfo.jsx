@@ -108,7 +108,7 @@ function PolicyInfo({ chainInfo, address, chainID }) {
         denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average,
       })
     );
   };
@@ -123,7 +123,7 @@ function PolicyInfo({ chainInfo, address, chainID }) {
         denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average,
       })
     );
   };
@@ -148,7 +148,7 @@ function PolicyInfo({ chainInfo, address, chainID }) {
       denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
       chainId: chainInfo.config.chainId,
       rpc: chainInfo.config.rpc,
-      feeAmount: chainInfo.config.gasPriceStep.average,
+      feeAmount: chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average,
     }
     if (
       data.policyMetadata.percentage !== 0 ||

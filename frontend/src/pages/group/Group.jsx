@@ -103,7 +103,7 @@ const GroupPolicies = ({ id, chainInfo, chainID }) => {
       denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
       chainId: chainInfo.config.chainId,
       rpc: chainInfo.config.rpc,
-      feeAmount: chainInfo.config.gasPriceStep.average,
+      feeAmount: chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average,
     };
 
     if (
@@ -423,7 +423,7 @@ const UpdateGroupMember = (props) => {
       denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
       chainId: chainInfo.config.chainId,
       rpc: chainInfo.config.rpc,
-      feeAmount: chainInfo.config.gasPriceStep.average,
+      feeAmount: chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average,
     };
 
     dispatch(txUpdateGroupMember(dataObj));
