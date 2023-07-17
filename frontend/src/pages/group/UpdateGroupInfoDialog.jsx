@@ -54,7 +54,7 @@ export default function UpdateGroupInfoDialog(props) {
         }),
         denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
         chainId: chainInfo.config.chainId,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config?.feeCurrencies[0]?.gasPriceStep.average,
         rest: chainInfo.config.rest,
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,

@@ -1,46 +1,53 @@
 {
-    "enable_modules": {
-        "authz": true,
-        "feegrant": true,
-        "group": true
+  "enable_modules": {
+    "authz": true,
+    "feegrant": true,
+    "group": true
+  },
+  "amino_config": {
+    "authz": true,
+    "feegrant": true,
+    "group": false
+  },
+  "show_airdrop": false,
+  "logos": {
+    "menu": "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/umee/images/umee.svg",
+    "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/umee/images/umee-logo.png"
+  },
+  "experimental": false,
+  "is_testnet": false,
+  "explorer_tx_hash_endpoint": "https://www.mintscan.io/umee/txs/",
+  "config": {
+    "chain_id": "umee-1",
+    "chain_name": "Umee",
+    "rest": "https://api.mainnet.network.umee.cc",
+    "rpc": "https://umee-rpc.polkachu.com",
+    "currencies": [
+      {
+        "coin_denom": "UMEE",
+        "coin_minimal_denom": "uumee",
+        "coin_decimals": 6
+      }
+    ],
+    "bech32_config": {
+      "bech32_prefix_acc_addr": "umee",
+      "bech32_prefix_acc_pub": "umeepub",
+      "bech32_prefix_val_addr": "umeevaloper",
+      "bech32_prefix_val_pub": "umeevaloperpub",
+      "bech32_prefix_cons_addr": "umeegvalcons",
+      "bech32_prefix_cons_pub": "umeevalconspub"
     },
-    "amino_config": {
-        "authz": true,
-        "feegrant": true,
-        "group": false
-    },
-    "show_airdrop": false,
-    "logos": {
-        "menu": "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/umee/images/umee.svg",
-        "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/umee/images/umee-logo.png"
-    },
-    "experimental": false,
-    "is_testnet": false,
-    "explorer_tx_hash_endpoint": "https://www.mintscan.io/umee/txs/",
-    "config": {
+    "fee_currencies": [
+      {
+        "coin_denom": "UMEE",
+        "coin_minimal_denom": "uumee",
+        "coin_decimals": 6,
         "gas_price_step": {
-            "low": 0.01,
-            "average": 0.025,
-            "high": 0.03
-        },
-        "chain_id": "umee-1",
-        "chain_name": "Umee",
-        "rest": "https://api.mainnet.network.umee.cc",
-        "rpc": "https://umee-rpc.polkachu.com",
-        "currencies": [
-            {
-                "coin_denom": "UMEE",
-                "coin_minimal_denom": "uumee",
-                "coin_decimals": 6
-            }
-        ],
-        "bech32_config": {
-            "bech32_prefix_acc_addr": "umee",
-            "bech32_prefix_acc_pub": "umeepub",
-            "bech32_prefix_val_addr": "umeevaloper",
-            "bech32_prefix_val_pub": "umeevaloperpub",
-            "bech32_prefix_cons_addr": "umeegvalcons",
-            "bech32_prefix_cons_pub": "umeevalconspub"
+          "low": 0.01,
+          "average": 0.025,
+          "high": 0.03
         }
-    }
+      }
+    ]
+  }
 }

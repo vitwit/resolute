@@ -118,7 +118,7 @@ export const ChainDetails = (props) => {
         aminoConfig: chainInfo?.network?.aminoConfig,
         prefix: chainInfo?.network?.config?.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo?.network?.config?.gasPriceStep.average * 10 ** decimals,
+          chainInfo?.network?.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** decimals,
         feegranter: feegrant?.granter,
         memo: "Delegate(rewards)",
       })
@@ -142,7 +142,7 @@ export const ChainDetails = (props) => {
         prefix: chainInfo.network.config.bech32Config.bech32PrefixAccAddr,
         rest: chainInfo.network.config.rest,
         feeAmount:
-          chainInfo.network.config.gasPriceStep.average * 10 ** decimals,
+          chainInfo.network.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** decimals,
         feegranter: feegrant.granter,
       })
     );

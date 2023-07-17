@@ -37,9 +37,7 @@ interface NetworkConfig {
   bip44?: BIP44;
   bech32Config: Bech32Config;
   currencies: Currency[];
-  feeCurrencies?: Currency[];
-  gasPriceStep: GasPrice;
-  coinType?: number;
+  feeCurrencies: Currency[];
   walletUrlForStaking?: string;
 }
 
