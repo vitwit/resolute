@@ -63,6 +63,8 @@ export default function VotesTable({
   limit,
   handleMembersPagination,
 }) {
+  console.log("row...", rows);
+  console.log("total...", total);
   const [page, setPage] = React.useState(pageNumber);
   const [rowsPerPage, setRowsPerPage] = React.useState(limit);
   const handleChangePage = (event, newPage) => {
