@@ -203,7 +203,7 @@ export default function ProposalInfo() {
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
-            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
           feegranter: feegrant.granter,
         })
       );
@@ -221,7 +221,7 @@ export default function ProposalInfo() {
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
-            chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
           feegranter: feegrant.granter,
         });
       } else {
