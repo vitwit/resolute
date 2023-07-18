@@ -12,7 +12,6 @@
     "chainName": "Cosmos Hub",
     "rest": "https://resolute.witval.com/cosmos_api",
     "rpc": "https://resolute.witval.com/cosmos_rpc/",
-    "gasPriceStep": { "low": 0.01, "average": 0.025, "high": 0.03 },
     "currencies": [
       { "coinDenom": "ATOM", "coinMinimalDenom": "uatom", "coinDecimals": 6 }
     ],
@@ -23,6 +22,14 @@
       "bech32PrefixValPub": "cosmosvaloperpub",
       "bech32PrefixConsAddr": "cosmosgvalcons",
       "bech32PrefixConsPub": "cosmosvalconspub"
-    }
+    },
+    "feeCurrencies": [
+      {
+        "coinDenom": "ATOM",
+        "coinMinimalDenom": "uatom",
+        "coinDecimals": 6,
+        "gasPriceStep": { "low": 0.01, "average": 0.025, "high": 0.03 }
+      }
+    ]
   }
 }

@@ -170,7 +170,7 @@ const CreateProposal = ({ policyInfo }) => {
     obj["rpc"] = wallet?.chainInfo?.config?.rpc;
     obj["denom"] =
       wallet?.chainInfo?.config?.currencies?.[0]?.coinMinimalDenom || "";
-    obj["feeAmount"] = wallet?.chainInfo?.config?.gasPriceStep?.average || 0;
+    obj["feeAmount"] = wallet?.chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average || 0;
     dispatch(txCreateGroupProposal(obj));
   };
 
@@ -418,7 +418,7 @@ const AllProposals = () => {
         chainId: chainInfo?.config?.chainId,
         rpc: chainInfo?.config?.rpc,
         denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
-        feeAmount: chainInfo?.config?.gasPriceStep?.average,
+        feeAmount: chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average,
       })
     );
   };
@@ -434,7 +434,7 @@ const AllProposals = () => {
         chainId: chainInfo?.config?.chainId,
         rpc: chainInfo?.config?.rpc,
         denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
-        feeAmount: chainInfo?.config?.gasPriceStep?.average,
+        feeAmount: chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average,
       })
     );
   };
@@ -697,7 +697,7 @@ function Policy() {
         denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average,
       })
     );
   };
@@ -712,7 +712,7 @@ function Policy() {
         denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average,
       })
     );
   };
@@ -727,7 +727,7 @@ function Policy() {
         denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
-        feeAmount: chainInfo.config.gasPriceStep.average,
+        feeAmount: chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average,
       })
     );
   };

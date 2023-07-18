@@ -38,7 +38,7 @@ export const Chain = (props) => {
         prefix: chainInfo.network.config.bech32Config.bech32PrefixAccAddr,
         rest: chainInfo.network.config.rest,
         feeAmount:
-          chainInfo.network.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.network.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
         feegranter: feegrant.granter,
       })
     );

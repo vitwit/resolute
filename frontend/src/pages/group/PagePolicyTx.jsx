@@ -407,7 +407,7 @@ export default function PagePolicyTx({ control, setValue }) {
   //       gas: 200000,
   //       memo: "",
   //       fees:
-  //         chainInfo?.config?.gasPriceStep?.average *
+  //         chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average *
   //         10 ** chainInfo?.config?.currencies[0].coinDecimals,
   //     },
   //   });

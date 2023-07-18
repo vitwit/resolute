@@ -101,7 +101,12 @@ function PolicyForm({ handlePolicy, policyObj, handlePolicyClose, chainID }) {
           <Button onClick={() => handlePolicyClose()} sx={{ mx: "8px" }}>
             Cancel
           </Button>
-          <Button variant="contained" type="submit" sx={{ mx: "8px" }}>
+          <Button
+            variant="contained"
+            disableElevation
+            type="submit"
+            sx={{ mx: "8px" }}
+          >
             Update
           </Button>
         </Box>
