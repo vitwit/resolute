@@ -18,7 +18,10 @@ import { setSelectedNetwork } from "../features/common/commonSlice";
 import { getGrantsToMe } from "../features/authz/authzSlice";
 import { useNavigate } from "react-router-dom";
 import { resetTabs, resetTabResetStatus } from "../features/authz/authzSlice";
-import { set } from "date-fns";
+import { connectWalletV1 } from "../features/wallet/walletSlice";
+import { networks as allNetworks } from "../utils/chainsInfo";
+import { removeAllFeegrants } from "../utils/localStorage";
+import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
 
 export function CustomAppBar(props) {
   const tabResetStatus = useSelector((state) => state.authz.tabResetStatus);
@@ -36,20 +39,42 @@ export function CustomAppBar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [walletAnchorEl, setWalletAnchorEl] = React.useState(null);
   const [walletName, setWalletName] = React.useState("keplr");
-  console.log("walletName", walletName);
   const open = Boolean(walletAnchorEl);
   const handleWalletClick = (event) => {
     setWalletAnchorEl(event.currentTarget);
   };
   useEffect(() => {
-  },[walletName])
+    if (walletName === "keplr") {
+      window.wallet = window.keplr;
+      setTimeout(() => {
+        dispatch(
+          connectWalletV1({
+            mainnets: allNetworks,
+            testnets: [],
+          })
+        );
+      }, 1000);
+    } else {
+      window.wallet = window.leap;
+      setTimeout(() => {
+        dispatch(
+          connectWalletV1({
+            mainnets: allNetworks,
+            testnets: [],
+          })
+        );
+      }, 1000);
+    }
+    removeAllFeegrants();
+    dispatch(resetFeegrantState());
+  }, [walletName]);
 
   const changeWallet = (newWallet) => {
-    if(walletName !== newWallet) {
+    if (walletName !== newWallet) {
       setWalletName(newWallet);
     }
     handleWalletClose();
-  }
+  };
   const handleWalletClose = () => {
     setWalletAnchorEl(null);
   };
@@ -186,7 +211,7 @@ export function CustomAppBar(props) {
           aria-expanded={open ? "true" : undefined}
           onClick={handleWalletClick}
         >
-          Select Wallet
+          {walletName || "select Wallet"}
         </Button>
         <Menu
           id="demo-positioned-menu"

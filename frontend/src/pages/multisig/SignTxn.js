@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 
 async function getKeplrWalletAmino(chainID) {
-  await window.keplr.enable(chainID);
+  await window.wallet.enable(chainID);
   const offlineSigner = window.getOfflineSignerOnlyAmino(chainID);
   const accounts = await offlineSigner.getAccounts();
   return [offlineSigner, accounts[0]];
@@ -34,7 +34,7 @@ export default function SignTxn(props) {
 
   const signTheTx = async () => {
     setLoad(true);
-    window.keplr.defaultOptions = {
+    window.wallet.defaultOptions = {
       sign: {
         preferNoSetMemo: true,
         preferNoSetFee: true,

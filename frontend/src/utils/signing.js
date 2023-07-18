@@ -53,7 +53,7 @@ const getKeplrClient = async (aminoConfig, chainId, messages) => {
   let signer;
   if (!canUseAmino(aminoConfig, messages)) {
     try {
-      await window.keplr.enable(chainId);
+      await window.wallet.enable(chainId);
       signer = window.getOfflineSigner(chainId);
     } catch (error) {
       console.log(error);
@@ -61,7 +61,7 @@ const getKeplrClient = async (aminoConfig, chainId, messages) => {
     }
   } else {
     try {
-      await window.keplr.enable(chainId);
+      await window.wallet.enable(chainId);
       signer = window.getOfflineSignerOnlyAmino(chainId);
     } catch (error) {
       console.log(error);

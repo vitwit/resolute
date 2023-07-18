@@ -15,7 +15,7 @@ import { NewMultisigThreshoPubkey } from "./tx/utils";
 import { useParams } from "react-router-dom";
 
 async function getKeplrWalletAmino(chainID) {
-  await window.keplr.enable(chainID);
+  await window.wallet.enable(chainID);
   const offlineSigner = window.getOfflineSignerOnlyAmino(chainID);
   const accounts = await offlineSigner.getAccounts();
   return [offlineSigner, accounts[0]];

@@ -7,7 +7,7 @@ import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  connectKeplrWalletV1,
+  connectWalletV1,
 } from "./../features/wallet/walletSlice";
 import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
@@ -44,19 +44,21 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    window.wallet = window.keplr
     setTimeout(() => {
       dispatch(
-        connectKeplrWalletV1({
+        connectWalletV1({
           mainnets: networks,
           testnets: [],
         })
       );
     }, 1000);
 
-    const listener = () => {
+    const keplrAccountChangeListener = () => {
+      window.wallet = window.keplr
       setTimeout(() => {
         dispatch(
-          connectKeplrWalletV1({
+          connectWalletV1({
             mainnets: networks,
             testnets: [],
           })
@@ -65,10 +67,26 @@ export default function Dashboard() {
       removeAllFeegrants();
       dispatch(resetFeegrantState());
     };
-    window.addEventListener("keplr_keystorechange", listener);
+
+    const leapAccountChangeListener = () => {
+      window.wallet = window.leap
+      setTimeout(() => {
+        dispatch(
+          connectWalletV1({
+            mainnets: networks,
+            testnets: [],
+          })
+        );
+      }, 1000);
+      removeAllFeegrants();
+      dispatch(resetFeegrantState());
+    };
+    window.addEventListener("keplr_keystorechange", keplrAccountChangeListener);
+    window.addEventListener('leap_keystorechange', leapAccountChangeListener);
 
     return () => {
-      window.removeEventListener("keplr_keystorechange", listener);
+      window.removeEventListener("keplr_keystorechange", keplrAccountChangeListener);
+      window.removeEventListener('leap_keystorechange', leapAccountChangeListener);
     };
   }, []);
 
