@@ -17,7 +17,7 @@ export const StakingTotal = (props) => {
           <CardContent>
             <Typography
               align="left"
-              variant="body1"
+              variant="body2"
               fontWeight={500}
               color="text.secondary"
             >
@@ -28,7 +28,12 @@ export const StakingTotal = (props) => {
               variant="h6"
               color="text.primary"
             >
-              ${props?.totalAmount}
+              ${props?.totalAmount?.toLocaleString(
+                undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              }
+              )}
             </Typography>
           </CardContent>
         </Card>
@@ -40,15 +45,20 @@ export const StakingTotal = (props) => {
           <CardContent>
             <Typography
               align="left"
-              variant="body1"
+              variant="body2"
               fontWeight={500}
               color="text.secondary"
-            >Total Staking Rewards</Typography>
+            >Total Rewards</Typography>
             <Typography
               align="left"
               variant="h6"
               color="text.primary"
-            >${props?.totalReward}</Typography>
+            >${props?.totalReward?.toLocaleString(
+              undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }
+            )}</Typography>
 
           </CardContent>
         </Card>

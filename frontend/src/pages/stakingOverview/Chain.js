@@ -69,7 +69,8 @@ export const Chain = (props) => {
           <Grid item>
             <div
               style={{
-                display: "flex"
+                display: "flex",
+
               }}
             >
               <Avatar
@@ -79,13 +80,23 @@ export const Chain = (props) => {
                   height: 36
                 }}
               />
+              <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                
+              }}
+            >
               <Typography
                 align="left"
-                variant="h6"
-                gutterBottom
-                color="text.secondary"
+                variant="body1"
+                color="text.primary"
+                fontWeight={600}
                 sx={{
                   ml: 1,
+                  justifyContent: "center",
+                  display: "flex",
+                  flexDirection: "column",
                   "&:hover": {
                     cursor: "pointer",
                   },
@@ -96,16 +107,19 @@ export const Chain = (props) => {
               >
                 {chainInfo?.network?.config?.chainName}
               </Typography>
-            </div>
             <Typography
               align="left"
-              variant="body1"
+              variant="body2"
               fontWeight={500}
-              color="text.primary"
+              color="text.secondary"
+              sx={{
+                ml: 1,
+              }}
               gutterBottom>
               Total staked:&nbsp;{chainStakedAmount}&nbsp;{props.chain.denom}
             </Typography>
-
+            </div>
+              </div>
           </Grid>
           <Grid item>
             <Button

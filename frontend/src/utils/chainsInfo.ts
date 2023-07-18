@@ -104,6 +104,52 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
+      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/evmos/images/evmos.svg",
+      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/evmos/images/evmos-logo.png"
+    },
+    experimental: false,
+    isTestnet: false,
+    explorerTxHashEndpoint: "https://www.mintscan.io/evmos/txs/",
+    config: {
+      gasPriceStep: {
+        low: 0.01,
+        average: 0.025,
+        high: 0.03
+      },
+      chainId: "evmos_9001-2",
+      chainName: "Evmos",
+      rest: "https://evmos.kingnodes.com",
+      rpc: "https://rpc-evmos.ecostake.com",
+      currencies: [
+        {
+          coinDenom: "EVMOS",
+          coinMinimalDenom: "aevmos",
+          coinDecimals: 18
+        }
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: "evmos",
+        bech32PrefixAccPub: "evmospub",
+        bech32PrefixValAddr: "evmosvaloper",
+        bech32PrefixValPub: "evmosvaloperpub",
+        bech32PrefixConsAddr: "evmosgvalcons",
+        bech32PrefixConsPub: "evmosvalconspub"
+      }
+    }
+  },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false
+    },
+    showAirdrop: false,
+    logos: {
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno-logo.png"
     },
@@ -292,6 +338,70 @@ export const networks: Network[] = [
         bech32PrefixConsAddr: "regengvalcons",
         bech32PrefixConsPub: "regenvalconspub"
       }
+    }
+  },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: true
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false
+    },
+    showAirdrop: false,
+    logos: {
+      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
+      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png"
+    },
+    experimental: true,
+    isTestnet: false,
+    explorerTxHashEndpoint: "https://www.mintscan.io/cosmos/txs/",
+    config: {
+      gasPriceStep: {
+        low: 0,
+        average: 0.025,
+        high: 0.03
+      },
+      chainId: "testnet",
+      chainName: "Simapp",
+      rest: "http://127.0.0.1:1317",
+      rpc: "https://127.0.0.1:26657",
+      currencies: [
+        {
+          coinDenom: "STAKE",
+          coinMinimalDenom: "stake",
+          coinDecimals: 6
+        }
+      ],
+      bip44: {
+        coinType: 118
+      },
+      bech32Config: {
+        bech32PrefixAccAddr: "cosmos",
+        bech32PrefixAccPub: "cosmospub",
+        bech32PrefixValAddr: "cosmosvaloper",
+        bech32PrefixValPub: "cosmosvaloperpub",
+        bech32PrefixConsAddr: "cosmosgvalcons",
+        bech32PrefixConsPub: "cosmosvalconspub"
+      },
+      coinType: 118,
+      walletUrlForStaking: "https://resolute.vitwit.com/simapp/staking",
+      feeCurrencies: [
+        {
+          coinDenom: "STAKE",
+          coinMinimalDenom: "stake",
+          coinDecimals: 6,
+          coinGeckoId: "stake",
+          gasPriceStep: {
+            low: 0,
+            average: 0,
+            high: 0.01
+          }
+        }
+      ]
     }
   },
   {
