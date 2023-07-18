@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 
 async function getWalletAmino(chainID) {
   await window.wallet.enable(chainID);
-  const offlineSigner = window.getOfflineSignerOnlyAmino(chainID);
+  const offlineSigner = window.wallet.getOfflineSignerOnlyAmino(chainID);
   const accounts = await offlineSigner.getAccounts();
   return [offlineSigner, accounts[0]];
 }

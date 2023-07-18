@@ -54,7 +54,7 @@ const getClient = async (aminoConfig, chainId, messages) => {
   if (!canUseAmino(aminoConfig, messages)) {
     try {
       await window.wallet.enable(chainId);
-      signer = window.getOfflineSigner(chainId);
+      signer = window.wallet.getOfflineSigner(chainId);
     } catch (error) {
       console.log(error);
       throw new Error("failed to get wallet");
@@ -62,7 +62,7 @@ const getClient = async (aminoConfig, chainId, messages) => {
   } else {
     try {
       await window.wallet.enable(chainId);
-      signer = window.getOfflineSignerOnlyAmino(chainId);
+      signer = window.wallet.getOfflineSignerOnlyAmino(chainId);
     } catch (error) {
       console.log(error);
       throw new Error("failed to get wallet");

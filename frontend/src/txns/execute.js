@@ -34,7 +34,7 @@ export async function signAndBroadcastGroupMsg(
 ) {
   await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
   defaultRegistryTypes.forEach((v) => {
     registry.register(v[0], v[1]);
@@ -67,7 +67,7 @@ export async function signAndBroadcastUpdateGroupMembers(
 ) {
   await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   registry.register(
@@ -96,7 +96,7 @@ export async function signAndBroadcastUpdateGroupPolicy(
 ) {
   await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   registry.register(
@@ -125,7 +125,7 @@ export async function signAndBroadcastUpdateGroupPolicyMetadata(
 ) {
   await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   registry.register(
@@ -154,7 +154,7 @@ export async function signAndBroadcastUpdateGroupPolicyAdmin(
 ) {
   await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   registry.register(
@@ -183,7 +183,7 @@ export async function signAndBroadcastAddGroupPolicy(
 ) {
   await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   registry.register(
@@ -212,7 +212,7 @@ export async function signAndBroadcastLeaveGroup(
 ) {
   await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   registry.register("/cosmos.group.v1.MsgLeaveGroup", MsgLeaveGroup);
@@ -238,7 +238,7 @@ export async function signAndBroadcastGroupProposalVote(
 ) {
   await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   const aTypes = new AminoTypes({
@@ -269,7 +269,7 @@ export async function signAndBroadcastGroupProposalExecute(
 ) {
   await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   const aTypes = new AminoTypes({
@@ -300,7 +300,7 @@ export async function signAndBroadcastGroupProposal(
 ) {
   await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   const aTypes = new AminoTypes({
@@ -335,7 +335,7 @@ export async function signAndBroadcastUpdateGroupAdmin(
 ) {
   await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   const aTypes = new AminoTypes({
@@ -369,7 +369,7 @@ export async function signAndBroadcastUpdateGroupMetadata(
 ) {
   await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   const aTypes = new AminoTypes({
@@ -491,14 +491,14 @@ export function fee(coinMinimalDenom, amount, gas = 280000, feeGranter = "") {
 
 export async function getWalletAmino(chainID) {
   await window.wallet.enable(chainID);
-  const offlineSigner = window.getOfflineSignerOnlyAmino(chainID);
+  const offlineSigner = window.wallet.getOfflineSignerOnlyAmino(chainID);
   const accounts = await offlineSigner.getAccounts();
   return [offlineSigner, accounts[0]];
 }
 
 export async function getWalletDirect(chainID) {
   await window.wallet.enable(chainID);
-  const offlineSigner = window.getOfflineSigner(chainID);
+  const offlineSigner = window.wallet.getOfflineSigner(chainID);
   const accounts = await offlineSigner.getAccounts();
   return [offlineSigner, accounts[0]];
 }
