@@ -49,7 +49,7 @@ const canUseAmino = (aminoConfig, messages) => {
   return true;
 };
 
-const getKeplrClient = async (aminoConfig, chainId, messages) => {
+const getClient = async (aminoConfig, chainId, messages) => {
   let signer;
   if (!canUseAmino(aminoConfig, messages)) {
     try {
@@ -57,7 +57,7 @@ const getKeplrClient = async (aminoConfig, chainId, messages) => {
       signer = window.getOfflineSigner(chainId);
     } catch (error) {
       console.log(error);
-      throw new Error("failed to get keplr");
+      throw new Error("failed to get wallet");
     }
   } else {
     try {
@@ -65,7 +65,7 @@ const getKeplrClient = async (aminoConfig, chainId, messages) => {
       signer = window.getOfflineSignerOnlyAmino(chainId);
     } catch (error) {
       console.log(error);
-      throw new Error("failed to get keplr");
+      throw new Error("failed to get wallet");
     }
   }
 
@@ -85,9 +85,9 @@ export const signAndBroadcast = async (
 ) => {
   let signer;
   try {
-    signer = await getKeplrClient(aminoConfig, chainId, messages);
+    signer = await getClient(aminoConfig, chainId, messages);
   } catch (error) {
-    throw new Error("failed to get keplr");
+    throw new Error("failed to get wallet");
   }
 
   const accounts = await signer.getAccounts();
@@ -369,7 +369,7 @@ async function sign(
   }
 
   if (aminoMsgs && signer.signAmino) {
-    // Sign as amino if possible for Ledger and Keplr support
+    // Sign as amino if possible for Ledger and wallet support
     const signDoc = makeAminoSignDoc(
       aminoMsgs,
       fee,

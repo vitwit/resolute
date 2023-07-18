@@ -1,6 +1,6 @@
 import { toBase64 } from "@cosmjs/encoding";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getKeplrWalletAmino, isKeplrInstalled } from "../../txns/execute";
+import { getWalletAmino, isWalletInstalled } from "../../txns/execute";
 import { setConnected } from "../../utils/localStorage";
 import { setError } from "../common/commonSlice";
 
@@ -19,14 +19,14 @@ export const connectWalletV1 = createAsyncThunk(
     const mainnets = data.mainnets;
     const testnets = data.testnets;
 
-    if (!isKeplrInstalled()) {
+    if (!isWalletInstalled()) {
       dispatch(
         setError({
           type: "error",
-          message: "Keplr wallet is not installed",
+          message: "wallet is not installed",
         })
       );
-      return rejectWithValue("Keplr wallet is not installed");
+      return rejectWithValue("wallet is not installed");
     } else {
       window.wallet.defaultOptions = {
         sign: {
@@ -46,7 +46,7 @@ export const connectWalletV1 = createAsyncThunk(
           }
           let chainId = mainnets[i].config.chainId;
           const chainName = mainnets[i].config.chainName;
-          await getKeplrWalletAmino(chainId);
+          await getWalletAmino(chainId);
           let walletInfo = await window.wallet.getKey(chainId);
           walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString('base64');
           delete walletInfo?.address;
@@ -72,7 +72,7 @@ export const connectWalletV1 = createAsyncThunk(
           }
           const chainId = testnets[i].config.chainId;
           const chainName = testnets[i].config.chainName;
-          await getKeplrWalletAmino(chainId);
+          await getWalletAmino(chainId);
           const walletInfo = await window.wallet.getKey(chainId);
           delete walletInfo?.pubKey;
           delete walletInfo?.address;
@@ -117,14 +117,14 @@ export const connectKeplrWallet = createAsyncThunk(
   "wallet/connect",
   async (network, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      if (!isKeplrInstalled()) {
+      if (!isWalletInstalled()) {
         dispatch(
           setError({
             type: "error",
-            message: "Keplr wallet is not installed",
+            message: "wallet is not installed",
           })
         );
-        return rejectWithValue("Keplr wallet is not installed");
+        return rejectWithValue("wallet is not installed");
       } else {
         window.wallet.defaultOptions = {
           sign: {
@@ -136,7 +136,7 @@ export const connectKeplrWallet = createAsyncThunk(
           await window.wallet.experimentalSuggestChain(network.config);
         }
         try {
-          const result = await getKeplrWalletAmino(network.config.chainId);
+          const result = await getWalletAmino(network.config.chainId);
           const walletInfo = await window.wallet.getKey(network.config.chainId);
           setConnected();
           return fulfillWithValue({

@@ -8,7 +8,7 @@ import { setError } from "../../features/common/commonSlice";
 import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 
-async function getKeplrWalletAmino(chainID) {
+async function getWalletAmino(chainID) {
   await window.wallet.enable(chainID);
   const offlineSigner = window.getOfflineSignerOnlyAmino(chainID);
   const accounts = await offlineSigner.getAccounts();
@@ -46,7 +46,7 @@ export default function SignTxn(props) {
         chainInfo?.config?.rpc
       );
 
-      let result = await getKeplrWalletAmino(chainInfo?.config?.chainId);
+      let result = await getWalletAmino(chainInfo?.config?.chainId);
       var wallet = result[0];
       const signingClient = await SigningStargateClient.offline(wallet);
 
