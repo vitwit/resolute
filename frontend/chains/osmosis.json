@@ -48,6 +48,16 @@
           "high": 0.03
         }
       }
-    ]
+    ],
+    "stake_currency": {
+      "coin_denom": "OSMO",
+      "coin_minimal_denom": "uosmo",
+      "coin_decimals": 6
+    },
+    "image": "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
+    "theme": {
+      "primaryColor": "#fff",
+      "gradient": "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)"
+    }
   }
 }

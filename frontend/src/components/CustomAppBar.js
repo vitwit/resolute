@@ -18,6 +18,7 @@ import { setSelectedNetwork } from "../features/common/commonSlice";
 import { getGrantsToMe } from "../features/authz/authzSlice";
 import { useNavigate } from "react-router-dom";
 import { resetTabs, resetTabResetStatus } from "../features/authz/authzSlice";
+import { set } from "date-fns";
 
 export function CustomAppBar(props) {
   const tabResetStatus = useSelector((state) => state.authz.tabResetStatus);
@@ -33,6 +34,25 @@ export function CustomAppBar(props) {
     (state) => state.common.selectedNetwork.chainName
   );
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [walletAnchorEl, setWalletAnchorEl] = React.useState(null);
+  const [walletName, setWalletName] = React.useState("keplr");
+  console.log("walletName", walletName);
+  const open = Boolean(walletAnchorEl);
+  const handleWalletClick = (event) => {
+    setWalletAnchorEl(event.currentTarget);
+  };
+  useEffect(() => {
+  },[walletName])
+
+  const changeWallet = (newWallet) => {
+    if(walletName !== newWallet) {
+      setWalletName(newWallet);
+    }
+    handleWalletClose();
+  }
+  const handleWalletClose = () => {
+    setWalletAnchorEl(null);
+  };
 
   const switchHandler = (event) => {
     dispatch(setAuthzMode(event.target.checked));
@@ -156,6 +176,35 @@ export function CustomAppBar(props) {
               </ListItemText>
             </MenuItem>
           ))}
+        </Menu>
+        <Button
+          id="demo-positioned-button"
+          aria-controls={open ? "demo-positioned-menu" : undefined}
+          aria-haspopup="true"
+          endIcon={<ExpandMoreOutlinedIcon />}
+          color="inherit"
+          aria-expanded={open ? "true" : undefined}
+          onClick={handleWalletClick}
+        >
+          Select Wallet
+        </Button>
+        <Menu
+          id="demo-positioned-menu"
+          aria-labelledby="demo-positioned-button"
+          anchorEl={walletAnchorEl}
+          open={open}
+          onClose={handleWalletClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+        >
+          <MenuItem onClick={() => changeWallet("keplr")}>Keplr</MenuItem>
+          <MenuItem onClick={() => changeWallet("leap")}>Leap</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

@@ -21,7 +21,7 @@
     "chain_id": "testnet",
     "chain_name": "Simapp",
     "rest": "http://127.0.0.1:1317",
-    "rpc": "http://127.0.0.1:26657",
+    "rpc": "https://127.0.0.1:26657",
     "currencies": [
       {
         "coin_denom": "STAKE",
@@ -53,6 +53,17 @@
           "high": 0.01
         }
       }
-    ]
+    ],
+    "stake_currency": {
+      "coin_denom": "STAKE",
+      "coin_minimal_denom": "stake",
+      "coin_decimals": 6,
+      "coin_gecko_id": "stake"
+    },
+    "image": "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
+    "theme": {
+      "primaryColor": "#fff",
+      "gradient": "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)"
+    }
   }
 }

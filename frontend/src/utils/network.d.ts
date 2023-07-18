@@ -4,62 +4,69 @@ type Currency = {
   coinDecimals: number;
   coinGeckoId?: string;
   gasPriceStep?: GasPrice;
-};
-
-type Logos = { toolbar: string; menu: string };
-
-type StakeCurrency = {
+  };
+  
+  type Logos = { toolbar: string; menu: string };
+  
+  type StakeCurrency = {
   coinDenom: string;
   coinMinimalDenom: string;
   coinDecimals: number;
   coinGeckoId?: string;
-};
-
-type BIP44 = { coinType: number };
-
-type GasPrice = { low: number; average: number; high: number };
-
-type Bech32Config = {
+  };
+  
+  type BIP44 = { coinType: number };
+  
+  type GasPrice = { low: number; average: number; high: number };
+  
+  type Bech32Config = {
   bech32PrefixAccAddr: string;
   bech32PrefixAccPub: string;
   bech32PrefixValAddr: string;
   bech32PrefixValPub: string;
   bech32PrefixConsAddr: string;
   bech32PrefixConsPub: string;
-};
+  };
 
-interface NetworkConfig {
+  type Theme = {
+    primaryColor: string,
+    gradient: string,
+  }
+  
+  interface NetworkConfig {
   chainId: string;
   chainName: string;
   rest: string;
   rpc: string;
-  stakeCurrency?: StakeCurrency;
+  stakeCurrency: StakeCurrency;
   bip44?: BIP44;
   bech32Config: Bech32Config;
   currencies: Currency[];
   feeCurrencies: Currency[];
   walletUrlForStaking?: string;
-}
-
-interface AirdropAction {
+  image: string;
+  theme: Theme;
+  }
+  
+  interface AirdropAction {
   type: string;
   title: string;
   redirect?: string;
-}
-
-interface AminoConfig {
+  }
+  
+  interface AminoConfig {
   authz: boolean;
   feegrant: boolean;
   group: boolean;
-}
-
-interface EnableModule {
+  }
+  
+  interface EnableModule {
   authz: boolean;
   feegrant: boolean;
   group: boolean;
-}
-
-interface Network {
+  }
+  
+  interface Network {
   showAirdrop: boolean;
   logos: Logos;
   experimental: boolean;
@@ -70,4 +77,6 @@ interface Network {
   airdropActions?: AirdropAction[];
   aminoConfig: AminoConfig;
   enableModules: EnableModule;
-}
+  }
+  
+  
