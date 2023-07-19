@@ -37,7 +37,7 @@
       "bech32_prefix_cons_addr": "junogvalcons",
       "bech32_prefix_cons_pub": "junovalconspub"
     },
-    "feeCurrencies": [
+    "fee_currencies": [
       {
         "coin_denom": "JUNO",
         "coin_minimal_denom": "ujuno",

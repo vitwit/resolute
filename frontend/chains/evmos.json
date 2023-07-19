@@ -18,11 +18,6 @@
     "is_testnet": false,
     "explorer_tx_hash_endpoint": "https://www.mintscan.io/evmos/txs/",
     "config": {
-        "gas_price_step": {
-            "low": 0.01,
-            "average": 0.025,
-            "high": 0.03
-        },
         "chain_id": "evmos_9001-2",
         "chain_name": "Evmos",
         "rest": "https://evmos.kingnodes.com",
@@ -41,6 +36,18 @@
             "bech32_prefix_val_pub": "evmosvaloperpub",
             "bech32_prefix_cons_addr": "evmosgvalcons",
             "bech32_prefix_cons_pub": "evmosvalconspub"
-        }
+        },
+        "fee_currencies": [
+            {
+              "coin_denom": "EVMOS",
+              "coin_minimal_denom": "aevmos",
+              "coin_decimals": 18,
+              "gas_price_step": {
+                "low": 0.01,
+                "average": 0.025,
+                "high": 0.03
+              }
+            }
+          ]
     }
 }
