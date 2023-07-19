@@ -37,7 +37,7 @@
       "bech32_prefix_cons_addr": "cosmosgvalcons",
       "bech32_prefix_cons_pub": "cosmosvalconspub"
     },
-    "feeCurrencies": [
+    "fee_currencies": [
       {
         "coin_denom": "ATOM",
         "coin_minimal_denom": "uatom",
