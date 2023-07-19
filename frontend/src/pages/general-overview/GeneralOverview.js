@@ -30,11 +30,10 @@ export const GeneralOverview = (props) => {
   const tokensPriceInfo = useSelector(
     (state) => state.common?.allTokensInfoState?.info
   );
-  const [totalDetails, setTotalDetails] = useState({
-    totalStaked: 0,
-    totalBalance: 0,
-    totalRewards: 0,
-  });
+
+  const [totalAvailableAmount, setTotalAvailableAmount] = useState(0.0);
+  const [totalStakedAmount, setTotalStakedAmount] = useState(0.0);
+  const [totalPendingAmount, setTotalPendingAmount] = useState(0.0);
 
   const chainIDs = [];
   chainNames.forEach((chainName) => chainIDs.push(nameToChainIDs[chainName]));
@@ -45,63 +44,61 @@ export const GeneralOverview = (props) => {
   }
 
   const convertToDollars = (denom, amount = 0) => {
-    let price = +tokensPriceInfo?.[denom]?.info?.["usd"] || 0;
-    return amount * price;
+    if (tokensPriceInfo[denom]) {
+      let price = +tokensPriceInfo?.[denom]?.info?.["usd"] || 0;
+      return amount * price;
+    }
+
+    return 0;
   };
 
   useEffect(() => {
     let totalStakedAmount = 0;
     chainIDs.forEach((chainID) => {
-      let denom =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
-      let staked = stakingChains?.[chainID]?.delegations?.totalStaked || 0;
-      const decimals =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
-        0;
-      totalStakedAmount += convertToDollars(denom, staked / 10 ** decimals);
+      const staked = stakingChains?.[chainID]?.delegations?.totalStaked || 0;
+      if (staked > 0) {
+        let denom =
+          networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+        const decimals =
+          networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
+          0;
+        totalStakedAmount += convertToDollars(denom, staked / (10 ** decimals));
+      }
     });
-    setTotalDetails({
-      totalBalance: totalDetails.totalBalance,
-      totalStaked: totalStakedAmount.toLocaleString(),
-      totalRewards: totalDetails.totalRewards,
-    });
+    setTotalStakedAmount(totalStakedAmount);
   }, [stakingChains]);
 
   useEffect(() => {
     let totalRewards = 0;
     chainIDs.forEach((chainID) => {
-      let denom =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
-      let rewards =
+      const rewards =
         distributionChains?.[chainID]?.delegatorRewards?.totalRewards || 0;
-      const decimals =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
-        0;
-      totalRewards += convertToDollars(denom, rewards / 10 ** decimals);
+      if (rewards > 0) {
+        const denom =
+          networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+        const decimals =
+          networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
+          0;
+        totalRewards += convertToDollars(denom, rewards / 10 ** decimals);
+      }
     });
-    setTotalDetails({
-      totalBalance: totalDetails.totalBalance,
-      totalStaked: totalDetails.totalStaked,
-      totalRewards: totalRewards.toLocaleString(),
-    });
+    setTotalPendingAmount(totalRewards);
   }, [distributionChains]);
 
   useEffect(() => {
     let totalBalance = 0;
     chainIDs.forEach((chainID) => {
-      let denom =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
-      let balance = parseBalance(balanceChains?.[chainID]?.list || []);
       const decimals =
         networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
         0;
-      totalBalance += convertToDollars(denom, balance / 10 ** decimals);
+      const denom =
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+      const balance = parseBalance(balanceChains?.[chainID]?.list || [], decimals, denom);
+      if (balanceChains?.[chainID]?.list?.length > 0) {
+        totalBalance += convertToDollars(denom, balance);
+      }
     });
-    setTotalDetails({
-      totalBalance: totalBalance.toLocaleString(),
-      totalStaked: totalDetails.totalStaked,
-      totalRewards: totalDetails.totalRewards,
-    });
+    setTotalAvailableAmount(totalBalance);
   }, [balanceChains]);
 
   useEffect(() => {
@@ -116,6 +113,7 @@ export const GeneralOverview = (props) => {
           chainID: chainID,
         })
       );
+
       dispatch(
         getDelegations({
           baseURL: chainInfo.config.rest,
@@ -123,6 +121,7 @@ export const GeneralOverview = (props) => {
           chainID: chainID,
         })
       );
+
       dispatch(
         getDelegatorTotalRewards({
           baseURL: chainInfo.config.rest,
@@ -147,14 +146,19 @@ export const GeneralOverview = (props) => {
             <CardContent>
               <Typography
                 align="left"
-                variant="body1"
+                variant="body2"
                 color="text.secondary"
                 fontWeight={500}
               >
                 Total Available Balance
               </Typography>
               <Typography align="left" variant="h6" color="text.primary">
-                ${totalDetails.totalBalance}
+                ${totalAvailableAmount?.toLocaleString(
+                  undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                }
+                )}
               </Typography>
             </CardContent>
           </Card>
@@ -164,14 +168,19 @@ export const GeneralOverview = (props) => {
             <CardContent>
               <Typography
                 align="left"
-                variant="body1"
+                variant="body2"
                 color="text.secondary"
                 fontWeight={500}
               >
                 Total Staked Balance
               </Typography>
               <Typography align="left" variant="h6" color="text.primary">
-                ${totalDetails.totalStaked}
+                ${parseFloat(totalStakedAmount)?.toLocaleString(
+                  undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                }
+                )}
               </Typography>
             </CardContent>
           </Card>
@@ -181,14 +190,19 @@ export const GeneralOverview = (props) => {
             <CardContent>
               <Typography
                 align="left"
-                variant="body1"
+                variant="body2"
                 color="text.secondary"
                 fontWeight={500}
               >
                 Total Rewards
               </Typography>
               <Typography align="left" variant="h6" color="text.primary">
-                ${totalDetails.totalRewards}
+                ${parseFloat(totalPendingAmount)?.toLocaleString(
+                  undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                }
+                )}
               </Typography>
             </CardContent>
           </Card>
@@ -206,13 +220,15 @@ export const GeneralOverview = (props) => {
             </StyledTableRow>
           </TableHead>
           <TableBody>
-            {chainIDs.map((chainID) => (
-              <ChainDetails
-                key={chainID}
-                chainID={chainID}
-                chainName={chainIdToNames[chainID]}
-              />
-            ))}
+            {
+              chainIDs.map((chainID) => (
+                <ChainDetails
+                  key={chainID}
+                  chainID={chainID}
+                  chainName={chainIdToNames[chainID]}
+                />
+              ))
+            }
           </TableBody>
         </Table>
       </TableContainer>

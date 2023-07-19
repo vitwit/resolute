@@ -1,12 +1,11 @@
 import { Avatar, Button, CircularProgress, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 import { claimRewardInBank } from "../../features/bank/bankSlice";
 import {
-  getDelegatorTotalRewards,
   resetChainRewards,
   txWithdrawAllRewards,
 } from "../../features/distribution/distributionSlice";
