@@ -8,9 +8,9 @@ test("expect valid pallet for existing network", () => {
 test("expect default pallet for non existing network", () => {
     const pallet = getPalletByNetwork("abcdef");
     expect(pallet.primary).toEqual({
-        light: "#6573c3",
-        main: "#3f51b5",
-        dark: "#2c387e",
+        light: "#b7abcf",
+        main: "#400d40",
+        dark: "#312941",
         contrastText: "#fff",
       });
   });
