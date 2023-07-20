@@ -8,8 +8,6 @@ import {
 } from "../../features/staking/stakeSlice";
 import { getDelegatorTotalRewards } from "../../features/distribution/distributionSlice";
 import { Chain } from "./Chain";
-import { getTokenPrice } from "../../features/common/commonSlice";
-import { set } from "date-fns";
 
 const StakingOverview = (props) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -112,7 +110,6 @@ const StakingOverview = (props) => {
       for (let j = 0; j < delegations?.delegations?.length; j++) {
         let validator = delegations.delegations[j].delegation.validator_address;
         let amount = delegations.delegations[j].balance.amount / 10 ** decimal;
-        dispatch(getTokenPrice(denom));
         let validatorName =
           validatorstore?.active?.[validator]?.description?.moniker ||
           validatorstore?.inActive?.[validator]?.description?.moniker ||

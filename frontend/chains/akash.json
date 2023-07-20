@@ -37,7 +37,7 @@
       "bech32_prefix_cons_addr": "akashgvalcons",
       "bech32_prefix_cons_pub": "akashvalconspub"
     },
-    "feeCurrencies": [
+    "fee_currencies": [
       {
         "coin_denom": "AKT",
         "coin_minimal_denom": "uakt",

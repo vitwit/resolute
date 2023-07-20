@@ -118,6 +118,59 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
+      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/evmos/images/evmos.svg",
+      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/evmos/images/evmos-logo.png"
+    },
+    experimental: false,
+    isTestnet: false,
+    explorerTxHashEndpoint: "https://www.mintscan.io/evmos/txs/",
+    config: {
+      chainId: "evmos_9001-2",
+      chainName: "Evmos",
+      rest: "https://evmos.kingnodes.com",
+      rpc: "https://rpc-evmos.ecostake.com",
+      currencies: [
+        {
+          coinDenom: "EVMOS",
+          coinMinimalDenom: "aevmos",
+          coinDecimals: 18
+        }
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: "evmos",
+        bech32PrefixAccPub: "evmospub",
+        bech32PrefixValAddr: "evmosvaloper",
+        bech32PrefixValPub: "evmosvaloperpub",
+        bech32PrefixConsAddr: "evmosgvalcons",
+        bech32PrefixConsPub: "evmosvalconspub"
+      },
+      feeCurrencies: [
+        {
+          coinDenom: "EVMOS",
+          coinMinimalDenom: "aevmos",
+          coinDecimals: 18,
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.025,
+            high: 0.03
+          }
+        }
+      ]
+    }
+  },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false
+    },
+    showAirdrop: false,
+    logos: {
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno-logo.png"
     },
@@ -346,7 +399,7 @@ export const networks: Network[] = [
       chainId: "testnet",
       chainName: "Simapp",
       rest: "http://127.0.0.1:1317",
-      rpc: "https://127.0.0.1:26657",
+      rpc: "http://127.0.0.1:26657",
       currencies: [
         {
           coinDenom: "STAKE",
