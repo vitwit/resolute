@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Paper, Typography, Grid, Tooltip, Box } from "@mui/material";
 import { parseProposalStatus } from "../../components/group/ProposalCard";
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import PropTypes from 'prop-types';
 
 function countVotes(votes) {
   const votesCount = {
