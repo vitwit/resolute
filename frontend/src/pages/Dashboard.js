@@ -20,7 +20,7 @@ import { isDarkMode, mdTheme } from "../utils/theme";
 import { Paper, Typography } from "@mui/material";
 import Home from "./Home";
 import { defaultPallet } from "../utils/pallet";
-import { removeAllFeegrants } from "../utils/localStorage";
+import { KEY_DARK_MODE, KEY_WALLET_NAME, removeAllFeegrants } from "../utils/localStorage";
 import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
 import { networks } from "../utils/chainsInfo";
 
@@ -32,7 +32,7 @@ export default function Dashboard() {
 
   const [darkMode, setDarkMode] = useState(isDarkMode());
   const onModeChange = () => {
-    localStorage.setItem("DARK_MODE", !darkMode);
+    localStorage.setItem(KEY_DARK_MODE, !darkMode);
     setDarkMode(!darkMode);
   };
 
@@ -44,15 +44,30 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    window.wallet = window.keplr
-    setTimeout(() => {
-      dispatch(
-        connectWalletV1({
-          mainnets: networks,
-          testnets: [],
-        })
-      );
-    }, 1000);
+    const walletName = localStorage.getItem(KEY_WALLET_NAME)
+    if (walletName === "keplr") {
+      window.wallet = window.keplr
+      setTimeout(() => {
+        dispatch(
+          connectWalletV1({
+            mainnets: networks,
+            testnets: [],
+            walletName: "keplr",
+          })
+        );
+      }, 1000);
+    } else if (walletName === "leap") {
+      window.wallet = window.leap
+      setTimeout(() => {
+        dispatch(
+          connectWalletV1({
+            mainnets: networks,
+            testnets: [],
+            walletName: "leap",
+          })
+        );
+      }, 1000);
+    }
 
     const keplrAccountChangeListener = () => {
       window.wallet = window.keplr
@@ -61,6 +76,7 @@ export default function Dashboard() {
           connectWalletV1({
             mainnets: networks,
             testnets: [],
+            walletName: "keplr",
           })
         );
       }, 1000);
@@ -75,6 +91,7 @@ export default function Dashboard() {
           connectWalletV1({
             mainnets: networks,
             testnets: [],
+            walletName: "leap",
           })
         );
       }, 1000);

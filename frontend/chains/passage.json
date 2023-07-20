@@ -14,7 +14,8 @@
     "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
     "menu": "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png"
   },
-  "experimental": true,
+  "keplr_experimental": true,
+  "leap_experimental": true,
   "is_testnet": false,
   "explorer_tx_hash_endpoint": "https://passage.aneka.io/txs/",
   "config": {

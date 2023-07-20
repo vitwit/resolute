@@ -93,7 +93,7 @@ export function DialogDelegate(props) {
               <b>
                 Staking will lock your funds for{" "}
                 {Math.floor(
-                  parseInt(params?.params?.unbonding_time) / (3600 * 24)
+                  parseInt(params?.data?.params?.unbonding_time) / (3600 * 24)
                 )}
                 + days.
               </b>
@@ -101,7 +101,7 @@ export function DialogDelegate(props) {
               You will need to undelegate in order for your staked assets to be
               liquid again. This process will take{" "}
               {Math.floor(
-                parseInt(params?.params?.unbonding_time) / (3600 * 24)
+                parseInt(params?.data?.params?.unbonding_time) / (3600 * 24)
               )}{" "}
               days to complete.
             </Alert>

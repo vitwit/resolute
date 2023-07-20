@@ -41,7 +41,10 @@ export const connectWalletV1 = createAsyncThunk(
       const nameToChainIDs = {};
       for (let i = 0; i < mainnets.length; i++) {
         try {
-          if (mainnets[i].experimental) {
+          if (data.walletName === "keplr" && mainnets[i].keplrExperimental) {
+            await window.wallet.experimentalSuggestChain(mainnets[i].config);
+          }
+          if (data.walletName === "leap" && mainnets[i].leapExperimental) {
             await window.wallet.experimentalSuggestChain(mainnets[i].config);
           }
           let chainId = mainnets[i].config.chainId;
@@ -61,7 +64,7 @@ export const connectWalletV1 = createAsyncThunk(
           };
           nameToChainIDs[chainName?.toLowerCase().split(" ").join("")] = chainId;
         } catch (error) {
-          console.log("unable to connect: ", error);
+          console.log(`unable to connect to network ${mainnets[i].config.chainName}: `, error);
         }
       }
 
@@ -87,7 +90,7 @@ export const connectWalletV1 = createAsyncThunk(
 
           nameToChainIDs[chainName?.toLowerCase()] = chainId;
         } catch (error) {
-          console.log("unable to connect: ", error);
+          console.log(`unable to connect to network ${mainnets[i].config.chainName}: `, error);
         }
       }
 
@@ -181,6 +184,8 @@ export const walletSlice = createSlice({
       state.algo = "";
       state.name = "";
       state.pubKey = "";
+      state.nameToChainIDs = {};
+      state.networks = {};
     },
     setNetwork: (state, action) => {
       state.chainInfo = action.payload.chainInfo;

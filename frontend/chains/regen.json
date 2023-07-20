@@ -14,7 +14,8 @@
     "menu": "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/regen/images/regen.svg",
     "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/regen/images/regen-logo.png"
   },
-  "experimental": false,
+  "keplr_experimental": false,
+  "leap_experimental": true,
   "is_testnet": false,
   "explorer_tx_hash_endpoint": "https://www.mintscan.io/regen/txs/",
   "config": {
@@ -49,6 +50,9 @@
         }
       }
     ],
+    "bip44": {
+      "coin_type": 118
+    },
     "stake_currency": {
       "coin_denom": "REGEN",
       "coin_minimal_denom": "uregen",

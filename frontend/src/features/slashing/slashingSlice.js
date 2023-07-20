@@ -20,7 +20,7 @@ export const txUnjail = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        460000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,

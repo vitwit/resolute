@@ -14,7 +14,8 @@
     "menu": "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/akash/images/akash.svg",
     "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/akash/images/akash-logo.png"
   },
-  "experimental": false,
+  "keplr_experimental": false,
+  "leap_experimental": false,
   "is_testnet": false,
   "explorer_tx_hash_endpoint": "https://www.mintscan.io/akash/txs/",
   "config": {
@@ -37,7 +38,10 @@
       "bech32_prefix_cons_addr": "akashgvalcons",
       "bech32_prefix_cons_pub": "akashvalconspub"
     },
-    "feeCurrencies": [
+    "bip44": {
+      "coin_type": 118
+    },
+    "fee_currencies": [
       {
         "coin_denom": "AKT",
         "coin_minimal_denom": "uakt",

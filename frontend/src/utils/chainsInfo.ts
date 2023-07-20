@@ -15,7 +15,8 @@ export const networks: Network[] = [
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/akash/images/akash.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/akash/images/akash-logo.png"
     },
-    experimental: false,
+    keplrExperimental: false,
+    leapExperimental: false,
     isTestnet: false,
     explorerTxHashEndpoint: "https://www.mintscan.io/akash/txs/",
     config: {
@@ -37,6 +38,9 @@ export const networks: Network[] = [
         bech32PrefixValPub: "akashvaloperpub",
         bech32PrefixConsAddr: "akashgvalcons",
         bech32PrefixConsPub: "akashvalconspub"
+      },
+      bip44: {
+        coinType: 118
       },
       feeCurrencies: [
         {
@@ -78,7 +82,8 @@ export const networks: Network[] = [
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png"
     },
-    experimental: false,
+    keplrExperimental: false,
+    leapExperimental: false,
     isTestnet: false,
     explorerTxHashEndpoint: "https://www.mintscan.io/cosmos/txs/",
     config: {
@@ -113,6 +118,9 @@ export const networks: Network[] = [
           }
         }
       ],
+      bip44: {
+        coinType: 118
+      },
       stakeCurrency: {
         coinDenom: "ATOM",
         coinMinimalDenom: "uatom",
@@ -141,7 +149,8 @@ export const networks: Network[] = [
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno-logo.png"
     },
-    experimental: false,
+    keplrExperimental: false,
+    leapExperimental: false,
     isTestnet: false,
     explorerTxHashEndpoint: "https://www.mintscan.io/juno/txs/",
     config: {
@@ -176,6 +185,9 @@ export const networks: Network[] = [
           }
         }
       ],
+      bip44: {
+        coinType: 118
+      },
       stakeCurrency: {
         coinDenom: "JUNO",
         coinMinimalDenom: "ujuno",
@@ -204,7 +216,8 @@ export const networks: Network[] = [
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.png"
     },
-    experimental: false,
+    keplrExperimental: false,
+    leapExperimental: false,
     isTestnet: false,
     explorerTxHashEndpoint: "https://www.mintscan.io/osmosis/txs/",
     config: {
@@ -239,6 +252,9 @@ export const networks: Network[] = [
           }
         }
       ],
+      bip44: {
+        coinType: 118
+      },
       stakeCurrency: {
         coinDenom: "OSMO",
         coinMinimalDenom: "uosmo",
@@ -267,7 +283,8 @@ export const networks: Network[] = [
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png"
     },
-    experimental: true,
+    keplrExperimental: true,
+    leapExperimental: true,
     isTestnet: false,
     explorerTxHashEndpoint: "https://passage.aneka.io/txs/",
     config: {
@@ -337,7 +354,8 @@ export const networks: Network[] = [
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/regen/images/regen.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/regen/images/regen-logo.png"
     },
-    experimental: false,
+    keplrExperimental: false,
+    leapExperimental: true,
     isTestnet: false,
     explorerTxHashEndpoint: "https://www.mintscan.io/regen/txs/",
     config: {
@@ -372,6 +390,9 @@ export const networks: Network[] = [
           }
         }
       ],
+      bip44: {
+        coinType: 118
+      },
       stakeCurrency: {
         coinDenom: "REGEN",
         coinMinimalDenom: "uregen",
@@ -400,7 +421,8 @@ export const networks: Network[] = [
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png"
     },
-    experimental: true,
+    keplrExperimental: true,
+    leapExperimental: true,
     isTestnet: false,
     explorerTxHashEndpoint: "https://www.mintscan.io/cosmos/txs/",
     config: {
@@ -469,7 +491,8 @@ export const networks: Network[] = [
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/stargaze/images/stargaze.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/stargaze/images/stargaze-logo.png"
     },
-    experimental: false,
+    keplrExperimental: false,
+    leapExperimental: false,
     isTestnet: false,
     explorerTxHashEndpoint: "https://www.mintscan.io/stargaze/txs/",
     config: {
@@ -504,6 +527,9 @@ export const networks: Network[] = [
           }
         }
       ],
+      bip44: {
+        coinType: 118
+      },
       stakeCurrency: {
         coinDenom: "STARS",
         coinMinimalDenom: "ustars",
@@ -532,7 +558,8 @@ export const networks: Network[] = [
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/umee/images/umee.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/umee/images/umee-logo.png"
     },
-    experimental: false,
+    keplrExperimental: false,
+    leapExperimental: false,
     isTestnet: false,
     explorerTxHashEndpoint: "https://www.mintscan.io/umee/txs/",
     config: {
@@ -567,6 +594,9 @@ export const networks: Network[] = [
           }
         }
       ],
+      bip44: {
+        coinType: 118
+      },
       stakeCurrency: {
         coinDenom: "UMEE",
         coinMinimalDenom: "uumee",

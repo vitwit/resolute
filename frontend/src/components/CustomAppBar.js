@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,19 +9,16 @@ import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
 import { setAuthzMode } from "../features/common/commonSlice";
 import { FormControlLabel, Switch } from "@mui/material";
-import ListItemText from "@mui/material/ListItemText";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import Button from "@mui/material/Button";
-import { setSelectedNetwork } from "../features/common/commonSlice";
 import { getGrantsToMe } from "../features/authz/authzSlice";
 import { useNavigate } from "react-router-dom";
 import { resetTabs, resetTabResetStatus } from "../features/authz/authzSlice";
-import { connectWalletV1 } from "../features/wallet/walletSlice";
+import { connectWalletV1, resetWallet } from "../features/wallet/walletSlice";
 import { networks as allNetworks } from "../utils/chainsInfo";
-import { removeAllFeegrants } from "../utils/localStorage";
+import { KEY_WALLET_NAME, removeAllFeegrants } from "../utils/localStorage";
 import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
+import { ConnectWalletDialog } from "./wallet/ConnectWallet";
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 
 export function CustomAppBar(props) {
   const tabResetStatus = useSelector((state) => state.authz.tabResetStatus);
@@ -30,20 +27,18 @@ export function CustomAppBar(props) {
 
   const networks = useSelector((state) => state.wallet.networks);
   const isAuthzMode = useSelector((state) => state.common.authzMode);
+  const isWalletConnected = useSelector((state) => state.wallet.connected);
   const chainIDs = Object.keys(networks);
+
+  const [showSelectWallet, setShowSelectWallet] = useState(false);
 
   const selectedAuthz = useSelector((state) => state.authz.selected);
   const selectNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [walletAnchorEl, setWalletAnchorEl] = React.useState(null);
-  const [walletName, setWalletName] = React.useState("keplr");
-  const open = Boolean(walletAnchorEl);
-  const handleWalletClick = (event) => {
-    setWalletAnchorEl(event.currentTarget);
-  };
-  useEffect(() => {
+
+  const connectWallet = (walletName) => {
     if (walletName === "keplr") {
       window.wallet = window.keplr;
       setTimeout(() => {
@@ -51,33 +46,32 @@ export function CustomAppBar(props) {
           connectWalletV1({
             mainnets: allNetworks,
             testnets: [],
+            walletName: "keplr",
           })
         );
+        removeAllFeegrants();
+        dispatch(resetFeegrantState());
+        localStorage.setItem(KEY_WALLET_NAME, "keplr");
       }, 1000);
-    } else {
+
+    } else if (walletName === "leap") {
       window.wallet = window.leap;
       setTimeout(() => {
         dispatch(
           connectWalletV1({
             mainnets: allNetworks,
             testnets: [],
+            walletName: "leap",
           })
         );
+        removeAllFeegrants();
+        dispatch(resetFeegrantState());
+        localStorage.setItem(KEY_WALLET_NAME, "leap");
       }, 1000);
-    }
-    removeAllFeegrants();
-    dispatch(resetFeegrantState());
-  }, [walletName]);
 
-  const changeWallet = (newWallet) => {
-    if (walletName !== newWallet) {
-      setWalletName(newWallet);
     }
-    handleWalletClose();
-  };
-  const handleWalletClose = () => {
-    setWalletAnchorEl(null);
-  };
+  }
+
 
   const switchHandler = (event) => {
     dispatch(setAuthzMode(event.target.checked));
@@ -118,6 +112,13 @@ export function CustomAppBar(props) {
     }
   }, [isAuthzMode]);
 
+  const handleDisconnectWallet = () => {
+    removeAllFeegrants();
+    dispatch(resetFeegrantState());
+    localStorage.removeItem(KEY_WALLET_NAME);
+    dispatch(resetWallet());
+  }
+
   return (
     <AppBar
       position="absolute"
@@ -156,7 +157,7 @@ export function CustomAppBar(props) {
             />
           }
         ></FormControlLabel>
-        <Button
+        {/* <Button
           id="demo-positioned-button"
           color="inherit"
           endIcon={<ExpandMoreOutlinedIcon />}
@@ -201,37 +202,44 @@ export function CustomAppBar(props) {
               </ListItemText>
             </MenuItem>
           ))}
-        </Menu>
-        <Button
-          id="demo-positioned-button"
-          aria-controls={open ? "demo-positioned-menu" : undefined}
-          aria-haspopup="true"
-          endIcon={<ExpandMoreOutlinedIcon />}
-          color="inherit"
-          aria-expanded={open ? "true" : undefined}
-          onClick={handleWalletClick}
-        >
-          {walletName || "select Wallet"}
-        </Button>
-        <Menu
-          id="demo-positioned-menu"
-          aria-labelledby="demo-positioned-button"
-          anchorEl={walletAnchorEl}
-          open={open}
-          onClose={handleWalletClose}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          <MenuItem onClick={() => changeWallet("keplr")}>Keplr</MenuItem>
-          <MenuItem onClick={() => changeWallet("leap")}>Leap</MenuItem>
-        </Menu>
+        </Menu> */}
+        {
+          !isWalletConnected ?
+            <Button
+              color="inherit"
+              onClick={() => { setShowSelectWallet(!showSelectWallet) }}
+              sx={{
+                textTransform: "none"
+              }}
+            >
+              Connect wallet
+            </Button>
+            :
+            <Button
+              color="inherit"
+              sx={{
+                textTransform: "none"
+              }}
+              endIcon={
+                <LogoutOutlinedIcon />
+              }
+              onClick={() => {
+                handleDisconnectWallet();
+              }}
+            >
+              Disconnect
+            </Button>
+        }
       </Toolbar>
+
+      <ConnectWalletDialog
+        open={showSelectWallet}
+        onClose={() => setShowSelectWallet(false)}
+        onWalletSelect={(wallet) => {
+          connectWallet(wallet);
+          setShowSelectWallet(false);
+        }}
+      />
     </AppBar>
   );
 }
