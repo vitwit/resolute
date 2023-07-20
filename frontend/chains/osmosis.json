@@ -38,7 +38,7 @@
       "bech32_prefix_cons_addr": "osmosisgvalcons",
       "bech32_prefix_cons_pub": "osmosisvalconspub"
     },
-    "feeCurrencies": [
+    "fee_currencies": [
       {
         "coin_denom": "OSMO",
         "coin_minimal_denom": "uosmo",
