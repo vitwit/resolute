@@ -175,9 +175,9 @@ export default function VotesTable({
                       </Typography>
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                      {row?.metadata?.justification?.length
-                        ? JSON.parse(row?.metadata)?.justification
-                        : "-"}
+                      {row?.metadata?.justification ||
+                        JSON.parse(row?.metadata)?.justification ||
+                        "-"}
                     </StyledTableCell>
                     <StyledTableCell align="right">
                       {getLocalTime(row?.submit_time) || "-"}

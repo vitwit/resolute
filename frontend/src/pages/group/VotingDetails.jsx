@@ -5,20 +5,25 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 function countVotes(votes) {
-  const votesCount = { yes: 0, no: 0, abstain: 0, veto: 0 };
+  const votesCount = {
+    yes_count: 0,
+    no_count: 0,
+    abstain_count: 0,
+    no_with_veto_count: 0,
+  };
   for (let index = 0; index < votes?.length; index++) {
     switch (votes[index]?.option) {
-      case "VOTE_OPTION_NO":
-        votesCount.yes = votesCount["yes"] + 1;
-        break;
       case "VOTE_OPTION_YES":
-        votesCount.no += 1;
+        votesCount.yes_count += 1;
+        break;
+      case "VOTE_OPTION_NO":
+        votesCount.no_count += 1;
         break;
       case "VOTE_OPTION_ABSTAIN":
-        votesCount.abstain += 1;
+        votesCount.abstain_count += 1;
         break;
       case "VOTE_OPTION_NO_WITH_VETO":
-        votesCount.veto += 1;
+        votesCount.no_with_veto_count += 1;
         break;
     }
   }
@@ -26,28 +31,23 @@ function countVotes(votes) {
 }
 
 const VotingDetailsAfterVotingPeriod = (props) => {
-  const { proposal } = props;
-
+  const { proposal, votesCount, isActive } = props;
   const params = useParams();
 
-  const { networkName } = params;
-
-  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-  const chainID = nameToChainIDs[networkName];
-  const groupMembers = useSelector((state) => state.group.groupMembers?.[chainID]);
-
-  const {yes_count, no_count, no_with_veto_count, abstain_count} = proposal?.final_tally_result;
-  const tallySum = Number(yes_count) + Number(no_count) + Number(no_with_veto_count) + Number(abstain_count);
-  console.log("tallySum,,,,", tallySum);
+  const { yes_count, no_count, no_with_veto_count, abstain_count } = isActive
+    ? votesCount
+    : proposal?.final_tally_result;
+  const tallySum =
+    Number(yes_count) +
+    Number(no_count) +
+    Number(no_with_veto_count) +
+    Number(abstain_count);
   const tallySumInfo = {
-    yes: tallySum > 0 ? (yes_count/tallySum) * 100 : 0,
-    no: tallySum > 0 ? (no_count/tallySum) * 100 : 0,
-    no_with_veto: tallySum > 0 ? (no_with_veto_count/tallySum) * 100 : 0,
-    abstain: tallySum > 0 ? (abstain_count/tallySum) * 100 : 0, 
-  }
-
-  console.log(proposal);
-  console.log(groupMembers);
+    yes: tallySum > 0 ? (yes_count / tallySum) * 100 : 0,
+    no: tallySum > 0 ? (no_count / tallySum) * 100 : 0,
+    no_with_veto: tallySum > 0 ? (no_with_veto_count / tallySum) * 100 : 0,
+    abstain: tallySum > 0 ? (abstain_count / tallySum) * 100 : 0,
+  };
 
   return (
     <>
@@ -89,7 +89,10 @@ const VotingDetailsAfterVotingPeriod = (props) => {
               }}
             ></Box>
           </Tooltip>
-          <Tooltip title={`Veto ${tallySumInfo?.no_with_veto}%`} placement="top">
+          <Tooltip
+            title={`Veto ${tallySumInfo?.no_with_veto}%`}
+            placement="top"
+          >
             <Box
               sx={{
                 width: `${tallySumInfo?.no_with_veto}%`,
@@ -112,7 +115,7 @@ const VotingDetailsAfterVotingPeriod = (props) => {
         </Box>
         <Grid container sx={{ mt: 2 }}>
           <Grid item md={3}>
-            <Box sx={{display: "flex"}}>
+            <Box sx={{ display: "flex" }}>
               <Box
                 sx={{
                   width: "4px",
@@ -121,14 +124,14 @@ const VotingDetailsAfterVotingPeriod = (props) => {
                   marginRight: "15px",
                 }}
               ></Box>
-              <Box sx={{textAlign: "left"}}>
+              <Box sx={{ textAlign: "left" }}>
                 <Typography fontWeight={500}>Yes</Typography>
                 <Typography fontWeight={500}>{tallySumInfo?.yes}%</Typography>
               </Box>
             </Box>
           </Grid>
           <Grid item md={3}>
-            <Box sx={{display: "flex"}}>
+            <Box sx={{ display: "flex" }}>
               <Box
                 sx={{
                   width: "4px",
@@ -137,14 +140,14 @@ const VotingDetailsAfterVotingPeriod = (props) => {
                   marginRight: "15px",
                 }}
               ></Box>
-              <Box sx={{textAlign: "left"}}>
+              <Box sx={{ textAlign: "left" }}>
                 <Typography fontWeight={500}>No</Typography>
                 <Typography fontWeight={500}>{tallySumInfo?.no}%</Typography>
               </Box>
             </Box>
           </Grid>
           <Grid item md={3}>
-            <Box sx={{display: "flex"}}>
+            <Box sx={{ display: "flex" }}>
               <Box
                 sx={{
                   width: "4px",
@@ -153,14 +156,16 @@ const VotingDetailsAfterVotingPeriod = (props) => {
                   marginRight: "15px",
                 }}
               ></Box>
-              <Box sx={{textAlign: "left"}}>
+              <Box sx={{ textAlign: "left" }}>
                 <Typography fontWeight={500}>NoWithVeto</Typography>
-                <Typography fontWeight={500}>{tallySumInfo?.no_with_veto}%</Typography>
+                <Typography fontWeight={500}>
+                  {tallySumInfo?.no_with_veto}%
+                </Typography>
               </Box>
             </Box>
           </Grid>
           <Grid item md={3}>
-            <Box sx={{display: "flex"}}>
+            <Box sx={{ display: "flex" }}>
               <Box
                 sx={{
                   width: "4px",
@@ -169,13 +174,14 @@ const VotingDetailsAfterVotingPeriod = (props) => {
                   marginRight: "15px",
                 }}
               ></Box>
-              <Box sx={{textAlign: "left"}}>
+              <Box sx={{ textAlign: "left" }}>
                 <Typography fontWeight={500}>Abstain</Typography>
-                <Typography fontWeight={500}>{tallySumInfo?.abstain}%</Typography>
+                <Typography fontWeight={500}>
+                  {tallySumInfo?.abstain}%
+                </Typography>
               </Box>
             </Box>
           </Grid>
-
         </Grid>
       </Paper>
     </>
@@ -187,13 +193,20 @@ function VotingDetails(props) {
   const votesCount = countVotes(rows.votes);
   const [isActive, setIsActive] = useState(false);
   useEffect(() => {
-    if (proposal?.status === "PROPOSAL_STATUS_SUBMITTED") {
+    if (
+      proposal?.status === "PROPOSAL_STATUS_SUBMITTED" ||
+      proposal?.status === "PROPOSAL_STATUS_ABORTED"
+    ) {
       setIsActive(true);
     }
   }, [proposal]);
   return (
     <div>
-      <VotingDetailsAfterVotingPeriod proposal={proposal} />
+      <VotingDetailsAfterVotingPeriod
+        proposal={proposal}
+        votesCount={votesCount}
+        isActive={isActive}
+      />
       <Paper sx={{ mt: 3, p: 2 }} variant="outlined">
         <Typography sx={{ float: "left" }} variant="body1" fontWeight={600}>
           Vote Details

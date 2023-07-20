@@ -64,7 +64,7 @@ function ActiveProposals({ id, wallet, chainInfo, chainID }) {
         <Grid container spacing={2}>
           {proposals?.map((p, index) => (
             <Grid item key={index} md={6} xs={12}>
-              <ProposalCard proposal={p} networkName={currentNetwork} />
+              <ProposalCard proposal={p} networkName={currentNetwork} groupID={params.id} />
             </Grid>
           ))}
         </Grid>
