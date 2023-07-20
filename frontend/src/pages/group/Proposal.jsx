@@ -487,6 +487,11 @@ function Proposal() {
       setTotal(Number(data?.pagination?.total || 0));
   }, [data]);
 
+  const proposalInfo = useSelector(
+    (state) => state.group?.groupProposal?.[chainID]
+  );
+  const proposal = proposalInfo?.data?.proposal;
+
   return (
     <Box>
       <Box>
@@ -503,19 +508,21 @@ function Proposal() {
         </Paper>
       </Box>
 
-      <Box sx={{ mt: 2 }}>
-        {status === "pending" ? <CircularProgress /> : null}
-
-        {status !== "pending" ? (
-          <VotesTable
-            total={total}
-            limit={limit}
-            pageNumber={pageNumber}
-            handleMembersPagination={handleMembersPagination}
-            rows={data}
-          />
-        ) : null}
-      </Box>
+      {proposal?.status === "PROPOSAL_STATUS_ACCEPTED" ||
+      proposal?.status === "PROPOSAL_STATUS_REJECTED" ? null : (
+        <Box sx={{ mt: 2 }}>
+          {status === "pending" ? <CircularProgress /> : null}
+          {status !== "pending" ? (
+            <VotesTable
+              total={total}
+              limit={limit}
+              pageNumber={pageNumber}
+              handleMembersPagination={handleMembersPagination}
+              rows={data}
+            />
+          ) : null}
+        </Box>
+      )}
     </Box>
   );
 }
