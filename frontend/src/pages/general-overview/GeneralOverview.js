@@ -148,7 +148,7 @@ export const GeneralOverview = (props) => {
                 align="left"
                 variant="body2"
                 color="text.secondary"
-                fontWeight={500}
+                fontWeight={600}
               >
                 Total Available Balance
               </Typography>
@@ -170,7 +170,7 @@ export const GeneralOverview = (props) => {
                 align="left"
                 variant="body2"
                 color="text.secondary"
-                fontWeight={500}
+                fontWeight={600}
               >
                 Total Staked Balance
               </Typography>
@@ -192,7 +192,7 @@ export const GeneralOverview = (props) => {
                 align="left"
                 variant="body2"
                 color="text.secondary"
-                fontWeight={500}
+                fontWeight={600}
               >
                 Total Rewards
               </Typography>

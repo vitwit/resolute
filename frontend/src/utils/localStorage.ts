@@ -1,8 +1,12 @@
 import { Grant } from "cosmjs-types/cosmos/feegrant/v1beta1/feegrant";
 
+
 interface ChainWiseGrants {
   [key: string]: Grant;
 }
+
+export const KEY_WALLET_NAME: string = "WALLET_NAME";
+export const KEY_DARK_MODE: string = "DARK_MODE";
 
 export function setConnected() {
   localStorage.setItem("CONNECTED", "true");

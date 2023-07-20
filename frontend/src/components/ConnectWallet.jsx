@@ -1,27 +1,23 @@
-import Button from "@mui/material/Button";
-import { Typography } from '@mui/material'
-import { Box } from '@mui/system'
-import React from 'react'
+import React from "react"
+import { Typography } from "@mui/material"
+import { Box } from "@mui/system"
 
 export default function ConnectWallet() {
-    return (
-        <>
-            <Box>
-                <Typography
-                    variant='h5'
-                    gutterBottom
-                    color="text.primary"
-                >
-                    Wallet not connected
-                </Typography>
-                <Button
-                    variant="contained"
-                    disableElevation
 
-                >
-                    Connect
-                </Button>
-            </Box>
-        </>
+    return (
+        <Box
+            sx={{
+                mt: 4,
+            }}
+        >
+            <Typography
+                variant="h5"
+                gutterBottom
+                fontWeight={600}
+                color="text.primary"
+            >
+                Wallet not connected
+            </Typography>
+        </Box>
     )
 }

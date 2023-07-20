@@ -49,23 +49,23 @@ const canUseAmino = (aminoConfig, messages) => {
   return true;
 };
 
-const getKeplrClient = async (aminoConfig, chainId, messages) => {
+const getClient = async (aminoConfig, chainId, messages) => {
   let signer;
   if (!canUseAmino(aminoConfig, messages)) {
     try {
-      await window.keplr.enable(chainId);
-      signer = window.getOfflineSigner(chainId);
+      await window.wallet.enable(chainId);
+      signer = window.wallet.getOfflineSigner(chainId);
     } catch (error) {
       console.log(error);
-      throw new Error("failed to get keplr");
+      throw new Error("failed to get wallet");
     }
   } else {
     try {
-      await window.keplr.enable(chainId);
-      signer = window.getOfflineSignerOnlyAmino(chainId);
+      await window.wallet.enable(chainId);
+      signer = window.wallet.getOfflineSignerOnlyAmino(chainId);
     } catch (error) {
       console.log(error);
-      throw new Error("failed to get keplr");
+      throw new Error("failed to get wallet");
     }
   }
 
@@ -85,9 +85,9 @@ export const signAndBroadcast = async (
 ) => {
   let signer;
   try {
-    signer = await getKeplrClient(aminoConfig, chainId, messages);
+    signer = await getClient(aminoConfig, chainId, messages);
   } catch (error) {
-    throw new Error("failed to get keplr");
+    throw new Error("failed to get wallet");
   }
 
   const accounts = await signer.getAccounts();
@@ -173,7 +173,7 @@ function calculateFee(gasLimit, gasPrice, granter) {
 }
 
 function getFee(gas, gasPrice, granter) {
-  if (!gas) gas = 260000;
+  if (!gas) gas = 460000;
   return calculateFee(gas, gasPrice, granter);
 }
 
@@ -369,7 +369,7 @@ async function sign(
   }
 
   if (aminoMsgs && signer.signAmino) {
-    // Sign as amino if possible for Ledger and Keplr support
+    // Sign as amino if possible for Ledger and wallet support
     const signDoc = makeAminoSignDoc(
       aminoMsgs,
       fee,

@@ -14,9 +14,9 @@ import PropTypes from "prop-types";
 import { NewMultisigThreshoPubkey } from "./tx/utils";
 import { useParams } from "react-router-dom";
 
-async function getKeplrWalletAmino(chainID) {
-  await window.keplr.enable(chainID);
-  const offlineSigner = window.getOfflineSignerOnlyAmino(chainID);
+async function getWalletAmino(chainID) {
+  await window.wallet.enable(chainID);
+  const offlineSigner = window.wallet.getOfflineSignerOnlyAmino(chainID);
   const accounts = await offlineSigner.getAccounts();
   return [offlineSigner, accounts[0]];
 }
@@ -102,8 +102,8 @@ export default function BroadcastTx(props) {
         },
       };
 
-      let keplr = await getKeplrWalletAmino(chainInfo?.config?.chainId);
-      const offlineClient = await SigningStargateClient.offline(keplr[0]);
+      let walletAmino = await getWalletAmino(chainInfo?.config?.chainId);
+      const offlineClient = await SigningStargateClient.offline(walletAmino[0]);
       const txBodyBytes = offlineClient.registry.encode(txBody);
 
       const signedTx = makeMultisignedTx(
