@@ -30,9 +30,8 @@ function countVotes(votes) {
   return votesCount;
 }
 
-const VotingDetailsAfterVotingPeriod = (props) => {
+const VotingPercentageBar = (props) => {
   const { proposal, votesCount, isActive } = props;
-  const params = useParams();
 
   const { yes_count, no_count, no_with_veto_count, abstain_count } = isActive
     ? votesCount
@@ -188,6 +187,12 @@ const VotingDetailsAfterVotingPeriod = (props) => {
   );
 };
 
+VotingPercentageBar.propTypes = {
+  proposal: PropTypes.object.isRequired,
+  votesCount: PropTypes.object.isRequired,
+  isActive: PropTypes.bool.isRequired
+}
+
 function VotingDetails(props) {
   const { rows, proposal } = props;
   const votesCount = countVotes(rows.votes);
@@ -202,82 +207,18 @@ function VotingDetails(props) {
   }, [proposal]);
   return (
     <div>
-      <VotingDetailsAfterVotingPeriod
+      <VotingPercentageBar
         proposal={proposal}
         votesCount={votesCount}
         isActive={isActive}
       />
-      <Paper sx={{ mt: 3, p: 2 }} variant="outlined">
-        <Typography sx={{ float: "left" }} variant="body1" fontWeight={600}>
-          Vote Details
-        </Typography>
-        <Grid spacing={2} columnSpacing={{ md: 4, xs: 2 }} container>
-          <Grid item md={2} xs={6}>
-            <Paper sx={{ p: 1, borderColor: "blue" }} variant="outlined">
-              <Typography color={"primary"} variant="subtitle1">
-                Yes
-              </Typography>
-              <Typography
-                color={"primary"}
-                fontWeight={"bold"}
-                variant="subtitle1"
-              >
-                {isActive
-                  ? votesCount?.yes
-                  : proposal?.final_tally_result?.yes_count || 0}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item md={2} xs={6}>
-            <Paper sx={{ p: 1, borderColor: "red" }} variant="outlined">
-              <Typography color={"error"} variant="subtitle1">
-                No
-              </Typography>
-              <Typography
-                color={"error"}
-                fontWeight={"bold"}
-                variant="subtitle1"
-              >
-                {isActive
-                  ? votesCount?.no
-                  : proposal?.final_tally_result?.no_count || 0}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item md={2} xs={6}>
-            <Paper sx={{ p: 1, borderColor: "orange" }} variant="outlined">
-              <Typography color={"orange"} variant="subtitle1">
-                Abstain
-              </Typography>
-              <Typography
-                color={"orange"}
-                fontWeight={"bold"}
-                variant="subtitle1"
-              >
-                {isActive
-                  ? votesCount?.abstain
-                  : proposal?.final_tally_result?.abstain_count || 0}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item md={2} xs={6}>
-            <Paper sx={{ p: 1, borderColor: "black" }} variant="outlined">
-              <Typography>Veto</Typography>
-              <Typography
-                color={"black"}
-                fontWeight={"bold"}
-                variant="subtitle1"
-              >
-                {isActive
-                  ? votesCount?.veto
-                  : proposal?.final_tally_result?.no_with_veto_count || 0}
-              </Typography>
-            </Paper>
-          </Grid>
-        </Grid>
-      </Paper>
     </div>
   );
 }
 
 export default VotingDetails;
+
+VotingDetails.propTypes = {
+  rows: PropTypes.object.isRequired,
+  proposal: PropTypes.object.isRequired
+}

@@ -341,8 +341,9 @@ function AddManualTx({
                   rules={{
                     maxLength: {
                       value: 70,
-                      message: "Details length cannot be more than 80 characters",
-                    }
+                      message:
+                        "Details length cannot be more than 80 characters",
+                    },
                   }}
                   render={({ field }) => (
                     <TextField
@@ -366,8 +367,9 @@ function AddManualTx({
                   rules={{
                     maxLength: {
                       value: 100,
-                      message: "Summary length cannot be more than 100 characters",
-                    }
+                      message:
+                        "Summary length cannot be more than 100 characters",
+                    },
                   }}
                   render={({ field }) => (
                     <TextField
@@ -391,14 +393,16 @@ function AddManualTx({
                   rules={{
                     maxLength: {
                       value: 40,
-                      message: "Forum URL length cannot be more than 30 characters",
-                    }
+                      message:
+                        "Forum URL length cannot be more than 30 characters",
+                    },
                   }}
                   render={({ field }) => (
                     <TextField
                       sx={{
                         mt: 1,
                       }}
+                      type="url"
                       {...field}
                       label="Forum URL"
                       fullWidth
