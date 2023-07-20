@@ -8,8 +8,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
-import { Typography } from "@mui/material";
+import { Typography, useForkRef } from "@mui/material";
 import { getLocalTime } from "../../utils/datetime";
+import { useParams } from "react-router-dom";
+import { getGroupMembersById } from "../../features/group/groupSlice";
+import { useSelector } from "react-redux";
 
 const votesStatus = {
   VOTE_OPTION_YES: {
@@ -62,9 +65,8 @@ export default function VotesTable({
   pageNumber = 0,
   limit,
   handleMembersPagination,
+  chainID,
 }) {
-  console.log("row...", rows);
-  console.log("total...", total);
   const [page, setPage] = React.useState(pageNumber);
   const [rowsPerPage, setRowsPerPage] = React.useState(limit);
   const handleChangePage = (event, newPage) => {
@@ -76,6 +78,24 @@ export default function VotesTable({
       rows?.pagination?.next_key
     );
   };
+
+  const groupMembers = useSelector(
+    (state) => state.group.groupMembers?.[chainID]
+  );
+  const members = groupMembers?.members;
+  const memberAddressToName = {};
+  console.log("-======");
+  console.log(members);
+  // console.log(members?.[0]?.member?.address)
+  // console.log(members?.[0]?.member?.metadata)
+  // console.log(Object.keys(members))
+  if (members) {
+    for (let index in Object.keys(members)) {
+      const member = members?.[Number(index)]?.member;
+      console.log(member);
+      memberAddressToName[member?.address] = member?.metadata;
+    }
+  }
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
@@ -135,7 +155,7 @@ export default function VotesTable({
                       component="th"
                       scope="row"
                     >
-                      {row?.voter || "-"}
+                      {memberAddressToName?.[row?.voter] || row?.voter || "-"}
                     </StyledTableCell>
                     <StyledTableCell
                       style={{
@@ -155,7 +175,7 @@ export default function VotesTable({
                       </Typography>
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                      {row?.metadata
+                      {row?.metadata?.justification?.length
                         ? JSON.parse(row?.metadata)?.justification
                         : "-"}
                     </StyledTableCell>

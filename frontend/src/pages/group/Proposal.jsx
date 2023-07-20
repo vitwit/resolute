@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import VotesTable from "../../components/group/VotesTable";
 import {
+  getGroupMembersById,
   getGroupProposalById,
   getVotesProposalById,
   txGroupProposalExecute,
@@ -430,7 +431,7 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
 function Proposal() {
   const dispatch = useDispatch();
   const params = useParams();
-  const { id } = params;
+  const { id, groupID } = params;
   const [limit, setLimit] = useState(5);
   const [total, setTotal] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);
@@ -492,6 +493,17 @@ function Proposal() {
   );
   const proposal = proposalInfo?.data?.proposal;
 
+  useEffect(() => {
+    dispatch(
+      getGroupMembersById({
+        baseURL: chainInfo?.config?.rest,
+        id: groupID,
+        pagination: { limit: 100, key: "" },
+        chainID: chainID,
+      })
+    )
+  })
+
   return (
     <Box>
       <Box>
@@ -499,6 +511,7 @@ function Proposal() {
           <Box>
             <ProposalInfo
               id={id}
+              groupID={groupID}
               wallet={wallet}
               address={address}
               chainID={chainID}
@@ -519,6 +532,7 @@ function Proposal() {
               pageNumber={pageNumber}
               handleMembersPagination={handleMembersPagination}
               rows={data}
+              chainID={chainID}
             />
           ) : null}
         </Box>

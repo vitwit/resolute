@@ -280,7 +280,7 @@ export default function Home(props) {
             <Route path="/daos" element={<GroupPage />} />
 
             <Route
-              path="/:networkName/daos/proposals/:id"
+              path="/:networkName/daos/groups/:groupID/proposals/:id"
               element={<GroupProposal />}
             />
             <Route path="/airdrop-check" element={<AirdropEligibility />} />

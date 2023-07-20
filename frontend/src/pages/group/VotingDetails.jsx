@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Paper, Typography, Grid, Tooltip, Box } from "@mui/material";
 import { parseProposalStatus } from "../../components/group/ProposalCard";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function countVotes(votes) {
   const votesCount = { yes: 0, no: 0, abstain: 0, veto: 0 };
@@ -25,15 +27,27 @@ function countVotes(votes) {
 
 const VotingDetailsAfterVotingPeriod = (props) => {
   const { proposal } = props;
+
+  const params = useParams();
+
+  const { networkName } = params;
+
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const chainID = nameToChainIDs[networkName];
+  const groupMembers = useSelector((state) => state.group.groupMembers?.[chainID]);
+
   const {yes_count, no_count, no_with_veto_count, abstain_count} = proposal?.final_tally_result;
   const tallySum = Number(yes_count) + Number(no_count) + Number(no_with_veto_count) + Number(abstain_count);
-
+  console.log("tallySum,,,,", tallySum);
   const tallySumInfo = {
-    yes: (yes_count/tallySum) * 100,
-    no: (no_count/tallySum) * 100,
-    no_with_veto: (no_with_veto_count/tallySum) * 100,
-    abstain: (abstain_count/tallySum) * 100, 
+    yes: tallySum > 0 ? (yes_count/tallySum) * 100 : 0,
+    no: tallySum > 0 ? (no_count/tallySum) * 100 : 0,
+    no_with_veto: tallySum > 0 ? (no_with_veto_count/tallySum) * 100 : 0,
+    abstain: tallySum > 0 ? (abstain_count/tallySum) * 100 : 0, 
   }
+
+  console.log(proposal);
+  console.log(groupMembers);
 
   return (
     <>
@@ -177,7 +191,6 @@ function VotingDetails(props) {
       setIsActive(true);
     }
   }, [proposal]);
-  console.log("proposal...", proposal);
   return (
     <div>
       <VotingDetailsAfterVotingPeriod proposal={proposal} />
