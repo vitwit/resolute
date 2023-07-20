@@ -37,7 +37,7 @@ export const txWithdrawAllRewards = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         msgs,
-        260000,
+        460000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,

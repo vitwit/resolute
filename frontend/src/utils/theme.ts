@@ -1,9 +1,10 @@
 import { getPalletByNetwork } from '../utils/pallet';
 import { createTheme } from '@mui/material/styles';
 import { networks } from './chainsInfo';
+import { KEY_DARK_MODE } from './localStorage';
 
 export function isDarkMode(): boolean {
-    const mode = localStorage.getItem("DARK_MODE");
+    const mode = localStorage.getItem(KEY_DARK_MODE);
     if (mode === "false") {
         return false;
     } else {
@@ -12,7 +13,6 @@ export function isDarkMode(): boolean {
 }
 
 export function getPallet() {
-    // const network = getSelectedNetwork();
     const network = networks[0];
     const pallet = getPalletByNetwork(network?.config.chainName);
     return pallet
@@ -26,14 +26,9 @@ export const mdTheme = (isDarkMode: boolean, primary: any, secondary: any) => cr
     },
     typography: {
         fontFamily: [
-            'Roboto',
-            'Ubuntu',
+            'Nunito',
             'sans-serif',
             '-apple-system',
-            'BlinkMacSystemFont',
-            '"Segoe UI"',
-            '"Helvetica Neue"',
-            'Arial',
             '"Apple Color Emoji"',
             '"Segoe UI Emoji"',
             '"Segoe UI Symbol"',

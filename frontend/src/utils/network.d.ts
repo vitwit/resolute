@@ -28,17 +28,25 @@ type Bech32Config = {
   bech32PrefixConsPub: string;
 };
 
+type Theme = {
+  primaryColor: string,
+  gradient: string,
+}
+
 interface NetworkConfig {
+  rpc: string;
+  rest: string;
   chainId: string;
   chainName: string;
-  rest: string;
-  rpc: string;
-  stakeCurrency?: StakeCurrency;
-  bip44?: BIP44;
+  stakeCurrency: StakeCurrency;
+  walletUrlForStaking?: string;
+  bip44: BIP44;
   bech32Config: Bech32Config;
   currencies: Currency[];
   feeCurrencies: Currency[];
-  walletUrlForStaking?: string;
+  features?: string[];
+  image: string;
+  theme: Theme;
 }
 
 interface AirdropAction {
@@ -62,7 +70,8 @@ interface EnableModule {
 interface Network {
   showAirdrop: boolean;
   logos: Logos;
-  experimental: boolean;
+  keplrExperimental: boolean;
+  leapExperimental: boolean;
   isTestnet: boolean;
   explorerTxHashEndpoint: string;
   config: NetworkConfig;
@@ -71,3 +80,4 @@ interface Network {
   aminoConfig: AminoConfig;
   enableModules: EnableModule;
 }
+

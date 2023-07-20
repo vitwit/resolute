@@ -32,9 +32,9 @@ export async function signAndBroadcastGroupMsg(
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
+  await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
   defaultRegistryTypes.forEach((v) => {
     registry.register(v[0], v[1]);
@@ -65,9 +65,9 @@ export async function signAndBroadcastUpdateGroupMembers(
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
+  await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   registry.register(
@@ -94,9 +94,9 @@ export async function signAndBroadcastUpdateGroupPolicy(
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
+  await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   registry.register(
@@ -123,9 +123,9 @@ export async function signAndBroadcastUpdateGroupPolicyMetadata(
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
+  await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   registry.register(
@@ -152,9 +152,9 @@ export async function signAndBroadcastUpdateGroupPolicyAdmin(
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
+  await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   registry.register(
@@ -181,9 +181,9 @@ export async function signAndBroadcastAddGroupPolicy(
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
+  await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   registry.register(
@@ -210,9 +210,9 @@ export async function signAndBroadcastLeaveGroup(
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
+  await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   registry.register("/cosmos.group.v1.MsgLeaveGroup", MsgLeaveGroup);
@@ -236,9 +236,9 @@ export async function signAndBroadcastGroupProposalVote(
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
+  await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   const aTypes = new AminoTypes({
@@ -267,9 +267,9 @@ export async function signAndBroadcastGroupProposalExecute(
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
+  await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   const aTypes = new AminoTypes({
@@ -298,9 +298,9 @@ export async function signAndBroadcastGroupProposal(
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
+  await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   const aTypes = new AminoTypes({
@@ -333,9 +333,9 @@ export async function signAndBroadcastUpdateGroupAdmin(
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
+  await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   const aTypes = new AminoTypes({
@@ -367,9 +367,9 @@ export async function signAndBroadcastUpdateGroupMetadata(
   rpcURL,
   memo = ""
 ) {
-  await window.keplr.enable(chainId);
+  await window.wallet.enable(chainId);
   const offlineSigner =
-    window.getOfflineSigner && window.keplr.getOfflineSigner(chainId);
+    window.wallet.getOfflineSigner && window.wallet.getOfflineSigner(chainId);
   let registry = new Registry();
 
   const aTypes = new AminoTypes({
@@ -405,7 +405,7 @@ export async function signAndBroadcastClaimMsg(
     ...AirdropAminoConverter,
   });
 
-  const result = await getKeplrWalletAmino(chainID);
+  const result = await getWalletAmino(chainID);
   const wallet = result[0];
   const account = result[1];
 
@@ -431,7 +431,7 @@ export async function signAndBroadcastAmino(
   rpcURL,
   memo = ""
 ) {
-  let result = await getKeplrWalletAmino(chainID);
+  let result = await getWalletAmino(chainID);
   var wallet = result[0];
   var account = result[1];
 
@@ -453,7 +453,7 @@ export async function signAndBroadcastProto(msgs, fee, rpcURL) {
   const client = await SigningStargateClient.connect(rpcURL);
 
   const chainId = await client.getChainId();
-  let result = await getKeplrWalletDirect(chainId);
+  let result = await getWalletDirect(chainId);
   var wallet = result[0];
   var account = result[1];
 
@@ -489,23 +489,23 @@ export function fee(coinMinimalDenom, amount, gas = 280000, feeGranter = "") {
   };
 }
 
-export async function getKeplrWalletAmino(chainID) {
-  await window.keplr.enable(chainID);
-  const offlineSigner = window.getOfflineSignerOnlyAmino(chainID);
+export async function getWalletAmino(chainID) {
+  await window.wallet.enable(chainID);
+  const offlineSigner = window.wallet.getOfflineSignerOnlyAmino(chainID);
   const accounts = await offlineSigner.getAccounts();
   return [offlineSigner, accounts[0]];
 }
 
-export async function getKeplrWalletDirect(chainID) {
-  await window.keplr.enable(chainID);
-  const offlineSigner = window.getOfflineSigner(chainID);
+export async function getWalletDirect(chainID) {
+  await window.wallet.enable(chainID);
+  const offlineSigner = window.wallet.getOfflineSigner(chainID);
   const accounts = await offlineSigner.getAccounts();
   return [offlineSigner, accounts[0]];
 }
 
-export function isKeplrInstalled() {
-  if (window.keplr === undefined) {
+export function isWalletInstalled() {
+  if (window.wallet === undefined) {
     return false;
   }
-  return window?.keplr && window?.getOfflineSigner == null ? false : true;
+  return window?.wallet && window?.getOfflineSigner == null ? false : true;
 }

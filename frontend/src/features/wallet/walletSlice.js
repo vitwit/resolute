@@ -1,6 +1,6 @@
 import { toBase64 } from "@cosmjs/encoding";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getKeplrWalletAmino, isKeplrInstalled } from "../../txns/execute";
+import { getWalletAmino, isWalletInstalled } from "../../txns/execute";
 import { setConnected } from "../../utils/localStorage";
 import { setError } from "../common/commonSlice";
 
@@ -13,22 +13,22 @@ const initialState = {
   nameToChainIDs: {},
 };
 
-export const connectKeplrWalletV1 = createAsyncThunk(
+export const connectWalletV1 = createAsyncThunk(
   "wallet/connectv1",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     const mainnets = data.mainnets;
     const testnets = data.testnets;
 
-    if (!isKeplrInstalled()) {
+    if (!isWalletInstalled()) {
       dispatch(
         setError({
           type: "error",
-          message: "Keplr wallet is not installed",
+          message: "wallet is not installed",
         })
       );
-      return rejectWithValue("Keplr wallet is not installed");
+      return rejectWithValue("wallet is not installed");
     } else {
-      window.keplr.defaultOptions = {
+      window.wallet.defaultOptions = {
         sign: {
           preferNoSetMemo: true,
           disableBalanceCheck: true,
@@ -41,13 +41,16 @@ export const connectKeplrWalletV1 = createAsyncThunk(
       const nameToChainIDs = {};
       for (let i = 0; i < mainnets.length; i++) {
         try {
-          if (mainnets[i].experimental) {
-            await window.keplr.experimentalSuggestChain(mainnets[i].config);
+          if (data.walletName === "keplr" && mainnets[i].keplrExperimental) {
+            await window.wallet.experimentalSuggestChain(mainnets[i].config);
+          }
+          if (data.walletName === "leap" && mainnets[i].leapExperimental) {
+            await window.wallet.experimentalSuggestChain(mainnets[i].config);
           }
           let chainId = mainnets[i].config.chainId;
           const chainName = mainnets[i].config.chainName;
-          await getKeplrWalletAmino(chainId);
-          let walletInfo = await window.keplr.getKey(chainId);
+          await getWalletAmino(chainId);
+          let walletInfo = await window.wallet.getKey(chainId);
           walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString('base64');
           delete walletInfo?.address;
 
@@ -61,19 +64,19 @@ export const connectKeplrWalletV1 = createAsyncThunk(
           };
           nameToChainIDs[chainName?.toLowerCase().split(" ").join("")] = chainId;
         } catch (error) {
-          console.log("unable to connect: ", error);
+          console.log(`unable to connect to network ${mainnets[i].config.chainName}: `, error);
         }
       }
 
       for (let i = 0; i < testnets.length; i++) {
         try {
           if (testnets[i].experimental) {
-            await window.keplr.experimentalSuggestChain(testnets[i].config);
+            await window.wallet.experimentalSuggestChain(testnets[i].config);
           }
           const chainId = testnets[i].config.chainId;
           const chainName = testnets[i].config.chainName;
-          await getKeplrWalletAmino(chainId);
-          const walletInfo = await window.keplr.getKey(chainId);
+          await getWalletAmino(chainId);
+          const walletInfo = await window.wallet.getKey(chainId);
           delete walletInfo?.pubKey;
           delete walletInfo?.address;
 
@@ -87,7 +90,7 @@ export const connectKeplrWalletV1 = createAsyncThunk(
 
           nameToChainIDs[chainName?.toLowerCase()] = chainId;
         } catch (error) {
-          console.log("unable to connect: ", error);
+          console.log(`unable to connect to network ${mainnets[i].config.chainName}: `, error);
         }
       }
 
@@ -117,27 +120,27 @@ export const connectKeplrWallet = createAsyncThunk(
   "wallet/connect",
   async (network, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
-      if (!isKeplrInstalled()) {
+      if (!isWalletInstalled()) {
         dispatch(
           setError({
             type: "error",
-            message: "Keplr wallet is not installed",
+            message: "wallet is not installed",
           })
         );
-        return rejectWithValue("Keplr wallet is not installed");
+        return rejectWithValue("wallet is not installed");
       } else {
-        window.keplr.defaultOptions = {
+        window.wallet.defaultOptions = {
           sign: {
             preferNoSetMemo: true,
             disableBalanceCheck: true,
           },
         };
         if (network.experimental) {
-          await window.keplr.experimentalSuggestChain(network.config);
+          await window.wallet.experimentalSuggestChain(network.config);
         }
         try {
-          const result = await getKeplrWalletAmino(network.config.chainId);
-          const walletInfo = await window.keplr.getKey(network.config.chainId);
+          const result = await getWalletAmino(network.config.chainId);
+          const walletInfo = await window.wallet.getKey(network.config.chainId);
           setConnected();
           return fulfillWithValue({
             walletInfo: walletInfo,
@@ -181,6 +184,8 @@ export const walletSlice = createSlice({
       state.algo = "";
       state.name = "";
       state.pubKey = "";
+      state.nameToChainIDs = {};
+      state.networks = {};
     },
     setNetwork: (state, action) => {
       state.chainInfo = action.payload.chainInfo;
@@ -201,8 +206,8 @@ export const walletSlice = createSlice({
       .addCase(connectKeplrWallet.rejected, () => { })
 
 
-      .addCase(connectKeplrWalletV1.pending, () => { })
-      .addCase(connectKeplrWalletV1.fulfilled, (state, action) => {
+      .addCase(connectWalletV1.pending, () => { })
+      .addCase(connectWalletV1.fulfilled, (state, action) => {
         const networks = action.payload.chainInfos;
         const nameToChainIDs = action.payload.nameToChainIDs;
         state.networks = networks;
@@ -211,7 +216,7 @@ export const walletSlice = createSlice({
         state.isNanoLedger = action.payload.isNanoLedger;
         state.name = action.payload.walletName;
       })
-      .addCase(connectKeplrWalletV1.rejected, () => { });
+      .addCase(connectWalletV1.rejected, () => { });
   },
 });
 

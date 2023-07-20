@@ -27,13 +27,13 @@ export const ChainDetails = (props) => {
       state.distribution?.chains?.[chainID]?.delegatorRewards?.totalRewards || 0
   );
   const distTxStatus = useSelector(
-    (state) => state.distribution.chains[chainID].tx
+    (state) => state.distribution?.chains?.[chainID]?.tx
   );
   const delegatorRewards = useSelector(
     (state) => state.distribution?.chains?.[chainID]?.delegatorRewards || {}
   );
   const staked = useSelector(
-    (state) => state.staking.chains[chainID].delegations.totalStaked
+    (state) => state.staking.chains[chainID]?.delegations?.totalStaked
   );
 
   const delegations = useSelector(
@@ -77,11 +77,11 @@ export const ChainDetails = (props) => {
   }, [txRestakeStatus]);
 
   useEffect(() => {
-    if (distTxStatus.status === "idle") {
+    if (distTxStatus?.status === "idle") {
       dispatch(claimRewardInBank({ chainID, totalRewards, minimalDenom }));
       dispatch(resetChainRewards({ chainID }));
     }
-  }, [distTxStatus.status]);
+  }, [distTxStatus?.status]);
 
   useEffect(() => {
     dispatch(resetRestakeTx());
@@ -203,7 +203,7 @@ export const ChainDetails = (props) => {
               disabled={
                 totalRewards <= 0 ||
                 txRestakeStatus === "pending" ||
-                distTxStatus.status === "pending"
+                distTxStatus?.status === "pending"
               }
               onClick={actionClaimAndStake}
             >
@@ -221,11 +221,11 @@ export const ChainDetails = (props) => {
               disabled={
                 totalRewards <= 0 ||
                 txRestakeStatus === "pending" ||
-                distTxStatus.status === "pending"
+                distTxStatus?.status === "pending"
               }
               onClick={claimRewards}
             >
-              {distTxStatus.status === "pending" ? (
+              {distTxStatus?.status === "pending" ? (
                 <>
                   <CircularProgress size={18} />
                   &nbsp;&nbsp;Please wait...

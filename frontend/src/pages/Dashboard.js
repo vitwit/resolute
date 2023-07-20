@@ -7,7 +7,7 @@ import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  connectKeplrWalletV1,
+  connectWalletV1,
 } from "./../features/wallet/walletSlice";
 import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
@@ -20,7 +20,7 @@ import { isDarkMode, mdTheme } from "../utils/theme";
 import { Paper, Typography } from "@mui/material";
 import Home from "./Home";
 import { defaultPallet } from "../utils/pallet";
-import { removeAllFeegrants } from "../utils/localStorage";
+import { KEY_DARK_MODE, KEY_WALLET_NAME, removeAllFeegrants } from "../utils/localStorage";
 import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
 import { networks } from "../utils/chainsInfo";
 
@@ -32,7 +32,7 @@ export default function Dashboard() {
 
   const [darkMode, setDarkMode] = useState(isDarkMode());
   const onModeChange = () => {
-    localStorage.setItem("DARK_MODE", !darkMode);
+    localStorage.setItem(KEY_DARK_MODE, !darkMode);
     setDarkMode(!darkMode);
   };
 
@@ -44,31 +44,66 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      dispatch(
-        connectKeplrWalletV1({
-          mainnets: networks,
-          testnets: [],
-        })
-      );
-    }, 1000);
-
-    const listener = () => {
+    const walletName = localStorage.getItem(KEY_WALLET_NAME)
+    if (walletName === "keplr") {
+      window.wallet = window.keplr
       setTimeout(() => {
         dispatch(
-          connectKeplrWalletV1({
+          connectWalletV1({
             mainnets: networks,
             testnets: [],
+            walletName: "keplr",
+          })
+        );
+      }, 1000);
+    } else if (walletName === "leap") {
+      window.wallet = window.leap
+      setTimeout(() => {
+        dispatch(
+          connectWalletV1({
+            mainnets: networks,
+            testnets: [],
+            walletName: "leap",
+          })
+        );
+      }, 1000);
+    }
+
+    const keplrAccountChangeListener = () => {
+      window.wallet = window.keplr
+      setTimeout(() => {
+        dispatch(
+          connectWalletV1({
+            mainnets: networks,
+            testnets: [],
+            walletName: "keplr",
           })
         );
       }, 1000);
       removeAllFeegrants();
       dispatch(resetFeegrantState());
     };
-    window.addEventListener("keplr_keystorechange", listener);
+
+    const leapAccountChangeListener = () => {
+      window.wallet = window.leap
+      setTimeout(() => {
+        dispatch(
+          connectWalletV1({
+            mainnets: networks,
+            testnets: [],
+            walletName: "leap",
+          })
+        );
+      }, 1000);
+      removeAllFeegrants();
+      dispatch(resetFeegrantState());
+    };
+    window.addEventListener("keplr_keystorechange", keplrAccountChangeListener);
+    window.addEventListener('leap_keystorechange', leapAccountChangeListener);
 
     return () => {
-      window.removeEventListener("keplr_keystorechange", listener);
+      window.removeEventListener("keplr_keystorechange", keplrAccountChangeListener);
+      window.removeEventListener('leap_keystorechange', leapAccountChangeListener);
     };
   }, []);
 
