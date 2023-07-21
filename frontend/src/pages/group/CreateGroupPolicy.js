@@ -83,8 +83,8 @@ function CreateGroupPolicy({
                   {...field}
                   required
                   size="small"
+                  label="Description"
                   name="description"
-                  placeholder="Description"
                   fullWidth
                   error={errors?.policyMetadata?.description}
                   helperText={
@@ -105,8 +105,7 @@ function CreateGroupPolicy({
       {policyUpdate || policyMetadataUpdate ? null : (
         <Grid
           item
-          xs={6}
-          md={3}
+          xs={12}
           sx={{
             textAlign: "left",
           }}
@@ -149,7 +148,7 @@ function CreateGroupPolicy({
 
       {policyMetadataUpdate ? null : (
         <>
-          <Grid item md={4} xs={6}>
+          <Grid item md={6} xs={6}>
             <Controller
               fullWidth
               name={`policyMetadata.votingPeriod`}
@@ -164,10 +163,11 @@ function CreateGroupPolicy({
                   <TextField
                     {...field}
                     fullWidth
+                    required
+                    label="Voting Period (Days)"
                     size="small"
                     name="votingPeriod"
                     type="number"
-                    placeholder="Voting Period (Days) *"
                     error={errors?.policyMetadata?.votingPeriod}
                     helperText={errors?.policyMetadata?.votingPeriod?.message}
                   />
@@ -175,7 +175,7 @@ function CreateGroupPolicy({
               )}
             />
           </Grid>
-          <Grid item md={4} xs={6}>
+          <Grid item md={6} xs={6}>
             <Controller
               fullWidth
               name={`policyMetadata.minExecPeriod`}
@@ -196,8 +196,8 @@ function CreateGroupPolicy({
                     fullWidth
                     size="small"
                     name="minExecPeriod"
+                    label="Execution Delay (Days)"
                     type="number"
-                    placeholder="Execution delay (Days) *"
                     error={errors?.policyMetadata?.minExecPeriod}
                     helperText={
                       errors?.policyMetadata?.minExecPeriod?.message ||
@@ -287,7 +287,7 @@ function CreateGroupPolicy({
                   <FormControl
                     fullWidth
                     sx={{
-                      mt: 1,
+                      mt: 3.5,
                     }}
                   >
                     <Slider

@@ -129,7 +129,7 @@ function PolicyProposalsList(props) {
       >
         {proposals?.data?.proposals?.map((p, index) => (
           <Grid item md={6} xs={12} key={index}>
-            <ProposalCard proposal={p} networkName={networkName} />
+            <ProposalCard proposal={p} networkName={networkName} groupID={params?.id} />
           </Grid>
         ))}
       </Grid>

@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import VotesTable from "../../components/group/VotesTable";
 import {
+  getGroupMembersById,
   getGroupProposalById,
   getVotesProposalById,
   txGroupProposalExecute,
@@ -26,6 +27,7 @@ import DailogVote from "../../components/group/DialogVote";
 import { parseProposalStatus } from "../../components/group/ProposalCard";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
+import VotingDetails from "./VotingDetails";
 
 const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
   const [voteOpen, setVoteOpen] = useState(false);
@@ -37,6 +39,16 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
   const voteRes = useSelector((state) => state.group?.voteRes);
 
   const proposal = proposalInfo?.data?.proposal;
+  const [total, setTotal] = useState(0);
+  const groupInfo = useSelector(
+    (state) => state.group?.proposalVotes?.[chainID]
+  );
+  const data = groupInfo?.data;
+
+  useEffect(() => {
+    if (Number(data?.pagination?.total))
+      setTotal(Number(data?.pagination?.total || 0));
+  }, [data]);
 
   const getProposal = () => {
     if (chainInfo?.config?.rest && chainID) {
@@ -364,74 +376,7 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
               </Grid>
             </Grid>
 
-            <Paper sx={{ mt: 3, p: 2 }} variant="outlined">
-              <Typography
-                sx={{ float: "left" }}
-                variant="body1"
-                fontWeight={600}
-              >
-                Vote Details
-              </Typography>
-              <Grid spacing={2} columnSpacing={{ md: 4, xs: 2 }} container>
-                <Grid item md={2} xs={6}>
-                  <Paper sx={{ p: 1, borderColor: "blue" }} variant="outlined">
-                    <Typography color={"primary"} variant="subtitle1">
-                      Yes
-                    </Typography>
-                    <Typography
-                      color={"primary"}
-                      fontWeight={"bold"}
-                      variant="subtitle1"
-                    >
-                      {proposal?.final_tally_result?.yes_count || 0}
-                    </Typography>
-                  </Paper>
-                </Grid>
-                <Grid item md={2} xs={6}>
-                  <Paper sx={{ p: 1, borderColor: "red" }} variant="outlined">
-                    <Typography color={"error"} variant="subtitle1">
-                      No
-                    </Typography>
-                    <Typography
-                      color={"error"}
-                      fontWeight={"bold"}
-                      variant="subtitle1"
-                    >
-                      {proposal?.final_tally_result?.no_count || 0}
-                    </Typography>
-                  </Paper>
-                </Grid>
-                <Grid item md={2} xs={6}>
-                  <Paper
-                    sx={{ p: 1, borderColor: "orange" }}
-                    variant="outlined"
-                  >
-                    <Typography color={"orange"} variant="subtitle1">
-                      Abstain
-                    </Typography>
-                    <Typography
-                      color={"orange"}
-                      fontWeight={"bold"}
-                      variant="subtitle1"
-                    >
-                      {proposal?.final_tally_result?.abstain_count || 0}
-                    </Typography>
-                  </Paper>
-                </Grid>
-                <Grid item md={2} xs={6}>
-                  <Paper sx={{ p: 1, borderColor: "black" }} variant="outlined">
-                    <Typography>Veto</Typography>
-                    <Typography
-                      color={"black"}
-                      fontWeight={"bold"}
-                      variant="subtitle1"
-                    >
-                      {proposal?.final_tally_result?.no_with_veto_account || 0}
-                    </Typography>
-                  </Paper>
-                </Grid>
-              </Grid>
-            </Paper>
+            <VotingDetails proposal={proposal} rows={data} />
 
             <Box
               sx={{
@@ -486,7 +431,7 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
 function Proposal() {
   const dispatch = useDispatch();
   const params = useParams();
-  const { id } = params;
+  const { id, groupID } = params;
   const [limit, setLimit] = useState(5);
   const [total, setTotal] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);
@@ -543,6 +488,22 @@ function Proposal() {
       setTotal(Number(data?.pagination?.total || 0));
   }, [data]);
 
+  const proposalInfo = useSelector(
+    (state) => state.group?.groupProposal?.[chainID]
+  );
+  const proposal = proposalInfo?.data?.proposal;
+
+  useEffect(() => {
+    dispatch(
+      getGroupMembersById({
+        baseURL: chainInfo?.config?.rest,
+        id: groupID,
+        pagination: { limit: 100, key: "" },
+        chainID: chainID,
+      })
+    )
+  })
+
   return (
     <Box>
       <Box>
@@ -550,6 +511,7 @@ function Proposal() {
           <Box>
             <ProposalInfo
               id={id}
+              groupID={groupID}
               wallet={wallet}
               address={address}
               chainID={chainID}
@@ -559,19 +521,22 @@ function Proposal() {
         </Paper>
       </Box>
 
-      <Box sx={{ mt: 2 }}>
-        {status === "pending" ? <CircularProgress /> : null}
-
-        {status !== "pending" ? (
-          <VotesTable
-            total={total}
-            limit={limit}
-            pageNumber={pageNumber}
-            handleMembersPagination={handleMembersPagination}
-            rows={data}
-          />
-        ) : null}
-      </Box>
+      {proposal?.status === "PROPOSAL_STATUS_ACCEPTED" ||
+      proposal?.status === "PROPOSAL_STATUS_REJECTED" ? null : (
+        <Box sx={{ mt: 2 }}>
+          {status === "pending" ? <CircularProgress /> : null}
+          {status !== "pending" ? (
+            <VotesTable
+              total={total}
+              limit={limit}
+              pageNumber={pageNumber}
+              handleMembersPagination={handleMembersPagination}
+              rows={data}
+              chainID={chainID}
+            />
+          ) : null}
+        </Box>
+      )}
     </Box>
   );
 }

@@ -133,6 +133,7 @@ function PolicyInfo({ chainInfo, address, chainID }) {
       getGroupById({
         baseURL: chainInfo?.config?.rest,
         id: id,
+        chainID: chainID,
       })
     );
   };

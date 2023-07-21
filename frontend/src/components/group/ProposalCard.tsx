@@ -7,11 +7,13 @@ import { shortenAddress } from "../../utils/util";
 interface ProposalCardProps {
   proposal: any;
   networkName: string;
+  groupID: Number;
 }
 
 function ProposalCard({
   proposal,
   networkName,
+  groupID,
 }: ProposalCardProps): JSX.Element {
   const navigate = useNavigate();
 
@@ -25,7 +27,7 @@ function ProposalCard({
   return (
     <Paper
       onClick={() => {
-        navigate(`/${networkName}/daos/proposals/${proposal?.id}`);
+        navigate(`/${networkName}/daos/groups/${groupID}/proposals/${proposal?.id}`);
       }}
       sx={{
         p: 2,

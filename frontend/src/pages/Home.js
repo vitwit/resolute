@@ -162,14 +162,14 @@ export default function Home(props) {
 
   return (
     <Box>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}
-      >
-        <Tabs value={value} onChange={handleChange} aria-label="menu bar"
-
-        >
-          <Tab label="Overview" {...a11yProps(0)} value={0}
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs value={value} onChange={handleChange} aria-label="menu bar">
+          <Tab
+            label="Overview"
+            {...a11yProps(0)}
+            value={0}
             sx={{
-              fontWeight: 600
+              fontWeight: 600,
             }}
           />
           <Tab
@@ -177,7 +177,7 @@ export default function Home(props) {
             {...a11yProps(1)}
             value={1}
             sx={{
-              fontWeight: 600
+              fontWeight: 600,
             }}
             disabled={authzEnabled && !authzTabs?.sendEnabled}
           />
@@ -186,7 +186,7 @@ export default function Home(props) {
             {...a11yProps(2)}
             value={2}
             sx={{
-              fontWeight: 600
+              fontWeight: 600,
             }}
             disabled={authzEnabled && !authzTabs?.govEnabled}
           />
@@ -195,25 +195,36 @@ export default function Home(props) {
             {...a11yProps(3)}
             value={3}
             sx={{
-              fontWeight: 600
+              fontWeight: 600,
             }}
             disabled={authzEnabled && !authzTabs?.stakingEnabled}
           />
           {!authzEnabled && authzTabs?.multisigEnabled ? (
-            <Tab label="Multisig" {...a11yProps(4)} value={4}
+            <Tab
+              label="Multisig"
+              {...a11yProps(4)}
+              value={4}
               sx={{
-                fontWeight: 600
+                fontWeight: 600,
               }}
             />
           ) : null}
-          {!authzEnabled && <Tab label="Authz" {...a11yProps(5)} value={5}
+          {!authzEnabled && (
+            <Tab
+              label="Authz"
+              {...a11yProps(5)}
+              value={5}
+              sx={{
+                fontWeight: 600,
+              }}
+            />
+          )}
+          <Tab
+            label="Feegrant"
+            {...a11yProps(6)}
+            value={6}
             sx={{
-              fontWeight: 600
-            }}
-          />}
-          <Tab label="Feegrant" {...a11yProps(6)} value={6}
-            sx={{
-              fontWeight: 600
+              fontWeight: 600,
             }}
           />
           <Tab
@@ -221,15 +232,20 @@ export default function Home(props) {
             {...a11yProps(7)}
             value={7}
             sx={{
-              fontWeight: 600
+              fontWeight: 600,
             }}
             disabled={authzEnabled && !authzTabs?.daosEnabled}
           />
-          {!authzEnabled && <Tab label="Airdrop" {...a11yProps(8)} value={8}
-            sx={{
-              fontWeight: 600
-            }}
-          />}
+          {!authzEnabled && (
+            <Tab
+              label="Airdrop"
+              {...a11yProps(8)}
+              value={8}
+              sx={{
+                fontWeight: 600,
+              }}
+            />
+          )}
         </Tabs>
       </Box>
 
@@ -239,95 +255,97 @@ export default function Home(props) {
         }}
       >
         <ContextData.Provider value={network} setNetwork={setNetwork}>
-          {
-            wallet.connected ?
-              <Routes>
-                <Route path="/" element={<OverviewPage />}>
-                  <Route path=":networkName/overview" element={<OverviewPage />} />
-                </Route>
-
-                <Route path="/:networkName/transfers" element={<SendPage />} />
-
-                <Route path="/transfers" element={<SendPage />} />
-
-                <Route path="/authz" element={<AuthzOverview />} />
-
-                <Route path="/:networkName/authz" element={<Authz />} />
-
-                <Route path="/feegrant" element={<FeegrantOverview />} />
-
-                <Route path="/:networkName/feegrant" element={<Feegrant />} />
-
-                <Route path="/staking" element={<StakingPage />} />
-
-                <Route path="/:networkName/staking" element={<StakingPage />} />
-
-                <Route path="/gov" element={<ActiveProposals />} />
-
-                <Route path="/:networkName/gov" element={<ActiveProposals />} />
-
+          {wallet.connected ? (
+            <Routes>
+              <Route path="/" element={<OverviewPage />}>
                 <Route
-                  path="/:networkName/proposals/:id"
-                  element={
-                    <Suspense fallback={<CircularProgress />}>
-                      <Proposal />
-                    </Suspense>
-                  }
-                ></Route>
-
-                <Route path="/:networkName/daos" element={<GroupPageV1 />} />
-
-                <Route path="/:networkName/multisig" element={<PageMultisig />} />
-
-                <Route
-                  path="/:networkName/multisig/:address/txs"
-                  element={<PageMultisigInfo />}
+                  path=":networkName/overview"
+                  element={<OverviewPage />}
                 />
+              </Route>
 
-                <Route
-                  path="/:networkName/multisig/:address/create-tx"
-                  element={<PageCreateTx />}
-                />
+              <Route path="/:networkName/transfers" element={<SendPage />} />
 
-                <Route path="/:networkName/slashing" element={<UnjailPage />} />
+              <Route path="/transfers" element={<SendPage />} />
 
-                <Route
-                  path="/:networkName/daos/create-group"
-                  element={<CreateGroupNewPage />}
-                />
+              <Route path="/authz" element={<AuthzOverview />} />
 
-                <Route
-                  path="/:networkName/feegrant/new"
-                  element={<NewFeegrant />}
-                />
+              <Route path="/:networkName/authz" element={<Authz />} />
 
-                <Route path="/:networkName/authz/new" element={<NewAuthz />} />
+              <Route path="/feegrant" element={<FeegrantOverview />} />
 
-                <Route path="/:networkName/daos/:id" element={<Group />} />
+              <Route path="/:networkName/feegrant" element={<Feegrant />} />
 
-                <Route
-                  path="/:networkName/daos/:id/policies/:policyId"
-                  element={<Policy />}
-                />
+              <Route path="/staking" element={<StakingPage />} />
 
-                <Route
-                  path="/:networkName/daos/:id/policies/:policyAddress/proposals"
-                  element={<CreateProposal />}
-                />
+              <Route path="/:networkName/staking" element={<StakingPage />} />
 
-                <Route path="/daos" element={<GroupPage />} />
+              <Route path="/gov" element={<ActiveProposals />} />
 
-                <Route
-                  path="/:networkName/daos/proposals/:id"
-                  element={<GroupProposal />}
-                />
-                <Route path="/airdrop-check" element={<AirdropEligibility />} />
+              <Route path="/:networkName/gov" element={<ActiveProposals />} />
 
-                <Route path="*" element={<Page404 />}></Route>
-              </Routes>
-              :
-              <ConnectWallet />
-          }
+              <Route
+                path="/:networkName/proposals/:id"
+                element={
+                  <Suspense fallback={<CircularProgress />}>
+                    <Proposal />
+                  </Suspense>
+                }
+              ></Route>
+
+              <Route path="/:networkName/daos" element={<GroupPageV1 />} />
+
+              <Route path="/:networkName/multisig" element={<PageMultisig />} />
+
+              <Route
+                path="/:networkName/multisig/:address/txs"
+                element={<PageMultisigInfo />}
+              />
+
+              <Route
+                path="/:networkName/multisig/:address/create-tx"
+                element={<PageCreateTx />}
+              />
+
+              <Route path="/:networkName/slashing" element={<UnjailPage />} />
+
+              <Route
+                path="/:networkName/daos/create-group"
+                element={<CreateGroupNewPage />}
+              />
+
+              <Route
+                path="/:networkName/feegrant/new"
+                element={<NewFeegrant />}
+              />
+
+              <Route path="/:networkName/authz/new" element={<NewAuthz />} />
+
+              <Route path="/:networkName/daos/:id" element={<Group />} />
+
+              <Route
+                path="/:networkName/daos/:id/policies/:policyId"
+                element={<Policy />}
+              />
+
+              <Route
+                path="/:networkName/daos/:id/policies/:policyAddress/proposals"
+                element={<CreateProposal />}
+              />
+
+              <Route path="/daos" element={<GroupPage />} />
+
+              <Route
+                path="/:networkName/daos/groups/:groupID/proposals/:id"
+                element={<GroupProposal />}
+              />
+              <Route path="/airdrop-check" element={<AirdropEligibility />} />
+
+              <Route path="*" element={<Page404 />}></Route>
+            </Routes>
+          ) : (
+            <ConnectWallet />
+          )}
         </ContextData.Provider>
       </Box>
     </Box>
