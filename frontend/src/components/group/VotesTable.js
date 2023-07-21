@@ -84,15 +84,9 @@ export default function VotesTable({
   );
   const members = groupMembers?.members;
   const memberAddressToName = {};
-  console.log("-======");
-  console.log(members);
-  // console.log(members?.[0]?.member?.address)
-  // console.log(members?.[0]?.member?.metadata)
-  // console.log(Object.keys(members))
   if (members) {
     for (let index in Object.keys(members)) {
       const member = members?.[Number(index)]?.member;
-      console.log(member);
       memberAddressToName[member?.address] = member?.metadata;
     }
   }
