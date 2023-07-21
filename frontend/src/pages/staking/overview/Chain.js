@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Grid, Card, CardContent, Typography, Avatar, Button, CircularProgress } from '@mui/material';
 import { Validators } from './Validators';
 import { useDispatch, useSelector } from 'react-redux';
-import { getDelegatorTotalRewards, txWithdrawAllRewards } from '../../features/distribution/distributionSlice';
+import { getDelegatorTotalRewards, txWithdrawAllRewards } from '../../../features/distribution/distributionSlice';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 

@@ -1,7 +1,7 @@
 import { Typography, Avatar, Box } from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getGrantsToMe } from "../../features/authz/authzSlice";
+import { getGrantsToMe } from "../../../features/authz/authzSlice";
 import StakingGranter from "./StakingGranter";
 import PropTypes from "prop-types";
 import {

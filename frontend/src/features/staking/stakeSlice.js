@@ -60,7 +60,7 @@ export const txRestake = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         data.msgs,
-        368995,
+        399999 + Math.ceil((399999 * 0.1) * (data.msgs?.length || 1)),
         data.memo,
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -302,9 +302,9 @@ export const getAllValidators = createAsyncThunk(
           data?.status,
           nextKey
             ? {
-                key: nextKey,
-                limit: limit,
-              }
+              key: nextKey,
+              limit: limit,
+            }
             : {}
         );
         validators.push(...response.data.validators);
@@ -344,9 +344,9 @@ export const getDelegations = createAsyncThunk(
           data.address,
           nextKey
             ? {
-                key: nextKey,
-                limit: limit,
-              }
+              key: nextKey,
+              limit: limit,
+            }
             : {}
         );
         delegations.push(...(response.data?.delegation_responses || []));
@@ -378,9 +378,9 @@ export const getAuthzDelegations = createAsyncThunk(
           data.address,
           nextKey
             ? {
-                key: nextKey,
-                limit: limit,
-              }
+              key: nextKey,
+              limit: limit,
+            }
             : {}
         );
         delegations.push(...(response.data?.delegation_responses || []));
@@ -729,12 +729,12 @@ export const stakeSlice = createSlice({
       });
 
     builder
-      .addCase(getParams.pending, (state) => {})
+      .addCase(getParams.pending, (state) => { })
       .addCase(getParams.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
         state.chains[chainID].params = action.payload;
       })
-      .addCase(getParams.rejected, (state, action) => {});
+      .addCase(getParams.rejected, (state, action) => { });
 
     builder
       .addCase(txDelegate.pending, (state, action) => {
@@ -789,13 +789,13 @@ export const stakeSlice = createSlice({
 
     // pool info
     builder
-      .addCase(getPoolInfo.pending, (state) => {})
+      .addCase(getPoolInfo.pending, (state) => { })
       .addCase(getPoolInfo.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
         state.chains[chainID].pool[action.meta?.arg?.chainID] =
           action.payload.data;
       })
-      .addCase(getPoolInfo.rejected, (state, action) => {});
+      .addCase(getPoolInfo.rejected, (state, action) => { });
 
     // restake transaction
     builder

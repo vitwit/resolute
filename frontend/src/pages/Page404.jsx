@@ -1,11 +1,11 @@
+import React from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
 export default function Page404() {
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     return (
         <div style={{ marginTop: 72 }}>

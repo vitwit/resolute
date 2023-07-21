@@ -5,11 +5,11 @@ import { StakingTotal } from "./StakingTotal";
 import {
   getDelegations,
   getAllValidators,
-} from "../../features/staking/stakeSlice";
-import { getDelegatorTotalRewards } from "../../features/distribution/distributionSlice";
+} from "../../../features/staking/stakeSlice";
+import { getDelegatorTotalRewards } from "../../../features/distribution/distributionSlice";
 import { Chain } from "./Chain";
 
-const StakingOverview = (props) => {
+const StakingOverview = () => {
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const wallet = useSelector((state) => state.wallet);

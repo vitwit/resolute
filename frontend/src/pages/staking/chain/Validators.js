@@ -9,32 +9,31 @@ import {
   txReDelegate,
   resetTxType,
   getAllValidators,
-} from "../features/staking/stakeSlice";
+} from "../../../features/staking/stakeSlice";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Paper from "@mui/material/Paper";
-import { ActiveValidators } from "../components/ActiveValidators";
-import { InActiveValidators } from "../components/InActiveValidators";
-import { MyDelegations } from "../components/Delegations";
+import { ActiveValidators } from "../../../components/ActiveValidators";
+import { InActiveValidators } from "../../../components/InActiveValidators";
+import { MyDelegations } from "../../../components/Delegations";
 import {
   getDelegatorTotalRewards,
   txWithdrawAllRewards,
   resetTx,
-} from "../features/distribution/distributionSlice";
-import { parseBalance } from "../utils/denom";
-import { DialogDelegate } from "../components/DialogDelegate";
-import { getBalances } from "../features/bank/bankSlice";
-import { DialogUndelegate } from "../components/DialogUndelegate";
+} from "../../../features/distribution/distributionSlice";
+import { parseBalance } from "../../../utils/denom";
+import { DialogDelegate } from "../../../components/DialogDelegate";
+import { getBalances } from "../../../features/bank/bankSlice";
+import { DialogUndelegate } from "../../../components/DialogUndelegate";
 import {
   resetError,
-  resetFeegrant,
   resetTxHash,
   setError,
   removeFeegrant as removeFeegrantState,
   setFeegrant as setFeegrantState,
-} from "./../features/common/commonSlice";
-import { DialogRedelegate } from "../components/DialogRedelegate";
-import { WitvalValidator } from "../components/WitvalValidator";
+} from "../../../features/common/commonSlice";
+import { DialogRedelegate } from "../../../components/DialogRedelegate";
+import { WitvalValidator } from "../../../components/WitvalValidator";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import {
@@ -42,18 +41,18 @@ import {
   getReDelegateAuthz,
   getUnDelegateAuthz,
   getWithdrawRewardsAuthz,
-} from "../utils/authorizations";
-import { authzExecHelper } from "../features/authz/authzSlice";
+} from "../../../utils/authorizations";
+import { authzExecHelper } from "../../../features/authz/authzSlice";
 import { Box, TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { FilteredValidators } from "./../components/FilteredValidators";
+import { FilteredValidators } from "../../../components/FilteredValidators";
 import { useTheme } from "@emotion/react";
-import FeegranterInfo from "../components/FeegranterInfo";
+import FeegranterInfo from "../../../components/FeegranterInfo";
 import {
   getFeegrant,
   removeFeegrant as removeFeegrantLocalState,
-} from "../utils/localStorage";
+} from "../../../utils/localStorage";
 import { useParams } from "react-router-dom";
 
 export default function Validators(props) {
@@ -61,7 +60,6 @@ export default function Validators(props) {
   const params = useParams();
   const dispatch = useDispatch();
   const [type, setType] = useState("delegations");
-  const staking = useSelector((state) => state.staking);
   const validators = useSelector(
     (state) => state.staking.chains[chainID].validators
   );
@@ -487,7 +485,6 @@ export default function Validators(props) {
           dispatch(
             getDelegations({
               chainID,
-              chainID,
               baseURL: chainInfo.config.rest,
               address: address,
             })
@@ -637,7 +634,7 @@ export default function Validators(props) {
     <>
       {connected ? (
         delegations?.status === "pending" &&
-        validators?.status === "pending" ? (
+          validators?.status === "pending" ? (
           delegations?.delegations.length === 0 ? (
             <CircularProgress />
           ) : (
@@ -755,7 +752,7 @@ export default function Validators(props) {
                   />
                 </Box>
                 {filteredVals.active.length > 0 ||
-                filteredVals.inactive.length > 0 ? (
+                  filteredVals.inactive.length > 0 ? (
                   <FilteredValidators
                     chainID={chainID}
                     onMenuAction={onMenuAction}
