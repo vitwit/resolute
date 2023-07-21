@@ -5,13 +5,12 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import ActiveProposals from "./gov/ActiveProposals";
-import StakingPage from "./StakingPage";
-import GroupPageV1 from "./GroupPageV1";
+import StakingPage from "./staking/StakingPage";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import Page404 from "./Page404";
 import { useDispatch, useSelector } from "react-redux";
-import OverviewPage from "./OverviewPage";
+import OverviewPage from "./overview/OverviewPage";
 import SendPage from "./SendPage";
 import UnjailPage from "./slashing/UnjailPage";
 import PageMultisig from "./multisig/PageMultisig";
@@ -293,7 +292,7 @@ export default function Home(props) {
                 }
               ></Route>
 
-              <Route path="/:networkName/daos" element={<GroupPageV1 />} />
+              <Route path="/:networkName/daos" element={<GroupPage />} />
 
               <Route path="/:networkName/multisig" element={<PageMultisig />} />
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, TableContainer, TableHead, TableBody } from '@mui/material';
 import { Validator } from './Validator';
-import { StyledTableCell, StyledTableRow } from '../../components/CustomTable';
+import { StyledTableCell, StyledTableRow } from '../../../components/CustomTable';
 
 export const Validators = (props) => {
   return (

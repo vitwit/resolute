@@ -149,7 +149,8 @@ export const networks: Network[] = [
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/evmos/images/evmos.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/evmos/images/evmos-logo.png"
     },
-    experimental: false,
+    keplrExperimental: false,
+    leapExperimental: false,
     isTestnet: false,
     explorerTxHashEndpoint: "https://www.mintscan.io/evmos/txs/",
     config: {
@@ -183,7 +184,20 @@ export const networks: Network[] = [
             high: 0.03
           }
         }
-      ]
+      ],
+      bip44: {
+        coinType: 60
+      },
+      stakeCurrency: {
+        coinDenom: "ATOM",
+        coinMinimalDenom: "uatom",
+        coinDecimals: 6
+      },
+      image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
+      theme: {
+        primaryColor: "#fff",
+        gradient: "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)"
+      }
     }
   },
   {

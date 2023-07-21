@@ -1,65 +1,47 @@
 import { Avatar, Button, CircularProgress, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
-import { claimRewardInBank } from "../../features/bank/bankSlice";
+import { StyledTableCell, StyledTableRow } from "../../../components/CustomTable";
+import { claimRewardInBank } from "../../../features/bank/bankSlice";
 import {
   resetChainRewards,
   txWithdrawAllRewards,
-} from "../../features/distribution/distributionSlice";
+} from "../../../features/distribution/distributionSlice";
 import {
   addRewardsToDelegations,
   resetRestakeTx,
   txRestake,
-} from "../../features/staking/stakeSlice";
-import { Delegate } from "../../txns/staking";
-import { parseBalance } from "../../utils/denom";
+} from "../../../features/staking/stakeSlice";
+import { Delegate } from "../../../txns/staking";
+import { parseBalance } from "../../../utils/denom";
 
-export const ChainDetails = (props) => {
-  const { chainID, chainName } = props;
-  const balance = useSelector(
-    (state) => state.bank.balances?.[chainID]?.list || []
-  );
-  const totalRewards = useSelector(
-    (state) =>
-      state.distribution?.chains?.[chainID]?.delegatorRewards?.totalRewards || 0
-  );
-  const distTxStatus = useSelector(
-    (state) => state.distribution?.chains?.[chainID]?.tx
-  );
-  const delegatorRewards = useSelector(
-    (state) => state.distribution?.chains?.[chainID]?.delegatorRewards || {}
-  );
-  const staked = useSelector(
-    (state) => state.staking.chains[chainID]?.delegations?.totalStaked
-  );
-
-  const delegations = useSelector(
-    (state) => state.staking?.chains?.[chainID]?.delegations || []
-  );
-
-  const txRestakeStatus = useSelector(
-    (state) => state.staking.overviewTx.status
-  );
-
-  const wallet = useSelector((state) => state.wallet);
-  const chainInfo = wallet?.networks?.[chainID];
-  const denom = chainInfo?.network?.config?.currencies?.[0]?.coinDenom;
-  const minimalDenom =
-    chainInfo?.network?.config?.currencies?.[0]?.coinMinimalDenom;
-  const decimals =
-    chainInfo?.network?.config?.currencies?.[0]?.coinDecimals || 1;
-  const logoURL = chainInfo?.network?.logos?.menu;
+export const ChainDetails = ({ chainID, chainName }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const feegrant = useSelector((state) => state.common.feegrant);
+  const wallet = useSelector((state) => state.wallet);
+  const tokensPriceInfo = useSelector((state) => state.common?.allTokensInfoState?.info);
 
-  const handleOnClick = (chainName) => {
+  const { list: balance } = useSelector((state) => state.bank.balances?.[chainID]) || {};
+  const totalRewards = useSelector((state) => state.distribution?.chains?.[chainID]?.delegatorRewards?.totalRewards || 0);
+  const distTxStatus = useSelector((state) => state.distribution?.chains?.[chainID]?.tx);
+  const delegatorRewards = useSelector((state) => state.distribution?.chains?.[chainID]?.delegatorRewards || {});
+  const staked = useSelector((state) => state.staking.chains[chainID]?.delegations?.totalStaked);
+  const delegations = useSelector((state) => state.staking?.chains?.[chainID]?.delegations || []);
+  const txRestakeStatus = useSelector((state) => state.staking.overviewTx.status);
+
+  const chainInfo = wallet?.networks?.[chainID];
+  const denom = chainInfo?.network?.config?.currencies?.[0]?.coinDenom;
+  const minimalDenom = chainInfo?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+  const decimals = chainInfo?.network?.config?.currencies?.[0]?.coinDecimals || 1;
+  const logoURL = chainInfo?.network?.logos?.menu;
+
+  // Memoized function to prevent unnecessary re-renders
+  const handleOnClick = useCallback(() => {
     navigate(`/${chainName}/overview`);
-  };
-
-  const dispatch = useDispatch();
+  }, [chainName, navigate]);
 
   useEffect(() => {
     if (txRestakeStatus === "idle") {
@@ -90,10 +72,8 @@ export const ChainDetails = (props) => {
   const actionClaimAndStake = () => {
     const msgs = [];
     const delegator = chainInfo?.walletInfo?.bech32Address;
-    for (let index = 0; index < delegatorRewards?.list.length; index++) {
-      const delegation = delegatorRewards.list[index];
-      for (let i = 0; i < delegation.reward.length; i++) {
-        const reward = delegation.reward[i];
+    for (const delegation of delegatorRewards.list) {
+      for (const reward of delegation.reward) {
         if (reward.denom === minimalDenom) {
           msgs.push(
             Delegate(
@@ -192,6 +172,11 @@ export const ChainDetails = (props) => {
             {(+totalRewards / 10 ** decimals).toLocaleString()}&nbsp;{denom}
           </StyledTableCell>
           <StyledTableCell>
+            {
+              tokensPriceInfo[minimalDenom] ? `$${parseFloat(tokensPriceInfo[minimalDenom]?.info?.["usd"]).toFixed(2)}` : "N/A"
+            }
+          </StyledTableCell>
+          <StyledTableCell>
             <Button
               color="primary"
               disableElevation
@@ -207,7 +192,15 @@ export const ChainDetails = (props) => {
               }
               onClick={actionClaimAndStake}
             >
-              Claim&nbsp;&&nbsp;Stake
+
+              {txRestakeStatus?.status === "pending" ? (
+                <>
+                  <CircularProgress size={18} />
+                  &nbsp;Claim&nbsp;&&nbsp;Stake
+                </>
+              ) : (
+                <>Claim&nbsp;&&nbsp;Stake</>
+              )}
             </Button>
             <Button
               color="primary"
@@ -228,7 +221,7 @@ export const ChainDetails = (props) => {
               {distTxStatus?.status === "pending" ? (
                 <>
                   <CircularProgress size={18} />
-                  &nbsp;&nbsp;Please wait...
+                  &nbsp;Claim
                 </>
               ) : (
                 <>Claim</>

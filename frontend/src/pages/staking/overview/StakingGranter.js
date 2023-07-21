@@ -3,15 +3,15 @@ import { Typography, Button, Grid, CircularProgress } from "@mui/material";
 import AuthzDelegations from "./AuthzDelegations";
 import { useTheme } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllValidators, getAuthzDelegations } from "../../features/staking/stakeSlice";
-import { getAuthzDelegatorTotalRewards } from "../../features/distribution/distributionSlice";
-import { getBalances } from "../../features/bank/bankSlice";
-import { parseBalance } from "../../utils/denom";
-import { DialogDelegate } from "../../components/DialogDelegate";
-import { authzExecHelper } from "../../features/authz/authzSlice";
-import { setError } from "../../features/common/commonSlice";
-import { DialogUndelegate } from "../../components/DialogUndelegate";
-import { DialogRedelegate } from "../../components/DialogRedelegate";
+import { getAllValidators, getAuthzDelegations } from "../../../features/staking/stakeSlice";
+import { getAuthzDelegatorTotalRewards } from "../../../features/distribution/distributionSlice";
+import { getBalances } from "../../../features/bank/bankSlice";
+import { parseBalance } from "../../../utils/denom";
+import { DialogDelegate } from "../../../components/DialogDelegate";
+import { authzExecHelper } from "../../../features/authz/authzSlice";
+import { setError } from "../../../features/common/commonSlice";
+import { DialogUndelegate } from "../../../components/DialogUndelegate";
+import { DialogRedelegate } from "../../../components/DialogRedelegate";
 import PropTypes from "prop-types";
 
 export default function StakingGranter(props) {

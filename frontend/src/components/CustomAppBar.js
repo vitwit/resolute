@@ -23,20 +23,12 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 export function CustomAppBar(props) {
   const tabResetStatus = useSelector((state) => state.authz.tabResetStatus);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const networks = useSelector((state) => state.wallet.networks);
   const isAuthzMode = useSelector((state) => state.common.authzMode);
   const isWalletConnected = useSelector((state) => state.wallet.connected);
-  const chainIDs = Object.keys(networks);
 
   const [showSelectWallet, setShowSelectWallet] = useState(false);
-
-  const selectedAuthz = useSelector((state) => state.authz.selected);
-  const selectNetwork = useSelector(
-    (state) => state.common.selectedNetwork.chainName
-  );
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const connectWallet = (walletName) => {
     if (walletName === "keplr") {
@@ -77,22 +69,10 @@ export function CustomAppBar(props) {
     dispatch(setAuthzMode(event.target.checked));
   };
 
-  const handleClick = (event) => {
-    if (selectedAuthz.granter.length === 0) {
-      setAnchorEl(event.currentTarget);
-    } else {
-      alert("cannot switch to other network in authz mode");
-    }
-  };
-
-  const navigateTo = (path) => {
-    navigate(path);
-  };
-
   useEffect(() => {
     if (tabResetStatus) {
       dispatch(resetTabResetStatus());
-      Object.keys(networks).map((key, _) => {
+      Object.keys(networks).forEach((key) => {
         const network = networks[key];
         dispatch(
           getGrantsToMe({

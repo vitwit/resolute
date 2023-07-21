@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Avatar, Box, Typography } from '@mui/material';
-import { StyledTableCell, StyledTableRow } from '../../components/CustomTable';
+import { StyledTableCell, StyledTableRow } from './../../../components/CustomTable';
 
 export const Validator = (props) => {
   let reward = (+props.reward).toLocaleString();

@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getBalances } from "../features/bank/bankSlice";
-import { getDelegations, getUnbonding } from "../features/staking/stakeSlice";
-import { getDelegatorTotalRewards } from "../features/distribution/distributionSlice";
-import { parseBalance } from "../utils/denom";
+import { getBalances } from "../../../features/bank/bankSlice";
+import { getDelegations, getUnbonding } from "../../../features/staking/stakeSlice";
+import { getDelegatorTotalRewards } from "../../../features/distribution/distributionSlice";
+import { parseBalance } from "../../../utils/denom";
 import {
   shortenAddress,
   shortenPubKey,
   totalRewards,
   totalUnbonding,
-} from "../utils/util";
+} from "../../../utils/util";
 import { Button, Chip, Grid, Paper, Typography } from "@mui/material";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { Box } from "@mui/system";
-import { getAccountInfo } from "../features/auth/slice";
+import { getAccountInfo } from "../../../features/auth/slice";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-import { copyToClipboard } from "../utils/clipboard";
-import { getTokenPrice } from "../features/common/commonSlice";
+import { copyToClipboard } from "../../../utils/clipboard";
+import { getTokenPrice } from "../../../features/common/commonSlice";
 
 export default function Overview(props) {
   const { chainID, chainName } = props;
@@ -50,9 +50,9 @@ export default function Overview(props) {
 
   useEffect(() => {
     if (connected && config.currencies.length > 0) {
-        setTotalBalance(
-          parseBalance(balance?.[chainID]?.list || [], coinDecimals, coinDenom)
-        );
+      setTotalBalance(
+        parseBalance(balance?.[chainID]?.list || [], coinDecimals, coinDenom)
+      );
       setTotalDelegations(delegations.totalStaked / 10.0 ** coinDecimals);
       setTotalRewards(totalRewards(rewards?.list, coinDecimals, coinDenom));
       setTotalUnbonding(totalUnbonding(unbonding.delegations, coinDecimals));
@@ -156,18 +156,6 @@ export default function Overview(props) {
                 Assets
               </Typography>
               <Box>
-                <Button
-                  sx={{
-                    mb: 1,
-                    textTransform: "none",
-                  }}
-                  variant="contained"
-                  disableElevation
-                  size="small"
-                  onClick={() => navigate("/multi-tx")}
-                >
-                  Multi Send
-                </Button>
                 <Button
                   sx={{
                     mb: 1,
@@ -388,9 +376,9 @@ export default function Overview(props) {
                               priceInfo?.info?.usd *
                               parseFloat(
                                 parseFloat(available) +
-                                  parseFloat(delegated) +
-                                  parseFloat(pendingRewards) +
-                                  parseFloat(unbondingDel)
+                                parseFloat(delegated) +
+                                parseFloat(pendingRewards) +
+                                parseFloat(unbondingDel)
                               ).toFixed(2)
                             ).toLocaleString()}
                           </Typography>

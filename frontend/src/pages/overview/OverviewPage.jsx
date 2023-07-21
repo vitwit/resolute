@@ -2,9 +2,9 @@ import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import SelectNetwork from "../components/common/SelectNetwork";
-import Overview from "./Overview";
-import { GeneralOverview } from "./general-overview/GeneralOverview";
+import SelectNetwork from "../../components/common/SelectNetwork";
+import Overview from "./chain/Overview";
+import { ChainsOverview } from "./overview/ChainsOverview";
 import { CircularProgress } from "@mui/material";
 
 export default function OverviewPage() {
@@ -83,7 +83,7 @@ export default function OverviewPage() {
             />
           </>
         ) : (
-          <GeneralOverview
+          <ChainsOverview
             chainNames={Object.keys(nameToChainIDs)}
           />
         )}

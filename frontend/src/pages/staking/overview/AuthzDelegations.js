@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import Button from "@mui/material/Button";
-import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
+import { StyledTableCell, StyledTableRow } from "../../../components/CustomTable";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import { formatValidatorStatus } from "../../utils/util";
+import { formatValidatorStatus } from "../../../utils/util";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@emotion/react";
 import { CircularProgress } from "@mui/material";

@@ -1,18 +1,17 @@
+import React, { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
-import SelectNetwork from "../components/common/SelectNetwork";
-import { useDispatch, useSelector } from "react-redux";
+import SelectNetwork from "../../components/common/SelectNetwork";
 import { useNavigate, useParams } from "react-router-dom";
-import { Paper, Typography } from "@mui/material";
-import Validators from "./Validators";
-import StakingOverview from "./stakingOverview/StakingOverview";
-import StakingAuthz from "./stakingOverview/StakingAuthz";
+import { Paper } from "@mui/material";
+import Validators from "./chain/Validators";
+import StakingOverview from "./overview/StakingOverview";
+import StakingAuthz from "./overview/StakingAuthz";
 import { useEffect } from "react";
 
 export default function StakingPage() {
   const wallet = useSelector((state) => state.wallet);
   const stakingChains = useSelector((state) => state.staking.chains);
   const isAuthzMode = useSelector((state) => state.common.authzMode);
-  const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
   const nameToChainIDs = wallet.nameToChainIDs;
