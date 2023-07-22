@@ -21,7 +21,7 @@ export const networks: Network[] = [
     explorerTxHashEndpoint: "https://www.mintscan.io/akash/txs/",
     config: {
       chainId: "akashnet-2",
-      chainName: "AKASH",
+      chainName: "Akash",
       rest: "https://akash-api.polkachu.com",
       rpc: "https://rpc.akash.forbole.com/",
       currencies: [
