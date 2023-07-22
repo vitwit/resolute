@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getProposals, resetTx, txVote } from "../../features/gov/govSlice";
+import { getProposals, resetTx, txVote } from "../../../features/gov/govSlice";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -9,15 +9,16 @@ import {
   setError,
   resetError,
   resetTxHash,
-} from "../../features/common/commonSlice";
+} from "../../../features/common/commonSlice";
 import {
   authzExecHelper,
-} from "../../features/authz/authzSlice";
-import VoteDialog from "../../components/Vote";
+} from "../../../features/authz/authzSlice";
+import VoteDialog from "../../../components/Vote";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import PropTypes from "prop-types";
+import { nameToVoteOption } from "../../../utils/proposals";
 
 Proposals.propTypes = {
   id: PropTypes.number.isRequired,
@@ -87,7 +88,7 @@ export default function Proposals({
   }, [errMsg, status]);
 
   const onVoteSubmit = (data) => {
-    const vote = nameToOption(data.option);
+    const vote = nameToVoteOption(data.option);
     if (!authzMode) {
       dispatch(
         txVote({
@@ -229,17 +230,3 @@ export default function Proposals({
   );
 }
 
-function nameToOption(name) {
-  switch (name) {
-    case "yes":
-      return 1;
-    case "abstain":
-      return 2;
-    case "no":
-      return 3;
-    case "noWithVeto":
-      return 4;
-    default:
-      return 0;
-  }
-}

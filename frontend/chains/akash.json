@@ -20,7 +20,7 @@
   "explorer_tx_hash_endpoint": "https://www.mintscan.io/akash/txs/",
   "config": {
     "chain_id": "akashnet-2",
-    "chain_name": "AKASH",
+    "chain_name": "Akash",
     "rest": "https://akash-api.polkachu.com",
     "rpc": "https://rpc.akash.forbole.com/",
     "currencies": [

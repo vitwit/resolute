@@ -1,26 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { computeVotingPercentage } from "../../utils/util";
-import { getDaysLeft } from "../../utils/datetime";
-import "./../common.css";
+import { getDaysLeft } from "../../../utils/datetime";
 import Tooltip from "@mui/material/Tooltip";
 import { Paper } from "@mui/material";
+import { computeVotingPercentage, formatVoteOption } from "../../../utils/proposals";
 
 export const ProposalItem = (props) => {
   const { info, vote, onItemClick, tally } = props;
-  const tallyInfo = computeVotingPercentage(tally);
-  const { yes, no, no_with_veto, abstain } = tallyInfo;
+  const tallyInfo = computeVotingPercentage(tally, false);
+  const { yes, no, noWithVeto, abstain } = tallyInfo;
   const tallySum =
-    Number(yes) + Number(no) + Number(no_with_veto) + Number(abstain);
+    Number(yes) + Number(no) + Number(noWithVeto) + Number(abstain);
 
   const tallySumInfo = {
     yes: (tallyInfo.yes / tallySum) * 100,
     no: (tallyInfo.no / tallySum) * 100,
-    no_with_veto: (tallyInfo.no_with_veto / tallySum) * 100,
+    no_with_veto: (tallyInfo.noWithVeto / tallySum) * 100,
     abstain: (tallyInfo.abstain / tallySum) * 100,
   };
   const onVoteClick = () => {
@@ -44,8 +43,10 @@ export const ProposalItem = (props) => {
           onClick={() => onItemClick()}
         >
           <Typography
-            sx={{ fontSize: 16, fontWeight: "700", cursor: "pointer" }}
+            sx={{ cursor: "pointer" }}
             color="text.primary"
+            fontWeight={600}
+            variant="body1"
             gutterBottom
           >
             #{info.proposal_id}
@@ -56,7 +57,9 @@ export const ProposalItem = (props) => {
             color="text.primary"
             className="proposal-title"
             onClick={() => onItemClick()}
-            sx={{ cursor: "pointer", marginLeft: "8px", fontWeight: "500" }}
+            gutterBottom
+            fontWeight={600}
+            sx={{ cursor: "pointer", ml: 1 }}
           >
             {info.content?.title || info.content?.["@type"]}
           </Typography>
@@ -65,7 +68,7 @@ export const ProposalItem = (props) => {
         <div style={{ display: "flex", alignItems: "center" }}>
           <Typography variant="body1">Voting ends in &nbsp;</Typography>
           <Typography variant="body1">
-            {getDaysLeft(info?.voting_end_time)} days
+            {getDaysLeft(info?.voting_end_time) === 1 ? `1 day` : `${getDaysLeft(info?.voting_end_time)} days`}
           </Typography>
         </div>
 
@@ -141,17 +144,3 @@ export const ProposalItem = (props) => {
     </Paper>
   );
 };
-function formatVoteOption(option) {
-  switch (option) {
-    case "VOTE_OPTION_YES":
-      return "Yes";
-    case "VOTE_OPTION_NO":
-      return "No";
-    case "VOTE_OPTION_ABSTAIN":
-      return "Abstain";
-    case "VOTE_OPTION_NO_WITH_VETO":
-      return "NoWithVeto";
-    default:
-      return "";
-  }
-}

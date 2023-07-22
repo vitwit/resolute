@@ -7,39 +7,36 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { computeVotePercentage, getProposalComponent } from "../../utils/util";
-import { getLocalTime } from "../../utils/datetime";
+import { getLocalTime } from "../../../utils/datetime";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getProposal,
-  getProposals,
   getProposalTally,
   txVote,
-} from "../../features/gov/govSlice";
+} from "../../../features/gov/govSlice";
 import {
   resetError,
   resetFeegrant,
   setError,
   setFeegrant as setFeegrantState,
-} from "../../features/common/commonSlice";
-import { resetTx } from "../../features/distribution/distributionSlice";
-import { getVoteAuthz } from "../../utils/authorizations";
-import { authzExecHelper } from "../../features/authz/authzSlice";
-import VoteDialog from "../../components/Vote";
-import { getPoolInfo } from "../../features/staking/stakeSlice";
+} from "../../../features/common/commonSlice";
+import { resetTx } from "../../../features/distribution/distributionSlice";
+import { getVoteAuthz } from "../../../utils/authorizations";
+import { authzExecHelper } from "../../../features/authz/authzSlice";
+import VoteDialog from "../../../components/Vote";
+import { getPoolInfo } from "../../../features/staking/stakeSlice";
 import { useTheme } from "@emotion/react";
-import FeegranterInfo from "../../components/FeegranterInfo";
-import "./../common.css";
-import { filterVoteAuthz } from "./ActiveProposals";
-import { getFeegrant } from "../../utils/localStorage";
+import FeegranterInfo from "../../../components/FeegranterInfo";
+import { filterVoteAuthz } from "../ProposalsPage";
+import { getFeegrant } from "../../../utils/localStorage";
+import getProposalStatusComponent, { computeVotingPercentage, nameToVoteOption } from "../../../utils/proposals";
 
 export default function ProposalInfo() {
   const dispatch = useDispatch();
   const params = useParams();
 
   const [authzGrants, setAuthzGrants] = useState({});
-  const proposalInfoRes = useSelector((state) => state.gov.proposalInfo);
 
   const { networkName, id } = useParams();
   const nameToIDs = useSelector((state) => state.wallet.nameToChainIDs);
@@ -56,22 +53,15 @@ export default function ProposalInfo() {
   const proposalTally = useSelector(
     (state) => state.gov.tally[chainID]?.proposalTally || {}
   );
-  const votes = useSelector(
-    (state) => state.gov.votes[chainID]?.proposals || {}
-  );
+
   const activeProposals = useSelector((state) => state.gov.active);
-
-  const [selectedNetwork, setSelectedNetwork] = useState("");
   const chainInfo = network?.network;
-
   const [proposal, setProposal] = useState({});
-
   const feegrant = useSelector((state) => state.common.feegrant?.[networkName]);
 
   useEffect(() => {
     const chainID = nameToIDs[networkName];
     if (networkName?.length > 0 && chainID?.length > 0) {
-      setSelectedNetwork(chainID);
       if (!activeProposals[chainID]?.proposals?.length) {
         dispatch(
           getProposal({
@@ -149,7 +139,6 @@ export default function ProposalInfo() {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
 
-  const tallyState = {};
   const proposalState = { status: "idle" };
 
   useEffect(() => {
@@ -189,7 +178,7 @@ export default function ProposalInfo() {
   };
 
   const onVoteSubmit = (data) => {
-    const vote = nameToOption(data.option);
+    const vote = nameToVoteOption(data.option);
     if (selectedAuthz.granter.length === 0) {
       dispatch(
         txVote({
@@ -262,7 +251,7 @@ export default function ProposalInfo() {
             }}
             color="text.primary"
             variant="h6"
-            fontWeight={500}
+            fontWeight={600}
           >
             Proposal Details
           </Typography>
@@ -287,18 +276,17 @@ export default function ProposalInfo() {
               style={{
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "space-between",
+                justifyContent: "right",
               }}
             >
-              <Typography variant="h6" color="text.primary" gutterBottom>
-                &nbsp;
-              </Typography>
-              {getProposalComponent(proposal?.status)}
+              {getProposalStatusComponent({
+                type: proposal?.status,
+              })}
             </div>
             <Typography
               variant="h6"
               color="text.primary"
-              fontWeight={500}
+              fontWeight={600}
               gutterBottom
             >
               #{id}&nbsp;&nbsp;{proposal?.content?.title}
@@ -375,8 +363,9 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(
+                    computeVotingPercentage(
                       proposalTally[id],
+                      true,
                       poolInfo?.[chainID]
                     ).yes
                   }
@@ -393,8 +382,9 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(
+                    computeVotingPercentage(
                       proposalTally[id],
+                      true,
                       poolInfo?.[chainID]
                     ).no
                   }
@@ -411,10 +401,11 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(
+                    computeVotingPercentage(
                       proposalTally[id],
+                      true,
                       poolInfo?.[chainID]
-                    ).no_with_veto
+                    ).noWithVeto
                   }
                   %
                 </Typography>
@@ -429,8 +420,9 @@ export default function ProposalInfo() {
                 </Typography>
                 <Typography>
                   {
-                    computeVotePercentage(
+                    computeVotingPercentage(
                       proposalTally[id],
+                      true,
                       poolInfo?.[chainID]
                     ).abstain
                   }
@@ -491,22 +483,4 @@ export default function ProposalInfo() {
       />
     </>
   );
-}
-
-const parseDescription = (description) =>
-  description.replace(/(\r\n|\r|\n)/g, "<br />");
-
-function nameToOption(name) {
-  switch (name) {
-    case "yes":
-      return 1;
-    case "abstain":
-      return 2;
-    case "no":
-      return 3;
-    case "noWithVeto":
-      return 4;
-    default:
-      return 0;
-  }
 }
