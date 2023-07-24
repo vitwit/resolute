@@ -32,6 +32,7 @@ import {
   setError,
   removeFeegrant as removeFeegrantState,
   setFeegrant as setFeegrantState,
+  getICNSName,
 } from "../../features/common/commonSlice";
 import {
   getMsgNameFromAuthz,
@@ -71,6 +72,7 @@ export default function Authz() {
   const grantsByMe = useSelector((state) => state.authz.grantsByMe?.[chainID]);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
   const txAuthzRes = useSelector((state) => state.authz.txAuthzRes);
+  const icnsNames = useSelector((state) => state.common.icnsNames);
 
   const handleInfoClose = (value) => {
     setInfoOpen(false);
@@ -225,6 +227,15 @@ export default function Authz() {
     });
   };
 
+  const fetchName = (address) => {
+    if(!icnsNames?.[address]) {
+      dispatch(getICNSName({
+        address: address,
+      }))
+    }
+    return icnsNames?.[address]?.name;
+  }
+
   return (
     <>
       {selected?.authorization ? (
@@ -364,7 +375,7 @@ export default function Authz() {
                             }}
                           >
                             <StyledTableCell component="th" scope="row">
-                              {shortenAddress(row.grantee, 21)}
+                            {fetchName(row.grantee) || shortenAddress(row.grantee, 21)}
                             </StyledTableCell>
                             <StyledTableCell>
                               <Chip
