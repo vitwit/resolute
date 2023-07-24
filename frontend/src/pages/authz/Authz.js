@@ -47,18 +47,7 @@ import {
 } from "../../utils/localStorage";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
-
-export const NameAddress = ({ address, name }) => {
-  const [show, setShow] = useState(false);
-  const toggleAddress = () => {
-    setShow(!show);
-  };
-  return (
-    <div onClick={toggleAddress} style={{ cursor: "pointer" }}>
-      {show ? shortenAddress(address, 24) : name || shortenAddress(address, 24)}
-    </div>
-  );
-};
+import NameAddress from "../../components/common/NameAddress";
 
 export default function Authz() {
   const dispatch = useDispatch();

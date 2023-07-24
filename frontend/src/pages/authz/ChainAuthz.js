@@ -27,7 +27,7 @@ import { AuthorizationInfo } from "../../components/AuthorizationInfo";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
 import { getICNSName } from "../../features/common/commonSlice";
-import { NameAddress } from "./Authz";
+import NameAddress from "../../components/common/NameAddress";
 
 export const ChainAuthz = (props) => {
   const { chainName, chainID } = props;

@@ -52,18 +52,7 @@ import SelectNetwork from "../../components/common/SelectNetwork";
 import FeegranterInfo from "../../components/FeegranterInfo";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
-
-export const NameAddress = ({ address, name }) => {
-  const [show, setShow] = useState(false);
-  const toggleAddress = () => {
-    setShow(!show);
-  };
-  return (
-    <div onClick={toggleAddress} style={{ cursor: "pointer" }}>
-      {show ? shortenAddress(address, 21) : name || shortenAddress(address, 24)}
-    </div>
-  );
-};
+import NameAddress from "../../components/common/NameAddress";
 
 export const renderExpiration = (row) => {
   const PERIODIC_ALLOWANCE = "/cosmos.feegrant.v1beta1.PeriodicAllowance";

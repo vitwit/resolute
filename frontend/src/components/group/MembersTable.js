@@ -6,12 +6,13 @@ import TableHead from "@mui/material/TableHead";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
 import PropTypes from "prop-types";
-import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "./../CustomTable";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { Chip } from "@mui/material";
 import { copyToClipboard } from "../../utils/clipboard";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import NameAddress from "../common/NameAddress";
+import { getICNSName } from "../../features/common/commonSlice";
 
 const MembersTable = (props) => {
   const { members } = props;
@@ -22,12 +23,25 @@ const MembersTable = (props) => {
 
   const dispatch = useDispatch();
 
+  const icnsNames = useSelector((state) => state.common.icnsNames);
+
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setPerPage(event.target.value);
+  };
+
+  const fetchName = (address) => {
+    if (!icnsNames?.[address]) {
+      dispatch(
+        getICNSName({
+          address: address,
+        })
+      );
+    }
+    return icnsNames?.[address]?.name;
   };
 
   return (
@@ -38,7 +52,6 @@ const MembersTable = (props) => {
             <StyledTableCell>Address</StyledTableCell>
             <StyledTableCell align="left">Weight</StyledTableCell>
             <StyledTableCell align="left">Name</StyledTableCell>
-            {/* <StyledTableCell align="right">Action</StyledTableCell> */}
           </StyledTableRow>
         </TableHead>
         <TableBody>
@@ -47,15 +60,14 @@ const MembersTable = (props) => {
             .map((row, index) => (
               <StyledTableRow key={index * (currentPage + 1)}>
                 <StyledTableCell component="th" scope="row">
-                  {/* {shortenAddress(row?.member?.address, 26) || "-"} */}
                   <Chip
-                      label={shortenAddress(row?.member?.address, 24)}
-                      size="small"
-                      deleteIcon={<ContentCopyOutlined />}
-                      onDelete={() => {
-                        copyToClipboard(row?.member?.address, dispatch);
-                      }}
-                    />
+                    label={<NameAddress address={row?.member?.address} name={fetchName(row?.member?.address)} />}
+                    size="small"
+                    deleteIcon={<ContentCopyOutlined />}
+                    onDelete={() => {
+                      copyToClipboard(row?.member?.address, dispatch);
+                    }}
+                  />
                 </StyledTableCell>
                 <StyledTableCell align="left">
                   &nbsp;&nbsp;{row?.member?.weight || "-"}
@@ -63,22 +75,6 @@ const MembersTable = (props) => {
                 <StyledTableCell align="left">
                   {row?.member?.metadata || "-"}
                 </StyledTableCell>
-                {/* <StyledTableCell align="right">
-                <Tooltip title={"Delete"} arrow>
-                  <IconButton
-                    onClick={() => {
-                      // handleDeleteMember({
-                      //   address: row?.member?.address,
-                      //   weight: "0",
-                      //   metadata: row?.member?.metadata,
-                      // });
-                    }}
-                    color="error"
-                  >
-                    <DeleteOutline />
-                  </IconButton>
-                </Tooltip>
-              </StyledTableCell> */}
               </StyledTableRow>
             ))}
         </TableBody>

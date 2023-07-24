@@ -16,12 +16,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import { shortenAddress, getTypeURLName } from "../../utils/util";
-import { NameAddress, renderExpiration } from "./Feegrant";
+import { renderExpiration } from "./Feegrant";
 import { FeegrantInfo } from "../../components/FeegrantInfo";
 import { txRevoke } from "../../features/feegrant/feegrantSlice";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
 import { getICNSName } from "../../features/common/commonSlice";
+import NameAddress from "../../components/common/NameAddress";
 
 export const ChainGrants = (props) => {
   const { chainName, chainID } = props;
