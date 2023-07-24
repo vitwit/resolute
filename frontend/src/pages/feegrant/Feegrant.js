@@ -26,6 +26,7 @@ import {
   setFeegrant as setFeegrantState,
   resetFeegrant,
   removeFeegrant as removeFeegrantState,
+  getICNSName,
 } from "./../../features/common/commonSlice";
 import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "./../../utils/util";
@@ -49,6 +50,20 @@ import {
 } from "../../utils/localStorage";
 import SelectNetwork from "../../components/common/SelectNetwork";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
+import { copyToClipboard } from "../../utils/clipboard";
+
+export const NameAddress = ({ address, name }) => {
+  const [show, setShow] = useState(false);
+  const toggleAddress = () => {
+    setShow(!show);
+  };
+  return (
+    <div onClick={toggleAddress} style={{ cursor: "pointer" }}>
+      {show ? shortenAddress(address, 21) : name || shortenAddress(address, 24)}
+    </div>
+  );
+};
 
 export const renderExpiration = (row) => {
   const PERIODIC_ALLOWANCE = "/cosmos.feegrant.v1beta1.PeriodicAllowance";
@@ -173,6 +188,7 @@ export default function Feegrant() {
   const currency = chainInfo?.config?.currencies[0];
   const [infoOpen, setInfoOpen] = React.useState(false);
   const isNanoLedger = useSelector((state) => state.wallet.isNanoLedger);
+  const icnsNames = useSelector((state) => state.common.icnsNames);
 
   const [selected, setSelected] = React.useState({});
   const [isNoAuthzs, setNoAuthzs] = useState(false);
@@ -268,7 +284,8 @@ export default function Feegrant() {
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
-            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+            10 ** currency.coinDecimals,
           baseURL: chainInfo.config.rest,
           feegranter: feegrant?.granter,
         })
@@ -285,7 +302,8 @@ export default function Feegrant() {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         baseURL: chainInfo.config.rest,
         feegranter: feegrant?.granter,
       });
@@ -391,6 +409,17 @@ export default function Feegrant() {
       dispatch(resetExecTx());
     }
   }, [authzExecTx]);
+
+  const fetchName = (address) => {
+    if (!icnsNames?.[address]) {
+      dispatch(
+        getICNSName({
+          address: address,
+        })
+      );
+    }
+    return icnsNames?.[address]?.name;
+  };
 
   return (
     <>
@@ -498,7 +527,19 @@ export default function Feegrant() {
                             }}
                           >
                             <StyledTableCell component="th" scope="row">
-                              {shortenAddress(row.grantee, 21)}
+                              <Chip
+                                label={
+                                  <NameAddress
+                                    address={row.grantee}
+                                    name={fetchName(row.grantee)}
+                                  />
+                                }
+                                size="small"
+                                deleteIcon={<ContentCopyOutlined />}
+                                onDelete={() => {
+                                  copyToClipboard(row.grantee, dispatch);
+                                }}
+                              />
                             </StyledTableCell>
                             <StyledTableCell>
                               <Chip

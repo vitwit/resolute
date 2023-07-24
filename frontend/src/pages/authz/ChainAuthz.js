@@ -24,6 +24,10 @@ import {
 import { getLocalTime } from "../../utils/datetime";
 import { txAuthzRevoke } from "../../features/authz/authzSlice";
 import { AuthorizationInfo } from "../../components/AuthorizationInfo";
+import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
+import { copyToClipboard } from "../../utils/clipboard";
+import { getICNSName } from "../../features/common/commonSlice";
+import { NameAddress } from "./Authz";
 
 export const ChainAuthz = (props) => {
   const { chainName, chainID } = props;
@@ -40,6 +44,8 @@ export const ChainAuthz = (props) => {
   );
   const feegrant = useSelector((state) => state.common.authz?.[chainName]);
   const authzTx = useSelector((state) => state.authz.tx);
+  const icnsNames = useSelector((state) => state.common.icnsNames);
+
   const currency = chainInfo?.config?.currencies[0];
   const [tab, setTab] = useState(0);
   const [selected, setSelected] = React.useState({});
@@ -66,11 +72,23 @@ export const ChainAuthz = (props) => {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         baseURL: chainInfo.config.rest,
         feegranter: feegrant?.granter,
       })
     );
+  };
+
+  const fetchName = (address) => {
+    if (!icnsNames?.[address]) {
+      dispatch(
+        getICNSName({
+          address: address,
+        })
+      );
+    }
+    return icnsNames?.[address]?.name;
   };
 
   return chainGrantsByMe?.grants?.length || chainGrantsToMe?.grants?.length ? (
@@ -170,7 +188,19 @@ export const ChainAuthz = (props) => {
                       }}
                     >
                       <StyledTableCell component="th" scope="row">
-                        {shortenAddress(row.grantee, 21)}
+                        <Chip
+                          label={
+                            <NameAddress
+                              address={row.grantee}
+                              name={fetchName(row.grantee)}
+                            />
+                          }
+                          size="small"
+                          deleteIcon={<ContentCopyOutlined />}
+                          onDelete={() => {
+                            copyToClipboard(row.grantee, dispatch);
+                          }}
+                        />
                       </StyledTableCell>
                       <StyledTableCell>
                         <Chip

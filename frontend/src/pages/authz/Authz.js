@@ -45,6 +45,20 @@ import {
   getFeegrant,
   removeFeegrant as removeFeegrantLocalState,
 } from "../../utils/localStorage";
+import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
+import { copyToClipboard } from "../../utils/clipboard";
+
+export const NameAddress = ({ address, name }) => {
+  const [show, setShow] = useState(false);
+  const toggleAddress = () => {
+    setShow(!show);
+  };
+  return (
+    <div onClick={toggleAddress} style={{ cursor: "pointer" }}>
+      {show ? shortenAddress(address, 24) : name || shortenAddress(address, 24)}
+    </div>
+  );
+};
 
 export default function Authz() {
   const dispatch = useDispatch();
@@ -167,7 +181,8 @@ export default function Authz() {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         feegranter: feegrant?.granter,
       })
     );
@@ -222,19 +237,22 @@ export default function Authz() {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+        chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+        10 ** currency.coinDecimals,
       feegranter: feegrant?.granter,
     });
   };
 
   const fetchName = (address) => {
-    if(!icnsNames?.[address]) {
-      dispatch(getICNSName({
-        address: address,
-      }))
+    if (!icnsNames?.[address]) {
+      dispatch(
+        getICNSName({
+          address: address,
+        })
+      );
     }
     return icnsNames?.[address]?.name;
-  }
+  };
 
   return (
     <>
@@ -375,7 +393,19 @@ export default function Authz() {
                             }}
                           >
                             <StyledTableCell component="th" scope="row">
-                            {fetchName(row.grantee) || shortenAddress(row.grantee, 21)}
+                              <Chip
+                                label={
+                                  <NameAddress
+                                    address={row.grantee}
+                                    name={fetchName(row.grantee)}
+                                  />
+                                }
+                                size="small"
+                                deleteIcon={<ContentCopyOutlined />}
+                                onDelete={() => {
+                                  copyToClipboard(row.grantee, dispatch);
+                                }}
+                              />
                             </StyledTableCell>
                             <StyledTableCell>
                               <Chip

@@ -16,9 +16,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import { shortenAddress, getTypeURLName } from "../../utils/util";
-import { renderExpiration } from "./Feegrant";
+import { NameAddress, renderExpiration } from "./Feegrant";
 import { FeegrantInfo } from "../../components/FeegrantInfo";
 import { txRevoke } from "../../features/feegrant/feegrantSlice";
+import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
+import { copyToClipboard } from "../../utils/clipboard";
+import { getICNSName } from "../../features/common/commonSlice";
 
 export const ChainGrants = (props) => {
   const { chainName, chainID } = props;
@@ -35,6 +38,8 @@ export const ChainGrants = (props) => {
   );
   const feegrant = useSelector((state) => state.common.feegrant?.[chainName]);
   const txStatus = useSelector((state) => state.feegrant.tx);
+  const icnsNames = useSelector((state) => state.common.icnsNames);
+
   const currency = chainInfo?.config?.currencies[0];
   const [tab, setTab] = useState(0);
   const [selected, setSelected] = React.useState({});
@@ -58,11 +63,23 @@ export const ChainGrants = (props) => {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         baseURL: chainInfo.config.rest,
         feegranter: feegrant?.granter,
       })
     );
+  };
+
+  const fetchName = (address) => {
+    if (!icnsNames?.[address]) {
+      dispatch(
+        getICNSName({
+          address: address,
+        })
+      );
+    }
+    return icnsNames?.[address]?.name;
   };
 
   return chainGrantsByMe?.length || chainGrantsToMe?.length ? (
@@ -162,7 +179,19 @@ export const ChainGrants = (props) => {
                       }}
                     >
                       <StyledTableCell component="th" scope="row">
-                        {shortenAddress(row.grantee, 21)}
+                        <Chip
+                          label={
+                            <NameAddress
+                              address={row.grantee}
+                              name={fetchName(row.grantee)}
+                            />
+                          }
+                          size="small"
+                          deleteIcon={<ContentCopyOutlined />}
+                          onDelete={() => {
+                            copyToClipboard(row.grantee, dispatch);
+                          }}
+                        />
                       </StyledTableCell>
                       <StyledTableCell>
                         <Chip
