@@ -28,6 +28,8 @@ import { parseProposalStatus } from "../../components/group/ProposalCard";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
 import VotingDetails from "./VotingDetails";
+import { getICNSName } from "../../features/common/commonSlice";
+import NameAddress from "../../components/common/NameAddress";
 
 const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
   const [voteOpen, setVoteOpen] = useState(false);
@@ -37,6 +39,7 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
     (state) => state.group?.groupProposal?.[chainID]
   );
   const voteRes = useSelector((state) => state.group?.voteRes);
+  const icnsNames = useSelector((state) => state.common.icnsNames);
 
   const proposal = proposalInfo?.data?.proposal;
   const [total, setTotal] = useState(0);
@@ -104,6 +107,17 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
         feeAmount: chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average,
       })
     );
+  };
+
+  const fetchName = (address) => {
+    if (!icnsNames?.[address]) {
+      dispatch(
+        getICNSName({
+          address: address,
+        })
+      );
+    }
+    return icnsNames?.[address]?.name;
   };
 
   return (
@@ -361,7 +375,12 @@ const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
                 >
                   {proposal?.proposers?.map((p, index) => (
                     <Chip
-                      label={shortenAddress(p, 21)}
+                      label={
+                        <NameAddress
+                          address={p}
+                          name={fetchName(p)}
+                        />
+                      }
                       size="small"
                       deleteIcon={<ContentCopyOutlined />}
                       onDelete={() => {
@@ -501,8 +520,8 @@ function Proposal() {
         pagination: { limit: 100, key: "" },
         chainID: chainID,
       })
-    )
-  })
+    );
+  });
 
   return (
     <Box>
