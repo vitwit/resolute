@@ -502,7 +502,19 @@ export default function Authz() {
                             }}
                           >
                             <StyledTableCell component="th" scope="row">
-                              {shortenAddress(row.granter, 21)}
+                              <Chip
+                                label={
+                                  <NameAddress
+                                    address={row.granter}
+                                    name={fetchName(row.granter)}
+                                  />
+                                }
+                                size="small"
+                                deleteIcon={<ContentCopyOutlined />}
+                                onDelete={() => {
+                                  copyToClipboard(row.granter, dispatch);
+                                }}
+                              />
                             </StyledTableCell>
                             <StyledTableCell>
                               <Chip
