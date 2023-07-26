@@ -47,7 +47,6 @@ export default function PageMultisig() {
   const accounts = multisigAccounts.accounts;
   const pendingTxns = multisigAccounts.txnCounts;
 
-
   const dispatch = useDispatch();
   const [currentNetwork, setCurrentNetwork] = useState();
   useEffect(() => {
@@ -56,15 +55,16 @@ export default function PageMultisig() {
     if (network.length > 0 && connected) {
       const chainId = nameToChainIDs[network];
       if (chainId?.length > 0) {
-        const chain = networks[chainId];
         setChainInfo(networks[chainId]);
-        dispatch(getMultisigAccounts(chain?.walletInfo?.bech32Address));
       } else {
         throw new Error("you shouldn't be here");
       }
     }
-
   }, [params, connected]);
+
+  useEffect(() => {
+    dispatch(getMultisigAccounts(chainInfo?.walletInfo?.bech32Address));
+  }, [chainInfo]);
 
   useEffect(() => {
     if (createMultiAccRes.status === "idle") {
@@ -184,14 +184,18 @@ export default function PageMultisig() {
                   >
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
+                        navigate(
+                          `/${currentNetwork}/multisig/${row.address}/txs`
+                        );
                       }}
                     >
                       {row?.name}
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
+                        navigate(
+                          `/${currentNetwork}/multisig/${row.address}/txs`
+                        );
                       }}
                     >
                       <Chip
@@ -206,21 +210,27 @@ export default function PageMultisig() {
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
+                        navigate(
+                          `/${currentNetwork}/multisig/${row.address}/txs`
+                        );
                       }}
                     >
                       {row?.threshold || 0}
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
+                        navigate(
+                          `/${currentNetwork}/multisig/${row.address}/txs`
+                        );
                       }}
                     >
                       <strong> {pendingTxns[row?.address] || 0} </strong> txns
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
+                        navigate(
+                          `/${currentNetwork}/multisig/${row.address}/txs`
+                        );
                       }}
                     >
                       {getLocalTime(row?.created_at)}
@@ -230,7 +240,6 @@ export default function PageMultisig() {
               </TableBody>
             </Table>
           </TableContainer>
-
         </FormControl>
       ) : null}
 

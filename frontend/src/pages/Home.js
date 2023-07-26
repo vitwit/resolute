@@ -198,7 +198,7 @@ export default function Home(props) {
             }}
             disabled={authzEnabled && !authzTabs?.stakingEnabled}
           />
-          {!authzEnabled && authzTabs?.multisigEnabled ? (
+          {!authzEnabled ? (
             <Tab
               label="Multisig"
               {...a11yProps(4)}
