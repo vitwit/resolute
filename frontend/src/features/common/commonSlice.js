@@ -62,7 +62,9 @@ export const getICNSName = createAsyncThunk(
   "common/getICNSName",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await commonService.fetchICNSName({address: data.address});
+      const response = await commonService.fetchICNSName({
+        address: data.address,
+      });
       return {
         data: response.data,
         address: data.address,
@@ -73,7 +75,7 @@ export const getICNSName = createAsyncThunk(
       );
     }
   }
-)
+);
 
 export const commonSlice = createSlice({
   name: "common",
@@ -167,40 +169,21 @@ export const commonSlice = createSlice({
         state.allTokensInfoState.error = action.payload;
         state.allTokensInfoState.info = {};
       });
-    
+
     builder
-    .addCase(getICNSName.pending, (state, action) => {
-      // const address = action.meta?.arg?.address || "";
-      // if(address?.length) {
-      //   let result = {
-      //     name: "",
-      //     status: "pending",
-      //   }
-      //   state.icnsNames[address] = result;
-      // }
-    })
-    .addCase(getICNSName.fulfilled, (state, action) => {
-      const address = action.payload?.address || "";
-      if(address?.length) {
-        let result = {
-          name: action.payload?.data?.data?.primary_name,
-          status: "idle",
-          errMsg: "",
+      .addCase(getICNSName.pending, (state) => {})
+      .addCase(getICNSName.fulfilled, (state, action) => {
+        const address = action.payload?.address || "";
+        if (address?.length) {
+          let result = {
+            name: action.payload?.data?.data?.primary_name,
+            status: "idle",
+            errMsg: "",
+          };
+          state.icnsNames[address] = result;
         }
-        state.icnsNames[address] = result;
-      }
-    })
-    .addCase(getICNSName.rejected, (state, action) => {
-      // const address = action.meta?.arg?.address || "";
-      // if(address?.length) {
-      //   let result = {
-      //     name: "",
-      //     status: "rejected",
-      //     errMsg: action?.error?.message || "",
-      //   }
-      //   state.icnsNames[address] = result;
-      // }
-    });
+      })
+      .addCase(getICNSName.rejected, (state) => {});
   },
 });
 

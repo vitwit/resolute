@@ -18,6 +18,7 @@ import {
   resetTxHash,
   removeFeegrant as removeFeegrantState,
   setFeegrant as setFeegrantState,
+  getICNSName,
 } from "../../features/common/commonSlice";
 import { txUnjail } from "../../features/slashing/slashingSlice";
 import TextField from "@mui/material/TextField";
@@ -63,6 +64,7 @@ export default function Unjail() {
   const selectedAuthz = useSelector((state) => state.authz.selected);
   const feegrant = useSelector((state) => state.common.feegrant?.[selectedNetwork]);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
+  const icnsNames = useSelector((state) => state.common.icnsNames);
 
   const [isNoAuthzs, setNoAuthzs] = useState(false);
   const [authzGrants, setAuthzGrants] = useState();
@@ -151,7 +153,18 @@ export default function Unjail() {
       grants: currentChainGrants,
       chainName: selectedNetwork.toLowerCase()
     }));
-  }, [selectedNetwork, params])
+  }, [selectedNetwork, params]);
+
+  const fetchName = (address) => {
+    if (!icnsNames?.[address]) {
+      dispatch(
+        getICNSName({
+          address: address,
+        })
+      );
+    }
+    return icnsNames?.[address]?.name;
+  };
 
   return (
     <Box
@@ -236,7 +249,7 @@ export default function Unjail() {
                       >
                         {authzGrants.map((granter, index) => (
                           <MenuItem id={index} value={granter}>
-                            {granter}
+                          {fetchName(granter) || granter}
                           </MenuItem>
                         ))}
                       </Select>

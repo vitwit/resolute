@@ -193,7 +193,7 @@ export default function ProposalInfo() {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
             chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
-          feegranter: feegrant.granter,
+          feegranter: feegrant?.granter,
         })
       );
     } else {

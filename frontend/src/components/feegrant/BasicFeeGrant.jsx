@@ -3,15 +3,18 @@ import { FormControl, InputAdornment, TextField } from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Controller, useFormContext } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import { getICNSName } from "../../features/common/commonSlice";
 
 function BasicFeeGrant(props) {
   const { granters, granter, setGranter } = props;
   const params = useParams();
+  const dispatch = useDispatch();
+
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
@@ -21,12 +24,24 @@ function BasicFeeGrant(props) {
 
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const icnsNames = useSelector((state) => state.common.icnsNames);
 
   const currency =
     networks[nameToChainIDs[currentNetwork]]?.network.config.currencies;
 
 
   const { control } = useFormContext();
+
+  const fetchName = (address) => {
+    if (!icnsNames?.[address]) {
+      dispatch(
+        getICNSName({
+          address: address,
+        })
+      );
+    }
+    return icnsNames?.[address]?.name;
+  };
 
   return (
     <>
@@ -54,7 +69,7 @@ function BasicFeeGrant(props) {
           >
             {granters.map((granter, index) => (
               <MenuItem id={index} value={granter}>
-                {granter}
+              {fetchName(granter) || granter}
               </MenuItem>
             ))}
           </Select>

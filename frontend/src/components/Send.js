@@ -8,12 +8,12 @@ import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { FormControl } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import { getICNSName } from "../features/common/commonSlice";
 
 Send.propTypes = {
   onSend: PropTypes.func.isRequired,
@@ -36,10 +36,12 @@ export default function Send(props) {
     isAuthzMode,
     grantsToMe,
     setGranter,
-    granter
+    granter,
   } = props;
 
+  const dispatch = useDispatch();
   const currency = chainInfo?.config?.currencies[0];
+  const icnsNames = useSelector((state) => state.common.icnsNames);
 
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
@@ -55,6 +57,17 @@ export default function Send(props) {
       denom: currency.coinMinimalDenom,
       granter: granter,
     });
+  };
+
+  const fetchName = (address) => {
+    if (!icnsNames?.[address]) {
+      dispatch(
+        getICNSName({
+          address: address,
+        })
+      );
+    }
+    return icnsNames?.[address]?.name;
   };
 
   return (
@@ -78,7 +91,7 @@ export default function Send(props) {
         }}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-        {isAuthzMode && grantsToMe?.length > 0 ? (
+          {isAuthzMode && grantsToMe?.length > 0 ? (
             <FormControl
               fullWidth
               sx={{
@@ -98,7 +111,7 @@ export default function Send(props) {
               >
                 {grantsToMe.map((granter, index) => (
                   <MenuItem id={index} value={granter}>
-                    {granter}
+                    {fetchName(granter) || granter}
                   </MenuItem>
                 ))}
               </Select>

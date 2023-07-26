@@ -11,14 +11,28 @@ import { FormControl } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getICNSName } from "../features/common/commonSlice";
 
 export function PeriodicFeegrant(props) {
   const { loading, onGrant, currency, granters, granter, setGranter } = props;
 
   const { handleSubmit, control, getValues } = useFormContext();
 
+  const dispatch = useDispatch();
   const isAuthzMode = useSelector((state) => state.common.authzMode);
+  const icnsNames = useSelector((state) => state.common.icnsNames);
+
+  const fetchName = (address) => {
+    if (!icnsNames?.[address]) {
+      dispatch(
+        getICNSName({
+          address: address,
+        })
+      );
+    }
+    return icnsNames?.[address]?.name;
+  };
 
   return (
     <>
@@ -46,7 +60,7 @@ export function PeriodicFeegrant(props) {
           >
             {granters.map((granter, index) => (
               <MenuItem id={index} value={granter}>
-                {granter}
+              {fetchName(granter) || granter}
               </MenuItem>
             ))}
           </Select>

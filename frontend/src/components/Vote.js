@@ -12,12 +12,12 @@ import { useSelector } from "react-redux";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
-import { setError } from "../features/common/commonSlice";
+import { getICNSName, setError } from "../features/common/commonSlice";
 
 VoteDialog.propTypes = {
   closeDialog: PropTypes.func.isRequired,
@@ -27,14 +27,16 @@ VoteDialog.propTypes = {
   isAuthzMode: PropTypes.bool.isRequired,
 };
 
-
 export default function VoteDialog(props) {
   const [option, setOption] = React.useState("");
   const dispatch = useDispatch();
-  const [granter, setGranter] = React.useState(props.granters.length > 0 ? props.granters[0] : "");
+  const [granter, setGranter] = React.useState(
+    props.granters.length > 0 ? props.granters[0] : ""
+  );
   const [justification, setJustification] = React.useState("");
   const govTx = useSelector((state) => state.gov.tx);
   const authzExecTx = useSelector((state) => state.authz.execTx);
+  const icnsNames = useSelector((state) => state.common.icnsNames);
 
   const handleClose = () => {
     setOption("");
@@ -42,13 +44,13 @@ export default function VoteDialog(props) {
   };
 
   const handleVote = () => {
-    if(!option) {
+    if (!option) {
       dispatch(
         setError({
           type: "error",
-          message: "Vote option not selected"
+          message: "Vote option not selected",
         })
-      )
+      );
       return;
     }
     props.onVote({
@@ -60,6 +62,17 @@ export default function VoteDialog(props) {
 
   const handleChange = (e) => {
     setOption(e.target.value);
+  };
+
+  const fetchName = (address) => {
+    if (!icnsNames?.[address]) {
+      dispatch(
+        getICNSName({
+          address: address,
+        })
+      );
+    }
+    return icnsNames?.[address]?.name;
   };
 
   return (
@@ -133,39 +146,34 @@ export default function VoteDialog(props) {
                   }
                   label="Abstain"
                 />
-
               </FormGroup>
             </FormControl>
-            {
-              props.isAuthzMode && props.granters.length > 0 ?
-                <FormControl fullWidth
-                  sx={{
-                    mt: 1,
+            {props.isAuthzMode && props.granters.length > 0 ? (
+              <FormControl
+                fullWidth
+                sx={{
+                  mt: 1,
+                }}
+              >
+                <InputLabel id="granter-label">Granter Account</InputLabel>
+                <Select
+                  labelId="granter-label"
+                  id="granter-select"
+                  value={granter}
+                  label="Granter account"
+                  onChange={(e) => {
+                    setGranter(e.target.value);
                   }}
+                  size="small"
                 >
-                  <InputLabel id="granter-label">Granter Account</InputLabel>
-                  <Select
-                    labelId="granter-label"
-                    id="granter-select"
-                    value={granter}
-                    label="Granter account"
-                    onChange={(e) => {
-                      setGranter(e.target.value);
-                    }}
-                    size="small"
-                  >
-                    {
-                      props.granters.map((granter, index) => (
-
-                        <MenuItem id={index} value={granter}>{granter}</MenuItem>
-                      ))
-                    }
-                  </Select>
-
-                </FormControl>
-                :
-                null
-            }
+                  {props.granters.map((granter, index) => (
+                    <MenuItem id={index} value={granter}>
+                      {fetchName('cosmos1vv6hruquzpty4xpks9znkw8gys5x4nsnqw9f4k') || granter}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ) : null}
 
             <FormControl
               fullWidth
@@ -179,9 +187,8 @@ export default function VoteDialog(props) {
                 placeholder="justification"
                 value={justification}
                 onChange={(e) => {
-                  setJustification(e.target.value)
+                  setJustification(e.target.value);
                 }}
-
               />
             </FormControl>
           </Box>
@@ -196,7 +203,7 @@ export default function VoteDialog(props) {
             disableElevation
           >
             {govTx?.status === "pending" ||
-              authzExecTx?.status === "pending" ? (
+            authzExecTx?.status === "pending" ? (
               <CircularProgress size={25} />
             ) : (
               "Vote"
