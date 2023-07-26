@@ -133,7 +133,7 @@ export default function Authz() {
         })
       );
     }
-  }, [params, chainInfo, txAuthzRes?.status]);
+  }, [chainInfo, txAuthzRes?.status]);
 
   useEffect(() => {
     if (grantsToMe?.errMsg !== "" && grantsToMe?.status === "rejected") {
