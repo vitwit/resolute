@@ -136,52 +136,7 @@ export function CustomAppBar(props) {
             }
           ></FormControlLabel>
         ) : null}
-        {/* <Button
-          id="demo-positioned-button"
-          color="inherit"
-          endIcon={<ExpandMoreOutlinedIcon />}
-          aria-controls={anchorEl ? "demo-positioned-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={anchorEl ? "true" : undefined}
-          onClick={handleClick}
-        >
-          {selectNetwork || "Select Network"}
-        </Button>
-        <Menu
-          id="demo-positioned-menu"
-          aria-labelledby="demo-positioned-button"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={() => setAnchorEl(null)}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          {chainIDs.map((chain) => (
-            <MenuItem
-              key={chain}
-              onClick={() => {
-                setAnchorEl(null);
-                dispatch(
-                  setSelectedNetwork({
-                    chainName: networks[chain].network.config.chainName,
-                    chainID: networks[chain].network.config.chainId,
-                  })
-                );
-                navigateTo("/");
-              }}
-            >
-              <ListItemText>
-                {networks[chain].network.config.chainName}
-              </ListItemText>
-            </MenuItem>
-          ))}
-        </Menu> */}
+        
         {!isWalletConnected ? (
           <Button
             color="inherit"
