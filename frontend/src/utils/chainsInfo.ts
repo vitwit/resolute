@@ -491,7 +491,7 @@ export const networks: Network[] = [
     keplrExperimental: true,
     leapExperimental: true,
     isTestnet: false,
-    explorerTxHashEndpoint: "https://www.mintscan.io/cosmos/txs/",
+    explorerTxHashEndpoint: "http://127.0.0.1:1317/cosmos/tx/v1beta1/txs/",
     config: {
       chainId: "testnet",
       chainName: "Simapp",
