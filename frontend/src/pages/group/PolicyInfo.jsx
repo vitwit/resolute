@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getGroupById,
+  getGroupMembersById,
   getGroupPoliciesById,
   txUpdateGroupPolicy,
   txUpdateGroupPolicyAdmin,
@@ -66,6 +67,17 @@ function PolicyInfo({ chainInfo, address, chainID }) {
     getGroup();
     getPolicies();
   }, [chainInfo]);
+
+  useEffect(() => {
+    dispatch(
+      getGroupMembersById({
+        baseURL: chainInfo?.config?.rest,
+        id: id,
+        pagination: { limit: 100, key: "" },
+        chainID: chainID,
+      })
+    );
+  }, [chainInfo])
 
   useEffect(() => {
     const data = groupPolicies?.data?.group_policies || [];

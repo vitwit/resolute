@@ -8,6 +8,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import { useSelector } from "react-redux";
 import { shortenAddress, ThresholdDecisionPolicy } from "../../utils/util";
 import moment from "moment";
+import { getDaysCount } from "./PolicyCard";
 
 interface GridItemProps {
   label: string;
@@ -245,13 +246,7 @@ function PolicyDetails({
           <LabelText text="Voting Period" />
           <LabelValue
             text={
-              moment
-                .utc(
-                  parseInt(
-                    policyObj?.decision_policy?.windows?.voting_period || 0
-                  ) * 1000
-                )
-                .format("D") + " Days"
+              getDaysCount(policyObj?.decision_policy?.windows?.voting_period) + " Days"
             }
           />
         </Grid>
@@ -259,14 +254,7 @@ function PolicyDetails({
           <LabelText text="Execution Delay" />
           <LabelValue
             text={
-              moment
-                .utc(
-                  parseInt(
-                    policyObj?.decision_policy?.windows?.min_execution_period ||
-                      0
-                  ) * 1000
-                )
-                .format("D") + " Days"
+              getDaysCount(policyObj?.decision_policy?.windows?.min_execution_period) + " Days"
             }
           />
         </Grid>
