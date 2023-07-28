@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { MenuItem, Select, FormControl } from '@mui/material'
 import { Box } from '@mui/system'
 import PropTypes from "prop-types";
+import { useDispatch } from 'react-redux';
+import { setSelectedNetwork } from '../../features/common/commonSlice';
 
 export default function SelectNetwork(props) {
     const { onSelect, networks, defaultNetwork } = props;
+    const dispatch = useDispatch();
 
     const [selected, setSelected] = useState("cosmoshub");
     const handleNetworkSelect = (e) => {
@@ -15,9 +18,16 @@ export default function SelectNetwork(props) {
     useEffect(() => {
         if (defaultNetwork?.length > 0) {
             setSelected(defaultNetwork)
-
         }
     }, [defaultNetwork]);
+
+    useEffect(() => {
+        dispatch(
+            setSelectedNetwork({
+              chainName: selected
+            })
+          );
+    }, [selected])
 
     return (
         <Box sx={{ maxWidth: 150 }}>
