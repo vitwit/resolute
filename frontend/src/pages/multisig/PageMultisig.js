@@ -14,8 +14,8 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import { DialogCreateMultisig } from "../../components/multisig/DialogCreateMultisig";
-import { getMultisigAccounts } from "../../features/multisig/multisigSlice";
+import DialogCreateMultisig from "../../components/multisig/DialogCreateMultisig";
+import { getMultisigAccounts, resetCreateMultisigRes } from "../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 import { getLocalTime } from "../../utils/datetime";
@@ -70,6 +70,7 @@ export default function PageMultisig() {
     if (createMultiAccRes.status === "idle") {
       setOpen(false);
       dispatch(getMultisigAccounts(walletInfo?.bech32Address));
+      dispatch(resetCreateMultisigRes())
     }
   }, [createMultiAccRes]);
 
@@ -129,7 +130,7 @@ export default function PageMultisig() {
               mt: 6,
             }}
           >
-            <Typography variant="body1" fontWeight={500}>
+            <Typography variant="h6" fontWeight={600}>
               No Multisig accounts found on your address
             </Typography>
             <Button
@@ -241,6 +242,7 @@ export default function PageMultisig() {
           onClose={onClose}
           open={open}
           address={walletInfo?.bech32Address}
+          pubKey={walletInfo?.pubKey}
         />
       ) : null}
     </Paper>
