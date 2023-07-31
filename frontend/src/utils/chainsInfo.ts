@@ -355,7 +355,7 @@ export const networks: Network[] = [
     isTestnet: false,
     explorerTxHashEndpoint: "https://passage.aneka.io/txs/",
     config: {
-      chainId: "passage-1",
+      chainId: "passage-2",
       chainName: "Passage",
       rest: "https://api.passage.vitwit.com/",
       rpc: "https://rpc.passage.vitwit.com",
