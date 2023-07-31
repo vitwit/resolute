@@ -3,7 +3,10 @@ import { Box } from "@mui/system";
 import React, { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { StyledTableCell, StyledTableRow } from "../../../components/CustomTable";
+import {
+  StyledTableCell,
+  StyledTableRow,
+} from "../../../components/CustomTable";
 import { claimRewardInBank } from "../../../features/bank/bankSlice";
 import {
   resetChainRewards,
@@ -16,26 +19,47 @@ import {
 } from "../../../features/staking/stakeSlice";
 import { Delegate } from "../../../txns/staking";
 import { parseBalance } from "../../../utils/denom";
-import chainDenoms from '../../../utils/chainDenoms.json';
+import chainDenoms from "../../../utils/chainDenoms.json";
+import { getTokenPrice } from "../../../features/common/commonSlice";
 
 export const ChainDetails = ({ chainID, chainName }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const feegrant = useSelector((state) => state.common.feegrant);
   const wallet = useSelector((state) => state.wallet);
-  const tokensPriceInfo = useSelector((state) => state.common?.allTokensInfoState?.info);
-  const { list: balance } = useSelector((state) => state.bank.balances?.[chainID]) || {};
-  const totalRewards = useSelector((state) => state.distribution?.chains?.[chainID]?.delegatorRewards?.totalRewards || 0);
-  const distTxStatus = useSelector((state) => state.distribution?.chains?.[chainID]?.tx);
-  const delegatorRewards = useSelector((state) => state.distribution?.chains?.[chainID]?.delegatorRewards || {});
-  const staked = useSelector((state) => state.staking.chains[chainID]?.delegations?.totalStaked);
-  const delegations = useSelector((state) => state.staking?.chains?.[chainID]?.delegations || []);
-  const txRestakeStatus = useSelector((state) => state.staking.overviewTx.status);
+  const tokensPriceInfo = useSelector(
+    (state) => state.common?.allTokensInfoState?.info
+  );
+  const { list: balance } =
+    useSelector((state) => state.bank.balances?.[chainID]) || {};
+  const totalRewards = useSelector(
+    (state) =>
+      state.distribution?.chains?.[chainID]?.delegatorRewards?.totalRewards || 0
+  );
+  const distTxStatus = useSelector(
+    (state) => state.distribution?.chains?.[chainID]?.tx
+  );
+  const delegatorRewards = useSelector(
+    (state) => state.distribution?.chains?.[chainID]?.delegatorRewards || {}
+  );
+  const staked = useSelector(
+    (state) => state.staking.chains[chainID]?.delegations?.totalStaked
+  );
+  const delegations = useSelector(
+    (state) => state.staking?.chains?.[chainID]?.delegations || []
+  );
+  const txRestakeStatus = useSelector(
+    (state) => state.staking.overviewTx.status
+  );
 
   const chainInfo = wallet?.networks?.[chainID];
-  const denom = chainInfo?.network?.config?.currencies?.[0]?.coinDenom;
-  const minimalDenom = chainInfo?.network?.config?.currencies?.[0]?.coinMinimalDenom;
-  const decimals = chainInfo?.network?.config?.currencies?.[0]?.coinDecimals || 1;
+  const originDenom = chainInfo?.network?.config?.currencies?.[0]?.coinDenom;
+  const originMinimalDenom =
+    chainInfo?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+  const minimalDenom =
+    chainInfo?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+  const decimals =
+    chainInfo?.network?.config?.currencies?.[0]?.coinDecimals || 1;
   const logoURL = chainInfo?.network?.logos?.menu;
 
   // Memoized function to prevent unnecessary re-renders
@@ -97,7 +121,8 @@ export const ChainDetails = ({ chainID, chainName }) => {
         aminoConfig: chainInfo?.network?.aminoConfig,
         prefix: chainInfo?.network?.config?.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo?.network?.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** decimals,
+          chainInfo?.network?.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** decimals,
         feegranter: feegrant?.granter,
         memo: "Delegate(rewards)",
       })
@@ -121,7 +146,8 @@ export const ChainDetails = ({ chainID, chainName }) => {
         prefix: chainInfo.network.config.bech32Config.bech32PrefixAccAddr,
         rest: chainInfo.network.config.rest,
         feeAmount:
-          chainInfo.network.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** decimals,
+          chainInfo.network.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** decimals,
         feegranter: feegrant.granter,
       })
     );
@@ -129,212 +155,126 @@ export const ChainDetails = ({ chainID, chainName }) => {
 
   return (
     <>
-      {/* {balance?.length > 0 ? (
-        <StyledTableRow>
-          <StyledTableCell size="small">
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Avatar
-                src={logoURL}
-                sx={{
-                  width: 24,
-                  height: 24,
-                  "&:hover": {
-                    backgroundColor: "white",
-                    cursor: "pointer",
-                  },
-                }}
-                onClick={() => handleOnClick(chainName)}
-              />
-              &nbsp;&nbsp;
-              <Typography
-                sx={{
-                  textTransform: "capitalize",
-                  "&:hover": {
-                    cursor: "pointer",
-                    color: "purple",
-                  },
-                }}
-                onClick={() => handleOnClick(chainName)}
-              >
-                {chainName}
-              </Typography>
-            </Box>
-          </StyledTableCell>
-          <StyledTableCell>
-            {parseBalance(balance, decimals, minimalDenom).toLocaleString()}
-            &nbsp;
-            {denom}
-          </StyledTableCell>
-          <StyledTableCell>
-            {(+staked / 10 ** decimals).toLocaleString()}&nbsp;{denom}
-          </StyledTableCell>
-          <StyledTableCell>
-            {(+totalRewards / 10 ** decimals).toLocaleString()}&nbsp;{denom}
-          </StyledTableCell>
-          <StyledTableCell>
-            {
-              tokensPriceInfo[minimalDenom] ? `$${parseFloat(tokensPriceInfo[minimalDenom]?.info?.["usd"]).toFixed(2)}` : "N/A"
-            }
-          </StyledTableCell>
-          <StyledTableCell>
-            <Button
-              color="primary"
-              disableElevation
-              variant="contained"
-              size="small"
-              sx={{
-                textTransform: "none",
-              }}
-              disabled={
-                totalRewards <= 0 ||
-                txRestakeStatus === "pending" ||
-                distTxStatus?.status === "pending"
-              }
-              onClick={actionClaimAndStake}
-            >
-
-              {txRestakeStatus?.status === "pending" ? (
-                <>
-                  <CircularProgress size={18} />
-                  &nbsp;Claim&nbsp;&&nbsp;Stake
-                </>
-              ) : (
-                <>Claim&nbsp;&&nbsp;Stake</>
-              )}
-            </Button>
-            <Button
-              color="primary"
-              disableElevation
-              variant="contained"
-              size="small"
-              sx={{
-                textTransform: "none",
-                ml: 1,
-              }}
-              disabled={
-                totalRewards <= 0 ||
-                txRestakeStatus === "pending" ||
-                distTxStatus?.status === "pending"
-              }
-              onClick={claimRewards}
-            >
-              {distTxStatus?.status === "pending" ? (
-                <>
-                  <CircularProgress size={18} />
-                  &nbsp;Claim
-                </>
-              ) : (
-                <>Claim</>
-              )}
-            </Button>
-          </StyledTableCell>
-        </StyledTableRow>
-      ) : null} */}
       {balance?.map((item, index) => {
         const denomInfo = chainDenoms[chainName].filter((x) => {
-          return x.denom === item.denom
-        })
-        return (
+          return x.denom === item.denom;
+        });
+        console.log("------", denomInfo);
+        dispatch(getTokenPrice(denomInfo.origin_denom));
+        return denomInfo.length ? (
           <StyledTableRow key={index}>
-          <StyledTableCell size="small">
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Avatar
-                src={logoURL}
+            <StyledTableCell size="small">
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Avatar
+                  src={logoURL}
+                  sx={{
+                    width: 24,
+                    height: 24,
+                    "&:hover": {
+                      backgroundColor: "white",
+                      cursor: "pointer",
+                    },
+                  }}
+                  onClick={() => handleOnClick(chainName)}
+                />
+                &nbsp;&nbsp;
+                <Typography
+                  sx={{
+                    textTransform: "capitalize",
+                    "&:hover": {
+                      cursor: "pointer",
+                      color: "purple",
+                    },
+                  }}
+                  onClick={() => handleOnClick(chainName)}
+                >
+                  {chainName}
+                </Typography>
+              </Box>
+            </StyledTableCell>
+            <StyledTableCell>
+              {parseBalance(balance, decimals, item.denom).toLocaleString()}
+              &nbsp;
+              {denomInfo[0].symbol}
+            </StyledTableCell>
+            <StyledTableCell>
+              {originMinimalDenom !== item.denom
+                ? "-"
+                : (+staked / 10 ** decimals).toLocaleString() +
+                  " " +
+                  originDenom}
+            </StyledTableCell>
+            <StyledTableCell>
+              {originMinimalDenom !== item.denom
+                ? "-"
+                : (+totalRewards / 10 ** decimals).toLocaleString() +
+                  " " +
+                  originDenom}
+            </StyledTableCell>
+            <StyledTableCell>
+              {tokensPriceInfo[denomInfo[0]?.origin_denom]
+                ? `$${(
+                    parseFloat(
+                      tokensPriceInfo[denomInfo[0]?.origin_denom]?.info?.["usd"]
+                    ) * parseBalance(balance, decimals, item.denom)
+                  ).toFixed(2)}`
+                : "N/A"}
+            </StyledTableCell>
+            <StyledTableCell>
+              <Button
+                color="primary"
+                disableElevation
+                variant="contained"
+                size="small"
                 sx={{
-                  width: 24,
-                  height: 24,
-                  "&:hover": {
-                    backgroundColor: "white",
-                    cursor: "pointer",
-                  },
+                  textTransform: "none",
                 }}
-                onClick={() => handleOnClick(chainName)}
-              />
-              &nbsp;&nbsp;
-              <Typography
-                sx={{
-                  textTransform: "capitalize",
-                  "&:hover": {
-                    cursor: "pointer",
-                    color: "purple",
-                  },
-                }}
-                onClick={() => handleOnClick(chainName)}
+                disabled={
+                  totalRewards <= 0 ||
+                  txRestakeStatus === "pending" ||
+                  distTxStatus?.status === "pending"
+                }
+                onClick={actionClaimAndStake}
               >
-                {chainName}
-              </Typography>
-            </Box>
-          </StyledTableCell>
-          <StyledTableCell>
-            {parseBalance(balance, decimals, item.denom).toLocaleString()}
-            &nbsp;
-            {denomInfo[0].symbol}
-          </StyledTableCell>
-          <StyledTableCell>
-            {(+staked / 10 ** decimals).toLocaleString()}&nbsp;{denom}
-          </StyledTableCell>
-          <StyledTableCell>
-            {(+totalRewards / 10 ** decimals).toLocaleString()}&nbsp;{denom}
-          </StyledTableCell>
-          <StyledTableCell>
-            {
-              tokensPriceInfo[minimalDenom] ? `$${parseFloat(tokensPriceInfo[minimalDenom]?.info?.["usd"]).toFixed(2)}` : "N/A"
-            }
-          </StyledTableCell>
-          <StyledTableCell>
-            <Button
-              color="primary"
-              disableElevation
-              variant="contained"
-              size="small"
-              sx={{
-                textTransform: "none",
-              }}
-              disabled={
-                totalRewards <= 0 ||
-                txRestakeStatus === "pending" ||
-                distTxStatus?.status === "pending"
-              }
-              onClick={actionClaimAndStake}
-            >
-
-              {txRestakeStatus?.status === "pending" ? (
-                <>
-                  <CircularProgress size={18} />
-                  &nbsp;Claim&nbsp;&&nbsp;Stake
-                </>
-              ) : (
-                <>Claim&nbsp;&&nbsp;Stake</>
-              )}
-            </Button>
-            <Button
-              color="primary"
-              disableElevation
-              variant="contained"
-              size="small"
-              sx={{
-                textTransform: "none",
-                ml: 1,
-              }}
-              disabled={
-                totalRewards <= 0 ||
-                txRestakeStatus === "pending" ||
-                distTxStatus?.status === "pending"
-              }
-              onClick={claimRewards}
-            >
-              {distTxStatus?.status === "pending" ? (
-                <>
-                  <CircularProgress size={18} />
-                  &nbsp;Claim
-                </>
-              ) : (
-                <>Claim</>
-              )}
-            </Button>
-          </StyledTableCell>
-        </StyledTableRow>
-        )
+                {txRestakeStatus?.status === "pending" ? (
+                  <>
+                    <CircularProgress size={18} />
+                    &nbsp;Claim&nbsp;&&nbsp;Stake
+                  </>
+                ) : (
+                  <>Claim&nbsp;&&nbsp;Stake</>
+                )}
+              </Button>
+              <Button
+                color="primary"
+                disableElevation
+                variant="contained"
+                size="small"
+                sx={{
+                  textTransform: "none",
+                  ml: 1,
+                }}
+                disabled={
+                  totalRewards <= 0 ||
+                  txRestakeStatus === "pending" ||
+                  distTxStatus?.status === "pending"
+                }
+                onClick={claimRewards}
+              >
+                {distTxStatus?.status === "pending" ? (
+                  <>
+                    <CircularProgress size={18} />
+                    &nbsp;Claim
+                  </>
+                ) : (
+                  <>Claim</>
+                )}
+              </Button>
+            </StyledTableCell>
+          </StyledTableRow>
+        ) : (
+          <></>
+        );
       })}
     </>
   );
