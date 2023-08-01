@@ -89,7 +89,7 @@ export const networks: Network[] = [
     config: {
       chainId: "cosmoshub-4",
       chainName: "CosmosHub",
-      rest: "https://lcd.cosmos.dragonstake.io",
+      rest: "https://lcd-cosmoshub.blockapsis.com",
       rpc: "https://resolute.witval.com/cosmos_rpc/",
       currencies: [
         {
