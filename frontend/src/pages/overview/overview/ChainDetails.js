@@ -160,16 +160,130 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
     <>
       {assetType === "native" ? (
         <>
-          <>
-            {balance?.length > 0 ? (
-              <StyledTableRow>
+          {balance?.length > 0 ? (
+            <StyledTableRow>
+              <StyledTableCell size="small">
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Avatar
+                    src={logoURL}
+                    sx={{
+                      width: 24,
+                      height: 24,
+                      "&:hover": {
+                        backgroundColor: "white",
+                        cursor: "pointer",
+                      },
+                    }}
+                    onClick={() => handleOnClick(chainName)}
+                  />
+                  &nbsp;&nbsp;
+                  <Typography
+                    sx={{
+                      textTransform: "capitalize",
+                      "&:hover": {
+                        cursor: "pointer",
+                        color: "purple",
+                      },
+                    }}
+                    onClick={() => handleOnClick(chainName)}
+                  >
+                    {chainName}
+                  </Typography>
+                </Box>
+              </StyledTableCell>
+              <StyledTableCell>
+                {parseBalance(
+                  balance,
+                  decimals,
+                  originMinimalDenom
+                ).toLocaleString()}
+                &nbsp;
+                {originDenom}
+              </StyledTableCell>
+              <StyledTableCell>
+                {(+staked / 10 ** decimals).toLocaleString()}&nbsp;
+                {originDenom}
+              </StyledTableCell>
+              <StyledTableCell>
+                {(+totalRewards / 10 ** decimals).toLocaleString()}&nbsp;
+                {originDenom}
+              </StyledTableCell>
+              <StyledTableCell>
+                {tokensPriceInfo[originMinimalDenom]
+                  ? `$${parseFloat(
+                      tokensPriceInfo[originMinimalDenom]?.info?.["usd"]
+                    ).toFixed(2)}`
+                  : "N/A"}
+              </StyledTableCell>
+              <StyledTableCell>
+                <Button
+                  color="primary"
+                  disableElevation
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    textTransform: "none",
+                  }}
+                  disabled={
+                    totalRewards <= 0 ||
+                    txRestakeStatus === "pending" ||
+                    distTxStatus?.status === "pending"
+                  }
+                  onClick={actionClaimAndStake}
+                >
+                  {txRestakeStatus?.status === "pending" ? (
+                    <>
+                      <CircularProgress size={18} />
+                      &nbsp;Claim&nbsp;&&nbsp;Stake
+                    </>
+                  ) : (
+                    <>Claim&nbsp;&&nbsp;Stake</>
+                  )}
+                </Button>
+                <Button
+                  color="primary"
+                  disableElevation
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    textTransform: "none",
+                    ml: 1,
+                  }}
+                  disabled={
+                    totalRewards <= 0 ||
+                    txRestakeStatus === "pending" ||
+                    distTxStatus?.status === "pending"
+                  }
+                  onClick={claimRewards}
+                >
+                  {distTxStatus?.status === "pending" ? (
+                    <>
+                      <CircularProgress size={18} />
+                      &nbsp;Claim
+                    </>
+                  ) : (
+                    <>Claim</>
+                  )}
+                </Button>
+              </StyledTableCell>
+            </StyledTableRow>
+          ) : null}
+        </>
+      ) : (
+        <>
+          {balance?.map((item, index) => {
+            const denomInfo = chainDenoms[chainName].filter((x) => {
+              return x.denom === item.denom;
+            });
+            return denomInfo.length && item.denom !== originMinimalDenom ? (
+              <StyledTableRow key={index}>
                 <StyledTableCell size="small">
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Avatar
-                      src={logoURL}
+                      src={ibcChainLogoUrl + denomInfo[0]?.image}
                       sx={{
-                        width: 24,
-                        height: 24,
+                        width: 28,
+                        height: 28,
                         "&:hover": {
                           backgroundColor: "white",
                           cursor: "pointer",
@@ -178,191 +292,68 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                       onClick={() => handleOnClick(chainName)}
                     />
                     &nbsp;&nbsp;
-                    <Typography
-                      sx={{
-                        textTransform: "capitalize",
-                        "&:hover": {
-                          cursor: "pointer",
-                          color: "purple",
-                        },
-                      }}
-                      onClick={() => handleOnClick(chainName)}
-                    >
-                      {chainName}
-                    </Typography>
-                  </Box>
-                </StyledTableCell>
-                <StyledTableCell>
-                  {parseBalance(
-                    balance,
-                    decimals,
-                    originMinimalDenom
-                  ).toLocaleString()}
-                  &nbsp;
-                  {originDenom}
-                </StyledTableCell>
-                <StyledTableCell>
-                  {(+staked / 10 ** decimals).toLocaleString()}&nbsp;
-                  {originDenom}
-                </StyledTableCell>
-                <StyledTableCell>
-                  {(+totalRewards / 10 ** decimals).toLocaleString()}&nbsp;
-                  {originDenom}
-                </StyledTableCell>
-                <StyledTableCell>
-                  {tokensPriceInfo[originMinimalDenom]
-                    ? `$${parseFloat(
-                        tokensPriceInfo[originMinimalDenom]?.info?.["usd"]
-                      ).toFixed(2)}`
-                    : "N/A"}
-                </StyledTableCell>
-                <StyledTableCell>
-                  <Button
-                    color="primary"
-                    disableElevation
-                    variant="contained"
-                    size="small"
-                    sx={{
-                      textTransform: "none",
-                    }}
-                    disabled={
-                      totalRewards <= 0 ||
-                      txRestakeStatus === "pending" ||
-                      distTxStatus?.status === "pending"
-                    }
-                    onClick={actionClaimAndStake}
-                  >
-                    {txRestakeStatus?.status === "pending" ? (
-                      <>
-                        <CircularProgress size={18} />
-                        &nbsp;Claim&nbsp;&&nbsp;Stake
-                      </>
-                    ) : (
-                      <>Claim&nbsp;&&nbsp;Stake</>
-                    )}
-                  </Button>
-                  <Button
-                    color="primary"
-                    disableElevation
-                    variant="contained"
-                    size="small"
-                    sx={{
-                      textTransform: "none",
-                      ml: 1,
-                    }}
-                    disabled={
-                      totalRewards <= 0 ||
-                      txRestakeStatus === "pending" ||
-                      distTxStatus?.status === "pending"
-                    }
-                    onClick={claimRewards}
-                  >
-                    {distTxStatus?.status === "pending" ? (
-                      <>
-                        <CircularProgress size={18} />
-                        &nbsp;Claim
-                      </>
-                    ) : (
-                      <>Claim</>
-                    )}
-                  </Button>
-                </StyledTableCell>
-              </StyledTableRow>
-            ) : null}
-          </>
-        </>
-      ) : (
-        <>
-          <>
-            {balance?.map((item, index) => {
-              const denomInfo = chainDenoms[chainName].filter((x) => {
-                return x.denom === item.denom;
-              });
-              dispatch(getTokenPrice(denomInfo.origin_denom));
-              return (denomInfo.length && item.denom !== originMinimalDenom) ? (
-                <StyledTableRow key={index}>
-                  <StyledTableCell size="small">
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Avatar
-                        src={ibcChainLogoUrl + denomInfo[0]?.image}
+                    <Box>
+                      <Typography
                         sx={{
-                          width: 28,
-                          height: 28,
+                          textTransform: "capitalize",
                           "&:hover": {
-                            backgroundColor: "white",
                             cursor: "pointer",
+                            color: "purple",
                           },
                         }}
                         onClick={() => handleOnClick(chainName)}
-                      />
-                      &nbsp;&nbsp;
-                      <Box>
+                      >
+                        {denomInfo[0]?.origin_chain}
                         <Typography
                           sx={{
-                            textTransform: "capitalize",
-                            "&:hover": {
-                              cursor: "pointer",
-                              color: "purple",
-                            },
-                          }}
-                          onClick={() => handleOnClick(chainName)}
-                        >
-                          {denomInfo[0]?.origin_chain}
-                          <Typography
-                            sx={{
-                              backgroundColor: "#767676",
-                              borderRadius: "4px",
-                              ml: "4px",
-                              px: "4px",
-                              fontWeight: 600,
-                              display: "inline",
-                              color: "white",
-                              fontSize: "14px",
-                            }}
-                          >
-                            IBC
-                          </Typography>
-                        </Typography>
-                        <Typography
-                          sx={{
-                            textTransform: "capitalize",
-                            "&:hover": {
-                              cursor: "pointer",
-                              color: "purple",
-                            },
+                            backgroundColor: "#767676",
+                            borderRadius: "4px",
+                            ml: "4px",
+                            px: "4px",
+                            fontWeight: 600,
+                            display: "inline",
+                            color: "white",
                             fontSize: "14px",
                           }}
-                          onClick={() => handleOnClick(chainName)}
                         >
-                          On {chainName}
+                          IBC
                         </Typography>
-                      </Box>
+                      </Typography>
+                      <Typography
+                        sx={{
+                          textTransform: "capitalize",
+                          "&:hover": {
+                            cursor: "pointer",
+                            color: "purple",
+                          },
+                          fontSize: "14px",
+                        }}
+                        onClick={() => handleOnClick(chainName)}
+                      >
+                        On {chainName}
+                      </Typography>
                     </Box>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    {parseBalance(
-                      balance,
-                      decimals,
-                      item.denom
-                    ).toLocaleString()}
-                    &nbsp;
-                    {denomInfo[0].symbol}
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    {tokensPriceInfo[denomInfo[0]?.origin_denom]
-                      ? `$${parseFloat(
-                          tokensPriceInfo[denomInfo[0]?.origin_denom]?.info?.[
-                            "usd"
-                          ]
-                        ).toFixed(2)}`
-                      : "N/A"}
-                  </StyledTableCell>
-                </StyledTableRow>
-              ) : (
-                <></>
-              );
-            })}
-          </>
+                  </Box>
+                </StyledTableCell>
+                <StyledTableCell>
+                  {parseBalance(balance, denomInfo[0]?.decimals, item.denom).toLocaleString()}
+                  &nbsp;
+                  {denomInfo[0].symbol}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {tokensPriceInfo[denomInfo[0]?.origin_denom]
+                    ? `$${parseFloat(
+                        tokensPriceInfo[denomInfo[0]?.origin_denom]?.info?.[
+                          "usd"
+                        ]
+                      ).toFixed(2)}`
+                    : "N/A"}
+                </StyledTableCell>
+              </StyledTableRow>
+            ) : (
+              <></>
+            );
+          })}
         </>
       )}
     </>

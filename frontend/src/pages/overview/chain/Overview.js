@@ -18,12 +18,13 @@ import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { copyToClipboard } from "../../../utils/clipboard";
 import { getTokenPrice } from "../../../features/common/commonSlice";
+import Assets from "./Assets";
 
 export default function Overview(props) {
   const { chainID, chainName } = props;
   const wallet = useSelector((state) => state.wallet);
   const { connected } = wallet;
-  const address = wallet.networks[chainID].walletInfo.bech32Address;
+  const address = "osmo1stk09x2c92d24406drhn5pyhzqx8f8kpk43g4l";
   const chainInfo = wallet.networks[chainID].network;
   const pubkey = wallet.networks[chainID].walletInfo.pubKey;
   const balance = useSelector((state) => state.bank.balances);
@@ -183,13 +184,7 @@ export default function Overview(props) {
                     minHeight: 280,
                   }}
                 >
-                  <Typography
-                    sx={{ justifyContent: "center" }}
-                    variant="h6"
-                    color="text.secondary"
-                  >
-                    Coming soon
-                  </Typography>
+                  <Assets balances={balance?.[chainID]?.list} chainName={chainName} chainInfo={chainInfo} />
                 </Paper>
               </Grid>
 
