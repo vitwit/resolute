@@ -22,7 +22,7 @@ import { parseBalance } from "../../../utils/denom";
 import chainDenoms from "../../../utils/chainDenoms.json";
 import { getTokenPrice } from "../../../features/common/commonSlice";
 
-export const ChainDetails = ({ chainID, chainName }) => {
+export const ChainDetails = ({ chainID, chainName, assetType }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const feegrant = useSelector((state) => state.common.feegrant);
@@ -56,11 +56,12 @@ export const ChainDetails = ({ chainID, chainName }) => {
   const originDenom = chainInfo?.network?.config?.currencies?.[0]?.coinDenom;
   const originMinimalDenom =
     chainInfo?.network?.config?.currencies?.[0]?.coinMinimalDenom;
-  const minimalDenom =
-    chainInfo?.network?.config?.currencies?.[0]?.coinMinimalDenom;
   const decimals =
     chainInfo?.network?.config?.currencies?.[0]?.coinDecimals || 1;
   const logoURL = chainInfo?.network?.logos?.menu;
+
+  const ibcChainLogoUrl =
+    "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/";
 
   // Memoized function to prevent unnecessary re-renders
   const handleOnClick = useCallback(() => {
@@ -84,7 +85,9 @@ export const ChainDetails = ({ chainID, chainName }) => {
 
   useEffect(() => {
     if (distTxStatus?.status === "idle") {
-      dispatch(claimRewardInBank({ chainID, totalRewards, minimalDenom }));
+      dispatch(
+        claimRewardInBank({ chainID, totalRewards, originMinimalDenom })
+      );
       dispatch(resetChainRewards({ chainID }));
     }
   }, [distTxStatus?.status]);
@@ -98,13 +101,13 @@ export const ChainDetails = ({ chainID, chainName }) => {
     const delegator = chainInfo?.walletInfo?.bech32Address;
     for (const delegation of delegatorRewards.list) {
       for (const reward of delegation.reward) {
-        if (reward.denom === minimalDenom) {
+        if (reward.denom === originMinimalDenom) {
           msgs.push(
             Delegate(
               delegator,
               delegation.validator_address,
               parseInt(reward.amount),
-              minimalDenom
+              originMinimalDenom
             )
           );
         }
@@ -115,7 +118,7 @@ export const ChainDetails = ({ chainID, chainName }) => {
       txRestake({
         msgs: msgs,
         chainId: chainID,
-        denom: minimalDenom,
+        denom: originMinimalDenom,
         chainId: chainID,
         rest: chainInfo?.network?.config?.rest,
         aminoConfig: chainInfo?.network?.aminoConfig,
@@ -140,7 +143,7 @@ export const ChainDetails = ({ chainID, chainName }) => {
     dispatch(
       txWithdrawAllRewards({
         msgs: delegationPairs,
-        denom: minimalDenom,
+        denom: originMinimalDenom,
         chainID: chainID,
         aminoConfig: chainInfo.network.aminoConfig,
         prefix: chainInfo.network.config.bech32Config.bech32PrefixAccAddr,
@@ -155,127 +158,213 @@ export const ChainDetails = ({ chainID, chainName }) => {
 
   return (
     <>
-      {balance?.map((item, index) => {
-        const denomInfo = chainDenoms[chainName].filter((x) => {
-          return x.denom === item.denom;
-        });
-        console.log("------", denomInfo);
-        dispatch(getTokenPrice(denomInfo.origin_denom));
-        return denomInfo.length ? (
-          <StyledTableRow key={index}>
-            <StyledTableCell size="small">
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Avatar
-                  src={logoURL}
-                  sx={{
-                    width: 24,
-                    height: 24,
-                    "&:hover": {
-                      backgroundColor: "white",
-                      cursor: "pointer",
-                    },
-                  }}
-                  onClick={() => handleOnClick(chainName)}
-                />
-                &nbsp;&nbsp;
-                <Typography
-                  sx={{
-                    textTransform: "capitalize",
-                    "&:hover": {
-                      cursor: "pointer",
-                      color: "purple",
-                    },
-                  }}
-                  onClick={() => handleOnClick(chainName)}
-                >
-                  {chainName}
-                </Typography>
-              </Box>
-            </StyledTableCell>
-            <StyledTableCell>
-              {parseBalance(balance, decimals, item.denom).toLocaleString()}
-              &nbsp;
-              {denomInfo[0].symbol}
-            </StyledTableCell>
-            <StyledTableCell>
-              {originMinimalDenom !== item.denom
-                ? "-"
-                : (+staked / 10 ** decimals).toLocaleString() +
-                  " " +
-                  originDenom}
-            </StyledTableCell>
-            <StyledTableCell>
-              {originMinimalDenom !== item.denom
-                ? "-"
-                : (+totalRewards / 10 ** decimals).toLocaleString() +
-                  " " +
-                  originDenom}
-            </StyledTableCell>
-            <StyledTableCell>
-              {tokensPriceInfo[denomInfo[0]?.origin_denom]
-                ? `$${(
-                    parseFloat(
-                      tokensPriceInfo[denomInfo[0]?.origin_denom]?.info?.["usd"]
-                    ) * parseBalance(balance, decimals, item.denom)
-                  ).toFixed(2)}`
-                : "N/A"}
-            </StyledTableCell>
-            <StyledTableCell>
-              <Button
-                color="primary"
-                disableElevation
-                variant="contained"
-                size="small"
-                sx={{
-                  textTransform: "none",
-                }}
-                disabled={
-                  totalRewards <= 0 ||
-                  txRestakeStatus === "pending" ||
-                  distTxStatus?.status === "pending"
-                }
-                onClick={actionClaimAndStake}
-              >
-                {txRestakeStatus?.status === "pending" ? (
-                  <>
-                    <CircularProgress size={18} />
-                    &nbsp;Claim&nbsp;&&nbsp;Stake
-                  </>
-                ) : (
-                  <>Claim&nbsp;&&nbsp;Stake</>
-                )}
-              </Button>
-              <Button
-                color="primary"
-                disableElevation
-                variant="contained"
-                size="small"
-                sx={{
-                  textTransform: "none",
-                  ml: 1,
-                }}
-                disabled={
-                  totalRewards <= 0 ||
-                  txRestakeStatus === "pending" ||
-                  distTxStatus?.status === "pending"
-                }
-                onClick={claimRewards}
-              >
-                {distTxStatus?.status === "pending" ? (
-                  <>
-                    <CircularProgress size={18} />
-                    &nbsp;Claim
-                  </>
-                ) : (
-                  <>Claim</>
-                )}
-              </Button>
-            </StyledTableCell>
-          </StyledTableRow>
-        ) : (
-          <></>
-        );
-      })}
+      {assetType === "native" ? (
+        <>
+          <>
+            {balance?.length > 0 ? (
+              <StyledTableRow>
+                <StyledTableCell size="small">
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Avatar
+                      src={logoURL}
+                      sx={{
+                        width: 24,
+                        height: 24,
+                        "&:hover": {
+                          backgroundColor: "white",
+                          cursor: "pointer",
+                        },
+                      }}
+                      onClick={() => handleOnClick(chainName)}
+                    />
+                    &nbsp;&nbsp;
+                    <Typography
+                      sx={{
+                        textTransform: "capitalize",
+                        "&:hover": {
+                          cursor: "pointer",
+                          color: "purple",
+                        },
+                      }}
+                      onClick={() => handleOnClick(chainName)}
+                    >
+                      {chainName}
+                    </Typography>
+                  </Box>
+                </StyledTableCell>
+                <StyledTableCell>
+                  {parseBalance(
+                    balance,
+                    decimals,
+                    originMinimalDenom
+                  ).toLocaleString()}
+                  &nbsp;
+                  {originDenom}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {(+staked / 10 ** decimals).toLocaleString()}&nbsp;
+                  {originDenom}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {(+totalRewards / 10 ** decimals).toLocaleString()}&nbsp;
+                  {originDenom}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {tokensPriceInfo[originMinimalDenom]
+                    ? `$${parseFloat(
+                        tokensPriceInfo[originMinimalDenom]?.info?.["usd"]
+                      ).toFixed(2)}`
+                    : "N/A"}
+                </StyledTableCell>
+                <StyledTableCell>
+                  <Button
+                    color="primary"
+                    disableElevation
+                    variant="contained"
+                    size="small"
+                    sx={{
+                      textTransform: "none",
+                    }}
+                    disabled={
+                      totalRewards <= 0 ||
+                      txRestakeStatus === "pending" ||
+                      distTxStatus?.status === "pending"
+                    }
+                    onClick={actionClaimAndStake}
+                  >
+                    {txRestakeStatus?.status === "pending" ? (
+                      <>
+                        <CircularProgress size={18} />
+                        &nbsp;Claim&nbsp;&&nbsp;Stake
+                      </>
+                    ) : (
+                      <>Claim&nbsp;&&nbsp;Stake</>
+                    )}
+                  </Button>
+                  <Button
+                    color="primary"
+                    disableElevation
+                    variant="contained"
+                    size="small"
+                    sx={{
+                      textTransform: "none",
+                      ml: 1,
+                    }}
+                    disabled={
+                      totalRewards <= 0 ||
+                      txRestakeStatus === "pending" ||
+                      distTxStatus?.status === "pending"
+                    }
+                    onClick={claimRewards}
+                  >
+                    {distTxStatus?.status === "pending" ? (
+                      <>
+                        <CircularProgress size={18} />
+                        &nbsp;Claim
+                      </>
+                    ) : (
+                      <>Claim</>
+                    )}
+                  </Button>
+                </StyledTableCell>
+              </StyledTableRow>
+            ) : null}
+          </>
+        </>
+      ) : (
+        <>
+          <>
+            {balance?.map((item, index) => {
+              const denomInfo = chainDenoms[chainName].filter((x) => {
+                return x.denom === item.denom;
+              });
+              dispatch(getTokenPrice(denomInfo.origin_denom));
+              return (denomInfo.length && item.denom !== originMinimalDenom) ? (
+                <StyledTableRow key={index}>
+                  <StyledTableCell size="small">
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <Avatar
+                        src={ibcChainLogoUrl + denomInfo[0]?.image}
+                        sx={{
+                          width: 28,
+                          height: 28,
+                          "&:hover": {
+                            backgroundColor: "white",
+                            cursor: "pointer",
+                          },
+                        }}
+                        onClick={() => handleOnClick(chainName)}
+                      />
+                      &nbsp;&nbsp;
+                      <Box>
+                        <Typography
+                          sx={{
+                            textTransform: "capitalize",
+                            "&:hover": {
+                              cursor: "pointer",
+                              color: "purple",
+                            },
+                          }}
+                          onClick={() => handleOnClick(chainName)}
+                        >
+                          {denomInfo[0]?.origin_chain}
+                          <Typography
+                            sx={{
+                              backgroundColor: "#767676",
+                              borderRadius: "4px",
+                              ml: "4px",
+                              px: "4px",
+                              fontWeight: 600,
+                              display: "inline",
+                              color: "white",
+                              fontSize: "14px",
+                            }}
+                          >
+                            IBC
+                          </Typography>
+                        </Typography>
+                        <Typography
+                          sx={{
+                            textTransform: "capitalize",
+                            "&:hover": {
+                              cursor: "pointer",
+                              color: "purple",
+                            },
+                            fontSize: "14px",
+                          }}
+                          onClick={() => handleOnClick(chainName)}
+                        >
+                          On {chainName}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {parseBalance(
+                      balance,
+                      decimals,
+                      item.denom
+                    ).toLocaleString()}
+                    &nbsp;
+                    {denomInfo[0].symbol}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {tokensPriceInfo[denomInfo[0]?.origin_denom]
+                      ? `$${parseFloat(
+                          tokensPriceInfo[denomInfo[0]?.origin_denom]?.info?.[
+                            "usd"
+                          ]
+                        ).toFixed(2)}`
+                      : "N/A"}
+                  </StyledTableCell>
+                </StyledTableRow>
+              ) : (
+                <></>
+              );
+            })}
+          </>
+        </>
+      )}
     </>
   );
 };
