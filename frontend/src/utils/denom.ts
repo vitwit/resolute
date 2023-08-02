@@ -58,3 +58,11 @@ export function getDenomBalance(tokens: Coin[], denom: string): number {
   }
   return 0.0;
 }
+
+export const formatNumber = (number: number): string => {
+  return number?.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }) || "N/A";
+};
+

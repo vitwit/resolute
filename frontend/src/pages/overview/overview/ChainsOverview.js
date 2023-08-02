@@ -16,11 +16,8 @@ import {
   TableHead,
   Typography,
 } from "@mui/material";
-import {
-  StyledTableCell,
-  StyledTableRow,
-} from "../../../components/CustomTable";
-import { parseBalance } from "../../../utils/denom";
+import { StyledTableCell, StyledTableRow } from "../../../components/CustomTable";
+import { formatNumber, parseBalance } from "../../../utils/denom";
 import { Button } from "@mui/material";
 
 export const paddingTopBottom = {
@@ -144,27 +141,9 @@ export const ChainsOverview = ({ chainNames }) => {
     });
   }, []);
 
-  const totalAvailableAmount = useMemo(
-    () => calculateTotalAvailableAmount(),
-    [calculateTotalAvailableAmount]
-  );
-  const totalStakedAmount = useMemo(
-    () => calculateTotalStakedAmount(),
-    [calculateTotalStakedAmount]
-  );
-  const totalPendingAmount = useMemo(
-    () => calculateTotalPendingAmount(),
-    [calculateTotalPendingAmount]
-  );
-
-  const formatNumber = (number) => {
-    return (
-      number?.toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }) || "N/A"
-    );
-  };
+  const totalAvailableAmount = useMemo(() => calculateTotalAvailableAmount(), [calculateTotalAvailableAmount]);
+  const totalStakedAmount = useMemo(() => calculateTotalStakedAmount(), [calculateTotalStakedAmount]);
+  const totalPendingAmount = useMemo(() => calculateTotalPendingAmount(), [calculateTotalPendingAmount]);
 
   return (
     <Paper sx={{ p: 2, mt: 2 }} elevation={0}>
