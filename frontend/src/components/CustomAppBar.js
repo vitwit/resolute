@@ -18,7 +18,7 @@ import { networks as allNetworks } from "../utils/chainsInfo";
 import { KEY_WALLET_NAME, removeAllFeegrants } from "../utils/localStorage";
 import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
 import { ConnectWalletDialog } from "./wallet/ConnectWallet";
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
 export function CustomAppBar(props) {
   const tabResetStatus = useSelector((state) => state.authz.tabResetStatus);
@@ -45,7 +45,6 @@ export function CustomAppBar(props) {
         dispatch(resetFeegrantState());
         localStorage.setItem(KEY_WALLET_NAME, "keplr");
       }, 1000);
-
     } else if (walletName === "leap") {
       window.wallet = window.leap;
       setTimeout(() => {
@@ -60,10 +59,8 @@ export function CustomAppBar(props) {
         dispatch(resetFeegrantState());
         localStorage.setItem(KEY_WALLET_NAME, "leap");
       }, 1000);
-
     }
-  }
-
+  };
 
   const switchHandler = (event) => {
     dispatch(setAuthzMode(event.target.checked));
@@ -97,7 +94,7 @@ export function CustomAppBar(props) {
     dispatch(resetFeegrantState());
     localStorage.removeItem(KEY_WALLET_NAME);
     dispatch(resetWallet());
-  }
+  };
 
   return (
     <AppBar
@@ -127,89 +124,45 @@ export function CustomAppBar(props) {
           {props.darkMode ? <LightModeOutlined /> : <DarkModeOutlined />}
         </IconButton>
 
-        <FormControlLabel
-          label="Authz mode"
-          control={
-            <Switch
-              checked={isAuthzMode}
-              onChange={switchHandler}
-              color="secondary"
-            />
-          }
-        ></FormControlLabel>
-        {/* <Button
-          id="demo-positioned-button"
-          color="inherit"
-          endIcon={<ExpandMoreOutlinedIcon />}
-          aria-controls={anchorEl ? "demo-positioned-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={anchorEl ? "true" : undefined}
-          onClick={handleClick}
-        >
-          {selectNetwork || "Select Network"}
-        </Button>
-        <Menu
-          id="demo-positioned-menu"
-          aria-labelledby="demo-positioned-button"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={() => setAnchorEl(null)}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          {chainIDs.map((chain) => (
-            <MenuItem
-              key={chain}
-              onClick={() => {
-                setAnchorEl(null);
-                dispatch(
-                  setSelectedNetwork({
-                    chainName: networks[chain].network.config.chainName,
-                    chainID: networks[chain].network.config.chainId,
-                  })
-                );
-                navigateTo("/");
-              }}
-            >
-              <ListItemText>
-                {networks[chain].network.config.chainName}
-              </ListItemText>
-            </MenuItem>
-          ))}
-        </Menu> */}
-        {
-          !isWalletConnected ?
-            <Button
-              color="inherit"
-              onClick={() => { setShowSelectWallet(!showSelectWallet) }}
-              sx={{
-                textTransform: "none"
-              }}
-            >
-              Connect wallet
-            </Button>
-            :
-            <Button
-              color="inherit"
-              sx={{
-                textTransform: "none"
-              }}
-              endIcon={
-                <LogoutOutlinedIcon />
-              }
-              onClick={() => {
-                handleDisconnectWallet();
-              }}
-            >
-              Disconnect
-            </Button>
-        }
+        {isWalletConnected ? (
+          <FormControlLabel
+            label="Authz mode"
+            control={
+              <Switch
+                checked={isAuthzMode}
+                onChange={switchHandler}
+                color="secondary"
+              />
+            }
+          ></FormControlLabel>
+        ) : null}
+        
+        {!isWalletConnected ? (
+          <Button
+            color="inherit"
+            onClick={() => {
+              setShowSelectWallet(!showSelectWallet);
+            }}
+            sx={{
+              textTransform: "none",
+            }}
+          >
+            Connect wallet
+          </Button>
+        ) : (
+          <Button
+            color="inherit"
+            sx={{
+              textTransform: "none",
+            }}
+            endIcon={<LogoutOutlinedIcon />}
+            onClick={() => {
+              handleDisconnectWallet();
+            }}
+          >
+            Disconnect
+          </Button>
+        )}
       </Toolbar>
 
       <ConnectWalletDialog
