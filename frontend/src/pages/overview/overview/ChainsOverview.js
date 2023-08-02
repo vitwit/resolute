@@ -21,8 +21,12 @@ import {
   StyledTableRow,
 } from "../../../components/CustomTable";
 import { parseBalance } from "../../../utils/denom";
-import { ButtonGroup } from "@mui/material";
 import { Button } from "@mui/material";
+
+export const paddingTopBottom = {
+  paddingTop: 1,
+  paddingBottom: 1,
+};
 
 export const ChainsOverview = ({ chainNames }) => {
   const dispatch = useDispatch();
@@ -224,25 +228,23 @@ export const ChainsOverview = ({ chainNames }) => {
         </Grid>
       </Grid>
 
-      <Box
-        sx={{ display: "flex", mb: 1 }}
-      >
-        <Box
+      <Box sx={{ display: "flex", mb: 1 }}>
+        <Button
           variant={assetType === "native" ? "contained" : "outlined"}
           onClick={() => {
             setAssetType("native");
           }}
-          sx={{borderRadius: 10}}
+          sx={{ borderRadius: 10, height: "24px" }}
           disableElevation
         >
           Native
-        </Box>
+        </Button>
         <Button
           variant={assetType === "ibc" ? "contained" : "outlined"}
           onClick={() => {
             setAssetType("ibc");
           }}
-          sx={{borderRadius: 10, ml: 1}}
+          sx={{ borderRadius: 10, height: "24px", ml: 1 }}
           disableElevation
         >
           IBC
@@ -253,18 +255,28 @@ export const ChainsOverview = ({ chainNames }) => {
         <Table>
           <TableHead>
             <StyledTableRow>
-              <StyledTableCell>Network Name</StyledTableCell>
-              <StyledTableCell>Available Balance</StyledTableCell>
+              <StyledTableCell sx={paddingTopBottom}>
+                Network Name
+              </StyledTableCell>
+              <StyledTableCell sx={paddingTopBottom}>
+                Available Balance
+              </StyledTableCell>
               {assetType === "native" ? (
                 <>
-                  <StyledTableCell>Staked Amount</StyledTableCell>
-                  <StyledTableCell>Rewards</StyledTableCell>
+                  <StyledTableCell sx={paddingTopBottom}>
+                    Staked Amount
+                  </StyledTableCell>
+                  <StyledTableCell sx={paddingTopBottom}>
+                    Rewards
+                  </StyledTableCell>
                 </>
               ) : null}
-              <StyledTableCell>Price</StyledTableCell>
+              <StyledTableCell sx={paddingTopBottom}>Price</StyledTableCell>
               {assetType === "native" ? (
                 <>
-                  <StyledTableCell>&nbsp;Actions</StyledTableCell>
+                  <StyledTableCell sx={paddingTopBottom}>
+                    &nbsp;Actions
+                  </StyledTableCell>
                 </>
               ) : null}
             </StyledTableRow>

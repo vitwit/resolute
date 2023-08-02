@@ -14,19 +14,16 @@ import {
   Typography,
 } from "@mui/material";
 import chainDenoms from "../../../utils/chainDenoms.json";
-import { useDispatch, useSelector } from "react-redux";
-import { getTokenPrice } from "../../../features/common/commonSlice";
+import { useSelector } from "react-redux";
 import { parseBalance } from "../../../utils/denom";
+import { paddingTopBottom } from "../overview/ChainsOverview";
 
 const Assets = (props) => {
-  const { balances, chainName, chainInfo } = props;
-  const dispatch = useDispatch();
+  const { balances, chainName } = props;
 
   const tokensPriceInfo = useSelector(
     (state) => state.common?.allTokensInfoState?.info
   );
-  const originMinimalDenom =
-    chainInfo?.config?.currencies?.[0]?.coinMinimalDenom;
   const ibcChainLogoUrl =
     "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/";
 
@@ -37,9 +34,13 @@ const Assets = (props) => {
           <Table>
             <TableHead>
               <StyledTableRow>
-                <StyledTableCell>Network Name</StyledTableCell>
-                <StyledTableCell>Available Balance</StyledTableCell>
-                <StyledTableCell>Price</StyledTableCell>
+                <StyledTableCell sx={paddingTopBottom}>
+                  Network Name
+                </StyledTableCell>
+                <StyledTableCell sx={paddingTopBottom}>
+                  Available Balance
+                </StyledTableCell>
+                <StyledTableCell sx={paddingTopBottom}>Price</StyledTableCell>
               </StyledTableRow>
             </TableHead>
             <TableBody>
@@ -119,12 +120,12 @@ const Assets = (props) => {
           </Table>
         ) : (
           <Typography
-          sx={{
-            textTransform: "capitalize",
-          }}
-        >
-          No Assets
-        </Typography>
+            sx={{
+              textTransform: "capitalize",
+            }}
+          >
+            No Assets
+          </Typography>
         )}
       </TableContainer>
     </div>

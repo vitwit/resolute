@@ -20,7 +20,6 @@ import {
 import { Delegate } from "../../../txns/staking";
 import { parseBalance } from "../../../utils/denom";
 import chainDenoms from "../../../utils/chainDenoms.json";
-import { getTokenPrice } from "../../../features/common/commonSlice";
 
 export const ChainDetails = ({ chainID, chainName, assetType }) => {
   const dispatch = useDispatch();
@@ -272,10 +271,10 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
       ) : (
         <>
           {balance?.map((item, index) => {
-            const denomInfo = chainDenoms[chainName].filter((x) => {
+            const denomInfo = chainDenoms[chainName]?.filter((x) => {
               return x.denom === item.denom;
             });
-            return denomInfo.length && item.denom !== originMinimalDenom ? (
+            return denomInfo?.length && item.denom !== originMinimalDenom ? (
               <StyledTableRow key={index}>
                 <StyledTableCell size="small">
                   <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -336,7 +335,11 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                   </Box>
                 </StyledTableCell>
                 <StyledTableCell>
-                  {parseBalance(balance, denomInfo[0]?.decimals, item.denom).toLocaleString()}
+                  {parseBalance(
+                    balance,
+                    denomInfo[0]?.decimals,
+                    item.denom
+                  ).toLocaleString()}
                   &nbsp;
                   {denomInfo[0].symbol}
                 </StyledTableCell>
