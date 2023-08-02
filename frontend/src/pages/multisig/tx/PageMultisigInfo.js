@@ -26,12 +26,12 @@ import { formatNumber } from "../../../utils/denom";
 
 export default function PageMultisigInfo() {
   const dispatch = useDispatch();
-  const params = useParams()
+  const params = useParams();
   const { address: multisigAddress } = params;
 
   const [chainInfo, setChainInfo] = useState({});
   const [currency, setCurrency] = useState();
-  const [currentNetwork, setCurrentNetwork] = useState('');
+  const [currentNetwork, setCurrentNetwork] = useState("");
 
   const multisigAccountDetails = useSelector(
     (state) => state.multisig.multisigAccount
@@ -68,7 +68,6 @@ export default function PageMultisigInfo() {
       if (chainId?.length > 0) {
         setChainInfo(networks[chainId]);
         setCurrency(networks[chainId]?.network.config.currencies[0]);
-        dispatch(multisigByAddress(multisigAddress));
       }
     }
   }, [params, connected]);
@@ -97,6 +96,8 @@ export default function PageMultisigInfo() {
           status: null,
         })
       );
+
+      dispatch(multisigByAddress(multisigAddress));
     }
   }, [chainInfo]);
 
@@ -160,8 +161,8 @@ export default function PageMultisigInfo() {
               Threshold
             </Typography>
             <Typography>
-              &nbsp;&nbsp;{`${multisigAccount?.threshold}/${members?.length}` || 0}
-
+              &nbsp;&nbsp;
+              {`${multisigAccount?.threshold}/${members?.length}` || 0}
             </Typography>
           </Grid>
           <Grid item xs={6} md={3}>
@@ -239,7 +240,11 @@ export default function PageMultisigInfo() {
           }}
         >
           <Button
-            onClick={() => navigate(`/${currentNetwork}/multisig/${multisigAddress}/create-tx`)}
+            onClick={() =>
+              navigate(
+                `/${currentNetwork}/multisig/${multisigAddress}/create-tx`
+              )
+            }
             disableElevation
             variant="contained"
             sx={{
@@ -250,7 +255,7 @@ export default function PageMultisigInfo() {
           </Button>
         </Box>
         {multisigAccountDetails.status === "idle" &&
-          multisigAccount?.address?.length > 0 ? (
+        multisigAccount?.address?.length > 0 ? (
           <TransactionsList address={multisigAddress} />
         ) : (
           <CircularProgress size={40} />
