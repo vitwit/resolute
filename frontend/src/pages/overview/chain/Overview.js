@@ -24,7 +24,7 @@ export default function Overview(props) {
   const { chainID, chainName } = props;
   const wallet = useSelector((state) => state.wallet);
   const { connected } = wallet;
-  const address = "osmo1stk09x2c92d24406drhn5pyhzqx8f8kpk43g4l";
+  const address = wallet.networks[chainID].walletInfo.bech32Address;
   const chainInfo = wallet.networks[chainID].network;
   const pubkey = wallet.networks[chainID].walletInfo.pubKey;
   const balance = useSelector((state) => state.bank.balances);
