@@ -23,14 +23,18 @@ function CreateGroupPolicy({
   getValues,
   policyMetadataUpdate,
   policyUpdate,
+  policyType,
+  setPolicyType
 }) {
   const totalWeight =
     members.reduce((initial, weight) => initial + Number(weight.weight), 0) ||
     0;
 
-  const [policyType, setPolicyType] = useState(PERCENTAGE);
   const [asAdmin, setAsAdmin] = useState("gov");
   const [decisionPolicyType, setDecisionPolicyType] = useState(policy_Type);
+  const [group_PolicyType, setGroup_PolicyType] = useState(PERCENTAGE);
+  const groupPolicyType = policyType || group_PolicyType;
+  const setGroupPolicyType = setPolicyType || setGroup_PolicyType;
 
   return (
     <Grid container spacing={2}>
@@ -240,7 +244,7 @@ function CreateGroupPolicy({
                     row
                     {...field}
                     onChange={(e) => {
-                      setPolicyType(e.target.value);
+                      setGroupPolicyType(e.target.value);
                       setDecisionPolicyType(null);
                       setValue("policyMetadata.decisionPolicy", e.target.value);
                       if (e.target.value === THRESHOLD) {
@@ -249,7 +253,7 @@ function CreateGroupPolicy({
                         setValue("policyMetadata.threshold", 0);
                       }
                     }}
-                    value={decisionPolicyType || policyType}
+                    value={decisionPolicyType || groupPolicyType}
                   >
                     <FormControlLabel
                       value={PERCENTAGE}
@@ -321,7 +325,7 @@ function CreateGroupPolicy({
                   <FormControl
                     fullWidth
                     sx={{
-                      mt: 1,
+                      mt: 3.5,
                     }}
                   >
                     <Slider

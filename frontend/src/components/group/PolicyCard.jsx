@@ -8,6 +8,10 @@ import { copyToClipboard } from "../../utils/clipboard";
 import { useDispatch } from "react-redux";
 import moment from 'moment/moment';
 
+export const getDaysCount = (seconds) => {
+  const days = parseInt(seconds || 0)/86400;
+  return Math.round(days);
+}
 
 export default function PolicyCard({ policyInfo, totalWeight }) {
   const navigate = useNavigate();
@@ -120,8 +124,7 @@ export default function PolicyCard({ policyInfo, totalWeight }) {
             fontWeight={600}
           >
             {
-              moment.utc((parseInt(policyInfo?.decision_policy?.windows?.voting_period || 0)) * 1000).format('D')
-
+              getDaysCount(policyInfo?.decision_policy?.windows?.voting_period)
             }&nbsp;days
           </Typography>
 
@@ -132,7 +135,7 @@ export default function PolicyCard({ policyInfo, totalWeight }) {
             color="text.secondary"
             fontWeight={600}
           >
-            Execution delay
+            Execution Delay
           </Typography>
           <Typography
             variant="body2"
@@ -140,7 +143,7 @@ export default function PolicyCard({ policyInfo, totalWeight }) {
             fontWeight={600}
           >
             {
-              moment.utc((parseInt(policyInfo?.decision_policy?.windows?.min_execution_period || 0)) * 1000).format('D')
+              getDaysCount(policyInfo?.decision_policy?.windows?.min_execution_period)
             }&nbsp;days
           </Typography>
 

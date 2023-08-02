@@ -107,7 +107,13 @@ export default function Dashboard() {
     };
   }, []);
 
-  const chainInfo = useSelector((state) => state.wallet.chainInfo);
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const allNetworks = useSelector((state) => state.wallet.networks);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const chainID = nameToChainIDs[selectedNetwork];
+  const chainInfo = allNetworks[chainID]?.network;
   const dispatch = useDispatch();
 
   const errState = useSelector((state) => state.common.errState);

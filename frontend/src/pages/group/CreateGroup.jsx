@@ -32,15 +32,17 @@ const steps = ["Group details", "Members", "Group Policy"];
 export default function CreateGroupStepper() {
   const params = useParams();
 
+  const [policyType, setPolicyType] = useState(PERCENTAGE);
+
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
 
   const currentNetwork = params?.networkName || selectedNetwork;
+  
   const feegrant = useSelector(
     (state) => state.common.feegrant?.[currentNetwork]
   );
-
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
@@ -48,7 +50,6 @@ export default function CreateGroupStepper() {
     networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
   const name =
     networks[nameToChainIDs[currentNetwork]]?.walletInfo.name;
-
   const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
 
   const navigate = useNavigate();
@@ -391,6 +392,8 @@ export default function CreateGroupStepper() {
                     control={controlPolicyInfo}
                     members={getValuesMemberInfo("members")}
                     getValues={getValuesPolicyInfo}
+                    setPolicyType={setPolicyType}
+                    policyType={policyType}
                   />
                 </fieldset>
               )) ||
