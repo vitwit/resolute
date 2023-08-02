@@ -44,11 +44,10 @@ const Assets = (props) => {
             </TableHead>
             <TableBody>
               {balances?.map((item, index) => {
-                const denomInfo = chainDenoms[chainName].filter((x) => {
+                const denomInfo = chainDenoms[chainName]?.filter((x) => {
                   return x.denom === item.denom;
                 });
-                dispatch(getTokenPrice(denomInfo.origin_denom));
-                return denomInfo.length ? (
+                return denomInfo?.length ? (
                   <StyledTableRow key={index}>
                     <StyledTableCell size="small">
                       <Box sx={{ display: "flex", alignItems: "center" }}>

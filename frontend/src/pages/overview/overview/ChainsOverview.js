@@ -227,7 +227,7 @@ export const ChainsOverview = ({ chainNames }) => {
       <Box
         sx={{ display: "flex", mb: 1 }}
       >
-        <Button
+        <Box
           variant={assetType === "native" ? "contained" : "outlined"}
           onClick={() => {
             setAssetType("native");
@@ -236,7 +236,7 @@ export const ChainsOverview = ({ chainNames }) => {
           disableElevation
         >
           Native
-        </Button>
+        </Box>
         <Button
           variant={assetType === "ibc" ? "contained" : "outlined"}
           onClick={() => {
