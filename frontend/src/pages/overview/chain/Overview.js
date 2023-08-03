@@ -183,7 +183,7 @@ export default function Overview(props) {
                     minHeight: 280,
                   }}
                 >
-                  <Assets balances={balance?.[chainID]?.list} chainName={chainName} />
+                  <Assets balances={balance?.[chainID]?.list} chainName={chainName} currentChainDenom={coinDenom} />
                 </Paper>
               </Grid>
 
