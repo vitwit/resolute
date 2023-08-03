@@ -372,12 +372,12 @@ export const networks: Network[] = [
       ],
       walletUrlForStaking: "https://resolute.vitwit.com/passage/staking",
       bech32Config: {
-        bech32PrefixAccAddr: "passage",
-        bech32PrefixAccPub: "passagepub",
-        bech32PrefixValAddr: "passagevaloper",
-        bech32PrefixValPub: "passagevaloperpub",
-        bech32PrefixConsAddr: "passagegvalcons",
-        bech32PrefixConsPub: "passagevalconspub"
+        bech32PrefixAccAddr: "pasg",
+        bech32PrefixAccPub: "pasgpub",
+        bech32PrefixValAddr: "pasgvaloper",
+        bech32PrefixValPub: "pasgvaloperpub",
+        bech32PrefixConsAddr: "pasgvalcons",
+        bech32PrefixConsPub: "pasgvalconspub"
       },
       feeCurrencies: [
         {
