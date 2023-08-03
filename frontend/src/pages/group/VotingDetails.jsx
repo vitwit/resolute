@@ -24,6 +24,8 @@ function countVotes(votes) {
       case "VOTE_OPTION_NO_WITH_VETO":
         votesCount.no_with_veto_count += 1;
         break;
+      default:
+        throw new Error("invalid vote option")
     }
   }
   return votesCount;

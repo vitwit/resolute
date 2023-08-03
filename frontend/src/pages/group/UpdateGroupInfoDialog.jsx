@@ -33,10 +33,8 @@ export default function UpdateGroupInfoDialog(props) {
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
-  const [currentNetwork, setCurrentNetwork] = useState(
-    params?.networkName || selectedNetwork
-  );
 
+  const currentNetwork = params?.networkName || selectedNetwork;
   const feegrant = useSelector(
     (state) => state.common.feegrant?.[currentNetwork]
   );

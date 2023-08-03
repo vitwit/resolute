@@ -117,7 +117,10 @@ export default function Home(props) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
     if (newValue === 8) {
-      navigate("/airdrop-check");
+      if (selectedNetwork === "") 
+        navigate("/passage/airdrop-check");
+      else
+      navigate(`/${selectedNetwork.toLowerCase()}/airdrop-check`);
     } else if (
       newValue === 0 ||
       newValue === 2 ||
@@ -338,7 +341,7 @@ export default function Home(props) {
                 path="/:networkName/daos/groups/:groupID/proposals/:id"
                 element={<GroupProposal />}
               />
-              <Route path="/airdrop-check" element={<AirdropEligibility />} />
+              <Route path="/:networkName/airdrop-check" element={<AirdropEligibility />} />
 
               <Route path="*" element={<Page404 />}></Route>
             </Routes>

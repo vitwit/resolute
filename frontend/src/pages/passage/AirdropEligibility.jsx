@@ -16,7 +16,7 @@ import {
   txClaimAction,
   resetClaimRecords,
 } from "../../features/airdrop/airdropSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { resetError, setError } from "../../features/common/commonSlice";
 import AirdropProgress from "../../components/passage/AirdropProgress";
 import { fromBech32, toHex, toBech32, fromHex } from "@cosmjs/encoding";
@@ -217,7 +217,7 @@ export default function AirdropEligibility() {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    placeholder="enter cosmos/juno address"
+                    placeholder="Enter cosmos/juno address"
                     required
                     label="Address"
                     fullWidth
@@ -443,7 +443,7 @@ export default function AirdropEligibility() {
           fontWeight={800}
           style={{ marginTop: 36 }}
         >
-          Connect Keplr wallet to claim airdrop
+          Connect Keplr/Leap wallet to claim airdrop
         </Typography>
       ) : (
         <></>

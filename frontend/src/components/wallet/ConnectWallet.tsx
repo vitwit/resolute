@@ -28,6 +28,7 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
           justifyContent: "center",
           display: "flex"
         }}
+        variant="h5"
       >Connect Wallet</DialogTitle>
       <DialogContent
         sx={{
@@ -38,7 +39,7 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
           <Grid item xs={6} md={6}
             sx={{
               justifyContent: "center",
-              display: "flex"
+              display: "flex",
             }}
           >
             <Paper
@@ -49,19 +50,34 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
               onClick={() => handleOnWalletSelect("keplr")}
             >
               <Avatar
+                sx={{
+                  width: 64,
+                  height: 64,
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                }}
                 src="https://raw.githubusercontent.com/cosmology-tech/cosmos-kit/main/public/images/logos/wallets/keplr.svg"
               />
               <Typography
                 variant="h6"
+                fontWeight={600}
+                sx={{
+                  mt: 1,
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                }}
               >
-                Keplr
+                &nbsp;Keplr
               </Typography>
             </Paper>
           </Grid>
           <Grid item xs={6} md={6}
             sx={{
               justifyContent: "center",
-              display: "flex"
+              display: "flex",
+
             }}
           >
             <Paper
@@ -72,12 +88,26 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
               onClick={() => handleOnWalletSelect("leap")}
             >
               <Avatar
+                sx={{
+                  width: 64,
+                  height: 64,
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                }}
                 src="https://raw.githubusercontent.com/cosmology-tech/cosmos-kit/main/public/images/logos/wallets/leap.png"
               />
               <Typography
+                fontWeight={600}
                 variant="h6"
+                sx={{
+                  mt: 1,
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                }}
               >
-                Leap
+                &nbsp;Leap
               </Typography>
             </Paper>
 
