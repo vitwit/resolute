@@ -126,7 +126,6 @@ export default function Overview(props) {
       {connected ? (
         <>
           <AccountInfo
-            wallet={wallet}
             account={account}
             address={address}
             pubkey={pubkey}
@@ -415,7 +414,7 @@ export default function Overview(props) {
 }
 
 const AccountInfo = (props) => {
-  const { wallet, account, address, pubkey } = props;
+  const { account, address, pubkey } = props;
   return (
     <Box
       component="div"
@@ -538,7 +537,6 @@ const AccountInfo = (props) => {
 };
 
 AccountInfo.propTypes = {
-  wallet: PropTypes.object.isRequired,
   account: PropTypes.object.isRequired,
   onCopy: PropTypes.func.isRequired,
   address: PropTypes.string.isRequired,

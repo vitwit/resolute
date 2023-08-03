@@ -23,7 +23,6 @@ function ProposalUnDelegateForm({ chainInfo, handleMsgChange, type, address }) {
   });
 
   var validators = useSelector((state) => state.staking.validators);
-  var delegatorVals = useSelector((state) => state.multisig.delegatorVals);
   validators = validators?.active || {};
 
   useEffect(() => {

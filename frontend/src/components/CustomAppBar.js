@@ -11,7 +11,6 @@ import { setAuthzMode } from "../features/common/commonSlice";
 import { FormControlLabel, Switch } from "@mui/material";
 import Button from "@mui/material/Button";
 import { getGrantsToMe } from "../features/authz/authzSlice";
-import { useNavigate } from "react-router-dom";
 import { resetTabs, resetTabResetStatus } from "../features/authz/authzSlice";
 import { connectWalletV1, resetWallet } from "../features/wallet/walletSlice";
 import { networks as allNetworks } from "../utils/chainsInfo";
@@ -120,8 +119,17 @@ export function CustomAppBar(props) {
           align="left"
         ></Typography>
 
-        <IconButton aria-label="mode" onClick={() => props.onModeChange()}>
-          {props.darkMode ? <LightModeOutlined /> : <DarkModeOutlined />}
+        <IconButton
+          color="inherit"
+          aria-label="mode"
+          onClick={() => props.onModeChange()}
+        >
+          {
+            props.darkMode ?
+              <LightModeOutlined />
+              :
+              <DarkModeOutlined />
+          }
         </IconButton>
 
         {isWalletConnected ? (
@@ -136,7 +144,7 @@ export function CustomAppBar(props) {
             }
           ></FormControlLabel>
         ) : null}
-        
+
         {!isWalletConnected ? (
           <Button
             color="inherit"

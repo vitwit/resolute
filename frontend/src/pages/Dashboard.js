@@ -23,101 +23,83 @@ import { defaultPallet } from "../utils/pallet";
 import { KEY_DARK_MODE, KEY_WALLET_NAME, removeAllFeegrants } from "../utils/localStorage";
 import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
 import { networks } from "../utils/chainsInfo";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const [snackOpen, setSnackOpen] = useState(false);
-  const showSnack = (value) => {
-    setSnackOpen(value);
-  };
-
   const [darkMode, setDarkMode] = useState(isDarkMode());
+  const [snackTxOpen, setSnackTxClose] = useState(false);
+
+
+  const showSnack = (value) => setSnackOpen(value);
+
+
   const onModeChange = () => {
     localStorage.setItem(KEY_DARK_MODE, !darkMode);
     setDarkMode(!darkMode);
   };
 
-  const txLoadRes = useSelector((state) => state?.common?.txLoadRes?.load);
+  const showTxSnack = (value) => setSnackTxClose(value);
 
-  const [snackTxOpen, setSnackTxClose] = useState(false);
-  const showTxSnack = (value) => {
-    setSnackTxClose(value);
-  };
-
-  useEffect(() => {
-    const walletName = localStorage.getItem(KEY_WALLET_NAME)
-    if (walletName === "keplr") {
-      window.wallet = window.keplr
-      setTimeout(() => {
-        dispatch(
-          connectWalletV1({
-            mainnets: networks,
-            testnets: [],
-            walletName: "keplr",
-          })
-        );
-      }, 1000);
-    } else if (walletName === "leap") {
-      window.wallet = window.leap
-      setTimeout(() => {
-        dispatch(
-          connectWalletV1({
-            mainnets: networks,
-            testnets: [],
-            walletName: "leap",
-          })
-        );
-      }, 1000);
-    }
-
-    const keplrAccountChangeListener = () => {
-      window.wallet = window.keplr
-      setTimeout(() => {
-        dispatch(
-          connectWalletV1({
-            mainnets: networks,
-            testnets: [],
-            walletName: "keplr",
-          })
-        );
-      }, 1000);
-      removeAllFeegrants();
-      dispatch(resetFeegrantState());
-    };
-
-    const leapAccountChangeListener = () => {
-      window.wallet = window.leap
-      setTimeout(() => {
-        dispatch(
-          connectWalletV1({
-            mainnets: networks,
-            testnets: [],
-            walletName: "leap",
-          })
-        );
-      }, 1000);
-      removeAllFeegrants();
-      dispatch(resetFeegrantState());
-    };
-    window.addEventListener("keplr_keystorechange", keplrAccountChangeListener);
-    window.addEventListener('leap_keystorechange', leapAccountChangeListener);
-
-    return () => {
-      window.removeEventListener("keplr_keystorechange", keplrAccountChangeListener);
-      window.removeEventListener('leap_keystorechange', leapAccountChangeListener);
-    };
-  }, []);
-
-  const selectedNetwork = useSelector(
-    (state) => state.common.selectedNetwork.chainName
-  );
+  const commonState = useSelector((state) => state?.common);
+  const selectedNetwork = commonState.selectedNetwork.chainName;
   const allNetworks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const chainID = nameToChainIDs[selectedNetwork];
   const chainInfo = allNetworks[chainID]?.network;
+  const txLoadRes = commonState.txLoadRes?.load;
+  const errState = commonState.errState;
+  const txSuccess = commonState.txSuccess;
   const dispatch = useDispatch();
 
-  const errState = useSelector((state) => state.common.errState);
-  const txSuccess = useSelector((state) => state.common.txSuccess);
+
+  useEffect(() => {
+    const walletName = localStorage.getItem(KEY_WALLET_NAME);
+    let wallet;
+
+    if (walletName === "keplr") {
+      wallet = window.keplr;
+    } else if (walletName === "leap") {
+      wallet = window.leap;
+    }
+
+    if (wallet) {
+      window.wallet = wallet;
+      setTimeout(() => {
+        dispatch(
+          connectWalletV1({
+            mainnets: networks,
+            testnets: [],
+            walletName,
+          })
+        );
+      }, 1000);
+
+      const accountChangeListener = () => {
+        window.wallet = wallet;
+        setTimeout(() => {
+          dispatch(
+            connectWalletV1({
+              mainnets: networks,
+              testnets: [],
+              walletName,
+            })
+          );
+        }, 1000);
+
+        removeAllFeegrants();
+        dispatch(resetFeegrantState());
+      };
+
+      window.addEventListener(`${walletName}_keystorechange`, accountChangeListener);
+
+      return () => {
+        window.removeEventListener(`${walletName}_keystorechange`, accountChangeListener);
+      };
+    }
+  }, []);
+
+
 
   useEffect(() => {
     if (errState?.message?.length > 0 && errState?.type?.length > 0) {
@@ -136,129 +118,99 @@ export default function Dashboard() {
   }, [txSuccess]);
 
   return (
-    <ThemeProvider
-      theme={mdTheme(darkMode, defaultPallet.primary, defaultPallet.secondary)}
-    >
-      <>
-        <CustomAppBar darkMode={darkMode} onModeChange={() => onModeChange()} />
-
-        <Box sx={{ display: "flex" }}>
-          <Box
-            component="main"
-            sx={{
-              backgroundColor: (theme) =>
-                theme.palette.mode === "light"
-                  ? theme.palette.grey[200]
-                  : theme.palette.grey[900],
-              flexGrow: 1,
-              height: "96vh",
-              overflow: "auto",
-            }}
-          >
-            <Toolbar />
-            <Container
-              maxWidth="lg"
-              sx={{
-                mt: 1,
-                mb: 2
-              }}
-            >
-              <Home />
-            </Container>
-          </Box>
-        </Box>
-        <Footer />
-      </>
-
-      {errState?.message?.length > 0 ? (
-        <Snackbar
-          open={
-            snackOpen &&
-            errState?.message?.length > 0 &&
-            errState?.type?.length > 0
-          }
-          autoHideDuration={3000}
-          onClose={() => {
-            showSnack(false);
+    <ThemeProvider theme={mdTheme(darkMode, defaultPallet.primary, defaultPallet.secondary)}>
+      <CustomAppBar darkMode={darkMode} onModeChange={() => onModeChange()} />
+      <Box sx={{ display: "flex" }}>
+        <Box
+          component="main"
+          sx={{
+            backgroundColor: (theme) =>
+              theme.palette.mode === "light" ? theme.palette.grey[200] : theme.palette.grey[900],
+            flexGrow: 1,
+            height: "96vh",
+            overflow: "auto",
           }}
+        >
+          <Toolbar />
+          <Container maxWidth="lg" sx={{ mt: 1, mb: 2 }}>
+            <Home />
+          </Container>
+        </Box>
+      </Box>
+      <Footer />
+
+      {errState?.message?.length > 0 && (
+        <Snackbar
+          open={snackOpen && errState?.message?.length > 0 && errState?.type?.length > 0}
+          autoHideDuration={3000}
+          onClose={() => showSnack(false)}
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
         >
           <Alert
-            onClose={() => {
-              showSnack(false);
-            }}
+            onClose={() => showSnack(false)}
             severity={errState.type === "success" ? "success" : "error"}
             sx={{ width: "100%" }}
           >
             {errState.message}
           </Alert>
         </Snackbar>
-      ) : (
-        <></>
       )}
 
       <Snackbar
         open={txLoadRes}
-        onClose={() => {
-          showTxSnack(false);
-        }}
+        onClose={() => showTxSnack(false)}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <Alert
           iconMapping={{
             info: (
-              <CircularProgress
-                size={35}
-                sx={{ color: "#FFF", mr: 2, mt: 1 }}
-              />
+              <CircularProgress size={35} sx={{ color: "#FFF", mr: 2, mt: 1 }} />
             ),
           }}
-          onClose={() => {
-            dispatch(resetTxLoad());
-          }}
+          onClose={() => dispatch(resetTxLoad())}
           severity="info"
           sx={{ width: "100%" }}
         >
           <AlertTitle sx={{ width: "100%", display: "flex" }}>
             <Typography> Loading..</Typography>
           </AlertTitle>
-          Please wait for sometime.
+          Please wait for some time.
         </Alert>
       </Snackbar>
 
-      <Snackbar
-        open={snackTxOpen}
-        autoHideDuration={3000}
-        onClose={() => {
-          showTxSnack(false);
-        }}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={() => {
-            showTxSnack(false);
-          }}
-          severity="success"
-          sx={{ width: "100%" }}
+      {txSuccess?.hash?.length > 0 && (
+        <Snackbar
+          open={snackTxOpen}
+          autoHideDuration={3000}
+          onClose={() => showTxSnack(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
         >
-          <AlertTitle>Transaction Broadcasted</AlertTitle>
-          View on explorer{" "}
-          <Link
-            target="_blank"
-            href={`${chainInfo?.explorerTxHashEndpoint}${txSuccess?.hash}`}
-            color="inherit"
+          <Alert
+            onClose={() => showTxSnack(false)}
+            severity="success"
+            sx={{ width: "100%" }}
           >
-            {" "}
-            {txSuccess?.hash?.toLowerCase().substring(0, 5)}...
-          </Link>
-        </Alert>
-      </Snackbar>
+            <AlertTitle>Transaction Broadcasted</AlertTitle>
+            View on explorer{" "}
+            <Link
+              target="_blank"
+              href={`${chainInfo?.explorerTxHashEndpoint}${txSuccess?.hash}`}
+              color="inherit"
+            >
+              {" "}
+              {txSuccess?.hash?.toLowerCase().substring(0, 5)}...
+            </Link>
+          </Alert>
+        </Snackbar>
+      )}
     </ThemeProvider>
   );
+
 }
 
 
 const Footer = () => {
+  const navigate = useNavigate();
   return (
     <Paper
       elevation={0}
@@ -275,6 +227,7 @@ const Footer = () => {
           variant="caption"
           fontWeight={600}
           color="text.primary"
+          onClick={() => navigate("/staking")}
         >
           Witval
         </Typography>

@@ -107,7 +107,6 @@ export default function Validators(props) {
     setSelectedValidator(validator);
     switch (type) {
       case "delegate":
-        {
           if (availableBalance > 0) {
             setStakingOpen(true);
           } else {
@@ -118,7 +117,6 @@ export default function Validators(props) {
               })
             );
           }
-        }
         break;
       case "undelegate":
         if (delegations?.delegations?.delegations.length > 0) {
