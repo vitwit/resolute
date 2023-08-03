@@ -1,18 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Grid, CircularProgress } from "@mui/material";
+import {
+  Typography,
+  Button,
+  Grid,
+  CircularProgress,
+  Chip,
+} from "@mui/material";
 import AuthzDelegations from "./AuthzDelegations";
 import { useTheme } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllValidators, getAuthzDelegations } from "../../../features/staking/stakeSlice";
+import {
+  getAllValidators,
+  getAuthzDelegations,
+} from "../../../features/staking/stakeSlice";
 import { getAuthzDelegatorTotalRewards } from "../../../features/distribution/distributionSlice";
 import { getBalances } from "../../../features/bank/bankSlice";
 import { parseBalance } from "../../../utils/denom";
 import { DialogDelegate } from "../../../components/DialogDelegate";
 import { authzExecHelper } from "../../../features/authz/authzSlice";
-import { setError } from "../../../features/common/commonSlice";
+import { getICNSName, setError } from "../../../features/common/commonSlice";
 import { DialogUndelegate } from "../../../components/DialogUndelegate";
 import { DialogRedelegate } from "../../../components/DialogRedelegate";
 import PropTypes from "prop-types";
+import NameAddress from "../../../components/common/NameAddress";
+import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
+import { copyToClipboard } from "../../../utils/clipboard";
 
 export default function StakingGranter(props) {
   const {
@@ -49,6 +61,7 @@ export default function StakingGranter(props) {
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const balances = useSelector((state) => state.bank.balances);
   const feegrant = useSelector((state) => state.common.feegrant);
+  const icnsNames = useSelector((state) => state.common.icnsNames);
 
   const [totalRewards, setTotalRewards] = React.useState(0);
   const [availableBalance, setAvailableBalance] = useState(0);
@@ -107,7 +120,8 @@ export default function StakingGranter(props) {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
+        chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+        10 ** currency.coinDecimals,
       feegranter: feegrant?.granter,
     });
   };
@@ -125,7 +139,8 @@ export default function StakingGranter(props) {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
+        chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+        10 ** currency.coinDecimals,
       feegranter: feegrant.granter,
     });
   };
@@ -145,7 +160,8 @@ export default function StakingGranter(props) {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
+        chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+        10 ** currency.coinDecimals,
       feegranter: feegrant.granter,
     });
   };
@@ -169,7 +185,8 @@ export default function StakingGranter(props) {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
+        chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+        10 ** currency.coinDecimals,
       feegranter: feegrant.granter,
     });
   };
@@ -266,6 +283,17 @@ export default function StakingGranter(props) {
     }
   }, [authzExecTx]);
 
+  const fetchName = (address) => {
+    if (!icnsNames?.[address]) {
+      dispatch(
+        getICNSName({
+          address: address,
+        })
+      );
+    }
+    return icnsNames?.[address]?.name;
+  };
+
   return (
     <>
       <Grid
@@ -276,7 +304,17 @@ export default function StakingGranter(props) {
       >
         <Grid item>
           <Typography fontWeight={500} color="text.primary">
-            Granter: {granter}
+            Granter:{" "}
+            <Chip
+              label={
+                <NameAddress address={granter} name={fetchName(granter)} />
+              }
+              size="small"
+              deleteIcon={<ContentCopyOutlined />}
+              onDelete={() => {
+                copyToClipboard(granter, dispatch);
+              }}
+            />
           </Typography>
         </Grid>
         <Grid item>
