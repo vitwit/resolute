@@ -18,6 +18,7 @@ import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { copyToClipboard } from "../../../utils/clipboard";
 import { getTokenPrice } from "../../../features/common/commonSlice";
+import Assets from "./Assets";
 
 export default function Overview(props) {
   const { chainID, chainName } = props;
@@ -125,7 +126,6 @@ export default function Overview(props) {
       {connected ? (
         <>
           <AccountInfo
-            wallet={wallet}
             account={account}
             address={address}
             pubkey={pubkey}
@@ -183,13 +183,7 @@ export default function Overview(props) {
                     minHeight: 280,
                   }}
                 >
-                  <Typography
-                    sx={{ justifyContent: "center" }}
-                    variant="h6"
-                    color="text.secondary"
-                  >
-                    Coming soon
-                  </Typography>
+                  <Assets balances={balance?.[chainID]?.list} chainName={chainName} />
                 </Paper>
               </Grid>
 
@@ -420,7 +414,7 @@ export default function Overview(props) {
 }
 
 const AccountInfo = (props) => {
-  const { wallet, account, address, pubkey } = props;
+  const { account, address, pubkey } = props;
   return (
     <Box
       component="div"
@@ -543,7 +537,6 @@ const AccountInfo = (props) => {
 };
 
 AccountInfo.propTypes = {
-  wallet: PropTypes.object.isRequired,
   account: PropTypes.object.isRequired,
   onCopy: PropTypes.func.isRequired,
   address: PropTypes.string.isRequired,

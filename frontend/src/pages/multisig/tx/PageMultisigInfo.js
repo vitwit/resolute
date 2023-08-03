@@ -22,15 +22,16 @@ import { shortenAddress } from "../../../utils/util";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import Chip from "@mui/material/Chip";
 import { copyToClipboard } from "../../../utils/clipboard";
+import { formatNumber } from "../../../utils/denom";
 
 export default function PageMultisigInfo() {
   const dispatch = useDispatch();
-  const params = useParams()
+  const params = useParams();
   const { address: multisigAddress } = params;
 
   const [chainInfo, setChainInfo] = useState({});
   const [currency, setCurrency] = useState();
-  const [currentNetwork, setCurrentNetwork] = useState('');
+  const [currentNetwork, setCurrentNetwork] = useState("");
 
   const multisigAccountDetails = useSelector(
     (state) => state.multisig.multisigAccount
@@ -62,14 +63,13 @@ export default function PageMultisigInfo() {
   useEffect(() => {
     const network = params.networkName;
     setCurrentNetwork(network);
-    if(network.length > 0 && connected) {
+    if (network.length > 0 && connected) {
       const chainId = nameToChainIDs[network];
       if (chainId?.length > 0) {
         setChainInfo(networks[chainId]);
         setCurrency(networks[chainId]?.network.config.currencies[0]);
-        dispatch(multisigByAddress(multisigAddress));
       }
-  }
+    }
   }, [params, connected]);
 
   const navigate = useNavigate();
@@ -96,6 +96,8 @@ export default function PageMultisigInfo() {
           status: null,
         })
       );
+
+      dispatch(multisigByAddress(multisigAddress));
     }
   }, [chainInfo]);
 
@@ -116,7 +118,7 @@ export default function PageMultisigInfo() {
           fontWeight={600}
           gutterBottom
         >
-          Multisig Account Information
+          Multisig Details
         </Typography>
 
         <Grid
@@ -129,12 +131,12 @@ export default function PageMultisigInfo() {
         >
           <Grid item xs={6} md={3}>
             <Typography
-              variant="body1"
-              color="text.primary"
-              fontWeight={500}
+              variant="body2"
+              color="text.secondary"
+              fontWeight={600}
               gutterBottom
             >
-              Account
+              Address
             </Typography>
             <Chip
               label={
@@ -151,25 +153,26 @@ export default function PageMultisigInfo() {
           </Grid>
           <Grid item xs={6} md={3}>
             <Typography
-              variant="body1"
-              color="text.primary"
-              fontWeight={500}
+              variant="body2"
+              color="text.secondary"
+              fontWeight={600}
               gutterBottom
             >
               Threshold
             </Typography>
             <Typography>
-              &nbsp;&nbsp;{multisigAccount?.threshold || 0}
+              &nbsp;&nbsp;
+              {`${multisigAccount?.threshold}/${members?.length}` || 0}
             </Typography>
           </Grid>
           <Grid item xs={6} md={3}>
             <Typography
               gutterBottom
-              variant="body1"
-              color="text.primary"
-              fontWeight={500}
+              variant="body2"
+              color="text.secondary"
+              fontWeight={600}
             >
-              Available
+              Available balance
             </Typography>
             <Typography>
               {multisigBal?.balance?.amount / 10 ** currency?.coinDecimals || 0}{" "}
@@ -180,24 +183,24 @@ export default function PageMultisigInfo() {
           <Grid item xs={6} md={3}>
             <Typography
               gutterBottom
-              variant="body1"
-              color="text.primary"
-              fontWeight={500}
+              variant="body2"
+              color="text.secondary"
+              fontWeight={600}
             >
               Staked
             </Typography>
             <Typography>
-              {totalStake || 0} {currency?.coinDenom}
+              {formatNumber(totalStake) || 0} {currency?.coinDenom}
             </Typography>
           </Grid>
           <Grid item xs={12} md={12}>
             <Typography
-              variant="body1"
-              color="text.primary"
-              fontWeight={500}
+              variant="body2"
+              color="text.secondary"
+              fontWeight={600}
               gutterBottom
             >
-              Signers
+              Members
             </Typography>
             {members.map((m, index) => (
               <Chip
@@ -237,7 +240,11 @@ export default function PageMultisigInfo() {
           }}
         >
           <Button
-            onClick={() => navigate(`/${currentNetwork}/multisig/${multisigAddress}/create-tx`)}
+            onClick={() =>
+              navigate(
+                `/${currentNetwork}/multisig/${multisigAddress}/create-tx`
+              )
+            }
             disableElevation
             variant="contained"
             sx={{

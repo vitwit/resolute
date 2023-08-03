@@ -61,7 +61,6 @@ export default function Unjail() {
   const chainInfo = networks[chainID]?.network;
   const currency = networks[chainID]?.network.config.currencies[0];
 
-  const selectedAuthz = useSelector((state) => state.authz.selected);
   const feegrant = useSelector((state) => state.common.feegrant?.[selectedNetwork]);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
   const icnsNames = useSelector((state) => state.common.icnsNames);

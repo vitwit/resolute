@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import PropTypes from "prop-types";
@@ -20,7 +21,6 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import Collapse from "@mui/material/Collapse";
 import { Box } from "@mui/system";
-import React, { useEffect, useState } from "react";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -61,8 +61,8 @@ import { useParams } from "react-router-dom";
 const mapTxns = {
   "/cosmos.staking.v1beta1.MsgDelegate": "Delegate",
   "/cosmos.bank.v1beta1.MsgSend": "Send",
-  "/cosmos.staking.v1beta1.MsgBeginRedelegate": "Re-Delegate",
-  "/cosmos.staking.v1beta1.MsgUndelegate": "Un-Delegate",
+  "/cosmos.staking.v1beta1.MsgBeginRedelegate": "ReDelegate",
+  "/cosmos.staking.v1beta1.MsgUndelegate": "UnDelegate",
   Msg: "Tx Msg",
 };
 
@@ -240,7 +240,7 @@ const TableRowComponent = (props) => {
               ) : null}
 
               {tx?.messages[0].typeUrl ===
-              "/cosmos.staking.v1beta1.MsgDelegate" ? (
+                "/cosmos.staking.v1beta1.MsgDelegate" ? (
                 <p>
                   {mapTxns[tx?.messages[0]?.typeUrl]}{" "}
                   <strong>
@@ -257,7 +257,7 @@ const TableRowComponent = (props) => {
               ) : null}
 
               {tx?.messages[0].typeUrl ===
-              "/cosmos.staking.v1beta1.MsgUndelegate" ? (
+                "/cosmos.staking.v1beta1.MsgUndelegate" ? (
                 <p>
                   {mapTxns[tx?.messages[0]?.typeUrl]}{" "}
                   <strong>
@@ -274,7 +274,7 @@ const TableRowComponent = (props) => {
               ) : null}
 
               {tx?.messages[0].typeUrl ===
-              "/cosmos.staking.v1beta1.MsgBeginRedelegate" ? (
+                "/cosmos.staking.v1beta1.MsgBeginRedelegate" ? (
                 <p>
                   {mapTxns[tx?.messages[0]?.typeUrl]} &nbsp;
                   <strong>
@@ -328,8 +328,8 @@ const TableRowComponent = (props) => {
               ? getTxStatusComponent(tx?.status, onShowError)
               : "Waiting for brodcast"
             : !isWalletSigned()
-            ? "Waiting for your sign"
-            : "Waiting for others to sign"}
+              ? "Waiting for your sign"
+              : "Waiting for others to sign"}
         </StyledTableCell>
         {type === "history" ? (
           <StyledTableCell align="center">
@@ -539,129 +539,132 @@ export default function Transactions(props) {
   return (
     <Box>
       {txnsState?.status !== "pending" && !txnsState.list?.length ? (
-        <Typography variant="body1" color="error" fontWeight={500}>
+        <Typography variant="h6" fontWeight={600}>
           No transactions found
         </Typography>
       ) : (
         ""
       )}
       {txnsState?.status === "pending" ? <CircularProgress size={40} /> : null}
-      <Box style={{ display: "flex" }}>
-        <ButtonGroup
-          disableElevation
-          variant="outlined"
-          aria-label="outlined button group"
-        >
-          <Button
-            variant={isHistory ? "outlined" : "contained"}
-            onClick={() => {
-              setIsHistory(false);
-              dispatch(
-                getTxns({
-                  address: props.address,
-                  status: "current",
-                })
-              );
-            }}
-          >
-            Active
-          </Button>
-          <Button
-            variant={isHistory ? "contained" : "outlined"}
-            onClick={() => {
-              setIsHistory(true);
-              dispatch(
-                getTxns({
-                  address: props.address,
-                  status: "history",
-                })
-              );
-            }}
-          >
-            Completed
-          </Button>
-        </ButtonGroup>
-      </Box>
+
 
       {txnsState.list?.length > 0 ? (
-        <TableContainer
-          elevation={0}
-          sx={{
-            mt: 1,
-          }}
-        >
-          <Table
-            sx={{ minWidth: 500 }}
-            size="small"
-            aria-label="collapsible table"
+        <>
+          <Box style={{ display: "flex" }}>
+            <ButtonGroup
+              disableElevation
+              variant="outlined"
+              aria-label="outlined button group"
+            >
+              <Button
+                variant={isHistory ? "outlined" : "contained"}
+                onClick={() => {
+                  setIsHistory(false);
+                  dispatch(
+                    getTxns({
+                      address: props.address,
+                      status: "current",
+                    })
+                  );
+                }}
+              >
+                Active
+              </Button>
+              <Button
+                variant={isHistory ? "contained" : "outlined"}
+                onClick={() => {
+                  setIsHistory(true);
+                  dispatch(
+                    getTxns({
+                      address: props.address,
+                      status: "history",
+                    })
+                  );
+                }}
+              >
+                Completed
+              </Button>
+            </ButtonGroup>
+          </Box>
+          <TableContainer
+            elevation={0}
+            sx={{
+              mt: 1,
+            }}
           >
-            {isHistory ? (
-              <>
-                <TableHead>
-                  <StyledTableRow>
-                    <StyledTableCell>Messages</StyledTableCell>
-                    <StyledTableCell>Signed</StyledTableCell>
-                    <StyledTableCell align="left">Status</StyledTableCell>
-                    <StyledTableCell align="center">
-                      Transaction Url
-                    </StyledTableCell>
-                    <StyledTableCell align="center">Action</StyledTableCell>
-                  </StyledTableRow>
-                </TableHead>
-                <TableBody>
-                  {txnsState.list.map((row, index) => (
-                    <TableRowComponent
-                      key={index}
-                      tx={row}
-                      type="history"
-                      onShowError={() => {
-                        setErrorMsg(row?.err_msg);
-                        setOpenError(true);
-                      }}
-                      onShowMoreTxns={(msgs) => {
-                        setSelectedTxns(msgs);
-                        setTxnsListDialog(true);
-                      }}
-                      multisigAccount={multisigAccount}
-                    />
-                  ))}
-                </TableBody>
-              </>
-            ) : (
-              <>
-                <TableHead>
-                  <StyledTableRow>
-                    <StyledTableCell
-                      sx={{
-                        maxWidth: 220,
-                      }}
-                    >
-                      Messages
-                    </StyledTableCell>
-                    <StyledTableCell>Signed</StyledTableCell>
-                    <StyledTableCell align="left">Status</StyledTableCell>
-                    <StyledTableCell align="center"></StyledTableCell>
-                    <StyledTableCell align="center">Action</StyledTableCell>
-                  </StyledTableRow>
-                </TableHead>
-                <TableBody>
-                  {txnsState.list.map((row, index) => (
-                    <TableRowComponent
-                      key={index}
-                      tx={row}
-                      type="active"
-                      onShowMoreTxns={(msgs) => {
-                        setSelectedTxns(msgs);
-                        setTxnsListDialog(true);
-                      }}
-                      multisigAccount={multisigAccount}
-                    />
-                  ))}
-                </TableBody>
-              </>
-            )}
-          </Table>
-        </TableContainer>
+            <Table
+              sx={{ minWidth: 500 }}
+              size="small"
+              aria-label="collapsible table"
+            >
+              {isHistory ? (
+                <>
+                  <TableHead>
+                    <StyledTableRow>
+                      <StyledTableCell>Messages</StyledTableCell>
+                      <StyledTableCell>Signed</StyledTableCell>
+                      <StyledTableCell align="left">Status</StyledTableCell>
+                      <StyledTableCell align="center">
+                        Transaction Url
+                      </StyledTableCell>
+                      <StyledTableCell align="center">Action</StyledTableCell>
+                    </StyledTableRow>
+                  </TableHead>
+                  <TableBody>
+                    {txnsState.list.map((row, index) => (
+                      <TableRowComponent
+                        key={index}
+                        tx={row}
+                        type="history"
+                        onShowError={() => {
+                          setErrorMsg(row?.err_msg);
+                          setOpenError(true);
+                        }}
+                        onShowMoreTxns={(msgs) => {
+                          setSelectedTxns(msgs);
+                          setTxnsListDialog(true);
+                        }}
+                        multisigAccount={multisigAccount}
+                      />
+                    ))}
+                  </TableBody>
+                </>
+              ) : (
+                <>
+                  <TableHead>
+                    <StyledTableRow>
+                      <StyledTableCell
+                        sx={{
+                          maxWidth: 220,
+                        }}
+                      >
+                        Messages
+                      </StyledTableCell>
+                      <StyledTableCell>Signed</StyledTableCell>
+                      <StyledTableCell align="left">Status</StyledTableCell>
+                      <StyledTableCell align="center"></StyledTableCell>
+                      <StyledTableCell align="center">Action</StyledTableCell>
+                    </StyledTableRow>
+                  </TableHead>
+                  <TableBody>
+                    {txnsState.list.map((row, index) => (
+                      <TableRowComponent
+                        key={index}
+                        tx={row}
+                        type="active"
+                        onShowMoreTxns={(msgs) => {
+                          setSelectedTxns(msgs);
+                          setTxnsListDialog(true);
+                        }}
+                        multisigAccount={multisigAccount}
+                      />
+                    ))}
+                  </TableBody>
+                </>
+              )}
+            </Table>
+          </TableContainer>
+        </>
       ) : null}
 
       {openError ? (

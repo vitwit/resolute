@@ -89,7 +89,7 @@ export const networks: Network[] = [
     config: {
       chainId: "cosmoshub-4",
       chainName: "CosmosHub",
-      rest: "https://lcd-cosmoshub.blockapsis.com",
+      rest: "https://lcd.cosmos.dragonstake.io",
       rpc: "https://resolute.witval.com/cosmos_rpc/",
       currencies: [
         {
@@ -355,7 +355,7 @@ export const networks: Network[] = [
     isTestnet: false,
     explorerTxHashEndpoint: "https://passage.aneka.io/txs/",
     config: {
-      chainId: "passage-1",
+      chainId: "passage-2",
       chainName: "Passage",
       rest: "https://api.passage.vitwit.com/",
       rpc: "https://rpc.passage.vitwit.com",
@@ -491,7 +491,7 @@ export const networks: Network[] = [
     keplrExperimental: true,
     leapExperimental: true,
     isTestnet: false,
-    explorerTxHashEndpoint: "https://www.mintscan.io/cosmos/txs/",
+    explorerTxHashEndpoint: "http://127.0.0.1:1317/cosmos/tx/v1beta1/txs/",
     config: {
       chainId: "testnet",
       chainName: "Simapp",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,10 +8,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
-import { Typography, useForkRef } from "@mui/material";
+import { Typography } from "@mui/material";
 import { getLocalTime } from "../../utils/datetime";
-import { useParams } from "react-router-dom";
-import { getGroupMembersById } from "../../features/group/groupSlice";
 import { useSelector } from "react-redux";
 
 const votesStatus = {

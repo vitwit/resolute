@@ -77,7 +77,7 @@ export const connectWalletV1 = createAsyncThunk(
           const chainName = testnets[i].config.chainName;
           await getWalletAmino(chainId);
           const walletInfo = await window.wallet.getKey(chainId);
-          delete walletInfo?.pubKey;
+          walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString('base64');
           delete walletInfo?.address;
 
           walletName = walletInfo?.name;

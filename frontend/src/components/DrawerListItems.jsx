@@ -101,7 +101,7 @@ export function DrawerListItems({ currentPath, onNavigate, showAirdrop }) {
 
       {showAirdrop ? (
         <ListItemButton
-          onClick={() => onNavigate("/airdrop-check")}
+          onClick={() => onNavigate("/passage/airdrop-check")}
           selected={currentPath === "/airdrop-check"}
           sx={{ pb: 0.5, pt: 0.5 }}
         >

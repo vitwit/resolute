@@ -4,7 +4,7 @@
   "private": true,
   "author": "Vitwit Technologies Pvt Ltd",
   "dependencies": {
-    "@babel/core": "^7.21.8",
+    "@babel/core": "^7.22.9",
     "@cosmjs/encoding": "^0.29.5",
     "@cosmjs/proto-signing": "^0.31.0",
     "@cosmjs/stargate": "^0.31.0",
@@ -48,7 +48,7 @@
     "html-webpack-plugin": "^5.5.3",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.4.3",
-    "jest-resolve": "^29.6.0",
+    "jest-resolve": "^29.6.2",
     "jest-watch-typeahead": "^2.2.2",
     "lodash": "^4.17.21",
     "mathjs": "^11.8.2",

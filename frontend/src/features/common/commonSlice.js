@@ -24,7 +24,6 @@ const initialState = {
   feegrant: {},
   selectedNetwork: {
     chainName: "",
-    chainID: "",
   },
   icnsNames: {},
   authzMode: false,
@@ -126,7 +125,7 @@ export const commonSlice = createSlice({
       delete state.feegrant[data.payload];
     },
     setSelectedNetwork: (state, data) => {
-      state.selectedNetwork = data.payload;
+      state.selectedNetwork.chainName = data.payload.chainName;
     },
     setAuthzMode: (state, data) => {
       state.authzMode = data.payload;

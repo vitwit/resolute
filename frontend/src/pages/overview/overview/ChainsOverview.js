@@ -1,10 +1,11 @@
-import React, { useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { getDelegations } from "../../../features/staking/stakeSlice";
 import { getBalances } from "../../../features/bank/bankSlice";
 import { getDelegatorTotalRewards } from "../../../features/distribution/distributionSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { ChainDetails } from "./ChainDetails";
 import {
+  Box,
   Card,
   CardContent,
   Grid,
@@ -16,7 +17,13 @@ import {
   Typography,
 } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from "../../../components/CustomTable";
-import { parseBalance } from "../../../utils/denom";
+import { formatNumber, parseBalance } from "../../../utils/denom";
+import { Button } from "@mui/material";
+
+export const paddingTopBottom = {
+  paddingTop: 1,
+  paddingBottom: 1,
+};
 
 export const ChainsOverview = ({ chainNames }) => {
   const dispatch = useDispatch();
@@ -25,8 +32,11 @@ export const ChainsOverview = ({ chainNames }) => {
   const distributionChains = useSelector((state) => state.distribution.chains);
   const balanceChains = useSelector((state) => state.bank.balances);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-  const tokensPriceInfo = useSelector((state) => state.common?.allTokensInfoState?.info);
+  const tokensPriceInfo = useSelector(
+    (state) => state.common?.allTokensInfoState?.info
+  );
 
+  const [assetType, setAssetType] = useState("native");
   const chainIDs = chainNames.map((chainName) => nameToChainIDs[chainName]);
 
   const chainIdToNames = useMemo(() => {
@@ -50,9 +60,13 @@ export const ChainsOverview = ({ chainNames }) => {
     chainIDs.forEach((chainID) => {
       const staked = stakingChains?.[chainID]?.delegations?.totalStaked || 0;
       if (staked > 0) {
-        let denom = networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
-        const decimals = networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals || 0;
-        totalStakedAmount += convertToDollars(denom, staked / (10 ** decimals));
+        let denom =
+          networks?.[chainID]?.network?.config?.currencies?.[0]
+            ?.coinMinimalDenom;
+        const decimals =
+          networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
+          0;
+        totalStakedAmount += convertToDollars(denom, staked / 10 ** decimals);
       }
     });
     return totalStakedAmount;
@@ -61,10 +75,15 @@ export const ChainsOverview = ({ chainNames }) => {
   const calculateTotalPendingAmount = useCallback(() => {
     let totalRewards = 0;
     chainIDs.forEach((chainID) => {
-      const rewards = distributionChains?.[chainID]?.delegatorRewards?.totalRewards || 0;
+      const rewards =
+        distributionChains?.[chainID]?.delegatorRewards?.totalRewards || 0;
       if (rewards > 0) {
-        const denom = networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
-        const decimals = networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals || 0;
+        const denom =
+          networks?.[chainID]?.network?.config?.currencies?.[0]
+            ?.coinMinimalDenom;
+        const decimals =
+          networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
+          0;
         totalRewards += convertToDollars(denom, rewards / 10 ** decimals);
       }
     });
@@ -74,9 +93,16 @@ export const ChainsOverview = ({ chainNames }) => {
   const calculateTotalAvailableAmount = useCallback(() => {
     let totalBalance = 0;
     chainIDs.forEach((chainID) => {
-      const decimals = networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals || 0;
-      const denom = networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
-      const balance = parseBalance(balanceChains?.[chainID]?.list || [], decimals, denom);
+      const decimals =
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
+        0;
+      const denom =
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+      const balance = parseBalance(
+        balanceChains?.[chainID]?.list || [],
+        decimals,
+        denom
+      );
       if (balanceChains?.[chainID]?.list?.length > 0) {
         totalBalance += convertToDollars(denom, balance);
       }
@@ -89,37 +115,35 @@ export const ChainsOverview = ({ chainNames }) => {
       const chainInfo = networks[chainID]?.network;
       const address = networks[chainID]?.walletInfo?.bech32Address;
 
-      dispatch(getBalances({
-        baseURL: chainInfo?.config?.rest + "/",
-        address: address,
-        chainID: chainID,
-      }));
+      dispatch(
+        getBalances({
+          baseURL: chainInfo?.config?.rest + "/",
+          address: address,
+          chainID: chainID,
+        })
+      );
 
-      dispatch(getDelegations({
-        baseURL: chainInfo.config.rest,
-        address: address,
-        chainID: chainID,
-      }));
+      dispatch(
+        getDelegations({
+          baseURL: chainInfo.config.rest,
+          address: address,
+          chainID: chainID,
+        })
+      );
 
-      dispatch(getDelegatorTotalRewards({
-        baseURL: chainInfo.config.rest,
-        address: address,
-        chainID: chainID,
-      }));
+      dispatch(
+        getDelegatorTotalRewards({
+          baseURL: chainInfo.config.rest,
+          address: address,
+          chainID: chainID,
+        })
+      );
     });
   }, []);
 
   const totalAvailableAmount = useMemo(() => calculateTotalAvailableAmount(), [calculateTotalAvailableAmount]);
   const totalStakedAmount = useMemo(() => calculateTotalStakedAmount(), [calculateTotalStakedAmount]);
   const totalPendingAmount = useMemo(() => calculateTotalPendingAmount(), [calculateTotalPendingAmount]);
-
-
-  const formatNumber = (number) => {
-    return number?.toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }) || "N/A";
-  };
 
   return (
     <Paper sx={{ p: 2, mt: 2 }} elevation={0}>
@@ -182,28 +206,69 @@ export const ChainsOverview = ({ chainNames }) => {
           </Card>
         </Grid>
       </Grid>
+
+      <Box sx={{ display: "flex", mb: 1 }}>
+        <Button
+          variant={assetType === "native" ? "contained" : "outlined"}
+          onClick={() => {
+            setAssetType("native");
+          }}
+          sx={{ borderRadius: 10, height: "24px" }}
+          disableElevation
+        >
+          Native
+        </Button>
+        <Button
+          variant={assetType === "ibc" ? "contained" : "outlined"}
+          onClick={() => {
+            setAssetType("ibc");
+          }}
+          sx={{ borderRadius: 10, height: "24px", ml: 1 }}
+          disableElevation
+        >
+          IBC
+        </Button>
+      </Box>
+
       <TableContainer>
         <Table>
           <TableHead>
             <StyledTableRow>
-              <StyledTableCell>Network Name</StyledTableCell>
-              <StyledTableCell>Available Balance</StyledTableCell>
-              <StyledTableCell>Staked Amount</StyledTableCell>
-              <StyledTableCell>Rewards</StyledTableCell>
-              <StyledTableCell>Price</StyledTableCell>
-              <StyledTableCell>&nbsp;Actions</StyledTableCell>
+              <StyledTableCell sx={paddingTopBottom}>
+                Network Name
+              </StyledTableCell>
+              <StyledTableCell sx={paddingTopBottom}>
+                Available Balance
+              </StyledTableCell>
+              {assetType === "native" ? (
+                <>
+                  <StyledTableCell sx={paddingTopBottom}>
+                    Staked Amount
+                  </StyledTableCell>
+                  <StyledTableCell sx={paddingTopBottom}>
+                    Rewards
+                  </StyledTableCell>
+                </>
+              ) : null}
+              <StyledTableCell sx={paddingTopBottom}>Price</StyledTableCell>
+              {assetType === "native" ? (
+                <>
+                  <StyledTableCell sx={paddingTopBottom}>
+                    &nbsp;Actions
+                  </StyledTableCell>
+                </>
+              ) : null}
             </StyledTableRow>
           </TableHead>
           <TableBody>
-            {
-              chainIDs.map((chainID) => (
-                <ChainDetails
-                  key={chainID}
-                  chainID={chainID}
-                  chainName={chainIdToNames[chainID]}
-                />
-              ))
-            }
+            {chainIDs.map((chainID) => (
+              <ChainDetails
+                key={chainID}
+                chainID={chainID}
+                chainName={chainIdToNames[chainID]}
+                assetType={assetType}
+              />
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

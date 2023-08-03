@@ -8,8 +8,6 @@ import TableHead from "@mui/material/TableHead";
 import { formatVotingPower } from "../utils/denom";
 import { formatValidatorStatus } from "../utils/util";
 import Button from "@mui/material/Button";
-import { Box } from "@mui/system";
-import { Pagination } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useTheme } from "@emotion/react";
 
