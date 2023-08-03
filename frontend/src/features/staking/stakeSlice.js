@@ -60,7 +60,7 @@ export const txRestake = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         data.msgs,
-        399999 + Math.ceil((399999 * 0.1) * (data.msgs?.length || 1)),
+        399999 + Math.ceil(399999 * 0.1 * (data.msgs?.length || 1)),
         data.memo,
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -302,9 +302,9 @@ export const getAllValidators = createAsyncThunk(
           data?.status,
           nextKey
             ? {
-              key: nextKey,
-              limit: limit,
-            }
+                key: nextKey,
+                limit: limit,
+              }
             : {}
         );
         validators.push(...response.data.validators);
@@ -344,9 +344,9 @@ export const getDelegations = createAsyncThunk(
           data.address,
           nextKey
             ? {
-              key: nextKey,
-              limit: limit,
-            }
+                key: nextKey,
+                limit: limit,
+              }
             : {}
         );
         delegations.push(...(response.data?.delegation_responses || []));
@@ -378,9 +378,9 @@ export const getAuthzDelegations = createAsyncThunk(
           data.address,
           nextKey
             ? {
-              key: nextKey,
-              limit: limit,
-            }
+                key: nextKey,
+                limit: limit,
+              }
             : {}
         );
         delegations.push(...(response.data?.delegation_responses || []));
@@ -631,19 +631,21 @@ export const stakeSlice = createSlice({
       })
       .addCase(getDelegations.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
-        state.chains[chainID].delegations.status = "idle";
-        state.chains[chainID].delegations.delegations = action.payload;
-        state.chains[chainID].delegations.errMsg = "";
+        if (state.chains[chainID]) {
+          state.chains[chainID].delegations.status = "idle";
+          state.chains[chainID].delegations.delegations = action.payload;
+          state.chains[chainID].delegations.errMsg = "";
 
-        let total = 0.0;
-        for (let i = 0; i < action.payload.delegations.length; i++) {
-          const delegation = action.payload.delegations[i];
-          state.chains[chainID].delegations.delegatedTo[
-            delegation?.delegation?.validator_address
-          ] = true;
-          total += parseFloat(delegation?.delegation?.shares);
+          let total = 0.0;
+          for (let i = 0; i < action.payload.delegations.length; i++) {
+            const delegation = action.payload.delegations[i];
+            state.chains[chainID].delegations.delegatedTo[
+              delegation?.delegation?.validator_address
+            ] = true;
+            total += parseFloat(delegation?.delegation?.shares);
+          }
+          state.chains[chainID].delegations.totalStaked = total;
         }
-        state.chains[chainID].delegations.totalStaked = total;
       })
       .addCase(getDelegations.rejected, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
@@ -729,12 +731,12 @@ export const stakeSlice = createSlice({
       });
 
     builder
-      .addCase(getParams.pending, (state) => { })
+      .addCase(getParams.pending, (state) => {})
       .addCase(getParams.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
         state.chains[chainID].params = action.payload;
       })
-      .addCase(getParams.rejected, (state, action) => { });
+      .addCase(getParams.rejected, (state, action) => {});
 
     builder
       .addCase(txDelegate.pending, (state, action) => {
@@ -789,13 +791,13 @@ export const stakeSlice = createSlice({
 
     // pool info
     builder
-      .addCase(getPoolInfo.pending, (state) => { })
+      .addCase(getPoolInfo.pending, (state) => {})
       .addCase(getPoolInfo.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
         state.chains[chainID].pool[action.meta?.arg?.chainID] =
           action.payload.data;
       })
-      .addCase(getPoolInfo.rejected, (state, action) => { });
+      .addCase(getPoolInfo.rejected, (state, action) => {});
 
     // restake transaction
     builder
