@@ -15,7 +15,7 @@ export const CopyToClipboard = (props) => {
         <Tooltip title="Copy address">
           <IconButton
             size="small"
-            onDelete={() => {
+            onClick={() => {
               copyToClipboard(message, dispatch);
             }}
           >
