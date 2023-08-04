@@ -21,7 +21,7 @@
   "config": {
     "chain_id": "cosmoshub-4",
     "chain_name": "CosmosHub",
-    "rest": "https://lcd.cosmos.dragonstake.io",
+    "rest": "https://rpc-cosmoshub.blockapsis.com",
     "rpc": "https://resolute.witval.com/cosmos_rpc/",
     "currencies": [
       {
