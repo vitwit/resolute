@@ -125,9 +125,9 @@ export const ProposalItem = (props) => {
         </Box>
       </CardContent>
       <CardActions style={{ display: "flex", justifyContent: "space-between" }}>
-        {vote?.proposal_id ? (
+        {vote?.vote?.proposal_id ? (
           <Typography variant="body2" color="text.primary">
-            You voted {formatVoteOption(vote?.option)}
+            You voted {formatVoteOption(vote?.vote?.option)}
           </Typography>
         ) : (
           <>&nbsp;</>
