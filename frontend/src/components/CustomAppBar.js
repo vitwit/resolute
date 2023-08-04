@@ -19,6 +19,38 @@ import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
 import { ConnectWalletDialog } from "./wallet/ConnectWallet";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
+export const connectWallet = (walletName, dispatch) => {
+  if (walletName === "keplr") {
+    window.wallet = window.keplr;
+    setTimeout(() => {
+      dispatch(
+        connectWalletV1({
+          mainnets: allNetworks,
+          testnets: [],
+          walletName: "keplr",
+        })
+      );
+      removeAllFeegrants();
+      dispatch(resetFeegrantState());
+      localStorage.setItem(KEY_WALLET_NAME, "keplr");
+    }, 1000);
+  } else if (walletName === "leap") {
+    window.wallet = window.leap;
+    setTimeout(() => {
+      dispatch(
+        connectWalletV1({
+          mainnets: allNetworks,
+          testnets: [],
+          walletName: "leap",
+        })
+      );
+      removeAllFeegrants();
+      dispatch(resetFeegrantState());
+      localStorage.setItem(KEY_WALLET_NAME, "leap");
+    }, 1000);
+  }
+};
+
 export function CustomAppBar(props) {
   const tabResetStatus = useSelector((state) => state.authz.tabResetStatus);
   const dispatch = useDispatch();
@@ -28,38 +60,6 @@ export function CustomAppBar(props) {
   const isWalletConnected = useSelector((state) => state.wallet.connected);
 
   const [showSelectWallet, setShowSelectWallet] = useState(false);
-
-  const connectWallet = (walletName) => {
-    if (walletName === "keplr") {
-      window.wallet = window.keplr;
-      setTimeout(() => {
-        dispatch(
-          connectWalletV1({
-            mainnets: allNetworks,
-            testnets: [],
-            walletName: "keplr",
-          })
-        );
-        removeAllFeegrants();
-        dispatch(resetFeegrantState());
-        localStorage.setItem(KEY_WALLET_NAME, "keplr");
-      }, 1000);
-    } else if (walletName === "leap") {
-      window.wallet = window.leap;
-      setTimeout(() => {
-        dispatch(
-          connectWalletV1({
-            mainnets: allNetworks,
-            testnets: [],
-            walletName: "leap",
-          })
-        );
-        removeAllFeegrants();
-        dispatch(resetFeegrantState());
-        localStorage.setItem(KEY_WALLET_NAME, "leap");
-      }, 1000);
-    }
-  };
 
   const switchHandler = (event) => {
     dispatch(setAuthzMode(event.target.checked));
@@ -177,7 +177,7 @@ export function CustomAppBar(props) {
         open={showSelectWallet}
         onClose={() => setShowSelectWallet(false)}
         onWalletSelect={(wallet) => {
-          connectWallet(wallet);
+          connectWallet(wallet, dispatch);
           setShowSelectWallet(false);
         }}
       />

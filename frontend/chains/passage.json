@@ -36,12 +36,12 @@
     ],
     "wallet_url_for_staking": "https://resolute.vitwit.com/passage/staking",
     "bech32_config": {
-      "bech32_prefix_acc_addr": "passage",
-      "bech32_prefix_acc_pub": "passagepub",
-      "bech32_prefix_val_addr": "passagevaloper",
-      "bech32_prefix_val_pub": "passagevaloperpub",
-      "bech32_prefix_cons_addr": "passagegvalcons",
-      "bech32_prefix_cons_pub": "passagevalconspub"
+      "bech32_prefix_acc_addr": "pasg",
+      "bech32_prefix_acc_pub": "pasgpub",
+      "bech32_prefix_val_addr": "pasgvaloper",
+      "bech32_prefix_val_pub": "pasgvaloperpub",
+      "bech32_prefix_cons_addr": "pasgvalcons",
+      "bech32_prefix_cons_pub": "pasgvalconspub"
     },
     "fee_currencies": [
       {
