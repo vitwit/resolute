@@ -28,16 +28,19 @@ import { Button, Typography } from "@mui/material";
 
 export const filterSendAuthz = (authzs) => {
   const result = {};
-  
+
   for (const chainID in authzs) {
     const granters = [];
     const grants = authzs[chainID]?.grants || [];
     for (const grant of grants) {
       const authorizationType = grant?.authorization["@type"];
-      const isGenericAuthorization = authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
-      const isSendAuthorization = authorizationType === "/cosmos.bank.v1beta1.SendAuthorization";
-      const isMsgSend = grant?.authorization.msg === "/cosmos.bank.v1beta1.MsgSend";
-      if (isGenericAuthorization && isMsgSend || isSendAuthorization) {
+      const isGenericAuthorization =
+        authorizationType === "/cosmos.authz.v1beta1.GenericAuthorization";
+      const isSendAuthorization =
+        authorizationType === "/cosmos.bank.v1beta1.SendAuthorization";
+      const isMsgSend =
+        grant?.authorization.msg === "/cosmos.bank.v1beta1.MsgSend";
+      if ((isGenericAuthorization && isMsgSend) || isSendAuthorization) {
         granters.push(grant.granter);
       }
     }
@@ -153,6 +156,7 @@ export default function SendPage() {
         getGrantsToMe({
           baseURL: chainInfo.config.rest + "/",
           grantee: address,
+          chainID: nameToChainIDs[currentNetwork],
         })
       );
     }
@@ -193,7 +197,7 @@ export default function SendPage() {
             aminoConfig: chainInfo.aminoConfig,
             prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
             feeAmount:
-              chainInfo.config.gasPriceStep.average *
+              chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
               10 ** currency[0].coinDecimals,
             feegranter: feegrant?.granter,
           })
@@ -212,7 +216,7 @@ export default function SendPage() {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config.gasPriceStep.average *
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
           10 ** currency[0].coinDecimals,
         feegranter: feegrant?.granter,
       });

@@ -4,14 +4,13 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import ActiveProposals from "./gov/ActiveProposals";
-import StakingPage from "./StakingPage";
-import GroupPageV1 from "./GroupPageV1";
+import ActiveProposals from "./gov/ProposalsPage";
+import StakingPage from "./staking/StakingPage";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import Page404 from "./Page404";
 import { useDispatch, useSelector } from "react-redux";
-import OverviewPage from "./OverviewPage";
+import OverviewPage from "./overview/OverviewPage";
 import SendPage from "./SendPage";
 import UnjailPage from "./slashing/UnjailPage";
 import PageMultisig from "./multisig/PageMultisig";
@@ -32,8 +31,11 @@ import GroupProposal from "./group/Proposal";
 import { resetDefaultState as distributionResetDefaultState } from "../features/distribution/distributionSlice";
 import { resetDefaultState as stakingResetDefaultState } from "../features/staking/stakeSlice";
 import { getAllTokensPrice } from "../features/common/commonSlice";
-import Proposal from "./gov/Proposal";
+import Proposal from "./gov/chain/Proposal";
 import AirdropEligibility from "./passage/AirdropEligibility";
+import { FeegrantOverview } from "./feegrant/FeegrantOverview";
+import { AuthzOverview } from "./authz/AuthzOverview";
+import ConnectWallet from "../components/ConnectWallet";
 
 export const ContextData = React.createContext();
 
@@ -94,7 +96,7 @@ function getTabIndex(path) {
   else return 0;
 }
 
-export default function Home() {
+export default function Home(props) {
   const authzEnabled = useSelector((state) => state.common.authzMode);
   const [value, setValue] = React.useState(0);
   const selectedNetwork = useSelector(
@@ -110,11 +112,22 @@ export default function Home() {
   const pathParts = location.pathname.split("/");
   const page = pathParts?.[pathParts?.length - 1];
 
+  const authzTabs = useSelector((state) => state.authz.tabs);
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
     if (newValue === 8) {
-      navigate("/airdrop-check");
-    } else if (newValue === 0 || newValue === 2 || newValue === 3) {
+      if (selectedNetwork === "") 
+        navigate("/passage/airdrop-check");
+      else
+      navigate(`/${selectedNetwork.toLowerCase()}/airdrop-check`);
+    } else if (
+      newValue === 0 ||
+      newValue === 2 ||
+      newValue === 3 ||
+      newValue === 6 ||
+      newValue === 5
+    ) {
       navigate(ALL_NETWORKS[newValue]);
     } else {
       if (selectedNetwork === "") {
@@ -149,24 +162,92 @@ export default function Home() {
     setValue(getTabIndex(page));
   }, []);
 
-  useEffect(() => {
-    const chainIds = Object.keys(wallet.networks);
-    dispatch(stakingResetDefaultState(chainIds));
-  }, [wallet]);
-
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange} aria-label="menu bar">
-          <Tab label="Overview" {...a11yProps(0)} />
-          <Tab label="Transfers" {...a11yProps(1)} />
-          <Tab label="Governance" {...a11yProps(2)} />
-          <Tab label="Staking" {...a11yProps(3)} />
-          {!authzEnabled && <Tab label="Multisig" {...a11yProps(4)} />}
-          {!authzEnabled && <Tab label="Authz" {...a11yProps(5)} />}
-          <Tab label="Feegrant" {...a11yProps(6)} />
-          <Tab label="DAOs" {...a11yProps(7)} />
-          {!authzEnabled && <Tab label="Airdrop" {...a11yProps(8)} />}
+          <Tab
+            label="Overview"
+            {...a11yProps(0)}
+            value={0}
+            sx={{
+              fontWeight: 600,
+            }}
+          />
+          <Tab
+            label="Transfers"
+            {...a11yProps(1)}
+            value={1}
+            sx={{
+              fontWeight: 600,
+            }}
+            disabled={authzEnabled && !authzTabs?.sendEnabled}
+          />
+          <Tab
+            label="Governance"
+            {...a11yProps(2)}
+            value={2}
+            sx={{
+              fontWeight: 600,
+            }}
+            disabled={authzEnabled && !authzTabs?.govEnabled}
+          />
+          <Tab
+            label="Staking"
+            {...a11yProps(3)}
+            value={3}
+            sx={{
+              fontWeight: 600,
+            }}
+            disabled={authzEnabled && !authzTabs?.stakingEnabled}
+          />
+          {!authzEnabled && !authzTabs?.multisigEnabled ? (
+            <Tab
+              label="Multisig"
+              {...a11yProps(4)}
+              value={4}
+              sx={{
+                fontWeight: 600,
+              }}
+            />
+          ) : null}
+          {!authzEnabled && (
+            <Tab
+              label="Authz"
+              {...a11yProps(5)}
+              value={5}
+              sx={{
+                fontWeight: 600,
+              }}
+            />
+          )}
+          <Tab
+            label="Feegrant"
+            {...a11yProps(6)}
+            value={6}
+            sx={{
+              fontWeight: 600,
+            }}
+          />
+          <Tab
+            label="DAOs"
+            {...a11yProps(7)}
+            value={7}
+            sx={{
+              fontWeight: 600,
+            }}
+            disabled={authzEnabled && !authzTabs?.daosEnabled}
+          />
+          {!authzEnabled && (
+            <Tab
+              label="Airdrop"
+              {...a11yProps(8)}
+              value={8}
+              sx={{
+                fontWeight: 600,
+              }}
+            />
+          )}
         </Tabs>
       </Box>
 
@@ -176,86 +257,97 @@ export default function Home() {
         }}
       >
         <ContextData.Provider value={network} setNetwork={setNetwork}>
-          <Routes>
-            <Route path="/" element={<OverviewPage />}>
-              <Route path=":networkName/overview" element={<OverviewPage />} />
-            </Route>
+          {wallet.connected ? (
+            <Routes>
+              <Route path="/" element={<OverviewPage />}>
+                <Route
+                  path=":networkName/overview"
+                  element={<OverviewPage />}
+                />
+              </Route>
 
-            <Route path="/:networkName/transfers" element={<SendPage />} />
+              <Route path="/:networkName/transfers" element={<SendPage />} />
 
-            <Route path="/transfers" element={<SendPage />} />
+              <Route path="/transfers" element={<SendPage />} />
 
-            <Route path="/:networkName/authz" element={<Authz />} />
+              <Route path="/authz" element={<AuthzOverview />} />
 
-            <Route path="/:networkName/feegrant" element={<Feegrant />} />
+              <Route path="/:networkName/authz" element={<Authz />} />
 
-            <Route path="/staking" element={<StakingPage />} />
+              <Route path="/feegrant" element={<FeegrantOverview />} />
 
-            <Route path="/:networkName/staking" element={<StakingPage />} />
+              <Route path="/:networkName/feegrant" element={<Feegrant />} />
 
-            <Route path="/gov" element={<ActiveProposals />} />
+              <Route path="/staking" element={<StakingPage />} />
 
-            <Route path="/:networkName/gov" element={<ActiveProposals />} />
+              <Route path="/:networkName/staking" element={<StakingPage />} />
 
-            <Route
-              path="/:networkName/proposals/:id"
-              element={
-                <Suspense fallback={<CircularProgress />}>
-                  <Proposal />
-                </Suspense>
-              }
-            ></Route>
+              <Route path="/gov" element={<ActiveProposals />} />
 
-            <Route path="/:networkName/daos" element={<GroupPageV1 />} />
+              <Route path="/:networkName/gov" element={<ActiveProposals />} />
 
-            <Route path="/:networkName/multisig" element={<PageMultisig />} />
+              <Route
+                path="/:networkName/proposals/:id"
+                element={
+                  <Suspense fallback={<CircularProgress />}>
+                    <Proposal />
+                  </Suspense>
+                }
+              ></Route>
 
-            <Route
-              path="/:networkName/multisig/:address/txs"
-              element={<PageMultisigInfo />}
-            />
+              <Route path="/:networkName/daos" element={<GroupPage />} />
 
-            <Route
-              path="/:networkName/multisig/:address/create-tx"
-              element={<PageCreateTx />}
-            />
+              <Route path="/:networkName/multisig" element={<PageMultisig />} />
 
-            <Route path="/:networkName/slashing" element={<UnjailPage />} />
+              <Route
+                path="/:networkName/multisig/:address/txs"
+                element={<PageMultisigInfo />}
+              />
 
-            <Route
-              path="/:networkName/daos/create-group"
-              element={<CreateGroupNewPage />}
-            />
+              <Route
+                path="/:networkName/multisig/:address/create-tx"
+                element={<PageCreateTx />}
+              />
 
-            <Route
-              path="/:networkName/feegrant/new"
-              element={<NewFeegrant />}
-            />
+              <Route path="/:networkName/slashing" element={<UnjailPage />} />
 
-            <Route path="/:networkName/authz/new" element={<NewAuthz />} />
+              <Route
+                path="/:networkName/daos/create-group"
+                element={<CreateGroupNewPage />}
+              />
 
-            <Route path="/:networkName/daos/:id" element={<Group />} />
+              <Route
+                path="/:networkName/feegrant/new"
+                element={<NewFeegrant />}
+              />
 
-            <Route
-              path="/:networkName/daos/:id/policies/:policyId"
-              element={<Policy />}
-            />
+              <Route path="/:networkName/authz/new" element={<NewAuthz />} />
 
-            <Route
-              path="/:networkName/daos/:id/policies/:policyAddress/proposals"
-              element={<CreateProposal />}
-            />
+              <Route path="/:networkName/daos/:id" element={<Group />} />
 
-            <Route path="/daos" element={<GroupPage />} />
+              <Route
+                path="/:networkName/daos/:id/policies/:policyId"
+                element={<Policy />}
+              />
 
-            <Route
-              path="/:networkName/daos/proposals/:id"
-              element={<GroupProposal />}
-            />
-            <Route path="/airdrop-check" element={<AirdropEligibility />} />
+              <Route
+                path="/:networkName/daos/:id/policies/:policyAddress/proposals"
+                element={<CreateProposal />}
+              />
 
-            <Route path="*" element={<Page404 />}></Route>
-          </Routes>
+              <Route path="/daos" element={<GroupPage />} />
+
+              <Route
+                path="/:networkName/daos/groups/:groupID/proposals/:id"
+                element={<GroupProposal />}
+              />
+              <Route path="/:networkName/airdrop-check" element={<AirdropEligibility />} />
+
+              <Route path="*" element={<Page404 />}></Route>
+            </Routes>
+          ) : (
+            <ConnectWallet />
+          )}
         </ContextData.Provider>
       </Box>
     </Box>

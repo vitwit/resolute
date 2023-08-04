@@ -5,6 +5,7 @@ import { setError, setTxHash } from "../common/commonSlice";
 import govService from "./govService";
 
 const initialState = {
+  loading : 0,
   active: {
     proposals: {},
     status: "idle",
@@ -116,7 +117,7 @@ export const txVote = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         data?.justification || "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -154,6 +155,10 @@ export const proposalsSlice = createSlice({
   name: "gov",
   initialState,
   reducers: {
+    resetLoading: (state, action) => {
+      const {chainsCount} = action.payload;
+      state.loading += chainsCount;
+    },
     resetTx: (state) => {
       state.tx = {
         status: "",
@@ -180,14 +185,16 @@ export const proposalsSlice = createSlice({
 
           }
           state.active[chainID] = result;
+          state.loading--;
         }
       })
       .addCase(getProposals.rejected, (state, action) => {
-        const chainID = action.payload?.chainID;
+        const chainID = action.meta?.arg?.chainID;
         const chainData = state.active[chainID] || {};
         chainData.status = "rejected";
         chainData.errMsg = action.error.message;
         state.active[chainID] = chainData;
+        state.loading--;
       });
 
     // tally
@@ -271,5 +278,5 @@ export const proposalsSlice = createSlice({
   },
 });
 
-export const { resetTx } = proposalsSlice.actions;
+export const { resetTx, resetLoading } = proposalsSlice.actions;
 export default proposalsSlice.reducer;

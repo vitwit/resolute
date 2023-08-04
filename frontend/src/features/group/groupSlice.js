@@ -233,7 +233,7 @@ export const getGroupPolicyProposalsByPage = createAsyncThunk(
       for (let i = 0; i < data.length; i++) {
         try {
           await getProposalsPagination(data[i]?.address, {
-            limit: 1,
+            limit: 100,
             key: "",
           });
         } catch (error) {
@@ -285,9 +285,9 @@ export const txGroupProposalVote = createAsyncThunk(
       const result = await signAndBroadcastGroupProposalVote(
         data.admin,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
+        fee(data.denom, data.feeAmount, 860000),
         data.chainId,
-        data.rpc
+        data.rpc,
       );
 
       dispatch(resetTxLoad());
@@ -331,7 +331,7 @@ export const txGroupProposalExecute = createAsyncThunk(
       const result = await signAndBroadcastGroupProposalExecute(
         data.admin,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
+        fee(data.denom, data.feeAmount, 860000),
         data.chainId,
         data.rpc
       );
@@ -385,7 +385,7 @@ export const txUpdateGroupAdmin = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -435,7 +435,7 @@ export const txUpdateGroupMetadata = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -487,7 +487,7 @@ export const txCreateGroupProposal = createAsyncThunk(
       const result = await signAndBroadcastGroupProposal(
         data.admin,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
+        fee(data.denom, data.feeAmount, 860000),
         data.chainId,
         data.rpc
       );
@@ -549,7 +549,7 @@ export const txCreateGroup = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -599,7 +599,7 @@ export const txUpdateGroupMember = createAsyncThunk(
       const result = await signAndBroadcastUpdateGroupMembers(
         data.admin,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
+        fee(data.denom, data.feeAmount, 860000),
         data.chainId,
         data.rpc
       );
@@ -647,7 +647,7 @@ export const txAddGroupPolicy = createAsyncThunk(
       const result = await signAndBroadcastAddGroupPolicy(
         data.admin,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
+        fee(data.denom, data.feeAmount, 860000),
         data.chainId,
         data.rpc
       );
@@ -699,7 +699,7 @@ export const txUpdateGroupPolicy = createAsyncThunk(
       const result = await signAndBroadcastUpdateGroupPolicy(
         data.admin,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
+        fee(data.denom, data.feeAmount, 860000),
         data.chainId,
         data.rpc
       );
@@ -751,7 +751,7 @@ export const txUpdateGroupPolicyMetdata = createAsyncThunk(
       const result = await signAndBroadcastUpdateGroupPolicyMetadata(
         data.admin,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
+        fee(data.denom, data.feeAmount, 860000),
         data.chainId,
         data.rpc
       );
@@ -803,7 +803,7 @@ export const txUpdateGroupPolicyAdmin = createAsyncThunk(
       const result = await signAndBroadcastUpdateGroupPolicyAdmin(
         data.admin,
         [msg],
-        fee(data.denom, data.feeAmount, 260000),
+        fee(data.denom, data.feeAmount, 860000),
         data.chainId,
         data.rpc
       );
@@ -852,7 +852,7 @@ export const txLeaveGroupMember = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,

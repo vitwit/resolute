@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,55 +9,91 @@ import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
 import { setAuthzMode } from "../features/common/commonSlice";
 import { FormControlLabel, Switch } from "@mui/material";
-import ListItemText from "@mui/material/ListItemText";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import Button from "@mui/material/Button";
-import { setSelectedNetwork } from "../features/common/commonSlice";
 import { getGrantsToMe } from "../features/authz/authzSlice";
-import { useNavigate } from "react-router-dom";
+import { resetTabs, resetTabResetStatus } from "../features/authz/authzSlice";
+import { connectWalletV1, resetWallet } from "../features/wallet/walletSlice";
+import { networks as allNetworks } from "../utils/chainsInfo";
+import { KEY_WALLET_NAME, removeAllFeegrants } from "../utils/localStorage";
+import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
+import { ConnectWalletDialog } from "./wallet/ConnectWallet";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+
+export const connectWallet = (walletName, dispatch) => {
+  if (walletName === "keplr") {
+    window.wallet = window.keplr;
+    setTimeout(() => {
+      dispatch(
+        connectWalletV1({
+          mainnets: allNetworks,
+          testnets: [],
+          walletName: "keplr",
+        })
+      );
+      removeAllFeegrants();
+      dispatch(resetFeegrantState());
+      localStorage.setItem(KEY_WALLET_NAME, "keplr");
+    }, 1000);
+  } else if (walletName === "leap") {
+    window.wallet = window.leap;
+    setTimeout(() => {
+      dispatch(
+        connectWalletV1({
+          mainnets: allNetworks,
+          testnets: [],
+          walletName: "leap",
+        })
+      );
+      removeAllFeegrants();
+      dispatch(resetFeegrantState());
+      localStorage.setItem(KEY_WALLET_NAME, "leap");
+    }, 1000);
+  }
+};
 
 export function CustomAppBar(props) {
+  const tabResetStatus = useSelector((state) => state.authz.tabResetStatus);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const networks = useSelector((state) => state.wallet.networks);
   const isAuthzMode = useSelector((state) => state.common.authzMode);
-  const chainIDs = Object.keys(networks);
+  const isWalletConnected = useSelector((state) => state.wallet.connected);
 
-  const selectedAuthz = useSelector((state) => state.authz.selected);
-  const selectNetwork = useSelector((state) => state.common.selectedNetwork.chainName)
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [showSelectWallet, setShowSelectWallet] = useState(false);
 
   const switchHandler = (event) => {
     dispatch(setAuthzMode(event.target.checked));
   };
 
-  const handleClick = (event) => {
-    if (selectedAuthz.granter.length === 0) {
-      setAnchorEl(event.currentTarget);
-    } else {
-      alert("cannot switch to other network in authz mode");
+  useEffect(() => {
+    if (tabResetStatus) {
+      dispatch(resetTabResetStatus());
+      Object.keys(networks).forEach((key) => {
+        const network = networks[key];
+        dispatch(
+          getGrantsToMe({
+            baseURL: network.network?.config?.rest,
+            grantee: network.walletInfo?.bech32Address,
+            chainID: network.network?.config?.chainId,
+            changeAuthzTab: true,
+          })
+        );
+      });
     }
-  };
-
-  const navigateTo = (path) => {
-    navigate(path);
-  }
+  }, [tabResetStatus]);
 
   useEffect(() => {
     if (isAuthzMode) {
-      Object.keys(networks).map((key, _) => {
-        const network = networks[key];
-        dispatch(getGrantsToMe({
-          baseURL: network.network?.config?.rest,
-          grantee: network.walletInfo?.bech32Address,
-          chainID: network.network?.config?.chainId
-        }))
-      })
+      dispatch(resetTabs());
     }
   }, [isAuthzMode]);
+
+  const handleDisconnectWallet = () => {
+    removeAllFeegrants();
+    dispatch(resetFeegrantState());
+    localStorage.removeItem(KEY_WALLET_NAME);
+    dispatch(resetWallet());
+  };
 
   return (
     <AppBar
@@ -83,66 +119,68 @@ export function CustomAppBar(props) {
           align="left"
         ></Typography>
 
-        <IconButton aria-label="mode" onClick={() => props.onModeChange()}>
-          {props.darkMode ? <LightModeOutlined /> : <DarkModeOutlined />}
+        <IconButton
+          color="inherit"
+          aria-label="mode"
+          onClick={() => props.onModeChange()}
+        >
+          {
+            props.darkMode ?
+              <LightModeOutlined />
+              :
+              <DarkModeOutlined />
+          }
         </IconButton>
 
-        <FormControlLabel
-          label="Authz mode"
-          control={
-            <Switch
-              checked={isAuthzMode}
-              onChange={switchHandler}
-              color="secondary"
-            />
-          }
-        >
-        </FormControlLabel>
-        <Button
-          id="demo-positioned-button"
-          color="inherit"
-          endIcon={<ExpandMoreOutlinedIcon />}
-          aria-controls={anchorEl ? "demo-positioned-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={anchorEl ? "true" : undefined}
-          onClick={handleClick}
-        >
-          {selectNetwork || "Select Network"}
-        </Button>
-        <Menu
-          id="demo-positioned-menu"
-          aria-labelledby="demo-positioned-button"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={() => setAnchorEl(null)}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          {chainIDs.map(chain => (
-            <MenuItem
-              key={chain}
-              onClick={() => {
-                setAnchorEl(null);
-                dispatch(setSelectedNetwork({
-                  chainName: networks[chain].network.config.chainName,
-                  chainID: networks[chain].network.config.chainId
-                }));
-                navigateTo('/');
-              }}
-            >
-              <ListItemText>
-                {networks[chain].network.config.chainName}
-              </ListItemText>
-            </MenuItem>
-          ))}
-        </Menu>
+        {isWalletConnected ? (
+          <FormControlLabel
+            label="Authz mode"
+            control={
+              <Switch
+                checked={isAuthzMode}
+                onChange={switchHandler}
+                color="secondary"
+              />
+            }
+          ></FormControlLabel>
+        ) : null}
+
+        {!isWalletConnected ? (
+          <Button
+            color="inherit"
+            onClick={() => {
+              setShowSelectWallet(!showSelectWallet);
+            }}
+            sx={{
+              textTransform: "none",
+            }}
+          >
+            Connect wallet
+          </Button>
+        ) : (
+          <Button
+            color="inherit"
+            sx={{
+              textTransform: "none",
+            }}
+            endIcon={<LogoutOutlinedIcon />}
+            onClick={() => {
+              handleDisconnectWallet();
+            }}
+          >
+            Disconnect
+          </Button>
+        )}
       </Toolbar>
+
+      <ConnectWalletDialog
+        open={showSelectWallet}
+        onClose={() => setShowSelectWallet(false)}
+        onWalletSelect={(wallet) => {
+          connectWallet(wallet, dispatch);
+          setShowSelectWallet(false);
+        }}
+      />
     </AppBar>
   );
 }

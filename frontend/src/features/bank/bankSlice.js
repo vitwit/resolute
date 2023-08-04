@@ -3,6 +3,7 @@ import { SendMsg } from "../../txns/bank";
 import bankService from "./service";
 import { setError, setTxHash } from "../common/commonSlice";
 import { signAndBroadcast } from "../../utils/signing";
+import { parseBalance } from "../../utils/denom";
 
 const initialState = {
   balances: {},
@@ -46,7 +47,7 @@ export const multiTxns = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         data.msgs,
-        260000,
+        860000,
         data.memo,
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -90,7 +91,7 @@ export const txBankSend = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -127,7 +128,17 @@ export const txBankSend = createAsyncThunk(
 export const bankSlice = createSlice({
   name: "bank",
   initialState,
-  reducers: {},
+  reducers: {
+    claimRewardInBank: (state, action) => {
+      const { chainID, totalRewards, minimalDenom } = action.payload;
+      for (let i = 0; i < state?.balances?.[chainID]?.list?.length; i++) {
+        if (state.balances[chainID]?.list?.[i]?.denom === minimalDenom) {
+          state.balances[chainID].list[i].amount =
+            +state.balances[chainID].list[i].amount + totalRewards;
+        }
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getBalances.pending, (state) => {})
@@ -187,4 +198,5 @@ export const bankSlice = createSlice({
   },
 });
 
+export const { claimRewardInBank } = bankSlice.actions;
 export default bankSlice.reducer;

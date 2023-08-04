@@ -14,8 +14,11 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import { DialogCreateMultisig } from "../../components/multisig/DialogCreateMultisig";
-import { getMultisigAccounts } from "../../features/multisig/multisigSlice";
+import DialogCreateMultisig from "../../components/multisig/DialogCreateMultisig";
+import {
+  getMultisigAccounts,
+  resetCreateMultisigRes,
+} from "../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 import { getLocalTime } from "../../utils/datetime";
@@ -47,7 +50,6 @@ export default function PageMultisig() {
   const accounts = multisigAccounts.accounts;
   const pendingTxns = multisigAccounts.txnCounts;
 
-
   const dispatch = useDispatch();
   const [currentNetwork, setCurrentNetwork] = useState();
   useEffect(() => {
@@ -56,20 +58,23 @@ export default function PageMultisig() {
     if (network.length > 0 && connected) {
       const chainId = nameToChainIDs[network];
       if (chainId?.length > 0) {
-        const chain = networks[chainId];
         setChainInfo(networks[chainId]);
-        dispatch(getMultisigAccounts(chain?.walletInfo?.bech32Address));
       } else {
         throw new Error("you shouldn't be here");
       }
     }
-
   }, [params, connected]);
+
+  useEffect(() => {
+    if(chainInfo?.walletInfo?.bech32Address)
+    dispatch(getMultisigAccounts(chainInfo?.walletInfo?.bech32Address));
+  }, [chainInfo, connected]);
 
   useEffect(() => {
     if (createMultiAccRes.status === "idle") {
       setOpen(false);
       dispatch(getMultisigAccounts(walletInfo?.bech32Address));
+      dispatch(resetCreateMultisigRes());
     }
   }, [createMultiAccRes]);
 
@@ -129,7 +134,7 @@ export default function PageMultisig() {
               mt: 6,
             }}
           >
-            <Typography variant="body1" fontWeight={500}>
+            <Typography variant="h6" fontWeight={600}>
               No Multisig accounts found on your address
             </Typography>
             <Button
@@ -184,14 +189,18 @@ export default function PageMultisig() {
                   >
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
+                        navigate(
+                          `/${currentNetwork}/multisig/${row.address}/txs`
+                        );
                       }}
                     >
                       {row?.name}
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
+                        navigate(
+                          `/${currentNetwork}/multisig/${row.address}/txs`
+                        );
                       }}
                     >
                       <Chip
@@ -206,21 +215,27 @@ export default function PageMultisig() {
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
+                        navigate(
+                          `/${currentNetwork}/multisig/${row.address}/txs`
+                        );
                       }}
                     >
                       {row?.threshold || 0}
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
+                        navigate(
+                          `/${currentNetwork}/multisig/${row.address}/txs`
+                        );
                       }}
                     >
                       <strong> {pendingTxns[row?.address] || 0} </strong> txns
                     </StyledTableCell>
                     <StyledTableCell
                       onClick={() => {
-                        navigate(`/${currentNetwork}/multisig/${row.address}/txs`);
+                        navigate(
+                          `/${currentNetwork}/multisig/${row.address}/txs`
+                        );
                       }}
                     >
                       {getLocalTime(row?.created_at)}
@@ -230,7 +245,6 @@ export default function PageMultisig() {
               </TableBody>
             </Table>
           </TableContainer>
-
         </FormControl>
       ) : null}
 
@@ -241,6 +255,7 @@ export default function PageMultisig() {
           onClose={onClose}
           open={open}
           address={walletInfo?.bech32Address}
+          pubKey={walletInfo?.pubKey}
         />
       ) : null}
     </Paper>

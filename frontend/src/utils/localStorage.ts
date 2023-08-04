@@ -1,8 +1,12 @@
 import { Grant } from "cosmjs-types/cosmos/feegrant/v1beta1/feegrant";
 
+
 interface ChainWiseGrants {
   [key: string]: Grant;
 }
+
+export const KEY_WALLET_NAME: string = "WALLET_NAME";
+export const KEY_DARK_MODE: string = "DARK_MODE";
 
 export function setConnected() {
   localStorage.setItem("CONNECTED", "true");
@@ -31,15 +35,17 @@ export function getFeegrant(): ChainWiseGrants | any {
 }
 
 export function setFeegrant(grant: Grant, chainName: string) {
-  let data: ChainWiseGrants;
-  data = getFeegrant();
+  const data: ChainWiseGrants = getFeegrant() || {};
   data[chainName] = grant;
   localStorage.setItem(TYPE_FEEGRANT, JSON.stringify(data));
 }
 
 export function removeFeegrant(chainName: string) {
-  let data: ChainWiseGrants;
-  data = getFeegrant();
+  const data: ChainWiseGrants = getFeegrant() || {};
   delete data[chainName];
   localStorage.setItem(TYPE_FEEGRANT, JSON.stringify(data));
+}
+
+export function removeAllFeegrants() {
+  localStorage.removeItem("feegrant");
 }

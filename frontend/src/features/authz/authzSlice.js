@@ -12,10 +12,31 @@ import {
   AuthzExecUnDelegateMsg,
 } from "../../txns/authz";
 import { setError, setTxHash } from "../common/commonSlice";
-import { AuthzExecMsgUnjail } from "../../txns/authz/exec";
+import {
+  AuthzExecMsgFeegrant,
+  AuthzExecMsgRevoke,
+  AuthzExecMsgUnjail,
+} from "../../txns/authz/exec";
 import { signAndBroadcast } from "../../utils/signing";
+import { getAuthzTabs } from "../../utils/authorizations";
+import { AuthzFeegrantRevokeMsg } from "../../txns/feegrant/revoke";
+import { FeegrantBasicMsg, FeegrantPeriodicMsg } from "../../txns/feegrant";
+import { FeegrantFilterMsg } from "../../txns/feegrant/grant";
 
 const initialState = {
+  tabResetStatus: false,
+  tabs: {
+    airdropEnabled: false,
+    authzEnabled: false,
+    daosEnabled: false,
+    feegrantEnabled: false,
+    govEnabled: false,
+    multisigEnabled: false,
+    sendEnabled: false,
+    stakingEnabled: false,
+  },
+  grantsByMeCount: 0,
+  grantsToMeCount: 0,
   grantsToMe: {},
   grantsByMe: {},
   tx: {
@@ -76,7 +97,7 @@ export const txAuthzSend = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -120,7 +141,7 @@ export const txAuthzRevoke = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -136,6 +157,7 @@ export const txAuthzRevoke = createAsyncThunk(
           getGrantsByMe({
             baseURL: data.baseURL,
             granter: data.granter,
+            chainID: data.chainId,
           })
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
@@ -293,7 +315,7 @@ export const authzExecHelper = (dispatch, data) => {
     }
     case "unjail":
       {
-        const msg = AuthzExecMsgUnjail(data.validator, data.address);
+        const msg = AuthzExecMsgUnjail(data.validator, data.from);
         dispatch(
           txAuthzExec({
             msgs: [msg],
@@ -308,6 +330,104 @@ export const authzExecHelper = (dispatch, data) => {
         );
       }
       break;
+    case "revoke": {
+      const feegrantRevokeMsg = AuthzFeegrantRevokeMsg(
+        data.granter,
+        data.grantee
+      );
+      const msg = AuthzExecMsgRevoke(feegrantRevokeMsg, data.from);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
+    case "feegrantBasic": {
+      const feegrantBasicMsg = FeegrantBasicMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.expiration,
+        true
+      );
+      const msg = AuthzExecMsgFeegrant(feegrantBasicMsg, data.from);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
+    case "feegrantPeriodic": {
+      const feegrantPeriodicMsg = FeegrantPeriodicMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.period,
+        data.periodSpendLimit,
+        data.expiration,
+        true
+      );
+      const msg = AuthzExecMsgFeegrant(feegrantPeriodicMsg, data.from);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
+    case "feegrantFiltered": {
+      const feegrantFilteredMsg = FeegrantFilterMsg(
+        data.granter,
+        data.grantee,
+        data.denom,
+        data.spendLimit,
+        data.period,
+        data.periodSpendLimit,
+        data.expiration,
+        data.txType || [],
+        data.allowanceType,
+        true
+      );
+      const msg = AuthzExecMsgFeegrant(feegrantFilteredMsg, data.from);
+      dispatch(
+        txAuthzExec({
+          msgs: [msg],
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
     default:
       alert("not supported");
   }
@@ -328,7 +448,7 @@ export const txAuthzGeneric = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest
@@ -370,7 +490,7 @@ export const txAuthzExec = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         data.msgs,
-        260000,
+        860000,
         data?.metadata || "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -434,6 +554,25 @@ export const authzSlice = createSlice({
     resetTxAuthzRes: (state) => {
       state.txAuthzRes = {};
     },
+    resetTabs: (state) => {
+      state.tabs = { ...initialState.tabs };
+      state.tabResetStatus = true;
+    },
+    resetTabResetStatus: (state) => {
+      state.tabResetStatus = false;
+    },
+    removeAuthzGrant: (state, action) => {
+      const {granter, grantee, chainID} = action.payload;
+      const chainAuthzGrantsByMe = state.grantsByMe?.[chainID].grants || [];
+      for( let i=0; i<chainAuthzGrantsByMe.length; i++) {
+        if(chainAuthzGrantsByMe[i].grantee === grantee && chainAuthzGrantsByMe[i].granter === granter) {
+          chainAuthzGrantsByMe.splice(i, 1);
+            state.grantsByMe[chainID] = chainAuthzGrantsByMe;
+            state.grantsByMeCount--;
+          break;
+        }
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -451,21 +590,35 @@ export const authzSlice = createSlice({
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
-        if (chainID.length) {
+        const { changeAuthzTab } = action.meta?.arg;
+
+        if (chainID?.length) {
+          let grants = action.payload.data.grants;
+          if (changeAuthzTab) {
+            const existingTabs = state.tabs;
+            const updatedTabs = getAuthzTabs(grants);
+            for (let tabIndex in updatedTabs) {
+              updatedTabs[tabIndex] =
+                updatedTabs[tabIndex] || existingTabs[tabIndex];
+            }
+            state.tabs = updatedTabs;
+          }
           let result = {
             status: "idle",
             errMsg: "",
-            grants: action.payload.data.grants,
+            grants: grants,
             pagination: action.payload.data.pagination,
           };
           state.grantsToMe[chainID] = result;
+          state.grantsByMeCount = calculateAuthzCount(state.grantsByMe);
         }
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
         const chainID = action.meta.arg.chainID;
-        if(chainID.length) {
+        if (chainID.length) {
           state.grantsToMe[chainID].status = "rejected";
           state.grantsToMe[chainID].grants = [];
+          state.grantsToMeCount = calculateAuthzCount(state.grantsToMe)
           state.grantsToMe[chainID].pagination = {};
           state.grantsToMe[chainID].errMsg = action.error.message;
         }
@@ -493,12 +646,14 @@ export const authzSlice = createSlice({
           pagination: action.payload.data.pagination,
         };
         state.grantsByMe[chainID] = result;
+        state.grantsByMeCount = calculateAuthzCount(state.grantsByMe)
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
         const chainID = action.meta.arg.chainID;
-        if(chainID.length) {
+        if (chainID?.length) {
           state.grantsByMe[chainID].status = "rejected";
           state.grantsByMe[chainID].grants = [];
+          state.grantsByMeCount = calculateAuthzCount(state.grantsByMe)
           state.grantsByMe[chainID].pagination = {};
           state.grantsByMe[chainID].errMsg = action.error.message;
         }
@@ -559,12 +714,24 @@ export const authzSlice = createSlice({
   },
 });
 
+const calculateAuthzCount = (authzGrants) => {
+  let authzGrantCount = 0;
+  let chainIds = Object.keys(authzGrants);
+  for(let chainId of chainIds) {
+    authzGrantCount += authzGrants[chainId]?.grants?.length || 0;
+  }
+  return authzGrantCount;
+}
+
 export const {
   resetAlerts,
   setSelectedGranter,
   resetExecTx,
   resetTxAuthzRes,
+  resetTabs,
   exitAuthzMode,
+  resetTabResetStatus,
+  removeAuthzGrant,
 } = authzSlice.actions;
 
 export default authzSlice.reducer;

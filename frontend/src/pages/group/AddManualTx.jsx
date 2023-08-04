@@ -78,7 +78,13 @@ const getAmountInAtomics = (amount, currency) => {
   };
 };
 
-function AddManualTx({ address, chainInfo, handleCancel, adminAddress, networkName }) {
+function AddManualTx({
+  address,
+  chainInfo,
+  handleCancel,
+  adminAddress,
+  networkName,
+}) {
   const { policyAddress, id } = useParams();
   var [messages, setMessages] = useState([]);
 
@@ -89,8 +95,18 @@ function AddManualTx({ address, chainInfo, handleCancel, adminAddress, networkNa
   const methods = useForm({
     defaultValues: {
       gas: 20000,
+      metadata: {
+        title: "",
+        details: "",
+        summary: "",
+        forumurl: "",
+      },
     },
   });
+  const {
+    getValues,
+    formState: { errors: errors },
+  } = methods;
   const dispatch = useDispatch();
 
   const validators = null;
@@ -148,7 +164,7 @@ function AddManualTx({ address, chainInfo, handleCancel, adminAddress, networkNa
   const onSubmit = (data) => {
     dispatch(
       txCreateGroupProposal({
-        metadata: data?.metadata,
+        metadata: JSON.stringify(data?.metadata),
         admin: adminAddress,
         proposers: [adminAddress],
         messages: messages,
@@ -289,17 +305,110 @@ function AddManualTx({ address, chainInfo, handleCancel, adminAddress, networkNa
             <FormProvider {...methods}>
               <form onSubmit={methods.handleSubmit(onSubmit)}>
                 <Controller
-                  name="metadata"
+                  name="metadata.title"
                   control={methods.control}
+                  rules={{
+                    required: "Title is required",
+                    maxLength: {
+                      value: 30,
+                      message: "Title length cannot be more than 30 characters",
+                    },
+                    validate: () =>
+                      getValues("metadata.title").trim().length > 0,
+                  }}
                   render={({ field }) => (
                     <TextField
                       sx={{
                         mt: 1,
                       }}
                       {...field}
-                      label="Proposal Metadata"
+                      label="Proposal Title *"
                       fullWidth
                       size="small"
+                      error={errors?.metadata?.title}
+                      helperText={
+                        errors?.metadata?.title?.message ||
+                        (errors?.metadata?.title?.type === "validate" &&
+                          "Title is required")
+                      }
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="metadata.details"
+                  control={methods.control}
+                  rules={{
+                    maxLength: {
+                      value: 70,
+                      message:
+                        "Details length cannot be more than 80 characters",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <TextField
+                      sx={{
+                        mt: 1,
+                      }}
+                      {...field}
+                      label="Details"
+                      fullWidth
+                      size="small"
+                      multiline
+                      error={errors?.metadata?.details}
+                      helperText={errors?.metadata?.details?.message}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="metadata.summary"
+                  control={methods.control}
+                  rules={{
+                    maxLength: {
+                      value: 100,
+                      message:
+                        "Summary length cannot be more than 100 characters",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <TextField
+                      sx={{
+                        mt: 1,
+                      }}
+                      {...field}
+                      label="Summary"
+                      fullWidth
+                      size="small"
+                      multiline
+                      error={errors?.metadata?.summary}
+                      helperText={errors?.metadata?.summary?.message}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="metadata.forumurl"
+                  control={methods.control}
+                  rules={{
+                    maxLength: {
+                      value: 40,
+                      message:
+                        "Forum URL length cannot be more than 30 characters",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <TextField
+                      sx={{
+                        mt: 1,
+                      }}
+                      type="url"
+                      {...field}
+                      label="Forum URL"
+                      fullWidth
+                      size="small"
+                      error={errors?.metadata?.forumurl}
+                      helperText={errors?.metadata?.forumurl?.message}
                     />
                   )}
                 />

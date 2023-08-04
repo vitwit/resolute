@@ -37,6 +37,17 @@ import { StyledTableCell } from "../../components/CustomTable";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
 import { DAYS, PERCENTAGE } from "./common";
+import {
+  resetError,
+  resetTxHash,
+  removeFeegrant as removeFeegrantState,
+  setFeegrant as setFeegrantState,
+} from "../../features/common/commonSlice";
+import {
+  getFeegrant,
+  removeFeegrant as removeFeegrantLocalState,
+} from "../../utils/localStorage";
+import FeegranterInfo from "../../components/FeegranterInfo";
 
 const GroupPolicies = ({ id, chainInfo, chainID }) => {
   const LIMIT = 100;
@@ -48,7 +59,9 @@ const GroupPolicies = ({ id, chainInfo, chainID }) => {
 
   const addPolicyRes = useSelector((state) => state.group.addGroupPolicyRes);
 
-  const groupMembers = useSelector((state) => state.group.groupMembers?.[chainID]);
+  const groupMembers = useSelector(
+    (state) => state.group.groupMembers?.[chainID]
+  );
 
   useEffect(() => {
     if (addPolicyRes?.status === "idle") {
@@ -72,7 +85,9 @@ const GroupPolicies = ({ id, chainInfo, chainID }) => {
   }, []);
 
   let groupPolicies = [];
-  const groupInfo = useSelector((state) => state.group?.groupPolicies?.[chainID]);
+  const groupInfo = useSelector(
+    (state) => state.group?.groupPolicies?.[chainID]
+  );
   const data = groupInfo?.data;
   const status = groupInfo?.status;
 
@@ -88,7 +103,7 @@ const GroupPolicies = ({ id, chainInfo, chainID }) => {
       denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
       chainId: chainInfo.config.chainId,
       rpc: chainInfo.config.rpc,
-      feeAmount: chainInfo.config.gasPriceStep.average,
+      feeAmount: chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average,
     };
 
     if (
@@ -256,9 +271,12 @@ const GroupPolicies = ({ id, chainInfo, chainID }) => {
             mt: 2,
           }}
         >
-          {groupPolicies.map((p, index) => (
-            <Grid item md={4} xs={12} sm={12} lg={4} xl={3} key={index}>
-              <PolicyCard obj={p} />
+          {groupPolicies.map((policy, index) => (
+            <Grid item md={4} xs={6} sm={12} lg={4} xl={3} key={index}>
+              <PolicyCard
+                policyInfo={policy}
+                totalWeight={groupDetails?.data?.total_weight || 0}
+              />
             </Grid>
           ))}
         </Grid>
@@ -289,7 +307,9 @@ const GroupMembers = (props) => {
     getGroupmembers();
   }, [updateGroupRes?.status]);
 
-  const membersInfo = useSelector((state) => state.group.groupMembers?.[chainID]);
+  const membersInfo = useSelector(
+    (state) => state.group.groupMembers?.[chainID]
+  );
   const { members, pagination, status } = membersInfo;
 
   return (
@@ -338,29 +358,24 @@ const UpdateGroupMember = (props) => {
   const [removedMembers, setRemovedMembers] = useState([]);
 
   const {
-    register,
     control,
     handleSubmit,
-    watch,
     formState: { errors },
-    reset,
-    trigger,
-    setError,
   } = useForm({
     defaultValues: {
       members:
         members.length > 0
           ? members.map((m) => ({
-              ...m.member,
-              disabled: true,
-            }))
+            ...m.member,
+            disabled: true,
+          }))
           : [
-              {
-                address: "",
-                weight: "0",
-                metadata: "",
-              },
-            ],
+            {
+              address: "",
+              weight: "0",
+              metadata: "",
+            },
+          ],
     },
   });
 
@@ -408,7 +423,7 @@ const UpdateGroupMember = (props) => {
       denom: chainInfo?.config?.currencies?.[0]?.minimalCoinDenom,
       chainId: chainInfo.config.chainId,
       rpc: chainInfo.config.rpc,
-      feeAmount: chainInfo.config.gasPriceStep.average,
+      feeAmount: chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average,
     };
 
     dispatch(txUpdateGroupMember(dataObj));
@@ -459,7 +474,7 @@ const UpdateGroupMember = (props) => {
               <TableRow>
                 <StyledTableCell>Address</StyledTableCell>
                 <StyledTableCell>Weight</StyledTableCell>
-                <StyledTableCell>Metadata</StyledTableCell>
+                <StyledTableCell>Name</StyledTableCell>
                 <StyledTableCell>Actions</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -575,14 +590,18 @@ function Group() {
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const chainID = nameToChainIDs[currentNetwork];
-  const address =
-    networks[chainID]?.walletInfo.bech32Address;
+  const address = networks[chainID]?.walletInfo.bech32Address;
 
   const chainInfo = networks[chainID]?.network;
 
-  const membersInfo = useSelector((state) => state.group.groupMembers?.[chainID]);
+  const membersInfo = useSelector(
+    (state) => state.group.groupMembers?.[chainID]
+  );
   const groupInfo = useSelector((state) => state.group.groupInfo?.[chainID]);
   const wallet = useSelector((state) => state.wallet);
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[currentNetwork]
+  );
   const { connected } = wallet;
 
   const dispatch = useDispatch();
@@ -614,6 +633,29 @@ function Group() {
     }
   }, [connected]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetError());
+      dispatch(resetTxHash());
+    };
+  }, []);
+
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[currentNetwork];
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: currentNetwork.toLowerCase(),
+      })
+    );
+  }, [currentNetwork, params]);
+
+  const removeFeegrant = () => {
+    // Should we completely remove feegrant or only for this session.
+    dispatch(removeFeegrantState(currentNetwork));
+    removeFeegrantLocalState(currentNetwork);
+  };
+
   const groupInfoTabs = [
     {
       title: "Members",
@@ -637,6 +679,14 @@ function Group() {
     <>
       {groupInfo?.status === "idle" && groupInfo?.data ? (
         <Box>
+          {feegrant?.granter?.length > 0 ? (
+            <FeegranterInfo
+              feegrant={feegrant}
+              onRemove={() => {
+                removeFeegrant();
+              }}
+            />
+          ) : null}
           <GroupInfo
             id={params?.id}
             chainInfo={chainInfo}
@@ -694,10 +744,19 @@ function Group() {
               ) : null}
             </TabPanel>
             <TabPanel value={tabIndex} index={1}>
-              <GroupPolicies id={params?.id} chainInfo={chainInfo} chainID={chainID} />
+              <GroupPolicies
+                id={params?.id}
+                chainInfo={chainInfo}
+                chainID={chainID}
+              />
             </TabPanel>
             <TabPanel value={tabIndex} index={2}>
-              <ActiveProposals id={params?.id} wallet={wallet} chainInfo={chainInfo} chainID={chainID} />
+              <ActiveProposals
+                id={params?.id}
+                wallet={wallet}
+                chainInfo={chainInfo}
+                chainID={chainID}
+              />
             </TabPanel>
           </Paper>
         </Box>

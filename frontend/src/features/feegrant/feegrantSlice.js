@@ -15,6 +15,8 @@ import { FeegrantFilterMsg } from "../../txns/feegrant/grant";
 import { signAndBroadcast } from "../../utils/signing";
 
 const initialState = {
+  allGrantsToMe: {},
+  allGrantsByMe: {},
   grantsToMe: {
     status: "idle",
     grants: [],
@@ -27,6 +29,7 @@ const initialState = {
     status: "idle",
     grants: [],
   },
+  authzGrants: {},
   tx: {
     status: "idle",
     type: "",
@@ -60,6 +63,21 @@ export const getGrantsByMe = createAsyncThunk(
   }
 );
 
+export const getAuthzGrants = createAsyncThunk(
+  "feegrant/authzGrants",
+  async (data) => {
+    const response = await feegrantService.grantsByMe(
+      data.baseURL,
+      data.granter,
+      data.pagination
+    );
+    return {
+      data: response.data,
+      granter: data.granter,
+    };
+  }
+);
+
 export const txFeegrantBasic = createAsyncThunk(
   "feegrant/tx-basic",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
@@ -77,7 +95,7 @@ export const txFeegrantBasic = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -132,7 +150,7 @@ export const txGrantPeriodic = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -190,7 +208,7 @@ export const txGrantFilter = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -237,7 +255,7 @@ export const txRevoke = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -251,6 +269,18 @@ export const txRevoke = createAsyncThunk(
             granter: data.granter,
           })
         );
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        )
+        dispatch(
+          removeGrant({
+            chainID: data.chainId,
+            granter: data.granter,
+            grantee: data.grantee,
+          })
+        )
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         dispatch(
@@ -294,59 +324,144 @@ export const feegrantSlice = createSlice({
     },
     resetFeePeriodic: (state) => {
       state.txGrantPeriodicRes = {};
+    },
+    resetFeegrantState: (state) => {
+      state = initialState;
+    },
+    resetAuthzGrants: (state) => {
+      state.authzGrants = {};
+    },
+    removeGrant: (state, action) => {
+      const {granter, grantee, chainID} = action.payload;
+      const chainGrantsByMe = state.allGrantsByMe?.[chainID] || [];
+      delete state.allGrantsByMe[chainID]
+      for( let i=0; i<chainGrantsByMe.length; i++) {
+        if(chainGrantsByMe[i].grantee === grantee && chainGrantsByMe[i].granter === granter) {
+          chainGrantsByMe.splice(i, 1);
+          if(chainGrantsByMe.length > 0) {
+            state.allGrantsByMe[chainID] = chainGrantsByMe;
+          }
+          break;
+        }
+      }
     }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getGrantsToMe.pending, (state) => {
-        state.grantsToMe.status = "pending";
-        state.grantsToMe.grants = [];
-        state.errState = {
-          message: "",
-          type: "",
-        };
+      .addCase(getGrantsToMe.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (!chainID) {
+          state.grantsToMe.status = "pending";
+          state.grantsToMe.grants = [];
+          state.errState = {
+            message: "",
+            type: "",
+          };
+        }
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
-        state.grantsToMe.status = "idle";
-        state.grantsToMe.grants = action.payload?.allowances;
-        state.grantsToMe.pagination = action.payload?.pagination;
-        state.errState = {
-          message: "",
-          type: "",
-        };
+        const chainID = action.meta?.arg?.chainID;
+        if (chainID) {
+          if(action.payload?.allowances?.length > 0) {
+            state.allGrantsToMe[chainID] = action.payload?.allowances;
+          }
+        } else {
+          state.grantsToMe.status = "idle";
+          state.grantsToMe.grants = action.payload?.allowances;
+          state.grantsToMe.pagination = action.payload?.pagination;
+          state.errState = {
+            message: "",
+            type: "",
+          };
+        }
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
-        state.grantsToMe.status = "rejected";
-        state.grantsToMe.grants = [];
-        state.errState = {
-          message: action.error.message,
-          type: "error",
-        };
+        const chainID = action.meta?.arg?.chainID;
+        if (!chainID) {
+          state.grantsToMe.status = "rejected";
+          state.grantsToMe.grants = [];
+          state.errState = {
+            message: action.error.message,
+            type: "error",
+          };
+        }
       });
 
     builder
-      .addCase(getGrantsByMe.pending, (state) => {
-        state.grantsByMe.status = "pending";
-        state.errState = {
-          message: "",
-          type: "",
-        };
+      .addCase(getGrantsByMe.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (!chainID) {
+          state.grantsByMe.status = "pending";
+          state.errState = {
+            message: "",
+            type: "",
+          };
+        }
       })
       .addCase(getGrantsByMe.fulfilled, (state, action) => {
-        state.grantsByMe.status = "idle";
-        state.grantsByMe.grants = action.payload?.allowances;
-        state.grantsByMe.pagination = action.payload?.pagination;
-        state.errState = {
-          message: "",
-          type: "",
-        };
+        const chainID = action.meta?.arg?.chainID;
+        if (chainID) {
+          if(action.payload?.allowances?.length > 0) {
+            state.allGrantsByMe[chainID] = action.payload?.allowances;
+          }
+        } else {
+          state.grantsByMe.status = "idle";
+          state.grantsByMe.grants = action.payload?.allowances;
+          state.grantsByMe.pagination = action.payload?.pagination;
+          state.errState = {
+            message: "",
+            type: "",
+          };
+        }
       })
       .addCase(getGrantsByMe.rejected, (state, action) => {
-        state.grantsByMe.status = "rejected";
-        state.errState = {
-          message: action.error.message,
-          type: "error",
+        const chainID = action.meta?.arg?.chainID;
+        if (!chainID) {
+          state.grantsByMe.status = "rejected";
+          state.errState = {
+            message: action.error.message,
+            type: "error",
+          };
+        }
+      });
+
+      builder
+      .addCase(getAuthzGrants.pending, (state, action) => {
+        const granter = action.meta?.arg?.granter;
+        const result = {
+          grants: [],
+          status: "pending",
+          errState: {
+            message: "",
+            type: "",
+          },
         };
+        state.authzGrants[granter] = result;
+      })
+      .addCase(getAuthzGrants.fulfilled, (state, action) => {
+        const granter = action.payload?.granter;
+        const result = {
+          grants: action.payload?.data?.allowances,
+          status: "idle",
+          errState: {
+            message: "",
+            type: "",
+          },
+          pagination: action.payload?.data?.pagination,
+        };
+        state.authzGrants[granter] = result;
+      })
+      .addCase(getAuthzGrants.rejected, (state, action) => {
+        const granter = action.meta?.arg?.granter;
+        const result = {
+          grants: [],
+          status: "rejected",
+          errState: {
+            message: "",
+            type: "",
+          },
+        };
+        state.authzGrants[granter] = result;
       });
 
     // txns
@@ -389,7 +504,7 @@ export const feegrantSlice = createSlice({
         state.tx.status = `pending`;
         state.tx.type = `revoke`;
       })
-      .addCase(txRevoke.fulfilled, (state, _) => {
+      .addCase(txRevoke.fulfilled, (state, action) => {
         state.tx.status = `idle`;
         state.tx.type = `revoke`;
       })
@@ -411,6 +526,14 @@ export const feegrantSlice = createSlice({
   },
 });
 
-export const { resetAlerts, resetFeeFilter, resetFeeBasic, resetFeePeriodic } = feegrantSlice.actions;
+export const {
+  resetAlerts,
+  resetFeeFilter,
+  resetFeeBasic,
+  resetFeePeriodic,
+  resetFeegrantState,
+  removeGrant,
+  resetAuthzGrants,
+} = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;

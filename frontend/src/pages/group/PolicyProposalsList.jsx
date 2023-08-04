@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   CircularProgress,
@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import AlertMsg from "../../components/group/AlertMsg";
 import ProposalCard from "../../components/group/ProposalCard";
 import {
   getGroupPolicyProposals,
@@ -24,7 +23,6 @@ function PolicyProposalsList(props) {
 
   const proposals = useSelector((state) => state.group?.proposals?.[chainID]);
   const wallet = useSelector((state) => state.wallet);
-  const [voteOpen, setVoteOpen] = useState(false);
   const createProposalRes = useSelector(
     (state) => state.group?.groupProposalRes
   );
@@ -48,41 +46,6 @@ function PolicyProposalsList(props) {
   useEffect(() => {
     getProposals();
   }, [chainInfo]);
-
-  const onVoteDailogClose = () => {
-    setVoteOpen(false);
-  };
-
-  const onConfirm = (voteObj) => {
-
-    dispatch(
-      txGroupProposalVote({
-        admin: address,
-        voter: address,
-        option: voteObj?.vote,
-        proposalId: voteObj?.proposalId,
-        chainId: chainInfo?.config?.chainId,
-        rpc: chainInfo?.config?.rpc,
-        denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
-        feeAmount: chainInfo?.config?.gasPriceStep?.average,
-      })
-    );
-  };
-
-  const onExecute = (proposalId) => {
-
-    dispatch(
-      txGroupProposalExecute({
-        proposalId: proposalId,
-        admin: wallet?.address,
-        executor: wallet?.address,
-        chainId: chainInfo?.config?.chainId,
-        rpc: chainInfo?.config?.rpc,
-        denom: chainInfo?.config?.currencies?.[0]?.coinMinimalDenom,
-        feeAmount: chainInfo?.config?.gasPriceStep?.average,
-      })
-    );
-  };
 
   return (
     <Paper
@@ -159,10 +122,14 @@ function PolicyProposalsList(props) {
         </Box>
       ) : null}
 
-      <Grid spacing={2} container>
+      <Grid spacing={2} container
+        sx={{
+          mt: 1,
+        }}
+      >
         {proposals?.data?.proposals?.map((p, index) => (
           <Grid item md={6} xs={12} key={index}>
-            <ProposalCard proposal={p} networkName={networkName} />
+            <ProposalCard proposal={p} networkName={networkName} groupID={params?.id} />
           </Grid>
         ))}
       </Grid>

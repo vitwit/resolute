@@ -12,3 +12,13 @@ export function FeegrantRevokeMsg(granter: string, grantee: string): Msg {
     }),
   };
 }
+
+export function AuthzFeegrantRevokeMsg(granter: string, grantee: string): Msg {
+  return {
+    typeUrl: revokeTypeUrl,
+    value: MsgRevokeAllowance.encode({
+      grantee: grantee,
+      granter: granter,
+    }).finish(),
+  };
+}

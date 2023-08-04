@@ -1,14 +1,19 @@
+import React from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box } from '@mui/material';
 
 
 export default function Page404() {
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     return (
-        <div style={{ marginTop: 72 }}>
+        <Box
+            sx={{
+                mt: 6
+            }}
+        >
             <Typography
                 variant='h1'
                 color='text.primary'
@@ -33,6 +38,6 @@ export default function Page404() {
             >
                 Go to Home
             </Button>
-        </div>
+        </Box>
     );
 }

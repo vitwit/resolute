@@ -24,11 +24,14 @@ import {
   resetFeegrant,
   resetTxHash,
   setError,
+  removeFeegrant as removeFeegrantState,
+  setFeegrant as setFeegrantState,
 } from "../../features/common/commonSlice";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Typography, Alert } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import { getFeegrant, removeFeegrant as removeFeegrantLocalState } from "../../utils/localStorage";
 
 export default function NewAuthz() {
   const params = useParams();
@@ -118,9 +121,18 @@ export default function NewAuthz() {
     }
   }, [txAuthzRes?.status]);
 
+  useEffect(() => {
+    const currentChainGrants = getFeegrant()?.[currentNetwork];
+    dispatch(setFeegrantState({
+      grants: currentChainGrants,
+      chainName: currentNetwork.toLowerCase()
+    }));
+  }, [currentNetwork, params])
+
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
-    dispatch(resetFeegrant());
+    dispatch(removeFeegrantState(currentNetwork));
+    removeFeegrantLocalState(currentNetwork);
   };
 
   const [selected, setSelected] = useState("send");
@@ -152,7 +164,7 @@ export default function NewAuthz() {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
         feegranter: feegrant?.granter,
       })
     );
@@ -171,7 +183,7 @@ export default function NewAuthz() {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
         feegranter: feegrant?.granter,
       })
     );

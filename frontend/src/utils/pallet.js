@@ -101,15 +101,15 @@ const networks = {
 
 export const defaultPallet = {
   primary: {
-    light: "#6573c3",
-    main: "#3f51b5",
-    dark: "#2c387e",
+    light: "#b7abcf",
+    main: "#400d40",
+    dark: "#312941",
     contrastText: "#fff",
   },
   secondary: {
-    light: "#1de9b6",
-    main: "#1de9b6",
-    dark: "#14a37f",
+    light: "#e73986",
+    main: "#db2777",
+    dark: "#8f174c",
     contrastText: "#000",
   },
 };

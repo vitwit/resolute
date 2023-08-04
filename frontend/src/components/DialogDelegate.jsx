@@ -10,6 +10,8 @@ import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useForm, Controller } from "react-hook-form";
+import { Autocomplete } from "@mui/material";
+import { useSelector } from "react-redux";
 
 export function DialogDelegate(props) {
   const {
@@ -22,7 +24,11 @@ export function DialogDelegate(props) {
     loading,
     displayDenom,
     authzLoading,
+    validators,
+    onAuthzDelegateTx,
   } = props;
+
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
 
   const handleClose = () => {
     onClose();
@@ -40,11 +46,32 @@ export function DialogDelegate(props) {
   });
 
   const onSubmit = (data) => {
-    onDelegate({
-      validator: validator.operator_address,
-      amount: data.amount,
-    });
+    if (isAuthzMode) {
+      onAuthzDelegateTx({
+        validator: data?.validator?.operator_address || "",
+        amount: data?.amount || 0,
+      });
+    } else {
+      onDelegate({
+        validator: validator?.operator_address || "",
+        amount: data?.amount || 0,
+      });
+    }
   };
+
+  let ValidatorsMenuItems = [];
+  if (validators?.activeSorted?.length && isAuthzMode) {
+    const activevals = validators.activeSorted;
+    for (let index in activevals) {
+      ValidatorsMenuItems = [
+        ...ValidatorsMenuItems,
+        {
+          operator_address: activevals[index],
+          label: validators.active?.[activevals[index]].description.moniker,
+        },
+      ];
+    }
+  }
 
   return (
     <>
@@ -66,7 +93,7 @@ export function DialogDelegate(props) {
               <b>
                 Staking will lock your funds for{" "}
                 {Math.floor(
-                  parseInt(params?.params?.unbonding_time) / (3600 * 24)
+                  parseInt(params?.data?.params?.unbonding_time) / (3600 * 24)
                 )}
                 + days.
               </b>
@@ -74,28 +101,67 @@ export function DialogDelegate(props) {
               You will need to undelegate in order for your staked assets to be
               liquid again. This process will take{" "}
               {Math.floor(
-                parseInt(params?.params?.unbonding_time) / (3600 * 24)
+                parseInt(params?.data?.params?.unbonding_time) / (3600 * 24)
               )}{" "}
               days to complete.
             </Alert>
+            <div style={{ marginBottom: "8px" }}>
+              <Typography
+                color="text.primary"
+                fontWeight={600}
+                sx={{ mt: 2 }}
+              >
+                Available Balance
+              </Typography>
+              <Typography
+                color="text.primary"
+                variant="body1"
+                className="hover-link"
+                onClick={() => {
+                  setValue("amount", balance);
+                }}
+              >
+                {balance}
+              </Typography>
+            </div>
+            {validators?.activeSorted?.length && isAuthzMode ? (
+              <Controller
+                name="validator"
+                control={control}
+                defaultValue={null}
+                rules={{ required: "Validator type is required" }}
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => (
+                  <Autocomplete
+                    disablePortal
+                    fullWidth
+                    variant="outlined"
+                    required
+                    options={ValidatorsMenuItems}
+                    isOptionEqualToValue={(option, value) =>
+                      option.validator === value.validator
+                    }
+                    label="Type"
+                    value={value}
+                    onChange={(event, item) => {
+                      onChange(item);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        error={!!error}
+                        required
+                        placeholder="Select Validator"
+                        helperText={error ? error.message : null}
+                      />
+                    )}
+                  />
+                )}
+              />
+            ) : null}
 
-            <Typography
-              color="text.primary"
-              fontWeight={600}
-              style={{ marginTop: 16 }}
-            >
-              Available Balance
-            </Typography>
-            <Typography
-              color="text.primary"
-              variant="body1"
-              className="hover-link"
-              onClick={() => {
-                setValue("amount", balance);
-              }}
-            >
-              {balance}
-            </Typography>
             <div style={{ marginTop: 16 }}>
               <Controller
                 name="amount"

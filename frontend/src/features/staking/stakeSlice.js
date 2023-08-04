@@ -5,6 +5,7 @@ import { setError, setTxHash } from "../common/commonSlice";
 import { SOMETHING_WRONG } from "../multisig/multisigSlice";
 import { signAndBroadcast } from "../../utils/signing";
 import cloneDeep from "lodash/cloneDeep";
+import { getDenomBalance } from "../../utils/denom";
 
 const initialState = {
   chains: {},
@@ -31,6 +32,7 @@ const initialState = {
       delegatedTo: {},
       totalStaked: 0.0,
     },
+    authzDelegations: {},
     unbonding: {
       status: "idle",
       delegations: [],
@@ -44,7 +46,53 @@ const initialState = {
       type: "",
     },
   },
+  overviewTx: {
+    status: "",
+  },
 };
+
+export const txRestake = createAsyncThunk(
+  "staking/restake",
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    try {
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
+        data.msgs,
+        399999 + Math.ceil((399999 * 0.1) * (data.msgs?.length || 1)),
+        data.memo,
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.response);
+    }
+  }
+);
 
 export const txDelegate = createAsyncThunk(
   "staking/delegate",
@@ -62,7 +110,7 @@ export const txDelegate = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -120,7 +168,7 @@ export const txReDelegate = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -177,7 +225,7 @@ export const txUnDelegate = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        260000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -254,9 +302,9 @@ export const getAllValidators = createAsyncThunk(
           data?.status,
           nextKey
             ? {
-                key: nextKey,
-                limit: limit,
-              }
+              key: nextKey,
+              limit: limit,
+            }
             : {}
         );
         validators.push(...response.data.validators);
@@ -296,9 +344,43 @@ export const getDelegations = createAsyncThunk(
           data.address,
           nextKey
             ? {
-                key: nextKey,
-                limit: limit,
-              }
+              key: nextKey,
+              limit: limit,
+            }
+            : {}
+        );
+        delegations.push(...(response.data?.delegation_responses || []));
+        if (!response.data.pagination?.next_key) {
+          break;
+        }
+        nextKey = response.data.pagination.next_key;
+      }
+      return {
+        delegations: delegations,
+        chainID: data.chainID,
+      };
+    } catch (error) {
+      return rejectWithValue(error?.message || SOMETHING_WRONG);
+    }
+  }
+);
+
+export const getAuthzDelegations = createAsyncThunk(
+  "staking/authz-delegations",
+  async (data, { rejectWithValue }) => {
+    try {
+      const delegations = [];
+      let nextKey = null;
+      const limit = 100;
+      while (true) {
+        const response = await stakingService.delegations(
+          data.baseURL,
+          data.address,
+          nextKey
+            ? {
+              key: nextKey,
+              limit: limit,
+            }
             : {}
         );
         delegations.push(...(response.data?.delegation_responses || []));
@@ -336,6 +418,9 @@ export const stakeSlice = createSlice({
   name: "staking",
   initialState,
   reducers: {
+    resetRestakeTx: (state) => {
+      state.overviewTx.status = "";
+    },
     resetTxType: (state, action) => {
       let chainID = action.payload.chainID;
       state.chains[chainID].tx.type = "";
@@ -365,6 +450,33 @@ export const stakeSlice = createSlice({
     resetDelegations: (state, action) => {
       let chainID = action.payload.chainID;
       state.chains[chainID].delegations = initialState.defaultState.delegations;
+    },
+    addRewardsToDelegations: (state, action) => {
+      let { chainID, rewardsList, totalRewards } = action.payload;
+      let rewardsMap = new Map();
+      for (let i = 0; i < rewardsList.length; i++) {
+        rewardsMap[rewardsList[i].validator_address] = rewardsList[i].reward;
+      }
+
+      for (
+        let i = 0;
+        i <
+        state?.chains?.[chainID]?.delegations?.delegations?.delegations?.length;
+        i++
+      ) {
+        let delegation =
+          state.chains[chainID].delegations.delegations.delegations[i];
+        let validatorReward =
+          rewardsMap[delegation?.delegation?.validator_address];
+        if (!validatorReward) continue;
+        let amount = getDenomBalance(validatorReward, delegation.balance.denom);
+        delegation.delegation.shares = +delegation.delegation.shares + amount;
+        delegation.balance.amount = +delegation.balance.amount + amount;
+        state.chains[chainID].delegations.delegations.delegations[i] =
+          delegation;
+      }
+      state.chains[chainID].delegations.totalStaked =
+        +state.chains[chainID].delegations.totalStaked + +totalRewards;
     },
     sortValidatorsByVotingPower: (state, action) => {
       let chainID = action.payload.chainID;
@@ -483,7 +595,7 @@ export const stakeSlice = createSlice({
 
         let customSort = ([, a], [, b]) => {
           return b.tokens - a.tokens;
-        }
+        };
 
         const activeSort = Object.fromEntries(
           Object.entries(state.chains[chainID].validators.active).sort(
@@ -503,10 +615,12 @@ export const stakeSlice = createSlice({
       })
       .addCase(getAllValidators.rejected, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
-        let result = initialState.defaultState.validators;
+        let result = cloneDeep(initialState.defaultState.validators);
         result.errMsg = action.error.message;
         result.status = "rejected";
-        state.chains[chainID].validators = result;
+        if (state.chains[chainID]) {
+          state.chains[chainID].validators = result;
+        }
       });
 
     builder
@@ -533,8 +647,65 @@ export const stakeSlice = createSlice({
       })
       .addCase(getDelegations.rejected, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
-        state.chains[chainID].delegations.status = "rejected";
-        state.chains[chainID].delegations.errMsg = action.error.message;
+        if (state.chains[chainID]) {
+          state.chains[chainID].delegations.status = "rejected";
+          state.chains[chainID].delegations.errMsg = action.error.message;
+        }
+      });
+
+    builder
+      .addCase(getAuthzDelegations.pending, (state, action) => {
+        let chainID = action.meta?.arg?.chainID || "";
+        let granter = action.meta?.arg?.address || "";
+        if (chainID.length && granter.length) {
+          const result = {
+            status: "pending",
+            delegations: [],
+            errMsg: "",
+            pagination: {},
+            delegatedTo: {},
+            totalStaked: 0.0,
+          };
+          state.chains[chainID].authzDelegations[granter] = result;
+        }
+      })
+      .addCase(getAuthzDelegations.fulfilled, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        let granter = action.meta?.arg?.address;
+        if (chainID.length && granter.length) {
+          const result = {
+            status: "idle",
+            delegations: action.payload,
+            errMsg: "",
+            pagination: {},
+            delegatedTo: {},
+            totalStaked: 0.0,
+          };
+
+          let total = 0.0;
+          for (let i = 0; i < action.payload.delegations.length; i++) {
+            const delegation = action.payload.delegations[i];
+            result.delegatedTo[
+              delegation?.delegation?.validator_address
+            ] = true;
+            total += parseFloat(delegation?.delegation?.shares);
+          }
+          result.totalStaked = total;
+          state.chains[chainID].authzDelegations[granter] = result;
+        }
+      })
+      .addCase(getAuthzDelegations.rejected, (state, action) => {
+        let chainID = action.meta?.arg?.chainID;
+        let granter = action.meta?.arg?.address;
+        const result = {
+          status: "rejected",
+          delegations: [],
+          errMsg: action.error.message,
+          pagination: {},
+          delegatedTo: {},
+          totalStaked: 0.0,
+        };
+        state.chains[chainID].authzDelegations[granter] = result;
       });
 
     builder
@@ -558,12 +729,12 @@ export const stakeSlice = createSlice({
       });
 
     builder
-      .addCase(getParams.pending, (state) => {})
+      .addCase(getParams.pending, (state) => { })
       .addCase(getParams.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
         state.chains[chainID].params = action.payload;
       })
-      .addCase(getParams.rejected, (state, action) => {});
+      .addCase(getParams.rejected, (state, action) => { });
 
     builder
       .addCase(txDelegate.pending, (state, action) => {
@@ -618,13 +789,25 @@ export const stakeSlice = createSlice({
 
     // pool info
     builder
-      .addCase(getPoolInfo.pending, (state) => {})
+      .addCase(getPoolInfo.pending, (state) => { })
       .addCase(getPoolInfo.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
         state.chains[chainID].pool[action.meta?.arg?.chainID] =
           action.payload.data;
       })
-      .addCase(getPoolInfo.rejected, (state, action) => {});
+      .addCase(getPoolInfo.rejected, (state, action) => { });
+
+    // restake transaction
+    builder
+      .addCase(txRestake.pending, (state) => {
+        state.overviewTx.status = "pending";
+      })
+      .addCase(txRestake.fulfilled, (state) => {
+        state.overviewTx.status = "idle";
+      })
+      .addCase(txRestake.rejected, (state) => {
+        state.overviewTx.status = "rejected";
+      });
   },
 });
 
@@ -634,6 +817,8 @@ export const {
   resetDelegations,
   resetTxType,
   resetDefaultState,
+  resetRestakeTx,
+  addRewardsToDelegations,
 } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

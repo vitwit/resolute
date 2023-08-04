@@ -13,6 +13,8 @@ import { authzMsgTypes } from "../utils/authorizations";
 
 const renderAuthorization = (authz, displayDenom, coinDecimals) => {
   const { allowance, granter, grantee } = authz;
+  const PERIODIC_ALLOWANCE = "/cosmos.feegrant.v1beta1.PeriodicAllowance";
+  const BASIC_ALLOWANCE = "/cosmos.feegrant.v1beta1.BasicAllowance";
   switch (allowance["@type"]) {
     case "/cosmos.feegrant.v1beta1.BasicAllowance":
       return (
@@ -56,7 +58,10 @@ const renderAuthorization = (authz, displayDenom, coinDecimals) => {
                 {allowance.spend_limit.length === 0 ? (
                   <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
                 ) : (
-                  `${parseSpendLimit(allowance.spend_limit, coinDecimals)}${displayDenom}`
+                  `${parseSpendLimit(
+                    allowance.spend_limit,
+                    coinDecimals
+                  )}${displayDenom}`
                 )}
               </Typography>
             </li>
@@ -261,8 +266,12 @@ const renderAuthorization = (authz, displayDenom, coinDecimals) => {
                 Expiration
               </Typography>
               <Typography gutterBottom color="text.primary" variant="body2">
-                {allowance?.allowance?.basic?.expiration ? (
+                {allowance?.allowance?.["@type"] === PERIODIC_ALLOWANCE &&
+                allowance?.allowance?.basic?.expiration ? (
                   getLocalTime(allowance?.allowance?.basic?.expiration)
+                ) : allowance?.allowance?.["@type"] === BASIC_ALLOWANCE &&
+                  allowance?.allowance?.expiration ? (
+                  getLocalTime(allowance?.allowance?.expiration)
                 ) : (
                   <span dangerouslySetInnerHTML={{ __html: "&infin;" }} />
                 )}
