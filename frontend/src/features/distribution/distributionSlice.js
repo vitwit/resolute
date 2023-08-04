@@ -137,17 +137,19 @@ export const distSlice = createSlice({
       })
       .addCase(getDelegatorTotalRewards.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
-        state.chains[chainID].delegatorRewards.status = "idle";
-        state.chains[chainID].delegatorRewards.list =
-          action.payload.data.rewards;
-        let totalRewardsList = action?.payload?.data?.total;
-        let total = 0;
-        for (let i = 0; i < totalRewardsList.length; i++)
-          total += +totalRewardsList[i].amount;
-        state.chains[chainID].delegatorRewards.totalRewards = total;
-        state.chains[chainID].delegatorRewards.pagination =
-          action.payload.pagination;
-        state.chains[chainID].delegatorRewards.errMsg = "";
+        if(state.chains[chainID]) {
+          state.chains[chainID].delegatorRewards.status = "idle";
+          state.chains[chainID].delegatorRewards.list =
+            action.payload.data.rewards;
+          let totalRewardsList = action?.payload?.data?.total;
+          let total = 0;
+          for (let i = 0; i < totalRewardsList.length; i++)
+            total += +totalRewardsList[i].amount;
+          state.chains[chainID].delegatorRewards.totalRewards = total;
+          state.chains[chainID].delegatorRewards.pagination =
+            action.payload.pagination;
+          state.chains[chainID].delegatorRewards.errMsg = "";
+        }
       })
       .addCase(getDelegatorTotalRewards.rejected, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
