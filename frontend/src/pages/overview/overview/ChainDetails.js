@@ -183,6 +183,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                         cursor: "pointer",
                         color: "purple",
                       },
+                      fontWeight: 600,
                     }}
                     onClick={() => handleOnClick(chainName)}
                   >
@@ -302,7 +303,9 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                         }}
                         onClick={() => handleOnClick(chainName)}
                       >
-                        {denomInfo[0]?.origin_chain}
+                        <Typography sx={{ display: "inline", fontWeight: 600 }}>
+                          {denomInfo[0]?.origin_chain}
+                        </Typography>
                         <Typography
                           sx={{
                             backgroundColor: "#767676",
@@ -312,7 +315,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                             fontWeight: 600,
                             display: "inline",
                             color: "white",
-                            fontSize: "14px",
+                            fontSize: "12px",
                           }}
                         >
                           IBC

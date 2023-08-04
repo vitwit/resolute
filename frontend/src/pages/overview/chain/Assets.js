@@ -19,7 +19,7 @@ import { parseBalance } from "../../../utils/denom";
 import { paddingTopBottom } from "../overview/ChainsOverview";
 
 const Assets = (props) => {
-  const { balances, chainName } = props;
+  const { balances, chainName, currentChainDenom } = props;
 
   const tokensPriceInfo = useSelector(
     (state) => state.common?.allTokensInfoState?.info
@@ -66,21 +66,28 @@ const Assets = (props) => {
                               textTransform: "capitalize",
                             }}
                           >
-                            {denomInfo[0]?.origin_chain}
                             <Typography
-                              sx={{
-                                backgroundColor: "#767676",
-                                borderRadius: "4px",
-                                ml: "4px",
-                                px: "4px",
-                                fontWeight: 600,
-                                display: "inline",
-                                color: "white",
-                                fontSize: "14px",
-                              }}
+                              sx={{ display: "inline", fontWeight: 600 }}
                             >
-                              IBC
+                              {denomInfo[0]?.origin_chain}
                             </Typography>
+                            {currentChainDenom !==
+                            denomInfo[0]?.origin_denom ? (
+                              <Typography
+                                sx={{
+                                  backgroundColor: "#767676",
+                                  borderRadius: "4px",
+                                  ml: "4px",
+                                  px: "4px",
+                                  fontWeight: 600,
+                                  display: "inline",
+                                  color: "white",
+                                  fontSize: "12px",
+                                }}
+                              >
+                                IBC
+                              </Typography>
+                            ) : null}
                           </Typography>
                           <Typography
                             sx={{
@@ -135,6 +142,7 @@ const Assets = (props) => {
 Assets.propTypes = {
   balances: PropTypes.object.isRequired,
   chainID: PropTypes.string.isRequired,
+  currentChainDenom: PropTypes.string.isRequired,
 };
 
 export default Assets;
