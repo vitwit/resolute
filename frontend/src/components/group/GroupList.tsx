@@ -36,7 +36,7 @@ export default function GroupList(props: GroupsByAdminProps) {
           title={props.notFoundText}
           showAction={props.showNotFoundAction}
           onAction={() => {
-            navigateTo(`/${networkName}/daos/create-group`);
+            navigateTo(`/${networkName}/groups/create-group`);
           }}
           actionText="Create group"
         />

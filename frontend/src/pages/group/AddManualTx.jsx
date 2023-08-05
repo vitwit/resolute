@@ -150,7 +150,7 @@ function AddManualTx({
       );
 
       setTimeout(() => {
-        navigate(`/${networkName}/daos/${id}/policies/${policyAddress}`);
+        navigate(`/${networkName}/groups/${id}/policies/${policyAddress}`);
       }, 200);
     }
   }, [createRes?.status]);

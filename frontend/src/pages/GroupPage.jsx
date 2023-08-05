@@ -26,7 +26,7 @@ export default function GroupPage() {
 
   const handleTabChange = (value) => {
     if (value === 2) {
-      navigateTo(`/${currentNetwork}/daos/create-group`);
+      navigateTo(`/${currentNetwork}/groups/create-group`);
     } else {
       setTab(value);
     }
@@ -100,7 +100,7 @@ export default function GroupPage() {
         ) : null}
         <SelectNetwork
           onSelect={(name) => {
-            navigate(`/${name}/daos`);
+            navigate(`/${name}/groups`);
           }}
           networks={Object.keys(nameToChainIDs)}
           defaultNetwork={currentNetwork.toLowerCase().replace(/ /g, "")}
