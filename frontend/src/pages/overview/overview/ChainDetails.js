@@ -234,7 +234,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                   {txRestakeStatus === "pending" ? (
                     <>
                       <CircularProgress size={18} />
-                      &nbsp;Claim&nbsp;&&nbsp;Stake...
+                      &nbsp;Claim&nbsp;&&nbsp;Stake
                     </>
                   ) : (
                     <>Claim&nbsp;&&nbsp;Stake</>
@@ -259,7 +259,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                   {distTxStatus?.status === "pending" ? (
                     <>
                       <CircularProgress size={18} />
-                      &nbsp;Claim...
+                      &nbsp;Claim
                     </>
                   ) : (
                     <>Claim</>
