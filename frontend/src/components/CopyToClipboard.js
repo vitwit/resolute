@@ -6,8 +6,8 @@ import { copyToClipboard } from "../utils/clipboard";
 import { shortenAddress } from "../utils/util";
 
 export const CopyToClipboard = (props) => {
-  const { message } = props;
-  const toolTipEnabled = props.toolTipEnabled;
+  const { message, toolTipEnabled = false } = props;
+
   const dispatch = useDispatch();
   return (
     <Box>
@@ -19,7 +19,7 @@ export const CopyToClipboard = (props) => {
               copyToClipboard(message, dispatch);
             }}
           >
-            <ContentCopyOutlined sx={{fontSize:12}}/>
+            <ContentCopyOutlined sx={{ fontSize: 12 }} />
           </IconButton>
         </Tooltip>
       ) : (
