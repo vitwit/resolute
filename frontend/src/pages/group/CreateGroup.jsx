@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import { Button, Paper } from "@mui/material";
+import { Button, Paper, Typography } from "@mui/material";
 import { useForm, useFieldArray } from "react-hook-form";
 import CreateGroupMembersForm from "./CreateGroupMembersForm";
 import CreateGroupPolicy from "./CreateGroupPolicy";
@@ -26,8 +26,10 @@ import {
   removeFeegrant as removeFeegrantLocalState,
 } from "../../utils/localStorage";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import ClearIcon from '@mui/icons-material/Clear';
 
 const steps = ["Group details", "Members", "Group Policy"];
+const flexJustifyCenter = {display: "flex", justifyContent: "center"}
 
 export default function CreateGroupStepper() {
   const params = useParams();
@@ -65,7 +67,7 @@ export default function CreateGroupStepper() {
 
   useEffect(() => {
     if (txCreateGroupRes?.status === "idle") {
-      navigate(`/${currentNetwork}/daos`);
+      navigate(`/${currentNetwork}/groups`);
     }
   }, [txCreateGroupRes?.status]);
 
@@ -245,6 +247,7 @@ export default function CreateGroupStepper() {
           <Button
             sx={{
               mt: 1,
+              mb: 2,
             }}
             variant="outlined"
             disableElevation
@@ -352,6 +355,7 @@ export default function CreateGroupStepper() {
               sx={{
                 mt: 1,
                 ml: 1,
+                mb: 2,
               }}
               size="small"
               endIcon={<NavigateNextOutlinedIcon />}
@@ -406,6 +410,7 @@ export default function CreateGroupStepper() {
               sx={{
                 mt: 1,
                 ml: 1,
+                mb: 2,
               }}
               size="small"
               disabled={txCreateGroupRes?.status === "pending"}
@@ -424,6 +429,12 @@ export default function CreateGroupStepper() {
       ) : (
         <></>
       )}
+      <div style={{...flexJustifyCenter}}>
+        <Button variant="outlined" sx={flexJustifyCenter} size="small" onClick={() => {navigate(`/${currentNetwork}/groups`);}}>
+          <ClearIcon fontSize="16px"/> 
+          &nbsp;Cancel
+          </Button>
+      </div>
     </Box>
   );
 }
