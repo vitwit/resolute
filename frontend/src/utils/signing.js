@@ -173,7 +173,7 @@ function calculateFee(gasLimit, gasPrice, granter) {
 }
 
 function getFee(gas, gasPrice, granter) {
-  if (!gas) gas = 460000;
+  if (!gas) gas = 860000;
   return calculateFee(gas, gasPrice, granter);
 }
 
