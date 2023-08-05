@@ -4,10 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { NoData } from "../../components/group/NoData";
 import ProposalCard from "../../components/group/ProposalCard";
-import { resetActiveProposals } from "../../features/common/commonSlice";
 import { getGroupPolicyProposalsByPage } from "../../features/group/groupSlice";
 
-function ActiveProposals({ id, wallet, chainInfo, chainID }) {
+function ActiveProposals({ id, chainInfo, chainID }) {
   const dispatch = useDispatch();
 
   const params = useParams();
@@ -42,12 +41,6 @@ function ActiveProposals({ id, wallet, chainInfo, chainID }) {
       setProposals([...proposalsRes?.data]);
     }
   }, [proposalsRes?.status]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(resetActiveProposals());
-    };
-  });
 
   return (
     <Box
