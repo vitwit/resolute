@@ -21,7 +21,7 @@
   "config": {
     "chain_id": "umee-1",
     "chain_name": "Umee",
-    "rest": "https://api.mainnet.network.umee.cc",
+    "rest": "https://api-umee-ia.cosmosia.notional.ventures",
     "rpc": "https://umee-rpc.polkachu.com",
     "currencies": [
       {
