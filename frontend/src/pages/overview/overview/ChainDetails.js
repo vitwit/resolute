@@ -48,7 +48,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
     (state) => state.staking?.chains?.[chainID]?.delegations || []
   );
   const txRestakeStatus = useSelector(
-    (state) => state.staking.overviewTx.status
+    (state) => state.staking?.chains?.[chainID]?.overviewTx?.status
   );
 
   const chainInfo = wallet?.networks?.[chainID];
@@ -69,7 +69,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
 
   useEffect(() => {
     if (txRestakeStatus === "idle") {
-      dispatch(resetRestakeTx());
+      dispatch(resetRestakeTx({chainID: chainID}));
       dispatch(
         addRewardsToDelegations({
           chainID,
@@ -92,7 +92,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
   }, [distTxStatus?.status]);
 
   useEffect(() => {
-    dispatch(resetRestakeTx());
+    dispatch(resetRestakeTx({chainID: chainID}));
   }, []);
 
   const actionClaimAndStake = () => {
@@ -231,10 +231,10 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                   }
                   onClick={actionClaimAndStake}
                 >
-                  {txRestakeStatus?.status === "pending" ? (
+                  {txRestakeStatus === "pending" ? (
                     <>
                       <CircularProgress size={18} />
-                      &nbsp;Claim&nbsp;&&nbsp;Stake
+                      &nbsp;Claim&nbsp;&&nbsp;Stake...
                     </>
                   ) : (
                     <>Claim&nbsp;&&nbsp;Stake</>
@@ -259,7 +259,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                   {distTxStatus?.status === "pending" ? (
                     <>
                       <CircularProgress size={18} />
-                      &nbsp;Claim
+                      &nbsp;Claim...
                     </>
                   ) : (
                     <>Claim</>
