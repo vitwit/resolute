@@ -3,18 +3,21 @@ import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import { Button, Paper, Typography } from "@mui/material";
+import {
+  Button,
+  Paper,
+} from "@mui/material";
 import { useForm, useFieldArray } from "react-hook-form";
 import CreateGroupMembersForm from "./CreateGroupMembersForm";
 import CreateGroupPolicy from "./CreateGroupPolicy";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { resetGroupTx, txCreateGroup } from "../../features/group/groupSlice";
 import CreateGroupInfoForm from "./CreateGroupInfoForm";
 import { useParams } from "react-router-dom";
 import { DAYS, PERCENTAGE } from "./common";
-import NavigateNextOutlinedIcon from '@mui/icons-material/NavigateNextOutlined';
-import ArrowBackIosOutlinedIcon from '@mui/icons-material/ArrowBackIosOutlined';
+import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
+import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import {
   resetError,
   resetTxHash,
@@ -26,10 +29,10 @@ import {
   removeFeegrant as removeFeegrantLocalState,
 } from "../../utils/localStorage";
 import FeegranterInfo from "../../components/FeegranterInfo";
-import ClearIcon from '@mui/icons-material/Clear';
+import ClearIcon from "@mui/icons-material/Clear";
+import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 
 const steps = ["Group details", "Members", "Group Policy"];
-const flexJustifyCenter = {display: "flex", justifyContent: "center"}
 
 export default function CreateGroupStepper() {
   const params = useParams();
@@ -41,7 +44,7 @@ export default function CreateGroupStepper() {
   );
 
   const currentNetwork = params?.networkName || selectedNetwork;
-  
+
   const feegrant = useSelector(
     (state) => state.common.feegrant?.[currentNetwork]
   );
@@ -50,8 +53,7 @@ export default function CreateGroupStepper() {
 
   const address =
     networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
-  const name =
-    networks[nameToChainIDs[currentNetwork]]?.walletInfo.name;
+  const name = networks[nameToChainIDs[currentNetwork]]?.walletInfo.name;
   const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
 
   const navigate = useNavigate();
@@ -171,7 +173,6 @@ export default function CreateGroupStepper() {
     createGroup(data.policyMetadata);
   };
 
-
   const {
     control: controlInfo,
     handleSubmit: handleSubmitInfo,
@@ -185,8 +186,6 @@ export default function CreateGroupStepper() {
     },
   });
 
-
-
   const {
     control: controlMemberInfo,
     handleSubmit: handleSubmitMemberInfo,
@@ -195,11 +194,13 @@ export default function CreateGroupStepper() {
     setValue,
   } = useForm({
     defaultValues: {
-      members: [{
-        address: "",
-        weight: "1",
-        metadata: ""
-      }],
+      members: [
+        {
+          address: "",
+          weight: "1",
+          metadata: "",
+        },
+      ],
     },
   });
 
@@ -208,7 +209,6 @@ export default function CreateGroupStepper() {
     setValue(`members.${0}.metadata`, name);
     setValue(`members.${0}.weight`, "1");
   }, [address, name]);
-
 
   const { fields, append, remove } = useFieldArray({
     control: controlMemberInfo,
@@ -279,7 +279,9 @@ export default function CreateGroupStepper() {
           }}
         />
       ) : null}
-      <Stepper activeStep={activeStep} alternativeLabel
+      <Stepper
+        activeStep={activeStep}
+        alternativeLabel
         sx={{
           mb: 1,
         }}
@@ -300,7 +302,8 @@ export default function CreateGroupStepper() {
               errors={errorsInfo}
               getValues={getValuesGroupInfo}
             />
-            <Button type="submit"
+            <Button
+              type="submit"
               variant="outlined"
               disableElevation
               sx={{
@@ -320,9 +323,7 @@ export default function CreateGroupStepper() {
         <>
           {/* group members section start */}
 
-          <form
-            onSubmit={handleSubmitMemberInfo(onSubmitMemberInfo)}
-          >
+          <form onSubmit={handleSubmitMemberInfo(onSubmitMemberInfo)}>
             <Paper
               elevation={0}
               sx={{
@@ -349,7 +350,8 @@ export default function CreateGroupStepper() {
               ) : null}
             </Paper>
             <BackButton />
-            <Button type="submit"
+            <Button
+              type="submit"
               variant="outlined"
               disableElevation
               sx={{
@@ -370,9 +372,7 @@ export default function CreateGroupStepper() {
         <>
           {/* group policy section start */}
 
-          <form
-            onSubmit={handleSubmitPolicyInfo(onSubmitPolicyInfo)}
-          >
+          <form onSubmit={handleSubmitPolicyInfo(onSubmitPolicyInfo)}>
             <Paper
               elevation={0}
               sx={{
@@ -404,7 +404,8 @@ export default function CreateGroupStepper() {
                 null}
             </Paper>
             <BackButton />
-            <Button type="submit"
+            <Button
+              type="submit"
               variant="outlined"
               disableElevation
               sx={{
@@ -415,12 +416,9 @@ export default function CreateGroupStepper() {
               size="small"
               disabled={txCreateGroupRes?.status === "pending"}
             >
-              {
-                txCreateGroupRes?.status === "pending" ?
-                  "Please wait..."
-                  :
-                  "Create Group"
-              }
+              {txCreateGroupRes?.status === "pending"
+                ? "Please wait..."
+                : "Create Group"}
             </Button>
           </form>
 
@@ -429,12 +427,20 @@ export default function CreateGroupStepper() {
       ) : (
         <></>
       )}
-      <div style={{...flexJustifyCenter}}>
-        <Button variant="outlined" sx={flexJustifyCenter} size="small" onClick={() => {navigate(`/${currentNetwork}/groups`);}}>
-          <ClearIcon fontSize="16px"/> 
-          &nbsp;Cancel
-          </Button>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => {
+            navigate(`/${currentNetwork}/groups`);
+          }}
+          startIcon={<ClearIcon />}
+        >
+          Cancel
+        </Button>
       </div>
     </Box>
   );
 }
+
+
