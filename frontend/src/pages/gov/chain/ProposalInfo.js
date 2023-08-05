@@ -30,7 +30,12 @@ import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../../../components/FeegranterInfo";
 import { filterVoteAuthz } from "../ProposalsPage";
 import { getFeegrant } from "../../../utils/localStorage";
-import getProposalStatusComponent, { computeVotingPercentage, nameToVoteOption } from "../../../utils/proposals";
+import getProposalStatusComponent, {
+  computeVotingPercentage,
+  nameToVoteOption,
+} from "../../../utils/proposals";
+import ReactMarkdown from "react-markdown";
+import { get } from "lodash";
 
 export default function ProposalInfo() {
   const dispatch = useDispatch();
@@ -166,11 +171,13 @@ export default function ProposalInfo() {
 
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[networkName];
-    dispatch(setFeegrantState({
-      grants: currentChainGrants,
-      chainName: networkName.toLowerCase()
-    }));
-  }, [networkName, params])
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: networkName.toLowerCase(),
+      })
+    );
+  }, [networkName, params]);
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
@@ -192,7 +199,8 @@ export default function ProposalInfo() {
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
-            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+            10 ** currency.coinDecimals,
           feegranter: feegrant.granter,
         })
       );
@@ -210,7 +218,8 @@ export default function ProposalInfo() {
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
-            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+            10 ** currency.coinDecimals,
           feegranter: feegrant.granter,
         });
       } else {
@@ -441,33 +450,10 @@ export default function ProposalInfo() {
             >
               Proposal Details
             </Typography>
-            {/* <div
-              style={{
-                padding: 8,
-
-                backgroundColor:
-                  theme.palette?.mode === "light" ? "#f9fafc" : "#282828",
-                color: "text.primary",
-              }}
-              dangerouslySetInnerHTML={{
-                __html: parseDescription(
-                  `${proposalInfo?.content?.description}`
-                ),
-              }}
-            /> */}
-            <div
-              style={{
-                padding: 8,
-                backgroundColor:
-                  theme.palette?.mode === "light" ? "#f9fafc" : "#282828",
-                color: "text.primary",
-                whiteSpace: "pre-line",
-              }}
-              className="proposal-description-markdown"
-            >
+            <ReactMarkdown>
               {proposal?.content?.description &&
                 proposal?.content?.description.replace(/\\n/g, "\n")}
-            </div>
+            </ReactMarkdown>
           </Paper>
         </>
       ) : (
