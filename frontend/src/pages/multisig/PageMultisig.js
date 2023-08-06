@@ -131,26 +131,12 @@ export default function PageMultisig() {
         {multisigAccounts?.status !== "pending" && !accounts?.length ? (
           <Box
             sx={{
-              mt: 6,
+              mt: 2,
             }}
           >
-            <Typography variant="h6" fontWeight={600}>
+            <Typography variant="h6">
               No Multisig accounts found on your address
             </Typography>
-            <Button
-              onClick={() => {
-                setOpen(!open);
-              }}
-              variant="contained"
-              disableElevation
-              sx={{
-                textTransform: "none",
-                my: 2,
-              }}
-              size="small"
-            >
-              Create New Multisig
-            </Button>
           </Box>
         ) : (
           ""
