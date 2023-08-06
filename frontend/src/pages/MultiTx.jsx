@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RenderSendMessage } from "./multisig/tx/PageCreateTx";
 import { Pagination } from "@mui/material";
 import { Divider } from "@mui/material";
-import { multiTxns } from "../features/bank/bankSlice";
+import { multiTxns, resetMultiSendTxRes } from "../features/bank/bankSlice";
 import { resetError, setError } from "../features/common/commonSlice";
 import PropTypes from "prop-types";
 import { useNavigate, useParams } from "react-router-dom";
@@ -39,6 +39,7 @@ export default function MultiTx({ chainInfo, address }) {
     (state) => state.common.feegrant?.[currentNetwork]
   );
   const submitTxStatus = useSelector((state) => state.bank.tx.status);
+  const multiSendTxRes = useSelector((state) => state.bank.multiSendTxRes);
 
   const [slicedMsgs, setSlicedMsgs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -82,8 +83,16 @@ export default function MultiTx({ chainInfo, address }) {
   useEffect(() => {
     return () => {
       dispatch(resetError());
+      dispatch(resetMultiSendTxRes());
     };
   }, []);
+
+  useEffect(() => {
+    if (multiSendTxRes?.status === "idle") {
+      setMessages([]);
+      setSlicedMsgs([]);
+    }
+  }, [multiSendTxRes?.status]);
 
   const onFileContents = (content) => {
     const [parsedTxns, error] = parseSendMsgsFromContent(
@@ -98,7 +107,6 @@ export default function MultiTx({ chainInfo, address }) {
         })
       );
     } else {
-      console.log(parsedTxns);
       setMessages(parsedTxns);
       setSlicedMsgs(parsedTxns?.slice(0, PER_PAGE));
     }
