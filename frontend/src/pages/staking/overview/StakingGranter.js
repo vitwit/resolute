@@ -3,7 +3,10 @@ import { Typography, Button, Grid, CircularProgress } from "@mui/material";
 import AuthzDelegations from "./AuthzDelegations";
 import { useTheme } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllValidators, getAuthzDelegations } from "../../../features/staking/stakeSlice";
+import {
+  getAllValidators,
+  getAuthzDelegations,
+} from "../../../features/staking/stakeSlice";
 import { getAuthzDelegatorTotalRewards } from "../../../features/distribution/distributionSlice";
 import { getBalances } from "../../../features/bank/bankSlice";
 import { parseBalance } from "../../../utils/denom";
@@ -57,6 +60,8 @@ export default function StakingGranter(props) {
   const [selectedValidator, setSelectedValidator] = useState({});
   const [redelegateOpen, setRedelegateOpen] = React.useState(false);
 
+  const [claimingGranter, setClaimingGranter] = useState("");
+
   const handleDialogClose = () => {
     setStakingOpen(false);
     setUndelegateOpen(false);
@@ -107,7 +112,8 @@ export default function StakingGranter(props) {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
+        chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+        10 ** currency.coinDecimals,
       feegranter: feegrant?.granter,
     });
   };
@@ -125,7 +131,8 @@ export default function StakingGranter(props) {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
+        chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+        10 ** currency.coinDecimals,
       feegranter: feegrant.granter,
     });
   };
@@ -145,12 +152,14 @@ export default function StakingGranter(props) {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
+        chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+        10 ** currency.coinDecimals,
       feegranter: feegrant.granter,
     });
   };
 
-  const onAuthzWithdrawAllRewards = () => {
+  const onAuthzWithdrawAllRewards = (granter) => {
+    setClaimingGranter(granter);
     let delegationPairs = [];
     delegations?.delegations?.delegations.forEach((item) => {
       delegationPairs.push({
@@ -169,7 +178,8 @@ export default function StakingGranter(props) {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
+        chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+        10 ** currency.coinDecimals,
       feegranter: feegrant.granter,
     });
   };
@@ -255,6 +265,9 @@ export default function StakingGranter(props) {
   }, [balances]);
 
   useEffect(() => {
+    if(authzExecTx.status !== "pending") {
+      setClaimingGranter("");
+    }
     if (authzExecTx.status === "idle") {
       fetchGranterDelegationsInfo();
       setStakingOpen(false);
@@ -304,14 +317,14 @@ export default function StakingGranter(props) {
             sx={{
               textTransform: "none",
             }}
-            onClick={() => onAuthzWithdrawAllRewards()}
+            onClick={() => onAuthzWithdrawAllRewards(granter)}
             disabled={
               !withdrawAuthzGranters.includes(granter) ||
               authzExecTx?.status === "pending" ||
               Number(totalRewards) === 0
             }
           >
-            {authzExecTx?.status === "pending" ? (
+            {claimingGranter === granter ? (
               <CircularProgress size={25} />
             ) : (
               `Claim Rewards: ${(+totalRewards).toLocaleString()} ${

@@ -8,7 +8,7 @@ interface AuthzMenuItem {
 const SEND_V1BETA1_TYPEURL = "/cosmos.bank.v1beta1.MsgSend";
 const VOTE_V1BETA1_TYPEURL = "/cosmos.gov.v1beta1.MsgVote";
 const DELEGATE_V1BETA1_TYPEURL =
-  "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward";
+  "/cosmos.staking.v1beta1.MsgDelegate";
 const UNDELEGATE_V1BETA1_TYPEURL = "/cosmos.staking.v1beta1.MsgUndelegate";
 const REDELEGATE_V1BETA1_TYPEURL = "/cosmos.staking.v1beta1.MsgBeginRedelegate";
 const WITHDRAW_REWARDS_V1BETA1_TYPEURL =
