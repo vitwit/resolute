@@ -8,6 +8,7 @@ import {
   TextField,
   FormControl,
   Link,
+  CircularProgress,
 } from "@mui/material";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { parseSendMsgsFromContent } from "./group/utils";
@@ -70,7 +71,8 @@ export default function MultiTx({ chainInfo, address }) {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         feegranter: feegrant?.granter,
         memo: memo,
       })
@@ -303,7 +305,14 @@ export default function MultiTx({ chainInfo, address }) {
                   }}
                   disabled={submitTxStatus === "pending"}
                 >
-                  {submitTxStatus === "pending" ? "Please wait" : "Submit"}
+                  {submitTxStatus === "pending" ? (
+                    <>
+                      <CircularProgress size={18} />
+                      &nbsp;&nbsp;Please wait...
+                    </>
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </>
             ) : null}
