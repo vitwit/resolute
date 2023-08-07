@@ -165,7 +165,8 @@ export default function Authz() {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         feegranter: feegrant?.granter,
       })
     );
@@ -220,7 +221,8 @@ export default function Authz() {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+        chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+        10 ** currency.coinDecimals,
       feegranter: feegrant?.granter,
     });
   };
@@ -347,7 +349,6 @@ export default function Authz() {
                     <TableHead>
                       <StyledTableRow>
                         <StyledTableCell>Grantee</StyledTableCell>
-                        <StyledTableCell>Type</StyledTableCell>
                         <StyledTableCell>Message</StyledTableCell>
                         <StyledTableCell>Expiration</StyledTableCell>
                         <StyledTableCell>Details</StyledTableCell>
@@ -365,15 +366,6 @@ export default function Authz() {
                           >
                             <StyledTableCell component="th" scope="row">
                               {shortenAddress(row.grantee, 21)}
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              <Chip
-                                label={getTypeURLName(
-                                  row.authorization["@type"]
-                                )}
-                                variant="filled"
-                                size="medium"
-                              />
                             </StyledTableCell>
                             <StyledTableCell>
                               <Chip
@@ -456,7 +448,6 @@ export default function Authz() {
                     <TableHead>
                       <StyledTableRow>
                         <StyledTableCell>Granter</StyledTableCell>
-                        <StyledTableCell>Type</StyledTableCell>
                         <StyledTableCell>Message</StyledTableCell>
                         <StyledTableCell>Expiration</StyledTableCell>
                         <StyledTableCell>Details</StyledTableCell>
@@ -473,15 +464,6 @@ export default function Authz() {
                           >
                             <StyledTableCell component="th" scope="row">
                               {shortenAddress(row.granter, 21)}
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              <Chip
-                                label={getTypeURLName(
-                                  row.authorization["@type"]
-                                )}
-                                variant="filled"
-                                size="medium"
-                              />
                             </StyledTableCell>
                             <StyledTableCell>
                               <Chip

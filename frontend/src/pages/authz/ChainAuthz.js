@@ -66,7 +66,8 @@ export const ChainAuthz = (props) => {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         baseURL: chainInfo.config.rest,
         feegranter: feegrant?.granter,
       })
@@ -154,7 +155,6 @@ export const ChainAuthz = (props) => {
                 <TableHead>
                   <StyledTableRow>
                     <StyledTableCell>Grantee</StyledTableCell>
-                    <StyledTableCell>Type</StyledTableCell>
                     <StyledTableCell>Message</StyledTableCell>
                     <StyledTableCell>Expiration</StyledTableCell>
                     <StyledTableCell>Details</StyledTableCell>
@@ -171,13 +171,6 @@ export const ChainAuthz = (props) => {
                     >
                       <StyledTableCell component="th" scope="row">
                         {shortenAddress(row.grantee, 21)}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Chip
-                          label={getTypeURLName(row.authorization["@type"])}
-                          variant="filled"
-                          size="medium"
-                        />
                       </StyledTableCell>
                       <StyledTableCell>
                         <Chip
@@ -259,7 +252,6 @@ export const ChainAuthz = (props) => {
                 <TableHead>
                   <StyledTableRow>
                     <StyledTableCell>Granter</StyledTableCell>
-                    <StyledTableCell>Type</StyledTableCell>
                     <StyledTableCell>Message</StyledTableCell>
                     <StyledTableCell>Expiration</StyledTableCell>
                     <StyledTableCell>Details</StyledTableCell>
@@ -275,13 +267,6 @@ export const ChainAuthz = (props) => {
                     >
                       <StyledTableCell component="th" scope="row">
                         {shortenAddress(row.granter, 21)}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Chip
-                          label={getTypeURLName(row.authorization["@type"])}
-                          variant="filled"
-                          size="medium"
-                        />
                       </StyledTableCell>
                       <StyledTableCell>
                         <Chip
