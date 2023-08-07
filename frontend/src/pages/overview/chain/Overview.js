@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { copyToClipboard } from "../../../utils/clipboard";
 import { getTokenPrice } from "../../../features/common/commonSlice";
 import Assets from "./Assets";
+import { CopyToClipboard } from "../../../components/CopyToClipboard";
 
 export default function Overview(props) {
   const { chainID, chainName } = props;
@@ -456,14 +457,7 @@ const AccountInfo = (props) => {
             >
               Address
             </Typography>
-            <Chip
-              label={shortenAddress(address, 24)}
-              size="small"
-              deleteIcon={<ContentCopyOutlined />}
-              onDelete={() => {
-                props.onCopy(address);
-              }}
-            />
+            <CopyToClipboard message={address}/>
           </Grid>
           <Grid
             item
