@@ -27,7 +27,7 @@ export default function PolicyCard({ policyInfo, totalWeight }) {
       variant={"outlined"}
       onClick={() => {
         setLocalStorage("policy", policyInfo, "object");
-        navigate(`/${networkName}/daos/${policyInfo?.group_id}/policies/${policyInfo?.address}`);
+        navigate(`/${networkName}/groups/${policyInfo?.group_id}/policies/${policyInfo?.address}`);
       }}
       sx={{
         p: 2,
