@@ -303,8 +303,16 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                         }}
                         onClick={() => handleOnClick(chainName)}
                       >
+                        <Typography sx={{ display: "inline" }}>
+                          {parseBalance(
+                            balance,
+                            denomInfo[0]?.decimals,
+                            item.denom
+                          ).toLocaleString()}
+                          &nbsp;
+                        </Typography>
                         <Typography sx={{ display: "inline", fontWeight: 600 }}>
-                          {denomInfo[0]?.origin_chain}
+                          {denomInfo[0]?.symbol}
                         </Typography>
                         <Typography
                           sx={{
@@ -328,7 +336,8 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                             cursor: "pointer",
                             color: "purple",
                           },
-                          fontSize: "14px",
+                          fontSize: "12px",
+                          color: "#767676",
                         }}
                         onClick={() => handleOnClick(chainName)}
                       >
@@ -336,15 +345,6 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                       </Typography>
                     </Box>
                   </Box>
-                </StyledTableCell>
-                <StyledTableCell>
-                  {parseBalance(
-                    balance,
-                    denomInfo[0]?.decimals,
-                    item.denom
-                  ).toLocaleString()}
-                  &nbsp;
-                  {denomInfo[0].symbol}
                 </StyledTableCell>
                 <StyledTableCell>
                   {tokensPriceInfo[denomInfo[0]?.origin_denom]
