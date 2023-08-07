@@ -6,7 +6,13 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import ActiveProposals from "./gov/ProposalsPage";
 import StakingPage from "./staking/StakingPage";
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import Page404 from "./Page404";
 import { useDispatch, useSelector } from "react-redux";
@@ -85,6 +91,7 @@ function a11yProps(index) {
 }
 
 function getTabIndex(path) {
+  console.log("called.......");
   if (path.includes("transfers")) return 1;
   if (path.includes("gov")) return 2;
   else if (path.includes("staking")) return 3;
@@ -100,7 +107,7 @@ export default function Home(props) {
   const authzEnabled = useSelector((state) => state.common.authzMode);
   const [value, setValue] = React.useState(0);
   const selectedNetwork = useSelector(
-    (state) => state.common.selectedNetwork?.chainName || ""
+    (state) => state.common.selectedNetwork?.chainName.toLowerCase() || ""
   );
   const [network, setNetwork] = React.useState(selectedNetwork);
   const networks = useSelector((state) => state.wallet.networks);
@@ -117,10 +124,8 @@ export default function Home(props) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
     if (newValue === 8) {
-      if (selectedNetwork === "") 
-        navigate("/passage/airdrop-check");
-      else
-      navigate(`/${selectedNetwork.toLowerCase()}/airdrop-check`);
+      if (selectedNetwork === "") navigate("/passage/airdrop-check");
+      else navigate(`/${selectedNetwork.toLowerCase()}/airdrop-check`);
     } else if (
       newValue === 0 ||
       newValue === 2 ||
@@ -160,7 +165,7 @@ export default function Home(props) {
 
   useEffect(() => {
     setValue(getTabIndex(page));
-  }, []);
+  }, [selectedNetwork]);
 
   return (
     <Box>
@@ -238,7 +243,7 @@ export default function Home(props) {
             }}
             disabled={authzEnabled && !authzTabs?.groupsEnabled}
           />
-          {!authzEnabled && (
+          {(!authzEnabled && selectedNetwork === "passage" )? (
             <Tab
               label="Airdrop"
               {...a11yProps(8)}
@@ -247,7 +252,7 @@ export default function Home(props) {
                 fontWeight: 600,
               }}
             />
-          )}
+          ):null}
         </Tabs>
       </Box>
 
@@ -341,7 +346,10 @@ export default function Home(props) {
                 path="/:networkName/groups/groups/:groupID/proposals/:id"
                 element={<GroupProposal />}
               />
-              <Route path="/:networkName/airdrop-check" element={<AirdropEligibility />} />
+              <Route
+                path="/:networkName/airdrop-check"
+                element={<AirdropEligibility />}
+              />
 
               <Route path="*" element={<Page404 />}></Route>
             </Routes>

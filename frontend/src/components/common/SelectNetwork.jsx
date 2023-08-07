@@ -3,7 +3,6 @@ import { MenuItem, Select, FormControl } from '@mui/material'
 import { Box } from '@mui/system'
 import PropTypes from "prop-types";
 import { useDispatch } from 'react-redux';
-import { setSelectedNetwork } from '../../features/common/commonSlice';
 
 export default function SelectNetwork(props) {
     const { onSelect, networks, defaultNetwork } = props;
@@ -20,14 +19,6 @@ export default function SelectNetwork(props) {
             setSelected(defaultNetwork)
         }
     }, [defaultNetwork]);
-
-    useEffect(() => {
-        dispatch(
-            setSelectedNetwork({
-              chainName: selected
-            })
-          );
-    }, [selected])
 
     return (
         <Box sx={{ maxWidth: 150 }}>
