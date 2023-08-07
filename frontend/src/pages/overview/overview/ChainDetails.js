@@ -20,6 +20,7 @@ import {
 import { Delegate } from "../../../txns/staking";
 import { parseBalance } from "../../../utils/denom";
 import chainDenoms from "../../../utils/chainDenoms.json";
+import { CopyToClipboard } from "../../../components/CopyToClipboard";
 
 export const ChainDetails = ({ chainID, chainName, assetType }) => {
   const dispatch = useDispatch();
@@ -189,6 +190,10 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                   >
                     {chainName}
                   </Typography>
+                  <CopyToClipboard
+                    message={chainInfo?.walletInfo?.bech32Address}
+                    toolTipEnabled={true}
+                  />
                 </Box>
               </StyledTableCell>
               <StyledTableCell>
