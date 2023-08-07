@@ -35,9 +35,6 @@ const Assets = (props) => {
             <TableHead>
               <StyledTableRow>
                 <StyledTableCell sx={paddingTopBottom}>
-                  Network Name
-                </StyledTableCell>
-                <StyledTableCell sx={paddingTopBottom}>
                   Available Balance
                 </StyledTableCell>
                 <StyledTableCell sx={paddingTopBottom}>Price</StyledTableCell>
@@ -66,10 +63,18 @@ const Assets = (props) => {
                               textTransform: "capitalize",
                             }}
                           >
+                            <Typography sx={{ display: "inline" }}>
+                              {parseBalance(
+                                balances,
+                                denomInfo[0]?.decimals,
+                                item.denom
+                              ).toLocaleString()}
+                              &nbsp;
+                            </Typography>
                             <Typography
                               sx={{ display: "inline", fontWeight: 600 }}
                             >
-                              {denomInfo[0]?.origin_chain}
+                              {denomInfo[0]?.symbol}
                             </Typography>
                             {currentChainDenom !==
                             denomInfo[0]?.origin_denom ? (
@@ -92,22 +97,14 @@ const Assets = (props) => {
                           <Typography
                             sx={{
                               textTransform: "capitalize",
-                              fontSize: "14px",
+                              fontSize: "12px",
+                              color: "#767676",
                             }}
                           >
                             On {chainName}
                           </Typography>
                         </Box>
                       </Box>
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      {parseBalance(
-                        balances,
-                        denomInfo[0]?.decimals,
-                        item.denom
-                      ).toLocaleString()}
-                      &nbsp;
-                      {denomInfo[0].symbol}
                     </StyledTableCell>
                     <StyledTableCell>
                       {tokensPriceInfo[denomInfo[0]?.origin_denom]
