@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { MenuItem, Select, FormControl } from '@mui/material'
 import { Box } from '@mui/system'
 import PropTypes from "prop-types";
-import { useDispatch } from 'react-redux';
 
 export default function SelectNetwork(props) {
     const { onSelect, networks, defaultNetwork } = props;
