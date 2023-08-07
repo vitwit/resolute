@@ -8,16 +8,20 @@ import {
 } from "../../../features/staking/stakeSlice";
 import { getDelegatorTotalRewards } from "../../../features/distribution/distributionSlice";
 import { Chain } from "./Chain";
+import { useNavigate } from "react-router-dom";
+import SelectNetwork from "../../../components/common/SelectNetwork";
 
 const StakingOverview = () => {
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const wallet = useSelector((state) => state.wallet);
   const chainsmap = useSelector((state) => state.staking.chains);
   const rewardschainsMap = useSelector((state) => state.distribution.chains);
   const tokensPriceInfo = useSelector(
     (state) => state.common.allTokensInfoState.info
   );
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const [data, setData] = useState({
     totalAmount: 0,
     chains: [],
@@ -179,58 +183,69 @@ const StakingOverview = () => {
     }
   }, [rewardschainsMap]);
 
-  return (
+  return data?.chains?.length > 0 ? (
     <Container>
-      {data?.chains?.length > 0 ? (
-        <>
-          <StakingTotal
-            totalAmount={data?.totalAmount || 0}
-            totalReward={rewardData?.totalReward || 0}
+      <StakingTotal
+        totalAmount={data?.totalAmount || 0}
+        totalReward={rewardData?.totalReward || 0}
+      />
+      {data.chains.map((chain) => (
+        <Chain
+          chain={chain}
+          key={chain.chainName}
+          chainReward={
+            rewardData?.chains[chain.chainName] || {
+              totalRewards: 0,
+              validators: {},
+            }
+          }
+        />
+      ))}
+    </Container>
+  ) : (
+    <>
+      {isLoading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress
+            sx={{
+              mt: 4,
+            }}
           />
-          {data.chains.map((chain) => (
-            <Chain
-              chain={chain}
-              key={chain.chainName}
-              chainReward={
-                rewardData?.chains[chain.chainName] || {
-                  totalRewards: 0,
-                  validators: {},
-                }
-              }
-            />
-          ))}
-        </>
+        </Box>
       ) : (
         <>
-          {isLoading ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "end",
+            }}
+          >
+            <SelectNetwork
+              onSelect={(name) => {
+                navigate(`/${name}/staking`);
               }}
-            >
-              <CircularProgress
-                sx={{
-                  mt: 4,
-                }}
-              />
-            </Box>
-          ) : (
-            <Typography
-              variant="h6"
-              color="text.primary"
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                mt: 3,
-              }}
-            >
-              No delegations
-            </Typography>
-          )}
+              networks={Object.keys(nameToChainIDs)}
+            />
+          </Box>
+          <Typography
+            variant="h6"
+            color="text.primary"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              padding: 16,
+            }}
+          >
+            No Delegations found
+          </Typography>
         </>
       )}
-    </Container>
+    </>
   );
 };
 export default StakingOverview;
