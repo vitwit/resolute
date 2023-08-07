@@ -47,7 +47,7 @@ const ALL_NETWORKS = [
   "multisig",
   "authz",
   "feegrant",
-  "daos",
+  "groups",
   "airdrop-check",
 ];
 
@@ -91,7 +91,7 @@ function getTabIndex(path) {
   else if (path.includes("multisig")) return 4;
   else if (path.includes("authz")) return 5;
   else if (path.includes("feegrant")) return 6;
-  else if (path.includes("daos")) return 7;
+  else if (path.includes("groups")) return 7;
   else if (path.includes("airdrop-check")) return 8;
   else return 0;
 }
@@ -230,13 +230,13 @@ export default function Home(props) {
             }}
           />
           <Tab
-            label="DAOs"
+            label="Groups"
             {...a11yProps(7)}
             value={7}
             sx={{
               fontWeight: 600,
             }}
-            disabled={authzEnabled && !authzTabs?.daosEnabled}
+            disabled={authzEnabled && !authzTabs?.groupsEnabled}
           />
           {!authzEnabled && (
             <Tab
@@ -295,7 +295,7 @@ export default function Home(props) {
                 }
               ></Route>
 
-              <Route path="/:networkName/daos" element={<GroupPage />} />
+              <Route path="/:networkName/groups" element={<GroupPage />} />
 
               <Route path="/:networkName/multisig" element={<PageMultisig />} />
 
@@ -312,7 +312,7 @@ export default function Home(props) {
               <Route path="/:networkName/slashing" element={<UnjailPage />} />
 
               <Route
-                path="/:networkName/daos/create-group"
+                path="/:networkName/groups/create-group"
                 element={<CreateGroupNewPage />}
               />
 
@@ -323,22 +323,22 @@ export default function Home(props) {
 
               <Route path="/:networkName/authz/new" element={<NewAuthz />} />
 
-              <Route path="/:networkName/daos/:id" element={<Group />} />
+              <Route path="/:networkName/groups/:id" element={<Group />} />
 
               <Route
-                path="/:networkName/daos/:id/policies/:policyId"
+                path="/:networkName/groups/:id/policies/:policyId"
                 element={<Policy />}
               />
 
               <Route
-                path="/:networkName/daos/:id/policies/:policyAddress/proposals"
+                path="/:networkName/groups/:id/policies/:policyAddress/proposals"
                 element={<CreateProposal />}
               />
 
-              <Route path="/daos" element={<GroupPage />} />
+              <Route path="/groups" element={<GroupPage />} />
 
               <Route
-                path="/:networkName/daos/groups/:groupID/proposals/:id"
+                path="/:networkName/groups/groups/:groupID/proposals/:id"
                 element={<GroupProposal />}
               />
               <Route path="/:networkName/airdrop-check" element={<AirdropEligibility />} />
