@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Grid, CircularProgress } from "@mui/material";
+import {
+  Typography,
+  Button,
+  Grid,
+  CircularProgress,
+  Tooltip,
+} from "@mui/material";
 import AuthzDelegations from "./AuthzDelegations";
 import { useTheme } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
@@ -265,7 +271,7 @@ export default function StakingGranter(props) {
   }, [balances]);
 
   useEffect(() => {
-    if(authzExecTx.status !== "pending") {
+    if (authzExecTx.status !== "pending") {
       setClaimingGranter("");
     }
     if (authzExecTx.status === "idle") {
@@ -293,45 +299,85 @@ export default function StakingGranter(props) {
           </Typography>
         </Grid>
         <Grid item>
-          <Button
-            variant={theme.palette?.mode === "light" ? "outlined" : "contained"}
-            className="button-capitalize-title"
-            size="small"
-            sx={{
-              textTransform: "none",
-              mr: 1,
-            }}
-            disableElevation
-            disabled={!delegateAuthzGrants?.includes(granter)}
-            onClick={() => {
-              getAuthzBalances();
-              setStakingOpen(true);
-            }}
-          >
-            Delegate
-          </Button>
-          <Button
-            variant="contained"
-            disableElevation
-            size="small"
-            sx={{
-              textTransform: "none",
-            }}
-            onClick={() => onAuthzWithdrawAllRewards(granter)}
-            disabled={
-              !withdrawAuthzGranters.includes(granter) ||
-              authzExecTx?.status === "pending" ||
-              Number(totalRewards) === 0
+          <Tooltip
+            title={
+              !delegateAuthzGrants?.includes(granter)
+                ? "you don't have permission to delegate"
+                : ""
             }
           >
-            {claimingGranter === granter ? (
-              <CircularProgress size={25} />
-            ) : (
-              `Claim Rewards: ${(+totalRewards).toLocaleString()} ${
-                currency?.coinDenom
-              }`
-            )}
-          </Button>
+            <Button
+              variant={
+                theme.palette?.mode === "light" ||
+                !delegateAuthzGrants?.includes(granter)
+                  ? "outlined"
+                  : "contained"
+              }
+              className="button-capitalize-title"
+              size="small"
+              color={
+                delegateAuthzGrants?.includes(granter) ? "primary" : "error"
+              }
+              sx={{
+                textTransform: "none",
+                mr: 1,
+                cursor: !delegateAuthzGrants?.includes(granter)
+                  ? "not-allowed"
+                  : "pointer",
+              }}
+              disableElevation
+              onClick={() => {
+                if (delegateAuthzGrants?.includes(granter)) {
+                  getAuthzBalances();
+                  setStakingOpen(true);
+                }
+              }}
+            >
+              Delegate
+            </Button>
+          </Tooltip>
+
+          <Tooltip
+            title={
+              !withdrawAuthzGranters?.includes(granter)
+                ? "you don't have permission to claim rewards"
+                : ""
+            }
+          >
+            <Button
+              variant={
+                withdrawAuthzGranters?.includes(granter)
+                  ? "contained"
+                  : "outlined"
+              }
+              disableElevation
+              size="small"
+              color={
+                withdrawAuthzGranters?.includes(granter) ? "primary" : "error"
+              }
+              sx={{
+                textTransform: "none",
+                cursor: !withdrawAuthzGranters?.includes(granter)
+                  ? "not-allowed"
+                  : "pointer",
+              }}
+              onClick={() => {
+                if (withdrawAuthzGranters.includes(granter))
+                  onAuthzWithdrawAllRewards();
+              }}
+              disabled={
+                authzExecTx?.status === "pending" || Number(totalRewards) === 0
+              }
+            >
+              {claimingGranter === granter ? (
+                <CircularProgress size={25} />
+              ) : (
+                `Claim Rewards: ${(+totalRewards).toLocaleString()} ${
+                  currency?.coinDenom
+                }`
+              )}
+            </Button>
+          </Tooltip>
         </Grid>
       </Grid>
       <AuthzDelegations
