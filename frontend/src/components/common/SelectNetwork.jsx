@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 
 export default function SelectNetwork(props) {
     const { onSelect, networks, defaultNetwork } = props;
-    const dispatch = useDispatch();
 
     const [selected, setSelected] = useState("cosmoshub");
     const handleNetworkSelect = (e) => {
