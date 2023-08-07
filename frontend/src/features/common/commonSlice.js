@@ -91,9 +91,6 @@ export const commonSlice = createSlice({
     resetDecisionPolicies: (state) => {
       state.groupPolicies = {};
     },
-    resetActiveProposals: (state) => {
-      state.policyProposals = {};
-    },
     setFeegrant: (state, data) => {
       const chainName = data.payload.chainName;
       state.feegrant[chainName] = data.payload.grants;
@@ -154,7 +151,6 @@ export const commonSlice = createSlice({
 export const {
   setError,
   resetError,
-  resetActiveProposals,
   resetDecisionPolicies,
   setTxLoad,
   resetTxLoad,

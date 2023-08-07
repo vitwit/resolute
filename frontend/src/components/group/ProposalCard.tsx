@@ -27,7 +27,7 @@ function ProposalCard({
   return (
     <Paper
       onClick={() => {
-        navigate(`/${networkName}/daos/groups/${groupID}/proposals/${proposal?.id}`);
+        navigate(`/${networkName}/groups/groups/${groupID}/proposals/${proposal?.id}`);
       }}
       sx={{
         p: 2,
