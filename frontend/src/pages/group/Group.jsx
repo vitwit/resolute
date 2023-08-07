@@ -753,7 +753,6 @@ function Group() {
             <TabPanel value={tabIndex} index={2}>
               <ActiveProposals
                 id={params?.id}
-                wallet={wallet}
                 chainInfo={chainInfo}
                 chainID={chainID}
               />
