@@ -43,11 +43,14 @@ export default function Dashboard() {
   const selectedNetwork = commonState.selectedNetwork.chainName;
   const allNetworks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const isAuthzMode = useSelector((state) => state.common.authzMode);
+
   const chainID = nameToChainIDs[selectedNetwork];
   const chainInfo = allNetworks[chainID]?.network;
   const txLoadRes = commonState.txLoadRes?.load;
   const errState = commonState.errState;
   const txSuccess = commonState.txSuccess;
+  const [authzAlert, setAuthzAlert] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -104,6 +107,10 @@ export default function Dashboard() {
       };
     }
   }, []);
+
+  useEffect(() => {
+    setAuthzAlert(isAuthzMode);
+  }, [isAuthzMode]);
 
   useEffect(() => {
     if (errState?.message?.length > 0 && errState?.type?.length > 0) {
@@ -167,6 +174,16 @@ export default function Dashboard() {
           </Alert>
         </Snackbar>
       )}
+
+      <Snackbar open={authzAlert}>
+        <Alert
+          onClose={() => setAuthzAlert(false)}
+          severity="info"
+          sx={{ width: "100%" }}
+        >
+          You are in Authz Mode!
+        </Alert>
+      </Snackbar>
 
       <Snackbar
         open={txLoadRes}
