@@ -10,6 +10,7 @@ import { getTypeURLName, shortenAddress } from "../utils/util";
 import { parseSpendLimit } from "../utils/denom";
 import { getLocalTime } from "../utils/datetime";
 import { authzMsgTypes } from "../utils/authorizations";
+import { CopyToClipboard } from "./CopyToClipboard";
 
 const renderAuthorization = (authz, displayDenom, coinDecimals) => {
   const { allowance, granter, grantee } = authz;
@@ -34,21 +35,13 @@ const renderAuthorization = (authz, displayDenom, coinDecimals) => {
               <Typography color="text.primary" gutterBottom>
                 Granter
               </Typography>
-              <Chip
-                label={shortenAddress(granter, 21)}
-                variant="filled"
-                size="medium"
-              />
+              <CopyToClipboard message={granter} />
             </li>
             <li className="inline-space-between">
               <Typography color="text.primary" gutterBottom>
                 Grantee
               </Typography>
-              <Chip
-                label={shortenAddress(grantee, 21)}
-                variant="filled"
-                size="medium"
-              />
+              <CopyToClipboard message={grantee} />
             </li>
             <li className="inline-space-between">
               <Typography color="text.primary" gutterBottom>
