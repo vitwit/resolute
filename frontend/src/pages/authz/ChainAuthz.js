@@ -6,6 +6,7 @@ import {
   Chip,
   CircularProgress,
   Grid,
+  Stack,
   Table,
   TableBody,
   TableHead,
@@ -24,6 +25,7 @@ import {
 import { getLocalTime } from "../../utils/datetime";
 import { txAuthzRevoke } from "../../features/authz/authzSlice";
 import { AuthorizationInfo } from "../../components/AuthorizationInfo";
+import { CopyToClipboard } from "../../components/CopyToClipboard";
 
 export const ChainAuthz = (props) => {
   const { chainName, chainID } = props;
@@ -170,7 +172,13 @@ export const ChainAuthz = (props) => {
                       }}
                     >
                       <StyledTableCell component="th" scope="row">
-                        {shortenAddress(row.grantee, 21)}
+                        <Stack direction="row">
+                          {shortenAddress(row.grantee, 21)}
+                          <CopyToClipboard
+                            message={row.grantee}
+                            toolTipEnabled={true}
+                          />
+                        </Stack>
                       </StyledTableCell>
                       <StyledTableCell>
                         <Chip
@@ -266,7 +274,13 @@ export const ChainAuthz = (props) => {
                       }}
                     >
                       <StyledTableCell component="th" scope="row">
-                        {shortenAddress(row.granter, 21)}
+                        <Stack direction="row">
+                          {shortenAddress(row.granter, 21)}
+                          <CopyToClipboard
+                            message={row.granter}
+                            toolTipEnabled={true}
+                          />
+                        </Stack>
                       </StyledTableCell>
                       <StyledTableCell>
                         <Chip

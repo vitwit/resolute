@@ -660,7 +660,7 @@ export default function Validators(props) {
                 }}
                 disableElevation
               >
-                Delegations
+                My Delegations
               </Button>
               <Button
                 variant={type === "validators" ? "contained" : "outlined"}
@@ -670,7 +670,7 @@ export default function Validators(props) {
                 }}
                 disableElevation
               >
-                Validators
+                All Validators
               </Button>
             </ButtonGroup>
             {validators.witvalValidator?.description ? (

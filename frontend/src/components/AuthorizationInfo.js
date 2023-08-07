@@ -10,6 +10,7 @@ import { getTypeURLName, shortenAddress } from "../utils/util";
 import { parseSpendLimit } from "../utils/denom";
 import { getLocalTime } from "../utils/datetime";
 import { Grid } from "@mui/material";
+import { CopyToClipboard } from "./CopyToClipboard";
 
 const renderAuthorization = (authz, displayDenom) => {
   const { authorization, granter, grantee, expiration } = authz;
@@ -56,11 +57,7 @@ const renderAuthorization = (authz, displayDenom) => {
             }}
           >
             <Typography gutterBottom>Granter</Typography>
-            <Chip
-              label={shortenAddress(granter, 21)}
-              variant="filled"
-              size="medium"
-            />
+            <CopyToClipboard message={granter} />
           </Grid>
           <Grid
             item
@@ -71,11 +68,7 @@ const renderAuthorization = (authz, displayDenom) => {
             }}
           >
             <Typography>Grantee</Typography>
-            <Chip
-              label={shortenAddress(grantee, 21)}
-              variant="filled"
-              size="medium"
-            />
+            <CopyToClipboard message={grantee} />
           </Grid>
 
           <Grid
