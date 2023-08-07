@@ -73,7 +73,7 @@ function PolicyProposalsList(props) {
           disableElevation
           onClick={() => {
             navigate(
-              `/${networkName}/daos/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
+              `/${networkName}/groups/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
             );
           }}
         >
@@ -113,7 +113,7 @@ function PolicyProposalsList(props) {
             }}
             onClick={() => {
               navigate(
-                `/${networkName}/daos/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
+                `/${networkName}/groups/${params?.id}/policies/${props?.policyInfo?.address}/proposals`
               );
             }}
           >

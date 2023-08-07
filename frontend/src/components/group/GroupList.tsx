@@ -1,5 +1,5 @@
 import React from "react";
-import { CircularProgress, Grid } from "@mui/material";
+import { CircularProgress, Grid, Typography } from "@mui/material";
 import GroupCard from "./GroupCard";
 import PaginationElement from "./PaginationElement";
 import { useNavigate } from "react-router-dom";
@@ -32,14 +32,15 @@ export default function GroupList(props: GroupsByAdminProps) {
         <CircularProgress sx={{ textAlign: "center" }} />
       ) : null}
       {status !== "pending" && !groups?.length ? (
-        <NoData
-          title={props.notFoundText}
-          showAction={props.showNotFoundAction}
-          onAction={() => {
-            navigateTo(`/${networkName}/daos/create-group`);
+        <Typography
+          variant="h6"
+          color="text.primary"
+          sx={{
+            p: 2,
           }}
-          actionText="Create group"
-        />
+        >
+          {props.notFoundText}
+        </Typography>
       ) : null}
 
       {status !== "pending" && groups?.length > 0 ? (

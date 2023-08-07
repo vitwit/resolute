@@ -16,7 +16,10 @@ import {
   TableHead,
   Typography,
 } from "@mui/material";
-import { StyledTableCell, StyledTableRow } from "../../../components/CustomTable";
+import {
+  StyledTableCell,
+  StyledTableRow,
+} from "../../../components/CustomTable";
 import { formatNumber, parseBalance } from "../../../utils/denom";
 import { Button } from "@mui/material";
 
@@ -141,9 +144,18 @@ export const ChainsOverview = ({ chainNames }) => {
     });
   }, []);
 
-  const totalAvailableAmount = useMemo(() => calculateTotalAvailableAmount(), [calculateTotalAvailableAmount]);
-  const totalStakedAmount = useMemo(() => calculateTotalStakedAmount(), [calculateTotalStakedAmount]);
-  const totalPendingAmount = useMemo(() => calculateTotalPendingAmount(), [calculateTotalPendingAmount]);
+  const totalAvailableAmount = useMemo(
+    () => calculateTotalAvailableAmount(),
+    [calculateTotalAvailableAmount]
+  );
+  const totalStakedAmount = useMemo(
+    () => calculateTotalStakedAmount(),
+    [calculateTotalStakedAmount]
+  );
+  const totalPendingAmount = useMemo(
+    () => calculateTotalPendingAmount(),
+    [calculateTotalPendingAmount]
+  );
 
   return (
     <Paper sx={{ p: 2, mt: 2 }} elevation={0}>
@@ -229,19 +241,15 @@ export const ChainsOverview = ({ chainNames }) => {
           IBC
         </Button>
       </Box>
-
       <TableContainer>
         <Table>
           <TableHead>
             <StyledTableRow>
-              <StyledTableCell sx={paddingTopBottom}>
-                Network Name
-              </StyledTableCell>
-              <StyledTableCell sx={paddingTopBottom}>
-                Available Balance
-              </StyledTableCell>
               {assetType === "native" ? (
                 <>
+                  <StyledTableCell sx={paddingTopBottom}>
+                    Network Name
+                  </StyledTableCell>
                   <StyledTableCell sx={paddingTopBottom}>
                     Staked Amount
                   </StyledTableCell>
@@ -250,6 +258,9 @@ export const ChainsOverview = ({ chainNames }) => {
                   </StyledTableCell>
                 </>
               ) : null}
+              <StyledTableCell sx={paddingTopBottom}>
+                Available Balance
+              </StyledTableCell>
               <StyledTableCell sx={paddingTopBottom}>Price</StyledTableCell>
               {assetType === "native" ? (
                 <>
