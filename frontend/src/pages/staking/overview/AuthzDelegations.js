@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import Button from "@mui/material/Button";
-import { StyledTableCell, StyledTableRow } from "../../../components/CustomTable";
+import {
+  StyledTableCell,
+  StyledTableRow,
+} from "../../../components/CustomTable";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,7 +12,7 @@ import TableHead from "@mui/material/TableHead";
 import { formatValidatorStatus } from "../../../utils/util";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@emotion/react";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Tooltip } from "@mui/material";
 import PropTypes from "prop-types";
 
 export default function AuthzDelegations(props) {
@@ -86,11 +89,7 @@ export default function AuthzDelegations(props) {
             No delegations
           </Typography>
         ) : (
-          <Table
-            sx={{ minWidth: 500 }}
-            aria-label="simple table"
-            size="small"
-          >
+          <Table sx={{ minWidth: 500 }} aria-label="simple table" size="small">
             <TableHead>
               <StyledTableRow>
                 <StyledTableCell align="center">Validator</StyledTableCell>
@@ -144,46 +143,79 @@ export default function AuthzDelegations(props) {
                         .toLocaleString()}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      <Button
-                        variant={
-                          theme.palette?.mode === "light"
-                            ? "outlined"
-                            : "contained"
+                      <Tooltip
+                        title={
+                          !undelegateAuthzGrants?.includes(granter)
+                            ? "you don't have the permission to undelegate"
+                            : ""
                         }
-                        style={{ marginLeft: 4 }}
-                        className="button-capitalize-title"
-                        size="small"
-                        onClick={(e) =>
-                          handleClick(e, "undelegate", row.delegation)
-                        }
-                        sx={{
-                          textTransform: "none",
-                        }}
-                        disableElevation
-                        disabled={!undelegateAuthzGrants?.includes(granter)}
                       >
-                        Undelegate
-                      </Button>
-                      <Button
-                        variant={
-                          theme.palette?.mode === "light"
-                            ? "outlined"
-                            : "contained"
+                        <Button
+                          variant={
+                            theme.palette?.mode === "light" ||
+                            !undelegateAuthzGrants?.includes(granter)
+                              ? "outlined"
+                              : "contained"
+                          }
+                          color={
+                            undelegateAuthzGrants?.includes(granter)
+                              ? "primary"
+                              : "error"
+                          }
+                          style={{ marginLeft: 4 }}
+                          className="button-capitalize-title"
+                          size="small"
+                          onClick={(e) => {
+                            if (undelegateAuthzGrants?.includes(granter))
+                              handleClick(e, "undelegate", row.delegation);
+                          }}
+                          sx={{
+                            textTransform: "none",
+                            cursor: !undelegateAuthzGrants?.includes(granter)
+                              ? "not-allowed"
+                              : "pointer",
+                          }}
+                          disableElevation
+                        >
+                          Undelegate
+                        </Button>
+                      </Tooltip>
+                      <Tooltip
+                        title={
+                          !redelegateAuthzGrants?.includes(granter)
+                            ? "you don't have permission to redelegate"
+                            : ""
                         }
-                        className="button-capitalize-title"
-                        style={{ marginLeft: 4 }}
-                        size="small"
-                        onClick={(e) =>
-                          handleClick(e, "redelegate", row.delegation)
-                        }
-                        sx={{
-                          textTransform: "none",
-                        }}
-                        disableElevation
-                        disabled={!redelegateAuthzGrants?.includes(granter)}
                       >
-                        Redelegate
-                      </Button>
+                        <Button
+                          variant={
+                            theme.palette?.mode === "light" || !redelegateAuthzGrants?.includes(granter)
+                              ? "outlined"
+                              : "contained"
+                          }
+                          className="button-capitalize-title"
+                          style={{ marginLeft: 4 }}
+                          size="small"
+                          color={
+                            redelegateAuthzGrants?.includes(granter)
+                              ? "primary"
+                              : "error"
+                          }
+                          onClick={(e) => {
+                            if (redelegateAuthzGrants?.includes(granter))
+                              handleClick(e, "redelegate", row.delegation);
+                          }}
+                          sx={{
+                            textTransform: "none",
+                            cursor: !redelegateAuthzGrants?.includes(granter)
+                              ? "not-allowed"
+                              : "pointer",
+                          }}
+                          disableElevation
+                        >
+                          Redelegate
+                        </Button>
+                      </Tooltip>
                     </StyledTableCell>
                   </StyledTableRow>
                 );
