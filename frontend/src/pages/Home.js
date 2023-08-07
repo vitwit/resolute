@@ -91,7 +91,6 @@ function a11yProps(index) {
 }
 
 function getTabIndex(path) {
-  console.log("called.......");
   if (path.includes("transfers")) return 1;
   if (path.includes("gov")) return 2;
   else if (path.includes("staking")) return 3;
