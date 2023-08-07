@@ -124,7 +124,7 @@ export default function PageMultisig() {
           }}
           size="small"
         >
-          Create New Multisig
+          New Multisig +
         </Button>
       </Box>
       <Box sx={{ mt: 1 }}>

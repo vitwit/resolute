@@ -117,7 +117,7 @@ export default function GroupPage() {
           }}
           onClick={() => navigateTo(`/${currentNetwork}/groups/create-group`)}
         >
-          Create Group
+          New Group +
         </Button>
       </Box>
 
