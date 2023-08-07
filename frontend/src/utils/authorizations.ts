@@ -232,7 +232,7 @@ export interface AuthzTabs {
   sendEnabled: boolean;
   govEnabled: boolean;
   stakingEnabled: boolean;
-  daosEnabled: boolean;
+  groupsEnabled: boolean;
   feegrantEnabled: boolean;
   multisigEnabled: boolean;
   authzEnabled: boolean;
@@ -247,7 +247,7 @@ export function getAuthzTabs(authorizations: any[]): AuthzTabs {
   let result: AuthzTabs = {
     airdropEnabled: false,
     authzEnabled: false,
-    daosEnabled: false,
+    groupsEnabled: false,
     feegrantEnabled: false,
     govEnabled: false,
     multisigEnabled: false,
@@ -283,7 +283,7 @@ export function getAuthzTabs(authorizations: any[]): AuthzTabs {
           break;
       }
       if (authorizations[i].authorization?.msg.includes("cosmos.group.")) {
-        result.daosEnabled = true;
+        result.groupsEnabled = true;
       }
     }
   }
