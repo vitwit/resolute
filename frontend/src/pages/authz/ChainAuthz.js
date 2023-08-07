@@ -260,6 +260,7 @@ export const ChainAuthz = (props) => {
                   <StyledTableRow>
                     <StyledTableCell>Granter</StyledTableCell>
                     <StyledTableCell>Type</StyledTableCell>
+                    <StyledTableCell>Message</StyledTableCell>
                     <StyledTableCell>Expiration</StyledTableCell>
                     <StyledTableCell>Details</StyledTableCell>
                   </StyledTableRow>
@@ -278,6 +279,13 @@ export const ChainAuthz = (props) => {
                       <StyledTableCell>
                         <Chip
                           label={getTypeURLName(row.authorization["@type"])}
+                          variant="filled"
+                          size="medium"
+                        />
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Chip
+                          label={getMsgNameFromAuthz(row.authorization)}
                           variant="filled"
                           size="medium"
                         />
