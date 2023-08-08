@@ -10,7 +10,7 @@ import {
 import React from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedNetwork } from "../features/common/commonSlice";
+import { setSelectedNetwork, setSelectedNetworkLocal } from "../features/common/commonSlice";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@emotion/react";
 import CloseIcon from "@mui/icons-material/Close";
@@ -81,6 +81,11 @@ const DialogSelectNetwork = (props) => {
                         setSelectedNetwork({
                           chainName: networks[chain].network.config.chainName,
                           chainID: networks[chain].network.config.chainId,
+                        })
+                      );
+                      dispatch(
+                        setSelectedNetworkLocal({
+                          chainName: networks[chain].network.config.chainName,
                         })
                       );
                       navigateTo(
