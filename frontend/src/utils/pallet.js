@@ -101,22 +101,43 @@ const networks = {
 
 export const defaultPallet = {
   primary: {
-    light: "#b7abcf",
-    main: "#400d40",
-    dark: "#312941",
-    contrastText: "#fff",
+    main: '#009688',
+    light: '#52c7b8',
+    dark: '#00675b',
+    contrastText: '#fff',
   },
   secondary: {
-    light: "#e73986",
-    main: "#db2777",
-    dark: "#8f174c",
-    contrastText: "#000",
+    main: '#9c27b0',
+    light: '#d05ce3',
+    dark: '#6a0080',
+    contrastText: '#fff',
+  },
+  error: {
+    main: '#e91e63',
+    light: '#ff6090',
+    dark: '#b0003a',
+    contrastText: '#fff',
+  },
+  warning: {
+    main: '#ffc107',
+    light: '#ffe054',
+    dark: '#c79100',
+    contrastText: '#fff',
+  },
+  info: {
+    main: '#2196f3',
+    light: '#64b5f6',
+    dark: '#1976d2',
+    contrastText: '#fff',
+  },
+  success: {
+    main: '#4caf50',
+    light: '#80e27e',
+    dark: '#087f23',
+    contrastText: '#fff',
   },
 };
 
 export function getPalletByNetwork(networkName) {
-  if (networkName === "") return defaultPallet;
-  const pallet = networks[networkName];
-  if (!pallet) return defaultPallet;
-  return pallet;
+  return defaultPallet;
 }
