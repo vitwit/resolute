@@ -40,7 +40,7 @@ export default function Dashboard() {
   const showTxSnack = (value) => setSnackTxClose(value);
 
   const commonState = useSelector((state) => state?.common);
-  const selectedNetwork = commonState.selectedNetwork.chainName;
+  const selectedNetwork = commonState.selectedNetworkLocal.chainName.toLowerCase();
   const allNetworks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const isAuthzMode = useSelector((state) => state.common.authzMode);

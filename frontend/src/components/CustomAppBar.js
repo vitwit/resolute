@@ -11,6 +11,7 @@ import {
   setAuthzMode,
   setError,
   setSelectedNetwork,
+  setSelectedNetworkLocal,
 } from "../features/common/commonSlice";
 import {
   FormControlLabel,
@@ -184,6 +185,11 @@ export function CustomAppBar(props) {
                     setSelectedNetwork({
                       chainName: networks[chain].network.config.chainName,
                       chainID: networks[chain].network.config.chainId,
+                    })
+                  );
+                  dispatch(
+                    setSelectedNetworkLocal({
+                      chainName: networks[chain].network.config.chainName,
                     })
                   );
                   navigateTo(

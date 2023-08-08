@@ -25,6 +25,9 @@ const initialState = {
   selectedNetwork: {
     chainName: "",
   },
+  selectedNetworkLocal: {
+    chainName: "",
+  },
   authzMode: false,
 };
 
@@ -104,6 +107,9 @@ export const commonSlice = createSlice({
     setSelectedNetwork: (state, data) => {
       state.selectedNetwork.chainName = data.payload.chainName;
     },
+    setSelectedNetworkLocal: (state, data) => {
+      state.selectedNetworkLocal.chainName = data.payload.chainName;
+    },
     setAuthzMode: (state, data) => {
       state.authzMode = data.payload;
     },
@@ -161,6 +167,7 @@ export const {
   setSelectedNetwork,
   setAuthzMode,
   removeFeegrant,
+  setSelectedNetworkLocal,
 } = commonSlice.actions;
 
 export default commonSlice.reducer;
