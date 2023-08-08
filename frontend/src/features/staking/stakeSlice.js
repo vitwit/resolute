@@ -45,9 +45,9 @@ const initialState = {
       status: "idle",
       type: "",
     },
-  },
-  overviewTx: {
-    status: "",
+    overviewTx: {
+      status: "",
+    },
   },
 };
 
@@ -110,7 +110,7 @@ export const txDelegate = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        460000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -168,7 +168,7 @@ export const txReDelegate = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        460000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -225,7 +225,7 @@ export const txUnDelegate = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        460000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -418,8 +418,9 @@ export const stakeSlice = createSlice({
   name: "staking",
   initialState,
   reducers: {
-    resetRestakeTx: (state) => {
-      state.overviewTx.status = "";
+    resetRestakeTx: (state, action) => {
+      let chainID = action.payload.chainID;
+      state.chains[chainID].overviewTx.status = "";
     },
     resetTxType: (state, action) => {
       let chainID = action.payload.chainID;
@@ -801,14 +802,17 @@ export const stakeSlice = createSlice({
 
     // restake transaction
     builder
-      .addCase(txRestake.pending, (state) => {
-        state.overviewTx.status = "pending";
+      .addCase(txRestake.pending, (state, action) => {
+        let chainID = action.meta?.arg?.chainId;
+        state.chains[chainID].overviewTx.status = "pending";
       })
-      .addCase(txRestake.fulfilled, (state) => {
-        state.overviewTx.status = "idle";
+      .addCase(txRestake.fulfilled, (state, action) => {
+        let chainID = action.meta?.arg?.chainId;
+        state.chains[chainID].overviewTx.status = "idle";
       })
-      .addCase(txRestake.rejected, (state) => {
-        state.overviewTx.status = "rejected";
+      .addCase(txRestake.rejected, (state, action) => {
+        let chainID = action.meta?.arg?.chainId;
+        state.chains[chainID].overviewTx.status = "rejected";
       });
   },
 });

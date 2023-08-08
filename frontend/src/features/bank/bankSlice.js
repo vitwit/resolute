@@ -15,6 +15,7 @@ const initialState = {
   tx: {
     status: "idle",
   },
+  multiSendTxRes: {},
 };
 
 export const getBalances = createAsyncThunk("bank/balances", async (data) => {
@@ -47,7 +48,7 @@ export const multiTxns = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         data.msgs,
-        460000,
+        860000,
         data.memo,
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -91,7 +92,7 @@ export const txBankSend = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        460000,
+        860000,
         "",
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -137,6 +138,9 @@ export const bankSlice = createSlice({
             +state.balances[chainID].list[i].amount + totalRewards;
         }
       }
+    },
+    resetMultiSendTxRes: (state) => {
+      state.multiSendTxRes = {};
     },
   },
   extraReducers: (builder) => {
@@ -188,15 +192,18 @@ export const bankSlice = createSlice({
       })
       .addCase(multiTxns.pending, (state) => {
         state.tx.status = "pending";
+        state.multiSendTxRes.status = "pending";
       })
       .addCase(multiTxns.fulfilled, (state, _) => {
         state.tx.status = "idle";
+        state.multiSendTxRes.status = "idle";
       })
       .addCase(multiTxns.rejected, (state, _) => {
         state.tx.status = "rejected";
+        state.multiSendTxRes.status = "rejected";
       });
   },
 });
 
-export const { claimRewardInBank } = bankSlice.actions;
+export const { claimRewardInBank, resetMultiSendTxRes } = bankSlice.actions;
 export default bankSlice.reducer;

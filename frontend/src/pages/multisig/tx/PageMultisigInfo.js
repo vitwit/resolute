@@ -77,22 +77,22 @@ export default function PageMultisigInfo() {
     if (connected) {
       dispatch(
         getMultisigBalance({
-          baseURL: chainInfo?.config?.rest,
+          baseURL: chainInfo?.network?.config?.rest,
           address: multisigAddress,
-          denom: chainInfo?.config?.currencies[0].coinMinimalDenom,
+          denom: chainInfo?.network?.config?.currencies[0].coinMinimalDenom,
         })
       );
 
       dispatch(
         getDelegations({
-          baseURL: chainInfo?.config?.rest,
+          baseURL: chainInfo?.network?.config?.rest,
           address: multisigAddress,
         })
       );
 
       dispatch(
         getAllValidators({
-          baseURL: chainInfo?.config?.rest,
+          baseURL: chainInfo?.network?.config?.rest,
           status: null,
         })
       );

@@ -117,7 +117,7 @@ export const txVote = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        460000,
+        860000,
         data?.justification || "",
         `${data.feeAmount}${data.denom}`,
         data.rest,

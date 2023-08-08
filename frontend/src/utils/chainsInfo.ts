@@ -89,7 +89,7 @@ export const networks: Network[] = [
     config: {
       chainId: "cosmoshub-4",
       chainName: "CosmosHub",
-      rest: "https://lcd.cosmos.dragonstake.io",
+      rest: "https://rpc-cosmoshub.blockapsis.com",
       rpc: "https://resolute.witval.com/cosmos_rpc/",
       currencies: [
         {
@@ -632,7 +632,7 @@ export const networks: Network[] = [
     config: {
       chainId: "umee-1",
       chainName: "Umee",
-      rest: "https://api.mainnet.network.umee.cc",
+      rest: "https://api-umee-ia.cosmosia.notional.ventures",
       rpc: "https://umee-rpc.polkachu.com",
       currencies: [
         {
