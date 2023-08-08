@@ -133,8 +133,7 @@ export const ChainsOverview = ({ chainNames }) => {
       sortedChains = [...sortedChains, chain];
     });
     sortedChains.sort((x, y) => y.usdValue - x.usdValue);
-    let currentSortedChainIds = sortedChains.map((chain) => chain.chainID);
-    return currentSortedChainIds;
+    return sortedChains.map((chain) => chain.chainID);
   }, [chainIDs, networks, balanceChains, tokensPriceInfo]);
 
   useEffect(() => {
