@@ -89,7 +89,7 @@ export const networks: Network[] = [
     config: {
       chainId: "cosmoshub-4",
       chainName: "CosmosHub",
-      rest: "https://rpc-cosmoshub.blockapsis.com",
+      rest: "https://lcd-cosmoshub.blockapsis.com",
       rpc: "https://resolute.witval.com/cosmos_rpc/",
       currencies: [
         {
@@ -464,76 +464,6 @@ export const networks: Network[] = [
         coinDenom: "REGEN",
         coinMinimalDenom: "uregen",
         coinDecimals: 6
-      },
-      image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
-      theme: {
-        primaryColor: "#fff",
-        gradient: "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)"
-      }
-    }
-  },
-  {
-    enableModules: {
-      authz: true,
-      feegrant: true,
-      group: true
-    },
-    aminoConfig: {
-      authz: false,
-      feegrant: false,
-      group: false
-    },
-    showAirdrop: false,
-    logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
-      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png"
-    },
-    keplrExperimental: true,
-    leapExperimental: true,
-    isTestnet: false,
-    explorerTxHashEndpoint: "http://127.0.0.1:1317/cosmos/tx/v1beta1/txs/",
-    config: {
-      chainId: "testnet",
-      chainName: "Simapp",
-      rest: "http://127.0.0.1:1317",
-      rpc: "http://127.0.0.1:26657",
-      currencies: [
-        {
-          coinDenom: "STAKE",
-          coinMinimalDenom: "stake",
-          coinDecimals: 6
-        }
-      ],
-      bip44: {
-        coinType: 118
-      },
-      bech32Config: {
-        bech32PrefixAccAddr: "cosmos",
-        bech32PrefixAccPub: "cosmospub",
-        bech32PrefixValAddr: "cosmosvaloper",
-        bech32PrefixValPub: "cosmosvaloperpub",
-        bech32PrefixConsAddr: "cosmosgvalcons",
-        bech32PrefixConsPub: "cosmosvalconspub"
-      },
-      walletUrlForStaking: "https://resolute.vitwit.com/simapp/staking",
-      feeCurrencies: [
-        {
-          coinDenom: "STAKE",
-          coinMinimalDenom: "stake",
-          coinDecimals: 6,
-          coinGeckoId: "stake",
-          gasPriceStep: {
-            low: 0,
-            average: 0,
-            high: 0.01
-          }
-        }
-      ],
-      stakeCurrency: {
-        coinDenom: "STAKE",
-        coinMinimalDenom: "stake",
-        coinDecimals: 6,
-        coinGeckoId: "stake"
       },
       image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
       theme: {
