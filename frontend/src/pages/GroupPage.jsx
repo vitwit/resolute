@@ -17,6 +17,7 @@ import {
   removeFeegrant as removeFeegrantLocalState,
 } from "../utils/localStorage";
 import FeegranterInfo from "../components/FeegranterInfo";
+import AddIcon from "@mui/icons-material/Add";
 
 const AdminGroupList = lazy(() => import("./group/AdminGroupList"));
 const MemberGroupList = lazy(() => import("./group/MemberGroupList"));
@@ -116,8 +117,10 @@ export default function GroupPage() {
             textTransform: "none",
           }}
           onClick={() => navigateTo(`/${currentNetwork}/groups/create-group`)}
+          startIcon={<AddIcon />}
+          size="small"
         >
-          New Group +
+          New Group
         </Button>
       </Box>
 

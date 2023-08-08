@@ -26,6 +26,7 @@ import { useParams } from "react-router-dom";
 import SelectNetwork from "../../components/common/SelectNetwork";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function PageMultisig() {
   const [open, setOpen] = useState(false);
@@ -123,8 +124,9 @@ export default function PageMultisig() {
             textTransform: "none",
           }}
           size="small"
+          startIcon={<AddIcon />}
         >
-          New Multisig +
+          New Multisig
         </Button>
       </Box>
       <Box sx={{ mt: 1 }}>
