@@ -113,6 +113,30 @@ export const ChainsOverview = ({ chainNames }) => {
     return totalBalance;
   }, [chainIDs, balanceChains, networks]);
 
+  const getSortedChainIds = useCallback(() => {
+    let sortedChains = [];
+    chainIDs.forEach((chainID) => {
+      const decimals =
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
+        0;
+      const denom =
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+      const balance = parseBalance(
+        balanceChains?.[chainID]?.list || [],
+        decimals,
+        denom
+      );
+      let chain = { chainID, usdValue: 0 };
+      if (balanceChains?.[chainID]?.list?.length > 0) {
+        chain.usdValue = convertToDollars(denom, balance);
+      }
+      sortedChains = [...sortedChains, chain];
+    });
+    sortedChains.sort((x, y) => y.usdValue - x.usdValue);
+    let currentSortedChainIds = sortedChains.map((chain) => chain.chainID);
+    return currentSortedChainIds;
+  }, [chainIDs, networks, balanceChains, tokensPriceInfo]);
+
   useEffect(() => {
     chainIDs.forEach((chainID) => {
       const chainInfo = networks[chainID]?.network;
@@ -155,6 +179,11 @@ export const ChainsOverview = ({ chainNames }) => {
   const totalPendingAmount = useMemo(
     () => calculateTotalPendingAmount(),
     [calculateTotalPendingAmount]
+  );
+
+  const sortedChainIds = useMemo(
+    () => getSortedChainIds(),
+    [getSortedChainIds]
   );
 
   return (
@@ -272,7 +301,7 @@ export const ChainsOverview = ({ chainNames }) => {
             </StyledTableRow>
           </TableHead>
           <TableBody>
-            {chainIDs.map((chainID) => (
+            {sortedChainIds.map((chainID) => (
               <ChainDetails
                 key={chainID}
                 chainID={chainID}
