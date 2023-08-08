@@ -57,8 +57,7 @@ export default function NewAuthz() {
   const grantsByMe = useSelector((state) => state.authz.grantsByMe);
   const dispatch = useDispatch();
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
-  );
+    (state) => state.common.feegrant?.[currentNetwork] || {});
   const txAuthzRes = useSelector((state) => state.authz.txAuthzRes);
 
   useEffect(() => {

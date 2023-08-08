@@ -42,7 +42,7 @@ const GroupInfo = (props) => {
   }
 
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
   const groupInfo = useSelector((state) => state.group.groupInfo?.[chainID]);
   const membersInfo = useSelector((state) => state.group.groupMembers?.[chainID]);

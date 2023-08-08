@@ -27,7 +27,7 @@ export const Chain = (props) => {
       chainName = nameToChainIDs[networkID];
     }
   });
-  const feegrant = useSelector((state) => state.common.feegrant?.[chainName]);
+  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
   const distTxStatus = useSelector(
     (state) => state.distribution.chains[chainID].tx
   );

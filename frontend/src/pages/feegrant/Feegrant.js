@@ -165,7 +165,7 @@ export default function Feegrant() {
   );
   const isAuthzMode = useSelector((state) => state.common.authzMode);
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const errState = useSelector((state) => state.feegrant.errState);

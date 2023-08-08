@@ -57,7 +57,7 @@ export default function ProposalInfo() {
   const activeProposals = useSelector((state) => state.gov.active);
   const chainInfo = network?.network;
   const [proposal, setProposal] = useState({});
-  const feegrant = useSelector((state) => state.common.feegrant?.[networkName]);
+  const feegrant = useSelector((state) => state.common.feegrant?.[networkName] || {});
 
   useEffect(() => {
     const chainID = nameToIDs[networkName];
