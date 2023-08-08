@@ -137,7 +137,7 @@ export const distSlice = createSlice({
       })
       .addCase(getDelegatorTotalRewards.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
-        if(state.chains[chainID]) {
+        if (state.chains[chainID]) {
           state.chains[chainID].delegatorRewards.status = "idle";
           state.chains[chainID].delegatorRewards.list =
             action.payload.data.rewards;
@@ -175,19 +175,21 @@ export const distSlice = createSlice({
       .addCase(getAuthzDelegatorTotalRewards.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
         let granter = action.meta?.arg?.address;
-        const result = {
-          list: action.payload.data.rewards,
-          totalRewards: 0,
-          status: "idle",
-          errMsg: "",
-          pagination: {},
-        };
-        let totalRewardsList = action?.payload?.data?.total;
-        let total = 0;
-        for (let i = 0; i < totalRewardsList.length; i++)
-          total += +totalRewardsList[i].amount;
-        result.totalRewards = total;
-        state.chains[chainID].authzDelegatorRewards[granter] = result;
+        if (state.chains[chainID]) {
+          const result = {
+            list: action.payload.data.rewards,
+            totalRewards: 0,
+            status: "idle",
+            errMsg: "",
+            pagination: {},
+          };
+          let totalRewardsList = action?.payload?.data?.total;
+          let total = 0;
+          for (let i = 0; i < totalRewardsList.length; i++)
+            total += +totalRewardsList[i].amount;
+          result.totalRewards = total;
+          state.chains[chainID].authzDelegatorRewards[granter] = result;
+        }
       })
       .addCase(getAuthzDelegatorTotalRewards.rejected, (state, action) => {
         let chainID = action.meta?.arg?.chainID;

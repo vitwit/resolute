@@ -632,19 +632,21 @@ export const stakeSlice = createSlice({
       })
       .addCase(getDelegations.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
-        state.chains[chainID].delegations.status = "idle";
-        state.chains[chainID].delegations.delegations = action.payload;
-        state.chains[chainID].delegations.errMsg = "";
+        if (state.chains[chainID]) {
+          state.chains[chainID].delegations.status = "idle";
+          state.chains[chainID].delegations.delegations = action.payload;
+          state.chains[chainID].delegations.errMsg = "";
 
-        let total = 0.0;
-        for (let i = 0; i < action.payload.delegations.length; i++) {
-          const delegation = action.payload.delegations[i];
-          state.chains[chainID].delegations.delegatedTo[
-            delegation?.delegation?.validator_address
-          ] = true;
-          total += parseFloat(delegation?.delegation?.shares);
+          let total = 0.0;
+          for (let i = 0; i < action.payload.delegations.length; i++) {
+            const delegation = action.payload.delegations[i];
+            state.chains[chainID].delegations.delegatedTo[
+              delegation?.delegation?.validator_address
+            ] = true;
+            total += parseFloat(delegation?.delegation?.shares);
+          }
+          state.chains[chainID].delegations.totalStaked = total;
         }
-        state.chains[chainID].delegations.totalStaked = total;
       })
       .addCase(getDelegations.rejected, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
