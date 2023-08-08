@@ -190,7 +190,7 @@ export default function Feegrant() {
         chainName: currentNetwork.toLowerCase(),
       })
     );
-  }, [currentNetwork, params]);
+  }, [currentNetwork]);
 
   useEffect(() => {
     if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
@@ -332,16 +332,6 @@ export default function Feegrant() {
       );
     }
   };
-
-  useEffect(() => {
-    const currentChainGrants = getFeegrant()?.[currentNetwork];
-    dispatch(
-      setFeegrantState({
-        grants: currentChainGrants,
-        chainName: currentNetwork.toLowerCase(),
-      })
-    );
-  }, [currentNetwork, params]);
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
