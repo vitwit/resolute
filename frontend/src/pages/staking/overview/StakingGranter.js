@@ -363,7 +363,7 @@ export default function StakingGranter(props) {
               }}
               onClick={() => {
                 if (withdrawAuthzGranters.includes(granter))
-                  onAuthzWithdrawAllRewards();
+                  onAuthzWithdrawAllRewards(granter);
               }}
               disabled={
                 authzExecTx?.status === "pending" || Number(totalRewards) === 0
