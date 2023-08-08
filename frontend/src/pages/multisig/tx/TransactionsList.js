@@ -539,7 +539,7 @@ export default function Transactions(props) {
   return (
     <Box>
       {txnsState?.status !== "pending" && !txnsState.list?.length ? (
-        <Typography variant="h6" fontWeight={600}>
+        <Typography variant="h6" sx={{mt: 2}}>
           No transactions found
         </Typography>
       ) : (

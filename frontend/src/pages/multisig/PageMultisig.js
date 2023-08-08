@@ -26,6 +26,7 @@ import { useParams } from "react-router-dom";
 import SelectNetwork from "../../components/common/SelectNetwork";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function PageMultisig() {
   const [open, setOpen] = useState(false);
@@ -123,34 +124,21 @@ export default function PageMultisig() {
             textTransform: "none",
           }}
           size="small"
+          startIcon={<AddIcon />}
         >
-          Create New Multisig
+          New Multisig
         </Button>
       </Box>
       <Box sx={{ mt: 1 }}>
         {multisigAccounts?.status !== "pending" && !accounts?.length ? (
           <Box
             sx={{
-              mt: 6,
+              mt: 2,
             }}
           >
-            <Typography variant="h6" fontWeight={600}>
+            <Typography variant="h6">
               No Multisig accounts found on your address
             </Typography>
-            <Button
-              onClick={() => {
-                setOpen(!open);
-              }}
-              variant="contained"
-              disableElevation
-              sx={{
-                textTransform: "none",
-                my: 2,
-              }}
-              size="small"
-            >
-              Create New Multisig
-            </Button>
           </Box>
         ) : (
           ""
