@@ -36,7 +36,7 @@ export default function MultiTx({ chainInfo, address }) {
   const currency = chainInfo?.config?.currencies[0];
 
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
   const submitTxStatus = useSelector((state) => state.bank.tx.status);
   const multiSendTxRes = useSelector((state) => state.bank.multiSendTxRes);

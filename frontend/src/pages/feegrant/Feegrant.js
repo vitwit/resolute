@@ -165,7 +165,7 @@ export default function Feegrant() {
   );
   const isAuthzMode = useSelector((state) => state.common.authzMode);
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const errState = useSelector((state) => state.feegrant.errState);
@@ -190,7 +190,7 @@ export default function Feegrant() {
         chainName: currentNetwork.toLowerCase(),
       })
     );
-  }, [currentNetwork, params]);
+  }, [currentNetwork]);
 
   useEffect(() => {
     if (params?.networkName?.length > 0) setCurrentNetwork(params.networkName);
@@ -332,16 +332,6 @@ export default function Feegrant() {
       );
     }
   };
-
-  useEffect(() => {
-    const currentChainGrants = getFeegrant()?.[currentNetwork];
-    dispatch(
-      setFeegrantState({
-        grants: currentChainGrants,
-        chainName: currentNetwork.toLowerCase(),
-      })
-    );
-  }, [currentNetwork, params]);
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.

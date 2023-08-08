@@ -25,7 +25,7 @@ import { CopyToClipboard } from "../../../components/CopyToClipboard";
 export const ChainDetails = ({ chainID, chainName, assetType }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const feegrant = useSelector((state) => state.common.feegrant);
+  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
   const wallet = useSelector((state) => state.wallet);
   const tokensPriceInfo = useSelector(
     (state) => state.common?.allTokensInfoState?.info
@@ -151,7 +151,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
         feeAmount:
           chainInfo.network.config?.feeCurrencies?.[0]?.gasPriceStep.average *
           10 ** decimals,
-        feegranter: feegrant.granter,
+        feegranter: feegrant?.granter,
       })
     );
   };

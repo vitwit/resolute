@@ -600,7 +600,7 @@ function Group() {
   const groupInfo = useSelector((state) => state.group.groupInfo?.[chainID]);
   const wallet = useSelector((state) => state.wallet);
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
   const { connected } = wallet;
 
