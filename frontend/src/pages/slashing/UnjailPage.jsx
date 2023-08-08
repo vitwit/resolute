@@ -23,7 +23,10 @@ import { txUnjail } from "../../features/slashing/slashingSlice";
 import TextField from "@mui/material/TextField";
 import FeegranterInfo from "../../components/FeegranterInfo";
 import { useParams } from "react-router-dom";
-import { getFeegrant, removeFeegrant as removeFeegrantLocalState } from "../../utils/localStorage";
+import {
+  getFeegrant,
+  removeFeegrant as removeFeegrantLocalState,
+} from "../../utils/localStorage";
 import { FormControl } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -60,7 +63,9 @@ export default function Unjail() {
   const chainInfo = networks[chainID]?.network;
   const currency = networks[chainID]?.network.config.currencies[0];
 
-  const feegrant = useSelector((state) => state.common.feegrant?.[selectedNetwork]);
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[selectedNetwork] || {}
+  );
   const grantsToMe = useSelector((state) => state.authz.grantsToMe?.[chainID]);
 
   const [isNoAuthzs, setNoAuthzs] = useState(false);
@@ -94,7 +99,8 @@ export default function Unjail() {
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
-            chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
+            chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+            10 ** currency.coinDecimals,
           feegranter: feegrant?.granter,
         })
       );
@@ -110,7 +116,8 @@ export default function Unjail() {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+          10 ** currency.coinDecimals,
         feegranter: feegrant?.granter,
       });
     }
@@ -146,11 +153,13 @@ export default function Unjail() {
 
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[selectedNetwork];
-    dispatch(setFeegrantState({
-      grants: currentChainGrants,
-      chainName: selectedNetwork.toLowerCase()
-    }));
-  }, [selectedNetwork, params])
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: selectedNetwork.toLowerCase(),
+      })
+    );
+  }, [selectedNetwork, params]);
 
   return (
     <Box
@@ -256,7 +265,7 @@ export default function Unjail() {
                     }
                   >
                     {slashingTx.status === "pending" ||
-                      authzExecTx.status === "pending" ? (
+                    authzExecTx.status === "pending" ? (
                       <CircularProgress size={25} />
                     ) : (
                       "Unjail"

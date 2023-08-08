@@ -79,7 +79,7 @@ export default function Validators(props) {
   const wallet = useSelector((state) => state.wallet);
   const balance = useSelector((state) => state.bank.balances);
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
 
   const { connected } = wallet;

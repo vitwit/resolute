@@ -36,7 +36,7 @@ export default function UpdateGroupInfoDialog(props) {
 
   const currentNetwork = params?.networkName || selectedNetwork;
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
 
   const UpdateMetadata = () => {

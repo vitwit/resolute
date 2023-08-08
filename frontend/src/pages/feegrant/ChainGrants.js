@@ -35,7 +35,7 @@ export const ChainGrants = (props) => {
   const chainInfo = useSelector(
     (state) => state.wallet?.networks?.[chainID]?.network
   );
-  const feegrant = useSelector((state) => state.common.feegrant?.[chainName]);
+  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
   const txStatus = useSelector((state) => state.feegrant.tx);
   const currency = chainInfo?.config?.currencies[0];
   const [tab, setTab] = useState(0);

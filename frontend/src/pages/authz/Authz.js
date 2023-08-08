@@ -84,7 +84,7 @@ export default function Authz() {
     networks[nameToChainIDs[currentNetwork]]?.network.config.currencies[0];
 
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
 
   useEffect(() => {

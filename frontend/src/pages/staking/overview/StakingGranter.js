@@ -57,7 +57,17 @@ export default function StakingGranter(props) {
   const txStatus = useSelector((state) => state.staking.chains[chainID].tx);
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const balances = useSelector((state) => state.bank.balances);
-  const feegrant = useSelector((state) => state.common.feegrant);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  let chainName;
+  Object.keys(nameToChainIDs).forEach((networkID) => {
+    if (chainID == networkID) {
+      chainName = nameToChainIDs[networkID];
+    }
+  });
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[chainName] || {}
+  );
 
   const [totalRewards, setTotalRewards] = React.useState(0);
   const [availableBalance, setAvailableBalance] = useState(0);
@@ -139,7 +149,7 @@ export default function StakingGranter(props) {
       feeAmount:
         chainInfo.config.feeCurrencies[0].gasPriceStep.average *
         10 ** currency.coinDecimals,
-      feegranter: feegrant.granter,
+      feegranter: feegrant?.granter,
     });
   };
 
@@ -160,7 +170,7 @@ export default function StakingGranter(props) {
       feeAmount:
         chainInfo.config.feeCurrencies[0].gasPriceStep.average *
         10 ** currency.coinDecimals,
-      feegranter: feegrant.granter,
+      feegranter: feegrant?.granter,
     });
   };
 
@@ -186,7 +196,7 @@ export default function StakingGranter(props) {
       feeAmount:
         chainInfo.config.feeCurrencies[0].gasPriceStep.average *
         10 ** currency.coinDecimals,
-      feegranter: feegrant.granter,
+      feegranter: feegrant?.granter,
     });
   };
 
@@ -363,7 +373,7 @@ export default function StakingGranter(props) {
               }}
               onClick={() => {
                 if (withdrawAuthzGranters.includes(granter))
-                  onAuthzWithdrawAllRewards();
+                  onAuthzWithdrawAllRewards(granter);
               }}
               disabled={
                 authzExecTx?.status === "pending" || Number(totalRewards) === 0

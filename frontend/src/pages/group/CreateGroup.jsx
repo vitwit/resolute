@@ -46,7 +46,7 @@ export default function CreateGroupStepper() {
   const currentNetwork = params?.networkName || selectedNetwork;
 
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);

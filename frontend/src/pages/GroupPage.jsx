@@ -41,7 +41,7 @@ export default function GroupPage() {
 
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
 
   const navigate = useNavigate();
