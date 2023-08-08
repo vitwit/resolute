@@ -30,6 +30,7 @@ import { ConnectWalletDialog } from "./wallet/ConnectWallet";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import { useNavigate } from "react-router-dom";
+import DialogSelectNetwork from "./DialogSelectNetwork";
 
 export const connectWallet = (walletName, dispatch) => {
   if (walletName === "keplr") {
@@ -89,6 +90,11 @@ export function CustomAppBar(props) {
 
   const navigateTo = (path) => {
     navigate(path);
+  };
+
+  const [open, setDialogOpen] = useState(false);
+  const dialogCloseHandle = () => {
+    setDialogOpen(!open);
   };
 
   useEffect(() => {
@@ -152,71 +158,18 @@ export function CustomAppBar(props) {
           aria-controls={anchorEl ? "demo-positioned-menu" : undefined}
           aria-haspopup="true"
           aria-expanded={anchorEl ? "true" : undefined}
-          onClick={handleClick}
           sx={{ ml: 2 }}
+          onClick={() => {
+            if (isAuthzMode) {
+              authzModeAlert();
+            } else {
+              dialogCloseHandle();
+            }
+          }}
         >
           {selectNetwork || "All Networks"}
         </Button>
-        <Menu
-          id="demo-positioned-menu"
-          aria-labelledby="demo-positioned-button"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={() => setAnchorEl(null)}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          {chainIDs.map((chain) => (
-            <MenuItem
-              key={chain}
-              onClick={() => {
-                setAnchorEl(null);
-                if (isAuthzMode) {
-                  authzModeAlert();
-                } else {
-                  dispatch(
-                    setSelectedNetwork({
-                      chainName: networks[chain].network.config.chainName,
-                      chainID: networks[chain].network.config.chainId,
-                    })
-                  );
-                  navigateTo(
-                    `${networks[
-                      chain
-                    ].network.config.chainName.toLowerCase()}/overview`
-                  );
-                }
-              }}
-            >
-              <ListItemText>
-                {networks[chain].network.config.chainName}
-              </ListItemText>
-            </MenuItem>
-          ))}
-          <MenuItem
-            onClick={() => {
-              setAnchorEl(null);
-              if (isAuthzMode) {
-                authzModeAlert();
-              } else {
-                dispatch(
-                  setSelectedNetwork({
-                    chainName: "",
-                  })
-                );
-                navigateTo("/");
-              }
-            }}
-          >
-            <ListItemText>All Networks</ListItemText>
-          </MenuItem>
-        </Menu>
+
         <Typography
           component="h1"
           variant="h6"
@@ -282,6 +235,12 @@ export function CustomAppBar(props) {
           connectWallet(wallet, dispatch);
           setShowSelectWallet(false);
         }}
+      />
+
+      <DialogSelectNetwork
+        open={open}
+        dialogCloseHandle={dialogCloseHandle}
+        authzModeAlert={authzModeAlert}
       />
     </AppBar>
   );
