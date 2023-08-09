@@ -126,9 +126,17 @@ export const ChainsOverview = ({ chainNames }) => {
         decimals,
         denom
       );
+      // minimalDenom
+      const staked = stakingChains?.[chainID]?.delegations?.totalStaked || 0;
+      // minimalDenom
+      const rewards =
+        distributionChains?.[chainID]?.delegatorRewards?.totalRewards || 0;
       let chain = { chainID, usdValue: 0 };
       if (balanceChains?.[chainID]?.list?.length > 0) {
-        chain.usdValue = convertToDollars(denom, balance);
+        chain.usdValue =
+          convertToDollars(denom, balance) +
+          convertToDollars(denom, staked / 10 ** decimals) +
+          convertToDollars(denom, rewards / 10 ** decimals);
       }
       sortedChains = [...sortedChains, chain];
     });
@@ -279,16 +287,14 @@ export const ChainsOverview = ({ chainNames }) => {
                     Network Name
                   </StyledTableCell>
                   <StyledTableCell sx={paddingTopBottom}>
-                    Staked Amount
+                    Available Balance
                   </StyledTableCell>
                   <StyledTableCell sx={paddingTopBottom}>
-                    Rewards
+                    Staked Amount
                   </StyledTableCell>
                 </>
               ) : null}
-              <StyledTableCell sx={paddingTopBottom}>
-                Available Balance
-              </StyledTableCell>
+              <StyledTableCell sx={paddingTopBottom}>Rewards</StyledTableCell>
               <StyledTableCell sx={paddingTopBottom}>Price</StyledTableCell>
               {assetType === "native" ? (
                 <>

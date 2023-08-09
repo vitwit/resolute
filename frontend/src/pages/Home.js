@@ -125,14 +125,14 @@ export default function Home(props) {
     if (newValue === 8) {
       if (selectedNetwork === "") navigate("/passage/airdrop-check");
       else navigate(`/${selectedNetwork.toLowerCase()}/airdrop-check`);
-    } else if (
-      newValue === 0 ||
-      newValue === 2 ||
-      newValue === 3 ||
-      newValue === 6 ||
-      newValue === 5
-    ) {
+    } else if (newValue === 0 || newValue === 2) {
       navigate(ALL_NETWORKS[newValue]);
+    } else if (newValue === 3 || newValue === 6 || newValue === 5) {
+      navigate(
+        `${selectedNetwork ? selectedNetwork + "/" : ""}${
+          ALL_NETWORKS[newValue]
+        }`
+      );
     } else {
       if (selectedNetwork === "") {
         setNetwork("cosmoshub");
@@ -242,7 +242,7 @@ export default function Home(props) {
             }}
             disabled={authzEnabled && !authzTabs?.groupsEnabled}
           />
-          {(!authzEnabled && selectedNetwork === "passage" )? (
+          {!authzEnabled && selectedNetwork === "passage" ? (
             <Tab
               label="Airdrop"
               {...a11yProps(8)}
@@ -251,7 +251,7 @@ export default function Home(props) {
                 fontWeight: 600,
               }}
             />
-          ):null}
+          ) : null}
         </Tabs>
       </Box>
 
