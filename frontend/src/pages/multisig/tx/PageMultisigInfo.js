@@ -175,7 +175,10 @@ export default function PageMultisigInfo() {
               Available balance
             </Typography>
             <Typography>
-              {multisigBal?.balance?.amount / 10 ** currency?.coinDecimals || 0}{" "}
+              {(
+                multisigBal?.balance?.amount /
+                10 ** currency?.coinDecimals
+              ).toLocaleString() || 0}{" "}
               &nbsp;
               {currency?.coinDenom}
             </Typography>
@@ -256,7 +259,10 @@ export default function PageMultisigInfo() {
         </Box>
         {multisigAccountDetails.status === "idle" &&
         multisigAccount?.address?.length > 0 ? (
-          <TransactionsList address={multisigAddress} />
+          <TransactionsList
+            address={multisigAddress}
+            membersCount={members.length}
+          />
         ) : (
           <CircularProgress size={40} />
         )}
