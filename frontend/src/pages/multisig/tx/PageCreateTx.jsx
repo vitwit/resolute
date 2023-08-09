@@ -33,6 +33,7 @@ import { useForm, Controller } from "react-hook-form";
 import FeeComponent from "./../../../components/multisig/FeeComponent";
 import {
   createTxn,
+  getMultisigBalance,
   resetCreateTxnState,
 } from "../../../features/multisig/multisigSlice";
 import { fee } from "../../../txns/execute";
@@ -246,6 +247,18 @@ export default function PageCreateTx() {
       );
     }
   }, [connected]);
+
+  useEffect(() => {
+    if (connected) {
+      dispatch(
+        getMultisigBalance({
+          baseURL: chainInfo?.config?.rest,
+          address: address,
+          denom: chainInfo?.config?.currencies[0].coinMinimalDenom,
+        })
+      );
+    }
+  }, [chainInfo]);
 
   const handleTypeChange = (event) => {
     setTxType(event.target.value);
@@ -480,9 +493,9 @@ export default function PageCreateTx() {
                       onChange={handleTypeChange}
                     >
                       <MenuItem value={"Send"}>Send</MenuItem>
-                      <MenuItem value={"Delegate"}>Delegate</MenuItem>
+                      {/* <MenuItem value={"Delegate"}>Delegate</MenuItem>
                       <MenuItem value={"Redelegate"}>Redelegate</MenuItem>
-                      <MenuItem value={"Undelegate"}>Undelegate</MenuItem>
+                      <MenuItem value={"Undelegate"}>Undelegate</MenuItem> */}
                     </Select>
                   </FormControl>
                 </>
