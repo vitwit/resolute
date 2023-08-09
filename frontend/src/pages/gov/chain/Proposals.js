@@ -57,7 +57,7 @@ export default function Proposals({
     (state) => state.gov.votes[chainID]?.proposals || {}
   );
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[chainName] || {}
+    (state) => state.common.feegrant?.[chainName.toLowerCase()] || {}
   );
 
   const govTx = useSelector((state) => state.gov.tx);
@@ -160,43 +160,41 @@ export default function Proposals({
       {!proposals?.length ? (
         <></>
       ) : (
-        <Grid container>
-          <Grid item>
-            <Box
+        <>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "left",
+              mt: 2,
+            }}
+          >
+            <Avatar
+              src={chainLogo}
+              alt="network-icon"
               sx={{
-                display: "flex",
-                alignItems: "left",
-                mt: 2,
+                width: 30,
+                height: 30,
+              }}
+            />
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{
+                color: "text.primary",
+                ml: 1,
               }}
             >
-              <Avatar
-                src={chainLogo}
-                alt="network-icon"
-                sx={{
-                  width: 30,
-                  height: 30,
-                }}
+              {chainName}
+            </Typography>
+            <Box sx={{ml: 3}}>
+              <FeegrantCheckbox
+                useFeegrant={useFeegrant}
+                setUseFeegrant={setUseFeegrant}
+                feegrant={feegrant}
               />
-              <Typography
-                variant="h6"
-                gutterBottom
-                sx={{
-                  color: "text.primary",
-                  ml: 1,
-                }}
-              >
-                {chainName}
-              </Typography>
             </Box>
-          </Grid>
-          <Grid item>
-            <FeegrantCheckbox
-              useFeegrant={useFeegrant}
-              setUseFeegrant={setUseFeegrant}
-              feegrant={feegrant}
-            />
-          </Grid>
-        </Grid>
+          </Box>
+        </>
       )}
       {status === "pending" ? (
         <div
