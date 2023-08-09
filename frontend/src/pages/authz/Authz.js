@@ -116,7 +116,7 @@ export default function Authz() {
         chainName: currentNetwork.toLowerCase(),
       })
     );
-  }, [currentNetwork, params]);
+  }, [currentNetwork]);
 
   useEffect(() => {
     if (address !== "" || txAuthzRes?.status === "idle") {
