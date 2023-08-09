@@ -8,7 +8,7 @@ interface AuthzMenuItem {
 const SEND_V1BETA1_TYPEURL = "/cosmos.bank.v1beta1.MsgSend";
 const VOTE_V1BETA1_TYPEURL = "/cosmos.gov.v1beta1.MsgVote";
 const DELEGATE_V1BETA1_TYPEURL =
-  "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward";
+  "/cosmos.staking.v1beta1.MsgDelegate";
 const UNDELEGATE_V1BETA1_TYPEURL = "/cosmos.staking.v1beta1.MsgUndelegate";
 const REDELEGATE_V1BETA1_TYPEURL = "/cosmos.staking.v1beta1.MsgBeginRedelegate";
 const WITHDRAW_REWARDS_V1BETA1_TYPEURL =
@@ -232,7 +232,7 @@ export interface AuthzTabs {
   sendEnabled: boolean;
   govEnabled: boolean;
   stakingEnabled: boolean;
-  daosEnabled: boolean;
+  groupsEnabled: boolean;
   feegrantEnabled: boolean;
   multisigEnabled: boolean;
   authzEnabled: boolean;
@@ -247,7 +247,7 @@ export function getAuthzTabs(authorizations: any[]): AuthzTabs {
   let result: AuthzTabs = {
     airdropEnabled: false,
     authzEnabled: false,
-    daosEnabled: false,
+    groupsEnabled: false,
     feegrantEnabled: false,
     govEnabled: false,
     multisigEnabled: false,
@@ -283,7 +283,7 @@ export function getAuthzTabs(authorizations: any[]): AuthzTabs {
           break;
       }
       if (authorizations[i].authorization?.msg.includes("cosmos.group.")) {
-        result.daosEnabled = true;
+        result.groupsEnabled = true;
       }
     }
   }

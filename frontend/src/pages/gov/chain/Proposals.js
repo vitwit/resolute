@@ -48,7 +48,7 @@ export default function Proposals({
   const status = useSelector((state) => state.gov.active.status);
   const proposalTally = useSelector((state) => state.gov.tally[chainID]?.proposalTally || {});
   const votes = useSelector((state) => state.gov.votes[chainID]?.proposals || {});
-  const feegrant = useSelector((state) => state.common.feegrant);
+  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
 
   const govTx = useSelector((state) => state.gov.tx);
   const currency = currencies[0]
@@ -101,7 +101,7 @@ export default function Proposals({
           aminoConfig: aminoConfig,
           prefix: bech32Config.bech32PrefixAccAddr,
           feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
-          feegranter: feegrant.granter,
+          feegranter: feegrant?.granter,
           justification: data.justification,
         })
       );

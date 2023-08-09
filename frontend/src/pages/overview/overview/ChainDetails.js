@@ -20,11 +20,12 @@ import {
 import { Delegate } from "../../../txns/staking";
 import { parseBalance } from "../../../utils/denom";
 import chainDenoms from "../../../utils/chainDenoms.json";
+import { CopyToClipboard } from "../../../components/CopyToClipboard";
 
 export const ChainDetails = ({ chainID, chainName, assetType }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const feegrant = useSelector((state) => state.common.feegrant);
+  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
   const wallet = useSelector((state) => state.wallet);
   const tokensPriceInfo = useSelector(
     (state) => state.common?.allTokensInfoState?.info
@@ -48,7 +49,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
     (state) => state.staking?.chains?.[chainID]?.delegations || []
   );
   const txRestakeStatus = useSelector(
-    (state) => state.staking.overviewTx.status
+    (state) => state.staking?.chains?.[chainID]?.overviewTx?.status
   );
 
   const chainInfo = wallet?.networks?.[chainID];
@@ -69,7 +70,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
 
   useEffect(() => {
     if (txRestakeStatus === "idle") {
-      dispatch(resetRestakeTx());
+      dispatch(resetRestakeTx({chainID: chainID}));
       dispatch(
         addRewardsToDelegations({
           chainID,
@@ -92,7 +93,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
   }, [distTxStatus?.status]);
 
   useEffect(() => {
-    dispatch(resetRestakeTx());
+    dispatch(resetRestakeTx({chainID: chainID}));
   }, []);
 
   const actionClaimAndStake = () => {
@@ -150,7 +151,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
         feeAmount:
           chainInfo.network.config?.feeCurrencies?.[0]?.gasPriceStep.average *
           10 ** decimals,
-        feegranter: feegrant.granter,
+        feegranter: feegrant?.granter,
       })
     );
   };
@@ -183,11 +184,16 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                         cursor: "pointer",
                         color: "purple",
                       },
+                      fontWeight: 600,
                     }}
                     onClick={() => handleOnClick(chainName)}
                   >
                     {chainName}
                   </Typography>
+                  <CopyToClipboard
+                    message={chainInfo?.walletInfo?.bech32Address}
+                    toolTipEnabled={true}
+                  />
                 </Box>
               </StyledTableCell>
               <StyledTableCell>
@@ -230,7 +236,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                   }
                   onClick={actionClaimAndStake}
                 >
-                  {txRestakeStatus?.status === "pending" ? (
+                  {txRestakeStatus === "pending" ? (
                     <>
                       <CircularProgress size={18} />
                       &nbsp;Claim&nbsp;&&nbsp;Stake
@@ -302,7 +308,17 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                         }}
                         onClick={() => handleOnClick(chainName)}
                       >
-                        {denomInfo[0]?.origin_chain}
+                        <Typography sx={{ display: "inline" }}>
+                          {parseBalance(
+                            balance,
+                            denomInfo[0]?.decimals,
+                            item.denom
+                          ).toLocaleString()}
+                          &nbsp;
+                        </Typography>
+                        <Typography sx={{ display: "inline", fontWeight: 600 }}>
+                          {denomInfo[0]?.symbol}
+                        </Typography>
                         <Typography
                           sx={{
                             backgroundColor: "#767676",
@@ -312,7 +328,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                             fontWeight: 600,
                             display: "inline",
                             color: "white",
-                            fontSize: "14px",
+                            fontSize: "12px",
                           }}
                         >
                           IBC
@@ -325,7 +341,8 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                             cursor: "pointer",
                             color: "purple",
                           },
-                          fontSize: "14px",
+                          fontSize: "12px",
+                          color: "#767676",
                         }}
                         onClick={() => handleOnClick(chainName)}
                       >
@@ -333,15 +350,6 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                       </Typography>
                     </Box>
                   </Box>
-                </StyledTableCell>
-                <StyledTableCell>
-                  {parseBalance(
-                    balance,
-                    denomInfo[0]?.decimals,
-                    item.denom
-                  ).toLocaleString()}
-                  &nbsp;
-                  {denomInfo[0].symbol}
                 </StyledTableCell>
                 <StyledTableCell>
                   {tokensPriceInfo[denomInfo[0]?.origin_denom]

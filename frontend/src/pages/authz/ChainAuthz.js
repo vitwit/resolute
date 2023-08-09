@@ -6,6 +6,7 @@ import {
   Chip,
   CircularProgress,
   Grid,
+  Stack,
   Table,
   TableBody,
   TableHead,
@@ -28,6 +29,7 @@ import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
 import { getICNSName } from "../../features/common/commonSlice";
 import NameAddress from "../../components/common/NameAddress";
+import { CopyToClipboard } from "../../components/CopyToClipboard";
 
 export const ChainAuthz = (props) => {
   const { chainName, chainID } = props;
@@ -172,7 +174,6 @@ export const ChainAuthz = (props) => {
                 <TableHead>
                   <StyledTableRow>
                     <StyledTableCell>Grantee</StyledTableCell>
-                    <StyledTableCell>Type</StyledTableCell>
                     <StyledTableCell>Message</StyledTableCell>
                     <StyledTableCell>Expiration</StyledTableCell>
                     <StyledTableCell>Details</StyledTableCell>
@@ -196,19 +197,24 @@ export const ChainAuthz = (props) => {
                             />
                           }
                           size="small"
-                          deleteIcon={<ContentCopyOutlined />}
+                          deleteIcon={
+                            <CopyToClipboard
+                              message={row.grantee}
+                              toolTipEnabled={true}
+                            />
+                          }
                           onDelete={() => {
                             copyToClipboard(row.grantee, dispatch);
                           }}
                         />
                       </StyledTableCell>
-                      <StyledTableCell>
+                      {/* <StyledTableCell>
                         <Chip
                           label={getTypeURLName(row.authorization["@type"])}
                           variant="filled"
                           size="medium"
                         />
-                      </StyledTableCell>
+                      </StyledTableCell> */}
                       <StyledTableCell>
                         <Chip
                           label={getMsgNameFromAuthz(row.authorization)}
@@ -289,7 +295,7 @@ export const ChainAuthz = (props) => {
                 <TableHead>
                   <StyledTableRow>
                     <StyledTableCell>Granter</StyledTableCell>
-                    <StyledTableCell>Type</StyledTableCell>
+                    <StyledTableCell>Message</StyledTableCell>
                     <StyledTableCell>Expiration</StyledTableCell>
                     <StyledTableCell>Details</StyledTableCell>
                   </StyledTableRow>
@@ -303,11 +309,28 @@ export const ChainAuthz = (props) => {
                       }}
                     >
                       <StyledTableCell component="th" scope="row">
-                        {shortenAddress(row.granter, 21)}
+                        <Chip
+                          label={
+                            <NameAddress
+                              address={row.granter}
+                              name={fetchName(row.granter)}
+                            />
+                          }
+                          size="small"
+                          deleteIcon={
+                            <CopyToClipboard
+                              message={row.granter}
+                              toolTipEnabled={true}
+                            />
+                          }
+                          onDelete={() => {
+                            copyToClipboard(row.granter, dispatch);
+                          }}
+                        />
                       </StyledTableCell>
                       <StyledTableCell>
                         <Chip
-                          label={getTypeURLName(row.authorization["@type"])}
+                          label={getMsgNameFromAuthz(row.authorization)}
                           variant="filled"
                           size="medium"
                         />

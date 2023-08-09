@@ -29,7 +29,7 @@ export default function GroupCard({ group }: GroupCardProps) {
           },
           textAlign: "left",
         }}
-        onClick={() => navigate(`/${networkName}/daos/${group?.id}`)}
+        onClick={() => navigate(`/${networkName}/groups/${group?.id}`)}
         component="div"
       >
         {

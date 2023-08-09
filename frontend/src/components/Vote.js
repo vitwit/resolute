@@ -27,6 +27,14 @@ VoteDialog.propTypes = {
   isAuthzMode: PropTypes.bool.isRequired,
 };
 
+const votingButtonStyle = {
+  borderRadius: 10,
+  height: "28px",
+  mr: 1,
+  textTransform: "none",
+  fontSize: "18px",
+};
+
 export default function VoteDialog(props) {
   const [option, setOption] = React.useState("");
   const dispatch = useDispatch();
@@ -85,70 +93,57 @@ export default function VoteDialog(props) {
       >
         <DialogContent>
           <Box>
-            <FormControl
-              required
-              component="fieldset"
-              sx={{ m: 2 }}
-              variant="standard"
+            <Typography
+              variant="body1"
+              color="text.primary"
+              fontWeight={600}
+              sx={{ mb: 3 }}
             >
-              <Typography variant="body1" color="text.primary" fontWeight={600}>
-                Select Vote Option
-              </Typography>
-              <FormGroup
-                sx={{
-                  display: "flex",
-                  flexDirection: "initial",
-                  mt: 2,
+              Select Vote Option
+            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "", mb: 2 }}>
+              <Button
+                variant={option === "yes" ? "contained" : "outlined"}
+                onClick={() => {
+                  setOption("yes");
                 }}
+                sx={votingButtonStyle}
+                disableElevation
               >
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={option === "yes"}
-                      value="yes"
-                      onChange={handleChange}
-                      name="yes"
-                    />
-                  }
-                  label="Yes"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={option === "no"}
-                      value="no"
-                      onChange={handleChange}
-                      name="no"
-                    />
-                  }
-                  label="No"
-                />
-
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={option === "noWithVeto"}
-                      value="noWithVeto"
-                      onChange={handleChange}
-                      name="noWithVeto"
-                    />
-                  }
-                  label="NoWithVeto"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={option === "abstain"}
-                      value="abstain"
-                      onChange={handleChange}
-                      name="abstain"
-                    />
-                  }
-                  label="Abstain"
-                />
-              </FormGroup>
-            </FormControl>
-            {props.isAuthzMode && props.granters.length ? (
+                Yes
+              </Button>
+              <Button
+                variant={option === "no" ? "contained" : "outlined"}
+                onClick={() => {
+                  setOption("no");
+                }}
+                sx={votingButtonStyle}
+                disableElevation
+              >
+                No
+              </Button>
+              <Button
+                variant={option === "noWithVeto" ? "contained" : "outlined"}
+                onClick={() => {
+                  setOption("noWithVeto");
+                }}
+                sx={votingButtonStyle}
+                disableElevation
+              >
+                NoWithVeto
+              </Button>
+              <Button
+                variant={option === "abstain" ? "contained" : "outlined"}
+                onClick={() => {
+                  setOption("abstain");
+                }}
+                sx={votingButtonStyle}
+                disableElevation
+              >
+                Abstain
+              </Button>
+            </Box>
+            {props.isAuthzMode && props.granters.length > 0 ? (
               <FormControl
                 fullWidth
                 sx={{

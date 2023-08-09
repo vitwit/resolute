@@ -89,7 +89,7 @@ export default function Authz() {
     networks[nameToChainIDs[currentNetwork]]?.network.config.currencies[0];
 
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
 
   useEffect(() => {
@@ -365,7 +365,6 @@ export default function Authz() {
                     <TableHead>
                       <StyledTableRow>
                         <StyledTableCell>Grantee</StyledTableCell>
-                        <StyledTableCell>Type</StyledTableCell>
                         <StyledTableCell>Message</StyledTableCell>
                         <StyledTableCell>Expiration</StyledTableCell>
                         <StyledTableCell>Details</StyledTableCell>
@@ -394,15 +393,6 @@ export default function Authz() {
                                 onDelete={() => {
                                   copyToClipboard(row.grantee, dispatch);
                                 }}
-                              />
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              <Chip
-                                label={getTypeURLName(
-                                  row.authorization["@type"]
-                                )}
-                                variant="filled"
-                                size="medium"
                               />
                             </StyledTableCell>
                             <StyledTableCell>
@@ -486,7 +476,6 @@ export default function Authz() {
                     <TableHead>
                       <StyledTableRow>
                         <StyledTableCell>Granter</StyledTableCell>
-                        <StyledTableCell>Type</StyledTableCell>
                         <StyledTableCell>Message</StyledTableCell>
                         <StyledTableCell>Expiration</StyledTableCell>
                         <StyledTableCell>Details</StyledTableCell>
@@ -514,15 +503,6 @@ export default function Authz() {
                                 onDelete={() => {
                                   copyToClipboard(row.granter, dispatch);
                                 }}
-                              />
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              <Chip
-                                label={getTypeURLName(
-                                  row.authorization["@type"]
-                                )}
-                                variant="filled"
-                                size="medium"
                               />
                             </StyledTableCell>
                             <StyledTableCell>

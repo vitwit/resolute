@@ -5,6 +5,7 @@ import {
   CardContent,
   Chip,
   Grid,
+  Stack,
   Table,
   TableBody,
   TableHead,
@@ -23,6 +24,7 @@ import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
 import { getICNSName } from "../../features/common/commonSlice";
 import NameAddress from "../../components/common/NameAddress";
+import { CopyToClipboard } from "../../components/CopyToClipboard";
 
 export const ChainGrants = (props) => {
   const { chainName, chainID } = props;
@@ -37,7 +39,9 @@ export const ChainGrants = (props) => {
   const chainInfo = useSelector(
     (state) => state.wallet?.networks?.[chainID]?.network
   );
-  const feegrant = useSelector((state) => state.common.feegrant?.[chainName]);
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[chainName] || {}
+  );
   const txStatus = useSelector((state) => state.feegrant.tx);
   const icnsNames = useSelector((state) => state.common.icnsNames);
 
@@ -188,7 +192,12 @@ export const ChainGrants = (props) => {
                             />
                           }
                           size="small"
-                          deleteIcon={<ContentCopyOutlined />}
+                          deleteIcon={
+                            <CopyToClipboard
+                              message={row.grantee}
+                              toolTipEnabled={true}
+                            />
+                          }
                           onDelete={() => {
                             copyToClipboard(row.grantee, dispatch);
                           }}
@@ -272,7 +281,24 @@ export const ChainGrants = (props) => {
                       }}
                     >
                       <StyledTableCell component="th" scope="row">
-                        {shortenAddress(row.granter, 21)}
+                        <Chip
+                          label={
+                            <NameAddress
+                              address={row.granter}
+                              name={fetchName(row.granter)}
+                            />
+                          }
+                          size="small"
+                          deleteIcon={
+                            <CopyToClipboard
+                              message={row.granter}
+                              toolTipEnabled={true}
+                            />
+                          }
+                          onDelete={() => {
+                            copyToClipboard(row.granter, dispatch);
+                          }}
+                        />
                       </StyledTableCell>
                       <StyledTableCell>
                         <Chip

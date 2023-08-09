@@ -81,7 +81,7 @@ export default function SendPage() {
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
   const selectedAuthz = useSelector((state) => state.authz.selected);
   const isAuthzMode = useSelector((state) => state.common.authzMode);

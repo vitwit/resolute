@@ -16,7 +16,10 @@ import {
   TableHead,
   Typography,
 } from "@mui/material";
-import { StyledTableCell, StyledTableRow } from "../../../components/CustomTable";
+import {
+  StyledTableCell,
+  StyledTableRow,
+} from "../../../components/CustomTable";
 import { formatNumber, parseBalance } from "../../../utils/denom";
 import { Button } from "@mui/material";
 
@@ -110,6 +113,37 @@ export const ChainsOverview = ({ chainNames }) => {
     return totalBalance;
   }, [chainIDs, balanceChains, networks]);
 
+  const getSortedChainIds = useCallback(() => {
+    let sortedChains = [];
+    chainIDs.forEach((chainID) => {
+      const decimals =
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
+        0;
+      const denom =
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+      const balance = parseBalance(
+        balanceChains?.[chainID]?.list || [],
+        decimals,
+        denom
+      );
+      // minimalDenom
+      const staked = stakingChains?.[chainID]?.delegations?.totalStaked || 0;
+      // minimalDenom
+      const rewards =
+        distributionChains?.[chainID]?.delegatorRewards?.totalRewards || 0;
+      let chain = { chainID, usdValue: 0 };
+      if (balanceChains?.[chainID]?.list?.length > 0) {
+        chain.usdValue =
+          convertToDollars(denom, balance) +
+          convertToDollars(denom, staked / 10 ** decimals) +
+          convertToDollars(denom, rewards / 10 ** decimals);
+      }
+      sortedChains = [...sortedChains, chain];
+    });
+    sortedChains.sort((x, y) => y.usdValue - x.usdValue);
+    return sortedChains.map((chain) => chain.chainID);
+  }, [chainIDs, networks, balanceChains, tokensPriceInfo]);
+
   useEffect(() => {
     chainIDs.forEach((chainID) => {
       const chainInfo = networks[chainID]?.network;
@@ -141,9 +175,23 @@ export const ChainsOverview = ({ chainNames }) => {
     });
   }, []);
 
-  const totalAvailableAmount = useMemo(() => calculateTotalAvailableAmount(), [calculateTotalAvailableAmount]);
-  const totalStakedAmount = useMemo(() => calculateTotalStakedAmount(), [calculateTotalStakedAmount]);
-  const totalPendingAmount = useMemo(() => calculateTotalPendingAmount(), [calculateTotalPendingAmount]);
+  const totalAvailableAmount = useMemo(
+    () => calculateTotalAvailableAmount(),
+    [calculateTotalAvailableAmount]
+  );
+  const totalStakedAmount = useMemo(
+    () => calculateTotalStakedAmount(),
+    [calculateTotalStakedAmount]
+  );
+  const totalPendingAmount = useMemo(
+    () => calculateTotalPendingAmount(),
+    [calculateTotalPendingAmount]
+  );
+
+  const sortedChainIds = useMemo(
+    () => getSortedChainIds(),
+    [getSortedChainIds]
+  );
 
   return (
     <Paper sx={{ p: 2, mt: 2 }} elevation={0}>
@@ -229,27 +277,24 @@ export const ChainsOverview = ({ chainNames }) => {
           IBC
         </Button>
       </Box>
-
       <TableContainer>
         <Table>
           <TableHead>
             <StyledTableRow>
-              <StyledTableCell sx={paddingTopBottom}>
-                Network Name
-              </StyledTableCell>
-              <StyledTableCell sx={paddingTopBottom}>
-                Available Balance
-              </StyledTableCell>
               {assetType === "native" ? (
                 <>
                   <StyledTableCell sx={paddingTopBottom}>
-                    Staked Amount
+                    Network Name
                   </StyledTableCell>
                   <StyledTableCell sx={paddingTopBottom}>
-                    Rewards
+                    Available Balance
+                  </StyledTableCell>
+                  <StyledTableCell sx={paddingTopBottom}>
+                    Staked Amount
                   </StyledTableCell>
                 </>
               ) : null}
+              <StyledTableCell sx={paddingTopBottom}>Rewards</StyledTableCell>
               <StyledTableCell sx={paddingTopBottom}>Price</StyledTableCell>
               {assetType === "native" ? (
                 <>
@@ -261,7 +306,7 @@ export const ChainsOverview = ({ chainNames }) => {
             </StyledTableRow>
           </TableHead>
           <TableBody>
-            {chainIDs.map((chainID) => (
+            {sortedChainIds.map((chainID) => (
               <ChainDetails
                 key={chainID}
                 chainID={chainID}

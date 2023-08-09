@@ -36,6 +36,7 @@ export function CreateGroupInfoForm(props) {
                   label="Name"
                   size="small"
                   name="Group name"
+                  placeholder="Eg: Resolute"
                   fullWidth
                   sx={{
                     mb: 2,
@@ -67,6 +68,7 @@ export function CreateGroupInfoForm(props) {
                   label="Forum URL"
                   size="small"
                   name="Group forum"
+                  placeholder="Eg: https://resolute.vitwit.com/"
                   fullWidth
                   sx={{
                     mb: 2,
@@ -100,6 +102,7 @@ export function CreateGroupInfoForm(props) {
                 multiline
                 size="small"
                 name="Group description"
+                placeholder="Resolute is an advanced spacecraft designed to travel through the multiverse, connecting all Cosmos sovereign chains."
                 fullWidth
                 error={errors?.description}
                 helperText={errors?.description?.message || (errors?.description?.type === "validate" && "Description is required")}

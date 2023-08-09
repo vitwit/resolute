@@ -89,7 +89,7 @@ export const networks: Network[] = [
     config: {
       chainId: "cosmoshub-4",
       chainName: "CosmosHub",
-      rest: "https://lcd.cosmos.dragonstake.io",
+      rest: "https://lcd-cosmoshub.blockapsis.com",
       rpc: "https://resolute.witval.com/cosmos_rpc/",
       currencies: [
         {
@@ -372,12 +372,12 @@ export const networks: Network[] = [
       ],
       walletUrlForStaking: "https://resolute.vitwit.com/passage/staking",
       bech32Config: {
-        bech32PrefixAccAddr: "passage",
-        bech32PrefixAccPub: "passagepub",
-        bech32PrefixValAddr: "passagevaloper",
-        bech32PrefixValPub: "passagevaloperpub",
-        bech32PrefixConsAddr: "passagegvalcons",
-        bech32PrefixConsPub: "passagevalconspub"
+        bech32PrefixAccAddr: "pasg",
+        bech32PrefixAccPub: "pasgpub",
+        bech32PrefixValAddr: "pasgvaloper",
+        bech32PrefixValPub: "pasgvaloperpub",
+        bech32PrefixConsAddr: "pasgvalcons",
+        bech32PrefixConsPub: "pasgvalconspub"
       },
       feeCurrencies: [
         {
@@ -632,7 +632,7 @@ export const networks: Network[] = [
     config: {
       chainId: "umee-1",
       chainName: "Umee",
-      rest: "https://api.mainnet.network.umee.cc",
+      rest: "https://api-umee-ia.cosmosia.notional.ventures",
       rpc: "https://umee-rpc.polkachu.com",
       currencies: [
         {

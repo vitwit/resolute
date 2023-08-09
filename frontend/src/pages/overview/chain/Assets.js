@@ -19,7 +19,7 @@ import { parseBalance } from "../../../utils/denom";
 import { paddingTopBottom } from "../overview/ChainsOverview";
 
 const Assets = (props) => {
-  const { balances, chainName } = props;
+  const { balances, chainName, currentChainDenom } = props;
 
   const tokensPriceInfo = useSelector(
     (state) => state.common?.allTokensInfoState?.info
@@ -34,9 +34,6 @@ const Assets = (props) => {
           <Table>
             <TableHead>
               <StyledTableRow>
-                <StyledTableCell sx={paddingTopBottom}>
-                  Network Name
-                </StyledTableCell>
                 <StyledTableCell sx={paddingTopBottom}>
                   Available Balance
                 </StyledTableCell>
@@ -66,41 +63,48 @@ const Assets = (props) => {
                               textTransform: "capitalize",
                             }}
                           >
-                            {denomInfo[0]?.origin_chain}
-                            <Typography
-                              sx={{
-                                backgroundColor: "#767676",
-                                borderRadius: "4px",
-                                ml: "4px",
-                                px: "4px",
-                                fontWeight: 600,
-                                display: "inline",
-                                color: "white",
-                                fontSize: "14px",
-                              }}
-                            >
-                              IBC
+                            <Typography sx={{ display: "inline" }}>
+                              {parseBalance(
+                                balances,
+                                denomInfo[0]?.decimals,
+                                item.denom
+                              ).toLocaleString()}
+                              &nbsp;
                             </Typography>
+                            <Typography
+                              sx={{ display: "inline", fontWeight: 600 }}
+                            >
+                              {denomInfo[0]?.symbol}
+                            </Typography>
+                            {currentChainDenom !==
+                            denomInfo[0]?.origin_denom ? (
+                              <Typography
+                                sx={{
+                                  backgroundColor: "#767676",
+                                  borderRadius: "4px",
+                                  ml: "4px",
+                                  px: "4px",
+                                  fontWeight: 600,
+                                  display: "inline",
+                                  color: "white",
+                                  fontSize: "12px",
+                                }}
+                              >
+                                IBC
+                              </Typography>
+                            ) : null}
                           </Typography>
                           <Typography
                             sx={{
                               textTransform: "capitalize",
-                              fontSize: "14px",
+                              fontSize: "12px",
+                              color: "#767676",
                             }}
                           >
                             On {chainName}
                           </Typography>
                         </Box>
                       </Box>
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      {parseBalance(
-                        balances,
-                        denomInfo[0]?.decimals,
-                        item.denom
-                      ).toLocaleString()}
-                      &nbsp;
-                      {denomInfo[0].symbol}
                     </StyledTableCell>
                     <StyledTableCell>
                       {tokensPriceInfo[denomInfo[0]?.origin_denom]
@@ -135,6 +139,7 @@ const Assets = (props) => {
 Assets.propTypes = {
   balances: PropTypes.object.isRequired,
   chainID: PropTypes.string.isRequired,
+  currentChainDenom: PropTypes.string.isRequired,
 };
 
 export default Assets;

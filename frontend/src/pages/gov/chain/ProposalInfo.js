@@ -38,7 +38,7 @@ export default function ProposalInfo() {
 
   const [authzGrants, setAuthzGrants] = useState({});
 
-  const { networkName, id } = useParams();
+  const { networkName, id } = params;
   const nameToIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const chainID = nameToIDs[networkName];
   const network = useSelector((state) => state.wallet.networks[chainID]);
@@ -57,7 +57,7 @@ export default function ProposalInfo() {
   const activeProposals = useSelector((state) => state.gov.active);
   const chainInfo = network?.network;
   const [proposal, setProposal] = useState({});
-  const feegrant = useSelector((state) => state.common.feegrant?.[networkName]);
+  const feegrant = useSelector((state) => state.common.feegrant?.[networkName] || {});
 
   useEffect(() => {
     const chainID = nameToIDs[networkName];
@@ -170,7 +170,7 @@ export default function ProposalInfo() {
       grants: currentChainGrants,
       chainName: networkName.toLowerCase()
     }));
-  }, [networkName, params])
+  }, [networkName])
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.

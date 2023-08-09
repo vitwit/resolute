@@ -79,7 +79,7 @@ export default function Validators(props) {
   const wallet = useSelector((state) => state.wallet);
   const balance = useSelector((state) => state.bank.balances);
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
 
   const { connected } = wallet;
@@ -660,7 +660,7 @@ export default function Validators(props) {
                 }}
                 disableElevation
               >
-                Delegations
+                My Delegations
               </Button>
               <Button
                 variant={type === "validators" ? "contained" : "outlined"}
@@ -670,7 +670,7 @@ export default function Validators(props) {
                 }}
                 disableElevation
               >
-                Validators
+                All Validators
               </Button>
             </ButtonGroup>
             {validators.witvalValidator?.description ? (
