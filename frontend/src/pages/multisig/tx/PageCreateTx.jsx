@@ -407,7 +407,7 @@ export default function PageCreateTx() {
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
       msgs: [],
-      gas: 200000,
+      gas: 500000,
       memo: "",
       fees:
         chainInfo?.config?.feeCurrencies[0]?.gasPriceStep?.average *
