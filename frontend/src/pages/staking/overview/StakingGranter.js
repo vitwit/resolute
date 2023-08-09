@@ -60,9 +60,9 @@ export default function StakingGranter(props) {
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
   let chainName;
-  Object.keys(nameToChainIDs).forEach((networkID) => {
-    if (chainID == networkID) {
-      chainName = nameToChainIDs[networkID];
+  Object.keys(nameToChainIDs).forEach((networkName) => {
+    if (chainID == nameToChainIDs[networkName]) {
+      chainName = networkName;
     }
   });
   const feegrant = useSelector(
