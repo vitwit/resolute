@@ -20,7 +20,7 @@
     "explorer_tx_hash_endpoint": "https://passage.aneka.io/txs/",
     "config": {
       "chain_id": "passage-testnet-1",
-      "chain_name": "passage-testnet",
+      "chain_name": "Passage-testnet",
       "rest": "https://api.resolute.vitwit.com/passage_testapi/",
       "rpc": "https://api.resolute.vitwit.com/passage_testrpc/",
       "bip44": {
