@@ -31,7 +31,7 @@ export default function VoteDialog(props) {
   const [option, setOption] = React.useState("");
   const dispatch = useDispatch();
   const [granter, setGranter] = React.useState(
-    props.granters.length > 0 ? props.granters[0] : ""
+    props.granters.length ? props.granters[0] : ""
   );
   const [justification, setJustification] = React.useState("");
   const govTx = useSelector((state) => state.gov.tx);
@@ -148,7 +148,7 @@ export default function VoteDialog(props) {
                 />
               </FormGroup>
             </FormControl>
-            {props.isAuthzMode && props.granters.length > 0 ? (
+            {props.isAuthzMode && props.granters.length ? (
               <FormControl
                 fullWidth
                 sx={{
@@ -168,7 +168,7 @@ export default function VoteDialog(props) {
                 >
                   {props.granters.map((granter, index) => (
                     <MenuItem id={index} value={granter}>
-                      {fetchName('cosmos1vv6hruquzpty4xpks9znkw8gys5x4nsnqw9f4k') || granter}
+                      {fetchName(granter) || granter}
                     </MenuItem>
                   ))}
                 </Select>
