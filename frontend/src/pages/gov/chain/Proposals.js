@@ -57,7 +57,7 @@ export default function Proposals({
     (state) => state.gov.votes[chainID]?.proposals || {}
   );
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[chainName] || {}
+    (state) => state.common.feegrant?.[chainName.toLowerCase()] || {}
   );
 
   const govTx = useSelector((state) => state.gov.tx);
@@ -160,7 +160,7 @@ export default function Proposals({
       {!proposals?.length ? (
         <></>
       ) : (
-        <Grid container>
+        <Grid container justifyContent="space-between">
           <Grid item>
             <Box
               sx={{
