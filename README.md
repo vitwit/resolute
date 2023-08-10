@@ -11,7 +11,9 @@ Supported features:
 - [x] Feegrant
 - [x] Groups
 - [ ] IBC Transfer
-- [ ] ICA
+- [ ] Cross chain swaps
+- [ ] Interchain Accounts
+- [ ] Cosmwasm contracts
 
 ## Adding new network
 
