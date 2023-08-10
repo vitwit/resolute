@@ -10,15 +10,14 @@ import {
   resetError,
   resetTxHash,
 } from "../../../features/common/commonSlice";
-import {
-  authzExecHelper,
-} from "../../../features/authz/authzSlice";
+import { authzExecHelper } from "../../../features/authz/authzSlice";
 import VoteDialog from "../../../components/Vote";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import PropTypes from "prop-types";
 import { nameToVoteOption } from "../../../utils/proposals";
+import { FeegrantCheckbox } from "../../../components/FeegrantCheckbox";
 
 Proposals.propTypes = {
   id: PropTypes.number.isRequired,
@@ -35,25 +34,38 @@ Proposals.propTypes = {
   grantsToMe: PropTypes.array.isRequired,
 };
 
-
 export default function Proposals({
   id,
-  restEndpoint, chainName, chainLogo,
-  signer, gasPriceStep,
-  chainID, aminoConfig,
-  currencies, bech32Config, authzMode,
+  restEndpoint,
+  chainName,
+  chainLogo,
+  signer,
+  gasPriceStep,
+  chainID,
+  aminoConfig,
+  currencies,
+  bech32Config,
+  authzMode,
   grantsToMe,
 }) {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
-  const proposalTally = useSelector((state) => state.gov.tally[chainID]?.proposalTally || {});
-  const votes = useSelector((state) => state.gov.votes[chainID]?.proposals || {});
-  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
+  const proposalTally = useSelector(
+    (state) => state.gov.tally[chainID]?.proposalTally || {}
+  );
+  const votes = useSelector(
+    (state) => state.gov.votes[chainID]?.proposals || {}
+  );
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[chainName.toLowerCase()] || {}
+  );
 
   const govTx = useSelector((state) => state.gov.tx);
-  const currency = currencies[0]
+  const currency = currencies[0];
 
-  const proposals = useSelector((state) => state.gov.active[chainID]?.proposals || []);
+  const proposals = useSelector(
+    (state) => state.gov.active[chainID]?.proposals || []
+  );
 
   const dispatch = useDispatch();
 
@@ -101,7 +113,7 @@ export default function Proposals({
           aminoConfig: aminoConfig,
           prefix: bech32Config.bech32PrefixAccAddr,
           feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
-          feegranter: feegrant?.granter,
+          feegranter: useFeegrant ? feegrant?.granter : "",
           justification: data.justification,
         })
       );
@@ -119,7 +131,7 @@ export default function Proposals({
           aminoConfig: aminoConfig,
           prefix: bech32Config.bech32PrefixAccAddr,
           feeAmount: gasPriceStep.average * 10 ** currency.coinDecimals,
-          feegranter: feegrant.granter,
+          feegranter: useFeegrant ? feegrant?.granter : "",
           metadata: data.justification,
         });
       } else {
@@ -141,37 +153,48 @@ export default function Proposals({
 
   const navigate = useNavigate();
 
+  const [useFeegrant, setUseFeegrant] = React.useState(false);
+
   return (authzMode && grantsToMe?.length > 0) || !authzMode ? (
-    <React.Fragment
-      key={id}
-    >
+    <React.Fragment key={id}>
       {!proposals?.length ? (
         <></>
       ) : (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "left",
-            mt: 2,
-          }}
-        >
-          <Avatar src={chainLogo} alt="network-icon"
+        <>
+          <Box
             sx={{
-              width: 30,
-              height: 30,
-            }}
-          />
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{
-              color: "text.primary",
-              ml: 1,
+              display: "flex",
+              alignItems: "left",
+              mt: 2,
             }}
           >
-            {chainName}
-          </Typography>
-        </Box>
+            <Avatar
+              src={chainLogo}
+              alt="network-icon"
+              sx={{
+                width: 30,
+                height: 30,
+              }}
+            />
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{
+                color: "text.primary",
+                ml: 1,
+              }}
+            >
+              {chainName}
+            </Typography>
+            <Box sx={{ml: 3}}>
+              <FeegrantCheckbox
+                useFeegrant={useFeegrant}
+                setUseFeegrant={setUseFeegrant}
+                feegrant={feegrant}
+              />
+            </Box>
+          </Box>
+        </>
       )}
       {status === "pending" ? (
         <div
@@ -187,14 +210,15 @@ export default function Proposals({
       ) : proposals.length === 0 ? (
         <></>
       ) : (
-        <Grid container spacing={2}
+        <Grid
+          container
+          spacing={2}
           sx={{
             mb: 1,
           }}
         >
           {proposals.map((proposal, index) => (
             <Grid item md={6} xs={12} key={index}>
-
               <ProposalItem
                 info={proposal}
                 tally={proposalTally[proposal?.proposal_id]}
@@ -203,7 +227,9 @@ export default function Proposals({
                 setOpen={(pId) => onVoteDialog(pId)}
                 onItemClick={() =>
                   navigate(
-                    `/${chainName?.toLowerCase()}/proposals/${proposal?.proposal_id}`
+                    `/${chainName?.toLowerCase()}/proposals/${
+                      proposal?.proposal_id
+                    }`
                   )
                 }
                 chainUrl={restEndpoint}
@@ -223,10 +249,6 @@ export default function Proposals({
       )}
     </React.Fragment>
   ) : (
-    <
-      React.Fragment
-      key={id}
-    ></React.Fragment>
+    <React.Fragment key={id}></React.Fragment>
   );
 }
-
