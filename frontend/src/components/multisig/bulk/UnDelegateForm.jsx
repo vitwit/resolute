@@ -41,7 +41,7 @@ export default function UnDelegateForm(props) {
     (state) => state.staking.chains[chainID]?.validators
   );
   const delegations = useSelector(
-    (state) => state.staking.chains?.[chainID].delegations?.delegations?.delegations
+    (state) => state.staking.chains?.[chainID]?.delegations?.delegations?.delegations
   );
   
   const [data, setData] = useState([]);

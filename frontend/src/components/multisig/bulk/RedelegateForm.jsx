@@ -42,7 +42,7 @@ export default function RedelegateForm(props) {
     (state) => state.staking.chains[chainID]?.validators
   );
   const delegations = useSelector(
-    (state) => state.staking.chains?.[chainID].delegations?.delegations?.delegations
+    (state) => state.staking.chains?.[chainID]?.delegations?.delegations?.delegations
   );
 
   var [data, setData] = useState([]);
