@@ -34,12 +34,12 @@ import getProposalStatusComponent, {
   computeVotingPercentage,
   nameToVoteOption,
 } from "../../../utils/proposals";
-import ReactMarkdown from "react-markdown";
-import { get } from "lodash";
+import { useRemark } from "react-remark";
 
 export default function ProposalInfo() {
   const dispatch = useDispatch();
   const params = useParams();
+  const [proposalMarkdown, setProposalMarkdown] = useRemark();
 
   const [authzGrants, setAuthzGrants] = useState({});
 
@@ -62,7 +62,9 @@ export default function ProposalInfo() {
   const activeProposals = useSelector((state) => state.gov.active);
   const chainInfo = network?.network;
   const [proposal, setProposal] = useState({});
-  const feegrant = useSelector((state) => state.common.feegrant?.[networkName] || {});
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[networkName] || {}
+  );
 
   useEffect(() => {
     const chainID = nameToIDs[networkName];
@@ -128,6 +130,10 @@ export default function ProposalInfo() {
     }
   }, [grantsToMe]);
 
+  useEffect(() => {
+    setProposalMarkdown(proposal?.content?.description.replace(/\\n/g, "\n"));
+  }, [proposal?.content]);
+
   const govTx = useSelector((state) => state.gov.tx);
 
   const walletConnected = useSelector((state) => state.wallet.connected);
@@ -171,11 +177,13 @@ export default function ProposalInfo() {
 
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[networkName];
-    dispatch(setFeegrantState({
-      grants: currentChainGrants,
-      chainName: networkName.toLowerCase()
-    }));
-  }, [networkName])
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: networkName.toLowerCase(),
+      })
+    );
+  }, [networkName]);
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
@@ -448,10 +456,32 @@ export default function ProposalInfo() {
             >
               Proposal Details
             </Typography>
-            <ReactMarkdown>
-              {proposal?.content?.description &&
-                proposal?.content?.description.replace(/\\n/g, "\n")}
-            </ReactMarkdown>
+            {/* <div
+              style={{
+                padding: 8,
+
+                backgroundColor:
+                  theme.palette?.mode === "light" ? "#f9fafc" : "#282828",
+                color: "text.primary",
+              }}
+              dangerouslySetInnerHTML={{
+                __html: parseDescription(
+                  `${proposalInfo?.content?.description}`
+                ),
+              }}
+            /> */}
+            <div
+              style={{
+                padding: 8,
+                backgroundColor:
+                  theme.palette?.mode === "light" ? "#f9fafc" : "#282828",
+                color: "text.primary",
+                whiteSpace: "pre-line",
+              }}
+              className="proposal-description-markdown"
+            >
+              {proposal?.content?.description && proposalMarkdown}
+            </div>
           </Paper>
         </>
       ) : (
