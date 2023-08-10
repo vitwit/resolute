@@ -1,16 +1,11 @@
 import { Box, Button, InputAdornment, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Decimal } from "@cosmjs/math";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { useForm, Controller } from "react-hook-form";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Redelegate } from "../../../txns/staking";
-import { useParams } from "react-router-dom";
-import {
-  getAllValidators,
-  getDelegations,
-} from "../../../features/staking/stakeSlice";
 
 RedelegateForm.propTypes = {
   chainInfo: PropTypes.object.isRequired,
@@ -28,17 +23,7 @@ function parseDelegation(delegation, currency) {
 export default function RedelegateForm(props) {
   const { chainInfo, address } = props;
 
-  const params = useParams();
-  const dispatch = useDispatch();
-
-  const selectedNetwork = useSelector(
-    (state) => state.common.selectedNetwork.chainName
-  );
-  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-  const [currentNetwork, setCurrentNetwork] = useState(
-    params?.networkName || selectedNetwork.toLowerCase()
-  );
-  const chainID = nameToChainIDs[currentNetwork];
+  const chainID = chainInfo?.config?.chainId;
 
   const {
     handleSubmit,

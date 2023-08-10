@@ -5,8 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { useForm, Controller } from "react-hook-form";
 import Autocomplete from "@mui/material/Autocomplete";
-import { useParams } from "react-router-dom";
-import { getAllValidators, getDelegations } from "../../../features/staking/stakeSlice";
 
 Delegate.propTypes = {
   chainInfo: PropTypes.object.isRequired,
@@ -17,13 +15,8 @@ Delegate.propTypes = {
 export default function Delegate(props) {
   const { chainInfo, address } = props;
 
-  const params = useParams();
-  const selectedNetwork = useSelector(
-    (state) => state.common.selectedNetwork.chainName
-  );
-  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-  const [currentNetwork, setCurrentNetwork] = useState(params?.networkName || selectedNetwork.toLowerCase());
-  
+  const chainID = chainInfo?.config?.chainId;
+
   const dispatch = useDispatch();
 
   const {
@@ -38,19 +31,8 @@ export default function Delegate(props) {
     },
   });
 
-  var validators = useSelector((state) => state.staking.chains[nameToChainIDs[currentNetwork]]?.validators);
-  var [data, setData] = useState([]);
-  const wallet = useSelector((state) => state.wallet);
-
-  useEffect(() => {
-    dispatch(
-      getAllValidators({
-        baseURL: chainInfo?.config?.rest,
-        chainID: chainInfo?.config?.chainId,
-        status: null,
-      })
-    );
-  }, [chainInfo, wallet]);
+  const validators = useSelector((state) => state.staking.chains[chainID]?.validators);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     const data = [];

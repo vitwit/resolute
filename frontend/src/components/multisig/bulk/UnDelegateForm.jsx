@@ -23,6 +23,8 @@ function parseDelegation(delegation, currency) {
 export default function UnDelegateForm(props) {
   const { chainInfo, address } = props;
 
+  const chainID = chainInfo?.config?.chainId;
+
   const {
     handleSubmit,
     control,
@@ -35,11 +37,14 @@ export default function UnDelegateForm(props) {
     },
   });
 
-  const validators = useSelector((state) => state.staking.validators);
-  const delegations = useSelector(
-    (state) => state.staking.delegations.delegations
+  const validators = useSelector(
+    (state) => state.staking.chains[chainID]?.validators
   );
-  var [data, setData] = useState([]);
+  const delegations = useSelector(
+    (state) => state.staking.chains?.[chainID].delegations?.delegations?.delegations
+  );
+  
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     const data = [];

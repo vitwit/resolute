@@ -243,7 +243,7 @@ export default function PageCreateTx() {
       dispatch(
         getDelegations({
           baseURL: chainInfo?.config?.rest,
-          address: address,
+          address: "cosmos1ruf7usy994maage25gu9vekmqrpe4lm0gjlfr3",
           chainID: chainID,
         })
       );
@@ -497,7 +497,7 @@ export default function PageCreateTx() {
                       <MenuItem value={"Send"}>Send</MenuItem>
                       <MenuItem value={"Delegate"}>Delegate</MenuItem>
                       <MenuItem value={"Redelegate"}>Redelegate</MenuItem>
-                      {/* <MenuItem value={"Undelegate"}>Undelegate</MenuItem> */}
+                      <MenuItem value={"Undelegate"}>Undelegate</MenuItem>
                     </Select>
                   </FormControl>
                 </>
