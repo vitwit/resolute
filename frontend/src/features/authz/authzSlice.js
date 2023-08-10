@@ -28,7 +28,7 @@ const initialState = {
   tabs: {
     airdropEnabled: false,
     authzEnabled: false,
-    daosEnabled: false,
+    groupsEnabled: false,
     feegrantEnabled: false,
     govEnabled: false,
     multisigEnabled: false,

@@ -25,6 +25,9 @@ const initialState = {
   selectedNetwork: {
     chainName: "",
   },
+  selectedNetworkLocal: {
+    chainName: "cosmoshub",
+  },
   authzMode: false,
 };
 
@@ -91,9 +94,6 @@ export const commonSlice = createSlice({
     resetDecisionPolicies: (state) => {
       state.groupPolicies = {};
     },
-    resetActiveProposals: (state) => {
-      state.policyProposals = {};
-    },
     setFeegrant: (state, data) => {
       const chainName = data.payload.chainName;
       state.feegrant[chainName] = data.payload.grants;
@@ -106,6 +106,9 @@ export const commonSlice = createSlice({
     },
     setSelectedNetwork: (state, data) => {
       state.selectedNetwork.chainName = data.payload.chainName;
+    },
+    setSelectedNetworkLocal: (state, data) => {
+      state.selectedNetworkLocal.chainName = data.payload.chainName;
     },
     setAuthzMode: (state, data) => {
       state.authzMode = data.payload;
@@ -154,7 +157,6 @@ export const commonSlice = createSlice({
 export const {
   setError,
   resetError,
-  resetActiveProposals,
   resetDecisionPolicies,
   setTxLoad,
   resetTxLoad,
@@ -165,6 +167,7 @@ export const {
   setSelectedNetwork,
   setAuthzMode,
   removeFeegrant,
+  setSelectedNetworkLocal,
 } = commonSlice.actions;
 
 export default commonSlice.reducer;

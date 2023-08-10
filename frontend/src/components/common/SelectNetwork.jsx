@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { MenuItem, Select, FormControl } from '@mui/material'
 import { Box } from '@mui/system'
 import PropTypes from "prop-types";
+import { setSelectedNetworkLocal } from '../../features/common/commonSlice';
 import { useDispatch } from 'react-redux';
-import { setSelectedNetwork } from '../../features/common/commonSlice';
 
 export default function SelectNetwork(props) {
     const { onSelect, networks, defaultNetwork } = props;
@@ -23,7 +23,7 @@ export default function SelectNetwork(props) {
 
     useEffect(() => {
         dispatch(
-            setSelectedNetwork({
+            setSelectedNetworkLocal({
               chainName: selected
             })
           );

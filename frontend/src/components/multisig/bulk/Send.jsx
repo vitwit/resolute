@@ -1,10 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Button, InputAdornment, TextField } from "@mui/material";
+import { Button, InputAdornment, TextField, Typography } from "@mui/material";
 import { Decimal } from "@cosmjs/math";
 import { Box } from "@mui/system";
 import { useForm, Controller } from "react-hook-form";
 import { fromBech32 } from "@cosmjs/encoding";
+import { useSelector } from "react-redux";
 
 Send.propTypes = {
   chainInfo: PropTypes.object.isRequired,
@@ -18,6 +19,7 @@ export default function Send(props) {
     handleSubmit,
     control,
     formState: { errors },
+    setValue,
   } = useForm({
     defaultValues: {
       amount: 0,
@@ -27,6 +29,14 @@ export default function Send(props) {
   });
 
   const currency = chainInfo.config.currencies[0];
+
+  const multisigBal = useSelector((state) => state.multisig.balance);
+  const available =
+    (
+      multisigBal?.balance?.amount /
+      10 ** currency?.coinDecimals
+    ).toLocaleString() || 0;
+
   const onSubmit = (data) => {
     const amountInAtomics = Decimal.fromUserInput(
       data.amount,
@@ -54,7 +64,7 @@ export default function Send(props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
+      <Controller
         name="from"
         control={control}
         render={({ field }) => (
@@ -101,6 +111,16 @@ export default function Send(props) {
           />
         )}
       />
+      <Typography
+        variant="body2"
+        color="text.primary"
+        style={{ textAlign: "end" }}
+        className="hover-link"
+        onClick={() => setValue("amount", available)}
+      >
+        {available} &nbsp;
+        {currency?.coinDenom}
+      </Typography>
       <Controller
         name="amount"
         control={control}

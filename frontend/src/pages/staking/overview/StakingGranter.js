@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Grid, CircularProgress } from "@mui/material";
+import {
+  Typography,
+  Button,
+  Grid,
+  CircularProgress,
+  Tooltip,
+} from "@mui/material";
 import AuthzDelegations from "./AuthzDelegations";
 import { useTheme } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllValidators, getAuthzDelegations } from "../../../features/staking/stakeSlice";
+import {
+  getAllValidators,
+  getAuthzDelegations,
+} from "../../../features/staking/stakeSlice";
 import { getAuthzDelegatorTotalRewards } from "../../../features/distribution/distributionSlice";
 import { getBalances } from "../../../features/bank/bankSlice";
 import { parseBalance } from "../../../utils/denom";
@@ -48,7 +57,17 @@ export default function StakingGranter(props) {
   const txStatus = useSelector((state) => state.staking.chains[chainID].tx);
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const balances = useSelector((state) => state.bank.balances);
-  const feegrant = useSelector((state) => state.common.feegrant);
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  let chainName;
+  Object.keys(nameToChainIDs).forEach((networkID) => {
+    if (chainID == networkID) {
+      chainName = nameToChainIDs[networkID];
+    }
+  });
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[chainName] || {}
+  );
 
   const [totalRewards, setTotalRewards] = React.useState(0);
   const [availableBalance, setAvailableBalance] = useState(0);
@@ -56,6 +75,8 @@ export default function StakingGranter(props) {
   const [undelegateOpen, setUndelegateOpen] = React.useState(false);
   const [selectedValidator, setSelectedValidator] = useState({});
   const [redelegateOpen, setRedelegateOpen] = React.useState(false);
+
+  const [claimingGranter, setClaimingGranter] = useState("");
 
   const handleDialogClose = () => {
     setStakingOpen(false);
@@ -107,7 +128,8 @@ export default function StakingGranter(props) {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
+        chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+        10 ** currency.coinDecimals,
       feegranter: feegrant?.granter,
     });
   };
@@ -125,8 +147,9 @@ export default function StakingGranter(props) {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
-      feegranter: feegrant.granter,
+        chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+        10 ** currency.coinDecimals,
+      feegranter: feegrant?.granter,
     });
   };
 
@@ -145,12 +168,14 @@ export default function StakingGranter(props) {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
-      feegranter: feegrant.granter,
+        chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+        10 ** currency.coinDecimals,
+      feegranter: feegrant?.granter,
     });
   };
 
-  const onAuthzWithdrawAllRewards = () => {
+  const onAuthzWithdrawAllRewards = (granter) => {
+    setClaimingGranter(granter);
     let delegationPairs = [];
     delegations?.delegations?.delegations.forEach((item) => {
       delegationPairs.push({
@@ -169,8 +194,9 @@ export default function StakingGranter(props) {
       aminoConfig: chainInfo.aminoConfig,
       prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
       feeAmount:
-        chainInfo.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
-      feegranter: feegrant.granter,
+        chainInfo.config.feeCurrencies[0].gasPriceStep.average *
+        10 ** currency.coinDecimals,
+      feegranter: feegrant?.granter,
     });
   };
 
@@ -255,6 +281,9 @@ export default function StakingGranter(props) {
   }, [balances]);
 
   useEffect(() => {
+    if (authzExecTx.status !== "pending") {
+      setClaimingGranter("");
+    }
     if (authzExecTx.status === "idle") {
       fetchGranterDelegationsInfo();
       setStakingOpen(false);
@@ -280,45 +309,85 @@ export default function StakingGranter(props) {
           </Typography>
         </Grid>
         <Grid item>
-          <Button
-            variant={theme.palette?.mode === "light" ? "outlined" : "contained"}
-            className="button-capitalize-title"
-            size="small"
-            sx={{
-              textTransform: "none",
-              mr: 1,
-            }}
-            disableElevation
-            disabled={!delegateAuthzGrants?.includes(granter)}
-            onClick={() => {
-              getAuthzBalances();
-              setStakingOpen(true);
-            }}
-          >
-            Delegate
-          </Button>
-          <Button
-            variant="contained"
-            disableElevation
-            size="small"
-            sx={{
-              textTransform: "none",
-            }}
-            onClick={() => onAuthzWithdrawAllRewards()}
-            disabled={
-              !withdrawAuthzGranters.includes(granter) ||
-              authzExecTx?.status === "pending" ||
-              Number(totalRewards) === 0
+          <Tooltip
+            title={
+              !delegateAuthzGrants?.includes(granter)
+                ? "you don't have permission to delegate"
+                : ""
             }
           >
-            {authzExecTx?.status === "pending" ? (
-              <CircularProgress size={25} />
-            ) : (
-              `Claim Rewards: ${(+totalRewards).toLocaleString()} ${
-                currency?.coinDenom
-              }`
-            )}
-          </Button>
+            <Button
+              variant={
+                theme.palette?.mode === "light" ||
+                !delegateAuthzGrants?.includes(granter)
+                  ? "outlined"
+                  : "contained"
+              }
+              className="button-capitalize-title"
+              size="small"
+              color={
+                delegateAuthzGrants?.includes(granter) ? "primary" : "error"
+              }
+              sx={{
+                textTransform: "none",
+                mr: 1,
+                cursor: !delegateAuthzGrants?.includes(granter)
+                  ? "not-allowed"
+                  : "pointer",
+              }}
+              disableElevation
+              onClick={() => {
+                if (delegateAuthzGrants?.includes(granter)) {
+                  getAuthzBalances();
+                  setStakingOpen(true);
+                }
+              }}
+            >
+              Delegate
+            </Button>
+          </Tooltip>
+
+          <Tooltip
+            title={
+              !withdrawAuthzGranters?.includes(granter)
+                ? "you don't have permission to claim rewards"
+                : ""
+            }
+          >
+            <Button
+              variant={
+                withdrawAuthzGranters?.includes(granter)
+                  ? "contained"
+                  : "outlined"
+              }
+              disableElevation
+              size="small"
+              color={
+                withdrawAuthzGranters?.includes(granter) ? "primary" : "error"
+              }
+              sx={{
+                textTransform: "none",
+                cursor: !withdrawAuthzGranters?.includes(granter)
+                  ? "not-allowed"
+                  : "pointer",
+              }}
+              onClick={() => {
+                if (withdrawAuthzGranters.includes(granter))
+                  onAuthzWithdrawAllRewards(granter);
+              }}
+              disabled={
+                authzExecTx?.status === "pending" || Number(totalRewards) === 0
+              }
+            >
+              {claimingGranter === granter ? (
+                <CircularProgress size={25} />
+              ) : (
+                `Claim Rewards: ${(+totalRewards).toLocaleString()} ${
+                  currency?.coinDenom
+                }`
+              )}
+            </Button>
+          </Tooltip>
         </Grid>
       </Grid>
       <AuthzDelegations

@@ -600,7 +600,7 @@ function Group() {
   const groupInfo = useSelector((state) => state.group.groupInfo?.[chainID]);
   const wallet = useSelector((state) => state.wallet);
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
   const { connected } = wallet;
 
@@ -753,7 +753,6 @@ function Group() {
             <TabPanel value={tabIndex} index={2}>
               <ActiveProposals
                 id={params?.id}
-                wallet={wallet}
                 chainInfo={chainInfo}
                 chainID={chainID}
               />

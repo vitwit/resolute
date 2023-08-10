@@ -1,17 +1,39 @@
-import React, { useEffect } from 'react';
-import { Grid, Card, CardContent, Typography, Avatar, Button, CircularProgress } from '@mui/material';
-import { Validators } from './Validators';
-import { useDispatch, useSelector } from 'react-redux';
-import { getDelegatorTotalRewards, txWithdrawAllRewards } from '../../../features/distribution/distributionSlice';
-import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from "react";
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Button,
+  CircularProgress,
+} from "@mui/material";
+import { Validators } from "./Validators";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getDelegatorTotalRewards,
+  txWithdrawAllRewards,
+} from "../../../features/distribution/distributionSlice";
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 export const Chain = (props) => {
   const chainID = props?.chain?.chainName;
   const wallet = useSelector((state) => state.wallet);
-  const feegrant = useSelector((state) => state.common.feegrant);
-  const distTxStatus = useSelector((state) => state.distribution.chains[chainID].tx);
-  const delegations = useSelector((state) => state.staking.chains[chainID].delegations);
+  const nameToChainIDs = wallet.nameToChainIDs;
+  let chainName;
+  Object.keys(nameToChainIDs).forEach((networkID) => {
+    if (chainID == networkID) {
+      chainName = nameToChainIDs[networkID];
+    }
+  });
+  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
+  const distTxStatus = useSelector(
+    (state) => state.distribution.chains[chainID].tx
+  );
+  const delegations = useSelector(
+    (state) => state.staking.chains[chainID].delegations
+  );
   const dispatch = useDispatch();
   const chainInfo = wallet.networks[chainID];
   const currency = chainInfo.network?.config?.currencies[0];
@@ -38,20 +60,22 @@ export const Chain = (props) => {
         prefix: chainInfo.network.config.bech32Config.bech32PrefixAccAddr,
         rest: chainInfo.network.config.rest,
         feeAmount:
-          chainInfo.network.config.feeCurrencies[0].gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.network.config.feeCurrencies[0].gasPriceStep.average *
+          10 ** currency.coinDecimals,
         feegranter: feegrant.granter,
       })
     );
-  }
+  };
 
   useEffect(() => {
-    dispatch(getDelegatorTotalRewards({
-      chainID: chainID,
-      baseURL: chainInfo.network.config.rest,
-      address: chainInfo.walletInfo.bech32Address
-    }));
-  }, [distTxStatus.status])
-
+    dispatch(
+      getDelegatorTotalRewards({
+        chainID: chainID,
+        baseURL: chainInfo.network.config.rest,
+        address: chainInfo.walletInfo.bech32Address,
+      })
+    );
+  }, [distTxStatus.status]);
 
   return (
     <Card
@@ -61,65 +85,63 @@ export const Chain = (props) => {
       elevation={0}
     >
       <CardContent>
-        <Grid
-          container
-          justifyContent="space-between"
-          alignItems="center"
-        >
+        <Grid container justifyContent="space-between" alignItems="center">
           <Grid item>
             <div
               style={{
                 display: "flex",
-
               }}
             >
               <Avatar
                 src={props.chain.imageURL}
                 sx={{
                   width: 36,
-                  height: 36
+                  height: 36,
                 }}
               />
               <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                
-              }}
-            >
-              <Typography
-                align="left"
-                variant="body1"
-                color="text.primary"
-                fontWeight={600}
-                sx={{
-                  ml: 1,
-                  justifyContent: "center",
+                style={{
                   display: "flex",
                   flexDirection: "column",
-                  "&:hover": {
-                    cursor: "pointer",
-                  },
                 }}
-                onClick={() =>
-                  navigate(`/${chainInfo?.network?.config?.chainName.toLowerCase()}/staking`)
-                }
               >
-                {chainInfo?.network?.config?.chainName}
-              </Typography>
-            <Typography
-              align="left"
-              variant="body2"
-              fontWeight={500}
-              color="text.secondary"
-              sx={{
-                ml: 1,
-              }}
-              gutterBottom>
-              Total staked:&nbsp;{chainStakedAmount}&nbsp;{props.chain.denom}
-            </Typography>
-            </div>
+                <Typography
+                  align="left"
+                  variant="body1"
+                  color="text.primary"
+                  fontWeight={600}
+                  sx={{
+                    ml: 1,
+                    justifyContent: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                    "&:hover": {
+                      cursor: "pointer",
+                    },
+                  }}
+                  onClick={() =>
+                    navigate(
+                      `/${chainInfo?.network?.config?.chainName.toLowerCase()}/staking`
+                    )
+                  }
+                >
+                  {chainInfo?.network?.config?.chainName}
+                </Typography>
+                <Typography
+                  align="left"
+                  variant="body2"
+                  fontWeight={500}
+                  color="text.secondary"
+                  sx={{
+                    ml: 1,
+                  }}
+                  gutterBottom
+                >
+                  Total staked:&nbsp;{chainStakedAmount}&nbsp;
+                  {props.chain.denom}
+                </Typography>
               </div>
+            </div>
           </Grid>
           <Grid item>
             <Button
@@ -127,9 +149,9 @@ export const Chain = (props) => {
               color="primary"
               disableElevation
               size="small"
-              disabled={distTxStatus.status === 'pending'}
+              disabled={distTxStatus.status === "pending"}
               sx={{
-                textTransform: "none"
+                textTransform: "none",
               }}
               onClick={onClickClaim}
             >
@@ -151,7 +173,6 @@ export const Chain = (props) => {
           rewards={props?.chainReward?.validators}
           denom={props.chain.denom}
         />
-
       </CardContent>
     </Card>
   );
@@ -170,4 +191,3 @@ Chain.propTypes = {
     validators: PropTypes.object.isRequired,
   }).isRequired,
 };
-

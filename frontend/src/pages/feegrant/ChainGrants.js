@@ -5,6 +5,7 @@ import {
   CardContent,
   Chip,
   Grid,
+  Stack,
   Table,
   TableBody,
   TableHead,
@@ -19,6 +20,7 @@ import { shortenAddress, getTypeURLName } from "../../utils/util";
 import { renderExpiration } from "./Feegrant";
 import { FeegrantInfo } from "../../components/FeegrantInfo";
 import { txRevoke } from "../../features/feegrant/feegrantSlice";
+import { CopyToClipboard } from "../../components/CopyToClipboard";
 
 export const ChainGrants = (props) => {
   const { chainName, chainID } = props;
@@ -33,7 +35,7 @@ export const ChainGrants = (props) => {
   const chainInfo = useSelector(
     (state) => state.wallet?.networks?.[chainID]?.network
   );
-  const feegrant = useSelector((state) => state.common.feegrant?.[chainName]);
+  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
   const txStatus = useSelector((state) => state.feegrant.tx);
   const currency = chainInfo?.config?.currencies[0];
   const [tab, setTab] = useState(0);
@@ -58,7 +60,8 @@ export const ChainGrants = (props) => {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         baseURL: chainInfo.config.rest,
         feegranter: feegrant?.granter,
       })
@@ -162,7 +165,13 @@ export const ChainGrants = (props) => {
                       }}
                     >
                       <StyledTableCell component="th" scope="row">
-                        {shortenAddress(row.grantee, 21)}
+                        <Stack direction="row">
+                          {shortenAddress(row.grantee, 21)}
+                          <CopyToClipboard
+                            message={row.grantee}
+                            toolTipEnabled={true}
+                          />
+                        </Stack>
                       </StyledTableCell>
                       <StyledTableCell>
                         <Chip
@@ -242,7 +251,13 @@ export const ChainGrants = (props) => {
                       }}
                     >
                       <StyledTableCell component="th" scope="row">
-                        {shortenAddress(row.granter, 21)}
+                        <Stack direction="row">
+                          {shortenAddress(row.granter, 21)}
+                          <CopyToClipboard
+                            message={row.granter}
+                            toolTipEnabled={true}
+                          />
+                        </Stack>
                       </StyledTableCell>
                       <StyledTableCell>
                         <Chip

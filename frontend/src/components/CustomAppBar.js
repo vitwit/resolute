@@ -7,8 +7,18 @@ import LightModeOutlined from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlined from "@mui/icons-material/DarkModeOutlined";
 import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
-import { setAuthzMode } from "../features/common/commonSlice";
-import { FormControlLabel, Switch } from "@mui/material";
+import {
+  setAuthzMode,
+  setError,
+  setSelectedNetwork,
+} from "../features/common/commonSlice";
+import {
+  FormControlLabel,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Switch,
+} from "@mui/material";
 import Button from "@mui/material/Button";
 import { getGrantsToMe } from "../features/authz/authzSlice";
 import { resetTabs, resetTabResetStatus } from "../features/authz/authzSlice";
@@ -18,6 +28,9 @@ import { KEY_WALLET_NAME, removeAllFeegrants } from "../utils/localStorage";
 import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
 import { ConnectWalletDialog } from "./wallet/ConnectWallet";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
+import { useNavigate } from "react-router-dom";
+import DialogSelectNetwork from "./DialogSelectNetwork";
 
 export const connectWallet = (walletName, dispatch) => {
   if (walletName === "keplr") {
@@ -54,15 +67,34 @@ export const connectWallet = (walletName, dispatch) => {
 export function CustomAppBar(props) {
   const tabResetStatus = useSelector((state) => state.authz.tabResetStatus);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const networks = useSelector((state) => state.wallet.networks);
   const isAuthzMode = useSelector((state) => state.common.authzMode);
   const isWalletConnected = useSelector((state) => state.wallet.connected);
 
   const [showSelectWallet, setShowSelectWallet] = useState(false);
+  const selectNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const chainIDs = Object.keys(networks);
 
   const switchHandler = (event) => {
     dispatch(setAuthzMode(event.target.checked));
+  };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const navigateTo = (path) => {
+    navigate(path);
+  };
+
+  const [open, setDialogOpen] = useState(false);
+  const dialogCloseHandle = () => {
+    setDialogOpen(!open);
   };
 
   useEffect(() => {
@@ -95,6 +127,15 @@ export function CustomAppBar(props) {
     dispatch(resetWallet());
   };
 
+  const authzModeAlert = () => {
+    dispatch(
+      setError({
+        type: "error",
+        message: "You can't switch networks in Authz Mode",
+      })
+    );
+  };
+
   return (
     <AppBar
       position="absolute"
@@ -110,6 +151,25 @@ export function CustomAppBar(props) {
           src="https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png"
           style={{ maxWidth: 161, maxHeight: 45 }}
         />
+        <Button
+          id="demo-positioned-button"
+          color="inherit"
+          endIcon={<ExpandMoreOutlinedIcon />}
+          aria-controls={anchorEl ? "demo-positioned-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={anchorEl ? "true" : undefined}
+          sx={{ ml: 2 }}
+          onClick={() => {
+            if (isAuthzMode) {
+              authzModeAlert();
+            } else {
+              dialogCloseHandle();
+            }
+          }}
+        >
+          {selectNetwork || "All Networks"}
+        </Button>
+
         <Typography
           component="h1"
           variant="h6"
@@ -124,12 +184,7 @@ export function CustomAppBar(props) {
           aria-label="mode"
           onClick={() => props.onModeChange()}
         >
-          {
-            props.darkMode ?
-              <LightModeOutlined />
-              :
-              <DarkModeOutlined />
-          }
+          {props.darkMode ? <LightModeOutlined /> : <DarkModeOutlined />}
         </IconButton>
 
         {isWalletConnected ? (
@@ -180,6 +235,12 @@ export function CustomAppBar(props) {
           connectWallet(wallet, dispatch);
           setShowSelectWallet(false);
         }}
+      />
+
+      <DialogSelectNetwork
+        open={open}
+        dialogCloseHandle={dialogCloseHandle}
+        authzModeAlert={authzModeAlert}
       />
     </AppBar>
   );

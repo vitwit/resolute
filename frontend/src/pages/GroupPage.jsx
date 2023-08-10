@@ -1,6 +1,6 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import Box from "@mui/system/Box";
-import { Paper } from "@mui/material";
+import { Button, Paper } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import GroupTab, { TabPanel } from "../components/group/GroupTab";
 import CardSkeleton from "../components/group/CardSkeleton";
@@ -17,6 +17,7 @@ import {
   removeFeegrant as removeFeegrantLocalState,
 } from "../utils/localStorage";
 import FeegranterInfo from "../components/FeegranterInfo";
+import AddIcon from "@mui/icons-material/Add";
 
 const AdminGroupList = lazy(() => import("./group/AdminGroupList"));
 const MemberGroupList = lazy(() => import("./group/MemberGroupList"));
@@ -25,11 +26,7 @@ export default function GroupPage() {
   const [tab, setTab] = useState(0);
 
   const handleTabChange = (value) => {
-    if (value === 2) {
-      navigateTo(`/${currentNetwork}/daos/create-group`);
-    } else {
-      setTab(value);
-    }
+    setTab(value);
   };
 
   const params = useParams();
@@ -44,7 +41,7 @@ export default function GroupPage() {
 
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork]
+    (state) => state.common.feegrant?.[currentNetwork] || {}
   );
 
   const navigate = useNavigate();
@@ -87,6 +84,7 @@ export default function GroupPage() {
           display: "flex",
           justifyContent: "end",
           p: 1,
+          pr: 0,
         }}
         component="div"
       >
@@ -100,14 +98,33 @@ export default function GroupPage() {
         ) : null}
         <SelectNetwork
           onSelect={(name) => {
-            navigate(`/${name}/daos`);
+            navigate(`/${name}/groups`);
           }}
           networks={Object.keys(nameToChainIDs)}
           defaultNetwork={currentNetwork.toLowerCase().replace(/ /g, "")}
         />
       </Box>
+      <Box
+        sx={{
+          mb: 1,
+          textAlign: "right",
+        }}
+      >
+        <Button
+          variant="contained"
+          disableElevation
+          sx={{
+            textTransform: "none",
+          }}
+          onClick={() => navigateTo(`/${currentNetwork}/groups/create-group`)}
+          startIcon={<AddIcon />}
+          size="small"
+        >
+          New Group
+        </Button>
+      </Box>
 
-      <Paper variant={"outlined"} elevation={0} >
+      <Paper variant={"outlined"} elevation={0}>
         <GroupTab
           tabs={[
             {
@@ -117,10 +134,6 @@ export default function GroupPage() {
             {
               disabled: false,
               title: "Part of",
-            },
-            {
-              disabled: false,
-              title: "Create group",
             },
           ]}
           handleTabChange={handleTabChange}
