@@ -238,7 +238,6 @@ export default function PageCreateTx() {
           status: null,
         })
       );
-
       dispatch(
         getDelegations({
           baseURL: chainInfo?.config?.rest,
@@ -493,8 +492,8 @@ export default function PageCreateTx() {
                       onChange={handleTypeChange}
                     >
                       <MenuItem value={"Send"}>Send</MenuItem>
-                      {/* <MenuItem value={"Delegate"}>Delegate</MenuItem>
-                      <MenuItem value={"Redelegate"}>Redelegate</MenuItem>
+                      <MenuItem value={"Delegate"}>Delegate</MenuItem>
+                      {/* <MenuItem value={"Redelegate"}>Redelegate</MenuItem>
                       <MenuItem value={"Undelegate"}>Undelegate</MenuItem> */}
                     </Select>
                   </FormControl>
