@@ -225,7 +225,8 @@ export default function PageCreateTx() {
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
   const { connected } = wallet;
-  const chainInfo = networks[nameToChainIDs[networkName]]?.network;
+  const chainID = nameToChainIDs[networkName];
+  const chainInfo = networks[chainID]?.network;
 
   const validators = useSelector((state) => state.staking.validators);
 
@@ -236,16 +237,18 @@ export default function PageCreateTx() {
         getAllValidators({
           baseURL: chainInfo?.config?.rest,
           status: null,
+          chainID: chainID,
         })
       );
       dispatch(
         getDelegations({
           baseURL: chainInfo?.config?.rest,
           address: address,
+          chainID: chainID,
         })
       );
     }
-  }, [connected]);
+  }, [connected, chainInfo]);
 
   useEffect(() => {
     if (connected) {
@@ -493,8 +496,8 @@ export default function PageCreateTx() {
                     >
                       <MenuItem value={"Send"}>Send</MenuItem>
                       <MenuItem value={"Delegate"}>Delegate</MenuItem>
-                      {/* <MenuItem value={"Redelegate"}>Redelegate</MenuItem>
-                      <MenuItem value={"Undelegate"}>Undelegate</MenuItem> */}
+                      <MenuItem value={"Redelegate"}>Redelegate</MenuItem>
+                      {/* <MenuItem value={"Undelegate"}>Undelegate</MenuItem> */}
                     </Select>
                   </FormControl>
                 </>

@@ -1,11 +1,16 @@
 import { Box, Button, InputAdornment, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Decimal } from "@cosmjs/math";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { useForm, Controller } from "react-hook-form";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Redelegate } from "../../../txns/staking";
+import { useParams } from "react-router-dom";
+import {
+  getAllValidators,
+  getDelegations,
+} from "../../../features/staking/stakeSlice";
 
 RedelegateForm.propTypes = {
   chainInfo: PropTypes.object.isRequired,
@@ -23,6 +28,18 @@ function parseDelegation(delegation, currency) {
 export default function RedelegateForm(props) {
   const { chainInfo, address } = props;
 
+  const params = useParams();
+  const dispatch = useDispatch();
+
+  const selectedNetwork = useSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const [currentNetwork, setCurrentNetwork] = useState(
+    params?.networkName || selectedNetwork.toLowerCase()
+  );
+  const chainID = nameToChainIDs[currentNetwork];
+
   const {
     handleSubmit,
     control,
@@ -36,9 +53,11 @@ export default function RedelegateForm(props) {
     },
   });
 
-  var validators = useSelector((state) => state.staking.validators);
+  var validators = useSelector(
+    (state) => state.staking.chains[chainID]?.validators
+  );
   const delegations = useSelector(
-    (state) => state.staking.delegations.delegations
+    (state) => state.staking.chains?.[chainID].delegations?.delegations?.delegations
   );
 
   var [data, setData] = useState([]);
@@ -46,7 +65,7 @@ export default function RedelegateForm(props) {
   useEffect(() => {
     const data = [];
 
-    for (let i = 0; i < delegations.length; i++) {
+    for (let i = 0; i < delegations?.length; i++) {
       if (validators.active[delegations[i].delegation.validator_address]) {
         const temp = {
           label:
