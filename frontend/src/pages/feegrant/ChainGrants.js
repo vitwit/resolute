@@ -161,7 +161,6 @@ export const ChainGrants = (props) => {
                 <TableHead>
                   <StyledTableRow>
                     <StyledTableCell>Grantee</StyledTableCell>
-                    <StyledTableCell>Type</StyledTableCell>
                     <StyledTableCell>Expiration</StyledTableCell>
                     <StyledTableCell>Details</StyledTableCell>
                     <StyledTableCell>Action</StyledTableCell>
@@ -183,13 +182,6 @@ export const ChainGrants = (props) => {
                             toolTipEnabled={true}
                           />
                         </Stack>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Chip
-                          label={getTypeURLName(row.allowance["@type"])}
-                          variant="filled"
-                          size="medium"
-                        />
                       </StyledTableCell>
                       <StyledTableCell>{renderExpiration(row)}</StyledTableCell>
                       <StyledTableCell>
@@ -248,7 +240,6 @@ export const ChainGrants = (props) => {
                 <TableHead>
                   <StyledTableRow>
                     <StyledTableCell>Granter</StyledTableCell>
-                    <StyledTableCell>Type</StyledTableCell>
                     <StyledTableCell>Expiration</StyledTableCell>
                     <StyledTableCell>Details</StyledTableCell>
                   </StyledTableRow>
@@ -269,13 +260,6 @@ export const ChainGrants = (props) => {
                             toolTipEnabled={true}
                           />
                         </Stack>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Chip
-                          label={getTypeURLName(row.allowance["@type"])}
-                          variant="filled"
-                          size="medium"
-                        />
                       </StyledTableCell>
                       <StyledTableCell>{renderExpiration(row)}</StyledTableCell>
                       <StyledTableCell>
