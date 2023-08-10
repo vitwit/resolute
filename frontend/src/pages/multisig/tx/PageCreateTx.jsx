@@ -243,7 +243,7 @@ export default function PageCreateTx() {
       dispatch(
         getDelegations({
           baseURL: chainInfo?.config?.rest,
-          address: "cosmos1ruf7usy994maage25gu9vekmqrpe4lm0gjlfr3",
+          address: address,
           chainID: chainID,
         })
       );
