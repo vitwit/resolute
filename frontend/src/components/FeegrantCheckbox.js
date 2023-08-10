@@ -32,7 +32,7 @@ export const FeegrantCheckbox = (props) => {
           }}
           disableRipple
         />
-        <Typography sx={{ fontSize: 13 }}>Use Feegrant</Typography>
+        <Typography sx={{ fontSize: 16 }}>Use Feegrant</Typography>
       </Box>
 
       <Popover
@@ -55,7 +55,7 @@ export const FeegrantCheckbox = (props) => {
       >
         {useFeegrant ? (
           <Typography sx={{ p: 1 }}>
-            transaction fee will now be deducted from account address{" "}
+            Transaction fee will now be deducted from account address{" "}
             {feegrant?.granter}
           </Typography>
         ) : (

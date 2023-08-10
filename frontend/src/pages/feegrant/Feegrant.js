@@ -41,7 +41,7 @@ import { FeegrantInfo } from "./../../components/FeegrantInfo";
 import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Grid } from "@mui/material";
 import {
   getFeegrant,
   setFeegrant,
@@ -49,6 +49,7 @@ import {
 } from "../../utils/localStorage";
 import SelectNetwork from "../../components/common/SelectNetwork";
 import FeegranterInfo from "../../components/FeegranterInfo";
+import { CopyToClipboard } from "../../components/CopyToClipboard";
 
 export const renderExpiration = (row) => {
   const PERIODIC_ALLOWANCE = "/cosmos.feegrant.v1beta1.PeriodicAllowance";
@@ -268,7 +269,8 @@ export default function Feegrant() {
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
-            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+            10 ** currency.coinDecimals,
           baseURL: chainInfo.config.rest,
           feegranter: feegrant?.granter,
         })
@@ -285,7 +287,8 @@ export default function Feegrant() {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         baseURL: chainInfo.config.rest,
         feegranter: feegrant?.granter,
       });
@@ -472,7 +475,6 @@ export default function Feegrant() {
                     <TableHead>
                       <StyledTableRow>
                         <StyledTableCell>Grantee</StyledTableCell>
-                        <StyledTableCell>Type</StyledTableCell>
                         <StyledTableCell>Expiration</StyledTableCell>
                         <StyledTableCell>Details</StyledTableCell>
                         <StyledTableCell>Action</StyledTableCell>
@@ -488,14 +490,13 @@ export default function Feegrant() {
                             }}
                           >
                             <StyledTableCell component="th" scope="row">
-                              {shortenAddress(row.grantee, 21)}
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              <Chip
-                                label={getTypeURLName(row.allowance["@type"])}
-                                variant="filled"
-                                size="medium"
-                              />
+                              <Grid display="flex">
+                                {shortenAddress(row.grantee, 21)}
+                                <CopyToClipboard
+                                  message={row.grantee}
+                                  toolTipEnabled={true}
+                                />
+                              </Grid>
                             </StyledTableCell>
                             <StyledTableCell>
                               {renderExpiration(row)}
@@ -556,7 +557,6 @@ export default function Feegrant() {
                     <TableHead>
                       <StyledTableRow>
                         <StyledTableCell>Granter</StyledTableCell>
-                        <StyledTableCell>Type</StyledTableCell>
                         <StyledTableCell>Expiration</StyledTableCell>
                         <StyledTableCell>Details</StyledTableCell>
                         <StyledTableCell>Use Feegrant</StyledTableCell>
@@ -572,14 +572,13 @@ export default function Feegrant() {
                             }}
                           >
                             <StyledTableCell component="th" scope="row">
-                              {shortenAddress(row.granter, 21)}
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              <Chip
-                                label={getTypeURLName(row.allowance["@type"])}
-                                variant="filled"
-                                size="medium"
-                              />
+                              <Grid display="flex">
+                                {shortenAddress(row.granter, 21)}
+                                <CopyToClipboard
+                                  message={row.grantee}
+                                  toolTipEnabled={true}
+                                />
+                              </Grid>
                             </StyledTableCell>
                             <StyledTableCell>
                               {renderExpiration(row)}
