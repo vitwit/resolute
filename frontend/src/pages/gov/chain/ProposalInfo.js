@@ -30,13 +30,16 @@ import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../../../components/FeegranterInfo";
 import { filterVoteAuthz } from "../ProposalsPage";
 import { getFeegrant } from "../../../utils/localStorage";
-import getProposalStatusComponent, { computeVotingPercentage, nameToVoteOption } from "../../../utils/proposals";
-import { useRemark } from 'react-remark';
+import getProposalStatusComponent, {
+  computeVotingPercentage,
+  nameToVoteOption,
+} from "../../../utils/proposals";
+import { useRemark } from "react-remark";
 
 export default function ProposalInfo() {
   const dispatch = useDispatch();
   const params = useParams();
-  const [reactContent, setMarkdownSource] = useRemark();
+  const [proposalMarkdown, setProposalMarkdown] = useRemark();
 
   const [authzGrants, setAuthzGrants] = useState({});
 
@@ -59,7 +62,9 @@ export default function ProposalInfo() {
   const activeProposals = useSelector((state) => state.gov.active);
   const chainInfo = network?.network;
   const [proposal, setProposal] = useState({});
-  const feegrant = useSelector((state) => state.common.feegrant?.[networkName] || {});
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[networkName] || {}
+  );
 
   useEffect(() => {
     const chainID = nameToIDs[networkName];
@@ -125,7 +130,9 @@ export default function ProposalInfo() {
     }
   }, [grantsToMe]);
 
-  setMarkdownSource(proposal?.content?.description.replace(/\\n/g, "\n"));
+  useEffect(() => {
+    setProposalMarkdown(proposal?.content?.description.replace(/\\n/g, "\n"));
+  }, [proposal]);
 
   const govTx = useSelector((state) => state.gov.tx);
 
@@ -170,11 +177,13 @@ export default function ProposalInfo() {
 
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[networkName];
-    dispatch(setFeegrantState({
-      grants: currentChainGrants,
-      chainName: networkName.toLowerCase()
-    }));
-  }, [networkName])
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: networkName.toLowerCase(),
+      })
+    );
+  }, [networkName]);
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
@@ -469,8 +478,7 @@ export default function ProposalInfo() {
               }}
               className="proposal-description-markdown"
             >
-              {proposal?.content?.description &&
-                reactContent}
+              {proposal?.content?.description && proposalMarkdown}
             </div>
           </Paper>
         </>
