@@ -159,7 +159,7 @@ export default function Unjail() {
         chainName: selectedNetwork.toLowerCase(),
       })
     );
-  }, [selectedNetwork, params]);
+  }, [selectedNetwork]);
 
   return (
     <Box

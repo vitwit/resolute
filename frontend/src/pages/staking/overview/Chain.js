@@ -16,24 +16,28 @@ import {
 } from "../../../features/distribution/distributionSlice";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
+import { FeegrantCheckbox } from "../../../components/FeegrantCheckbox";
 
 export const Chain = (props) => {
   const chainID = props?.chain?.chainName;
   const wallet = useSelector((state) => state.wallet);
   const nameToChainIDs = wallet.nameToChainIDs;
   let chainName;
-  Object.keys(nameToChainIDs).forEach((networkID) => {
-    if (chainID == networkID) {
-      chainName = nameToChainIDs[networkID];
+  Object.keys(nameToChainIDs).forEach((networkName) => {
+    if (chainID == nameToChainIDs[networkName]) {
+      chainName = networkName;
     }
   });
-  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[chainName] || {}
+  );
   const distTxStatus = useSelector(
     (state) => state.distribution.chains[chainID].tx
   );
   const delegations = useSelector(
     (state) => state.staking.chains[chainID].delegations
   );
+  const [useFeegrant, setUseFeegrant] = React.useState(false);
   const dispatch = useDispatch();
   const chainInfo = wallet.networks[chainID];
   const currency = chainInfo.network?.config?.currencies[0];
@@ -62,7 +66,7 @@ export const Chain = (props) => {
         feeAmount:
           chainInfo.network.config.feeCurrencies[0].gasPriceStep.average *
           10 ** currency.coinDecimals,
-        feegranter: feegrant.granter,
+        feegranter: useFeegrant ? feegrant?.granter : "",
       })
     );
   };
@@ -85,7 +89,12 @@ export const Chain = (props) => {
       elevation={0}
     >
       <CardContent>
-        <Grid container justifyContent="space-between" alignItems="center">
+        <Grid
+          container
+          justifyContent="space-between"
+          alignItems="center"
+          sx={{ mb: 1 }}
+        >
           <Grid item>
             <div
               style={{
@@ -144,6 +153,11 @@ export const Chain = (props) => {
             </div>
           </Grid>
           <Grid item>
+            <FeegrantCheckbox
+              useFeegrant={useFeegrant}
+              setUseFeegrant={setUseFeegrant}
+              feegrant={feegrant}
+            />
             <Button
               variant="contained"
               color="primary"
