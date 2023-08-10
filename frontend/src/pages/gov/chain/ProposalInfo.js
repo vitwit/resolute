@@ -31,10 +31,12 @@ import FeegranterInfo from "../../../components/FeegranterInfo";
 import { filterVoteAuthz } from "../ProposalsPage";
 import { getFeegrant } from "../../../utils/localStorage";
 import getProposalStatusComponent, { computeVotingPercentage, nameToVoteOption } from "../../../utils/proposals";
+import { useRemark } from 'react-remark';
 
 export default function ProposalInfo() {
   const dispatch = useDispatch();
   const params = useParams();
+  const [reactContent, setMarkdownSource] = useRemark();
 
   const [authzGrants, setAuthzGrants] = useState({});
 
@@ -122,6 +124,8 @@ export default function ProposalInfo() {
       setAuthzGrants(result);
     }
   }, [grantsToMe]);
+
+  setMarkdownSource(proposal?.content?.description.replace(/\\n/g, "\n"));
 
   const govTx = useSelector((state) => state.gov.tx);
 
@@ -466,7 +470,7 @@ export default function ProposalInfo() {
               className="proposal-description-markdown"
             >
               {proposal?.content?.description &&
-                proposal?.content?.description.replace(/\\n/g, "\n")}
+                reactContent}
             </div>
           </Paper>
         </>
