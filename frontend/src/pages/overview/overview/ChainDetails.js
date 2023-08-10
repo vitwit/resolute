@@ -21,11 +21,14 @@ import { Delegate } from "../../../txns/staking";
 import { parseBalance } from "../../../utils/denom";
 import chainDenoms from "../../../utils/chainDenoms.json";
 import { CopyToClipboard } from "../../../components/CopyToClipboard";
+import { setSelectedNetworkLocal } from "../../../features/common/commonSlice";
 
 export const ChainDetails = ({ chainID, chainName, assetType }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[chainName] || {}
+  );
   const wallet = useSelector((state) => state.wallet);
   const tokensPriceInfo = useSelector(
     (state) => state.common?.allTokensInfoState?.info
@@ -70,7 +73,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
 
   useEffect(() => {
     if (txRestakeStatus === "idle") {
-      dispatch(resetRestakeTx({chainID: chainID}));
+      dispatch(resetRestakeTx({ chainID: chainID }));
       dispatch(
         addRewardsToDelegations({
           chainID,
@@ -93,10 +96,11 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
   }, [distTxStatus?.status]);
 
   useEffect(() => {
-    dispatch(resetRestakeTx({chainID: chainID}));
+    dispatch(resetRestakeTx({ chainID: chainID }));
   }, []);
 
   const actionClaimAndStake = () => {
+    dispatch(setSelectedNetworkLocal({ chainName }));
     const msgs = [];
     const delegator = chainInfo?.walletInfo?.bech32Address;
     for (const delegation of delegatorRewards.list) {
@@ -133,6 +137,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
   };
 
   const claimRewards = () => {
+    dispatch(setSelectedNetworkLocal({ chainName }));
     let delegationPairs = [];
     delegations.delegations.delegations.forEach((item) => {
       delegationPairs.push({

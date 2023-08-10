@@ -21,6 +21,7 @@ import { renderExpiration } from "./Feegrant";
 import { FeegrantInfo } from "../../components/FeegrantInfo";
 import { txRevoke } from "../../features/feegrant/feegrantSlice";
 import { CopyToClipboard } from "../../components/CopyToClipboard";
+import { setSelectedNetworkLocal } from "../../features/common/commonSlice";
 
 export const ChainGrants = (props) => {
   const { chainName, chainID } = props;
@@ -35,7 +36,9 @@ export const ChainGrants = (props) => {
   const chainInfo = useSelector(
     (state) => state.wallet?.networks?.[chainID]?.network
   );
-  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[chainName] || {}
+  );
   const txStatus = useSelector((state) => state.feegrant.tx);
   const currency = chainInfo?.config?.currencies[0];
   const [tab, setTab] = useState(0);
@@ -50,6 +53,7 @@ export const ChainGrants = (props) => {
   };
 
   const revoke = (a) => {
+    dispatch(setSelectedNetworkLocal({ chainName }));
     dispatch(
       txRevoke({
         granter: a.granter,

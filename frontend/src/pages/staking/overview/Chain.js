@@ -16,6 +16,7 @@ import {
 } from "../../../features/distribution/distributionSlice";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
+import { setSelectedNetworkLocal } from "../../../features/common/commonSlice";
 
 export const Chain = (props) => {
   const chainID = props?.chain?.chainName;
@@ -27,7 +28,9 @@ export const Chain = (props) => {
       chainName = nameToChainIDs[networkID];
     }
   });
-  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[chainName] || {}
+  );
   const distTxStatus = useSelector(
     (state) => state.distribution.chains[chainID].tx
   );
@@ -44,6 +47,7 @@ export const Chain = (props) => {
   const navigate = useNavigate();
 
   const onClickClaim = () => {
+    dispatch(setSelectedNetworkLocal({ chainName }));
     let delegationPairs = [];
     delegations.delegations.delegations.forEach((item) => {
       delegationPairs.push({
