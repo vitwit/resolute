@@ -30,12 +30,11 @@ import {
 import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "./../../utils/util";
 import { getLocalTime } from "./../../utils/datetime";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import {
   StyledTableCell,
   StyledTableRow,
 } from "./../../components/CustomTable";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { FeegrantInfo } from "./../../components/FeegrantInfo";
 import GroupTab, { TabPanel } from "../../components/group/GroupTab";
