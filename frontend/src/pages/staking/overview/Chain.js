@@ -17,6 +17,7 @@ import {
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { FeegrantCheckbox } from "../../../components/FeegrantCheckbox";
+import { setSelectedNetworkLocal } from "../../../features/common/commonSlice";
 
 export const Chain = (props) => {
   const chainID = props?.chain?.chainName;
@@ -48,6 +49,7 @@ export const Chain = (props) => {
   const navigate = useNavigate();
 
   const onClickClaim = () => {
+    dispatch(setSelectedNetworkLocal({ chainName }));
     let delegationPairs = [];
     delegations.delegations.delegations.forEach((item) => {
       delegationPairs.push({

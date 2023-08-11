@@ -27,6 +27,7 @@ import { txAuthzRevoke } from "../../features/authz/authzSlice";
 import { AuthorizationInfo } from "../../components/AuthorizationInfo";
 import { CopyToClipboard } from "../../components/CopyToClipboard";
 import { FeegrantCheckbox } from "../../components/FeegrantCheckbox";
+import { setSelectedNetworkLocal } from "../../features/common/commonSlice";
 
 export const ChainAuthz = (props) => {
   const { chainName, chainID } = props;
@@ -58,6 +59,7 @@ export const ChainAuthz = (props) => {
   };
 
   const revoke = (a, index) => {
+    dispatch(setSelectedNetworkLocal({ chainName }));
     setSelectedRevoke(index);
     dispatch(
       txAuthzRevoke({
