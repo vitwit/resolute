@@ -26,6 +26,7 @@ import { getLocalTime } from "../../utils/datetime";
 import { txAuthzRevoke } from "../../features/authz/authzSlice";
 import { AuthorizationInfo } from "../../components/AuthorizationInfo";
 import { CopyToClipboard } from "../../components/CopyToClipboard";
+import { FeegrantCheckbox } from "../../components/FeegrantCheckbox";
 import { setSelectedNetworkLocal } from "../../features/common/commonSlice";
 
 export const ChainAuthz = (props) => {
@@ -41,13 +42,14 @@ export const ChainAuthz = (props) => {
   const chainInfo = useSelector(
     (state) => state.wallet?.networks?.[chainID]?.network
   );
-  const feegrant = useSelector((state) => state.common.authz?.[chainName]);
+  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
   const authzTx = useSelector((state) => state.authz.tx);
   const currency = chainInfo?.config?.currencies[0];
   const [tab, setTab] = useState(0);
   const [selected, setSelected] = React.useState({});
   const [infoOpen, setInfoOpen] = React.useState(false);
   const [selectedRevoke, setSelectedRevoke] = React.useState(-1);
+  const [useFeegrant, setUseFeegrant] = React.useState(false);
 
   const handleTabChange = (value) => {
     setTab(value);
@@ -73,7 +75,7 @@ export const ChainAuthz = (props) => {
           chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
           10 ** currency.coinDecimals,
         baseURL: chainInfo.config.rest,
-        feegranter: feegrant?.granter,
+        feegranter: useFeegrant? feegrant?.granter : "",
       })
     );
   };
@@ -81,7 +83,7 @@ export const ChainAuthz = (props) => {
   return chainGrantsByMe?.grants?.length || chainGrantsToMe?.grants?.length ? (
     <Card elevation={0} sx={{ p: 1, mt: 2 }}>
       <CardContent>
-        <Grid container>
+        <Grid container justifyContent="space-between">
           <Grid item>
             <div
               style={{
@@ -111,6 +113,13 @@ export const ChainAuthz = (props) => {
                 {chainName.charAt(0).toUpperCase() + chainName.slice(1)}
               </Typography>
             </div>
+          </Grid>
+          <Grid item>
+            <FeegrantCheckbox
+              useFeegrant={useFeegrant}
+              setUseFeegrant={setUseFeegrant}
+              feegrant={feegrant}
+            />
           </Grid>
         </Grid>
       </CardContent>

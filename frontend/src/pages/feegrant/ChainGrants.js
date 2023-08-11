@@ -21,6 +21,7 @@ import { renderExpiration } from "./Feegrant";
 import { FeegrantInfo } from "../../components/FeegrantInfo";
 import { txRevoke } from "../../features/feegrant/feegrantSlice";
 import { CopyToClipboard } from "../../components/CopyToClipboard";
+import { FeegrantCheckbox } from "../../components/FeegrantCheckbox";
 import { setSelectedNetworkLocal } from "../../features/common/commonSlice";
 
 export const ChainGrants = (props) => {
@@ -44,6 +45,7 @@ export const ChainGrants = (props) => {
   const [tab, setTab] = useState(0);
   const [selected, setSelected] = React.useState({});
   const [infoOpen, setInfoOpen] = React.useState(false);
+  const [useFeegrant, setUseFeegrant] = React.useState(false);
 
   const handleTabChange = (value) => {
     setTab(value);
@@ -67,7 +69,7 @@ export const ChainGrants = (props) => {
           chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
           10 ** currency.coinDecimals,
         baseURL: chainInfo.config.rest,
-        feegranter: feegrant?.granter,
+        feegranter: useFeegrant ? feegrant?.granter : "",
       })
     );
   };
@@ -75,7 +77,7 @@ export const ChainGrants = (props) => {
   return chainGrantsByMe?.length || chainGrantsToMe?.length ? (
     <Card elevation={0} sx={{ p: 1, mt: 2 }}>
       <CardContent>
-        <Grid container>
+        <Grid container justifyContent="space-between">
           <Grid item>
             <div
               style={{
@@ -105,6 +107,13 @@ export const ChainGrants = (props) => {
                 {chainName.charAt(0).toUpperCase() + chainName.slice(1)}
               </Typography>
             </div>
+          </Grid>
+          <Grid item>
+            <FeegrantCheckbox
+              useFeegrant={useFeegrant}
+              setUseFeegrant={setUseFeegrant}
+              feegrant={feegrant}
+            />
           </Grid>
         </Grid>
       </CardContent>
@@ -154,7 +163,6 @@ export const ChainGrants = (props) => {
                 <TableHead>
                   <StyledTableRow>
                     <StyledTableCell>Grantee</StyledTableCell>
-                    <StyledTableCell>Type</StyledTableCell>
                     <StyledTableCell>Expiration</StyledTableCell>
                     <StyledTableCell>Details</StyledTableCell>
                     <StyledTableCell>Action</StyledTableCell>
@@ -176,13 +184,6 @@ export const ChainGrants = (props) => {
                             toolTipEnabled={true}
                           />
                         </Stack>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Chip
-                          label={getTypeURLName(row.allowance["@type"])}
-                          variant="filled"
-                          size="medium"
-                        />
                       </StyledTableCell>
                       <StyledTableCell>{renderExpiration(row)}</StyledTableCell>
                       <StyledTableCell>
@@ -241,7 +242,6 @@ export const ChainGrants = (props) => {
                 <TableHead>
                   <StyledTableRow>
                     <StyledTableCell>Granter</StyledTableCell>
-                    <StyledTableCell>Type</StyledTableCell>
                     <StyledTableCell>Expiration</StyledTableCell>
                     <StyledTableCell>Details</StyledTableCell>
                   </StyledTableRow>
@@ -262,13 +262,6 @@ export const ChainGrants = (props) => {
                             toolTipEnabled={true}
                           />
                         </Stack>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Chip
-                          label={getTypeURLName(row.allowance["@type"])}
-                          variant="filled"
-                          size="medium"
-                        />
                       </StyledTableCell>
                       <StyledTableCell>{renderExpiration(row)}</StyledTableCell>
                       <StyledTableCell>
