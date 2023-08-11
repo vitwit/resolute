@@ -1,7 +1,7 @@
 import { Box, Button, InputAdornment, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Decimal } from "@cosmjs/math";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { useForm, Controller } from "react-hook-form";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -15,6 +15,10 @@ Delegate.propTypes = {
 export default function Delegate(props) {
   const { chainInfo, address } = props;
 
+  const chainID = chainInfo?.config?.chainId;
+
+  const dispatch = useDispatch();
+
   const {
     handleSubmit,
     control,
@@ -27,8 +31,8 @@ export default function Delegate(props) {
     },
   });
 
-  var validators = useSelector((state) => state.staking.validators);
-  var [data, setData] = useState([]);
+  const validators = useSelector((state) => state.staking.chains[chainID]?.validators);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     const data = [];
