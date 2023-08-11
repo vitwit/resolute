@@ -157,7 +157,7 @@ export default function NewFeegrant() {
         chainName: currentNetwork.toLowerCase(),
       })
     );
-  }, [currentNetwork, params]);
+  }, [currentNetwork]);
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.

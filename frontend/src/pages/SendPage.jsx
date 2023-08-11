@@ -170,7 +170,7 @@ export default function SendPage() {
         chainName: currentNetwork.toLowerCase(),
       })
     );
-  }, [currentNetwork, params]);
+  }, [currentNetwork]);
 
   const onSendTx = (data) => {
     const amount = Number(data.amount);
