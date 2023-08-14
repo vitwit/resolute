@@ -10,10 +10,16 @@ import {
 import React from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedNetwork, setSelectedNetworkLocal } from "../features/common/commonSlice";
+import {
+  setSelectedNetwork,
+  setSelectedNetworkLocal,
+} from "../features/common/commonSlice";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@emotion/react";
 import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const chainItemStyle = {
   display: "flex",
@@ -65,7 +71,52 @@ const DialogSelectNetwork = (props) => {
             pb: 1,
           }}
         >
-          <Box sx={{ p: 2 }}>
+          <Box sx={{ p: 2, pt: 1 }}>
+            <Grid container spacing={3}>
+              <Grid
+                item
+                xs={6}
+                onClick={() => {
+                  if (isAuthzMode) {
+                    authzModeAlert();
+                  } else {
+                    dialogCloseHandle();
+                    dispatch(
+                      setSelectedNetwork({
+                        chainName: "",
+                      })
+                    );
+                    navigateTo("/");
+                  }
+                }}
+              >
+                <ChainItem
+                  chainName={"All Networks"}
+                  chainID={" "}
+                  chainLogo={" "}
+                  isNetworkName={false}
+                  icon={<FormatListBulletedIcon />}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={6}
+                onClick={() => {
+                  dialogCloseHandle();
+                  navigateTo("/add-network");
+                }}
+              >
+                <ChainItem
+                  chainName={"Add Network"}
+                  chainID={" "}
+                  chainLogo={<AddIcon />}
+                  isNetworkName={false}
+                  icon={<AddCircleOutlineIcon />}
+                />
+              </Grid>
+            </Grid>
+          </Box>
+          <Box sx={{ p: 2, pt: 1 }}>
             <Grid container rowSpacing={3} columnSpacing={3}>
               {chainIDs.map((chain) => (
                 <Grid
@@ -100,33 +151,11 @@ const DialogSelectNetwork = (props) => {
                     chainName={networks[chain].network.config.chainName}
                     chainLogo={networks[chain].network.logos.menu}
                     chainID={chain}
+                    isNetworkName={true}
+                    icon={null}
                   />
                 </Grid>
               ))}
-              <Grid
-                item
-                md={4}
-                xs={2}
-                onClick={() => {
-                  if (isAuthzMode) {
-                    authzModeAlert();
-                  } else {
-                    dialogCloseHandle();
-                    dispatch(
-                      setSelectedNetwork({
-                        chainName: "",
-                      })
-                    );
-                    navigateTo("/");
-                  }
-                }}
-              >
-                <ChainItem
-                  chainName={"All Networks"}
-                  chainID={" "}
-                  chainLogo={" "}
-                />
-              </Grid>
             </Grid>
           </Box>
         </DialogContent>
@@ -138,15 +167,19 @@ const DialogSelectNetwork = (props) => {
 export default DialogSelectNetwork;
 
 const ChainItem = (props) => {
-  const { chainName, chainLogo, chainID } = props;
+  const { chainName, chainLogo, chainID, isNetworkName, icon } = props;
   const theme = useTheme();
   return (
     <Box
       sx={chainItemStyle}
       backgroundColor={theme.palette?.mode === "light" ? "#f1f1f1" : "#474747"}
-      height={chainName === "All Networks" ? "39px" : null}
     >
-      <Avatar src={chainLogo} sx={{ width: 28, height: 28 }} />
+      {!isNetworkName ? (
+        icon
+      ) : (
+        <Avatar src={chainLogo} sx={{ width: 28, height: 28 }} />
+      )}
+
       <Typography sx={{ ml: 1 }}>
         <Typography>{chainName}</Typography>
         <Typography
