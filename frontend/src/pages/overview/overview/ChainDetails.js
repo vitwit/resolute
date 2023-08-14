@@ -324,20 +324,6 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                         <Typography sx={{ display: "inline", fontWeight: 600 }}>
                           {denomInfo[0]?.symbol}
                         </Typography>
-                        <Typography
-                          sx={{
-                            backgroundColor: "#767676",
-                            borderRadius: "4px",
-                            ml: "4px",
-                            px: "4px",
-                            fontWeight: 600,
-                            display: "inline",
-                            color: "white",
-                            fontSize: "12px",
-                          }}
-                        >
-                          IBC
-                        </Typography>
                       </Typography>
                       <Typography
                         sx={{
