@@ -102,7 +102,7 @@ export const ProposalItem = (props) => {
               }}
             ></Box>
           </Tooltip>
-          <Tooltip title={`Veto ${tallyInfo.no_with_veto}%`} placement="top">
+          <Tooltip title={`Veto ${tallyInfo.noWithVeto}%`} placement="top">
             <Box
               sx={{
                 width: `${tallySumInfo.no_with_veto}%`,
