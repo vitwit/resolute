@@ -22,7 +22,7 @@ import PropTypes from "prop-types";
 import { useNavigate, useParams } from "react-router-dom";
 
 const PER_PAGE = 5;
-const SEND_TEMPLATE = "https://resolute.witval.com/_static/send.csv";
+const SEND_TEMPLATE = "https://api.resolute.vitwit.com/_static/send.csv";
 
 export default function MultiTx({ chainInfo, address }) {
   const params = useParams();
