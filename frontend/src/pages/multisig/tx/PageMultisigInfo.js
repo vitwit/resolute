@@ -27,7 +27,7 @@ import { formatNumber } from "../../../utils/denom";
 export default function PageMultisigInfo() {
   const dispatch = useDispatch();
   const params = useParams();
-  const { address: multisigAddress } = params;
+  const { address: multisigAddress, networkName } = params;
 
   const [chainInfo, setChainInfo] = useState({});
   const [currency, setCurrency] = useState();
@@ -39,12 +39,16 @@ export default function PageMultisigInfo() {
   const multisigAccount = multisigAccountDetails?.account || {};
   const members = multisigAccountDetails?.pubkeys || [];
   const multisigBal = useSelector((state) => state.multisig.balance);
-  const multisigDel = useSelector((state) => state.staking.delegations);
   const wallet = useSelector((state) => state.wallet);
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
+  const chainId = nameToChainIDs[networkName];
   const [totalStake, setTotalStaked] = useState(0);
+
+  const multisigDel = useSelector(
+    (state) => state.staking.chains?.[chainId]?.delegations?.delegations
+  );
 
   useEffect(() => {
     let delegations = multisigDel?.delegations || [];
@@ -63,9 +67,8 @@ export default function PageMultisigInfo() {
   useEffect(() => {
     const network = params.networkName;
     setCurrentNetwork(network);
-    if (network.length > 0 && connected) {
-      const chainId = nameToChainIDs[network];
-      if (chainId?.length > 0) {
+    if (network?.length && connected) {
+      if (chainId?.length) {
         setChainInfo(networks[chainId]);
         setCurrency(networks[chainId]?.network.config.currencies[0]);
       }
@@ -87,6 +90,7 @@ export default function PageMultisigInfo() {
         getDelegations({
           baseURL: chainInfo?.network?.config?.rest,
           address: multisigAddress,
+          chainID: chainInfo?.network?.config?.chainId,
         })
       );
 
@@ -94,6 +98,7 @@ export default function PageMultisigInfo() {
         getAllValidators({
           baseURL: chainInfo?.network?.config?.rest,
           status: null,
+          chainID: chainInfo?.network?.config?.chainId,
         })
       );
 

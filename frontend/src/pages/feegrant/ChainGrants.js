@@ -22,6 +22,7 @@ import { FeegrantInfo } from "../../components/FeegrantInfo";
 import { txRevoke } from "../../features/feegrant/feegrantSlice";
 import { CopyToClipboard } from "../../components/CopyToClipboard";
 import { FeegrantCheckbox } from "../../components/FeegrantCheckbox";
+import { setSelectedNetworkLocal } from "../../features/common/commonSlice";
 
 export const ChainGrants = (props) => {
   const { chainName, chainID } = props;
@@ -54,6 +55,7 @@ export const ChainGrants = (props) => {
   };
 
   const revoke = (a) => {
+    dispatch(setSelectedNetworkLocal({ chainName }));
     dispatch(
       txRevoke({
         granter: a.granter,

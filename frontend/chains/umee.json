@@ -21,8 +21,8 @@
   "config": {
     "chain_id": "umee-1",
     "chain_name": "Umee",
-    "rest": "https://api-umee-ia.cosmosia.notional.ventures",
-    "rpc": "https://umee-rpc.polkachu.com",
+    "rest": "https://api.resolute.vitwit.com/umee_api/",
+    "rpc": "https://api.resolute.vitwit.com/umee_rpc/",
     "currencies": [
       {
         "coin_denom": "UMEE",

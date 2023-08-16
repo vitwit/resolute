@@ -41,13 +41,13 @@ import { resetError, setError } from "../../../features/common/commonSlice";
 
 // TODO: serve urls from env
 
-const MULTISIG_SEND_TEMPLATE = "https://resolute.witval.com/_static/send.csv";
+const MULTISIG_SEND_TEMPLATE = "https://api.resolute.vitwit.com/_static/send.csv";
 const MULTISIG_DELEGATE_TEMPLATE =
-  "https://resolute.witval.com/_static/delegate.csv";
+  "https://api.resolute.vitwit.com/_static/delegate.csv";
 const MULTISIG_UNDELEGATE_TEMPLATE =
-  "https://resolute.witval.com/_static/undelegate.csv";
+  "https://api.resolute.vitwit.com/_static/undelegate.csv";
 const MULTISIG_REDELEGATE_TEMPLATE =
-  "https://resolute.witval.com/_static/redelegate.csv";
+  "https://api.resolute.vitwit.com/_static/redelegate.csv";
 
 const PER_PAGE = 6;
 
@@ -225,7 +225,8 @@ export default function PageCreateTx() {
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
   const { connected } = wallet;
-  const chainInfo = networks[nameToChainIDs[networkName]]?.network;
+  const chainID = nameToChainIDs[networkName];
+  const chainInfo = networks[chainID]?.network;
 
   const validators = useSelector((state) => state.staking.validators);
 
@@ -236,17 +237,18 @@ export default function PageCreateTx() {
         getAllValidators({
           baseURL: chainInfo?.config?.rest,
           status: null,
+          chainID: chainID,
         })
       );
-
       dispatch(
         getDelegations({
           baseURL: chainInfo?.config?.rest,
           address: address,
+          chainID: chainID,
         })
       );
     }
-  }, [connected]);
+  }, [connected, chainInfo]);
 
   useEffect(() => {
     if (connected) {
@@ -493,9 +495,9 @@ export default function PageCreateTx() {
                       onChange={handleTypeChange}
                     >
                       <MenuItem value={"Send"}>Send</MenuItem>
-                      {/* <MenuItem value={"Delegate"}>Delegate</MenuItem>
+                      <MenuItem value={"Delegate"}>Delegate</MenuItem>
                       <MenuItem value={"Redelegate"}>Redelegate</MenuItem>
-                      <MenuItem value={"Undelegate"}>Undelegate</MenuItem> */}
+                      <MenuItem value={"Undelegate"}>Undelegate</MenuItem>
                     </Select>
                   </FormControl>
                 </>

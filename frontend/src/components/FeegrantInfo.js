@@ -23,16 +23,6 @@ const renderAuthorization = (authz, displayDenom, coinDecimals) => {
           <ul>
             <li className="inline-space-between">
               <Typography color="text.primary" gutterBottom>
-                Type
-              </Typography>
-              <Chip
-                label={getTypeURLName(allowance["@type"])}
-                variant="filled"
-                size="medium"
-              />
-            </li>
-            <li className="inline-space-between">
-              <Typography color="text.primary" gutterBottom>
                 Granter
               </Typography>
               <CopyToClipboard message={granter} />

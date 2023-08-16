@@ -10,8 +10,8 @@
   "config": {
     "chainId": "cosmoshub-4",
     "chainName": "Cosmos Hub",
-    "rest": "https://resolute.witval.com/cosmos_api",
-    "rpc": "https://resolute.witval.com/cosmos_rpc/",
+    "rest": "https://api.resolute.vitwit.com/cosmos_api",
+    "rpc": "https://api.resolute.vitwit.com/cosmos_rpc/",
     "currencies": [
       { "coinDenom": "ATOM", "coinMinimalDenom": "uatom", "coinDecimals": 6 }
     ],

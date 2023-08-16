@@ -22,8 +22,8 @@ export const networks: Network[] = [
     config: {
       chainId: "akashnet-2",
       chainName: "Akash",
-      rest: "https://akash-api.polkachu.com",
-      rpc: "https://rpc.akash.forbole.com/",
+      rest: "https://api.resolute.vitwit.com/akash_api/",
+      rpc: "https://api.resolute.vitwit.com/akash_rpc/",
       currencies: [
         {
           coinDenom: "AKT",
@@ -89,8 +89,8 @@ export const networks: Network[] = [
     config: {
       chainId: "cosmoshub-4",
       chainName: "CosmosHub",
-      rest: "https://lcd-cosmoshub.blockapsis.com",
-      rpc: "https://resolute.witval.com/cosmos_rpc/",
+      rest: "https://api.resolute.vitwit.com/cosmos_api/",
+      rpc: "https://api.resolute.vitwit.com/cosmos_rpc/",
       currencies: [
         {
           coinDenom: "ATOM",
@@ -223,8 +223,8 @@ export const networks: Network[] = [
     config: {
       chainId: "juno-1",
       chainName: "Juno",
-      rest: "https://juno-api.polkachu.com",
-      rpc: "https://juno-rpc.polkachu.com",
+      rest: "https://api.resolute.vitwit.com/juno_api/",
+      rpc: "https://api.resolute.vitwit.com/juno_rpc/",
       currencies: [
         {
           coinDenom: "JUNO",
@@ -499,8 +499,8 @@ export const networks: Network[] = [
     config: {
       chainId: "regen-1",
       chainName: "Regen",
-      rest: "https://regen.stakesystems.io",
-      rpc: "https://rpc-regen.ecostake.com",
+      rest: "https://api.resolute.vitwit.com/regen_api/",
+      rpc: "https://api.resolute.vitwit.com/regen_rpc/",
       currencies: [
         {
           coinDenom: "REGEN",
@@ -636,8 +636,8 @@ export const networks: Network[] = [
     config: {
       chainId: "stargaze-1",
       chainName: "Stargaze",
-      rest: "https://rest.stargaze-apis.com/",
-      rpc: "https://rpc.stargaze-apis.com/",
+      rest: "https://api.resolute.vitwit.com/stargaze_api/",
+      rpc: "https://api.resolute.vitwit.com/stargaze_rpc/",
       currencies: [
         {
           coinDenom: "STARS",
@@ -703,8 +703,8 @@ export const networks: Network[] = [
     config: {
       chainId: "umee-1",
       chainName: "Umee",
-      rest: "https://api-umee-ia.cosmosia.notional.ventures",
-      rpc: "https://umee-rpc.polkachu.com",
+      rest: "https://api.resolute.vitwit.com/umee_api/",
+      rpc: "https://api.resolute.vitwit.com/umee_rpc/",
       currencies: [
         {
           coinDenom: "UMEE",

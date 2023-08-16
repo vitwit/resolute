@@ -125,8 +125,14 @@ export default function Home(props) {
     if (newValue === 8) {
       if (selectedNetwork === "") navigate("/passage/airdrop-check");
       else navigate(`/${selectedNetwork.toLowerCase()}/airdrop-check`);
-    } else if (newValue === 0 || newValue === 2) {
+    } else if (newValue === 2) {
       navigate(ALL_NETWORKS[newValue]);
+    } else if (newValue === 0) {
+      navigate(
+        `${selectedNetwork ? selectedNetwork + "/overview" : ""}${
+          ALL_NETWORKS[newValue]
+        }`
+      );
     } else if (newValue === 3 || newValue === 6 || newValue === 5) {
       navigate(
         `${selectedNetwork ? selectedNetwork + "/" : ""}${

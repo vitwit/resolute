@@ -26,21 +26,6 @@ const renderAuthorization = (authz, displayDenom) => {
               mb: 1,
             }}
           >
-            <Typography gutterBottom>Type</Typography>
-            <Chip
-              label={getTypeURLName(authorization["@type"])}
-              variant="filled"
-              size="medium"
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            md={6}
-            sx={{
-              mb: 1,
-            }}
-          >
             <Typography>SpendLimit</Typography>
             <Typography gutterBottom color="text.secondary">
               {parseSpendLimit(authorization.spend_limit, 6)}
