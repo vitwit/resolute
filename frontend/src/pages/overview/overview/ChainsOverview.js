@@ -5,6 +5,7 @@ import { getDelegatorTotalRewards } from "../../../features/distribution/distrib
 import { useDispatch, useSelector } from "react-redux";
 import { ChainDetails } from "./ChainDetails";
 import {
+  Avatar,
   Box,
   Card,
   CardContent,
@@ -22,6 +23,8 @@ import {
 } from "../../../components/CustomTable";
 import { formatNumber, parseBalance } from "../../../utils/denom";
 import { Button } from "@mui/material";
+import chainDenoms from "../../../utils/chainDenoms.json";
+import { useNavigate } from "react-router-dom";
 
 export const paddingTopBottom = {
   paddingTop: 1,
@@ -29,7 +32,10 @@ export const paddingTopBottom = {
 };
 
 export const ChainsOverview = ({ chainNames }) => {
+  const ibcChainLogoUrl =
+    "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/";
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const networks = useSelector((state) => state.wallet.networks);
   const stakingChains = useSelector((state) => state.staking.chains);
   const distributionChains = useSelector((state) => state.distribution.chains);
@@ -144,6 +150,45 @@ export const ChainsOverview = ({ chainNames }) => {
     return sortedChains.map((chain) => chain.chainID);
   }, [chainIDs, networks, balanceChains, tokensPriceInfo]);
 
+  const getIBCSortedCHainIds = useCallback(() => {
+    let sortedIBCChains = [];
+
+    chainIDs.forEach((chainID) => {
+      const chainName = chainIdToNames[chainID];
+      const minimalDenom =
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+      const chainBalances = balanceChains?.[chainID]?.list || [];
+      chainBalances.forEach((balance) => {
+        const denomInfo = chainDenoms[chainName]?.filter((denomInfo) => {
+          return denomInfo.denom === balance.denom;
+        });
+        if (balance.denom !== minimalDenom && denomInfo.length) {
+          const usdDenomPrice =
+            tokensPriceInfo[denomInfo[0]?.origin_denom]?.info?.["usd"] || 0;
+          const balanceAmount = parseBalance(
+            [balance],
+            denomInfo[0].decimals,
+            balance.denom
+          );
+          const usdDenomValue = balanceAmount * usdDenomPrice;
+          sortedIBCChains = [
+            ...sortedIBCChains,
+            {
+              usdValue: usdDenomValue,
+              usdPrice: usdDenomPrice,
+              balanceAmount: balanceAmount,
+              chainName: chainName,
+              denomInfo: denomInfo,
+            },
+          ];
+        }
+      });
+    });
+
+    sortedIBCChains.sort((x, y) => y.usdValue - x.usdValue);
+    return sortedIBCChains;
+  }, [chainIDs, networks, balanceChains, tokensPriceInfo]);
+
   useEffect(() => {
     chainIDs.forEach((chainID) => {
       const chainInfo = networks[chainID]?.network;
@@ -175,6 +220,10 @@ export const ChainsOverview = ({ chainNames }) => {
     });
   }, []);
 
+  const handleOnClick = (chainName) => {
+    navigate(`/${chainName}/overview`);
+  };
+
   const totalAvailableAmount = useMemo(
     () => calculateTotalAvailableAmount(),
     [calculateTotalAvailableAmount]
@@ -191,6 +240,11 @@ export const ChainsOverview = ({ chainNames }) => {
   const sortedChainIds = useMemo(
     () => getSortedChainIds(),
     [getSortedChainIds]
+  );
+
+  const ibcSortedChains = useMemo(
+    () => getIBCSortedCHainIds(),
+    [getIBCSortedCHainIds]
   );
 
   return (
@@ -306,14 +360,86 @@ export const ChainsOverview = ({ chainNames }) => {
             </StyledTableRow>
           </TableHead>
           <TableBody>
-            {sortedChainIds.map((chainID) => (
-              <ChainDetails
-                key={chainID}
-                chainID={chainID}
-                chainName={chainIdToNames[chainID]}
-                assetType={assetType}
-              />
-            ))}
+            {assetType === "native" ? (
+              sortedChainIds.map((chainID) => (
+                <ChainDetails
+                  key={chainID}
+                  chainID={chainID}
+                  chainName={chainIdToNames[chainID]}
+                  assetType={assetType}
+                />
+              ))
+            ) : ibcSortedChains.length ? (
+              ibcSortedChains.map((ibcAssetInfo) => (
+                <StyledTableRow
+                  key={
+                    ibcAssetInfo.chainName +
+                    ibcAssetInfo.denomInfo[0].origin_denom
+                  }
+                >
+                  <StyledTableCell size="small">
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <Avatar
+                        src={ibcChainLogoUrl + ibcAssetInfo.denomInfo[0]?.image}
+                        sx={{
+                          width: 28,
+                          height: 28,
+                          "&:hover": {
+                            backgroundColor: "white",
+                            cursor: "pointer",
+                          },
+                        }}
+                        onClick={() => handleOnClick(ibcAssetInfo.chainName)}
+                      />
+                      &nbsp;&nbsp;
+                      <Box>
+                        <Typography
+                          sx={{
+                            textTransform: "capitalize",
+                            "&:hover": {
+                              cursor: "pointer",
+                              color: "purple",
+                            },
+                          }}
+                          onClick={() => handleOnClick(ibcAssetInfo.chainName)}
+                        >
+                          <Typography sx={{ display: "inline" }}>
+                            {ibcAssetInfo.balanceAmount.toLocaleString()}
+                            &nbsp;
+                          </Typography>
+                          <Typography
+                            sx={{ display: "inline", fontWeight: 600 }}
+                          >
+                            {ibcAssetInfo.denomInfo[0]?.symbol}
+                          </Typography>
+                        </Typography>
+                        <Typography
+                          sx={{
+                            textTransform: "capitalize",
+                            "&:hover": {
+                              cursor: "pointer",
+                              color: "purple",
+                            },
+                            fontSize: "12px",
+                            color: "#767676",
+                          }}
+                          onClick={() => handleOnClick(ibcAssetInfo.chainName)}
+                        >
+                          On {ibcAssetInfo.chainName}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {ibcAssetInfo.usdPrice
+                      ? `$${parseFloat(ibcAssetInfo.usdPrice).toFixed(2)}`
+                      : "N/A"}
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))
+            ) : (
+              <></>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
