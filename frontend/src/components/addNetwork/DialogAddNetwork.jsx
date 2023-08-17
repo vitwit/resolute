@@ -16,56 +16,12 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
+import { defaultValues } from "./utils";
 
 const DialogAddNetwork = (props) => {
   const { open, dialogCloseHandle } = props;
   const { control, handleSubmit, setValue, getValues } = useForm({
-    defaultValues: {
-      chainConfig: {
-        chainName: "",
-        chainID: "",
-        restEndpoint: "",
-        rpcEndpoint: "",
-        isTestnet: "",
-      },
-      currency: {
-        coinDenom: "",
-        coinMinimalDenom: "",
-        decimals: "",
-      },
-      accAddressPerfix: "",
-      feeCurrency: {
-        coinDenom: "",
-        coinMinimalDenom: "",
-        decimals: "",
-      },
-      gasPriceStep: {
-        low: "",
-        average: "",
-        high: "",
-      },
-      coinType: 118,
-      stakeCurrency: {
-        coinDenom: "",
-        coinMinimalDenom: "",
-        decimals: "",
-      },
-      explorerEndpoint: "",
-      enableModules: {
-        authz: "",
-        feegrant: "",
-        groups: "",
-      },
-      aminoConfig: {
-        authz: "",
-        feegrant: "",
-        groups: "No",
-      },
-      wallet: {
-        keplrExperimental: "",
-        leapExperimental: "",
-      },
-    },
+    defaultValues: defaultValues,
   });
 
   const [isTestnet, setIsTestnet] = useState(null);
@@ -92,7 +48,9 @@ const DialogAddNetwork = (props) => {
             alignItems: "center",
           }}
         >
-          <Typography variant="h5" color="primary">Add Network</Typography>
+          <Typography variant="h5" color="primary">
+            Add Network
+          </Typography>
           <CloseIcon
             sx={{ cursor: "pointer" }}
             onClick={() => {
@@ -254,6 +212,7 @@ const DialogAddNetwork = (props) => {
                     <TextField
                       {...field}
                       required
+                      type="number"
                       label="Decimals"
                       size="small"
                       name="currency.decimals"
@@ -657,7 +616,7 @@ const FormSectionTitle = ({ title }) => {
   return (
     <>
       <Grid item xs={12}>
-        <Typography variant="h6" fontWeight={0} color="primary">
+        <Typography fontWeight={0} color="primary">
           {title}
         </Typography>
       </Grid>
@@ -672,7 +631,7 @@ const CustomRadioGroup = (props) => {
     <Controller
       name={name}
       control={control}
-      // rules={rules}
+      rules={rules}
       render={({ field }) => (
         <FormControl fullWidth>
           <FormLabel sx={{ textAlign: "left" }} id="">
