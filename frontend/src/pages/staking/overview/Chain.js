@@ -79,6 +79,7 @@ export const Chain = (props) => {
         chainID: chainID,
         baseURL: chainInfo.network.config.rest,
         address: chainInfo.walletInfo.bech32Address,
+        denom: currency.coinMinimalDenom,
       })
     );
   }, [distTxStatus.status]);
