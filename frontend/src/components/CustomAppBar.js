@@ -31,7 +31,7 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import { useNavigate } from "react-router-dom";
 import DialogSelectNetwork from "./DialogSelectNetwork";
-import DialogAddNetwork from "./DialogAddNetwork";
+import DialogAddNetwork from "./addNetwork/DialogAddNetwork";
 
 export const connectWallet = (walletName, dispatch) => {
   if (walletName === "keplr") {
