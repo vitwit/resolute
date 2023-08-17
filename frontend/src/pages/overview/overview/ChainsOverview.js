@@ -147,7 +147,7 @@ export const ChainsOverview = ({ chainNames }) => {
   useEffect(() => {
     chainIDs.forEach((chainID) => {
       const chainInfo = networks[chainID]?.network;
-      const address = networks[chainID]?.walletInfo?.bech32Address;
+      const address = "umee1uvcj5e2j2hdrta7hcya409klqwf000mt7qkxvg"
 
       dispatch(
         getBalances({

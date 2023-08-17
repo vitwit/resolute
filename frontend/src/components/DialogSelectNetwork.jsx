@@ -40,7 +40,13 @@ const dialogTitleStyle = {
 };
 
 const DialogSelectNetwork = (props) => {
-  const { open, dialogCloseHandle, authzModeAlert } = props;
+  const {
+    open,
+    dialogCloseHandle,
+    authzModeAlert,
+    addNetworkDialogOpen,
+    addNetworkDialogCloseHandle,
+  } = props;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -103,7 +109,7 @@ const DialogSelectNetwork = (props) => {
                 xs={6}
                 onClick={() => {
                   dialogCloseHandle();
-                  navigateTo("/add-network");
+                  addNetworkDialogCloseHandle(!addNetworkDialogOpen);
                 }}
               >
                 <ChainItem
