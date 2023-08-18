@@ -147,7 +147,7 @@ const StakingOverview = () => {
       let chainnetwork = wallet.networks[chainIds[i]];
       let address = chainnetwork?.walletInfo?.bech32Address;
       let baseURL = chainnetwork?.network?.config.rest;
-      let denom = chainnetwork.network?.config?.currencies[0]?.coinDenom;
+      const denom = chainnetwork.network?.config?.currencies[0]?.coinDenom;
       dispatch(
         getAllValidators({
           baseURL: baseURL,
