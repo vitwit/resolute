@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -227,7 +228,6 @@ const DialogAddNetwork = (props) => {
               <Grid item xs={4}>
                 <CustomRadioGroup
                   control={control}
-                  rules={{ required: "required" }}
                   label={"Is Testnet"}
                   name={"chainConfig.isTestnet"}
                   setValue={setValue}
@@ -595,7 +595,6 @@ const DialogAddNetwork = (props) => {
               <Grid item xs={4}>
                 <CustomRadioGroup
                   control={control}
-                  rules={{ required: "required" }}
                   label={"Authz"}
                   name={"enableModules.authz"}
                   setValue={setValue}
@@ -606,7 +605,6 @@ const DialogAddNetwork = (props) => {
               <Grid item xs={4}>
                 <CustomRadioGroup
                   control={control}
-                  rules={{ required: "required" }}
                   label={"Feegrant"}
                   name={"enableModules.feegrant"}
                   setValue={setValue}
@@ -617,7 +615,6 @@ const DialogAddNetwork = (props) => {
               <Grid item xs={4}>
                 <CustomRadioGroup
                   control={control}
-                  rules={{ required: "required" }}
                   label={"Groups"}
                   name={"enableModules.groups"}
                   setValue={setValue}
@@ -631,7 +628,6 @@ const DialogAddNetwork = (props) => {
               <Grid item xs={4}>
                 <CustomRadioGroup
                   control={control}
-                  rules={{ required: "required" }}
                   label={"Authz"}
                   name={"aminoConfig.authz"}
                   setValue={setValue}
@@ -642,7 +638,6 @@ const DialogAddNetwork = (props) => {
               <Grid item xs={4}>
                 <CustomRadioGroup
                   control={control}
-                  rules={{ required: "required" }}
                   label={"Feegrant"}
                   name={"aminoConfig.feegrant"}
                   setValue={setValue}
@@ -656,7 +651,6 @@ const DialogAddNetwork = (props) => {
               <Grid item xs={4}>
                 <CustomRadioGroup
                   control={control}
-                  rules={{ required: "required" }}
                   label={"Keplr Experimental"}
                   name={"wallet.keplrExperimental"}
                   setValue={setValue}
@@ -667,7 +661,6 @@ const DialogAddNetwork = (props) => {
               <Grid item xs={4}>
                 <CustomRadioGroup
                   control={control}
-                  rules={{ required: "required" }}
                   label={"Leap Experimental"}
                   name={"wallet.leapExperimental"}
                   setValue={setValue}
@@ -702,37 +695,31 @@ const FormSectionTitle = ({ title }) => {
 };
 
 const CustomRadioGroup = (props) => {
-  const { control, rules, label, name, setValue, value, setter } = props;
+  const { control, label, name, setValue, value, setter } = props;
 
   return (
     <Controller
       name={name}
       control={control}
-      rules={rules}
       render={({ field }) => (
         <FormControl fullWidth>
-          <FormLabel sx={{ textAlign: "left" }} id="">
-            {label}
-          </FormLabel>
-          <RadioGroup
-            row
-            {...field}
-            onChange={(e) => {
-              if (e.target.value === "Yes") {
-                setter(e.target.value);
-                setValue(name, e.target.value);
-              } else {
-                setter(e.target.value);
-                setValue(name, e.target.value);
-              }
-            }}
-            value={value}
-            error={"asdfsdf"}
-            helperText={"dddddd"}
-          >
-            <FormControlLabel value={"Yes"} control={<Radio />} label="Yes" />
-            <FormControlLabel value={"No"} control={<Radio />} label="No" />
-          </RadioGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setValue(name, "Yes");
+                    setter("Yes");
+                  } else {
+                    setValue(name, "No");
+                    setter("No");
+                  }
+                }}
+                checked={value === "Yes" ? true : false}
+              />
+            }
+            label={label}
+          />
         </FormControl>
       )}
     />
