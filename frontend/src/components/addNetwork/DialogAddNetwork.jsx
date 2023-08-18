@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Box,
   Button,
   Checkbox,
   Dialog,
@@ -8,10 +7,7 @@ import {
   DialogTitle,
   FormControl,
   FormControlLabel,
-  FormLabel,
   Grid,
-  Radio,
-  RadioGroup,
   TextField,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -202,7 +198,7 @@ const DialogAddNetwork = (props) => {
                           getValues("chainConfig.rpcEndpoint").trim()
                         )
                       ) {
-                        return "RPC Endpoint should not contain spaces in between";
+                        return getNoSpacesMsg("RPC Endpoint");
                       }
                     },
                   }}
@@ -221,6 +217,42 @@ const DialogAddNetwork = (props) => {
                       }}
                       error={errors?.chainConfig?.rpcEndpoint}
                       helperText={errors?.chainConfig?.rpcEndpoint?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <Controller
+                  name="chainConfig.logo"
+                  control={control}
+                  rules={{
+                    required: getRequiredMsg("Logo URL"),
+                    validate: () => {
+                      if (!getValues("chainConfig.logo").trim().length) {
+                        return getRequiredMsg("Logo URL");
+                      }
+                      if (
+                        validateSpaces(getValues("chainConfig.logo").trim())
+                      ) {
+                        return getNoSpacesMsg("Logo URL");
+                      }
+                    },
+                  }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      required
+                      type="url"
+                      label="Logo URL"
+                      size="small"
+                      name="chainConfig.logo"
+                      placeholder="Eg: https://raw.githubusercontent.com/..../images/cosmoshub.svg"
+                      fullWidth
+                      sx={{
+                        mb: 2,
+                      }}
+                      error={errors?.chainConfig?.logo}
+                      helperText={errors?.chainConfig?.logo?.message}
                     />
                   )}
                 />
@@ -706,6 +738,7 @@ const CustomRadioGroup = (props) => {
           <FormControlLabel
             control={
               <Checkbox
+                size="small"
                 onChange={(e) => {
                   if (e.target.checked) {
                     setValue(name, "Yes");

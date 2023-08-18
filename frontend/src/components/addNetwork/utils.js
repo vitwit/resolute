@@ -5,6 +5,7 @@ export const defaultValues = {
     restEndpoint: "",
     rpcEndpoint: "",
     isTestnet: "",
+    logo: "",
   },
   currency: {
     coinDenom: "",
