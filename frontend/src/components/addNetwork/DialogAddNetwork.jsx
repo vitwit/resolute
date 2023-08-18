@@ -18,6 +18,7 @@ import {
   validateSpaces,
   getRequiredMsg,
   getNoSpacesMsg,
+  validInteger,
 } from "./utils";
 
 const DialogAddNetwork = (props) => {
@@ -258,7 +259,7 @@ const DialogAddNetwork = (props) => {
                 />
               </Grid>
               <Grid item xs={4}>
-                <CustomRadioGroup
+                <CustomCheckBoxField
                   control={control}
                   label={"Is Testnet"}
                   name={"chainConfig.isTestnet"}
@@ -274,7 +275,19 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name={"currency.coinDenom"}
                   control={control}
-                  rules={{}}
+                  rules={{
+                    required: getRequiredMsg("Coin Denom"),
+                    validate: () => {
+                      if (!getValues("currency.coinDenom").trim().length) {
+                        return getRequiredMsg("Coin Denom");
+                      }
+                      if (
+                        validateSpaces(getValues("currency.coinDenom").trim())
+                      ) {
+                        return getNoSpacesMsg("Coin Denom");
+                      }
+                    },
+                  }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -287,6 +300,8 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.currency?.coinDenom}
+                      helperText={errors?.currency?.coinDenom?.message}
                     />
                   )}
                 />
@@ -295,7 +310,23 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="currency.coinMinimalDenom"
                   control={control}
-                  rules={{}}
+                  rules={{
+                    required: getRequiredMsg("Coin Minimal Denom"),
+                    validate: () => {
+                      if (
+                        !getValues("currency.coinMinimalDenom").trim().length
+                      ) {
+                        return getRequiredMsg("Coin Minimlal Denom");
+                      }
+                      if (
+                        validateSpaces(
+                          getValues("currency.coinMinimalDenom").trim()
+                        )
+                      ) {
+                        return getNoSpacesMsg("Coin Minimal Denom");
+                      }
+                    },
+                  }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -308,6 +339,8 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.currency?.coinMinimalDenom}
+                      helperText={errors?.currency?.coinMinimalDenom?.message}
                     />
                   )}
                 />
@@ -316,7 +349,15 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="currency.decimals"
                   control={control}
-                  rules={{}}
+                  rules={{
+                    required: getRequiredMsg("Decimals"),
+                    min: { value: 1, message: "Value should be positive" },
+                    validate: () => {
+                      if (!validInteger(getValues("currency.decimals"))) {
+                        return "Floating points not allowed";
+                      }
+                    },
+                  }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -330,6 +371,8 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.currency?.decimals}
+                      helperText={errors?.currency?.decimals?.message}
                     />
                   )}
                 />
@@ -625,7 +668,7 @@ const DialogAddNetwork = (props) => {
             <Grid container columnSpacing={2}>
               <FormSectionTitle title={"Enable Modules"} />
               <Grid item xs={4}>
-                <CustomRadioGroup
+                <CustomCheckBoxField
                   control={control}
                   label={"Authz"}
                   name={"enableModules.authz"}
@@ -635,7 +678,7 @@ const DialogAddNetwork = (props) => {
                 />
               </Grid>
               <Grid item xs={4}>
-                <CustomRadioGroup
+                <CustomCheckBoxField
                   control={control}
                   label={"Feegrant"}
                   name={"enableModules.feegrant"}
@@ -645,7 +688,7 @@ const DialogAddNetwork = (props) => {
                 />
               </Grid>
               <Grid item xs={4}>
-                <CustomRadioGroup
+                <CustomCheckBoxField
                   control={control}
                   label={"Groups"}
                   name={"enableModules.groups"}
@@ -658,7 +701,7 @@ const DialogAddNetwork = (props) => {
             <Grid container columnSpacing={2}>
               <FormSectionTitle title={"Enable Amino Config"} />
               <Grid item xs={4}>
-                <CustomRadioGroup
+                <CustomCheckBoxField
                   control={control}
                   label={"Authz"}
                   name={"aminoConfig.authz"}
@@ -668,7 +711,7 @@ const DialogAddNetwork = (props) => {
                 />
               </Grid>
               <Grid item xs={4}>
-                <CustomRadioGroup
+                <CustomCheckBoxField
                   control={control}
                   label={"Feegrant"}
                   name={"aminoConfig.feegrant"}
@@ -681,7 +724,7 @@ const DialogAddNetwork = (props) => {
             <Grid container columnSpacing={2}>
               <FormSectionTitle title={"Experimental Wallet"} />
               <Grid item xs={4}>
-                <CustomRadioGroup
+                <CustomCheckBoxField
                   control={control}
                   label={"Keplr Experimental"}
                   name={"wallet.keplrExperimental"}
@@ -691,7 +734,7 @@ const DialogAddNetwork = (props) => {
                 />
               </Grid>
               <Grid item xs={4}>
-                <CustomRadioGroup
+                <CustomCheckBoxField
                   control={control}
                   label={"Leap Experimental"}
                   name={"wallet.leapExperimental"}
@@ -726,7 +769,7 @@ const FormSectionTitle = ({ title }) => {
   );
 };
 
-const CustomRadioGroup = (props) => {
+const CustomCheckBoxField = (props) => {
   const { control, label, name, setValue, value, setter } = props;
 
   return (

@@ -47,16 +47,24 @@ export const defaultValues = {
 };
 
 export const validateSpaces = (value) => {
-  if(value?.match(' ')) {
-    return true
+  if (value?.match(" ")) {
+    return true;
   }
-  return false
-}
+  return false;
+};
+
+export const validInteger = (value) => {
+  var re = /^\d*$/;
+  if (re.test(value)) {
+    return true;
+  }
+  return false;
+};
 
 export const getRequiredMsg = (value) => {
-  return value + " is required"
-}
+  return value + " is required";
+};
 
 export const getNoSpacesMsg = (value) => {
-  return value + " should not contain spaces in between"
-}
+  return value + " should not contain spaces in between";
+};
