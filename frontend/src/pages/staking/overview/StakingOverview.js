@@ -144,10 +144,10 @@ const StakingOverview = () => {
   useEffect(() => {
     let chainIds = Object.keys(wallet.networks);
     for (let i = 0; i < chainIds.length; i++) {
-      let chainnetwork = wallet.networks[chainIds[i]];
-      let address = chainnetwork?.walletInfo?.bech32Address;
-      let baseURL = chainnetwork?.network?.config.rest;
-      let denom = chainnetwork.network?.config?.currencies[0]?.coinDenom;
+      const chainnetwork = wallet.networks[chainIds[i]];
+      const address = chainnetwork?.walletInfo?.bech32Address;
+      const baseURL = chainnetwork?.network?.config.rest;
+      const denom = chainnetwork.network?.config?.currencies[0]?.coinDenom;
       dispatch(
         getAllValidators({
           baseURL: baseURL,
