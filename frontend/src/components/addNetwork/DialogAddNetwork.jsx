@@ -384,7 +384,19 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="accAddressPerfix"
                   control={control}
-                  rules={{}}
+                  rules={{
+                    required: getRequiredMsg("Account Address Prefix"),
+                    validate: () => {
+                      if (!getValues("accAddressPerfix").trim().length) {
+                        return getRequiredMsg("Account Address Prefix");
+                      }
+                      if (
+                        validateSpaces(getValues("accAddressPerfix").trim())
+                      ) {
+                        return getNoSpacesMsg("Account Address Prefix");
+                      }
+                    },
+                  }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -397,6 +409,8 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.accAddressPerfix}
+                      helperText={errors?.accAddressPerfix?.message}
                     />
                   )}
                 />
