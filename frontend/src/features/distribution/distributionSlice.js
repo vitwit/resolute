@@ -4,6 +4,7 @@ import { WithdrawAllRewardsMsg } from "../../txns/distr";
 import { setError, setTxHash } from "../common/commonSlice";
 import { signAndBroadcast } from "../../utils/signing";
 import cloneDeep from "lodash/cloneDeep";
+import {getDenomBalance} from '../../utils/denom'
 
 const initialState = {
   chains: {},
@@ -137,15 +138,13 @@ export const distSlice = createSlice({
       })
       .addCase(getDelegatorTotalRewards.fulfilled, (state, action) => {
         let chainID = action.meta?.arg?.chainID;
+        let denom = action.meta?.arg?.denom || "";
         if (state.chains[chainID]) {
           state.chains[chainID].delegatorRewards.status = "idle";
           state.chains[chainID].delegatorRewards.list =
             action.payload.data.rewards;
           let totalRewardsList = action?.payload?.data?.total;
-          let total = 0;
-          for (let i = 0; i < totalRewardsList.length; i++)
-            total += +totalRewardsList[i].amount;
-          state.chains[chainID].delegatorRewards.totalRewards = total;
+          state.chains[chainID].delegatorRewards.totalRewards = getDenomBalance(totalRewardsList, denom);
           state.chains[chainID].delegatorRewards.pagination =
             action.payload.pagination;
           state.chains[chainID].delegatorRewards.errMsg = "";

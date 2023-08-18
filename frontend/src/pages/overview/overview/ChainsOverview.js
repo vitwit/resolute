@@ -193,6 +193,8 @@ export const ChainsOverview = ({ chainNames }) => {
     chainIDs.forEach((chainID) => {
       const chainInfo = networks[chainID]?.network;
       const address = networks[chainID]?.walletInfo?.bech32Address;
+      const denom =
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
 
       dispatch(
         getBalances({
@@ -215,6 +217,7 @@ export const ChainsOverview = ({ chainNames }) => {
           baseURL: chainInfo.config.rest,
           address: address,
           chainID: chainID,
+          denom: denom,
         })
       );
     });
