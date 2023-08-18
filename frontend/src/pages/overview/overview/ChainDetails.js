@@ -63,9 +63,6 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
     chainInfo?.network?.config?.currencies?.[0]?.coinDecimals || 1;
   const logoURL = chainInfo?.network?.logos?.menu;
 
-  const ibcChainLogoUrl =
-    "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/";
-
   // Memoized function to prevent unnecessary re-renders
   const handleOnClick = useCallback(() => {
     navigate(`/${chainName}/overview`);
@@ -280,83 +277,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
           ) : null}
         </>
       ) : (
-        <>
-          {balance?.map((item, index) => {
-            const denomInfo = chainDenoms[chainName]?.filter((x) => {
-              return x.denom === item.denom;
-            });
-            return denomInfo?.length && item.denom !== originMinimalDenom ? (
-              <StyledTableRow key={index}>
-                <StyledTableCell size="small">
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Avatar
-                      src={ibcChainLogoUrl + denomInfo[0]?.image}
-                      sx={{
-                        width: 28,
-                        height: 28,
-                        "&:hover": {
-                          backgroundColor: "white",
-                          cursor: "pointer",
-                        },
-                      }}
-                      onClick={() => handleOnClick(chainName)}
-                    />
-                    &nbsp;&nbsp;
-                    <Box>
-                      <Typography
-                        sx={{
-                          textTransform: "capitalize",
-                          "&:hover": {
-                            cursor: "pointer",
-                            color: "purple",
-                          },
-                        }}
-                        onClick={() => handleOnClick(chainName)}
-                      >
-                        <Typography sx={{ display: "inline" }}>
-                          {parseBalance(
-                            balance,
-                            denomInfo[0]?.decimals,
-                            item.denom
-                          ).toLocaleString()}
-                          &nbsp;
-                        </Typography>
-                        <Typography sx={{ display: "inline", fontWeight: 600 }}>
-                          {denomInfo[0]?.symbol}
-                        </Typography>
-                      </Typography>
-                      <Typography
-                        sx={{
-                          textTransform: "capitalize",
-                          "&:hover": {
-                            cursor: "pointer",
-                            color: "purple",
-                          },
-                          fontSize: "12px",
-                          color: "#767676",
-                        }}
-                        onClick={() => handleOnClick(chainName)}
-                      >
-                        On {chainName}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </StyledTableCell>
-                <StyledTableCell>
-                  {tokensPriceInfo[denomInfo[0]?.origin_denom]
-                    ? `$${parseFloat(
-                        tokensPriceInfo[denomInfo[0]?.origin_denom]?.info?.[
-                          "usd"
-                        ]
-                      ).toFixed(2)}`
-                    : "N/A"}
-                </StyledTableCell>
-              </StyledTableRow>
-            ) : (
-              <></>
-            );
-          })}
-        </>
+        <></>
       )}
     </>
   );
