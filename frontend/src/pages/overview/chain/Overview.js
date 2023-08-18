@@ -106,6 +106,7 @@ export default function Overview(props) {
         chainID: chainID,
         baseURL: config.rest,
         address: address,
+        denom: coinDenom,
       })
     );
 
