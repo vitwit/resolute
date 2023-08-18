@@ -16,11 +16,22 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
-import { defaultValues } from "./utils";
+import {
+  defaultValues,
+  validateSpaces,
+  getRequiredMsg,
+  getNoSpacesMsg,
+} from "./utils";
 
 const DialogAddNetwork = (props) => {
   const { open, dialogCloseHandle } = props;
-  const { control, handleSubmit, setValue, getValues } = useForm({
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    getValues,
+  } = useForm({
     defaultValues: defaultValues,
   });
 
@@ -67,7 +78,21 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="chainConfig.chainName"
                   control={control}
-                  rules={{}}
+                  rules={{
+                    required: getRequiredMsg("Chain Name"),
+                    validate: () => {
+                      if (!getValues("chainConfig.chainName").trim().length) {
+                        return getRequiredMsg("Chain Name");
+                      }
+                      if (
+                        validateSpaces(
+                          getValues("chainConfig.chainName").trim()
+                        )
+                      ) {
+                        return getNoSpacesMsg("Chain Name");
+                      }
+                    },
+                  }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -80,6 +105,8 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.chainConfig?.chainName}
+                      helperText={errors?.chainConfig?.chainName?.message}
                     />
                   )}
                 />
@@ -88,7 +115,19 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="chainConfig.chainID"
                   control={control}
-                  rules={{}}
+                  rules={{
+                    required: getRequiredMsg("Chain ID"),
+                    validate: () => {
+                      if (!getValues("chainConfig.chainID").trim().length) {
+                        return getRequiredMsg("Chain ID");
+                      }
+                      if (
+                        validateSpaces(getValues("chainConfig.chainID").trim())
+                      ) {
+                        return getNoSpacesMsg("Chain ID");
+                      }
+                    },
+                  }}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -101,6 +140,8 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.chainConfig?.chainID}
+                      helperText={errors?.chainConfig?.chainID?.message}
                     />
                   )}
                 />
@@ -109,19 +150,38 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="chainConfig.restEndpoint"
                   control={control}
-                  rules={{}}
+                  rules={{
+                    required: getRequiredMsg("Rest Endpoint"),
+                    validate: () => {
+                      if (
+                        !getValues("chainConfig.restEndpoint").trim().length
+                      ) {
+                        return getRequiredMsg("Rest Endpoint");
+                      }
+                      if (
+                        validateSpaces(
+                          getValues("chainConfig.restEndpoint").trim()
+                        )
+                      ) {
+                        return getNoSpacesMsg("Rest Endpoint");
+                      }
+                    },
+                  }}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       required
+                      type="url"
                       label="Rest Endpoint"
                       size="small"
                       name="restEndpoint"
-                      placeholder="Rest Endpoint *"
+                      placeholder="Eg: https://api.resolute.vitwit.com/cosmos_api/"
                       fullWidth
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.chainConfig?.restEndpoint}
+                      helperText={errors?.chainConfig?.restEndpoint?.message}
                     />
                   )}
                 />
@@ -130,19 +190,36 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="chainConfig.rpcEndpoint"
                   control={control}
-                  rules={{}}
+                  rules={{
+                    required: getRequiredMsg("RPC Endpoint"),
+                    validate: () => {
+                      if (!getValues("chainConfig.rpcEndpoint").trim().length) {
+                        return getRequiredMsg("RPC Endpoint");
+                      }
+                      if (
+                        validateSpaces(
+                          getValues("chainConfig.rpcEndpoint").trim()
+                        )
+                      ) {
+                        return "RPC Endpoint should not contain spaces in between";
+                      }
+                    },
+                  }}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       required
+                      type="url"
                       label="RPC Endpoint"
                       size="small"
                       name="rpcEndpoint"
-                      placeholder="RPC Endpoint *"
+                      placeholder="Eg: https://api.resolute.vitwit.com/cosmos_rpc/"
                       fullWidth
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.chainConfig?.rpcEndpoint}
+                      helperText={errors?.chainConfig?.rpcEndpoint?.message}
                     />
                   )}
                 />
@@ -650,6 +727,8 @@ const CustomRadioGroup = (props) => {
               }
             }}
             value={value}
+            error={"asdfsdf"}
+            helperText={"dddddd"}
           >
             <FormControlLabel value={"Yes"} control={<Radio />} label="Yes" />
             <FormControlLabel value={"No"} control={<Radio />} label="No" />

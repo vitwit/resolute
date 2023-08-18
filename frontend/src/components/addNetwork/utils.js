@@ -44,3 +44,18 @@ export const defaultValues = {
     leapExperimental: "",
   },
 };
+
+export const validateSpaces = (value) => {
+  if(value?.match(' ')) {
+    return true
+  }
+  return false
+}
+
+export const getRequiredMsg = (value) => {
+  return value + " is required"
+}
+
+export const getNoSpacesMsg = (value) => {
+  return value + " should not contain spaces in between"
+}
