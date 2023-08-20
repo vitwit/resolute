@@ -19,9 +19,9 @@ export const defaultValues = {
     decimals: "",
   },
   gasPriceStep: {
-    low: "",
-    average: "",
-    high: "",
+    low: 0.01,
+    average: 0.025,
+    high: 0.03,
   },
   coinType: 118,
   stakeCurrency: {
@@ -67,4 +67,9 @@ export const getRequiredMsg = (value) => {
 
 export const getNoSpacesMsg = (value) => {
   return value + " should not contain spaces in between";
+};
+
+export const addNetwork = (data) => {
+  console.log("data...");
+  console.log(data);
 };

@@ -19,6 +19,7 @@ import {
   getRequiredMsg,
   getNoSpacesMsg,
   validInteger,
+  addNetwork,
 } from "./utils";
 
 const DialogAddNetwork = (props) => {
@@ -43,8 +44,63 @@ const DialogAddNetwork = (props) => {
   const [leapExperimental, setLeapExperimental] = useState(null);
 
   const onSubmit = (data) => {
-    console.log("data...");
-    console.log(data);
+    addNetwork(data);
+  };
+
+  const setSameAsCurrency = (e, field) => {
+    if (e.target.checked) {
+      setValue(field + ".coinDenom", getValues("currency.coinDenom"), {
+        shouldValidate: true,
+      });
+      setValue(
+        field + ".coinMinimalDenom",
+        getValues("currency.coinMinimalDenom"),
+        { shouldValidate: true }
+      );
+      setValue(field + ".decimals", getValues("currency.decimals"), {
+        shouldValidate: true,
+      });
+    }
+  };
+
+  const getCoinDenomValidations = (name, fieldName) => {
+    return {
+      required: getRequiredMsg(fieldName),
+      validate: () => {
+        if (!getValues(name).trim().length) {
+          return getRequiredMsg(fieldName);
+        }
+        if (validateSpaces(getValues(name).trim())) {
+          return getNoSpacesMsg(fieldName);
+        }
+      },
+    };
+  };
+
+  const getCoinDecimalsValidations = (name, fieldName) => {
+    return {
+      required: getRequiredMsg(fieldName),
+      min: { value: 1, message: "Value should be positive" },
+      validate: () => {
+        if (!validInteger(getValues(name))) {
+          return "Floating points not allowed";
+        }
+      },
+    };
+  };
+
+  const getURLValidations = (name, fieldName) => {
+    return {
+      required: getRequiredMsg(fieldName),
+      validate: () => {
+        if (!getValues(name).trim().length) {
+          return getRequiredMsg(fieldName);
+        }
+        if (validateSpaces(getValues(name).trim())) {
+          return getNoSpacesMsg(fieldName);
+        }
+      },
+    };
   };
 
   return (
@@ -148,23 +204,10 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="chainConfig.restEndpoint"
                   control={control}
-                  rules={{
-                    required: getRequiredMsg("Rest Endpoint"),
-                    validate: () => {
-                      if (
-                        !getValues("chainConfig.restEndpoint").trim().length
-                      ) {
-                        return getRequiredMsg("Rest Endpoint");
-                      }
-                      if (
-                        validateSpaces(
-                          getValues("chainConfig.restEndpoint").trim()
-                        )
-                      ) {
-                        return getNoSpacesMsg("Rest Endpoint");
-                      }
-                    },
-                  }}
+                  rules={getURLValidations(
+                    "chainConfig.restEndpoint",
+                    "Rest Endpoint"
+                  )}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -188,21 +231,10 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="chainConfig.rpcEndpoint"
                   control={control}
-                  rules={{
-                    required: getRequiredMsg("RPC Endpoint"),
-                    validate: () => {
-                      if (!getValues("chainConfig.rpcEndpoint").trim().length) {
-                        return getRequiredMsg("RPC Endpoint");
-                      }
-                      if (
-                        validateSpaces(
-                          getValues("chainConfig.rpcEndpoint").trim()
-                        )
-                      ) {
-                        return getNoSpacesMsg("RPC Endpoint");
-                      }
-                    },
-                  }}
+                  rules={getURLValidations(
+                    "chainConfig.rpcEndpoint",
+                    "RPC Endpoint"
+                  )}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -226,19 +258,7 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="chainConfig.logo"
                   control={control}
-                  rules={{
-                    required: getRequiredMsg("Logo URL"),
-                    validate: () => {
-                      if (!getValues("chainConfig.logo").trim().length) {
-                        return getRequiredMsg("Logo URL");
-                      }
-                      if (
-                        validateSpaces(getValues("chainConfig.logo").trim())
-                      ) {
-                        return getNoSpacesMsg("Logo URL");
-                      }
-                    },
-                  }}
+                  rules={getURLValidations("chainConfig.logo", "Logo URL")}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -275,19 +295,10 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name={"currency.coinDenom"}
                   control={control}
-                  rules={{
-                    required: getRequiredMsg("Coin Denom"),
-                    validate: () => {
-                      if (!getValues("currency.coinDenom").trim().length) {
-                        return getRequiredMsg("Coin Denom");
-                      }
-                      if (
-                        validateSpaces(getValues("currency.coinDenom").trim())
-                      ) {
-                        return getNoSpacesMsg("Coin Denom");
-                      }
-                    },
-                  }}
+                  rules={getCoinDenomValidations(
+                    "currency.coinDenom",
+                    "Coin Denom"
+                  )}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -310,23 +321,10 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="currency.coinMinimalDenom"
                   control={control}
-                  rules={{
-                    required: getRequiredMsg("Coin Minimal Denom"),
-                    validate: () => {
-                      if (
-                        !getValues("currency.coinMinimalDenom").trim().length
-                      ) {
-                        return getRequiredMsg("Coin Minimlal Denom");
-                      }
-                      if (
-                        validateSpaces(
-                          getValues("currency.coinMinimalDenom").trim()
-                        )
-                      ) {
-                        return getNoSpacesMsg("Coin Minimal Denom");
-                      }
-                    },
-                  }}
+                  rules={getCoinDenomValidations(
+                    "currency.coinMinimalDenom",
+                    "Coin Minimlal Denom"
+                  )}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -349,15 +347,10 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="currency.decimals"
                   control={control}
-                  rules={{
-                    required: getRequiredMsg("Decimals"),
-                    min: { value: 1, message: "Value should be positive" },
-                    validate: () => {
-                      if (!validInteger(getValues("currency.decimals"))) {
-                        return "Floating points not allowed";
-                      }
-                    },
-                  }}
+                  rules={getCoinDecimalsValidations(
+                    "currency.decimals",
+                    "Decimals"
+                  )}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -420,7 +413,13 @@ const DialogAddNetwork = (props) => {
               <FormSectionTitle title={"Fee Currencies"} />
               <Grid item xs={12}>
                 <Typography sx={{ display: "flex", alignItems: "center" }}>
-                  <input type="checkbox" style={{ width: 10 }} />
+                  <input
+                    type="checkbox"
+                    style={{ width: 10 }}
+                    onChange={(e) => {
+                      setSameAsCurrency(e, "feeCurrency");
+                    }}
+                  />
                   <Typography fontSize={12}>
                     Same as currency details
                   </Typography>
@@ -430,7 +429,10 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="feeCurrency.coinDenom"
                   control={control}
-                  rules={{}}
+                  rules={getCoinDenomValidations(
+                    "feeCurrency.coinDenom",
+                    "Coin Denom"
+                  )}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -443,6 +445,8 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.feeCurrency?.coinDenom}
+                      helperText={errors?.feeCurrency?.coinDenom?.message}
                     />
                   )}
                 />
@@ -451,7 +455,10 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="feeCurrency.coinMinimalDenom"
                   control={control}
-                  rules={{}}
+                  rules={getCoinDenomValidations(
+                    "feeCurrency.coinMinimalDenom",
+                    "Coin Minimlal Denom"
+                  )}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -464,6 +471,10 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.feeCurrency?.coinMinimalDenom}
+                      helperText={
+                        errors?.feeCurrency?.coinMinimalDenom?.message
+                      }
                     />
                   )}
                 />
@@ -472,11 +483,15 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="feeCurrency.decimals"
                   control={control}
-                  rules={{}}
+                  rules={getCoinDecimalsValidations(
+                    "feeCurrency.decimals",
+                    "Decimals"
+                  )}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       required
+                      type="number"
                       label="Decimals"
                       size="small"
                       name="feeCurrency.decimals"
@@ -485,6 +500,8 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.feeCurrency?.decimals}
+                      helperText={errors?.feeCurrency?.decimals?.message}
                     />
                   )}
                 />
@@ -495,11 +512,19 @@ const DialogAddNetwork = (props) => {
                   <Controller
                     name="gasPriceStep.low"
                     control={control}
-                    rules={{}}
+                    rules={{
+                      required: getRequiredMsg("GasPriceStep Low"),
+                      validate: () => {
+                        if (getValues("gasPriceStep.low") <= 0) {
+                          return "Should be greater than 0";
+                        }
+                      },
+                    }}
                     render={({ field }) => (
                       <TextField
                         {...field}
                         required
+                        type="number"
                         label="Low"
                         size="small"
                         name="gasPriceStep.low"
@@ -508,6 +533,8 @@ const DialogAddNetwork = (props) => {
                         sx={{
                           mb: 2,
                         }}
+                        error={errors?.gasPriceStep?.low}
+                        helperText={errors?.gasPriceStep?.low?.message}
                       />
                     )}
                   />
@@ -516,11 +543,19 @@ const DialogAddNetwork = (props) => {
                   <Controller
                     name="gasPriceStep.average"
                     control={control}
-                    rules={{}}
+                    rules={{
+                      required: getRequiredMsg("GasPriceStep Average"),
+                      validate: () => {
+                        if (getValues("gasPriceStep.average") <= 0) {
+                          return "Should be greater than 0";
+                        }
+                      },
+                    }}
                     render={({ field }) => (
                       <TextField
                         {...field}
                         required
+                        type="number"
                         label="Average"
                         size="small"
                         name="gasPriceStep.average"
@@ -529,6 +564,8 @@ const DialogAddNetwork = (props) => {
                         sx={{
                           mb: 2,
                         }}
+                        error={errors?.gasPriceStep?.average}
+                        helperText={errors?.gasPriceStep?.average?.message}
                       />
                     )}
                   />
@@ -537,11 +574,19 @@ const DialogAddNetwork = (props) => {
                   <Controller
                     name="gasPriceStep.high"
                     control={control}
-                    rules={{}}
+                    rules={{
+                      required: getRequiredMsg("GasPriceStep High"),
+                      validate: () => {
+                        if (getValues("gasPriceStep.high") <= 0) {
+                          return "Should be greater than 0";
+                        }
+                      },
+                    }}
                     render={({ field }) => (
                       <TextField
                         {...field}
                         required
+                        type="number"
                         label="High"
                         size="small"
                         name="gasPriceStep.high"
@@ -550,6 +595,8 @@ const DialogAddNetwork = (props) => {
                         sx={{
                           mb: 2,
                         }}
+                        error={errors?.gasPriceStep?.high}
+                        helperText={errors?.gasPriceStep?.high?.message}
                       />
                     )}
                   />
@@ -563,11 +610,12 @@ const DialogAddNetwork = (props) => {
                   defaultValue={118}
                   name="coinType"
                   control={control}
-                  rules={{}}
+                  rules={getCoinDecimalsValidations("coinType", "Coin Type")}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       required
+                      type="number"
                       label="Coin Type"
                       size="small"
                       name="coinType"
@@ -576,6 +624,8 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.coinType}
+                      helperText={errors?.coinType?.message}
                     />
                   )}
                 />
@@ -585,7 +635,13 @@ const DialogAddNetwork = (props) => {
               <FormSectionTitle title={"Stake Currency"} />
               <Grid item xs={12}>
                 <Typography sx={{ display: "flex", alignItems: "center" }}>
-                  <input type="checkbox" style={{ width: 10 }} />
+                  <input
+                    type="checkbox"
+                    style={{ width: 10 }}
+                    onChange={(e) => {
+                      setSameAsCurrency(e, "stakeCurrency");
+                    }}
+                  />
                   <Typography fontSize={12}>
                     Same as currency details
                   </Typography>
@@ -595,7 +651,10 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="stakeCurrency.coinDenom"
                   control={control}
-                  rules={{}}
+                  rules={getCoinDenomValidations(
+                    "stakeCurrency.coinDenom",
+                    "Coin Denom"
+                  )}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -608,6 +667,8 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.stakeCurrency?.coinDenom}
+                      helperText={errors?.stakeCurrency?.coinDenom?.message}
                     />
                   )}
                 />
@@ -616,7 +677,10 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="stakeCurrency.coinMinimalDenom"
                   control={control}
-                  rules={{}}
+                  rules={getCoinDenomValidations(
+                    "stakeCurrency.coinMinimalDenom",
+                    "Coin Minimlal Denom"
+                  )}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -629,6 +693,10 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.stakeCurrency?.coinMinimalDenom}
+                      helperText={
+                        errors?.stakeCurrency?.coinMinimalDenom?.message
+                      }
                     />
                   )}
                 />
@@ -637,11 +705,15 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="stakeCurrency.decimals"
                   control={control}
-                  rules={{}}
+                  rules={getCoinDecimalsValidations(
+                    "stakeCurrency.decimals",
+                    "Decimals"
+                  )}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       required
+                      type="number"
                       label="Decimals"
                       size="small"
                       name="stakeCurrency.decimals"
@@ -650,6 +722,8 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.stakeCurrency?.decimals}
+                      helperText={errors?.stakeCurrency?.decimals?.message}
                     />
                   )}
                 />
@@ -661,11 +735,15 @@ const DialogAddNetwork = (props) => {
                 <Controller
                   name="explorerEndpoint"
                   control={control}
-                  rules={{}}
+                  rules={getURLValidations(
+                    "explorerEndpoint",
+                    "Explorer Tx Hash Endpoint"
+                  )}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       required
+                      type="url"
                       label="Explorer Tx Hash Endpoint"
                       size="small"
                       name="explorerEndpoint"
@@ -674,6 +752,8 @@ const DialogAddNetwork = (props) => {
                       sx={{
                         mb: 2,
                       }}
+                      error={errors?.explorerEndpoint}
+                      helperText={errors?.explorerEndpoint?.message}
                     />
                   )}
                 />
