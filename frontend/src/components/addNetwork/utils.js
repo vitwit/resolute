@@ -1,3 +1,5 @@
+import { setNetwork } from "../../utils/localStorage";
+
 export const defaultValues = {
   chainConfig: {
     chainName: "",
@@ -33,12 +35,12 @@ export const defaultValues = {
   enableModules: {
     authz: "",
     feegrant: "",
-    groups: "",
+    group: "",
   },
   aminoConfig: {
     authz: "",
     feegrant: "",
-    groups: "No",
+    group: "No",
   },
   wallet: {
     keplrExperimental: "",
@@ -47,17 +49,9 @@ export const defaultValues = {
 };
 
 const chainInfo = {
-  enable_modules: {
-    authz: null,
-    feegrant: null,
-    group: null,
-  },
-  amino_config: {
-    authz: null,
-    feegrant: null,
-    group: false,
-  },
-  show_airdrop: null,
+  enable_modules: {},
+  amino_config: {},
+  show_airdrop: false,
   logos: {
     menu: null,
     toolbar:
@@ -72,41 +66,13 @@ const chainInfo = {
     chain_name: null,
     rest: null,
     rpc: null,
-    currencies: [
-      {
-        coin_denom: null,
-        coin_minimal_denom: null,
-        coin_decimals: null,
-      },
-    ],
-    bech32_config: {
-      bech32_prefix_acc_addr: null,
-      bech32_prefix_acc_pub: null,
-      bech32_prefix_val_addr: null,
-      bech32_prefix_val_pub: null,
-      bech32_prefix_cons_addr: null,
-      bech32_prefix_cons_pub: null,
-    },
-    fee_currencies: [
-      {
-        coin_denom: null,
-        coin_minimal_denom: null,
-        coin_decimals: null,
-        gas_price_step: {
-          low: null,
-          average: null,
-          high: null,
-        },
-      },
-    ],
+    currencies: [],
+    bech32_config: {},
+    fee_currencies: [],
     bip44: {
       coin_type: null,
     },
-    stake_currency: {
-      coin_denom: null,
-      coin_minimal_denom: null,
-      coin_decimals: null,
-    },
+    stake_currency: {},
     image:
       "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
     theme: {
@@ -141,5 +107,63 @@ export const getNoSpacesMsg = (value) => {
 };
 
 export const addNetwork = (data) => {
-  
+  const parseValue = (value) => {
+    if (value === "Yes") {
+      return true;
+    }
+    return false;
+  };
+
+  chainInfo.enable_modules = {
+    authz: parseValue(data.enableModules.authz),
+    feegrant: parseValue(data.enableModules.feegrant),
+    group: parseValue(data.enableModules.group),
+  };
+  chainInfo.amino_config = {
+    authz: parseValue(data.aminoConfig.authz),
+    feegrant: parseValue(data.aminoConfig.feegrant),
+    group: false,
+  };
+  chainInfo.logos.menu = data.chainConfig.logo;
+  chainInfo.keplr_experimental = parseValue(data.wallet.keplrExperimental);
+  chainInfo.leap_experimental = parseValue(data.wallet.leapExperimental);
+  chainInfo.is_testnet = parseValue(data.chainConfig.isTestnet);
+  chainInfo.explorer_tx_hash_endpoint = data.explorerEndpoint;
+  chainInfo.config.chain_id = data.chainConfig.chainID;
+  chainInfo.config.chain_name = data.chainConfig.chainName;
+  chainInfo.config.rest = data.chainConfig.restEndpoint;
+  chainInfo.config.rpc = data.chainConfig.rpcEndpoint;
+  chainInfo.config.currencies = [
+    {
+      coin_denom: data.currency.coinDenom,
+      coin_minimal_denom: data.currency.coinMinimalDenom,
+      coin_decimals: data.currency.decimals,
+    },
+  ];
+  const accAddressPerfix = data.accAddressPerfix;
+  chainInfo.config.bech32_config = {
+    bech32_prefix_acc_addr: accAddressPerfix,
+    bech32_prefix_acc_pub: accAddressPerfix + "pub",
+    bech32_prefix_val_addr: accAddressPerfix + "valoper",
+    bech32_prefix_val_pub: accAddressPerfix + "valoperpub",
+    bech32_prefix_cons_addr: accAddressPerfix + "gvalcons",
+    bech32_prefix_cons_pub: accAddressPerfix + "valconspub",
+  };
+  chainInfo.config.fee_currencies = [
+    {
+      coin_denom: data.feeCurrency.coinDenom,
+      coin_minimal_denom: data.feeCurrency.coinMinimalDenom,
+      coin_decimals: data.feeCurrency.decimals,
+      gas_price_step: data.gasPriceStep,
+    },
+  ];
+  chainInfo.config.bip44.coin_type = data.coinType;
+  chainInfo.config.stake_currency = {
+    coin_denom: data.stakeCurrency.coinDenom,
+    coin_minimal_denom: data.stakeCurrency.coinMinimalDenom,
+    coin_decimals: data.stakeCurrency.decimals,
+  };
+
+  console.log(JSON.stringify(chainInfo));
+  setNetwork(chainInfo);
 };

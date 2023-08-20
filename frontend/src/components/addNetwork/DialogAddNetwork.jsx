@@ -817,7 +817,7 @@ const DialogAddNetwork = (props) => {
                 <CustomCheckBoxField
                   control={control}
                   label={"Groups"}
-                  name={"enableModules.groups"}
+                  name={"enableModules.group"}
                   setValue={setValue}
                   value={enableGroups}
                   setter={setEnableGroups}

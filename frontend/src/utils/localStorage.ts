@@ -1,6 +1,5 @@
 import { Grant } from "cosmjs-types/cosmos/feegrant/v1beta1/feegrant";
 
-
 interface ChainWiseGrants {
   [key: string]: Grant;
 }
@@ -48,4 +47,18 @@ export function removeFeegrant(chainName: string) {
 
 export function removeAllFeegrants() {
   localStorage.removeItem("feegrant");
+}
+
+export function getNetworks(): any {
+  const networks = localStorage.getItem("networks");
+  if (networks) {
+    return JSON.parse(networks);
+  }
+  return null;
+}
+
+export function setNetwork(chainInfo: any) {
+  var data = getNetworks() || [];
+  data.push(chainInfo);
+  localStorage.setItem("networks", JSON.stringify(data));
 }
