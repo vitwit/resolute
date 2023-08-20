@@ -21,6 +21,7 @@ import {
   validInteger,
   addNetwork,
 } from "./utils";
+import { useSelector } from "react-redux";
 
 const DialogAddNetwork = (props) => {
   const { open, dialogCloseHandle } = props;
@@ -43,8 +44,10 @@ const DialogAddNetwork = (props) => {
   const [keplrExperimental, setKeplrExperimental] = useState(null);
   const [leapExperimental, setLeapExperimental] = useState(null);
 
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
   const onSubmit = (data) => {
-    addNetwork(data);
+    addNetwork(data, nameToChainIDs);
   };
 
   const setSameAsCurrency = (e, field) => {
@@ -103,6 +106,29 @@ const DialogAddNetwork = (props) => {
     };
   };
 
+  const chainNameExist = () => {
+    const chainName = getValues("chainConfig.chainName");
+    const chainNamesList = Object.keys(nameToChainIDs);
+    if (chainNamesList.includes(chainName.toLowerCase())) {
+      return true;
+    }
+    return false;
+  };
+
+  const chainIDExist = () => {
+    const chainID = getValues("chainConfig.chainID");
+    const chainNamesList = Object.keys(nameToChainIDs);
+    for (let chain in chainNamesList) {
+      if (
+        nameToChainIDs[chainNamesList[chain]].toLowerCase() ===
+        chainID.toLowerCase()
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
     <>
       <Dialog open={open} onClose={dialogCloseHandle} fullWidth maxWidth="lg">
@@ -145,6 +171,9 @@ const DialogAddNetwork = (props) => {
                       ) {
                         return getNoSpacesMsg("Chain Name");
                       }
+                      if (chainNameExist()) {
+                        return "Chain exists with this name";
+                      }
                     },
                   }}
                   render={({ field }) => (
@@ -179,6 +208,9 @@ const DialogAddNetwork = (props) => {
                         validateSpaces(getValues("chainConfig.chainID").trim())
                       ) {
                         return getNoSpacesMsg("Chain ID");
+                      }
+                      if (chainIDExist()) {
+                        return "Chain exists with this ID";
                       }
                     },
                   }}
