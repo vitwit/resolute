@@ -54,7 +54,7 @@ export function getNetworks(): any {
   if (networks) {
     return JSON.parse(networks);
   }
-  return null;
+  return [];
 }
 
 export function setNetwork(chainInfo: any) {

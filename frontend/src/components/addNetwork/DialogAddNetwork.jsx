@@ -21,10 +21,17 @@ import {
   validInteger,
   addNetwork,
 } from "./utils";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { KEY_WALLET_NAME, getNetworks } from "../../utils/localStorage";
+import { setError } from "../../features/common/commonSlice";
+import { connectWalletV1 } from "../../features/wallet/walletSlice";
+import { networks } from "../../utils/chainsInfo";
 
 const DialogAddNetwork = (props) => {
   const { open, dialogCloseHandle } = props;
+
+  const dispatch = useDispatch();
+
   const {
     control,
     handleSubmit,
@@ -48,6 +55,18 @@ const DialogAddNetwork = (props) => {
 
   const onSubmit = (data) => {
     addNetwork(data, nameToChainIDs);
+    const walletName = localStorage.getItem(KEY_WALLET_NAME);
+    dispatch(
+      connectWalletV1({
+        mainnets: [...networks, ...getNetworks()],
+        testnets: [],
+        walletName,
+      })
+    );
+    dialogCloseHandle();
+    dispatch(
+      setError({ type: "success", message: "Network added successfully" })
+    );
   };
 
   const setSameAsCurrency = (e, field) => {

@@ -49,34 +49,34 @@ export const defaultValues = {
 };
 
 const chainInfo = {
-  enable_modules: {},
-  amino_config: {},
-  show_airdrop: false,
+  enableModules: {},
+  aminoConfig: {},
+  showAirdrop: false,
   logos: {
     menu: null,
     toolbar:
       "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png",
   },
-  keplr_experimental: null,
-  leap_experimental: null,
-  is_testnet: null,
-  explorer_tx_hash_endpoint: null,
+  keplrExperimental: null,
+  leapExperimental: null,
+  isTestnet: null,
+  explorerTxHashEndpoint: null,
   config: {
-    chain_id: null,
-    chain_name: null,
+    chainId: null,
+    chainName: null,
     rest: null,
     rpc: null,
     currencies: [],
-    bech32_config: {},
-    fee_currencies: [],
+    bech32Config: {},
+    feeCurrencies: [],
     bip44: {
-      coin_type: null,
+      coinType: null,
     },
-    stake_currency: {},
+    stakeCurrency: {},
     image:
       "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
     theme: {
-      primary_color: "#fff",
+      primaryColor: "#fff",
       gradient:
         "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)",
     },
@@ -114,56 +114,55 @@ export const addNetwork = (data) => {
     return false;
   };
 
-  chainInfo.enable_modules = {
+  chainInfo.enableModules = {
     authz: parseValue(data.enableModules.authz),
     feegrant: parseValue(data.enableModules.feegrant),
     group: parseValue(data.enableModules.group),
   };
-  chainInfo.amino_config = {
+  chainInfo.aminoConfig = {
     authz: parseValue(data.aminoConfig.authz),
     feegrant: parseValue(data.aminoConfig.feegrant),
     group: false,
   };
   chainInfo.logos.menu = data.chainConfig.logo;
-  chainInfo.keplr_experimental = parseValue(data.wallet.keplrExperimental);
-  chainInfo.leap_experimental = parseValue(data.wallet.leapExperimental);
-  chainInfo.is_testnet = parseValue(data.chainConfig.isTestnet);
-  chainInfo.explorer_tx_hash_endpoint = data.explorerEndpoint;
-  chainInfo.config.chain_id = data.chainConfig.chainID;
-  chainInfo.config.chain_name = data.chainConfig.chainName;
+  chainInfo.keplrExperimental = parseValue(data.wallet.keplrExperimental);
+  chainInfo.leapExperimental = parseValue(data.wallet.leapExperimental);
+  chainInfo.isTestnet = parseValue(data.chainConfig.isTestnet);
+  chainInfo.explorerTxHashEndpoint = data.explorerEndpoint;
+  chainInfo.config.chainId = data.chainConfig.chainID;
+  chainInfo.config.chainName = data.chainConfig.chainName;
   chainInfo.config.rest = data.chainConfig.restEndpoint;
   chainInfo.config.rpc = data.chainConfig.rpcEndpoint;
   chainInfo.config.currencies = [
     {
-      coin_denom: data.currency.coinDenom,
-      coin_minimal_denom: data.currency.coinMinimalDenom,
-      coin_decimals: data.currency.decimals,
+      coinDenom: data.currency.coinDenom,
+      coinMinimalDenom: data.currency.coinMinimalDenom,
+      coinDecimals: data.currency.decimals,
     },
   ];
   const accAddressPerfix = data.accAddressPerfix;
-  chainInfo.config.bech32_config = {
-    bech32_prefix_acc_addr: accAddressPerfix,
-    bech32_prefix_acc_pub: accAddressPerfix + "pub",
-    bech32_prefix_val_addr: accAddressPerfix + "valoper",
-    bech32_prefix_val_pub: accAddressPerfix + "valoperpub",
-    bech32_prefix_cons_addr: accAddressPerfix + "gvalcons",
-    bech32_prefix_cons_pub: accAddressPerfix + "valconspub",
+  chainInfo.config.bech32Config = {
+    bech32PrefixAccAddr: accAddressPerfix,
+    bech32PrefixAccPub: accAddressPerfix + "pub",
+    bech32PrefixValAddr: accAddressPerfix + "valoper",
+    bech32PrefixValPub: accAddressPerfix + "valoperpub",
+    bech32PrefixConsAddr: accAddressPerfix + "gvalcons",
+    bech32PrefixConsPub: accAddressPerfix + "valconspub",
   };
-  chainInfo.config.fee_currencies = [
+  chainInfo.config.feeCurrencies = [
     {
-      coin_denom: data.feeCurrency.coinDenom,
-      coin_minimal_denom: data.feeCurrency.coinMinimalDenom,
-      coin_decimals: data.feeCurrency.decimals,
-      gas_price_step: data.gasPriceStep,
+      coinDenom: data.feeCurrency.coinDenom,
+      coinMinimalDenom: data.feeCurrency.coinMinimalDenom,
+      coinDecimals: data.feeCurrency.decimals,
+      gasPriceStep: data.gasPriceStep,
     },
   ];
-  chainInfo.config.bip44.coin_type = data.coinType;
-  chainInfo.config.stake_currency = {
+  chainInfo.config.bip44.coinType = data.coinType;
+  chainInfo.config.stakeCurrency = {
     coin_denom: data.stakeCurrency.coinDenom,
     coin_minimal_denom: data.stakeCurrency.coinMinimalDenom,
     coin_decimals: data.stakeCurrency.decimals,
   };
 
-  console.log(JSON.stringify(chainInfo));
   setNetwork(chainInfo);
 };
