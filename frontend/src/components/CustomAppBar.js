@@ -254,6 +254,7 @@ export function CustomAppBar(props) {
       <DialogAddNetwork
         open={addNetworkDialogOpen}
         dialogCloseHandle={addNetworkDialogCloseHandle}
+        selectNetworkDialogCloseHandle={dialogCloseHandle}
       />
     </AppBar>
   );

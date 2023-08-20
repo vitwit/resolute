@@ -28,7 +28,7 @@ import { connectWalletV1 } from "../../features/wallet/walletSlice";
 import { networks } from "../../utils/chainsInfo";
 
 const DialogAddNetwork = (props) => {
-  const { open, dialogCloseHandle } = props;
+  const { open, dialogCloseHandle, selectNetworkDialogCloseHandle } = props;
 
   const dispatch = useDispatch();
 
@@ -67,6 +67,7 @@ const DialogAddNetwork = (props) => {
     dispatch(
       setError({ type: "success", message: "Network added successfully" })
     );
+    selectNetworkDialogCloseHandle()
   };
 
   const setSameAsCurrency = (e, field) => {
