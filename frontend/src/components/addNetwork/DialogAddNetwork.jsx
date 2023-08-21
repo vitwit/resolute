@@ -26,6 +26,28 @@ import { KEY_WALLET_NAME, getNetworks } from "../../utils/localStorage";
 import { setError } from "../../features/common/commonSlice";
 import { connectWalletV1 } from "../../features/wallet/walletSlice";
 import { networks } from "../../utils/chainsInfo";
+import {
+  CHAINCONFIG_CHAIN_NAME,
+  CHAINCONFIG_CHAIN_ID,
+  CHAINCONFIG_REST_ENDPOINT,
+  CHAINCONFIG_RPC_ENDPOINT,
+  CHAINCONFIG_LOGO,
+  CURRENCY_COIN_DENOM,
+  CURRENCY_COIN_MINIMAL_DENOM,
+  CURRENCY_DECIAMLS,
+  ACC_ADDRESS_PREFIX,
+  FEE_CURRENCY_COIN_DENOM,
+  FEE_CURRENCY_COIN_MINIMAL_DENOM,
+  FEE_CURRENCY_DECIAMLS,
+  GAS_PRICE_STEP_LOW,
+  GAS_PRICE_STEP_AVG,
+  GAS_PRICE_STEP_HIGH,
+  COIN_TYPE,
+  STAKE_CURRENCY_COIN_DENOM,
+  STAKE_CURRENCY_COIN_MINIMAL_DENOM,
+  STAKE_CURRENCY_DECIAMLS,
+  EXPLORER_ENDPOINT,
+} from "./utils";
 
 const DialogAddNetwork = (props) => {
   const { open, dialogCloseHandle, selectNetworkDialogCloseHandle } = props;
@@ -67,20 +89,20 @@ const DialogAddNetwork = (props) => {
     dispatch(
       setError({ type: "success", message: "Network added successfully" })
     );
-    selectNetworkDialogCloseHandle()
+    selectNetworkDialogCloseHandle();
   };
 
   const setSameAsCurrency = (e, field) => {
     if (e.target.checked) {
-      setValue(field + ".coinDenom", getValues("currency.coinDenom"), {
+      setValue(field + ".coinDenom", getValues(CURRENCY_COIN_DENOM), {
         shouldValidate: true,
       });
       setValue(
         field + ".coinMinimalDenom",
-        getValues("currency.coinMinimalDenom"),
+        getValues(CURRENCY_COIN_MINIMAL_DENOM),
         { shouldValidate: true }
       );
-      setValue(field + ".decimals", getValues("currency.decimals"), {
+      setValue(field + ".decimals", getValues(CURRENCY_DECIAMLS), {
         shouldValidate: true,
       });
     }
@@ -127,7 +149,7 @@ const DialogAddNetwork = (props) => {
   };
 
   const chainNameExist = () => {
-    const chainName = getValues("chainConfig.chainName");
+    const chainName = getValues(CHAINCONFIG_CHAIN_NAME);
     const chainNamesList = Object.keys(nameToChainIDs);
     if (chainNamesList.includes(chainName.toLowerCase())) {
       return true;
@@ -136,7 +158,7 @@ const DialogAddNetwork = (props) => {
   };
 
   const chainIDExist = () => {
-    const chainID = getValues("chainConfig.chainID");
+    const chainID = getValues(CHAINCONFIG_CHAIN_ID);
     const chainNamesList = Object.keys(nameToChainIDs);
     for (let chain in chainNamesList) {
       if (
@@ -176,18 +198,16 @@ const DialogAddNetwork = (props) => {
               <FormSectionTitle title={"Chain Configuration"} />
               <Grid item xs={6}>
                 <Controller
-                  name="chainConfig.chainName"
+                  name={CHAINCONFIG_CHAIN_NAME}
                   control={control}
                   rules={{
                     required: getRequiredMsg("Chain Name"),
                     validate: () => {
-                      if (!getValues("chainConfig.chainName").trim().length) {
+                      if (!getValues(CHAINCONFIG_CHAIN_NAME).trim().length) {
                         return getRequiredMsg("Chain Name");
                       }
                       if (
-                        validateSpaces(
-                          getValues("chainConfig.chainName").trim()
-                        )
+                        validateSpaces(getValues(CHAINCONFIG_CHAIN_NAME).trim())
                       ) {
                         return getNoSpacesMsg("Chain Name");
                       }
@@ -202,7 +222,7 @@ const DialogAddNetwork = (props) => {
                       required
                       label="Chain Name"
                       size="small"
-                      name="chainConfig.chainName"
+                      name={CHAINCONFIG_CHAIN_NAME}
                       placeholder="Chain Name *"
                       fullWidth
                       sx={{
@@ -216,16 +236,16 @@ const DialogAddNetwork = (props) => {
               </Grid>
               <Grid item xs={6}>
                 <Controller
-                  name="chainConfig.chainID"
+                  name={CHAINCONFIG_CHAIN_ID}
                   control={control}
                   rules={{
                     required: getRequiredMsg("Chain ID"),
                     validate: () => {
-                      if (!getValues("chainConfig.chainID").trim().length) {
+                      if (!getValues(CHAINCONFIG_CHAIN_ID).trim().length) {
                         return getRequiredMsg("Chain ID");
                       }
                       if (
-                        validateSpaces(getValues("chainConfig.chainID").trim())
+                        validateSpaces(getValues(CHAINCONFIG_CHAIN_ID).trim())
                       ) {
                         return getNoSpacesMsg("Chain ID");
                       }
@@ -240,7 +260,7 @@ const DialogAddNetwork = (props) => {
                       required
                       label="Chain ID"
                       size="small"
-                      name="chainID"
+                      name={CHAINCONFIG_CHAIN_ID}
                       placeholder="Chain ID *"
                       fullWidth
                       sx={{
@@ -254,10 +274,10 @@ const DialogAddNetwork = (props) => {
               </Grid>
               <Grid item xs={6}>
                 <Controller
-                  name="chainConfig.restEndpoint"
+                  name={CHAINCONFIG_REST_ENDPOINT}
                   control={control}
                   rules={getURLValidations(
-                    "chainConfig.restEndpoint",
+                    CHAINCONFIG_REST_ENDPOINT,
                     "Rest Endpoint"
                   )}
                   render={({ field }) => (
@@ -267,7 +287,7 @@ const DialogAddNetwork = (props) => {
                       type="url"
                       label="Rest Endpoint"
                       size="small"
-                      name="restEndpoint"
+                      name={CHAINCONFIG_REST_ENDPOINT}
                       placeholder="Eg: https://api.resolute.vitwit.com/cosmos_api/"
                       fullWidth
                       sx={{
@@ -281,10 +301,10 @@ const DialogAddNetwork = (props) => {
               </Grid>
               <Grid item xs={6}>
                 <Controller
-                  name="chainConfig.rpcEndpoint"
+                  name={CHAINCONFIG_RPC_ENDPOINT}
                   control={control}
                   rules={getURLValidations(
-                    "chainConfig.rpcEndpoint",
+                    CHAINCONFIG_RPC_ENDPOINT,
                     "RPC Endpoint"
                   )}
                   render={({ field }) => (
@@ -294,7 +314,7 @@ const DialogAddNetwork = (props) => {
                       type="url"
                       label="RPC Endpoint"
                       size="small"
-                      name="rpcEndpoint"
+                      name={CHAINCONFIG_RPC_ENDPOINT}
                       placeholder="Eg: https://api.resolute.vitwit.com/cosmos_rpc/"
                       fullWidth
                       sx={{
@@ -308,9 +328,9 @@ const DialogAddNetwork = (props) => {
               </Grid>
               <Grid item xs={6}>
                 <Controller
-                  name="chainConfig.logo"
+                  name={CHAINCONFIG_LOGO}
                   control={control}
-                  rules={getURLValidations("chainConfig.logo", "Logo URL")}
+                  rules={getURLValidations(CHAINCONFIG_LOGO, "Logo URL")}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -318,7 +338,7 @@ const DialogAddNetwork = (props) => {
                       type="url"
                       label="Logo URL"
                       size="small"
-                      name="chainConfig.logo"
+                      name={CHAINCONFIG_LOGO}
                       placeholder="Eg: https://raw.githubusercontent.com/..../images/cosmoshub.svg"
                       fullWidth
                       sx={{
@@ -345,10 +365,10 @@ const DialogAddNetwork = (props) => {
               <FormSectionTitle title={"Currency Details"} />
               <Grid item xs={4}>
                 <Controller
-                  name={"currency.coinDenom"}
+                  name={CURRENCY_COIN_DENOM}
                   control={control}
                   rules={getCoinDenomValidations(
-                    "currency.coinDenom",
+                    CURRENCY_COIN_DENOM,
                     "Coin Denom"
                   )}
                   render={({ field }) => (
@@ -357,7 +377,7 @@ const DialogAddNetwork = (props) => {
                       required
                       label="Coin Denom"
                       size="small"
-                      name="currency.coinDenom"
+                      name={CURRENCY_COIN_DENOM}
                       placeholder="Eg: ATOM"
                       fullWidth
                       sx={{
@@ -371,10 +391,10 @@ const DialogAddNetwork = (props) => {
               </Grid>
               <Grid item xs={4}>
                 <Controller
-                  name="currency.coinMinimalDenom"
+                  name={CURRENCY_COIN_MINIMAL_DENOM}
                   control={control}
                   rules={getCoinDenomValidations(
-                    "currency.coinMinimalDenom",
+                    CURRENCY_COIN_MINIMAL_DENOM,
                     "Coin Minimlal Denom"
                   )}
                   render={({ field }) => (
@@ -383,7 +403,7 @@ const DialogAddNetwork = (props) => {
                       required
                       label="Coin Minimal Denom"
                       size="small"
-                      name="currency.coinMinimalDenom"
+                      name={CURRENCY_COIN_MINIMAL_DENOM}
                       placeholder="Eg: uatom"
                       fullWidth
                       sx={{
@@ -397,10 +417,10 @@ const DialogAddNetwork = (props) => {
               </Grid>
               <Grid item xs={4}>
                 <Controller
-                  name="currency.decimals"
+                  name={CURRENCY_DECIAMLS}
                   control={control}
                   rules={getCoinDecimalsValidations(
-                    "currency.decimals",
+                    CURRENCY_DECIAMLS,
                     "Decimals"
                   )}
                   render={({ field }) => (
@@ -410,7 +430,7 @@ const DialogAddNetwork = (props) => {
                       type="number"
                       label="Decimals"
                       size="small"
-                      name="currency.decimals"
+                      name={CURRENCY_DECIAMLS}
                       placeholder="Eg: 6"
                       fullWidth
                       sx={{
@@ -427,16 +447,16 @@ const DialogAddNetwork = (props) => {
               <FormSectionTitle title={"Bech32 Configuration"} />
               <Grid item xs={4}>
                 <Controller
-                  name="accAddressPerfix"
+                  name={ACC_ADDRESS_PREFIX}
                   control={control}
                   rules={{
                     required: getRequiredMsg("Account Address Prefix"),
                     validate: () => {
-                      if (!getValues("accAddressPerfix").trim().length) {
+                      if (!getValues(ACC_ADDRESS_PREFIX).trim().length) {
                         return getRequiredMsg("Account Address Prefix");
                       }
                       if (
-                        validateSpaces(getValues("accAddressPerfix").trim())
+                        validateSpaces(getValues(ACC_ADDRESS_PREFIX).trim())
                       ) {
                         return getNoSpacesMsg("Account Address Prefix");
                       }
@@ -448,7 +468,7 @@ const DialogAddNetwork = (props) => {
                       required
                       label="Account Address Prefix"
                       size="small"
-                      name="accAddressPerfix"
+                      name={ACC_ADDRESS_PREFIX}
                       placeholder="Eg: cosmos"
                       fullWidth
                       sx={{
@@ -479,10 +499,10 @@ const DialogAddNetwork = (props) => {
               </Grid>
               <Grid item xs={4}>
                 <Controller
-                  name="feeCurrency.coinDenom"
+                  name={FEE_CURRENCY_COIN_DENOM}
                   control={control}
                   rules={getCoinDenomValidations(
-                    "feeCurrency.coinDenom",
+                    FEE_CURRENCY_COIN_DENOM,
                     "Coin Denom"
                   )}
                   render={({ field }) => (
@@ -491,7 +511,7 @@ const DialogAddNetwork = (props) => {
                       required
                       label="Coin Denom"
                       size="small"
-                      name="feeCurrency.coinDenom"
+                      name={FEE_CURRENCY_COIN_DENOM}
                       placeholder="Eg: ATOM"
                       fullWidth
                       sx={{
@@ -505,10 +525,10 @@ const DialogAddNetwork = (props) => {
               </Grid>
               <Grid item xs={4}>
                 <Controller
-                  name="feeCurrency.coinMinimalDenom"
+                  name={FEE_CURRENCY_COIN_MINIMAL_DENOM}
                   control={control}
                   rules={getCoinDenomValidations(
-                    "feeCurrency.coinMinimalDenom",
+                    FEE_CURRENCY_COIN_MINIMAL_DENOM,
                     "Coin Minimlal Denom"
                   )}
                   render={({ field }) => (
@@ -517,7 +537,7 @@ const DialogAddNetwork = (props) => {
                       required
                       label="Coin Minimal Denom"
                       size="small"
-                      name="feeCurrency.coinMinimalDenom"
+                      name={FEE_CURRENCY_COIN_MINIMAL_DENOM}
                       placeholder="Eg: uatom"
                       fullWidth
                       sx={{
@@ -533,10 +553,10 @@ const DialogAddNetwork = (props) => {
               </Grid>
               <Grid item xs={4}>
                 <Controller
-                  name="feeCurrency.decimals"
+                  name={FEE_CURRENCY_DECIAMLS}
                   control={control}
                   rules={getCoinDecimalsValidations(
-                    "feeCurrency.decimals",
+                    FEE_CURRENCY_DECIAMLS,
                     "Decimals"
                   )}
                   render={({ field }) => (
@@ -546,7 +566,7 @@ const DialogAddNetwork = (props) => {
                       type="number"
                       label="Decimals"
                       size="small"
-                      name="feeCurrency.decimals"
+                      name={FEE_CURRENCY_DECIAMLS}
                       placeholder="Eg: 6"
                       fullWidth
                       sx={{
@@ -562,12 +582,12 @@ const DialogAddNetwork = (props) => {
                 <FormSectionTitle title={"Gas Price Step"} />
                 <Grid item xs={4}>
                   <Controller
-                    name="gasPriceStep.low"
+                    name={GAS_PRICE_STEP_LOW}
                     control={control}
                     rules={{
                       required: getRequiredMsg("GasPriceStep Low"),
                       validate: () => {
-                        if (getValues("gasPriceStep.low") <= 0) {
+                        if (getValues(GAS_PRICE_STEP_LOW) <= 0) {
                           return "Should be greater than 0";
                         }
                       },
@@ -579,7 +599,7 @@ const DialogAddNetwork = (props) => {
                         type="number"
                         label="Low"
                         size="small"
-                        name="gasPriceStep.low"
+                        name={GAS_PRICE_STEP_LOW}
                         placeholder="Eg: 0.01"
                         fullWidth
                         sx={{
@@ -593,12 +613,12 @@ const DialogAddNetwork = (props) => {
                 </Grid>
                 <Grid item xs={4}>
                   <Controller
-                    name="gasPriceStep.average"
+                    name={GAS_PRICE_STEP_AVG}
                     control={control}
                     rules={{
                       required: getRequiredMsg("GasPriceStep Average"),
                       validate: () => {
-                        if (getValues("gasPriceStep.average") <= 0) {
+                        if (getValues(GAS_PRICE_STEP_AVG) <= 0) {
                           return "Should be greater than 0";
                         }
                       },
@@ -610,7 +630,7 @@ const DialogAddNetwork = (props) => {
                         type="number"
                         label="Average"
                         size="small"
-                        name="gasPriceStep.average"
+                        name={GAS_PRICE_STEP_AVG}
                         placeholder="Eg: 0.025"
                         fullWidth
                         sx={{
@@ -624,12 +644,12 @@ const DialogAddNetwork = (props) => {
                 </Grid>
                 <Grid item xs={4}>
                   <Controller
-                    name="gasPriceStep.high"
+                    name={GAS_PRICE_STEP_HIGH}
                     control={control}
                     rules={{
                       required: getRequiredMsg("GasPriceStep High"),
                       validate: () => {
-                        if (getValues("gasPriceStep.high") <= 0) {
+                        if (getValues(GAS_PRICE_STEP_HIGH) <= 0) {
                           return "Should be greater than 0";
                         }
                       },
@@ -641,7 +661,7 @@ const DialogAddNetwork = (props) => {
                         type="number"
                         label="High"
                         size="small"
-                        name="gasPriceStep.high"
+                        name={GAS_PRICE_STEP_HIGH}
                         placeholder="Eg: 0.03"
                         fullWidth
                         sx={{
@@ -660,9 +680,9 @@ const DialogAddNetwork = (props) => {
               <Grid item xs={4}>
                 <Controller
                   defaultValue={118}
-                  name="coinType"
+                  name={COIN_TYPE}
                   control={control}
-                  rules={getCoinDecimalsValidations("coinType", "Coin Type")}
+                  rules={getCoinDecimalsValidations(COIN_TYPE, "Coin Type")}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -670,7 +690,7 @@ const DialogAddNetwork = (props) => {
                       type="number"
                       label="Coin Type"
                       size="small"
-                      name="coinType"
+                      name={COIN_TYPE}
                       placeholder="Eg: 118"
                       fullWidth
                       sx={{
@@ -701,10 +721,10 @@ const DialogAddNetwork = (props) => {
               </Grid>
               <Grid item xs={4}>
                 <Controller
-                  name="stakeCurrency.coinDenom"
+                  name={STAKE_CURRENCY_COIN_DENOM}
                   control={control}
                   rules={getCoinDenomValidations(
-                    "stakeCurrency.coinDenom",
+                    STAKE_CURRENCY_COIN_DENOM,
                     "Coin Denom"
                   )}
                   render={({ field }) => (
@@ -713,7 +733,7 @@ const DialogAddNetwork = (props) => {
                       required
                       label="Coin Denom"
                       size="small"
-                      name="stakeCurrency.coinDenom"
+                      name={STAKE_CURRENCY_COIN_DENOM}
                       placeholder="Eg: ATOM"
                       fullWidth
                       sx={{
@@ -727,10 +747,10 @@ const DialogAddNetwork = (props) => {
               </Grid>
               <Grid item xs={4}>
                 <Controller
-                  name="stakeCurrency.coinMinimalDenom"
+                  name={STAKE_CURRENCY_COIN_MINIMAL_DENOM}
                   control={control}
                   rules={getCoinDenomValidations(
-                    "stakeCurrency.coinMinimalDenom",
+                    STAKE_CURRENCY_COIN_MINIMAL_DENOM,
                     "Coin Minimlal Denom"
                   )}
                   render={({ field }) => (
@@ -739,7 +759,7 @@ const DialogAddNetwork = (props) => {
                       required
                       label="Coin Minimal Denom"
                       size="small"
-                      name="stakeCurrency.coinMinimalDenom"
+                      name={STAKE_CURRENCY_COIN_MINIMAL_DENOM}
                       placeholder="Eg: uatom"
                       fullWidth
                       sx={{
@@ -755,10 +775,10 @@ const DialogAddNetwork = (props) => {
               </Grid>
               <Grid item xs={4}>
                 <Controller
-                  name="stakeCurrency.decimals"
+                  name={STAKE_CURRENCY_DECIAMLS}
                   control={control}
                   rules={getCoinDecimalsValidations(
-                    "stakeCurrency.decimals",
+                    STAKE_CURRENCY_DECIAMLS,
                     "Decimals"
                   )}
                   render={({ field }) => (
@@ -768,7 +788,7 @@ const DialogAddNetwork = (props) => {
                       type="number"
                       label="Decimals"
                       size="small"
-                      name="stakeCurrency.decimals"
+                      name={STAKE_CURRENCY_DECIAMLS}
                       placeholder="Eg: 6"
                       fullWidth
                       sx={{
@@ -785,10 +805,10 @@ const DialogAddNetwork = (props) => {
               <FormSectionTitle title={"Explorer"} />
               <Grid item xs={6}>
                 <Controller
-                  name="explorerEndpoint"
+                  name={EXPLORER_ENDPOINT}
                   control={control}
                   rules={getURLValidations(
-                    "explorerEndpoint",
+                    EXPLORER_ENDPOINT,
                     "Explorer Tx Hash Endpoint"
                   )}
                   render={({ field }) => (
@@ -798,7 +818,7 @@ const DialogAddNetwork = (props) => {
                       type="url"
                       label="Explorer Tx Hash Endpoint"
                       size="small"
-                      name="explorerEndpoint"
+                      name={EXPLORER_ENDPOINT}
                       placeholder="Eg: https://www.mintscan.io/cosmos/txs/"
                       fullWidth
                       sx={{

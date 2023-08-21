@@ -83,6 +83,27 @@ const chainInfo = {
   },
 };
 
+export const CHAINCONFIG_CHAIN_NAME = "chainConfig.chainName";
+export const CHAINCONFIG_CHAIN_ID = "chainConfig.chainID";
+export const CHAINCONFIG_REST_ENDPOINT = "chainConfig.restEndpoint";
+export const CHAINCONFIG_RPC_ENDPOINT = "chainConfig.rpcEndpoint";
+export const CHAINCONFIG_LOGO = "chainConfig.logo";
+export const CURRENCY_COIN_DENOM = "currency.coinDenom";
+export const CURRENCY_COIN_MINIMAL_DENOM = "currency.coinMinimalDenom";
+export const CURRENCY_DECIAMLS = "currency.decimals";
+export const ACC_ADDRESS_PREFIX = "accAddressPerfix";
+export const FEE_CURRENCY_COIN_DENOM = "feeCurrency.coinDenom";
+export const FEE_CURRENCY_COIN_MINIMAL_DENOM = "feeCurrency.coinMinimalDenom";
+export const FEE_CURRENCY_DECIAMLS = "feeCurrency.decimals";
+export const GAS_PRICE_STEP_LOW = "gasPriceStep.low";
+export const GAS_PRICE_STEP_AVG = "gasPriceStep.average";
+export const GAS_PRICE_STEP_HIGH = "gasPriceStep.high";
+export const COIN_TYPE = "coinType";
+export const STAKE_CURRENCY_COIN_DENOM = "stakeCurrency.coinDenom";
+export const STAKE_CURRENCY_COIN_MINIMAL_DENOM = "stakeCurrency.coinMinimalDenom";
+export const STAKE_CURRENCY_DECIAMLS = "stakeCurrency.decimals";
+export const EXPLORER_ENDPOINT = "explorerEndpoint";
+
 export const validateSpaces = (value) => {
   if (value?.match(" ")) {
     return true;
