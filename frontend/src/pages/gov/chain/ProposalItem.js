@@ -29,9 +29,11 @@ export const ProposalItem = (props) => {
   const chainInfo = useSelector(
     (state) => state.wallet.networks?.[chainID]?.network
   );
-
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[chainName] || {}
+  );
   const balances = useSelector((state) => state.bank.balances[chainID]?.list);
-  console.log(balances);
+  const govTx = useSelector((state) => state.gov.tx);
 
   const currency = chainInfo?.config?.currencies;
 
@@ -60,7 +62,7 @@ export const ProposalItem = (props) => {
       baseURL: chainInfo?.config?.rest + "/",
       address: address,
       chainID: chainID,
-    })
+    });
     dispatch(
       getBalances({
         baseURL: chainInfo?.config?.rest + "/",
@@ -81,6 +83,12 @@ export const ProposalItem = (props) => {
       }
     }
   }, [balances]);
+
+  useEffect(() => {
+    if (govTx.status === "idle") {
+      handleDialogClose();
+    }
+  }, [govTx]);
 
   return (
     <Paper
@@ -237,6 +245,10 @@ export const ProposalItem = (props) => {
         onClose={handleDialogClose}
         balance={balance?.amount}
         displayDenom={balance?.denom}
+        address={address}
+        proposalId={info.proposal_id}
+        chainInfo={chainInfo}
+        feegrant={feegrant}
       />
     </Paper>
   );

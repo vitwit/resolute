@@ -8,9 +8,24 @@ import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Controller, useForm } from "react-hook-form";
+import { txDeposit } from "../features/gov/govSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const DialogDeposit = (props) => {
-  const { onClose, open, balance, loading, displayDenom } = props;
+  const {
+    onClose,
+    open,
+    balance,
+    displayDenom,
+    address,
+    proposalId,
+    chainInfo,
+    feegrant,
+  } = props;
+
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.gov.tx.status);
+
   const handleClose = () => {
     onClose();
   };
@@ -26,9 +41,25 @@ const DialogDeposit = (props) => {
     },
   });
 
-  const onSubmit = () => {
-    console.log("submitted")
-  }
+  const onSubmit = (data) => {
+    dispatch(
+      txDeposit({
+        depositer: address,
+        proposalId: proposalId,
+        amount: Number(data.amount),
+        denom: chainInfo.config.currencies[0].coinMinimalDenom,
+        chainId: chainInfo.config.chainId,
+        rpc: chainInfo.config.rpc,
+        rest: chainInfo.config.rest,
+        aminoConfig: chainInfo.aminoConfig,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+        feeAmount:
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** chainInfo.config.currencies[0].coinDecimals,
+        feegranter: feegrant.granter,
+      })
+    );
+  };
 
   return (
     <>

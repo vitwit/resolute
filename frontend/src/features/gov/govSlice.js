@@ -3,6 +3,7 @@ import { GovVoteMsg } from "../../txns/gov";
 import { signAndBroadcast } from "../../utils/signing";
 import { setError, setTxHash } from "../common/commonSlice";
 import govService from "./govService";
+import { GovDepositMsg } from "../../txns/gov/deposit";
 
 const initialState = {
   loading: 0,
@@ -59,7 +60,7 @@ export const getProposalsInDeposit = createAsyncThunk(
     );
     return {
       chainID: data.chainID,
-      data: response.data
+      data: response.data,
     };
   }
 );
@@ -96,7 +97,7 @@ export const getProposalsInVoting = createAsyncThunk(
     }
     return {
       chainID: data.chainID,
-      data: response.data
+      data: response.data,
     };
   }
 );
@@ -108,7 +109,7 @@ export const getProposalTally = createAsyncThunk(
     response.data.tally.proposal_id = data.proposalId;
     return {
       chainID: data.chainID,
-      data: response.data
+      data: response.data,
     };
   }
 );
@@ -124,7 +125,7 @@ export const getVotes = createAsyncThunk("gov/voter-votes", async (data) => {
   response.data.vote.proposal_id = data.proposalId;
   return {
     chainID: data.chainID,
-    data: response.data
+    data: response.data,
   };
 });
 
@@ -133,6 +134,55 @@ export const txVote = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = GovVoteMsg(data.proposalId, data.voter, data.option);
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
+        [msg],
+        860000,
+        data?.justification || "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const txDeposit = createAsyncThunk(
+  "gov/tx-deposit",
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    try {
+      const msg = GovDepositMsg(
+        data.proposalId,
+        data.depositer,
+        data.amount,
+        data.denom
+      );
       const result = await signAndBroadcast(
         data.chainId,
         data.aminoConfig,
@@ -203,9 +253,8 @@ export const proposalsSlice = createSlice({
             status: "idle",
             errMsg: "",
             proposals: action.payload?.data?.proposals,
-            pagination: action.payload?.pagination
-
-          }
+            pagination: action.payload?.pagination,
+          };
           state.active[chainID] = result;
           state.loading--;
         }
@@ -219,7 +268,7 @@ export const proposalsSlice = createSlice({
         state.loading--;
       });
 
-      builder
+    builder
       .addCase(getProposalsInDeposit.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
         const chainData = state.deposit[chainID] || {};
@@ -235,9 +284,8 @@ export const proposalsSlice = createSlice({
             status: "idle",
             errMsg: "",
             proposals: action.payload?.data?.proposals,
-            pagination: action.payload?.pagination
-
-          }
+            pagination: action.payload?.pagination,
+          };
           state.deposit[chainID] = result;
         }
         state.loading--;
@@ -253,41 +301,38 @@ export const proposalsSlice = createSlice({
 
     // tally
     builder
-      .addCase(getProposalTally.pending, () => { })
+      .addCase(getProposalTally.pending, () => {})
       .addCase(getProposalTally.fulfilled, (state, action) => {
         const chainID = action.payload.chainID;
         let result = {
           status: "idle",
           errMsg: "",
-          proposalTally: state.tally[chainID]?.proposalTally || {}
+          proposalTally: state.tally[chainID]?.proposalTally || {},
         };
 
         result.proposalTally[action.payload?.data?.tally?.proposal_id] =
           action.payload?.data.tally;
         state.tally[chainID] = result;
       })
-      .addCase(getProposalTally.rejected, () => {
-      });
+      .addCase(getProposalTally.rejected, () => {});
 
     // votes
     builder
-      .addCase(getVotes.pending, () => {
-      })
+      .addCase(getVotes.pending, () => {})
       .addCase(getVotes.fulfilled, (state, action) => {
         const chainID = action.payload.chainID;
         let result = {
           status: "idle",
           errMsg: "",
-          proposals: []
-        }
+          proposals: [],
+        };
 
         result.proposals[action.payload?.data?.vote?.proposal_id] =
           action.payload.data;
 
-        state.votes[chainID] = result
+        state.votes[chainID] = result;
       })
-      .addCase(getVotes.rejected, (state, action) => {
-      });
+      .addCase(getVotes.rejected, (state, action) => {});
 
     // tx-vote
     builder
@@ -298,6 +343,18 @@ export const proposalsSlice = createSlice({
         state.tx.status = "idle";
       })
       .addCase(txVote.rejected, (state, _) => {
+        state.tx.status = "rejected";
+      });
+
+    // tx-deposit
+    builder
+      .addCase(txDeposit.pending, (state) => {
+        state.tx.status = "pending";
+      })
+      .addCase(txDeposit.fulfilled, (state, _) => {
+        state.tx.status = "idle";
+      })
+      .addCase(txDeposit.rejected, (state, _) => {
         state.tx.status = "rejected";
       });
 
@@ -312,15 +369,15 @@ export const proposalsSlice = createSlice({
         if (chainID.length > 0) {
           const old = state.active[chainID];
           if (old?.proposals?.length > 0) {
-            old.proposals = [action.payload.proposal]
+            old.proposals = [action.payload.proposal];
             state.active[chainID] = old;
           } else {
             state.active[chainID] = {
               status: "idle",
               errMsg: "",
               proposals: [action.payload?.proposal],
-              pagination: {}
-            }
+              pagination: {},
+            };
           }
         }
       })

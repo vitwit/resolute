@@ -3,7 +3,7 @@ import { Msg } from "../types";
 
 const msgDeposit = "/cosmos.gov.v1beta1.MsgDeposit";
 
-export function GovVoteMsg(
+export function GovDepositMsg(
   proposalId: number,
   depositer: string,
   amount: number,
