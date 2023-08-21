@@ -57,7 +57,7 @@ export const connectWallet = (walletName, dispatch) => {
       window.wallet = window.leap;
       connectActions(walletName, dispatch);
       break;
-    case "cosmos-station":
+    case "cosmostation":
       window.wallet = window?.cosmostation?.providers?.keplr;
       connectActions(walletName, dispatch);
       break;

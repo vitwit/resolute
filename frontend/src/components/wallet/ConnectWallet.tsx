@@ -56,7 +56,7 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
               elevation={0}
               sx={{
                 p: 3,
-                width: "35%",
+                width: "36%",
               }}
               onClick={() => handleOnWalletSelect("keplr")}
             >
@@ -97,7 +97,7 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
               elevation={0}
               sx={{
                 p: 3,
-                width: "35%",
+                width: "36%",
               }}
               onClick={() => handleOnWalletSelect("leap")}
             >
@@ -139,9 +139,10 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
               elevation={0}
               sx={{
                 p: 3,
-                width: "35%",
+                width: "36%",
+                wordWrap: "break-word", // Allow the text to wrap within the specified width
               }}
-              onClick={() => handleOnWalletSelect("cosmos-station")}
+              onClick={() => handleOnWalletSelect("cosmostation")}
             >
               <Avatar
                 sx={{
@@ -151,7 +152,7 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
                     cursor: "pointer",
                   },
                 }}
-                src="https://raw.githubusercontent.com/cosmology-tech/cosmos-kit/main/public/images/logos/wallets/cosmos-station.png"
+                src="https://raw.githubusercontent.com/cosmology-tech/cosmos-kit/main/public/images/logos/wallets/cosmostation.png"
               />
               <Typography
                 fontWeight={600}
@@ -163,7 +164,7 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
                   },
                 }}
               >
-                &nbsp;Cosmos-Station
+                &nbsp;Cosmostation
               </Typography>
             </Paper>
           </Grid>

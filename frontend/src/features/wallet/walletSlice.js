@@ -41,7 +41,7 @@ export const connectWalletV1 = createAsyncThunk(
       const nameToChainIDs = {};
       for (let i = 0; i < mainnets.length; i++) {
         try {
-          if ((data.walletName === "keplr" || data.walletName === "cosmos-station" ) && mainnets[i].keplrExperimental) {
+          if ((data.walletName === "keplr" || data.walletName === "cosmostation" ) && mainnets[i].keplrExperimental) {
             await window.wallet.experimentalSuggestChain(mainnets[i].config);
           }
           if (data.walletName === "leap" && mainnets[i].leapExperimental) {
