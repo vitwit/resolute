@@ -226,6 +226,7 @@ export const proposalsSlice = createSlice({
         chainData.status = "pending";
         chainData.errMsg = "";
         state.deposit[chainID] = chainData;
+        state.loading++;
       })
       .addCase(getProposalsInDeposit.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
@@ -239,6 +240,7 @@ export const proposalsSlice = createSlice({
           }
           state.deposit[chainID] = result;
         }
+        state.loading--;
       })
       .addCase(getProposalsInDeposit.rejected, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
@@ -246,6 +248,7 @@ export const proposalsSlice = createSlice({
         chainData.status = "rejected";
         chainData.errMsg = action.error.message;
         state.deposit[chainID] = chainData;
+        state.loading--;
       });
 
     // tally

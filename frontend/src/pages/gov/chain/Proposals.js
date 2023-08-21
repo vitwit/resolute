@@ -48,6 +48,7 @@ export default function Proposals({
   bech32Config,
   authzMode,
   grantsToMe,
+  isChainSpecific,
 }) {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
@@ -71,6 +72,7 @@ export default function Proposals({
   const depositProposals = useSelector(
     (state) => state.gov.deposit[chainID]?.proposals || []
   );
+  const loading = useSelector((state) => state.gov.loading);
 
   const [proposals, setProposals] = useState([]);
 
@@ -189,8 +191,10 @@ export default function Proposals({
 
   return (authzMode && grantsToMe?.length > 0) || !authzMode ? (
     <React.Fragment key={id}>
-      {!proposals?.length ? (
-        <></>
+      {!proposals?.length && !loading ? (
+        <>
+        {isChainSpecific && <Typography sx={{mt: 6}} variant="h6">- No Proposals Found -</Typography>}
+        </>
       ) : (
         <>
           <Box

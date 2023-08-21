@@ -62,6 +62,7 @@ function ProposalsPage() {
       authzMode={isAuthzMode}
       grantsToMe={authzGrants[selectedNetworkData.config.chainId] || []}
       id={1}
+      isChainSpecific={true}
     />
   ) : (
     Object.keys(networks).map((key, index) => (
@@ -79,6 +80,7 @@ function ProposalsPage() {
         authzMode={isAuthzMode}
         grantsToMe={authzGrants[networks[key].network.config.chainId] || []}
         id={index}
+        isChainSpecific={false}
       />
     ))
   );
