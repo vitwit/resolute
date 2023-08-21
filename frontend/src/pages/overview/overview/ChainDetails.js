@@ -225,17 +225,42 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                       tokensPriceInfo[originMinimalDenom]?.info?.["usd"]
                     ).toFixed(2)}`}
                     <Box>
-                      ({PRICE_CHANGE_PERCENTAGE >= 0 && `+`}
+                      {
+                      PRICE_CHANGE_PERCENTAGE >= 0 ?
+                      <Typography
+                        color="green"
+                        variant="caption"
+                      >
+                      +
                       {parseFloat(
                         tokensPriceInfo[originMinimalDenom]?.info?.[
                           "usd_24h_change"
                         ]
                       ).toFixed(2)}
-                      %)
+                      %
+                      </Typography>
+                        :
+                        <Typography
+                        color="error"
+                        variant="caption"
+                      >
+                         {parseFloat(
+                        tokensPriceInfo[originMinimalDenom]?.info?.[
+                          "usd_24h_change"
+                        ]
+                      ).toFixed(2)}
+                      %
+                        </Typography>
+                    }
+                     
                     </Box>
                   </>
                 ) : (
-                  "N/A"
+                  <Typography
+                    variant="body2"
+                  >
+                  N/A
+                  </Typography>
                 )}
               </StyledTableCell>
               <StyledTableCell>
