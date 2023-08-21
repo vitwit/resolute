@@ -62,6 +62,9 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
   const decimals =
     chainInfo?.network?.config?.currencies?.[0]?.coinDecimals || 1;
   const logoURL = chainInfo?.network?.logos?.menu;
+  const PRICE_CHANGE_PERCENTAGE = Number(
+    tokensPriceInfo[originMinimalDenom]?.info?.["usd_24h_change"] || "0"
+  );
 
   // Memoized function to prevent unnecessary re-renders
   const handleOnClick = useCallback(() => {
@@ -216,11 +219,49 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                 {originDenom}
               </StyledTableCell>
               <StyledTableCell>
-                {tokensPriceInfo[originMinimalDenom]
-                  ? `$${parseFloat(
+                {tokensPriceInfo[originMinimalDenom] ? (
+                  <>
+                    {`$${parseFloat(
                       tokensPriceInfo[originMinimalDenom]?.info?.["usd"]
-                    ).toFixed(2)}`
-                  : "N/A"}
+                    ).toFixed(2)}`}
+                    <Box>
+                      {
+                      PRICE_CHANGE_PERCENTAGE >= 0 ?
+                      <Typography
+                        color="green"
+                        variant="caption"
+                      >
+                      +
+                      {parseFloat(
+                        tokensPriceInfo[originMinimalDenom]?.info?.[
+                          "usd_24h_change"
+                        ]
+                      ).toFixed(2)}
+                      %
+                      </Typography>
+                        :
+                        <Typography
+                        color="error"
+                        variant="caption"
+                      >
+                         {parseFloat(
+                        tokensPriceInfo[originMinimalDenom]?.info?.[
+                          "usd_24h_change"
+                        ]
+                      ).toFixed(2)}
+                      %
+                        </Typography>
+                    }
+                     
+                    </Box>
+                  </>
+                ) : (
+                  <Typography
+                    variant="body2"
+                  >
+                  N/A
+                  </Typography>
+                )}
               </StyledTableCell>
               <StyledTableCell>
                 <Button
