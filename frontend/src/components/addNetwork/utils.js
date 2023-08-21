@@ -159,9 +159,9 @@ export const addNetwork = (data) => {
   ];
   chainInfo.config.bip44.coinType = data.coinType;
   chainInfo.config.stakeCurrency = {
-    coin_denom: data.stakeCurrency.coinDenom,
-    coin_minimal_denom: data.stakeCurrency.coinMinimalDenom,
-    coin_decimals: data.stakeCurrency.decimals,
+    coinDenom: data.stakeCurrency.coinDenom,
+    coinMinimalDenom: data.stakeCurrency.coinMinimalDenom,
+    coinDecimals: data.stakeCurrency.decimals,
   };
 
   setNetwork(chainInfo);
