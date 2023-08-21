@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import ConnectWallet from "../../components/ConnectWallet";
 import { CircularProgress, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { resetLoading } from "../../features/gov/govSlice";
 import { Box } from "@mui/system";
 
 export const filterVoteAuthz = (authzs) => {
@@ -33,10 +32,6 @@ function ProposalsPage() {
 
   const params = useParams();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(resetLoading({ chainsCount: Object.keys(networks).length }));
-  }, [networks]);
 
   useEffect(() => {
     if (loading && defaultLoading) {

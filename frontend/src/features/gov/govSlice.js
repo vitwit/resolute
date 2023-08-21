@@ -194,6 +194,7 @@ export const proposalsSlice = createSlice({
         chainData.status = "pending";
         chainData.errMsg = "";
         state.active[chainID] = chainData;
+        state.loading++;
       })
       .addCase(getProposalsInVoting.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
