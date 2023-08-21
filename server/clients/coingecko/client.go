@@ -20,7 +20,7 @@ func NewClient(api string, vsCurrencies []string) Client {
 }
 
 func (c Client) GetPrice(ids []string) (map[string]interface{}, error) {
-	resp, err := http.Get(fmt.Sprintf("%s/simple/price?ids=%s&vs_currencies=%s", c.API, strings.Join(ids, ","), c.VsCurrencies))
+	resp, err := http.Get(fmt.Sprintf("%s/simple/price?ids=%s&vs_currencies=%s&include_24hr_change=true", c.API, strings.Join(ids, ","), c.VsCurrencies))
 	if err != nil {
 		return nil, err
 	}
