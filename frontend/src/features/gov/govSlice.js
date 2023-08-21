@@ -5,8 +5,13 @@ import { setError, setTxHash } from "../common/commonSlice";
 import govService from "./govService";
 
 const initialState = {
-  loading : 0,
+  loading: 0,
   active: {
+    proposals: {},
+    status: "idle",
+    errMsg: "",
+  },
+  deposit: {
     proposals: {},
     status: "idle",
     errMsg: "",
@@ -43,7 +48,23 @@ export const getProposal = createAsyncThunk(
   }
 );
 
-export const getProposals = createAsyncThunk(
+export const getProposalsInDeposit = createAsyncThunk(
+  "gov/deposit-proposals",
+  async (data) => {
+    const response = await govService.proposals(
+      data.baseURL,
+      data?.key,
+      data?.limit,
+      1
+    );
+    return {
+      chainID: data.chainID,
+      data: response.data
+    };
+  }
+);
+
+export const getProposalsInVoting = createAsyncThunk(
   "gov/active-proposals",
   async (data, { dispatch }) => {
     const response = await govService.proposals(
@@ -156,7 +177,7 @@ export const proposalsSlice = createSlice({
   initialState,
   reducers: {
     resetLoading: (state, action) => {
-      const {chainsCount} = action.payload;
+      const { chainsCount } = action.payload;
       state.loading += chainsCount;
     },
     resetTx: (state) => {
@@ -167,14 +188,14 @@ export const proposalsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getProposals.pending, (state, action) => {
+      .addCase(getProposalsInVoting.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
         const chainData = state.active[chainID] || {};
         chainData.status = "pending";
         chainData.errMsg = "";
         state.active[chainID] = chainData;
       })
-      .addCase(getProposals.fulfilled, (state, action) => {
+      .addCase(getProposalsInVoting.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
         if (chainID.length > 0) {
           let result = {
@@ -188,13 +209,42 @@ export const proposalsSlice = createSlice({
           state.loading--;
         }
       })
-      .addCase(getProposals.rejected, (state, action) => {
+      .addCase(getProposalsInVoting.rejected, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
         const chainData = state.active[chainID] || {};
         chainData.status = "rejected";
         chainData.errMsg = action.error.message;
         state.active[chainID] = chainData;
         state.loading--;
+      });
+
+      builder
+      .addCase(getProposalsInDeposit.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const chainData = state.deposit[chainID] || {};
+        chainData.status = "pending";
+        chainData.errMsg = "";
+        state.deposit[chainID] = chainData;
+      })
+      .addCase(getProposalsInDeposit.fulfilled, (state, action) => {
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          let result = {
+            status: "idle",
+            errMsg: "",
+            proposals: action.payload?.data?.proposals,
+            pagination: action.payload?.pagination
+
+          }
+          state.deposit[chainID] = result;
+        }
+      })
+      .addCase(getProposalsInDeposit.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const chainData = state.deposit[chainID] || {};
+        chainData.status = "rejected";
+        chainData.errMsg = action.error.message;
+        state.deposit[chainID] = chainData;
       });
 
     // tally

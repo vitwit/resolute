@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getProposals, resetTx, txVote } from "../../../features/gov/govSlice";
+import { getProposalsInDeposit, getProposalsInVoting, resetTx, txVote } from "../../../features/gov/govSlice";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -18,6 +18,7 @@ import Avatar from "@mui/material/Avatar";
 import PropTypes from "prop-types";
 import { nameToVoteOption } from "../../../utils/proposals";
 import { FeegrantCheckbox } from "../../../components/FeegrantCheckbox";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 Proposals.propTypes = {
   id: PropTypes.number.isRequired,
@@ -63,16 +64,47 @@ export default function Proposals({
   const govTx = useSelector((state) => state.gov.tx);
   const currency = currencies[0];
 
-  const proposals = useSelector(
+  const votingProposals = useSelector(
     (state) => state.gov.active[chainID]?.proposals || []
   );
 
+  const depositProposals = useSelector(
+    (state) => state.gov.deposit[chainID]?.proposals || []
+  );
+
+  const [proposals, setProposals] = useState([]);
+
   const dispatch = useDispatch();
+  const [showDepositProposal, setShowDepositProposals] = useState(false);
+  useEffect(() => {
+    if (depositProposals.length > 0 && showDepositProposal) {
+      setProposals([
+        ...votingProposals,
+        ...depositProposals,
+      ])
+    }
+  }, [depositProposals, showDepositProposal]);
+
+  useEffect(() => {
+    if (votingProposals.length > 0 && !showDepositProposal) {
+      setProposals([
+        ...votingProposals,
+      ])
+    }
+  }, [votingProposals]);
+
+  const fetchDepositProposals = () => {
+    if (depositProposals?.length === 0)
+    dispatch(getProposalsInDeposit({
+      baseURL: restEndpoint,
+      chainID: chainID,
+    }))
+  }
 
   useEffect(() => {
     if (!authzMode || (authzMode && grantsToMe?.length > 0)) {
       dispatch(
-        getProposals({
+        getProposalsInVoting({
           baseURL: restEndpoint,
           voter: signer,
           chainID: chainID,
@@ -164,34 +196,59 @@ export default function Proposals({
           <Box
             sx={{
               display: "flex",
-              alignItems: "left",
-              mt: 2,
+              justifyContent: "space-between",
+              mt: 3,
+              mb: 1,
             }}
           >
-            <Avatar
-              src={chainLogo}
-              alt="network-icon"
+            <Box
               sx={{
-                width: 30,
-                height: 30,
-              }}
-            />
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{
-                color: "text.primary",
-                ml: 1,
+                display: "flex",
+                alignItems: "left",
               }}
             >
-              {chainName}
-            </Typography>
-            <Box sx={{ml: 3}}>
-              <FeegrantCheckbox
-                useFeegrant={useFeegrant}
-                setUseFeegrant={setUseFeegrant}
-                feegrant={feegrant}
+              <Avatar
+                src={chainLogo}
+                alt="network-icon"
+                sx={{
+                  width: 30,
+                  height: 30,
+                }}
               />
+              <Typography
+                variant="h6"
+                gutterBottom
+                sx={{
+                  color: "text.primary",
+                  ml: 1,
+                }}
+              >
+                {chainName}
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "left",
+              }}
+            >
+              <FormControlLabel control={
+                <Checkbox
+                  onChange={(e) => {
+                    setShowDepositProposals(e.target.checked);
+                    if (e.target.checked) {
+                      fetchDepositProposals();
+                    }
+                  }
+                  }
+                />} label="Show in deposit" />
+              <Box sx={{ ml: 3 }}>
+                <FeegrantCheckbox
+                  useFeegrant={useFeegrant}
+                  setUseFeegrant={setUseFeegrant}
+                  feegrant={feegrant}
+                />
+              </Box>
             </Box>
           </Box>
         </>
@@ -227,8 +284,7 @@ export default function Proposals({
                 setOpen={(pId) => onVoteDialog(pId)}
                 onItemClick={() =>
                   navigate(
-                    `/${chainName?.toLowerCase()}/proposals/${
-                      proposal?.proposal_id
+                    `/${chainName?.toLowerCase()}/proposals/${proposal?.proposal_id
                     }`
                   )
                 }

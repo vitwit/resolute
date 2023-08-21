@@ -58,7 +58,7 @@ function ProposalsPage() {
       restEndpoint={selectedNetworkData.config.rest}
       chainName={selectedNetworkData.config.chainName}
       chainLogo={selectedNetworkData.logos.menu}
-      signer={selectedNetworkData.walletInfo.bech32Address}
+      signer={selectedNetworkData.walletInfo?.bech32Address}
       gasPriceStep={selectedNetworkData.config.feeCurrencies?.[0]?.gasPriceStep}
       aminoConfig={selectedNetworkData.aminoConfig}
       bech32Config={selectedNetworkData.config.bech32Config}
@@ -75,7 +75,7 @@ function ProposalsPage() {
         restEndpoint={networks[key].network.config.rest}
         chainName={networks[key].network.config.chainName}
         chainLogo={networks[key].network.logos.menu}
-        signer={networks[key].walletInfo.bech32Address}
+        signer={networks[key].walletInfo?.bech32Address}
         gasPriceStep={networks[key].network.config.feeCurrencies?.[0]?.gasPriceStep}
         aminoConfig={networks[key].network.aminoConfig}
         bech32Config={networks[key].network.config.bech32Config}

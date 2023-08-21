@@ -65,12 +65,17 @@ export const ProposalItem = (props) => {
           </Typography>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="body1">Voting ends in &nbsp;</Typography>
-          <Typography variant="body1">
-            {getDaysLeft(info?.voting_end_time) === 1 ? `1 day` : `${getDaysLeft(info?.voting_end_time)} days`}
-          </Typography>
-        </div>
+        {
+          info?.status === "PROPOSAL_STATUS_VOTING" ?
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="body1">Voting ends in &nbsp;</Typography>
+              <Typography variant="body1">
+                {getDaysLeft(info?.voting_end_time) === 1 ? `1 day` : `${getDaysLeft(info?.voting_end_time)} days`}
+              </Typography>
+            </div>
+            :
+            null
+        }
 
         <Box
           sx={{
@@ -132,14 +137,43 @@ export const ProposalItem = (props) => {
         ) : (
           <>&nbsp;</>
         )}
-        <Button
-          size="small"
-          variant="contained"
-          disableElevation
-          onClick={onVoteClick}
+        <Box
+          sx={{
+            textAlign: "right"
+          }}
         >
-          Vote
-        </Button>
+          {
+            info?.status === "PROPOSAL_STATUS_DEPOSIT_PERIOD"
+              ?
+              <Button
+                size="small"
+                variant="contained"
+                disableElevation
+                onClick={() => { }} // TODO: call deposit action
+                sx={{
+                  mr: 1,
+                }}
+              >
+                Deposit
+              </Button>
+              :
+              null
+          }
+          {
+            info?.status === "PROPOSAL_STATUS_VOTING_PERIOD"
+              ?
+              <Button
+                size="small"
+                variant="contained"
+                disableElevation
+                onClick={onVoteClick}
+              >
+                Vote
+              </Button>
+              :
+              null
+          }
+        </Box>
       </CardActions>
     </Paper>
   );
