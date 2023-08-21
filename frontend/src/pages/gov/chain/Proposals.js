@@ -221,6 +221,10 @@ export default function Proposals({
                 sx={{
                   color: "text.primary",
                   ml: 1,
+                  cursor: "pointer"
+                }}
+                onClick={() => {
+                  navigate(`/${chainName.toLowerCase()}/gov`)
                 }}
               >
                 {chainName}
