@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
@@ -7,10 +7,34 @@ import Typography from "@mui/material/Typography";
 import { getDaysLeft } from "../../../utils/datetime";
 import Tooltip from "@mui/material/Tooltip";
 import { Paper } from "@mui/material";
-import { computeVotingPercentage, formatVoteOption } from "../../../utils/proposals";
+import {
+  computeVotingPercentage,
+  formatVoteOption,
+} from "../../../utils/proposals";
+import DialogDeposit from "../../../components/DialogDeposit";
+import { useDispatch, useSelector } from "react-redux";
+import { getBalances } from "../../../features/bank/bankSlice";
+import { setError } from "../../../features/common/commonSlice";
 
 export const ProposalItem = (props) => {
-  const { info, vote, onItemClick, tally } = props;
+  const { info, vote, onItemClick, tally, chainName, address } = props;
+
+  const dispatch = useDispatch();
+
+  const [balance, setBalance] = useState({});
+
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const chainID = nameToChainIDs[chainName.toLowerCase()];
+  const chainInfo = useSelector(
+    (state) => state.wallet.networks?.[chainID]?.network
+  );
+
+  const balances = useSelector((state) => state.bank.balances[chainID]?.list);
+  console.log(balances);
+
+  const currency = chainInfo?.config?.currencies;
+
   const tallyInfo = computeVotingPercentage(tally, false);
   const { yes, no, noWithVeto, abstain } = tallyInfo;
   const tallySum =
@@ -26,6 +50,37 @@ export const ProposalItem = (props) => {
     props.setOpen(info?.proposal_id);
   };
 
+  const [openDepositDialog, setOpenDepositDialog] = useState(false);
+  const handleDialogClose = () => {
+    setOpenDepositDialog(false);
+  };
+
+  useEffect(() => {
+    console.log({
+      baseURL: chainInfo?.config?.rest + "/",
+      address: address,
+      chainID: chainID,
+    })
+    dispatch(
+      getBalances({
+        baseURL: chainInfo?.config?.rest + "/",
+        address: address,
+        chainID: chainID,
+      })
+    );
+  }, [chainInfo, address, chainID]);
+
+  useEffect(() => {
+    if (balances?.length > 0) {
+      for (let index = 0; index < balances?.length; index++) {
+        const b = balances[index];
+        if (b.denom === currency[0].coinMinimalDenom) {
+          setBalance(b);
+          break;
+        }
+      }
+    }
+  }, [balances]);
 
   return (
     <Paper
@@ -65,17 +120,16 @@ export const ProposalItem = (props) => {
           </Typography>
         </div>
 
-        {
-          info?.status === "PROPOSAL_STATUS_VOTING_PERIOD" ?
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Typography variant="body1">Voting ends in &nbsp;</Typography>
-              <Typography variant="body1">
-                {getDaysLeft(info?.voting_end_time) === 1 ? `1 day` : `${getDaysLeft(info?.voting_end_time)} days`}
-              </Typography>
-            </div>
-            :
-            null
-        }
+        {info?.status === "PROPOSAL_STATUS_VOTING_PERIOD" ? (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Typography variant="body1">Voting ends in &nbsp;</Typography>
+            <Typography variant="body1">
+              {getDaysLeft(info?.voting_end_time) === 1
+                ? `1 day`
+                : `${getDaysLeft(info?.voting_end_time)} days`}
+            </Typography>
+          </div>
+        ) : null}
 
         <Box
           sx={{
@@ -139,42 +193,51 @@ export const ProposalItem = (props) => {
         )}
         <Box
           sx={{
-            textAlign: "right"
+            textAlign: "right",
           }}
         >
-          {
-            info?.status === "PROPOSAL_STATUS_DEPOSIT_PERIOD"
-              ?
-              <Button
-                size="small"
-                variant="contained"
-                disableElevation
-                onClick={() => { }} // TODO: call deposit action
-                sx={{
-                  mr: 1,
-                }}
-              >
-                Deposit
-              </Button>
-              :
-              null
-          }
-          {
-            info?.status === "PROPOSAL_STATUS_VOTING_PERIOD"
-              ?
-              <Button
-                size="small"
-                variant="contained"
-                disableElevation
-                onClick={onVoteClick}
-              >
-                Vote
-              </Button>
-              :
-              null
-          }
+          {info?.status === "PROPOSAL_STATUS_DEPOSIT_PERIOD" ? (
+            <Button
+              size="small"
+              variant="contained"
+              disableElevation
+              onClick={() => {
+                if (balance?.amount === 0 || !balance?.amount) {
+                  dispatch(
+                    setError({
+                      type: "error",
+                      message: "No balance",
+                    })
+                  );
+                } else {
+                  setOpenDepositDialog(true);
+                }
+              }} // TODO: call deposit action
+              sx={{
+                mr: 1,
+              }}
+            >
+              Deposit
+            </Button>
+          ) : null}
+          {info?.status === "PROPOSAL_STATUS_VOTING_PERIOD" ? (
+            <Button
+              size="small"
+              variant="contained"
+              disableElevation
+              onClick={onVoteClick}
+            >
+              Vote
+            </Button>
+          ) : null}
         </Box>
       </CardActions>
+      <DialogDeposit
+        open={openDepositDialog}
+        onClose={handleDialogClose}
+        balance={balance?.amount}
+        displayDenom={balance?.denom}
+      />
     </Paper>
   );
 };

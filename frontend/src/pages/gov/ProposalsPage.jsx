@@ -53,7 +53,7 @@ function ProposalsPage() {
       restEndpoint={selectedNetworkData.config.rest}
       chainName={selectedNetworkData.config.chainName}
       chainLogo={selectedNetworkData.logos.menu}
-      signer={selectedNetworkData.walletInfo?.bech32Address}
+      signer={networks[selectedNetwork].walletInfo?.bech32Address}
       gasPriceStep={selectedNetworkData.config.feeCurrencies?.[0]?.gasPriceStep}
       aminoConfig={selectedNetworkData.aminoConfig}
       bech32Config={selectedNetworkData.config.bech32Config}
