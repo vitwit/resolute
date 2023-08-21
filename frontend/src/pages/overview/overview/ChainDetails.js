@@ -63,7 +63,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
     chainInfo?.network?.config?.currencies?.[0]?.coinDecimals || 1;
   const logoURL = chainInfo?.network?.logos?.menu;
   const PRICE_CHANGE_PERCENTAGE = Number(
-    tokensPriceInfo[originMinimalDenom]?.info?.["usd_24h_change"] || "-1"
+    tokensPriceInfo[originMinimalDenom]?.info?.["usd_24h_change"] || "0"
   );
 
   // Memoized function to prevent unnecessary re-renders
@@ -224,10 +224,9 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                     {`$${parseFloat(
                       tokensPriceInfo[originMinimalDenom]?.info?.["usd"]
                     ).toFixed(2)}`}
-                    <Box>(
-                      {PRICE_CHANGE_PERCENTAGE >=0 && `+`}
-                      {
-                      parseFloat(
+                    <Box>
+                      ({PRICE_CHANGE_PERCENTAGE >= 0 && `+`}
+                      {parseFloat(
                         tokensPriceInfo[originMinimalDenom]?.info?.[
                           "usd_24h_change"
                         ]
