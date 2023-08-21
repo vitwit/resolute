@@ -66,7 +66,7 @@ export const ProposalItem = (props) => {
         </div>
 
         {
-          info?.status === "PROPOSAL_STATUS_VOTING" ?
+          info?.status === "PROPOSAL_STATUS_VOTING_PERIOD" ?
             <div style={{ display: "flex", alignItems: "center" }}>
               <Typography variant="body1">Voting ends in &nbsp;</Typography>
               <Typography variant="body1">
