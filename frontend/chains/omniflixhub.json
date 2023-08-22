@@ -21,8 +21,8 @@
     "config": {
       "chain_id": "omniflixhub-1",
       "chain_name": "OmniflixHub",
-      "rest": "https://api.omniflix.nodestake.top/",
-      "rpc": "https://rpc.omniflix.nodestake.top/",
+      "rest": "https://api.resolute.vitwit.com/omniflix_api/",
+      "rpc": "https://api.resolute.vitwit.com/omniflix_rpc/",
       "currencies": [
         {
           "coin_denom": "FLIX",

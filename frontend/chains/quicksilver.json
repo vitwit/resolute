@@ -21,8 +21,8 @@
   "config": {
     "chain_id": "quicksilver-2",
     "chain_name": "Quicksilver",
-    "rest": "https://m-quicksilver.api.utsa.tech/",
-    "rpc": "https://m-quicksilver.rpc.utsa.tech/",
+    "rest": "https://api.resolute.vitwit.com/quicksilver_api/",
+    "rpc": "https://api.resolute.vitwit.com/quicksilver_rpc/",
     "currencies": [
       {
         "coin_denom": "QCK",

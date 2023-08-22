@@ -21,8 +21,8 @@
     "config": {
       "chain_id": "desmos-mainnet",
       "chain_name": "Desmos",
-      "rest": "https://api.mainnet.desmos.network/",
-      "rpc": "https://rpc.mainnet.desmos.network/",
+      "rest": "https://api.resolute.vitwit.com/desmos_api/",
+      "rpc": "https://api.resolute.vitwit.com/desmos_rpc/",
       "currencies": [
         {
           "coin_denom": "DSM",
