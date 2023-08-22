@@ -11,10 +11,11 @@ const voterVoteURL = (id: number, voter: string): string =>
 const fetchProposals = (
   baseURL: string,
   key: string | undefined,
-  limit: number
+  limit: number,
+  status: number
 ): Promise<AxiosResponse> => {
   let uri = `${baseURL}${proposalsURL}`;
-  uri += `?proposal_status=2`;
+  uri += `?proposal_status=${status}`;
 
   const params = convertPaginationToParams({
     key: key,

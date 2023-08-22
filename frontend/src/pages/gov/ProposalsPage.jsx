@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import ConnectWallet from "../../components/ConnectWallet";
 import { CircularProgress, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { resetLoading } from "../../features/gov/govSlice";
 import { Box } from "@mui/system";
 
 export const filterVoteAuthz = (authzs) => {
@@ -35,10 +34,6 @@ function ProposalsPage() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(resetLoading({ chainsCount: Object.keys(networks).length }));
-  }, [networks]);
-
-  useEffect(() => {
     if (loading && defaultLoading) {
       setDefaultLoading(false);
     }
@@ -58,7 +53,7 @@ function ProposalsPage() {
       restEndpoint={selectedNetworkData.config.rest}
       chainName={selectedNetworkData.config.chainName}
       chainLogo={selectedNetworkData.logos.menu}
-      signer={selectedNetworkData.walletInfo.bech32Address}
+      signer={networks[selectedNetwork].walletInfo?.bech32Address}
       gasPriceStep={selectedNetworkData.config.feeCurrencies?.[0]?.gasPriceStep}
       aminoConfig={selectedNetworkData.aminoConfig}
       bech32Config={selectedNetworkData.config.bech32Config}
@@ -67,6 +62,7 @@ function ProposalsPage() {
       authzMode={isAuthzMode}
       grantsToMe={authzGrants[selectedNetworkData.config.chainId] || []}
       id={1}
+      isChainSpecific={true}
     />
   ) : (
     Object.keys(networks).map((key, index) => (
@@ -75,7 +71,7 @@ function ProposalsPage() {
         restEndpoint={networks[key].network.config.rest}
         chainName={networks[key].network.config.chainName}
         chainLogo={networks[key].network.logos.menu}
-        signer={networks[key].walletInfo.bech32Address}
+        signer={networks[key].walletInfo?.bech32Address}
         gasPriceStep={networks[key].network.config.feeCurrencies?.[0]?.gasPriceStep}
         aminoConfig={networks[key].network.aminoConfig}
         bech32Config={networks[key].network.config.bech32Config}
@@ -84,6 +80,7 @@ function ProposalsPage() {
         authzMode={isAuthzMode}
         grantsToMe={authzGrants[networks[key].network.config.chainId] || []}
         id={index}
+        isChainSpecific={false}
       />
     ))
   );
