@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getProposals, resetTx, txVote } from "../../../features/gov/govSlice";
+import {
+  getProposalsInDeposit,
+  getProposalsInVoting,
+  resetTx,
+  txVote,
+} from "../../../features/gov/govSlice";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -18,6 +23,7 @@ import Avatar from "@mui/material/Avatar";
 import PropTypes from "prop-types";
 import { nameToVoteOption } from "../../../utils/proposals";
 import { FeegrantCheckbox } from "../../../components/FeegrantCheckbox";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 Proposals.propTypes = {
   id: PropTypes.number.isRequired,
@@ -47,6 +53,7 @@ export default function Proposals({
   bech32Config,
   authzMode,
   grantsToMe,
+  isChainSpecific,
 }) {
   const errMsg = useSelector((state) => state.gov.active.errMsg);
   const status = useSelector((state) => state.gov.active.status);
@@ -63,16 +70,45 @@ export default function Proposals({
   const govTx = useSelector((state) => state.gov.tx);
   const currency = currencies[0];
 
-  const proposals = useSelector(
+  const votingProposals = useSelector(
     (state) => state.gov.active[chainID]?.proposals || []
   );
 
+  const depositProposals = useSelector(
+    (state) => state.gov.deposit[chainID]?.proposals || []
+  );
+  const loading = useSelector((state) => state.gov.loading);
+
+  const [proposals, setProposals] = useState([]);
+
   const dispatch = useDispatch();
+  const [showDepositProposal, setShowDepositProposals] = useState(false);
+  useEffect(() => {
+    if (depositProposals.length > 0 && showDepositProposal) {
+      setProposals([...votingProposals, ...depositProposals]);
+    }
+  }, [depositProposals, showDepositProposal]);
+
+  useEffect(() => {
+    if (votingProposals.length > 0 && !showDepositProposal) {
+      setProposals([...votingProposals]);
+    }
+  }, [votingProposals]);
+
+  const fetchDepositProposals = () => {
+    if (depositProposals?.length === 0)
+      dispatch(
+        getProposalsInDeposit({
+          baseURL: restEndpoint,
+          chainID: chainID,
+        })
+      );
+  };
 
   useEffect(() => {
     if (!authzMode || (authzMode && grantsToMe?.length > 0)) {
       dispatch(
-        getProposals({
+        getProposalsInVoting({
           baseURL: restEndpoint,
           voter: signer,
           chainID: chainID,
@@ -157,43 +193,40 @@ export default function Proposals({
 
   return (authzMode && grantsToMe?.length > 0) || !authzMode ? (
     <React.Fragment key={id}>
-      {!proposals?.length ? (
-        <></>
+      {isChainSpecific && (
+        <ChainProposalsHeader
+          navigate={navigate}
+          chainName={chainName}
+          setShowDepositProposals={setShowDepositProposals}
+          fetchDepositProposals={fetchDepositProposals}
+          useFeegrant={useFeegrant}
+          setUseFeegrant={setUseFeegrant}
+          feegrant={feegrant}
+          chainLogo={chainLogo}
+        />
+      )}
+      {!proposals?.length && !loading ? (
+        <>
+          {isChainSpecific && (
+            <Typography sx={{ mt: 6 }} variant="h6">
+              - No Proposals Found -
+            </Typography>
+          )}
+        </>
       ) : (
         <>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "left",
-              mt: 2,
-            }}
-          >
-            <Avatar
-              src={chainLogo}
-              alt="network-icon"
-              sx={{
-                width: 30,
-                height: 30,
-              }}
+          {proposals?.length && !isChainSpecific ? (
+            <ChainProposalsHeader
+              navigate={navigate}
+              chainName={chainName}
+              setShowDepositProposals={setShowDepositProposals}
+              fetchDepositProposals={fetchDepositProposals}
+              useFeegrant={useFeegrant}
+              setUseFeegrant={setUseFeegrant}
+              feegrant={feegrant}
+              chainLogo={chainLogo}
             />
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{
-                color: "text.primary",
-                ml: 1,
-              }}
-            >
-              {chainName}
-            </Typography>
-            <Box sx={{ml: 3}}>
-              <FeegrantCheckbox
-                useFeegrant={useFeegrant}
-                setUseFeegrant={setUseFeegrant}
-                feegrant={feegrant}
-              />
-            </Box>
-          </Box>
+          ) : null}
         </>
       )}
       {status === "pending" ? (
@@ -234,6 +267,8 @@ export default function Proposals({
                 }
                 chainUrl={restEndpoint}
                 proposalId={proposal?.proposal_id}
+                chainName={chainName}
+                address={signer}
               />
             </Grid>
           ))}
@@ -252,3 +287,83 @@ export default function Proposals({
     <React.Fragment key={id}></React.Fragment>
   );
 }
+
+const ChainProposalsHeader = (props) => {
+  const {
+    navigate,
+    chainName,
+    setShowDepositProposals,
+    fetchDepositProposals,
+    useFeegrant,
+    setUseFeegrant,
+    feegrant,
+    chainLogo,
+  } = props;
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        mt: 3,
+        mb: 1,
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "left",
+        }}
+      >
+        <Avatar
+          src={chainLogo}
+          alt="network-icon"
+          sx={{
+            width: 30,
+            height: 30,
+          }}
+        />
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{
+            color: "text.primary",
+            ml: 1,
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            navigate(`/${chainName.toLowerCase()}/gov`);
+          }}
+        >
+          {chainName}
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "left",
+        }}
+      >
+        <FormControlLabel
+          control={
+            <Checkbox
+              onChange={(e) => {
+                setShowDepositProposals(e.target.checked);
+                if (e.target.checked) {
+                  fetchDepositProposals();
+                }
+              }}
+            />
+          }
+          label="Show in deposit"
+        />
+        <Box sx={{ ml: 3 }}>
+          <FeegrantCheckbox
+            useFeegrant={useFeegrant}
+            setUseFeegrant={setUseFeegrant}
+            feegrant={feegrant}
+          />
+        </Box>
+      </Box>
+    </Box>
+  );
+};
