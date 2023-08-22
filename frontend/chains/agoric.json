@@ -61,7 +61,7 @@
           }
       ],
       "bip44": {
-        "coin_type": 118
+        "coin_type": 564
       },
       "stake_currency": {
         "coin_denom": "BLD",
