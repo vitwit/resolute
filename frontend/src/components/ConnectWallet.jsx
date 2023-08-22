@@ -9,6 +9,7 @@ import { useTheme } from "@emotion/react";
 export default function ConnectWallet() {
   const [showSelectWallet, setShowSelectWallet] = useState(false);
   const dispatch = useDispatch();
+  const theme = useTheme();
 
   return (
     <Box
@@ -43,6 +44,7 @@ export default function ConnectWallet() {
           connectWallet(wallet, dispatch);
           setShowSelectWallet(false);
         }}
+        mode={theme.palette.mode}
       />
     </Box>
   );
