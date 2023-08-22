@@ -62,7 +62,7 @@ export const networks: Network[] = [
         }
       ],
       bip44: {
-        coinType: 118
+        coinType: 564
       },
       stakeCurrency: {
         coinDenom: "BLD",
