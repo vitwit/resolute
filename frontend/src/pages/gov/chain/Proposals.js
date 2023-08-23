@@ -86,6 +86,8 @@ export default function Proposals({
   useEffect(() => {
     if (depositProposals.length > 0 && showDepositProposal) {
       setProposals([...votingProposals, ...depositProposals]);
+    } else if (!showDepositProposal) {
+      setProposals(votingProposals);
     }
   }, [depositProposals, showDepositProposal]);
 
@@ -354,7 +356,7 @@ const ChainProposalsHeader = (props) => {
               }}
             />
           }
-          label="Show in deposit"
+          label={<Typography color="text.primary">Show in deposit</Typography>}
         />
         <Box sx={{ ml: 3 }}>
           <FeegrantCheckbox

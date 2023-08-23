@@ -12,16 +12,10 @@ import {
   formatVoteOption,
 } from "../../../utils/proposals";
 import DialogDeposit from "../../../components/DialogDeposit";
-import { useDispatch, useSelector } from "react-redux";
-import { getBalances } from "../../../features/bank/bankSlice";
-import { setError } from "../../../features/common/commonSlice";
+import { useSelector } from "react-redux";
 
 export const ProposalItem = (props) => {
   const { info, vote, onItemClick, tally, chainName, address } = props;
-
-  const dispatch = useDispatch();
-
-  const [balance, setBalance] = useState({});
 
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
@@ -32,10 +26,7 @@ export const ProposalItem = (props) => {
   const feegrant = useSelector(
     (state) => state.common.feegrant?.[chainName] || {}
   );
-  const balances = useSelector((state) => state.bank.balances[chainID]?.list);
   const govTx = useSelector((state) => state.gov.tx);
-
-  const currency = chainInfo?.config?.currencies;
 
   const tallyInfo = computeVotingPercentage(tally, false);
   const { yes, no, noWithVeto, abstain } = tallyInfo;
@@ -56,33 +47,6 @@ export const ProposalItem = (props) => {
   const handleDialogClose = () => {
     setOpenDepositDialog(false);
   };
-
-  useEffect(() => {
-    console.log({
-      baseURL: chainInfo?.config?.rest + "/",
-      address: address,
-      chainID: chainID,
-    });
-    dispatch(
-      getBalances({
-        baseURL: chainInfo?.config?.rest + "/",
-        address: address,
-        chainID: chainID,
-      })
-    );
-  }, [chainInfo, address, chainID]);
-
-  useEffect(() => {
-    if (balances?.length > 0) {
-      for (let index = 0; index < balances?.length; index++) {
-        const b = balances[index];
-        if (b.denom === currency[0].coinMinimalDenom) {
-          setBalance(b);
-          break;
-        }
-      }
-    }
-  }, [balances]);
 
   useEffect(() => {
     if (govTx.status === "idle") {
@@ -210,19 +174,7 @@ export const ProposalItem = (props) => {
               variant="contained"
               disableElevation
               onClick={() => {
-                if (balance?.amount === 0 || !balance?.amount) {
-                  dispatch(
-                    setError({
-                      type: "error",
-                      message: "No balance",
-                    })
-                  );
-                } else {
-                  setOpenDepositDialog(true);
-                }
-              }} // TODO: call deposit action
-              sx={{
-                mr: 1,
+                setOpenDepositDialog(true);
               }}
             >
               Deposit
@@ -243,8 +195,6 @@ export const ProposalItem = (props) => {
       <DialogDeposit
         open={openDepositDialog}
         onClose={handleDialogClose}
-        balance={balance?.amount}
-        displayDenom={balance?.denom}
         address={address}
         proposalId={info.proposal_id}
         chainInfo={chainInfo}
