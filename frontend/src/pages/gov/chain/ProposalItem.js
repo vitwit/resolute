@@ -12,10 +12,13 @@ import {
   formatVoteOption,
 } from "../../../utils/proposals";
 import DialogDeposit from "../../../components/DialogDeposit";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedNetworkLocal } from "../../../features/common/commonSlice";
 
 export const ProposalItem = (props) => {
   const { info, vote, onItemClick, tally, chainName, address } = props;
+
+  const dispatch = useDispatch();
 
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
@@ -40,6 +43,11 @@ export const ProposalItem = (props) => {
     abstain: (tallyInfo.abstain / tallySum) * 100,
   };
   const onVoteClick = () => {
+    dispatch(
+      setSelectedNetworkLocal({
+        chainName: chainName,
+      })
+    );
     props.setOpen(info?.proposal_id);
   };
 
@@ -83,7 +91,6 @@ export const ProposalItem = (props) => {
             component="div"
             color="text.primary"
             className="proposal-title"
-            onClick={() => onItemClick()}
             gutterBottom
             fontWeight={600}
             sx={{ cursor: "pointer", ml: 1 }}
@@ -174,6 +181,11 @@ export const ProposalItem = (props) => {
               variant="contained"
               disableElevation
               onClick={() => {
+                dispatch(
+                  setSelectedNetworkLocal({
+                    chainName: chainName,
+                  })
+                );
                 setOpenDepositDialog(true);
               }}
             >
@@ -185,7 +197,9 @@ export const ProposalItem = (props) => {
               size="small"
               variant="contained"
               disableElevation
-              onClick={onVoteClick}
+              onClick={() => {
+                onVoteClick();
+              }}
             >
               Vote
             </Button>

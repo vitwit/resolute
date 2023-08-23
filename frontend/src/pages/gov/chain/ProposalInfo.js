@@ -372,7 +372,7 @@ export default function ProposalInfo() {
                       color="text.secondary"
                       variant="body2"
                     >
-                      Deposit Ends
+                      Deposit Period Ends
                     </Typography>
                     <Typography
                       gutterBottom
