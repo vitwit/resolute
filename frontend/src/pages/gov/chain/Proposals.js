@@ -86,8 +86,6 @@ export default function Proposals({
   useEffect(() => {
     if (depositProposals.length > 0 && showDepositProposal) {
       setProposals([...votingProposals, ...depositProposals]);
-    } else if (!showDepositProposal) {
-      setProposals(votingProposals);
     }
   }, [depositProposals, showDepositProposal]);
 
@@ -96,6 +94,12 @@ export default function Proposals({
       setProposals([...votingProposals]);
     }
   }, [votingProposals]);
+
+  useEffect(() => {
+    if (!showDepositProposal) {
+      setProposals(votingProposals);
+    }
+  }, [showDepositProposal]);
 
   const fetchDepositProposals = () => {
     if (depositProposals?.length === 0)
