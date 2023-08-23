@@ -13,10 +13,11 @@ export interface ConnectWalletDiaogProps {
   open: boolean;
   onClose: () => void;
   onWalletSelect: (name: string) => void;
+  mode: "light" | "dark";
 }
 
 export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
-  const { onClose, onWalletSelect, open } = props;
+  const { onClose, onWalletSelect, open, mode } = props;
 
   const handleClose = () => {
     onClose();
@@ -27,43 +28,52 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
   };
 
   return (
-    <Dialog onClose={handleClose} open={open} maxWidth="xs" fullWidth>
+    <Dialog onClose={handleClose} open={open} maxWidth="xs" fullWidth
+      sx={{
+        p: 2
+      }}
+    >
       <DialogTitle
         sx={{
           justifyContent: "center",
           display: "flex",
         }}
-        variant="h5"
+        variant="h6"
       >
         Connect Wallet
       </DialogTitle>
       <DialogContent
         sx={{
-          p: 2,
+          p: 3,
+          mt: 2,
         }}
       >
         <Grid container>
           <Grid
             item
-            xs={6}
-            md={6}
+            xs={12}
+            md={12}
             sx={{
               justifyContent: "center",
               display: "flex",
             }}
           >
             <Paper
-              elevation={0}
+              elevation={mode === "light" ? 1 : 0}
               sx={{
-                p: 3,
-                width: "36%",
+                pt: 1,
+                pb: 1,
+                pl: 4,
+                pr: 4,
+                display: "flex",
+                justifyContent: "center"
               }}
               onClick={() => handleOnWalletSelect("keplr")}
             >
               <Avatar
                 sx={{
-                  width: 64,
-                  height: 64,
+                  width: 32,
+                  height: 32,
                   "&:hover": {
                     cursor: "pointer",
                   },
@@ -72,39 +82,42 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
               />
               <Typography
                 variant="h6"
-                fontWeight={600}
                 sx={{
-                  mt: 1,
                   "&:hover": {
                     cursor: "pointer",
                   },
                 }}
               >
-                &nbsp;Keplr
+                &nbsp;Keplr Wallet&nbsp;
               </Typography>
             </Paper>
           </Grid>
           <Grid
             item
-            xs={6}
-            md={6}
+            xs={12}
+            md={12}
             sx={{
               justifyContent: "center",
               display: "flex",
             }}
+            mt={2}
           >
             <Paper
-              elevation={0}
+              elevation={mode === "light" ? 1 : 0}
               sx={{
-                p: 3,
-                width: "36%",
+                pt: 1,
+                pb: 1,
+                pl: 4,
+                pr: 4,
+                display: "flex",
+                justifyContent: "center"
               }}
               onClick={() => handleOnWalletSelect("leap")}
             >
               <Avatar
                 sx={{
-                  width: 64,
-                  height: 64,
+                  width: 32,
+                  height: 32,
                   "&:hover": {
                     cursor: "pointer",
                   },
@@ -112,23 +125,21 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
                 src="https://raw.githubusercontent.com/cosmology-tech/cosmos-kit/main/public/images/logos/wallets/leap.png"
               />
               <Typography
-                fontWeight={600}
                 variant="h6"
                 sx={{
-                  mt: 1,
                   "&:hover": {
                     cursor: "pointer",
                   },
                 }}
               >
-                &nbsp;Leap
+                &nbsp;Leap Wallet&nbsp;&nbsp;
               </Typography>
             </Paper>
           </Grid>
           <Grid
             item
-            xs={6}
-            md={6}
+            xs={12}
+            md={12}
             sx={{
               justifyContent: "center",
               display: "flex",
@@ -136,18 +147,21 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
             }}
           >
             <Paper
-              elevation={0}
+              elevation={mode === "light" ? 1 : 0}
               sx={{
-                p: 3,
-                width: "36%",
-                wordWrap: "break-word", // Allow the text to wrap within the specified width
+                pt: 1,
+                pb: 1,
+                pl: 4,
+                pr: 4,
+                display: "flex",
+                justifyContent: "center"
               }}
               onClick={() => handleOnWalletSelect("cosmostation")}
             >
               <Avatar
                 sx={{
-                  width: 64,
-                  height: 64,
+                  width: 32,
+                  height: 32,
                   "&:hover": {
                     cursor: "pointer",
                   },
@@ -155,10 +169,8 @@ export function ConnectWalletDialog(props: ConnectWalletDiaogProps) {
                 src="https://raw.githubusercontent.com/cosmology-tech/cosmos-kit/main/public/images/logos/wallets/cosmostation.png"
               />
               <Typography
-                fontWeight={600}
                 variant="h6"
                 sx={{
-                  mt: 1,
                   "&:hover": {
                     cursor: "pointer",
                   },
