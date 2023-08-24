@@ -11,6 +11,7 @@ import { getLocalTime } from "../../../utils/datetime";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  getDepositParams,
   getProposal,
   getProposalTally,
   txVote,
@@ -20,6 +21,7 @@ import {
   resetFeegrant,
   setError,
   setFeegrant as setFeegrantState,
+  setSelectedNetworkLocal,
 } from "../../../features/common/commonSlice";
 import { resetTx } from "../../../features/distribution/distributionSlice";
 import { getVoteAuthz } from "../../../utils/authorizations";
@@ -36,6 +38,7 @@ import getProposalStatusComponent, {
 } from "../../../utils/proposals";
 import { useRemark } from "react-remark";
 import DialogDeposit from "../../../components/DialogDeposit";
+import { parseBalance } from "../../../utils/denom";
 
 export default function ProposalInfo() {
   const dispatch = useDispatch();
@@ -52,6 +55,9 @@ export default function ProposalInfo() {
   const poolInfo = useSelector(
     (state) => state.staking.chains?.[chainID]?.pool
   );
+  const depositParams = useSelector(
+    (state) => state.gov.depositParams?.[chainID]?.depositParams
+  );
 
   const currency = network?.network?.config?.currencies[0];
   const address = network?.walletInfo?.bech32Address;
@@ -63,9 +69,27 @@ export default function ProposalInfo() {
   const activeProposals = useSelector((state) => state.gov.active);
   const chainInfo = network?.network;
   const [proposal, setProposal] = useState({});
+  const [depositRequired, setDepositRequired] = useState(null);
   const feegrant = useSelector(
     (state) => state.common.feegrant?.[networkName] || {}
   );
+
+  useEffect(() => {
+    if (depositParams?.min_deposit?.length && proposal?.total_deposit?.length) {
+      setDepositRequired(
+        parseBalance(
+          depositParams?.min_deposit,
+          currency.coinDecimals,
+          currency.coinMinimalDenom
+        ) -
+          parseBalance(
+            proposal?.total_deposit,
+            currency.coinDecimals,
+            currency.coinMinimalDenom
+          )
+      );
+    }
+  }, [depositParams, proposal]);
 
   useEffect(() => {
     const chainID = nameToIDs[networkName];
@@ -74,6 +98,12 @@ export default function ProposalInfo() {
         getProposal({
           baseURL: network?.network?.config.rest,
           proposalId: id,
+          chainID: chainID,
+        })
+      );
+      dispatch(
+        getDepositParams({
+          baseURL: network?.network?.config?.rest,
           chainID: chainID,
         })
       );
@@ -388,14 +418,14 @@ export default function ProposalInfo() {
                       color="text.secondary"
                       variant="body2"
                     >
-                      Total Deposit
+                      Deposit Required
                     </Typography>
                     <Typography
                       gutterBottom
                       color="text.primary"
                       variant="body1"
                     >
-                      {proposal?.total_deposit?.[0]?.amount}
+                      {depositRequired?.toLocaleString()} {currency?.coinDenom}
                     </Typography>
                   </Grid>
                 </>
@@ -518,6 +548,11 @@ export default function ProposalInfo() {
                     textTransform: "none",
                   }}
                   onClick={() => {
+                    dispatch(
+                      setSelectedNetworkLocal({
+                        chainName: networkName,
+                      })
+                    );
                     setOpenDepositDialog(true);
                   }}
                 >

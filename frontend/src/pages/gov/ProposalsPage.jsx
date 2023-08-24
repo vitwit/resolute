@@ -17,7 +17,7 @@ export const filterVoteAuthz = (authzs) => {
             grant?.authorization.msg === "/cosmos.gov.v1beta1.MsgVote") ||
           grant?.authorization.msg === "/cosmos.gov.v1.MsgVote"
       )
-      .map((grant) => grant.granter);
+    .map((grant) => grant.granter);
 
     return { ...result, [chainID]: granters };
   }, {});
