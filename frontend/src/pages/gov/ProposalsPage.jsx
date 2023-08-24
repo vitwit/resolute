@@ -17,7 +17,7 @@ export const filterVoteAuthz = (authzs) => {
             grant?.authorization.msg === "/cosmos.gov.v1beta1.MsgVote") ||
           grant?.authorization.msg === "/cosmos.gov.v1.MsgVote"
       )
-    .map((grant) => grant.granter);
+      .map((grant) => grant.granter);
 
     return { ...result, [chainID]: granters };
   }, {});
@@ -108,54 +108,20 @@ function ProposalsPage() {
             </Typography>
           ) : selectedNetworkData ? (
             <>
-              <Box
-                item
-                xs={1}
-                md={3}
-                sx={{ display: "flex", justifyContent: "flex-end" }}
-              >
-                <SelectNetwork
-                  onSelect={(name) => {
-                    if (name === "allnetworks") {
-                      navigate(`/gov`);
-                    } else {
-                      navigate(`/${name}/gov`);
-                    }
-                  }}
-                  networks={[...Object.keys(nameToChainIDs), "All Networks"]}
-                  defaultNetwork={
-                    currentNetwork?.length > 0
-                      ? currentNetwork.toLowerCase().replace(/ /g, "")
-                      : "allnetworks"
-                  }
-                />
-              </Box>
+              <ChangeNetwork
+                navigate={navigate}
+                nameToChainIDs={nameToChainIDs}
+                currentNetwork={currentNetwork}
+              />
               {proposalComponent}
             </>
           ) : defaultLoading ? null : (
             <>
-              <Box
-                item
-                xs={1}
-                md={3}
-                sx={{ display: "flex", justifyContent: "flex-end" }}
-              >
-                <SelectNetwork
-                  onSelect={(name) => {
-                    if (name === "allnetworks") {
-                      navigate(`/gov`);
-                    } else {
-                      navigate(`/${name}/gov`);
-                    }
-                  }}
-                  networks={[...Object.keys(nameToChainIDs), "All Networks"]}
-                  defaultNetwork={
-                    currentNetwork?.length > 0
-                      ? currentNetwork.toLowerCase().replace(/ /g, "")
-                      : "allnetworks"
-                  }
-                />
-              </Box>
+              <ChangeNetwork
+                navigate={navigate}
+                nameToChainIDs={nameToChainIDs}
+                currentNetwork={currentNetwork}
+              />
               {proposalComponent}
             </>
           )}
@@ -177,5 +143,33 @@ function ProposalsPage() {
     </>
   );
 }
+
+const ChangeNetwork = (props) => {
+  const { currentNetwork, navigate, nameToChainIDs } = props;
+  return (
+    <Box
+      item
+      xs={1}
+      md={3}
+      sx={{ display: "flex", justifyContent: "flex-end" }}
+    >
+      <SelectNetwork
+        onSelect={(name) => {
+          if (name === "allnetworks") {
+            navigate(`/gov`);
+          } else {
+            navigate(`/${name}/gov`);
+          }
+        }}
+        networks={[...Object.keys(nameToChainIDs), "All Networks"]}
+        defaultNetwork={
+          currentNetwork?.length > 0
+            ? currentNetwork.toLowerCase().replace(/ /g, "")
+            : "allnetworks"
+        }
+      />
+    </Box>
+  );
+};
 
 export default ProposalsPage;
