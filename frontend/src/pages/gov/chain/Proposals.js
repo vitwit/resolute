@@ -95,6 +95,12 @@ export default function Proposals({
     }
   }, [votingProposals]);
 
+  useEffect(() => {
+    if (!showDepositProposal) {
+      setProposals(votingProposals);
+    }
+  }, [showDepositProposal]);
+
   const fetchDepositProposals = () => {
     if (depositProposals?.length === 0)
       dispatch(
@@ -354,7 +360,7 @@ const ChainProposalsHeader = (props) => {
               }}
             />
           }
-          label="Show in deposit"
+          label={<Typography color="text.primary">Show in deposit</Typography>}
         />
         <Box sx={{ ml: 3 }}>
           <FeegrantCheckbox
