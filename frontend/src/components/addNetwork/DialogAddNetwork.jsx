@@ -22,7 +22,7 @@ import {
   addNetwork,
 } from "./utils";
 import { useDispatch, useSelector } from "react-redux";
-import { KEY_WALLET_NAME, getNetworks } from "../../utils/localStorage";
+import { KEY_WALLET_NAME, getMainnets, getTestnets } from "../../utils/localStorage";
 import { setError } from "../../features/common/commonSlice";
 import { connectWalletV1 } from "../../features/wallet/walletSlice";
 import { networks } from "../../utils/chainsInfo";
@@ -80,7 +80,7 @@ const DialogAddNetwork = (props) => {
     const walletName = localStorage.getItem(KEY_WALLET_NAME);
     dispatch(
       connectWalletV1({
-        mainnets: [...networks, ...getNetworks()],
+        mainnets: [...networks, ...getMainnets(), ...getTestnets()],
         testnets: [],
         walletName,
       })

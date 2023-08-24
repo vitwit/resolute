@@ -100,7 +100,8 @@ export const GAS_PRICE_STEP_AVG = "gasPriceStep.average";
 export const GAS_PRICE_STEP_HIGH = "gasPriceStep.high";
 export const COIN_TYPE = "coinType";
 export const STAKE_CURRENCY_COIN_DENOM = "stakeCurrency.coinDenom";
-export const STAKE_CURRENCY_COIN_MINIMAL_DENOM = "stakeCurrency.coinMinimalDenom";
+export const STAKE_CURRENCY_COIN_MINIMAL_DENOM =
+  "stakeCurrency.coinMinimalDenom";
 export const STAKE_CURRENCY_DECIAMLS = "stakeCurrency.decimals";
 export const EXPLORER_ENDPOINT = "explorerEndpoint";
 
@@ -145,23 +146,23 @@ export const addNetwork = (data) => {
     feegrant: parseValue(data.aminoConfig.feegrant),
     group: false,
   };
-  chainInfo.logos.menu = data.chainConfig.logo;
+  chainInfo.logos.menu = data.chainConfig.logo.trim();
   chainInfo.keplrExperimental = parseValue(data.wallet.keplrExperimental);
   chainInfo.leapExperimental = parseValue(data.wallet.leapExperimental);
   chainInfo.isTestnet = parseValue(data.chainConfig.isTestnet);
-  chainInfo.explorerTxHashEndpoint = data.explorerEndpoint;
-  chainInfo.config.chainId = data.chainConfig.chainID;
-  chainInfo.config.chainName = data.chainConfig.chainName;
-  chainInfo.config.rest = data.chainConfig.restEndpoint;
-  chainInfo.config.rpc = data.chainConfig.rpcEndpoint;
+  chainInfo.explorerTxHashEndpoint = data.explorerEndpoint.trim();
+  chainInfo.config.chainId = data.chainConfig.chainID.trim();
+  chainInfo.config.chainName = data.chainConfig.chainName.trim();
+  chainInfo.config.rest = data.chainConfig.restEndpoint.trim();
+  chainInfo.config.rpc = data.chainConfig.rpcEndpoint.trim();
   chainInfo.config.currencies = [
     {
-      coinDenom: data.currency.coinDenom,
-      coinMinimalDenom: data.currency.coinMinimalDenom,
+      coinDenom: data.currency.coinDenom.trim(),
+      coinMinimalDenom: data.currency.coinMinimalDenom.trim(),
       coinDecimals: data.currency.decimals,
     },
   ];
-  const accAddressPerfix = data.accAddressPerfix;
+  const accAddressPerfix = data.accAddressPerfix.trim();
   chainInfo.config.bech32Config = {
     bech32PrefixAccAddr: accAddressPerfix,
     bech32PrefixAccPub: accAddressPerfix + "pub",
@@ -172,16 +173,16 @@ export const addNetwork = (data) => {
   };
   chainInfo.config.feeCurrencies = [
     {
-      coinDenom: data.feeCurrency.coinDenom,
-      coinMinimalDenom: data.feeCurrency.coinMinimalDenom,
+      coinDenom: data.feeCurrency.coinDenom.trim(),
+      coinMinimalDenom: data.feeCurrency.coinMinimalDenom.trim(),
       coinDecimals: data.feeCurrency.decimals,
       gasPriceStep: data.gasPriceStep,
     },
   ];
   chainInfo.config.bip44.coinType = data.coinType;
   chainInfo.config.stakeCurrency = {
-    coinDenom: data.stakeCurrency.coinDenom,
-    coinMinimalDenom: data.stakeCurrency.coinMinimalDenom,
+    coinDenom: data.stakeCurrency.coinDenom.trim(),
+    coinMinimalDenom: data.stakeCurrency.coinMinimalDenom.trim(),
     coinDecimals: data.stakeCurrency.decimals,
   };
 

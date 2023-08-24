@@ -47,18 +47,40 @@ export function removeFeegrant(chainName: string) {
 
 export function removeAllFeegrants() {
   localStorage.removeItem("feegrant");
+} 
+
+export function getMainnets(): any {
+  const networksInfo = localStorage.getItem("networks");
+  if (networksInfo) {
+    const networks = JSON.parse(networksInfo);
+    if (networks?.mainnets) {
+      return networks?.mainnets;
+    }
+  }
+  return [];
 }
 
-export function getNetworks(): any {
-  const networks = localStorage.getItem("networks");
-  if (networks) {
-    return JSON.parse(networks);
+export function getTestnets(): any {
+  const networksInfo = localStorage.getItem("networks");
+  if (networksInfo) {
+    const networks = JSON.parse(networksInfo);
+    if (networks?.testnets) {
+      return networks?.testnets;
+    }
   }
   return [];
 }
 
 export function setNetwork(chainInfo: any) {
-  var data = getNetworks() || [];
-  data.push(chainInfo);
-  localStorage.setItem("networks", JSON.stringify(data));
+  var mainnets = getMainnets();
+  var testnets = getTestnets();
+  if (chainInfo.isTestnet) {
+    testnets.push(chainInfo);
+  } else {
+    mainnets.push(chainInfo);
+  }
+  localStorage.setItem(
+    "networks",
+    JSON.stringify({ mainnets: mainnets, testnets: testnets })
+  );
 }

@@ -19,7 +19,8 @@ import { defaultPallet } from "../utils/pallet";
 import {
   KEY_DARK_MODE,
   KEY_WALLET_NAME,
-  getNetworks,
+  getMainnets,
+  getTestnets,
   removeAllFeegrants,
 } from "../utils/localStorage";
 import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
@@ -69,7 +70,7 @@ export default function Dashboard() {
       setTimeout(() => {
         dispatch(
           connectWalletV1({
-            mainnets: [...networks, ...getNetworks()],
+            mainnets: [...networks, ...getMainnets(), ...getTestnets()],
             testnets: [],
             walletName,
           })
