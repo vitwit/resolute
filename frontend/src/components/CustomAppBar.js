@@ -33,35 +33,37 @@ import { useNavigate } from "react-router-dom";
 import DialogSelectNetwork from "./DialogSelectNetwork";
 import DialogAddNetwork from "./addNetwork/DialogAddNetwork";
 
+export const connectActions = (walletName, dispatch) => {
+  setTimeout(() => {
+    dispatch(
+      connectWalletV1({
+        mainnets: allNetworks,
+        testnets: [],
+        walletName: walletName,
+      })
+    );
+    removeAllFeegrants();
+    dispatch(resetFeegrantState());
+    localStorage.setItem(KEY_WALLET_NAME, walletName);
+  }, 1000);
+};
+
 export const connectWallet = (walletName, dispatch) => {
-  if (walletName === "keplr") {
-    window.wallet = window.keplr;
-    setTimeout(() => {
-      dispatch(
-        connectWalletV1({
-          mainnets: allNetworks,
-          testnets: [],
-          walletName: "keplr",
-        })
-      );
-      removeAllFeegrants();
-      dispatch(resetFeegrantState());
-      localStorage.setItem(KEY_WALLET_NAME, "keplr");
-    }, 1000);
-  } else if (walletName === "leap") {
-    window.wallet = window.leap;
-    setTimeout(() => {
-      dispatch(
-        connectWalletV1({
-          mainnets: allNetworks,
-          testnets: [],
-          walletName: "leap",
-        })
-      );
-      removeAllFeegrants();
-      dispatch(resetFeegrantState());
-      localStorage.setItem(KEY_WALLET_NAME, "leap");
-    }, 1000);
+  switch (walletName) {
+    case "keplr":
+      window.wallet = window.keplr;
+      connectActions(walletName, dispatch);
+      break;
+    case "leap":
+      window.wallet = window.leap;
+      connectActions(walletName, dispatch);
+      break;
+    case "cosmostation":
+      window.wallet = window?.cosmostation?.providers?.keplr;
+      connectActions(walletName, dispatch);
+      break;
+    default:
+      console.log("error while connecting Wallet...");
   }
 };
 
@@ -210,7 +212,7 @@ export function CustomAppBar(props) {
           <Button
             color="inherit"
             onClick={() => {
-              setShowSelectWallet(!showSelectWallet);
+              setShowSelectWallet((showSelectWallet) => !showSelectWallet);
             }}
             sx={{
               textTransform: "none",

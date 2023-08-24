@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
@@ -7,10 +7,30 @@ import Typography from "@mui/material/Typography";
 import { getDaysLeft } from "../../../utils/datetime";
 import Tooltip from "@mui/material/Tooltip";
 import { Paper } from "@mui/material";
-import { computeVotingPercentage, formatVoteOption } from "../../../utils/proposals";
+import {
+  computeVotingPercentage,
+  formatVoteOption,
+} from "../../../utils/proposals";
+import DialogDeposit from "../../../components/DialogDeposit";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedNetworkLocal } from "../../../features/common/commonSlice";
 
 export const ProposalItem = (props) => {
-  const { info, vote, onItemClick, tally } = props;
+  const { info, vote, onItemClick, tally, chainName, address } = props;
+
+  const dispatch = useDispatch();
+
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+
+  const chainID = nameToChainIDs[chainName.toLowerCase()];
+  const chainInfo = useSelector(
+    (state) => state.wallet.networks?.[chainID]?.network
+  );
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[chainName] || {}
+  );
+  const govTx = useSelector((state) => state.gov.tx);
+
   const tallyInfo = computeVotingPercentage(tally, false);
   const { yes, no, noWithVeto, abstain } = tallyInfo;
   const tallySum =
@@ -23,9 +43,24 @@ export const ProposalItem = (props) => {
     abstain: (tallyInfo.abstain / tallySum) * 100,
   };
   const onVoteClick = () => {
+    dispatch(
+      setSelectedNetworkLocal({
+        chainName: chainName,
+      })
+    );
     props.setOpen(info?.proposal_id);
   };
 
+  const [openDepositDialog, setOpenDepositDialog] = useState(false);
+  const handleDialogClose = () => {
+    setOpenDepositDialog(false);
+  };
+
+  useEffect(() => {
+    if (govTx.status === "idle") {
+      handleDialogClose();
+    }
+  }, [govTx]);
 
   return (
     <Paper
@@ -56,7 +91,6 @@ export const ProposalItem = (props) => {
             component="div"
             color="text.primary"
             className="proposal-title"
-            onClick={() => onItemClick()}
             gutterBottom
             fontWeight={600}
             sx={{ cursor: "pointer", ml: 1 }}
@@ -65,12 +99,16 @@ export const ProposalItem = (props) => {
           </Typography>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="body1">Voting ends in &nbsp;</Typography>
-          <Typography variant="body1">
-            {getDaysLeft(info?.voting_end_time) === 1 ? `1 day` : `${getDaysLeft(info?.voting_end_time)} days`}
-          </Typography>
-        </div>
+        {info?.status === "PROPOSAL_STATUS_VOTING_PERIOD" ? (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Typography variant="body1">Voting ends in &nbsp;</Typography>
+            <Typography variant="body1">
+              {getDaysLeft(info?.voting_end_time) === 1
+                ? `1 day`
+                : `${getDaysLeft(info?.voting_end_time)} days`}
+            </Typography>
+          </div>
+        ) : null}
 
         <Box
           sx={{
@@ -132,15 +170,50 @@ export const ProposalItem = (props) => {
         ) : (
           <>&nbsp;</>
         )}
-        <Button
-          size="small"
-          variant="contained"
-          disableElevation
-          onClick={onVoteClick}
+        <Box
+          sx={{
+            textAlign: "right",
+          }}
         >
-          Vote
-        </Button>
+          {info?.status === "PROPOSAL_STATUS_DEPOSIT_PERIOD" ? (
+            <Button
+              size="small"
+              variant="contained"
+              disableElevation
+              onClick={() => {
+                dispatch(
+                  setSelectedNetworkLocal({
+                    chainName: chainName,
+                  })
+                );
+                setOpenDepositDialog(true);
+              }}
+            >
+              Deposit
+            </Button>
+          ) : null}
+          {info?.status === "PROPOSAL_STATUS_VOTING_PERIOD" ? (
+            <Button
+              size="small"
+              variant="contained"
+              disableElevation
+              onClick={() => {
+                onVoteClick();
+              }}
+            >
+              Vote
+            </Button>
+          ) : null}
+        </Box>
       </CardActions>
+      <DialogDeposit
+        open={openDepositDialog}
+        onClose={handleDialogClose}
+        address={address}
+        proposalId={info.proposal_id}
+        chainInfo={chainInfo}
+        feegrant={feegrant}
+      />
     </Paper>
   );
 };
