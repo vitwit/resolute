@@ -420,7 +420,9 @@ export const stakeSlice = createSlice({
   reducers: {
     resetRestakeTx: (state, action) => {
       let chainID = action.payload.chainID;
-      state.chains[chainID].overviewTx.status = "";
+      if (chainID?.length && state.chains[chainID]) {
+        state.chains[chainID].overviewTx.status = "";
+      }
     },
     resetTxType: (state, action) => {
       let chainID = action.payload.chainID;

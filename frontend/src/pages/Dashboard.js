@@ -19,6 +19,8 @@ import { defaultPallet } from "../utils/pallet";
 import {
   KEY_DARK_MODE,
   KEY_WALLET_NAME,
+  getMainnets,
+  getTestnets,
   removeAllFeegrants,
 } from "../utils/localStorage";
 import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
@@ -63,13 +65,12 @@ export default function Dashboard() {
     } else if (walletName === "leap") {
       wallet = window.leap;
     }
-
     if (wallet) {
       window.wallet = wallet;
       setTimeout(() => {
         dispatch(
           connectWalletV1({
-            mainnets: networks,
+            mainnets: [...networks, ...getMainnets(), ...getTestnets()],
             testnets: [],
             walletName,
           })
