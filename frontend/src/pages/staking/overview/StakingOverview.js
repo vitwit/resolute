@@ -10,6 +10,7 @@ import { getDelegatorTotalRewards } from "../../../features/distribution/distrib
 import { Chain } from "./Chain";
 import { useNavigate } from "react-router-dom";
 import SelectNetwork from "../../../components/common/SelectNetwork";
+import { parseBalance } from "../../../utils/denom";
 
 const StakingOverview = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -66,9 +67,7 @@ const StakingOverview = () => {
         let rewards = validatorRewards?.[j].reward;
         let validatorReward = 0;
 
-        for (let k = 0; k < rewards.length; k++) {
-          validatorReward += +rewards[k].amount / 10 ** decimal;
-        }
+        validatorReward = parseBalance(rewards, decimal, coinMinimalDenom);
 
         validatorMap[address] = validatorReward || 0;
       }
