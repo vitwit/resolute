@@ -269,7 +269,7 @@ export const ChainsOverview = ({ chainNames }) => {
         }}
         spacing={1}
       >
-        <Grid item xs={6} md={4}>
+        <Grid item xs={6} md={3}>
           <Card elevation={0}>
             <CardContent>
               <Typography
@@ -286,7 +286,7 @@ export const ChainsOverview = ({ chainNames }) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={6} md={4}>
+        <Grid item xs={6} md={3}>
           <Card elevation={0}>
             <CardContent>
               <Typography
@@ -303,7 +303,7 @@ export const ChainsOverview = ({ chainNames }) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={6} md={4}>
+        <Grid item xs={6} md={3}>
           <Card elevation={0}>
             <CardContent>
               <Typography
@@ -316,6 +316,26 @@ export const ChainsOverview = ({ chainNames }) => {
               </Typography>
               <Typography align="left" variant="h6" color="text.primary">
                 ${formatNumber(totalPendingAmount)}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={6} md={3}>
+          <Card elevation={0}>
+            <CardContent>
+              <Typography
+                align="left"
+                variant="body2"
+                color="text.secondary"
+                fontWeight={600}
+              >
+                Total Wallet Balance
+              </Typography>
+              <Typography align="left" variant="h6" color="text.primary">
+                $
+                {formatNumber(
+                  totalAvailableAmount + totalStakedAmount + totalPendingAmount
+                )}
               </Typography>
             </CardContent>
           </Card>
