@@ -5,23 +5,14 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Controller, useForm } from "react-hook-form";
 import { txDeposit } from "../features/gov/govSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { Typography } from "@mui/material";
 
 const DialogDeposit = (props) => {
-  const {
-    onClose,
-    open,
-    balance,
-    displayDenom,
-    address,
-    proposalId,
-    chainInfo,
-    feegrant,
-  } = props;
+  const { onClose, open, address, proposalId, chainInfo, feegrant } = props;
 
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.gov.tx.status);
@@ -66,31 +57,13 @@ const DialogDeposit = (props) => {
       <Dialog onClose={handleClose} open={open}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogContent>
-            <div style={{ marginBottom: "8px" }}>
-              <Typography color="text.primary" fontWeight={600} sx={{ mt: 2 }}>
-                Available Balance
-              </Typography>
-              <Typography
-                color="text.primary"
-                variant="body1"
-                className="hover-link"
-                onClick={() => {
-                  setValue("amount", balance);
-                }}
-              >
-                {balance}
-              </Typography>
-            </div>
-
+            <Typography>Deposit</Typography>
             <div style={{ marginTop: 16 }}>
               <Controller
                 name="amount"
                 control={control}
                 rules={{
                   required: "Amount is required",
-                  validate: (value) => {
-                    return Number(value) > 0 && Number(value) <= balance;
-                  },
                 }}
                 render={({ field }) => (
                   <TextField
@@ -99,13 +72,6 @@ const DialogDeposit = (props) => {
                     label="Amount to deposit"
                     fullWidth
                     size="small"
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="start">
-                          {displayDenom}
-                        </InputAdornment>
-                      ),
-                    }}
                     error={errors.amount}
                     helperText={
                       errors.amount?.type === "validate"
@@ -123,6 +89,7 @@ const DialogDeposit = (props) => {
               color="secondary"
               className="button-capitalize-title"
               disableElevation
+              disabled={loading === "pending"}
               onClick={() => handleClose()}
             >
               Cancel

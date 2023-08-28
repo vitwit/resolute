@@ -17,6 +17,7 @@ const initialState = {
     status: "idle",
     errMsg: "",
   },
+  depositParams: {},
   tally: {
     status: "idle",
     errMsg: "",
@@ -128,6 +129,21 @@ export const getVotes = createAsyncThunk("gov/voter-votes", async (data) => {
     data: response.data,
   };
 });
+
+export const getDepositParams = createAsyncThunk(
+  "gov/deposit-params",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await govService.depositParams(data.baseURL);
+      return {
+        chainID: data.chainID,
+        data: response.data,
+      };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 
 export const txVote = createAsyncThunk(
   "gov/tx-vote",
@@ -386,6 +402,22 @@ export const proposalsSlice = createSlice({
         state.proposalInfo.error =
           payload?.payload?.message || payload.error.message;
       });
+
+    //deposit-params
+    builder
+      .addCase(getDepositParams.pending, () => {})
+      .addCase(getDepositParams.fulfilled, (state, action) => {
+        state.depositParams.status = "idle";
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          state.depositParams[chainID] = {
+            status: "idle",
+            errMsg: "",
+            depositParams: action.payload?.data?.deposit_params,
+          };
+        }
+      })
+      .addCase(getDepositParams.rejected, () => {});
   },
 });
 

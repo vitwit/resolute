@@ -31,6 +31,7 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import { useNavigate } from "react-router-dom";
 import DialogSelectNetwork from "./DialogSelectNetwork";
+import DialogAddNetwork from "./addNetwork/DialogAddNetwork";
 
 export const connectActions = (walletName, dispatch) => {
   setTimeout(() => {
@@ -97,6 +98,11 @@ export function CustomAppBar(props) {
   const [open, setDialogOpen] = useState(false);
   const dialogCloseHandle = () => {
     setDialogOpen(!open);
+  };
+
+  const [addNetworkDialogOpen, setAddNetworkDialogOpen] = useState(false);
+  const addNetworkDialogCloseHandle = () => {
+    setAddNetworkDialogOpen(!addNetworkDialogOpen);
   };
 
   useEffect(() => {
@@ -243,6 +249,14 @@ export function CustomAppBar(props) {
         open={open}
         dialogCloseHandle={dialogCloseHandle}
         authzModeAlert={authzModeAlert}
+        addNetworkDialogCloseHandle={addNetworkDialogCloseHandle}
+        addNetworkDialogOpen={addNetworkDialogOpen}
+      />
+
+      <DialogAddNetwork
+        open={addNetworkDialogOpen}
+        dialogCloseHandle={addNetworkDialogCloseHandle}
+        selectNetworkDialogCloseHandle={dialogCloseHandle}
       />
     </AppBar>
   );
