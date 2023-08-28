@@ -13,6 +13,7 @@ import multiSlice from "../features/multisig/multisigSlice";
 import groupSlice from "../features/group/groupSlice";
 import slashingSlice from "../features/slashing/slashingSlice";
 import authReducer from "../features/auth/slice";
+import ibcSlice from "../features/ibc/ibcSlice";
 
 export const store = configureStore({
   reducer: {
@@ -30,12 +31,16 @@ export const store = configureStore({
     slashing: slashingSlice,
     node: nodeReducer,
     auth: authReducer,
+    ibc: ibcSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         // Ignore these action types
-        ignoredActions: ["wallet/connect/fulfilled", "wallet/connectv1/fulfilled"],
+        ignoredActions: [
+          "wallet/connect/fulfilled",
+          "wallet/connectv1/fulfilled",
+        ],
       },
     }),
 });

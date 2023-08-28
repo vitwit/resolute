@@ -27,12 +27,31 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js";
 import { makeSignDoc, Registry } from "@cosmjs/proto-signing";
 import { slashingAminoConverter } from "../features/slashing/slashing";
 import { MsgUnjail } from "../txns/slashing/tx";
-import { MsgCreateGroup, MsgCreateGroupPolicy, MsgCreateGroupWithPolicy, MsgExec, MsgLeaveGroup, MsgSubmitProposal, MsgUpdateGroupAdmin, MsgUpdateGroupMembers, MsgUpdateGroupMetadata, MsgUpdateGroupPolicyAdmin, MsgUpdateGroupPolicyDecisionPolicy, MsgUpdateGroupPolicyMetadata, MsgVote } from "cosmjs-types/cosmos/group/v1/tx";
+import {
+  MsgCreateGroup,
+  MsgCreateGroupPolicy,
+  MsgCreateGroupWithPolicy,
+  MsgExec,
+  MsgLeaveGroup,
+  MsgSubmitProposal,
+  MsgUpdateGroupAdmin,
+  MsgUpdateGroupMembers,
+  MsgUpdateGroupMetadata,
+  MsgUpdateGroupPolicyAdmin,
+  MsgUpdateGroupPolicyDecisionPolicy,
+  MsgUpdateGroupPolicyMetadata,
+  MsgVote,
+} from "cosmjs-types/cosmos/group/v1/tx";
 
 const canUseAmino = (aminoConfig, messages) => {
   for (let i = 0; i < messages.length; i++) {
     const message = messages[i];
-    if (message.typeUrl.startsWith("/cosmos.authz") && !aminoConfig.authz) {
+    if (message.typeUrl.startsWith("/ibc")) {
+      return false;
+    } else if (
+      message.typeUrl.startsWith("/cosmos.authz") &&
+      !aminoConfig.authz
+    ) {
       return false;
     } else if (
       message.typeUrl.startsWith("/cosmos.feegrant") &&
@@ -104,18 +123,42 @@ export const signAndBroadcast = async (
 
   registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
   registry.register("/cosmos.group.v1.MsgCreateGroup", MsgCreateGroup);
-  registry.register("/cosmos.group.v1.MsgCreateGroupPolicy", MsgCreateGroupPolicy);
-  registry.register("/cosmos.group.v1.MsgUpdateGroupAdmin", MsgUpdateGroupAdmin);
+  registry.register(
+    "/cosmos.group.v1.MsgCreateGroupPolicy",
+    MsgCreateGroupPolicy
+  );
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupAdmin",
+    MsgUpdateGroupAdmin
+  );
   registry.register("/cosmos.group.v1.MsgLeaveGroup", MsgLeaveGroup);
-  registry.register("/cosmos.group.v1.MsgUpdateGroupMetadata", MsgUpdateGroupMetadata);
-  registry.register("/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy", MsgUpdateGroupPolicyDecisionPolicy);
-  registry.register("/cosmos.group.v1.MsgUpdateGroupPolicyMetadata", MsgUpdateGroupPolicyMetadata);
-  registry.register("/cosmos.group.v1.MsgUpdateGroupMembers", MsgUpdateGroupMembers);
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupMetadata",
+    MsgUpdateGroupMetadata
+  );
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy",
+    MsgUpdateGroupPolicyDecisionPolicy
+  );
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupPolicyMetadata",
+    MsgUpdateGroupPolicyMetadata
+  );
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupMembers",
+    MsgUpdateGroupMembers
+  );
   registry.register("/cosmos.group.v1.MsgVote", MsgVote);
   registry.register("/cosmos.group.v1.MsgExec", MsgExec);
   registry.register("/cosmos.group.v1.MsgSubmitProposal", MsgSubmitProposal);
-  registry.register("/cosmos.group.v1.MsgCreateGroupWithPolicy", MsgCreateGroupWithPolicy);
-  registry.register("/cosmos.group.v1.MsgUpdateGroupPolicyAdmin", MsgUpdateGroupPolicyAdmin);
+  registry.register(
+    "/cosmos.group.v1.MsgCreateGroupWithPolicy",
+    MsgCreateGroupWithPolicy
+  );
+  registry.register(
+    "/cosmos.group.v1.MsgUpdateGroupPolicyAdmin",
+    MsgUpdateGroupPolicyAdmin
+  );
 
   if (!gas) {
     gas = await simulate(
@@ -328,7 +371,9 @@ function parseTxResult(result) {
 
 function convertToAmino(aminoConfig, aminoTypes, messages) {
   return messages.map((message) => {
-    if (message.typeUrl.startsWith("/cosmos.authz") && !aminoConfig.authz) {
+    if(message.typeUrl.startsWith("/ibc")) {
+      throw new Error("This chain does not support amino signing for ibc");
+    } else if (message.typeUrl.startsWith("/cosmos.authz") && !aminoConfig.authz) {
       throw new Error("This chain does not support amino signing for authz");
     } else if (
       message.typeUrl.startsWith("/cosmos.feegrant") &&
