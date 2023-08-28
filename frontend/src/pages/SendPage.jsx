@@ -25,6 +25,7 @@ import MultiTx from "./MultiTx";
 import SelectNetwork from "../components/common/SelectNetwork";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { Button, Typography } from "@mui/material";
+import { IBCTransfer } from "./IBCTransfer";
 
 export const filterSendAuthz = (authzs) => {
   const result = {};
@@ -271,6 +272,16 @@ export default function SendPage() {
                 >
                   Multi Send
                 </Button>
+                <Button
+                  variant={
+                    sendType === "IBC-transfer" ? "contained" : "outlined"
+                  }
+                  onClick={() => {
+                    setSendType("IBC-transfer");
+                  }}
+                >
+                  IBC transfer
+                </Button>
               </ButtonGroup>
             ) : null}
           </Grid>
@@ -336,9 +347,18 @@ export default function SendPage() {
               <Grid item xs={1} md={3}></Grid>
             </Grid>
           </>
-        ) : (
+        ) : sendType === "multi-send" ? (
           <>
             <MultiTx chainInfo={chainInfo} address={address} />
+          </>
+        ) : (
+          <>
+            <IBCTransfer
+              chainInfo={chainInfo}
+              address={address}
+              networkName={currentNetwork}
+              balances={balances}
+            />
           </>
         )}
       </Box>
