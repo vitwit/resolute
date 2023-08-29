@@ -26,6 +26,7 @@ import {
   setFeegrant as setFeegrantState,
   resetFeegrant,
   removeFeegrant as removeFeegrantState,
+  setActiveTab,
 } from "./../../features/common/commonSlice";
 import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "./../../utils/util";
@@ -231,6 +232,7 @@ export default function Feegrant() {
       dispatch(resetAlerts());
       dispatch(resetError());
       dispatch(resetTxHash());
+      dispatch(setActiveTab("feegrant"));
     };
   }, []);
 

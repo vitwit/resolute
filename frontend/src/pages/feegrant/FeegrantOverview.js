@@ -9,6 +9,7 @@ import { Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import SelectNetwork from "../../components/common/SelectNetwork";
 import { useNavigate } from "react-router-dom";
+import { setActiveTab } from "../../features/common/commonSlice";
 
 export const FeegrantOverview = () => {
   const dispatch = useDispatch();
@@ -39,6 +40,10 @@ export const FeegrantOverview = () => {
       );
     });
   }, [nameToChainIDs]);
+
+  useEffect(() => {
+    dispatch(setActiveTab("feegrant"));
+  }, []);
 
   return (
     <>

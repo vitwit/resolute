@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { resetDefaultState } from "../../features/staking/stakeSlice";
 import AddManualTx from "./AddManualTx";
+import { setActiveTab } from "../../features/common/commonSlice";
 
 function CreateProposal() {
   const [type, setType] = React.useState(null);
@@ -25,6 +26,10 @@ function CreateProposal() {
   const chainInfo = networks[nameToChainIDs[currentNetwork]]?.network;
   const address =
   networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
+  
+  useEffect(() => {
+    dispatch(setActiveTab("groups"));
+  }, [])
 
   return (
     <>

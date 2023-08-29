@@ -37,11 +37,16 @@ import {
   resetCreateTxnState,
 } from "../../../features/multisig/multisigSlice";
 import { fee } from "../../../txns/execute";
-import { resetError, setError } from "../../../features/common/commonSlice";
+import {
+  resetError,
+  setActiveTab,
+  setError,
+} from "../../../features/common/commonSlice";
 
 // TODO: serve urls from env
 
-const MULTISIG_SEND_TEMPLATE = "https://api.resolute.vitwit.com/_static/send.csv";
+const MULTISIG_SEND_TEMPLATE =
+  "https://api.resolute.vitwit.com/_static/send.csv";
 const MULTISIG_DELEGATE_TEMPLATE =
   "https://api.resolute.vitwit.com/_static/delegate.csv";
 const MULTISIG_UNDELEGATE_TEMPLATE =
@@ -261,6 +266,10 @@ export default function PageCreateTx() {
       );
     }
   }, [chainInfo]);
+
+  useEffect(() => {
+    dispatch(setActiveTab("multisig"));
+  }, []);
 
   const handleTypeChange = (event) => {
     setTxType(event.target.value);

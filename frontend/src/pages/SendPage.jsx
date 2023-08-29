@@ -9,6 +9,7 @@ import {
   setError,
   removeFeegrant as removeFeegrantState,
   setFeegrant as setFeegrantState,
+  setActiveTab,
 } from "./../features/common/commonSlice";
 import { getBalances, txBankSend } from "../features/bank/bankSlice";
 import Send from "../components/Send";
@@ -102,6 +103,7 @@ export default function SendPage() {
     return () => {
       dispatch(resetError());
       dispatch(resetTxHash());
+      dispatch(setActiveTab("transfers"));
     };
   }, []);
 

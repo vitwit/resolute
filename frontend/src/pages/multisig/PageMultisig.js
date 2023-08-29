@@ -27,6 +27,7 @@ import SelectNetwork from "../../components/common/SelectNetwork";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
 import AddIcon from "@mui/icons-material/Add";
+import { setActiveTab } from "../../features/common/commonSlice";
 
 export default function PageMultisig() {
   const [open, setOpen] = useState(false);
@@ -78,6 +79,10 @@ export default function PageMultisig() {
       dispatch(resetCreateMultisigRes());
     }
   }, [createMultiAccRes]);
+
+  useEffect(() => {
+    dispatch(setActiveTab("multisig"));
+  }, []);
 
   const onClose = () => {
     setOpen(false);

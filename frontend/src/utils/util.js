@@ -270,3 +270,28 @@ export const HasGrantAccess = (type) => {
     yes: false,
   };
 };
+
+export const getTabIndex = (path) => {
+  switch (path) {
+    case "overview":
+      return 0;
+    case "transfers":
+      return 1;
+    case "gov":
+      return 2;
+    case "staking":
+      return 3;
+    case "multisig":
+      return 4;
+    case "authz":
+      return 5;
+    case "feegrant":
+      return 6;
+    case "groups":
+      return 7;
+    case "airdrop-check":
+      return 8;
+    default:
+      return 0;
+  }
+}

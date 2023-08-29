@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { SOMETHING_WRONG } from "../multisig/multisigSlice";
 import commonService from "./commonService";
+import { getTabIndex } from "../../utils/util";
 
 const initialState = {
   errState: {
@@ -29,6 +30,7 @@ const initialState = {
     chainName: "cosmoshub",
   },
   authzMode: false,
+  activeTab: 0,
 };
 
 export const getTokenPrice = createAsyncThunk(
@@ -113,6 +115,9 @@ export const commonSlice = createSlice({
     setAuthzMode: (state, data) => {
       state.authzMode = data.payload;
     },
+    setActiveTab: (state, action) => {
+      state.activeTab = getTabIndex(action.payload);
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -168,6 +173,7 @@ export const {
   setAuthzMode,
   removeFeegrant,
   setSelectedNetworkLocal,
+  setActiveTab
 } = commonSlice.actions;
 
 export default commonSlice.reducer;

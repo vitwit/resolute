@@ -11,6 +11,7 @@ import {
   resetTxHash,
   removeFeegrant as removeFeegrantState,
   setFeegrant as setFeegrantState,
+  setActiveTab,
 } from "../features/common/commonSlice";
 import {
   getFeegrant,
@@ -58,6 +59,7 @@ export default function GroupPage() {
     return () => {
       dispatch(resetError());
       dispatch(resetTxHash());
+      dispatch(setActiveTab("groups"));
     };
   }, []);
 

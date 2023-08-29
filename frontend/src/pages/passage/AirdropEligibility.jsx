@@ -17,7 +17,7 @@ import {
   resetClaimRecords,
 } from "../../features/airdrop/airdropSlice";
 import { useNavigate, useParams } from "react-router-dom";
-import { resetError, setError } from "../../features/common/commonSlice";
+import { resetError, setActiveTab, setError } from "../../features/common/commonSlice";
 import AirdropProgress from "../../components/passage/AirdropProgress";
 import { fromBech32, toHex, toBech32, fromHex } from "@cosmjs/encoding";
 import AlertTitle from "@mui/material/AlertTitle";
@@ -87,6 +87,7 @@ export default function AirdropEligibility() {
       return () => {
         dispatch(resetError());
         dispatch(resetState());
+        dispatch(setActiveTab("airdrop-check"));
       };
     }
   }, []);

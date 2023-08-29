@@ -45,6 +45,7 @@ import DialogVote from "../../components/group/DialogVote";
 import EastIcon from "@mui/icons-material/East";
 import PolicyInfo from "./PolicyInfo";
 import PolicyProposalsList from "./PolicyProposalsList";
+import { setActiveTab } from "../../features/common/commonSlice";
 
 const DELEGATE_MSG = `/cosmos.staking.v1beta1.MsgDelegate`;
 const SEND_MSG = `/cosmos.bank.v1beta1.MsgSend`;
@@ -686,6 +687,10 @@ function Policy() {
   useEffect(() => {
     if (updateMetadataRes?.status === "idle") setShowMetadataInput(false);
   }, [updateMetadataRes?.status]);
+
+  useEffect(() => {
+    dispatch(setActiveTab("groups"));
+  }, [])
 
   const handleSubmitPolicy = (policyMetadata) => {
 

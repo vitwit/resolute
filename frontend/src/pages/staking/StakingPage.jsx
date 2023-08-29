@@ -1,4 +1,4 @@
-import React, { useSelector } from "react-redux";
+import React, { useDispatch, useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import SelectNetwork from "../../components/common/SelectNetwork";
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,8 +7,10 @@ import Validators from "./chain/Validators";
 import StakingOverview from "./overview/StakingOverview";
 import StakingAuthz from "./overview/StakingAuthz";
 import { useEffect } from "react";
+import { setActiveTab } from "../../features/common/commonSlice";
 
 export default function StakingPage() {
+  const dispatch = useDispatch();
   const wallet = useSelector((state) => state.wallet);
   const stakingChains = useSelector((state) => state.staking.chains);
   const isAuthzMode = useSelector((state) => state.common.authzMode);
@@ -27,6 +29,10 @@ export default function StakingPage() {
       navigate(`/staking`);
     }
   }, [isAuthzMode]);
+
+  useEffect(() => {
+    dispatch(setActiveTab("staking"));
+  }, []);
 
   return (
     <div>

@@ -31,6 +31,7 @@ import {
   setError,
   removeFeegrant as removeFeegrantState,
   setFeegrant as setFeegrantState,
+  setActiveTab,
 } from "../../features/common/commonSlice";
 import {
   getMsgNameFromAuthz,
@@ -106,6 +107,7 @@ export default function Authz() {
 
   useEffect(() => {
     dispatch(resetTxAuthzRes());
+    dispatch(setActiveTab("authz"));
   }, []);
 
   useEffect(() => {

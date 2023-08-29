@@ -23,6 +23,7 @@ import {
   resetTxHash,
   removeFeegrant as removeFeegrantState,
   setFeegrant as setFeegrantState,
+  setActiveTab,
 } from "../../features/common/commonSlice";
 import {
   getFeegrant,
@@ -64,6 +65,7 @@ export default function CreateGroupStepper() {
   useEffect(() => {
     return () => {
       dispatch(resetGroupTx());
+      dispatch(setActiveTab("groups"));
     };
   }, []);
 

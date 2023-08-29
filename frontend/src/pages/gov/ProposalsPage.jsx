@@ -6,6 +6,7 @@ import { CircularProgress, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box } from "@mui/system";
 import SelectNetwork from "../../components/common/SelectNetwork";
+import { setActiveTab } from "../../features/common/commonSlice";
 
 export const filterVoteAuthz = (authzs) => {
   return Object.keys(authzs).reduce((result, chainID) => {
@@ -55,6 +56,10 @@ function ProposalsPage() {
     );
     setAuthzGrants(result);
   }, [grantsToMe, nameToIDs, params]);
+
+  useEffect(() => {
+    dispatch(setActiveTab("gov"));
+  }, []);
 
   const selectedNetworkData =
     selectedNetwork && networks[selectedNetwork]?.network;

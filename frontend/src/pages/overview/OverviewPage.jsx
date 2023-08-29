@@ -1,13 +1,15 @@
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectNetwork from "../../components/common/SelectNetwork";
 import Overview from "./chain/Overview";
 import { ChainsOverview } from "./overview/ChainsOverview";
 import { CircularProgress } from "@mui/material";
+import { setActiveTab } from "../../features/common/commonSlice";
 
 export default function OverviewPage() {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const staking = useSelector((state) => state.staking.chains);
   const distribution = useSelector((state) => state.distribution.chains);
@@ -35,6 +37,10 @@ export default function OverviewPage() {
   const handleOnSelect = (chainName) => {
     navigate(`/${chainName}/overview`);
   };
+
+  useEffect(() => {
+    dispatch(setActiveTab("overview"))
+  }, [])
 
   return (
     <>

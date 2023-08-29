@@ -103,6 +103,7 @@ export default function VotesTable({
         fontWeight={600}
         sx={{
           textAlign: "left",
+          color: "text.primary"
         }}
         gutterBottom
       >

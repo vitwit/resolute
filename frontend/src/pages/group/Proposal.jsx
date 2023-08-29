@@ -28,6 +28,7 @@ import { parseProposalStatus } from "../../components/group/ProposalCard";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
 import VotingDetails from "./VotingDetails";
+import { setActiveTab } from "../../features/common/commonSlice";
 
 const ProposalInfo = ({ id, wallet, address, chainID, chainInfo }) => {
   const [voteOpen, setVoteOpen] = useState(false);
@@ -501,7 +502,8 @@ function Proposal() {
         pagination: { limit: 100, key: "" },
         chainID: chainID,
       })
-    )
+    );
+    dispatch(setActiveTab("groups"));
   })
 
   return (

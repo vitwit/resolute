@@ -23,6 +23,7 @@ import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import Chip from "@mui/material/Chip";
 import { copyToClipboard } from "../../../utils/clipboard";
 import { formatNumber } from "../../../utils/denom";
+import { setActiveTab } from "../../../features/common/commonSlice";
 
 export default function PageMultisigInfo() {
   const dispatch = useDispatch();
@@ -105,6 +106,10 @@ export default function PageMultisigInfo() {
       dispatch(multisigByAddress(multisigAddress));
     }
   }, [chainInfo]);
+
+  useEffect(() => {
+    dispatch(setActiveTab("multisig"));
+  }, []);
 
   return (
     <>

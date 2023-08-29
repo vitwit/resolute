@@ -23,6 +23,7 @@ import {
   setError,
   setFeegrant as setFeegrantState,
   removeFeegrant as removeFeegrantState,
+  setActiveTab,
 } from "../../features/common/commonSlice";
 import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import {
@@ -134,18 +135,9 @@ export default function NewFeegrant() {
   useEffect(() => {
     return () => {
       dispatch(resetFeeFilter());
-    };
-  }, []);
-
-  useEffect(() => {
-    return () => {
       dispatch(resetFeeBasic());
-    };
-  }, []);
-
-  useEffect(() => {
-    return () => {
       dispatch(resetFeePeriodic());
+      dispatch(setActiveTab("feegrant"));
     };
   }, []);
 

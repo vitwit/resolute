@@ -90,24 +90,13 @@ function a11yProps(index) {
   };
 }
 
-function getTabIndex(path) {
-  if (path.includes("transfers")) return 1;
-  if (path.includes("gov")) return 2;
-  else if (path.includes("staking")) return 3;
-  else if (path.includes("multisig")) return 4;
-  else if (path.includes("authz")) return 5;
-  else if (path.includes("feegrant")) return 6;
-  else if (path.includes("groups")) return 7;
-  else if (path.includes("airdrop-check")) return 8;
-  else return 0;
-}
-
 export default function Home(props) {
   const authzEnabled = useSelector((state) => state.common.authzMode);
   const [value, setValue] = React.useState(0);
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork?.chainName.toLowerCase() || ""
   );
+  const activeTab = useSelector((state) => state.common.activeTab);
   const [network, setNetwork] = React.useState(selectedNetwork);
   const networks = useSelector((state) => state.wallet.networks);
   const wallet = useSelector((state) => state.wallet);
@@ -171,8 +160,8 @@ export default function Home(props) {
   }, [selectedNetwork, page]);
 
   useEffect(() => {
-    setValue(getTabIndex(page));
-  }, [selectedNetwork]);
+    setValue(activeTab)
+  }, [activeTab])
 
   return (
     <Box>
@@ -346,8 +335,6 @@ export default function Home(props) {
                 path="/:networkName/groups/:id/policies/:policyAddress/proposals"
                 element={<CreateProposal />}
               />
-
-              <Route path="/groups" element={<GroupPage />} />
 
               <Route
                 path="/:networkName/groups/groups/:groupID/proposals/:id"

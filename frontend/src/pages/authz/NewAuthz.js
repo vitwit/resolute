@@ -26,6 +26,7 @@ import {
   setError,
   removeFeegrant as removeFeegrantState,
   setFeegrant as setFeegrantState,
+  setActiveTab,
 } from "../../features/common/commonSlice";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Typography, Alert } from "@mui/material";
@@ -108,6 +109,7 @@ export default function NewAuthz() {
   useEffect(() => {
     return () => {
       dispatch(resetTxAuthzRes());
+      dispatch(setActiveTab("authz"));
     };
   }, []);
 
