@@ -360,15 +360,15 @@ export const networks: Network[] = [
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno-logo.png"
     },
-    keplrExperimental: true,
-    leapExperimental: true,
+    keplrExperimental: false,
+    leapExperimental: false,
     isTestnet: false,
     explorerTxHashEndpoint: "https://www.mintscan.io/juno/txs/",
     config: {
-      chainId: "junotest",
+      chainId: "juno-1",
       chainName: "Juno",
-      rest: "http://192.168.1.36:1317",
-      rpc: "http://192.168.1.36:16657",
+      rest: "https://api.resolute.vitwit.com/juno_api/",
+      rpc: "https://api.resolute.vitwit.com/juno_rpc/",
       currencies: [
         {
           coinDenom: "JUNO",
