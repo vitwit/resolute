@@ -14,15 +14,15 @@
     "menu": "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno.svg",
     "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno-logo.png"
   },
-  "keplr_experimental": true,
-  "leap_experimental": true,
+  "keplr_experimental": false,
+  "leap_experimental": false,
   "is_testnet": false,
   "explorer_tx_hash_endpoint": "https://www.mintscan.io/juno/txs/",
   "config": {
-    "chain_id": "junotest",
+    "chain_id": "juno-1",
     "chain_name": "Juno",
-    "rest": "http://192.168.1.36:1317",
-    "rpc": "http://192.168.1.36:16657",
+    "rest": "https://api.resolute.vitwit.com/juno_api/",
+    "rpc": "https://api.resolute.vitwit.com/juno_rpc/",
     "currencies": [
       {
         "coin_denom": "JUNO",
