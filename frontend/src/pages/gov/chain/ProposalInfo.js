@@ -473,7 +473,7 @@ export default function ProposalInfo() {
                       {
                         computeVotingPercentage(
                           proposalTally[id],
-                          true,
+                          false,
                           poolInfo?.[chainID]
                         ).yes
                       }
@@ -492,7 +492,7 @@ export default function ProposalInfo() {
                       {
                         computeVotingPercentage(
                           proposalTally[id],
-                          true,
+                          false,
                           poolInfo?.[chainID]
                         ).no
                       }
@@ -511,7 +511,7 @@ export default function ProposalInfo() {
                       {
                         computeVotingPercentage(
                           proposalTally[id],
-                          true,
+                          false,
                           poolInfo?.[chainID]
                         ).noWithVeto
                       }
@@ -530,7 +530,7 @@ export default function ProposalInfo() {
                       {
                         computeVotingPercentage(
                           proposalTally[id],
-                          true,
+                          false,
                           poolInfo?.[chainID]
                         ).abstain
                       }
