@@ -15,12 +15,12 @@ export const txIBCTransfer = createAsyncThunk(
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
       const msg = IBCTransferMsg(
-        data.sourcePort,
-        data.sourceChannel,
+        data.from,
+        data.to,
         data.amount,
         data.assetMinimalDenom,
-        data.from,
-        data.to
+        "transfer",
+        "channel-0"
       );
       const result = await signAndBroadcast(
         data.chainID,

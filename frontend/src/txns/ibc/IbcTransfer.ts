@@ -22,6 +22,10 @@ export function IBCTransferMsg(
       },
       sourceChannel: sourceChannel,
       sourcePort: sourcePort,
+      timeoutHeight: {
+        revisionHeight: 2200,
+        revisionNumber: 1,
+      }
     }),
   };
 }
