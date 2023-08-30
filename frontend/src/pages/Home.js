@@ -233,14 +233,15 @@ export default function Home(props) {
               }}
             />
           )}
-          <Tab
-            label="Feegrant"
-            {...a11yProps(6)}
-            value={6}
-            sx={{
-              fontWeight: 600,
-            }}
-          />
+            <Tab
+              label="Feegrant"
+              {...a11yProps(6)}
+              value={6}
+              sx={{
+                fontWeight: 600,
+              }}
+              disabled={authzEnabled && !authzTabs?.feegratEnabled}
+            />
           <Tab
             label="Groups"
             {...a11yProps(7)}

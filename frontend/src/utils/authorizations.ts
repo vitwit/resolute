@@ -239,7 +239,7 @@ export interface AuthzTabs {
   airdropEnabled: boolean;
 }
 
-const SEND_AUTHZ = "/cosmos.authz.v1beta1.SendAuthorization";
+const SEND_AUTHZ = "/cosmos.bank.v1beta1.SendAuthorization";
 const GENERIC_AUTHZ = "/cosmos.authz.v1beta1.GenericAuthorization";
 const STAKE_AUTHZ = "/cosmos.authz.v1beta1.StakeAuthorization";
 
