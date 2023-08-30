@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { setError, setTxHash } from "../common/commonSlice";
 import { signAndBroadcast } from "../../utils/signing";
 import { IBCTransferMsg } from "../../txns/ibc/IbcTransfer";
+import ibcService from "./ibcService";
 
 const initialState = {
   // tx.chains[chainID].status = "pending" | "rejected" | "idle"
@@ -14,13 +15,16 @@ export const txIBCTransfer = createAsyncThunk(
   "ibc/transfer",
   async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
+      const consensusStateResponse = await ibcService.consensusState(data.rpc);
+      const timeout_BlockHeight = consensusStateResponse?.data?.result?.response?.last_block_height + 150 || 150 ;
       const msg = IBCTransferMsg(
         data.from,
         data.to,
         data.amount,
         data.assetMinimalDenom,
-        "transfer",
-        "channel-0"
+        data.sourcePort,
+        data.sourceChannel,
+        timeout_BlockHeight,
       );
       const result = await signAndBroadcast(
         data.chainID,

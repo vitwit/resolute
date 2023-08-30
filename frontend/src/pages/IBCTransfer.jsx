@@ -50,12 +50,13 @@ export const IBCTransfer = (props) => {
         txIBCTransfer({
           from: address,
           to: recipient,
-          amount: amount,
+          amount: amount * (10 ** Number(selectedAsset['decimals'])) ,
           assetMinimalDenom: selectedAsset["denom"],
-          sourcePort: selectedAsset["port"],
-          sourceChannel: selectedAsset["channel"],
+          sourcePort: destinationChain["port"],
+          sourceChannel: destinationChain["channel"],
           chainID: chainInfo.config.chainId,
           rest: chainInfo.config.rest,
+          rpc: chainInfo.config.rpc,
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:

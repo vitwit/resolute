@@ -9,7 +9,8 @@ export function IBCTransferMsg(
   amount: number,
   denom: string,
   sourcePort: string,
-  sourceChannel: string
+  sourceChannel: string,
+  timeoutBlockHeight: Long,
 ): Msg {
   return {
     typeUrl: msgIBCSendTypeUrl,
@@ -23,7 +24,7 @@ export function IBCTransferMsg(
       sourceChannel: sourceChannel,
       sourcePort: sourcePort,
       timeoutHeight: {
-        revisionHeight: 2200,
+        revisionHeight: String(timeoutBlockHeight),
         revisionNumber: 1,
       }
     }),
