@@ -6,9 +6,8 @@ import { IBCTransferMsg } from "../../txns/ibc/IbcTransfer";
 const initialState = {
   // tx.chains[chainID].status = "pending" | "rejected" | "idle"
   // tx.chains[chainID].type = "send" | "confirm"
-  tx: {
-    chains: {},
-  },
+
+  chains: {},
 };
 
 export const txIBCTransfer = createAsyncThunk(
@@ -19,7 +18,7 @@ export const txIBCTransfer = createAsyncThunk(
         data.sourcePort,
         data.sourceChannel,
         data.amount,
-        data.minimalDenom,
+        data.assetMinimalDenom,
         data.from,
         data.to
       );
@@ -30,7 +29,7 @@ export const txIBCTransfer = createAsyncThunk(
         [msg],
         860000,
         "",
-        `${data.feeAmount}${data.denom}`,
+        `${data.feeAmount}${data.minimalDenom}`,
         data.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );

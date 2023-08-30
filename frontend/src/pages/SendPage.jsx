@@ -358,6 +358,7 @@ export default function SendPage() {
               address={address}
               networkName={currentNetwork}
               balances={balances}
+              feegrant={feegrant}
             />
           </>
         )}
