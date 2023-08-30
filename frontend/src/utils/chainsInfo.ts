@@ -361,14 +361,14 @@ export const networks: Network[] = [
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno-logo.png"
     },
     keplrExperimental: true,
-    leapExperimental: false,
+    leapExperimental: true,
     isTestnet: false,
     explorerTxHashEndpoint: "https://www.mintscan.io/juno/txs/",
     config: {
-      chainId: "juno-1",
+      chainId: "junotest",
       chainName: "Juno",
-      rest: "http://localhost:1317/",
-      rpc: "http://localhost:26657/",
+      rest: "http://192.168.1.36:1317",
+      rpc: "http://192.168.1.36:16657",
       currencies: [
         {
           coinDenom: "JUNO",

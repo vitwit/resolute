@@ -52,6 +52,8 @@ export const IBCTransfer = (props) => {
           to: recipient,
           amount: amount,
           assetMinimalDenom: selectedAsset["denom"],
+          sourcePort: selectedAsset["port"],
+          sourceChannel: selectedAsset["channel"],
           chainID: chainInfo.config.chainId,
           rest: chainInfo.config.rest,
           aminoConfig: chainInfo.aminoConfig,
