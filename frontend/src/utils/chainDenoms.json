@@ -1716,6 +1716,26 @@
       "coinGeckoId": "e-money-eur"
     },
     {
+      "denom": "ibc/B9F7C1E4CE9219B5AF06C47B18661DBD49CCD7A6C18FF789E2FB62BB365CFF9C",
+      "type": "ibc",
+      "origin_chain": "passagetest",
+      "origin_denom": "hemanth",
+      "origin_type": "native",
+      "symbol": "EEUR",
+      "decimals": 6,
+      "enable": true,
+      "path": "passage>juno",
+      "channel": "channel-0",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-0",
+        "port": "transfer",
+        "denom": "eeur"
+      },
+      "image": "emoney/asset/eeur.png",
+      "coinGeckoId": "e-money-eur"
+    },
+    {
       "denom": "ibc/EAC38D55372F38F1AFD68DF7FE9EF762DCF69F26520643CF3F9D292A738D8034",
       "type": "ibc",
       "origin_chain": "ethereum",
