@@ -135,7 +135,7 @@ export const ChainsOverview = ({ chainNames }) => {
         totalBalance += convertToDollars(denom, balance);
       }
     });
-    return {totalBalance: totalBalance, totalIBCBalance: totalIBCBalance};
+    return { totalBalance: totalBalance, totalIBCBalance: totalIBCBalance };
   }, [chainIDs, balanceChains, networks]);
 
   const getSortedChainIds = useCallback(() => {
@@ -212,6 +212,8 @@ export const ChainsOverview = ({ chainNames }) => {
     chainIDs.forEach((chainID) => {
       const chainInfo = networks[chainID]?.network;
       const address = networks[chainID]?.walletInfo?.bech32Address;
+      const denom =
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
 
       dispatch(
         getBalances({
@@ -228,35 +230,26 @@ export const ChainsOverview = ({ chainNames }) => {
           chainID: chainID,
         })
       );
+
+      dispatch(
+        getDelegatorTotalRewards({
+          baseURL: chainInfo.config.rest,
+          address: address,
+          chainID: chainID,
+          denom: denom,
+        })
+      );
     });
   }, []);
-
-  useEffect(() => {
-    if (assetType === "native") {
-      chainIDs.forEach((chainID) => {
-        const chainInfo = networks[chainID]?.network;
-        const address = networks[chainID]?.walletInfo?.bech32Address;
-        const denom =
-          networks?.[chainID]?.network?.config?.currencies?.[0]
-            ?.coinMinimalDenom;
-
-        dispatch(
-          getDelegatorTotalRewards({
-            baseURL: chainInfo.config.rest,
-            address: address,
-            chainID: chainID,
-            denom: denom,
-          })
-        );
-      });
-    }
-  }, [assetType]);
 
   const handleOnClick = (chainName) => {
     navigate(`/${chainName}/overview`);
   };
 
-  const {totalBalance: totalAvailableAmount, totalIBCBalance: totalIBCAssetsAmount}  = useMemo(
+  const {
+    totalBalance: totalAvailableAmount,
+    totalIBCBalance: totalIBCAssetsAmount,
+  } = useMemo(
     () => calculateTotalAvailableAmount(),
     [calculateTotalAvailableAmount]
   );
@@ -353,7 +346,10 @@ export const ChainsOverview = ({ chainNames }) => {
               <Typography align="left" variant="h6" color="text.primary">
                 $
                 {formatNumber(
-                  totalAvailableAmount + totalStakedAmount + totalPendingAmount + totalIBCAssetsAmount
+                  totalAvailableAmount +
+                    totalStakedAmount +
+                    totalPendingAmount +
+                    totalIBCAssetsAmount
                 )}
               </Typography>
             </CardContent>
@@ -401,6 +397,7 @@ export const ChainsOverview = ({ chainNames }) => {
                 </>
               ) : null}
               <StyledTableCell sx={paddingTopBottom}>Rewards</StyledTableCell>
+              <StyledTableCell sx={paddingTopBottom}>Value</StyledTableCell>
               <StyledTableCell sx={paddingTopBottom}>Price</StyledTableCell>
               {assetType === "native" ? (
                 <>
@@ -481,6 +478,11 @@ export const ChainsOverview = ({ chainNames }) => {
                         </Typography>
                       </Box>
                     </Box>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {ibcAssetInfo.usdPrice
+                      ? `$${parseFloat(ibcAssetInfo.usdPrice * ibcAssetInfo.balanceAmount).toFixed(2)}`
+                      : "N/A"}
                   </StyledTableCell>
                   <StyledTableCell>
                     {ibcAssetInfo.usdPrice

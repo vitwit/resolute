@@ -18,7 +18,7 @@ const initialState = {
     },
     authzDelegatorRewards: {},
     tx: {
-      status: "idle",
+      status: "",
       txHash: "",
     },
   },
