@@ -11,6 +11,7 @@ import { claimRewardInBank } from "../../../features/bank/bankSlice";
 import {
   resetChainRewards,
   txWithdrawAllRewards,
+  resetTx as resetDistTx
 } from "../../../features/distribution/distributionSlice";
 import {
   addRewardsToDelegations,
@@ -39,6 +40,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
     (state) =>
       state.distribution?.chains?.[chainID]?.delegatorRewards?.totalRewards || 0
   );
+
   const distTxStatus = useSelector(
     (state) => state.distribution?.chains?.[chainID]?.tx
   );
@@ -97,6 +99,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
 
   useEffect(() => {
     dispatch(resetRestakeTx({ chainID: chainID }));
+    dispatch(resetDistTx({ chainID: chainID }));
   }, []);
 
   const actionClaimAndStake = () => {
