@@ -4,13 +4,13 @@ import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import React from "react";
 
-const MULTISIG_SEND_TEMPLATE = "https://resolute.witval.com/_static/send.csv";
+const MULTISIG_SEND_TEMPLATE = "https://api.resolute.vitwit.com/_static/send.csv";
 const MULTISIG_DELEGATE_TEMPLATE =
-  "https://resolute.witval.com/_static/delegate.csv";
+  "https://api.resolute.vitwit.com/_static/delegate.csv";
 const MULTISIG_UNDELEGATE_TEMPLATE =
-  "https://resolute.witval.com/_static/undelegate.csv";
+  "https://api.resolute.vitwit.com/_static/undelegate.csv";
 const MULTISIG_REDELEGATE_TEMPLATE =
-  "https://resolute.witval.com/_static/redelegate.csv";
+  "https://api.resolute.vitwit.com/_static/redelegate.csv";
 
 const TYPE_SEND = "SEND";
 const TYPE_DELEGATE = "DELEGATE";

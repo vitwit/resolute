@@ -31,18 +31,17 @@ import {
 import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "./../../utils/util";
 import { getLocalTime } from "./../../utils/datetime";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import {
   StyledTableCell,
   StyledTableRow,
 } from "./../../components/CustomTable";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { FeegrantInfo } from "./../../components/FeegrantInfo";
 import GroupTab, { TabPanel } from "../../components/group/GroupTab";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Grid } from "@mui/material";
 import {
   getFeegrant,
   setFeegrant,
@@ -490,7 +489,6 @@ export default function Feegrant() {
                     <TableHead>
                       <StyledTableRow>
                         <StyledTableCell>Grantee</StyledTableCell>
-                        <StyledTableCell>Type</StyledTableCell>
                         <StyledTableCell>Expiration</StyledTableCell>
                         <StyledTableCell>Details</StyledTableCell>
                         <StyledTableCell>Action</StyledTableCell>
@@ -586,7 +584,6 @@ export default function Feegrant() {
                     <TableHead>
                       <StyledTableRow>
                         <StyledTableCell>Granter</StyledTableCell>
-                        <StyledTableCell>Type</StyledTableCell>
                         <StyledTableCell>Expiration</StyledTableCell>
                         <StyledTableCell>Details</StyledTableCell>
                         <StyledTableCell>Use Feegrant</StyledTableCell>

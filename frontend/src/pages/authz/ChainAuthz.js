@@ -30,6 +30,8 @@ import { copyToClipboard } from "../../utils/clipboard";
 import { getICNSName } from "../../features/common/commonSlice";
 import NameAddress from "../../components/common/NameAddress";
 import { CopyToClipboard } from "../../components/CopyToClipboard";
+import { FeegrantCheckbox } from "../../components/FeegrantCheckbox";
+import { setSelectedNetworkLocal } from "../../features/common/commonSlice";
 
 export const ChainAuthz = (props) => {
   const { chainName, chainID } = props;
@@ -44,7 +46,7 @@ export const ChainAuthz = (props) => {
   const chainInfo = useSelector(
     (state) => state.wallet?.networks?.[chainID]?.network
   );
-  const feegrant = useSelector((state) => state.common.authz?.[chainName]);
+  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
   const authzTx = useSelector((state) => state.authz.tx);
   const icnsNames = useSelector((state) => state.common.icnsNames);
 
@@ -53,6 +55,7 @@ export const ChainAuthz = (props) => {
   const [selected, setSelected] = React.useState({});
   const [infoOpen, setInfoOpen] = React.useState(false);
   const [selectedRevoke, setSelectedRevoke] = React.useState(-1);
+  const [useFeegrant, setUseFeegrant] = React.useState(false);
 
   const handleTabChange = (value) => {
     setTab(value);
@@ -62,6 +65,7 @@ export const ChainAuthz = (props) => {
   };
 
   const revoke = (a, index) => {
+    dispatch(setSelectedNetworkLocal({ chainName }));
     setSelectedRevoke(index);
     dispatch(
       txAuthzRevoke({
@@ -77,7 +81,7 @@ export const ChainAuthz = (props) => {
           chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
           10 ** currency.coinDecimals,
         baseURL: chainInfo.config.rest,
-        feegranter: feegrant?.granter,
+        feegranter: useFeegrant? feegrant?.granter : "",
       })
     );
   };
@@ -96,7 +100,7 @@ export const ChainAuthz = (props) => {
   return chainGrantsByMe?.grants?.length || chainGrantsToMe?.grants?.length ? (
     <Card elevation={0} sx={{ p: 1, mt: 2 }}>
       <CardContent>
-        <Grid container>
+        <Grid container justifyContent="space-between">
           <Grid item>
             <div
               style={{
@@ -126,6 +130,13 @@ export const ChainAuthz = (props) => {
                 {chainName.charAt(0).toUpperCase() + chainName.slice(1)}
               </Typography>
             </div>
+          </Grid>
+          <Grid item>
+            <FeegrantCheckbox
+              useFeegrant={useFeegrant}
+              setUseFeegrant={setUseFeegrant}
+              feegrant={feegrant}
+            />
           </Grid>
         </Grid>
       </CardContent>

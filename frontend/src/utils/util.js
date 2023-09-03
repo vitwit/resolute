@@ -1,6 +1,7 @@
 import Chip from "@mui/material/Chip";
 import { Decimal } from "@cosmjs/math";
 import { authzMsgTypes } from "./authorizations";
+import chainDenoms from "./chainDenoms.json";
 
 export function getTypeURLName(url) {
   if (!url) {
@@ -269,4 +270,30 @@ export const HasGrantAccess = (type) => {
   return {
     yes: false,
   };
+};
+
+export const getIBCBalances = (balancesList, nativeDenom, chainName) => {
+  let count = 0;
+  let ibcBalances = [];
+  for (let i = 0; i < balancesList?.length; i++) {
+    if (balancesList[i]?.denom === nativeDenom) continue;
+    const denomInfo = getOriginDenom(balancesList[i], chainName);
+    ibcBalances = [
+      ...ibcBalances,
+      {
+        denom: denomInfo?.origin_denom,
+        amount: Number(balancesList[i]?.amount),
+        decimals: denomInfo?.decimals
+      },
+    ];
+    count++;
+  }
+  return ibcBalances;
+};
+
+export const getOriginDenom = (balance, chainName) => {
+  const denomInfo = chainDenoms[chainName]?.filter((item) => {
+    return balance?.denom === item.denom;
+  });
+  return {origin_denom: denomInfo?.[0]?.origin_denom, decimals: denomInfo?.[0]?.decimals};
 };

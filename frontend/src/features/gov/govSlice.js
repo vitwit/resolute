@@ -3,14 +3,21 @@ import { GovVoteMsg } from "../../txns/gov";
 import { signAndBroadcast } from "../../utils/signing";
 import { setError, setTxHash } from "../common/commonSlice";
 import govService from "./govService";
+import { GovDepositMsg } from "../../txns/gov/deposit";
 
 const initialState = {
-  loading : 0,
+  loading: 0,
   active: {
     proposals: {},
     status: "idle",
     errMsg: "",
   },
+  deposit: {
+    proposals: {},
+    status: "idle",
+    errMsg: "",
+  },
+  depositParams: {},
   tally: {
     status: "idle",
     errMsg: "",
@@ -43,7 +50,23 @@ export const getProposal = createAsyncThunk(
   }
 );
 
-export const getProposals = createAsyncThunk(
+export const getProposalsInDeposit = createAsyncThunk(
+  "gov/deposit-proposals",
+  async (data) => {
+    const response = await govService.proposals(
+      data.baseURL,
+      data?.key,
+      data?.limit,
+      1
+    );
+    return {
+      chainID: data.chainID,
+      data: response.data,
+    };
+  }
+);
+
+export const getProposalsInVoting = createAsyncThunk(
   "gov/active-proposals",
   async (data, { dispatch }) => {
     const response = await govService.proposals(
@@ -75,7 +98,7 @@ export const getProposals = createAsyncThunk(
     }
     return {
       chainID: data.chainID,
-      data: response.data
+      data: response.data,
     };
   }
 );
@@ -87,7 +110,7 @@ export const getProposalTally = createAsyncThunk(
     response.data.tally.proposal_id = data.proposalId;
     return {
       chainID: data.chainID,
-      data: response.data
+      data: response.data,
     };
   }
 );
@@ -103,9 +126,24 @@ export const getVotes = createAsyncThunk("gov/voter-votes", async (data) => {
   response.data.vote.proposal_id = data.proposalId;
   return {
     chainID: data.chainID,
-    data: response.data
+    data: response.data,
   };
 });
+
+export const getDepositParams = createAsyncThunk(
+  "gov/deposit-params",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await govService.depositParams(data.baseURL);
+      return {
+        chainID: data.chainID,
+        data: response.data,
+      };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 
 export const txVote = createAsyncThunk(
   "gov/tx-vote",
@@ -151,12 +189,61 @@ export const txVote = createAsyncThunk(
   }
 );
 
+export const txDeposit = createAsyncThunk(
+  "gov/tx-deposit",
+  async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    try {
+      const msg = GovDepositMsg(
+        data.proposalId,
+        data.depositer,
+        data.amount,
+        data.denom
+      );
+      const result = await signAndBroadcast(
+        data.chainId,
+        data.aminoConfig,
+        data.prefix,
+        [msg],
+        860000,
+        data?.justification || "",
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: "error",
+            message: result?.rawLog,
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const proposalsSlice = createSlice({
   name: "gov",
   initialState,
   reducers: {
     resetLoading: (state, action) => {
-      const {chainsCount} = action.payload;
+      const { chainsCount } = action.payload;
       state.loading += chainsCount;
     },
     resetTx: (state) => {
@@ -167,28 +254,28 @@ export const proposalsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getProposals.pending, (state, action) => {
+      .addCase(getProposalsInVoting.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
         const chainData = state.active[chainID] || {};
         chainData.status = "pending";
         chainData.errMsg = "";
         state.active[chainID] = chainData;
+        state.loading++;
       })
-      .addCase(getProposals.fulfilled, (state, action) => {
+      .addCase(getProposalsInVoting.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || "";
         if (chainID.length > 0) {
           let result = {
             status: "idle",
             errMsg: "",
             proposals: action.payload?.data?.proposals,
-            pagination: action.payload?.pagination
-
-          }
+            pagination: action.payload?.pagination,
+          };
           state.active[chainID] = result;
           state.loading--;
         }
       })
-      .addCase(getProposals.rejected, (state, action) => {
+      .addCase(getProposalsInVoting.rejected, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
         const chainData = state.active[chainID] || {};
         chainData.status = "rejected";
@@ -197,43 +284,71 @@ export const proposalsSlice = createSlice({
         state.loading--;
       });
 
+    builder
+      .addCase(getProposalsInDeposit.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const chainData = state.deposit[chainID] || {};
+        chainData.status = "pending";
+        chainData.errMsg = "";
+        state.deposit[chainID] = chainData;
+        state.loading++;
+      })
+      .addCase(getProposalsInDeposit.fulfilled, (state, action) => {
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          let result = {
+            status: "idle",
+            errMsg: "",
+            proposals: action.payload?.data?.proposals,
+            pagination: action.payload?.pagination,
+          };
+          state.deposit[chainID] = result;
+        }
+        state.loading--;
+      })
+      .addCase(getProposalsInDeposit.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const chainData = state.deposit[chainID] || {};
+        chainData.status = "rejected";
+        chainData.errMsg = action.error.message;
+        state.deposit[chainID] = chainData;
+        state.loading--;
+      });
+
     // tally
     builder
-      .addCase(getProposalTally.pending, () => { })
+      .addCase(getProposalTally.pending, () => {})
       .addCase(getProposalTally.fulfilled, (state, action) => {
         const chainID = action.payload.chainID;
         let result = {
           status: "idle",
           errMsg: "",
-          proposalTally: state.tally[chainID]?.proposalTally || {}
+          proposalTally: state.tally[chainID]?.proposalTally || {},
         };
 
         result.proposalTally[action.payload?.data?.tally?.proposal_id] =
           action.payload?.data.tally;
         state.tally[chainID] = result;
       })
-      .addCase(getProposalTally.rejected, () => {
-      });
+      .addCase(getProposalTally.rejected, () => {});
 
     // votes
     builder
-      .addCase(getVotes.pending, () => {
-      })
+      .addCase(getVotes.pending, () => {})
       .addCase(getVotes.fulfilled, (state, action) => {
         const chainID = action.payload.chainID;
         let result = {
           status: "idle",
           errMsg: "",
-          proposals: []
-        }
+          proposals: [],
+        };
 
         result.proposals[action.payload?.data?.vote?.proposal_id] =
           action.payload.data;
 
-        state.votes[chainID] = result
+        state.votes[chainID] = result;
       })
-      .addCase(getVotes.rejected, (state, action) => {
-      });
+      .addCase(getVotes.rejected, (state, action) => {});
 
     // tx-vote
     builder
@@ -244,6 +359,18 @@ export const proposalsSlice = createSlice({
         state.tx.status = "idle";
       })
       .addCase(txVote.rejected, (state, _) => {
+        state.tx.status = "rejected";
+      });
+
+    // tx-deposit
+    builder
+      .addCase(txDeposit.pending, (state) => {
+        state.tx.status = "pending";
+      })
+      .addCase(txDeposit.fulfilled, (state, _) => {
+        state.tx.status = "idle";
+      })
+      .addCase(txDeposit.rejected, (state, _) => {
         state.tx.status = "rejected";
       });
 
@@ -258,15 +385,15 @@ export const proposalsSlice = createSlice({
         if (chainID.length > 0) {
           const old = state.active[chainID];
           if (old?.proposals?.length > 0) {
-            old.proposals = [action.payload.proposal]
+            old.proposals = [action.payload.proposal];
             state.active[chainID] = old;
           } else {
             state.active[chainID] = {
               status: "idle",
               errMsg: "",
               proposals: [action.payload?.proposal],
-              pagination: {}
-            }
+              pagination: {},
+            };
           }
         }
       })
@@ -275,6 +402,22 @@ export const proposalsSlice = createSlice({
         state.proposalInfo.error =
           payload?.payload?.message || payload.error.message;
       });
+
+    //deposit-params
+    builder
+      .addCase(getDepositParams.pending, () => {})
+      .addCase(getDepositParams.fulfilled, (state, action) => {
+        state.depositParams.status = "idle";
+        const chainID = action.payload?.chainID || "";
+        if (chainID.length > 0) {
+          state.depositParams[chainID] = {
+            status: "idle",
+            errMsg: "",
+            depositParams: action.payload?.data?.deposit_params,
+          };
+        }
+      })
+      .addCase(getDepositParams.rejected, () => {});
   },
 });
 

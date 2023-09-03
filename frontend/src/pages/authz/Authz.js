@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getGrantsToMe,
@@ -19,9 +19,8 @@ import {
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Chip from "@mui/material/Chip";
 import { getTypeURLName, shortenAddress } from "../../utils/util";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { getLocalTime } from "../../utils/datetime";
 import { AuthorizationInfo } from "../../components/AuthorizationInfo";
@@ -121,7 +120,7 @@ export default function Authz() {
         chainName: currentNetwork.toLowerCase(),
       })
     );
-  }, [currentNetwork, params]);
+  }, [currentNetwork]);
 
   useEffect(() => {
     if (address !== "" || txAuthzRes?.status === "idle") {

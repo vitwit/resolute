@@ -11,6 +11,7 @@ import { getLocalTime } from "../../../utils/datetime";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  getDepositParams,
   getProposal,
   getProposalTally,
   txVote,
@@ -20,6 +21,7 @@ import {
   resetFeegrant,
   setError,
   setFeegrant as setFeegrantState,
+  setSelectedNetworkLocal,
 } from "../../../features/common/commonSlice";
 import { resetTx } from "../../../features/distribution/distributionSlice";
 import { getVoteAuthz } from "../../../utils/authorizations";
@@ -30,11 +32,18 @@ import { useTheme } from "@emotion/react";
 import FeegranterInfo from "../../../components/FeegranterInfo";
 import { filterVoteAuthz } from "../ProposalsPage";
 import { getFeegrant } from "../../../utils/localStorage";
-import getProposalStatusComponent, { computeVotingPercentage, nameToVoteOption } from "../../../utils/proposals";
+import getProposalStatusComponent, {
+  computeVotingPercentage,
+  nameToVoteOption,
+} from "../../../utils/proposals";
+import { useRemark } from "react-remark";
+import DialogDeposit from "../../../components/DialogDeposit";
+import { parseBalance } from "../../../utils/denom";
 
 export default function ProposalInfo() {
   const dispatch = useDispatch();
   const params = useParams();
+  const [proposalMarkdown, setProposalMarkdown] = useRemark();
 
   const [authzGrants, setAuthzGrants] = useState({});
 
@@ -45,6 +54,9 @@ export default function ProposalInfo() {
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
   const poolInfo = useSelector(
     (state) => state.staking.chains?.[chainID]?.pool
+  );
+  const depositParams = useSelector(
+    (state) => state.gov.depositParams?.[chainID]?.depositParams
   );
 
   const currency = network?.network?.config?.currencies[0];
@@ -57,19 +69,45 @@ export default function ProposalInfo() {
   const activeProposals = useSelector((state) => state.gov.active);
   const chainInfo = network?.network;
   const [proposal, setProposal] = useState({});
-  const feegrant = useSelector((state) => state.common.feegrant?.[networkName] || {});
+  const [depositRequired, setDepositRequired] = useState(null);
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[networkName] || {}
+  );
+
+  useEffect(() => {
+    if (depositParams?.min_deposit?.length && proposal?.total_deposit?.length) {
+      setDepositRequired(
+        parseBalance(
+          depositParams?.min_deposit,
+          currency.coinDecimals,
+          currency.coinMinimalDenom
+        ) -
+          parseBalance(
+            proposal?.total_deposit,
+            currency.coinDecimals,
+            currency.coinMinimalDenom
+          )
+      );
+    }
+  }, [depositParams, proposal]);
 
   useEffect(() => {
     const chainID = nameToIDs[networkName];
     if (networkName?.length > 0 && chainID?.length > 0) {
+      dispatch(
+        getProposal({
+          baseURL: network?.network?.config.rest,
+          proposalId: id,
+          chainID: chainID,
+        })
+      );
+      dispatch(
+        getDepositParams({
+          baseURL: network?.network?.config?.rest,
+          chainID: chainID,
+        })
+      );
       if (!activeProposals[chainID]?.proposals?.length) {
-        dispatch(
-          getProposal({
-            baseURL: network?.network?.config.rest,
-            proposalId: id,
-            chainID: chainID,
-          })
-        );
         dispatch(
           getProposalTally({
             baseURL: network?.network?.config.rest,
@@ -123,6 +161,10 @@ export default function ProposalInfo() {
     }
   }, [grantsToMe]);
 
+  useEffect(() => {
+    setProposalMarkdown(proposal?.content?.description.replace(/\\n/g, "\n"));
+  }, [proposal]);
+
   const govTx = useSelector((state) => state.gov.tx);
 
   const walletConnected = useSelector((state) => state.wallet.connected);
@@ -160,17 +202,20 @@ export default function ProposalInfo() {
       ) {
         dispatch(resetTx({ chainID: chainID }));
         setOpen(false);
+        handleDialogClose();
       }
     }
   }, [govTx, authzExecTx]);
 
   useEffect(() => {
     const currentChainGrants = getFeegrant()?.[networkName];
-    dispatch(setFeegrantState({
-      grants: currentChainGrants,
-      chainName: networkName.toLowerCase()
-    }));
-  }, [networkName])
+    dispatch(
+      setFeegrantState({
+        grants: currentChainGrants,
+        chainName: networkName.toLowerCase(),
+      })
+    );
+  }, [networkName]);
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
@@ -192,8 +237,9 @@ export default function ProposalInfo() {
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
-            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
-          feegranter: feegrant?.granter,
+            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+            10 ** currency.coinDecimals,
+          feegranter: feegrant.granter,
         })
       );
     } else {
@@ -210,7 +256,8 @@ export default function ProposalInfo() {
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
-            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+            10 ** currency.coinDecimals,
           feegranter: feegrant.granter,
         });
       } else {
@@ -234,6 +281,11 @@ export default function ProposalInfo() {
     } else {
       setOpen(true);
     }
+  };
+
+  const [openDepositDialog, setOpenDepositDialog] = useState(false);
+  const handleDialogClose = () => {
+    setOpenDepositDialog(false);
   };
 
   const theme = useTheme();
@@ -304,132 +356,210 @@ export default function ProposalInfo() {
                   Submitted Time
                 </Typography>
                 <Typography gutterBottom color="text.primary" variant="body1">
-                  2022-08-25 06:53
+                  {getLocalTime(proposal?.submit_time)}
                 </Typography>
               </Grid>
-              <Grid item xs={6} md={4}>
-                <Typography gutterBottom color="text.secondary" variant="body2">
-                  Voting Starts
-                </Typography>
-                <Typography gutterBottom color="text.primary" variant="body1">
-                  {getLocalTime(proposal?.voting_start_time)}
-                </Typography>
-              </Grid>
-
-              <Grid item xs={6} md={4}>
-                <Typography gutterBottom color="text.secondary" variant="body2">
-                  Voting Ends
-                </Typography>
-                <Typography gutterBottom color="text.primary" variant="body1">
-                  {getLocalTime(proposal?.voting_end_time)}
-                </Typography>
-              </Grid>
+              {proposal?.status === "PROPOSAL_STATUS_VOTING_PERIOD" ? (
+                <>
+                  <Grid item xs={6} md={4}>
+                    <Typography
+                      gutterBottom
+                      color="text.secondary"
+                      variant="body2"
+                    >
+                      Voting Starts
+                    </Typography>
+                    <Typography
+                      gutterBottom
+                      color="text.primary"
+                      variant="body1"
+                    >
+                      {getLocalTime(proposal?.voting_start_time)}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6} md={4}>
+                    <Typography
+                      gutterBottom
+                      color="text.secondary"
+                      variant="body2"
+                    >
+                      Voting Ends
+                    </Typography>
+                    <Typography
+                      gutterBottom
+                      color="text.primary"
+                      variant="body1"
+                    >
+                      {getLocalTime(proposal?.voting_end_time)}
+                    </Typography>
+                  </Grid>
+                </>
+              ) : (
+                <>
+                  <Grid item xs={6} md={4}>
+                    <Typography
+                      gutterBottom
+                      color="text.secondary"
+                      variant="body2"
+                    >
+                      Deposit Period Ends
+                    </Typography>
+                    <Typography
+                      gutterBottom
+                      color="text.primary"
+                      variant="body1"
+                    >
+                      {getLocalTime(proposal?.deposit_end_time)}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6} md={4}>
+                    <Typography
+                      gutterBottom
+                      color="text.secondary"
+                      variant="body2"
+                    >
+                      Deposit Required
+                    </Typography>
+                    <Typography
+                      gutterBottom
+                      color="text.primary"
+                      variant="body1"
+                    >
+                      {depositRequired?.toLocaleString()} {currency?.coinDenom}
+                    </Typography>
+                  </Grid>
+                </>
+              )}
             </Grid>
 
-            <Box
-              component="div"
-              sx={{
-                mt: 2,
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <Typography variant="body2" color="text.secondary">
-                Vote details
-              </Typography>
+            {proposal?.status === "PROPOSAL_STATUS_VOTING_PERIOD" ? (
+              <>
+                <Box
+                  component="div"
+                  sx={{
+                    mt: 2,
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    Vote details
+                  </Typography>
 
-              <Button
-                variant="contained"
-                disableElevation
-                sx={{
-                  textTransform: "none",
-                }}
-                onClick={() => {
-                  onVoteDialog();
-                }}
-              >
-                Vote
-              </Button>
-            </Box>
+                  <Button
+                    variant="contained"
+                    disableElevation
+                    sx={{
+                      textTransform: "none",
+                    }}
+                    onClick={() => {
+                      onVoteDialog();
+                    }}
+                  >
+                    Vote
+                  </Button>
+                </Box>
 
-            <Grid container spacing={2}>
-              <Grid item xs={6} md={2}>
-                <Typography
-                  variant="body1"
-                  color="text.primary"
-                  fontWeight={500}
+                <Grid container spacing={2}>
+                  <Grid item xs={6} md={2}>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      fontWeight={500}
+                    >
+                      YES
+                    </Typography>
+                    <Typography>
+                      {
+                        computeVotingPercentage(
+                          proposalTally[id],
+                          false,
+                          poolInfo?.[chainID]
+                        ).yes
+                      }
+                      %
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6} md={2}>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      fontWeight={500}
+                    >
+                      NO
+                    </Typography>
+                    <Typography>
+                      {
+                        computeVotingPercentage(
+                          proposalTally[id],
+                          false,
+                          poolInfo?.[chainID]
+                        ).no
+                      }
+                      %
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6} md={2}>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      fontWeight={500}
+                    >
+                      NO WITH VETO
+                    </Typography>
+                    <Typography>
+                      {
+                        computeVotingPercentage(
+                          proposalTally[id],
+                          false,
+                          poolInfo?.[chainID]
+                        ).noWithVeto
+                      }
+                      %
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6} md={2}>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      fontWeight={500}
+                    >
+                      ABSTAIN
+                    </Typography>
+                    <Typography>
+                      {
+                        computeVotingPercentage(
+                          proposalTally[id],
+                          false,
+                          poolInfo?.[chainID]
+                        ).abstain
+                      }
+                      %
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </>
+            ) : (
+              <Box sx={{ textAlign: "right" }}>
+                <Button
+                  variant="contained"
+                  disableElevation
+                  sx={{
+                    textTransform: "none",
+                  }}
+                  onClick={() => {
+                    dispatch(
+                      setSelectedNetworkLocal({
+                        chainName: networkName,
+                      })
+                    );
+                    setOpenDepositDialog(true);
+                  }}
                 >
-                  YES
-                </Typography>
-                <Typography>
-                  {
-                    computeVotingPercentage(
-                      proposalTally[id],
-                      true,
-                      poolInfo?.[chainID]
-                    ).yes
-                  }
-                  %
-                </Typography>
-              </Grid>
-              <Grid item xs={6} md={2}>
-                <Typography
-                  variant="body1"
-                  color="text.primary"
-                  fontWeight={500}
-                >
-                  NO
-                </Typography>
-                <Typography>
-                  {
-                    computeVotingPercentage(
-                      proposalTally[id],
-                      true,
-                      poolInfo?.[chainID]
-                    ).no
-                  }
-                  %
-                </Typography>
-              </Grid>
-              <Grid item xs={6} md={2}>
-                <Typography
-                  variant="body1"
-                  color="text.primary"
-                  fontWeight={500}
-                >
-                  NO WITH VETO
-                </Typography>
-                <Typography>
-                  {
-                    computeVotingPercentage(
-                      proposalTally[id],
-                      true,
-                      poolInfo?.[chainID]
-                    ).noWithVeto
-                  }
-                  %
-                </Typography>
-              </Grid>
-              <Grid item xs={6} md={2}>
-                <Typography
-                  variant="body1"
-                  color="text.primary"
-                  fontWeight={500}
-                >
-                  ABSTAIN
-                </Typography>
-                <Typography>
-                  {
-                    computeVotingPercentage(
-                      proposalTally[id],
-                      true,
-                      poolInfo?.[chainID]
-                    ).abstain
-                  }
-                  %
-                </Typography>
-              </Grid>
-            </Grid>
+                  Deposit
+                </Button>
+              </Box>
+            )}
             <Typography
               color="text.primary"
               variant="body1"
@@ -441,20 +571,6 @@ export default function ProposalInfo() {
             >
               Proposal Details
             </Typography>
-            {/* <div
-              style={{
-                padding: 8,
-
-                backgroundColor:
-                  theme.palette?.mode === "light" ? "#f9fafc" : "#282828",
-                color: "text.primary",
-              }}
-              dangerouslySetInnerHTML={{
-                __html: parseDescription(
-                  `${proposalInfo?.content?.description}`
-                ),
-              }}
-            /> */}
             <div
               style={{
                 padding: 8,
@@ -465,8 +581,7 @@ export default function ProposalInfo() {
               }}
               className="proposal-description-markdown"
             >
-              {proposal?.content?.description &&
-                proposal?.content?.description.replace(/\\n/g, "\n")}
+              {proposal?.content?.description && proposalMarkdown}
             </div>
           </Paper>
         </>
@@ -480,6 +595,16 @@ export default function ProposalInfo() {
         onVote={onVoteSubmit}
         isAuthzMode={isAuthzMode}
         granters={authzGrants[chainID] || []}
+      />
+
+      <DialogDeposit
+        open={openDepositDialog}
+        onClose={handleDialogClose}
+        address={address}
+        proposalId={id}
+        chainInfo={chainInfo}
+        feegrant={feegrant}
+        chainID={chainID}
       />
     </>
   );

@@ -12,6 +12,83 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
+      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/ceac711f4bc842e280d50353790f1feac2ebfd44/agoric/images/bld.svg",
+      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/master/agoric/images/bld.png"
+    },
+    keplrExperimental: false,
+    leapExperimental: false,
+    isTestnet: false,
+    explorerTxHashEndpoint: "https://atomscan.com/agoric/transactions/",
+    config: {
+      chainId: "agoric-3",
+      chainName: "Agoric",
+      rest: "https://api.resolute.vitwit.com/agoric_api/",
+      rpc: "https://api.resolute.vitwit.com/agoric_rpc/",
+      currencies: [
+        {
+          coinDenom: "BLD",
+          coinMinimalDenom: "ubld",
+          coinDecimals: 6
+        }
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: "agoric",
+        bech32PrefixAccPub: "agoricpub",
+        bech32PrefixValAddr: "agoricvaloper",
+        bech32PrefixValPub: "agoricvaloperpub",
+        bech32PrefixConsAddr: "agoricgvalcons",
+        bech32PrefixConsPub: "agoricvalconspub"
+      },
+      feeCurrencies: [
+        {
+          coinDenom: "BLD",
+          coinMinimalDenom: "ubld",
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.03,
+            average: 0.05,
+            high: 0.07
+          }
+        },
+        {
+          coinDenom: "IST",
+          coinMinimalDenom: "uist",
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.0034,
+            average: 0.007,
+            high: 0.02
+          }
+        }
+      ],
+      bip44: {
+        coinType: 564
+      },
+      stakeCurrency: {
+        coinDenom: "BLD",
+        coinMinimalDenom: "ubld",
+        coinDecimals: 6
+      },
+      image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
+      theme: {
+        primaryColor: "#fff",
+        gradient: "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)"
+      }
+    }
+  },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false
+    },
+    showAirdrop: false,
+    logos: {
       menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/akash/images/akash.svg",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/akash/images/akash-logo.png"
     },
@@ -22,8 +99,8 @@ export const networks: Network[] = [
     config: {
       chainId: "akashnet-2",
       chainName: "Akash",
-      rest: "https://akash-api.polkachu.com",
-      rpc: "https://rpc.akash.forbole.com/",
+      rest: "https://api.resolute.vitwit.com/akash_api/",
+      rpc: "https://api.resolute.vitwit.com/akash_rpc/",
       currencies: [
         {
           coinDenom: "AKT",
@@ -89,8 +166,8 @@ export const networks: Network[] = [
     config: {
       chainId: "cosmoshub-4",
       chainName: "CosmosHub",
-      rest: "https://lcd-cosmoshub.blockapsis.com",
-      rpc: "https://resolute.witval.com/cosmos_rpc/",
+      rest: "https://api.resolute.vitwit.com/cosmos_api/",
+      rpc: "https://api.resolute.vitwit.com/cosmos_rpc/",
       currencies: [
         {
           coinDenom: "ATOM",
@@ -124,6 +201,73 @@ export const networks: Network[] = [
       stakeCurrency: {
         coinDenom: "ATOM",
         coinMinimalDenom: "uatom",
+        coinDecimals: 6
+      },
+      image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
+      theme: {
+        primaryColor: "#fff",
+        gradient: "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)"
+      }
+    }
+  },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false
+    },
+    showAirdrop: false,
+    logos: {
+      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/ceac711f4bc842e280d50353790f1feac2ebfd44/desmos/images/dsm.svg",
+      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/master/desmos/images/dsm.png"
+    },
+    keplrExperimental: true,
+    leapExperimental: true,
+    isTestnet: false,
+    explorerTxHashEndpoint: "https://www.mintscan.io/desmos/txs/",
+    config: {
+      chainId: "desmos-mainnet",
+      chainName: "Desmos",
+      rest: "https://api.resolute.vitwit.com/desmos_api/",
+      rpc: "https://api.resolute.vitwit.com/desmos_rpc/",
+      currencies: [
+        {
+          coinDenom: "DSM",
+          coinMinimalDenom: "udsm",
+          coinDecimals: 6
+        }
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: "desmos",
+        bech32PrefixAccPub: "desmospub",
+        bech32PrefixValAddr: "desmosvaloper",
+        bech32PrefixValPub: "desmosvaloperpub",
+        bech32PrefixConsAddr: "desmosgvalcons",
+        bech32PrefixConsPub: "desmosvalconspub"
+      },
+      feeCurrencies: [
+        {
+          coinDenom: "DSM",
+          coinMinimalDenom: "udsm",
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.03,
+            high: 0.05
+          }
+        }
+      ],
+      bip44: {
+        coinType: 118
+      },
+      stakeCurrency: {
+        coinDenom: "DSM",
+        coinMinimalDenom: "udsm",
         coinDecimals: 6
       },
       image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
@@ -223,8 +367,8 @@ export const networks: Network[] = [
     config: {
       chainId: "juno-1",
       chainName: "Juno",
-      rest: "https://juno-api.polkachu.com",
-      rpc: "https://juno-rpc.polkachu.com",
+      rest: "https://api.resolute.vitwit.com/juno_api/",
+      rpc: "https://api.resolute.vitwit.com/juno_rpc/",
       currencies: [
         {
           coinDenom: "JUNO",
@@ -258,6 +402,73 @@ export const networks: Network[] = [
       stakeCurrency: {
         coinDenom: "JUNO",
         coinMinimalDenom: "ujuno",
+        coinDecimals: 6
+      },
+      image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
+      theme: {
+        primaryColor: "#fff",
+        gradient: "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)"
+      }
+    }
+  },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false
+    },
+    showAirdrop: false,
+    logos: {
+      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/master/omniflixhub/images/flix.png",
+      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/master/omniflixhub/images/flix.png"
+    },
+    keplrExperimental: false,
+    leapExperimental: false,
+    isTestnet: false,
+    explorerTxHashEndpoint: "https://www.mintscan.io/omniflix/txs/",
+    config: {
+      chainId: "omniflixhub-1",
+      chainName: "OmniflixHub",
+      rest: "https://api.resolute.vitwit.com/omniflix_api/",
+      rpc: "https://api.resolute.vitwit.com/omniflix_rpc/",
+      currencies: [
+        {
+          coinDenom: "FLIX",
+          coinMinimalDenom: "uflix",
+          coinDecimals: 6
+        }
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: "omniflix",
+        bech32PrefixAccPub: "omniflixpub",
+        bech32PrefixValAddr: "omniflixvaloper",
+        bech32PrefixValPub: "omniflixvaloperpub",
+        bech32PrefixConsAddr: "omniflixgvalcons",
+        bech32PrefixConsPub: "omniflixvalconspub"
+      },
+      feeCurrencies: [
+        {
+          coinDenom: "FLIX",
+          coinMinimalDenom: "uflix",
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.025,
+            high: 0.03
+          }
+        }
+      ],
+      bip44: {
+        coinType: 118
+      },
+      stakeCurrency: {
+        coinDenom: "FLIX",
+        coinMinimalDenom: "uflix",
         coinDecimals: 6
       },
       image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
@@ -356,7 +567,7 @@ export const networks: Network[] = [
     explorerTxHashEndpoint: "https://passage.aneka.io/txs/",
     config: {
       chainId: "passage-testnet-1",
-      chainName: "passage-testnet",
+      chainName: "Passage-testnet",
       rest: "https://api.resolute.vitwit.com/passage_testapi/",
       rpc: "https://api.resolute.vitwit.com/passage_testrpc/",
       bip44: {
@@ -480,6 +691,73 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
+      group: false
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false
+    },
+    showAirdrop: false,
+    logos: {
+      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/master/quicksilver/images/qck.png",
+      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/master/quicksilver/images/quicksilver-chain-logo.png"
+    },
+    keplrExperimental: false,
+    leapExperimental: false,
+    isTestnet: false,
+    explorerTxHashEndpoint: "https://www.mintscan.io/quicksilver/txs/",
+    config: {
+      chainId: "quicksilver-2",
+      chainName: "Quicksilver",
+      rest: "https://api.resolute.vitwit.com/quicksilver_api/",
+      rpc: "https://api.resolute.vitwit.com/quicksilver_rpc/",
+      currencies: [
+        {
+          coinDenom: "QCK",
+          coinMinimalDenom: "uqck",
+          coinDecimals: 6
+        }
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: "quick",
+        bech32PrefixAccPub: "quickpub",
+        bech32PrefixValAddr: "quickvaloper",
+        bech32PrefixValPub: "quickvaloperpub",
+        bech32PrefixConsAddr: "quickgvalcons",
+        bech32PrefixConsPub: "quickvalconspub"
+      },
+      bip44: {
+        coinType: 118
+      },
+      feeCurrencies: [
+        {
+          coinDenom: "QCK",
+          coinMinimalDenom: "uqck",
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.0001,
+            average: 0.0001,
+            high: 0.00025
+          }
+        }
+      ],
+      stakeCurrency: {
+        coinDenom: "QCK",
+        coinMinimalDenom: "uqck",
+        coinDecimals: 6
+      },
+      image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
+      theme: {
+        primaryColor: "#fff",
+        gradient: "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)"
+      }
+    }
+  },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
       group: true
     },
     aminoConfig: {
@@ -499,8 +777,8 @@ export const networks: Network[] = [
     config: {
       chainId: "regen-1",
       chainName: "Regen",
-      rest: "https://regen.stakesystems.io",
-      rpc: "https://rpc-regen.ecostake.com",
+      rest: "https://api.resolute.vitwit.com/regen_api/",
+      rpc: "https://api.resolute.vitwit.com/regen_rpc/",
       currencies: [
         {
           coinDenom: "REGEN",
@@ -636,8 +914,8 @@ export const networks: Network[] = [
     config: {
       chainId: "stargaze-1",
       chainName: "Stargaze",
-      rest: "https://rest.stargaze-apis.com/",
-      rpc: "https://rpc.stargaze-apis.com/",
+      rest: "https://api.resolute.vitwit.com/stargaze_api/",
+      rpc: "https://api.resolute.vitwit.com/stargaze_rpc/",
       currencies: [
         {
           coinDenom: "STARS",
@@ -684,6 +962,73 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
+      group: false
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false
+    },
+    showAirdrop: false,
+    logos: {
+      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/ceac711f4bc842e280d50353790f1feac2ebfd44/tgrade/images/tgrade-symbol-gradient_lines.svg",
+      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/master/tgrade/images/tgrade-logo-gradient_h.png"
+    },
+    keplrExperimental: false,
+    leapExperimental: false,
+    isTestnet: false,
+    explorerTxHashEndpoint: "https://www.mintscan.io/tgrade/txs/",
+    config: {
+      chainId: "tgrade-mainnet-1",
+      chainName: "Tgrade",
+      rest: "https://api.resolute.vitwit.com/tgrade_api/",
+      rpc: "https://api.resolute.vitwit.com/tgrade_rpc/",
+      currencies: [
+        {
+          coinDenom: "TGD",
+          coinMinimalDenom: "utgd",
+          coinDecimals: 6
+        }
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: "tgrade",
+        bech32PrefixAccPub: "tgradepub",
+        bech32PrefixValAddr: "tgradevaloper",
+        bech32PrefixValPub: "tgradevaloperpub",
+        bech32PrefixConsAddr: "tgradegvalcons",
+        bech32PrefixConsPub: "tgradevalconspub"
+      },
+      feeCurrencies: [
+        {
+          coinDenom: "TGD",
+          coinMinimalDenom: "utgd",
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.05,
+            average: 0.075,
+            high: 0.1
+          }
+        }
+      ],
+      bip44: {
+        coinType: 118
+      },
+      stakeCurrency: {
+        coinDenom: "TGD",
+        coinMinimalDenom: "utgd",
+        coinDecimals: 6
+      },
+      image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
+      theme: {
+        primaryColor: "#fff",
+        gradient: "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)"
+      }
+    }
+  },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
       group: true
     },
     aminoConfig: {
@@ -703,8 +1048,8 @@ export const networks: Network[] = [
     config: {
       chainId: "umee-1",
       chainName: "Umee",
-      rest: "https://api-umee-ia.cosmosia.notional.ventures",
-      rpc: "https://umee-rpc.polkachu.com",
+      rest: "https://api.resolute.vitwit.com/umee_api/",
+      rpc: "https://api.resolute.vitwit.com/umee_rpc/",
       currencies: [
         {
           coinDenom: "UMEE",

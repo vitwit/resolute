@@ -128,7 +128,7 @@ export const commonSlice = createSlice({
       state.selectedNetwork.chainName = data.payload.chainName;
     },
     setSelectedNetworkLocal: (state, data) => {
-      state.selectedNetworkLocal.chainName = data.payload.chainName;
+      state.selectedNetworkLocal.chainName = data.payload.chainName.toLowerCase();
     },
     setAuthzMode: (state, data) => {
       state.authzMode = data.payload;

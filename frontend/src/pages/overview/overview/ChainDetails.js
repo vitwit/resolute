@@ -11,6 +11,7 @@ import { claimRewardInBank } from "../../../features/bank/bankSlice";
 import {
   resetChainRewards,
   txWithdrawAllRewards,
+  resetTx as resetDistTx
 } from "../../../features/distribution/distributionSlice";
 import {
   addRewardsToDelegations,
@@ -21,11 +22,14 @@ import { Delegate } from "../../../txns/staking";
 import { parseBalance } from "../../../utils/denom";
 import chainDenoms from "../../../utils/chainDenoms.json";
 import { CopyToClipboard } from "../../../components/CopyToClipboard";
+import { setSelectedNetworkLocal } from "../../../features/common/commonSlice";
 
 export const ChainDetails = ({ chainID, chainName, assetType }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const feegrant = useSelector((state) => state.common.feegrant?.[chainName] || {});
+  const feegrant = useSelector(
+    (state) => state.common.feegrant?.[chainName] || {}
+  );
   const wallet = useSelector((state) => state.wallet);
   const tokensPriceInfo = useSelector(
     (state) => state.common?.allTokensInfoState?.info
@@ -36,6 +40,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
     (state) =>
       state.distribution?.chains?.[chainID]?.delegatorRewards?.totalRewards || 0
   );
+
   const distTxStatus = useSelector(
     (state) => state.distribution?.chains?.[chainID]?.tx
   );
@@ -59,9 +64,9 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
   const decimals =
     chainInfo?.network?.config?.currencies?.[0]?.coinDecimals || 1;
   const logoURL = chainInfo?.network?.logos?.menu;
-
-  const ibcChainLogoUrl =
-    "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/";
+  const PRICE_CHANGE_PERCENTAGE = Number(
+    tokensPriceInfo[originMinimalDenom]?.info?.["usd_24h_change"] || "0"
+  );
 
   // Memoized function to prevent unnecessary re-renders
   const handleOnClick = useCallback(() => {
@@ -70,7 +75,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
 
   useEffect(() => {
     if (txRestakeStatus === "idle") {
-      dispatch(resetRestakeTx({chainID: chainID}));
+      dispatch(resetRestakeTx({ chainID: chainID }));
       dispatch(
         addRewardsToDelegations({
           chainID,
@@ -93,10 +98,12 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
   }, [distTxStatus?.status]);
 
   useEffect(() => {
-    dispatch(resetRestakeTx({chainID: chainID}));
+    dispatch(resetRestakeTx({ chainID: chainID }));
+    dispatch(resetDistTx({ chainID: chainID }));
   }, []);
 
   const actionClaimAndStake = () => {
+    dispatch(setSelectedNetworkLocal({ chainName }));
     const msgs = [];
     const delegator = chainInfo?.walletInfo?.bech32Address;
     for (const delegation of delegatorRewards.list) {
@@ -133,6 +140,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
   };
 
   const claimRewards = () => {
+    dispatch(setSelectedNetworkLocal({ chainName }));
     let delegationPairs = [];
     delegations.delegations.delegations.forEach((item) => {
       delegationPairs.push({
@@ -214,11 +222,49 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
                 {originDenom}
               </StyledTableCell>
               <StyledTableCell>
-                {tokensPriceInfo[originMinimalDenom]
-                  ? `$${parseFloat(
+                {tokensPriceInfo[originMinimalDenom] ? (
+                  <>
+                    {`$${parseFloat(
                       tokensPriceInfo[originMinimalDenom]?.info?.["usd"]
-                    ).toFixed(2)}`
-                  : "N/A"}
+                    ).toFixed(2)}`}
+                    <Box>
+                      {
+                      PRICE_CHANGE_PERCENTAGE >= 0 ?
+                      <Typography
+                        color="green"
+                        variant="caption"
+                      >
+                      +
+                      {parseFloat(
+                        tokensPriceInfo[originMinimalDenom]?.info?.[
+                          "usd_24h_change"
+                        ]
+                      ).toFixed(2)}
+                      %
+                      </Typography>
+                        :
+                        <Typography
+                        color="error"
+                        variant="caption"
+                      >
+                         {parseFloat(
+                        tokensPriceInfo[originMinimalDenom]?.info?.[
+                          "usd_24h_change"
+                        ]
+                      ).toFixed(2)}
+                      %
+                        </Typography>
+                    }
+                     
+                    </Box>
+                  </>
+                ) : (
+                  <Typography
+                    variant="body2"
+                  >
+                  N/A
+                  </Typography>
+                )}
               </StyledTableCell>
               <StyledTableCell>
                 <Button
@@ -275,97 +321,7 @@ export const ChainDetails = ({ chainID, chainName, assetType }) => {
           ) : null}
         </>
       ) : (
-        <>
-          {balance?.map((item, index) => {
-            const denomInfo = chainDenoms[chainName]?.filter((x) => {
-              return x.denom === item.denom;
-            });
-            return denomInfo?.length && item.denom !== originMinimalDenom ? (
-              <StyledTableRow key={index}>
-                <StyledTableCell size="small">
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Avatar
-                      src={ibcChainLogoUrl + denomInfo[0]?.image}
-                      sx={{
-                        width: 28,
-                        height: 28,
-                        "&:hover": {
-                          backgroundColor: "white",
-                          cursor: "pointer",
-                        },
-                      }}
-                      onClick={() => handleOnClick(chainName)}
-                    />
-                    &nbsp;&nbsp;
-                    <Box>
-                      <Typography
-                        sx={{
-                          textTransform: "capitalize",
-                          "&:hover": {
-                            cursor: "pointer",
-                            color: "purple",
-                          },
-                        }}
-                        onClick={() => handleOnClick(chainName)}
-                      >
-                        <Typography sx={{ display: "inline" }}>
-                          {parseBalance(
-                            balance,
-                            denomInfo[0]?.decimals,
-                            item.denom
-                          ).toLocaleString()}
-                          &nbsp;
-                        </Typography>
-                        <Typography sx={{ display: "inline", fontWeight: 600 }}>
-                          {denomInfo[0]?.symbol}
-                        </Typography>
-                        <Typography
-                          sx={{
-                            backgroundColor: "#767676",
-                            borderRadius: "4px",
-                            ml: "4px",
-                            px: "4px",
-                            fontWeight: 600,
-                            display: "inline",
-                            color: "white",
-                            fontSize: "12px",
-                          }}
-                        >
-                          IBC
-                        </Typography>
-                      </Typography>
-                      <Typography
-                        sx={{
-                          textTransform: "capitalize",
-                          "&:hover": {
-                            cursor: "pointer",
-                            color: "purple",
-                          },
-                          fontSize: "12px",
-                          color: "#767676",
-                        }}
-                        onClick={() => handleOnClick(chainName)}
-                      >
-                        On {chainName}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </StyledTableCell>
-                <StyledTableCell>
-                  {tokensPriceInfo[denomInfo[0]?.origin_denom]
-                    ? `$${parseFloat(
-                        tokensPriceInfo[denomInfo[0]?.origin_denom]?.info?.[
-                          "usd"
-                        ]
-                      ).toFixed(2)}`
-                    : "N/A"}
-                </StyledTableCell>
-              </StyledTableRow>
-            ) : (
-              <></>
-            );
-          })}
-        </>
+        <></>
       )}
     </>
   );

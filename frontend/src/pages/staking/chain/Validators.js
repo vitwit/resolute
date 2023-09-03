@@ -88,6 +88,7 @@ export default function Validators(props) {
   const currency = useSelector(
     (state) => state.wallet.networks[chainID].network?.config?.currencies[0]
   );
+  const denom = currency.coinMinimalDenom;
 
   const [selected, setSelected] = React.useState("active");
   const [stakingOpen, setStakingOpen] = React.useState(false);
@@ -107,16 +108,16 @@ export default function Validators(props) {
     setSelectedValidator(validator);
     switch (type) {
       case "delegate":
-          if (availableBalance > 0) {
-            setStakingOpen(true);
-          } else {
-            dispatch(
-              setError({
-                type: "error",
-                message: "no balance",
-              })
-            );
-          }
+        if (availableBalance > 0) {
+          setStakingOpen(true);
+        } else {
+          dispatch(
+            setError({
+              type: "error",
+              message: "no balance",
+            })
+          );
+        }
         break;
       case "undelegate":
         if (delegations?.delegations?.delegations.length > 0) {
@@ -223,6 +224,7 @@ export default function Validators(props) {
           chainID: chainID,
           baseURL: chainInfo.config.rest,
           address: address,
+          denom: denom,
         })
       );
       dispatch(
@@ -267,6 +269,7 @@ export default function Validators(props) {
         chainID: chainID,
         baseURL: chainInfo.config.rest,
         address: address,
+        denom: denom,
       })
     );
   }
@@ -286,6 +289,7 @@ export default function Validators(props) {
           chainID: chainID,
           baseURL: chainInfo.config.rest,
           address: address,
+          denom: denom,
         })
       );
     }
@@ -326,7 +330,8 @@ export default function Validators(props) {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         feegranter: feegrant?.granter,
       });
     } else {
@@ -339,7 +344,8 @@ export default function Validators(props) {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           rest: chainInfo.config.rest,
           feeAmount:
-            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+            10 ** currency.coinDecimals,
           feegranter: feegrant?.granter,
         })
       );
@@ -376,7 +382,8 @@ export default function Validators(props) {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         feegranter: feegrant?.granter,
       });
     } else {
@@ -393,7 +400,8 @@ export default function Validators(props) {
           aminoConfig: chainInfo.aminoConfig,
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           feeAmount:
-            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+            10 ** currency.coinDecimals,
           feegranter: feegrant?.granter,
         })
       );
@@ -429,7 +437,8 @@ export default function Validators(props) {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         feegranter: feegrant?.granter,
       });
     } else {
@@ -444,7 +453,8 @@ export default function Validators(props) {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           rest: chainInfo.config.rest,
           feeAmount:
-            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+            10 ** currency.coinDecimals,
           feegranter: feegrant?.granter,
         })
       );
@@ -527,7 +537,8 @@ export default function Validators(props) {
         aminoConfig: chainInfo.aminoConfig,
         prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
         feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+          10 ** currency.coinDecimals,
         feegranter: feegrant?.granter,
       });
     } else {
@@ -544,7 +555,8 @@ export default function Validators(props) {
           prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
           rest: chainInfo.config.rest,
           feeAmount:
-            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average * 10 ** currency.coinDecimals,
+            chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+            10 ** currency.coinDecimals,
           feegranter: feegrant?.granter,
         })
       );
@@ -620,7 +632,7 @@ export default function Validators(props) {
         chainName: currentNetwork.toLowerCase(),
       })
     );
-  }, [currentNetwork, params]);
+  }, [currentNetwork]);
 
   const removeFeegrant = () => {
     // Should we completely remove feegrant or only for this session.
@@ -632,7 +644,7 @@ export default function Validators(props) {
     <>
       {connected ? (
         delegations?.status === "pending" &&
-          validators?.status === "pending" ? (
+        validators?.status === "pending" ? (
           delegations?.delegations.length === 0 ? (
             <CircularProgress />
           ) : (
@@ -750,7 +762,7 @@ export default function Validators(props) {
                   />
                 </Box>
                 {filteredVals.active.length > 0 ||
-                  filteredVals.inactive.length > 0 ? (
+                filteredVals.inactive.length > 0 ? (
                   <FilteredValidators
                     chainID={chainID}
                     onMenuAction={onMenuAction}

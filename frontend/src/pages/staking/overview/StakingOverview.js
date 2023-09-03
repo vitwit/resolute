@@ -10,6 +10,7 @@ import { getDelegatorTotalRewards } from "../../../features/distribution/distrib
 import { Chain } from "./Chain";
 import { useNavigate } from "react-router-dom";
 import SelectNetwork from "../../../components/common/SelectNetwork";
+import { parseBalance } from "../../../utils/denom";
 
 const StakingOverview = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -66,9 +67,7 @@ const StakingOverview = () => {
         let rewards = validatorRewards?.[j].reward;
         let validatorReward = 0;
 
-        for (let k = 0; k < rewards.length; k++) {
-          validatorReward += +rewards[k].amount / 10 ** decimal;
-        }
+        validatorReward = parseBalance(rewards, decimal, coinMinimalDenom);
 
         validatorMap[address] = validatorReward || 0;
       }
@@ -144,9 +143,10 @@ const StakingOverview = () => {
   useEffect(() => {
     let chainIds = Object.keys(wallet.networks);
     for (let i = 0; i < chainIds.length; i++) {
-      let chainnetwork = wallet.networks[chainIds[i]];
-      let address = chainnetwork?.walletInfo?.bech32Address;
-      let baseURL = chainnetwork?.network?.config.rest;
+      const chainnetwork = wallet.networks[chainIds[i]];
+      const address = chainnetwork?.walletInfo?.bech32Address;
+      const baseURL = chainnetwork?.network?.config.rest;
+      const denom = chainnetwork.network?.config?.currencies[0]?.coinDenom;
       dispatch(
         getAllValidators({
           baseURL: baseURL,
@@ -166,6 +166,7 @@ const StakingOverview = () => {
           chainID: chainIds[i],
           baseURL: baseURL,
           address: address,
+          denom: denom,
         })
       );
     }

@@ -5,9 +5,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import { useSelector } from "react-redux";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
@@ -18,6 +15,7 @@ import Select from "@mui/material/Select";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import { getICNSName, setError } from "../features/common/commonSlice";
+import CloseIcon from "@mui/icons-material/Close";
 
 VoteDialog.propTypes = {
   closeDialog: PropTypes.func.isRequired,
@@ -93,14 +91,22 @@ export default function VoteDialog(props) {
       >
         <DialogContent>
           <Box>
-            <Typography
-              variant="body1"
-              color="text.primary"
-              fontWeight={600}
-              sx={{ mb: 3 }}
-            >
-              Select Vote Option
-            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography
+                variant="body1"
+                color="text.primary"
+                fontWeight={600}
+                sx={{ mb: 3 }}
+              >
+                Select Vote Option
+              </Typography>
+              <Typography>
+                <CloseIcon
+                  sx={{ fontSize: "20px", cursor: "pointer" }}
+                  onClick={handleClose}
+                />
+              </Typography>
+            </Box>
             <Box sx={{ display: "flex", justifyContent: "", mb: 2 }}>
               <Button
                 variant={option === "yes" ? "contained" : "outlined"}
