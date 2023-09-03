@@ -34,6 +34,7 @@ function ProposalsPage() {
   const nameToIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const loading = useSelector((state) => state.gov.loading);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const authzTabs = useSelector((state) => state.authz.tabs);
 
   const params = useParams();
   const dispatch = useDispatch();
@@ -102,7 +103,7 @@ function ProposalsPage() {
     <>
       {walletConnected ? (
         <>
-          {isAuthzMode && !authzGrants.length ? (
+          {isAuthzMode && !authzTabs?.govEnabled ? (
             <Typography variant="h6" fontWeight={600} color="text.primary">
               You don't have authz permission.
             </Typography>
