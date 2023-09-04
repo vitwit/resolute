@@ -290,7 +290,13 @@ export default function Proposals({
       )}
     </React.Fragment>
   ) : (
-    <React.Fragment key={id}></React.Fragment>
+    <React.Fragment key={id}>
+      {isChainSpecific && (
+        <Typography variant="h6" fontWeight={600} color="text.primary">
+          You don't have authz permission.
+        </Typography>
+      )}
+    </React.Fragment>
   );
 }
 
