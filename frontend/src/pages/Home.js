@@ -92,7 +92,11 @@ function a11yProps(index) {
 
 function getTabIndex(path) {
   if (path.includes("transfers")) return 1;
-  if (path.includes("gov")) return 2;
+  if (
+    path.includes("gov") ||
+    (path.includes("proposals") && !path.includes("groups"))
+  )
+    return 2;
   else if (path.includes("staking")) return 3;
   else if (path.includes("multisig")) return 4;
   else if (path.includes("authz")) return 5;
@@ -116,7 +120,6 @@ export default function Home(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const pathParts = location.pathname.split("/");
-  const page = pathParts?.[pathParts?.length - 1];
 
   const authzTabs = useSelector((state) => state.authz.tabs);
 
@@ -168,10 +171,10 @@ export default function Home(props) {
         chainName: selectedNetwork.toLowerCase(),
       })
     );
-  }, [selectedNetwork, page]);
+  }, [selectedNetwork, pathParts]);
 
   useEffect(() => {
-    setValue(getTabIndex(page));
+    setValue(getTabIndex(pathParts));
   }, [selectedNetwork]);
 
   return (
@@ -233,14 +236,15 @@ export default function Home(props) {
               }}
             />
           )}
-          <Tab
-            label="Feegrant"
-            {...a11yProps(6)}
-            value={6}
-            sx={{
-              fontWeight: 600,
-            }}
-          />
+            <Tab
+              label="Feegrant"
+              {...a11yProps(6)}
+              value={6}
+              sx={{
+                fontWeight: 600,
+              }}
+              disabled={authzEnabled && !authzTabs?.feegratEnabled}
+            />
           <Tab
             label="Groups"
             {...a11yProps(7)}

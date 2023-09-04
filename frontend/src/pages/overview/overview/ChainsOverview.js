@@ -25,6 +25,7 @@ import { formatNumber, parseBalance } from "../../../utils/denom";
 import { Button } from "@mui/material";
 import chainDenoms from "../../../utils/chainDenoms.json";
 import { useNavigate } from "react-router-dom";
+import { getIBCBalances } from "../../../utils/util";
 
 export const paddingTopBottom = {
   paddingTop: 1,
@@ -101,6 +102,7 @@ export const ChainsOverview = ({ chainNames }) => {
 
   const calculateTotalAvailableAmount = useCallback(() => {
     let totalBalance = 0;
+    let totalIBCBalance = 0;
     chainIDs.forEach((chainID) => {
       const decimals =
         networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
@@ -112,11 +114,28 @@ export const ChainsOverview = ({ chainNames }) => {
         decimals,
         denom
       );
+      const chainName =
+        networks?.[chainID]?.network?.config?.chainName.toLowerCase();
+      const ibcBalances = getIBCBalances(
+        balanceChains?.[chainID]?.list,
+        denom,
+        chainName
+      );
+      for (let i = 0; i < ibcBalances?.length; i++) {
+        totalIBCBalance += convertToDollars(
+          ibcBalances[i].denom,
+          parseBalance(
+            ibcBalances,
+            ibcBalances?.[i]?.decimals,
+            ibcBalances?.[i]?.denom
+          )
+        );
+      }
       if (balanceChains?.[chainID]?.list?.length > 0) {
         totalBalance += convertToDollars(denom, balance);
       }
     });
-    return totalBalance;
+    return { totalBalance: totalBalance, totalIBCBalance: totalIBCBalance };
   }, [chainIDs, balanceChains, networks]);
 
   const getSortedChainIds = useCallback(() => {
@@ -193,6 +212,8 @@ export const ChainsOverview = ({ chainNames }) => {
     chainIDs.forEach((chainID) => {
       const chainInfo = networks[chainID]?.network;
       const address = networks[chainID]?.walletInfo?.bech32Address;
+      const denom =
+        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
 
       dispatch(
         getBalances({
@@ -209,35 +230,26 @@ export const ChainsOverview = ({ chainNames }) => {
           chainID: chainID,
         })
       );
+
+      dispatch(
+        getDelegatorTotalRewards({
+          baseURL: chainInfo.config.rest,
+          address: address,
+          chainID: chainID,
+          denom: denom,
+        })
+      );
     });
   }, []);
-
-  useEffect(() => {
-    if (assetType === "native") {
-      chainIDs.forEach((chainID) => {
-        const chainInfo = networks[chainID]?.network;
-        const address = networks[chainID]?.walletInfo?.bech32Address;
-        const denom =
-          networks?.[chainID]?.network?.config?.currencies?.[0]
-            ?.coinMinimalDenom;
-
-        dispatch(
-          getDelegatorTotalRewards({
-            baseURL: chainInfo.config.rest,
-            address: address,
-            chainID: chainID,
-            denom: denom,
-          })
-        );
-      });
-    }
-  }, [assetType]);
 
   const handleOnClick = (chainName) => {
     navigate(`/${chainName}/overview`);
   };
 
-  const totalAvailableAmount = useMemo(
+  const {
+    totalBalance: totalAvailableAmount,
+    totalIBCBalance: totalIBCAssetsAmount,
+  } = useMemo(
     () => calculateTotalAvailableAmount(),
     [calculateTotalAvailableAmount]
   );
@@ -269,7 +281,7 @@ export const ChainsOverview = ({ chainNames }) => {
         }}
         spacing={1}
       >
-        <Grid item xs={6} md={4}>
+        <Grid item xs={6} md={3}>
           <Card elevation={0}>
             <CardContent>
               <Typography
@@ -286,7 +298,7 @@ export const ChainsOverview = ({ chainNames }) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={6} md={4}>
+        <Grid item xs={6} md={3}>
           <Card elevation={0}>
             <CardContent>
               <Typography
@@ -303,7 +315,7 @@ export const ChainsOverview = ({ chainNames }) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={6} md={4}>
+        <Grid item xs={6} md={3}>
           <Card elevation={0}>
             <CardContent>
               <Typography
@@ -316,6 +328,29 @@ export const ChainsOverview = ({ chainNames }) => {
               </Typography>
               <Typography align="left" variant="h6" color="text.primary">
                 ${formatNumber(totalPendingAmount)}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={6} md={3}>
+          <Card elevation={0}>
+            <CardContent>
+              <Typography
+                align="left"
+                variant="body2"
+                color="text.secondary"
+                fontWeight={600}
+              >
+                Total Wallet Balance
+              </Typography>
+              <Typography align="left" variant="h6" color="text.primary">
+                $
+                {formatNumber(
+                  totalAvailableAmount +
+                    totalStakedAmount +
+                    totalPendingAmount +
+                    totalIBCAssetsAmount
+                )}
               </Typography>
             </CardContent>
           </Card>
@@ -362,6 +397,7 @@ export const ChainsOverview = ({ chainNames }) => {
                 </>
               ) : null}
               <StyledTableCell sx={paddingTopBottom}>Rewards</StyledTableCell>
+              <StyledTableCell sx={paddingTopBottom}>Value</StyledTableCell>
               <StyledTableCell sx={paddingTopBottom}>Price</StyledTableCell>
               {assetType === "native" ? (
                 <>
@@ -442,6 +478,11 @@ export const ChainsOverview = ({ chainNames }) => {
                         </Typography>
                       </Box>
                     </Box>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {ibcAssetInfo.usdPrice
+                      ? `$${parseFloat(ibcAssetInfo.usdPrice * ibcAssetInfo.balanceAmount).toFixed(2)}`
+                      : "N/A"}
                   </StyledTableCell>
                   <StyledTableCell>
                     {ibcAssetInfo.usdPrice

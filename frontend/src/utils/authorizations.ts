@@ -7,8 +7,7 @@ interface AuthzMenuItem {
 
 const SEND_V1BETA1_TYPEURL = "/cosmos.bank.v1beta1.MsgSend";
 const VOTE_V1BETA1_TYPEURL = "/cosmos.gov.v1beta1.MsgVote";
-const DELEGATE_V1BETA1_TYPEURL =
-  "/cosmos.staking.v1beta1.MsgDelegate";
+const DELEGATE_V1BETA1_TYPEURL = "/cosmos.staking.v1beta1.MsgDelegate";
 const UNDELEGATE_V1BETA1_TYPEURL = "/cosmos.staking.v1beta1.MsgUndelegate";
 const REDELEGATE_V1BETA1_TYPEURL = "/cosmos.staking.v1beta1.MsgBeginRedelegate";
 const WITHDRAW_REWARDS_V1BETA1_TYPEURL =
@@ -85,8 +84,23 @@ export function getTypeURLFromAuthorization(authorization: any): string {
       return "/cosmos.bank.v1beta1.MsgSend";
     case "/cosmos.authz.v1beta1.GenericAuthorization":
       return authorization.msg;
+    case "/cosmos.staking.v1beta1.StakeAuthorization":
+      return getStakeAuthzType(authorization?.authorization_type);
     default:
       throw new Error("unsupported authorization");
+  }
+}
+
+function getStakeAuthzType(type: string): string {
+  switch (type) {
+    case "AUTHORIZATION_TYPE_DELEGATE":
+      return "/cosmos.staking.v1beta1.MsgDelegate";
+    case "AUTHORIZATION_TYPE_UNDELEGATE":
+      return "/cosmos.staking.v1beta1.MsgUndelegate";
+    case "AUTHORIZATION_TYPE_REDELEGATE":
+      return "/cosmos.staking.v1beta1.MsgBeginRedelegate";
+    default:
+      throw new Error("unsupported stake authorization type");
   }
 }
 
@@ -116,7 +130,7 @@ export function getSendAuthz(grants: any, granter: string): null | any {
     if (
       (grants[i]?.authorization?.msg === "/cosmos.bank.v1beta1.MsgSend" ||
         grants[i]?.authorization["@type"] ===
-        "/cosmos.bank.v1beta1.SendAuthorization") &&
+          "/cosmos.bank.v1beta1.SendAuthorization") &&
       grants[i]?.granter === granter
     ) {
       return grants[i];
@@ -154,7 +168,7 @@ export function getWithdrawRewardsAuthz(
   for (let i = 0; i < grants.length; i++) {
     if (
       grants[i]?.authorization?.msg ===
-      "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward" &&
+        "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward" &&
       grants[i]?.granter === granter
     ) {
       return grants[i];
@@ -175,6 +189,14 @@ export function getDelegateAuthz(grants: any, granter: string): null | any {
       grants[i]?.granter === granter
     ) {
       return grants[i];
+    } else if (
+      grants[i]?.authorization["@type"] ===
+        "/cosmos.staking.v1beta1.StakeAuthorization" &&
+      grants[i]?.authorization?.authorization_type ===
+        "AUTHORIZATION_TYPE_DELEGATE" &&
+      grants[i]?.granter === granter
+    ) {
+      return grants[i];
     }
   }
 
@@ -189,7 +211,15 @@ export function getUnDelegateAuthz(grants: any, granter: string): null | any {
   for (let i = 0; i < grants.length; i++) {
     if (
       grants[i]?.authorization?.msg ===
-      "/cosmos.staking.v1beta1.MsgUndelegate" &&
+        "/cosmos.staking.v1beta1.MsgUndelegate" &&
+      grants[i]?.granter === granter
+    ) {
+      return grants[i];
+    } else if (
+      grants[i]?.authorization["@type"] ===
+        "/cosmos.staking.v1beta1.StakeAuthorization" &&
+      grants[i]?.authorization?.authorization_type ===
+        "AUTHORIZATION_TYPE_UNDELEGATE" &&
       grants[i]?.granter === granter
     ) {
       return grants[i];
@@ -207,7 +237,15 @@ export function getReDelegateAuthz(grants: any, granter: string): null | any {
   for (let i = 0; i < grants.length; i++) {
     if (
       grants[i]?.authorization?.msg ===
-      "/cosmos.staking.v1beta1.MsgBeginRedelegate" &&
+        "/cosmos.staking.v1beta1.MsgBeginRedelegate" &&
+      grants[i]?.granter === granter
+    ) {
+      return grants[i];
+    } else if (
+      grants[i]?.authorization["@type"] ===
+        "/cosmos.staking.v1beta1.StakeAuthorization" &&
+      grants[i]?.authorization?.authorization_type ===
+        "AUTHORIZATION_TYPE_REDELEGATE" &&
       grants[i]?.granter === granter
     ) {
       return grants[i];
@@ -223,6 +261,14 @@ export function getMsgNameFromAuthz(authorization: any): string {
       return "MsgSend";
     case "/cosmos.authz.v1beta1.GenericAuthorization":
       return getTypeURLName(authorization.msg);
+    case "/cosmos.staking.v1beta1.StakeAuthorization":
+      const temp = getStakeAuthzType(authorization?.authorization_type).split(
+        "."
+      );
+      if (temp.length === 0) {
+        return "Unknown";
+      }
+      return temp[temp.length - 1];
     default:
       return "Unknown";
   }
@@ -239,7 +285,7 @@ export interface AuthzTabs {
   airdropEnabled: boolean;
 }
 
-const SEND_AUTHZ = "/cosmos.authz.v1beta1.SendAuthorization";
+const SEND_AUTHZ = "/cosmos.bank.v1beta1.SendAuthorization";
 const GENERIC_AUTHZ = "/cosmos.authz.v1beta1.GenericAuthorization";
 const STAKE_AUTHZ = "/cosmos.authz.v1beta1.StakeAuthorization";
 
@@ -259,8 +305,7 @@ export function getAuthzTabs(authorizations: any[]): AuthzTabs {
       result.sendEnabled = true;
     } else if (authorizations[i].authorization["@type"] === STAKE_AUTHZ) {
       result.stakingEnabled = true;
-    }
-    else if (authorizations[i].authorization["@type"] === GENERIC_AUTHZ) {
+    } else if (authorizations[i].authorization["@type"] === GENERIC_AUTHZ) {
       switch (authorizations[i].authorization?.msg) {
         case SEND_V1BETA1_TYPEURL:
           result.sendEnabled = true;

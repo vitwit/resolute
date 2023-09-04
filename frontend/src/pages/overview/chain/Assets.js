@@ -94,15 +94,6 @@ const Assets = (props) => {
                               </Typography>
                             ) : null}
                           </Typography>
-                          <Typography
-                            sx={{
-                              textTransform: "capitalize",
-                              fontSize: "12px",
-                              color: "#767676",
-                            }}
-                          >
-                            On {chainName}
-                          </Typography>
                         </Box>
                       </Box>
                     </StyledTableCell>
