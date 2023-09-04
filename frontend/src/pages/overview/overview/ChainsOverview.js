@@ -397,7 +397,11 @@ export const ChainsOverview = ({ chainNames }) => {
                 </>
               ) : null}
               <StyledTableCell sx={paddingTopBottom}>Rewards</StyledTableCell>
-              <StyledTableCell sx={paddingTopBottom}>Value</StyledTableCell>
+              {assetType === "ibc" ? (
+                <>
+                  <StyledTableCell sx={paddingTopBottom}>Value</StyledTableCell>
+                </>
+              ) : null}
               <StyledTableCell sx={paddingTopBottom}>Price</StyledTableCell>
               {assetType === "native" ? (
                 <>
@@ -481,7 +485,9 @@ export const ChainsOverview = ({ chainNames }) => {
                   </StyledTableCell>
                   <StyledTableCell>
                     {ibcAssetInfo.usdPrice
-                      ? `$${parseFloat(ibcAssetInfo.usdPrice * ibcAssetInfo.balanceAmount).toFixed(2)}`
+                      ? `$${parseFloat(
+                          ibcAssetInfo.usdPrice * ibcAssetInfo.balanceAmount
+                        ).toFixed(2)}`
                       : "N/A"}
                   </StyledTableCell>
                   <StyledTableCell>
