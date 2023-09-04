@@ -5,8 +5,7 @@ import { IBCTransferMsg } from "../../txns/ibc/IbcTransfer";
 import ibcService from "./ibcService";
 
 const initialState = {
-  // tx.chains[chainID].status = "pending" | "rejected" | "idle"
-  // tx.chains[chainID].type = "send" | "confirm"
+  // state.chains[chainID].status = "pending" | "rejected" | "idle"
 
   chains: {},
 };
@@ -77,7 +76,6 @@ export const ibcSlice = createSlice({
         const chainID = action.meta.arg.chainID;
         const ibcStatus = {
           status: "pending",
-          type: "send",
         };
         state.chains[chainID] = ibcStatus;
       })
@@ -85,7 +83,6 @@ export const ibcSlice = createSlice({
         const chainID = action.meta.arg.chainID;
         const ibcStatus = {
           status: "idle",
-          type: "confirm",
         };
         state.chains[chainID] = ibcStatus;
       })
@@ -93,7 +90,6 @@ export const ibcSlice = createSlice({
         const chainID = action.meta.arg.chainID;
         const ibcStatus = {
           status: "rejected",
-          type: "",
         };
         state.chains[chainID] = ibcStatus;
       });

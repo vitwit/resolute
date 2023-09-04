@@ -285,7 +285,9 @@ export default function SendPage() {
               </ButtonGroup>
             ) : null}
           </Grid>
-          <Grid
+          {
+            sendType!=="IBC-transfer" ? (
+              <Grid
             item
             xs={1}
             md={3}
@@ -303,6 +305,9 @@ export default function SendPage() {
               }
             />
           </Grid>
+            ) : null
+          }
+          
         </Grid>
         {isAuthzMode && isNoAuthzs ? (
           <>

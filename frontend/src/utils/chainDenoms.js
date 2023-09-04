@@ -28,3 +28,33 @@ export const getIBCBalances = (balances = [], chainName = "") => {
   );
   return IBCBalances || [];
 };
+
+export const getIBCChainsInfo = (balances = {}, nameToChainIds = {}) => {
+  let IBCChainsInfo = {};
+  for (let chainName of Object.keys(nameToChainIds)) {
+    const chainID = nameToChainIds[chainName];
+    if (!chainDenoms[chainName]) continue;
+    let connectedChains = {};
+    let ownedAssets = {};
+    for (let IBCAsset of chainDenoms[chainName]) {
+      IBCAsset["amount"] = 0;
+      if (IBCAsset["type"] === "staking") {
+        ownedAssets[IBCAsset["denom"]] = IBCAsset;
+      }
+      for (let balance of balances?.[chainID]?.list || []) {
+        if (balance["denom"] === IBCAsset["denom"]) {
+          IBCAsset["amount"] = balance.amount;
+          ownedAssets[IBCAsset["denom"]] = IBCAsset;
+          break;
+        }
+      }
+      if (IBCAsset["type"] === "staking") continue;
+      connectedChains[IBCAsset["origin_chain"]] = {
+        port: IBCAsset["port"],
+        channel: IBCAsset["channel"],
+      };
+    }
+    IBCChainsInfo[chainName] = { connectedChains, ownedAssets };
+  }
+  return IBCChainsInfo;
+};
