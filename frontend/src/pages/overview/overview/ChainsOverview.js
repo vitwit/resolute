@@ -394,11 +394,16 @@ export const ChainsOverview = ({ chainNames }) => {
                   <StyledTableCell sx={paddingTopBottom}>
                     Staked Amount
                   </StyledTableCell>
+                  <StyledTableCell sx={paddingTopBottom}>
+                    Rewards
+                  </StyledTableCell>
                 </>
               ) : null}
-              <StyledTableCell sx={paddingTopBottom}>Rewards</StyledTableCell>
               {assetType === "ibc" ? (
                 <>
+                  <StyledTableCell sx={paddingTopBottom}>
+                    IBC Assets
+                  </StyledTableCell>
                   <StyledTableCell sx={paddingTopBottom}>Value</StyledTableCell>
                 </>
               ) : null}
