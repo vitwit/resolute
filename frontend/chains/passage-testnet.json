@@ -11,8 +11,8 @@
     },
     "show_airdrop": true,
     "logos": {
-      "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
-      "menu": "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png"
+      "menu": "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/passage/pasg.png",
+      "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png"
     },
     "keplr_experimental": true,
     "leap_experimental": true,
