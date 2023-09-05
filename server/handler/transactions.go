@@ -380,3 +380,74 @@ func (h *Handler) DeleteTransaction(c echo.Context) error {
 		Status: "transaction deleted",
 	})
 }
+
+func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
+	address := c.Param("address")
+	creatorAddress := c.Param("creator-address")
+
+	row := h.DB.QueryRow(`SELECT address FROM multisig_accounts WHERE address=$1 AND created_by=$2`, address, creatorAddress)
+	if row.Err() != nil {
+		if sql.ErrNoRows == row.Err() {
+			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Status:  "error",
+				Message: fmt.Sprintf("no accounts with address %s", address),
+				Log:     row.Err().Error(),
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to query accounts",
+			Log:     row.Err().Error(),
+		})
+	}
+
+	var accountAddress string
+	if err := row.Scan(&accountAddress); err != nil {
+		if sql.ErrNoRows.Error() == err.Error() {
+			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Status:  "error",
+				Message: fmt.Sprintf("no accounts with address %s", address),
+				Log:     err.Error(),
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to get accounts",
+			Log:     err.Error(),
+		})
+	}
+
+	_, err := h.DB.Exec(`DELETE from transactions WHERE multisig_address=$1`, address)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to delete transaction",
+			Log:     err.Error(),
+		})
+	}
+
+	_, err = h.DB.Exec(`DELETE from pubkeys WHERE multisig_address=$1`, address)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to delete pubkeys",
+			Log:     err.Error(),
+		})
+	}
+
+	_, err = h.DB.Exec(`DELETE from multisig_accounts WHERE address=$1`, address)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to delete account",
+			Log:     err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, model.SuccessResponse{
+		Status: "account deleted",
+	})
+}
