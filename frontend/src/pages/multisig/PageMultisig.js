@@ -7,6 +7,7 @@ import {
   Chip,
   CircularProgress,
   FormControl,
+  IconButton,
   Paper,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
@@ -16,8 +17,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import DialogCreateMultisig from "../../components/multisig/DialogCreateMultisig";
 import {
+  deleteAccount,
   getMultisigAccounts,
   resetCreateMultisigRes,
+  resetDeleteAccountTxnState,
 } from "../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
@@ -27,9 +30,15 @@ import SelectNetwork from "../../components/common/SelectNetwork";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DialogConfirm from "../../components/multisig/DialogConfirm";
+import { setError } from "../../features/common/commonSlice";
 
 export default function PageMultisig() {
   const [open, setOpen] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [deleteAccountData, setDeleteAccountData] = useState({});
+
   const params = useParams();
   const [chainInfo, setChainInfo] = useState({});
 
@@ -38,7 +47,7 @@ export default function PageMultisig() {
   const createMultiAccRes = useSelector(
     (state) => state.multisig.createMultisigAccountRes
   );
-
+  const deleteAccountRes = useSelector((state) => state.multisig.deleteAccountRes);
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
   const multisigAccounts = useSelector(
@@ -47,6 +56,7 @@ export default function PageMultisig() {
   const wallet = useSelector((state) => state.wallet);
   const { connected } = wallet;
   const { walletInfo, network } = chainInfo;
+  const address = walletInfo?.bech32Address;
 
   const accounts = multisigAccounts.accounts;
   const pendingTxns = multisigAccounts.txnCounts;
@@ -67,8 +77,10 @@ export default function PageMultisig() {
   }, [params, connected]);
 
   useEffect(() => {
-    if(chainInfo?.walletInfo?.bech32Address)
-    dispatch(getMultisigAccounts(chainInfo?.walletInfo?.bech32Address));
+    if (chainInfo?.walletInfo?.bech32Address) {
+      dispatch(getMultisigAccounts(chainInfo?.walletInfo?.bech32Address));
+      dispatch(resetDeleteAccountTxnState())
+    }
   }, [chainInfo, connected]);
 
   useEffect(() => {
@@ -79,8 +91,36 @@ export default function PageMultisig() {
     }
   }, [createMultiAccRes]);
 
+  useEffect(() => {
+    if(deleteAccountRes.status === "idle") {
+      dispatch(getMultisigAccounts(walletInfo?.bech32Address));
+      dispatch(resetCreateMultisigRes());
+      dispatch(
+        setError({
+          type: "success",
+          message: "Account deleted successfully",
+        })
+      );
+    } else if (deleteAccountRes.status === "rejected") {
+      dispatch(
+        setError({
+          type: "error",
+          message: deleteAccountRes.error,
+        })
+      );
+    }
+  }, [deleteAccountRes])
+
   const onClose = () => {
     setOpen(false);
+  };
+
+  const onDialogConfirmClose = () => {
+    setConfirmDialogOpen(false);
+  };
+
+  const deleteMultisigAccount = () => {
+    dispatch(deleteAccount(deleteAccountData));
   };
 
   return (
@@ -162,6 +202,7 @@ export default function PageMultisig() {
                   <StyledTableCell>Threshold</StyledTableCell>
                   <StyledTableCell>Actions Required</StyledTableCell>
                   <StyledTableCell>Created At</StyledTableCell>
+                  <StyledTableCell>Actions</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
@@ -228,6 +269,22 @@ export default function PageMultisig() {
                     >
                       {getLocalTime(row?.created_at)}
                     </StyledTableCell>
+                    <StyledTableCell>
+                      <IconButton
+                        aria-label="delete account"
+                        color="error"
+                        onClick={() => {
+                          setDeleteAccountData({
+                            address: row?.address,
+                            creatorAddress: address,
+                          });
+                          setConfirmDialogOpen(true);
+                        }}
+                        disabled={address !== row?.created_by}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </StyledTableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
@@ -245,6 +302,15 @@ export default function PageMultisig() {
           address={walletInfo?.bech32Address}
           pubKey={walletInfo?.pubKey}
         />
+      ) : null}
+      {confirmDialogOpen ? (
+        <>
+          <DialogConfirm
+            open={confirmDialogOpen}
+            onClose={onDialogConfirmClose}
+            deleteMultisigAccount={deleteMultisigAccount}
+          />
+        </>
       ) : null}
     </Paper>
   );

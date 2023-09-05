@@ -61,6 +61,9 @@ export const createTransaction = (data) => {
 export const deleteTx = (address, txId) =>
   Axios.delete(`${BASE_URL}/multisig/${address}/tx/${txId}`);
 
+export const deleteAccount = (address, creatorAddress) =>
+  Axios.delete(`${BASE_URL}/multisig/${creatorAddress}/${address}`);
+
 export default {
   createAccount: createAccount,
   getAccounts: getAccounts,
@@ -70,4 +73,5 @@ export default {
   signTx: signTx,
   updateTx: updateTx,
   deleteTx: deleteTx,
+  deleteAccount: deleteAccount,
 };

@@ -39,6 +39,10 @@ const initialState = {
     status: "",
     error: "",
   },
+  deleteAccountRes: {
+    status: "",
+    error: "",
+  },
   updateTxn: {
     status: "",
     error: "",
@@ -83,6 +87,23 @@ export const deleteTxn = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await multisigService.deleteTx(data.address, data.id);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data?.message || error?.message || SOMETHING_WRONG
+      );
+    }
+  }
+);
+
+export const deleteAccount = createAsyncThunk(
+  "multisig/deleteAccount",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await multisigService.deleteAccount(
+        data.address,
+        data.creatorAddress
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -197,6 +218,9 @@ export const multiSlice = createSlice({
     },
     resetDeleteTxnState: (state, _) => {
       state.deleteTxnRes = initialState.deleteTxnRes;
+    },
+    resetDeleteAccountTxnState: (state, _) => {
+      state.deleteTxnRes = initialState.deleteAccountRes;
     },
     resetUpdateTxnState: (state, _) => {
       state.updateTxn = initialState.updateTxn;
@@ -313,6 +337,18 @@ export const multiSlice = createSlice({
       });
 
     builder
+      .addCase(deleteAccount.pending, (state) => {
+        state.deleteAccountRes.status = "pending";
+      })
+      .addCase(deleteAccount.fulfilled, (state, _) => {
+        state.deleteAccountRes.status = "idle";
+      })
+      .addCase(deleteAccount.rejected, (state, action) => {
+        state.deleteAccountRes.status = "rejected";
+        state.deleteAccountRes.error = action.payload;
+      });
+
+    builder
       .addCase(updateTxn.pending, (state) => {
         state.updateTxn.status = "pending";
       })
@@ -344,6 +380,7 @@ export const {
   resetDeleteTxnState,
   resetUpdateTxnState,
   resetSignTxnState,
+  resetDeleteAccountTxnState,
 } = multiSlice.actions;
 
 export default multiSlice.reducer;
