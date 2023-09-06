@@ -11,7 +11,7 @@
     },
     "show_airdrop": false,
     "logos": {
-      "menu": "https://raw.githubusercontent.com/vitwit/chain-registry/ceac711f4bc842e280d50353790f1feac2ebfd44/desmos/images/dsm.svg",
+      "menu": "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/desmos/dsm.png",
       "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/master/desmos/images/dsm.png"
     },
     "keplr_experimental": true,
