@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -406,7 +407,7 @@ func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
 		if sql.ErrNoRows.Error() == err.Error() {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Status:  "error",
-				Message: fmt.Sprintf("no accounts with address %s", address),
+				Message: fmt.Sprintf("no account with address %s", address),
 				Log:     err.Error(),
 			})
 		}
@@ -417,7 +418,11 @@ func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
 		})
 	}
 
-	_, err := h.DB.Exec(`DELETE from transactions WHERE multisig_address=$1`, address)
+	ctx := context.Background()
+
+	tx, err := h.DB.BeginTx(ctx, nil)
+
+	_, err = tx.ExecContext(ctx, `DELETE from transactions WHERE multisig_address=$1`, address)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
@@ -427,7 +432,7 @@ func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
 		})
 	}
 
-	_, err = h.DB.Exec(`DELETE from pubkeys WHERE multisig_address=$1`, address)
+	_, err = tx.ExecContext(ctx, `DELETE from pubkeys WHERE multisig_address=$1`, address)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
@@ -437,12 +442,21 @@ func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
 		})
 	}
 
-	_, err = h.DB.Exec(`DELETE from multisig_accounts WHERE address=$1`, address)
+	_, err = tx.ExecContext(ctx, `DELETE from multisig_accounts WHERE address=$1`, address)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Status:  "error",
 			Message: "failed to delete account",
+			Log:     err.Error(),
+		})
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to commit database transactions",
 			Log:     err.Error(),
 		})
 	}
