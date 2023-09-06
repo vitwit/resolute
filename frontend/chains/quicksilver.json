@@ -11,7 +11,7 @@
   },
   "show_airdrop": false,
   "logos": {
-    "menu": "https://raw.githubusercontent.com/vitwit/chain-registry/master/quicksilver/images/qck.png",
+    "menu": "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/quicksilver/qck.png",
     "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/master/quicksilver/images/quicksilver-chain-logo.png"
   },
   "keplr_experimental": false,
