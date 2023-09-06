@@ -285,29 +285,26 @@ export default function SendPage() {
               </ButtonGroup>
             ) : null}
           </Grid>
-          {
-            sendType!=="IBC-transfer" ? (
-              <Grid
-            item
-            xs={1}
-            md={3}
-            sx={{ display: "flex", justifyContent: "center" }}
-          >
-            <SelectNetwork
-              onSelect={(name) => {
-                navigate(`/${name}/transfers`);
-              }}
-              networks={Object.keys(nameToChainIDs)}
-              defaultNetwork={
-                currentNetwork?.length > 0
-                  ? currentNetwork.toLowerCase().replace(/ /g, "")
-                  : "cosmoshub"
-              }
-            />
-          </Grid>
-            ) : null
-          }
-          
+          {sendType !== "IBC-transfer" ? (
+            <Grid
+              item
+              xs={1}
+              md={3}
+              sx={{ display: "flex", justifyContent: "center" }}
+            >
+              <SelectNetwork
+                onSelect={(name) => {
+                  navigate(`/${name}/transfers`);
+                }}
+                networks={Object.keys(nameToChainIDs)}
+                defaultNetwork={
+                  currentNetwork?.length > 0
+                    ? currentNetwork.toLowerCase().replace(/ /g, "")
+                    : "cosmoshub"
+                }
+              />
+            </Grid>
+          ) : null}
         </Grid>
         {isAuthzMode && isNoAuthzs ? (
           <>
@@ -358,13 +355,7 @@ export default function SendPage() {
           </>
         ) : (
           <>
-            <IBCTransfer
-              chainInfo={chainInfo}
-              address={address}
-              networkName={currentNetwork}
-              balances={balances}
-              feegrant={feegrant}
-            />
+            <IBCTransfer />
           </>
         )}
       </Box>
