@@ -17,7 +17,7 @@ const DialogConfirm = (props) => {
           sx={{ textAlign: "center", fontWeight: 600 }}
           variant="h6"
         >
-          Delete multisig account?
+          Deleting a multisig account removes all its transactions.
         </DialogContent>
         <DialogActions>
           <Button
@@ -31,7 +31,7 @@ const DialogConfirm = (props) => {
               onClose();
             }}
           >
-            No
+            Cancel
           </Button>
           <Button
             variant="outlined"
@@ -45,7 +45,7 @@ const DialogConfirm = (props) => {
               onClose();
             }}
           >
-            Yes
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
