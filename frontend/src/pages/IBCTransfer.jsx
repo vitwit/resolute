@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   CircularProgress,
@@ -16,7 +17,6 @@ import { txIBCTransfer } from "../features/ibc/ibcSlice";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { setError } from "../features/common/commonSlice";
 import { getBalances } from "../features/bank/bankSlice";
-import { Controller } from "react-hook-form";
 
 export const IBCTransfer = () => {
   const [chainName, setChainName] = useState("cosmoshub");
@@ -24,22 +24,6 @@ export const IBCTransfer = () => {
   const [selectedAsset, setSelectedAsset] = useState("");
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState(0);
-
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    formState: {errors},
-    getValues,
-  } = useForm({
-    defaultValues: {
-      chainName: "cosmoshub",
-      destinationChain: null,
-      selectedAsset: null,
-      recipient: null,
-      amount: null
-    }
-  })
 
   const dispatch = useDispatch();
 
@@ -119,6 +103,7 @@ export const IBCTransfer = () => {
   };
 
   const onSubmit = (e) => {
+    e.preventDefault();
     onIBCTransferTx();
   };
 
@@ -133,6 +118,12 @@ export const IBCTransfer = () => {
           mx: "auto",
         }}
       >
+        <Alert severity="warning">
+          <Typography sx={{ align: "center" }}>
+            Avoid IBC transfers to centralized exchanges. Your assets may be
+            lost.
+          </Typography>
+        </Alert>
         <Box>
           <Typography color="text.primary" variant="h6" fontWeight={600}>
             IBC-Transfer
@@ -146,14 +137,11 @@ export const IBCTransfer = () => {
             mt: 2,
           }}
         >
-          <form onSubmit={() => handleSubmit(onSubmit)}>
+          <form onSubmit={(e) => onSubmit(e)}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Controller 
-                name={"from"}
-                control={control}
-                // rules={}
-                render={({field}) => (
-                  <Select
+              <FormControl sx={{ width: "40%" }}>
+                <InputLabel id="select-helper-label-right">From *</InputLabel>
+                <Select
                   required
                   value={chainName}
                   label="select-network"
@@ -169,8 +157,7 @@ export const IBCTransfer = () => {
                     </MenuItem>
                   ))}
                 </Select>
-                )}
-              />
+              </FormControl>
 
               <FormControl sx={{ width: "40%" }}>
                 <InputLabel id="select-helper-label-right">To *</InputLabel>
@@ -189,8 +176,8 @@ export const IBCTransfer = () => {
                       value={
                         IBCInfo?.[chainName]?.connectedChains?.[connectedChain]
                       }
+                      key={connectedChain}
                     >
-                      {" "}
                       {connectedChain.toUpperCase()}
                     </MenuItem>
                   ))}
@@ -238,9 +225,10 @@ export const IBCTransfer = () => {
                     (assetDenom) => (
                       <MenuItem
                         value={IBCInfo?.[chainName]?.ownedAssets?.[assetDenom]}
+                        key={assetDenom}
                       >
                         {
-                          IBCInfo?.[chainName]?.ownedAssets?.[assetDenom][
+                          IBCInfo?.[chainName]?.ownedAssets?.[assetDenom]?.[
                             "symbol"
                           ]
                         }

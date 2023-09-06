@@ -49,6 +49,7 @@ export const getIBCChainsInfo = (balances = {}, nameToChainIds = {}) => {
         }
       }
       if (IBCAsset["type"] === "staking") continue;
+      if (!IBCAsset["port"]) continue;
       connectedChains[IBCAsset["origin_chain"]] = {
         port: IBCAsset["port"],
         channel: IBCAsset["channel"],

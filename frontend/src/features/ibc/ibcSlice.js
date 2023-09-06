@@ -3,6 +3,7 @@ import { setError, setTxHash } from "../common/commonSlice";
 import { signAndBroadcast } from "../../utils/signing";
 import { IBCTransferMsg } from "../../txns/ibc/IbcTransfer";
 import ibcService from "./ibcService";
+import { getBalances } from "../bank/bankSlice";
 
 const initialState = {
   // state.chains[chainID].status = "pending" | "rejected" | "idle"
@@ -40,6 +41,13 @@ export const txIBCTransfer = createAsyncThunk(
         dispatch(
           setTxHash({
             hash: result?.transactionHash,
+          })
+        );
+        dispatch(
+          getBalances({
+            baseURL: data.rest + "/",
+            address: data.from,
+            chainID: data.chainID,
           })
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
