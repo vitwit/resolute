@@ -12,7 +12,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/ceac711f4bc842e280d50353790f1feac2ebfd44/agoric/images/bld.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/agoric/bld.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/master/agoric/images/bld.png"
     },
     keplrExperimental: false,
@@ -89,7 +89,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/akash/images/akash.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/akash/akt.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/akash/images/akash-logo.png"
     },
     keplrExperimental: false,
@@ -156,7 +156,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/cosmoshub/atom.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png"
     },
     keplrExperimental: false,
@@ -223,7 +223,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/ceac711f4bc842e280d50353790f1feac2ebfd44/desmos/images/dsm.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/desmos/dsm.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/master/desmos/images/dsm.png"
     },
     keplrExperimental: true,
@@ -290,7 +290,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/evmos/images/evmos.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/evmos/evmos.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/evmos/images/evmos-logo.png"
     },
     keplrExperimental: false,
@@ -357,7 +357,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/juno/juno.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/juno/images/juno-logo.png"
     },
     keplrExperimental: false,
@@ -424,7 +424,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/master/omniflixhub/images/flix.png",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/omniflixhub/flix.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/master/omniflixhub/images/flix.png"
     },
     keplrExperimental: false,
@@ -491,7 +491,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/osmosis/osmo.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.png"
     },
     keplrExperimental: false,
@@ -558,8 +558,8 @@ export const networks: Network[] = [
     },
     showAirdrop: true,
     logos: {
-      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png"
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/passage/pasg.png",
+      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png"
     },
     keplrExperimental: true,
     leapExperimental: true,
@@ -629,8 +629,8 @@ export const networks: Network[] = [
     },
     showAirdrop: true,
     logos: {
-      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png",
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage.png"
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/passage/pasg.png",
+      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png"
     },
     keplrExperimental: true,
     leapExperimental: true,
@@ -700,7 +700,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/master/quicksilver/images/qck.png",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/quicksilver/qck.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/master/quicksilver/images/quicksilver-chain-logo.png"
     },
     keplrExperimental: false,
@@ -767,7 +767,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/regen/images/regen.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/regen/regen.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/regen/images/regen-logo.png"
     },
     keplrExperimental: false,
@@ -834,7 +834,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/cosmoshub/atom.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/cosmoshub/images/cosmoshub-logo.png"
     },
     keplrExperimental: true,
@@ -904,7 +904,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/stargaze/images/stargaze.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/stargaze/stars.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/stargaze/images/stargaze-logo.png"
     },
     keplrExperimental: false,
@@ -971,7 +971,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/ceac711f4bc842e280d50353790f1feac2ebfd44/tgrade/images/tgrade-symbol-gradient_lines.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/tgrade/tgrade.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/master/tgrade/images/tgrade-logo-gradient_h.png"
     },
     keplrExperimental: false,
@@ -1038,7 +1038,7 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
-      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/umee/images/umee.svg",
+      menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/umee/umee.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/umee/images/umee-logo.png"
     },
     keplrExperimental: false,
