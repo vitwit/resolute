@@ -16,6 +16,7 @@ const DialogDeposit = (props) => {
 
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.gov.tx.status);
+  const currency = chainInfo.config.currencies[0];
 
   const handleClose = () => {
     onClose();
@@ -24,7 +25,7 @@ const DialogDeposit = (props) => {
   const {
     handleSubmit,
     control,
-    setValue,
+    getValues,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -37,7 +38,7 @@ const DialogDeposit = (props) => {
       txDeposit({
         depositer: address,
         proposalId: proposalId,
-        amount: Number(data.amount),
+        amount: Number(data.amount) * 10 ** currency.coinDecimals,
         denom: chainInfo.config.currencies[0].coinMinimalDenom,
         chainId: chainInfo.config.chainId,
         rpc: chainInfo.config.rpc,
@@ -64,6 +65,11 @@ const DialogDeposit = (props) => {
                 control={control}
                 rules={{
                   required: "Amount is required",
+                  validate: () => {
+                    if (getValues("amount") <= 0) {
+                      return "Must be greater than 0";
+                    }
+                  },
                 }}
                 render={({ field }) => (
                   <TextField
@@ -73,11 +79,14 @@ const DialogDeposit = (props) => {
                     fullWidth
                     size="small"
                     error={errors.amount}
-                    helperText={
-                      errors.amount?.type === "validate"
-                        ? "Insufficient balance"
-                        : errors.amount?.message
-                    }
+                    helperText={errors?.amount?.message}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          {currency?.coinDenom}
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 )}
               />
