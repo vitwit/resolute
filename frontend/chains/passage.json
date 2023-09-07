@@ -21,7 +21,7 @@
   "config": {
     "chain_id": "passage-2",
     "chain_name": "Passage",
-    "rest": "https://api.passage.vitwit.com/",
+    "rest": "https://api.passage.vitwit.com",
     "rpc": "https://rpc.passage.vitwit.com",
     "bip44": {
       "coin_type": 118
