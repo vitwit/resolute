@@ -639,7 +639,7 @@ export const networks: Network[] = [
     config: {
       chainId: "passage-2",
       chainName: "Passage",
-      rest: "https://api.passage.vitwit.com/",
+      rest: "https://api.passage.vitwit.com",
       rpc: "https://rpc.passage.vitwit.com",
       bip44: {
         coinType: 118
