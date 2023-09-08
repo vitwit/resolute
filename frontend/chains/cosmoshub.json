@@ -21,8 +21,8 @@
   "config": {
     "chain_id": "cosmoshub-4",
     "chain_name": "CosmosHub",
-    "rest": "https://api.resolute.vitwit.com/cosmos_api/",
-    "rpc": "https://api.resolute.vitwit.com/cosmos_rpc/",
+    "rest": "https://api.resolute.vitwit.com/cosmos_api",
+    "rpc": "https://api.resolute.vitwit.com/cosmos_rpc",
     "currencies": [
       {
         "coin_denom": "ATOM",

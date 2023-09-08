@@ -21,8 +21,8 @@
     "config": {
       "chain_id": "agoric-3",
       "chain_name": "Agoric",
-      "rest": "https://api.resolute.vitwit.com/agoric_api/",
-      "rpc": "https://api.resolute.vitwit.com/agoric_rpc/",
+      "rest": "https://agoric-api.polkachu.com",
+      "rpc": "https://agoric-rpc.polkachu.com",
       "currencies": [
         {
           "coin_denom": "BLD",

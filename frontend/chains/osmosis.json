@@ -22,7 +22,7 @@
     "chain_id": "osmosis-1",
     "chain_name": "Osmosis",
     "rest": "https://osmosis-api.polkachu.com",
-    "rpc": "https://rpc.osmosis.zone/",
+    "rpc": "https://rpc.osmosis.zone",
     "currencies": [
       {
         "coin_denom": "OSMO",

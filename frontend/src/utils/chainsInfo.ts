@@ -22,8 +22,8 @@ export const networks: Network[] = [
     config: {
       chainId: "agoric-3",
       chainName: "Agoric",
-      rest: "https://api.resolute.vitwit.com/agoric_api/",
-      rpc: "https://api.resolute.vitwit.com/agoric_rpc/",
+      rest: "https://agoric-api.polkachu.com",
+      rpc: "https://agoric-rpc.polkachu.com",
       currencies: [
         {
           coinDenom: "BLD",
@@ -99,8 +99,8 @@ export const networks: Network[] = [
     config: {
       chainId: "akashnet-2",
       chainName: "Akash",
-      rest: "https://api.resolute.vitwit.com/akash_api/",
-      rpc: "https://api.resolute.vitwit.com/akash_rpc/",
+      rest: "https://api.resolute.vitwit.com/akash_api",
+      rpc: "https://api.resolute.vitwit.com/akash_rpc",
       currencies: [
         {
           coinDenom: "AKT",
@@ -166,8 +166,8 @@ export const networks: Network[] = [
     config: {
       chainId: "cosmoshub-4",
       chainName: "CosmosHub",
-      rest: "https://api.resolute.vitwit.com/cosmos_api/",
-      rpc: "https://api.resolute.vitwit.com/cosmos_rpc/",
+      rest: "https://api.resolute.vitwit.com/cosmos_api",
+      rpc: "https://api.resolute.vitwit.com/cosmos_rpc",
       currencies: [
         {
           coinDenom: "ATOM",
@@ -233,8 +233,8 @@ export const networks: Network[] = [
     config: {
       chainId: "desmos-mainnet",
       chainName: "Desmos",
-      rest: "https://api.resolute.vitwit.com/desmos_api/",
-      rpc: "https://api.resolute.vitwit.com/desmos_rpc/",
+      rest: "https://api.resolute.vitwit.com/desmos_api",
+      rpc: "https://api.resolute.vitwit.com/desmos_rpc",
       currencies: [
         {
           coinDenom: "DSM",
@@ -367,8 +367,8 @@ export const networks: Network[] = [
     config: {
       chainId: "juno-1",
       chainName: "Juno",
-      rest: "https://api.resolute.vitwit.com/juno_api/",
-      rpc: "https://api.resolute.vitwit.com/juno_rpc/",
+      rest: "https://api.resolute.vitwit.com/juno_api",
+      rpc: "https://api.resolute.vitwit.com/juno_rpc",
       currencies: [
         {
           coinDenom: "JUNO",
@@ -434,8 +434,8 @@ export const networks: Network[] = [
     config: {
       chainId: "omniflixhub-1",
       chainName: "OmniflixHub",
-      rest: "https://api.resolute.vitwit.com/omniflix_api/",
-      rpc: "https://api.resolute.vitwit.com/omniflix_rpc/",
+      rest: "https://api.resolute.vitwit.com/omniflix_api",
+      rpc: "https://api.resolute.vitwit.com/omniflix_rpc",
       currencies: [
         {
           coinDenom: "FLIX",
@@ -502,7 +502,7 @@ export const networks: Network[] = [
       chainId: "osmosis-1",
       chainName: "Osmosis",
       rest: "https://osmosis-api.polkachu.com",
-      rpc: "https://rpc.osmosis.zone/",
+      rpc: "https://rpc.osmosis.zone",
       currencies: [
         {
           coinDenom: "OSMO",
@@ -568,8 +568,8 @@ export const networks: Network[] = [
     config: {
       chainId: "passage-testnet-1",
       chainName: "Passage-testnet",
-      rest: "https://api.resolute.vitwit.com/passage_testapi/",
-      rpc: "https://api.resolute.vitwit.com/passage_testrpc/",
+      rest: "https://api.resolute.vitwit.com/passage_testapi",
+      rpc: "https://api.resolute.vitwit.com/passage_testrpc",
       bip44: {
         coinType: 118
       },
@@ -710,8 +710,8 @@ export const networks: Network[] = [
     config: {
       chainId: "quicksilver-2",
       chainName: "Quicksilver",
-      rest: "https://api.resolute.vitwit.com/quicksilver_api/",
-      rpc: "https://api.resolute.vitwit.com/quicksilver_rpc/",
+      rest: "https://api.resolute.vitwit.com/quicksilver_api",
+      rpc: "https://api.resolute.vitwit.com/quicksilver_rpc",
       currencies: [
         {
           coinDenom: "QCK",
@@ -777,8 +777,8 @@ export const networks: Network[] = [
     config: {
       chainId: "regen-1",
       chainName: "Regen",
-      rest: "https://api.resolute.vitwit.com/regen_api/",
-      rpc: "https://api.resolute.vitwit.com/regen_rpc/",
+      rest: "https://api.resolute.vitwit.com/regen_api",
+      rpc: "https://api.resolute.vitwit.com/regen_rpc",
       currencies: [
         {
           coinDenom: "REGEN",
@@ -914,8 +914,8 @@ export const networks: Network[] = [
     config: {
       chainId: "stargaze-1",
       chainName: "Stargaze",
-      rest: "https://api.resolute.vitwit.com/stargaze_api/",
-      rpc: "https://api.resolute.vitwit.com/stargaze_rpc/",
+      rest: "https://api.resolute.vitwit.com/stargaze_api",
+      rpc: "https://api.resolute.vitwit.com/stargaze_rpc",
       currencies: [
         {
           coinDenom: "STARS",
@@ -981,8 +981,8 @@ export const networks: Network[] = [
     config: {
       chainId: "tgrade-mainnet-1",
       chainName: "Tgrade",
-      rest: "https://api.resolute.vitwit.com/tgrade_api/",
-      rpc: "https://api.resolute.vitwit.com/tgrade_rpc/",
+      rest: "https://api.resolute.vitwit.com/tgrade_api",
+      rpc: "https://api.resolute.vitwit.com/tgrade_rpc",
       currencies: [
         {
           coinDenom: "TGD",
@@ -1048,8 +1048,8 @@ export const networks: Network[] = [
     config: {
       chainId: "umee-1",
       chainName: "Umee",
-      rest: "https://api.resolute.vitwit.com/umee_api/",
-      rpc: "https://api.resolute.vitwit.com/umee_rpc/",
+      rest: "https://api.resolute.vitwit.com/umee_api",
+      rpc: "https://api.resolute.vitwit.com/umee_rpc",
       currencies: [
         {
           coinDenom: "UMEE",

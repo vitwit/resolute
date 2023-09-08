@@ -181,7 +181,7 @@ export const ChainsOverview = ({ chainNames }) => {
         const denomInfo = chainDenoms[chainName]?.filter((denomInfo) => {
           return denomInfo.denom === balance.denom;
         });
-        if (balance.denom !== minimalDenom && denomInfo.length) {
+        if (balance?.denom !== minimalDenom && denomInfo?.length) {
           const usdDenomPrice =
             tokensPriceInfo[denomInfo[0]?.origin_denom]?.info?.["usd"] || 0;
           const balanceAmount = parseBalance(

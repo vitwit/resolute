@@ -21,8 +21,8 @@
   "config": {
     "chain_id": "regen-1",
     "chain_name": "Regen",
-    "rest": "https://api.resolute.vitwit.com/regen_api/",
-    "rpc": "https://api.resolute.vitwit.com/regen_rpc/",
+    "rest": "https://api.resolute.vitwit.com/regen_api",
+    "rpc": "https://api.resolute.vitwit.com/regen_rpc",
     "currencies": [
       {
         "coin_denom": "REGEN",
