@@ -4749,5 +4749,422 @@
       "image": "terra/asset/luna.png",
       "coinGeckoId": "terra-luna-2"
     }
+  ],
+  "agoric": [],
+  "desmos": [
+    {
+      "denom": "udsm",
+      "type": "staking",
+      "origin_chain": "desmos",
+      "origin_denom": "udsm",
+      "origin_type": "staking",
+      "symbol": "DSM",
+      "decimals": 6,
+      "description": "Desmos Staking Coin",
+      "image": "desmos/asset/dsm.png",
+      "coinGeckoId": "desmos"
+    },
+    {
+      "denom": "ibc/13B2C536BB057AC79D5616B8EA1B9540EC1F2170718CAFF6F0083C966FFFED0B",
+      "type": "ibc",
+      "origin_chain": "osmosis",
+      "origin_denom": "uosmo",
+      "origin_type": "staking",
+      "symbol": "OSMO",
+      "decimals": 6,
+      "enable": true,
+      "path": "osmosis>desmos",
+      "channel": "channel-2",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-135",
+        "port": "transfer",
+        "denom": "uosmo"
+      },
+      "image": "osmosis/asset/osmo.png",
+      "coinGeckoId": "osmosis"
+    },
+    {
+      "denom": "ibc/6FA7B62692FBCA2E51F567947035DE3C5D7333D49D13B85A25F358E80DF4E991",
+      "type": "ibc",
+      "origin_chain": "osmosis",
+      "origin_denom": "uion",
+      "origin_type": "native",
+      "symbol": "ION",
+      "decimals": 6,
+      "enable": true,
+      "path": "osmosis>desmos",
+      "channel": "channel-2",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-135",
+        "port": "transfer",
+        "denom": "uion"
+      },
+      "image": "osmosis/asset/ion.png",
+      "coinGeckoId": "ion"
+    }
+  ],
+  "omniflixhub": [
+    {
+      "denom": "uflix",
+      "type": "staking",
+      "origin_chain": "omniflix",
+      "origin_denom": "uflix",
+      "origin_type": "staking",
+      "symbol": "FLIX",
+      "decimals": 6,
+      "description": "OmniFlix Staking Coin",
+      "image": "omniflix/asset/flix.png",
+      "coinGeckoId": "omniflix-network"
+    },
+    {
+      "denom": "ibc/A8C2D23A1E6F95DA4E48BA349667E322BD7A6C996D8A4AAE8BA72E190F3D1477",
+      "type": "ibc",
+      "origin_chain": "cosmos",
+      "origin_denom": "uatom",
+      "origin_type": "staking",
+      "symbol": "ATOM",
+      "decimals": 6,
+      "enable": true,
+      "path": "cosmos>omniflix",
+      "channel": "channel-12",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-306",
+        "port": "transfer",
+        "denom": "uatom"
+      },
+      "image": "cosmos/asset/atom.png",
+      "coinGeckoId": "cosmos"
+    },
+    {
+      "denom": "ibc/F951C98B3D08879376970DD39F74907896391810FD40AF9B2357A02E9E82BBA5",
+      "type": "ibc",
+      "origin_chain": "juno",
+      "origin_denom": "ujuno",
+      "origin_type": "staking",
+      "symbol": "JUNO",
+      "decimals": 6,
+      "enable": true,
+      "path": "juno>omniflix",
+      "channel": "channel-20",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-78",
+        "port": "transfer",
+        "denom": "ujuno"
+      },
+      "image": "juno/asset/juno.png",
+      "coinGeckoId": "juno-network"
+    },
+    {
+      "denom": "ibc/EA7DF7F779C7F14E07172E5713E07356B55F01496CA649DDE46CF8FBF1A8466D",
+      "type": "ibc",
+      "origin_chain": "osmosis",
+      "origin_denom": "uion",
+      "origin_type": "native",
+      "symbol": "ION",
+      "decimals": 6,
+      "enable": true,
+      "path": "osmosis>omniflix",
+      "channel": "channel-1",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-199",
+        "port": "transfer",
+        "denom": "uion"
+      },
+      "image": "osmosis/asset/ion.png",
+      "coinGeckoId": "ion"
+    },
+    {
+      "denom": "ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B",
+      "type": "ibc",
+      "origin_chain": "osmosis",
+      "origin_denom": "uosmo",
+      "origin_type": "staking",
+      "symbol": "OSMO",
+      "decimals": 6,
+      "enable": true,
+      "path": "osmosis>omniflix",
+      "channel": "channel-1",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-199",
+        "port": "transfer",
+        "denom": "uosmo"
+      },
+      "image": "osmosis/asset/osmo.png",
+      "coinGeckoId": "osmosis"
+    },
+    {
+      "denom": "ibc/CC12CFFD769D5E0059D98E760DD34FAB477261785B99240C97F6AABC4F566CB5",
+      "type": "ibc",
+      "origin_chain": "chihuahua",
+      "origin_denom": "uhuahua",
+      "origin_type": "staking",
+      "symbol": "HUAHUA",
+      "decimals": 6,
+      "enable": true,
+      "path": "chihuahua>omniflix",
+      "channel": "channel-5",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-17",
+        "port": "transfer",
+        "denom": "uhuahua"
+      },
+      "image": "chihuahua/asset/huahua.png",
+      "coinGeckoId": "chihuahua-token"
+    }
+  ],
+  "quicksilver": [
+    {
+      "denom": "uqck",
+      "type": "staking",
+      "origin_chain": "quicksilver",
+      "origin_denom": "uqck",
+      "origin_type": "staking",
+      "symbol": "QCK",
+      "decimals": 6,
+      "description": "Quicksilver Staking Coin",
+      "image": "quicksilver/asset/qck.png",
+      "coinGeckoId": "quicksilver"
+    },
+    {
+      "denom": "uqstars",
+      "type": "native",
+      "origin_chain": "quicksilver",
+      "origin_denom": "uqstars",
+      "origin_type": "native",
+      "symbol": "qSTARS",
+      "decimals": 6,
+      "description": "Quicksilver Staked Stars",
+      "image": "quicksilver/asset/qstars.png",
+      "coinGeckoId": ""
+    },
+    {
+      "denom": "uqatom",
+      "type": "native",
+      "origin_chain": "quicksilver",
+      "origin_denom": "uqatom",
+      "origin_type": "native",
+      "symbol": "qATOM",
+      "decimals": 6,
+      "description": "Quicksilver Staked ATOM",
+      "image": "quicksilver/asset/qatom.png",
+      "coinGeckoId": ""
+    },
+    {
+      "denom": "uqregen",
+      "type": "native",
+      "origin_chain": "quicksilver",
+      "origin_denom": "uqregen",
+      "origin_type": "native",
+      "symbol": "qREGEN",
+      "decimals": 6,
+      "description": "Quicksilver Staked REGEN",
+      "image": "quicksilver/asset/qregen.png",
+      "coinGeckoId": ""
+    },
+    {
+      "denom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+      "type": "ibc",
+      "origin_chain": "cosmos",
+      "origin_denom": "uatom",
+      "origin_type": "staking",
+      "symbol": "ATOM",
+      "decimals": 6,
+      "enable": true,
+      "path": "cosmos>quicksilver",
+      "channel": "channel-1",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-467",
+        "port": "transfer",
+        "denom": "uatom"
+      },
+      "image": "cosmos/asset/atom.png",
+      "coinGeckoId": "cosmos"
+    },
+    {
+      "denom": "ibc/49BAE4CD2172833F14000627DA87ED8024AD46A38D6ED33F6239F22B5832F958",
+      "type": "ibc",
+      "origin_chain": "stargaze",
+      "origin_denom": "ustars",
+      "origin_type": "staking",
+      "symbol": "STARS",
+      "decimals": 6,
+      "enable": true,
+      "path": "stargaze>quicksilver",
+      "channel": "channel-0",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-124",
+        "port": "transfer",
+        "denom": "ustars"
+      },
+      "image": "stargaze/asset/stars.png",
+      "coinGeckoId": "stargaze"
+    },
+    {
+      "denom": "ibc/13B2C536BB057AC79D5616B8EA1B9540EC1F2170718CAFF6F0083C966FFFED0B",
+      "type": "ibc",
+      "origin_chain": "osmosis",
+      "origin_denom": "uosmo",
+      "origin_type": "staking",
+      "symbol": "OSMO",
+      "decimals": 6,
+      "enable": true,
+      "path": "osmosis>quicksilver",
+      "channel": "channel-2",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-522",
+        "port": "transfer",
+        "denom": "uosmo"
+      },
+      "image": "osmosis/asset/osmo.png",
+      "coinGeckoId": "osmosis"
+    },
+    {
+      "denom": "ibc/50601881EB04667D5BD252FAEB5AA0713F117A2AB9DE365CF7DF9BB4083065B8",
+      "type": "ibc",
+      "origin_chain": "persistence",
+      "origin_denom": "uxprt",
+      "origin_type": "staking",
+      "symbol": "XPRT",
+      "decimals": 6,
+      "enable": true,
+      "path": "persistence>quicksilver",
+      "channel": "channel-16",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-73",
+        "port": "transfer",
+        "denom": "uxprt"
+      },
+      "image": "persistence/asset/pstake.png",
+      "coinGeckoId": "persistence"
+    },
+    {
+      "denom": "ibc/73E97EB411B29C6F989C35D277D1A7FC65083572F102AC6BD101884EE9FB2C9F",
+      "type": "ibc",
+      "origin_chain": "evmos",
+      "origin_denom": "aevmos",
+      "origin_type": "staking",
+      "symbol": "EVMOS",
+      "decimals": 18,
+      "enable": true,
+      "path": "evmos>quicksilver",
+      "channel": "channel-7",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-37",
+        "port": "transfer",
+        "denom": "aevmos"
+      },
+      "image": "evmos/asset/evmos.png",
+      "coinGeckoId": "evmos"
+    },
+    {
+      "denom": "ibc/A7E38774F447445DB94A8ED00BEE78EFC43EED7A732D314D3F7F4AB743993E9F",
+      "type": "ibc",
+      "origin_chain": "regen",
+      "origin_denom": "uregen",
+      "origin_type": "staking",
+      "symbol": "REGEN",
+      "decimals": 6,
+      "enable": true,
+      "path": "regen>quicksilver",
+      "channel": "channel-17",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-62",
+        "port": "transfer",
+        "denom": "uregen"
+      },
+      "image": "regen/asset/regen.png",
+      "coinGeckoId": "regen"
+    },
+    {
+      "denom": "uqosmo",
+      "type": "native",
+      "origin_chain": "quicksilver",
+      "origin_denom": "uqosmo",
+      "origin_type": "native",
+      "symbol": "qOSMO",
+      "decimals": 6,
+      "description": "Quicksilver Staked OSMO",
+      "image": "quicksilver/asset/qosmo.png",
+      "coinGeckoId": ""
+    },
+    {
+      "denom": "ibc/BFF8BC09B94E2EA90B64961A181D2383280FFA7847109DE1AB4ECA366466462A",
+      "type": "ibc",
+      "origin_chain": "sommelier",
+      "origin_denom": "usomm",
+      "origin_type": "staking",
+      "symbol": "SOMM",
+      "decimals": 6,
+      "enable": true,
+      "path": "sommelier>quicksilver",
+      "channel": "channel-101",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-59",
+        "port": "transfer",
+        "denom": "usomm"
+      },
+      "image": "sommelier/asset/somm.png",
+      "coinGeckoId": "regen"
+    },
+    {
+      "denom": "uqsomm",
+      "type": "native",
+      "origin_chain": "quicksilver",
+      "origin_denom": "uqsomm",
+      "origin_type": "native",
+      "symbol": "qSOMM",
+      "decimals": 6,
+      "description": "Quicksilver Staked SOMM",
+      "image": "quicksilver/asset/qsomm.png",
+      "coinGeckoId": ""
+    }
+  ],
+  "tgrade": [
+    {
+      "denom": "utgd",
+      "type": "staking",
+      "origin_chain": "tgrade",
+      "origin_denom": "utgd",
+      "origin_type": "staking",
+      "symbol": "TGD",
+      "decimals": 6,
+      "description": "Tgrade Staking Coin",
+      "image": "tgrade/asset/tgd.png",
+      "coinGeckoId": "tgrade"
+    },
+    {
+      "denom": "ibc/4B322204B4F59D770680FE4D7A565DDC3F37BFF035474B717476C66A4F83DD72",
+      "type": "ibc",
+      "origin_chain": "evmos",
+      "origin_denom": "aevmos",
+      "origin_type": "staking",
+      "symbol": "EVMOS",
+      "decimals": 18,
+      "enable": true,
+      "path": "evmos>tgrade",
+      "channel": "channel-9",
+      "port": "transfer",
+      "counter_party": {
+        "channel": "channel-34",
+        "port": "transfer",
+        "denom": "aevmos"
+      },
+      "image": "evmos/asset/evmos.png",
+      "coinGeckoId": "evmos"
+    }
   ]
 }
