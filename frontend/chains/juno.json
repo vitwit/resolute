@@ -21,8 +21,8 @@
   "config": {
     "chain_id": "juno-1",
     "chain_name": "Juno",
-    "rest": "https://api.resolute.vitwit.com/juno_api/",
-    "rpc": "https://api.resolute.vitwit.com/juno_rpc/",
+    "rest": "https://api.resolute.vitwit.com/juno_api",
+    "rpc": "https://api.resolute.vitwit.com/juno_rpc",
     "currencies": [
       {
         "coin_denom": "JUNO",

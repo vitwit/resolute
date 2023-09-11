@@ -21,8 +21,8 @@
     "config": {
       "chain_id": "passage-testnet-1",
       "chain_name": "Passage-testnet",
-      "rest": "https://api.resolute.vitwit.com/passage_testapi/",
-      "rpc": "https://api.resolute.vitwit.com/passage_testrpc/",
+      "rest": "https://api.resolute.vitwit.com/passage_testapi",
+      "rpc": "https://api.resolute.vitwit.com/passage_testrpc",
       "bip44": {
         "coin_type": 118
       },

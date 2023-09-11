@@ -21,8 +21,8 @@
     "config": {
       "chain_id": "tgrade-mainnet-1",
       "chain_name": "Tgrade",
-      "rest": "https://api.resolute.vitwit.com/tgrade_api/",
-      "rpc": "https://api.resolute.vitwit.com/tgrade_rpc/",
+      "rest": "https://api.resolute.vitwit.com/tgrade_api",
+      "rpc": "https://api.resolute.vitwit.com/tgrade_rpc",
       "currencies": [
         {
           "coin_denom": "TGD",
