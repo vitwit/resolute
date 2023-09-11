@@ -1,5 +1,5 @@
 import Axios, { AxiosResponse } from "axios";
-import { convertPaginationToParams, getValidURL } from "../utils";
+import { convertPaginationToParams, cleanURL } from "../utils";
 
 const delegatorTotalRewardsURL = (address: string) =>
   `/cosmos/distribution/v1beta1/delegators/${address}/rewards`;
@@ -9,7 +9,7 @@ export const fetchDelegatorTotalRewards = (
   address: string,
   pagination: any
 ): Promise<AxiosResponse> => {
-  let uri = `${getValidURL(baseURL)}${delegatorTotalRewardsURL(address)}`;
+  let uri = `${cleanURL(baseURL)}${delegatorTotalRewardsURL(address)}`;
   const parsed = convertPaginationToParams(pagination);
   if (parsed !== "") {
     uri += `?${parsed}`;

@@ -1,7 +1,7 @@
 import Axios from "axios";
-import { getValidURL } from "../utils";
+import { cleanURL } from "../utils";
 
-const BASE_URL = getValidURL(process.env.REACT_APP_API_URI);
+const BASE_URL = cleanURL(process.env.REACT_APP_API_URI);
 
 const CREATE_ACCOUNT = "/multisig";
 const GET_ACCOUNTS = "/multisig/accounts";

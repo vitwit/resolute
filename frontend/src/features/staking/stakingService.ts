@@ -1,5 +1,5 @@
 import Axios, { AxiosResponse } from "axios";
-import { convertPaginationToParams, getValidURL } from "../utils";
+import { convertPaginationToParams, cleanURL } from "../utils";
 
 const validatorsURL = "/cosmos/staking/v1beta1/validators";
 const delegationsURL = "/cosmos/staking/v1beta1/delegations/";
@@ -13,7 +13,7 @@ const fetchValidators = (
   status: string,
   pagination: any
 ): Promise<AxiosResponse> => {
-  let uri = `${getValidURL(baseURL)}${validatorsURL}`;
+  let uri = `${cleanURL(baseURL)}${validatorsURL}`;
 
   const pageParams = convertPaginationToParams(pagination);
   if (status !== null) {
@@ -31,7 +31,7 @@ const fetchdelegations = (
   address: string,
   pagination: any
 ): Promise<AxiosResponse> => {
-  let uri = `${getValidURL(baseURL)}${delegationsURL}${address}`;
+  let uri = `${cleanURL(baseURL)}${delegationsURL}${address}`;
   const pageParams = convertPaginationToParams(pagination);
   if (pageParams !== "") uri += `?${pageParams}`;
 
@@ -43,7 +43,7 @@ const fetchUnbonding = (
   address: string,
   pagination: any
 ): Promise<AxiosResponse> => {
-  let uri = `${getValidURL(baseURL)}${unbondingDelegationsURL(address)}`;
+  let uri = `${cleanURL(baseURL)}${unbondingDelegationsURL(address)}`;
   const pageParams = convertPaginationToParams(pagination);
   if (pageParams !== "") uri += `?${pageParams}`;
 
@@ -51,10 +51,10 @@ const fetchUnbonding = (
 };
 
 const fetchParams = (baseURL: string): Promise<AxiosResponse> =>
-  Axios.get(`${getValidURL(baseURL)}${paramsURL}`);
+  Axios.get(`${cleanURL(baseURL)}${paramsURL}`);
 
 const fetchPoolInfo = (baseURL: string): Promise<AxiosResponse> =>
-  Axios.get(`${getValidURL(baseURL)}${poolURL}`);
+  Axios.get(`${cleanURL(baseURL)}${poolURL}`);
 
 const result = {
   validators: fetchValidators,
