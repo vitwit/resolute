@@ -55,7 +55,7 @@ export default function StakingGrants(props) {
     if (address.length > 0) {
       dispatch(
         getGrantsToMe({
-          baseURL: chainInfo.config.rest + "/",
+          baseURL: chainInfo.config.rest,
           grantee: address,
           chainID: chainID,
         })

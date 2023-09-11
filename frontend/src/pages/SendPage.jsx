@@ -137,7 +137,7 @@ export default function SendPage() {
       if (!isAuthzMode) {
         dispatch(
           getBalances({
-            baseURL: chainInfo.config.rest + "/",
+            baseURL: chainInfo.config.rest,
             address: address,
             chainID: nameToChainIDs[currentNetwork],
           })
@@ -145,7 +145,7 @@ export default function SendPage() {
       } else {
         dispatch(
           getBalances({
-            baseURL: chainInfo.config.rest + "/",
+            baseURL: chainInfo.config.rest,
             address: granter,
             chainID: nameToChainIDs[currentNetwork],
           })
@@ -154,7 +154,7 @@ export default function SendPage() {
 
       dispatch(
         getGrantsToMe({
-          baseURL: chainInfo.config.rest + "/",
+          baseURL: chainInfo.config.rest,
           grantee: address,
           chainID: nameToChainIDs[currentNetwork],
         })
