@@ -11,7 +11,7 @@ const initialState = {
   chains: {},
   defaultState: {
     validators: {
-      status: "idle",
+      status: "",
       active: {},
       inactive: {},
       activeSorted: [],
@@ -25,7 +25,7 @@ const initialState = {
       witvalValidator: {},
     },
     delegations: {
-      status: "idle",
+      status: "",
       delegations: [],
       errMsg: "",
       pagination: {},
