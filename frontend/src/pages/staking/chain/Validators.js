@@ -229,7 +229,7 @@ export default function Validators(props) {
       );
       dispatch(
         getBalances({
-          baseURL: chainInfo.config.rest + "/",
+          baseURL: chainInfo.config.rest,
           address: address,
           chainID: nameToChainIDs[currentNetwork],
         })
@@ -250,7 +250,7 @@ export default function Validators(props) {
   function fetchUserInfo(address) {
     dispatch(
       getBalances({
-        baseURL: chainInfo.config.rest + "/",
+        baseURL: chainInfo.config.rest,
         address: address,
         chainID: nameToChainIDs[currentNetwork],
       })
@@ -474,7 +474,7 @@ export default function Validators(props) {
           );
           dispatch(
             getBalances({
-              baseURL: chainInfo.config.rest + "/",
+              baseURL: chainInfo.config.rest,
               address: address,
               chainID: nameToChainIDs[currentNetwork],
             })

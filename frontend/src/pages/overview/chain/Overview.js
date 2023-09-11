@@ -87,7 +87,7 @@ export default function Overview(props) {
 
     dispatch(
       getBalances({
-        baseURL: config.rest + "/",
+        baseURL: config.rest,
         address: address,
         chainID: chainID,
       })

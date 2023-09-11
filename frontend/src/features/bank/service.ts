@@ -1,7 +1,7 @@
 import Axios, { AxiosResponse } from "axios";
 import { convertPaginationToParams, getValidURL } from "../utils";
 
-const balancesURL = "cosmos/bank/v1beta1/balances/";
+const balancesURL = "/cosmos/bank/v1beta1/balances/";
 const balanceURL = (address: string, denom: string) =>
   `/cosmos/bank/v1beta1/balances/${address}/by_denom?denom=${denom}`;
 
