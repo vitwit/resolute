@@ -610,7 +610,7 @@ export const authzSlice = createSlice({
             pagination: action.payload.data.pagination,
           };
           state.grantsToMe[chainID] = result;
-          state.grantsByMeCount = calculateAuthzCount(state.grantsByMe);
+          state.grantsToMeCount = calculateAuthzCount(state.grantsToMe);
         }
       })
       .addCase(getGrantsToMe.rejected, (state, action) => {
