@@ -392,7 +392,7 @@ export default function NewFeegrant() {
     if (isAuthzMode) {
       dispatch(
         getGrantsToMe({
-          baseURL: chainInfo.config.rest + "/",
+          baseURL: chainInfo.config.rest,
           grantee: address,
           chainID: chainID,
         })

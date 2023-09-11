@@ -217,7 +217,7 @@ export const ChainsOverview = ({ chainNames }) => {
 
       dispatch(
         getBalances({
-          baseURL: chainInfo?.config?.rest + "/",
+          baseURL: chainInfo?.config?.rest,
           address: address,
           chainID: chainID,
         })

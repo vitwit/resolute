@@ -1,5 +1,7 @@
 import Axios from "axios";
-const BASE_URL = process.env.REACT_APP_API_URI;
+import { cleanURL } from "../utils";
+
+const BASE_URL = cleanURL(process.env.REACT_APP_API_URI);
 
 const CREATE_ACCOUNT = "/multisig";
 const GET_ACCOUNTS = "/multisig/accounts";
