@@ -40,3 +40,11 @@ export const convertPaginationToParamsOffset = (pagination) => {
 
     return result
 } 
+
+//Removes the slashes('/') present at the end of url
+export const getValidURL = (url) => {
+    while(url?.length > 0 && url[url.length-1] === "/"){
+        url = url.slice(0,url.length-1)
+    }
+    return url;
+}

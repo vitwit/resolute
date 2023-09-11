@@ -1,5 +1,5 @@
 import Axios, { AxiosResponse } from "axios";
-import { convertPaginationToParams } from "../utils";
+import { convertPaginationToParams, getValidURL } from "../utils";
 
 const proposalsURL = "/cosmos/gov/v1beta1/proposals";
 const proposalTallyURL = (id: number): string =>
@@ -16,7 +16,7 @@ const fetchProposals = (
   limit: number,
   status: number
 ): Promise<AxiosResponse> => {
-  let uri = `${baseURL}${proposalsURL}`;
+  let uri = `${getValidURL(baseURL)}${proposalsURL}`;
   uri += `?proposal_status=${status}`;
 
   const params = convertPaginationToParams({
@@ -32,7 +32,7 @@ const fetchProposalTally = (
   baseURL: string,
   proposalId: number
 ): Promise<AxiosResponse> => {
-  let uri = `${baseURL}${proposalTallyURL(proposalId)}`;
+  let uri = `${getValidURL(baseURL)}${proposalTallyURL(proposalId)}`;
   return Axios.get(uri);
 };
 
@@ -43,7 +43,7 @@ const fetchVoterVote = (
   key: string | undefined,
   limit: number
 ): Promise<AxiosResponse> => {
-  let uri = `${baseURL}${voterVoteURL(proposalId, voter)}`;
+  let uri = `${getValidURL(baseURL)}${voterVoteURL(proposalId, voter)}`;
   const params = convertPaginationToParams({
     key: key,
     limit: limit,
@@ -57,10 +57,10 @@ const fetchProposal = (
   baseURL: string,
   proposalId: number
 ): Promise<AxiosResponse> =>
-  Axios.get(`${baseURL}${proposalsURL}/${proposalId}`);
+  Axios.get(`${getValidURL(baseURL)}${proposalsURL}/${proposalId}`);
 
 const fetchDepositParams = (baseURL: string): Promise<AxiosResponse> =>
-  Axios.get(`${baseURL}${depositParamsURL}`);
+  Axios.get(`${getValidURL(baseURL)}${depositParamsURL}`);
 
 const result = {
   proposals: fetchProposals,

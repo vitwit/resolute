@@ -1,5 +1,5 @@
 import Axios, { AxiosResponse } from "axios";
-import { convertPaginationToParams } from "../utils";
+import { convertPaginationToParams, getValidURL } from "../utils";
 
 const balancesURL = "cosmos/bank/v1beta1/balances/";
 const balanceURL = (address: string, denom: string) =>
@@ -10,7 +10,7 @@ const fetchBalances = (
   address: string,
   pagination: any
 ): Promise<AxiosResponse> => {
-  let uri = `${baseURL}${balancesURL}${address}`;
+  let uri = `${getValidURL(baseURL)}${balancesURL}${address}`;
   const parsed = convertPaginationToParams(pagination);
   if (parsed === "") {
     uri += `?${parsed}`;
@@ -24,7 +24,7 @@ const fetchBalance = (
   address: string,
   denom: string
 ): Promise<AxiosResponse> => {
-  const uri = `${baseURL}${balanceURL(address, denom)}`;
+  const uri = `${getValidURL(baseURL)}${balanceURL(address, denom)}`;
 
   return Axios.get(uri);
 };

@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import { convertPaginationToParams, convertPaginationToParamsOffset } from '../utils';
+import { convertPaginationToParams, convertPaginationToParamsOffset, getValidURL } from '../utils';
 
 const groupByAdminURL = (admin) => `/cosmos/group/v1/groups_by_admin/${admin}`
 const groupByMemberURL = (address) => `/cosmos/group/v1/groups_by_member/${address}`
@@ -13,7 +13,7 @@ const GroupProposalURL = proposal_id => `/cosmos/group/v1/proposal/${proposal_id
 
 
 const fetchGroupsByAdmin = (baseURL, admin, pagination) => {
-    let uri = `${baseURL}${groupByAdminURL(admin)}`
+    let uri = `${getValidURL(baseURL)}${groupByAdminURL(admin)}`
     const pageParams = convertPaginationToParamsOffset(pagination)
     if (pageParams !== "") uri += `?${pageParams}&pagination.count_total=true`
 
@@ -25,7 +25,7 @@ const fetchGroupsByAdmin = (baseURL, admin, pagination) => {
 }
 
 const fetchGroupsByMember = (baseURL, address, pagination) => {
-    let uri = `${baseURL}${groupByMemberURL(address)}`
+    let uri = `${getValidURL(baseURL)}${groupByMemberURL(address)}`
     const pageParams = convertPaginationToParamsOffset(pagination)
     if (pageParams !== "") uri += `?${pageParams}&pagination.count_total=true`
 
@@ -37,7 +37,7 @@ const fetchGroupsByMember = (baseURL, address, pagination) => {
 }
 
 const fetchGroupMembers = (baseURL, groupId, pagination) => {
-    let uri = `${baseURL}${groupMembersURL(groupId)}`
+    let uri = `${getValidURL(baseURL)}${groupMembersURL(groupId)}`
     const pageParams = convertPaginationToParams(pagination)
     if (pageParams !== "") uri += `?${pageParams}`
 
@@ -49,7 +49,7 @@ const fetchGroupMembers = (baseURL, groupId, pagination) => {
 }
 
 const fetchGroupById = (baseURL, groupId) => {
-    let uri = `${baseURL}${groupByIdURL(groupId)}`
+    let uri = `${getValidURL(baseURL)}${groupByIdURL(groupId)}`
 
     return Axios.get(uri, {
         headers: {
@@ -59,7 +59,7 @@ const fetchGroupById = (baseURL, groupId) => {
 }
 
 const fetchGroupMembersById = (baseURL, groupId, pagination) => {
-    let uri = `${baseURL}${groupMembersByIdURL(groupId)}`
+    let uri = `${getValidURL(baseURL)}${groupMembersByIdURL(groupId)}`
     const pageParams = convertPaginationToParams(pagination)
     if (pageParams !== "") uri += `?${pageParams}&pagination.count_total=true`
 
@@ -71,7 +71,7 @@ const fetchGroupMembersById = (baseURL, groupId, pagination) => {
 }
 
 const fetchVotesProposalById = (baseURL, proposalId, pagination) => {
-    let uri = `${baseURL}${votesPropsalURL(proposalId)}`
+    let uri = `${getValidURL(baseURL)}${votesPropsalURL(proposalId)}`
     const pageParams = convertPaginationToParams(pagination)
     if (pageParams !== "") uri += `?${pageParams}&pagination.count_total=true`
 
@@ -83,7 +83,7 @@ const fetchVotesProposalById = (baseURL, proposalId, pagination) => {
 }
 
 const fetchGroupPoliciesById = (baseURL, groupId, pagination) => {
-    let uri = `${baseURL}${groupPoliciesByIdURL(groupId)}`
+    let uri = `${getValidURL(baseURL)}${groupPoliciesByIdURL(groupId)}`
     const pageParams = convertPaginationToParams(pagination)
     if (pageParams !== "") uri += `?${pageParams}&pagination.count_total=true`
 
@@ -96,7 +96,7 @@ const fetchGroupPoliciesById = (baseURL, groupId, pagination) => {
 
 
 const fetchGroupPolicyProposalsById = (baseURL, address, pagination) => {
-    let uri = `${baseURL}${groupPolicyProposalsURL(address)}`
+    let uri = `${getValidURL(baseURL)}${groupPolicyProposalsURL(address)}`
     const pageParams = convertPaginationToParams(pagination)
     if (pageParams !== "") uri += `?${pageParams}&pagination.count_total=true`
 
@@ -108,7 +108,7 @@ const fetchGroupPolicyProposalsById = (baseURL, address, pagination) => {
 }
 
 const fetchGroupProposalById = (baseURL, id) => {
-    let uri = `${baseURL}${GroupProposalURL(id)}`
+    let uri = `${getValidURL(baseURL)}${GroupProposalURL(id)}`
 
     return Axios.get(uri, {
         headers: {

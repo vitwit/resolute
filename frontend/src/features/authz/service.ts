@@ -1,5 +1,5 @@
 import Axios, { AxiosResponse } from "axios";
-import { convertPaginationToParams } from "../utils";
+import { convertPaginationToParams, getValidURL } from "../utils";
 
 const grantToMeURL = "/cosmos/authz/v1beta1/grants/grantee/";
 const grantByMeURL = "/cosmos/authz/v1beta1/grants/granter/";
@@ -9,7 +9,7 @@ const fetchGrantsToMe = (
   grantee: string,
   pagination: any
 ): Promise<AxiosResponse> => {
-  let uri = `${baseURL}${grantToMeURL}${grantee}`;
+  let uri = `${getValidURL(baseURL)}${grantToMeURL}${grantee}`;
   let parsed = convertPaginationToParams(pagination);
   if (parsed !== "") {
     uri += `?${parsed}`;
@@ -23,7 +23,7 @@ const fetchGrantsByMe = (
   grantee: string,
   pagination: any
 ): Promise<AxiosResponse> => {
-  let uri = `${baseURL}${grantByMeURL}${grantee}`;
+  let uri = `${getValidURL(baseURL)}${grantByMeURL}${grantee}`;
   let parsed = convertPaginationToParams(pagination);
   if (parsed !== "") {
     uri += `?${parsed}`;

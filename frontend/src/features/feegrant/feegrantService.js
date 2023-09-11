@@ -1,11 +1,11 @@
 import Axios from 'axios';
-import { convertPaginationToParams } from '../utils';
+import { convertPaginationToParams, getValidURL } from '../utils';
 
 const grantToMeURL = '/cosmos/feegrant/v1beta1/allowances/';
 const grantByMeURL = '/cosmos/feegrant/v1beta1/issued/';
 
 const fetchGrantsToMe = (baseURL, grantee, pagination) => {
-  let uri = `${baseURL}${grantToMeURL}${grantee}`
+  let uri = `${getValidURL(baseURL)}${grantToMeURL}${grantee}`
   const parsed = convertPaginationToParams(pagination)
   if (parsed !== "") {
     uri += `?${parsed}`
@@ -20,7 +20,7 @@ const fetchGrantsToMe = (baseURL, grantee, pagination) => {
 
 
 const fetchGrantsByMe = (baseURL, grantee,pagination) => {
-  let uri = `${baseURL}${grantByMeURL}${grantee}`
+  let uri = `${getValidURL(baseURL)}${grantByMeURL}${grantee}`
   const parsed = convertPaginationToParams(pagination)
   if (parsed !== "") {
     uri += `?${parsed}`
