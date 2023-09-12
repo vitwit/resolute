@@ -101,6 +101,10 @@ export default function Proposals({
     }
   }, [showDepositProposal]);
 
+  useEffect(() => {
+    setShowDepositProposals(false);
+  }, [chainID]);
+
   const fetchDepositProposals = () => {
     if (depositProposals?.length === 0)
       dispatch(
@@ -121,6 +125,7 @@ export default function Proposals({
         })
       );
     }
+    setProposals([]);
 
     return () => {
       dispatch(resetError());
@@ -128,7 +133,7 @@ export default function Proposals({
       dispatch(resetTx());
       setOpen(false);
     };
-  }, []);
+  }, [chainID]);
 
   useEffect(() => {
     if (status === "rejected" && errMsg === "") {
@@ -203,6 +208,7 @@ export default function Proposals({
         <ChainProposalsHeader
           navigate={navigate}
           chainName={chainName}
+          showDepositProposal={showDepositProposal}
           setShowDepositProposals={setShowDepositProposals}
           fetchDepositProposals={fetchDepositProposals}
           useFeegrant={useFeegrant}
@@ -214,7 +220,7 @@ export default function Proposals({
       {!proposals?.length && !loading ? (
         <>
           {isChainSpecific && (
-            <Typography sx={{ mt: 6 }} variant="h6">
+            <Typography sx={{ mt: 6 }} variant="h6" color="text.primary">
               - No Proposals Found -
             </Typography>
           )}
@@ -225,6 +231,7 @@ export default function Proposals({
             <ChainProposalsHeader
               navigate={navigate}
               chainName={chainName}
+              showDepositProposal={showDepositProposal}
               setShowDepositProposals={setShowDepositProposals}
               fetchDepositProposals={fetchDepositProposals}
               useFeegrant={useFeegrant}
@@ -304,6 +311,7 @@ const ChainProposalsHeader = (props) => {
   const {
     navigate,
     chainName,
+    showDepositProposal,
     setShowDepositProposals,
     fetchDepositProposals,
     useFeegrant,
@@ -364,6 +372,7 @@ const ChainProposalsHeader = (props) => {
                   fetchDepositProposals();
                 }
               }}
+              checked={showDepositProposal}
             />
           }
           label={<Typography color="text.primary">Show in deposit</Typography>}
