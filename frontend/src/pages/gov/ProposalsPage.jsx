@@ -10,7 +10,7 @@ import SelectNetwork from "../../components/common/SelectNetwork";
 export const filterVoteAuthz = (authzs) => {
   return Object.keys(authzs).reduce((result, chainID) => {
     const granters = authzs[chainID]?.grants
-      .filter(
+      ?.filter(
         (grant) =>
           (grant?.authorization["@type"] ===
             "/cosmos.authz.v1beta1.GenericAuthorization" &&
