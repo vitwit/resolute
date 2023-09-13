@@ -63,6 +63,9 @@ export default function Validators(props) {
   const validators = useSelector(
     (state) => state.staking.chains[chainID].validators
   );
+  const validatorsStatus = useSelector(
+    (state) => state.staking.chains?.[chainID]?.validators?.status
+  );
   const stakingParams = useSelector(
     (state) => state.staking.chains[chainID].params
   );
@@ -229,7 +232,7 @@ export default function Validators(props) {
       );
       dispatch(
         getBalances({
-          baseURL: chainInfo.config.rest + "/",
+          baseURL: chainInfo.config.rest,
           address: address,
           chainID: nameToChainIDs[currentNetwork],
         })
@@ -250,7 +253,7 @@ export default function Validators(props) {
   function fetchUserInfo(address) {
     dispatch(
       getBalances({
-        baseURL: chainInfo.config.rest + "/",
+        baseURL: chainInfo.config.rest,
         address: address,
         chainID: nameToChainIDs[currentNetwork],
       })
@@ -474,7 +477,7 @@ export default function Validators(props) {
           );
           dispatch(
             getBalances({
-              baseURL: chainInfo.config.rest + "/",
+              baseURL: chainInfo.config.rest,
               address: address,
               chainID: nameToChainIDs[currentNetwork],
             })
@@ -694,16 +697,28 @@ export default function Validators(props) {
                 <br />
               </>
             ) : null}
+
             {type === "delegations" ? (
-              <MyDelegations
-                chainID={chainID}
-                validators={validators}
-                delegations={delegations}
-                currency={currency}
-                rewards={rewards?.list}
-                onDelegationAction={onMenuAction}
-                onWithdrawAllRewards={onWithdrawAllRewards}
-              />
+              <>
+                {validatorsStatus === "idle" ||
+                validatorsStatus === "rejected" ||
+                validators?.activeSorted?.length ||
+                validators?.inactiveSorted?.length ? (
+                  <MyDelegations
+                    chainID={chainID}
+                    validators={validators}
+                    delegations={delegations}
+                    currency={currency}
+                    rewards={rewards?.list}
+                    onDelegationAction={onMenuAction}
+                    onWithdrawAllRewards={onWithdrawAllRewards}
+                  />
+                ) : (
+                  <div style={{ marginTop: "24px" }}>
+                    <CircularProgress />
+                  </div>
+                )}
+              </>
             ) : (
               <Paper
                 elevation={0}

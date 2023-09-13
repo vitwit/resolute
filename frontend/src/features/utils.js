@@ -40,3 +40,11 @@ export const convertPaginationToParamsOffset = (pagination) => {
 
     return result
 } 
+
+// removes the trailing slashes from given url
+export const cleanURL = (url) => {
+    if(url?.length) {
+        return url.replace(/\/+$/, '');
+    }
+    return ""
+}

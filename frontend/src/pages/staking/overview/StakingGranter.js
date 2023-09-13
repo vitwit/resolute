@@ -87,7 +87,7 @@ export default function StakingGranter(props) {
   const getAuthzBalances = () => {
     dispatch(
       getBalances({
-        baseURL: chainInfo.config.rest + "/",
+        baseURL: chainInfo.config.rest,
         address: granter,
         chainID: chainID,
       })

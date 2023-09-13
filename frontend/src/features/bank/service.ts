@@ -1,7 +1,7 @@
 import Axios, { AxiosResponse } from "axios";
-import { convertPaginationToParams } from "../utils";
+import { convertPaginationToParams, cleanURL } from "../utils";
 
-const balancesURL = "cosmos/bank/v1beta1/balances/";
+const balancesURL = "/cosmos/bank/v1beta1/balances/";
 const balanceURL = (address: string, denom: string) =>
   `/cosmos/bank/v1beta1/balances/${address}/by_denom?denom=${denom}`;
 
@@ -10,7 +10,7 @@ const fetchBalances = (
   address: string,
   pagination: any
 ): Promise<AxiosResponse> => {
-  let uri = `${baseURL}${balancesURL}${address}`;
+  let uri = `${cleanURL(baseURL)}${balancesURL}${address}`;
   const parsed = convertPaginationToParams(pagination);
   if (parsed === "") {
     uri += `?${parsed}`;
@@ -24,7 +24,7 @@ const fetchBalance = (
   address: string,
   denom: string
 ): Promise<AxiosResponse> => {
-  const uri = `${baseURL}${balanceURL(address, denom)}`;
+  const uri = `${cleanURL(baseURL)}${balanceURL(address, denom)}`;
 
   return Axios.get(uri);
 };
