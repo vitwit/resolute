@@ -2,7 +2,8 @@
   "enable_modules": {
     "authz": true,
     "feegrant": true,
-    "group": true
+    "group": true,
+    "wasm": false
   },
   "amino_config": {
     "authz": false,
