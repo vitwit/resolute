@@ -409,7 +409,7 @@ export default function PageCreateTx() {
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
       msgs: [],
-      gas: 500000,
+      gas: 900000,
       memo: "",
       fees:
         chainInfo?.config?.feeCurrencies[0]?.gasPriceStep?.average *
@@ -798,7 +798,7 @@ export const RenderDelegateMessage = (message, index, currency, onDelete) => {
         </Typography>
         <Typography variant="body2" color="text.primary" fontWeight={600}>
           {parseBalance(
-            [message.value.amount],
+            [message.value.amount[0]],
             currency.coinDecimals,
             currency.coinMinimalDenom
           )}
