@@ -3,7 +3,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: false
     },
     aminoConfig: {
       authz: false,
@@ -80,7 +81,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: false
     },
     aminoConfig: {
       authz: false,
@@ -147,7 +149,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: false
     },
     aminoConfig: {
       authz: false,
@@ -214,7 +217,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: false
     },
     aminoConfig: {
       authz: false,
@@ -281,7 +285,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: false
     },
     aminoConfig: {
       authz: false,
@@ -348,7 +353,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: true
     },
     aminoConfig: {
       authz: false,
@@ -415,7 +421,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: false
     },
     aminoConfig: {
       authz: false,
@@ -482,7 +489,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: true
     },
     aminoConfig: {
       authz: false,
@@ -549,7 +557,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: true
     },
     aminoConfig: {
       authz: false,
@@ -620,7 +629,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: true
     },
     aminoConfig: {
       authz: false,
@@ -691,7 +701,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: false
     },
     aminoConfig: {
       authz: false,
@@ -758,7 +769,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: true
+      group: true,
+      wasm: false
     },
     aminoConfig: {
       authz: true,
@@ -825,7 +837,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: true
+      group: true,
+      wasm: false
     },
     aminoConfig: {
       authz: false,
@@ -895,7 +908,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: true
     },
     aminoConfig: {
       authz: false,
@@ -962,7 +976,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: false
+      group: false,
+      wasm: false
     },
     aminoConfig: {
       authz: false,
@@ -1029,7 +1044,8 @@ export const networks: Network[] = [
     enableModules: {
       authz: true,
       feegrant: true,
-      group: true
+      group: true,
+      wasm: false
     },
     aminoConfig: {
       authz: true,

@@ -42,6 +42,7 @@ import AirdropEligibility from "./passage/AirdropEligibility";
 import { FeegrantOverview } from "./feegrant/FeegrantOverview";
 import { AuthzOverview } from "./authz/AuthzOverview";
 import ConnectWallet from "../components/ConnectWallet";
+import Wasm from "./wasm/Wasm";
 
 export const ContextData = React.createContext();
 
@@ -55,6 +56,14 @@ const ALL_NETWORKS = [
   "feegrant",
   "groups",
   "airdrop-check",
+  "wasm",
+];
+
+const WASM_SUPPORTED_CHAINS = [
+  "juno",
+  "passage",
+  "stargaze",
+  "passage-testnet",
 ];
 
 function TabPanel(props) {
@@ -236,15 +245,15 @@ export default function Home(props) {
               }}
             />
           )}
-            <Tab
-              label="Feegrant"
-              {...a11yProps(6)}
-              value={6}
-              sx={{
-                fontWeight: 600,
-              }}
-              disabled={authzEnabled && !authzTabs?.feegratEnabled}
-            />
+          <Tab
+            label="Feegrant"
+            {...a11yProps(6)}
+            value={6}
+            sx={{
+              fontWeight: 600,
+            }}
+            disabled={authzEnabled && !authzTabs?.feegratEnabled}
+          />
           <Tab
             label="Groups"
             {...a11yProps(7)}
@@ -259,6 +268,16 @@ export default function Home(props) {
               label="Airdrop"
               {...a11yProps(8)}
               value={8}
+              sx={{
+                fontWeight: 600,
+              }}
+            />
+          ) : null}
+          {!authzEnabled && WASM_SUPPORTED_CHAINS.includes(selectedNetwork) ? (
+            <Tab
+              label="Wasm"
+              {...a11yProps(9)}
+              value={9}
               sx={{
                 fontWeight: 600,
               }}
@@ -361,7 +380,7 @@ export default function Home(props) {
                 path="/:networkName/airdrop-check"
                 element={<AirdropEligibility />}
               />
-
+              <Route path="/:networkName/wasm" element={<Wasm />} />
               <Route path="*" element={<Page404 />}></Route>
             </Routes>
           ) : (
