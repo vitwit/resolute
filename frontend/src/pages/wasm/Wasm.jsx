@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getCodes } from "../../features/wasm/wasmSlice";
 import PaginationElement from "../../components/group/PaginationElement";
 import {
@@ -10,7 +10,6 @@ import {
   TableBody,
   TableContainer,
   TableHead,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
@@ -32,6 +31,8 @@ const styles = {
 const Wasm = () => {
   const dispatch = useDispatch();
   const params = useParams();
+  const navigate = useNavigate();
+
   const selectedNetwork = useSelector(
     (state) => state.common.selectedNetwork.chainName
   );
@@ -64,6 +65,10 @@ const Wasm = () => {
 
   const handlePagination = (page) => {
     fetchCodes(page * PER_PAGE, PER_PAGE);
+  };
+
+  const handleClick = (item) => {
+    navigate(`/${currentNetwork}/wasm/${item.code_id}/contracts`);
   };
 
   useEffect(() => {
@@ -109,13 +114,20 @@ const Wasm = () => {
             </TableHead>
             <TableBody>
               {contractCodes.map((item, index) => (
-                <StyledTableRow>
+                <StyledTableRow key={index}>
                   <StyledTableCell>{item.code_id}</StyledTableCell>
-
                   <StyledTableCell>
-                    <Tooltip title={item.data_hash} placement="right">
-                      <Box sx={styles.codeHashStyle}>{item.data_hash}</Box>
-                    </Tooltip>
+                    <abbr
+                      title={item.data_hash}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <Box
+                        onClick={() => handleClick(item)}
+                        sx={styles.codeHashStyle}
+                      >
+                        {item.data_hash}
+                      </Box>
+                    </abbr>
                   </StyledTableCell>
                   <StyledTableCell>{item.creator}</StyledTableCell>
                   <StyledTableCell>

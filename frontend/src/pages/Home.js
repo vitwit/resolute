@@ -43,6 +43,7 @@ import { FeegrantOverview } from "./feegrant/FeegrantOverview";
 import { AuthzOverview } from "./authz/AuthzOverview";
 import ConnectWallet from "../components/ConnectWallet";
 import Wasm from "./wasm/Wasm";
+import WasmContracts from "./wasm/WasmContracts";
 
 export const ContextData = React.createContext();
 
@@ -64,6 +65,7 @@ const WASM_SUPPORTED_CHAINS = [
   "passage",
   "stargaze",
   "passage-testnet",
+  "osmosis"
 ];
 
 function TabPanel(props) {
@@ -381,6 +383,10 @@ export default function Home(props) {
                 element={<AirdropEligibility />}
               />
               <Route path="/:networkName/wasm" element={<Wasm />} />
+              <Route
+                path="/:networkName/wasm/:codeID/contracts"
+                element={<WasmContracts />}
+              />
               <Route path="*" element={<Page404 />}></Route>
             </Routes>
           ) : (

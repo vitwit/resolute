@@ -3,6 +3,7 @@ import wasmService from "./wasmService";
 
 const initialState = {
   codes: {},
+  contracts: {},
 };
 
 export const getCodes = createAsyncThunk("wasm/codes", async (data) => {
@@ -12,6 +13,17 @@ export const getCodes = createAsyncThunk("wasm/codes", async (data) => {
     data: response.data,
   };
 });
+
+export const getContractsByCode = createAsyncThunk(
+  "wasm/contracts",
+  async (data) => {
+    const response = await wasmService.contracts(data.baseURL, data.codeId, data.pagination);
+    return {
+      chainID: data.chainID,
+      data: response.data,
+    };
+  }
+);
 
 export const wasmSlice = createSlice({
   name: "wasm",
@@ -53,6 +65,43 @@ export const wasmSlice = createSlice({
             errMsg: action.error.message,
           };
           state.codes[chainID] = result;
+        }
+      })
+
+      .addCase(getContractsByCode.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            contracts: [],
+            pagination: {},
+            status: "pending",
+            errMsg: "",
+          };
+          state.contracts[chainID] = result;
+        }
+      })
+      .addCase(getContractsByCode.fulfilled, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            contracts: action.payload?.data?.contracts,
+            pagination: action.payload?.data?.pagination,
+            status: "idle",
+            errMsg: "",
+          };
+          state.contracts[chainID] = result;
+        }
+      })
+      .addCase(getContractsByCode.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID || "";
+        if (chainID.length) {
+          let result = {
+            contracts: [],
+            pagination: {},
+            status: "rejected",
+            errMsg: action.error.message,
+          };
+          state.contracts[chainID] = result;
         }
       });
   },
