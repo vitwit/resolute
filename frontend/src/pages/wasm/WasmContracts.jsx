@@ -5,6 +5,7 @@ import { getContractsByCode } from "../../features/wasm/wasmSlice";
 import {
   Box,
   Button,
+  CircularProgress,
   Paper,
   Table,
   TableBody,
@@ -36,6 +37,9 @@ const WasmContracts = () => {
   const contractsPagination = useSelector(
     (state) => state.wasm?.contracts?.[chainID]?.pagination
   );
+  const contractsStatus = useSelector(
+    (state) => state.wasm?.contracts?.[chainID]?.status
+  );
 
   const PER_PAGE = 20;
   const fetchCodes = (offset = 0, limit = PER_PAGE) => {
@@ -62,60 +66,68 @@ const WasmContracts = () => {
 
   return (
     <Paper
-    elevation={0}
-    sx={{
-      p: 2,
-    }}
-  >
-    <Box
+      elevation={0}
       sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        marginBottom: 1,
+        p: 2,
       }}
     >
-      <Typography color="text.primary" variant="h6">
-        CosmWasm Smart Contracts
-      </Typography>
-    </Box>
-    {contracts?.length ? (
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <StyledTableRow>
-              <StyledTableCell sx={wasmStyles.paddingTopBottom}>
-                Contract List
-              </StyledTableCell>
-              <StyledTableCell sx={wasmStyles.paddingTopBottom}>
-                Actions
-              </StyledTableCell>
-            </StyledTableRow>
-          </TableHead>
-          <TableBody>
-            {contracts.map((contractAddress, index) => (
-              <StyledTableRow key={index}>
-                <StyledTableCell sx={wasmStyles.paddingTopBottom}>{contractAddress}</StyledTableCell>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: 1,
+        }}
+      >
+        <Typography color="text.primary">
+          Contract List of Code : {codeId}
+        </Typography>
+      </Box>
+      {contracts?.length ? (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <StyledTableRow>
                 <StyledTableCell sx={wasmStyles.paddingTopBottom}>
-                  <Button>Contract Info</Button>
+                  Contract List
+                </StyledTableCell>
+                <StyledTableCell sx={wasmStyles.paddingTopBottom}>
+                  Actions
                 </StyledTableCell>
               </StyledTableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    ) : (
-      <>
-        <Typography>No Contracts Exist</Typography>
-      </>
-    )}
-    <Box sx={{ display: "grid", placeItems: "center" }}>
-      <PaginationElement
-        handlePagination={handlePagination}
-        paginationKey={contractsPagination?.next_key}
-        total={Number(contractsPagination?.total) / PER_PAGE}
-      />
-    </Box>
-  </Paper>
+            </TableHead>
+            <TableBody>
+              {contracts.map((contractAddress, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell sx={wasmStyles.paddingTopBottom}>
+                    {contractAddress}
+                  </StyledTableCell>
+                  <StyledTableCell sx={wasmStyles.paddingTopBottom}>
+                    <Button variant="contained" size="small">
+                      Contract Info
+                    </Button>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <>
+          {contractsStatus === "pending" ? (
+            <CircularProgress />
+          ) : (
+            <Typography>No Contracts Exist</Typography>
+          )}
+        </>
+      )}
+      <Box sx={{ display: "grid", placeItems: "center" }}>
+        <PaginationElement
+          handlePagination={handlePagination}
+          paginationKey={contractsPagination?.next_key}
+          total={Number(contractsPagination?.total) / PER_PAGE}
+        />
+      </Box>
+    </Paper>
   );
 };
 

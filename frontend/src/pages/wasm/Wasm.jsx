@@ -5,6 +5,7 @@ import { getCodes } from "../../features/wasm/wasmSlice";
 import PaginationElement from "../../components/group/PaginationElement";
 import {
   Box,
+  CircularProgress,
   Paper,
   Table,
   TableBody,
@@ -34,6 +35,9 @@ const Wasm = () => {
   );
   const codesPagination = useSelector(
     (state) => state.wasm?.codes?.[chainID]?.pagination
+  );
+  const codesStatus = useSelector(
+    (state) => state.wasm?.codes?.[chainID]?.status
   );
 
   const PER_PAGE = 20;
@@ -76,7 +80,7 @@ const Wasm = () => {
           marginBottom: 1,
         }}
       >
-        <Typography color="text.primary" variant="h6">
+        <Typography color="text.primary">
           CosmWasm Smart Contracts
         </Typography>
       </Box>
@@ -127,7 +131,11 @@ const Wasm = () => {
         </TableContainer>
       ) : (
         <>
-          <Typography>No Codes Exist</Typography>
+          {codesStatus === "pending" ? (
+            <CircularProgress />
+          ) : (
+            <Typography>No Codes Exist</Typography>
+          )}
         </>
       )}
       <Box sx={{ display: "grid", placeItems: "center" }}>
