@@ -13,20 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
-
-const styles = {
-  paddingTopBottom: {
-    paddingTop: 1,
-    paddingBottom: 1,
-  },
-  codeHashStyle: {
-    cursor: "pointer",
-    maxWidth: "256px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    color: "primary.main",
-  },
-};
+import { wasmStyles } from "./wasm-css";
 
 const Wasm = () => {
   const dispatch = useDispatch();
@@ -98,16 +85,16 @@ const Wasm = () => {
           <Table>
             <TableHead>
               <StyledTableRow>
-                <StyledTableCell sx={styles.paddingTopBottom}>
+                <StyledTableCell sx={wasmStyles.paddingTopBottom}>
                   Code Id
                 </StyledTableCell>
-                <StyledTableCell sx={styles.paddingTopBottom}>
+                <StyledTableCell sx={wasmStyles.paddingTopBottom}>
                   Code Hash
                 </StyledTableCell>
-                <StyledTableCell sx={styles.paddingTopBottom}>
+                <StyledTableCell sx={wasmStyles.paddingTopBottom}>
                   Creator
                 </StyledTableCell>
-                <StyledTableCell sx={styles.paddingTopBottom}>
+                <StyledTableCell sx={wasmStyles.paddingTopBottom}>
                   Permissions
                 </StyledTableCell>
               </StyledTableRow>
@@ -123,7 +110,7 @@ const Wasm = () => {
                     >
                       <Box
                         onClick={() => handleClick(item)}
-                        sx={styles.codeHashStyle}
+                        sx={wasmStyles.codeHashStyle}
                       >
                         {item.data_hash}
                       </Box>

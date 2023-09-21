@@ -14,20 +14,7 @@ import {
 } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 import PaginationElement from "../../components/group/PaginationElement";
-
-const styles = {
-  paddingTopBottom: {
-    paddingTop: 1,
-    paddingBottom: 1,
-  },
-  codeHashStyle: {
-    cursor: "pointer",
-    maxWidth: "256px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    color: "primary.main",
-  },
-};
+import { wasmStyles } from "./wasm-css";
 
 const WasmContracts = () => {
   const dispatch = useDispatch();
@@ -96,10 +83,10 @@ const WasmContracts = () => {
         <Table>
           <TableHead>
             <StyledTableRow>
-              <StyledTableCell sx={styles.paddingTopBottom}>
+              <StyledTableCell sx={wasmStyles.paddingTopBottom}>
                 Contract List
               </StyledTableCell>
-              <StyledTableCell sx={styles.paddingTopBottom}>
+              <StyledTableCell sx={wasmStyles.paddingTopBottom}>
                 Actions
               </StyledTableCell>
             </StyledTableRow>
@@ -107,8 +94,8 @@ const WasmContracts = () => {
           <TableBody>
             {contracts.map((contractAddress, index) => (
               <StyledTableRow key={index}>
-                <StyledTableCell sx={styles.paddingTopBottom}>{contractAddress}</StyledTableCell>
-                <StyledTableCell sx={styles.paddingTopBottom}>
+                <StyledTableCell sx={wasmStyles.paddingTopBottom}>{contractAddress}</StyledTableCell>
+                <StyledTableCell sx={wasmStyles.paddingTopBottom}>
                   <Button>Contract Info</Button>
                 </StyledTableCell>
               </StyledTableRow>
