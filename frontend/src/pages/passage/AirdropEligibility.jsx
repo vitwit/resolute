@@ -25,10 +25,12 @@ import CustomizedDialogs from "../../components/passage/disclaimer";
 import "./../common.css";
 import { networks } from "../../utils/chainsInfo";
 
-function getPasgNetwork() {
+function getPasgNetwork(pathParams) {
   for (let i = 0; i < networks.length; i++) {
     const network = networks[i];
-    if (network.config.currencies[0].coinMinimalDenom === "upasg") {
+    if (network.config.currencies[0].coinMinimalDenom === "upasg"
+    && network?.config?.chainName.toLowerCase() === pathParams?.networkName
+    ) {
       return network;
     }
   }
@@ -59,13 +61,16 @@ function getPassageAddress(address) {
 
 export default function AirdropEligibility() {
   const defaultChainID = "passage-2";
+
+  const pathParams = useParams();
   const claimRecords = useSelector((state) => state.airdrop.claimRecords);
   const params = useSelector((state) => state.airdrop.params);
-  const [chainInfo, _] = useState(getPasgNetwork());
+  const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const [chainInfo, _] = useState(getPasgNetwork(pathParams));
   const status = useSelector((state) => state.airdrop.claimStatus);
   const errMsg = useSelector((state) => state.airdrop.errMsg);
   const txStatus = useSelector((state) => state.airdrop.tx.status);
-  const walletAddress = useSelector((state) => state.wallet.networks?.[defaultChainID]?.walletInfo?.bech32Address);
+  const walletAddress = useSelector((state) => state.wallet.networks?.[nameToChainIDs[pathParams?.networkName]]?.walletInfo?.bech32Address);
   const currency = chainInfo.config.currencies[0];
 
   const airdropActions = [{ title: "#1 Initial Claim", type: "action" }];
