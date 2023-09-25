@@ -254,7 +254,7 @@ export default function Home(props) {
             }}
             disabled={authzEnabled && !authzTabs?.groupsEnabled}
           />
-          {!authzEnabled && selectedNetwork === "passage" ? (
+          {!authzEnabled && selectedNetwork === "passage" || "passage-testnet" ? (
             <Tab
               label="Airdrop"
               {...a11yProps(8)}

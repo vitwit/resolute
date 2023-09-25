@@ -58,7 +58,7 @@ function getPassageAddress(address) {
 }
 
 export default function AirdropEligibility() {
-  const defaultChainID = "passage-1";
+  const defaultChainID = "passage-2";
   const claimRecords = useSelector((state) => state.airdrop.claimRecords);
   const params = useSelector((state) => state.airdrop.params);
   const [chainInfo, _] = useState(getPasgNetwork());
@@ -68,11 +68,18 @@ export default function AirdropEligibility() {
   const walletAddress = useSelector((state) => state.wallet.networks?.[defaultChainID]?.walletInfo?.bech32Address);
   const currency = chainInfo.config.currencies[0];
 
+  const airdropActions = [{ title: "#1 Initial Claim", type: "action" }];
+
   const { handleSubmit, control, setValue, getValues } = useForm({
     defaultValues: {
       address: "",
     },
   });
+
+  let navigate = useNavigate();
+  function navigateTo(path) {
+    navigate(path);
+  }
 
   useEffect(() => {
     if (chainInfo.showAirdrop) {
@@ -121,10 +128,7 @@ export default function AirdropEligibility() {
     }
   }, [errMsg]);
 
-  let navigate = useNavigate();
-  function navigateTo(path) {
-    navigate(path);
-  }
+
 
   const dispatch = useDispatch();
   const onSubmit = (data) => {
@@ -299,7 +303,7 @@ export default function AirdropEligibility() {
         </Grid>
         <Grid item xs={1} md={2}></Grid>
       </Grid>
-      {claimRecords?.address && chainInfo.airdropActions?.length > 0 ? (
+      {claimRecords?.address && airdropActions?.length > 0 ? (
         <Alert severity="info" style={{ textAlign: "left", marginTop: 8 }}>
           <AlertTitle>
             <Typography variant="body1" fontWeight={500}>
@@ -337,7 +341,7 @@ export default function AirdropEligibility() {
       )}
       {walletAddress?.length > 0 ? (
         claimRecords?.address === getValues().address &&
-          chainInfo.airdropActions?.length > 0 ? (
+          airdropActions?.length > 0 ? (
           <>
             <br />
             <Paper style={{ padding: 16, textAlign: "left" }} elevation={0}>
@@ -355,7 +359,7 @@ export default function AirdropEligibility() {
               <Typography color="text.primary" variant="h5" fontWeight={600}>
                 Missions
               </Typography>
-              {chainInfo.airdropActions.map((item, index) =>
+              {airdropActions.map((item, index) =>
                 item.type === "action" ? (
                   <Paper key={index} elevation={1} className="claim-item">
                     <Typography
