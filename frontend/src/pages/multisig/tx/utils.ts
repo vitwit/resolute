@@ -22,8 +22,10 @@ export const parseSendMsgsFromContent = (
   const msgs = [];
   for (let i = 0; i < messages.length; i++) {
     try {
-      const tx = parseSendTx(from, messages[i]);
-      msgs.push(tx);
+      if (messages[i].length > 0) {
+        const tx = parseSendTx(from, messages[i]);
+        msgs.push(tx);
+      }
     } catch (error: any) {
       return [[], error?.message || `failed to parse message at ${i}`];
     }
@@ -72,8 +74,10 @@ export const parseDelegateMsgsFromContent = (
   const msgs = [];
   for (let i = 0; i < messages.length; i++) {
     try {
-      const msg = parseDelegateMsg(delegator, messages[i]);
-      msgs.push(msg);
+      if (messages[i].length > 0) {
+        const msg = parseDelegateMsg(delegator, messages[i]);
+        msgs.push(msg);
+      }
     } catch (error: any) {
       return [[], error?.message || `failed to parse message at ${i}`];
     }
@@ -120,8 +124,10 @@ export const parseUnDelegateMsgsFromContent = (
   const msgs = [];
   for (let i = 0; i < messages.length; i++) {
     try {
-      const msg = parseUnDelegateMsg(delegator, messages[i]);
-      msgs.push(msg);
+      if (messages[i].length > 0) {
+        const msg = parseUnDelegateMsg(delegator, messages[i]);
+        msgs.push(msg);
+      }
     } catch (error: any) {
       return [[], error?.message || `failed to parse message at ${i}`];
     }
@@ -168,8 +174,10 @@ export const parseReDelegateMsgsFromContent = (
   const msgs = [];
   for (let i = 0; i < messages.length; i++) {
     try {
-      const msg = parseReDelegateMsg(delegator, messages[i]);
-      msgs.push(msg);
+      if (messages[i].length > 0) {
+        const msg = parseReDelegateMsg(delegator, messages[i]);
+        msgs.push(msg);
+      }
     } catch (error: any) {
       return [[], error?.message || `failed to parse message at ${i}`];
     }
