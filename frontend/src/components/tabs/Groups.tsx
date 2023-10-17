@@ -4,7 +4,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
 export default function Groups() {
-  const [value, setValue] = React.useState("granted-to-me");
+  const [value, setValue] = React.useState("created-by-me");
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     console.log(newValue);
@@ -37,7 +37,7 @@ export default function Groups() {
           textColor="primary"
           aria-label="groups tabs"
         >
-          <Tab sx={tabStyle} value={"cranted-by-me"} label="Created by me" />
+          <Tab sx={tabStyle} value={"created-by-me"} label="Created by me" />
           <Tab sx={tabStyle} value={"create"} label="Create new group" />
           <Tab sx={tabStyle} value={"other-groups"} label="Other Groups" />
         </Tabs>
