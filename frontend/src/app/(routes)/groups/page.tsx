@@ -7,6 +7,7 @@ const page = () => {
     <div className="page space-y-10">
       <Groups />
       <GroupsCards />
+      
     </div>
   );
 };
