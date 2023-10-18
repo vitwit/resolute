@@ -8,7 +8,6 @@ body {
   @apply leading-[normal] m-0;
 }
 
-
 *,
 ::before,
 ::after {
@@ -25,9 +24,12 @@ body {
   border-width: 0;
 }
 
+.blur-effect {
+  backdrop-filter: blur(2px);
+}
+
 @layer utilities {
   @variants responsive {
-
     /* Hide scrollbar for Chrome, Safari and Opera */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
@@ -47,6 +49,7 @@ body {
   .connectWallet {
     @apply px-[120px] flex flex-col justify-center h-screen;
     font-family: "Space Grotesk" !important;
+    background: url("/cosmos-background.png"), lightgray 50% / cover;
   }
 
   .connectWallet__ship1 {
@@ -64,7 +67,6 @@ body {
   .resolute__title {
     @apply relative flex gap-[140px] text-white text-[150px] font-bold leading-[175px] tracking-[6px];
   }
-
 
   .resolute__title img {
     @apply absolute left-[170px] bottom-[-20px];
@@ -84,16 +86,34 @@ body {
 
   .layout {
     @apply w-screen h-screen;
-    background: url("/cosmos-background.png"), lightgray 50% / cover;
     background-repeat: no-repeat;
     background-size: 100vw 100vh;
   }
 
+  .page-content {
+    @apply flex flex-col items-center overflow-y-scroll no-scrollbar h-screen w-full text-white;
+  }
+
+  .main {
+    @apply flex;
+    background: url("/cosmos-background-light.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: #1f102d;
+    background-repeat: no-repeat;
+  }
+
+  .sidebar-logo {
+    @apply h-[78px] flex items-center;
+  }
+
   .sidebar {
     @apply h-screen flex flex-col justify-between w-[260px] px-4 py-6;
-    background: linear-gradient(180deg,
-        #1f102d 25.28%,
-        rgba(98, 76, 82, 0) 110.05%);
+    background: linear-gradient(
+      180deg,
+      #1f102d 25.28%,
+      rgba(98, 76, 82, 0.3) 110.05%
+    );
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   }
 
@@ -251,7 +271,6 @@ body {
     animation-delay: 200ms;
   }
 
-
   .staking-grid {
     @apply grid grid-cols-4 gap-[24px];
   }
@@ -281,29 +300,36 @@ body {
     @apply text-[#B0B0B0] text-sm not-italic font-light leading-3 tracking-[0.56px];
   }
   .h-line {
-    @apply w-full h-px self-stretch bg-[#b0b0b033] ;
+    @apply w-full h-px self-stretch bg-[#b0b0b033];
   }
+  
+  .input-w-full {
+    @apply w-full rounded h-10 px-4 py-2 bg-transparent border border-[#b0b0b033];
+  }
+
+  .input-bold-label {
+      @apply text-white text-sm not-italic font-bold leading-6;
+    }
 }
-@layer components{
+@layer components {
   .custom-box {
     @apply w-[1102px] h-[300px] rounded-2xl;
     justify-content: center;
-    background-color: #20172F;
-    margin: 70px auto 0;
-    position: relative;
+    background-color: #20172f;
     padding: 24px;
     display: flex;
-    margin-top: 40px;
-
   }
 
   .header {
     @apply flex justify-between items-center relative;
-
   }
 
-  .header img {
-    @apply absolute right-0
+  .header .dialog-close-icon {
+    @apply absolute right-0;
+  }
+
+  .dialog-close-icon {
+    @apply cursor-pointer;
   }
 
   .header h2 {
@@ -321,64 +347,61 @@ body {
   }
 
   .wallet {
-    @apply flex flex-col justify-center items-center
+    @apply w-[172px] h-[140px] flex flex-col justify-center items-center cursor-pointer rounded-md hover:bg-[#3B3148];
   }
   .rectangle-box {
-    @apply w-[788px] h-[376px] rounded-2xl ;
+    @apply w-[788px] h-[376px] rounded-2xl;
     justify-content: center;
-    background-color: #20172F;
+    background-color: #20172f;
     margin: 70px auto 0;
     position: relative;
-    padding:  40px 24px;
+    padding: 40px 24px;
     display: flex;
-   
   }
   .heading {
-    @apply flex justify-between items-center relative font-bold text-white text-[20px] ;
+    @apply flex justify-between items-center relative font-bold text-white text-[20px];
     margin: auto;
     margin-top: 10px;
   }
   .deleteimage {
-    @apply flex items-center justify-between flex-col ;
+    @apply flex items-center justify-between flex-col;
     margin-bottom: 40px;
   }
   .text {
-    @apply text-white font-light leading-5 text-[20px]
+    @apply text-white font-light leading-5 text-[20px];
   }
   .cancel-button {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
-    font-normal leading-3 ;
+    font-normal leading-3;
   }
   .Logout-box {
     @apply flex w-[788px] h-[376px] flex-col justify-center items-start gap-10 relative
     backdrop-blur-[2px] px-6 py-10 rounded-2xl;
-    background: #20172F;
-
+    background: #20172f;
   }
   .title {
-    @apply flex justify-between items-center relative font-bold text-white text-[20px] leading-3 ;
+    @apply flex justify-between items-center relative font-bold text-white text-[20px] leading-3;
     margin: auto;
     margin-top: 10px;
   }
   .Logoutimage {
     @apply flex items-center justify-between flex-col gap-4 w-full;
-   
   }
   .Logout-text {
-    @apply text-white text-center not-italic font-light leading-5 text-[20px] ;
+    @apply text-white text-center not-italic font-light leading-5 text-[20px];
   }
   .cancel1-button {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
-    font-normal leading-3 ;
+    font-normal leading-3;
   }
   .Logout-button {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
-    font-normal leading-3 ;
+    font-normal leading-3;
   }
   .Staking-box {
     @apply flex w-[788px] h-[568px] flex-col justify-center items-start gap-10
     backdrop-blur-[2px] px-6 py-10 rounded-2xl;
-    background: #20172F;
+    background: #20172f;
   }
   .staking-header {
     @apply flex w-[700px] justify-center items-center gap-2 self-stretch;
@@ -390,18 +413,15 @@ body {
     @apply text-white text-base not-italic font-bold leading-6;
   }
   .staking-text2 h2 {
-    @apply text-white text-sm not-italic font-bold leading-6 ;
+    @apply text-white text-sm not-italic font-bold leading-6;
   }
   .staking-points {
-   
     @apply flex items-start gap-2 self-stretch border px-4 py-2 rounded-lg border-solid border-[rgba(176,176,176,0.20)] flex-col w-[740px] h-[104px];
-
   }
   .staking-points p {
     @apply text-white text-sm not-italic font-light leading-6 self-stretch gap-2;
-    
   }
-  .unavilable-delegation{
+  .unavilable-delegation {
     @apply flex flex-row gap-6 self-stretch;
   }
   .p {
@@ -418,28 +438,27 @@ body {
   }
   .holder {
     @apply flex items-start gap-2 self-stretch border px-4 py-2 rounded-lg border-solid border-[rgba(176,176,176,0.20)];
-
   }
   .holder p {
     @apply text-white text-sm not-italic font-light leading-6;
-  } 
+  }
   .stake {
     @apply text-end;
   }
   .staking-buttons {
-    @apply flex flex-row items-center gap-10 self-stretch w-full justify-between ;
+    @apply flex flex-row items-center gap-10 self-stretch w-full justify-between;
   }
   .staking-cancel {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
-    font-normal leading-3 ;
+    font-normal leading-3;
   }
   .undelegate {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
-    font-normal leading-3 ;
+    font-normal leading-3;
   }
   .staking-box2 {
     @apply flex w-[788px] h-[528px] flex-col justify-center items-start gap-10 backdrop-blur-[2px] px-6 py-10 rounded-2xl;
-  background: #20172f;
+    background: #20172f;
   }
   .staking-head {
     @apply flex flex-col justify-center items-start gap-6 self-stretch;
@@ -448,7 +467,7 @@ body {
     @apply flex w-[700px] justify-center items-center gap-2 self-stretch;
   }
   .Staking2-header h2 {
-  @apply flex w-[89px] flex-col justify-center self-stretch text-white text-center text-xl not-italic font-bold leading-3;
+    @apply flex w-[89px] flex-col justify-center self-stretch text-white text-center text-xl not-italic font-bold leading-3;
   }
   .staking2-text p {
     @apply text-white text-base not-italic font-bold leading-6;
@@ -485,28 +504,27 @@ body {
   }
   .holder1 {
     @apply flex items-start gap-2 self-stretch border px-4 py-2 rounded-lg border-solid border-[rgba(176,176,176,0.20)];
-
   }
   .holder p {
     @apply text-white text-sm not-italic font-light leading-6;
-  } 
+  }
   .stake2 {
     @apply text-end;
   }
   .staking2-buttons {
-    @apply flex flex-row items-center gap-10 self-stretch w-full justify-between ;
+    @apply flex flex-row items-center gap-10 self-stretch w-full justify-between;
   }
   .staking2-cancel {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
-    font-normal leading-3 ;
+    font-normal leading-3;
   }
   .delegate {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
-    font-normal leading-3 ;
+    font-normal leading-3;
   }
   .staking-box3 {
     @apply flex w-[788px] h-[520px] flex-col justify-center items-start gap-10 backdrop-blur-[2px] px-6 py-10 rounded-2xl;
-  background: #20172f;
+    background: #20172f;
   }
   .staking3-head {
     @apply flex flex-col justify-center items-start gap-6 self-stretch;
@@ -529,10 +547,10 @@ body {
   .staking3-holder {
     @apply flex w-[441.5px] items-start gap-2 items-center justify-between w-full;
   }
-  .staking3-holder p{
+  .staking3-holder p {
     @apply text-[#B0B0B0] text-sm not-italic font-light leading-6;
   }
-  .staking3-head3{
+  .staking3-head3 {
     @apply flex flex-col items-center gap-6 self-stretch;
   }
   .head4 {
@@ -560,19 +578,19 @@ body {
     @apply items-end;
   }
   .staking3-buttons {
-    @apply flex flex-row items-center gap-10 self-stretch w-full justify-between ;
+    @apply flex flex-row items-center gap-10 self-stretch w-full justify-between;
   }
   .staking3-cancel {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
-    font-normal leading-3 ;
+    font-normal leading-3;
   }
   .delegates3 {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
-    font-normal leading-3 ;
+    font-normal leading-3;
   }
   .Fregrant-box1 {
     @apply flex w-[788px] h-[404px] flex-col justify-center items-start gap-10 backdrop-blur-[2px] px-6 py-10 rounded-2xl;
-  background: #20172f;
+    background: #20172f;
   }
   .Fregrant1 {
     @apply flex justify-center items-center gap-2 flex-[1_0_0] self-stretch;
@@ -581,13 +599,13 @@ body {
     @apply text-white text-center text-xl not-italic font-bold leading-3 flex w-52 flex-col justify-center self-stretch;
   }
   .Fregrant1-Head {
-  @apply flex flex-col items-center gap-10 self-stretch;
+    @apply flex flex-col items-center gap-10 self-stretch;
   }
   .Fregrant1-Head1 {
     @apply flex justify-between gap-10 self-stretch;
   }
   .head1 {
-    @apply  justify-center items-start space-y-2 self-stretch;
+    @apply justify-center items-start space-y-2 self-stretch;
   }
   .head1-first {
     @apply flex w-[340px] h-[24px] flex-col justify-center items-start gap-2 self-stretch text-white text-sm not-italic font-bold leading-6;
@@ -599,7 +617,7 @@ body {
     @apply flex flex-row;
   }
   .headf2 {
-    @apply  justify-center items-start space-y-2 self-stretch;
+    @apply justify-center items-start space-y-2 self-stretch;
   }
   .headf2-first {
     @apply flex w-[340px] h-[24px] flex-col justify-center items-start gap-2 self-stretch text-white text-sm not-italic font-bold leading-6;
@@ -614,35 +632,35 @@ body {
     @apply flex justify-between gap-10 self-stretch;
   }
   .headf {
-    @apply  justify-center items-start space-y-2 self-stretch;
+    @apply justify-center items-start space-y-2 self-stretch;
   }
   .headf-first {
     @apply flex flex-col justify-center items-start gap-2 self-stretch text-white text-sm not-italic font-bold leading-6;
   }
   .headf-second {
-    @apply flex flex-col justify-center items-start gap-2 self-stretch text-white text-sm not-italic font-light leading-6 tracking-[0.56px];;
+    @apply flex flex-col justify-center items-start gap-2 self-stretch text-white text-sm not-italic font-light leading-6 tracking-[0.56px];
   }
   .headf-main {
     @apply flex flex-row;
   }
   .headfpop {
-    @apply  justify-center items-start space-y-2 self-stretch;
+    @apply justify-center items-start space-y-2 self-stretch;
   }
   .headfpop-first {
     @apply flex w-[340px] h-[24px] flex-col justify-center items-start gap-2 self-stretch text-white text-sm not-italic font-bold leading-6;
   }
-  .headfpop-second { 
+  .headfpop-second {
     @apply flex flex-col justify-center items-start gap-2 self-stretch text-white text-sm not-italic font-light leading-6;
   }
   .headfpop-main {
-    @apply flex flex-row; 
+    @apply flex flex-row;
   }
   .Fregrant-dismiss {
     @apply text-white text-center text-xl not-italic font-bold leading-5 underline self-stretch;
   }
   .Feegrant-box2 {
     @apply flex w-[788px] h-[376px] flex-col justify-center items-start gap-10 backdrop-blur-[2px] px-6 py-10 rounded-2xl;
-  background: #20172f;
+    background: #20172f;
   }
   .Feegrant2 {
     @apply flex justify-center items-center gap-2 flex-[1_0_0] self-stretch;
@@ -660,15 +678,15 @@ body {
     @apply text-white text-center text-xl not-italic font-light leading-5;
   }
   .Feegrant2-buttons {
-    @apply flex flex-row items-center gap-10 self-stretch w-full justify-between ;
+    @apply flex flex-row items-center gap-10 self-stretch w-full justify-between;
   }
   .Feegrant2-cancel {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
-    font-normal leading-3 ;
+    font-normal leading-3;
   }
   .Revoke {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
-    font-normal leading-3 ;
+    font-normal leading-3;
   }
   .Feegrant-box3 {
     @apply flex w-[788px] h-[356px] flex-col justify-center items-start gap-10 backdrop-blur-[2px] px-6 py-10 rounded-2xl;
@@ -690,10 +708,10 @@ body {
     @apply text-white text-center text-xl not-italic font-light leading-5;
   }
   .Feegrant-Dismiss {
-  @apply text-white text-center text-xl not-italic font-bold leading-5 underline self-stretch;
+    @apply text-white text-center text-xl not-italic font-bold leading-5 underline self-stretch;
   }
   .group-grid {
-    @apply grid grid-cols-4 gap-[24px] ;
+    @apply grid grid-cols-4 gap-[24px];
   }
   .group-grid-card {
     @apply flex w-full flex-col items-start gap-6 p-6 rounded-2xl;
@@ -702,7 +720,7 @@ body {
   .group-title {
     @apply flex justify-between items-center self-stretch;
   }
-  .titlegrp{
+  .titlegrp {
     @apply text-white text-base not-italic font-bold leading-3 mr-24;
   }
   .end-title {
@@ -711,7 +729,7 @@ body {
   .group-text {
     @apply text-white text-sm not-italic font-normal leading-5 tracking-[0.56px] self-stretch;
   }
-  .group-head{
+  .group-head {
     @apply flex justify-between gap-10 self-stretch;
   }
   .headg {
@@ -724,17 +742,16 @@ body {
     @apply text-white text-sm not-italic font-normal leading-3 tracking-[0.56px];
   }
   .head2g {
-    @apply  justify-center items-start space-y-2 self-stretch;
+    @apply justify-center items-start space-y-2 self-stretch;
   }
   .head2g-first {
     @apply text-[#B0B0B0] text-xs not-italic font-normal leading-3 tracking-[0.48px];
   }
-  .head2g-second { 
+  .head2g-second {
     @apply text-white text-sm not-italic font-normal leading-3 tracking-[0.56px];
   }
   .Groupbuttons {
-    @apply flex justify-between items-center self-stretch;;
-    
+    @apply flex justify-between items-center self-stretch;
   }
   .viewbutton {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[127px];
@@ -830,4 +847,5 @@ body {
   
   
 }
+
  

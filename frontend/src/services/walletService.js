@@ -1,7 +1,7 @@
 export const connectWalletV1 = async (data) => {
   const mainnets = data.mainnets;
   const testnets = data.testnets;
-  console.log("connect wallet called...");
+  console.log("connect wallet called...", data);
   if (!window.keplr) {
     alert("keplr not connected");
     return;

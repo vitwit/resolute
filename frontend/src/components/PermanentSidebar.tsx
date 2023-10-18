@@ -55,15 +55,17 @@ const PermanentSidebar = ({ children }: { children: React.ReactNode }) => {
   const pathParts = pathname.split("/");
   const selectedPart = getSelectedPartFromURL(pathParts);
   return (
-    <div className="flex bg-[#1F102D99]">
+    <div className="main">
       <div className="sidebar">
         <div className="sidebar__menu">
-          <Image
-            src="/vitwit-logo.png"
-            width={184}
-            height={52}
-            alt="Vitwit Logo"
-          />
+          <div className="sidebar-logo">
+            <Image
+              src="/vitwit-logo.png"
+              width={184}
+              height={52}
+              alt="Vitwit Logo"
+            />
+          </div>
           <div className="flex flex-col gap-4">
             {menuItems.map((item, index) => (
               <MenuItem
@@ -85,7 +87,7 @@ const PermanentSidebar = ({ children }: { children: React.ReactNode }) => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-center overflow-y-scroll no-scrollbar h-screen w-screen text-white">
+      <div className="page-content">
         <div className="w-full">
           <div className=" mx-10 mt-10 relative">
             <TopNav pathname={selectedPart} />

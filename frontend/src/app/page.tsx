@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { usePathname } from 'next/navigation'
+import { usePathname } from "next/navigation";
 import React from "react";
 import Image from "next/image";
 import AccountDetails from "./../components/AccountDetails";
@@ -28,6 +28,7 @@ const OverviewPage = () => {
     
      
       
+
       <div className="space-y-6">
         <div className="table-title">
           <div className="table-title-content">Asset Information</div>

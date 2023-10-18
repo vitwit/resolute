@@ -1,10 +1,10 @@
 import React from "react";
-import Feegrants from "../../../components/tabs/Feegrants";
+import Feegrant from "./Feegrant";
 
 const page = () => {
   return (
     <div className="page">
-      <Feegrants />
+      <Feegrant />
     </div>
   );
 };

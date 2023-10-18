@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { connectWalletV1 } from "../services/walletService";
 import { networks } from "../utils/chainsInfo";
 import Image from "next/image";
+import Walletpage from "./popups/WalletPage";
 
 export const ConnectWalletButton = ({
   children,
@@ -10,7 +11,19 @@ export const ConnectWalletButton = ({
   children: React.ReactNode;
 }) => {
   const [isConnected, setIsConnected] = useState(false);
-
+  const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
+    useState<boolean>(false);
+  const handleClose = () => {
+    setConnectWalletDialogOpen(!connectWalletDialogOpen);
+  };
+  const selectWallet = (walletName: string) => {
+    connectWalletV1({
+      mainnets: networks,
+      testnets: [],
+      walletName: walletName,
+      setIsConnected,
+    });
+  };
   return isConnected ? (
     <>{children}</>
   ) : (
@@ -50,17 +63,19 @@ export const ConnectWalletButton = ({
           <button
             className="connectWallet__btn"
             onClick={() => {
-              connectWalletV1({
-                mainnets: networks,
-                testnets: [],
-                setIsConnected,
-              });
+              // connectWalletV1({
+              //   mainnets: networks,
+              //   testnets: [],
+              //   setIsConnected,
+              // });
+              setConnectWalletDialogOpen(true);
             }}
           >
             CONNECT WALLET
           </button>
         </div>
       </div>
+      <Walletpage open={connectWalletDialogOpen} handleClose={handleClose} selectWallet={selectWallet}/>
     </div>
   );
 };
