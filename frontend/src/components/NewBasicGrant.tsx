@@ -5,7 +5,7 @@ import { useForm, type FieldValues } from "react-hook-form";
 import InputLabel from "@mui/material/InputLabel";
 import { Label } from "@mui/icons-material";
 
-export default function NewGrant() {
+export default function NewBasicGrant() {
   const {
     register,
     handleSubmit,

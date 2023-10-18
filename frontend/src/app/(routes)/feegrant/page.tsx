@@ -1,12 +1,10 @@
 import React from "react";
-import Feegrants from "../../../components/tabs/Feegrants";
-import GrantsToMeTable from "staking/components/GrantsToMeTable";
-import GrantsByMeTable from "staking/components/GrantsByMeTable";
+import Feegrant from "./Feegrant";
 
 const page = () => {
   return (
-    <div className="page space-y-10">
-      <Feegrants />
+    <div className="page">
+      <Feegrant />
     </div>
   );
 };
