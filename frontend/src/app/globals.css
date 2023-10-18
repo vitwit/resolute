@@ -49,6 +49,7 @@ body {
   .connectWallet {
     @apply px-[120px] flex flex-col justify-center h-screen;
     font-family: "Space Grotesk" !important;
+    background: url("/cosmos-background.png"), lightgray 50% / cover;
   }
 
   .connectWallet__ship1 {
@@ -85,9 +86,25 @@ body {
 
   .layout {
     @apply w-screen h-screen;
-    background: url("/cosmos-background.png"), lightgray 50% / cover;
     background-repeat: no-repeat;
     background-size: 100vw 100vh;
+  }
+
+  .page-content {
+    @apply flex flex-col items-center overflow-y-scroll no-scrollbar h-screen w-full text-white;
+  }
+
+  .main {
+    @apply flex;
+    background: url("/cosmos-background-light.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: #1f102d;
+    background-repeat: no-repeat;
+  }
+
+  .sidebar-logo {
+    @apply h-[78px] flex items-center;
   }
 
   .sidebar {
@@ -95,7 +112,7 @@ body {
     background: linear-gradient(
       180deg,
       #1f102d 25.28%,
-      rgba(98, 76, 82, 0) 110.05%
+      rgba(98, 76, 82, 0.3) 110.05%
     );
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   }
