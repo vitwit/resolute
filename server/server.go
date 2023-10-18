@@ -3,7 +3,9 @@
 package main
 
 import (
+	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -47,6 +49,34 @@ func main() {
 	// check db
 	if err := db.Ping(); err != nil {
 		log.Fatal(err)
+	}
+
+	if len(os.Args) > 1 {
+		// Read the SQL file
+		sqlFile, err := ioutil.ReadFile("schema/schema.sql")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Start a transaction
+		tx, err := db.Begin()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Execute the contents of the SQL file
+		_, err = tx.Exec(string(sqlFile))
+		if err != nil {
+			tx.Rollback()
+			log.Fatal(err)
+		}
+
+		// Commit the transaction
+		err = tx.Commit()
+		if err != nil {
+			log.Fatal(err)
+		}
+
 	}
 
 	// Initialize handler
