@@ -2,13 +2,16 @@
 import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import GrantsByMeTable from "../GrantsByMeTable";
+import GrantsToMeTable from "../GrantsToMeTable";
+import NewGrant from "../NewGrant";
 
 export default function Feegrants() {
-  const [value, setValue] = React.useState("granted-to-me");
+  const [tabItem, setTabItem] = React.useState("granted-to-me");
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    console.log(newValue);
-    setValue(newValue);
+  const handleChange = (event: React.SyntheticEvent, value: string) => {
+    console.log(value);
+    setTabItem(value);
   };
 
   const tabStyle = {
@@ -31,7 +34,7 @@ export default function Feegrants() {
     <>
       <div className="w-full flex justify-center">
         <Tabs
-          value={value}
+          value={tabItem}
           onChange={handleChange}
           indicatorColor="primary"
           textColor="primary"
@@ -42,6 +45,11 @@ export default function Feegrants() {
           <Tab sx={tabStyle} value={"granted-to-me"} label="Granted To Me" />
         </Tabs>
       </div>
+      {tabItem == "granted-to-me" ? (
+        <GrantsToMeTable />
+      ) : tabItem === "granted-by-me" ? (
+        <GrantsByMeTable />
+      ) : <NewGrant/>}
     </>
   );
 }
