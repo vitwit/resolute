@@ -770,5 +770,64 @@ body {
   .vote-confirm {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
   }
+  .Groups-Main {
+    @apply flex w-[1542px] flex-col items-start gap-10 p-6 rounded-2xl ;
+  background: rgba(46, 32, 55, 0.75);
+  }
+  .titlegrp-Name{
+    @apply text-white text-base not-italic font-bold leading-3 ml-[-1270px];
+  }
+  .Group-details {
+    @apply flex items-start gap-10;
+  }
+  .headGroup1 {
+    @apply flex flex-col items-start gap-2;
+  }
+  .Group-first {
+    @apply text-[#B0B0B0] text-xs not-italic font-normal leading-3 tracking-[0.48px];
+  }
+  .Group-second {
+    @apply text-white text-sm not-italic font-normal leading-10 tracking-[0.56px] flex h-6 flex-col justify-center;
+  }
+  .head-Group2 {
+    @apply flex flex-col items-start gap-2;
+  }
+  .Group2-first {
+    @apply text-[#B0B0B0] text-xs not-italic font-normal leading-3 tracking-[0.48px];
+  }
+  .Group2-second {
+    @apply flex items-start gap-2;
+    /* @apply text-white flex-row text-sm not-italic font-normal leading-10 tracking-[0.56px] flex w-[183px] h-6 justify-center; */
+  }
+  .Group2-Address {
+     @apply flex items-center w-[183px] h-6 text-right  mr-2 justify-center text-white text-sm not-italic font-normal leading-10 tracking-[0.56px];
+  }
+  .Group2-Edit {
+    @apply flex w-7 h-6 flex-col justify-center text-sm not-italic font-extralight leading-10 tracking-[0.56px] underline;
+    
+  }
+  .Group2buttons {
+    @apply flex items-center gap-10 self-stretch;
+  }
+  .updatebutton {
+    @apply flex justify-center w-[120px] items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
+  
+    /* @apply flex justify-center items-center gap-2.5 self-stretch border text-white text-sm not-italic font-normal leading-3 px-6 py-3.5 rounded-[100px] border-solid border-white; */
+  }
+  .leaveButton {
+    @apply flex justify-center w-[120px] items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
+  
+  }
+  .groups-tablehead {
+    @apply flex justify-between items-center self-stretch;
+  }
+  .groups-tablehead h2 {
+    @apply flex w-32 flex-col justify-center self-stretch text-white text-xl not-italic font-bold leading-6;
+  }
+  .updatemembers {
+    @apply flex w-[200px] h-10 flex-col justify-center items-center gap-2.5 border px-4 py-1 rounded-[100px] border-solid border-white;
+  }
+  
+  
 }
  
