@@ -302,6 +302,14 @@ body {
   .h-line {
     @apply w-full h-px self-stretch bg-[#b0b0b033];
   }
+  
+  .input-w-full {
+    @apply w-full rounded h-10 px-4 py-2 bg-transparent border border-[#b0b0b033];
+  }
+
+  .input-bold-label {
+      @apply text-white text-sm not-italic font-bold leading-6;
+    }
 }
 @layer components {
   .custom-box {
