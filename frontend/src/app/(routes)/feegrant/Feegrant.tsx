@@ -4,6 +4,8 @@ import Image from "next/image";
 import CustomTabsGroup, { TabPanel } from "staking/components/CustomTabsGroup";
 import { useForm } from "react-hook-form";
 import NewBasicGrant from "../../../components/NewBasicGrant";
+import GrantsByMeTable from "../../../components/GrantsByMeTable";
+import GrantsToMeTable from "../../../components/GrantsToMeTable";
 
 export default function Feegrant() {
   const [tab, setTab] = useState(0);
@@ -44,7 +46,7 @@ export default function Feegrant() {
       </div>
       <div className="mt-10">
         <TabPanel value={tab} index={0}>
-          Grant By Me
+          <GrantsByMeTable />
         </TabPanel>
         <TabPanel value={tab} index={1}>
           <div className="flex justify-between items-center">
@@ -83,7 +85,7 @@ export default function Feegrant() {
           </div>
         </TabPanel>
         <TabPanel value={tab} index={2}>
-          Grants To Me
+          <GrantsToMeTable />
         </TabPanel>
       </div>
     </>
