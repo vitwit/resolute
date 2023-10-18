@@ -760,3 +760,10 @@ body {
     @apply flex w-[127px] justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
   }
 }
+
+
+@layer components { 
+
+  
+
+}
