@@ -49,7 +49,7 @@ export default function UnDelegateForm(props) {
   useEffect(() => {
     const data = [];
 
-    for (let i = 0; i < delegations.length; i++) {
+    for (let i = 0; i < delegations?.length; i++) {
       if (validators.active[delegations[i].delegation.validator_address]) {
         const temp = {
           label:
