@@ -35,7 +35,7 @@ const Groupspage2table = () => {
             </div>
             <div>
                 <table className='customGrouptable'>
-                    <thead className='Grouptablehead mb-9'>
+                    <thead className='Grouptablehead mb-'>
                         <tr className='text-left'>
                             <th>Address</th>
                             <th>Weight</th>

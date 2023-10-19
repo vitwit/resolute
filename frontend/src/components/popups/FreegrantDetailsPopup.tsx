@@ -40,7 +40,7 @@ const FreegrantDetailsPopup = () => {
                 </div>
             </div>
             <div className='Fregrant-dismiss'>
-                <h2>Dismiss</h2>
+                <button>Dismiss</button>
             </div>
         </div>
     )
