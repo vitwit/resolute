@@ -25,6 +25,7 @@ import {
   REDELEGATE_TYPE_URL,
   SEND_TYPE_URL,
   UNDELEGATE_TYPE_URL,
+  CREATE_VESTING_ACCOUNT_TYPE_URL,
 } from "./utils";
 import { parseBalance } from "../../../utils/denom";
 import { Pagination } from "@mui/material";
@@ -38,10 +39,12 @@ import {
 } from "../../../features/multisig/multisigSlice";
 import { fee } from "../../../txns/execute";
 import { resetError, setError } from "../../../features/common/commonSlice";
+import CreateVestingAccountForm from "../../../components/multisig/bulk/CreateVestingAccountForm";
 
 // TODO: serve urls from env
 
-const MULTISIG_SEND_TEMPLATE = "https://api.resolute.vitwit.com/_static/send.csv";
+const MULTISIG_SEND_TEMPLATE =
+  "https://api.resolute.vitwit.com/_static/send.csv";
 const MULTISIG_DELEGATE_TEMPLATE =
   "https://api.resolute.vitwit.com/_static/delegate.csv";
 const MULTISIG_UNDELEGATE_TEMPLATE =
@@ -55,6 +58,7 @@ const TYPE_SEND = "SEND";
 const TYPE_DELEGATE = "DELEGATE";
 const TYPE_UNDELEGATE = "UNDELEGATE";
 const TYPE_REDELEGATE = "REDELEGATE";
+const TYPE_CREATE_VESTING_ACCOUNT = "CREATE_VESTING_ACCOUNT";
 
 const SelectTransactionType = (props) => {
   return (
@@ -279,6 +283,13 @@ export default function PageCreateTx() {
         return RenderUnDelegateMessage(msg, index, currency, onDelete);
       case REDELEGATE_TYPE_URL:
         return RenderReDelegateMessage(msg, index, currency, onDelete);
+      case CREATE_VESTING_ACCOUNT_TYPE_URL:
+        return RenderCreateVestingAccountMessage(
+          msg,
+          index,
+          currency,
+          onDelete
+        );
       default:
         return "";
     }
@@ -498,6 +509,9 @@ export default function PageCreateTx() {
                       <MenuItem value={"Delegate"}>Delegate</MenuItem>
                       <MenuItem value={"Redelegate"}>Redelegate</MenuItem>
                       <MenuItem value={"Undelegate"}>Undelegate</MenuItem>
+                      <MenuItem value={"CreateVestingAccount"}>
+                        Create Vesting Account
+                      </MenuItem>
                     </Select>
                   </FormControl>
                 </>
@@ -545,6 +559,19 @@ export default function PageCreateTx() {
                   chainInfo={chainInfo}
                   address={address}
                   onUndelegate={(payload) => {
+                    setMessages([...messages, payload]);
+                  }}
+                />
+              ) : null}
+
+              {txType === "CreateVestingAccount" ? (
+                <CreateVestingAccountForm
+                  chainInfo={chainInfo}
+                  address={address}
+                  onCreateVestingAccount={(payload) => {
+                    console.log("here...");
+                    console.log(messages);
+                    console.log(payload);
                     setMessages([...messages, payload]);
                   }}
                 />
@@ -917,6 +944,62 @@ export const RenderReDelegateMessage = (message, index, currency, onDelete) => {
         </Typography>
         <Typography variant="body2" color="text.primary" fontWeight={600}>
           {shortenAddress(message.value.validatorDstAddress, 21)}
+        </Typography>
+      </Box>
+      {onDelete ? (
+        <IconButton
+          color="error"
+          aria-label="delete transaction"
+          component="label"
+          onClick={() => onDelete(index)}
+        >
+          <DeleteOutline />
+        </IconButton>
+      ) : null}
+    </Box>
+  );
+};
+
+export const RenderCreateVestingAccountMessage = (
+  message,
+  index,
+  currency,
+  onDelete
+) => {
+  return (
+    <Box
+      component="div"
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        pt: 1.5,
+      }}
+    >
+      <Box
+        component="div"
+        sx={{
+          display: "flex",
+        }}
+      >
+        <Typography variant="body2" color="text.primary" fontWeight={500}>
+          #{index + 1}&nbsp;&nbsp;
+        </Typography>
+        <Typography variant="body2" color="text.primary" fontWeight={600}>
+          CreateVestingAccount&nbsp;
+        </Typography>
+        <Typography variant="body2" color="text.primary" fontWeight={600}>
+          {shortenAddress(message.value?.toAddress || "", 21)}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" fontWeight={500}>
+          &nbsp;with&nbsp;
+        </Typography>
+        <Typography variant="body2" color="text.primary" fontWeight={600}>
+          {parseBalance(
+            [message.value.amount],
+            currency.coinDecimals,
+            currency.coinMinimalDenom
+          )}
+          {currency.coinDenom}&nbsp;
         </Typography>
       </Box>
       {onDelete ? (

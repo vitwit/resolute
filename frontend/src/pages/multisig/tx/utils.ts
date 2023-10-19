@@ -6,6 +6,8 @@ export const SEND_TYPE_URL = "/cosmos.bank.v1beta1.MsgSend";
 export const DELEGATE_TYPE_URL = "/cosmos.staking.v1beta1.MsgDelegate";
 export const UNDELEGATE_TYPE_URL = "/cosmos.staking.v1beta1.MsgUndelegate";
 export const REDELEGATE_TYPE_URL = "/cosmos.staking.v1beta1.MsgBeginRedelegate";
+export const CREATE_VESTING_ACCOUNT_TYPE_URL =
+  "/cosmos.vesting.v1beta1.MsgCreateVestingAccount";
 
 // parseSendMsgsFromContent returns list of parsed send messages. It returns an error
 // if provided content is invalid.
