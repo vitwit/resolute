@@ -833,18 +833,48 @@ body {
   }
   .leaveButton {
     @apply flex justify-center w-[120px] items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
-  
   }
-  .groups-tablehead {
-    @apply flex justify-between items-center self-stretch;
+  .table-main {
+    @apply flex justify-between items-center  self-stretch;
   }
-  .groups-tablehead h2 {
+  .table-main-text {
     @apply flex w-32 flex-col justify-center self-stretch text-white text-xl not-italic font-bold leading-6;
   }
   .updatemembers {
-    @apply flex w-[200px] h-10 flex-col justify-center items-center gap-2.5 border px-4 py-1 rounded-[100px] border-solid border-white;
+    @apply flex w-[200px] h-10 flex-col justify-center items-center gap-2.5 leading-6 border px-4 py-1 rounded-[100px] border-solid border-white;
   }
-  
+  .Grouptablehead {
+    @apply pb-4 border-b-[0.5px] border-[#B0B0B033]; 
+  }
+  .Grouptablehead th {
+    @apply text-[16px] leading-3 font-normal h-10;
+  }
+  .customTableHead td {
+    @apply pt-6 text-[14px] leading-3 ;
+  }
+  .customGrouptable {
+    @apply w-full;    
+  }
+  .Groups-vote-grid {
+    @apply flex flex-col w-[788px] h-[316px] justify-center items-center gap-10 self-stretch backdrop-blur-[2px] px-6 py-10 rounded-2xl;
+  background: #20172f;
+  }
+  .vote-head {
+    @apply flex h-10 justify-between items-center;
+  }
+  .vote-head h2 {
+    @apply flex w-[225px] flex-col justify-center self-stretch text-white text-center text-xl not-italic font-bold leading-3;
+  }
+  .vote-Image {
+    @apply flex flex-col items-center gap-4;
+  }
+  .vote-Image p {
+    @apply text-white text-center text-xl not-italic font-light leading-5;
+  }
+  .vote-button {
+    @apply text-white text-center text-xl not-italic font-bold leading-5 underline;
+  }
+
   
 }
 

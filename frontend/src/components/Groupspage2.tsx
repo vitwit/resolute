@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import ValidatorsTable from './ValidatorsTable'
+
 
 const Groupspage2 = () => {
     return (

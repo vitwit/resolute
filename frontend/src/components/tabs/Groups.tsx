@@ -4,6 +4,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
 
+
 export default function Groups() {
   const [value, setValue] = React.useState("created-by-me");
 
@@ -43,6 +44,7 @@ export default function Groups() {
           <Tab sx={tabStyle} value={"other-groups"} label="Other Groups" />
         </Tabs>
       </div>
+      
     </>
   );
 }

@@ -4,6 +4,7 @@ import Image from 'next/image'
 const  GroupsCards = () => {
   const groupData = [1, 2, 3, 4, 5, 6, 7, 8];
   return (
+    
     <div className='group-grid'>
       {groupData.map((index: number, id: number) =>(
         <div className='group-grid-card ' key={id}>
@@ -26,8 +27,8 @@ const  GroupsCards = () => {
           </div>
         </div>
         <div className='Groupbuttons'>
-          <div className='viewbutton'>View</div>
-          <div className='leavebutton'>Leave</div>
+          <button className='viewbutton'>View</button>
+          <button className='leavebutton'>Leave</button>
         </div>
       </div>
         ))}
