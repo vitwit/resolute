@@ -874,13 +874,14 @@ body {
   .vote-button {
     @apply text-white text-center text-xl not-italic font-bold leading-5 underline;
   }
-  .DecisionTable {
-    @apply w-full;
-  }
-
-
   .policy-name {
     @apply flex w-36 h-[30px] flex-col justify-center shrink-0 text-white text-sm not-italic font-light leading-3 underline;
+  }
+  .table-Decison-text {
+    @apply flex w-[167px] flex-col justify-center self-stretch text-white text-xl not-italic font-bold leading-6;
+  }
+  .proposal-name {
+  @apply flex flex-col justify-center flex-[1_0_0] self-stretch text-white text-sm not-italic font-light leading-4 tracking-[0.56px];
   }
 
   
