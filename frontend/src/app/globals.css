@@ -759,11 +759,123 @@ body {
   .leavebutton {
     @apply flex w-[127px] justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
   }
-}
-
-
-@layer components { 
+  .VoteforProposal-popup {
+    @apply flex w-[788px]  h-[518px] flex-col justify-center items-start gap-10 backdrop-blur-[2px] px-6 py-10 rounded-2xl;
+  background: #20172f;
+  }
+  .vote-name {
+    @apply flex h-10 justify-center items-center  w-full;
+  }
+  .vote-text {
+    @apply text-white text-xl not-italic font-bold leading-3;
+  }
+  .VoteProposal-buttons{
+    @apply  flex flex-row items-center gap-10 self-stretch w-full justify-between ;
+  }
+  .Proposal {
+    @apply flex items-start gap-2 w-[350px] self-stretch border text-white text-sm not-italic font-light leading-6 px-4 py-2 rounded-[100px] border-solid border-white;
+  }
+  .voteproposal-text {
+    @apply text-white space-y-2 text-sm not-italic font-bold leading-6;
+  }
+  .voteproposal-message {
+    @apply flex h-[86px] w-[740px] items-start gap-2 self-stretch border px-4 py-2 rounded-lg border-solid border-[rgba(176,176,176,0.20)];
+  }
+  .voteproposal-message p{
+    @apply text-white text-sm not-italic font-light leading-6;
+  }
+  .vote-confirm {
+    @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
+  }
+  .Groups-Main {
+    @apply flex w-[1542px] flex-col items-start gap-10 p-6 rounded-2xl ;
+  background: rgba(46, 32, 55, 0.75);
+  }
+  .titlegrp-Name{
+    @apply text-white text-base not-italic font-bold leading-3 ml-[-1270px];
+  }
+  .Group-details {
+    @apply flex items-start gap-10;
+  }
+  .headGroup1 {
+    @apply flex flex-col items-start gap-2;
+  }
+  .Group-first {
+    @apply text-[#B0B0B0] text-xs not-italic font-normal leading-3 tracking-[0.48px];
+  }
+  .Group-second {
+    @apply text-white text-sm not-italic font-normal leading-10 tracking-[0.56px] flex h-6 flex-col justify-center;
+  }
+  .head-Group2 {
+    @apply flex flex-col items-start gap-2;
+  }
+  .Group2-first {
+    @apply text-[#B0B0B0] text-xs not-italic font-normal leading-3 tracking-[0.48px];
+  }
+  .Group2-second {
+    @apply flex items-start gap-2;
+    /* @apply text-white flex-row text-sm not-italic font-normal leading-10 tracking-[0.56px] flex w-[183px] h-6 justify-center; */
+  }
+  .Group2-Address {
+     @apply flex items-center w-[183px] h-6 text-right  mr-2 justify-center text-white text-sm not-italic font-normal leading-10 tracking-[0.56px];
+  }
+  .Group2-Edit {
+    @apply flex w-7 h-6 flex-col justify-center text-sm not-italic font-extralight leading-10 tracking-[0.56px] underline;
+    
+  }
+  .Group2buttons {
+    @apply flex items-center gap-10 self-stretch;
+  }
+  .updatebutton {
+    @apply flex justify-center w-[120px] items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
+  
+    /* @apply flex justify-center items-center gap-2.5 self-stretch border text-white text-sm not-italic font-normal leading-3 px-6 py-3.5 rounded-[100px] border-solid border-white; */
+  }
+  .leaveButton {
+    @apply flex justify-center w-[120px] items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
+  }
+  .table-main {
+    @apply flex justify-between items-center  self-stretch;
+  }
+  .table-main-text {
+    @apply flex w-32 flex-col justify-center self-stretch text-white text-xl not-italic font-bold leading-6;
+  }
+  .updatemembers {
+    @apply flex w-[200px] h-10 flex-col justify-center items-center gap-2.5 leading-6 border px-4 py-1 rounded-[100px] border-solid border-white;
+  }
+  .Grouptablehead {
+    @apply pb-4 border-b-[0.5px] border-[#B0B0B033]; 
+  }
+  .Grouptablehead th {
+    @apply text-[16px] leading-3 font-normal h-10;
+  }
+  .customTableHead td {
+    @apply pt-6 text-[14px] leading-3 ;
+  }
+  .customGrouptable {
+    @apply w-full;    
+  }
+  .Groups-vote-grid {
+    @apply flex flex-col w-[788px] h-[316px] justify-center items-center gap-10 self-stretch backdrop-blur-[2px] px-6 py-10 rounded-2xl;
+  background: #20172f;
+  }
+  .vote-head {
+    @apply flex h-10 justify-between items-center;
+  }
+  .vote-head h2 {
+    @apply flex w-[225px] flex-col justify-center self-stretch text-white text-center text-xl not-italic font-bold leading-3;
+  }
+  .vote-Image {
+    @apply flex flex-col items-center gap-4;
+  }
+  .vote-Image p {
+    @apply text-white text-center text-xl not-italic font-light leading-5;
+  }
+  .vote-button {
+    @apply text-white text-center text-xl not-italic font-bold leading-5 underline;
+  }
 
   
-
 }
+
+ 

@@ -2,45 +2,36 @@
 import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import CustomTabsGroup, { TabPanel } from "../CustomTabsGroup";
+import GroupsCards from "../GroupsCards";
 
 export default function Groups() {
-  const [value, setValue] = React.useState("granted-to-me");
-
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    console.log(newValue);
-    setValue(newValue);
-  };
-
-  const tabStyle = {
-    textTransform: "none",
-    color: "rgba(176, 176, 176, 0.50)", // Change the text color to black when selected
-    fontFamily: "inter",
-    paddingX: "40px",
-    marginX: "20px",
-
-    paddingY: "0px",
-    fontSize: "16px",
-    fontWeight: 400,
-    lineHeight: "12px",
-    "&.Mui-selected": {
-      color: "white",
-      fontWeight: 700,
-    },
+  const [tab, setTab] = React.useState(0);
+  const handleTabChange = (value: number) => {
+    setTab(value);
   };
   return (
     <>
       <div className="w-full flex justify-center">
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="primary"
-          textColor="primary"
-          aria-label="groups tabs"
-        >
-          <Tab sx={tabStyle} value={"cranted-by-me"} label="Created by me" />
-          <Tab sx={tabStyle} value={"create"} label="Create new group" />
-          <Tab sx={tabStyle} value={"other-groups"} label="Other Groups" />
-        </Tabs>
+        <CustomTabsGroup
+          handleTabChange={handleTabChange}
+          tabs={[
+            { title: "Created By Me", disabled: false },
+            { title: "Create new group", disabled: false },
+            { title: "Other Groups", disabled: false },
+          ]}
+        />
+      </div>
+      <div className="mt-10">
+        <TabPanel value={tab} index={0}>
+          <GroupsCards />
+        </TabPanel>
+        <TabPanel value={tab} index={1}>
+          Create new group
+        </TabPanel>
+        <TabPanel value={tab} index={2}>
+          Other groups
+        </TabPanel>
       </div>
     </>
   );

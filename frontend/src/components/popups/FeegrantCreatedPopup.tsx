@@ -12,7 +12,7 @@ const FeegrantCreatedPopup = () => {
             <p>You have successfully updated the Grant</p>
         </div>
         <div className='Feegrant-Dismiss'>
-            <h2>Dismiss</h2>
+            <button>Dismiss</button>
         </div>
     </div>
   )
