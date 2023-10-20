@@ -881,7 +881,21 @@ body {
     @apply flex w-[167px] flex-col justify-center self-stretch text-white text-xl not-italic font-bold leading-6;
   }
   .proposal-name {
-  @apply flex flex-col justify-center flex-[1_0_0] self-stretch text-white text-sm not-italic font-light leading-4 tracking-[0.56px];
+  @apply flex flex-col justify-center self-stretch text-white text-sm not-italic font-light leading-4 tracking-[0.56px];
+  }
+  .proposalname-grid {
+    @apply flex w-[1542px] h-[308px] flex-col items-start gap-10 p-6 rounded-2xl;
+    background: rgba(46, 32, 55, 0.75);
+  }
+  .Proposal-title {
+    @apply flex justify-between items-center self-stretch gap-6;
+  }
+  .Proposal-Name {
+    @apply text-white text-base not-italic font-bold leading-4 tracking-[0.64px] ml-[-1100px];
+  }
+  .vote-button {
+    @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
+
   }
 
   
