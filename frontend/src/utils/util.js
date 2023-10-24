@@ -59,6 +59,8 @@ export const getSelectedPartFromURL = (urlParts) => {
       return "Staking";
     case "feegrant":
       return "Feegrant";
+    case "governance":
+      return "Governance";
     case "groups":
       return "Groups";
     case "authz":
