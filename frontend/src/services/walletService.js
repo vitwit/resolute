@@ -1,12 +1,31 @@
+export const isWalletInstalled = (walletName) => {
+  switch (walletName) {
+    case "keplr":
+      if (!window.keplr) return false;
+      window.wallet = window.keplr;
+      return true;
+    case "leap":
+      if (!window.leap) return false;
+      window.wallet = window.leap;
+      return true;
+    case "cosmostation":
+      if (!window.cosmostation?.providers?.keplr) return false;
+      window.wallet = window?.cosmostation?.providers?.keplr;
+      return true;
+    default:
+      return false;
+  }
+};
+
 export const connectWalletV1 = async (data) => {
+  const walletName = data.walletName;
   const mainnets = data.mainnets;
   const testnets = data.testnets;
   console.log("connect wallet called...", data);
-  if (!window.keplr) {
-    alert("keplr not connected");
+  if (!isWalletInstalled(walletName)) {
+    alert("wallet is not connected");
     return;
   } else {
-    window.wallet = window.keplr;
     window.wallet.defaultOptions = {
       sign: {
         preferNoSetMemo: true,
@@ -84,7 +103,7 @@ export const connectWalletV1 = async (data) => {
     if (chainInfos.length === 0) {
       alert("Permission denied for all the networks");
     }
-    
+
     data.setIsConnected(true);
   }
 };
