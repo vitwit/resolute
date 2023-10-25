@@ -117,27 +117,27 @@ body {
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   }
 
-  .sidebar__menu {
+  .sidebar-menu {
     @apply flex flex-col gap-10;
   }
 
-  .sidebar__menu__item {
+  .sidebar-menu-item {
     @apply px-4 py-2 rounded-full text-white flex items-center cursor-pointer hover:bg-[#5c4670];
   }
 
-  .sidebar__menu__item-selected {
+  .sidebar-menu-item-selected {
     @apply bg-[#B0B0B033] hover:bg-[#B0B0B033];
   }
 
-  .sidebar__footer {
+  .sidebar-footer {
     @apply flex gap-6 flex-col;
   }
 
-  .sidebar__footer__border {
+  .sidebar-footer-border {
     @apply h-[1px] bg-[#B0B0B033];
   }
 
-  .sidebar__footer__authz {
+  .sidebar-footer-authz {
     @apply flex gap-2 px-4 py-2 text-white text-[14px] leading-3;
   }
 }

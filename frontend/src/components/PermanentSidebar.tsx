@@ -57,7 +57,7 @@ const PermanentSidebar = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="main">
       <div className="sidebar">
-        <div className="sidebar__menu">
+        <div className="sidebar-menu">
           <div className="sidebar-logo">
             <Image
               src="/vitwit-logo.png"
@@ -73,15 +73,14 @@ const PermanentSidebar = ({ children }: { children: React.ReactNode }) => {
                 key={index}
                 itemName={item.name}
                 icon={item.icon}
-                selected={false}
                 link={item.link}
               />
             ))}
           </div>
         </div>
-        <div className="sidebar__footer">
-          <div className="sidebar__footer__border"></div>
-          <div className="sidebar__footer__authz">
+        <div className="sidebar-footer">
+          <div className="sidebar-footer-border"></div>
+          <div className="sidebar-footer-authz">
             <div>Authz Mode</div>
             <div>Toggle</div>
           </div>
@@ -105,21 +104,19 @@ const MenuItem = ({
   pathname,
   itemName,
   icon,
-  selected,
   link,
 }: {
   pathname: string;
   itemName: string;
   icon: any;
-  selected: boolean;
   link: string;
 }) => {
   pathname = pathname.toLowerCase();
   pathname = pathname === "overview" ? "/" : `/${pathname}`;
   return (
     <Link
-      className={`sidebar__menu__item ${
-        pathname === link ? "sidebar__menu__item-selected" : ""
+      className={`sidebar-menu-item ${
+        pathname === link ? "sidebar-menu-item-selected" : ""
       }`}
       href={link}
     >
