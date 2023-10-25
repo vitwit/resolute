@@ -104,7 +104,7 @@ export const connectWalletV1 = async (data) => {
       alert("Permission denied for all the networks");
     }
 
-    data.setIsConnected(true);
+    data.setConnected(true);
   }
 };
 

@@ -10,7 +10,7 @@ export const ConnectWalletButton = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [isConnected, setIsConnected] = useState(false);
+  const [connected, setConnected] = useState(false);
   const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
     useState<boolean>(false);
   const handleClose = () => {
@@ -21,10 +21,10 @@ export const ConnectWalletButton = ({
       mainnets: networks,
       testnets: [],
       walletName: walletName,
-      setIsConnected,
+      setConnected,
     });
   };
-  return isConnected ? (
+  return connected ? (
     <>{children}</>
   ) : (
     <div>
