@@ -1,6 +1,8 @@
 import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
 import { MsgCreateVestingAccount } from "cosmjs-types/cosmos/vesting/v1beta1/tx";
 import { Msg } from "../types";
+import { coins } from "@cosmjs/proto-signing";
+import Long from "long";
 
 const msgCreateVestingAccount =
   "/cosmos.vesting.v1beta1.MsgCreateVestingAccount";
@@ -18,13 +20,8 @@ export function CreateVestingAccount(
     value: MsgCreateVestingAccount.fromPartial({
       fromAddress: fromAddress,
       toAddress: toAddress,
-      amount: [
-        Coin.fromPartial({
-          denom: denom,
-          amount: String(amount),
-        }),
-      ],
-      endTime: endTime,
+      amount: coins(amount, denom),
+      endTime: Long.fromString(endTime.toString()),
       delayed: delayed,
     }),
   };

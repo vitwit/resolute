@@ -51,7 +51,7 @@ export default function CreateVestingAccountForm(props) {
       Number(currency?.coinDecimals)
     ).atomics;
 
-    const msgCreateVestingAccount = CreateVestingAccount(data.from, data.to, baseAmount, currency?.coinDenom, data.expiration.getTime(), data.delayed);
+    const msgCreateVestingAccount = CreateVestingAccount(data.from, data.to, baseAmount, currency?.coinMinimalDenom, data.expiration.getTime(), data.delayed);
     props.onCreateVestingAccount(msgCreateVestingAccount);
   };
 

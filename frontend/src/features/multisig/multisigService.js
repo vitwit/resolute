@@ -33,7 +33,7 @@ export const fetchMultisigAccounts = (address) => {
 
 export const createTxn = (address, payload) => {
   let uri = `${BASE_URL}/multisig/${address}/tx`;
-
+  payload.messages[0].value.endTime = payload.messages[0].value.endTime.toString()
   return Axios.post(uri, payload);
 };
 
