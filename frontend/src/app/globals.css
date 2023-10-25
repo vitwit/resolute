@@ -46,41 +46,41 @@ body {
 }
 
 @layer components {
-  .connectWallet {
+  .connect-wallet {
     @apply px-[120px] flex flex-col justify-center h-screen;
     font-family: "Space Grotesk" !important;
     background: url("/cosmos-background.png"), lightgray 50% / cover;
   }
 
-  .connectWallet__ship1 {
+  .space-ship-image-1 {
     @apply absolute top-[72px] left-[272px];
   }
 
-  .connectWallet__ship2 {
+  .space-ship-image-2 {
     @apply absolute top-[180px] left-[282px];
   }
 
-  .connectWallet__header {
+  .connect-wallet-header {
     @apply pt-6 absolute top-0;
   }
 
-  .resolute__title {
+  .home-title {
     @apply relative flex gap-[140px] text-white text-[150px] font-bold leading-[175px] tracking-[6px];
   }
 
-  .resolute__title img {
+  .home-title img {
     @apply absolute left-[170px] bottom-[-20px];
   }
 
-  .resolute__title h1 {
+  .home-title h1 {
     @apply z-[10];
   }
 
-  .resolute__title__caption h2 {
+  .home-title-caption h2 {
     @apply text-white text-[48px] font-light leading-[90px] tracking-[1.92px];
   }
 
-  .connectWallet__btn {
+  .connect-wallet-btn {
     @apply text-white px-[54px] py-6 rounded-full border-[4px] border-[#612155] text-[24px] font-bold leading-8 tracking-[1.92px];
   }
 

@@ -28,22 +28,22 @@ export const ConnectWalletButton = ({
     <>{children}</>
   ) : (
     <div>
-      <div className="connectWallet">
+      <div className="connect-wallet">
         <Image
-          className="connectWallet__ship1"
+          className="space-ship-image-1"
           src="/space-ship.png"
           width={136}
           height={151}
           alt="Space Ship"
         />
         <Image
-          className="connectWallet__ship2"
+          className="space-ship-image-2"
           src="/space-ship.png"
           width={72}
           height={80}
           alt="Space Ship"
         />
-        <div className="connectWallet__header">
+        <div className="connect-wallet-header">
           <Image
             src="/vitwit-logo.png"
             width={184}
@@ -51,23 +51,18 @@ export const ConnectWalletButton = ({
             alt="Vitwit-Logo"
           />
         </div>
-        <div className="resolute__title">
+        <div className="home-title">
           <h1>Res</h1>
           <Image src="/o.png" width={348} height={200} alt="Resolute" />
           <h1>lute</h1>
         </div>
-        <div className="resolute__title__caption">
+        <div className="home-title-caption">
           <h2>Interchain Interface</h2>
         </div>
         <div>
           <button
-            className="connectWallet__btn"
+            className="connect-wallet-btn"
             onClick={() => {
-              // connectWalletV1({
-              //   mainnets: networks,
-              //   testnets: [],
-              //   setIsConnected,
-              // });
               setConnectWalletDialogOpen(true);
             }}
           >
