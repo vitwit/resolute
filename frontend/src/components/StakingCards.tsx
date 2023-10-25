@@ -44,8 +44,8 @@ const StakingCards = () => {
               </div>
             </div>
             <div className="flex justify-between">
-              <button className="customBtn">Claim</button>
-              <button className="customBtn">Claim&Stake</button>
+              <button className="custom-btn">Claim</button>
+              <button className="custom-btn">Claim&Stake</button>
               <Image
                 className="cursor-pointer"
                 src="/vector.svg"

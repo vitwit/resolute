@@ -63,7 +63,7 @@ export default function NewBasicGrant() {
       <button
         disabled={isSubmitting}
         type="submit"
-        className="flex customBtn mt-10 h-10 items-center justify-center"
+        className="flex custom-btn mt-10 h-10 items-center justify-center"
       >
         <div className="input-bold-label">Grant</div>
       </button>

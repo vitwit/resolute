@@ -4,8 +4,8 @@ import React from "react";
 const AssetsTable = () => {
   return (
     <div>
-      <table className="customTable overflow-y-scroll">
-        <thead className="customTableHead">
+      <table className="custom-table overflow-y-scroll">
+        <thead className="custom-table-head">
           <tr className="text-left">
             <th className="w-1/4">Network</th>
             <th className="w-1/5">StakeAmount</th>
@@ -45,8 +45,8 @@ const AssetsTable = () => {
               </td>
               <td>
                 <div className="flex justify-between items-center">
-                  <button className="customBtn">Claim</button>
-                  <button className="customBtn customBtnDisabled">
+                  <button className="custom-btn">Claim</button>
+                  <button className="custom-btn custom-btn-disabled">
                     Claim & Stake
                   </button>
                 </div>

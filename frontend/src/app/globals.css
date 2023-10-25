@@ -183,27 +183,27 @@ body {
     @apply text-[14px] font-light leading-6;
   }
 
-  .customBtn {
+  .custom-btn {
     @apply min-w-[140px] rounded-full border-[1px] text-[14px] leading-3 py-[14px] px-6;
   }
 
-  .customBtnDisabled {
+  .custom-btn-disabled {
     @apply border-[#B0B0B080] text-[#B0B0B080] hover:cursor-not-allowed;
   }
 
-  .customTable {
+  .custom-table {
     @apply w-full;
   }
 
-  .customTable td {
+  .custom-table td {
     @apply pt-6 text-[14px] leading-3;
   }
 
-  .customTableHead {
+  .custom-table-head {
     @apply pb-4 border-b-[0.5px] border-[#B0B0B033];
   }
 
-  .customTableHead th {
+  .custom-table-head th {
     @apply text-[16px] leading-3 font-normal h-10;
   }
 }
@@ -231,11 +231,11 @@ body {
     @apply flex flex-col justify-between space-y-4;
   }
 
-  .account-metadata__title {
+  .account-metadata-title {
     @apply text-gray-400 text-right text-sm font-normal leading-4 tracking-tighter;
   }
 
-  .account-metadata__content {
+  .account-metadata-content {
     @apply text-white text-right text-base font-normal leading-[40px] tracking-[0.56px];
   }
   .balance-title {
@@ -849,7 +849,7 @@ body {
   .Grouptablehead th {
     @apply text-[16px] leading-3 font-normal h-10;
   }
-  .customTableHead td {
+  .custom-table-head td {
     @apply pt-6 text-[14px] leading-3 ;
   }
   .customGrouptable {

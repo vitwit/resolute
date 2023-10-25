@@ -13,8 +13,8 @@ const GrantsByMeTable = () => {
 
   return (
     <div>
-      <table className="customTable overflow-y-scroll">
-        <thead className="customTableHead">
+      <table className="custom-table overflow-y-scroll">
+        <thead className="custom-table-head">
           <tr className="text-left">
             <th className="w-1/5">Network</th>
             <th className="w-1/4">Granter</th>
@@ -59,7 +59,7 @@ const GrantsByMeTable = () => {
                 </div>
               </td>
               <td>
-                <button className="customBtn">Revoke</button>
+                <button className="custom-btn">Revoke</button>
               </td>
             </tr>
           ))}

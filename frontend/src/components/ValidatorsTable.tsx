@@ -22,8 +22,8 @@ const ValidatorsTable = () => {
   }, [validators]);
   return (
     <div>
-      <table className="customTable overflow-y-scroll">
-        <thead className="customTableHead">
+      <table className="custom-table overflow-y-scroll">
+        <thead className="custom-table-head">
           <tr className="text-left">
             <th>Rank</th>
             <th>Validator</th>
@@ -86,7 +86,7 @@ const ValidatorsTable = () => {
               </td>
               <td>20%</td>
               <td>
-                <button className="customBtn">Claim</button>
+                <button className="custom-btn">Claim</button>
               </td>
             </tr>
           ))}

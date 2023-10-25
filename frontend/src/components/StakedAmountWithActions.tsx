@@ -12,9 +12,9 @@ const StakedAmountWithActions = () => {
           </div>
         </div>
         <div className="flex space-x-10 items-center">
-        <div><button className="customBtn">Claim All</button></div>
-        <div><button className="customBtn">Stake All</button></div>
-        <div><button className="customBtn">Delegate</button></div>
+        <div><button className="custom-btn">Claim All</button></div>
+        <div><button className="custom-btn">Stake All</button></div>
+        <div><button className="custom-btn">Delegate</button></div>
           
         </div>
       </div>

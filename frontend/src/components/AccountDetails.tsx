@@ -24,10 +24,10 @@ const AccountDetails = () => {
       </div>
       <div className="flex flex-end space-x-12">
         <div className="account-metadata">
-          <div className="account-metadata__title">Public Key</div>
+          <div className="account-metadata-title">Public Key</div>
 
           <div className="flex justify-between space-x-2">
-            <div className="account-metadata__content">
+            <div className="account-metadata-content">
               A548OhedNfWrFXPfe5...
             </div>
             <Image
@@ -40,14 +40,14 @@ const AccountDetails = () => {
           </div>
         </div>
         <div className="account-metadata">
-          <div className="account-metadata__title">Account Number</div>
+          <div className="account-metadata-title">Account Number</div>
 
-          <div className="account-metadata__content">1234567893</div>
+          <div className="account-metadata-content">1234567893</div>
         </div>
         <div className="account-metadata">
-          <div className="account-metadata__title">Sequence</div>
+          <div className="account-metadata-title">Sequence</div>
 
-          <div className="account-metadata__content">000000</div>
+          <div className="account-metadata-content">000000</div>
         </div>
       </div>
     </div>
