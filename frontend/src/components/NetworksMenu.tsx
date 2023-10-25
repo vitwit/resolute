@@ -5,11 +5,10 @@ import React, { useState } from "react";
 
 const NetworksMenu = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [items, setItems] = useState([]);
   return (
     <div>
       <div
-        className="topNav__options__networks"
+        className="top-nav-options-networks"
         onClick={() => setMenuOpen((menuOpen) => !menuOpen)}
       >
         <div className="flex items-center gap-2">
@@ -19,7 +18,7 @@ const NetworksMenu = () => {
             height={24}
             alt="All Networks"
           />
-          <div className="topNav__options__networks__currentNetwork">
+          <div className="top-nav-options-networks-currentNetwork">
             All Networks
           </div>
         </div>
@@ -33,31 +32,31 @@ const NetworksMenu = () => {
         </div>
       </div>
       {menuOpen ? (
-        <div className="networksMenu">
+        <div className="networks-menu">
           <ul>
-            <div className="networkItem networkSearch">
+            <div className="network-menu-item network-search">
               <input type="text" placeholder="  Search" />
             </div>
             {[1, 2, 3, 4, 5, 6].map((item, index) => (
-              <li key={index} className="networkItem">
+              <li key={index} className="network-menu-item">
                 <Image
                   src="./osmosis-logo.svg"
                   width={24}
                   height={24}
                   alt="osmosis"
                 />
-                <div className="networkName">Osmosis</div>
+                <div className="network-name">Osmosis</div>
               </li>
             ))}
 
-            <div className="networkItem addNetwork">
+            <div className="network-menu-item add-network">
               <Image
                 src="./add-network-icon.svg"
                 width={24}
                 height={24}
                 alt="Add Network"
               />
-              <div className="networkName">Add Network</div>
+              <div className="network-name">Add Network</div>
             </div>
           </ul>
         </div>

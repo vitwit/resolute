@@ -143,43 +143,43 @@ body {
 }
 
 @layer components {
-  .topNav {
+  .top-nav {
     @apply w-full flex justify-between items-center;
   }
 
-  .topNav__title h2 {
+  .top-nav-title h2 {
     @apply text-white text-[20px] leading-6 font-bold;
   }
 
-  .topNav__options {
+  .top-nav-options {
     @apply flex gap-6 items-center;
   }
 
-  .topNav__options__networks {
+  .top-nav-options-networks {
     @apply flex items-center justify-between w-[200px] rounded-full border-[1px] px-4 py-1 hover:cursor-pointer;
   }
 
-  .topNav__options__networks__currentNetwork {
+  .top-nav-options-networks-currentNetwork {
     @apply text-[14px] leading-3 text-white;
   }
 
-  .networksMenu {
+  .networks-menu {
     @apply absolute top-[46px] right-[64px] bg-[#3C3047] rounded-lg w-[200px] py-1;
   }
 
-  .networkItem {
+  .network-menu-item {
     @apply flex gap-2 px-4 py-2 cursor-pointer hover:bg-[#5a4b66];
   }
 
-  .networkSearch {
+  .network-search {
     @apply cursor-default px-4 hover:bg-[#3C3047] border-b-[1px] border-[#B0B0B033];
   }
 
-  .networkSearch input {
+  .network-search input {
     @apply w-full bg-transparent focus:outline-none placeholder:text-[#FFFFFF80] text-[14px] leading-6 font-light;
   }
 
-  .networkName {
+  .network-name {
     @apply text-[14px] font-light leading-6;
   }
 

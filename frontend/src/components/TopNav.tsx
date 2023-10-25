@@ -7,13 +7,13 @@ import { useRouter } from "next/navigation";
 const TopNav = ({ pathname }: { pathname: string }) => {
   const router = useRouter();
   return (
-    <div className="topNav">
-      <div className="topNav__title">
+    <div className="top-nav">
+      <div className="top-nav-title">
         <h2>{pathname}</h2>
       </div>
-      <div className="topNav__options">
+      <div className="top-nav-options">
         <NetworksMenu />
-        <div className="topNav__options__logout">
+        <div>
           <Image
             onClick={() => {
               window.location.reload();
