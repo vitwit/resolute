@@ -21,13 +21,13 @@ const Walletpage = ({
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="custom-box flex-col">
-          <div className="header">
+          <div className="add-wallet-header">
             <h2>Add Wallet</h2>
             <div className="dialog-close-icon" onClick={handleClose}>
               <Image src="/close.svg" width={40} height={40} alt="close" />
             </div>
           </div>
-          <div className="container">
+          <div className="add-wallet-dialog-content">
             <div
               className="wallet"
               onClick={() => {
@@ -40,7 +40,7 @@ const Walletpage = ({
                 height={100}
                 alt="Keplrwallet"
               />
-              <p className="text">Keplr Wallet</p>
+              <p className="wallet-name">Keplr Wallet</p>
             </div>
             <div
               className="wallet"
@@ -54,7 +54,7 @@ const Walletpage = ({
                 height={100}
                 alt="Leap Wallet"
               />
-              <p className="text">Leap Wallet</p>
+              <p className="wallet-name">Leap Wallet</p>
             </div>
             <div
               className="wallet"
@@ -68,7 +68,7 @@ const Walletpage = ({
                 height={100}
                 alt="cosmostation"
               />
-              <p className="text">Cosmostation </p>
+              <p className="wallet-name">Cosmostation </p>
             </div>
           </div>
         </div>

@@ -14,16 +14,6 @@ body {
   border-width: 0;
 }
 
-body {
-  @apply leading-[normal] m-0;
-}
-
-*,
-::before,
-::after {
-  border-width: 0;
-}
-
 .blur-effect {
   backdrop-filter: blur(2px);
 }
@@ -294,7 +284,7 @@ body {
   }
 
   .staking-amount {
-    @apply text-white text-[28px] not-italic font-semibold leading-10 tracking-[1.12px] text-[#B0B0B0] text-[28px] not-italic font-semibold leading-10 tracking-[1.12px];
+    @apply text-[#B0B0B0] text-[28px] not-italic font-semibold leading-10 tracking-[1.12px];
   }
   .staking-amount-heading {
     @apply text-[#B0B0B0] text-sm not-italic font-light leading-3 tracking-[0.56px];
@@ -302,15 +292,16 @@ body {
   .h-line {
     @apply w-full h-px self-stretch bg-[#b0b0b033];
   }
-  
+
   .input-w-full {
     @apply w-full rounded h-10 px-4 py-2 bg-transparent border border-[#b0b0b033];
   }
 
   .input-bold-label {
-      @apply text-white text-sm not-italic font-bold leading-6;
-    }
+    @apply text-white text-sm not-italic font-bold leading-6;
+  }
 }
+
 @layer components {
   .custom-box {
     @apply w-[1102px] h-[300px] rounded-2xl;
@@ -320,11 +311,11 @@ body {
     display: flex;
   }
 
-  .header {
+  .add-wallet-header {
     @apply flex justify-between items-center relative;
   }
 
-  .header .dialog-close-icon {
+  .add-wallet-header .dialog-close-icon {
     @apply absolute right-0;
   }
 
@@ -332,23 +323,20 @@ body {
     @apply cursor-pointer;
   }
 
-  .header h2 {
+  .add-wallet-header h2 {
     @apply flex-col font-bold text-white text-[20px];
     margin: auto;
   }
 
-  .container {
+  .add-wallet-dialog-content {
     @apply flex w-full justify-between mt-10;
     padding: 0 180px;
-  }
-
-  .text {
-    @apply font-bold text-white items-center text-center leading-3 text-[20px] h-10 flex;
   }
 
   .wallet {
     @apply w-[172px] h-[140px] flex flex-col justify-center items-center cursor-pointer rounded-md hover:bg-[#3B3148];
   }
+
   .rectangle-box {
     @apply w-[788px] h-[376px] rounded-2xl;
     justify-content: center;
@@ -358,46 +346,57 @@ body {
     padding: 40px 24px;
     display: flex;
   }
+
   .heading {
     @apply flex justify-between items-center relative font-bold text-white text-[20px];
     margin: auto;
     margin-top: 10px;
   }
-  .deleteimage {
+
+  .delete-image {
     @apply flex items-center justify-between flex-col;
     margin-bottom: 40px;
   }
-  .text {
-    @apply text-white font-light leading-5 text-[20px];
+
+  .wallet-name {
+    @apply font-bold text-white items-center text-center leading-3 text-[20px] h-10 flex;
   }
+
   .cancel-button {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
     font-normal leading-3;
   }
-  .Logout-box {
+
+  .logout-box {
     @apply flex w-[788px] h-[376px] flex-col justify-center items-start gap-10 relative
     backdrop-blur-[2px] px-6 py-10 rounded-2xl;
     background: #20172f;
   }
+
   .title {
     @apply flex justify-between items-center relative font-bold text-white text-[20px] leading-3;
     margin: auto;
     margin-top: 10px;
   }
-  .Logoutimage {
+
+  .logout-image {
     @apply flex items-center justify-between flex-col gap-4 w-full;
   }
-  .Logout-text {
+
+  .logout-text {
     @apply text-white text-center not-italic font-light leading-5 text-[20px];
   }
-  .cancel1-button {
+
+  .cancel-button {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
     font-normal leading-3;
   }
-  .Logout-button {
+
+  .logout-button {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white w-[350px] h-10 text-white
     font-normal leading-3;
   }
+  
   .Staking-box {
     @apply flex w-[788px] h-[568px] flex-col justify-center items-start gap-10
     backdrop-blur-[2px] px-6 py-10 rounded-2xl;
@@ -761,7 +760,7 @@ body {
   }
   .VoteforProposal-popup {
     @apply flex w-[788px]  h-[518px] flex-col justify-center items-start gap-10 backdrop-blur-[2px] px-6 py-10 rounded-2xl;
-  background: #20172f;
+    background: #20172f;
   }
   .vote-name {
     @apply flex h-10 justify-center items-center  w-full;
@@ -769,8 +768,8 @@ body {
   .vote-text {
     @apply text-white text-xl not-italic font-bold leading-3;
   }
-  .VoteProposal-buttons{
-    @apply  flex flex-row items-center gap-10 self-stretch w-full justify-between ;
+  .VoteProposal-buttons {
+    @apply flex flex-row items-center gap-10 self-stretch w-full justify-between;
   }
   .Proposal {
     @apply flex items-start gap-2 w-[350px] self-stretch border text-white text-sm not-italic font-light leading-6 px-4 py-2 rounded-[100px] border-solid border-white;
@@ -781,17 +780,17 @@ body {
   .voteproposal-message {
     @apply flex h-[86px] w-[740px] items-start gap-2 self-stretch border px-4 py-2 rounded-lg border-solid border-[rgba(176,176,176,0.20)];
   }
-  .voteproposal-message p{
+  .voteproposal-message p {
     @apply text-white text-sm not-italic font-light leading-6;
   }
   .vote-confirm {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
   }
   .Groups-Main {
-    @apply flex w-[1542px] flex-col items-start gap-10 p-6 rounded-2xl ;
-  background: rgba(46, 32, 55, 0.75);
+    @apply flex w-[1542px] flex-col items-start gap-10 p-6 rounded-2xl;
+    background: rgba(46, 32, 55, 0.75);
   }
-  .titlegrp-Name{
+  .titlegrp-Name {
     @apply text-white text-base not-italic font-bold leading-3 ml-[-1270px];
   }
   .Group-details {
@@ -817,18 +816,17 @@ body {
     /* @apply text-white flex-row text-sm not-italic font-normal leading-10 tracking-[0.56px] flex w-[183px] h-6 justify-center; */
   }
   .Group2-Address {
-     @apply flex items-center w-[183px] h-6 text-right  mr-2 justify-center text-white text-sm not-italic font-normal leading-10 tracking-[0.56px];
+    @apply flex items-center w-[183px] h-6 text-right  mr-2 justify-center text-white text-sm not-italic font-normal leading-10 tracking-[0.56px];
   }
   .Group2-Edit {
     @apply flex w-7 h-6 flex-col justify-center text-sm not-italic font-extralight leading-10 tracking-[0.56px] underline;
-    
   }
   .Group2buttons {
     @apply flex items-center gap-10 self-stretch;
   }
   .updatebutton {
     @apply flex justify-center w-[120px] items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
-  
+
     /* @apply flex justify-center items-center gap-2.5 self-stretch border text-white text-sm not-italic font-normal leading-3 px-6 py-3.5 rounded-[100px] border-solid border-white; */
   }
   .leaveButton {
@@ -844,20 +842,20 @@ body {
     @apply flex w-[200px] h-10 flex-col justify-center items-center gap-2.5 leading-6 border px-4 py-1 rounded-[100px] border-solid border-white;
   }
   .Grouptablehead {
-    @apply pb-4 border-b-[0.5px] border-[#B0B0B033]; 
+    @apply pb-4 border-b-[0.5px] border-[#B0B0B033];
   }
   .Grouptablehead th {
     @apply text-[16px] leading-3 font-normal h-10;
   }
   .custom-table-head td {
-    @apply pt-6 text-[14px] leading-3 ;
+    @apply pt-6 text-[14px] leading-3;
   }
   .customGrouptable {
-    @apply w-full;    
+    @apply w-full;
   }
   .Groups-vote-grid {
     @apply flex flex-col w-[788px] h-[316px] justify-center items-center gap-10 self-stretch backdrop-blur-[2px] px-6 py-10 rounded-2xl;
-  background: #20172f;
+    background: #20172f;
   }
   .vote-head {
     @apply flex h-10 justify-between items-center;
@@ -874,8 +872,4 @@ body {
   .vote-button {
     @apply text-white text-center text-xl not-italic font-bold leading-5 underline;
   }
-
-  
 }
-
- 
