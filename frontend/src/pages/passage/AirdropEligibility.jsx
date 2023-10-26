@@ -15,6 +15,7 @@ import {
   getClaimParams,
   txClaimAction,
   resetClaimRecords,
+  getAirdropDetails,
 } from "../../features/airdrop/airdropSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import { resetError, setError } from "../../features/common/commonSlice";
@@ -24,6 +25,14 @@ import AlertTitle from "@mui/material/AlertTitle";
 import CustomizedDialogs from "../../components/passage/disclaimer";
 import "./../common.css";
 import { networks } from "../../utils/chainsInfo";
+import {
+  Box,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+} from "@mui/material";
+import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
 
 function getPasgNetwork(pathParams) {
   for (let i = 0; i < networks.length; i++) {
@@ -71,6 +80,10 @@ export default function AirdropEligibility() {
   const status = useSelector((state) => state.airdrop.claimStatus);
   const errMsg = useSelector((state) => state.airdrop.errMsg);
   const txStatus = useSelector((state) => state.airdrop.tx.status);
+  const detailsStatus = useSelector(
+    (state) => state.airdrop.airdropDetailsStatus
+  );
+  const airdropDetails = useSelector((state) => state.airdrop.airdropDetails);
   const walletAddress = useSelector(
     (state) =>
       state.wallet.networks?.[nameToChainIDs[pathParams?.networkName]]
@@ -90,6 +103,10 @@ export default function AirdropEligibility() {
   function navigateTo(path) {
     navigate(path);
   }
+
+  const handleGOTOStaking = () => {
+    navigate(`/${pathParams?.networkName}/staking`);
+  };
 
   useEffect(() => {
     if (chainInfo.showAirdrop) {
@@ -153,6 +170,11 @@ export default function AirdropEligibility() {
       dispatch(
         getClaimRecords({
           baseURL: chainInfo.config.rest,
+          address: address,
+        })
+      );
+      dispatch(
+        getAirdropDetails({
           address: address,
         })
       );
@@ -300,6 +322,93 @@ export default function AirdropEligibility() {
                         claim.
                       </Typography>
                     </Alert>
+
+                    {detailsStatus === "fulfilled" ? (
+                      <Box
+                        sx={{
+                          mt: 4,
+                          textAlign: "left",
+                        }}
+                      >
+                        <Typography
+                          variant="title1"
+                          fontWeight={600}
+                          gutterBottom
+                        >
+                          Airdrop breakdown
+                        </Typography>
+                        <TableContainer
+                          component={Paper}
+                          elevation={0}
+                          sx={{
+                            mt: 1,
+                          }}
+                        >
+                          <Table size="small">
+                            <TableHead>
+                              <StyledTableRow>
+                                <StyledTableCell
+                                  sx={{
+                                    fontWeight: 600,
+                                    color: "text.primary",
+                                  }}
+                                >
+                                  Airdrop Category
+                                </StyledTableCell>
+                                <StyledTableCell
+                                  sx={{
+                                    fontWeight: 600,
+                                    color: "text.primary",
+                                  }}
+                                >
+                                  No. of NFTs
+                                </StyledTableCell>
+                                <StyledTableCell
+                                  sx={{
+                                    fontWeight: 600,
+                                    color: "text.primary",
+                                  }}
+                                >
+                                  Total Airdrop
+                                </StyledTableCell>
+                              </StyledTableRow>
+                            </TableHead>
+                            <TableBody>
+                              <StyledTableRow>
+                                <StyledTableCell>
+                                  Town&nbsp;1&nbsp;
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  {airdropDetails?.town1_nfts}
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  {(
+                                    parseFloat(airdropDetails?.town1_amount) /
+                                    10 ** 6
+                                  ).toLocaleString() || 0}
+                                  &nbsp; PASG
+                                </StyledTableCell>
+                              </StyledTableRow>
+                              <StyledTableRow>
+                                <StyledTableCell>
+                                  Town&nbsp;2&nbsp;
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  {airdropDetails?.town2_nfts}
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  {(
+                                    parseFloat(airdropDetails?.town2_amount) /
+                                    10 ** 6
+                                  ).toLocaleString() || 0}
+                                  &nbsp; PASG
+                                </StyledTableCell>
+                              </StyledTableRow>
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </Box>
+                    ) : null}
                   </>
                 ) : (
                   <Alert style={{ textAlign: "left" }} severity="error">
@@ -435,14 +544,28 @@ export default function AirdropEligibility() {
                 )
               )}
               <Paper elevation={1} className="claim-item">
-                <Typography
-                  color="text.primary"
-                  variant="body1"
-                  fontWeight={600}
-                >
-                  #2 Stake your initial airdrop until 14 months from genesis and
-                  recieve +50% of your initial token claim
-                </Typography>
+                <Box>
+                  <Typography
+                    color="text.primary"
+                    variant="body1"
+                    fontWeight={600}
+                    gutterBottom
+                  >
+                    #2 Stake your initial airdrop until 14 months from genesis
+                    and recieve +50% of your initial token claim
+                  </Typography>
+                  <Link
+                    onClick={handleGOTOStaking}
+                    variant="body1"
+                    sx={{
+                      justifyContent: "center",
+                      display: "flex",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Click here to stake
+                  </Link>
+                </Box>
                 <Button variant="contained" disableElevation disabled>
                   Automated
                 </Button>
