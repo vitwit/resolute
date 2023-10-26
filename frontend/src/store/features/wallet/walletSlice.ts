@@ -22,7 +22,7 @@ interface ChainInfo {
 
 const initialState = {
   name: "",
-  connected: isConnected(),
+  connected: false,
   isNanoLedger: false,
   pubKey: "",
   networks: {},

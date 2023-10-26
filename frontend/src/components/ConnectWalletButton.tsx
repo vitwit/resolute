@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { networks } from "../utils/chainsInfo";
 import Image from "next/image";
 import Walletpage from "./popups/WalletPage";
-import { getWalletName } from "../utils/localStorage";
+import { getWalletName, isConnected, logout } from "../utils/localStorage";
 import { useDispatch, useSelector } from "react-redux";
 import { connectWalletV1 } from "../store/features/wallet/walletSlice";
 import { AppDispatch } from "../store/store";
@@ -36,7 +36,7 @@ export const ConnectWalletButton = ({
   useEffect(() => {
     const walletName = getWalletName();
     console.log(walletName)
-    if (connected) {
+    if (isConnected()) {
       dispatch(
         connectWalletV1({
           walletName,
@@ -64,7 +64,7 @@ export const ConnectWalletButton = ({
       `${walletName}_keystorechange`,
       accountChangeListener
     );
-
+    
     return () => {
       window.removeEventListener(
         `${walletName}_keystorechange`,
