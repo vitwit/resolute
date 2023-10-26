@@ -2,10 +2,12 @@
 
 import { configureStore } from "@reduxjs/toolkit";
 import multisigSlice from "./features/multisig/multisigSlice";
+import walletSlice from "./features/wallet/walletSlice";
 
 export const store = configureStore({
   reducer: {
-    multisig: multisigSlice
+    wallet: walletSlice,
+    multisig: multisigSlice,
   },
 });
 

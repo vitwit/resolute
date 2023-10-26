@@ -1,29 +1,36 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { connectWalletV1 } from "../services/walletService";
 import { networks } from "../utils/chainsInfo";
 import Image from "next/image";
 import Walletpage from "./popups/WalletPage";
-import { getWalletName, isConnected } from "staking/utils/localStorage";
+import { getWalletName } from "../utils/localStorage";
+import { useDispatch, useSelector } from "react-redux";
+import { connectWalletV1 } from "../store/features/wallet/walletSlice";
+import { AppDispatch } from "../store/store";
 
 export const ConnectWalletButton = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [connected, setConnected] = useState(isConnected());
+  const dispatch = useDispatch<AppDispatch>();
+  const connected = useSelector((state: any) => state.wallet.connected);
   const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
     useState<boolean>(false);
   const handleClose = () => {
-    setConnectWalletDialogOpen(!connectWalletDialogOpen);
+    setConnectWalletDialogOpen(
+      (connectWalletDialogOpen) => !connectWalletDialogOpen
+    );
   };
   const selectWallet = (walletName: string) => {
-    connectWalletV1({
-      mainnets: networks,
-      testnets: [],
-      walletName: walletName,
-      setConnected,
-    });
+    dispatch(
+      connectWalletV1({
+        walletName,
+        mainnets: networks,
+        testnets: [],
+      })
+    );
+    handleClose();
   };
 
   useEffect(() => {
@@ -31,15 +38,16 @@ export const ConnectWalletButton = ({
     const accountChangeListener = () => {
       setTimeout(
         () =>
-          connectWalletV1({
-            mainnets: networks,
-            testnets: [],
-            walletName: walletName,
-            setConnected,
-          }),
+          dispatch(
+            connectWalletV1({
+              walletName,
+              mainnets: networks,
+              testnets: [],
+            })
+          ),
         1000
       );
-      window.location.reload()
+      window.location.reload();
     };
 
     window.addEventListener(

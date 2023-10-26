@@ -3,10 +3,12 @@ import Image from "next/image";
 import React from "react";
 import NetworksMenu from "./NetworksMenu";
 import { useRouter } from "next/navigation";
-import { logout } from "staking/utils/localStorage";
+import { logout } from "../utils/localStorage";
+import { useDispatch } from "react-redux";
+import { resetWallet } from "../store/features/wallet/walletSlice";
 
 const TopNav = ({ pathname }: { pathname: string }) => {
-  const router = useRouter();
+  const dispatch = useDispatch();
   return (
     <div className="top-nav">
       <div className="top-nav-title">
@@ -17,9 +19,8 @@ const TopNav = ({ pathname }: { pathname: string }) => {
         <div>
           <Image
             onClick={() => {
-              logout()
-              window.location.reload();
-              
+              logout();
+              dispatch(resetWallet());
             }}
             className="cursor-pointer"
             src="./logout-icon.svg"
