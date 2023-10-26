@@ -9,6 +9,11 @@ const getClaimRecords = (baseURL, address) => {
   return Axios.get(uri)
 }
 
+const getAirdropDetails = (address) => {
+  const uri = `https://api.resolute.vitwit.com/passage-airdrop-details/airdrop-check?address=${address}`
+  return Axios.get(uri)
+}
+
 const getClaimParams = (baseURL) => {
   const uri = `${cleanURL(baseURL)}${claimParamsURL}`
   return Axios.get(uri)
@@ -17,6 +22,7 @@ const getClaimParams = (baseURL) => {
 const result = {
     claimRecords: getClaimRecords,
     params: getClaimParams,
+    airdropDetails: getAirdropDetails, 
   }
   
   export default result;
