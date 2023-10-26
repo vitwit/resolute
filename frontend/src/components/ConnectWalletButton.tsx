@@ -4,13 +4,14 @@ import { connectWalletV1 } from "../services/walletService";
 import { networks } from "../utils/chainsInfo";
 import Image from "next/image";
 import Walletpage from "./popups/WalletPage";
+import { isConnected } from "staking/utils/localStorage";
 
 export const ConnectWalletButton = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [connected, setConnected] = useState(false);
+  const [connected, setConnected] = useState(isConnected());
   const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
     useState<boolean>(false);
   const handleClose = () => {
@@ -70,7 +71,11 @@ export const ConnectWalletButton = ({
           </button>
         </div>
       </div>
-      <Walletpage open={connectWalletDialogOpen} handleClose={handleClose} selectWallet={selectWallet}/>
+      <Walletpage
+        open={connectWalletDialogOpen}
+        handleClose={handleClose}
+        selectWallet={selectWallet}
+      />
     </div>
   );
 };
