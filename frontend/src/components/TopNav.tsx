@@ -3,6 +3,7 @@ import Image from "next/image";
 import React from "react";
 import NetworksMenu from "./NetworksMenu";
 import { useRouter } from "next/navigation";
+import { logout } from "staking/utils/localStorage";
 
 const TopNav = ({ pathname }: { pathname: string }) => {
   const router = useRouter();
@@ -16,8 +17,9 @@ const TopNav = ({ pathname }: { pathname: string }) => {
         <div>
           <Image
             onClick={() => {
+              logout()
               window.location.reload();
-              router.push("/");
+              
             }}
             className="cursor-pointer"
             src="./logout-icon.svg"
