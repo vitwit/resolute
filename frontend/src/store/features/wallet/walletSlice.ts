@@ -146,7 +146,7 @@ export const connectWalletV1 = createAsyncThunk(
         return rejectWithValue("Permission denied for all the networks");
       } else {
         setConnected();
-        setWalletName(walletName);
+        setWalletName(data.walletName);
         return fulfillWithValue({
           chainInfos,
           nameToChainIDs,

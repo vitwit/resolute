@@ -35,6 +35,16 @@ export const ConnectWalletButton = ({
 
   useEffect(() => {
     const walletName = getWalletName();
+    console.log(walletName)
+    if (connected) {
+      dispatch(
+        connectWalletV1({
+          walletName,
+          mainnets: networks,
+          testnets: [],
+        })
+      );
+    }
     const accountChangeListener = () => {
       setTimeout(
         () =>
