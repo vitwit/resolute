@@ -1,16 +1,17 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connectWalletV1 } from "../services/walletService";
 import { networks } from "../utils/chainsInfo";
 import Image from "next/image";
 import Walletpage from "./popups/WalletPage";
+import { getWalletName, isConnected } from "staking/utils/localStorage";
 
 export const ConnectWalletButton = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [connected, setConnected] = useState(false);
+  const [connected, setConnected] = useState(isConnected());
   const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
     useState<boolean>(false);
   const handleClose = () => {
@@ -24,6 +25,36 @@ export const ConnectWalletButton = ({
       setConnected,
     });
   };
+
+  useEffect(() => {
+    const walletName = getWalletName();
+    const accountChangeListener = () => {
+      setTimeout(
+        () =>
+          connectWalletV1({
+            mainnets: networks,
+            testnets: [],
+            walletName: walletName,
+            setConnected,
+          }),
+        1000
+      );
+      window.location.reload()
+    };
+
+    window.addEventListener(
+      `${walletName}_keystorechange`,
+      accountChangeListener
+    );
+
+    return () => {
+      window.removeEventListener(
+        `${walletName}_keystorechange`,
+        accountChangeListener
+      );
+    };
+  }, []);
+
   return connected ? (
     <>{children}</>
   ) : (
@@ -70,7 +101,11 @@ export const ConnectWalletButton = ({
           </button>
         </div>
       </div>
-      <Walletpage open={connectWalletDialogOpen} handleClose={handleClose} selectWallet={selectWallet}/>
+      <Walletpage
+        open={connectWalletDialogOpen}
+        handleClose={handleClose}
+        selectWallet={selectWallet}
+      />
     </div>
   );
 };
