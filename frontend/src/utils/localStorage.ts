@@ -9,6 +9,10 @@ export function setWalletName(walletName: string) {
   localStorage.setItem(KEY_WALLET_NAME, walletName);
 }
 
+export function getWalletName(): string {
+  return localStorage.getItem(KEY_WALLET_NAME) || "";
+}
+
 export function removeWalletName() {
   localStorage.removeItem(KEY_WALLET_NAME);
 }
