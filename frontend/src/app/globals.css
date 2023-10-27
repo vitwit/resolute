@@ -898,7 +898,10 @@ body {
 
   }
   .multisig-grid {
-    @apply flex flex-row h-[112px] items-end gap-6 self-stretch p-6 rounded-2xl;
+    @apply grid grid-rows-4 gap-[24px];
+  }
+  .multisig{
+    @apply flex flex-row h-[112px] items-start gap-6 self-stretch p-6 rounded-2xl;
   background: rgba(46, 32, 55, 0.75);
   }
   .multisig-details {
@@ -917,10 +920,6 @@ body {
     /* @apply w-full h-px self-stretch bg-[#b0b0b033]; */
     @apply w-px h-[50px];
   background: rgba(176, 176, 176, 0.2);
-  }
-  .members-limit-reach {
-    @apply inline-flex flex-col w-[788px] h-[356px] justify-center items-start gap-10 backdrop-blur-[2px] px-6 py-10 rounded-2xl;
-    background: #20172f;
   }
   .members-limit-head {
     @apply flex w-[225px] flex-col justify-center self-stretch text-white text-center text-xl not-italic font-bold leading-3;
