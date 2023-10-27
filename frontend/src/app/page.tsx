@@ -7,6 +7,7 @@ import AccountDetails from "./../components/AccountDetails";
 import TopNav from "./../components/TopNav";
 import BalanceOverview from "./../components/BalanceOverview";
 import AssetsTable from "./../components/AssetsTable";
+import AllMultisigAccounts from "staking/components/AllMultisigAccounts";
 
 
 
@@ -22,6 +23,9 @@ const OverviewPage = () => {
     <div className="page space-y-10">
       <AccountDetails />
       <BalanceOverview />
+      <AllMultisigAccounts />
+     
+     
      
       
       

@@ -897,7 +897,55 @@ body {
     @apply flex justify-center items-center gap-2.5 self-stretch border px-6 py-3.5 rounded-[100px] border-solid border-white;
 
   }
-
+  .multisig-grid {
+    @apply flex flex-row h-[112px] items-end gap-6 self-stretch p-6 rounded-2xl;
+  background: rgba(46, 32, 55, 0.75);
+  }
+  .multisig-details {
+    @apply space-y-4;
+  }
+  .multisig {
+    @apply flex justify-between items-center flex-[1_0_0] self-stretch;
+  }
+  .multisig-first {
+    @apply text-[#B0B0B0] text-sm not-italic font-normal leading-4 tracking-[0.28px] flex-[1_0_0];
+  }
+  .multisig-second {
+    @apply flex h-6 flex-col justify-center self-stretch text-white text-right text-sm not-italic font-normal leading-10 tracking-[0.56px];
+  }
+  .v-line {
+    /* @apply w-full h-px self-stretch bg-[#b0b0b033]; */
+    @apply w-px h-[50px];
+  background: rgba(176, 176, 176, 0.2);
+  }
+  .members-limit-reach {
+    @apply inline-flex flex-col w-[788px] h-[356px] justify-center items-start gap-10 backdrop-blur-[2px] px-6 py-10 rounded-2xl;
+    background: #20172f;
+  }
+  .members-limit-head {
+    @apply flex w-[225px] flex-col justify-center self-stretch text-white text-center text-xl not-italic font-bold leading-3;
+    font-family: Inter;
+  }
+  .members-limit-reach {
+    @apply flex flex-col w-[788px] h-[316px] justify-center items-center gap-10 self-stretch backdrop-blur-[2px] px-6 py-10 rounded-2xl;
+  background: #20172f;
+  }
+  .member-head {
+    @apply flex h-10 justify-between items-center;
+  }
+  .member-head h2 {
+    @apply flex w-[225px] flex-col justify-center self-stretch text-white text-center text-xl not-italic font-bold leading-3;
+  }
+  .member-image {
+    @apply flex flex-col items-center gap-4;
+  }
+  .member-image p {
+    @apply text-white text-center text-xl not-italic font-light leading-5;
+  }
+  .member-button {
+    @apply text-white text-center text-xl not-italic font-bold leading-5 underline cursor-pointer;
+  }
+ 
   
 }
 
