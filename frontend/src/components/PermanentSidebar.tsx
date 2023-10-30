@@ -3,9 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import TopNav from "./TopNav";
 import { getSelectedPartFromURL } from "../utils/util";
+import AddNetwork from "./popups/AddNetwork";
 
 const menuItems = [
   {
@@ -54,6 +55,14 @@ const PermanentSidebar = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const pathParts = pathname.split("/");
   const selectedPart = getSelectedPartFromURL(pathParts);
+  const [addNetworkDialogOpen, setddNetworkDialogOpen] =
+    useState<boolean>(false);
+    const handleClose = () => {
+      setddNetworkDialogOpen(
+        (addNetworkDialogOpen) => !addNetworkDialogOpen
+      );
+    };
+
   return (
     <div className="main">
       <div className="sidebar">
@@ -94,6 +103,10 @@ const PermanentSidebar = ({ children }: { children: React.ReactNode }) => {
         </div>
         {children}
       </div>
+      <AddNetwork
+        open={addNetworkDialogOpen}
+        handleClose={handleClose}
+      />
     </div>
   );
 };

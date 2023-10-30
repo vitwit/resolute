@@ -21,7 +21,7 @@ const Walletpage = ({
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="custom-box flex-col">
-          <div className="add-wallet-header">
+          <div className="popup-title">
             <h2>Add Wallet</h2>
             <div className="dialog-close-icon" onClick={handleClose}>
               <Image src="/close.svg" width={40} height={40} alt="close" />

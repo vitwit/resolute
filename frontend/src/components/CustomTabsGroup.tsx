@@ -64,6 +64,7 @@ export default function CustomTabsGroup({
     paddingY: "0px",
     fontSize: "16px",
     fontWeight: 400,
+    width: "200px",
     lineHeight: "12px",
     "&.Mui-selected": {
       color: "white",
