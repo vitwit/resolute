@@ -872,4 +872,30 @@ body {
   .vote-button {
     @apply text-white text-center text-xl not-italic font-bold leading-5 underline;
   }
+  .members-limit-head {
+    @apply flex w-[225px] flex-col justify-center self-stretch text-white text-center text-xl not-italic font-bold leading-3;
+    font-family: Inter;
+  }
+  .members-limit-reach {
+    @apply flex flex-col w-[788px] h-[316px] justify-center items-center gap-10 self-stretch backdrop-blur-[2px] px-6 py-10 rounded-2xl;
+  background: #20172f;
+  }
+  .member-head {
+    @apply flex h-10 justify-between items-center;
+  }
+  .member-head h2 {
+    @apply flex w-[225px] flex-col justify-center self-stretch text-white text-center text-xl not-italic font-bold leading-3;
+  }
+  .member-image {
+    @apply flex flex-col items-center gap-4;
+  }
+  .member-image p {
+    @apply text-white text-center text-xl not-italic font-light leading-5;
+  }
+  .member-button {
+    @apply text-white text-center text-xl not-italic font-bold leading-5 underline cursor-pointer;
+  }
+ 
+  
+
 }
