@@ -190,11 +190,11 @@ body {
   }
 
   .custom-table-head {
-    @apply pb-4 border-b-[0.5px] border-[#B0B0B033];
+    @apply pb-4 border-b-[0.5px] border-[#B0B0B033] ;
   }
 
   .custom-table-head th {
-    @apply text-[16px] leading-3 font-normal h-10;
+    @apply text-[16px] leading-3 font-normal h-10  text-[#B0B0B0];
   }
 }
 
@@ -848,7 +848,7 @@ body {
     @apply text-[16px] leading-3 font-normal h-10;
   }
   .custom-table-head td {
-    @apply pt-6 text-[14px] leading-3;
+    @apply pt-6 text-[14px] leading-3  ;
   }
   .customGrouptable {
     @apply w-full;

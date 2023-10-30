@@ -4,6 +4,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import CustomTabsGroup, { TabPanel } from "../CustomTabsGroup";
 import AllMultisigAccount from "staking/app/(routes)/multisig/AllMultisigAccount";
+import RecentTable from "staking/app/(routes)/multisig/RecentTable";
 
 
 export default function Multisig() {
@@ -25,7 +26,8 @@ export default function Multisig() {
       </div>
       <div className="mt-10">
         <TabPanel value={tab} index={0}>
-         Recent
+        <RecentTable />
+        
         </TabPanel>
         <TabPanel value={tab} index={1}>
           Create new group

@@ -18,9 +18,15 @@
     @apply flex h-6 flex-col justify-center self-stretch text-white text-right text-sm not-italic font-normal leading-10 tracking-[0.56px];
   }
   .v-line {
-    /* @apply w-full h-px self-stretch bg-[#b0b0b033]; */
     @apply w-px h-[50px];
-  background: rgba(176, 176, 176, 0.2);
+    background: rgba(176, 176, 176, 0.2);
+  }
+  .network {
+    @apply flex  h-10 justify-between items-center self-stretch;
+  }
+  .network-name {
+    @apply flex w-[200px] flex-col justify-center self-stretch text-white mr-[1305px] text-base not-italic font-normal leading-3 ;
+  font-family: Inter;
   }
   
 
