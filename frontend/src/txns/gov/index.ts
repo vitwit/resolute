@@ -1,1 +1,0 @@
-export { GovVoteMsg } from "./vote";
