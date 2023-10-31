@@ -1,13 +1,8 @@
-"use client";
+"use client"
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { getWalletAmino } from "../../../txns/execute";
 import { isWalletInstalled } from "./walletService";
-import {
-  isConnected,
-  setConnected,
-  setWalletName,
-} from "../../../utils/localStorage";
-declare var window: any;
+import { isConnected, setConnected, setWalletName } from "../../../utils/localStorage";
 
 interface ChainInfo {
   walletInfo: {
