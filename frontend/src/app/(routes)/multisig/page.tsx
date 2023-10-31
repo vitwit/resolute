@@ -1,10 +1,13 @@
 import React from 'react'
-import Multisig from './Multisig'
+import AllMultisigAccount from './AllMultisigAccount'
+// import Groups from "../../../components/tabs/";
+import Multisig from 'staking/components/tabs/Multisg'
+
 
 const page = () => {
   return (
     <div className='page'>
-      <Multisig />
+     <Multisig />
     </div>
   )
 }

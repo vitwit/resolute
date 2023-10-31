@@ -1,3 +1,5 @@
+declare let window: WalletWindow;
+
 export async function getWalletAmino(chainID: string): Promise<[any, string]> {
   await window.wallet.enable(chainID);
   const offlineSigner = window.wallet.getOfflineSignerOnlyAmino(chainID);
