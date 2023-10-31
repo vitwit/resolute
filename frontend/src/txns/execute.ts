@@ -9,7 +9,7 @@ import { MsgClaim } from "./passage/msg_claim";
 import { AirdropAminoConverter } from "../store/features/airdrop/amino";
 import { MsgUnjail } from "./slashing/tx";
 
-declare var window: any;
+declare let window: WalletWindow;
 
 export async function signAndBroadcastClaimMsg(
   signer: any,

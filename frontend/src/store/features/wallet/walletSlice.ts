@@ -7,7 +7,8 @@ import {
   setConnected,
   setWalletName,
 } from "../../../utils/localStorage";
-declare var window: any;
+
+declare let window: WalletWindow;
 
 interface ChainInfo {
   walletInfo: {
