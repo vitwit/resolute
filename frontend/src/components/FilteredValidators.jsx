@@ -16,6 +16,10 @@ export function FilteredValidators(props) {
     (state) => state.staking.chains[chainID].delegations.delegatedTo
   );
 
+  const wallet = useSelector(state => state.wallet);
+  const coinDecimals = wallet?.networks[chainID]?.network?.config?.currencies[0]?.coinDecimals || 6;
+
+
   return (
     <>
       <TableContainer component={Paper} elevation={0}>
@@ -24,7 +28,7 @@ export function FilteredValidators(props) {
             <StyledTableRow>
               <StyledTableCell>Rank</StyledTableCell>
               <StyledTableCell align="left">Validator</StyledTableCell>
-              <StyledTableCell align="center">Voting Power</StyledTableCell>
+              <StyledTableCell align="left">Voting Power</StyledTableCell>
               <StyledTableCell align="center">Status</StyledTableCell>
               <StyledTableCell align="center">Commission</StyledTableCell>
               <StyledTableCell align="center">Actions</StyledTableCell>
@@ -42,8 +46,8 @@ export function FilteredValidators(props) {
                 <StyledTableCell align="left">
                   {validators.active[keyName]?.description.moniker}
                 </StyledTableCell>
-                <StyledTableCell align="center">
-                  {formatVotingPower(validators.active[keyName]?.tokens, 6)}
+                <StyledTableCell align="left">
+                  {formatVotingPower(validators.active[keyName]?.tokens, coinDecimals)}
                 </StyledTableCell>
                 <StyledTableCell>
                   {validators.active[keyName]?.jailed

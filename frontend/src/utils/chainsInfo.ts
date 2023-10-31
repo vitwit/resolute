@@ -290,6 +290,76 @@ export const networks: Network[] = [
     },
     showAirdrop: false,
     logos: {
+      menu: "https://raw.githubusercontent.com/cosmos/chain-registry/master/dydx/images/dydx.svg",
+      toolbar: "https://raw.githubusercontent.com/cosmos/chain-registry/master/dydx/images/dydx.svg"
+    },
+    keplrExperimental: false,
+    leapExperimental: true,
+    isTestnet: false,
+    explorerTxHashEndpoint: "https://mintscan.io/dydx/txs/",
+    config: {
+      chainId: "dydx-mainnet-1",
+      chainName: "DYDX",
+      rest: "https://dydx-api.lavenderfive.com:443",
+      rpc: "https://dydx-rpc.lavenderfive.com:443",
+      currencies: [
+        {
+          coinDenom: "DYDX",
+          coinMinimalDenom: "adydx",
+          coinDecimals: 18
+        }
+      ],
+      bip44: {
+        coinType: 118
+      },
+      bech32Config: {
+        bech32PrefixAccAddr: "dydx",
+        bech32PrefixAccPub: "dydxpub",
+        bech32PrefixValAddr: "dydxvaloper",
+        bech32PrefixValPub: "dydxvaloperpub",
+        bech32PrefixConsAddr: "dydxvalcons",
+        bech32PrefixConsPub: "dydxvalconspub"
+      },
+      walletUrlForStaking: "https://resolute.vitwit.com/dydx/staking",
+      feeCurrencies: [
+        {
+          coinDenom: "DYDX",
+          coinMinimalDenom: "adydx",
+          coinDecimals: 18,
+          coinGeckoId: "dydx",
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.02,
+            high: 0.05
+          }
+        }
+      ],
+      stakeCurrency: {
+        coinDenom: "DYDX",
+        coinMinimalDenom: "adydx",
+        coinDecimals: 18,
+        coinGeckoId: "dydx"
+      },
+      image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
+      theme: {
+        primaryColor: "#fff",
+        gradient: "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)"
+      }
+    }
+  },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false
+    },
+    showAirdrop: false,
+    logos: {
       menu: "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/evmos/evmos.png",
       toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/evmos/images/evmos-logo.png"
     },
@@ -403,6 +473,73 @@ export const networks: Network[] = [
         coinDenom: "JUNO",
         coinMinimalDenom: "ujuno",
         coinDecimals: 6
+      },
+      image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
+      theme: {
+        primaryColor: "#fff",
+        gradient: "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)"
+      }
+    }
+  },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: true
+    },
+    aminoConfig: {
+      authz: true,
+      feegrant: true,
+      group: false
+    },
+    showAirdrop: false,
+    logos: {
+      menu: "https://raw.githubusercontent.com/vitwit/chain-registry/f98e34339a1d30b4a2734b78d6dfcbba9cb02f8e/likecoin/images/like.png",
+      toolbar: "https://raw.githubusercontent.com/vitwit/chain-registry/c194a4887fdc60b96314b813eaeb435c1a15f307/likecoin/images/likecoin-chain-logo.png"
+    },
+    keplrExperimental: false,
+    leapExperimental: false,
+    isTestnet: false,
+    explorerTxHashEndpoint: "https://www.mintscan.io/likecoin/txs/",
+    config: {
+      chainId: "likecoin-mainnet-2",
+      chainName: "LikeCoin",
+      rest: "https://mainnet-node.like.co",
+      rpc: "https://mainnet-node-rpc.like.co",
+      currencies: [
+        {
+          coinDenom: "LIKE",
+          coinMinimalDenom: "nanolike",
+          coinDecimals: 9
+        }
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: "like",
+        bech32PrefixAccPub: "likepub",
+        bech32PrefixValAddr: "likevaloper",
+        bech32PrefixValPub: "likevaloperpub",
+        bech32PrefixConsAddr: "likegvalcons",
+        bech32PrefixConsPub: "likevalconspub"
+      },
+      feeCurrencies: [
+        {
+          coinDenom: "LIKE",
+          coinMinimalDenom: "nanolike",
+          coinDecimals: 9,
+          gasPriceStep: {
+            low: 1,
+            average: 10,
+            high: 1000
+          }
+        }
+      ],
+      bip44: {
+        coinType: 118
+      },
+      stakeCurrency: {
+        coinDenom: "LIKE",
+        coinMinimalDenom: "nanolike",
+        coinDecimals: 9
       },
       image: "https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg",
       theme: {

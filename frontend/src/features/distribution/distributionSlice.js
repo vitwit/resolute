@@ -108,7 +108,9 @@ export const distSlice = createSlice({
   reducers: {
     resetTx: (state, action) => {
       let chainID = action.payload.chainID;
-      state.chains[chainID].tx = initialState.defaultState.tx;
+      if (state.chains[chainID].tx) {
+        state.chains[chainID].tx = initialState.defaultState.tx;
+      }
     },
     resetDefaultState: (state, action) => {
       let chainsMap = {};

@@ -22,6 +22,9 @@ export function InActiveValidators(props) {
 
   const [inactiveVals, setInactiveVals] = useState(validators.inactiveSorted);
 
+  const wallet = useSelector(state => state.wallet);
+  const coinDecimals = wallet?.networks[chainID]?.network?.config?.currencies[0]?.coinDecimals || 6;
+
   useEffect(() => {
     setInactiveVals(validators.inactiveSorted);
   }, [validators]);
@@ -36,7 +39,7 @@ export function InActiveValidators(props) {
             <StyledTableRow>
               <StyledTableCell>Rank</StyledTableCell>
               <StyledTableCell align="left">Validator</StyledTableCell>
-              <StyledTableCell align="center">Voting Power</StyledTableCell>
+              <StyledTableCell align="left">Voting Power</StyledTableCell>
               <StyledTableCell align="center">Commission</StyledTableCell>
               <StyledTableCell align="center">Status</StyledTableCell>
               <StyledTableCell align="center">Action</StyledTableCell>
@@ -55,8 +58,8 @@ export function InActiveValidators(props) {
                   <StyledTableCell align="left">
                     {validators.inactive[keyName]?.description.moniker}
                   </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {formatVotingPower(validators.inactive[keyName]?.tokens, 6)}
+                  <StyledTableCell align="left">
+                    {formatVotingPower(validators.inactive[keyName]?.tokens, coinDecimals)}
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {(

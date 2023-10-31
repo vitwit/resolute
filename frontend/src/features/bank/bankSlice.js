@@ -3,7 +3,6 @@ import { SendMsg } from "../../txns/bank";
 import bankService from "./service";
 import { setError, setTxHash } from "../common/commonSlice";
 import { signAndBroadcast } from "../../utils/signing";
-import { parseBalance } from "../../utils/denom";
 
 const initialState = {
   balances: {},

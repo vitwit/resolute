@@ -693,6 +693,7 @@ export default function Validators(props) {
                 <WitvalValidator
                   validator={validators.witvalValidator}
                   onMenuAction={onMenuAction}
+                  chainID={chainID}
                 />
                 <br />
               </>

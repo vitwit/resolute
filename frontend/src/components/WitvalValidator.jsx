@@ -10,9 +10,13 @@ import { formatVotingPower } from "../utils/denom";
 import Typography from "@mui/material/Typography";
 import { formatValidatorStatus } from "../utils/util";
 import { useTheme } from "@emotion/react";
+import { useSelector } from "react-redux";
 
 export function WitvalValidator(props) {
-  const { validator, onMenuAction } = props;
+  const { validator, onMenuAction, chainID } = props;
+
+  const wallet = useSelector(state => state.wallet);
+  const coinDecimals = wallet?.networks[chainID]?.network?.config?.currencies[0]?.coinDecimals || 6;
 
   const theme = useTheme();
   return (
@@ -51,7 +55,7 @@ export function WitvalValidator(props) {
               <TableHead>
                 <StyledTableRow>
                   <StyledTableCell align="center">Validator</StyledTableCell>
-                  <StyledTableCell align="center">Voting Power</StyledTableCell>
+                  <StyledTableCell align="left">Voting Power</StyledTableCell>
                   <StyledTableCell align="center">Commission</StyledTableCell>
                   <StyledTableCell align="center">Actions</StyledTableCell>
                 </StyledTableRow>
@@ -68,8 +72,8 @@ export function WitvalValidator(props) {
                       ? formatValidatorStatus(true, null)
                       : formatValidatorStatus(false, validator?.status)}
                   </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {formatVotingPower(validator.tokens, 6)}
+                  <StyledTableCell align="left">
+                    {formatVotingPower(validator.tokens, coinDecimals)}
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {(validator.commission.commission_rates.rate * 100).toFixed(
