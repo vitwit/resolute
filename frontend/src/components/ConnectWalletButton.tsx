@@ -35,7 +35,7 @@ export const ConnectWalletButton = ({
 
   useEffect(() => {
     const walletName = getWalletName();
-    console.log(walletName)
+    console.log(walletName);
     if (isConnected()) {
       dispatch(
         connectWalletV1({
@@ -64,8 +64,10 @@ export const ConnectWalletButton = ({
       `${walletName}_keystorechange`,
       accountChangeListener
     );
-    
+    console.log("added");
+
     return () => {
+      console.log("removed");
       window.removeEventListener(
         `${walletName}_keystorechange`,
         accountChangeListener
