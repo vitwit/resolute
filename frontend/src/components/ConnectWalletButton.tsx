@@ -64,10 +64,8 @@ export const ConnectWalletButton = ({
       `${walletName}_keystorechange`,
       accountChangeListener
     );
-    console.log("added");
 
     return () => {
-      console.log("removed");
       window.removeEventListener(
         `${walletName}_keystorechange`,
         accountChangeListener
