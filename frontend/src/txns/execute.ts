@@ -11,7 +11,6 @@ import { MsgUnjail } from "./slashing/tx";
 
 declare var window: any;
 
-
 export async function signAndBroadcastClaimMsg(
   signer: any,
   msgs: any[],
