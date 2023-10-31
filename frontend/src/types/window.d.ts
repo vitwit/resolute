@@ -5,5 +5,6 @@ declare global {
     leap: any;
     wallet: any;
     cosmostation: any;
+    getOfflineSigner: any;
   }
 }

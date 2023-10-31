@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { setError, setTxHash } from "../common/commonSlice";
-import { Unjail } from "../../txns/slashing/unjail";
-import { signAndBroadcast } from "../../utils/signing";
+import { Unjail } from "../../../txns/slashing/unjail";
+import { signAndBroadcast } from "../../../utils/signing";
 
 const initialState = {
   tx: {
@@ -27,28 +26,11 @@ export const txUnjail = createAsyncThunk(
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
-        dispatch(
-          setTxHash({
-            hash: result?.transactionHash,
-          })
-        );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        dispatch(
-          setError({
-            type: "error",
-            message: result?.rawLog,
-          })
-        );
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-      dispatch(
-        setError({
-          type: "error",
-          message: error.message,
-        })
-      );
       return rejectWithValue(error.response);
     }
   }

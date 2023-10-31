@@ -1,8 +1,8 @@
 /* eslint-disable */
 import Long from "long";
 import * as _m0 from "protobufjs/minimal";
-import { Timestamp } from "./../google/timestamp";
-import { Duration } from "./../google/duration";
+import { Timestamp } from "../google/timestamp";
+import { Duration } from "../google/duration";
 
 export const protobufPackage = "cosmos.slashing.v1beta1";
 

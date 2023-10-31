@@ -1,4 +1,4 @@
-import { MsgClaim } from "../../txns/passage/msg_claim";
+import { MsgClaim } from "../../../txns/passage/msg_claim";
 import { AminoMsg } from "@cosmjs/amino";
 
 export interface AminoClaimAirdrop extends AminoMsg {

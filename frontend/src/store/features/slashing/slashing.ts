@@ -1,4 +1,4 @@
-import { MsgUnjail } from "../../txns/slashing/tx";
+import { MsgUnjail } from "../../../txns/slashing/tx";
 import { AminoMsg } from "@cosmjs/amino";
 import { AminoConverters } from "@cosmjs/stargate";
 

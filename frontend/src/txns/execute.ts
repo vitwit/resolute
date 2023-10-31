@@ -90,7 +90,7 @@ export async function signAndBroadcastProto(
     registry: registry,
   });
 
-  const accountInfo = await client.getAccount(account.address);
+  const accountInfo: any = await client.getAccount(account.address);
 
   const signed = await signingClient.sign(account.address, msgs, fee, "", {
     accountNumber: accountInfo.accountNumber,
