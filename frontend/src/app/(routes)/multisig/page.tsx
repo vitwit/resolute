@@ -1,17 +1,16 @@
-import React from 'react'
-import AllMultisigAccount from './AllMultisigAccount'
-// import Groups from "../../../components/tabs/";
-import Multisig from 'staking/components/tabs/Multisg'
-import RecentTable from './RecentTable'
+import React from "react";
 
+import Multisig from "staking/components/tabs/Multisg";
+
+import AllMultisiggrid from "./AllMultisiggrid";
+import AllMultisigAccount from "./AllMultisigAccount";
 
 const page = () => {
   return (
-    <div className='page'>
-     <Multisig />
-     
+    <div className="page">
+      <Multisig />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;

@@ -28,6 +28,20 @@
     @apply flex w-[200px] flex-col justify-center self-stretch text-white mr-[1305px] text-base not-italic font-normal leading-3 ;
   font-family: Inter;
   }
+  .all-multisig-grid {
+    @apply   items-start gap-6 self-stretch p-6 rounded-2xl;
+  background: rgba(46, 32, 55, 0.75);
+  }
+  .multisig-grid-1 {
+    @apply flex flex-row justify-between items-center flex-[1_0_0] self-stretch;
+  }
+  .multisig-grid-2 {
+    @apply flex flex-row items-center gap-10 self-stretch;
+  }
+  .multisig-grid-3 {
+    @apply flex flex-row items-start gap-4 self-stretch;
+  }
+  
   
 
 

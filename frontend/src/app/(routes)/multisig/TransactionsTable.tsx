@@ -1,21 +1,15 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Image from "next/image";
 
-const AllNetworksTable = () => {
+const TransactionsTable = () => {
+  const [transactions, setTransactions] = useState([1, 2, 3, 4, 5, 6]);
+
   return (
-    <div className="space-y-10">
-      <div className="network">
-        <Image
-          src="./all-networks-icon.svg"
-          height={32}
-          width={32}
-          alt="all-networks-logo"
-        />
-        <div className="network-name">AllNetworks</div>
-      </div>
+    <div className="space-y-10 mt-10">
       <table className="custom-table overflow-y-scroll">
         <thead className="custom-table-head">
-          <tr className="text-left ">
+          <tr className="text-left">
             <th className="">Messages</th>
             <th className="w-1/6">Signed</th>
             <th className="w-1/6">Status</th>
@@ -23,14 +17,30 @@ const AllNetworksTable = () => {
           </tr>
         </thead>
         <tbody>
-          {[1, 2, 3, 4].map((item, index) => (
+          {transactions.map((item, index) => (
             <tr key={index} className="">
               <td className="">
-                <div className="">
-                  Send 1 ATOM To cosmos1le7vetsh5...6aj5nhf2
+                <div className="flex gap-1 items-center">
+                  <div className="">
+                    Send 1 ATOM To cosmos1le7vetsh5...6aj5nhf2
+                  </div>
+                  {index === 1 || index === 3 ? (
+                    <Image
+                      src="./down-arrow-icon.svg"
+                      width={24}
+                      height={24}
+                      alt="Dropdown"
+                    />
+                  ) : null}
                 </div>
               </td>
-              <td>0/2</td>
+              <td>
+                {index === 1 || index === 3
+                  ? "2/2"
+                  : index === 5
+                  ? "1/2"
+                  : "0/2"}
+              </td>
               <td>
                 <div className="flex gap-2">
                   <Image
@@ -53,7 +63,12 @@ const AllNetworksTable = () => {
                     />
                     <div className="my-auto ">Raw</div>
                   </div>
-                  <button className="custom-btn">Sign</button>
+                  {index === 1 || index === 3 ? (
+                    <button className="custom-btn">Broadcast</button>
+                  ) : (
+                    <button className="custom-btn">Sign</button>
+                  )}
+                  {index === 6}
                   <Image
                     src="./DeleteRed.svg"
                     width={40}
@@ -70,4 +85,4 @@ const AllNetworksTable = () => {
   );
 };
 
-export default AllNetworksTable;
+export default TransactionsTable;

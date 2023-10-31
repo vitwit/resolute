@@ -8,10 +8,12 @@ const Multisig = () => {
   const dispatch = useDispatch<AppDispatch>();
   const multisigAccounts = useSelector(
     (state: any) => state.multisig.multisigAccounts
-  ); 
+  );
 
   useEffect(() => {
-    dispatch(getMultisigAccounts("cosmos16wnk86wkfj7a84g4d7epa2mf7fk2g7cm0rljjm"));
+    dispatch(
+      getMultisigAccounts("cosmos16wnk86wkfj7a84g4d7epa2mf7fk2g7cm0rljjm")
+    );
   }, [dispatch]);
   return <div>{JSON.stringify(multisigAccounts)}</div>;
 };
