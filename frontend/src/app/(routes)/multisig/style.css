@@ -41,6 +41,9 @@
   .multisig-grid-3 {
     @apply flex flex-row items-start gap-4 self-stretch;
   }
+  .drop-box {
+    @apply flex items-start w-[87px] gap-2 border px-10 py-2 rounded-lg border-solid border-[rgba(176,176,176,0.20)];
+  }
   
   
 

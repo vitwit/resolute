@@ -8,7 +8,7 @@ import RecentTable from "staking/app/(routes)/multisig/RecentTable";
 import AllMultisiggrid from "staking/app/(routes)/multisig/AllMultisiggrid";
 import AllNetworksTable from "staking/app/(routes)/multisig/AllNetworksTable";
 import TransactionsTable from "staking/app/(routes)/multisig/TransactionsTable";
-
+import CreateMultisigForm from "staking/app/(routes)/multisig/CreateMultisigForm";
 export default function Multisig() {
   const [tab, setTab] = useState(0);
   const [multisigTypeTab, setMultisigTypeTab] = useState(0);
@@ -35,7 +35,10 @@ export default function Multisig() {
           <RecentTable />
         </TabPanel>
         <TabPanel value={tab} index={1}>
-          Create new multisig
+          <div className="space-y-6">
+            <h2 className="text-[20px] leading-3 font-bold">Create Multisig</h2>
+            <CreateMultisigForm />
+          </div>
         </TabPanel>
         <TabPanel value={tab} index={2}>
           <AllMultisiggrid />
