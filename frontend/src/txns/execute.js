@@ -496,6 +496,16 @@ export async function getWalletAmino(chainID) {
   return [offlineSigner, accounts[0]];
 }
 
+export async function getSignerAndAccountAmino(chainID) {
+  try {
+  const offlineSigner = window.wallet.getOfflineSignerOnlyAmino(chainID);
+  const accounts = await offlineSigner.getAccounts();
+  return [offlineSigner, accounts[0]];
+  } catch (error) {
+    throw error;
+  }
+} 
+
 export async function getWalletDirect(chainID) {
   await window.wallet.enable(chainID);
   const offlineSigner = window.wallet.getOfflineSigner(chainID);
