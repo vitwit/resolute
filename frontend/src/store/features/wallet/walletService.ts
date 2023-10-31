@@ -1,3 +1,5 @@
+declare let window: WalletWindow;
+
 export const isWalletInstalled = (walletName: string): boolean => {
   switch (walletName) {
     case "keplr":
