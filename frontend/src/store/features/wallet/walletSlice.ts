@@ -4,6 +4,8 @@ import { getWalletAmino } from "../../../txns/execute";
 import { isWalletInstalled } from "./walletService";
 import { isConnected, setConnected, setWalletName } from "../../../utils/localStorage";
 
+declare let window: WalletWindow;
+
 interface ChainInfo {
   walletInfo: {
     name: string;
