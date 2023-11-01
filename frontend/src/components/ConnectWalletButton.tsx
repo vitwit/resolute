@@ -35,7 +35,6 @@ export const ConnectWalletButton = ({
 
   useEffect(() => {
     const walletName = getWalletName();
-    console.log(walletName);
     if (isConnected()) {
       dispatch(
         connectWalletV1({
