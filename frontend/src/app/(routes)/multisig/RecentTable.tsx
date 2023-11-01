@@ -46,6 +46,7 @@ const RecentTable = () => {
                       height={20}
                       width={20}
                       alt="Raw-logo"
+                      className="cursor-pointer"
                     />
                     <div className="my-auto ">Raw</div>
                   </div>
@@ -55,6 +56,7 @@ const RecentTable = () => {
                     width={40}
                     height={40}
                     alt="Delete-logo"
+                    className="cursor-pointer"
                   />
                 </div>
               </td>
