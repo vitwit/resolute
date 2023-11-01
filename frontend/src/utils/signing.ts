@@ -25,7 +25,6 @@ import { multiply, format, ceil, bignumber, floor } from "mathjs";
 import { makeSignDoc as makeAminoSignDoc } from "@cosmjs/amino";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js";
 import { makeSignDoc, Registry } from "@cosmjs/proto-signing";
-import { slashingAminoConverter } from "../store/features/slashing/slashing";
 import { MsgUnjail } from "../txns/slashing/tx";
 
 declare const window: any;
@@ -51,7 +50,7 @@ const canUseAmino = (aminoConfig: any, messages: any[]): boolean => {
 };
 
 const getClient = async (
-  aminoConfig: any,
+  aminoConfig: AminoConfig,
   chainId: string,
   messages: any[]
 ): Promise<any> => {
@@ -73,7 +72,6 @@ const getClient = async (
       throw new Error("failed to get wallet");
     }
   }
-
   return signer;
 };
 
@@ -98,7 +96,6 @@ export const signAndBroadcast = async (
   const accounts = await signer.getAccounts();
   const registry = new Registry(defaultStargateTypes);
   const defaultConverters = {
-    ...slashingAminoConverter(),
     ...createBankAminoConverters(),
     ...createDistributionAminoConverters(),
     ...createGovAminoConverters(),
