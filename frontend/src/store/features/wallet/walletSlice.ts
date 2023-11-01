@@ -35,18 +35,16 @@ const initialState = {
   nameToChainIDs: {},
 };
 
-export const connectWalletV1 = createAsyncThunk(
-  "wallet/connectv1",
+export const establishWalletConnection = createAsyncThunk(
+  "wallet/connect",
   async (
     data: {
       mainnets: Network[];
-      testnets: Network[];
       walletName: string;
     },
     { rejectWithValue, fulfillWithValue }
   ) => {
     const mainnets = data.mainnets;
-    const testnets = data.testnets;
 
     if (!isWalletInstalled(data.walletName)) {
       alert("wallet is not installed");
@@ -58,13 +56,10 @@ export const connectWalletV1 = createAsyncThunk(
           disableBalanceCheck: true,
         },
       };
-      const mainnetChainIDs: string[] = mainnets.map(
+      const chainIDs: string[] = mainnets.map(
         (mainnet) => mainnet.config.chainId
       );
-      const testnetChainIDs: string[] = testnets.map(
-        (testnet) => testnet.config.chainId
-      );
-      const chainIDs: string[] = [...mainnetChainIDs, ...testnetChainIDs];
+
       window.wallet.enable(chainIDs);
 
       let walletName = "";
@@ -101,44 +96,6 @@ export const connectWalletV1 = createAsyncThunk(
           };
           nameToChainIDs[chainName?.toLowerCase().split(" ").join("")] =
             chainId;
-        } catch (error) {
-          console.log(
-            `unable to connect to network ${mainnets[i].config.chainName}: `,
-            error
-          );
-        }
-      }
-
-      for (let i = 0; i < testnets.length; i++) {
-        try {
-          if (
-            (data.walletName === "keplr" ||
-              data.walletName === "cosmostation") &&
-            testnets[i].keplrExperimental
-          ) {
-            await window.wallet.experimentalSuggestChain(mainnets[i].config);
-          }
-          if (data.walletName === "leap" && testnets[i].leapExperimental) {
-            await window.wallet.experimentalSuggestChain(mainnets[i].config);
-          }
-          const chainId = testnets[i].config.chainId;
-          const chainName = testnets[i].config.chainName;
-          await getWalletAmino(chainId);
-          const walletInfo = await window.wallet.getKey(chainId);
-          walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString(
-            "base64"
-          );
-          delete walletInfo?.address;
-
-          walletName = walletInfo?.name;
-          isNanoLedger = walletInfo?.isNanoLedger || false;
-
-          chainInfos[chainId] = {
-            walletInfo: walletInfo,
-            network: testnets[i],
-          };
-
-          nameToChainIDs[chainName?.toLowerCase()] = chainId;
         } catch (error) {
           console.log(
             `unable to connect to network ${mainnets[i].config.chainName}: `,
@@ -185,8 +142,8 @@ const walletSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(connectWalletV1.pending, () => {})
-      .addCase(connectWalletV1.fulfilled, (state, action) => {
+      .addCase(establishWalletConnection.pending, () => {})
+      .addCase(establishWalletConnection.fulfilled, (state, action) => {
         const networks = action.payload.chainInfos;
         const nameToChainIDs = action.payload.nameToChainIDs;
         state.networks = networks;
@@ -195,7 +152,7 @@ const walletSlice = createSlice({
         state.isNanoLedger = action.payload.isNanoLedger;
         state.name = action.payload.walletName;
       })
-      .addCase(connectWalletV1.rejected, () => {});
+      .addCase(establishWalletConnection.rejected, () => {});
   },
 });
 

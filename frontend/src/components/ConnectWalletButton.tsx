@@ -5,7 +5,7 @@ import Image from "next/image";
 import Walletpage from "./popups/WalletPage";
 import { getWalletName, isConnected, logout } from "../utils/localStorage";
 import { useDispatch, useSelector } from "react-redux";
-import { connectWalletV1 } from "../store/features/wallet/walletSlice";
+import { establishWalletConnection } from "../store/features/wallet/walletSlice";
 import { AppDispatch } from "../store/store";
 
 export const ConnectWalletButton = ({
@@ -24,10 +24,9 @@ export const ConnectWalletButton = ({
   };
   const selectWallet = (walletName: string) => {
     dispatch(
-      connectWalletV1({
+      establishWalletConnection({
         walletName,
         mainnets: networks,
-        testnets: [],
       })
     );
     handleClose();
@@ -37,10 +36,9 @@ export const ConnectWalletButton = ({
     const walletName = getWalletName();
     if (isConnected()) {
       dispatch(
-        connectWalletV1({
+        establishWalletConnection({
           walletName,
           mainnets: networks,
-          testnets: [],
         })
       );
     }
@@ -48,10 +46,9 @@ export const ConnectWalletButton = ({
       setTimeout(
         () =>
           dispatch(
-            connectWalletV1({
+            establishWalletConnection({
               walletName,
               mainnets: networks,
-              testnets: [],
             })
           ),
         1000
