@@ -1,5 +1,4 @@
 import React from "react";
-import GroupsCards from "../../../components/GroupsCards";
 import Groups from "../../../components/tabs/Groups";
 
 const page = () => {

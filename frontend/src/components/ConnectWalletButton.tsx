@@ -22,6 +22,7 @@ export const ConnectWalletButton = ({
       (connectWalletDialogOpen) => !connectWalletDialogOpen
     );
   };
+
   const selectWallet = (walletName: string) => {
     dispatch(
       connectWalletV1({
@@ -33,28 +34,28 @@ export const ConnectWalletButton = ({
     handleClose();
   };
 
+  const tryConnectWallet = (walletName: string) => {
+    dispatch(
+      connectWalletV1({
+        walletName,
+        mainnets: networks,
+        testnets: [],
+      })
+    );
+  }
+
   useEffect(() => {
     const walletName = getWalletName();
     console.log(walletName)
+
     if (isConnected()) {
-      dispatch(
-        connectWalletV1({
-          walletName,
-          mainnets: networks,
-          testnets: [],
-        })
-      );
+      tryConnectWallet(walletName)
     }
+
     const accountChangeListener = () => {
       setTimeout(
         () =>
-          dispatch(
-            connectWalletV1({
-              walletName,
-              mainnets: networks,
-              testnets: [],
-            })
-          ),
+        tryConnectWallet(walletName),
         1000
       );
       window.location.reload();
@@ -71,7 +72,7 @@ export const ConnectWalletButton = ({
         accountChangeListener
       );
     };
-  }, []);
+  });
 
   return connected ? (
     <>{children}</>
