@@ -1,12 +1,7 @@
-import React from "react";
-import Feegrant from "./Feegrant";
+import React from 'react';
 
 const page = () => {
-  return (
-    <div className="page">
-      <Feegrant />
-    </div>
-  );
+  return <div className="page">Feegrant</div>;
 };
 
 export default page;

@@ -1,8 +1,8 @@
-"use client"
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { getWalletAmino } from "../../../txns/execute";
-import { isWalletInstalled } from "./walletService";
-import { isConnected, setConnected, setWalletName } from "../../../utils/localStorage";
+'use client';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getWalletAmino } from '../../../txns/execute';
+import { isWalletInstalled } from './walletService';
+import { setConnected, setWalletName } from '../../../utils/localStorage';
 
 declare let window: WalletWindow;
 
@@ -23,16 +23,16 @@ interface ChainInfo {
 }
 
 const initialState = {
-  name: "",
+  name: '',
   connected: false,
   isNanoLedger: false,
-  pubKey: "",
+  pubKey: '',
   networks: {},
   nameToChainIDs: {},
 };
 
 export const connectWalletV1 = createAsyncThunk(
-  "wallet/connectv1",
+  'wallet/connectv1',
   async (
     data: {
       mainnets: Network[];
@@ -45,8 +45,8 @@ export const connectWalletV1 = createAsyncThunk(
     const testnets = data.testnets;
 
     if (!isWalletInstalled(data.walletName)) {
-      alert("wallet is not installed");
-      return rejectWithValue("wallet is not installed");
+      alert('wallet is not installed');
+      return rejectWithValue('wallet is not installed');
     } else {
       window.wallet.defaultOptions = {
         sign: {
@@ -63,21 +63,21 @@ export const connectWalletV1 = createAsyncThunk(
       const chainIDs: string[] = [...mainnetChainIDs, ...testnetChainIDs];
       window.wallet.enable(chainIDs);
 
-      let walletName = "";
+      let walletName = '';
       let isNanoLedger = false;
       const chainInfos: Record<string, ChainInfo> = {};
       const nameToChainIDs: Record<string, string> = {};
       for (let i = 0; i < mainnets.length; i++) {
         try {
           if (
-            (data.walletName === "keplr" ||
-              data.walletName === "cosmostation") &&
+            (data.walletName === 'keplr' ||
+              data.walletName === 'cosmostation') &&
             mainnets[i].keplrExperimental
           ) {
             await window.wallet.experimentalSuggestChain(mainnets[i].config);
           }
 
-          if (data.walletName === "leap" && mainnets[i].leapExperimental) {
+          if (data.walletName === 'leap' && mainnets[i].leapExperimental) {
             await window.wallet.experimentalSuggestChain(mainnets[i].config);
           }
 
@@ -89,7 +89,7 @@ export const connectWalletV1 = createAsyncThunk(
           const walletInfo = await window.wallet.getKey(chainId);
 
           walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString(
-            "base64"
+            'base64'
           );
           delete walletInfo?.address;
 
@@ -100,7 +100,7 @@ export const connectWalletV1 = createAsyncThunk(
             walletInfo: walletInfo,
             network: mainnets[i],
           };
-          nameToChainIDs[chainName?.toLowerCase().split(" ").join("")] =
+          nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
             chainId;
         } catch (error) {
           console.log(
@@ -113,14 +113,14 @@ export const connectWalletV1 = createAsyncThunk(
       for (let i = 0; i < testnets.length; i++) {
         try {
           if (
-            (data.walletName === "keplr" ||
-              data.walletName === "cosmostation") &&
+            (data.walletName === 'keplr' ||
+              data.walletName === 'cosmostation') &&
             testnets[i].keplrExperimental
           ) {
             await window.wallet.experimentalSuggestChain(mainnets[i].config);
           }
 
-          if (data.walletName === "leap" && testnets[i].leapExperimental) {
+          if (data.walletName === 'leap' && testnets[i].leapExperimental) {
             await window.wallet.experimentalSuggestChain(mainnets[i].config);
           }
 
@@ -131,7 +131,7 @@ export const connectWalletV1 = createAsyncThunk(
 
           const walletInfo = await window.wallet.getKey(chainId);
           walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString(
-            "base64"
+            'base64'
           );
           delete walletInfo?.address;
 
@@ -153,8 +153,8 @@ export const connectWalletV1 = createAsyncThunk(
       }
 
       if (Object.keys(chainInfos).length === 0) {
-        alert("Permission denied for all the networks");
-        return rejectWithValue("Permission denied for all the networks");
+        alert('Permission denied for all the networks');
+        return rejectWithValue('Permission denied for all the networks');
       } else {
         setConnected();
         setWalletName(data.walletName);
@@ -171,19 +171,19 @@ export const connectWalletV1 = createAsyncThunk(
 );
 
 const walletSlice = createSlice({
-  name: "wallet",
+  name: 'wallet',
   initialState,
   reducers: {
     setWallet: (
-      state,
-      action: PayloadAction<{ address: string; chainInfo: any }>
+      state
+      // action: PayloadAction<{ address: string; chainInfo: any }>
     ) => {
       state.connected = true;
     },
     resetWallet: (state) => {
       state.connected = false;
-      state.name = "";
-      state.pubKey = "";
+      state.name = '';
+      state.pubKey = '';
       state.nameToChainIDs = {};
       state.networks = {};
     },

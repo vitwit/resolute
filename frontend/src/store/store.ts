@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { configureStore } from "@reduxjs/toolkit";
-import multisigSlice from "./features/multisig/multisigSlice";
-import walletSlice from "./features/wallet/walletSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import multisigSlice from './features/multisig/multisigSlice';
+import walletSlice from './features/wallet/walletSlice';
 
 export const store = configureStore({
   reducer: {

@@ -1,6 +1,7 @@
-import React from "react";
-import Image from "next/image";
-import { Dialog, DialogContent } from "@mui/material";
+import React from 'react';
+import Image from 'next/image';
+import { Dialog, DialogContent } from '@mui/material';
+import { supportedWallets } from 'staking/utils/contants';
 
 const Walletpage = ({
   open,
@@ -17,7 +18,7 @@ const Walletpage = ({
       onClose={handleClose}
       maxWidth="lg"
       className="blur-effect"
-      PaperProps={{ sx: { borderRadius: "16px", backgroundColor: "#20172F" } }}
+      PaperProps={{ sx: { borderRadius: '16px', backgroundColor: '#20172F' } }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="custom-box flex-col">
@@ -28,48 +29,23 @@ const Walletpage = ({
             </div>
           </div>
           <div className="add-wallet-dialog-content">
-            <div
-              className="wallet"
-              onClick={() => {
-                selectWallet("keplr");
-              }}
-            >
-              <Image
-                src="/Keplrwallet.png"
-                width={100}
-                height={100}
-                alt="Keplrwallet"
-              />
-              <p className="wallet-name">Keplr Wallet</p>
-            </div>
-            <div
-              className="wallet"
-              onClick={() => {
-                selectWallet("leap");
-              }}
-            >
-              <Image
-                src="/Leapwallet.png"
-                width={100}
-                height={100}
-                alt="Leap Wallet"
-              />
-              <p className="wallet-name">Leap Wallet</p>
-            </div>
-            <div
-              className="wallet"
-              onClick={() => {
-                selectWallet("cosmostation");
-              }}
-            >
-              <Image
-                src="/cosmostation.png"
-                width={100}
-                height={100}
-                alt="cosmostation"
-              />
-              <p className="wallet-name">Cosmostation </p>
-            </div>
+            {supportedWallets.map((wallet, index) => (
+              <div
+                className="wallet"
+                onClick={() => {
+                  selectWallet(wallet.name.toLocaleLowerCase());
+                }}
+                key={index}
+              >
+                <Image
+                  src={wallet.logo}
+                  width={100}
+                  height={100}
+                  alt={wallet.name}
+                />
+                <p className="wallet-name">{wallet.name}</p>
+              </div>
+            ))}
           </div>
         </div>
       </DialogContent>

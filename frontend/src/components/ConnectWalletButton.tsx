@@ -1,12 +1,12 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { networks } from "../utils/chainsInfo";
-import Image from "next/image";
-import Walletpage from "./popups/WalletPage";
-import { getWalletName, isConnected, logout } from "../utils/localStorage";
-import { useDispatch, useSelector } from "react-redux";
-import { connectWalletV1 } from "../store/features/wallet/walletSlice";
-import { AppDispatch } from "../store/store";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { networks } from '../utils/chainsInfo';
+import Image from 'next/image';
+import Walletpage from './popups/WalletPage';
+import { getWalletName, isConnected } from '../utils/localStorage';
+import { useDispatch, useSelector } from 'react-redux';
+import { connectWalletV1 } from '../store/features/wallet/walletSlice';
+import { AppDispatch, RootState } from '../store/store';
 
 export const ConnectWalletButton = ({
   children,
@@ -14,7 +14,7 @@ export const ConnectWalletButton = ({
   children: React.ReactNode;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const connected = useSelector((state: any) => state.wallet.connected);
+  const connected = useSelector((state: RootState) => state.wallet.connected);
   const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
     useState<boolean>(false);
   const handleClose = () => {
@@ -42,22 +42,18 @@ export const ConnectWalletButton = ({
         testnets: [],
       })
     );
-  }
+  };
 
   useEffect(() => {
     const walletName = getWalletName();
-    console.log(walletName)
+    console.log(walletName);
 
     if (isConnected()) {
-      tryConnectWallet(walletName)
+      tryConnectWallet(walletName);
     }
 
     const accountChangeListener = () => {
-      setTimeout(
-        () =>
-        tryConnectWallet(walletName),
-        1000
-      );
+      setTimeout(() => tryConnectWallet(walletName), 1000);
       window.location.reload();
     };
 
@@ -65,7 +61,7 @@ export const ConnectWalletButton = ({
       `${walletName}_keystorechange`,
       accountChangeListener
     );
-    
+
     return () => {
       window.removeEventListener(
         `${walletName}_keystorechange`,
