@@ -1,8 +1,8 @@
-export const KEY_WALLET_NAME: string = "WALLET_NAME";
-export const KEY_DARK_MODE: string = "DARK_MODE";
+export const KEY_WALLET_NAME: string = 'WALLET_NAME';
+export const KEY_DARK_MODE: string = 'DARK_MODE';
 
 export function setConnected() {
-  localStorage.setItem("CONNECTED", "true");
+  localStorage.setItem('CONNECTED', 'true');
 }
 
 export function setWalletName(walletName: string) {
@@ -10,7 +10,7 @@ export function setWalletName(walletName: string) {
 }
 
 export function getWalletName(): string {
-  return localStorage.getItem(KEY_WALLET_NAME) || "";
+  return localStorage.getItem(KEY_WALLET_NAME) || '';
 }
 
 export function removeWalletName() {
@@ -18,20 +18,20 @@ export function removeWalletName() {
 }
 
 export function isConnected(): boolean {
-  const connected = localStorage.getItem("CONNECTED");
+  const connected = localStorage.getItem('CONNECTED');
   if (connected && KEY_WALLET_NAME) {
     return true;
   }
-  
+
   return false;
 }
-export function logout(): void {
-  localStorage.removeItem("CONNECTED");
+export function logout() {
+  localStorage.removeItem('CONNECTED');
   removeWalletName();
 }
 
 export function getMainnets(): Network[] {
-  const networksInfo = localStorage.getItem("networks");
+  const networksInfo = localStorage.getItem('networks');
   if (networksInfo) {
     const networks = JSON.parse(networksInfo);
     if (networks?.mainnets) {
@@ -39,29 +39,4 @@ export function getMainnets(): Network[] {
     }
   }
   return [];
-}
-
-export function getTestnets(): Network[] {
-  const networksInfo = localStorage.getItem("networks");
-  if (networksInfo) {
-    const networks = JSON.parse(networksInfo);
-    if (networks?.testnets) {
-      return networks?.testnets;
-    }
-  }
-  return [];
-}
-
-export function setNetwork(chainInfo: any) {
-  var mainnets = getMainnets();
-  var testnets = getTestnets();
-  if (chainInfo.isTestnet) {
-    testnets.push(chainInfo);
-  } else {
-    mainnets.push(chainInfo);
-  }
-  localStorage.setItem(
-    "networks",
-    JSON.stringify({ mainnets: mainnets, testnets: testnets })
-  );
 }

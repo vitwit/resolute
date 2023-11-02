@@ -14,7 +14,7 @@ export const ConnectWalletButton = ({
   children: React.ReactNode;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const connected = useSelector((state: any) => state.wallet.connected);
+  const connected = useSelector((state: RootState) => state.wallet.connected);
   const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
     useState<boolean>(false);
   const handleClose = () => {
@@ -35,20 +35,16 @@ export const ConnectWalletButton = ({
         networks: networks,
       })
     );
-  }
+  };
 
   useEffect(() => {
     const walletName = getWalletName();
     if (isConnected()) {
-      tryConnectWallet(walletName)
+      tryConnectWallet(walletName);
     }
 
     const accountChangeListener = () => {
-      setTimeout(
-        () =>
-        tryConnectWallet(walletName),
-        1000
-      );
+      setTimeout(() => tryConnectWallet(walletName), 1000);
       window.location.reload();
     };
 

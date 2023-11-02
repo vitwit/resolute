@@ -1,3 +1,5 @@
+import { OfflineAminoSigner, OfflineDirectSigner } from '@keplr-wallet/types';
+
 import {
   SigningStargateClient,
   defaultRegistryTypes,
@@ -91,7 +93,9 @@ export async function getWalletAmino(chainID: string): Promise<any> {
   return [offlineSigner, accounts[0]];
 }
 
-export async function getWalletDirect(chainID: string): Promise<any> {
+export async function getWalletDirect(
+  chainID: string
+): Promise<[OfflineAminoSigner & OfflineDirectSigner, string]> {
   await window.wallet.enable(chainID);
   const offlineSigner = window.wallet.getOfflineSigner(chainID);
   const accounts = await offlineSigner.getAccounts();

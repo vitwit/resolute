@@ -1,12 +1,8 @@
-'use client'
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import { getWalletAmino } from '../../../txns/execute'
-import { isWalletInstalled } from './walletService'
-import {
-  isConnected,
-  setConnected,
-  setWalletName,
-} from '../../../utils/localStorage'
+'use client';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getWalletAmino } from '../../../txns/execute';
+import { isWalletInstalled } from './walletService';
+import { setConnected, setWalletName } from '../../../utils/localStorage';
 
 declare let window: WalletWindow
 
@@ -126,8 +122,8 @@ const walletSlice = createSlice({
   initialState,
   reducers: {
     setWallet: (
-      state,
-      action: PayloadAction<{ address: string; chainInfo: any }>
+      state
+      // action: PayloadAction<{ address: string; chainInfo: any }>
     ) => {
       state.connected = true
     },

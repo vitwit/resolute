@@ -1,21 +1,19 @@
-const validatorsURL = "/cosmos/staking/v1beta1/validators";
-const delegationsURL = "/cosmos/staking/v1beta1/delegations/";
+const validatorsURL = '/cosmos/staking/v1beta1/validators';
+const delegationsURL = '/cosmos/staking/v1beta1/delegations/';
 const unbondingDelegationsURL = (address: string) =>
   `/cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`;
-const paramsURL = "/cosmos/staking/v1beta1/params";
-const poolURL = "/cosmos/staking/v1beta1/pool";
+const paramsURL = '/cosmos/staking/v1beta1/params';
+const poolURL = '/cosmos/staking/v1beta1/pool';
 
-const fetchValidators = async (
-  baseURL: string,
-): Promise<Response> => {
+const fetchValidators = async (baseURL: string): Promise<Response> => {
   const uri = `${baseURL}${validatorsURL}`;
-  
+
   return await fetch(uri);
 };
 
 const fetchDelegations = async (
   baseURL: string,
-  address: string,
+  address: string
 ): Promise<Response> => {
   const uri = `${baseURL}${delegationsURL}${address}`;
 
@@ -24,7 +22,7 @@ const fetchDelegations = async (
 
 const fetchUnbonding = async (
   baseURL: string,
-  address: string,
+  address: string
 ): Promise<Response> => {
   const uri = `${baseURL}${unbondingDelegationsURL(address)}`;
 
