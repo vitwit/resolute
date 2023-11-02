@@ -1,6 +1,6 @@
-import React from "react";
-import Image from "next/image";
-import { Dialog, DialogContent } from "@mui/material";
+import React from 'react';
+import Image from 'next/image';
+import { Dialog, DialogContent } from '@mui/material';
 
 const Walletpage = ({
   open,
@@ -17,7 +17,7 @@ const Walletpage = ({
       onClose={handleClose}
       maxWidth="lg"
       className="blur-effect"
-      PaperProps={{ sx: { borderRadius: "16px", backgroundColor: "#20172F" } }}
+      PaperProps={{ sx: { borderRadius: '16px', backgroundColor: '#20172F' } }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="custom-box flex-col">
@@ -31,7 +31,7 @@ const Walletpage = ({
             <div
               className="wallet"
               onClick={() => {
-                selectWallet("keplr");
+                selectWallet('keplr');
               }}
             >
               <Image
@@ -45,7 +45,7 @@ const Walletpage = ({
             <div
               className="wallet"
               onClick={() => {
-                selectWallet("leap");
+                selectWallet('leap');
               }}
             >
               <Image
@@ -59,7 +59,7 @@ const Walletpage = ({
             <div
               className="wallet"
               onClick={() => {
-                selectWallet("cosmostation");
+                selectWallet('cosmostation');
               }}
             >
               <Image

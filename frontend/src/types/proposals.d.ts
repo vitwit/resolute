@@ -21,7 +21,7 @@ export interface Proposal {
 }
 
 export interface Content {
-  "@type": string;
+  '@type': string;
   title: string;
   description: string;
   recipient: string;

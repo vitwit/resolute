@@ -1,15 +1,15 @@
-import "./globals.css";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import PermanentSideBar from "../components/PermanentSidebar";
-import { ConnectWalletButton } from "../components/ConnectWalletButton";
-import { StoreProvider } from "staking/store/StoreProvider";
+import './globals.css';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import PermanentSideBar from '../components/PermanentSidebar';
+import { ConnectWalletButton } from '../components/ConnectWalletButton';
+import { StoreProvider } from 'staking/store/StoreProvider';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Resolute",
-  description: "resolute",
+  title: 'Resolute',
+  description: 'resolute',
 };
 
 export default function RootLayout({

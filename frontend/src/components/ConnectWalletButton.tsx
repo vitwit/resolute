@@ -1,27 +1,27 @@
-'use client'
-import React, { useEffect, useState } from 'react'
-import { networks } from '../utils/chainsInfo'
-import Image from 'next/image'
-import Walletpage from './popups/WalletPage'
-import { getWalletName, isConnected } from '../utils/localStorage'
-import { useDispatch, useSelector } from 'react-redux'
-import { connectWalletV1 } from '../store/features/wallet/walletSlice'
-import { AppDispatch, RootState } from '../store/store'
+'use client';
+import React, { useEffect, useState } from 'react';
+import { networks } from '../utils/chainsInfo';
+import Image from 'next/image';
+import Walletpage from './popups/WalletPage';
+import { getWalletName, isConnected } from '../utils/localStorage';
+import { useDispatch, useSelector } from 'react-redux';
+import { connectWalletV1 } from '../store/features/wallet/walletSlice';
+import { AppDispatch, RootState } from '../store/store';
 
 export const ConnectWalletButton = ({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) => {
-  const dispatch = useDispatch<AppDispatch>()
-  const connected = useSelector((state: RootState) => state.wallet.connected)
+  const dispatch = useDispatch<AppDispatch>();
+  const connected = useSelector((state: RootState) => state.wallet.connected);
   const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
-    useState<boolean>(false)
+    useState<boolean>(false);
   const handleClose = () => {
     setConnectWalletDialogOpen(
       (connectWalletDialogOpen) => !connectWalletDialogOpen
-    )
-  }
+    );
+  };
 
   const selectWallet = (walletName: string) => {
     dispatch(
@@ -30,9 +30,9 @@ export const ConnectWalletButton = ({
         mainnets: networks,
         testnets: [],
       })
-    )
-    handleClose()
-  }
+    );
+    handleClose();
+  };
 
   const tryConnectWallet = (walletName: string) => {
     dispatch(
@@ -41,34 +41,34 @@ export const ConnectWalletButton = ({
         mainnets: networks,
         testnets: [],
       })
-    )
-  }
+    );
+  };
 
   useEffect(() => {
-    const walletName = getWalletName()
-    console.log(walletName)
+    const walletName = getWalletName();
+    console.log(walletName);
 
     if (isConnected()) {
-      tryConnectWallet(walletName)
+      tryConnectWallet(walletName);
     }
 
     const accountChangeListener = () => {
-      setTimeout(() => tryConnectWallet(walletName), 1000)
-      window.location.reload()
-    }
+      setTimeout(() => tryConnectWallet(walletName), 1000);
+      window.location.reload();
+    };
 
     window.addEventListener(
       `${walletName}_keystorechange`,
       accountChangeListener
-    )
+    );
 
     return () => {
       window.removeEventListener(
         `${walletName}_keystorechange`,
         accountChangeListener
-      )
-    }
-  })
+      );
+    };
+  });
 
   return connected ? (
     <>{children}</>
@@ -109,7 +109,7 @@ export const ConnectWalletButton = ({
           <button
             className="connect-wallet-btn"
             onClick={() => {
-              setConnectWalletDialogOpen(true)
+              setConnectWalletDialogOpen(true);
             }}
           >
             CONNECT WALLET
@@ -122,5 +122,5 @@ export const ConnectWalletButton = ({
         selectWallet={selectWallet}
       />
     </div>
-  )
-}
+  );
+};
