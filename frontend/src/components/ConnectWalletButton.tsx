@@ -24,12 +24,7 @@ export const ConnectWalletButton = ({
   };
 
   const selectWallet = (walletName: string) => {
-    dispatch(
-      establishWalletConnection({
-        walletName,
-        mainnets: networks,
-      })
-    );
+    tryConnectWallet(walletName)
     handleClose();
   };
 
@@ -37,7 +32,7 @@ export const ConnectWalletButton = ({
     dispatch(
       establishWalletConnection({
         walletName,
-        mainnets: networks,
+        networks: networks,
       })
     );
   }
