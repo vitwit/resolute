@@ -3,9 +3,15 @@ import { SendMsg } from '../../../txns/bank'
 import bankService from './bankService'
 import { signAndBroadcast } from '../../../utils/signing'
 import { Pagination } from 'staking/types/proposals'
+import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 
+interface Balance {
+  list: Coin[]
+  status: TxStatus
+  errMsg: string
+}
 interface BankState {
-  balances: Record<string, any>
+  balances: Record<string, Balance>
   tx: {
     status: TxStatus
   }
@@ -149,14 +155,14 @@ export const bankSlice = createSlice({
     builder
       .addCase(getBalances.pending, (state: BankState, action) => {
         const chainID = action.meta.arg.chainID
-        state.balances[chainID] = 'pending'
+        state.balances[chainID].status = TxStatus.PENDING
       })
       .addCase(getBalances.fulfilled, (state, action) => {
         const chainID = action.payload.chainID
 
         let result = {
           list: action.payload.data?.balances,
-          status: 'idle',
+          status: TxStatus.IDLE,
           errMsg: '',
         }
         state.balances[chainID] = result
@@ -164,7 +170,7 @@ export const bankSlice = createSlice({
       .addCase(getBalances.rejected, (state: BankState, action) => {
         const chainID = action.meta.arg.chainID
         state.balances[chainID] = {
-          status: 'idle',
+          status: TxStatus.REJECTED,
           errMsg:
             action?.error?.message || 'requested rejected for unknown reason',
           list: [],

@@ -77,7 +77,7 @@ const getClient = async (
 
 export const signAndBroadcast = async (
   chainId: string,
-  aminoConfig: any,
+  aminoConfig: AminoConfig,
   prefix: string,
   messages: any[],
   gas: number,
