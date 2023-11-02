@@ -5,7 +5,7 @@ const balanceURL = (address: string, denom: string) =>
 const fetchBalances = async (
   baseURL: string,
   address: string,
-  pagination: any
+  // pagination: any
 ):Promise<Response> => {
     const uri = `${baseURL}${balancesURL}${address}`;
     return await fetch(uri);

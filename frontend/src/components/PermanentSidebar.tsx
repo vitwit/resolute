@@ -1,59 +1,58 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
-import TopNav from "./TopNav";
-import { getSelectedPartFromURL } from "../utils/util";
+import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import React from 'react'
+import { getSelectedPartFromURL } from '../utils/util'
 
 const menuItems = [
   {
-    name: "Overview",
-    icon: "/overview-icon.svg",
-    link: "/",
+    name: 'Overview',
+    icon: '/overview-icon.svg',
+    link: '/',
   },
   {
-    name: "Transfers",
-    icon: "/transfers-icon.svg",
-    link: "/transfers",
+    name: 'Transfers',
+    icon: '/transfers-icon.svg',
+    link: '/transfers',
   },
   {
-    name: "Governance",
-    icon: "/gov-icon.svg",
-    link: "/governance",
+    name: 'Governance',
+    icon: '/gov-icon.svg',
+    link: '/governance',
   },
   {
-    name: "Staking",
-    icon: "/staking-icon.svg",
-    link: "/staking",
+    name: 'Staking',
+    icon: '/staking-icon.svg',
+    link: '/staking',
   },
   {
-    name: "Multisig",
-    icon: "/multisig-icon.svg",
-    link: "/multisig",
+    name: 'Multisig',
+    icon: '/multisig-icon.svg',
+    link: '/multisig',
   },
   {
-    name: "Authz",
-    icon: "/authz-icon.svg",
-    link: "/authz",
+    name: 'Authz',
+    icon: '/authz-icon.svg',
+    link: '/authz',
   },
   {
-    name: "Feegrant",
-    icon: "/feegrant-icon.svg",
-    link: "/feegrant",
+    name: 'Feegrant',
+    icon: '/feegrant-icon.svg',
+    link: '/feegrant',
   },
   {
-    name: "Groups",
-    icon: "/groups-icon.svg",
-    link: "/groups",
+    name: 'Groups',
+    icon: '/groups-icon.svg',
+    link: '/groups',
   },
-];
+]
 
 const PermanentSidebar = ({ children }: { children: React.ReactNode }) => {
-  const pathname = usePathname();
-  const pathParts = pathname.split("/");
-  const selectedPart = getSelectedPartFromURL(pathParts);
+  const pathname = usePathname()
+  const pathParts = pathname.split('/')
+  const selectedPart = getSelectedPartFromURL(pathParts)
   return (
     <div className="main">
       <div className="sidebar">
@@ -88,17 +87,15 @@ const PermanentSidebar = ({ children }: { children: React.ReactNode }) => {
       </div>
       <div className="page-content">
         <div className="w-full">
-          <div className=" mx-10 mt-10 relative">
-            <TopNav pathname={selectedPart} />
-          </div>
+          <div className=" mx-10 mt-10 relative">TopNav</div>
         </div>
         {children}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PermanentSidebar;
+export default PermanentSidebar
 
 const MenuItem = ({
   pathname,
@@ -106,22 +103,22 @@ const MenuItem = ({
   icon,
   link,
 }: {
-  pathname: string;
-  itemName: string;
-  icon: any;
-  link: string;
+  pathname: string
+  itemName: string
+  icon: string
+  link: string
 }) => {
-  pathname = pathname.toLowerCase();
-  pathname = pathname === "overview" ? "/" : `/${pathname}`;
+  pathname = pathname.toLowerCase()
+  pathname = pathname === 'overview' ? '/' : `/${pathname}`
   return (
     <Link
       className={`sidebar-menu-item ${
-        pathname === link ? "sidebar-menu-item-selected" : ""
+        pathname === link ? 'sidebar-menu-item-selected' : ''
       }`}
       href={link}
     >
       <Image src={icon} width={24} height={24} alt={itemName} />
       <div className="ml-2">{itemName}</div>
     </Link>
-  );
-};
+  )
+}
