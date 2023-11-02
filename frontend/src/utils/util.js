@@ -1,6 +1,8 @@
 export const convertPaginationToParams = (pagination) => {
   let result = '';
-  if (!pagination || (!pagination.key && !pagination.limit)) { return ''; }
+  if (!pagination || (!pagination.key && !pagination.limit)) {
+    return '';
+  }
   if (pagination.key !== null) {
     result += `pagination.key=${encodeURIComponent(pagination.key)}`;
     if (pagination.limit !== null) {
@@ -17,11 +19,7 @@ export const convertPaginationToParams = (pagination) => {
 
 export const convertPaginationToParamsOffset = (pagination) => {
   let result = '';
-  if (
-    pagination === undefined ||
-    (pagination?.offset === null && pagination?.limit === null) ||
-    (pagination?.offset === undefined && pagination?.limit === undefined)
-  ) {
+  if (!pagination || (!pagination.key && !pagination.limit)) {
     return '';
   }
   if (pagination.offset !== null) {
