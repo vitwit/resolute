@@ -35,18 +35,15 @@ export const ConnectWalletButton = ({
 
   const tryConnectWallet = (walletName: string) => {
     dispatch(
-      connectWalletV1({
+      establishWalletConnection({
         walletName,
         mainnets: networks,
-        testnets: [],
       })
     );
   }
 
   useEffect(() => {
     const walletName = getWalletName();
-    console.log(walletName)
-
     if (isConnected()) {
       tryConnectWallet(walletName)
     }
