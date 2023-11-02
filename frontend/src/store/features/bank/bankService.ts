@@ -1,18 +1,19 @@
-import Axios, { AxiosResponse } from "axios";
-import { convertPaginationToParams, cleanURL } from "../../../utils/util";
+import Axios, { AxiosResponse } from 'axios';
+import { convertPaginationToParams, cleanURL } from '../../../utils/util';
+import { KeyLimitPagination } from '../../../types/types';
 
-const balancesURL = "/cosmos/bank/v1beta1/balances/";
+const balancesURL = '/cosmos/bank/v1beta1/balances/';
 const balanceURL = (address: string, denom: string) =>
   `/cosmos/bank/v1beta1/balances/${address}/by_denom?denom=${denom}`;
 
 const fetchBalances = (
   baseURL: string,
   address: string,
-  pagination: any
+  pagination: KeyLimitPagination
 ): Promise<AxiosResponse> => {
   let uri = `${cleanURL(baseURL)}${balancesURL}${address}`;
   const parsed = convertPaginationToParams(pagination);
-  if (parsed === "") {
+  if (parsed !== '') {
     uri += `?${parsed}`;
   }
 

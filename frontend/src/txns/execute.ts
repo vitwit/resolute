@@ -4,11 +4,11 @@ import {
   SigningStargateClient,
   defaultRegistryTypes,
   AminoTypes,
-} from "@cosmjs/stargate";
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import { Registry } from "@cosmjs/proto-signing";
-import { MsgClaim } from "./passage/msg_claim";
-import { MsgUnjail } from "./slashing/tx";
+} from '@cosmjs/stargate';
+import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
+import { Registry } from '@cosmjs/proto-signing';
+import { MsgClaim } from './passage/msg_claim';
+import { MsgUnjail } from './slashing/tx';
 
 declare let window: WalletWindow;
 
@@ -17,7 +17,7 @@ export async function signAndBroadcastAmino(
   fee: any,
   chainID: string,
   rpcURL: string,
-  memo: string = ""
+  memo: string = ''
 ): Promise<any> {
   let result = await getWalletAmino(chainID);
   var wallet = result[0];
@@ -28,7 +28,7 @@ export async function signAndBroadcastAmino(
     registry.register(v[0], v[1]);
   });
 
-  registry.register("/passage3d.claim.v1beta1.MsgClaim", MsgClaim);
+  registry.register('/passage3d.claim.v1beta1.MsgClaim', MsgClaim);
 
   const cosmJS = await SigningStargateClient.connectWithSigner(rpcURL, wallet, {
     registry: registry,
@@ -54,7 +54,7 @@ export async function signAndBroadcastProto(
     registry.register(v[0], v[1]);
   });
 
-  registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
+  registry.register('/cosmos.slashing.v1beta1.MsgUnjail', MsgUnjail);
 
   const signingClient = await SigningStargateClient.offline(wallet, {
     registry: registry,
@@ -77,7 +77,7 @@ export function fee(
   coinMinimalDenom: string,
   amount: string,
   gas: number = 280000,
-  feeGranter: string = ""
+  feeGranter: string = ''
 ): any {
   return {
     amount: [{ amount: String(amount), denom: coinMinimalDenom }],
@@ -86,7 +86,11 @@ export function fee(
   };
 }
 
-export async function getWalletAmino(chainID: string): Promise<any> {
+export async function getWalletAmino(
+  chainID: string
+): Promise<
+  [OfflineAminoSigner, { address: string; algo: string; pubKey: Uint32Array }]
+> {
   await window.wallet.enable(chainID);
   const offlineSigner = window.wallet.getOfflineSignerOnlyAmino(chainID);
   const accounts = await offlineSigner.getAccounts();
@@ -95,7 +99,7 @@ export async function getWalletAmino(chainID: string): Promise<any> {
 
 export async function getWalletDirect(
   chainID: string
-): Promise<[OfflineAminoSigner & OfflineDirectSigner, string]> {
+): Promise<[OfflineAminoSigner & OfflineDirectSigner, { address: string; algo: string; pubKey: Uint32Array }]> {
   await window.wallet.enable(chainID);
   const offlineSigner = window.wallet.getOfflineSigner(chainID);
   const accounts = await offlineSigner.getAccounts();
