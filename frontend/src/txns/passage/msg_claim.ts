@@ -133,7 +133,7 @@ export class MsgClientImpl implements Msg {
     this.rpc = rpc;
     this.Claim = this.Claim.bind(this);
   }
-  Claim(request: MsgClaim): Promise<MsgClaimResponse> {
+  async Claim(request: MsgClaim): Promise<MsgClaimResponse> {
     const data = MsgClaim.encode(request).finish();
     const promise = this.rpc.request(
       "passage3d.claim.v1beta1.Msg",

@@ -24,12 +24,12 @@ export function isConnected(): boolean {
   }
   return false;
 }
-export function logout() {
+export function logout(): void {
   localStorage.removeItem("CONNECTED");
   removeWalletName();
 }
 
-export function getMainnets(): any {
+export function getMainnets(): Network[] {
   const networksInfo = localStorage.getItem("networks");
   if (networksInfo) {
     const networks = JSON.parse(networksInfo);
@@ -40,7 +40,7 @@ export function getMainnets(): any {
   return [];
 }
 
-export function getTestnets(): any {
+export function getTestnets(): Network[] {
   const networksInfo = localStorage.getItem("networks");
   if (networksInfo) {
     const networks = JSON.parse(networksInfo);

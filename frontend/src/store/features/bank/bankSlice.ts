@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { SendMsg } from "../../../txns/bank";
-import bankService from "./service";
+import bankService from "./bankService";
 import { signAndBroadcast } from "../../../utils/signing";
-import { parseBalance } from "../../../utils/denom";
 
 interface bankState {
   balances: Record<string, any>;

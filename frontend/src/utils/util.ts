@@ -1,4 +1,7 @@
-export const convertPaginationToParams = (pagination) => {
+export const convertPaginationToParams = (pagination: {
+  key: string | null | undefined;
+  limit: number | null | undefined;
+}): string => {
   let result = "";
   if (
     pagination === undefined ||
@@ -7,7 +10,7 @@ export const convertPaginationToParams = (pagination) => {
   ) {
     return "";
   }
-  if (pagination.key !== null) {
+  if (pagination.key) {
     result += `pagination.key=${encodeURIComponent(pagination.key)}`;
     if (pagination.limit !== null) {
       result += `&pagination.limit=${pagination.limit}`;
@@ -21,7 +24,10 @@ export const convertPaginationToParams = (pagination) => {
   return result;
 };
 
-export const convertPaginationToParamsOffset = (pagination) => {
+export const convertPaginationToParamsOffset = (pagination: {
+  offset: number | null | undefined;
+  limit: number | null | undefined;
+}): string => {
   let result = "";
   if (
     pagination === undefined ||
@@ -44,15 +50,14 @@ export const convertPaginationToParamsOffset = (pagination) => {
   return result;
 };
 
-// removes the trailing slashes from given url
-export const cleanURL = (url) => {
+export const cleanURL = (url: string | undefined): string => {
   if (url?.length) {
     return url.replace(/\/+$/, "");
   }
   return "";
 };
 
-export const getSelectedPartFromURL = (urlParts) => {
+export const getSelectedPartFromURL = (urlParts: string[]): string => {
   if (urlParts.length === 1) return "Overview";
   switch (urlParts[1]) {
     case "staking":

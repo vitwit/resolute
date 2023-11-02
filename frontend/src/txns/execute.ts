@@ -6,41 +6,9 @@ import {
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Registry } from "@cosmjs/proto-signing";
 import { MsgClaim } from "./passage/msg_claim";
-import { AirdropAminoConverter } from "../store/features/airdrop/amino";
 import { MsgUnjail } from "./slashing/tx";
 
 declare let window: WalletWindow;
-
-export async function signAndBroadcastClaimMsg(
-  signer: any,
-  msgs: any[],
-  fee: any,
-  chainID: string,
-  rpcURL: string,
-  memo: string = ""
-): Promise<any> {
-  const aTypes = new AminoTypes({
-    ...AirdropAminoConverter,
-  });
-
-  const result = await getWalletAmino(chainID);
-  const wallet = result[0];
-  const account = result[1];
-
-  let registry = new Registry();
-  defaultRegistryTypes.forEach((v: any) => {
-    registry.register(v[0], v[1]);
-  });
-
-  registry.register("/passage3d.claim.v1beta1.MsgClaim", MsgClaim);
-
-  const cosmJS = await SigningStargateClient.connectWithSigner(rpcURL, wallet, {
-    registry: registry,
-    aminoTypes: aTypes,
-  });
-
-  return await cosmJS.signAndBroadcast(account.address, msgs, fee, memo);
-}
 
 export async function signAndBroadcastAmino(
   msgs: any[],
