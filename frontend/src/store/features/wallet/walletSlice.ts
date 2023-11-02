@@ -75,13 +75,18 @@ export const establishWalletConnection = createAsyncThunk(
           ) {
             await window.wallet.experimentalSuggestChain(mainnets[i].config);
           }
+
           if (data.walletName === "leap" && mainnets[i].leapExperimental) {
             await window.wallet.experimentalSuggestChain(mainnets[i].config);
           }
-          let chainId: string = mainnets[i].config.chainId;
+
+          const chainId: string = mainnets[i].config.chainId;
           const chainName: string = mainnets[i].config.chainName;
+
           await getWalletAmino(chainId);
-          let walletInfo = await window.wallet.getKey(chainId);
+
+          const walletInfo = await window.wallet.getKey(chainId);
+
           walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString(
             "base64"
           );
@@ -110,6 +115,7 @@ export const establishWalletConnection = createAsyncThunk(
       } else {
         setConnected();
         setWalletName(data.walletName);
+
         return fulfillWithValue({
           chainInfos,
           nameToChainIDs,
@@ -133,7 +139,6 @@ const walletSlice = createSlice({
     },
     resetWallet: (state) => {
       state.connected = false;
-
       state.name = "";
       state.pubKey = "";
       state.nameToChainIDs = {};

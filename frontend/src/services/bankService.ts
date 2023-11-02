@@ -7,9 +7,9 @@ const fetchBalances = async (
   address: string,
   pagination: any
 ):Promise<Response> => {
-  let uri = `${baseURL}${balancesURL}${address}`;
-  return await fetch(uri);
-};
+    const uri = `${baseURL}${balancesURL}${address}`;
+    return await fetch(uri);
+  };
 
 const fetchBalance = async (
   baseURL: string,

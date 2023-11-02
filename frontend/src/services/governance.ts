@@ -46,7 +46,7 @@ const fetchProposalTally = async (
   baseURL: string,
   proposalId: number
 ): Promise<Response> => {
-  let uri = `${cleanURL(baseURL)}${proposalTallyURL(proposalId)}`;
+  const uri = `${cleanURL(baseURL)}${proposalTallyURL(proposalId)}`;
   return await fetch(uri);
 };
 
