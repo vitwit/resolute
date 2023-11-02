@@ -1,12 +1,6 @@
 export const convertPaginationToParams = (pagination) => {
   let result = '';
-  if (
-    pagination === undefined ||
-    (pagination?.key === null && pagination?.limit === null) ||
-    (pagination?.key === undefined && pagination?.limit === undefined)
-  ) {
-    return '';
-  }
+  if (!pagination || (!pagination.key && !pagination.limit)) { return ''; }
   if (pagination.key !== null) {
     result += `pagination.key=${encodeURIComponent(pagination.key)}`;
     if (pagination.limit !== null) {

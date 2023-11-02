@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import React from 'react'
-import { getSelectedPartFromURL } from '../utils/util'
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import React from 'react';
+import { getSelectedPartFromURL } from '../utils/util';
 
 const menuItems = [
   {
@@ -47,12 +47,12 @@ const menuItems = [
     icon: '/groups-icon.svg',
     link: '/groups',
   },
-]
+];
 
 const PermanentSidebar = ({ children }: { children: React.ReactNode }) => {
-  const pathname = usePathname()
-  const pathParts = pathname.split('/')
-  const selectedPart = getSelectedPartFromURL(pathParts)
+  const pathname = usePathname();
+  const pathParts = pathname.split('/');
+  const selectedPart = getSelectedPartFromURL(pathParts);
   return (
     <div className="main">
       <div className="sidebar">
@@ -92,10 +92,10 @@ const PermanentSidebar = ({ children }: { children: React.ReactNode }) => {
         {children}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PermanentSidebar
+export default PermanentSidebar;
 
 const MenuItem = ({
   pathname,
@@ -103,13 +103,13 @@ const MenuItem = ({
   icon,
   link,
 }: {
-  pathname: string
-  itemName: string
-  icon: string
-  link: string
+  pathname: string;
+  itemName: string;
+  icon: string;
+  link: string;
 }) => {
-  pathname = pathname.toLowerCase()
-  pathname = pathname === 'overview' ? '/' : `/${pathname}`
+  pathname = pathname.toLowerCase();
+  pathname = pathname === 'overview' ? '/' : `/${pathname}`;
   return (
     <Link
       className={`sidebar-menu-item ${
@@ -120,5 +120,5 @@ const MenuItem = ({
       <Image src={icon} width={24} height={24} alt={itemName} />
       <div className="ml-2">{itemName}</div>
     </Link>
-  )
-}
+  );
+};
