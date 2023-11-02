@@ -1,12 +1,12 @@
-import { KeplrWindow } from '@keplr-wallet/types'
+import { KeplrWindow } from '@keplr-wallet/types';
 declare global {
   interface WalletWindow extends Window {
-    keplr: KeplrWindow
+    keplr: KeplrWindow;
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    leap: any
+    leap: any;
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    wallet: KeplrWindow | any
+    wallet: KeplrWindow | any;
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    cosmostation: any
+    cosmostation: any;
   }
 }

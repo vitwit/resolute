@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   createContext,
@@ -7,7 +7,7 @@ import {
   SetStateAction,
   useState,
   ReactNode,
-} from "react";
+} from 'react';
 
 type DataType = {
   firstName: string;
@@ -21,8 +21,8 @@ interface ContextProps {
 }
 
 const GlobalContext = createContext<ContextProps>({
-  userId: "",
-  setUserId: (): string => "",
+  userId: '',
+  setUserId: (): string => '',
   data: [],
   setData: (): DataType[] => [],
 });
@@ -30,7 +30,7 @@ const GlobalContext = createContext<ContextProps>({
 export const TestProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState('');
   const [data, setData] = useState<[] | DataType[]>([]);
 
   return (

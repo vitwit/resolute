@@ -1,7 +1,7 @@
-import { ProposalsResponse } from "../types/proposals";
-import { convertPaginationToParams, cleanURL } from "../utils/util";
+import { ProposalsResponse } from '../types/proposals';
+import { convertPaginationToParams, cleanURL } from '../utils/util';
 
-const proposalsURL = "/cosmos/gov/v1beta1/proposals";
+const proposalsURL = '/cosmos/gov/v1beta1/proposals';
 const proposalTallyURL = (id: number): string =>
   `/cosmos/gov/v1beta1/proposals/${id}/tally`;
 
@@ -24,12 +24,12 @@ const fetchProposals = async (
     limit: limit,
   });
 
-  if (params !== "") uri += `&${params}`;
+  if (params !== '') uri += `&${params}`;
 
   const response = await fetch(uri);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch proposals");
+    throw new Error('Failed to fetch proposals');
   }
 
   const data = await response.json();
@@ -62,7 +62,7 @@ const fetchVoterVote = async (
     key: key,
     limit: limit,
   });
-  if (params !== "") uri += `?${params}`;
+  if (params !== '') uri += `?${params}`;
 
   return await fetch(uri);
 };
@@ -76,7 +76,6 @@ const fetchProposal = async (
 const fetchDepositParams = async (baseURL: string): Promise<Response> =>
   await fetch(`${cleanURL(baseURL)}${depositParamsURL}`);
 
-
 export const getProposalsInVoting = async (data: {
   baseURL: string;
   key: string | undefined;
@@ -88,12 +87,12 @@ export const getProposalsInVoting = async (data: {
 };
 
 const result = {
-    proposals: fetchProposals,
-    tally: fetchProposalTally,
-    votes: fetchVoterVote,
-    proposal: fetchProposal,
-    depositParams: fetchDepositParams,
-    proposalsInVoting: getProposalsInVoting,
-  };
+  proposals: fetchProposals,
+  tally: fetchProposalTally,
+  votes: fetchVoterVote,
+  proposal: fetchProposal,
+  depositParams: fetchDepositParams,
+  proposalsInVoting: getProposalsInVoting,
+};
 
 export default result;
