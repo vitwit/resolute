@@ -8,8 +8,8 @@ const poolURL = "/cosmos/staking/v1beta1/pool";
 const fetchValidators = async (
   baseURL: string,
 ): Promise<Response> => {
-  let uri = `${baseURL}${validatorsURL}`;
-
+  const uri = `${baseURL}${validatorsURL}`;
+  
   return await fetch(uri);
 };
 
@@ -17,7 +17,7 @@ const fetchDelegations = async (
   baseURL: string,
   address: string,
 ): Promise<Response> => {
-  let uri = `${baseURL}${delegationsURL}${address}`;
+  const uri = `${baseURL}${delegationsURL}${address}`;
 
   return await fetch(uri);
 };
@@ -26,7 +26,7 @@ const fetchUnbonding = async (
   baseURL: string,
   address: string,
 ): Promise<Response> => {
-  let uri = `${baseURL}${unbondingDelegationsURL(address)}`;
+  const uri = `${baseURL}${unbondingDelegationsURL(address)}`;
 
   return await fetch(uri);
 };

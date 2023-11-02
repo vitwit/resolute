@@ -22,6 +22,7 @@ export function isConnected(): boolean {
   if (connected && KEY_WALLET_NAME) {
     return true;
   }
+  
   return false;
 }
 export function logout() {
