@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { SendMsg } from '../../../txns/bank'
 import bankService from './bankService'
 import { signAndBroadcast } from '../../../utils/signing'
+import { Pagination } from 'staking/types/proposals'
 
 interface BankState {
   balances: Record<string, any>
@@ -27,7 +28,7 @@ export const getBalances = createAsyncThunk(
     baseURL: string
     address: string
     chainID: string
-    pagination: any
+    pagination?: Pagination
   }) => {
     const response = await bankService.balances(
       data.baseURL,
@@ -48,8 +49,8 @@ export const multiTxns = createAsyncThunk(
       baseURL: string
       address: string
       chainID: string
-      pagination: any
-      aminoConfig: any
+      pagination?: Pagination
+      aminoConfig: AminoConfig
       prefix: any
       msgs: any[]
       memo: string
@@ -77,7 +78,7 @@ export const multiTxns = createAsyncThunk(
       } else {
         return rejectWithValue(result?.rawLog)
       }
-    } catch (error: any) {
+    } catch (error:any) {
       return rejectWithValue(error.message)
     }
   }
@@ -93,8 +94,8 @@ export const txBankSend = createAsyncThunk(
       to: string
       amount: number
       chainID: string
-      pagination: any
-      aminoConfig: any
+      pagination?: Pagination
+      aminoConfig: AminoConfig
       prefix: any
       feeAmount: number
       denom: string
@@ -131,7 +132,7 @@ export const bankSlice = createSlice({
   name: 'bank',
   initialState,
   reducers: {
-    claimRewardInBank: (state: any, action) => {
+    claimRewardInBank: (state: BankState, action) => {
       const { chainID, totalRewards, minimalDenom } = action.payload
       for (let i = 0; i < state?.balances?.[chainID]?.list?.length; i++) {
         if (state.balances[chainID]?.list?.[i]?.denom === minimalDenom) {
@@ -146,7 +147,7 @@ export const bankSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getBalances.pending, (state: any, action) => {
+      .addCase(getBalances.pending, (state: BankState, action) => {
         const chainID = action.meta.arg.chainID
         state.balances[chainID] = 'pending'
       })
@@ -160,7 +161,7 @@ export const bankSlice = createSlice({
         }
         state.balances[chainID] = result
       })
-      .addCase(getBalances.rejected, (state: any, action) => {
+      .addCase(getBalances.rejected, (state: BankState, action) => {
         const chainID = action.meta.arg.chainID
         state.balances[chainID] = {
           status: 'idle',
