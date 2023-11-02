@@ -3,7 +3,7 @@ import { SendMsg } from "../../../txns/bank";
 import bankService from "./bankService";
 import { signAndBroadcast } from "../../../utils/signing";
 
-interface bankState {
+interface BankState {
   balances: Record<string, any>;
   tx: {
     status: "" | "idle" | "pending" | "rejected";
@@ -13,7 +13,7 @@ interface bankState {
   };
 }
 
-const initialState: bankState = {
+const initialState: BankState = {
   balances: {},
   tx: {
     status: "",
@@ -170,26 +170,26 @@ export const bankSlice = createSlice({
         };
       })
 
-      .addCase(txBankSend.pending, (state: any) => {
+      .addCase(txBankSend.pending, (state: BankState) => {
         state.tx.status = "pending";
       })
-      .addCase(txBankSend.fulfilled, (state: any, _) => {
+      .addCase(txBankSend.fulfilled, (state: BankState, _) => {
         state.tx.status = "idle";
       })
-      .addCase(txBankSend.rejected, (state: any, _) => {
+      .addCase(txBankSend.rejected, (state: BankState, _) => {
         state.tx.status = "rejected";
       })
-      .addCase(multiTxns.pending, (state: any) => {
+      .addCase(multiTxns.pending, (state: BankState) => {
         state.tx.status = "pending";
-        state.multiSendTxRes.status = "pending";
+        state.multiSendTx.status = "pending";
       })
-      .addCase(multiTxns.fulfilled, (state: any, _) => {
+      .addCase(multiTxns.fulfilled, (state: BankState, _) => {
         state.tx.status = "idle";
-        state.multiSendTxRes.status = "idle";
+        state.multiSendTx.status = "idle";
       })
-      .addCase(multiTxns.rejected, (state: any, _) => {
+      .addCase(multiTxns.rejected, (state: BankState, _) => {
         state.tx.status = "rejected";
-        state.multiSendTxRes.status = "rejected";
+        state.multiSendTx.status = "rejected";
       });
   },
 });
