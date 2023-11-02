@@ -2,9 +2,15 @@
 
 import Image from "next/image";
 import React, { useState } from "react";
+import AddNetwork from "./popups/AddNetwork";
 
 const NetworksMenu = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [addNetworkDialogOpen, setAddNetworkDialogOpen] =
+    useState<boolean>(false);
+  const handleClose = () => {
+    setAddNetworkDialogOpen((addNetworkDialogOpen) => !addNetworkDialogOpen);
+  };
   return (
     <div>
       <div
@@ -49,7 +55,13 @@ const NetworksMenu = () => {
               </li>
             ))}
 
-            <div className="network-menu-item add-network">
+            <div
+              className="network-menu-item add-network"
+              onClick={() => {
+                setMenuOpen(false);
+                setAddNetworkDialogOpen(true);
+              }}
+            >
               <Image
                 src="./add-network-icon.svg"
                 width={24}
@@ -61,6 +73,7 @@ const NetworksMenu = () => {
           </ul>
         </div>
       ) : null}
+      <AddNetwork handleClose={handleClose} open={addNetworkDialogOpen} />
     </div>
   );
 };

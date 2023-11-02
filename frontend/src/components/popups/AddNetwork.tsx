@@ -27,6 +27,7 @@ const AddNetwork = ({
   const [chainIDExist, setChainIDExist] = useState<boolean>(false);
   const [chainNameExist, setChainNameExist] = useState<boolean>(false);
   const [showErrors, setShowErrors] = useState<boolean>(false);
+  const [networkConfig, setNetworkConfig] = useState<Network | {}>({});
 
   const nameToChainIDs = useSelector(
     (state: any) => state.wallet.nameToChainIDs
@@ -64,9 +65,12 @@ const AddNetwork = ({
           chainNameExists(_.get(parsedData, "config.chain_name"))
         );
         setChainIDExist(chainIDExists(_.get(parsedData, "config.chain_id")));
+        setNetworkConfig(parsedData);
+      } else {
+        setNetworkConfig({});
       }
-      console.log(res);
     } catch (e) {
+      setNetworkConfig({});
       console.log(e);
     }
   };
@@ -92,9 +96,13 @@ const AddNetwork = ({
     return false;
   };
 
+  const addNetwork = () => {
+    console.log(networkConfig);
+  };
+
   return (
     <Dialog
-      open={true}
+      open={open}
       onClose={handleClose}
       maxWidth="lg"
       className="blur-effect"
@@ -221,7 +229,12 @@ const AddNetwork = ({
               </div>
             )}
             <div className="w-full">
-              <button className="custom-btn w-full">Add Network</button>
+              <button
+                className="custom-btn w-full"
+                onClick={() => addNetwork()}
+              >
+                Add Network
+              </button>
             </div>
           </div>
         </div>
