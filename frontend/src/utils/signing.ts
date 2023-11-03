@@ -30,7 +30,6 @@ import {
   OfflineSigner,
   Registry,
 } from '@cosmjs/proto-signing';
-import { MsgUnjail } from '../txns/slashing/tx';
 import { Msg } from '../types/types';
 import { ERR_NO_OFFLINE_AMINO_SIGNER, ERR_UNKNOWN } from './errors';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
@@ -111,8 +110,6 @@ export const signAndBroadcast = async (
   };
   let aminoTypes = new AminoTypes(defaultConverters);
   aminoTypes = new AminoTypes({ ...defaultConverters });
-
-  registry.register('/cosmos.slashing.v1beta1.MsgUnjail', MsgUnjail);
 
   if (!gas) {
     gas = await simulate(

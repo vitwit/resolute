@@ -9,7 +9,6 @@ import {
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { GeneratedType, Registry } from '@cosmjs/proto-signing';
 import { MsgClaim } from './passage/msg_claim';
-import { MsgUnjail } from './slashing/tx';
 import { Msg } from '../types/types';
 
 declare let window: WalletWindow;
@@ -53,8 +52,6 @@ export async function signAndBroadcastProto(
   defaultRegistryTypes.forEach((v: [string, GeneratedType]) => {
     registry.register(v[0], v[1]);
   });
-
-  registry.register('/cosmos.slashing.v1beta1.MsgUnjail', MsgUnjail);
 
   const signingClient = await SigningStargateClient.offline(wallet, {
     registry: registry,
