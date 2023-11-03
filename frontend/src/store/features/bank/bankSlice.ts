@@ -1,23 +1,24 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { SendMsg } from '../../../txns/bank'
-import bankService from './bankService'
-import { signAndBroadcast } from '../../../utils/signing'
-import { Pagination } from 'staking/types/proposals'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { SendMsg } from '../../../txns/bank';
+import bankService from './bankService';
+import { signAndBroadcast } from '../../../utils/signing';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
+import { KeyLimitPagination, Msg } from '../../../types/types';
+import { TxStatus } from '../../../types/store';
 
 interface Balance {
-  list: Coin[]
-  status: TxStatus
-  errMsg: string
+  list: Coin[];
+  status: TxStatus;
+  errMsg: string;
 }
 interface BankState {
-  balances: Record<string, Balance>
+  balances: Record<string, Balance>;
   tx: {
-    status: TxStatus
-  }
+    status: TxStatus;
+  };
   multiSendTx: {
-    status: TxStatus
-  }
+    status: TxStatus;
+  };
 }
 
 const initialState: BankState = {
@@ -26,46 +27,45 @@ const initialState: BankState = {
     status: TxStatus.INIT,
   },
   multiSendTx: { status: TxStatus.INIT },
-}
+};
 
 export const getBalances = createAsyncThunk(
   'bank/balances',
   async (data: {
-    baseURL: string
-    address: string
-    chainID: string
-    pagination?: Pagination
+    baseURL: string;
+    address: string;
+    chainID: string;
+    pagination: KeyLimitPagination;
   }) => {
     const response = await bankService.balances(
       data.baseURL,
       data.address,
       data.pagination
-    )
+    );
     return {
       chainID: data.chainID,
       data: response.data,
-    }
+    };
   }
-)
+);
 
 export const multiTxns = createAsyncThunk(
   'bank/multi-txs',
   async (
     data: {
-      baseURL: string
-      address: string
-      chainID: string
-      pagination?: Pagination
-      aminoConfig: AminoConfig
-      prefix: any
-      msgs: any[]
-      memo: string
-      feeAmount: number
-      denom: string
-      feegranter: string
-      rest: string
+      baseURL: string;
+      address: string;
+      chainID: string;
+      aminoConfig: AminoConfig;
+      prefix: string;
+      msgs: Msg[];
+      memo: string;
+      feeAmount: number;
+      denom: string;
+      feegranter: string;
+      rest: string;
     },
-    { rejectWithValue, fulfillWithValue, dispatch }
+    { rejectWithValue, fulfillWithValue }
   ) => {
     try {
       const result = await signAndBroadcast(
@@ -78,40 +78,40 @@ export const multiTxns = createAsyncThunk(
         `${data.feeAmount}${data.denom}`,
         data.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
-      )
+      );
       if (result?.code === 0) {
-        return fulfillWithValue({ txHash: result?.transactionHash })
+        return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        return rejectWithValue(result?.rawLog)
+        return rejectWithValue(result?.rawLog);
       }
-    } catch (error:any) {
-      return rejectWithValue(error.message)
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      return rejectWithValue(error.message);
     }
   }
-)
+);
 
 export const txBankSend = createAsyncThunk(
   'bank/tx-bank-send',
   async (
     data: {
-      baseURL: string
-      address: string
-      from: string
-      to: string
-      amount: number
-      chainID: string
-      pagination?: Pagination
-      aminoConfig: AminoConfig
-      prefix: any
-      feeAmount: number
-      denom: string
-      feegranter: string
-      rest: string
+      baseURL: string;
+      address: string;
+      from: string;
+      to: string;
+      amount: number;
+      chainID: string;
+      aminoConfig: AminoConfig;
+      prefix: string;
+      feeAmount: number;
+      denom: string;
+      feegranter: string;
+      rest: string;
     },
-    { rejectWithValue, fulfillWithValue, dispatch }
+    { rejectWithValue, fulfillWithValue }
   ) => {
     try {
-      const msg = SendMsg(data.from, data.to, data.amount, data.denom)
+      const msg = SendMsg(data.from, data.to, data.amount, data.denom);
       const result = await signAndBroadcast(
         data.chainID,
         data.aminoConfig,
@@ -122,84 +122,85 @@ export const txBankSend = createAsyncThunk(
         `${data.feeAmount}${data.denom}`,
         data.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
-      )
+      );
       if (result?.code === 0) {
-        return fulfillWithValue({ txHash: result?.transactionHash })
+        return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
-        return rejectWithValue(result?.rawLog)
+        return rejectWithValue(result?.rawLog);
       }
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      return rejectWithValue(error.message)
+      return rejectWithValue(error.message);
     }
   }
-)
+);
 
 export const bankSlice = createSlice({
   name: 'bank',
   initialState,
   reducers: {
     claimRewardInBank: (state: BankState, action) => {
-      const { chainID, totalRewards, minimalDenom } = action.payload
+      const { chainID, totalRewards, minimalDenom } = action.payload;
       for (let i = 0; i < state?.balances?.[chainID]?.list?.length; i++) {
         if (state.balances[chainID]?.list?.[i]?.denom === minimalDenom) {
           state.balances[chainID].list[i].amount =
-            +state.balances[chainID].list[i].amount + totalRewards
+            +state.balances[chainID].list[i].amount + totalRewards;
         }
       }
     },
     resetMultiSendTxRes: (state) => {
-      state.multiSendTx = { status: TxStatus.INIT }
+      state.multiSendTx = { status: TxStatus.INIT };
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(getBalances.pending, (state: BankState, action) => {
-        const chainID = action.meta.arg.chainID
-        state.balances[chainID].status = TxStatus.PENDING
+        const chainID = action.meta.arg.chainID;
+        state.balances[chainID].status = TxStatus.PENDING;
       })
       .addCase(getBalances.fulfilled, (state, action) => {
-        const chainID = action.payload.chainID
+        const chainID = action.payload.chainID;
 
-        let result = {
+        const result = {
           list: action.payload.data?.balances,
           status: TxStatus.IDLE,
           errMsg: '',
-        }
-        state.balances[chainID] = result
+        };
+        state.balances[chainID] = result;
       })
       .addCase(getBalances.rejected, (state: BankState, action) => {
-        const chainID = action.meta.arg.chainID
+        const chainID = action.meta.arg.chainID;
         state.balances[chainID] = {
           status: TxStatus.REJECTED,
           errMsg:
             action?.error?.message || 'requested rejected for unknown reason',
           list: [],
-        }
+        };
       })
 
-      .addCase(txBankSend.pending, (state: BankState) => {
-        state.tx.status = TxStatus.PENDING
+      .addCase(txBankSend.pending, (state) => {
+        state.tx.status = TxStatus.PENDING;
       })
-      .addCase(txBankSend.fulfilled, (state: BankState, _) => {
-        state.tx.status = TxStatus.IDLE
+      .addCase(txBankSend.fulfilled, (state) => {
+        state.tx.status = TxStatus.IDLE;
       })
-      .addCase(txBankSend.rejected, (state: BankState, _) => {
-        state.tx.status = TxStatus.REJECTED
+      .addCase(txBankSend.rejected, (state) => {
+        state.tx.status = TxStatus.REJECTED;
       })
-      .addCase(multiTxns.pending, (state: BankState) => {
-        state.tx.status = TxStatus.PENDING
-        state.multiSendTx.status = TxStatus.PENDING
+      .addCase(multiTxns.pending, (state) => {
+        state.tx.status = TxStatus.PENDING;
+        state.multiSendTx.status = TxStatus.PENDING;
       })
-      .addCase(multiTxns.fulfilled, (state: BankState, _) => {
-        state.tx.status = TxStatus.IDLE
-        state.multiSendTx.status = TxStatus.IDLE
+      .addCase(multiTxns.fulfilled, (state) => {
+        state.tx.status = TxStatus.IDLE;
+        state.multiSendTx.status = TxStatus.IDLE;
       })
-      .addCase(multiTxns.rejected, (state: BankState, _) => {
-        state.tx.status = TxStatus.REJECTED
-        state.multiSendTx.status = TxStatus.REJECTED
-      })
+      .addCase(multiTxns.rejected, (state) => {
+        state.tx.status = TxStatus.REJECTED;
+        state.multiSendTx.status = TxStatus.REJECTED;
+      });
   },
-})
+});
 
-export const { claimRewardInBank, resetMultiSendTxRes } = bankSlice.actions
-export default bankSlice.reducer
+export const { claimRewardInBank, resetMultiSendTxRes } = bankSlice.actions;
+export default bankSlice.reducer;

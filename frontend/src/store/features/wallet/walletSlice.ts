@@ -74,7 +74,7 @@ export const establishWalletConnection = createAsyncThunk(
           if (data.walletName === 'leap' && networks[i].leapExperimental) {
             await window.wallet.experimentalSuggestChain(networks[i].config)
           }
-          let chainId: string = networks[i].config.chainId
+          const chainId: string = networks[i].config.chainId
           const chainName: string = networks[i].config.chainName
           await getWalletAmino(chainId)
 

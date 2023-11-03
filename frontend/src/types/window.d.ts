@@ -8,6 +8,5 @@ declare global {
     wallet: KeplrWindow | any;
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     cosmostation: any;
-    getOfflineSigner: any;
   }
 }

@@ -3,28 +3,29 @@ import { OfflineAminoSigner, OfflineDirectSigner } from '@keplr-wallet/types';
 import {
   SigningStargateClient,
   defaultRegistryTypes,
-  AminoTypes,
+  StdFee,
+  DeliverTxResponse,
 } from '@cosmjs/stargate';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
-import { Registry } from '@cosmjs/proto-signing';
+import { GeneratedType, Registry } from '@cosmjs/proto-signing';
 import { MsgClaim } from './passage/msg_claim';
 import { MsgUnjail } from './slashing/tx';
+import { Msg } from '../types/types';
 
 declare let window: WalletWindow;
 
 export async function signAndBroadcastAmino(
-  msgs: any[],
-  fee: any,
+  msgs: Msg[],
+  fee: number,
   chainID: string,
   rpcURL: string,
   memo: string = ''
-): Promise<any> {
-  let result = await getWalletAmino(chainID);
-  var wallet = result[0];
-  var account = result[1];
-
-  let registry = new Registry();
-  defaultRegistryTypes.forEach((v: any) => {
+): Promise<DeliverTxResponse> {
+  const result = await getWalletAmino(chainID);
+  const wallet = result[0];
+  const account = result[1];
+  const registry = new Registry();
+  defaultRegistryTypes.forEach((v: [string, GeneratedType]) => {
     registry.register(v[0], v[1]);
   });
 
@@ -38,19 +39,18 @@ export async function signAndBroadcastAmino(
 }
 
 export async function signAndBroadcastProto(
-  msgs: any[],
-  fee: any,
+  msgs: Msg[],
+  fee: StdFee,
   rpcURL: string
-): Promise<any> {
+): Promise<DeliverTxResponse> {
   const client = await SigningStargateClient.connect(rpcURL);
 
   const chainId = await client.getChainId();
-  let result = await getWalletDirect(chainId);
-  var wallet = result[0];
-  var account = result[1];
-
-  let registry = new Registry();
-  defaultRegistryTypes.forEach((v: any) => {
+  const result = await getWalletDirect(chainId);
+  const wallet = result[0];
+  const account = result[1];
+  const registry = new Registry();
+  defaultRegistryTypes.forEach((v: [string, GeneratedType]) => {
     registry.register(v[0], v[1]);
   });
 
@@ -60,12 +60,12 @@ export async function signAndBroadcastProto(
     registry: registry,
   });
 
-  const accountInfo: any = await client.getAccount(account.address);
+  const accountInfo = await client.getAccount(account.address);
 
-  const signed = await signingClient.sign(account.address, msgs, fee, "", {
-    accountNumber: accountInfo.accountNumber,
+  const signed = await signingClient.sign(account.address, msgs, fee, '', {
+    accountNumber: accountInfo?.accountNumber || -1,
     chainId: chainId,
-    sequence: accountInfo.sequence,
+    sequence: accountInfo?.sequence || -1,
   });
 
   return await client.broadcastTx(
@@ -78,7 +78,7 @@ export function fee(
   amount: string,
   gas: number = 280000,
   feeGranter: string = ''
-): any {
+): StdFee {
   return {
     amount: [{ amount: String(amount), denom: coinMinimalDenom }],
     gas: String(gas),
@@ -99,7 +99,12 @@ export async function getWalletAmino(
 
 export async function getWalletDirect(
   chainID: string
-): Promise<[OfflineAminoSigner & OfflineDirectSigner, { address: string; algo: string; pubKey: Uint32Array }]> {
+): Promise<
+  [
+    OfflineAminoSigner & OfflineDirectSigner,
+    { address: string; algo: string; pubKey: Uint32Array },
+  ]
+> {
   await window.wallet.enable(chainID);
   const offlineSigner = window.wallet.getOfflineSigner(chainID);
   const accounts = await offlineSigner.getAccounts();
@@ -107,8 +112,5 @@ export async function getWalletDirect(
 }
 
 export function isWalletInstalled(): boolean {
-  if (window.wallet === undefined) {
-    return false;
-  }
-  return window?.wallet && window?.getOfflineSigner == null ? false : true;
+  return window.wallet ? true : false;
 }

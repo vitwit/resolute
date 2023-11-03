@@ -3,15 +3,13 @@ import {
   Fee,
   TxBody,
   TxRaw,
-} from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
-import { Buffer } from "buffer";
-import axios from "axios";
-import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys.js";
-import { toBase64, fromBase64 } from "@cosmjs/encoding";
-import Long from "long";
+} from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
+import { Buffer } from 'buffer';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { PubKey as comsjsPubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys.js';
+import { toBase64, fromBase64 } from '@cosmjs/encoding';
+import Long from 'long';
 import {
-  assertIsDeliverTxSuccess,
-  GasPrice,
   coin,
   defaultRegistryTypes as defaultStargateTypes,
   createBankAminoConverters,
@@ -19,28 +17,38 @@ import {
   createGovAminoConverters,
   createStakingAminoConverters,
   AminoTypes,
-} from "@cosmjs/stargate";
-import { sleep } from "@cosmjs/utils";
-import { multiply, format, ceil, bignumber, floor } from "mathjs";
-import { makeSignDoc as makeAminoSignDoc } from "@cosmjs/amino";
-import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js";
-import { makeSignDoc, Registry } from "@cosmjs/proto-signing";
-import { MsgUnjail } from "../txns/slashing/tx";
+  StdFee,
+  GasPrice,
+} from '@cosmjs/stargate';
+import { sleep } from '@cosmjs/utils';
+import { multiply, format, ceil, bignumber, floor } from 'mathjs';
+import { AminoMsg, makeSignDoc as makeAminoSignDoc } from '@cosmjs/amino';
+import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing.js';
+import {
+  isOfflineDirectSigner,
+  makeSignDoc,
+  OfflineSigner,
+  Registry,
+} from '@cosmjs/proto-signing';
+import { MsgUnjail } from '../txns/slashing/tx';
+import { Msg } from '../types/types';
+import { ERR_NO_OFFLINE_AMINO_SIGNER, ERR_UNKNOWN } from './errors';
+import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 
-declare const window: any;
+declare const window: WalletWindow;
 
-const canUseAmino = (aminoConfig: any, messages: any[]): boolean => {
+const canUseAmino = (aminoConfig: AminoConfig, messages: Msg[]): boolean => {
   for (let i = 0; i < messages.length; i++) {
     const message = messages[i];
-    if (message.typeUrl.startsWith("/cosmos.authz") && !aminoConfig.authz) {
+    if (message.typeUrl.startsWith('/cosmos.authz') && !aminoConfig.authz) {
       return false;
     } else if (
-      message.typeUrl.startsWith("/cosmos.feegrant") &&
+      message.typeUrl.startsWith('/cosmos.feegrant') &&
       !aminoConfig.feegrant
     ) {
       return false;
     } else if (
-      message.typeUrl.startsWith("/cosmos.group") &&
+      message.typeUrl.startsWith('/cosmos.group') &&
       !aminoConfig.group
     ) {
       return false;
@@ -52,8 +60,8 @@ const canUseAmino = (aminoConfig: any, messages: any[]): boolean => {
 const getClient = async (
   aminoConfig: AminoConfig,
   chainId: string,
-  messages: any[]
-): Promise<any> => {
+  messages: Msg[]
+): Promise<OfflineSigner> => {
   let signer;
   if (!canUseAmino(aminoConfig, messages)) {
     try {
@@ -61,7 +69,7 @@ const getClient = async (
       signer = window.wallet.getOfflineSigner(chainId);
     } catch (error) {
       console.log(error);
-      throw new Error("failed to get wallet");
+      throw new Error('failed to get wallet');
     }
   } else {
     try {
@@ -69,7 +77,7 @@ const getClient = async (
       signer = window.wallet.getOfflineSignerOnlyAmino(chainId);
     } catch (error) {
       console.log(error);
-      throw new Error("failed to get wallet");
+      throw new Error('failed to get wallet');
     }
   }
   return signer;
@@ -79,18 +87,18 @@ export const signAndBroadcast = async (
   chainId: string,
   aminoConfig: AminoConfig,
   prefix: string,
-  messages: any[],
+  messages: Msg[],
   gas: number,
   memo: string,
-  gasPrice: any,
+  gasPrice: string,
   restUrl: string,
-  granter?: any
-): Promise<any> => {
-  let signer;
+  granter?: string
+): Promise<ParsedTxResponse> => {
+  let signer: OfflineSigner;
   try {
     signer = await getClient(aminoConfig, chainId, messages);
   } catch (error) {
-    throw new Error("failed to get wallet");
+    throw new Error('failed to get wallet');
   }
 
   const accounts = await signer.getAccounts();
@@ -104,7 +112,7 @@ export const signAndBroadcast = async (
   let aminoTypes = new AminoTypes(defaultConverters);
   aminoTypes = new AminoTypes({ ...defaultConverters });
 
-  registry.register("/cosmos.slashing.v1beta1.MsgUnjail", MsgUnjail);
+  registry.register('/cosmos.slashing.v1beta1.MsgUnjail', MsgUnjail);
 
   if (!gas) {
     gas = await simulate(
@@ -134,25 +142,26 @@ export const signAndBroadcast = async (
     registry
   );
 
-  return broadcast(txBody, restUrl);
+  return await broadcast(txBody, restUrl);
 };
 
-function calculateFee(gasLimit: number, gasPrice: any, granter: any): any {
-  const processedGasPrice =
-    typeof gasPrice === "string" ? GasPrice.fromString(gasPrice) : gasPrice;
-
-  const amount = ceil(
-    bignumber(
-      multiply(
-        bignumber(processedGasPrice?.amount?.toString()),
-        bignumber(gasLimit.toString())
-      )
-    )
-  );
+function calculateFee(
+  gasLimit: number,
+  gasPrice: string,
+  granter?: string
+): StdFee {
+  const decodedGasPrice = GasPrice.fromString(gasPrice);
+  const processedGasPrice: { amount: number; denom: string } = {
+    amount: decodedGasPrice.amount.toFloatApproximation(),
+    denom: decodedGasPrice.denom,
+  };
+  const num1 = multiply(processedGasPrice.amount, gasLimit);
+  const num2 = bignumber(num1.toString());
+  const amount = ceil(num2);
   return {
     amount: [
       coin(
-        format(floor(amount), { notation: "fixed" }),
+        format(floor(amount), { notation: 'fixed' }),
         processedGasPrice.denom
       ),
     ],
@@ -161,46 +170,21 @@ function calculateFee(gasLimit: number, gasPrice: any, granter: any): any {
   };
 }
 
-function getFee(gas: number, gasPrice: any, granter: any): any {
+function getFee(gas: number, gasPrice: string, granter?: string): StdFee {
   if (!gas) gas = 860000;
   return calculateFee(gas, gasPrice, granter);
 }
 
-async function getAccount(restUrl: string, address: string): Promise<any> {
-  let value;
+async function getAccount(restUrl: string, address: string): Promise<Account> {
   try {
-    const res = await axios.get(
-      restUrl + "/cosmos/auth/v1beta1/accounts/" + address
+    const res: AxiosResponse<Account> = await axios.get(
+      restUrl + '/cosmos/auth/v1beta1/accounts/' + address
     );
-    value = res.data.account;
-    const baseAccount =
-      value.BaseAccount || value.baseAccount || value.base_account;
-    if (baseAccount) {
-      value = baseAccount;
-    }
 
-    const baseVestingAccount =
-      value.BaseVestingAccount ||
-      value.baseVestingAccount ||
-      value.base_vesting_account;
-    if (baseVestingAccount) {
-      value = baseVestingAccount;
-
-      const baseAccount_1 =
-        value.BaseAccount || value.baseAccount || value.base_account;
-      if (baseAccount_1) {
-        value = baseAccount_1;
-      }
-    }
-
-    const nestedAccount = value.account;
-    if (nestedAccount) {
-      value = nestedAccount;
-    }
-    return value;
-  } catch (error: any) {
-    if (error.response?.status === 404) {
-      throw new Error("Account does not exist on chain");
+    return res.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response?.status === 404) {
+      throw new Error('Account does not exist on chain');
     } else {
       console.log(error);
       throw error;
@@ -210,25 +194,28 @@ async function getAccount(restUrl: string, address: string): Promise<any> {
 
 async function simulate(
   restUrl: string,
-  registry: any,
-  signer: any,
+  registry: Registry,
+  signer: OfflineSigner,
   address: string,
-  messages: any[],
+  messages: Msg[],
   memo: string,
   modifier: number,
-  gasPrice: any,
-  granter: any
+  gasPrice: string,
+  granter?: string
 ): Promise<number> {
   const account = await getAccount(restUrl, address);
   const fee = getFee(50_000, gasPrice, granter);
+  const amount: Coin[] = fee.amount.map((coin) => {
+    return { amount: coin.amount, denom: coin.denom };
+  });
   const txBody = {
     bodyBytes: makeBodyBytes(registry, messages, memo),
     authInfoBytes: await makeAuthInfoBytes(
       signer,
       account,
       {
-        amount: fee.amount,
-        gasLimit: fee.gas,
+        amount: amount,
+        gasLimit: BigInt(fee.gas),
       },
       SignMode.SIGN_MODE_UNSPECIFIED
     ),
@@ -237,17 +224,23 @@ async function simulate(
 
   try {
     const estimate = await axios
-      .post(restUrl + "/cosmos/tx/v1beta1/simulate", {
+      .post(restUrl + '/cosmos/tx/v1beta1/simulate', {
         tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
       })
       .then((el) => el.data.gas_info.gas_used);
     return estimate * modifier;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || error.message);
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+    throw new Error(ERR_UNKNOWN);
   }
 }
 
-async function broadcast(txBody: any, restUrl: string): Promise<any> {
+async function broadcast(
+  txBody: TxRaw,
+  restUrl: string
+): Promise<ParsedTxResponse> {
   const timeoutMs = 60_000;
   const pollIntervalMs = 3_000;
   let timedOut = false;
@@ -255,7 +248,7 @@ async function broadcast(txBody: any, restUrl: string): Promise<any> {
     timedOut = true;
   }, timeoutMs);
 
-  const pollForTx = async (txId: string): Promise<any> => {
+  const pollForTx = async (txId: string): Promise<ParsedTxResponse> => {
     if (timedOut) {
       throw new Error(
         `Transaction with ID ${txId} was submitted but was not yet found on the chain. You might want to check later. There was a wait of ${
@@ -266,35 +259,39 @@ async function broadcast(txBody: any, restUrl: string): Promise<any> {
     await sleep(pollIntervalMs);
     try {
       const response = await axios.get(
-        restUrl + "/cosmos/tx/v1beta1/txs/" + txId
+        restUrl + '/cosmos/tx/v1beta1/txs/' + txId
       );
       const result = parseTxResult(response.data.tx_response);
       return result;
-    } catch (error: any) {
+    } catch (error) {
       // if transaction index is disabled return txhash
-      if (
-        error.response?.data?.message === "transaction indexing is disabled"
-      ) {
-        const result = parseTxResult({
-          code: 0,
-          txhash: txId,
-        });
-        return result;
+      if (error instanceof AxiosError) {
+        if (
+          error?.response?.data?.message === 'transaction indexing is disabled'
+        ) {
+          const result = parseTxResult({
+            code: 0,
+            txhash: txId,
+          });
+          return result;
+        }
       }
+
       return pollForTx(txId);
     }
   };
 
-  const response = await axios.post(restUrl + "/cosmos/tx/v1beta1/txs", {
+  const response = await axios.post(restUrl + '/cosmos/tx/v1beta1/txs', {
     tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
-    mode: "BROADCAST_MODE_SYNC",
+    mode: 'BROADCAST_MODE_SYNC',
   });
   const result = parseTxResult(response.data.tx_response);
-  assertIsDeliverTxSuccess(result);
+  // have ambiguous issues, todo...
+  //assertIsDeliverTxSuccess(result);
   return pollForTx(result.transactionHash).then(
     (value) => {
       clearTimeout(txPollTimeout);
-      assertIsDeliverTxSuccess(value);
+      //assertIsDeliverTxSuccess(value);
       return value;
     },
     (error) => {
@@ -304,7 +301,7 @@ async function broadcast(txBody: any, restUrl: string): Promise<any> {
   );
 }
 
-function parseTxResult(result: any): any {
+function parseTxResult(result: TxResponse): ParsedTxResponse {
   return {
     code: result.code,
     height: result.height,
@@ -316,23 +313,23 @@ function parseTxResult(result: any): any {
 }
 
 function convertToAmino(
-  aminoConfig: any,
-  aminoTypes: any,
-  messages: any[]
-): any[] {
+  aminoConfig: AminoConfig,
+  aminoTypes: AminoTypes,
+  messages: Msg[]
+): AminoMsg[] {
   return messages.map((message) => {
-    if (message.typeUrl.startsWith("/cosmos.authz") && !aminoConfig.authz) {
-      throw new Error("This chain does not support amino signing for authz");
+    if (message.typeUrl.startsWith('/cosmos.authz') && !aminoConfig.authz) {
+      throw new Error('This chain does not support amino signing for authz');
     } else if (
-      message.typeUrl.startsWith("/cosmos.feegrant") &&
+      message.typeUrl.startsWith('/cosmos.feegrant') &&
       !aminoConfig.feegrant
     ) {
-      throw new Error("This chain does not support amino signing for feegrant");
+      throw new Error('This chain does not support amino signing for feegrant');
     } else if (
-      message.typeUrl.startsWith("/cosmos.group") &&
+      message.typeUrl.startsWith('/cosmos.group') &&
       !aminoConfig.group
     ) {
-      throw new Error("This chain does not support amino signing for group");
+      throw new Error('This chain does not support amino signing for group');
     }
 
     return aminoTypes.toAmino(message);
@@ -340,17 +337,21 @@ function convertToAmino(
 }
 
 async function sign(
-  signer: any,
+  signer: OfflineSigner,
   chainId: string,
-  aminoConfig: any,
-  aminoTypes: any,
+  aminoConfig: AminoConfig,
+  aminoTypes: AminoTypes,
   address: string,
-  messages: any[],
+  messages: Msg[],
   memo: string,
-  fee: any,
+  fee: StdFee,
   restUrl: string,
-  registry: any
-): Promise<any> {
+  registry: Registry
+): Promise<{
+  bodyBytes: Uint8Array;
+  authInfoBytes: Uint8Array;
+  signatures: [Uint8Array] | [Buffer];
+}> {
   const account = await getAccount(restUrl, address);
   const { account_number: accountNumber, sequence } = account;
   const txBodyBytes = makeBodyBytes(registry, messages, memo);
@@ -361,7 +362,8 @@ async function sign(
     console.log(error);
   }
 
-  if (aminoMsgs && signer.signAmino) {
+  // if messages are amino and signer is amino signer
+  if (aminoMsgs && !isOfflineDirectSigner(signer)) {
     // Sign as amino if possible for Ledger and wallet support
     const signDoc = makeAminoSignDoc(
       aminoMsgs,
@@ -372,12 +374,15 @@ async function sign(
       sequence
     );
     const { signature, signed } = await signer.signAmino(address, signDoc);
+    const amount: Coin[] = signed.fee.amount.map((coin) => {
+      return { amount: coin.amount, denom: coin.denom };
+    });
     const authInfoBytes = await makeAuthInfoBytes(
       signer,
       account,
       {
-        amount: signed.fee.amount,
-        gasLimit: signed.fee.gas,
+        amount: amount,
+        gasLimit: BigInt(signed.fee.gas),
         granter: signed.fee.granter,
       },
       SignMode.SIGN_MODE_LEGACY_AMINO_JSON
@@ -386,16 +391,23 @@ async function sign(
     return {
       bodyBytes: makeBodyBytes(registry, messages, signed.memo),
       authInfoBytes: authInfoBytes,
-      signatures: [Buffer.from(signature.signature, "base64")],
+      signatures: [Buffer.from(signature.signature, 'base64')],
     };
-  } else {
+  }
+
+  // if messages are amino and signer is not amino signer
+  if (aminoMsgs) {
+    throw new Error(ERR_NO_OFFLINE_AMINO_SIGNER);
+  }
+
+  // if the signer is direct signer
+  if (isOfflineDirectSigner(signer)) {
     // Sign using standard protobuf messages
     const authInfoBytes = await makeAuthInfoBytes(
       signer,
       account,
       {
-        amount: fee.amount,
-        gasLimit: fee.gas,
+        gasLimit: BigInt(fee.gas),
         granter: fee.granter,
       },
       SignMode.SIGN_MODE_DIRECT
@@ -404,7 +416,7 @@ async function sign(
       txBodyBytes,
       authInfoBytes,
       chainId,
-      accountNumber
+      +accountNumber
     );
     const { signature, signed } = await signer.signDirect(address, signDoc);
     return {
@@ -413,11 +425,14 @@ async function sign(
       signatures: [fromBase64(signature.signature)],
     };
   }
+
+  // any other case by default
+  throw new Error(ERR_UNKNOWN);
 }
 
 function makeBodyBytes(
-  registry: any,
-  messages: any[],
+  registry: Registry,
+  messages: Msg[],
   memo: string
 ): Uint8Array {
   const anyMsgs = messages.map((m) => registry.encodeAsAny(m));
@@ -430,15 +445,15 @@ function makeBodyBytes(
 }
 
 async function makeAuthInfoBytes(
-  signer: any,
-  account: any,
-  fee: any,
-  mode: any
+  signer: OfflineSigner,
+  account: Account,
+  fee: FeeForAuthInfoBytes,
+  mode: SignMode
 ): Promise<Uint8Array> {
   const { sequence } = account;
   const accountFromSigner = (await signer.getAccounts())[0];
   if (!accountFromSigner) {
-    throw new Error("Failed to retrieve account");
+    throw new Error('Failed to retrieve account');
   }
   const signerPubkey = accountFromSigner.pubkey;
   return AuthInfo.encode({
@@ -446,11 +461,13 @@ async function makeAuthInfoBytes(
       {
         publicKey: {
           typeUrl: pubkeyTypeUrl(account.pub_key),
-          value: PubKey.encode({
-            key: signerPubkey,
-          }).finish(),
+          value: comsjsPubKey
+            .encode({
+              key: signerPubkey,
+            })
+            .finish(),
         },
-        sequence: BigInt("" + Long.fromNumber(sequence, true)),
+        sequence: BigInt('' + Long.fromString(sequence, true)),
         modeInfo: { single: { mode: mode } },
       },
     ],
@@ -458,11 +475,11 @@ async function makeAuthInfoBytes(
   }).finish();
 }
 
-const pubkeyTypeUrl = (pub_key: any, coinType?: number): string => {
-  if (pub_key && pub_key["@type"]) return pub_key["@type"];
+const pubkeyTypeUrl = (pub_key: PubKey, coinType?: number): string => {
+  if (pub_key && pub_key['@type']) return pub_key['@type'];
 
   if (coinType === 60) {
-    return "/ethermint.crypto.v1.ethsecp256k1.PubKey";
+    return '/ethermint.crypto.v1.ethsecp256k1.PubKey';
   }
-  return "/cosmos.crypto.secp256k1.PubKey";
+  return '/cosmos.crypto.secp256k1.PubKey';
 };

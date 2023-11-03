@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 import { networks } from "../utils/chainsInfo";
 import Image from "next/image";
 import Walletpage from "./popups/WalletPage";
-import { getWalletName, isConnected, logout } from "../utils/localStorage";
+import { getWalletName, isConnected } from "../utils/localStorage";
 import { useDispatch, useSelector } from "react-redux";
 import { establishWalletConnection } from "../store/features/wallet/walletSlice";
-import { AppDispatch } from "../store/store";
+import { AppDispatch, RootState } from "../store/store";
 
 export const ConnectWalletButton = ({
   children,

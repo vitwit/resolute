@@ -1,5 +1,6 @@
 export interface Msg {
   typeUrl: string;
+  /*eslint-disable-next-line */
   value: any;
 }
 
