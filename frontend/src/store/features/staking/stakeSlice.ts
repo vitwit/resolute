@@ -113,7 +113,7 @@ export const txRestake = createAsyncThunk(
   async (
     data: {
       chainID: string;
-      aminoConfig: any;
+      aminoConfig: AminoConfig;
       prefix: any;
       msgs: any[];
       memo: string;
@@ -213,7 +213,7 @@ export const txReDelegate = createAsyncThunk(
       amount: number;
       denom: string;
       chainID: string;
-      aminoConfig: any;
+      aminoConfig: AminoConfig;
       prefix: string;
       feeAmount: number;
       rest: string;
@@ -270,7 +270,7 @@ export const txUnDelegate = createAsyncThunk(
       amount: number;
       denom: string;
       chainID: string;
-      aminoConfig: any;
+      aminoConfig: AminoConfig;
       prefix: string;
       feeAmount: number;
       rest: string;
@@ -519,15 +519,14 @@ export const stakeSlice = createSlice({
       state,
       action: PayloadAction<{ chainID: string; validators: any }>
     ) => {
-      let chainID = action.payload.chainID;
-      let validators = action.payload.validators;
+      const { chainID, validators } = action.payload;
       state.chains[chainID].validators = validators;
     },
     delegations: (
       state,
       action: PayloadAction<{ chainID: string; delegations: any }>
     ) => {
-      let { chainID, delegations } = action.payload;
+      const { chainID, delegations } = action.payload;
       state.chains[chainID].delegations = delegations;
     },
     resetState: (state, action: PayloadAction<{ chainID: string }>) => {
