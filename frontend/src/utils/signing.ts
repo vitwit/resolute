@@ -33,6 +33,7 @@ import {
 import { Msg } from '../types/types';
 import { ERR_NO_OFFLINE_AMINO_SIGNER, ERR_UNKNOWN } from './errors';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
+import { GAS_FEE } from './constants';
 
 declare const window: WalletWindow;
 
@@ -168,7 +169,7 @@ function calculateFee(
 }
 
 function getFee(gas: number, gasPrice: string, granter?: string): StdFee {
-  if (!gas) gas = 860000;
+  if (!gas) gas = GAS_FEE;
   return calculateFee(gas, gasPrice, granter);
 }
 
