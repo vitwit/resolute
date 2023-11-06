@@ -5,6 +5,7 @@ import { signAndBroadcast } from '../../../utils/signing';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { KeyLimitPagination, Msg } from '../../../types/types';
 import { TxStatus } from '../../../types/store';
+import { GAS_FEE } from 'staking/utils/constants';
 
 interface Balance {
   list: Coin[];
@@ -73,7 +74,7 @@ export const multiTxns = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         data.msgs,
-        860000,
+        GAS_FEE,
         data.memo,
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -117,7 +118,7 @@ export const txBankSend = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        860000,
+        GAS_FEE,
         '',
         `${data.feeAmount}${data.denom}`,
         data.rest,
