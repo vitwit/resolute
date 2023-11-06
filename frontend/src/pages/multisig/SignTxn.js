@@ -19,10 +19,11 @@ SignTxn.propTypes = {
   address: PropTypes.string.isRequired,
   txId: PropTypes.string.isRequired,
   unSignedTxn: PropTypes.object.isRequired,
+  isMember: PropTypes.bool.isRequired,
 };
 
 export default function SignTxn(props) {
-  const { txId, unSignedTxn, address } = props;
+  const { txId, unSignedTxn, address, isMember } = props;
   const dispatch = useDispatch();
   const [load, setLoad] = useState(false);
 
@@ -104,6 +105,7 @@ export default function SignTxn(props) {
       sx={{
         textTransform: "none",
       }}
+      disabled={!isMember}
     >
       {load ? "Loading..." : "Sign"}
     </Button>

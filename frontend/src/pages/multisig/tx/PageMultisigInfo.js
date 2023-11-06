@@ -32,6 +32,7 @@ export default function PageMultisigInfo() {
   const [chainInfo, setChainInfo] = useState({});
   const [currency, setCurrency] = useState();
   const [currentNetwork, setCurrentNetwork] = useState("");
+  const [isMember, setIsMember] = useState(false);
 
   const multisigAccountDetails = useSelector(
     (state) => state.multisig.multisigAccount
@@ -42,8 +43,11 @@ export default function PageMultisigInfo() {
   const wallet = useSelector((state) => state.wallet);
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-
+  const walletAddress =
+    networks[nameToChainIDs[networkName]]?.walletInfo?.bech32Address;
   const chainId = nameToChainIDs[networkName];
+  const pubkeys = multisigAccountDetails.pubkeys;
+
   const [totalStake, setTotalStaked] = useState(0);
 
   const multisigDel = useSelector(
@@ -105,6 +109,15 @@ export default function PageMultisigInfo() {
       dispatch(multisigByAddress(multisigAddress));
     }
   }, [chainInfo]);
+
+  useEffect(() => {
+    const result = pubkeys?.filter((keys) => {
+      return keys.address === walletAddress;
+    });
+    if (result?.length) {
+      setIsMember(true);
+    }
+  }, [pubkeys]);
 
   return (
     <>
@@ -253,6 +266,7 @@ export default function PageMultisigInfo() {
                 `/${currentNetwork}/multisig/${multisigAddress}/create-tx`
               )
             }
+            disabled={!isMember}
             disableElevation
             variant="contained"
             sx={{
@@ -267,6 +281,7 @@ export default function PageMultisigInfo() {
           <TransactionsList
             address={multisigAddress}
             membersCount={members.length}
+            isMember={isMember}
           />
         ) : (
           <CircularProgress size={40} />

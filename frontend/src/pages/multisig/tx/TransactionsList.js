@@ -156,6 +156,7 @@ const TableRowComponent = (props) => {
     onShowMoreTxns,
     multisigAccount,
     membersCount,
+    isMember
   } = props;
   const { networkName } = useParams();
 
@@ -372,6 +373,7 @@ const TableRowComponent = (props) => {
                 signatures={tx?.signatures}
                 txId={tx?.id}
                 unSignedTxn={tx}
+                isMember={isMember}
               />
             )}
           </StyledTableCell>
@@ -407,6 +409,7 @@ const TableRowComponent = (props) => {
               mb: 2,
               ml: 1,
             }}
+            disabled={!isMember}
             onClick={() => {
               dispatch(
                 deleteTxn({
@@ -450,11 +453,12 @@ TableRowComponent.propTypes = {
   onShowError: PropTypes.func.isRequired,
   onShowMoreTxns: PropTypes.func.isRequired,
   multisigAccount: PropTypes.object.isRequired,
+  isMember: PropTypes.bool.isRequired,
 };
 
 export default function Transactions(props) {
   const dispatch = useDispatch();
-  const { membersCount } = props;
+  const { membersCount, isMember } = props;
   const txnsState = useSelector((state) => state.multisig?.txns || {});
   const createTxRes = useSelector((state) => state.multisig.createTxnRes);
   const [isHistory, setIsHistory] = useState(false);
@@ -646,6 +650,7 @@ export default function Transactions(props) {
                           }}
                           multisigAccount={multisigAccount}
                           membersCount={membersCount}
+                          isMember={isMember}
                         />
                       ))}
                     </TableBody>
@@ -691,6 +696,7 @@ export default function Transactions(props) {
                           }}
                           multisigAccount={multisigAccount}
                           membersCount={membersCount}
+                          isMember={isMember}
                         />
                       ))}
                     </TableBody>
@@ -746,4 +752,5 @@ export default function Transactions(props) {
 
 Transactions.propTypes = {
   address: PropTypes.string.isRequired,
+  isMember: PropTypes.bool.isRequired,
 };
