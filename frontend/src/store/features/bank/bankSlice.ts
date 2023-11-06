@@ -6,6 +6,7 @@ import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { KeyLimitPagination, Msg } from '../../../types/types';
 import { TxStatus } from '../../../types/store';
 import { GAS_FEE } from 'staking/utils/constants';
+import { MultiTxnsInputs, TxSendInputs } from 'staking/types/bank';
 
 interface Balance {
   list: Coin[];
@@ -50,34 +51,23 @@ export const getBalances = createAsyncThunk(
   }
 );
 
+
 export const multiTxns = createAsyncThunk(
   'bank/multi-txs',
   async (
-    data: {
-      baseURL: string;
-      address: string;
-      chainID: string;
-      aminoConfig: AminoConfig;
-      prefix: string;
-      msgs: Msg[];
-      memo: string;
-      feeAmount: number;
-      denom: string;
-      feegranter: string;
-      rest: string;
-    },
+    data: MultiTxnsInputs,
     { rejectWithValue, fulfillWithValue }
   ) => {
     try {
       const result = await signAndBroadcast(
-        data.chainID,
-        data.aminoConfig,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
         data.prefix,
         data.msgs,
         GAS_FEE,
         data.memo,
         `${data.feeAmount}${data.denom}`,
-        data.rest,
+        data.basicChainInfo.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
@@ -95,33 +85,20 @@ export const multiTxns = createAsyncThunk(
 export const txBankSend = createAsyncThunk(
   'bank/tx-bank-send',
   async (
-    data: {
-      baseURL: string;
-      address: string;
-      from: string;
-      to: string;
-      amount: number;
-      chainID: string;
-      aminoConfig: AminoConfig;
-      prefix: string;
-      feeAmount: number;
-      denom: string;
-      feegranter: string;
-      rest: string;
-    },
+    data: TxSendInputs,
     { rejectWithValue, fulfillWithValue }
   ) => {
     try {
       const msg = SendMsg(data.from, data.to, data.amount, data.denom);
       const result = await signAndBroadcast(
-        data.chainID,
-        data.aminoConfig,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
         data.prefix,
         [msg],
         GAS_FEE,
-        '',
+        data.memo,
         `${data.feeAmount}${data.denom}`,
-        data.rest,
+        data.basicChainInfo.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
@@ -153,6 +130,7 @@ export const bankSlice = createSlice({
       state.multiSendTx = { status: TxStatus.INIT };
     },
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(getBalances.pending, (state: BankState, action) => {
@@ -161,7 +139,6 @@ export const bankSlice = createSlice({
       })
       .addCase(getBalances.fulfilled, (state, action) => {
         const chainID = action.payload.chainID;
-
         const result = {
           list: action.payload.data?.balances,
           status: TxStatus.IDLE,
@@ -178,7 +155,6 @@ export const bankSlice = createSlice({
           list: [],
         };
       })
-
       .addCase(txBankSend.pending, (state) => {
         state.tx.status = TxStatus.PENDING;
       })

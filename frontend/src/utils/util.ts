@@ -21,22 +21,14 @@ export const convertPaginationToParamsOffset = (pagination: {
   limit: number | null | undefined;
 }): string => {
   let result = '';
-  if (
-    pagination === undefined ||
-    (pagination?.offset === null && pagination?.limit === null) ||
-    (pagination?.offset === undefined && pagination?.limit === undefined)
-  ) {
+  if (!pagination) {
     return '';
   }
-  if (pagination.offset !== null) {
+  if (!pagination.offset) {
     result += `pagination.offset=${pagination.offset}`;
-    if (pagination.limit !== null) {
-      result += `&pagination.limit=${pagination.limit}`;
-    }
-  } else {
-    if (pagination.limit !== null) {
-      result += `pagination.limit=${pagination.limit}`;
-    }
+  }
+  if (!pagination.limit) {
+    result += `pagination.limit=${pagination.limit}`;
   }
 
   return result;

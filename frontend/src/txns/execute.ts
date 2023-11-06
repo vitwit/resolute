@@ -10,6 +10,7 @@ import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { GeneratedType, Registry } from '@cosmjs/proto-signing';
 import { MsgClaim } from './passage/msg_claim';
 import { Msg } from '../types/types';
+import { GAS_FEE } from '../utils/constants';
 
 declare let window: WalletWindow;
 
@@ -73,7 +74,7 @@ export async function signAndBroadcastProto(
 export function fee(
   coinMinimalDenom: string,
   amount: string,
-  gas: number = 280000,
+  gas: number = GAS_FEE,
   feeGranter: string = ''
 ): StdFee {
   return {

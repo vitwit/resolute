@@ -4,3 +4,11 @@ export enum TxStatus {
   IDLE = 'idle',
   REJECTED = 'rejected',
 }
+
+interface BasicChainInfo {
+  baseURL: string;
+  chainID: string;
+  aminoConfig: AminoConfig;
+  rest: string;
+  rpc: string;
+}
