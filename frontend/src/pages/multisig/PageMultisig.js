@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -18,6 +18,7 @@ import DialogCreateMultisig from "../../components/multisig/DialogCreateMultisig
 import {
   getMultisigAccounts,
   resetCreateMultisigRes,
+  verifyAccount,
 } from "../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
@@ -32,6 +33,7 @@ export default function PageMultisig() {
   const [open, setOpen] = useState(false);
   const params = useParams();
   const [chainInfo, setChainInfo] = useState({});
+  const COSMOS_HUB = "cosmoshub";
 
   const navigate = useNavigate();
 
@@ -45,11 +47,16 @@ export default function PageMultisig() {
     (state) => state.multisig.multisigAccounts
   );
   const wallet = useSelector((state) => state.wallet);
+  const verifyAccountRes = useSelector(
+    (state) => state.multisig.verifyAccountRes
+  );
   const { connected } = wallet;
   const { walletInfo, network } = chainInfo;
 
   const accounts = multisigAccounts.accounts;
   const pendingTxns = multisigAccounts.txnCounts;
+  const cosmosAddress =
+    networks[nameToChainIDs[COSMOS_HUB]]?.walletInfo.bech32Address;
 
   const dispatch = useDispatch();
   const [currentNetwork, setCurrentNetwork] = useState();
@@ -67,8 +74,8 @@ export default function PageMultisig() {
   }, [params, connected]);
 
   useEffect(() => {
-    if(chainInfo?.walletInfo?.bech32Address)
-    dispatch(getMultisigAccounts(chainInfo?.walletInfo?.bech32Address));
+    if (chainInfo?.walletInfo?.bech32Address)
+      dispatch(getMultisigAccounts(chainInfo?.walletInfo?.bech32Address));
   }, [chainInfo, connected]);
 
   useEffect(() => {
@@ -82,6 +89,17 @@ export default function PageMultisig() {
   const onClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      dispatch(
+        verifyAccount({
+          chainID: nameToChainIDs?.[COSMOS_HUB],
+          address: cosmosAddress,
+        })
+      );
+    }, 1000);
+  }, [cosmosAddress]);
 
   return (
     <Paper elevation={0} sx={{ p: 2, borderRadius: 0 }}>

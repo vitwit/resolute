@@ -35,7 +35,11 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         // Ignore these action types
-        ignoredActions: ["wallet/connect/fulfilled", "wallet/connectv1/fulfilled"],
+        ignoredActions: [
+          "wallet/connect/fulfilled",
+          "wallet/connectv1/fulfilled",
+          "multisig/verifyAccount/fulfilled",
+        ],
       },
     }),
 });

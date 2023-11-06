@@ -9,9 +9,13 @@ const MULTI_ACCOUNT_URL = "/accounts";
 const TXNS_URL = "/txs";
 const SIGN_URL = (address, txId) =>
   `${BASE_URL}/multisig/${address}/sign-tx/${txId}`;
+const VERIFY_ACCOUNT_URL = "/multisig/verify";
 
 const createAccount = (data) =>
   Axios.post(`${BASE_URL}${CREATE_ACCOUNT}`, data);
+
+const verifyUser = (data) =>
+  Axios.post(`${BASE_URL}${VERIFY_ACCOUNT_URL}`, data);
 
 const getAccounts = (address) =>
   Axios.get(`${BASE_URL}${GET_ACCOUNTS}/${address}`);
@@ -72,4 +76,5 @@ export default {
   signTx: signTx,
   updateTx: updateTx,
   deleteTx: deleteTx,
+  verifyUser: verifyUser,
 };

@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import multisigService from "./multisigService";
 import bankService from "../bank/service";
+import { SignMsg } from "../../txns/multisig/verify";
+import { setError } from "../common/commonSlice";
 
 export const SOMETHING_WRONG = "Something went wrong";
 
@@ -47,6 +49,11 @@ const initialState = {
     balance: {},
     status: "idle",
     errMsg: "",
+  },
+  verifyAccountRes: {
+    token: "",
+    status: "",
+    error: "",
   },
 };
 
@@ -181,6 +188,39 @@ export const signTx = createAsyncThunk(
       return rejectWithValue(
         error?.response?.data?.message || error?.message || SOMETHING_WRONG
       );
+    }
+  }
+);
+
+export const verifyAccount = createAsyncThunk(
+  "multisig/verifyAccount",
+  async (data, { rejectWithValue, dispatch }) => {
+    try {
+      const token = await window.keplr.signArbitrary(
+        data.chainID,
+        data.address,
+        JSON.stringify(SignMsg(data.address))
+      );
+      try {
+        const response = await multisigService.verifyUser(token);
+        return {
+          response: response,
+          token: token,
+        };
+      } catch (error) {
+        return rejectWithValue(
+          error?.response?.data?.message || error?.message || SOMETHING_WRONG
+        );
+      }
+    } catch (error) {
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message || "",
+        })
+      );
+      console.log("error...", error);
+      return rejectWithValue("Wallet connection request rejected");
     }
   }
 );
@@ -334,6 +374,21 @@ export const multiSlice = createSlice({
       .addCase(signTx.rejected, (state, action) => {
         state.createSignRes.status = "rejected";
         state.createSignRes.error = action.payload;
+      });
+
+    builder
+      .addCase(verifyAccount.pending, (state) => {
+        state.verifyAccountRes.status = "pending";
+        state.verifyAccountRes.error = "";
+      })
+      .addCase(verifyAccount.fulfilled, (state, action) => {
+        state.verifyAccountRes.token = action.payload.token.signature;
+        state.verifyAccountRes.status = "idle";
+        state.verifyAccountRes.error = "";
+      })
+      .addCase(verifyAccount.rejected, (state, action) => {
+        state.verifyAccountRes.status = "rejected";
+        state.verifyAccountRes.error = action.payload;
       });
   },
 });
