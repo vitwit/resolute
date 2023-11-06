@@ -8,7 +8,6 @@ import {
 } from '@cosmjs/stargate';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { GeneratedType, Registry } from '@cosmjs/proto-signing';
-import { MsgClaim } from './passage/msg_claim';
 import { Msg } from '../types/types';
 import { GAS_FEE } from '../utils/constants';
 
@@ -28,8 +27,6 @@ export async function signAndBroadcastAmino(
   defaultRegistryTypes.forEach((v: [string, GeneratedType]) => {
     registry.register(v[0], v[1]);
   });
-
-  registry.register('/passage3d.claim.v1beta1.MsgClaim', MsgClaim);
 
   const cosmJS = await SigningStargateClient.connectWithSigner(rpcURL, wallet, {
     registry: registry,
