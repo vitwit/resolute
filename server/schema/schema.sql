@@ -59,6 +59,20 @@ CREATE TABLE public.multisig_accounts (
     created_at timestamp with time zone DEFAULT '2022-09-23 22:26:53.911454+05:30'::timestamp with time zone NOT NULL
 );
 
+--
+-- TOC entry 204 (class 1259 OID 16822)
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+     id  SERIAL PRIMARY KEY,
+    address character varying(50) NOT NULL,
+    salt INTEGER CHECK (salt > 0),
+    signature character varying(50) NOT NULL,
+    pub_key jsonb DEFAULT '[]'::jsonb,
+    created_at timestamp with time zone DEFAULT '2022-09-23 22:26:53.911454+05:30'::timestamp with time zone NOT NULL
+);
+
 
 --
 -- TOC entry 205 (class 1259 OID 16840)
