@@ -3,6 +3,7 @@ package middleware
 import (
 	"database/sql"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/vitwit/resolute/server/model"
@@ -29,7 +30,9 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 		var userAddess string
 
-		err := h.DB.QueryRow(`SELECT address FROM users where address=$1 and signature=$2`, address, signature).Scan(&userAddess)
+		saniSignature := strings.Replace(signature, " ", "+", -1)
+
+		err := h.DB.QueryRow(`SELECT address FROM users where address=$1 and signature=$2`, address, saniSignature).Scan(&userAddess)
 		if err == sql.ErrNoRows {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Status:  "Unauthorized",

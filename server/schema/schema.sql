@@ -66,9 +66,9 @@ CREATE TABLE public.multisig_accounts (
 
 CREATE TABLE public.users (
      id  SERIAL PRIMARY KEY,
-    address character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
     salt INTEGER CHECK (salt > 0),
-    signature character varying(50) NOT NULL,
+    signature character varying(250) NOT NULL,
     pub_key jsonb DEFAULT '[]'::jsonb,
     created_at timestamp with time zone DEFAULT '2022-09-23 22:26:53.911454+05:30'::timestamp with time zone NOT NULL
 );
