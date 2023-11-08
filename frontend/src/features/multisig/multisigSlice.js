@@ -196,13 +196,20 @@ export const verifyAccount = createAsyncThunk(
   "multisig/verifyAccount",
   async (data, { rejectWithValue, dispatch }) => {
     try {
-      const token = await window.keplr.signArbitrary(
+      const token = await window.wallet.signArbitrary(
         data.chainID,
         data.address,
         JSON.stringify(SignMsg(data.address))
       );
+      console.log("token,,,,,,,", token);
+      const salt = new Date().getTime();
       try {
-        const response = await multisigService.verifyUser(token);
+        const response = await multisigService.verifyUser({
+          address: data.address,
+          signature: token.signature,
+          salt: 10,
+          pubKey: token.pub_key,
+        });
         return {
           response: response,
           token: token,
@@ -243,6 +250,9 @@ export const multiSlice = createSlice({
     },
     resetSignTxnState: (state, _) => {
       state.createSignRes = initialState.createSignRes;
+    },
+    resetVerifyAccountRes: (state, _) => {
+      state.verifyAccountRes = initialState.verifyAccountRes;
     },
   },
   extraReducers: (builder) => {

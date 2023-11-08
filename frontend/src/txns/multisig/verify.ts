@@ -7,7 +7,7 @@ export function SignMsg(address: string): Msg {
     typeUrl: msgSign,
     value: {
       signer: address,
-      data: "Resolute - Offchain Verificaiton",
+      data: "Resolute - Offchain Verificaiton-10",
     },
   };
 }
