@@ -21,6 +21,7 @@ import {
 import { isValidPubKey, generateMultisigAccount } from "../../txns/multisig";
 import Box from "@mui/system/Box";
 import { THRESHOLD } from "../../pages/group/common";
+import { getToken } from "../../utils/localStorage";
 
 const InputTextComponent = ({
   field,
@@ -169,11 +170,19 @@ const DialogCreateMultisig = (props) => {
         Number(threshold),
         addressPrefix
       );
-      console.log("Addres.....", res);
       res.name = name;
       res.chainId = chainId;
       res.createdBy = address;
-      dispatch(createAccount(res));
+      const queryParams = {
+        address: address,
+        signature: getToken(),
+      };
+      dispatch(
+        createAccount({
+          queryParams: queryParams,
+          data: res,
+        })
+      );
     } catch (error) {
       dispatch(setError({ type: "error", message: error }));
     }

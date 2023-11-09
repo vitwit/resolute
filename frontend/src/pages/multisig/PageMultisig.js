@@ -308,11 +308,22 @@ export default function PageMultisig() {
           ) : null}
         </>
       ) : (
-        <Box sx={{my: 2}}>
+        <Box sx={{ my: 2 }}>
           <Typography>Please verify your account ownership</Typography>
-          <Button sx={{mt: 2}} size="small" variant="contained" disableElevation onClick={() => {
-            console.log("asd")
-          }}>
+          <Button
+            sx={{ mt: 2 }}
+            size="small"
+            variant="contained"
+            disableElevation
+            onClick={() => {
+              dispatch(
+                verifyAccount({
+                  chainID: nameToChainIDs?.[COSMOS_HUB],
+                  address: cosmosAddress,
+                })
+              );
+            }}
+          >
             Verify
           </Button>
         </Box>

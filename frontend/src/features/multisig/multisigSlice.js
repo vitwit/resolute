@@ -61,7 +61,10 @@ export const createAccount = createAsyncThunk(
   "multisig/createAccount",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await multisigService.createAccount(data);
+      const response = await multisigService.createAccount(
+        data.queryParams,
+        data.data
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -135,7 +138,11 @@ export const createTxn = createAsyncThunk(
   "multisig/createTxn",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await multisigService.createTxn(data.address, data);
+      const response = await multisigService.createTxn(
+        data.queryParams,
+        data.data.address,
+        data.data
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -201,14 +208,13 @@ export const verifyAccount = createAsyncThunk(
         data.address,
         JSON.stringify(SignMsg(data.address))
       );
-      console.log("token,,,,,,,", token);
       const salt = new Date().getTime();
       try {
         const response = await multisigService.verifyUser({
           address: data.address,
           signature: token.signature,
           salt: 10,
-          pubKey: token.pub_key,
+          pubKey: JSON.stringify(token.pub_key),
         });
         return {
           response: response,

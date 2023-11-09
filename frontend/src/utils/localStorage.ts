@@ -47,7 +47,7 @@ export function removeFeegrant(chainName: string) {
 
 export function removeAllFeegrants() {
   localStorage.removeItem("feegrant");
-} 
+}
 
 export function getMainnets(): any {
   const networksInfo = localStorage.getItem("networks");
@@ -83,4 +83,13 @@ export function setNetwork(chainInfo: any) {
     "networks",
     JSON.stringify({ mainnets: mainnets, testnets: testnets })
   );
+}
+
+export function getToken(): string {
+  const token = localStorage.getItem("multisig_token") || "";
+  if (token) {
+    const parsedValue = JSON.parse(token);
+    return parsedValue.token;
+  }
+  return "";
 }
