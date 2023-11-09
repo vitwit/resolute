@@ -21,7 +21,7 @@ import {
 import { isValidPubKey, generateMultisigAccount } from "../../txns/multisig";
 import Box from "@mui/system/Box";
 import { THRESHOLD } from "../../pages/group/common";
-import { getToken } from "../../utils/localStorage";
+import { getAuthToken } from "../../utils/localStorage";
 
 const InputTextComponent = ({
   field,
@@ -173,9 +173,10 @@ const DialogCreateMultisig = (props) => {
       res.name = name;
       res.chainId = chainId;
       res.createdBy = address;
+      const authToken = getAuthToken(chainId);
       const queryParams = {
         address: address,
-        signature: getToken(),
+        signature: authToken?.signature,
       };
       dispatch(
         createAccount({

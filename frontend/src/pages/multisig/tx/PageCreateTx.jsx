@@ -38,7 +38,8 @@ import {
 } from "../../../features/multisig/multisigSlice";
 import { fee } from "../../../txns/execute";
 import { resetError, setError } from "../../../features/common/commonSlice";
-import { getToken } from "../../../utils/localStorage";
+import { getAuthToken } from "../../../utils/localStorage";
+// import { getToken } from "../../../utils/localStorage";
 
 // TODO: serve urls from env
 
@@ -226,11 +227,11 @@ export default function PageCreateTx() {
   const wallet = useSelector((state) => state.wallet);
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-  const walletAddress =
-    networks[nameToChainIDs[COSMOS_HUB]]?.walletInfo.bech32Address;
+
   const { connected } = wallet;
   const chainID = nameToChainIDs[networkName];
   const chainInfo = networks[chainID]?.network;
+  const walletAddress = networks[chainID]?.walletInfo.bech32Address;
 
   const validators = useSelector((state) => state.staking.validators);
 
@@ -427,6 +428,7 @@ export default function PageCreateTx() {
       data.fees,
       data.gas
     );
+    const authToken = getAuthToken(chainInfo?.config?.chainId);
     dispatch(
       createTxn({
         data: {
@@ -439,7 +441,7 @@ export default function PageCreateTx() {
         },
         queryParams: {
           address: walletAddress,
-          signature: getToken(),
+          signature: authToken?.signature,
         },
       })
     );

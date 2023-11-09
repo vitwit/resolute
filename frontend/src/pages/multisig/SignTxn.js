@@ -7,6 +7,7 @@ import { signTx } from "../../features/multisig/multisigSlice";
 import { setError } from "../../features/common/commonSlice";
 import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
+import { getAuthToken } from "../../utils/localStorage";
 
 async function getWalletAmino(chainID) {
   await window.wallet.enable(chainID);
@@ -30,8 +31,9 @@ export default function SignTxn(props) {
   const { networkName } = useParams();
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-  const from = networks[nameToChainIDs[networkName]]?.walletInfo?.bech32Address;
-  const chainInfo = networks[nameToChainIDs[networkName]]?.network;
+  const chainID = nameToChainIDs[networkName];
+  const from = networks[chainID]?.walletInfo?.bech32Address;
+  const chainInfo = networks[chainID]?.network;
 
   const signTheTx = async () => {
     setLoad(true);
@@ -86,7 +88,16 @@ export default function SignTxn(props) {
         signature: toBase64(signatures[0]),
       };
 
-      dispatch(signTx(payload));
+      const authToken = getAuthToken(chainID);
+      dispatch(
+        signTx({
+          data: payload,
+          queryParams: {
+            address: from,
+            signature: authToken?.signature,
+          },
+        })
+      );
       setLoad(false);
     } catch (error) {
       setLoad(false);

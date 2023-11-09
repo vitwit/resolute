@@ -186,9 +186,9 @@ export const signTx = createAsyncThunk(
   "multisig/signTx",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await multisigService.signTx(data.address, data.txId, {
-        signer: data.signer,
-        signature: data.signature,
+      const response = await multisigService.signTx(data.queryParams,data.data.address, data.data.txId, {
+        signer: data.data.signer,
+        signature: data.data.signature,
       });
       return response.data;
     } catch (error) {
@@ -232,7 +232,6 @@ export const verifyAccount = createAsyncThunk(
           message: error.message || "",
         })
       );
-      console.log("error...", error);
       return rejectWithValue("Wallet connection request rejected");
     }
   }

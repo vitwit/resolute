@@ -41,7 +41,6 @@ export const fetchMultisigAccounts = (address) => {
 };
 
 export const createTxn = (queryParams, address, payload) => {
-  alert(JSON.stringify(queryParams));
   let uri = CREATE_TXN_URL(address, queryParams);
 
   return Axios.post(uri, payload);
