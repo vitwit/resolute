@@ -21,6 +21,7 @@ import {
   KEY_WALLET_NAME,
   getMainnets,
   getTestnets,
+  removeAllAuthTokens,
   removeAllFeegrants,
 } from "../utils/localStorage";
 import { resetFeegrantState } from "../features/feegrant/feegrantSlice";
@@ -92,6 +93,7 @@ export default function Dashboard() {
         }, 1000);
 
         removeAllFeegrants();
+        removeAllAuthTokens();
         dispatch(resetFeegrantState());
       };
 

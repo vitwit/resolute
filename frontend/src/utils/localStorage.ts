@@ -140,3 +140,7 @@ export function getAuthToken(chainID: string): AuthToken | null {
 
   return null;
 }
+
+export function removeAllAuthTokens() {
+  localStorage.removeItem(AUTH_TOKEN_KEY_NAME);
+}
