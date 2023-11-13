@@ -35,10 +35,7 @@ interface TxLog {
 }
 
 interface AuthInfo {
-  public_key: {
-    '@type': string;
-    key: string;
-  };
+  public_key: PubKey;
   mode_info: {
     single: {
       mode: string;
