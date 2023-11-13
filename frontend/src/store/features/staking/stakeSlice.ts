@@ -10,6 +10,10 @@ import {
   GetDelegationsResponse,
   Pagination,
   Params,
+  TxDelegateInputs,
+  TxRedelegateInputs,
+  TxReStakeInputs,
+  TxUndelegateInputs,
   Validator,
 } from '../../../types/staking';
 import { AxiosError } from 'axios';
@@ -99,22 +103,9 @@ const initialState: StakingState = {
   },
 };
 
-interface TxReStakeInputs {
-  basicChainInfo: BasicChainInfo;
-  prefix: string;
-  msgs: Msg[];
-  memo: string;
-  feeAmount: number;
-  denom: string;
-  feegranter: string;
-}
-
 export const txRestake = createAsyncThunk(
   'staking/restake',
-  async (
-    data: TxReStakeInputs,
-    { rejectWithValue, fulfillWithValue }
-  ) => {
+  async (data: TxReStakeInputs, { rejectWithValue, fulfillWithValue }) => {
     try {
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
@@ -137,17 +128,6 @@ export const txRestake = createAsyncThunk(
     }
   }
 );
-
-interface TxDelegateInputs {
-  basicChainInfo: BasicChainInfo;
-  delegator: string;
-  validator: string;
-  amount: number;
-  denom: string;
-  prefix: string;
-  feeAmount: number;
-  feegranter: string;
-}
 
 export const txDelegate = createAsyncThunk(
   'staking/delegate',
@@ -193,18 +173,6 @@ export const txDelegate = createAsyncThunk(
   }
 );
 
-interface TxRedelegateInputs {
-  basicChainInfo: BasicChainInfo;
-  delegator: string;
-  srcVal: string;
-  destVal: string;
-  amount: number;
-  denom: string;
-  prefix: string;
-  feeAmount: number;
-  feegranter: string;
-}
-
 export const txReDelegate = createAsyncThunk(
   'staking/redelegate',
   async (
@@ -249,23 +217,9 @@ export const txReDelegate = createAsyncThunk(
   }
 );
 
-interface TxUndelegateInputs {
-  basicChainInfo: BasicChainInfo;
-  delegator: string;
-  validator: string;
-  amount: number;
-  denom: string;
-  prefix: string;
-  feeAmount: number;
-  feegranter: string;
-}
-
 export const txUnDelegate = createAsyncThunk(
   'staking/undelegate',
-  async (
-    data: TxUndelegateInputs,
-    { rejectWithValue, fulfillWithValue }
-  ) => {
+  async (data: TxUndelegateInputs, { rejectWithValue, fulfillWithValue }) => {
     try {
       const msg = UnDelegate(
         data.delegator,

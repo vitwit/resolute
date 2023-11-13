@@ -82,3 +82,47 @@ interface Params {
   global_liquid_staking_cap: string;
   validator_liquid_staking_cap: string;
 }
+
+interface TxRedelegateInputs {
+  basicChainInfo: BasicChainInfo;
+  delegator: string;
+  srcVal: string;
+  destVal: string;
+  amount: number;
+  denom: string;
+  prefix: string;
+  feeAmount: number;
+  feegranter: string;
+}
+
+interface TxUndelegateInputs {
+  basicChainInfo: BasicChainInfo;
+  delegator: string;
+  validator: string;
+  amount: number;
+  denom: string;
+  prefix: string;
+  feeAmount: number;
+  feegranter: string;
+}
+
+interface TxDelegateInputs {
+  basicChainInfo: BasicChainInfo;
+  delegator: string;
+  validator: string;
+  amount: number;
+  denom: string;
+  prefix: string;
+  feeAmount: number;
+  feegranter: string;
+}
+
+interface TxReStakeInputs {
+  basicChainInfo: BasicChainInfo;
+  prefix: string;
+  msgs: Msg[];
+  memo: string;
+  feeAmount: number;
+  denom: string;
+  feegranter: string;
+}
