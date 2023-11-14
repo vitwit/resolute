@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import multisigService from "./multisigService";
 import bankService from "../bank/service";
-import { SignMsg } from "../../txns/multisig/verify";
 import { setError } from "../common/commonSlice";
 
 export const SOMETHING_WRONG = "Something went wrong";
+const VERIFICATION_MESSAGE =
+  "Resolute offchain verification.\n\nSign an offchain verification message to\nprove your ownership to access the multisig page.";
 
 const initialState = {
   createMultisigAccountRes: {
@@ -221,9 +222,8 @@ export const verifyAccount = createAsyncThunk(
       const token = await window.wallet.signArbitrary(
         data.chainID,
         data.address,
-        JSON.stringify(SignMsg(data.address))
+        VERIFICATION_MESSAGE
       );
-      const salt = new Date().getTime();
       try {
         const response = await multisigService.verifyUser({
           address: data.address,
