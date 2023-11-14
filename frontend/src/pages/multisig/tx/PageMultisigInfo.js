@@ -24,7 +24,7 @@ import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import Chip from "@mui/material/Chip";
 import { copyToClipboard } from "../../../utils/clipboard";
 import { formatNumber } from "../../../utils/denom";
-import { getAuthToken, setAuthToken } from "../../../utils/localStorage";
+import { getAuthToken, removeAllAuthTokens, setAuthToken } from "../../../utils/localStorage";
 import { setError } from "../../../features/common/commonSlice";
 import VerifyAccount from "../VerifyAccount";
 
@@ -158,6 +158,9 @@ export default function PageMultisigInfo() {
     if (token) {
       if (token.address === walletAddress && token.chainID === chainId) {
         return true;
+      } else {
+        removeAllAuthTokens();
+        return false;
       }
     }
     return false;
