@@ -222,7 +222,6 @@ export default function PageCreateTx() {
   const { address, networkName } = useParams();
 
   const [txType, setTxType] = useState("");
-  const COSMOS_HUB = "cosmoshub";
 
   const wallet = useSelector((state) => state.wallet);
   const networks = useSelector((state) => state.wallet.networks);

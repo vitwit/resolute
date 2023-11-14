@@ -17,12 +17,16 @@ import TransactionsList from "./TransactionsList";
 import {
   multisigByAddress,
   getMultisigBalance,
+  verifyAccount,
 } from "../../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../../utils/util";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import Chip from "@mui/material/Chip";
 import { copyToClipboard } from "../../../utils/clipboard";
 import { formatNumber } from "../../../utils/denom";
+import { getAuthToken, setAuthToken } from "../../../utils/localStorage";
+import { setError } from "../../../features/common/commonSlice";
+import VerifyAccount from "../VerifyAccount";
 
 export default function PageMultisigInfo() {
   const dispatch = useDispatch();
@@ -33,6 +37,7 @@ export default function PageMultisigInfo() {
   const [currency, setCurrency] = useState();
   const [currentNetwork, setCurrentNetwork] = useState("");
   const [isMember, setIsMember] = useState(false);
+  const [verified, setVerified] = useState(false);
 
   const multisigAccountDetails = useSelector(
     (state) => state.multisig.multisigAccount
@@ -43,6 +48,9 @@ export default function PageMultisigInfo() {
   const wallet = useSelector((state) => state.wallet);
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
+  const verifyAccountRes = useSelector(
+    (state) => state.multisig.verifyAccountRes
+  );
   const walletAddress =
     networks[nameToChainIDs[networkName]]?.walletInfo?.bech32Address;
   const chainId = nameToChainIDs[networkName];
@@ -119,174 +127,220 @@ export default function PageMultisigInfo() {
     }
   }, [pubkeys]);
 
+  useEffect(() => {
+    if (verifyAccountRes.status === "idle") {
+      setAuthToken({
+        chainID: chainId,
+        address: walletAddress,
+        signature: verifyAccountRes.token,
+      });
+      setVerified(true);
+    } else if (verifyAccountRes.status === "rejected") {
+      dispatch(
+        setError({
+          type: "error",
+          message: verifyAccountRes.error,
+        })
+      );
+    }
+  }, [verifyAccountRes]);
+
+  useEffect(() => {
+    if (isVerified()) {
+      setVerified(true);
+    } else {
+      setVerified(false);
+    }
+  }, [walletAddress, chainId]);
+
+  const isVerified = () => {
+    const token = getAuthToken(chainId);
+    if (token) {
+      if (token.address === walletAddress && token.chainID === chainId) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
     <>
-      <Paper
-        elevation={0}
-        sx={{
-          borderRadius: 0,
-          p: 1,
-          pl: 2,
-          pr: 2,
-        }}
-      >
-        <Typography
-          variant="h6"
-          color="text.primary"
-          fontWeight={600}
-          gutterBottom
-        >
-          Multisig Details
-        </Typography>
-
-        <Grid
-          container
-          sx={{
-            textAlign: "left",
-            p: 1,
-          }}
-          spacing={2}
-        >
-          <Grid item xs={6} md={3}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight={600}
-              gutterBottom
-            >
-              Address
-            </Typography>
-            <Chip
-              label={
-                multisigAccount?.address
-                  ? shortenAddress(multisigAccount?.address, 24)
-                  : ""
-              }
-              size="small"
-              deleteIcon={<ContentCopyOutlined />}
-              onDelete={() => {
-                copyToClipboard(multisigAccount?.address, dispatch);
+      {verified ? (
+        <>
+          <>
+            <Paper
+              elevation={0}
+              sx={{
+                borderRadius: 0,
+                p: 1,
+                pl: 2,
+                pr: 2,
               }}
-            />
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight={600}
-              gutterBottom
             >
-              Threshold
-            </Typography>
-            <Typography>
-              &nbsp;&nbsp;
-              {`${multisigAccount?.threshold}/${members?.length}` || 0}
-            </Typography>
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <Typography
-              gutterBottom
-              variant="body2"
-              color="text.secondary"
-              fontWeight={600}
-            >
-              Available balance
-            </Typography>
-            <Typography>
-              {(
-                multisigBal?.balance?.amount /
-                10 ** currency?.coinDecimals
-              ).toLocaleString() || 0}{" "}
-              &nbsp;
-              {currency?.coinDenom}
-            </Typography>
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <Typography
-              gutterBottom
-              variant="body2"
-              color="text.secondary"
-              fontWeight={600}
-            >
-              Staked
-            </Typography>
-            <Typography>
-              {formatNumber(totalStake) || 0} {currency?.coinDenom}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} md={12}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight={600}
-              gutterBottom
-            >
-              Members
-            </Typography>
-            {members.map((m, index) => (
-              <Chip
-                key={index}
-                sx={{
-                  ml: 0.5,
-                  mr: 0.5,
-                  mt: 1,
-                }}
-                label={m?.address ? shortenAddress(m.address, 24) : ""}
-                size="small"
-                deleteIcon={<ContentCopyOutlined />}
-                onDelete={() => {
-                  copyToClipboard(m?.address, dispatch);
-                }}
-              />
-            ))}
-          </Grid>
-        </Grid>
-      </Paper>
-      <Paper
-        elevation={0}
-        sx={{
-          p: 2,
-          mt: 1,
-        }}
-      >
-        <Typography variant="h6" fontWeight={600} color="text.primary">
-          Transactions
-        </Typography>
+              <Typography
+                variant="h6"
+                color="text.primary"
+                fontWeight={600}
+                gutterBottom
+              >
+                Multisig Details
+              </Typography>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "right",
-          }}
-        >
-          <Button
-            onClick={() =>
-              navigate(
-                `/${currentNetwork}/multisig/${multisigAddress}/create-tx`
-              )
-            }
-            disabled={!isMember}
-            disableElevation
-            variant="contained"
-            sx={{
-              textTransform: "none",
-            }}
-          >
-            Create Transaction
-          </Button>
-        </Box>
-        {multisigAccountDetails.status === "idle" &&
-        multisigAccount?.address?.length > 0 ? (
-          <TransactionsList
-            address={multisigAddress}
-            membersCount={members.length}
-            isMember={isMember}
-          />
-        ) : (
-          <CircularProgress size={40} />
-        )}
-      </Paper>
+              <Grid
+                container
+                sx={{
+                  textAlign: "left",
+                  p: 1,
+                }}
+                spacing={2}
+              >
+                <Grid item xs={6} md={3}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight={600}
+                    gutterBottom
+                  >
+                    Address
+                  </Typography>
+                  <Chip
+                    label={
+                      multisigAccount?.address
+                        ? shortenAddress(multisigAccount?.address, 24)
+                        : ""
+                    }
+                    size="small"
+                    deleteIcon={<ContentCopyOutlined />}
+                    onDelete={() => {
+                      copyToClipboard(multisigAccount?.address, dispatch);
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={6} md={3}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight={600}
+                    gutterBottom
+                  >
+                    Threshold
+                  </Typography>
+                  <Typography>
+                    &nbsp;&nbsp;
+                    {`${multisigAccount?.threshold}/${members?.length}` || 0}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6} md={3}>
+                  <Typography
+                    gutterBottom
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight={600}
+                  >
+                    Available balance
+                  </Typography>
+                  <Typography>
+                    {(
+                      multisigBal?.balance?.amount /
+                      10 ** currency?.coinDecimals
+                    ).toLocaleString() || 0}{" "}
+                    &nbsp;
+                    {currency?.coinDenom}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6} md={3}>
+                  <Typography
+                    gutterBottom
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight={600}
+                  >
+                    Staked
+                  </Typography>
+                  <Typography>
+                    {formatNumber(totalStake) || 0} {currency?.coinDenom}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={12}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight={600}
+                    gutterBottom
+                  >
+                    Members
+                  </Typography>
+                  {members.map((m, index) => (
+                    <Chip
+                      key={index}
+                      sx={{
+                        ml: 0.5,
+                        mr: 0.5,
+                        mt: 1,
+                      }}
+                      label={m?.address ? shortenAddress(m.address, 24) : ""}
+                      size="small"
+                      deleteIcon={<ContentCopyOutlined />}
+                      onDelete={() => {
+                        copyToClipboard(m?.address, dispatch);
+                      }}
+                    />
+                  ))}
+                </Grid>
+              </Grid>
+            </Paper>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 2,
+                mt: 1,
+              }}
+            >
+              <Typography variant="h6" fontWeight={600} color="text.primary">
+                Transactions
+              </Typography>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "right",
+                }}
+              >
+                <Button
+                  onClick={() =>
+                    navigate(
+                      `/${currentNetwork}/multisig/${multisigAddress}/create-tx`
+                    )
+                  }
+                  disabled={!isMember}
+                  disableElevation
+                  variant="contained"
+                  sx={{
+                    textTransform: "none",
+                  }}
+                >
+                  Create Transaction
+                </Button>
+              </Box>
+              {multisigAccountDetails.status === "idle" &&
+              multisigAccount?.address?.length > 0 ? (
+                <TransactionsList
+                  address={multisigAddress}
+                  membersCount={members.length}
+                  isMember={isMember}
+                />
+              ) : (
+                <CircularProgress size={40} />
+              )}
+            </Paper>
+          </>
+        </>
+      ) : (
+        <Paper>
+          <VerifyAccount chainID={chainId} walletAddress={walletAddress} />
+        </Paper>
+      )}
     </>
   );
 }

@@ -30,6 +30,7 @@ import { copyToClipboard } from "../../utils/clipboard";
 import AddIcon from "@mui/icons-material/Add";
 import { setError } from "../../features/common/commonSlice";
 import { getAuthToken, setAuthToken } from "../../utils/localStorage";
+import VerifyAccount from "./VerifyAccount";
 
 export default function PageMultisig() {
   const [open, setOpen] = useState(false);
@@ -139,15 +140,6 @@ export default function PageMultisig() {
       }
     }
     return false;
-  };
-
-  const dispatchVerifyAccount = (chainID, walletAddress) => {
-    dispatch(
-      verifyAccount({
-        chainID: chainID,
-        address: walletAddress,
-      })
-    );
   };
 
   return (
@@ -321,20 +313,7 @@ export default function PageMultisig() {
             ) : null}
           </>
         ) : (
-          <Box sx={{ my: 2 }}>
-            <Typography>Please verify your account ownership</Typography>
-            <Button
-              sx={{ mt: 2 }}
-              size="small"
-              variant="contained"
-              disableElevation
-              onClick={() => {
-                dispatchVerifyAccount(chainID, walletAddress);
-              }}
-            >
-              Verify
-            </Button>
-          </Box>
+          <VerifyAccount chainID={chainID} walletAddress={walletAddress} />
         )}
       </>
     </Paper>
