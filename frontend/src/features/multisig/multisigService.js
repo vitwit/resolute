@@ -31,8 +31,12 @@ const getAccount = (address) => Axios.get(`${BASE_URL}/multisig/${address}`);
 const signTx = (queryParams, address, txId, payload) =>
   Axios.post(SIGN_URL(queryParams, address, txId), payload);
 
-const updateTx = (address, txId, payload) =>
-  Axios.post(`${BASE_URL}${CREATE_ACCOUNT}/${address}/tx/${txId}`, payload);
+const updateTx = (queryParams, address, txId, payload) =>
+  Axios.post(
+    `${BASE_URL}${CREATE_ACCOUNT}/${address}/tx/${txId}` +
+      SIGNATURE_PARAMS_STRING(queryParams),
+    payload
+  );
 
 export const fetchMultisigAccounts = (address) => {
   let uri = `${BASE_URL}/accounts/${address}`;

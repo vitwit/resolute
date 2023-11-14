@@ -335,7 +335,7 @@ const TableRowComponent = (props) => {
           {(tx?.signatures?.length || 0) >= threshold
             ? tx?.status === "SUCCESS" || tx?.status === "FAILED"
               ? getTxStatusComponent(tx?.status, onShowError)
-              : "Waiting for brodcast"
+              : "Waiting for broadcast"
             : !isWalletSigned()
             ? "Waiting for your sign"
             : "Waiting for others to sign"}

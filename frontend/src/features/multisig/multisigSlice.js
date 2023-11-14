@@ -154,9 +154,15 @@ export const createTxn = createAsyncThunk(
 
 export const updateTxn = createAsyncThunk(
   "multisig/updateTxn",
-  async ({ address, txId, body }, { rejectWithValue }) => {
+  async ({ queryParams, data }, { rejectWithValue }) => {
+    console.log(queryParams, data);
     try {
-      const response = await multisigService.updateTx(address, txId, body);
+      const response = await multisigService.updateTx(
+        queryParams,
+        data.address,
+        data.txId,
+        data.body
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -186,10 +192,15 @@ export const signTx = createAsyncThunk(
   "multisig/signTx",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await multisigService.signTx(data.queryParams,data.data.address, data.data.txId, {
-        signer: data.data.signer,
-        signature: data.data.signature,
-      });
+      const response = await multisigService.signTx(
+        data.queryParams,
+        data.data.address,
+        data.data.txId,
+        {
+          signer: data.data.signer,
+          signature: data.data.signature,
+        }
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
