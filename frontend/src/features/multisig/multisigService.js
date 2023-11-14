@@ -33,7 +33,7 @@ const signTx = (queryParams, address, txId, payload) =>
 
 const updateTx = (queryParams, address, txId, payload) =>
   Axios.post(
-    `${BASE_URL}${CREATE_ACCOUNT}/${address}/tx/${txId}` +
+    `${BASE_URL}/multisig/${address}/tx/${txId}` +
       SIGNATURE_PARAMS_STRING(queryParams),
     payload
   );
@@ -73,8 +73,11 @@ export const createTransaction = (data) => {
   return Axios.post(uri, data);
 };
 
-export const deleteTx = (address, txId) =>
-  Axios.delete(`${BASE_URL}/multisig/${address}/tx/${txId}`);
+export const deleteTx = (queryParams, address, txId) =>
+  Axios.delete(
+    `${BASE_URL}/multisig/${address}/tx/${txId}` +
+      SIGNATURE_PARAMS_STRING(queryParams)
+  );
 
 export default {
   createAccount: createAccount,

@@ -57,6 +57,7 @@ import {
   UNDELEGATE_TYPE_URL,
 } from "./utils";
 import { useParams } from "react-router-dom";
+import { getAuthToken } from "../../../utils/localStorage";
 
 const mapTxns = {
   "/cosmos.staking.v1beta1.MsgDelegate": "Delegate",
@@ -156,7 +157,7 @@ const TableRowComponent = (props) => {
     onShowMoreTxns,
     multisigAccount,
     membersCount,
-    isMember
+    isMember,
   } = props;
   const { networkName } = useParams();
 
@@ -165,12 +166,13 @@ const TableRowComponent = (props) => {
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
-  const walletAddress =
-    networks[nameToChainIDs[networkName]]?.walletInfo?.bech32Address;
-  const chainInfo = networks[nameToChainIDs[networkName]]?.network;
+  const chainID = nameToChainIDs[networkName];
+  const walletAddress = networks[chainID]?.walletInfo?.bech32Address;
+  const chainInfo = networks[chainID]?.network;
 
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
+  const authToken = getAuthToken(chainID);
 
   const isWalletSigned = () => {
     let signs = tx?.signatures || [];
@@ -413,8 +415,14 @@ const TableRowComponent = (props) => {
             onClick={() => {
               dispatch(
                 deleteTxn({
-                  address: tx?.multisig_address,
-                  id: tx?.id,
+                  queryParams: {
+                    address: walletAddress,
+                    signature: authToken.signature,
+                  },
+                  data: {
+                    address: tx?.multisig_address,
+                    id: tx?.id,
+                  },
                 })
               );
             }}

@@ -92,7 +92,11 @@ export const deleteTxn = createAsyncThunk(
   "multisig/deleteTxn",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await multisigService.deleteTx(data.address, data.id);
+      const response = await multisigService.deleteTx(
+        data.queryParams,
+        data.data.address,
+        data.data.id
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
