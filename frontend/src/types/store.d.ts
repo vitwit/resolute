@@ -12,3 +12,8 @@ interface BasicChainInfo {
   rest: string;
   rpc: string;
 }
+
+export interface Msg {
+  typeUrl: string
+  value: any
+}
