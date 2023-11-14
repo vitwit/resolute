@@ -4,7 +4,7 @@ import stakingService from './stakingService';
 import { ERR_UNKNOWN } from '../../../utils/errors';
 import { signAndBroadcast } from '../../../utils/signing';
 import cloneDeep from 'lodash/cloneDeep';
-import { BasicChainInfo, TxStatus } from '../../../types/store';
+import { TxStatus } from '../../../types/store';
 import { GAS_FEE } from '../../../utils/constants';
 import {
   GetDelegationsResponse,
