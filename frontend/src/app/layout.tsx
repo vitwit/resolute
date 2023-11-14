@@ -1,9 +1,10 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import PermanentSideBar from '../components/PermanentSidebar';
+
 import { ConnectWalletButton } from '../components/ConnectWalletButton';
 import { StoreProvider } from 'staking/store/StoreProvider';
+import SideBar from 'staking/components/SideBar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,7 +25,7 @@ export default function RootLayout({
           <StoreProvider>
             <div className="layout">
               <ConnectWalletButton>
-                <PermanentSideBar> {children}</PermanentSideBar>
+                <SideBar> {children}</SideBar>
               </ConnectWalletButton>
             </div>
           </StoreProvider>
