@@ -1,5 +1,4 @@
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
-import { Msg } from "../../types/types";
 const msgSendTypeUrl: string = "/cosmos.bank.v1beta1.MsgSend";
 
 export function SendMsg(

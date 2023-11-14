@@ -1,6 +1,5 @@
 import Axios, { AxiosResponse } from 'axios';
 import { convertPaginationToParams, cleanURL } from '../../../utils/util';
-import { KeyLimitPagination } from '../../../types/types';
 
 const balancesURL = '/cosmos/bank/v1beta1/balances/';
 const balanceURL = (address: string, denom: string) =>

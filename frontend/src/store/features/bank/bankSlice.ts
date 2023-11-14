@@ -3,10 +3,9 @@ import { SendMsg } from '../../../txns/bank';
 import bankService from './bankService';
 import { signAndBroadcast } from '../../../utils/signing';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
-import { KeyLimitPagination } from '../../../types/types';
 import { TxStatus } from '../../../types/store';
-import { GAS_FEE } from 'staking/utils/constants';
-import { MultiTxnsInputs, TxSendInputs } from 'staking/types/bank';
+import { GAS_FEE } from '../../../utils/constants';
+import { MultiTxnsInputs, TxSendInputs } from '../../../types/bank';
 
 interface Balance {
   list: Coin[];

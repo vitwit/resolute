@@ -1,5 +1,3 @@
-import { KeyLimitPagination } from 'staking/types/types';
-
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
 ): string => {

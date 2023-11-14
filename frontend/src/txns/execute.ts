@@ -8,7 +8,6 @@ import {
 } from '@cosmjs/stargate';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { GeneratedType, Registry } from '@cosmjs/proto-signing';
-import { Msg } from '../types/types';
 import { GAS_FEE } from '../utils/constants';
 
 declare let window: WalletWindow;

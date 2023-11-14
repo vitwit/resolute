@@ -1,10 +1,10 @@
-export interface Msg {
+interface Msg {
   typeUrl: string;
   /*eslint-disable-next-line */
   value: any;
 }
 
-export type KeyLimitPagination = {
+type KeyLimitPagination = {
   key?: string;
   limit?: number;
 }

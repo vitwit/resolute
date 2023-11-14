@@ -30,7 +30,6 @@ import {
   OfflineSigner,
   Registry,
 } from '@cosmjs/proto-signing';
-import { Msg } from '../types/types';
 import { ERR_NO_OFFLINE_AMINO_SIGNER, ERR_UNKNOWN } from './errors';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { GAS_FEE } from './constants';
