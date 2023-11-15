@@ -1,83 +1,79 @@
-"use client"
-import Image from "next/image";
-import React from "react";
+'use client';
+import Image from 'next/image';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getSelectedPartFromURL } from '../utils/util';
 
 const menuItems = [
-    {
-        name: '',
-        icon: '/overview-icon.svg',
-        link: '/',
-    },
-    {
-        name: '',
-        icon: '/transfers-icon.svg',
-        link: '/transfers', 
-    },
-    {
-        name: '',
-        icon: '/governance-icon.svg',
-        link: '/governance',
-      },
-      {
-        name: '',
-        icon: '/staking-icon.svg',
-        link: '/staking',
-      },
-      {
-        name: '',
-        icon: '/groups-icon.svg',
-        link: '/groups',
-      },
-      {
-        name: '',
-        icon: '/multisig-icon.svg',
-        link: '/multisig',
-      },
-      {
-        name: '',
-        icon: '/authz-icon.svg',
-        link: '/authz',
-      },
-]
+  {
+    name: '',
+    icon: '/overview-icon.svg',
+    activeIcon: '/overview-icon-active.svg',
+    link: '/',
+  },
+  {
+    name: '',
+    icon: '/transfers-icon.svg',
+    activeIcon: '/transfers-icon-active.svg',
+    link: '/transfers',
+  },
+  {
+    name: '',
+    icon: '/gov-icon.svg',
+    activeIcon: '/gov-icon-active.svg',
+    link: '/governance',
+  },
+  {
+    name: '',
+    icon: '/staking-icon.svg',
+    activeIcon: '/staking-icon-active.svg',
+    link: '/staking',
+  },
+  {
+    name: '',
+    icon: '/groups-icon.svg',
+    activeIcon: '/groups-icon-active.svg',
+    link: '/groups',
+  },
+  {
+    name: '',
+    icon: '/multisig-icon.svg',
+    activeIcon: '/multisig-icon-active.svg',
+    link: '/multisig',
+  },
+  {
+    name: '',
+    icon: '/authz-icon.svg',
+    activeIcon: '/authz-icon-active.svg',
+    link: '/authz',
+  },
+];
 
-const SideBar = ({children}: {children: React.ReactNode}) => {
-    const pathname = usePathname();
-    const pathParts = pathname.split('/');
-    const selectedPart = getSelectedPartFromURL(pathParts);
+const SideBar = ({ children }: { children: React.ReactNode }) => {
+  const pathName = usePathname();
+  const pathParts = pathName.split('/');
+  const selectedPart = getSelectedPartFromURL(pathParts);
   return (
     <div className="main">
-        <div className="sidebar">
-            <div className="sidebar-menu">
-                <div className="sidebar-logo">
-                    <Image
-                        src= "/vitwit-logo.png"
-                        width={55}
-                        height={30}
-                        alt="Vitwit Logo"
-                    />
-                </div>
-                <div className="flex flex-col gap-4">
-                    {menuItems.map((item, index) => (
-                        <MenuItem
-                            pathname={selectedPart}
-                            key={index}
-                            itemName={item.name}
-                            icon={item.icon}
-                            link={item.link}
-                        />
-                    ))}
-                </div>
-                <div className="pge-content">
-                    <div className="w-full">
-                        {/* <div className="mx-10 mt-10 relative">TopNav</div> */}
-                    </div>
-                    {children}
-                </div>
-            </div>
+      <div className="sidebar">
+        <div className="">
+          <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
         </div>
+        <div className="flex flex-col gap-4 items-center">
+          {menuItems.map((item, index) => (
+            <MenuItem
+              key={index}
+              pathName={selectedPart}
+              itemName={item.name}
+              icon={item.icon}
+              activeIcon={item.activeIcon}
+              link={item.link}
+            />
+          ))}
+        </div>
+      </div>
+      <div>{children}</div>
     </div>
   );
 };
@@ -85,27 +81,36 @@ const SideBar = ({children}: {children: React.ReactNode}) => {
 export default SideBar;
 
 const MenuItem = ({
-    pathname,
-    itemName,
-    icon,
-    link,
+  pathName,
+  itemName,
+  icon,
+  activeIcon,
+  link,
 }: {
-    pathname: string;
-    itemName: string;
-    icon: string;
-    link: string;
+  pathName: string;
+  itemName: string;
+  icon: string;
+  activeIcon: string;
+  link: string;
 }) => {
-    pathname = pathname.toLowerCase();
-    pathname = pathname === 'overview' ? '/' : `/${pathname}`;
-    return (
-        <Link 
-            className={`sidebar-menu-item ${
-                pathname === link ? 'sidebar-menu-item-selected' : ''
-              }`}
-              href={link}
-            >
-             <Image src={icon} width={40} height={40} alt={itemName} />
-            <div className="ml-2">{itemName}</div>
-            </Link>
-    );
+  pathName = pathName.toLowerCase();
+  pathName = pathName === 'overview' ? '/' : `/${pathName}`;
+  return (
+    <Link href={link}>
+      <div
+        className={`sidebar-menu-item ${
+          pathName === link ? 'sidebar-menu-item-selected' : ''
+        }`}
+      >
+        <div>
+          <Image
+            src={pathName === link ? activeIcon : icon}
+            height={45}
+            width={45}
+            alt={itemName}
+          />
+        </div>
+      </div>
+    </Link>
+  );
 };
