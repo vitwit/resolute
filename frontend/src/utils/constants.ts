@@ -1,0 +1,1 @@
+export const GAS_FEE = 860000

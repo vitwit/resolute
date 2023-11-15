@@ -1,12 +1,12 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import { networks } from '../utils/chainsInfo';
-import Image from 'next/image';
-import Walletpage from './popups/WalletPage';
-import { getWalletName, isConnected } from '../utils/localStorage';
-import { useDispatch, useSelector } from 'react-redux';
-import { connectWalletV1 } from '../store/features/wallet/walletSlice';
-import { AppDispatch, RootState } from '../store/store';
+"use client";
+import React, { useEffect, useState } from "react";
+import { networks } from "../utils/chainsInfo";
+import Image from "next/image";
+import Walletpage from "./popups/WalletPage";
+import { getWalletName, isConnected } from "../utils/localStorage";
+import { useDispatch, useSelector } from "react-redux";
+import { establishWalletConnection } from "../store/features/wallet/walletSlice";
+import { AppDispatch, RootState } from "../store/store";
 
 export const ConnectWalletButton = ({
   children,
@@ -24,30 +24,21 @@ export const ConnectWalletButton = ({
   };
 
   const selectWallet = (walletName: string) => {
-    dispatch(
-      connectWalletV1({
-        walletName,
-        mainnets: networks,
-        testnets: [],
-      })
-    );
+    tryConnectWallet(walletName)
     handleClose();
   };
 
   const tryConnectWallet = (walletName: string) => {
     dispatch(
-      connectWalletV1({
+      establishWalletConnection({
         walletName,
-        mainnets: networks,
-        testnets: [],
+        networks: networks,
       })
     );
   };
 
   useEffect(() => {
     const walletName = getWalletName();
-    console.log(walletName);
-
     if (isConnected()) {
       tryConnectWallet(walletName);
     }
