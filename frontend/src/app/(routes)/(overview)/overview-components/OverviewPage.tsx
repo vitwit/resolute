@@ -10,6 +10,7 @@ import {
   getDelegations,
   getAllValidators,
 } from '@/store/features/staking/stakeSlice';
+import { USD_CURRENCY } from '@/utils/contants';
 
 const chainDenomsData = chainDenoms as AssetData;
 
@@ -42,23 +43,29 @@ const OverviewPage = () => {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const tokensPriceInfo: any = {};
     if (tokensPriceInfo?.[denom]) {
-      const price = +tokensPriceInfo?.[denom]?.info?.['usd'] || 0;
+      const price = +tokensPriceInfo?.[denom]?.info?.[USD_CURRENCY] || 0;
       return amount * price;
     }
     return 0;
   };
+
+  const getDenomInfo = useCallback(
+    (chainID: string): { denom: string; decimals: number } => {
+      const currency = networks?.[chainID]?.network?.config?.currencies?.[0];
+      return {
+        denom: currency.coinMinimalDenom,
+        decimals: currency.coinDecimals || 0,
+      };
+    },
+    [networks]
+  );
 
   const calculateTotalStakedAmount = useCallback(() => {
     let totalStakedAmount = 0;
     chainIDs.forEach((chainID) => {
       const staked = stakingChains?.[chainID]?.delegations?.totalStaked || 0;
       if (staked > 0) {
-        const denom =
-          networks?.[chainID]?.network?.config?.currencies?.[0]
-            ?.coinMinimalDenom;
-        const decimals =
-          networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
-          0;
+        const { denom, decimals } = getDenomInfo(chainID);
         totalStakedAmount += convertToDollars(denom, staked / 10 ** decimals);
       }
     });
@@ -87,12 +94,9 @@ const OverviewPage = () => {
   const calculateTotalAvailableAmount = useCallback(() => {
     let totalBalance = 0;
     let totalIBCBalance = 0;
+
     chainIDs.forEach((chainID) => {
-      const decimals =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
-        0;
-      const denom =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+      const { denom, decimals } = getDenomInfo(chainID);
       const balance = parseBalance(
         balanceChains?.[chainID]?.list || [],
         decimals,
@@ -105,6 +109,7 @@ const OverviewPage = () => {
         denom,
         chainName
       );
+
       for (let i = 0; i < ibcBalances?.length; i++) {
         totalIBCBalance += convertToDollars(
           ibcBalances[i].balance.denom,
@@ -115,26 +120,26 @@ const OverviewPage = () => {
           )
         );
       }
+
       if (balanceChains?.[chainID]?.list?.length > 0) {
         totalBalance += convertToDollars(denom, balance);
       }
     });
-    return { totalBalance: totalBalance, totalIBCBalance: totalIBCBalance };
+
+    return { totalBalance, totalIBCBalance };
   }, [chainIDs, balanceChains, networks]);
 
   const getSortedChainIds = useCallback(() => {
     let sortedChains: { chainID: string; usdValue: number }[] = [];
+
     chainIDs.forEach((chainID) => {
-      const decimals =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinDecimals ||
-        0;
-      const denom =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+      const { denom, decimals } = getDenomInfo(chainID);
       const balanceAmountInDenoms = parseBalance(
         balanceChains?.[chainID]?.list || [],
         decimals,
         denom
       );
+
       // minimalDenom
       const stakedAmountInDenoms: number =
         stakingChains?.[chainID]?.delegations?.totalStaked || 0;
@@ -179,7 +184,7 @@ const OverviewPage = () => {
         });
         if (balance?.denom !== minimalDenom && denomInfo?.length) {
           //   const usdDenomPrice =
-          //     tokensPriceInfo[denomInfo[0]?.origin_denom]?.info?.['usd'] || 0;
+          //     tokensPriceInfo[denomInfo[0]?.origin_denom]?.info?.[USD_CURRENCY] || 0;
           const usdDenomPrice = 0;
           const balanceAmount = parseBalance(
             [balance],
@@ -207,27 +212,19 @@ const OverviewPage = () => {
 
   useEffect(() => {
     chainIDs.forEach((chainID) => {
-      const chainInfo = networks[chainID]?.network;
-      const address = networks[chainID]?.walletInfo?.bech32Address;
+      const allChainInfo = networks[chainID];
+      const chainInfo = allChainInfo.network;
+      const address = allChainInfo?.walletInfo?.bech32Address;
       //   const denom =
       //     networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+      const basicChainInputs = {
+        baseURL: chainInfo.config.rest,
+        address,
+        chainID,
+      };
 
-      dispatch(
-        getBalances({
-          baseURL: chainInfo.config.rest,
-          address: address,
-          chainID: chainID,
-        })
-      );
-
-      dispatch(
-        getDelegations({
-          baseURL: chainInfo.config.rest,
-          address: address,
-          chainID: chainID,
-        })
-      );
-
+      dispatch(getBalances(basicChainInputs));
+      dispatch(getDelegations(basicChainInputs));
       dispatch(
         getAllValidators({
           baseURL: chainInfo.config.rest,
