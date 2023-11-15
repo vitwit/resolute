@@ -1,4 +1,5 @@
 import { Grant } from "cosmjs-types/cosmos/feegrant/v1beta1/feegrant";
+import { jsonParse } from "../features/utils";
 
 interface ChainWiseGrants {
   [key: string]: Grant;
@@ -106,7 +107,7 @@ export function setAuthToken(authToken: AuthToken) {
   var authTokens = [];
 
   if (tokens) {
-    authTokens = JSON.parse(tokens);
+    authTokens = jsonParse(tokens);
   }
 
   const token = authTokens.filter((item: AuthToken) => {

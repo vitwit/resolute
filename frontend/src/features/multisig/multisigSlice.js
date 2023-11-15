@@ -2,10 +2,12 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import multisigService from "./multisigService";
 import bankService from "../bank/service";
 import { setError } from "../common/commonSlice";
+import { jsonStringify } from "../utils";
 
 export const SOMETHING_WRONG = "Something went wrong";
 const VERIFICATION_MESSAGE =
   "Resolute offchain verification.\n\nSign an offchain verification message to\nprove your ownership to access the multisig page.";
+const VERIFICATION_ERROR = "Error is verifying account";
 
 const initialState = {
   createMultisigAccountRes: {
@@ -224,20 +226,22 @@ export const verifyAccount = createAsyncThunk(
         data.address,
         VERIFICATION_MESSAGE
       );
+
       try {
         const response = await multisigService.verifyUser({
           address: data.address,
           signature: token.signature,
           salt: 10,
-          pubKey: JSON.stringify(token.pub_key),
+          pubKey: jsonStringify(token.pub_key),
         });
+
         return {
-          response: response,
-          token: token,
+          response,
+          token,
         };
       } catch (error) {
         return rejectWithValue(
-          error?.response?.data?.message || error?.message || SOMETHING_WRONG
+          error?.response?.data?.message || error?.message || VERIFICATION_ERROR
         );
       }
     } catch (error) {

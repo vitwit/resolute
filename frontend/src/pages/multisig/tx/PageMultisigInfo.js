@@ -54,7 +54,7 @@ export default function PageMultisigInfo() {
   const walletAddress =
     networks[nameToChainIDs[networkName]]?.walletInfo?.bech32Address;
   const chainId = nameToChainIDs[networkName];
-  const pubkeys = multisigAccountDetails.pubkeys;
+  const pubkeys = multisigAccountDetails.pubkeys || [];
 
   const [totalStake, setTotalStaked] = useState(0);
 
