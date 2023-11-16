@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 .main {
-  @apply leading-[normal] m-0;
+  @apply leading-[normal] m-0 text-white;
   background: linear-gradient(
     180deg,
     rgba(74, 162, 156, 0.6) 0%,
@@ -25,6 +25,24 @@
   backdrop-filter: blur(2px);
 }
 
+@layer base {
+  .txt-xs {
+    @apply text-[12px] leading-normal;
+  }
+  .txt-sm {
+    @apply text-[14px] leading-normal;
+  }
+  .txt-md {
+    @apply text-[16px] leading-normal;
+  }
+  .txt-lg {
+    @apply text-[20px] leading-normal;
+  }
+  .txt-xl {
+    @apply text-[24px] leading-normal;
+  }
+}
+
 @layer utilities {
   @variants responsive {
     /* Hide scrollbar for Chrome, Safari and Opera */
@@ -39,6 +57,10 @@
       scrollbar-width: none;
       /* Firefox */
     }
+  }
+
+  .primary-gradient {
+    background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
   }
 }
 
