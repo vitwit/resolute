@@ -302,15 +302,14 @@ export const getAllValidators = createAsyncThunk(
                 limit: limit,
               }
             : {}
-        );
-        console.log('getAllValidators:', JSON.stringify(response.data));
+        ); 
         validators.push(...response.data.validators);
         if (!response?.data?.pagination?.next_key) {
           break;
         }
         nextKey = response.data.pagination.next_key;
       }
-      console.log('vals...', JSON.stringify(validators));
+      
       return {
         validators: validators,
         chainID: data.chainID,
@@ -326,7 +325,6 @@ export const getParams = createAsyncThunk(
   'staking/params',
   async (data: { baseURL: string; chainID: string }) => {
     const response = await stakingService.params(data.baseURL);
-    console.log('getParams', response.data);
     return {
       data: response.data,
       chainID: data.chainID,
@@ -365,7 +363,7 @@ export const getDelegations = createAsyncThunk(
         }
         nextKey = response.data.pagination.next_key;
       }
-      console.log('delegations', delegations);
+      
       return {
         delegations: delegations,
         chainID: data.chainID,
