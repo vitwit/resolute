@@ -26,7 +26,10 @@ import Feegrant from "./feegrant/Feegrant";
 import CreateGroupNewPage from "./group/CreateGroup";
 import NewFeegrant from "./feegrant/NewFeegrant";
 import { getFeegrant } from "../utils/localStorage";
-import { setFeegrant as setFeegrantState } from "../features/common/commonSlice";
+import {
+  setFeegrant as setFeegrantState,
+  setSelectedNetwork,
+} from "../features/common/commonSlice";
 import Authz from "./authz/Authz";
 import NewAuthz from "./authz/NewAuthz";
 import GroupPage from "./GroupPage";
@@ -125,31 +128,40 @@ export default function Home(props) {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    let currentNetwork = selectedNetwork;
+    if (currentNetwork === "allnetworks") {
+      currentNetwork = "";
+    }
     if (newValue === 8) {
-      if (selectedNetwork === "") navigate("/passage/airdrop-check");
-      else navigate(`/${selectedNetwork.toLowerCase()}/airdrop-check`);
+      if (currentNetwork === "") navigate("/passage/airdrop-check");
+      else navigate(`/${currentNetwork.toLowerCase()}/airdrop-check`);
     } else if (newValue === 2) {
-      if (selectedNetwork === "") navigate(ALL_NETWORKS[newValue]);
+      if (currentNetwork === "") navigate(ALL_NETWORKS[newValue]);
       else
-        navigate(`${selectedNetwork.toLowerCase()}/${ALL_NETWORKS[newValue]}`);
+        navigate(`${currentNetwork.toLowerCase()}/${ALL_NETWORKS[newValue]}`);
     } else if (newValue === 0) {
       navigate(
-        `${selectedNetwork ? selectedNetwork + "/overview" : ""}${
+        `${currentNetwork ? currentNetwork + "/overview" : ""}${
           ALL_NETWORKS[newValue]
         }`
       );
     } else if (newValue === 3 || newValue === 6 || newValue === 5) {
       navigate(
-        `${selectedNetwork ? selectedNetwork + "/" : ""}${
-          ALL_NETWORKS[newValue]
-        }`
+        `${currentNetwork ? currentNetwork + "/" : ""}${ALL_NETWORKS[newValue]}`
       );
+    } else if (newValue === 9) {
+      dispatch(
+        setSelectedNetwork({
+          chainName: "",
+        })
+      );
+      navigate("/");
     } else {
-      if (selectedNetwork === "") {
+      if (currentNetwork === "") {
         setNetwork("cosmoshub");
         navigate(`cosmoshub/${ALL_NETWORKS[newValue]}`);
       } else {
-        navigate(`${selectedNetwork.toLowerCase()}/${ALL_NETWORKS[newValue]}`);
+        navigate(`${currentNetwork.toLowerCase()}/${ALL_NETWORKS[newValue]}`);
       }
     }
   };
@@ -180,7 +192,21 @@ export default function Home(props) {
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} onChange={handleChange} aria-label="menu bar">
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="menu bar"
+        >
+          {selectedNetwork?.length ? (
+            <Tab
+              label="Home"
+              {...a11yProps(9)}
+              value={9}
+              sx={{
+                fontWeight: 600,
+              }}
+            />
+          ) : null}
           <Tab
             label="Overview"
             {...a11yProps(0)}
@@ -236,15 +262,15 @@ export default function Home(props) {
               }}
             />
           )}
-            <Tab
-              label="Feegrant"
-              {...a11yProps(6)}
-              value={6}
-              sx={{
-                fontWeight: 600,
-              }}
-              disabled={authzEnabled && !authzTabs?.feegratEnabled}
-            />
+          <Tab
+            label="Feegrant"
+            {...a11yProps(6)}
+            value={6}
+            sx={{
+              fontWeight: 600,
+            }}
+            disabled={authzEnabled && !authzTabs?.feegratEnabled}
+          />
           <Tab
             label="Groups"
             {...a11yProps(7)}
@@ -254,7 +280,8 @@ export default function Home(props) {
             }}
             disabled={authzEnabled && !authzTabs?.groupsEnabled}
           />
-          {!authzEnabled && selectedNetwork === "passage" || "passage-testnet" ? (
+          {(!authzEnabled && selectedNetwork === "passage") ||
+          "passage-testnet" ? (
             <Tab
               label="Airdrop"
               {...a11yProps(8)}
