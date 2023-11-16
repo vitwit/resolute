@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import { RootState } from '../../../..//store/store';
+import { RootState } from '../../../../store/store';
 import { getBalances } from '@/store/features/bank/bankSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
