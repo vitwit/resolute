@@ -3,27 +3,40 @@ import { cleanURL } from "../utils";
 
 const BASE_URL = cleanURL(process.env.REACT_APP_API_URI);
 
-const CREATE_ACCOUNT = "/multisig";
+const SIGNATURE_PARAMS_STRING = (queryParams) =>
+  `?address=${queryParams.address}&signature=${queryParams.signature}`;
+const CREATE_ACCOUNT = (queryParams) =>
+  `/multisig` + SIGNATURE_PARAMS_STRING(queryParams);
 const GET_ACCOUNTS = "/multisig/accounts";
 const MULTI_ACCOUNT_URL = "/accounts";
 const TXNS_URL = "/txs";
-const SIGN_URL = (address, txId) =>
-  `${BASE_URL}/multisig/${address}/sign-tx/${txId}`;
+const SIGN_URL = (queryParams, address, txId) =>
+  `${BASE_URL}/multisig/${address}/sign-tx/${txId}` +
+  SIGNATURE_PARAMS_STRING(queryParams);
+const VERIFY_ACCOUNT_URL = (address) => `/users/${address}/signature`;
+const CREATE_TXN_URL = (address, queryParams) =>
+  `${BASE_URL}/multisig/${address}/tx` + SIGNATURE_PARAMS_STRING(queryParams);
 
-const createAccount = (data) =>
-  Axios.post(`${BASE_URL}${CREATE_ACCOUNT}`, data);
+const createAccount = (queryParams, data) =>
+  Axios.post(`${BASE_URL}${CREATE_ACCOUNT(queryParams)}`, data);
+
+const verifyUser = (data) =>
+  Axios.post(`${BASE_URL}${VERIFY_ACCOUNT_URL(data.address)}`, data);
 
 const getAccounts = (address) =>
   Axios.get(`${BASE_URL}${GET_ACCOUNTS}/${address}`);
 
-const getAccount = (address) =>
-  Axios.get(`${BASE_URL}${CREATE_ACCOUNT}/${address}`);
+const getAccount = (address) => Axios.get(`${BASE_URL}/multisig/${address}`);
 
-const signTx = (address, txId, payload) =>
-  Axios.post(SIGN_URL(address, txId), payload);
+const signTx = (queryParams, address, txId, payload) =>
+  Axios.post(SIGN_URL(queryParams, address, txId), payload);
 
-const updateTx = (address, txId, payload) =>
-  Axios.post(`${BASE_URL}${CREATE_ACCOUNT}/${address}/tx/${txId}`, payload);
+const updateTx = (queryParams, address, txId, payload) =>
+  Axios.post(
+    `${BASE_URL}/multisig/${address}/tx/${txId}` +
+      SIGNATURE_PARAMS_STRING(queryParams),
+    payload
+  );
 
 export const fetchMultisigAccounts = (address) => {
   let uri = `${BASE_URL}/accounts/${address}`;
@@ -31,8 +44,8 @@ export const fetchMultisigAccounts = (address) => {
   return Axios.get(uri);
 };
 
-export const createTxn = (address, payload) => {
-  let uri = `${BASE_URL}/multisig/${address}/tx`;
+export const createTxn = (queryParams, address, payload) => {
+  let uri = CREATE_TXN_URL(address, queryParams);
 
   return Axios.post(uri, payload);
 };
@@ -60,8 +73,11 @@ export const createTransaction = (data) => {
   return Axios.post(uri, data);
 };
 
-export const deleteTx = (address, txId) =>
-  Axios.delete(`${BASE_URL}/multisig/${address}/tx/${txId}`);
+export const deleteTx = (queryParams, address, txId) =>
+  Axios.delete(
+    `${BASE_URL}/multisig/${address}/tx/${txId}` +
+      SIGNATURE_PARAMS_STRING(queryParams)
+  );
 
 export default {
   createAccount: createAccount,
@@ -72,4 +88,5 @@ export default {
   signTx: signTx,
   updateTx: updateTx,
   deleteTx: deleteTx,
+  verifyUser: verifyUser,
 };

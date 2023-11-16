@@ -57,6 +57,7 @@ import {
   UNDELEGATE_TYPE_URL,
 } from "./utils";
 import { useParams } from "react-router-dom";
+import { getAuthToken } from "../../../utils/localStorage";
 
 const mapTxns = {
   "/cosmos.staking.v1beta1.MsgDelegate": "Delegate",
@@ -156,6 +157,7 @@ const TableRowComponent = (props) => {
     onShowMoreTxns,
     multisigAccount,
     membersCount,
+    isMember,
   } = props;
   const { networkName } = useParams();
 
@@ -164,12 +166,13 @@ const TableRowComponent = (props) => {
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
 
-  const walletAddress =
-    networks[nameToChainIDs[networkName]]?.walletInfo?.bech32Address;
-  const chainInfo = networks[nameToChainIDs[networkName]]?.network;
+  const chainID = nameToChainIDs[networkName];
+  const walletAddress = networks[chainID]?.walletInfo?.bech32Address;
+  const chainInfo = networks[chainID]?.network;
 
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
+  const authToken = getAuthToken(chainID);
 
   const isWalletSigned = () => {
     let signs = tx?.signatures || [];
@@ -334,7 +337,7 @@ const TableRowComponent = (props) => {
           {(tx?.signatures?.length || 0) >= threshold
             ? tx?.status === "SUCCESS" || tx?.status === "FAILED"
               ? getTxStatusComponent(tx?.status, onShowError)
-              : "Waiting for brodcast"
+              : "Waiting for broadcast"
             : !isWalletSigned()
             ? "Waiting for your sign"
             : "Waiting for others to sign"}
@@ -372,6 +375,7 @@ const TableRowComponent = (props) => {
                 signatures={tx?.signatures}
                 txId={tx?.id}
                 unSignedTxn={tx}
+                isMember={isMember}
               />
             )}
           </StyledTableCell>
@@ -407,11 +411,18 @@ const TableRowComponent = (props) => {
               mb: 2,
               ml: 1,
             }}
+            disabled={!isMember}
             onClick={() => {
               dispatch(
                 deleteTxn({
-                  address: tx?.multisig_address,
-                  id: tx?.id,
+                  queryParams: {
+                    address: walletAddress,
+                    signature: authToken.signature,
+                  },
+                  data: {
+                    address: tx?.multisig_address,
+                    id: tx?.id,
+                  },
                 })
               );
             }}
@@ -450,11 +461,12 @@ TableRowComponent.propTypes = {
   onShowError: PropTypes.func.isRequired,
   onShowMoreTxns: PropTypes.func.isRequired,
   multisigAccount: PropTypes.object.isRequired,
+  isMember: PropTypes.bool.isRequired,
 };
 
 export default function Transactions(props) {
   const dispatch = useDispatch();
-  const { membersCount } = props;
+  const { membersCount, isMember } = props;
   const txnsState = useSelector((state) => state.multisig?.txns || {});
   const createTxRes = useSelector((state) => state.multisig.createTxnRes);
   const [isHistory, setIsHistory] = useState(false);
@@ -646,6 +658,7 @@ export default function Transactions(props) {
                           }}
                           multisigAccount={multisigAccount}
                           membersCount={membersCount}
+                          isMember={isMember}
                         />
                       ))}
                     </TableBody>
@@ -691,6 +704,7 @@ export default function Transactions(props) {
                           }}
                           multisigAccount={multisigAccount}
                           membersCount={membersCount}
+                          isMember={isMember}
                         />
                       ))}
                     </TableBody>
@@ -746,4 +760,5 @@ export default function Transactions(props) {
 
 Transactions.propTypes = {
   address: PropTypes.string.isRequired,
+  isMember: PropTypes.bool.isRequired,
 };

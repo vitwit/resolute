@@ -1,8 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import multisigService from "./multisigService";
 import bankService from "../bank/service";
+import { setError } from "../common/commonSlice";
+import { jsonStringify } from "../utils";
 
 export const SOMETHING_WRONG = "Something went wrong";
+const VERIFICATION_MESSAGE =
+  "Resolute offchain verification.\n\nSign an offchain verification message to\nprove your ownership to access the multisig page.";
+const VERIFICATION_ERROR = "Error is verifying account";
 
 const initialState = {
   createMultisigAccountRes: {
@@ -48,13 +53,21 @@ const initialState = {
     status: "idle",
     errMsg: "",
   },
+  verifyAccountRes: {
+    token: "",
+    status: "",
+    error: "",
+  },
 };
 
 export const createAccount = createAsyncThunk(
   "multisig/createAccount",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await multisigService.createAccount(data);
+      const response = await multisigService.createAccount(
+        data.queryParams,
+        data.data
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -82,7 +95,11 @@ export const deleteTxn = createAsyncThunk(
   "multisig/deleteTxn",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await multisigService.deleteTx(data.address, data.id);
+      const response = await multisigService.deleteTx(
+        data.queryParams,
+        data.data.address,
+        data.data.id
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -128,7 +145,11 @@ export const createTxn = createAsyncThunk(
   "multisig/createTxn",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await multisigService.createTxn(data.address, data);
+      const response = await multisigService.createTxn(
+        data.queryParams,
+        data.data.address,
+        data.data
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -140,9 +161,15 @@ export const createTxn = createAsyncThunk(
 
 export const updateTxn = createAsyncThunk(
   "multisig/updateTxn",
-  async ({ address, txId, body }, { rejectWithValue }) => {
+  async ({ queryParams, data }, { rejectWithValue }) => {
+    console.log(queryParams, data);
     try {
-      const response = await multisigService.updateTx(address, txId, body);
+      const response = await multisigService.updateTx(
+        queryParams,
+        data.address,
+        data.txId,
+        data.body
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -172,15 +199,59 @@ export const signTx = createAsyncThunk(
   "multisig/signTx",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await multisigService.signTx(data.address, data.txId, {
-        signer: data.signer,
-        signature: data.signature,
-      });
+      const response = await multisigService.signTx(
+        data.queryParams,
+        data.data.address,
+        data.data.txId,
+        {
+          signer: data.data.signer,
+          signature: data.data.signature,
+        }
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
         error?.response?.data?.message || error?.message || SOMETHING_WRONG
       );
+    }
+  }
+);
+
+export const verifyAccount = createAsyncThunk(
+  "multisig/verifyAccount",
+  async (data, { rejectWithValue, dispatch }) => {
+    try {
+      const token = await window.wallet.signArbitrary(
+        data.chainID,
+        data.address,
+        VERIFICATION_MESSAGE
+      );
+
+      try {
+        const response = await multisigService.verifyUser({
+          address: data.address,
+          signature: token.signature,
+          salt: 10,
+          pubKey: jsonStringify(token.pub_key),
+        });
+
+        return {
+          response,
+          token,
+        };
+      } catch (error) {
+        return rejectWithValue(
+          error?.response?.data?.message || error?.message || VERIFICATION_ERROR
+        );
+      }
+    } catch (error) {
+      dispatch(
+        setError({
+          type: "error",
+          message: error.message || "",
+        })
+      );
+      return rejectWithValue("Wallet connection request rejected");
     }
   }
 );
@@ -203,6 +274,9 @@ export const multiSlice = createSlice({
     },
     resetSignTxnState: (state, _) => {
       state.createSignRes = initialState.createSignRes;
+    },
+    resetVerifyAccountRes: (state, _) => {
+      state.verifyAccountRes = initialState.verifyAccountRes;
     },
   },
   extraReducers: (builder) => {
@@ -334,6 +408,21 @@ export const multiSlice = createSlice({
       .addCase(signTx.rejected, (state, action) => {
         state.createSignRes.status = "rejected";
         state.createSignRes.error = action.payload;
+      });
+
+    builder
+      .addCase(verifyAccount.pending, (state) => {
+        state.verifyAccountRes.status = "pending";
+        state.verifyAccountRes.error = "";
+      })
+      .addCase(verifyAccount.fulfilled, (state, action) => {
+        state.verifyAccountRes.token = action.payload.token.signature;
+        state.verifyAccountRes.status = "idle";
+        state.verifyAccountRes.error = "";
+      })
+      .addCase(verifyAccount.rejected, (state, action) => {
+        state.verifyAccountRes.status = "rejected";
+        state.verifyAccountRes.error = action.payload;
       });
   },
 });

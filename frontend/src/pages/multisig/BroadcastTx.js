@@ -13,6 +13,7 @@ import {
 import PropTypes from "prop-types";
 import { NewMultisigThreshoPubkey } from "./tx/utils";
 import { useParams } from "react-router-dom";
+import { getAuthToken } from "../../utils/localStorage";
 
 async function getWalletAmino(chainID) {
   await window.wallet.enable(chainID);
@@ -35,7 +36,9 @@ export default function BroadcastTx(props) {
 
   const networks = useSelector((state) => state.wallet.networks);
   const nameToChainIDs = useSelector((state) => state.wallet.nameToChainIDs);
-  const chainInfo = networks[nameToChainIDs[networkName]]?.network;
+  const chainID = nameToChainIDs?.[networkName];
+  const chainInfo = networks[chainID]?.network;
+  const walletAddress = networks?.[chainID]?.walletInfo.bech32Address;
 
   const updateTxnRes = useSelector((state) => state.multisig.updateTxn);
 
@@ -58,6 +61,11 @@ export default function BroadcastTx(props) {
 
   const broadcastTxn = async () => {
     setLoad(true);
+    const authToken = getAuthToken(chainID);
+    const queryParams = {
+      address: walletAddress,
+      signature: authToken?.signature,
+    };
     try {
       const client = await SigningStargateClient.connect(
         chainInfo?.config?.rpc
@@ -122,12 +130,15 @@ export default function BroadcastTx(props) {
       if (result.code === 0) {
         dispatch(
           updateTxn({
-            txId: tx?.id,
-            address: multisigAccount?.account.address,
-            body: {
-              status: "SUCCESS",
-              hash: result?.transactionHash || "",
-              error_message: "",
+            queryParams: queryParams,
+            data: {
+              txId: tx?.id,
+              address: multisigAccount?.account.address,
+              body: {
+                status: "SUCCESS",
+                hash: result?.transactionHash || "",
+                error_message: "",
+              },
             },
           })
         );
@@ -140,13 +151,16 @@ export default function BroadcastTx(props) {
         );
         dispatch(
           updateTxn({
-            txId: tx.id,
-            address: multisigAccount?.account.address,
-            body: {
-              status: "FAILED",
-              hash: result?.transactionHash || "",
-              error_message:
-                result?.rawLog || "Failed to broadcast transaction",
+            queryParams: queryParams,
+            data: {
+              txId: tx.id,
+              address: multisigAccount?.account.address,
+              body: {
+                status: "FAILED",
+                hash: result?.transactionHash || "",
+                error_message:
+                  result?.rawLog || "Failed to broadcast transaction",
+              },
             },
           })
         );
@@ -159,15 +173,20 @@ export default function BroadcastTx(props) {
           message: error?.message || "Failed to broadcast transaction",
         })
       );
+      console.log("result");
 
       dispatch(
         updateTxn({
-          txId: tx?.id,
-          address: multisigAccount?.account.address,
-          body: {
-            status: "FAILED",
-            hash: "",
-            error_message: error?.message || "Failed to broadcast transaction",
+          queryParams: queryParams,
+          data: {
+            txId: tx?.id,
+            address: multisigAccount?.account.address,
+            body: {
+              status: "FAILED",
+              hash: "",
+              error_message:
+                error?.message || "Failed to broadcast transaction",
+            },
           },
         })
       );

@@ -18,6 +18,7 @@ import DialogCreateMultisig from "../../components/multisig/DialogCreateMultisig
 import {
   getMultisigAccounts,
   resetCreateMultisigRes,
+  verifyAccount,
 } from "../../features/multisig/multisigSlice";
 import { shortenAddress } from "../../utils/util";
 import { StyledTableCell, StyledTableRow } from "../../components/CustomTable";
@@ -27,11 +28,15 @@ import SelectNetwork from "../../components/common/SelectNetwork";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import { copyToClipboard } from "../../utils/clipboard";
 import AddIcon from "@mui/icons-material/Add";
+import { setError } from "../../features/common/commonSlice";
+import { getAuthToken, setAuthToken } from "../../utils/localStorage";
+import VerifyAccount from "./VerifyAccount";
 
 export default function PageMultisig() {
   const [open, setOpen] = useState(false);
   const params = useParams();
   const [chainInfo, setChainInfo] = useState({});
+  const [verified, setVerified] = useState(false);
 
   const navigate = useNavigate();
 
@@ -45,6 +50,9 @@ export default function PageMultisig() {
     (state) => state.multisig.multisigAccounts
   );
   const wallet = useSelector((state) => state.wallet);
+  const verifyAccountRes = useSelector(
+    (state) => state.multisig.verifyAccountRes
+  );
   const { connected } = wallet;
   const { walletInfo, network } = chainInfo;
 
@@ -65,10 +73,12 @@ export default function PageMultisig() {
       }
     }
   }, [params, connected]);
+  const chainID = nameToChainIDs?.[currentNetwork];
+  const walletAddress = networks[chainID]?.walletInfo.bech32Address;
 
   useEffect(() => {
-    if(chainInfo?.walletInfo?.bech32Address)
-    dispatch(getMultisigAccounts(chainInfo?.walletInfo?.bech32Address));
+    if (chainInfo?.walletInfo?.bech32Address)
+      dispatch(getMultisigAccounts(chainInfo?.walletInfo?.bech32Address));
   }, [chainInfo, connected]);
 
   useEffect(() => {
@@ -83,169 +93,229 @@ export default function PageMultisig() {
     setOpen(false);
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      if (!isVerified() && chainID?.length) {
+        dispatch(
+          verifyAccount({
+            chainID: chainID,
+            address: walletAddress,
+          })
+        );
+      }
+    }, 1200);
+  }, [walletAddress, chainID]);
+
+  useEffect(() => {
+    if (verifyAccountRes.status === "idle") {
+      setAuthToken({
+        chainID: chainID,
+        address: walletAddress,
+        signature: verifyAccountRes.token,
+      });
+      setVerified(true);
+    } else if (verifyAccountRes.status === "rejected") {
+      dispatch(
+        setError({
+          type: "error",
+          message: verifyAccountRes.error,
+        })
+      );
+    }
+  }, [verifyAccountRes]);
+
+  useEffect(() => {
+    if (isVerified()) {
+      setVerified(true);
+    } else {
+      setVerified(false);
+    }
+  }, [walletAddress, chainID]);
+
+  const isVerified = () => {
+    const token = getAuthToken(chainID);
+    if (token) {
+      if (token.address === walletAddress && token.chainID === chainID) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
     <Paper elevation={0} sx={{ p: 2, borderRadius: 0 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h6" fontWeight={600} color="text.primary">
-          Create / Select Multisig Account
-        </Typography>
-        <SelectNetwork
-          onSelect={(name) => {
-            navigate(`/${name}/multisig`);
-          }}
-          networks={Object.keys(nameToChainIDs)}
-          defaultNetwork={
-            params.networkName?.length > 0
-              ? params.networkName.toLowerCase().replace(/ /g, "")
-              : "cosmoshub"
-          }
-        />
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "right",
-          mt: 1,
-        }}
-      >
-        <Button
-          onClick={() => {
-            setOpen(!open);
-          }}
-          variant="contained"
-          disableElevation
+      <>
+        <Box
           sx={{
-            textTransform: "none",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
-          size="small"
-          startIcon={<AddIcon />}
         >
-          New Multisig
-        </Button>
-      </Box>
-      <Box sx={{ mt: 1 }}>
-        {multisigAccounts?.status !== "pending" && !accounts?.length ? (
-          <Box
-            sx={{
-              mt: 2,
+          <Typography variant="h6" fontWeight={600} color="text.primary">
+            Create / Select Multisig Account
+          </Typography>
+          <SelectNetwork
+            onSelect={(name) => {
+              navigate(`/${name}/multisig`);
             }}
-          >
-            <Typography variant="h6">
-              No Multisig accounts found on your address
-            </Typography>
-          </Box>
-        ) : (
-          ""
-        )}
-        {multisigAccounts?.status === "pending" ? (
-          <CircularProgress size={40} />
-        ) : null}
-      </Box>
-      {accounts?.length > 0 ? (
-        <FormControl fullWidth sx={{ mt: 2 }}>
-          <TableContainer>
-            <Table
-              sx={{ minWidth: 650 }}
-              aria-label="simple table"
-              size="small"
+            networks={Object.keys(nameToChainIDs)}
+            defaultNetwork={
+              params.networkName?.length > 0
+                ? params.networkName.toLowerCase().replace(/ /g, "")
+                : "cosmoshub"
+            }
+          />
+        </Box>
+        {verified ? (
+          <>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "right",
+                mt: 1,
+              }}
             >
-              <TableHead>
-                <StyledTableRow>
-                  <StyledTableCell>Name</StyledTableCell>
-                  <StyledTableCell>Address</StyledTableCell>
-                  <StyledTableCell>Threshold</StyledTableCell>
-                  <StyledTableCell>Actions Required</StyledTableCell>
-                  <StyledTableCell>Created At</StyledTableCell>
-                </StyledTableRow>
-              </TableHead>
-              <TableBody>
-                {accounts.map((row, index) => (
-                  <StyledTableRow
-                    key={index}
-                    sx={{
-                      "&:last-child td, &:last-child th": { border: 0 },
-                      "&:hover": {
-                        cursor: "pointer",
-                      },
-                    }}
+              <Button
+                onClick={() => {
+                  setOpen(!open);
+                }}
+                variant="contained"
+                disableElevation
+                sx={{
+                  textTransform: "none",
+                }}
+                size="small"
+                startIcon={<AddIcon />}
+              >
+                New Multisig
+              </Button>
+            </Box>
+            <Box sx={{ mt: 1 }}>
+              {multisigAccounts?.status !== "pending" && !accounts?.length ? (
+                <Box
+                  sx={{
+                    mt: 2,
+                  }}
+                >
+                  <Typography variant="h6">
+                    No Multisig accounts found on your address
+                  </Typography>
+                </Box>
+              ) : (
+                ""
+              )}
+              {multisigAccounts?.status === "pending" ? (
+                <CircularProgress size={40} />
+              ) : null}
+            </Box>
+            {accounts?.length > 0 ? (
+              <FormControl fullWidth sx={{ mt: 2 }}>
+                <TableContainer>
+                  <Table
+                    sx={{ minWidth: 650 }}
+                    aria-label="simple table"
+                    size="small"
                   >
-                    <StyledTableCell
-                      onClick={() => {
-                        navigate(
-                          `/${currentNetwork}/multisig/${row.address}/txs`
-                        );
-                      }}
-                    >
-                      {row?.name}
-                    </StyledTableCell>
-                    <StyledTableCell
-                      onClick={() => {
-                        navigate(
-                          `/${currentNetwork}/multisig/${row.address}/txs`
-                        );
-                      }}
-                    >
-                      <Chip
-                        label={shortenAddress(row?.address, 21)}
-                        variant="filled"
-                        size="medium"
-                        deleteIcon={<ContentCopyOutlined />}
-                        onDelete={() => {
-                          copyToClipboard(row?.address, dispatch);
-                        }}
-                      />
-                    </StyledTableCell>
-                    <StyledTableCell
-                      onClick={() => {
-                        navigate(
-                          `/${currentNetwork}/multisig/${row.address}/txs`
-                        );
-                      }}
-                    >
-                      {row?.threshold || 0}
-                    </StyledTableCell>
-                    <StyledTableCell
-                      onClick={() => {
-                        navigate(
-                          `/${currentNetwork}/multisig/${row.address}/txs`
-                        );
-                      }}
-                    >
-                      <strong> {pendingTxns[row?.address] || 0} </strong> txns
-                    </StyledTableCell>
-                    <StyledTableCell
-                      onClick={() => {
-                        navigate(
-                          `/${currentNetwork}/multisig/${row.address}/txs`
-                        );
-                      }}
-                    >
-                      {getLocalTime(row?.created_at)}
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </FormControl>
-      ) : null}
+                    <TableHead>
+                      <StyledTableRow>
+                        <StyledTableCell>Name</StyledTableCell>
+                        <StyledTableCell>Address</StyledTableCell>
+                        <StyledTableCell>Threshold</StyledTableCell>
+                        <StyledTableCell>Actions Required</StyledTableCell>
+                        <StyledTableCell>Created At</StyledTableCell>
+                      </StyledTableRow>
+                    </TableHead>
+                    <TableBody>
+                      {accounts.map((row, index) => (
+                        <StyledTableRow
+                          key={index}
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                            "&:hover": {
+                              cursor: "pointer",
+                            },
+                          }}
+                        >
+                          <StyledTableCell
+                            onClick={() => {
+                              navigate(
+                                `/${currentNetwork}/multisig/${row.address}/txs`
+                              );
+                            }}
+                          >
+                            {row?.name}
+                          </StyledTableCell>
+                          <StyledTableCell
+                            onClick={() => {
+                              navigate(
+                                `/${currentNetwork}/multisig/${row.address}/txs`
+                              );
+                            }}
+                          >
+                            <Chip
+                              label={shortenAddress(row?.address, 21)}
+                              variant="filled"
+                              size="medium"
+                              deleteIcon={<ContentCopyOutlined />}
+                              onDelete={() => {
+                                copyToClipboard(row?.address, dispatch);
+                              }}
+                            />
+                          </StyledTableCell>
+                          <StyledTableCell
+                            onClick={() => {
+                              navigate(
+                                `/${currentNetwork}/multisig/${row.address}/txs`
+                              );
+                            }}
+                          >
+                            {row?.threshold || 0}
+                          </StyledTableCell>
+                          <StyledTableCell
+                            onClick={() => {
+                              navigate(
+                                `/${currentNetwork}/multisig/${row.address}/txs`
+                              );
+                            }}
+                          >
+                            <strong> {pendingTxns[row?.address] || 0} </strong>{" "}
+                            txns
+                          </StyledTableCell>
+                          <StyledTableCell
+                            onClick={() => {
+                              navigate(
+                                `/${currentNetwork}/multisig/${row.address}/txs`
+                              );
+                            }}
+                          >
+                            {getLocalTime(row?.created_at)}
+                          </StyledTableCell>
+                        </StyledTableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </FormControl>
+            ) : null}
 
-      {open ? (
-        <DialogCreateMultisig
-          addressPrefix={network?.config?.bech32Config?.bech32PrefixAccAddr}
-          chainId={network?.config?.chainId}
-          onClose={onClose}
-          open={open}
-          address={walletInfo?.bech32Address}
-          pubKey={walletInfo?.pubKey}
-        />
-      ) : null}
+            {open ? (
+              <DialogCreateMultisig
+                addressPrefix={
+                  network?.config?.bech32Config?.bech32PrefixAccAddr
+                }
+                chainId={network?.config?.chainId}
+                onClose={onClose}
+                open={open}
+                address={walletInfo?.bech32Address}
+                pubKey={walletInfo?.pubKey}
+              />
+            ) : null}
+          </>
+        ) : (
+          <VerifyAccount chainID={chainID} walletAddress={walletAddress} />
+        )}
+      </>
     </Paper>
   );
 }

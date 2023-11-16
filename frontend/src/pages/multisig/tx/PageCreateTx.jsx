@@ -38,10 +38,13 @@ import {
 } from "../../../features/multisig/multisigSlice";
 import { fee } from "../../../txns/execute";
 import { resetError, setError } from "../../../features/common/commonSlice";
+import { getAuthToken } from "../../../utils/localStorage";
+// import { getToken } from "../../../utils/localStorage";
 
 // TODO: serve urls from env
 
-const MULTISIG_SEND_TEMPLATE = "https://api.resolute.vitwit.com/_static/send.csv";
+const MULTISIG_SEND_TEMPLATE =
+  "https://api.resolute.vitwit.com/_static/send.csv";
 const MULTISIG_DELEGATE_TEMPLATE =
   "https://api.resolute.vitwit.com/_static/delegate.csv";
 const MULTISIG_UNDELEGATE_TEMPLATE =
@@ -227,6 +230,7 @@ export default function PageCreateTx() {
   const { connected } = wallet;
   const chainID = nameToChainIDs[networkName];
   const chainInfo = networks[chainID]?.network;
+  const walletAddress = networks[chainID]?.walletInfo.bech32Address;
 
   const validators = useSelector((state) => state.staking.validators);
 
@@ -423,14 +427,21 @@ export default function PageCreateTx() {
       data.fees,
       data.gas
     );
+    const authToken = getAuthToken(chainInfo?.config?.chainId);
     dispatch(
       createTxn({
-        address: address,
-        chain_id: chainInfo?.config?.chainId,
-        messages: messages,
-        fee: feeObj,
-        memo: data.memo,
-        gas: data.gas,
+        data: {
+          address: address,
+          chain_id: chainInfo?.config?.chainId,
+          messages: messages,
+          fee: feeObj,
+          memo: data.memo,
+          gas: data.gas,
+        },
+        queryParams: {
+          address: walletAddress,
+          signature: authToken?.signature,
+        },
       })
     );
   };

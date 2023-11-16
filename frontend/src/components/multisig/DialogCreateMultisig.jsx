@@ -21,6 +21,7 @@ import {
 import { isValidPubKey, generateMultisigAccount } from "../../txns/multisig";
 import Box from "@mui/system/Box";
 import { THRESHOLD } from "../../pages/group/common";
+import { getAuthToken } from "../../utils/localStorage";
 
 const InputTextComponent = ({
   field,
@@ -42,7 +43,11 @@ const InputTextComponent = ({
       InputProps={{
         endAdornment: (
           <InputAdornment
-            onClick={() => !field.disabled ? handleRemoveValue(index): alert("cannot self remove")}
+            onClick={() =>
+              !field.disabled
+                ? handleRemoveValue(index)
+                : alert("cannot self remove")
+            }
             position="end"
             sx={{
               "&:hover": {
@@ -60,7 +65,7 @@ const InputTextComponent = ({
 
 const DialogCreateMultisig = (props) => {
   const { onClose, open, addressPrefix, chainId, address, pubKey } = props;
-  const wallet = useSelector(state => state.wallet);
+  const wallet = useSelector((state) => state.wallet);
   const createMultiAccRes = useSelector(
     (state) => state.multisig.createMultisigAccountRes
   );
@@ -70,9 +75,7 @@ const DialogCreateMultisig = (props) => {
     if (createMultiAccRes?.status === "idle") {
       dispatch(setError({ type: "success", message: "Successfully created" }));
     } else if (createMultiAccRes?.status === "rejected") {
-      dispatch(
-        setError({ type: "error", message: createMultiAccRes?.error })
-      );
+      dispatch(setError({ type: "error", message: createMultiAccRes?.error }));
     }
   }, [createMultiAccRes]);
 
@@ -91,19 +94,27 @@ const DialogCreateMultisig = (props) => {
   const [formError, setFormError] = useState("");
 
   useEffect(() => {
-    setPubKeyFields([{
-      name: "current",
-      value: pubKey,
-      label: "Public Key (Secp256k1)",
-      placeHolder: "E. g. AtgCrYjD+21d1+og3inzVEOGbCf5uhXnVeltFIo7RcRp",
-      required: true,
-      disabled: true,
-    }, { ...pubKeyObj }])
+    setPubKeyFields([
+      {
+        name: "current",
+        value: pubKey,
+        label: "Public Key (Secp256k1)",
+        placeHolder: "E. g. AtgCrYjD+21d1+og3inzVEOGbCf5uhXnVeltFIo7RcRp",
+        required: true,
+        disabled: true,
+      },
+      { ...pubKeyObj },
+    ]);
   }, [wallet]);
 
   const handleAddPubKey = () => {
     if (pubKeyFields?.length > 6) {
-      dispatch(setError({ type: "error", message: "You can't add more than 7 pub keys" }));
+      dispatch(
+        setError({
+          type: "error",
+          message: "You can't add more than 7 pub keys",
+        })
+      );
       return;
     } else {
       setPubKeyFields([...pubKeyFields, pubKeyObj]);
@@ -122,7 +133,9 @@ const DialogCreateMultisig = (props) => {
     setFormError("");
 
     if (Number(threshold) < 1) {
-      dispatch(setError({ type: "error", message: "Threshold must be greater than 1" }));
+      dispatch(
+        setError({ type: "error", message: "Threshold must be greater than 1" })
+      );
       return;
     }
 
@@ -152,11 +165,25 @@ const DialogCreateMultisig = (props) => {
     }
 
     try {
-      let res = generateMultisigAccount(pubKeys, Number(threshold), addressPrefix);
+      let res = generateMultisigAccount(
+        pubKeys,
+        Number(threshold),
+        addressPrefix
+      );
       res.name = name;
       res.chainId = chainId;
       res.createdBy = address;
-      dispatch(createAccount(res));
+      const authToken = getAuthToken(chainId);
+      const queryParams = {
+        address: address,
+        signature: authToken?.signature,
+      };
+      dispatch(
+        createAccount({
+          queryParams: queryParams,
+          data: res,
+        })
+      );
     } catch (error) {
       dispatch(setError({ type: "error", message: error }));
     }

@@ -1,11 +1,26 @@
 import { Grant } from "cosmjs-types/cosmos/feegrant/v1beta1/feegrant";
+import { jsonParse } from "../features/utils";
 
 interface ChainWiseGrants {
   [key: string]: Grant;
 }
 
+interface AuthToken {
+  chainID: string;
+  address: string;
+  signature: string;
+}
+
+interface AuthToken2 {
+  [key: string]: {
+    address: string;
+    signature: string;
+  };
+}
+
 export const KEY_WALLET_NAME: string = "WALLET_NAME";
 export const KEY_DARK_MODE: string = "DARK_MODE";
+const AUTH_TOKEN_KEY_NAME: string = "AUTH_TOKEN";
 
 export function setConnected() {
   localStorage.setItem("CONNECTED", "true");
@@ -47,7 +62,7 @@ export function removeFeegrant(chainName: string) {
 
 export function removeAllFeegrants() {
   localStorage.removeItem("feegrant");
-} 
+}
 
 export function getMainnets(): any {
   const networksInfo = localStorage.getItem("networks");
@@ -74,13 +89,59 @@ export function getTestnets(): any {
 export function setNetwork(chainInfo: any) {
   var mainnets = getMainnets();
   var testnets = getTestnets();
+
   if (chainInfo.isTestnet) {
     testnets.push(chainInfo);
   } else {
     mainnets.push(chainInfo);
   }
+
   localStorage.setItem(
     "networks",
     JSON.stringify({ mainnets: mainnets, testnets: testnets })
   );
+}
+
+export function setAuthToken(authToken: AuthToken) {
+  const tokens = localStorage.getItem(AUTH_TOKEN_KEY_NAME);
+  var authTokens = [];
+
+  if (tokens) {
+    authTokens = jsonParse(tokens);
+  }
+
+  const token = authTokens.filter((item: AuthToken) => {
+    return item.chainID === authToken.chainID;
+  });
+
+  if (token.length) {
+    return;
+  }
+  if (authToken.chainID && authToken.address && authToken.signature) {
+    authTokens.push({
+      chainID: authToken.chainID,
+      address: authToken.address,
+      signature: authToken.signature,
+    });
+    localStorage.setItem(AUTH_TOKEN_KEY_NAME, JSON.stringify(authTokens));
+  }
+}
+
+export function getAuthToken(chainID: string): AuthToken | null {
+  const tokens = localStorage.getItem(AUTH_TOKEN_KEY_NAME);
+
+  if (tokens) {
+    var authTokens = JSON.parse(tokens);
+
+    const token = authTokens.filter((item: AuthToken) => {
+      return item.chainID === chainID;
+    });
+    return token[0];
+  }
+
+  return null;
+}
+
+export function removeAllAuthTokens() {
+  localStorage.removeItem(AUTH_TOKEN_KEY_NAME);
 }
