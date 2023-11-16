@@ -30,14 +30,6 @@ const OverviewPage = () => {
     (chainName) => nameToChainIDs[chainName]
   );
 
-  const chainIdToNames = useMemo(() => {
-    const chainIdToNames: Record<string, string> = {};
-    for (const key in nameToChainIDs) {
-      chainIdToNames[nameToChainIDs[key]] = key;
-    }
-    return chainIdToNames;
-  }, [nameToChainIDs]);
-
   const convertToDollars = (denom: string, amount: number) => {
     // todo: after common slice
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -50,11 +42,16 @@ const OverviewPage = () => {
   };
 
   const getDenomInfo = useCallback(
-    (chainID: string): { denom: string; decimals: number } => {
-      const currency = networks?.[chainID]?.network?.config?.currencies?.[0];
+    (
+      chainID: string
+    ): { minimalDenom: string; decimals: number; chainName: string } => {
+      const config = networks?.[chainID]?.network?.config;
+      const currency = config?.currencies?.[0];
+      const chainName = config?.chainName.toLowerCase();
       return {
-        denom: currency.coinMinimalDenom,
+        minimalDenom: currency.coinMinimalDenom,
         decimals: currency.coinDecimals || 0,
+        chainName,
       };
     },
     [networks]
@@ -65,12 +62,15 @@ const OverviewPage = () => {
     chainIDs.forEach((chainID) => {
       const staked = stakingChains?.[chainID]?.delegations?.totalStaked || 0;
       if (staked > 0) {
-        const { denom, decimals } = getDenomInfo(chainID);
-        totalStakedAmount += convertToDollars(denom, staked / 10 ** decimals);
+        const { minimalDenom, decimals } = getDenomInfo(chainID);
+        totalStakedAmount += convertToDollars(
+          minimalDenom,
+          staked / 10 ** decimals
+        );
       }
     });
     return totalStakedAmount;
-  }, [chainIDs, stakingChains, networks]);
+  }, [chainIDs, stakingChains, getDenomInfo]);
 
   // Todo: can be added after distribution slice is added
   //   const calculateTotalPendingAmount = useCallback(() => {
@@ -96,17 +96,16 @@ const OverviewPage = () => {
     let totalIBCBalance = 0;
 
     chainIDs.forEach((chainID) => {
-      const { denom, decimals } = getDenomInfo(chainID);
+      const { minimalDenom, decimals, chainName } = getDenomInfo(chainID);
       const balance = parseBalance(
         balanceChains?.[chainID]?.list || [],
         decimals,
-        denom
+        minimalDenom
       );
-      const chainName =
-        networks?.[chainID]?.network?.config?.chainName.toLowerCase();
+
       const ibcBalances = getIBCBalances(
         balanceChains?.[chainID]?.list,
-        denom,
+        minimalDenom,
         chainName
       );
 
@@ -122,22 +121,22 @@ const OverviewPage = () => {
       }
 
       if (balanceChains?.[chainID]?.list?.length > 0) {
-        totalBalance += convertToDollars(denom, balance);
+        totalBalance += convertToDollars(minimalDenom, balance);
       }
     });
 
     return { totalBalance, totalIBCBalance };
-  }, [chainIDs, balanceChains, networks]);
+  }, [chainIDs, balanceChains, getDenomInfo]);
 
   const getSortedChainIds = useCallback(() => {
     let sortedChains: { chainID: string; usdValue: number }[] = [];
 
     chainIDs.forEach((chainID) => {
-      const { denom, decimals } = getDenomInfo(chainID);
+      const { minimalDenom, decimals } = getDenomInfo(chainID);
       const balanceAmountInDenoms = parseBalance(
         balanceChains?.[chainID]?.list || [],
         decimals,
-        denom
+        minimalDenom
       );
 
       // minimalDenom
@@ -154,15 +153,21 @@ const OverviewPage = () => {
       };
       if (balanceChains?.[chainID]?.list?.length > 0) {
         chain.usdValue =
-          convertToDollars(denom, balanceAmountInDenoms) +
-          convertToDollars(denom, stakedAmountInDenoms / 10 ** decimals) +
-          convertToDollars(denom, rewardsAmountInDenoms / 10 ** decimals);
+          convertToDollars(minimalDenom, balanceAmountInDenoms) +
+          convertToDollars(
+            minimalDenom,
+            stakedAmountInDenoms / 10 ** decimals
+          ) +
+          convertToDollars(
+            minimalDenom,
+            rewardsAmountInDenoms / 10 ** decimals
+          );
       }
       sortedChains = [...sortedChains, chain];
     });
     sortedChains.sort((x, y) => y.usdValue - x.usdValue);
     return sortedChains.map((chain) => chain.chainID);
-  }, [chainIDs, networks, balanceChains]);
+  }, [chainIDs, getDenomInfo, balanceChains]);
 
   const getIBCSortedChainIds = useCallback(() => {
     let sortedIBCChains: {
@@ -174,9 +179,7 @@ const OverviewPage = () => {
     }[] = [];
 
     chainIDs.forEach((chainID) => {
-      const chainName = chainIdToNames[chainID];
-      const minimalDenom =
-        networks?.[chainID]?.network?.config?.currencies?.[0]?.coinMinimalDenom;
+      const { minimalDenom, chainName } = getDenomInfo(chainID);
       const chainBalances = balanceChains?.[chainID]?.list || [];
       chainBalances.forEach((balance) => {
         const denomInfo = chainDenomsData[chainName]?.filter((denomInfo) => {
@@ -208,7 +211,7 @@ const OverviewPage = () => {
 
     sortedIBCChains.sort((x, y) => y.usdValue - x.usdValue);
     return sortedIBCChains;
-  }, [chainIDs, networks, balanceChains]);
+  }, [chainIDs, balanceChains, getDenomInfo]);
 
   useEffect(() => {
     chainIDs.forEach((chainID) => {
