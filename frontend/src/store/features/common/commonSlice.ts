@@ -140,6 +140,14 @@ export const commonSlice = createSlice({
   },
 });
 
-export const {} = commonSlice.actions;
+export const {
+  setError,
+  resetError,
+  setTxLoad,
+  resetTxLoad,
+  setTxHash,
+  resetTxHash,
+  setSelectedNetwork,
+} = commonSlice.actions;
 
 export default commonSlice.reducer;
