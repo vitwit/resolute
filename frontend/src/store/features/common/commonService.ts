@@ -1,7 +1,7 @@
 import Axios, { AxiosResponse } from 'axios';
 import { cleanURL } from '../../../utils/util';
 
-const BASE_URL = 'https://api.resolute.vitwit.com';
+const BASE_URL = process.env.BACKEND_URI;
 
 const fetchPriceInfo = (denom: string): Promise<AxiosResponse> => {
   const uri = `${cleanURL(BASE_URL)}/tokens-info/${denom}`;
