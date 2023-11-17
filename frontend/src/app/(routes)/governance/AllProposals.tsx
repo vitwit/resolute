@@ -32,9 +32,7 @@ const AllProposals = () => {
               height={32}
               alt="Cosmos-Logo"
             />
-            <p className="flex items-center text-white text-base font-medium">
-              All Networks
-            </p>
+            <p className="proposal-text-medium">All Networks</p>
           </div>
         </div>
         <div className="v-line"></div>
@@ -42,14 +40,10 @@ const AllProposals = () => {
         {proposalData.map((proposal, index) => (
           <div className="proposal" key={index}>
             <div className="proposal-id">
-              <p className="text-white text-sm  font-extralight leading-[14px]">
-                {proposal.id}
-              </p>
+              <p className="proposal-text-extralight">{proposal.id}</p>
             </div>
             <div className="flex flex-col space-y-2">
-              <p className="text-white text-sm  font-normal leading-6">
-                {proposal.title}
-              </p>
+              <p className="proposal-text-normal">{proposal.title}</p>
               <div className="flex space-x-4">
                 <div className="flex space-x-1">
                   <Image
@@ -58,9 +52,7 @@ const AllProposals = () => {
                     height={20}
                     alt="Akash-Logo"
                   />
-                  <p className=" flex items-center text-[rgba(255,255,255,0.75)] text-sm font-light leading-[14px]">
-                    {proposal.networkname}
-                  </p>
+                  <p className="proposal-text-small">{proposal.networkname}</p>
                 </div>
                 <div className="flex space-x-1">
                   <Image
@@ -69,9 +61,7 @@ const AllProposals = () => {
                     height={24}
                     alt="Timer-Icon"
                   />
-                  <p className=" flex items-center text-[rgba(255,255,255,0.75)] text-sm font-light leading-[14px]">
-                    {proposal.expires}
-                  </p>
+                  <p className="proposal-text-small">{proposal.expires}</p>
                 </div>
                 <div className="flex space-x-1">
                   <Image
@@ -80,9 +70,7 @@ const AllProposals = () => {
                     height={24}
                     alt="Vote-Icon"
                   />
-                  <p className="flex items-center text-[rgba(255,255,255,0.75)] text-sm  font-light leading-[14px]">
-                    {proposal.votingStatus}
-                  </p>
+                  <p className="proposal-text-small">{proposal.votingStatus}</p>
                 </div>
               </div>
             </div>

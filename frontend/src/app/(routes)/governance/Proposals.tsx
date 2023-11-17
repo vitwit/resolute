@@ -40,19 +40,21 @@ const Proposals = () => {
   return (
     <div className="main-page">
       <div className="proposals-head">
-        <div className="text-white text-base  font-medium">Proposals</div>
+        <div className="proposal-text-medium">Proposals</div>
         <div className="flex space-x-6">
           <button className="cstm-btn">
-            <p className="text">All Proposals</p>
+            <p className="proposal-text-extralight">All Proposals</p>
           </button>
           <button className="cstm-btn">
-            <p className="text">Voting ending in 2 days</p>
+            <p className="proposal-text-extralight">Voting ending in 2 days</p>
           </button>
           <button className="cstm-btn">
-            <p className="text">Show proposals in deposit</p>
+            <p className="proposal-text-extralight">
+              Show proposals in deposit
+            </p>
           </button>
           <button className="cstm-btn">
-            <p className="text">Recent proposals</p>
+            <p className="proposal-text-extralight">Recent proposals</p>
           </button>
         </div>
       </div>
@@ -66,9 +68,7 @@ const Proposals = () => {
               height={32}
               alt="Cosmos-Logo"
             />
-            <p className="flex items-center text-white text-base  font-medium">
-              Cosmos
-            </p>
+            <p className="proposal-text-medium">Cosmos</p>
           </div>
           <div className="view-history">View History</div>
         </div>
@@ -77,14 +77,10 @@ const Proposals = () => {
         {proposalData.map((proposal, index) => (
           <div className="proposal" key={index}>
             <div className="proposal-id">
-              <p className="text-white text-sm  font-extralight leading-[14px]">
-                {proposal.id}
-              </p>
+              <p className="proposal-text-extralight">{proposal.id}</p>
             </div>
             <div className="flex flex-col space-y-2">
-              <p className="text-white text-sm font-normal leading-6">
-                {proposal.title}
-              </p>
+              <p className="proposal-text-normal">{proposal.title}</p>
               <div className="flex space-x-4">
                 <div className="flex space-x-1">
                   <Image
@@ -93,9 +89,7 @@ const Proposals = () => {
                     height={24}
                     alt="Timer-Icon"
                   />
-                  <p className=" flex items-center text-[rgba(255,255,255,0.75)] text-sm font-light leading-[14px]">
-                    {proposal.expires}
-                  </p>
+                  <p className="proposal-text-small">{proposal.expires}</p>
                 </div>
                 <div className="flex space-x-1">
                   <Image
@@ -104,9 +98,7 @@ const Proposals = () => {
                     height={24}
                     alt="Vote-Icon"
                   />
-                  <p className="flex items-center text-[rgba(255,255,255,0.75)] text-sm  font-light leading-[14px]">
-                    {proposal.votingStatus}
-                  </p>
+                  <p className="proposal-text-small">{proposal.votingStatus}</p>
                 </div>
               </div>
             </div>

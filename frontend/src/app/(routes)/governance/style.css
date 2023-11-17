@@ -1,32 +1,40 @@
-
 .proposals-head {
-    @apply flex flex-col items-start gap-4;
+  @apply flex flex-col items-start gap-4;
 }
 .cstm-btn {
-    @apply flex h-8 flex-col justify-center items-start gap-2 backdrop-blur-[2px] px-6 py-2 rounded-[100px];
+  @apply flex h-8 flex-col justify-center items-start gap-2 backdrop-blur-[2px] px-6 py-2 rounded-[100px];
   background: rgba(255, 255, 255, 0.1);
 }
-.text {
-    @apply text-white text-sm font-extralight;
-}
 .main-page {
-    @apply flex flex-col items-start gap-10 px-10 py-6;
+  @apply flex flex-col items-start gap-10 px-10 py-6;
 }
 .view-history {
-    @apply flex flex-col justify-center cursor-pointer text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal] underline;    
+  @apply flex flex-col justify-center cursor-pointer text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal] underline;
 }
 .v-line {
-    @apply h-[0.5px];
-    background: linear-gradient(
-      90deg,
-      rgba(74, 162, 156, 0.5) 7.46%,
-      rgba(139, 61, 167, 0.5) 94.28%
-    );
+  @apply h-[0.5px];
+  background: linear-gradient(
+    90deg,
+    rgba(74, 162, 156, 0.5) 7.46%,
+    rgba(139, 61, 167, 0.5) 94.28%
+  );
 }
 .proposal-id {
-    @apply flex w-14 h-14 justify-center items-center gap-2.5 rounded-[100px];
-    background: rgba(255, 255, 255, 0.1);
+  @apply flex w-14 h-14 justify-center items-center gap-2.5 rounded-[100px];
+  background: rgba(255, 255, 255, 0.1);
 }
 .proposal {
-    @apply flex items-start gap-4 ;
+  @apply flex items-start gap-4;
+}
+.proposal-text-small {
+  @apply flex items-center text-[rgba(255,255,255,0.75)] text-sm font-light leading-[14px];
+}
+.proposal-text-extralight {
+  @apply text-white text-sm font-extralight leading-[14px];
+}
+.proposal-text-normal {
+  @apply text-white text-sm font-normal leading-6;
+}
+.proposal-text-medium {
+  @apply flex items-center text-white text-base font-medium;
 }
