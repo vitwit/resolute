@@ -38,12 +38,10 @@ const Proposals = () => {
   ];
 
   return (
-    <div className="Main-page">
+    <div className="main-page">
       <div className="proposals-head">
-        <div className="text-white text-base not-italic font-medium">
-          Proposals
-        </div>
-        <div className=" flex space-x-6">
+        <div className="text-white text-base  font-medium">Proposals</div>
+        <div className="flex space-x-6">
           <button className="cstm-btn">
             <p className="text">All Proposals</p>
           </button>
@@ -60,7 +58,7 @@ const Proposals = () => {
       </div>
 
       <div className="space-y-4 w-full">
-        <div className="flex justify-between ">
+        <div className="flex justify-between">
           <div className="flex space-x-2">
             <Image
               src="./cosmos-logo.svg"
@@ -68,7 +66,7 @@ const Proposals = () => {
               height={32}
               alt="Cosmos-Logo"
             />
-            <p className="flex items-center text-white text-base not-italic font-medium ">
+            <p className="flex items-center text-white text-base  font-medium">
               Cosmos
             </p>
           </div>
@@ -79,34 +77,34 @@ const Proposals = () => {
         {proposalData.map((proposal, index) => (
           <div className="proposal" key={index}>
             <div className="proposal-id">
-              <p className="text-white text-sm not-italic font-extralight leading-[14px]">
+              <p className="text-white text-sm  font-extralight leading-[14px]">
                 {proposal.id}
               </p>
             </div>
             <div className="flex flex-col space-y-2">
-              <p className="text-white text-sm not-italic font-normal leading-6">
+              <p className="text-white text-sm font-normal leading-6">
                 {proposal.title}
               </p>
               <div className="flex space-x-4">
                 <div className="flex space-x-1">
                   <Image
-                    src="./timer-logo.svg"
+                    src="./timer-icon.svg"
                     width={24}
                     height={24}
-                    alt="Timer-Logo"
+                    alt="Timer-Icon"
                   />
-                  <p className=" flex items-center text-[rgba(255,255,255,0.75)] text-sm not-italic font-light leading-[14px]">
+                  <p className=" flex items-center text-[rgba(255,255,255,0.75)] text-sm font-light leading-[14px]">
                     {proposal.expires}
                   </p>
                 </div>
                 <div className="flex space-x-1">
                   <Image
-                    src="./vote-logo.svg"
+                    src="./vote-icon.svg"
                     width={24}
                     height={24}
-                    alt="Vote-Logo"
+                    alt="Vote-Icon"
                   />
-                  <p className="flex items-center text-[rgba(255,255,255,0.75)] text-sm not-italic font-light leading-[14px]">
+                  <p className="flex items-center text-[rgba(255,255,255,0.75)] text-sm  font-light leading-[14px]">
                     {proposal.votingStatus}
                   </p>
                 </div>

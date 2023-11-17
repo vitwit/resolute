@@ -1,12 +1,12 @@
 import React from 'react';
 import Proposals from './Proposals';
-import AllNetworks from './AllNetworks';
+import AllProposals from './AllProposals';
 
 const page = () => {
   return (
     <div className="page">
       <Proposals />
-      <AllNetworks />
+      <AllProposals />
     </div>
   );
 };

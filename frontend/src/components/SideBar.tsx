@@ -73,7 +73,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
           ))}
         </div>
       </div>
-      <div className='w-full'>{children}</div>
+      <div className='flex-1'>{children}</div>
     </div>
   );
 };
