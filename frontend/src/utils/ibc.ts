@@ -1,5 +1,6 @@
 import chainDenoms from './chainDenoms.json';
 import { Coin, coin } from '@cosmjs/amino';
+import { ERR_MISSING_TOKEN } from './errors';
 
 const chainDenomsData = chainDenoms as AssetData;
 
@@ -9,9 +10,14 @@ export const getIBCBalances = (
   chainName: string
 ): { balance: Coin; decimals: number }[] => {
   let ibcBalances: { balance: Coin; decimals: number }[] = [];
+
   for (let i = 0; i < balancesList?.length; i++) {
     if (balancesList[i]?.denom === nativeDenom) continue;
     const denomInfo = getOriginDenom(balancesList[i], chainName);
+    if (!denomInfo.origin_denom) {
+      console.error(ERR_MISSING_TOKEN(balancesList[i].denom));
+      continue;
+    }
     ibcBalances = [
       ...ibcBalances,
       {
