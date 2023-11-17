@@ -1,9 +1,4 @@
-.main {
-    @apply flex items-start gap-6 w-full px-10 py-6;
-}
-.topnav-gov {
-    @apply flex justify-between w-full ;
-}
+
 .proposals-head {
     @apply flex flex-col items-start gap-4;
 }
