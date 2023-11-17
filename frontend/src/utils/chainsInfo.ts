@@ -370,8 +370,8 @@ export const networks: Network[] = [
     config: {
       chainId: "dydx-mainnet-1",
       chainName: "DYDX",
-      rest: "https://dydx-api.lavenderfive.com:443",
-      rpc: "https://dydx-rpc.lavenderfive.com:443",
+      rest: "https://dydx-rest.publicnode.com",
+      rpc: "https://dydx-rpc.publicnode.com:443",
       currencies: [
         {
           coinDenom: "DYDX",

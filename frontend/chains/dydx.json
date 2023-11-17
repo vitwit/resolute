@@ -21,8 +21,8 @@
   "config": {
     "chain_id": "dydx-mainnet-1",
     "chain_name": "DYDX",
-    "rest": "https://dydx-api.lavenderfive.com:443",
-    "rpc": "https://dydx-rpc.lavenderfive.com:443",
+    "rest": "https://dydx-rest.publicnode.com",
+    "rpc": "https://dydx-rpc.publicnode.com:443",
     "currencies": [
       {
         "coin_denom": "DYDX",
@@ -55,7 +55,7 @@
         }
       }
     ],
-    
+
     "stake_currency": {
       "coin_denom": "DYDX",
       "coin_minimal_denom": "adydx",
