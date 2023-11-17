@@ -7,9 +7,14 @@ import {
   getDelegations,
   getAllValidators,
 } from '@/store/features/staking/stakeSlice';
+import WalletSummery from './WalletSummery';
+import TopNav from './TopNav';
+import History from './History';
 import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import useGetSortedChainIDs from '@/custom-hooks/useGetSortedChainIDs';
 import useGetIBCSortedChainIDs from '@/custom-hooks/useGetIBCSortedChainIds';
+import PageAd from './PageAd';
+import AssetsTable from './AssetsTable';
 
 const OverviewPage = () => {
   const dispatch = useAppDispatch();
@@ -59,18 +64,21 @@ const OverviewPage = () => {
   }, []);
 
   return (
-    <div>
-      {JSON.stringify(nativeSortedChainIds)}
-      <br />
-      <br />
-      {JSON.stringify(ibcSortedChainIds)}
-      <br />
-      <br />
-      {totalAvailableAmount +
-        ' ' +
-        totalRewardsAmount +
-        ' ' +
-        totalStakedAmount}
+    <div className="w-full flex justify-between overflow-y-scroll no-scrollbar">
+      <div className="w-full px-10 py-6 space-y-6">
+        <TopNav />
+        <WalletSummery
+          balanceAmount={totalAvailableAmount}
+          stakedAmount={totalStakedAmount}
+          rewardsAmount={totalRewardsAmount}
+        />
+        <PageAd />
+        {/* {JSON.stringify(nativeSortedChainIds)}
+        <br />
+        {JSON.stringify(ibcSortedChainIds)} */}
+        <AssetsTable />
+      </div>
+      <History />
     </div>
   );
 };

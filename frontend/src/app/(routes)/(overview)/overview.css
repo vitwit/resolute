@@ -1,0 +1,45 @@
+.summary-card {
+    @apply px-6 py-4 w-full space-y-2 bg-[#2c3b53] rounded-2xl
+}
+
+.summary-cards-container {
+    @apply flex gap-6 w-full
+}
+
+.assets-table {
+    @apply rounded-3xl text-white bg-[#2C3B53];
+    backdrop-filter: blur(2px);
+}
+
+.assets-table th {
+    @apply pb-4;
+}
+
+.assets-table td {
+    @apply font-light leading-normal pt-4 pb-4 px-2;
+}
+
+.assets-table tbody tr {
+    @apply hover:bg-[#343142];
+}
+
+.border-1 {
+    @apply absolute bottom-0 h-[0.5px];
+    background: linear-gradient(90deg,
+            rgba(74, 162, 156, 0.5) 7.46%,
+            rgba(139, 61, 167, 0.5) 94.28%);
+}
+
+.asset-action {
+    @apply w-8 h-8 rounded-lg flex justify-center items-center;
+    background: linear-gradient(180deg,
+            rgba(74, 162, 156, 0.8) 0%,
+            rgba(139, 61, 167, 0.8) 100%),
+        lightgray 50% / cover no-repeat;
+}
+
+.right-section {
+    @apply flex flex-col p-6 bg-[#100D2A] w-[500px] min-w-[374px] min-h-[800px] overflow-y-scroll no-scrollbar;
+    background: rgba(14, 11, 38, 0.20);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}

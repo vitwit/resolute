@@ -34,7 +34,6 @@ export const convertPaginationToParamsOffset = (pagination: {
   if (pagination.limit) {
     result += `pagination.limit=${pagination.limit}`;
   }
-
   return result;
 };
 
@@ -65,4 +64,10 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
     default:
       return 'Overview';
   }
+};
+
+export const dispayAmount = (amount: number): string => {
+  if (amount === 0) return '$ 0';
+  if (amount < 0.001) return '< $ 0.001';
+  return '$ ' + amount.toFixed(3);
 };
