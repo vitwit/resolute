@@ -62,6 +62,10 @@
   .primary-gradient {
     background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
   }
+
+  .flex-center-center {
+    @apply flex justify-center items-center;
+  }
 }
 
 /* Home page styles  */
