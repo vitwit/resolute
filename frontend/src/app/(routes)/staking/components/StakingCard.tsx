@@ -6,6 +6,8 @@ import StakingActionsMenu from './StakingActionsMenu';
 import StakingCardStats from './StakingCardStats';
 import { Tooltip } from '@mui/material';
 
+type ToogleMenu = () => void;
+
 const StakingCard = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -81,7 +83,7 @@ const StakingCardHeader = ({
   );
 };
 
-const StakingCardActions = ({ toggleMenu }: { toggleMenu: Function }) => {
+const StakingCardActions = ({ toggleMenu }: { toggleMenu: ToogleMenu }) => {
   return (
     <div className="mt-6 flex justify-between items-center">
       <div className="flex gap-10">

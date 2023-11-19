@@ -60,8 +60,8 @@ const AllValidators = () => {
           View All
         </div>
       </div>
-      {arr.map((item, index) => (
-        <Validator />
+      {arr.map((_, index) => (
+        <Validator key={index} />
       ))}
     </div>
   );
