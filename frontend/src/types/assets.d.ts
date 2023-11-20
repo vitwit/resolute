@@ -2,7 +2,7 @@ interface ParsedIBCAsset {
   type: 'ibc';
   usdValue: number;
   usdPrice: number;
-  inflation: string;
+  inflation: number;
   balance: number;
   chainName: string;
   chainID: string;
@@ -15,7 +15,7 @@ interface ParsedNativeAsset {
   type: 'native';
   usdValue: number;
   usdPrice: number;
-  inflation: string;
+  inflation: number;
   balance: number;
   staked: number;
   rewards: number;

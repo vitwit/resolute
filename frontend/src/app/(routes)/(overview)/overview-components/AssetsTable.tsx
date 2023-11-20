@@ -1,14 +1,15 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
+import { displayAmount, displayAmountWithDenom } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
+import { displayAmountInDollars } from '../../../../utils/util';
 
 const AssetsTable = () => {
   const [sortedAssets] = useSortedAssets();
   const balancesLoading = useAppSelector(
     (state) => state.bank.balancesLoading > 0
   );
-  console.log(balancesLoading+"hjj")
   const delegationsLoading = useAppSelector(
     (state) => state.staking.delegationsLoading > 0
   );
@@ -16,18 +17,8 @@ const AssetsTable = () => {
     <>
       {sortedAssets.length ? (
         <div className="assets-table bg-[#0E0b26] px-6 py-4 space-y-6">
-          <div className="flex justify-between">
-            <div className="text-white text-xl font-medium leading-[normal];">
-              Asset Information
-            </div>
-            <div>
-              <Image
-                src="/graph-view-icon.svg"
-                height={32}
-                width={32}
-                alt="graph-view"
-              />
-            </div>
+          <div className="text-white text-xl font-medium leading-[normal];">
+            Asset Information
           </div>
           <div>
             <table className="w-full text-sm leading-normal">
@@ -44,24 +35,35 @@ const AssetsTable = () => {
                 {sortedAssets.map((asset) => (
                   <tr key={asset.chainID + asset.denom}>
                     <td>
-                      <div>{asset.balance + ' ' + asset.displayDenom}</div>
+                      <div>
+                        {displayAmountWithDenom(
+                          asset.balance,
+                          asset.displayDenom
+                        )}
+                      </div>
                       <div className="text-xs text-[#a7a2b5] font-thin leading-[normal]">
                         on {asset.chainName}
                       </div>
                     </td>
                     <td>
                       {asset.type === 'native'
-                        ? asset.staked + ' ' + asset.displayDenom
+                        ? displayAmountWithDenom(
+                            asset.staked,
+                            asset.displayDenom
+                          )
                         : '-'}
                     </td>
                     <td>
                       {asset.type === 'native'
-                        ? asset.rewards + ' ' + asset.displayDenom
+                        ? displayAmountWithDenom(
+                            asset.rewards,
+                            asset.displayDenom
+                          )
                         : '-'}
                     </td>
                     <td>
                       <div className="flex gap-2">
-                        <div>$ {asset.usdPrice}</div>
+                        <div>{displayAmountInDollars(asset.usdPrice)}</div>
                         <div className="flex">
                           <Image
                             src="/down-arrow-filled-icon.svg"
@@ -70,7 +72,7 @@ const AssetsTable = () => {
                             alt="decreased"
                           />
                           <div className="text-[#E57575]">
-                            {asset.inflation}
+                            {displayAmount(asset.inflation)}
                           </div>
                         </div>
                       </div>

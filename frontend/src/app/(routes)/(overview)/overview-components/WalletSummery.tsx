@@ -1,4 +1,4 @@
-import { dispayAmount } from '@/utils/util';
+import { displayAmountInDollars } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 type AssetSummary = { icon: string; alt: string; type: string; amount: string };
@@ -8,9 +8,9 @@ const WalletSummery = (props: {
   stakedAmount: number;
   rewardsAmount: number;
 }) => {
-  const balanceAmount = dispayAmount(props.balanceAmount);
-  const stakedAmount = dispayAmount(props.stakedAmount);
-  const rewardsAmount = dispayAmount(props.rewardsAmount);
+  const balanceAmount = displayAmountInDollars(props.balanceAmount);
+  const stakedAmount = displayAmountInDollars(props.stakedAmount);
+  const rewardsAmount = displayAmountInDollars(props.rewardsAmount);
   const assetsSummaryData: AssetSummary[] = [
     {
       icon: 'stakesAmount.svg',

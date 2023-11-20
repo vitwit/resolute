@@ -19,6 +19,9 @@ const useSortedAssets = (): [ParsedAsset[]] => {
   const chainIDs = Object.keys(nameToChainIDs).map(
     (chainName) => nameToChainIDs[chainName]
   );
+  const tokensPriceInfo = useAppSelector(
+    (state) => state.common.allTokensInfoState.info
+  );
 
   const sortedAssets = useMemo(() => {
     let sortedAssets: ParsedAsset[] = [];
@@ -51,9 +54,11 @@ const useSortedAssets = (): [ParsedAsset[]] => {
           const rewardsAmountInDenoms =
             rewardsAmountInMinDenoms / 10 ** decimals;
 
-          //Todo: common slice
-          const denomPrice = 1;
-          const inflation = '+2%';
+          const usdPriceInfo: TokenInfo | undefined =
+            tokensPriceInfo?.[minimalDenom]?.info;
+          const usdDenomPrice = usdPriceInfo?.usd || 0;
+          const inflation = usdPriceInfo?.usd_24h_change || 0;
+
           const balanceAmountInDenoms = parseBalance(
             balanceChains?.[chainID]?.list || [],
             decimals,
@@ -63,10 +68,11 @@ const useSortedAssets = (): [ParsedAsset[]] => {
             type: 'native',
             chainName: chainName,
             usdValue:
-              denomPrice * (balanceAmountInDenoms +
-              stakedAmountInDenoms +
-              rewardsAmountInDenoms),
-            usdPrice: denomPrice,
+              usdDenomPrice *
+              (balanceAmountInDenoms +
+                stakedAmountInDenoms +
+                rewardsAmountInDenoms),
+            usdPrice: usdDenomPrice,
             inflation: inflation,
             chainID: chainID,
             displayDenom: coinDenom,
@@ -76,9 +82,11 @@ const useSortedAssets = (): [ParsedAsset[]] => {
             denom: minimalDenom,
           };
         } else if (denomInfo?.length) {
-          // Todo
-          const usdDenomPrice = 1;
-          const inflation = '-1%';
+          const usdPriceInfo: TokenInfo | undefined =
+            tokensPriceInfo?.[denomInfo[0].origin_denom]?.info;
+          const usdDenomPrice = usdPriceInfo?.usd || 0;
+          const inflation = usdPriceInfo?.usd_24h_change || 0;
+
           const balanceAmount = parseBalance(
             [balance],
             denomInfo[0].decimals,
@@ -107,7 +115,7 @@ const useSortedAssets = (): [ParsedAsset[]] => {
     sortedAssets.sort((x, y) => y.usdValue - x.usdValue);
 
     return sortedAssets;
-  }, [chainIDs, balanceChains, networks]);
+  }, [chainIDs, balanceChains, networks, tokensPriceInfo]);
 
   return [sortedAssets];
 };

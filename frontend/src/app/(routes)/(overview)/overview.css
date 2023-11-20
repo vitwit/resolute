@@ -1,5 +1,6 @@
 .summary-card {
-    @apply px-6 py-4 w-full space-y-2 bg-[#2c3b53] rounded-2xl
+    @apply px-6 py-4 w-full space-y-2 rounded-2xl backdrop-blur-[2px] bg-[#0e0b26];
+    backdrop-filter: blur(2px);
 }
 
 .summary-cards-container {
@@ -7,7 +8,7 @@
 }
 
 .assets-table {
-    @apply rounded-3xl text-white bg-[#2C3B53];
+    @apply rounded-3xl text-white bg-[#0e0b26];
     backdrop-filter: blur(2px);
 }
 
@@ -39,7 +40,6 @@
 }
 
 .right-section {
-    @apply flex flex-col p-6 bg-[#100D2A] w-[500px] min-w-[374px] min-h-screen overflow-y-scroll;
-    background: rgba(14, 11, 38, 0.20);
+    @apply flex flex-col p-6 bg-[#0e0b26] w-[500px] min-w-[374px] min-h-screen overflow-y-scroll;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }

@@ -61,8 +61,8 @@ const OverviewPage = () => {
   }, []);
 
   return (
-    <div className="w-full flex justify-between overflow-y-scroll no-scrollbar">
-      <div className="w-full px-10 py-6 space-y-6">
+    <div className="w-full flex justify-between">
+      <div className="w-full px-10 py-6 space-y-6 overflow-y-scroll min-h-[800px] h-screen">
         <TopNav />
         <WalletSummery
           balanceAmount={totalAvailableAmount}
