@@ -20,11 +20,11 @@ const fetchValidators = (
   let uri = `${cleanURL(baseURL)}${validatorsURL}`;
 
   const pageParams = convertPaginationToParams(pagination);
-  if (status !== null) {
+  if (status) {
     uri += `?status=${status}`;
-    if (pageParams !== '') uri += `&${pageParams}`;
+    if (pageParams) uri += `&${pageParams}`;
   } else {
-    if (pageParams !== '') uri += `?${pageParams}`;
+    if (pageParams) uri += `?${pageParams}`;
   }
 
   return Axios.get(uri);

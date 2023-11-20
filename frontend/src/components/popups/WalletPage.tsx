@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent } from '@mui/material';
-import { supportedWallets } from 'staking/utils/contants';
+import { supportedWallets } from '@/utils/contants';
 
 const Walletpage = ({
   open,
