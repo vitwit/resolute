@@ -11,18 +11,23 @@ interface ChainInfo {
     name: string;
     isNanoLedger: boolean;
     pubKey: string;
+    bech32Address: string;
+    isKeystone: string;
+    algo: string;
   };
-  network: {
-    config: {
-      chainId: string;
-      chainName: string;
-    };
-    keplrExperimental?: boolean;
-    leapExperimental?: boolean;
-  };
+  network: Network;
 }
 
-const initialState = {
+interface WalletState {
+  name: string;
+  connected: boolean;
+  isNanoLedger: boolean;
+  pubKey: string;
+  networks: Record<string, ChainInfo>;
+  nameToChainIDs: Record<string, string>;
+}
+
+const initialState: WalletState = {
   name: '',
   connected: false,
   isNanoLedger: false,

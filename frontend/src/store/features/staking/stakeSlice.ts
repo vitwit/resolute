@@ -4,7 +4,6 @@ import stakingService from './stakingService';
 import { ERR_UNKNOWN } from '../../../utils/errors';
 import { signAndBroadcast } from '../../../utils/signing';
 import cloneDeep from 'lodash/cloneDeep';
-import { TxStatus } from '../../../types/store';
 import { GAS_FEE } from '../../../utils/constants';
 import {
   GetDelegationsResponse,
@@ -17,6 +16,7 @@ import {
   Validator,
 } from '../../../types/staking';
 import { AxiosError } from 'axios';
+import { TxStatus } from '../../../types/enums';
 
 interface Validators {
   status: TxStatus;
@@ -266,7 +266,6 @@ export const getValidators = createAsyncThunk(
         data?.status,
         data?.pagination
       );
-      console.log('getValidators:', JSON.stringify(response.data));
       return {
         chainID: data.chainID,
         data: response.data,
@@ -284,7 +283,7 @@ export const getAllValidators = createAsyncThunk(
   async (
     data: {
       baseURL: string;
-      status: string;
+      status?: string;
       chainID: string;
     },
     { rejectWithValue }
@@ -303,15 +302,14 @@ export const getAllValidators = createAsyncThunk(
                 limit: limit,
               }
             : {}
-        );
-        console.log('getAllValidators:', JSON.stringify(response.data));
+        ); 
         validators.push(...response.data.validators);
-        if (!response.data.pagination?.next_key) {
+        if (!response?.data?.pagination?.next_key) {
           break;
         }
         nextKey = response.data.pagination.next_key;
       }
-      console.log('vals...', JSON.stringify(validators));
+      
       return {
         validators: validators,
         chainID: data.chainID,
@@ -327,7 +325,6 @@ export const getParams = createAsyncThunk(
   'staking/params',
   async (data: { baseURL: string; chainID: string }) => {
     const response = await stakingService.params(data.baseURL);
-    console.log('getParams', response.data);
     return {
       data: response.data,
       chainID: data.chainID,
@@ -360,14 +357,13 @@ export const getDelegations = createAsyncThunk(
               }
             : {}
         );
-        console.log('getDelegations:', JSON.stringify(response.data));
         delegations.push(...(response.data?.delegation_responses || []));
         if (!response.data.pagination?.next_key) {
           break;
         }
         nextKey = response.data.pagination.next_key;
       }
-      console.log('delegations', delegations);
+      
       return {
         delegations: delegations,
         chainID: data.chainID,
@@ -441,6 +437,8 @@ export const stakeSlice = createSlice({
     builder
       .addCase(getValidators.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
         state.chains[chainID].validators.status = TxStatus.PENDING;
         state.chains[chainID].validators.errMsg = '';
       })
@@ -484,15 +482,15 @@ export const stakeSlice = createSlice({
         state.chains[chainID].validators.status = TxStatus.REJECTED;
         state.chains[chainID].validators.errMsg =
           action.error.message || ERR_UNKNOWN;
-        const result = initialState.defaultState.validators;
-        result.errMsg = action.error.message || '';
-        result.status = TxStatus.REJECTED;
-        state.chains[chainID].validators = result;
+        state.chains[chainID].validators.errMsg = action.error.message || '';
+        state.chains[chainID].validators.status = TxStatus.REJECTED;
       });
 
     builder
       .addCase(getAllValidators.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
         state.chains[chainID].validators.status = TxStatus.PENDING;
         state.chains[chainID].validators.errMsg = '';
       })
@@ -552,17 +550,15 @@ export const stakeSlice = createSlice({
       })
       .addCase(getAllValidators.rejected, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
-        const result = cloneDeep(initialState.defaultState.validators);
-        result.errMsg = action.error.message || '';
-        result.status = TxStatus.REJECTED;
-        if (state.chains[chainID]) {
-          state.chains[chainID].validators = result;
-        }
+        state.chains[chainID].validators.errMsg = action.error.message || '';
+        state.chains[chainID].validators.status = TxStatus.REJECTED;
       });
 
     builder
       .addCase(getDelegations.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
         state.chains[chainID].delegations.status = TxStatus.PENDING;
         state.chains[chainID].delegations.errMsg = '';
       })
