@@ -1,19 +1,19 @@
 import Image from 'next/image';
 import React from 'react';
 
+// TODO: Create css classes for repeated styles
+
 const StakingSidebar = () => {
   return (
-    <div className="staking-sidebar w-[500px] bg-[#0E0B2633] h-screen min-h-[800px] overflow-y-hidden no-scrollbar">
+    <div className="staking-sidebar">
       <div className="flex flex-col gap-6">
         <div className="flex gap-10">
           <StakingStatsCard />
           <StakingStatsCard />
         </div>
-        <div className="flex gap-6 text-[16px] leading-[20px] font-medium">
-          <button className="w-1/2 x-6 py-3 rounded-2xl primary-gradient">
-            Claim All
-          </button>
-          <button className="w-1/2 x-6 py-3 rounded-2xl primary-gradient">
+        <div className="staking-sidebar-actions">
+          <button className="staking-sidebar-actions-btn">Claim All</button>
+          <button className="staking-sidebar-actions-btn">
             Claim and stake all
           </button>
         </div>
@@ -51,7 +51,9 @@ const StakingStatsCard = () => {
 };
 
 const AllValidators = () => {
-  const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ,13, 14, 15, 16, 17 , 18, 19 ,20];
+  const arr = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+  ];
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
@@ -70,7 +72,7 @@ const AllValidators = () => {
 const Validator = () => {
   return (
     <div className="flex justify-between items-center">
-      <div className='flex gap-4'>
+      <div className="flex gap-4">
         <div className="bg-[#fff] rounded-full">
           <Image src="/witval-logo.png" height={40} width={40} alt="Witval" />
         </div>

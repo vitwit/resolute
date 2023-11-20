@@ -3,6 +3,7 @@
 import React from 'react';
 import './../staking.css';
 import StakingCard from './StakingCard';
+import UnbondingCard from './UnbondingCard';
 
 const StakingOverview = () => {
   const arr = [
@@ -16,6 +17,17 @@ const StakingOverview = () => {
             <StakingCard key={index} />
           </>
         ))}
+      </div>
+
+      <div>
+        <h2 className="txt-lg font-medium my-6">Unbonding</h2>
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+          {arr.map((item, index) => (
+            <>
+              <UnbondingCard key={index} />
+            </>
+          ))}
+        </div>
       </div>
     </div>
   );

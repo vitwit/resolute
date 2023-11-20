@@ -58,7 +58,7 @@ const StakingCard = () => {
 
 export default StakingCard;
 
-const StakingCardHeader = ({
+export const StakingCardHeader = ({
   validator,
   validatorLogo,
   network,
@@ -71,7 +71,7 @@ const StakingCardHeader = ({
 }) => {
   return (
     <div className="flex justify-between">
-      <div className="flex-center-center gap-1">
+      <div className="flex-center-center gap-1 h-10">
         <Image src={validatorLogo} height={32} width={32} alt={validator} />
         <div className="txt-md font-medium">Stakefish</div>
       </div>
