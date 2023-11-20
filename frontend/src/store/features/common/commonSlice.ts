@@ -40,7 +40,6 @@ export const getTokenPrice = createAsyncThunk(
       const response = await commonService.tokenInfo(data);
       return response.data;
     } catch (error) {
-      console.log(error);
       if (error instanceof AxiosError) return rejectWithValue(error.message);
       return rejectWithValue(ERR_UNKNOWN);
     }
@@ -110,7 +109,7 @@ export const commonSlice = createSlice({
       })
       .addCase(getTokenPrice.rejected, (state, action) => {
         state.tokensInfoState.status = 'rejected';
-        state.tokensInfoState.error = action.error.message || '';
+        state.tokensInfoState.error = JSON.stringify(action.payload) || '';
         state.tokensInfoState.info = initialState.tokensInfoState.info;
       });
 
@@ -134,7 +133,7 @@ export const commonSlice = createSlice({
       })
       .addCase(getAllTokensPrice.rejected, (state, action) => {
         state.allTokensInfoState.status = 'rejected';
-        state.allTokensInfoState.error = action.error.message || '';
+        state.allTokensInfoState.error = JSON.stringify(action.payload) || '';
         state.allTokensInfoState.info = {};
       });
   },
