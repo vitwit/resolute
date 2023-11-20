@@ -5,13 +5,8 @@
 @tailwind utilities;
 
 .main {
-  @apply leading-[normal] m-0 text-white;
-  background: linear-gradient(
-    180deg,
-    rgba(74, 162, 156, 0.6) 0%,
-    rgba(139, 61, 167, 0.6) 100%
-  );
-  background-color: #0e0b26;
+  @apply leading-[normal] m-0;
+  background-color: #0b071d;
   font-family: 'Inter', sans-serif;
 }
 
@@ -165,8 +160,8 @@
   }
 
   .sidebar {
-    @apply h-screen min-h-[800px] w-[87px] px-4 py-10 flex flex-col gap-16 items-center;
-    background: #0e0b2633;
+    @apply h-screen min-h-[800px] w-[87px] px-4 py-10 flex flex-col justify-between items-center;
+    background: #0E0B26;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   }
 
