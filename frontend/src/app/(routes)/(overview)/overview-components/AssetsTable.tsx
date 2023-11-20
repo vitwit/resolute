@@ -103,10 +103,17 @@ const AssetsTable = () => {
             </table>
           </div>
         </div>
-      ) : balancesLoading || delegationsLoading ? (
-        <>loading..</>
       ) : (
-        <>-No data-</>
+        <div
+          style={{marginTop:100}}
+          className="w-full flex items-center justify-center text-white"
+        >
+          {balancesLoading || delegationsLoading ? (
+            <>Loading...</>
+          ) : (
+            <>- No data -</>
+          )}
+        </div>
       )}
     </>
   );
