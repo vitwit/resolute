@@ -1,34 +1,34 @@
-import { displayAmountInDollars } from '@/utils/util';
+import { formatDollarAmount } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 type AssetSummary = { icon: string; alt: string; type: string; amount: string };
 
 const WalletSummery = (props: {
-  balanceAmount: number;
-  stakedAmount: number;
-  rewardsAmount: number;
+  available: number;
+  staked: number;
+  rewards: number;
 }) => {
-  const balanceAmount = displayAmountInDollars(props.balanceAmount);
-  const stakedAmount = displayAmountInDollars(props.stakedAmount);
-  const rewardsAmount = displayAmountInDollars(props.rewardsAmount);
+  const available = formatDollarAmount(props.available);
+  const staked = formatDollarAmount(props.staked);
+  const rewards = formatDollarAmount(props.rewards);
   const assetsSummaryData: AssetSummary[] = [
     {
       icon: 'stakesAmount.svg',
       alt: 'stake',
       type: 'Staked Amount',
-      amount: stakedAmount,
+      amount: staked,
     },
     {
       icon: 'rewardsAmount.svg',
       alt: 'rewards',
       type: 'Rewards',
-      amount: rewardsAmount,
+      amount: rewards,
     },
     {
       icon: 'balanceAmount.svg',
-      alt: 'balance',
+      alt: 'available',
       type: 'Wallet Balance',
-      amount: balanceAmount,
+      amount: available,
     },
   ];
 

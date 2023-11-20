@@ -65,9 +65,9 @@ const OverviewPage = () => {
       <div className="w-full px-10 py-6 space-y-6 overflow-y-scroll min-h-[800px] h-screen">
         <TopNav />
         <WalletSummery
-          balanceAmount={totalAvailableAmount}
-          stakedAmount={totalStakedAmount}
-          rewardsAmount={totalRewardsAmount}
+          available={totalAvailableAmount}
+          staked={totalStakedAmount}
+          rewards={totalRewardsAmount}
         />
         <PageAd />
         <AssetsTable />

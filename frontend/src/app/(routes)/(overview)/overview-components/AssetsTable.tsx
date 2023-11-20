@@ -1,9 +1,8 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
-import { displayAmount, displayAmountWithDenom } from '@/utils/util';
+import { formatAmount, formatCoin, formatDollarAmount } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
-import { displayAmountInDollars } from '../../../../utils/util';
 
 const AssetsTable = () => {
   const [sortedAssets] = useSortedAssets();
@@ -35,35 +34,24 @@ const AssetsTable = () => {
                 {sortedAssets.map((asset) => (
                   <tr key={asset.chainID + asset.denom}>
                     <td>
-                      <div>
-                        {displayAmountWithDenom(
-                          asset.balance,
-                          asset.displayDenom
-                        )}
-                      </div>
+                      <div>{formatCoin(asset.balance, asset.displayDenom)}</div>
                       <div className="text-xs text-[#a7a2b5] font-thin leading-[normal]">
                         on {asset.chainName}
                       </div>
                     </td>
                     <td>
                       {asset.type === 'native'
-                        ? displayAmountWithDenom(
-                            asset.staked,
-                            asset.displayDenom
-                          )
+                        ? formatCoin(asset.staked, asset.displayDenom)
                         : '-'}
                     </td>
                     <td>
                       {asset.type === 'native'
-                        ? displayAmountWithDenom(
-                            asset.rewards,
-                            asset.displayDenom
-                          )
+                        ? formatCoin(asset.rewards, asset.displayDenom)
                         : '-'}
                     </td>
                     <td>
                       <div className="flex gap-2">
-                        <div>{displayAmountInDollars(asset.usdPrice)}</div>
+                        <div>{formatDollarAmount(asset.usdPrice)}</div>
                         <div className="flex">
                           <Image
                             src="/down-arrow-filled-icon.svg"
@@ -72,7 +60,7 @@ const AssetsTable = () => {
                             alt="decreased"
                           />
                           <div className="text-[#E57575]">
-                            {displayAmount(asset.inflation)}
+                            {formatAmount(asset.inflation)}
                           </div>
                         </div>
                       </div>
@@ -105,7 +93,7 @@ const AssetsTable = () => {
         </div>
       ) : (
         <div
-          style={{marginTop:100}}
+          style={{ marginTop: 100 }}
           className="w-full flex items-center justify-center text-white"
         >
           {balancesLoading || delegationsLoading ? (

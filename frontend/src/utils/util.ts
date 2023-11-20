@@ -68,23 +68,20 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
   }
 };
 
-export const displayAmountInDollars = (amount: number): string => {
-  if (amount === 0) return '$ 0';
-  if (amount < 0.001) return '< $ 0.001';
-  return '$ ' + amount.toFixed(3);
+export const formatDollarAmount = (amount: number): string => {
+  if (amount === 0) return '$0';
+  if (amount < 1) return '< $1';
+  return '$ ' + amount.toFixed(2);
 };
 
-export const displayAmount = (amount: number): string => {
-  return amount === 0 ? '0' : amount.toFixed(3);
+export const formatAmount = (amount: number): string => {
+  return amount === 0 ? '0' : amount.toFixed(2);
 };
 
-export const displayAmountWithDenom = (
-  amount: number,
-  denom: string
-): string => {
+export const formatCoin = (amount: number, denom: string): string => {
   let parsedAmount;
   if (amount === 0) parsedAmount = '0';
-  else if (amount < 0.001) parsedAmount = '< 0.001';
-  else parsedAmount = amount.toFixed(3);
+  else if (amount < 1) parsedAmount = '< 1';
+  else parsedAmount = amount.toFixed(2);
   return parsedAmount + ' ' + denom;
 };
