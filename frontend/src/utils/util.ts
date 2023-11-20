@@ -8,6 +8,9 @@ export const convertPaginationToParams = (
   if (pagination.key) {
     result += `pagination.key=${encodeURIComponent(pagination.key)}`;
   }
+  if (pagination.key && pagination.limit) {
+    result += `&`;
+  }
   if (pagination.limit) {
     result += `pagination.limit=${pagination.limit}`;
   }
@@ -22,10 +25,13 @@ export const convertPaginationToParamsOffset = (pagination: {
   if (!pagination) {
     return '';
   }
-  if (!pagination.offset) {
+  if (pagination.offset) {
     result += `pagination.offset=${pagination.offset}`;
   }
-  if (!pagination.limit) {
+  if (pagination.offset && pagination.limit) {
+    result += `&`;
+  }
+  if (pagination.limit) {
     result += `pagination.limit=${pagination.limit}`;
   }
 
@@ -56,6 +62,8 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
       return 'Multisig';
     case 'transfers':
       return 'Transfers';
+    case 'history':
+      return 'History';
     default:
       return 'Overview';
   }

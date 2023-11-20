@@ -12,3 +12,5 @@ export const supportedWallets = [
     logo: '/cosmostation-wallet-logo.png',
   },
 ];
+
+export const USD_CURRENCY = 'usd';
