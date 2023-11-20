@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect } from 'react';
 import { RootState } from '../../../../store/store';
 import { getBalances } from '@/store/features/bank/bankSlice';
@@ -11,8 +12,6 @@ import WalletSummery from './WalletSummery';
 import TopNav from './TopNav';
 import History from './History';
 import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
-import useGetSortedChainIDs from '@/custom-hooks/useGetSortedChainIDs';
-import useGetIBCSortedChainIDs from '@/custom-hooks/useGetIBCSortedChainIds';
 import PageAd from './PageAd';
 import AssetsTable from './AssetsTable';
 
@@ -28,8 +27,6 @@ const OverviewPage = () => {
 
   const [totalStakedAmount, totalAvailableAmount, totalRewardsAmount] =
     useGetAssetsAmount();
-  const [nativeSortedChainIds] = useGetSortedChainIDs();
-  const [ibcSortedChainIds] = useGetIBCSortedChainIDs();
 
   useEffect(() => {
     chainIDs.forEach((chainID) => {
@@ -73,9 +70,6 @@ const OverviewPage = () => {
           rewardsAmount={totalRewardsAmount}
         />
         <PageAd />
-        {/* {JSON.stringify(nativeSortedChainIds)}
-        <br />
-        {JSON.stringify(ibcSortedChainIds)} */}
         <AssetsTable />
       </div>
       <History />

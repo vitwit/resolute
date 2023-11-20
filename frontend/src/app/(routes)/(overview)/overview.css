@@ -39,7 +39,7 @@
 }
 
 .right-section {
-    @apply flex flex-col p-6 bg-[#100D2A] w-[500px] min-w-[374px] min-h-[800px] overflow-y-scroll no-scrollbar;
+    @apply flex flex-col p-6 bg-[#100D2A] w-[500px] min-w-[374px] min-h-screen overflow-y-scroll;
     background: rgba(14, 11, 38, 0.20);
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
