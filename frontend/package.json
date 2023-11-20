@@ -22,7 +22,7 @@
     "@reduxjs/toolkit": "^1.9.7",
     "@types/node": "20.6.5",
     "@types/react": "18.2.37",
-    "@types/react-dom": "18.2.7",
+    "@types/react-dom": "18.2.15",
     "autoprefixer": "10.4.16",
     "axios": "^1.5.1",
     "cosmjs-types": "^0.9.0",
