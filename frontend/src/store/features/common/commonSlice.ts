@@ -1,3 +1,5 @@
+'use client';
+
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import commonService from './commonService';
 import { AxiosError } from 'axios';
