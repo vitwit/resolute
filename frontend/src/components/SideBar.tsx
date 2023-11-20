@@ -4,6 +4,9 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getSelectedPartFromURL } from '../utils/util';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { resetWallet } from '@/store/features/wallet/walletSlice';
+import { logout } from '@/utils/localStorage';
 
 const menuItems = [
   {
@@ -53,7 +56,8 @@ const menuItems = [
 const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
   const pathParts = pathName.split('/');
-  const selectedPart = getSelectedPartFromURL(pathParts);
+  const selectedPart = getSelectedPartFromURL(pathParts).toLowerCase();
+  const dispatch = useAppDispatch();
   return (
     <div className="main">
       <div className="sidebar">
@@ -71,6 +75,40 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
               link={item.link}
             />
           ))}
+        </div>
+        <div className="flex flex-col gap-6">
+          <Link href="/history">
+            <div
+              className={`sidebar-menu-item ${
+                selectedPart === 'history' ? 'sidebar-menu-item-selected' : ''
+              }`}
+            >
+              <Image
+                src={
+                  selectedPart === 'history'
+                    ? '/history-icon-active.svg'
+                    : '/history-icon.svg'
+                }
+                height={40}
+                width={40}
+                alt="Resolute"
+              />
+            </div>
+          </Link>
+          <div
+            className="sidebar-menu-item w-12 h-12 cursor-pointer"
+            onClick={() => {
+              dispatch(resetWallet());
+              logout();
+            }}
+          >
+            <Image
+              src="/logout-icon.svg"
+              height={40}
+              width={40}
+              alt="Resolute"
+            />
+          </div>
         </div>
       </div>
       <div className='flex-1'>{children}</div>
@@ -93,7 +131,7 @@ const MenuItem = ({
   activeIcon: string;
   link: string;
 }) => {
-  pathName = pathName.toLowerCase();
+  pathName = pathName;
   pathName = pathName === 'overview' ? '/' : `/${pathName}`;
   return (
     <Link href={link}>

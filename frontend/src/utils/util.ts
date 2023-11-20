@@ -61,6 +61,8 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
       return 'Multisig';
     case 'transfers':
       return 'Transfers';
+    case 'history':
+      return 'History';
     default:
       return 'Overview';
   }
