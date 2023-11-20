@@ -8,7 +8,7 @@ const balanceURL = (address: string, denom: string) =>
 const fetchBalances = (
   baseURL: string,
   address: string,
-  pagination: KeyLimitPagination
+  pagination?: KeyLimitPagination
 ): Promise<AxiosResponse> => {
   let uri = `${cleanURL(baseURL)}${balancesURL}${address}`;
   const parsed = convertPaginationToParams(pagination);

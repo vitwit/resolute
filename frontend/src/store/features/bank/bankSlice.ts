@@ -3,9 +3,9 @@ import { SendMsg } from '../../../txns/bank';
 import bankService from './bankService';
 import { signAndBroadcast } from '../../../utils/signing';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
-import { TxStatus } from '../../../types/store';
 import { GAS_FEE } from '../../../utils/constants';
 import { MultiTxnsInputs, TxSendInputs } from '../../../types/bank';
+import { TxStatus } from '../../../types/enums';
 
 interface Balance {
   list: Coin[];
@@ -13,7 +13,7 @@ interface Balance {
   errMsg: string;
 }
 interface BankState {
-  balances: Record<string, Balance>;
+  balances: { [key: string]: Balance };
   tx: {
     status: TxStatus;
   };
@@ -36,7 +36,7 @@ export const getBalances = createAsyncThunk(
     baseURL: string;
     address: string;
     chainID: string;
-    pagination: KeyLimitPagination;
+    pagination?: KeyLimitPagination;
   }) => {
     const response = await bankService.balances(
       data.baseURL,
@@ -50,13 +50,9 @@ export const getBalances = createAsyncThunk(
   }
 );
 
-
 export const multiTxns = createAsyncThunk(
   'bank/multi-txs',
-  async (
-    data: MultiTxnsInputs,
-    { rejectWithValue, fulfillWithValue }
-  ) => {
+  async (data: MultiTxnsInputs, { rejectWithValue, fulfillWithValue }) => {
     try {
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
@@ -83,10 +79,7 @@ export const multiTxns = createAsyncThunk(
 
 export const txBankSend = createAsyncThunk(
   'bank/tx-bank-send',
-  async (
-    data: TxSendInputs,
-    { rejectWithValue, fulfillWithValue }
-  ) => {
+  async (data: TxSendInputs, { rejectWithValue, fulfillWithValue }) => {
     try {
       const msg = SendMsg(data.from, data.to, data.amount, data.denom);
       const result = await signAndBroadcast(
@@ -137,7 +130,8 @@ export const bankSlice = createSlice({
         state.balances[chainID].status = TxStatus.PENDING;
       })
       .addCase(getBalances.fulfilled, (state, action) => {
-        const chainID = action.payload.chainID;
+        const chainID = action.meta.arg.chainID;
+
         const result = {
           list: action.payload.data?.balances,
           status: TxStatus.IDLE,
@@ -150,7 +144,7 @@ export const bankSlice = createSlice({
         state.balances[chainID] = {
           status: TxStatus.REJECTED,
           errMsg:
-            action?.error?.message || 'requested rejected for unknown reason',
+          action?.error?.message || 'requested rejected for unknown reason',
           list: [],
         };
       })
