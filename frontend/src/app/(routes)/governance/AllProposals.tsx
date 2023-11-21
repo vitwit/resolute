@@ -8,14 +8,24 @@ const AllProposals = () => {
     {
       id: '123',
       title: 'Introduce Take Rate and deployment deposit for axlUSDC',
-      networkname: 'Akash',
       expires: 'Expires in two days',
       votingStatus: 'Active Voting',
     },
     {
       id: '123',
       title: 'Introduce Take Rate and deployment deposit for axlUSDC',
-      networkname: 'Akash',
+      expires: 'Expires in two days',
+      votingStatus: 'Active Voting',
+    },
+    {
+      id: '123',
+      title: 'Introduce Take Rate and deployment deposit for axlUSDC',
+      expires: 'Expires in two days',
+      votingStatus: 'Active Voting',
+    },
+    {
+      id: '123',
+      title: 'Introduce Take Rate and deployment deposit for axlUSDC',
       expires: 'Expires in two days',
       votingStatus: 'Active Voting',
     },
@@ -27,10 +37,10 @@ const AllProposals = () => {
         <div className="flex justify-between">
           <div className="flex space-x-2">
             <Image
-              src="./cosmos-logo.svg"
+              src="/allnetworks.png"
               width={32}
               height={32}
-              alt="Cosmos-Logo"
+              alt="AllNetworks-Logo"
             />
             <p className="proposal-text-medium">All Networks</p>
           </div>
@@ -39,21 +49,16 @@ const AllProposals = () => {
 
         {proposalData.map((proposal, index) => (
           <div className="proposal" key={index}>
-            <div className="proposal-id">
-              <p className="proposal-text-extralight">{proposal.id}</p>
-            </div>
-            <div className="flex flex-col space-y-2">
-              <p className="proposal-text-normal">{proposal.title}</p>
-              <div className="flex space-x-4">
-                <div className="flex space-x-1">
-                  <Image
-                    src="./akash-logo.svg"
-                    width={20}
-                    height={20}
-                    alt="Akash-Logo"
-                  />
-                  <p className="proposal-text-small">{proposal.networkname}</p>
+            <div className="flex justify-between items-center w-full">
+              <div className="space-x-2 flex items-center">
+                <div className="proposal-id">
+                  <p className="proposal-text-extralight">{proposal.id}</p>
                 </div>
+
+                <p className="proposal-text-normal">{proposal.title}</p>
+              </div>
+              <div className="flex space-x-6"></div>
+              <div className="flex space-x-6">
                 <div className="flex space-x-1">
                   <Image
                     src="./timer-icon.svg"

@@ -39,6 +39,14 @@ const Proposals = () => {
 
   return (
     <div className="main-page">
+      <div>
+        <Image
+          src="/ad.png"
+          height={80}
+          width={1800}
+          alt="Advertisement-Image"
+        />
+      </div>
       <div className="proposals-head">
         <div className="proposal-text-medium">Proposals</div>
         <div className="flex space-x-6">
@@ -50,11 +58,8 @@ const Proposals = () => {
           </button>
           <button className="cstm-btn">
             <p className="proposal-text-extralight">
-              Show proposals in deposit
+              Proposals in deposit period
             </p>
-          </button>
-          <button className="cstm-btn">
-            <p className="proposal-text-extralight">Recent proposals</p>
           </button>
         </div>
       </div>
@@ -76,12 +81,15 @@ const Proposals = () => {
 
         {proposalData.map((proposal, index) => (
           <div className="proposal" key={index}>
-            <div className="proposal-id">
-              <p className="proposal-text-extralight">{proposal.id}</p>
-            </div>
-            <div className="flex flex-col space-y-2">
-              <p className="proposal-text-normal">{proposal.title}</p>
-              <div className="flex space-x-4">
+            <div className="flex justify-between items-center w-full">
+              <div className="space-x-2 flex items-center">
+                <div className="proposal-id">
+                  <p className="proposal-text-extralight">{proposal.id}</p>
+                </div>
+
+                <p className="proposal-text-normal">{proposal.title}</p>
+              </div>
+              <div className="flex space-x-6">
                 <div className="flex space-x-1">
                   <Image
                     src="./timer-icon.svg"

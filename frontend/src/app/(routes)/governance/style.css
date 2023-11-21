@@ -12,7 +12,7 @@
   @apply flex flex-col justify-center cursor-pointer text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal] underline;
 }
 .v-line {
-  @apply h-[0.5px];
+  @apply h-[0.5px] self-stretch;
   background: linear-gradient(
     90deg,
     rgba(74, 162, 156, 0.5) 7.46%,
@@ -20,8 +20,8 @@
   );
 }
 .proposal-id {
-  @apply flex w-14 h-14 justify-center items-center gap-2.5 rounded-[100px];
-  background: rgba(255, 255, 255, 0.1);
+  @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 .proposal {
   @apply flex items-start gap-4;
@@ -30,11 +30,108 @@
   @apply flex items-center text-[rgba(255,255,255,0.75)] text-sm font-light leading-[14px];
 }
 .proposal-text-extralight {
-  @apply text-white text-sm font-extralight leading-[14px];
+  @apply text-white text-xs font-extralight leading-[14px];
 }
 .proposal-text-normal {
   @apply text-white text-sm font-normal leading-6;
 }
 .proposal-text-medium {
   @apply flex items-center text-white text-base font-medium;
+}
+.proposal-text-big {
+  @apply text-white text-xl font-bold leading-[normal];
+}
+.proposal-text-main {
+  @apply text-white text-xl font-medium leading-[normal];
+}
+.popup-grid {
+  @apply flex w-[889px] h-[485px] flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
+  background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%);
+}
+.cross {
+  @apply flex justify-end items-center gap-2.5 self-stretch pl-6 pr-10 py-6;
+}
+.image-grid {
+  @apply flex justify-end items-center gap-10 self-stretch pr-0;
+}
+.text-grid {
+  @apply flex w-[451px] flex-col justify-center items-start gap-6;
+}
+.placeholder-text {
+  @apply flex h-[54px] flex-col justify-center items-start gap-2 px-4 py-0 rounded-2xl;
+  background: rgba(255, 255, 255, 0.1);
+}
+.placeholder-text input::placeholder {
+  @apply text-white font-extralight;
+}
+.placeholder-text input {
+  background-color: transparent;
+}
+.button {
+  @apply flex justify-center items-center gap-6 px-10 py-2.5 rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+.proposal-div {
+  @apply flex justify-between gap-10 space-y-6;
+}
+.proposal-brief {
+  @apply flex-1 flex-col items-start gap-4 self-stretch p-6 rounded-2xl;
+  background: #0e0b26;
+}
+.status-grid {
+  @apply flex flex-col w-[486px] h-[132px] justify-center items-start gap-4 self-stretch backdrop-blur-[2px] px-0 py-6 rounded-2xl;
+  background: #0e0b26;
+}
+.status-view-grid {
+  @apply flex flex-col justify-center items-start gap-6 self-stretch px-6 py-0;
+}
+.status-view {
+  @apply flex flex-col justify-center items-start gap-6 self-stretch;
+}
+.status-pass {
+  @apply flex justify-center items-start gap-2.5 self-stretch px-2 py-0;
+}
+.voting-grid {
+  @apply flex flex-col h-[253px] justify-center items-start gap-4 self-stretch backdrop-blur-[2px] px-6 py-6 rounded-2xl;
+  background: #0e0b26;
+}
+.voting-view {
+  @apply flex flex-col justify-center items-start gap-6 self-stretch px-6 py-0;
+}
+.horizontal-line {
+  @apply h-2 rounded-[100px];
+  background: white;
+}
+.proposal-details-grid {
+  @apply flex flex-col justify-center items-start gap-6 self-stretch backdrop-blur-[2px] px-0 py-6 rounded-2xl;
+  background: #0e0b26;
+}
+.proposal-details {
+  @apply flex justify-between items-start self-stretch px-6 py-0;
+}
+.right-bar {
+  @apply flex w-[500px] h-screen flex-col items-center gap-10 shrink-0 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-6;
+  background: #0e0b26;
+}
+.radio-buttons {
+  @apply flex flex-row w-full justify-between;
+}
+.radio-container {
+  @apply relative cursor-pointer block mb-2.5 pl-[30px];
+}
+.radio-container input {
+  @apply absolute opacity-0 cursor-pointer;
+}
+.radio-checkmark {
+  @apply absolute h-4 w-4 border rounded-[50%] border-solid border-white left-0 top-0 flex justify-center items-center;
+}
+.radio-container input:checked ~ .radio-checkmark .radio-check {
+  @apply bg-white w-[6px] h-[6px] rounded-full;
+}
+.vote-grid {
+  @apply flex flex-col items-start gap-4 self-stretch backdrop-blur-[2px] px-0 py-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.05);
+}
+.view-full {
+  @apply flex h-8 flex-col justify-center self-stretch text-white text-center text-sm not-italic font-normal leading-[normal] underline cursor-pointer;
 }
