@@ -7,6 +7,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { GAS_FEE } from '../../../utils/constants';
 import {
   GetDelegationsResponse,
+  GetUnbondingResponse,
   Pagination,
   Params,
   TxDelegateInputs,
@@ -42,6 +43,12 @@ interface Chain {
     pagination: Pagination | undefined;
     delegatedTo: Record<string, boolean>;
     totalStaked: number;
+  };
+  unbonding: {
+    status: TxStatus;
+    unbonding: GetUnbondingResponse;
+    errMsg: string;
+    pagination: Pagination | undefined;
   };
 
   params: Params | undefined;
@@ -93,7 +100,18 @@ const initialState: StakingState = {
       delegatedTo: {},
       totalStaked: 0.0,
     },
-
+    unbonding: {
+      status: TxStatus.INIT,
+      unbonding: {
+        unbonding_responses: [],
+        pagination: {
+          next_key: '',
+          total: '',
+        },
+      },
+      errMsg: '',
+      pagination: undefined,
+    },
     params: undefined,
     tx: {
       status: TxStatus.INIT,
@@ -302,14 +320,14 @@ export const getAllValidators = createAsyncThunk(
                 limit: limit,
               }
             : {}
-        ); 
+        );
         validators.push(...response.data.validators);
         if (!response?.data?.pagination?.next_key) {
           break;
         }
         nextKey = response.data.pagination.next_key;
       }
-      
+
       return {
         validators: validators,
         chainID: data.chainID,
@@ -363,9 +381,31 @@ export const getDelegations = createAsyncThunk(
         }
         nextKey = response.data.pagination.next_key;
       }
-      
+
       return {
         delegations: delegations,
+        chainID: data.chainID,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
+export const getUnbonding = createAsyncThunk(
+  'staking/unbonding',
+  async (
+    data: { baseURL: string; address: string; chainID: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await stakingService.unbonding(
+        data.baseURL,
+        data.address
+      );
+      return {
+        data: response.data,
         chainID: data.chainID,
       };
     } catch (error) {
@@ -602,6 +642,27 @@ export const stakeSlice = createSlice({
       .addCase(getParams.rejected, (state, action) => {
         const { chainID } = action.meta.arg;
         state.chains[chainID].paramsStatus = TxStatus.REJECTED;
+      });
+
+    builder
+      .addCase(getUnbonding.pending, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].unbonding.status = TxStatus.PENDING;
+        state.chains[chainID].unbonding.errMsg = '';
+      })
+      .addCase(getUnbonding.fulfilled, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].unbonding.status = TxStatus.IDLE;
+        state.chains[chainID].unbonding.unbonding.unbonding_responses =
+          action.payload.data.unbonding_responses;
+        state.chains[chainID].unbonding.pagination =
+          action.payload.data.pagination;
+        state.chains[chainID].unbonding.errMsg = '';
+      })
+      .addCase(getUnbonding.rejected, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].unbonding.status = TxStatus.REJECTED;
+        state.chains[chainID].unbonding.errMsg = action.error.message || '';
       });
 
     builder
