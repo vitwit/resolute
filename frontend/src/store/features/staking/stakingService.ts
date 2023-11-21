@@ -1,3 +1,5 @@
+'use client'
+
 import Axios, { AxiosResponse } from 'axios';
 import { convertPaginationToParams, cleanURL } from '../../../utils/util';
 import {
