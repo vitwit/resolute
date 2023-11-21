@@ -70,7 +70,7 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
 
 export const formatDollarAmount = (amount: number): string => {
   if (amount === 0) return '$0';
-  if (amount < 1) return '< $1';
+  if (amount < 0.1) return '< $0.1';
   return '$ ' + amount.toFixed(2);
 };
 
@@ -81,7 +81,7 @@ export const formatAmount = (amount: number): string => {
 export const formatCoin = (amount: number, denom: string): string => {
   let parsedAmount;
   if (amount === 0) parsedAmount = '0';
-  else if (amount < 1) parsedAmount = '< 1';
+  else if (amount < 0.01) parsedAmount = '< 0.01';
   else parsedAmount = amount.toFixed(2);
   return parsedAmount + ' ' + denom;
 };

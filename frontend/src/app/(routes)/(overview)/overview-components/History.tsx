@@ -1,11 +1,17 @@
 import Image from 'next/image';
 import React from 'react';
 import SideAd from './SideAd';
+import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
+import { formatDollarAmount } from '@/utils/util';
+import Profile from './Profile';
 
 const History = () => {
   return (
     <div className="right-section">
-      <SelectNetwork />
+      <div className="flex justify-between">
+        <SelectNetwork /> <Profile />
+      </div>
+
       <Balance />
       <SideAd />
       <RecentTransactions />
@@ -42,11 +48,13 @@ const SelectNetwork = () => {
 };
 
 const Balance = () => {
+  const [staked, available, rewards] = useGetAssetsAmount();
   return (
     <div>
       <div className="text-white text-center my-6">
-        <span className="text-[32px] leading-normal font-bold">45345 </span>
-        <span className="text-sm leading-normal">OSMO</span>
+        <span className="text-[32px] leading-normal font-bold">
+          {formatDollarAmount(staked + available + rewards)}
+        </span>
       </div>
       <div className="flex justify-between">
         <button className="primary-action-btn">Send</button>

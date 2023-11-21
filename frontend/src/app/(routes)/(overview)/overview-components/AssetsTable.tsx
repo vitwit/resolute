@@ -54,19 +54,21 @@ const AssetsTable = () => {
                         <div>{formatDollarAmount(asset.usdPrice)}</div>
                         <div className="flex">
                           <Image
-                            src="/down-arrow-filled-icon.svg"
+                            src={`/${
+                              asset.inflation >= 0 ? 'up' : 'down'
+                            }-arrow-filled-icon.svg`}
                             height={16}
                             width={16}
-                            alt="decreased"
+                            alt="inflation change"
                           />
                           <div className="text-[#E57575]">
-                            {formatAmount(asset.inflation)}
+                            {formatAmount(Math.abs(asset.inflation))}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between gap-1">
                         <div className="asset-action">
                           <Image
                             src="/claim-icon.svg"
