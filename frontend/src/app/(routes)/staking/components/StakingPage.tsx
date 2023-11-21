@@ -63,7 +63,7 @@ const StakingPage = ({ chainName }: { chainName: string }) => {
           />
         </div>
       </div>
-      <StakingSidebar validators={validators} />
+      <StakingSidebar validators={validators} currency={currency} />
     </div>
   );
 };

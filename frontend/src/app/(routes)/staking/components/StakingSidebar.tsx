@@ -9,7 +9,7 @@ import DialogAllValidators from './DialogAllValidators';
 
 // TODO: Create css classes for repeated styles
 
-const StakingSidebar = ({ validators }: { validators: Validators }) => {
+const StakingSidebar = ({ validators, currency }: { validators: Validators; currency: Currency }) => {
   return (
     <div className="staking-sidebar">
       <div className="flex flex-col gap-6">
@@ -25,7 +25,7 @@ const StakingSidebar = ({ validators }: { validators: Validators }) => {
         </div>
       </div>
       <div className="mt-10">
-        <AllValidators validators={validators} />
+        <AllValidators validators={validators} currency={currency} />
       </div>
     </div>
   );
@@ -56,7 +56,7 @@ const StakingStatsCard = () => {
   );
 };
 
-const AllValidators = ({ validators }: { validators: Validators }) => {
+const AllValidators = ({ validators, currency }: { validators: Validators; currency: Currency }) => {
   const [allValidatorsDialogOpen, setAllValidatorsDialogOpen] =
     useState<boolean>(false);
   const handleClose = () => {
@@ -98,6 +98,7 @@ const AllValidators = ({ validators }: { validators: Validators }) => {
         handleClose={handleClose}
         open={allValidatorsDialogOpen}
         validators={validators}
+        currency={currency}
       />
     </div>
   );

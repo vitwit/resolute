@@ -1,4 +1,5 @@
 import { Validators } from '@/types/staking';
+import { formatVotingPower } from '@/utils/denom';
 import {
   Avatar,
   Dialog,
@@ -43,14 +44,18 @@ const DialogAllValidators = ({
   handleClose,
   open,
   validators,
+  currency,
 }: {
   handleClose: HandleClose;
   open: boolean;
   validators: Validators;
+  currency: Currency;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const PER_PAGE = 7;
   const [slicedMsgs, setSlicedMsgs] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filtered, setFiltered] = useState<string[]>([]);
 
   useEffect(() => {
     if (validators?.activeSorted.length < PER_PAGE) {
@@ -60,6 +65,17 @@ const DialogAllValidators = ({
       setSlicedMsgs(validators?.activeSorted?.slice(0, 1 * PER_PAGE));
     }
   }, [validators?.activeSorted]);
+
+  useEffect(() => {
+    const filteredValidators = validators?.activeSorted.filter(
+      (validator) =>
+        validators.active[validator]?.description.moniker
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+    );
+    setFiltered(filteredValidators);
+    setCurrentPage(1);
+  }, [searchTerm, validators?.activeSorted]);
 
   return (
     <Dialog
@@ -78,13 +94,15 @@ const DialogAllValidators = ({
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="allvalidators px-10 py-6 flex justify-end w-[890px]">
-          <Image
-            className="cursor-pointer"
-            src="/close-icon.svg"
-            width={24}
-            height={24}
-            alt="Close"
-          />
+          <div onClick={() => handleClose()}>
+            <Image
+              className="cursor-pointer"
+              src="/close-icon.svg"
+              width={24}
+              height={24}
+              alt="Close"
+            />
+          </div>
         </div>
         <div className="px-10">
           <h2 className="txt-lg font-bold text-white">All Validators</h2>
@@ -101,8 +119,141 @@ const DialogAllValidators = ({
               className="w-full pl-2 border-none cursor-pointer focus:outline-none bg-transparent placeholder:font-custom1 placeholder:text-[14px] placeholder:text-[#FFFFFFBF] placeholder:font-extralight text-[#FFFFFFBF]"
               type="text"
               placeholder="Search Chain"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          {searchTerm.length ? (
+            <>
+              <Filtered
+                filtered={filtered}
+                validators={validators}
+                currency={currency}
+              />
+            </>
+          ) : (
+            <>
+              <div className="flex flex-col gap-6">
+                {slicedMsgs?.map((validator, index) => {
+                  const moniker =
+                    validators.active[validator]?.description.moniker;
+                  const commission =
+                    Number(
+                      validators.active[validator]?.commission?.commission_rates
+                        .rate
+                    ) * 100;
+                  const tokens = Number(validators.active[validator]?.tokens);
+
+                  return (
+                    <ValidatorComponent
+                      key={index + PER_PAGE * (currentPage - 1)}
+                      moniker={moniker}
+                      commission={commission}
+                      tokens={tokens}
+                      currency={currency}
+                    />
+                  );
+                })}
+              </div>
+              <div className="absolute bottom-12 right-10">
+                <Pagination
+                  sx={paginationComponentStyles}
+                  count={Math.ceil(validators?.activeSorted?.length / PER_PAGE)}
+                  shape="circular"
+                  onChange={(_, v) => {
+                    setCurrentPage(v);
+                    setSlicedMsgs(
+                      validators?.activeSorted?.slice(
+                        (v - 1) * PER_PAGE,
+                        v * PER_PAGE
+                      )
+                    );
+                  }}
+                />
+              </div>
+            </>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default DialogAllValidators;
+
+const ValidatorComponent = ({
+  moniker,
+  commission,
+  tokens,
+  currency,
+}: {
+  moniker: string;
+  commission: number;
+  tokens: number;
+  currency: Currency;
+}) => {
+  return (
+    <div className="flex justify-between items-center txt-sm text-white font-normal">
+      <div className="flex gap-4 items-center">
+        <div className="bg-[#fff] rounded-full">
+          <Avatar sx={{ width: 40, height: 40, bgcolor: deepPurple[300] }} />
+        </div>
+        <div className="flex flex-col gap-2 w-[200px]">
+          <div className="flex gap-2 items-center cursor-default">
+            <Tooltip title={moniker} placement="top">
+              <div className="text-[14px] leading-normal truncate">
+                {moniker}
+              </div>
+            </Tooltip>
+            <Image
+              src="/check-circle-icon.svg"
+              height={16}
+              width={16}
+              alt="Check"
+            />
+          </div>
+        </div>
+      </div>
+      <div className="leading-3">
+        {formatVotingPower(tokens, currency.coinDecimals)}
+      </div>
+      <div className="leading-3">{commission.toFixed(2)}% Commission</div>
+      <div>
+        <button className="px-3 py-[6px] primary-gradient text-[12px] leading-[20px] rounded-lg font-medium">
+          Delegate
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const Filtered = ({
+  filtered,
+  validators,
+  currency,
+}: {
+  filtered: string[];
+  validators: Validators;
+  currency: Currency;
+}) => {
+  const [slicedMsgs, setSlicedMsgs] = useState<string[]>([]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const PER_PAGE = 7;
+
+  useEffect(() => {
+    if (filtered.length < PER_PAGE) {
+      setSlicedMsgs(filtered);
+    } else {
+      setCurrentPage(1);
+      setSlicedMsgs(filtered?.slice(0, 1 * PER_PAGE));
+    }
+  }, [filtered]);
+
+  return (
+    <>
+      {slicedMsgs.length ? (
+        <>
           <div className="flex flex-col gap-6">
             {slicedMsgs?.map((validator, index) => {
               const moniker = validators.active[validator]?.description.moniker;
@@ -119,6 +270,7 @@ const DialogAllValidators = ({
                   moniker={moniker}
                   commission={commission}
                   tokens={tokens}
+                  currency={currency}
                 />
               );
             })}
@@ -126,63 +278,20 @@ const DialogAllValidators = ({
           <div className="absolute bottom-12 right-10">
             <Pagination
               sx={paginationComponentStyles}
-              count={Math.ceil(validators?.activeSorted?.length / PER_PAGE)}
+              count={Math.ceil(filtered?.length / PER_PAGE)}
               shape="circular"
               onChange={(_, v) => {
                 setCurrentPage(v);
                 setSlicedMsgs(
-                  validators?.activeSorted?.slice(
-                    (v - 1) * PER_PAGE,
-                    v * PER_PAGE
-                  )
+                  filtered?.slice((v - 1) * PER_PAGE, v * PER_PAGE)
                 );
               }}
             />
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-export default DialogAllValidators;
-
-const ValidatorComponent = ({
-  moniker,
-  commission,
-  tokens,
-}: {
-  moniker: string;
-  commission: number;
-  tokens: number;
-}) => {
-  return (
-    <div className="flex justify-between items-center txt-sm text-white font-normal">
-      <div className="flex gap-4 items-center">
-        <div className="bg-[#fff] rounded-full">
-          <Avatar sx={{ width: 40, height: 40, bgcolor: deepPurple[300] }} />
-        </div>
-        <div className="flex flex-col gap-2 w-[200px]">
-          <div className="flex gap-2 items-center cursor-default">
-            <Tooltip title={moniker} placement="top">
-              <div className="text-[14px] leading-3 truncate">{moniker}</div>
-            </Tooltip>
-            <Image
-              src="/check-circle-icon.svg"
-              height={16}
-              width={16}
-              alt="Check"
-            />
-          </div>
-        </div>
-      </div>
-      <div className="leading-3">{tokens.toLocaleString()}</div>
-      <div className="leading-3">{commission.toFixed(2)}% Commission</div>
-      <div>
-        <button className="px-3 py-[6px] primary-gradient text-[12px] leading-[20px] rounded-lg font-medium">
-          Delegate
-        </button>
-      </div>
-    </div>
+        </>
+      ) : (
+        <>No validators found</>
+      )}
+    </>
   );
 };

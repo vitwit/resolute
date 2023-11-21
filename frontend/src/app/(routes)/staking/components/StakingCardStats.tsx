@@ -1,3 +1,4 @@
+import { formatCoin } from '@/utils/util';
 import React from 'react';
 
 const StakingCardStats = ({
@@ -15,7 +16,7 @@ const StakingCardStats = ({
     <div className="flex justify-between mt-4">
       <StakingCardStatsItem
         name={'Staked Balance'}
-        value={String(delegated.toFixed(3).toLocaleString()) + ' ' + coinDenom}
+        value={formatCoin(delegated, coinDenom)}
       />
       <StakingCardStatsItem
         name={'Rewards'}
