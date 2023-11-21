@@ -1,3 +1,5 @@
+'use client'
+
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Delegate, UnDelegate, Redelegate } from '../../../txns/staking';
 import stakingService from './stakingService';
@@ -7,6 +9,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { GAS_FEE } from '../../../utils/constants';
 import {
   GetDelegationsResponse,
+  GetUnbondingResponse,
   Pagination,
   Params,
   TxDelegateInputs,
@@ -43,6 +46,12 @@ interface Chain {
     delegatedTo: Record<string, boolean>;
     totalStaked: number;
   };
+  unbonding: {
+    status: TxStatus;
+    unbonding: GetUnbondingResponse;
+    errMsg: string;
+    pagination: Pagination | undefined;
+  };
 
   params: Params | undefined;
   paramsStatus: TxStatus;
@@ -58,12 +67,16 @@ interface Chains {
 }
 
 interface StakingState {
+  validatorsLoading: number;
+  delegationsLoading: number;
   chains: Chains;
   defaultState: Chain;
 }
 
 const initialState: StakingState = {
   chains: {},
+  validatorsLoading: 0,
+  delegationsLoading: 0,
   defaultState: {
     paramsStatus: TxStatus.INIT,
     validators: {
@@ -93,7 +106,18 @@ const initialState: StakingState = {
       delegatedTo: {},
       totalStaked: 0.0,
     },
-
+    unbonding: {
+      status: TxStatus.INIT,
+      unbonding: {
+        unbonding_responses: [],
+        pagination: {
+          next_key: '',
+          total: '',
+        },
+      },
+      errMsg: '',
+      pagination: undefined,
+    },
     params: undefined,
     tx: {
       status: TxStatus.INIT,
@@ -302,14 +326,14 @@ export const getAllValidators = createAsyncThunk(
                 limit: limit,
               }
             : {}
-        ); 
+        );
         validators.push(...response.data.validators);
         if (!response?.data?.pagination?.next_key) {
           break;
         }
         nextKey = response.data.pagination.next_key;
       }
-      
+
       return {
         validators: validators,
         chainID: data.chainID,
@@ -363,9 +387,31 @@ export const getDelegations = createAsyncThunk(
         }
         nextKey = response.data.pagination.next_key;
       }
-      
+
       return {
         delegations: delegations,
+        chainID: data.chainID,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
+export const getUnbonding = createAsyncThunk(
+  'staking/unbonding',
+  async (
+    data: { baseURL: string; address: string; chainID: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await stakingService.unbonding(
+        data.baseURL,
+        data.address
+      );
+      return {
+        data: response.data,
         chainID: data.chainID,
       };
     } catch (error) {
@@ -436,6 +482,7 @@ export const stakeSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getValidators.pending, (state, action) => {
+        state.validatorsLoading++;
         const chainID = action.meta?.arg?.chainID;
         if (!state.chains[chainID])
           state.chains[chainID] = cloneDeep(initialState.defaultState);
@@ -443,6 +490,7 @@ export const stakeSlice = createSlice({
         state.chains[chainID].validators.errMsg = '';
       })
       .addCase(getValidators.fulfilled, (state, action) => {
+        state.validatorsLoading--;
         const chainID = action.meta?.arg?.chainID;
         state.chains[chainID].validators.status = TxStatus.IDLE;
         const result: { validators: Validator[] } = { validators: [] };
@@ -478,6 +526,7 @@ export const stakeSlice = createSlice({
         state.chains[chainID].validators.errMsg = '';
       })
       .addCase(getValidators.rejected, (state, action) => {
+        state.validatorsLoading--;
         const chainID = action.meta?.arg?.chainID;
         state.chains[chainID].validators.status = TxStatus.REJECTED;
         state.chains[chainID].validators.errMsg =
@@ -488,6 +537,7 @@ export const stakeSlice = createSlice({
 
     builder
       .addCase(getAllValidators.pending, (state, action) => {
+        state.validatorsLoading++;
         const chainID = action.meta?.arg?.chainID;
         if (!state.chains[chainID])
           state.chains[chainID] = cloneDeep(initialState.defaultState);
@@ -495,6 +545,7 @@ export const stakeSlice = createSlice({
         state.chains[chainID].validators.errMsg = '';
       })
       .addCase(getAllValidators.fulfilled, (state, action) => {
+        state.validatorsLoading--;
         const chainID = action.meta?.arg?.chainID;
         state.chains[chainID].validators.status = TxStatus.IDLE;
         const validators = action.payload.validators;
@@ -549,6 +600,7 @@ export const stakeSlice = createSlice({
           Object.keys(inactiveSort);
       })
       .addCase(getAllValidators.rejected, (state, action) => {
+        state.validatorsLoading--;
         const chainID = action.meta?.arg?.chainID;
         state.chains[chainID].validators.errMsg = action.error.message || '';
         state.chains[chainID].validators.status = TxStatus.REJECTED;
@@ -556,6 +608,7 @@ export const stakeSlice = createSlice({
 
     builder
       .addCase(getDelegations.pending, (state, action) => {
+        state.delegationsLoading++;
         const chainID = action.meta?.arg?.chainID;
         if (!state.chains[chainID])
           state.chains[chainID] = cloneDeep(initialState.defaultState);
@@ -563,6 +616,7 @@ export const stakeSlice = createSlice({
         state.chains[chainID].delegations.errMsg = '';
       })
       .addCase(getDelegations.fulfilled, (state, action) => {
+        state.delegationsLoading--;
         const chainID = action.meta?.arg?.chainID;
         if (state.chains[chainID]) {
           state.chains[chainID].delegations.status = TxStatus.IDLE;
@@ -582,6 +636,7 @@ export const stakeSlice = createSlice({
         }
       })
       .addCase(getDelegations.rejected, (state, action) => {
+        state.delegationsLoading--;
         const chainID = action.meta?.arg?.chainID;
         if (state.chains[chainID]) {
           state.chains[chainID].delegations.status = TxStatus.REJECTED;
@@ -602,6 +657,27 @@ export const stakeSlice = createSlice({
       .addCase(getParams.rejected, (state, action) => {
         const { chainID } = action.meta.arg;
         state.chains[chainID].paramsStatus = TxStatus.REJECTED;
+      });
+
+    builder
+      .addCase(getUnbonding.pending, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].unbonding.status = TxStatus.PENDING;
+        state.chains[chainID].unbonding.errMsg = '';
+      })
+      .addCase(getUnbonding.fulfilled, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].unbonding.status = TxStatus.IDLE;
+        state.chains[chainID].unbonding.unbonding.unbonding_responses =
+          action.payload.data.unbonding_responses;
+        state.chains[chainID].unbonding.pagination =
+          action.payload.data.pagination;
+        state.chains[chainID].unbonding.errMsg = '';
+      })
+      .addCase(getUnbonding.rejected, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].unbonding.status = TxStatus.REJECTED;
+        state.chains[chainID].unbonding.errMsg = action.error.message || '';
       });
 
     builder

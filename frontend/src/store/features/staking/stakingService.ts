@@ -1,15 +1,18 @@
+'use client'
+
 import Axios, { AxiosResponse } from 'axios';
 import { convertPaginationToParams, cleanURL } from '../../../utils/util';
 import {
   GetDelegationsResponse,
   GetParamsResponse,
+  GetUnbondingResponse,
   GetValidatorsResponse,
 } from '../../../types/staking';
 /* disable eslint*/
 const validatorsURL = '/cosmos/staking/v1beta1/validators';
 const delegationsURL = '/cosmos/staking/v1beta1/delegations/';
-// const unbondingDelegationsURL = (address: string) =>
-//   `/cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`;
+const unbondingDelegationsURL = (address: string) =>
+  `/cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`;
 const paramsURL = '/cosmos/staking/v1beta1/params';
 
 const fetchValidators = (
@@ -42,6 +45,15 @@ const fetchdelegations = (
   return Axios.get(uri);
 };
 
+const fetchUnbonding = async (
+  baseURL: string,
+  address: string
+): Promise<AxiosResponse<GetUnbondingResponse>> => {
+  const uri = `${baseURL}${unbondingDelegationsURL(address)}`;
+
+  return Axios.get(uri);
+};
+
 const fetchParams = (
   baseURL: string
 ): Promise<AxiosResponse<GetParamsResponse>> =>
@@ -50,6 +62,7 @@ const fetchParams = (
 const result = {
   validators: fetchValidators,
   delegations: fetchdelegations,
+  unbonding: fetchUnbonding,
   params: fetchParams,
 };
 

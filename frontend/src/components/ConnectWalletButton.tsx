@@ -1,20 +1,23 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { networks } from "../utils/chainsInfo";
-import Image from "next/image";
-import Walletpage from "./popups/WalletPage";
-import { getWalletName, isConnected } from "../utils/localStorage";
-import { useDispatch, useSelector } from "react-redux";
-import { establishWalletConnection } from "../store/features/wallet/walletSlice";
-import { AppDispatch, RootState } from "../store/store";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { networks } from '../utils/chainsInfo';
+import Image from 'next/image';
+import Walletpage from './popups/WalletPage';
+import { getWalletName, isConnected } from '../utils/localStorage';
+import { establishWalletConnection } from '../store/features/wallet/walletSlice';
+import { RootState } from '../store/store';
+import { getAllTokensPrice } from '@/store/features/common/commonSlice';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 
 export const ConnectWalletButton = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const connected = useSelector((state: RootState) => state.wallet.connected);
+  const dispatch = useAppDispatch();
+  const connected = useAppSelector(
+    (state: RootState) => state.wallet.connected
+  );
   const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
     useState<boolean>(false);
   const handleClose = () => {
@@ -24,7 +27,7 @@ export const ConnectWalletButton = ({
   };
 
   const selectWallet = (walletName: string) => {
-    tryConnectWallet(walletName)
+    tryConnectWallet(walletName);
     handleClose();
   };
 
@@ -53,13 +56,15 @@ export const ConnectWalletButton = ({
       accountChangeListener
     );
 
+    dispatch(getAllTokensPrice());
+
     return () => {
       window.removeEventListener(
         `${walletName}_keystorechange`,
         accountChangeListener
       );
     };
-  });
+  }, []);
 
   return connected ? (
     <>{children}</>

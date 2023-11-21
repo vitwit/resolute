@@ -1,3 +1,5 @@
+'use client';
+
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { SendMsg } from '../../../txns/bank';
 import bankService from './bankService';
@@ -6,6 +8,7 @@ import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { GAS_FEE } from '../../../utils/constants';
 import { MultiTxnsInputs, TxSendInputs } from '../../../types/bank';
 import { TxStatus } from '../../../types/enums';
+import { ERR_UNKNOWN } from '@/utils/errors';
 
 interface Balance {
   list: Coin[];
@@ -13,6 +16,7 @@ interface Balance {
   errMsg: string;
 }
 interface BankState {
+  balancesLoading: number;
   balances: { [key: string]: Balance };
   tx: {
     status: TxStatus;
@@ -23,6 +27,7 @@ interface BankState {
 }
 
 const initialState: BankState = {
+  balancesLoading: 0,
   balances: {},
   tx: {
     status: TxStatus.INIT,
@@ -125,9 +130,17 @@ export const bankSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(getBalances.pending, (state: BankState, action) => {
+      .addCase(getBalances.pending, (state, action) => {
         const chainID = action.meta.arg.chainID;
+        if (!state.balances[chainID]) {
+          state.balances[chainID] = {
+            list: [],
+            status: TxStatus.INIT,
+            errMsg: '',
+          };
+        }
         state.balances[chainID].status = TxStatus.PENDING;
+        state.balancesLoading++;
       })
       .addCase(getBalances.fulfilled, (state, action) => {
         const chainID = action.meta.arg.chainID;
@@ -138,16 +151,19 @@ export const bankSlice = createSlice({
           errMsg: '',
         };
         state.balances[chainID] = result;
+        state.balancesLoading--;
       })
-      .addCase(getBalances.rejected, (state: BankState, action) => {
+      .addCase(getBalances.rejected, (state, action) => {
         const chainID = action.meta.arg.chainID;
         state.balances[chainID] = {
           status: TxStatus.REJECTED,
-          errMsg:
-          action?.error?.message || 'requested rejected for unknown reason',
+          errMsg: action?.error?.message || ERR_UNKNOWN,
           list: [],
         };
-      })
+        state.balancesLoading--;
+      });
+
+    builder
       .addCase(txBankSend.pending, (state) => {
         state.tx.status = TxStatus.PENDING;
       })
@@ -156,7 +172,9 @@ export const bankSlice = createSlice({
       })
       .addCase(txBankSend.rejected, (state) => {
         state.tx.status = TxStatus.REJECTED;
-      })
+      });
+
+    builder
       .addCase(multiTxns.pending, (state) => {
         state.tx.status = TxStatus.PENDING;
         state.multiSendTx.status = TxStatus.PENDING;
