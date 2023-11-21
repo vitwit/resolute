@@ -22,7 +22,7 @@ const StakingCardStats = ({
         value={String(rewards) + ' ' + coinDenom}
       />
       <StakingCardStatsItem
-        name={'Staked Balance'}
+        name={'Commision'}
         value={String(commission.toFixed(2)) + ' ' + '%'}
       />
     </div>

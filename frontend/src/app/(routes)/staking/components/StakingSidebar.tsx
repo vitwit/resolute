@@ -1,6 +1,11 @@
+'use client';
+
 import { Validators } from '@/types/staking';
+import { Avatar, Tooltip } from '@mui/material';
+import { deepPurple } from '@mui/material/colors';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
+import DialogAllValidators from './DialogAllValidators';
 
 // TODO: Create css classes for repeated styles
 
@@ -20,7 +25,7 @@ const StakingSidebar = ({ validators }: { validators: Validators }) => {
         </div>
       </div>
       <div className="mt-10">
-        <AllValidators />
+        <AllValidators validators={validators} />
       </div>
     </div>
   );
@@ -51,51 +56,89 @@ const StakingStatsCard = () => {
   );
 };
 
-const AllValidators = () => {
-  const arr = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-  ];
+const AllValidators = ({ validators }: { validators: Validators }) => {
+  const [allValidatorsDialogOpen, setAllValidatorsDialogOpen] =
+    useState<boolean>(false);
+  const handleClose = () => {
+    setAllValidatorsDialogOpen(
+      (allValidatorsDialogOpen) => !allValidatorsDialogOpen
+    );
+  };
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
         <h2 className="text-[20px] leading-normal font-bold">All Validators</h2>
-        <div className="cursor-pointer text-[#FFFFFFBF] text-[12px] font-extralight underline underline-offset-2">
+        <div
+          className="cursor-pointer text-[#FFFFFFBF] text-[12px] font-extralight underline underline-offset-2"
+          onClick={() => setAllValidatorsDialogOpen(true)}
+        >
           View All
         </div>
       </div>
-      {arr.map((_, index) => (
-        <Validator key={index} />
-      ))}
+      {validators?.activeSorted.map((validator, index) => {
+        const moniker = validators.active[validator]?.description.moniker;
+        const commission =
+          Number(
+            validators.active[validator]?.commission?.commission_rates.rate
+          ) * 100;
+        const tokens = Number(validators.active[validator]?.tokens);
+
+        return (
+          <>
+            <Validator
+              key={index}
+              moniker={moniker}
+              commission={commission}
+              tokens={tokens}
+            />
+          </>
+        );
+      })}
+      <DialogAllValidators
+        handleClose={handleClose}
+        open={allValidatorsDialogOpen}
+        validators={validators}
+      />
     </div>
   );
 };
 
-const Validator = () => {
+const Validator = ({
+  moniker,
+  commission,
+  tokens,
+}: {
+  moniker: string;
+  commission: number;
+  tokens: number;
+}) => {
   return (
     <div className="flex justify-between items-center">
       <div className="flex gap-4">
         <div className="bg-[#fff] rounded-full">
-          <Image src="/witval-logo.png" height={40} width={40} alt="Witval" />
+          <Avatar sx={{ width: 40, height: 40, bgcolor: deepPurple[300] }} />
         </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-2 items-center">
-            <div className="text-[14px] font-light leading-3">Witval</div>
-            <div>
-              <Image
-                src="/check-circle-icon.svg"
-                height={16}
-                width={16}
-                alt="Check"
-              />
-            </div>
+        <div className="flex flex-col gap-2 w-[130px]">
+          <div className="flex gap-2 items-center cursor-default">
+            <Tooltip title={moniker} placement="top">
+              <div className="text-[14px] font-light leading-3 truncate">
+                {moniker}
+              </div>
+            </Tooltip>
+            <Image
+              src="/check-circle-icon.svg"
+              height={16}
+              width={16}
+              alt="Check"
+            />
           </div>
           <div className="text-[12px] text-[#FFFFFFBF] font-extralight leading-3">
-            11,200,324.044
+            {tokens.toLocaleString()}
           </div>
         </div>
       </div>
       <div className="text-[12px] text-[#FFFFFFBF] font-extralight leading-3">
-        20% Commission
+        {commission.toFixed(2)}% Commission
       </div>
       <div>
         <button className="px-3 py-[6px] primary-gradient text-[12px] leading-[20px] rounded-lg font-medium">
