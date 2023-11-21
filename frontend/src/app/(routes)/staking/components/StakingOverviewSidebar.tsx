@@ -1,4 +1,4 @@
-import { Validators } from '@/types/staking';
+import { formatDollarAmount } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 
@@ -64,7 +64,7 @@ const StakingStatsCard = ({
         </div>
       </div>
       <div className="px-2 text-lg font-bold leading-normal text-white">
-        {totalStakedAmount}
+        {formatDollarAmount(totalStakedAmount)}
       </div>
     </div>
   );

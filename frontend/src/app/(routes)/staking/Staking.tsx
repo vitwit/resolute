@@ -18,7 +18,7 @@ const Staking = () => {
     (chainName) => nameToChainIDs[chainName]
   );
 
-  const [totalStakedAmount, totalAvailableAmount, totalRewardsAmount] =
+  const [totalStakedAmount] =
     useGetAssetsAmount();
 
   useEffect(() => {

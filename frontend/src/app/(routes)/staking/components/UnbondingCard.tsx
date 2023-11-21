@@ -6,7 +6,6 @@ const UnbondingCard = () => {
     <div className="unbonding-card">
       <StakingCardHeader
         validator={'Stakefish'}
-        validatorLogo={'/stake-fish-icon.png'}
         network={'CosmosHub'}
         networkLogo={'/cosmos-icon.svg'}
       />

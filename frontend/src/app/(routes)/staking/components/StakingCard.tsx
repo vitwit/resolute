@@ -6,7 +6,7 @@ import StakingActionsMenu from './StakingActionsMenu';
 import StakingCardStats from './StakingCardStats';
 import { Avatar, Tooltip } from '@mui/material';
 import { capitalizeFirstLetter } from '@/utils/util';
-import { blue, deepPurple } from '@mui/material/colors';
+import { deepPurple } from '@mui/material/colors';
 
 type ToogleMenu = () => void;
 
@@ -51,7 +51,6 @@ const StakingCard = ({
       <div className="staking-card">
         <StakingCardHeader
           validator={validator}
-          validatorLogo={'/stake-fish-icon.png'}
           network={chainName}
           networkLogo={networkLogo}
         />
@@ -76,12 +75,10 @@ export default StakingCard;
 
 export const StakingCardHeader = ({
   validator,
-  validatorLogo,
   network,
   networkLogo,
 }: {
   validator: string;
-  validatorLogo: string;
   network: string;
   networkLogo: string;
 }) => {
