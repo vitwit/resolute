@@ -34,7 +34,6 @@ export const convertPaginationToParamsOffset = (pagination: {
   if (pagination.limit) {
     result += `pagination.limit=${pagination.limit}`;
   }
-
   return result;
 };
 
@@ -67,4 +66,22 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
     default:
       return 'Overview';
   }
+};
+
+export const formatDollarAmount = (amount: number): string => {
+  if (amount === 0) return '$0';
+  if (amount < 0.1) return '< $0.1';
+  return '$ ' + amount.toFixed(2);
+};
+
+export const formatAmount = (amount: number): string => {
+  return amount === 0 ? '0' : amount.toFixed(2);
+};
+
+export const formatCoin = (amount: number, denom: string): string => {
+  let parsedAmount;
+  if (amount === 0) parsedAmount = '0';
+  else if (amount < 0.01) parsedAmount = '< 0.01';
+  else parsedAmount = amount.toFixed(2);
+  return parsedAmount + ' ' + denom;
 };

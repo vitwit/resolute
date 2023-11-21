@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect } from 'react';
 import { RootState } from '../../../../store/store';
 import { getBalances } from '@/store/features/bank/bankSlice';
@@ -7,9 +8,12 @@ import {
   getDelegations,
   getAllValidators,
 } from '@/store/features/staking/stakeSlice';
+import WalletSummery from './WalletSummery';
+import TopNav from './TopNav';
+import History from './History';
 import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
-import useGetSortedChainIDs from '@/custom-hooks/useGetSortedChainIDs';
-import useGetIBCSortedChainIDs from '@/custom-hooks/useGetIBCSortedChainIds';
+import PageAd from './PageAd';
+import AssetsTable from './AssetsTable';
 
 const OverviewPage = () => {
   const dispatch = useAppDispatch();
@@ -23,8 +27,6 @@ const OverviewPage = () => {
 
   const [totalStakedAmount, totalAvailableAmount, totalRewardsAmount] =
     useGetAssetsAmount();
-  const [nativeSortedChainIds] = useGetSortedChainIDs();
-  const [ibcSortedChainIds] = useGetIBCSortedChainIDs();
 
   useEffect(() => {
     chainIDs.forEach((chainID) => {
@@ -59,18 +61,18 @@ const OverviewPage = () => {
   }, []);
 
   return (
-    <div>
-      {JSON.stringify(nativeSortedChainIds)}
-      <br />
-      <br />
-      {JSON.stringify(ibcSortedChainIds)}
-      <br />
-      <br />
-      {totalAvailableAmount +
-        ' ' +
-        totalRewardsAmount +
-        ' ' +
-        totalStakedAmount}
+    <div className="w-full flex justify-between">
+      <div className="w-full px-10 py-6 space-y-6 overflow-y-scroll min-h-[800px] h-screen">
+        <TopNav />
+        <WalletSummery
+          available={totalAvailableAmount}
+          staked={totalStakedAmount}
+          rewards={totalRewardsAmount}
+        />
+        <PageAd />
+        <AssetsTable />
+      </div>
+      <History />
     </div>
   );
 };

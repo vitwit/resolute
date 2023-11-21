@@ -18,6 +18,9 @@ const useGetAssetsAmount = () => {
   const balanceChains = useAppSelector(
     (state: RootState) => state.bank.balances
   );
+  const tokensPriceInfo = useAppSelector(
+    (state) => state.common.allTokensInfoState.info
+  );
 
   const getDenomInfo = useCallback(
     (
@@ -42,14 +45,15 @@ const useGetAssetsAmount = () => {
     chainIDs.forEach((chainID) => {
       const staked = stakingChains?.[chainID]?.delegations?.totalStaked || 0;
       if (staked > 0) {
-        const { decimals } = getDenomInfo(chainID);
-        // Todo: common slice
-        const denomPrice = 1;
-        totalStakedAmount += (staked / 10 ** decimals) * denomPrice;
+        const { decimals, minimalDenom } = getDenomInfo(chainID);
+        const usdPriceInfo: TokenInfo | undefined =
+          tokensPriceInfo?.[minimalDenom]?.info;
+        const usdDenomPrice = usdPriceInfo?.usd || 0;
+        totalStakedAmount += (staked / 10 ** decimals) * usdDenomPrice;
       }
     });
     return totalStakedAmount;
-  }, [chainIDs, stakingChains, getDenomInfo]);
+  }, [chainIDs, stakingChains, getDenomInfo, tokensPriceInfo]);
 
   // calculates bank balances (native + ibs) in usd
   const availableAmount: number = useMemo(() => {
@@ -64,8 +68,9 @@ const useGetAssetsAmount = () => {
         chainName
       );
 
-      // Todo: price
-      const denomPrice = 1;
+      const usdPriceInfo: TokenInfo | undefined =
+        tokensPriceInfo?.[minimalDenom]?.info;
+      const usdDenomPrice = usdPriceInfo?.usd || 0;
 
       for (let i = 0; i < ibcBalances?.length; i++) {
         totalIBCBalance +=
@@ -73,7 +78,7 @@ const useGetAssetsAmount = () => {
             [ibcBalances[i].balance],
             ibcBalances?.[i]?.decimals,
             ibcBalances?.[i]?.balance.denom
-          ) * denomPrice;
+          ) * usdDenomPrice;
       }
 
       const balance = parseBalance(
@@ -83,12 +88,12 @@ const useGetAssetsAmount = () => {
       );
 
       if (balanceChains?.[chainID]?.list?.length > 0) {
-        totalBalance += denomPrice * balance;
+        totalBalance += usdDenomPrice * balance;
       }
     });
 
     return totalBalance + totalIBCBalance;
-  }, [chainIDs, balanceChains, getDenomInfo]);
+  }, [chainIDs, balanceChains, getDenomInfo, tokensPriceInfo]);
 
   // calculates rewards amount in usd
   const rewardsAmount = useMemo(() => {

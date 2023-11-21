@@ -32,11 +32,13 @@ const useGetSortedChainIDs = () => {
       );
 
       // minimalDenom
-      const stakedAmountInDenoms: number =
+      const stakedAmountInMinDenoms: number =
         stakingChains?.[chainID]?.delegations?.totalStaked || 0;
 
       // Todo: distribution slice
-      const rewardsAmountInDenoms: number = 0;
+      const rewardsAmountInMinDenoms: number = 0;
+      const stakedAmountInDenoms = stakedAmountInMinDenoms / 10 ** decimals;
+      const rewardsAmountInDenoms = rewardsAmountInMinDenoms / 10 ** decimals;
       const chain: { chainID: string; usdValue: number } = {
         chainID,
         usdValue: 0,
@@ -45,9 +47,7 @@ const useGetSortedChainIDs = () => {
       const denomPrice = 1;
       chain.usdValue =
         denomPrice *
-        (balanceAmountInDenoms +
-          stakedAmountInDenoms / 10 ** decimals +
-          (rewardsAmountInDenoms / 10) * decimals);
+        (balanceAmountInDenoms + stakedAmountInDenoms + rewardsAmountInDenoms);
       if (chain.usdValue) sortedChains = [...sortedChains, chain];
     });
 
