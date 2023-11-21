@@ -62,7 +62,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
                             alt="inflation change"
                           />
                           <div className="text-[#E57575]">
-                            {formatAmount(Math.abs(asset.inflation))}
+                            {formatAmount(Math.abs(asset.inflation))}%
                           </div>
                         </div>
                       </div>
