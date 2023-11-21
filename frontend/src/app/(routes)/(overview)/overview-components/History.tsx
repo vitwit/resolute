@@ -5,14 +5,14 @@ import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import { formatDollarAmount } from '@/utils/util';
 import Profile from './Profile';
 
-const History = () => {
+const History = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
     <div className="right-section">
       <div className="flex justify-between">
         <SelectNetwork /> <Profile />
       </div>
 
-      <Balance />
+      <Balance chainIDs={chainIDs} />
       <SideAd />
       <RecentTransactions />
     </div>
@@ -47,8 +47,8 @@ const SelectNetwork = () => {
   );
 };
 
-const Balance = () => {
-  const [staked, available, rewards] = useGetAssetsAmount();
+const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
+  const [staked, available, rewards] = useGetAssetsAmount(chainIDs);
   return (
     <div>
       <div className="text-white text-center my-6">

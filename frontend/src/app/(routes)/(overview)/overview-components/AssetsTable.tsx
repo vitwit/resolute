@@ -4,8 +4,8 @@ import { formatAmount, formatCoin, formatDollarAmount } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 
-const AssetsTable = () => {
-  const [sortedAssets] = useSortedAssets();
+const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
+  const [sortedAssets] = useSortedAssets(chainIDs);
   const balancesLoading = useAppSelector(
     (state) => state.bank.balancesLoading > 0
   );
