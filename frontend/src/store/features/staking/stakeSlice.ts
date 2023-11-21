@@ -9,6 +9,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { GAS_FEE } from '../../../utils/constants';
 import {
   GetDelegationsResponse,
+  GetUnbondingResponse,
   Pagination,
   Params,
   TxDelegateInputs,
@@ -44,6 +45,12 @@ interface Chain {
     pagination: Pagination | undefined;
     delegatedTo: Record<string, boolean>;
     totalStaked: number;
+  };
+  unbonding: {
+    status: TxStatus;
+    unbonding: GetUnbondingResponse;
+    errMsg: string;
+    pagination: Pagination | undefined;
   };
 
   params: Params | undefined;
@@ -99,7 +106,18 @@ const initialState: StakingState = {
       delegatedTo: {},
       totalStaked: 0.0,
     },
-
+    unbonding: {
+      status: TxStatus.INIT,
+      unbonding: {
+        unbonding_responses: [],
+        pagination: {
+          next_key: '',
+          total: '',
+        },
+      },
+      errMsg: '',
+      pagination: undefined,
+    },
     params: undefined,
     tx: {
       status: TxStatus.INIT,
@@ -381,6 +399,28 @@ export const getDelegations = createAsyncThunk(
   }
 );
 
+export const getUnbonding = createAsyncThunk(
+  'staking/unbonding',
+  async (
+    data: { baseURL: string; address: string; chainID: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await stakingService.unbonding(
+        data.baseURL,
+        data.address
+      );
+      return {
+        data: response.data,
+        chainID: data.chainID,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
 export const stakeSlice = createSlice({
   name: 'staking',
   initialState,
@@ -617,6 +657,27 @@ export const stakeSlice = createSlice({
       .addCase(getParams.rejected, (state, action) => {
         const { chainID } = action.meta.arg;
         state.chains[chainID].paramsStatus = TxStatus.REJECTED;
+      });
+
+    builder
+      .addCase(getUnbonding.pending, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].unbonding.status = TxStatus.PENDING;
+        state.chains[chainID].unbonding.errMsg = '';
+      })
+      .addCase(getUnbonding.fulfilled, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].unbonding.status = TxStatus.IDLE;
+        state.chains[chainID].unbonding.unbonding.unbonding_responses =
+          action.payload.data.unbonding_responses;
+        state.chains[chainID].unbonding.pagination =
+          action.payload.data.pagination;
+        state.chains[chainID].unbonding.errMsg = '';
+      })
+      .addCase(getUnbonding.rejected, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].unbonding.status = TxStatus.REJECTED;
+        state.chains[chainID].unbonding.errMsg = action.error.message || '';
       });
 
     builder
