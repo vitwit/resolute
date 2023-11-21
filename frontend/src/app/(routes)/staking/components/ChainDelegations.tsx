@@ -22,7 +22,7 @@ const ChainDelegations = ({
   const networkLogo = networks[chainID].network.logos.menu;
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+    <>
       {delegations?.delegation_responses.map((row, index) => (
         <StakingCard
           key={index}
@@ -43,9 +43,10 @@ const ChainDelegations = ({
             parseFloat(row?.delegation?.shares) / 10 ** currency?.coinDecimals
           }
           networkLogo={networkLogo}
+          coinDenom={currency.coinDenom}
         />
       ))}
-    </div>
+    </>
   );
 };
 

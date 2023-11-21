@@ -8,6 +8,12 @@ const nextConfig = {
         port: '',
         pathname: '/vitwit/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'dummyimage.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };

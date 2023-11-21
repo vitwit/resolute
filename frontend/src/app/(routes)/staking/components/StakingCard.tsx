@@ -4,8 +4,9 @@ import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import StakingActionsMenu from './StakingActionsMenu';
 import StakingCardStats from './StakingCardStats';
-import { Tooltip } from '@mui/material';
+import { Avatar, Tooltip } from '@mui/material';
 import { capitalizeFirstLetter } from '@/utils/util';
+import { blue, deepPurple } from '@mui/material/colors';
 
 type ToogleMenu = () => void;
 
@@ -15,14 +16,15 @@ const StakingCard = ({
   commission,
   delegated,
   networkLogo,
+  coinDenom,
 }: {
   validator: string;
   chainName: string;
   commission: number;
   delegated: number;
   networkLogo: string;
+  coinDenom: string;
 }) => {
-  console.log('here');
   const [isMenuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -57,7 +59,7 @@ const StakingCard = ({
           delegated={delegated}
           rewards={10}
           commission={commission}
-          coinDenom={'ATOM'}
+          coinDenom={coinDenom}
         />
         <StakingCardActions toggleMenu={toggleMenu} />
       </div>
@@ -86,7 +88,7 @@ export const StakingCardHeader = ({
   return (
     <div className="flex justify-between">
       <div className="flex-center-center gap-1 h-10">
-        <Image src={validatorLogo} height={32} width={32} alt={validator} />
+        <Avatar sx={{ width: 32, height: 32, bgcolor: deepPurple[300] }} />
         <div className="txt-md font-medium">{validator}</div>
       </div>
       <div className="flex-center-center gap-1">
