@@ -27,6 +27,7 @@ const StakingCard = ({
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef2 = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
@@ -34,7 +35,12 @@ const StakingCard = ({
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        menuRef2.current &&
+        !menuRef2.current.contains(event.target as Node)
+      ) {
         setMenuOpen(false);
       }
     };
@@ -60,10 +66,10 @@ const StakingCard = ({
           commission={commission}
           coinDenom={coinDenom}
         />
-        <StakingCardActions toggleMenu={toggleMenu} />
+        <StakingCardActions toggleMenu={toggleMenu} menuRef2={menuRef2} />
       </div>
       {isMenuOpen && (
-        <div ref={menuRef} className="absolute top-[75%] right-[4%] z-10">
+        <div ref={menuRef} className="absolute top-[82%] right-[13%] z-10">
           <StakingActionsMenu />
         </div>
       )}
@@ -98,7 +104,13 @@ export const StakingCardHeader = ({
   );
 };
 
-const StakingCardActions = ({ toggleMenu }: { toggleMenu: ToogleMenu }) => {
+const StakingCardActions = ({
+  toggleMenu,
+  menuRef2,
+}: {
+  toggleMenu: ToogleMenu;
+  menuRef2: React.RefObject<HTMLDivElement>;
+}) => {
   return (
     <div className="mt-6 flex justify-between items-center">
       <div className="flex gap-10">
@@ -108,7 +120,7 @@ const StakingCardActions = ({ toggleMenu }: { toggleMenu: ToogleMenu }) => {
           icon={'/claim-and-stake-icon.svg'}
         />
       </div>
-      <Tooltip title="More options">
+      <Tooltip ref={menuRef2} title="More options" placement='top'>
         <div className="cursor-pointer" onClick={() => toggleMenu()}>
           <Image src="/menu-icon.svg" height={32} width={32} alt="Actions" />
         </div>

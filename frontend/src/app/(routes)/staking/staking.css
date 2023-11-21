@@ -19,7 +19,7 @@
 }
 
 .staking-actions-menu-item {
-  @apply p-4 text-[14px] w-[326px] font-medium leading-normal cursor-pointer;
+  @apply px-4 py-2 text-[14px] w-[150px] font-medium leading-normal cursor-pointer;
 }
 
 .staking-actions-menu-item:hover {
