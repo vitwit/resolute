@@ -41,7 +41,7 @@
 }
 
 .cancel-unbonding-btn {
-  @apply p-2 rounded-lg txt-sm leading-[12px] font-extralight;
+  @apply p-2 rounded-lg text-sm leading-[20px] font-extralight;
 }
 
 .staking-sidebar-actions {
@@ -49,7 +49,8 @@
 }
 
 .staking-sidebar-actions-btn {
-  @apply w-1/2 px-6 py-3 rounded-2xl primary-gradient;
+  @apply w-1/2 px-6 py-3 rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 
 .allvalidators {

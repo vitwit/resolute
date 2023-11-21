@@ -51,7 +51,7 @@ const StakingPage = ({ chainName }: { chainName: string }) => {
 
   return (
     <div className="flex justify-between">
-      <div className="px-10 py-6 flex-1 h-screen min-h-[800px] overflow-y-scroll no-scrollbar">
+      <div className="px-10 py-6 flex-1 h-screen min-h-[800px] overflow-y-scroll">
         <h2 className="txt-lg font-medium mb-6">Staking</h2>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
           <ChainDelegations
