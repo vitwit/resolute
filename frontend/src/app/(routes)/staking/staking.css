@@ -28,12 +28,7 @@
 
 .staking-card,
 .unbonding-card {
-  @apply p-4 rounded-2xl;
-  background: linear-gradient(
-    180deg,
-    rgba(74, 162, 156, 0.2) 0%,
-    rgba(139, 61, 167, 0.2) 100%
-  );
+  @apply p-4 rounded-2xl bg-[#0E0B26];
   backdrop-filter: blur(2px);
 }
 

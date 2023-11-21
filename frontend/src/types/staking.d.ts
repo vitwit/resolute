@@ -23,6 +23,21 @@ interface Validator {
   liquid_shares: string;
 }
 
+interface Validators {
+  status: TxStatus;
+  active: { [key: string]: Validator };
+  inactive: Record<string, Validator>;
+  activeSorted: string[];
+  inactiveSorted: string[];
+  errMsg: string;
+  pagination: {
+    next_key: string | null;
+  };
+  totalActive: number;
+  totalInactive: number;
+  witvalValidator?: Validator;
+}
+
 interface Description {
   moniker: string;
   identity: string;

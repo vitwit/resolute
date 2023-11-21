@@ -1,3 +1,5 @@
+'use client';
+
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Delegate, UnDelegate, Redelegate } from '../../../txns/staking';
 import stakingService from './stakingService';
@@ -14,24 +16,10 @@ import {
   TxReStakeInputs,
   TxUndelegateInputs,
   Validator,
+  Validators,
 } from '../../../types/staking';
 import { AxiosError } from 'axios';
 import { TxStatus } from '../../../types/enums';
-
-interface Validators {
-  status: TxStatus;
-  active: { [key: string]: Validator };
-  inactive: Record<string, Validator>;
-  activeSorted: string[];
-  inactiveSorted: string[];
-  errMsg: string;
-  pagination: {
-    next_key: string | null;
-  };
-  totalActive: number;
-  totalInactive: number;
-  witvalValidator?: Validator;
-}
 
 interface Chain {
   validators: Validators;
@@ -302,14 +290,14 @@ export const getAllValidators = createAsyncThunk(
                 limit: limit,
               }
             : {}
-        ); 
+        );
         validators.push(...response.data.validators);
         if (!response?.data?.pagination?.next_key) {
           break;
         }
         nextKey = response.data.pagination.next_key;
       }
-      
+
       return {
         validators: validators,
         chainID: data.chainID,
@@ -363,7 +351,7 @@ export const getDelegations = createAsyncThunk(
         }
         nextKey = response.data.pagination.next_key;
       }
-      
+
       return {
         delegations: delegations,
         chainID: data.chainID,
@@ -448,6 +436,7 @@ export const stakeSlice = createSlice({
         const result: { validators: Validator[] } = { validators: [] };
         result.validators = action.payload.data.validators;
         const res = action.payload.data.validators;
+        console.log(res)
         for (let index = 0; index < res.length; index++) {
           const element = res[index];
           if (

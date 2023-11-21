@@ -5,10 +5,24 @@ import React, { useEffect, useRef, useState } from 'react';
 import StakingActionsMenu from './StakingActionsMenu';
 import StakingCardStats from './StakingCardStats';
 import { Tooltip } from '@mui/material';
+import { capitalizeFirstLetter } from '@/utils/util';
 
 type ToogleMenu = () => void;
 
-const StakingCard = () => {
+const StakingCard = ({
+  validator,
+  chainName,
+  commission,
+  delegated,
+  networkLogo,
+}: {
+  validator: string;
+  chainName: string;
+  commission: number;
+  delegated: number;
+  networkLogo: string;
+}) => {
+  console.log('here');
   const [isMenuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -34,15 +48,15 @@ const StakingCard = () => {
     <div className="relative">
       <div className="staking-card">
         <StakingCardHeader
-          validator={'Stakefish'}
+          validator={validator}
           validatorLogo={'/stake-fish-icon.png'}
-          network={'CosmosHub'}
-          networkLogo={'/cosmos-icon.svg'}
+          network={chainName}
+          networkLogo={networkLogo}
         />
         <StakingCardStats
-          stakedBalance={10}
+          delegated={delegated}
           rewards={10}
-          commission={30}
+          commission={commission}
           coinDenom={'ATOM'}
         />
         <StakingCardActions toggleMenu={toggleMenu} />
@@ -73,11 +87,13 @@ export const StakingCardHeader = ({
     <div className="flex justify-between">
       <div className="flex-center-center gap-1 h-10">
         <Image src={validatorLogo} height={32} width={32} alt={validator} />
-        <div className="txt-md font-medium">Stakefish</div>
+        <div className="txt-md font-medium">{validator}</div>
       </div>
       <div className="flex-center-center gap-1">
         <Image src={networkLogo} height={20} width={20} alt={network} />
-        <div className="txt-sm font-extralight">{network}</div>
+        <div className="txt-sm font-extralight">
+          {capitalizeFirstLetter(network)}
+        </div>
       </div>
     </div>
   );

@@ -14,7 +14,7 @@ const StakingOverview = () => {
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
         {arr.map((item, index) => (
           <>
-            <StakingCard key={index} />
+            {/* <StakingCard key={index} /> */}
           </>
         ))}
       </div>

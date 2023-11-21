@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 .main {
-  @apply leading-[normal] m-0;
+  @apply leading-[normal] m-0 text-white;
   background-color: #0b071d;
   font-family: 'Inter', sans-serif;
 }

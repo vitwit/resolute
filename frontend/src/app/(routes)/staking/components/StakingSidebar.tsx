@@ -1,9 +1,10 @@
+import { Validators } from '@/types/staking';
 import Image from 'next/image';
 import React from 'react';
 
 // TODO: Create css classes for repeated styles
 
-const StakingSidebar = () => {
+const StakingSidebar = ({ validators }: { validators: Validators }) => {
   return (
     <div className="staking-sidebar">
       <div className="flex flex-col gap-6">

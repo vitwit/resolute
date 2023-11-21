@@ -1,12 +1,12 @@
 import React from 'react';
 
 const StakingCardStats = ({
-  stakedBalance,
+  delegated,
   rewards,
   commission,
   coinDenom,
 }: {
-  stakedBalance: number;
+  delegated: number;
   rewards: number;
   commission: number;
   coinDenom: string;
@@ -15,7 +15,7 @@ const StakingCardStats = ({
     <div className="flex justify-between mt-4">
       <StakingCardStatsItem
         name={'Staked Balance'}
-        value={String(stakedBalance) + ' ' + coinDenom}
+        value={String(delegated.toFixed(3).toLocaleString()) + ' ' + coinDenom}
       />
       <StakingCardStatsItem
         name={'Rewards'}
@@ -23,7 +23,7 @@ const StakingCardStats = ({
       />
       <StakingCardStatsItem
         name={'Staked Balance'}
-        value={String(commission) + ' ' + '%'}
+        value={String(commission.toFixed(2)) + ' ' + '%'}
       />
     </div>
   );
