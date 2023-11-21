@@ -87,6 +87,26 @@ interface GetParamsResponse {
   params: Params;
 }
 
+interface GetUnbondingResponse {
+  unbonding_responses: UnbondingResponse[];
+  pagination: Pagination;
+}
+
+interface UnbondingEntry {
+  creation_height: string;
+  completion_time: string;
+  initial_balance: string;
+  balance: string;
+  unbonding_id: string;
+  unbonding_on_hold_ref_count: string;
+}
+
+interface UnbondingResponse {
+  delegator_address: string;
+  validator_address: string;
+  entries: UnbondingEntry[];
+}
+
 interface Params {
   unbonding_time: string;
   max_validators: number;
