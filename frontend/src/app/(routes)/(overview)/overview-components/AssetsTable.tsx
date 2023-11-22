@@ -2,6 +2,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import { formatAmount, formatCoin, formatDollarAmount } from '@/utils/util';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
@@ -37,7 +38,10 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
                       <div>{formatCoin(asset.balance, asset.displayDenom)}</div>
                       {chainIDs.length > 1 && (
                         <div className="text-xs text-[#a7a2b5] font-thin leading-[normal]">
-                          on {asset.chainName}
+                          on{' '}
+                          <Link href={`/overview/${asset.chainName}`}>
+                            {asset.chainName}
+                          </Link>
                         </div>
                       )}
                     </td>
