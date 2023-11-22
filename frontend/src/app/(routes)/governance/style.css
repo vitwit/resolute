@@ -62,7 +62,7 @@
   background: rgba(255, 255, 255, 0.1);
 }
 .placeholder-text input::placeholder {
-  @apply text-white font-extralight;
+  @apply text-white text-xs font-extralight;
 }
 .placeholder-text input {
   background-color: transparent;

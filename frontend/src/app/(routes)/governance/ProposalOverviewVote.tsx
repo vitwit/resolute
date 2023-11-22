@@ -2,9 +2,21 @@ import React from 'react';
 import Image from 'next/image';
 import CustomPieChart from './CustomPiechart';
 import './style.css';
+import ProposalDetailsCard from './ProposalDetailsCard';
 
 function ProposalOverviewVote() {
   const quorum = 50;
+  const data = [
+    { value: 75, color: '#4AA29C', label: 'Yes' },
+    { value: 23, color: '#E57575', label: 'No' },
+    { value: 2, color: '#EFFF34', label: 'Veto' },
+    { value: 0, color: '#EFFF34', label: 'Veto' },
+  ];
+  const dataset = [
+    { value: 75, color: '#759BE5', label: 'Quorum' },
+    { value: 23, color: '#75E5A2', label: 'Turn out' },
+    { value: 2, color: '#B373CA', label: 'Threhold' },
+  ];
   return (
     <div className="space-y-6 pl-10 pr-0 pt-6 pb-0">
       <div>topnav</div>
@@ -122,35 +134,17 @@ function ProposalOverviewVote() {
                   </div>
                 </div>
                 <div>
-                  <div className="flex justify-between items-start gap-2 w-full">
-                    <div className="flex items-center gap-2">
-                      <CustomPieChart
-                        value={75}
-                        color="#759BE5"
-                        label="Quorum"
-                      />
-                      <div className="proposal-text-extralight">75% Quorum</div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CustomPieChart
-                        value={23}
-                        color="#75E5A2"
-                        label="Turn out"
-                      />
-                      <div className="proposal-text-extralight">
-                        23% Turn Out
+                  <div className="flex justify-between items-start gap-2">
+                    {dataset.map((item, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <CustomPieChart
+                          value={item.value}
+                          color={item.color}
+                          label={item.label}
+                        />
+                        <div className="proposal-text-extralight">{`${item.value}% ${item.label}`}</div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CustomPieChart
-                        value={50}
-                        color="#B373CA"
-                        label="Threhold"
-                      />
-                      <div className="proposal-text-extralight">
-                        50% Threshold
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -186,44 +180,20 @@ function ProposalOverviewVote() {
               </div>
 
               <div className="flex justify-between items-start gap-2">
-                <div className="flex items-center gap-2">
-                  <CustomPieChart value={75} color="#4AA29C" label="Yes" />
-                  <div className="proposal-text-extralight">75% Yes</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CustomPieChart value={23} color="#E57575" label="No" />
-                  <div className="proposal-text-extralight">23% No</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CustomPieChart value={2} color="#EFFF34" label="Veto" />
-                  <div className="proposal-text-extralight">2% Veto</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CustomPieChart value={0} color="#EFFF34" label="Veto" />
-                  <div className="proposal-text-extralight">0% Veto</div>
-                </div>
+                {data.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <CustomPieChart
+                      value={item.value}
+                      color={item.color}
+                      label={item.label}
+                    />
+                    <div className="proposal-text-extralight">{`${item.value}% ${item.label}`}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-
-          <div className="proposal-details-grid">
-            <div className="proposal-details proposal-text-normal">
-              <p>Proposal created at</p>
-              <p>23rd October 2023</p>
-            </div>
-            <div className="proposal-details proposal-text-normal">
-              <p>Proposal Started at</p>
-              <p>24th October 2023</p>
-            </div>
-            <div className="proposal-details proposal-text-normal">
-              <p>Proposal ends at</p>
-              <p>29th October 2023</p>
-            </div>
-            <div className="proposal-details proposal-text-normal">
-              <p>Proposal Network</p>
-              <p>Cosmos</p>
-            </div>
-          </div>
+          <ProposalDetailsCard />
         </div>
       </div>
     </div>

@@ -7,7 +7,6 @@ const DepositPopup = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   const handleClose = () => {
-    console.log('closing votePopup');
     setIsOpen(false);
   };
   if (!isOpen) {
@@ -21,7 +20,7 @@ const DepositPopup = () => {
           width={24}
           height={24}
           className="cursor-pointer"
-          alt="Plainclose-Icon"
+          alt="Close"
         />
       </div>
       <div className="image-grid">
@@ -54,12 +53,15 @@ const DepositPopup = () => {
               </div>
             </div>
 
-            <div className="placeholder-text">
+            <div className="placeholder-text ">
               <div className="flex w-full justify-between">
                 <input
                   type="text"
-                  placeholder="Enter Amount Here         ATOMS"
-                ></input>
+                  placeholder="Enter Amount Here"
+                >
+                
+                </input>
+                <div className='proposal-text-extralight flex items-center'>ATOMS</div>
               </div>
             </div>
             <div>

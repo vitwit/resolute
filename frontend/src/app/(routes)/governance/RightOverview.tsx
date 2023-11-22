@@ -7,10 +7,15 @@ import './style.css';
 import AllProposals from './AllProposals';
 
 const RightOverview = () => {
+  const data = [
+    { value: 75, color: '#4AA29C', label: 'Yes' },
+    { value: 23, color: '#E57575', label: 'No' },
+    { value: 2, color: '#EFFF34', label: 'Veto' },
+    { value: 0, color: '#EFFF34', label: 'Veto' },
+  ];
   const [isRightBarOpen, setIsRightBarOpen] = useState(true);
   const quorum = 50;
   const handleCloseClick = () => {
-    console.log('Close button clicked');
     setIsRightBarOpen(false);
   };
   return (
@@ -107,34 +112,16 @@ const RightOverview = () => {
                     </div>
 
                     <div className="flex justify-between items-start gap-2">
-                      <div className="flex items-center gap-2">
-                        <CustomPieChart
-                          value={75}
-                          color="#4AA29C"
-                          label="Yes"
-                        />
-                        <div className="proposal-text-extralight">75% Yes</div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CustomPieChart value={23} color="#E57575" label="No" />
-                        <div className="proposal-text-extralight">23% No</div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CustomPieChart
-                          value={2}
-                          color="#EFFF34"
-                          label="Veto"
-                        />
-                        <div className="proposal-text-extralight">2% Veto</div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CustomPieChart
-                          value={0}
-                          color="#EFFF34"
-                          label="Veto"
-                        />
-                        <div className="proposal-text-extralight">0% Veto</div>
-                      </div>
+                      {data.map((item, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <CustomPieChart
+                            value={item.value}
+                            color={item.color}
+                            label={item.label}
+                          />
+                          <div className="proposal-text-extralight">{`${item.value}% ${item.label}`}</div>
+                        </div>
+                      ))}
                     </div>
                     <div className="flex justify-between w-full">
                       <div className="flex proposal-text-extralight">

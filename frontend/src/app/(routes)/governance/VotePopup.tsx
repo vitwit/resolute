@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import './style.css';
+import RadioButtons from './RadioButtons';
 
 const VotePopup = () => {
   const [voteOption, setVoteOption] = useState<string>('');
@@ -11,7 +12,6 @@ const VotePopup = () => {
     setVoteOption(option);
   };
   const handleClose = () => {
-    console.log('closing votePopup');
     setIsOpen(false);
   };
   if (!isOpen) {
@@ -25,7 +25,7 @@ const VotePopup = () => {
           width={24}
           height={24}
           className="cursor-pointer"
-          alt="Plainclose-Icon"
+          alt="Close"
         />
       </div>
       <div className="image-grid">
@@ -59,69 +59,30 @@ const VotePopup = () => {
             </div>
             <div className="flex w-full justify-between">
               <div className="radio-buttons">
-                <label className="radio-container">
-                  <div className="flex space-x-2">
-                    <input
-                      type="radio"
-                      name="voteOption"
-                      value="yes"
-                      checked={voteOption === 'yes'}
-                      onChange={() => handleVoteChange('yes')}
-                    />
-                    <span className="radio-checkmark">
-                      <span className="radio-check"></span>
-                    </span>
-                    Yes
-                  </div>
-                </label>
-
-                <label className="radio-container">
-                  <div className="flex space-x-2">
-                    <input
-                      type="radio"
-                      name="voteOption"
-                      value="no"
-                      checked={voteOption === 'no'}
-                      onChange={() => handleVoteChange('no')}
-                    />
-                    <span className="radio-checkmark">
-                      <span className="radio-check"></span>
-                    </span>
-                    No
-                  </div>
-                </label>
-
-                <label className="radio-container">
-                  <div className="flex space-x-2">
-                    <input
-                      type="radio"
-                      name="voteOption"
-                      value="abstain"
-                      checked={voteOption === 'abstain'}
-                      onChange={() => handleVoteChange('abstain')}
-                    />
-                    <span className="radio-checkmark">
-                      <span className="radio-check"></span>
-                    </span>
-                    Abstain
-                  </div>
-                </label>
-
-                <label className="radio-container">
-                  <div className="flex space-x-2 items-center">
-                    <input
-                      type="radio"
-                      name="voteOption"
-                      value="no with veto"
-                      checked={voteOption === 'no with veto'}
-                      onChange={() => handleVoteChange('no with veto')}
-                    />
-                    <span className="radio-checkmark">
-                      <span className="radio-check"></span>
-                    </span>
-                    No with Veto
-                  </div>
-                </label>
+                <RadioButtons
+                  name="voteOption"
+                  value={'yes'}
+                  voteOption={voteOption}
+                  handleVoteChange={handleVoteChange}
+                />
+                <RadioButtons
+                  name="votOption"
+                  value={'no'}
+                  voteOption={voteOption}
+                  handleVoteChange={handleVoteChange}
+                />
+                <RadioButtons
+                  name="voteOption"
+                  value={'abstain'}
+                  voteOption={voteOption}
+                  handleVoteChange={handleVoteChange}
+                />
+                <RadioButtons
+                  name="votOption"
+                  value={'no with veto'}
+                  voteOption={voteOption}
+                  handleVoteChange={handleVoteChange}
+                />
               </div>
             </div>
             <div className="placeholder-text">
