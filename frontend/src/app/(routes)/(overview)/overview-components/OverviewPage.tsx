@@ -14,6 +14,7 @@ import History from './History';
 import PageAd from './PageAd';
 import AssetsTable from './AssetsTable';
 import AccountSummery from './AccountSummary';
+import { getAccountInfo } from '@/store/features/auth/authSlice';
 
 const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
@@ -38,6 +39,7 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
           chainID: chainID,
         })
       );
+      dispatch(getAccountInfo(basicChainInputs));
 
       // Todo: after distribution slice
       //   dispatch(
