@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import './style.css';
-import RadioButtons from './RadioButtons';
+import RadioButtons from './CustomRadioButton';
 
 const VotePopup = () => {
   const [voteOption, setVoteOption] = useState<string>('');
