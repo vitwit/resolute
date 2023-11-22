@@ -23,7 +23,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
             <table className="w-full text-sm leading-normal">
               <thead className="border-b-[0.5px] border-[#B0B0B033] relative">
                 <tr className="text-left">
-                  <th className="w-1/5">Chains</th>
+                  <th className="w-1/5">Available</th>
                   <th className="w-1/5">Staked</th>
                   <th className="w-1/4">Rewards</th>
                   <th className="w-1/4">Price</th>
@@ -52,7 +52,10 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
                         : '-'}
                     </td>
                     <td>
-                      <div className="flex gap-2">
+                      <div
+                        className="flex gap-2"
+                        style={{ alignItems: 'flex-end' }}
+                      >
                         <div>{formatDollarAmount(asset.usdPrice)}</div>
                         <div className="flex">
                           <Image
@@ -63,12 +66,13 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
                             width={16}
                             alt="inflation change"
                           />
-                          <div className="text-[#E57575]">
+                          <div className="text-[#E57575] text-[12px]">
                             {formatAmount(Math.abs(asset.inflation))}%
                           </div>
                         </div>
                       </div>
                     </td>
+
                     <td>
                       <div className="flex justify-between gap-1">
                         <div className="asset-action">
