@@ -20,7 +20,8 @@ const paginationComponentStyles = {
       backgroundColor: '#ffffff1a',
     },
     fontSize: '12px',
-    width: '24px',
+    minWidth: '24px',
+    height: '24px',
     borderRadius: '4px',
   },
   '& .Mui-selected': {
@@ -53,16 +54,16 @@ const DialogAllValidators = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const PER_PAGE = 7;
-  const [slicedMsgs, setSlicedMsgs] = useState<string[]>([]);
+  const [slicedValidators, setSlicedValidators] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filtered, setFiltered] = useState<string[]>([]);
 
   useEffect(() => {
     if (validators?.activeSorted.length < PER_PAGE) {
-      setSlicedMsgs(validators?.activeSorted);
+      setSlicedValidators(validators?.activeSorted);
     } else {
       setCurrentPage(1);
-      setSlicedMsgs(validators?.activeSorted?.slice(0, 1 * PER_PAGE));
+      setSlicedValidators(validators?.activeSorted?.slice(0, 1 * PER_PAGE));
     }
   }, [validators?.activeSorted]);
 
@@ -134,7 +135,7 @@ const DialogAllValidators = ({
           ) : (
             <>
               <div className="flex flex-col gap-6">
-                {slicedMsgs?.map((validator, index) => {
+                {slicedValidators?.map((validator, index) => {
                   const moniker =
                     validators.active[validator]?.description.moniker;
                   const commission =
@@ -155,6 +156,7 @@ const DialogAllValidators = ({
                   );
                 })}
               </div>
+              <div className="w-full h-[0.25px] bg-[#FFFFFF66] my-6"></div>
               <div className="absolute bottom-12 right-10">
                 <Pagination
                   sx={paginationComponentStyles}
@@ -162,7 +164,7 @@ const DialogAllValidators = ({
                   shape="circular"
                   onChange={(_, v) => {
                     setCurrentPage(v);
-                    setSlicedMsgs(
+                    setSlicedValidators(
                       validators?.activeSorted?.slice(
                         (v - 1) * PER_PAGE,
                         v * PER_PAGE
@@ -236,26 +238,26 @@ const Filtered = ({
   validators: Validators;
   currency: Currency;
 }) => {
-  const [slicedMsgs, setSlicedMsgs] = useState<string[]>([]);
+  const [slicedValidators, setSlicedValidators] = useState<string[]>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const PER_PAGE = 7;
 
   useEffect(() => {
     if (filtered.length < PER_PAGE) {
-      setSlicedMsgs(filtered);
+      setSlicedValidators(filtered);
     } else {
       setCurrentPage(1);
-      setSlicedMsgs(filtered?.slice(0, 1 * PER_PAGE));
+      setSlicedValidators(filtered?.slice(0, 1 * PER_PAGE));
     }
   }, [filtered]);
 
   return (
     <>
-      {slicedMsgs.length ? (
+      {slicedValidators.length ? (
         <>
           <div className="flex flex-col gap-6">
-            {slicedMsgs?.map((validator, index) => {
+            {slicedValidators?.map((validator, index) => {
               const moniker = validators.active[validator]?.description.moniker;
               const commission =
                 Number(
@@ -275,6 +277,7 @@ const Filtered = ({
               );
             })}
           </div>
+          <div className="w-full h-[0.25px] bg-[#FFFFFF66] my-6"></div>
           <div className="absolute bottom-12 right-10">
             <Pagination
               sx={paginationComponentStyles}
@@ -282,7 +285,7 @@ const Filtered = ({
               shape="circular"
               onChange={(_, v) => {
                 setCurrentPage(v);
-                setSlicedMsgs(
+                setSlicedValidators(
                   filtered?.slice((v - 1) * PER_PAGE, v * PER_PAGE)
                 );
               }}

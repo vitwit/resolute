@@ -6,10 +6,17 @@ import { deepPurple } from '@mui/material/colors';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import DialogAllValidators from './DialogAllValidators';
+import { formatVotingPower } from '@/utils/denom';
 
 // TODO: Create css classes for repeated styles
 
-const StakingSidebar = ({ validators, currency }: { validators: Validators; currency: Currency }) => {
+const StakingSidebar = ({
+  validators,
+  currency,
+}: {
+  validators: Validators;
+  currency: Currency;
+}) => {
   return (
     <div className="staking-sidebar">
       <div className="flex flex-col gap-6">
@@ -56,7 +63,13 @@ const StakingStatsCard = () => {
   );
 };
 
-const AllValidators = ({ validators, currency }: { validators: Validators; currency: Currency }) => {
+const AllValidators = ({
+  validators,
+  currency,
+}: {
+  validators: Validators;
+  currency: Currency;
+}) => {
   const [allValidatorsDialogOpen, setAllValidatorsDialogOpen] =
     useState<boolean>(false);
   const handleClose = () => {
@@ -90,6 +103,7 @@ const AllValidators = ({ validators, currency }: { validators: Validators; curre
               moniker={moniker}
               commission={commission}
               tokens={tokens}
+              currency={currency}
             />
           </>
         );
@@ -108,10 +122,12 @@ const Validator = ({
   moniker,
   commission,
   tokens,
+  currency,
 }: {
   moniker: string;
   commission: number;
   tokens: number;
+  currency: Currency;
 }) => {
   return (
     <div className="flex justify-between items-center">
@@ -134,7 +150,7 @@ const Validator = ({
             />
           </div>
           <div className="text-[12px] text-[#FFFFFFBF] font-extralight leading-3">
-            {tokens.toLocaleString()}
+            {formatVotingPower(tokens, currency.coinDecimals)}
           </div>
         </div>
       </div>
