@@ -100,3 +100,11 @@ export const formatCoin = (amount: number, denom: string): string => {
 export const getDaysLeftString = (daysLeft: number): string => {
   return daysLeft === 1 ? `1 Day` : `${daysLeft} Days`;
 };
+
+export const getValidatorStatus = (jailed: boolean, status: string): string => {
+  return jailed
+    ? 'Jailed'
+    : status === 'BOND_STATUS_UNBONDING'
+      ? 'Unbonding'
+      : 'Unbonded';
+};

@@ -1,5 +1,6 @@
 import { Validators } from '@/types/staking';
 import { formatVotingPower } from '@/utils/denom';
+import { getValidatorStatus } from '@/utils/util';
 import {
   Avatar,
   Dialog,
@@ -115,7 +116,7 @@ const DialogAllValidators = ({
                 alt="Search"
               />
             </div>
-            <div className='w-full'>
+            <div className="w-full">
               <input
                 className="w-full pl-2 border-none cursor-pointer focus:outline-none bg-transparent placeholder:font-custom1 placeholder:text-[14px] placeholder:text-[#FFFFFFBF] placeholder:font-extralight text-[#FFFFFFBF]"
                 type="text"
@@ -203,6 +204,8 @@ const ActiveValidators = ({
                       .rate
                   ) * 100;
                 const tokens = Number(validators.active[validator]?.tokens);
+                const jailed = validators.active[validator]?.jailed;
+                const status = validators.active[validator]?.status;
 
                 return (
                   <ValidatorComponent
@@ -211,6 +214,9 @@ const ActiveValidators = ({
                     commission={commission}
                     tokens={tokens}
                     currency={currency}
+                    jailed={jailed}
+                    status={status}
+                    active={true}
                   />
                 );
               })}
@@ -296,6 +302,8 @@ const InactiveValidators = ({
                       .rate
                   ) * 100;
                 const tokens = Number(validators.inactive[validator]?.tokens);
+                const jailed = validators.inactive[validator]?.jailed;
+                const status = validators.inactive[validator]?.status;
 
                 return (
                   <ValidatorComponent
@@ -304,6 +312,9 @@ const InactiveValidators = ({
                     commission={commission}
                     tokens={tokens}
                     currency={currency}
+                    jailed={jailed}
+                    status={status}
+                    active={false}
                   />
                 );
               })}
@@ -337,11 +348,17 @@ const ValidatorComponent = ({
   commission,
   tokens,
   currency,
+  jailed,
+  status,
+  active,
 }: {
   moniker: string;
   commission: number;
   tokens: number;
   currency: Currency;
+  jailed: boolean;
+  status: string;
+  active: boolean;
 }) => {
   return (
     <div className="flex justify-between items-center txt-sm text-white font-normal">
@@ -368,7 +385,14 @@ const ValidatorComponent = ({
       <div className="leading-3">
         {formatVotingPower(tokens, currency.coinDecimals)}
       </div>
-      <div className="leading-3">{commission.toFixed(2)}% Commission</div>
+      <div className="leading-3 min-w-[132px] text-center">
+        {commission.toFixed(2)}% Commission
+      </div>
+      {active ? null : (
+        <div className="min-w-[102px] text-center leading-3">
+          {getValidatorStatus(jailed, status)}
+        </div>
+      )}
       <div>
         <button className="px-3 py-[6px] primary-gradient text-[12px] leading-[20px] rounded-lg font-medium">
           Delegate
@@ -419,6 +443,8 @@ const Filtered = ({
                   validatorsSet[validator]?.commission?.commission_rates.rate
                 ) * 100;
               const tokens = Number(validatorsSet[validator]?.tokens);
+              const jailed = validatorsSet[validator]?.jailed;
+              const status = validatorsSet[validator]?.status;
 
               return (
                 <ValidatorComponent
@@ -427,6 +453,9 @@ const Filtered = ({
                   commission={commission}
                   tokens={tokens}
                   currency={currency}
+                  jailed={jailed}
+                  status={status}
+                  active={active}
                 />
               );
             })}
