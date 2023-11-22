@@ -86,26 +86,30 @@ const DialogAllValidators = ({
         <div className="px-10">
           <h2 className="txt-lg font-bold text-white">All Validators</h2>
           <div className="mt-4 py-2">
-            <input
-              type="radio"
-              name="validatorStatus"
-              id="active"
-              checked={active}
-              onChange={() => setActive(true)}
-            />
-            <label className="text-white cursor-pointer" htmlFor="active">
-              Active
-            </label>
-            <input
-              type="radio"
-              name="validatorStatus"
-              id="inactive"
-              checked={!active}
-              onChange={() => setActive(false)}
-            />
-            <label className="text-white" htmlFor="inactive">
-              Inactive
-            </label>
+            <div className="flex gap-6 text-white">
+              <div
+                className="flex items-center cursor-pointer gap-2"
+                onClick={() => setActive(true)}
+              >
+                <div className="border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center">
+                  {active ? (
+                    <div className="h-[6px] w-[6px] bg-white rounded-full"></div>
+                  ) : null}
+                </div>
+                <div>Active</div>
+              </div>
+              <div
+                className="flex items-center cursor-pointer gap-2"
+                onClick={() => setActive(false)}
+              >
+                <div className="border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center">
+                  {!active ? (
+                    <div className="h-[6px] w-[6px] bg-white rounded-full"></div>
+                  ) : null}
+                </div>
+                <div>Inactive</div>
+              </div>
+            </div>
           </div>
           <div className="my-6 h-12 flex bg-[#FFFFFF1A] items-center px-6 py-2 rounded-2xl hover:bg-[#ffffff11]">
             <div>
