@@ -11,6 +11,10 @@ type Account = {
   sequence: string;
 };
 
+interface GetAccountResponse {
+  account: Account;
+}
+
 interface FeeForAuthInfoBytes {
   amount?:
     | {
