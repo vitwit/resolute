@@ -96,3 +96,7 @@ export const formatCoin = (amount: number, denom: string): string => {
   else parsedAmount = amount.toFixed(2);
   return parsedAmount + ' ' + denom;
 };
+
+export const getDaysLeftString = (daysLeft: number): string => {
+  return daysLeft === 1 ? `1 Day` : `${daysLeft} Days`;
+};

@@ -6,10 +6,12 @@ import { RootState } from '@/store/store';
 import {
   getAllValidators,
   getDelegations,
+  getUnbonding,
 } from '@/store/features/staking/stakeSlice';
 
 import ChainDelegations from './ChainDelegations';
 import StakingSidebar from './StakingSidebar';
+import ChainUnbondings from './ChainUnbondings';
 
 const StakingPage = ({ chainName }: { chainName: string }) => {
   const dispatch = useAppDispatch();
@@ -20,6 +22,9 @@ const StakingPage = ({ chainName }: { chainName: string }) => {
   const chainID = nameToChainIDs[chainName];
   const delegations = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.delegations.delegations
+  );
+  const unbondingDelegations = useAppSelector(
+    (state: RootState) => state.staking.chains[chainID]?.unbonding.unbonding
   );
   const validators = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.validators
@@ -47,6 +52,13 @@ const StakingPage = ({ chainName }: { chainName: string }) => {
         chainID,
       })
     );
+    dispatch(
+      getUnbonding({
+        baseURL,
+        address,
+        chainID,
+      })
+    );
   }, []);
 
   return (
@@ -61,6 +73,19 @@ const StakingPage = ({ chainName }: { chainName: string }) => {
             validators={validators}
             currency={currency}
           />
+        </div>
+
+        <div>
+          <h2 className="txt-lg font-medium my-6">Unbonding</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+            <ChainUnbondings
+              chainID={chainID}
+              chainName={chainName}
+              unbondings={unbondingDelegations}
+              validators={validators}
+              currency={currency}
+            />
+          </div>
         </div>
       </div>
       <StakingSidebar validators={validators} currency={currency} />

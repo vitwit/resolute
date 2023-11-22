@@ -7,8 +7,10 @@ import { RootState } from '@/store/store';
 import {
   getAllValidators,
   getDelegations,
+  getUnbonding,
 } from '@/store/features/staking/stakeSlice';
 import ChainDelegations from './ChainDelegations';
+import ChainUnbondings from './ChainUnbondings';
 
 const StakingOverview = () => {
   const dispatch = useAppDispatch();
@@ -44,6 +46,13 @@ const StakingOverview = () => {
             chainID,
           })
         );
+        dispatch(
+          getUnbonding({
+            baseURL,
+            address,
+            chainID,
+          })
+        );
       });
     }
   }, []);
@@ -62,6 +71,26 @@ const StakingOverview = () => {
               chainID={chainID}
               chainName={chainName}
               delegations={delegations}
+              validators={validators}
+              currency={currency}
+            />
+          );
+        })}
+      </div>
+      <h2 className="txt-lg font-medium my-6">Unbonding</h2>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+        {chainIDs.map((chainID, index) => {
+          const unbondingDelegations =
+            stakingData[chainID]?.unbonding.unbonding;
+          const validators = stakingData[chainID]?.validators;
+          const currency = networks[chainID]?.network?.config?.currencies[0];
+          const chainName = networks[chainID]?.network?.config?.chainName;
+          return (
+            <ChainUnbondings
+              key={index}
+              chainID={chainID}
+              chainName={chainName}
+              unbondings={unbondingDelegations}
               validators={validators}
               currency={currency}
             />

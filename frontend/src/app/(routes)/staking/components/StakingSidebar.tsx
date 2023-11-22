@@ -77,6 +77,7 @@ const AllValidators = ({
       (allValidatorsDialogOpen) => !allValidatorsDialogOpen
     );
   };
+  const slicedValidatorsList = validators?.activeSorted.slice(0, 10);
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
@@ -88,7 +89,7 @@ const AllValidators = ({
           View All
         </div>
       </div>
-      {validators?.activeSorted.map((validator, index) => {
+      {slicedValidatorsList.map((validator, index) => {
         const moniker = validators.active[validator]?.description.moniker;
         const commission =
           Number(
