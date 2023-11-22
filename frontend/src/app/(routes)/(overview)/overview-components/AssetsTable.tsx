@@ -35,9 +35,11 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
                   <tr key={asset.chainID + asset.denom}>
                     <td>
                       <div>{formatCoin(asset.balance, asset.displayDenom)}</div>
-                      <div className="text-xs text-[#a7a2b5] font-thin leading-[normal]">
-                        on {asset.chainName}
-                      </div>
+                      {chainIDs.length > 1 && (
+                        <div className="text-xs text-[#a7a2b5] font-thin leading-[normal]">
+                          on {asset.chainName}
+                        </div>
+                      )}
                     </td>
                     <td>
                       {asset.type === 'native'
