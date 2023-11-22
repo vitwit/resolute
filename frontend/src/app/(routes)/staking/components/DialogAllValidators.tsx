@@ -115,7 +115,7 @@ const DialogAllValidators = ({
                 alt="Search"
               />
             </div>
-            <div>
+            <div className='w-full'>
               <input
                 className="w-full pl-2 border-none cursor-pointer focus:outline-none bg-transparent placeholder:font-custom1 placeholder:text-[14px] placeholder:text-[#FFFFFFBF] placeholder:font-extralight text-[#FFFFFFBF]"
                 type="text"

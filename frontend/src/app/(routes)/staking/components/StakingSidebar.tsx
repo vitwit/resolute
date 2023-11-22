@@ -77,7 +77,7 @@ const AllValidators = ({
       (allValidatorsDialogOpen) => !allValidatorsDialogOpen
     );
   };
-  const slicedValidatorsList = validators?.activeSorted.slice(0, 10);
+  const slicedValidatorsList = validators?.activeSorted.slice(0, 10) || [];
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">

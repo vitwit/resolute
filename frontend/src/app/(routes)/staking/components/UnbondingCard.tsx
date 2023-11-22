@@ -2,6 +2,7 @@ import React from 'react';
 import { StakingCardHeader } from './StakingCard';
 import { formatCoin, getDaysLeftString } from '@/utils/util';
 import { getDaysLeft } from '@/utils/datetime';
+import { Tooltip } from '@mui/material';
 
 const UnbondingCard = ({
   validator,
@@ -31,9 +32,11 @@ const UnbondingCard = ({
         coinDenom={currency.coinDenom}
       />
       <div>
-        <button className="primary-gradient cancel-unbonding-btn">
-          Cancel
-        </button>
+        <Tooltip title="Cancel unbonding" placement="right">
+          <button className="primary-gradient cancel-unbonding-btn">
+            Cancel
+          </button>
+        </Tooltip>
       </div>
     </div>
   );
