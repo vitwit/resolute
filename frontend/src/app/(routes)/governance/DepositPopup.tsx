@@ -4,12 +4,8 @@ import Image from 'next/image';
 import './style.css';
 
 const DepositPopup = () => {
-  const [voteOption, setVoteOption] = useState<string>('');
   const [isOpen, setIsOpen] = useState(true);
 
-  const handleVoteChange = (option: string) => {
-    setVoteOption(option);
-  };
   const handleClose = () => {
     console.log('closing votePopup');
     setIsOpen(false);
