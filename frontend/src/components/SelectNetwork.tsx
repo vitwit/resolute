@@ -18,7 +18,6 @@ const SelectNetwork = () => {
   const selectedNetwork = useAppSelector(
     (state: RootState) => state.common.selectedNetwork
   );
-  const [chainName, setChainName] = useState('');
   const [chainLogo, setChainLogo] = useState(ALL_NETWORKS_LOGO);
   const [walletAddress, setWalletAddress] = useState('');
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
@@ -40,11 +39,9 @@ const SelectNetwork = () => {
     if (selectedNetwork.chainName) {
       const chainID = nameToChainIDs[selectedNetwork.chainName];
 
-      setChainName(selectedNetwork.chainName.toLowerCase());
       setChainLogo(networks[chainID].network.logos.menu);
       setWalletAddress(networks[chainID].walletInfo.bech32Address);
     } else {
-      setChainName('All Networks');
       setChainLogo(ALL_NETWORKS_LOGO);
       setWalletAddress('');
     }
