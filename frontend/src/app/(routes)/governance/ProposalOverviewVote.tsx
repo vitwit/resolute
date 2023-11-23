@@ -1,11 +1,29 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import CustomPieChart from './CustomPiechart';
 import './style.css';
 import ProposalDetailsCard from './ProposalDetailsCard';
+import VotePopup from './VotePopup';
 
-function ProposalOverviewVote() {
+const ProposalOverviewVote = ({
+  proposalId,
+  proposalText,
+  proposalname,
+}: {
+  proposalId: string;
+  proposalText: string;
+  proposalname: string;
+}) => {
+  const [isVotePopupOpen, setVotePopupOpen] = useState(false);
+  const toggleVotePopup = () => {
+    setVotePopupOpen(!isVotePopupOpen);
+  };
   const quorum = 50;
+  const createdAt = '23rd October 2023';
+  const startedAt = '24th October 2023';
+  const endsAt = '29th October 2023';
+  const proposalNetwork = 'Cosmos';
   const data = [
     { value: 75, color: '#4AA29C', label: 'Yes' },
     { value: 23, color: '#E57575', label: 'No' },
@@ -43,75 +61,27 @@ function ProposalOverviewVote() {
                   alt="Cosmos-Logo"
                 />
                 <p className="proposal-text-normal flex items-center">
-                  #123 | Proposal
+                  {proposalId} | Proposal
                 </p>
               </div>
               <div>
-                <button className="button">
+                <button className="button" onClick={toggleVotePopup}>
                   <p className="proposal-text-medium">Vote</p>
                 </button>
               </div>
             </div>
           </div>
           <div className="space-y-6">
-            <div className="proposal-text-medium">
-              Adjust Trade and Earn Rewards Margined Protocol
-            </div>
-            <div className="space-y-4">
-              <h2 className="proposal-text-medium">Details</h2>
-            </div>
+            <div className="proposal-text-medium">{proposalname}</div>
 
-            <p className="proposal-text-normal">
-              Were proposing (and seeking community funds for) training a
-              foundation AI model on Akash Network, resulting in an Akash named
-              open source AI model, archived/We re proposing (and seeking
-              community funds for) training a foundation AI model on Akash
-              Network, resulting in an Akash named open source AI model,
-              archived/ shared on Huggingface. The full details can be found in
-              the original Github discussion thread here. shared on Huggingface.
-              The full details can be found in the original Github We re
-              proposing (and seeking community funds for) training a foundation
-              AI model on Akash Network, resulting in an Akash named open source
-              AI model, archived/ shared on Huggingface. The full details can be
-              found in the original Github discussion thread here. discussion
-              thread here.
-            </p>
-            <p className="proposal-text-normal">
-              We re proposing (and seeking community funds for) training a
-              foundation AI model on Akash Network, resulting in an Akash named
-              open sourc.
-            </p>
-            <p className="proposal-text-normal">
-              We re proposing (and seeking community funds for) training a
-              foundation AI model on Akash Network, resulting in an Akash named
-              opend in the original Github We re proposing (and seeking
-              community funds for) training a foundation AI model on Akash
-              Network, resulting in an Akash named open source AI model,
-              archived/ shared on Huggingface. The full details can be found in
-              the original Github discussion thread here. discussion thread
-              here.
-            </p>
-            <h2 className="proposal-text-medium">
-              Benefits to the Akash community include:
-            </h2>
-            <li className="proposal-text-normal">
-              Demonstrating that AI model training can be conducted on Akashs
-              decentralized cloud platform.
-            </li>
-            <li className="proposal-text-normal text-white">
-              Demonstrating that AI model training can be conducted on Akashs
-              decentralized cloud platform.
-            </li>
-            <li className="proposal-text-normal">
-              Demonstrating that AI model training can be conducted on Akashs
-              decentralized cloud platform.
-            </li>
-            <li className="proposal-text-normal">
-              Demonstrating that AI model training can be conducted on Akashs
-              decentralized cloud platform.
-            </li>
+            <p className="proposal-text-normal">{proposalText}</p>
           </div>
         </div>
+        {isVotePopupOpen && (
+          <>
+            <VotePopup votingEndsInDays={2} />
+          </>
+        )}
         <div className="space-y-4">
           <div className="status-grid">
             <div className="status-view-grid">
@@ -193,11 +163,16 @@ function ProposalOverviewVote() {
               </div>
             </div>
           </div>
-          <ProposalDetailsCard />
+          <ProposalDetailsCard
+            createdAt={createdAt}
+            startedAt={startedAt}
+            endsAt={endsAt}
+            proposalNetwork={proposalNetwork}
+          />
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default ProposalOverviewVote;
