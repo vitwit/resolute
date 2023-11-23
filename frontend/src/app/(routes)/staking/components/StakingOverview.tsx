@@ -11,6 +11,7 @@ import {
 } from '@/store/features/staking/stakeSlice';
 import ChainDelegations from './ChainDelegations';
 import ChainUnbondings from './ChainUnbondings';
+import { getDelegatorTotalRewards } from '@/store/features/distribution/distributionSlice';
 
 const StakingOverview = () => {
   const dispatch = useAppDispatch();
@@ -25,6 +26,9 @@ const StakingOverview = () => {
   const stakingData = useAppSelector(
     (state: RootState) => state.staking.chains
   );
+  const rewardsData = useAppSelector(
+    (state: RootState) => state.distribution.chains
+  );
   useEffect(() => {
     if (chainIDs) {
       chainIDs.forEach((chainID) => {
@@ -32,6 +36,7 @@ const StakingOverview = () => {
         const chainInfo = allChainInfo?.network;
         const address = allChainInfo?.walletInfo?.bech32Address;
         const baseURL = chainInfo?.config?.rest;
+        const currency = allChainInfo?.network?.config?.currencies[0];
 
         dispatch(
           getDelegations({
@@ -53,6 +58,14 @@ const StakingOverview = () => {
             chainID,
           })
         );
+        dispatch(
+          getDelegatorTotalRewards({
+            baseURL,
+            address,
+            chainID,
+            denom: currency.coinMinimalDenom,
+          })
+        );
       });
     }
   }, []);
@@ -65,12 +78,14 @@ const StakingOverview = () => {
           const validators = stakingData[chainID]?.validators;
           const currency = networks[chainID]?.network?.config?.currencies[0];
           const chainName = networks[chainID]?.network?.config?.chainName;
+          const rewards = rewardsData[chainID]?.delegatorRewards?.list;
           return (
             <ChainDelegations
               key={index}
               chainID={chainID}
               chainName={chainName}
               delegations={delegations}
+              rewards={rewards}
               validators={validators}
               currency={currency}
             />

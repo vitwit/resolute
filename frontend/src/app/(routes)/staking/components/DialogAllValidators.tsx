@@ -1,12 +1,7 @@
 import { Validators } from '@/types/staking';
 import { formatVotingPower } from '@/utils/denom';
 import { getValidatorStatus } from '@/utils/util';
-import {
-  Dialog,
-  DialogContent,
-  Pagination,
-  Tooltip,
-} from '@mui/material';
+import { Dialog, DialogContent, Pagination, Tooltip } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import ValidatorLogo from './ValidatorLogo';
@@ -58,7 +53,10 @@ const DialogAllValidators = ({
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        setSearchTerm('');
+        handleClose();
+      }}
       maxWidth="lg"
       className="opacity-95"
       PaperProps={{
@@ -72,7 +70,12 @@ const DialogAllValidators = ({
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="allvalidators px-10 py-6 flex justify-end w-[890px]">
-          <div onClick={() => handleClose()}>
+          <div
+            onClick={() => {
+              setSearchTerm('');
+              handleClose();
+            }}
+          >
             <Image
               className="cursor-pointer"
               src="/close-icon.svg"
@@ -375,11 +378,7 @@ const ValidatorComponent = ({
     <div className="flex justify-between items-center txt-sm text-white font-normal">
       <div className="flex gap-4 items-center">
         <div className="bg-[#fff] rounded-full">
-          <ValidatorLogo
-            identity={identity}
-            width={40}
-            height={40}
-          />
+          <ValidatorLogo identity={identity} width={40} height={40} />
         </div>
         <div className="flex flex-col gap-2 w-[200px]">
           <div className="flex gap-2 items-center cursor-default">
@@ -493,7 +492,7 @@ const Filtered = ({
           </div>
         </>
       ) : (
-        <>No validators found</>
+        <div className="text-white text-center">No validators found</div>
       )}
     </>
   );

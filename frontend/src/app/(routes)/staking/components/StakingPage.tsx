@@ -12,6 +12,7 @@ import {
 import ChainDelegations from './ChainDelegations';
 import StakingSidebar from './StakingSidebar';
 import ChainUnbondings from './ChainUnbondings';
+import { getDelegatorTotalRewards } from '@/store/features/distribution/distributionSlice';
 
 const StakingPage = ({ chainName }: { chainName: string }) => {
   const dispatch = useAppDispatch();
@@ -32,6 +33,10 @@ const StakingPage = ({ chainName }: { chainName: string }) => {
   const currency = useAppSelector(
     (state: RootState) =>
       state.wallet.networks[chainID].network?.config?.currencies[0]
+  );
+  const rewards = useAppSelector(
+    (state: RootState) =>
+      state.distribution.chains?.[chainID]?.delegatorRewards.list
   );
   const allChainInfo = networks[chainID];
   const chainInfo = allChainInfo?.network;
@@ -59,6 +64,14 @@ const StakingPage = ({ chainName }: { chainName: string }) => {
         chainID,
       })
     );
+    dispatch(
+      getDelegatorTotalRewards({
+        baseURL,
+        address,
+        chainID,
+        denom: currency.coinMinimalDenom,
+      })
+    );
   }, []);
 
   return (
@@ -72,6 +85,7 @@ const StakingPage = ({ chainName }: { chainName: string }) => {
             delegations={delegations}
             validators={validators}
             currency={currency}
+            rewards={rewards}
           />
         </div>
 
@@ -88,7 +102,11 @@ const StakingPage = ({ chainName }: { chainName: string }) => {
           </div>
         </div>
       </div>
-      <StakingSidebar validators={validators} currency={currency} />
+      <StakingSidebar
+        chainID={chainID}
+        validators={validators}
+        currency={currency}
+      />
     </div>
   );
 };

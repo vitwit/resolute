@@ -4,7 +4,7 @@
 }
 
 .staking-stats-card {
-  @apply bg-[#0E0B2633] rounded-2xl p-2;
+  @apply bg-[#FFFFFF0D] rounded-2xl p-2;
   backdrop-filter: blur(2px);
 }
 

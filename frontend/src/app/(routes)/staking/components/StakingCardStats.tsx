@@ -20,11 +20,11 @@ const StakingCardStats = ({
       />
       <StakingCardStatsItem
         name={'Rewards'}
-        value={String(rewards) + ' ' + coinDenom}
+        value={formatCoin(rewards, coinDenom)}
       />
       <StakingCardStatsItem
         name={'Commision'}
-        value={String(commission.toFixed(2)) + ' ' + '%'}
+        value={commission ? String(commission.toFixed(2)) + ' ' + '%' : '-'}
       />
     </div>
   );

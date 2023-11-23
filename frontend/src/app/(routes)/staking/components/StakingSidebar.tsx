@@ -5,22 +5,68 @@ import { Tooltip } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import DialogAllValidators from './DialogAllValidators';
-import { formatVotingPower } from '@/utils/denom';
+import { formatVotingPower, parseBalance } from '@/utils/denom';
 import ValidatorLogo from './ValidatorLogo';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { RootState } from '@/store/store';
+import { formatCoin } from '@/utils/util';
+import StakingStatsCard from './StakingStatsCard';
 
 const StakingSidebar = ({
   validators,
   currency,
+  chainID,
 }: {
   validators: Validators;
   currency: Currency;
+  chainID: string;
 }) => {
+  const stakedBalance = useAppSelector(
+    (state: RootState) =>
+      state.staking.chains?.[chainID]?.delegations.totalStaked || 0
+  );
+  const totalRewards = useAppSelector(
+    (state: RootState) =>
+      state.distribution.chains?.[chainID]?.delegatorRewards.totalRewards || 0
+  );
+  const tokens = [
+    {
+      amount: stakedBalance.toString(),
+      denom: currency.coinMinimalDenom,
+    },
+  ];
+  const rewardTokens = [
+    {
+      amount: parseInt(totalRewards.toString()).toString(),
+      denom: currency.coinMinimalDenom,
+    },
+  ];
   return (
     <div className="staking-sidebar">
       <div className="flex flex-col gap-6">
         <div className="flex gap-10">
-          <StakingStatsCard />
-          <StakingStatsCard />
+          <StakingStatsCard
+            name={'Staked Balance'}
+            value={formatCoin(
+              parseBalance(
+                tokens,
+                currency.coinDecimals,
+                currency.coinMinimalDenom
+              ),
+              currency.coinDenom
+            )}
+          />
+          <StakingStatsCard
+            name={'Rewards'}
+            value={formatCoin(
+              parseBalance(
+                rewardTokens,
+                currency.coinDecimals,
+                currency.coinMinimalDenom
+              ),
+              currency.coinDenom
+            )}
+          />
         </div>
         <div className="staking-sidebar-actions">
           <button className="staking-sidebar-actions-btn">Claim All</button>
@@ -37,29 +83,6 @@ const StakingSidebar = ({
 };
 
 export default StakingSidebar;
-
-const StakingStatsCard = () => {
-  return (
-    <div className="staking-stats-card w-full flex flex-col gap-2">
-      <div className="flex items-center">
-        <div className="w-10 h-10 flex-center-center">
-          <Image
-            src="/stake-icon.svg"
-            height={24}
-            width={24}
-            alt="Staked Balance"
-          />
-        </div>
-        <div className="text-sm text-white font-extralight leading-normal">
-          Staked Balance
-        </div>
-      </div>
-      <div className="px-2 text-lg font-bold leading-normal text-white">
-        8768
-      </div>
-    </div>
-  );
-};
 
 const AllValidators = ({
   validators,
@@ -136,11 +159,7 @@ const Validator = ({
     <div className="flex justify-between items-center">
       <div className="flex gap-4">
         <div className="bg-[#fff] rounded-full">
-          <ValidatorLogo
-            identity={identity}
-            height={40}
-            width={40}
-          />
+          <ValidatorLogo identity={identity} height={40} width={40} />
         </div>
         <div className="flex flex-col gap-2 w-[130px]">
           <div className="flex gap-2 items-center cursor-default">

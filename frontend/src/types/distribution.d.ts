@@ -4,7 +4,7 @@ interface DelegatorTotalRewardsRequest {
   baseURL: string;
   address: string;
   chainID: string;
-  denom?: string;
+  denom: string;
   pagination?: Pagination;
 }
 
@@ -15,7 +15,7 @@ interface Reward {
 
 interface DelegatorRewards {
   validator_address: string;
-  rewards: Reward[];
+  reward: Reward[];
 }
 
 interface DefaultState {

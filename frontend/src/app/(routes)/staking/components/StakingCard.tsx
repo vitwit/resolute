@@ -17,6 +17,7 @@ const StakingCard = ({
   commission,
   delegated,
   networkLogo,
+  rewards,
   coinDenom,
 }: {
   validator: string;
@@ -26,6 +27,7 @@ const StakingCard = ({
   delegated: number;
   networkLogo: string;
   coinDenom: string;
+  rewards: number;
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -65,7 +67,7 @@ const StakingCard = ({
         />
         <StakingCardStats
           delegated={delegated}
-          rewards={10}
+          rewards={rewards}
           commission={commission}
           coinDenom={coinDenom}
         />
@@ -97,7 +99,7 @@ export const StakingCardHeader = ({
     <div className="flex justify-between">
       <div className="flex-center-center gap-1 h-10">
         <ValidatorLogo identity={identity} width={24} height={24} />
-        <div className="txt-md font-medium">{validator}</div>
+        <div className="txt-md font-medium">{validator || '-'}</div>
       </div>
       <div className="flex-center-center gap-1">
         <Image src={networkLogo} height={20} width={20} alt={network} />
