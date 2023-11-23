@@ -21,7 +21,7 @@ export const getIBCBalances = (
     ibcBalances = [
       ...ibcBalances,
       {
-        balance: coin(Number(balancesList[i]?.amount), denomInfo?.origin_denom),
+        balance: coin(balancesList[i]?.amount, denomInfo?.origin_denom),
         decimals: denomInfo?.decimals,
       },
     ];

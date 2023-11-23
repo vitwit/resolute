@@ -4,13 +4,7 @@ import { useAppSelector } from './StateHooks';
 import { parseBalance } from '@/utils/denom';
 import { getIBCBalances } from '@/utils/ibc';
 
-const useGetAssetsAmount = () => {
-  const nameToChainIDs: Record<string, string> = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
-  );
-  const chainIDs = Object.keys(nameToChainIDs).map(
-    (chainName) => nameToChainIDs[chainName]
-  );
+const useGetAssetsAmount = (chainIDs: string[]) => {
   const stakingChains = useAppSelector(
     (state: RootState) => state.staking.chains
   );
