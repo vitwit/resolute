@@ -1,33 +1,32 @@
+import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import { formatDollarAmount } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 type AssetSummary = { icon: string; alt: string; type: string; amount: string };
 
-const WalletSummery = (props: {
-  available: number;
-  staked: number;
-  rewards: number;
-}) => {
-  const available = formatDollarAmount(props.available);
-  const staked = formatDollarAmount(props.staked);
-  const rewards = formatDollarAmount(props.rewards);
+const WalletSummery = ({ chainIDs }: { chainIDs: string[] }) => {
+  const [stakedAmount, availableAmount, rewardsAmount] =
+    useGetAssetsAmount(chainIDs);
+  const available = formatDollarAmount(availableAmount);
+  const staked = formatDollarAmount(stakedAmount);
+  const rewards = formatDollarAmount(rewardsAmount);
   const assetsSummaryData: AssetSummary[] = [
     {
-      icon: 'stakesAmount.svg',
+      icon: '/stakesAmount.svg',
       alt: 'stake',
       type: 'Staked Amount',
       amount: staked,
     },
     {
-      icon: 'rewardsAmount.svg',
+      icon: '/rewardsAmount.svg',
       alt: 'rewards',
       type: 'Rewards',
       amount: rewards,
     },
     {
-      icon: 'balanceAmount.svg',
+      icon: '/balanceAmount.svg',
       alt: 'available',
-      type: 'Wallet Balance',
+      type: 'Available',
       amount: available,
     },
   ];
@@ -52,7 +51,7 @@ const WalletSummaryCard = (props: AssetSummary) => {
   return (
     <div className="summary-card">
       <div className="flex w-full h-10">
-        <div className="flex items-center justify-center px-2">
+        <div className="flex items-center justify-center p-2">
           <Image src={icon} width={24} height={24} alt={alt}></Image>
         </div>
         <div className="flex items-center">

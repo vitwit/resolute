@@ -5,7 +5,7 @@ import { RootState } from '@/store/store';
 import chainDenoms from '@/utils/chainDenoms.json';
 const chainDenomsData = chainDenoms as AssetData;
 
-const useSortedAssets = (): [ParsedAsset[]] => {
+const useSortedAssets = (chainIDs: string[]): [ParsedAsset[]] => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const balanceChains = useAppSelector(
     (state: RootState) => state.bank.balances
@@ -13,12 +13,7 @@ const useSortedAssets = (): [ParsedAsset[]] => {
   const stakingChains = useAppSelector(
     (state: RootState) => state.staking.chains
   );
-  const nameToChainIDs: Record<string, string> = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
-  );
-  const chainIDs = Object.keys(nameToChainIDs).map(
-    (chainName) => nameToChainIDs[chainName]
-  );
+
   const tokensPriceInfo = useAppSelector(
     (state) => state.common.allTokensInfoState.info
   );
@@ -115,7 +110,7 @@ const useSortedAssets = (): [ParsedAsset[]] => {
     sortedAssets.sort((x, y) => y.usdValue - x.usdValue);
 
     return sortedAssets;
-  }, [chainIDs, balanceChains, networks, tokensPriceInfo]);
+  }, [chainIDs, balanceChains, networks, tokensPriceInfo, stakingChains]);
 
   return [sortedAssets];
 };

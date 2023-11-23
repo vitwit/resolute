@@ -174,11 +174,11 @@ function getFee(gas: number, gasPrice: string, granter?: string): StdFee {
 
 async function getAccount(restUrl: string, address: string): Promise<Account> {
   try {
-    const res: AxiosResponse<Account> = await axios.get(
+    const res: AxiosResponse<GetAccountResponse> = await axios.get(
       restUrl + '/cosmos/auth/v1beta1/accounts/' + address
     );
 
-    return res.data;
+    return res.data.account;
   } catch (error) {
     if (error instanceof AxiosError && error.response?.status === 404) {
       throw new Error('Account does not exist on chain');
@@ -350,7 +350,7 @@ async function sign(
   signatures: [Uint8Array] | [Buffer];
 }> {
   const account = await getAccount(restUrl, address);
-  const { account_number: accountNumber, sequence } = account;
+  const { account_number, sequence } = account;
   const txBodyBytes = makeBodyBytes(registry, messages, memo);
   let aminoMsgs;
   try {
@@ -367,7 +367,7 @@ async function sign(
       fee,
       chainId,
       memo,
-      accountNumber,
+      account_number,
       sequence
     );
     const { signature, signed } = await signer.signAmino(address, signDoc);
@@ -413,7 +413,7 @@ async function sign(
       txBodyBytes,
       authInfoBytes,
       chainId,
-      +accountNumber
+      +account_number
     );
     const { signature, signed } = await signer.signDirect(address, signDoc);
     return {
