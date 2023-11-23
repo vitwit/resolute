@@ -6,6 +6,7 @@ import walletSlice from './features/wallet/walletSlice';
 import commonSlice from './features/common/commonSlice';
 import stakeSlice from './features/staking/stakeSlice';
 import bankSlice from './features/bank/bankSlice';
+import distributionSlice from './features/distribution/distributionSlice';
 import authSlice from './features/auth/authSlice';
 
 export const store = configureStore({
@@ -16,6 +17,7 @@ export const store = configureStore({
     staking: stakeSlice,
     bank: bankSlice,
     auth: authSlice,
+    distribution: distributionSlice,
   },
 });
 
