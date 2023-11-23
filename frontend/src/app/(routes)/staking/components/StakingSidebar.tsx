@@ -1,15 +1,12 @@
 'use client';
 
 import { Validators } from '@/types/staking';
-import { Avatar, Tooltip } from '@mui/material';
-import { deepPurple } from '@mui/material/colors';
+import { Tooltip } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import DialogAllValidators from './DialogAllValidators';
 import { formatVotingPower } from '@/utils/denom';
 import ValidatorLogo from './ValidatorLogo';
-
-// TODO: Create css classes for repeated styles
 
 const StakingSidebar = ({
   validators,
@@ -141,7 +138,6 @@ const Validator = ({
         <div className="bg-[#fff] rounded-full">
           <ValidatorLogo
             identity={identity}
-            monikerName={moniker}
             height={40}
             width={40}
           />

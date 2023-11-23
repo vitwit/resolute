@@ -6,12 +6,10 @@ import React, { useEffect, useState } from 'react';
 
 const ValidatorLogo = ({
   identity,
-  monikerName,
   width,
   height,
 }: {
   identity: string;
-  monikerName: string;
   width: number;
   height: number;
 }) => {

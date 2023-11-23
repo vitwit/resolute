@@ -4,12 +4,8 @@ import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import StakingActionsMenu from './StakingActionsMenu';
 import StakingCardStats from './StakingCardStats';
-import { Avatar, Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import { capitalizeFirstLetter } from '@/utils/util';
-import { deepPurple } from '@mui/material/colors';
-import Axios, { AxiosError } from 'axios';
-import { ERR_UNKNOWN } from '@/utils/errors';
-import { get } from 'lodash';
 import ValidatorLogo from './ValidatorLogo';
 
 type ToogleMenu = () => void;
@@ -97,30 +93,10 @@ export const StakingCardHeader = ({
   network: string;
   networkLogo: string;
 }) => {
-  const [validatorPic, setValidatorPic] = useState<string>('');
-  useEffect(() => {
-    (async () => {
-      try {
-        const { status, data } = await Axios.get(
-          `https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`
-        );
-
-        if (status === 200) {
-          setValidatorPic(get(data, 'them[0].pictures.primary.url'));
-        } else {
-          setValidatorPic('');
-        }
-      } catch (error) {
-        if (error instanceof AxiosError)
-          console.log('Error while gettng profile pic', error.message);
-        console.log('Error while gettng profile pic', ERR_UNKNOWN);
-      }
-    })();
-  }, [identity]);
   return (
     <div className="flex justify-between">
       <div className="flex-center-center gap-1 h-10">
-        <ValidatorLogo identity={identity} monikerName={validator} width={24} height={24} />
+        <ValidatorLogo identity={identity} width={24} height={24} />
         <div className="txt-md font-medium">{validator}</div>
       </div>
       <div className="flex-center-center gap-1">

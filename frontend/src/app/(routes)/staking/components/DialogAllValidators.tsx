@@ -2,13 +2,11 @@ import { Validators } from '@/types/staking';
 import { formatVotingPower } from '@/utils/denom';
 import { getValidatorStatus } from '@/utils/util';
 import {
-  Avatar,
   Dialog,
   DialogContent,
   Pagination,
   Tooltip,
 } from '@mui/material';
-import { deepPurple } from '@mui/material/colors';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import ValidatorLogo from './ValidatorLogo';
@@ -379,7 +377,6 @@ const ValidatorComponent = ({
         <div className="bg-[#fff] rounded-full">
           <ValidatorLogo
             identity={identity}
-            monikerName={moniker}
             width={40}
             height={40}
           />
