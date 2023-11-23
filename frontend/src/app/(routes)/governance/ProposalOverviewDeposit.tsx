@@ -80,7 +80,12 @@ const ProposalOverviewDeposit = ({
         </div>
         {isDepositPopupOpen && (
           <>
-            <DepositPopup votingEndsInDays={2} denom={atomsValue} proposalId={123} proposalname={"Adjust Trade and Earn Rewards Margined Protocol"} />
+            <DepositPopup
+              votingEndsInDays={2}
+              denom={atomsValue}
+              proposalId={123}
+              proposalname={'Adjust Trade and Earn Rewards Margined Protocol'}
+            />
           </>
         )}
         <div className="space-y-4">
