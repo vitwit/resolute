@@ -19,7 +19,7 @@ const Staking = () => {
   );
 
   const [totalStakedAmount] =
-    useGetAssetsAmount();
+    useGetAssetsAmount(chainIDs);
 
   useEffect(() => {
     chainIDs.forEach((chainID) => {
