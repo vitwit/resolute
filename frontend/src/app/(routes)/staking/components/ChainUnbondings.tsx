@@ -31,6 +31,7 @@ const ChainUnbondings = ({
               validator={
                 validators?.active[row.validator_address]?.description.moniker
               }
+              identity={validators?.active[row.validator_address]?.description.identity}
               chainName={chainName}
               amount={parseFloat(entry.balance) / 10 ** currency?.coinDecimals}
               currency={currency}

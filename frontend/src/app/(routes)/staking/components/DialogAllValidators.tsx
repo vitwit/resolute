@@ -11,6 +11,7 @@ import {
 import { deepPurple } from '@mui/material/colors';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
+import ValidatorLogo from './ValidatorLogo';
 
 type HandleClose = () => void;
 
@@ -202,6 +203,8 @@ const ActiveValidators = ({
               {slicedValidators?.map((validator, index) => {
                 const moniker =
                   validators.active[validator]?.description.moniker;
+                const identity =
+                  validators.active[validator]?.description.identity;
                 const commission =
                   Number(
                     validators.active[validator]?.commission?.commission_rates
@@ -215,6 +218,7 @@ const ActiveValidators = ({
                   <ValidatorComponent
                     key={index + PER_PAGE * (currentPage - 1)}
                     moniker={moniker}
+                    identity={identity}
                     commission={commission}
                     tokens={tokens}
                     currency={currency}
@@ -300,6 +304,8 @@ const InactiveValidators = ({
               {slicedValidators?.map((validator, index) => {
                 const moniker =
                   validators.inactive[validator]?.description.moniker;
+                const identity =
+                  validators.inactive[validator]?.description.identity;
                 const commission =
                   Number(
                     validators.inactive[validator]?.commission?.commission_rates
@@ -313,6 +319,7 @@ const InactiveValidators = ({
                   <ValidatorComponent
                     key={index + PER_PAGE * (currentPage - 1)}
                     moniker={moniker}
+                    identity={identity}
                     commission={commission}
                     tokens={tokens}
                     currency={currency}
@@ -349,6 +356,7 @@ const InactiveValidators = ({
 
 const ValidatorComponent = ({
   moniker,
+  identity,
   commission,
   tokens,
   currency,
@@ -357,6 +365,7 @@ const ValidatorComponent = ({
   active,
 }: {
   moniker: string;
+  identity: string;
   commission: number;
   tokens: number;
   currency: Currency;
@@ -368,7 +377,12 @@ const ValidatorComponent = ({
     <div className="flex justify-between items-center txt-sm text-white font-normal">
       <div className="flex gap-4 items-center">
         <div className="bg-[#fff] rounded-full">
-          <Avatar sx={{ width: 40, height: 40, bgcolor: deepPurple[300] }} />
+          <ValidatorLogo
+            identity={identity}
+            monikerName={moniker}
+            width={40}
+            height={40}
+          />
         </div>
         <div className="flex flex-col gap-2 w-[200px]">
           <div className="flex gap-2 items-center cursor-default">
@@ -442,6 +456,7 @@ const Filtered = ({
                 validatorsSet = validators.inactive;
               }
               const moniker = validatorsSet[validator]?.description.moniker;
+              const identity = validatorsSet[validator]?.description.identity;
               const commission =
                 Number(
                   validatorsSet[validator]?.commission?.commission_rates.rate
@@ -454,6 +469,7 @@ const Filtered = ({
                 <ValidatorComponent
                   key={index + PER_PAGE * (currentPage - 1)}
                   moniker={moniker}
+                  identity={identity}
                   commission={commission}
                   tokens={tokens}
                   currency={currency}

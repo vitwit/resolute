@@ -7,11 +7,16 @@ import StakingCardStats from './StakingCardStats';
 import { Avatar, Tooltip } from '@mui/material';
 import { capitalizeFirstLetter } from '@/utils/util';
 import { deepPurple } from '@mui/material/colors';
+import Axios, { AxiosError } from 'axios';
+import { ERR_UNKNOWN } from '@/utils/errors';
+import { get } from 'lodash';
+import ValidatorLogo from './ValidatorLogo';
 
 type ToogleMenu = () => void;
 
 const StakingCard = ({
   validator,
+  identity,
   chainName,
   commission,
   delegated,
@@ -19,6 +24,7 @@ const StakingCard = ({
   coinDenom,
 }: {
   validator: string;
+  identity: string;
   chainName: string;
   commission: number;
   delegated: number;
@@ -57,6 +63,7 @@ const StakingCard = ({
       <div className="staking-card">
         <StakingCardHeader
           validator={validator}
+          identity={identity}
           network={chainName}
           networkLogo={networkLogo}
         />
@@ -81,17 +88,39 @@ export default StakingCard;
 
 export const StakingCardHeader = ({
   validator,
+  identity,
   network,
   networkLogo,
 }: {
   validator: string;
+  identity: string;
   network: string;
   networkLogo: string;
 }) => {
+  const [validatorPic, setValidatorPic] = useState<string>('');
+  useEffect(() => {
+    (async () => {
+      try {
+        const { status, data } = await Axios.get(
+          `https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`
+        );
+
+        if (status === 200) {
+          setValidatorPic(get(data, 'them[0].pictures.primary.url'));
+        } else {
+          setValidatorPic('');
+        }
+      } catch (error) {
+        if (error instanceof AxiosError)
+          console.log('Error while gettng profile pic', error.message);
+        console.log('Error while gettng profile pic', ERR_UNKNOWN);
+      }
+    })();
+  }, [identity]);
   return (
     <div className="flex justify-between">
       <div className="flex-center-center gap-1 h-10">
-        <Avatar sx={{ width: 32, height: 32, bgcolor: deepPurple[300] }} />
+        <ValidatorLogo identity={identity} monikerName={validator} width={24} height={24} />
         <div className="txt-md font-medium">{validator}</div>
       </div>
       <div className="flex-center-center gap-1">
@@ -120,7 +149,7 @@ const StakingCardActions = ({
           icon={'/claim-and-stake-icon.svg'}
         />
       </div>
-      <Tooltip ref={menuRef2} title="More options" placement='top'>
+      <Tooltip ref={menuRef2} title="More options" placement="top">
         <div className="cursor-pointer" onClick={() => toggleMenu()}>
           <Image src="/menu-icon.svg" height={32} width={32} alt="Actions" />
         </div>

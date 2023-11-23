@@ -6,6 +6,7 @@ import { Tooltip } from '@mui/material';
 
 const UnbondingCard = ({
   validator,
+  identity,
   chainName,
   amount,
   networkLogo,
@@ -13,6 +14,7 @@ const UnbondingCard = ({
   completionTime,
 }: {
   validator: string;
+  identity: string;
   chainName: string;
   amount: number;
   networkLogo: string;
@@ -23,6 +25,7 @@ const UnbondingCard = ({
     <div className="unbonding-card">
       <StakingCardHeader
         validator={validator}
+        identity={identity}
         network={chainName}
         networkLogo={networkLogo}
       />

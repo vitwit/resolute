@@ -7,6 +7,7 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import DialogAllValidators from './DialogAllValidators';
 import { formatVotingPower } from '@/utils/denom';
+import ValidatorLogo from './ValidatorLogo';
 
 // TODO: Create css classes for repeated styles
 
@@ -91,6 +92,7 @@ const AllValidators = ({
       </div>
       {slicedValidatorsList.map((validator, index) => {
         const moniker = validators.active[validator]?.description.moniker;
+        const identity = validators.active[validator]?.description.identity;
         const commission =
           Number(
             validators.active[validator]?.commission?.commission_rates.rate
@@ -102,6 +104,7 @@ const AllValidators = ({
             <Validator
               key={index}
               moniker={moniker}
+              identity={identity}
               commission={commission}
               tokens={tokens}
               currency={currency}
@@ -121,11 +124,13 @@ const AllValidators = ({
 
 const Validator = ({
   moniker,
+  identity,
   commission,
   tokens,
   currency,
 }: {
   moniker: string;
+  identity: string;
   commission: number;
   tokens: number;
   currency: Currency;
@@ -134,7 +139,12 @@ const Validator = ({
     <div className="flex justify-between items-center">
       <div className="flex gap-4">
         <div className="bg-[#fff] rounded-full">
-          <Avatar sx={{ width: 40, height: 40, bgcolor: deepPurple[300] }} />
+          <ValidatorLogo
+            identity={identity}
+            monikerName={moniker}
+            height={40}
+            width={40}
+          />
         </div>
         <div className="flex flex-col gap-2 w-[130px]">
           <div className="flex gap-2 items-center cursor-default">

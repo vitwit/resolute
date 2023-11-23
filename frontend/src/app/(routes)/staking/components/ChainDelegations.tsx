@@ -30,6 +30,8 @@ const ChainDelegations = ({
             validators?.active[row.delegation.validator_address]?.description
               .moniker
           }
+          identity={validators?.active[row.delegation.validator_address]?.description
+            .identity}
           chainName={chainName}
           commission={
             Number(
