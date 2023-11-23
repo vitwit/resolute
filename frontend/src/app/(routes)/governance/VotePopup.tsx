@@ -5,7 +5,7 @@ import './style.css';
 import RadioButtons from './CustomRadioButton';
 import { Dialog, DialogContent } from '@mui/material';
 
-const VotePopup = ({ votingEndsInDays }: { votingEndsInDays: number }) => {
+const VotePopup = ({ votingEndsInDays, proposalId, proposalname}: { votingEndsInDays: number; proposalId: number; proposalname: string }) => {
   const [voteOption, setVoteOption] = useState<string>('');
   const [isOpen, setIsOpen] = useState(true);
 
@@ -58,13 +58,13 @@ const VotePopup = ({ votingEndsInDays }: { votingEndsInDays: number }) => {
                         height={40}
                         alt="Cosmos-Logo"
                       />
-                      <p className="proposal-text-small">#123 | Proposal</p>
+                      <p className="proposal-text-small">{proposalId} | Proposal</p>
                     </div>
                     <div className="proposal-text-normal">
-                      Adjust Trade and Earn Rewards Margined Protocol
+                     {proposalname}
                     </div>
-                    <div className="proposal-text-small">
-                      Voting ends in 2 days
+                    <div className="proposal-text-small">{`Voting ends in ${votingEndsInDays} days`}
+                      
                     </div>
                   </div>
                 </div>

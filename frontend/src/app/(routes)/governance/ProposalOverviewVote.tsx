@@ -79,7 +79,11 @@ const ProposalOverviewVote = ({
         </div>
         {isVotePopupOpen && (
           <>
-            <VotePopup votingEndsInDays={2} />
+            <VotePopup
+              votingEndsInDays={2}
+              proposalId={123}
+              proposalname={'Adjust Trade and Earn Rewards Margined Protocol'}
+            />
           </>
         )}
         <div className="space-y-4">
