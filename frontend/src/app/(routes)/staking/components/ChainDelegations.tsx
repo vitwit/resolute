@@ -35,16 +35,16 @@ const ChainDelegations = ({
           const reward = rewards[i].reward;
           for (let j = 0; j < reward.length; j++) {
             if (reward[j].denom === currency.coinMinimalDenom) {
-              let temp = validatorRewards;
-              temp[rewards[i].validator_address] =
+              const valReward = validatorRewards;
+              valReward[rewards[i].validator_address] =
                 parseFloat(reward[j].amount) / 10 ** currency?.coinDecimals;
-              setValidatorRewards(temp);
+              setValidatorRewards(valReward);
             }
           }
         } else {
-          let temp = validatorRewards;
-          temp[rewards[i].validator_address] = 0.0;
-          setValidatorRewards(temp);
+          const valReward = validatorRewards;
+          valReward[rewards[i].validator_address] = 0.0;
+          setValidatorRewards(valReward);
         }
       }
     }
