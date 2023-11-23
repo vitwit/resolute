@@ -110,7 +110,7 @@ const useSortedAssets = (chainIDs: string[]): [ParsedAsset[]] => {
     sortedAssets.sort((x, y) => y.usdValue - x.usdValue);
 
     return sortedAssets;
-  }, [chainIDs, balanceChains, networks, tokensPriceInfo]);
+  }, [chainIDs, balanceChains, networks, tokensPriceInfo, stakingChains]);
 
   return [sortedAssets];
 };

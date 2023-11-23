@@ -26,7 +26,7 @@ const WalletSummery = ({ chainIDs }: { chainIDs: string[] }) => {
     {
       icon: '/balanceAmount.svg',
       alt: 'available',
-      type: 'Available Balance',
+      type: 'Available',
       amount: available,
     },
   ];

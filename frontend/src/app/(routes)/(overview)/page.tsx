@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React from 'react';
 import OverviewPage from './overview-components/OverviewPage';
@@ -14,7 +14,6 @@ const Overview = () => {
     (chainName) => nameToChainIDs[chainName]
   );
   return <OverviewPage chainIDs={chainIDs} />;
-  //return <>Overview</>
 };
 
 export default Overview;
