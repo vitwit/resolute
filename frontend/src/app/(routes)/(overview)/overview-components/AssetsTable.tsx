@@ -2,10 +2,11 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import { formatAmount, formatCoin, formatDollarAmount } from '@/utils/util';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
-const AssetsTable = () => {
-  const [sortedAssets] = useSortedAssets();
+const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
+  const [sortedAssets] = useSortedAssets(chainIDs);
   const balancesLoading = useAppSelector(
     (state) => state.bank.balancesLoading > 0
   );
@@ -23,7 +24,7 @@ const AssetsTable = () => {
             <table className="w-full text-sm leading-normal">
               <thead className="border-b-[0.5px] border-[#B0B0B033] relative">
                 <tr className="text-left">
-                  <th className="w-1/5">Chains</th>
+                  <th className="w-1/5">Available</th>
                   <th className="w-1/5">Staked</th>
                   <th className="w-1/4">Rewards</th>
                   <th className="w-1/4">Price</th>
@@ -35,9 +36,14 @@ const AssetsTable = () => {
                   <tr key={asset.chainID + asset.denom}>
                     <td>
                       <div>{formatCoin(asset.balance, asset.displayDenom)}</div>
-                      <div className="text-xs text-[#a7a2b5] font-thin leading-[normal]">
-                        on {asset.chainName}
-                      </div>
+                      {chainIDs.length > 1 && (
+                        <div className="text-xs text-[#a7a2b5] font-thin leading-[normal]">
+                          on{' '}
+                          <Link href={`/overview/${asset.chainName}`}>
+                            {asset.chainName}
+                          </Link>
+                        </div>
+                      )}
                     </td>
                     <td>
                       {asset.type === 'native'
@@ -50,7 +56,10 @@ const AssetsTable = () => {
                         : '-'}
                     </td>
                     <td>
-                      <div className="flex gap-2">
+                      <div
+                        className="flex gap-2"
+                        style={{ alignItems: 'flex-end' }}
+                      >
                         <div>{formatDollarAmount(asset.usdPrice)}</div>
                         <div className="flex">
                           <Image
@@ -61,12 +70,13 @@ const AssetsTable = () => {
                             width={16}
                             alt="inflation change"
                           />
-                          <div className="text-[#E57575]">
-                            {formatAmount(Math.abs(asset.inflation))}
+                          <div className="text-[#E57575] text-[12px]">
+                            {formatAmount(Math.abs(asset.inflation))}%
                           </div>
                         </div>
                       </div>
                     </td>
+
                     <td>
                       <div className="flex justify-between gap-1">
                         <div className="asset-action">

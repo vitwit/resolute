@@ -11,22 +11,13 @@ import {
 import WalletSummery from './WalletSummery';
 import TopNav from './TopNav';
 import History from './History';
-import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import PageAd from './PageAd';
 import AssetsTable from './AssetsTable';
+import AccountSummery from './AccountSummary';
 
-const OverviewPage = () => {
+const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
-  const nameToChainIDs: Record<string, string> = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
-  );
-  const chainIDs = Object.keys(nameToChainIDs).map(
-    (chainName) => nameToChainIDs[chainName]
-  );
-
-  const [totalStakedAmount, totalAvailableAmount, totalRewardsAmount] =
-    useGetAssetsAmount();
 
   useEffect(() => {
     chainIDs.forEach((chainID) => {
@@ -64,15 +55,12 @@ const OverviewPage = () => {
     <div className="w-full flex justify-between">
       <div className="w-full px-10 py-6 space-y-6 overflow-y-scroll min-h-[800px] h-screen">
         <TopNav />
-        <WalletSummery
-          available={totalAvailableAmount}
-          staked={totalStakedAmount}
-          rewards={totalRewardsAmount}
-        />
+        <WalletSummery chainIDs={chainIDs} />
+        {chainIDs.length === 1 && <AccountSummery chainID={chainIDs[0]} />}
         <PageAd />
-        <AssetsTable />
+        <AssetsTable chainIDs={chainIDs} />
       </div>
-      <History />
+      <History chainIDs={chainIDs} />
     </div>
   );
 };
