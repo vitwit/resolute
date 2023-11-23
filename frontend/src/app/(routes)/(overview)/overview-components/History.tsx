@@ -1,16 +1,13 @@
-import Image from 'next/image';
 import React from 'react';
 import SideAd from './SideAd';
 import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import { formatDollarAmount } from '@/utils/util';
-import Profile from './Profile';
+import TopNav from '@/components/TopNav';
 
 const History = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
     <div className="right-section">
-      <div className="flex justify-between">
-        <SelectNetwork /> <Profile />
-      </div>
+      <TopNav />
 
       <Balance chainIDs={chainIDs} />
       <SideAd />
@@ -20,32 +17,6 @@ const History = ({ chainIDs }: { chainIDs: string[] }) => {
 };
 
 export default History;
-
-const SelectNetwork = () => {
-  return (
-    <div>
-      <div className="flex gap-2 items-center cursor-pointer">
-        <Image
-          src="/all-networks-icon.png"
-          height={36}
-          width={36}
-          alt="All Networks"
-        />
-        <div className="text-md font-medium leading-normal text-white">
-          All Networks
-        </div>
-        <div>
-          <Image
-            src="/drop-down-icon.svg"
-            height={16}
-            width={16}
-            alt="Select Network"
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
   const [staked, available, rewards] = useGetAssetsAmount(chainIDs);
