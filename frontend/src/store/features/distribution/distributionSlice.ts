@@ -15,6 +15,7 @@ import { ERR_UNKNOWN } from '@/utils/errors';
 import { signAndBroadcast } from '@/utils/signing';
 import { WithdrawAllRewardsMsg } from '@/txns/distribution/withDrawRewards';
 import { TxStatus } from '@/types/enums';
+import { GAS_FEE } from '@/utils/constants';
 
 const initialState: DistributionStoreInitialState = {
   chains: {},
@@ -50,7 +51,7 @@ export const txWithdrawAllRewards = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         msgs,
-        860000,
+        GAS_FEE,
         '',
         `${data.feeAmount}${data.denom}`,
         data.rest,
