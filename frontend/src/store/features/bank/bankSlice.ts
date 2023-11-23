@@ -9,6 +9,7 @@ import { GAS_FEE } from '../../../utils/constants';
 import { MultiTxnsInputs, TxSendInputs } from '../../../types/bank';
 import { TxStatus } from '../../../types/enums';
 import { ERR_UNKNOWN } from '@/utils/errors';
+import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 
 interface Balance {
   list: Coin[];
@@ -84,7 +85,10 @@ export const multiTxns = createAsyncThunk(
 
 export const txBankSend = createAsyncThunk(
   'bank/tx-bank-send',
-  async (data: TxSendInputs, { rejectWithValue, fulfillWithValue }) => {
+  async (
+    data: TxSendInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
     try {
       const msg = SendMsg(data.from, data.to, data.amount, data.denom);
       const result = await signAndBroadcast(
@@ -99,6 +103,26 @@ export const txBankSend = createAsyncThunk(
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
+        const transaction: Transaction = {
+          code: 0,
+          transactionHash: result.transactionHash,
+          height: result.height || '-',
+          rawLog: result.rawLog || '-',
+          gasUsed: result.gasUsed || '-',
+          gasWanted: result.gasWanted || '-',
+          fee: result.fee || [],
+          time: result.time || '-',
+          msgs: [msg],
+          chainID: data.basicChainInfo.chainID,
+          address: data.from,
+        };
+        dispatch(
+          addTransactions({
+            chainID: data.basicChainInfo.chainID,
+            address: data.from,
+            transactions: [transaction],
+          })
+        );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);

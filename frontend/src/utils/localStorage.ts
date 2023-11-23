@@ -40,3 +40,24 @@ export function getMainnets(): Network[] {
   }
   return [];
 }
+
+export function getTransactions(
+  chainID: string,
+  address: string
+): Transaction[] {
+  const key = address + ' ' + chainID;
+  const transactions = localStorage.getItem(key);
+  if (transactions) return JSON.parse(transactions);
+  return [];
+}
+
+export function addTransanctions(
+  chainID: string,
+  address: string,
+  transactions: Transaction[]
+) {
+  let storedTransactions = getTransactions(chainID, address);
+  storedTransactions = [...storedTransactions, ...transactions];
+  const key = address + ' ' + chainID;
+  localStorage.set(key, JSON.stringify(storedTransactions));
+}

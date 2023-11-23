@@ -5,3 +5,8 @@ interface BasicChainInfo {
   rest: string;
   rpc: string;
 }
+
+interface Coin {
+  amount: string;
+  denom: string;
+}

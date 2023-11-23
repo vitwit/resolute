@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getWalletAmino } from '../../../txns/execute';
 import { isWalletInstalled } from './walletService';
 import { setConnected, setWalletName } from '../../../utils/localStorage';
+import { loadChainTransactions } from '../transactionHistory/transactionHistorySlice';
 
 declare let window: WalletWindow;
 
@@ -43,7 +44,7 @@ export const establishWalletConnection = createAsyncThunk(
       networks: Network[];
       walletName: string;
     },
-    { rejectWithValue, fulfillWithValue }
+    { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     const networks = data.networks;
 
@@ -83,6 +84,12 @@ export const establishWalletConnection = createAsyncThunk(
           const walletInfo = await window.wallet.getKey(chainId);
           walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString(
             'base64'
+          );
+          dispatch(
+            loadChainTransactions({
+              chainID: chainId,
+              address: walletInfo.bech32Address,
+            })
           );
           delete walletInfo?.address;
           walletName = walletInfo?.name;

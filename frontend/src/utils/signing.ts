@@ -266,11 +266,10 @@ async function broadcast(
         if (
           error?.response?.data?.message === 'transaction indexing is disabled'
         ) {
-          const result = parseTxResult({
+          return {
             code: 0,
-            txhash: txId,
-          });
-          return result;
+            transactionHash: txId,
+          };
         }
       }
 
@@ -306,6 +305,8 @@ function parseTxResult(result: TxResponse): ParsedTxResponse {
     transactionHash: result.txhash,
     gasUsed: result.gas_used,
     gasWanted: result.gas_wanted,
+    fee: result.tx.auth_info.fee.amount,
+    time: result.timestamp,
   };
 }
 
