@@ -7,6 +7,7 @@ import { cloneDeep } from 'lodash';
 export interface AccountInfoState {
   status: TxStatus;
   errMsg: string;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   account: BaseAccount | any;
 }
 
@@ -35,6 +36,7 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     resetAccountsInfo: (state) => {
+      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
       state = initialState;
     },
   },

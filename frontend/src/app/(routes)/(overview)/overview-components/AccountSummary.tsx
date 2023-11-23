@@ -1,6 +1,6 @@
 import { CopyToClipboard } from '@/components/CopyToClipboard';
 import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
-import { shortenAddress } from '@/utils/util';
+import { shortenMsg } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 type AssetSummary = {
@@ -21,7 +21,7 @@ const AccountSummery = ({ chainID }: { chainID: string }) => {
       value: (
         <CopyToClipboard
           message={pubkey}
-          formattedMessage={shortenAddress(pubkey, 15)}
+          formattedMessage={shortenMsg(pubkey, 15)}
         />
       ),
     },
