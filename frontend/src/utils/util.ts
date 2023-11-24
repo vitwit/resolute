@@ -99,6 +99,10 @@ export const formatCoin = (amount: number, denom: string): string => {
   return parsedAmount + ' ' + denom;
 };
 
+export function shortenMsg(Msg: string, maxCharacters: number) {
+  return Msg.slice(0, maxCharacters) + '...';
+}
+
 export function shortenAddress(bech32: string, maxCharacters: number) {
   if (maxCharacters >= bech32?.length) {
     return bech32;

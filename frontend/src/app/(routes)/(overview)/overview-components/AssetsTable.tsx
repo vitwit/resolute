@@ -76,7 +76,6 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
                         </div>
                       </div>
                     </td>
-
                     <td>
                       <div className="flex justify-between gap-1">
                         <div className="asset-action">

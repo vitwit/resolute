@@ -8,6 +8,7 @@ import stakeSlice from './features/staking/stakeSlice';
 import bankSlice from './features/bank/bankSlice';
 import distributionSlice from './features/distribution/distributionSlice';
 import transactionHistorySlice from './features/transactionHistory/transactionHistorySlice';
+import authSlice from './features/auth/authSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     common: commonSlice,
     staking: stakeSlice,
     bank: bankSlice,
+    auth: authSlice,
     distribution: distributionSlice,
     transactionHistory: transactionHistorySlice,
   },
