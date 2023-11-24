@@ -6,14 +6,16 @@ export interface BasicAccountInfo {
   accountNumber: string;
 }
 const useGetAccountInfo = (chainID: string) => {
-  // todo: auth slice
+  const authInfo = useAppSelector((state) => state.auth[chainID]);
+  const sequence = authInfo?.account.sequence || '-';
+  const accountNumber = authInfo?.account.account_number || '-';
   const pubkey = useAppSelector(
     (state) => state.wallet.networks[chainID].walletInfo.pubKey
   );
   const accountInfo: BasicAccountInfo = {
     pubkey,
-    sequence: '-',
-    accountNumber: '-',
+    sequence,
+    accountNumber,
   };
   return [accountInfo];
 };
