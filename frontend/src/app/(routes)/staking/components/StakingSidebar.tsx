@@ -2,7 +2,6 @@
 
 import { Validators } from '@/types/staking';
 import { Tooltip } from '@mui/material';
-import Image from 'next/image';
 import React, { useState } from 'react';
 import DialogAllValidators from './DialogAllValidators';
 import { formatVotingPower, parseBalance } from '@/utils/denom';
@@ -136,7 +135,6 @@ const AllValidators = ({
         handleClose={handleClose}
         open={allValidatorsDialogOpen}
         validators={validators}
-        currency={currency}
       />
     </div>
   );
@@ -161,19 +159,13 @@ const Validator = ({
         <div className="bg-[#fff] rounded-full">
           <ValidatorLogo identity={identity} height={40} width={40} />
         </div>
-        <div className="flex flex-col gap-2 w-[130px]">
+        <div className="flex flex-col justify-center gap-2 w-[130px]">
           <div className="flex gap-2 items-center cursor-default">
             <Tooltip title={moniker} placement="top">
               <div className="text-[14px] font-light leading-3 truncate">
                 {moniker}
               </div>
             </Tooltip>
-            <Image
-              src="/check-circle-icon.svg"
-              height={16}
-              width={16}
-              alt="Check"
-            />
           </div>
           <div className="text-[12px] text-[#FFFFFFBF] font-extralight leading-3">
             {formatVotingPower(tokens, currency.coinDecimals)}
@@ -181,7 +173,7 @@ const Validator = ({
         </div>
       </div>
       <div className="text-[12px] text-[#FFFFFFBF] font-extralight leading-3">
-        {commission.toFixed(2)}% Commission
+      {commission ? String(commission) + '%' : '-'} Commission
       </div>
       <div>
         <button className="px-3 py-[6px] primary-gradient text-[12px] leading-[20px] rounded-lg font-medium">

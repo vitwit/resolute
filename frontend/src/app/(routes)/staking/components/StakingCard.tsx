@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import StakingActionsMenu from './StakingActionsMenu';
 import StakingCardStats from './StakingCardStats';
 import { Tooltip } from '@mui/material';
-import { capitalizeFirstLetter } from '@/utils/util';
 import ValidatorLogo from './ValidatorLogo';
 
 type ToogleMenu = () => void;
@@ -97,15 +96,18 @@ export const StakingCardHeader = ({
 }) => {
   return (
     <div className="flex justify-between">
-      <div className="flex-center-center gap-1 h-10">
-        <ValidatorLogo identity={identity} width={24} height={24} />
-        <div className="txt-md font-medium">{validator || '-'}</div>
-      </div>
-      <div className="flex-center-center gap-1">
-        <Image src={networkLogo} height={20} width={20} alt={network} />
-        <div className="txt-sm font-extralight">
-          {capitalizeFirstLetter(network)}
+      <Tooltip title={validator} placement="top-start">
+        <div className="flex-center-center gap-1 h-10 cursor-default">
+          <ValidatorLogo identity={identity} width={24} height={24} />
+          <div className="txt-md font-medium w-[100px] truncate">
+            {validator || '-'}
+          </div>
         </div>
+      </Tooltip>
+      <div className="flex-center-center gap-1">
+        <Tooltip title={network} placement="left">
+          <Image src={networkLogo} height={24} width={24} alt={network} />
+        </Tooltip>
       </div>
     </div>
   );

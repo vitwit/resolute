@@ -153,3 +153,14 @@ export function shortenAddress(bech32: string, maxCharacters: number) {
 
   return prefix + '1' + former + '...' + latter;
 }
+
+export const getValidatorRank = (
+  validator: string,
+  validatorsList: string[]
+): string => {
+  const index = validatorsList.indexOf(validator);
+  if (index !== -1) {
+    return '#' + String(index + 1);
+  }
+  return '#-';
+};

@@ -15,7 +15,7 @@ const StakingCardStats = ({
   return (
     <div className="flex justify-between mt-4">
       <StakingCardStatsItem
-        name={'Staked Balance'}
+        name={'Staked'}
         value={formatCoin(delegated, coinDenom)}
       />
       <StakingCardStatsItem
@@ -24,7 +24,7 @@ const StakingCardStats = ({
       />
       <StakingCardStatsItem
         name={'Commision'}
-        value={commission ? String(commission.toFixed(2)) + ' ' + '%' : '-'}
+        value={commission ? String(commission) + '%' : '-'}
       />
     </div>
   );

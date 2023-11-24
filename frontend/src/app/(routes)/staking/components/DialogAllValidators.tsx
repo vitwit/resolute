@@ -1,6 +1,5 @@
 import { Validators } from '@/types/staking';
-import { formatVotingPower } from '@/utils/denom';
-import { getValidatorStatus } from '@/utils/util';
+import { getValidatorRank, getValidatorStatus } from '@/utils/util';
 import { Dialog, DialogContent, Pagination, Tooltip } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
@@ -40,12 +39,10 @@ const DialogAllValidators = ({
   handleClose,
   open,
   validators,
-  currency,
 }: {
   handleClose: HandleClose;
   open: boolean;
   validators: Validators;
-  currency: Currency;
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [active, setActive] = useState<boolean>(true);
@@ -134,17 +131,9 @@ const DialogAllValidators = ({
           </div>
         </div>
         {active ? (
-          <ActiveValidators
-            validators={validators}
-            currency={currency}
-            searchTerm={searchTerm}
-          />
+          <ActiveValidators validators={validators} searchTerm={searchTerm} />
         ) : (
-          <InactiveValidators
-            validators={validators}
-            currency={currency}
-            searchTerm={searchTerm}
-          />
+          <InactiveValidators validators={validators} searchTerm={searchTerm} />
         )}
       </DialogContent>
     </Dialog>
@@ -155,11 +144,9 @@ export default DialogAllValidators;
 
 const ActiveValidators = ({
   validators,
-  currency,
   searchTerm,
 }: {
   validators: Validators;
-  currency: Currency;
   searchTerm: string;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -194,7 +181,6 @@ const ActiveValidators = ({
             <Filtered
               filtered={filtered}
               validators={validators}
-              currency={currency}
               active={true}
             />
           </>
@@ -211,9 +197,12 @@ const ActiveValidators = ({
                     validators.active[validator]?.commission?.commission_rates
                       .rate
                   ) * 100;
-                const tokens = Number(validators.active[validator]?.tokens);
                 const jailed = validators.active[validator]?.jailed;
                 const status = validators.active[validator]?.status;
+                const rank = getValidatorRank(
+                  validator,
+                  validators.activeSorted
+                );
 
                 return (
                   <ValidatorComponent
@@ -221,11 +210,10 @@ const ActiveValidators = ({
                     moniker={moniker}
                     identity={identity}
                     commission={commission}
-                    tokens={tokens}
-                    currency={currency}
                     jailed={jailed}
                     status={status}
                     active={true}
+                    rank={rank}
                   />
                 );
               })}
@@ -256,11 +244,9 @@ const ActiveValidators = ({
 
 const InactiveValidators = ({
   validators,
-  currency,
   searchTerm,
 }: {
   validators: Validators;
-  currency: Currency;
   searchTerm: string;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -295,7 +281,6 @@ const InactiveValidators = ({
             <Filtered
               filtered={filtered}
               validators={validators}
-              currency={currency}
               active={false}
             />
           </>
@@ -312,9 +297,12 @@ const InactiveValidators = ({
                     validators.inactive[validator]?.commission?.commission_rates
                       .rate
                   ) * 100;
-                const tokens = Number(validators.inactive[validator]?.tokens);
                 const jailed = validators.inactive[validator]?.jailed;
                 const status = validators.inactive[validator]?.status;
+                const rank = getValidatorRank(validator, [
+                  ...validators.activeSorted,
+                  ...validators.inactiveSorted,
+                ]);
 
                 return (
                   <ValidatorComponent
@@ -322,11 +310,10 @@ const InactiveValidators = ({
                     moniker={moniker}
                     identity={identity}
                     commission={commission}
-                    tokens={tokens}
-                    currency={currency}
                     jailed={jailed}
                     status={status}
                     active={false}
+                    rank={rank}
                   />
                 );
               })}
@@ -359,20 +346,18 @@ const ValidatorComponent = ({
   moniker,
   identity,
   commission,
-  tokens,
-  currency,
   jailed,
   status,
   active,
+  rank,
 }: {
   moniker: string;
   identity: string;
   commission: number;
-  tokens: number;
-  currency: Currency;
   jailed: boolean;
   status: string;
   active: boolean;
+  rank: string;
 }) => {
   return (
     <div className="flex justify-between items-center txt-sm text-white font-normal">
@@ -387,20 +372,12 @@ const ValidatorComponent = ({
                 {moniker}
               </div>
             </Tooltip>
-            <Image
-              src="/check-circle-icon.svg"
-              height={16}
-              width={16}
-              alt="Check"
-            />
           </div>
         </div>
       </div>
-      <div className="leading-3">
-        {formatVotingPower(tokens, currency.coinDecimals)}
-      </div>
+      <div className="leading-3">{rank}</div>
       <div className="leading-3 min-w-[132px] text-center">
-        {commission.toFixed(2)}% Commission
+        {commission ? String(commission) + '%' : '-'} Commission
       </div>
       {active ? null : (
         <div className="min-w-[102px] text-center leading-3">
@@ -419,12 +396,10 @@ const ValidatorComponent = ({
 const Filtered = ({
   filtered,
   validators,
-  currency,
   active,
 }: {
   filtered: string[];
   validators: Validators;
-  currency: Currency;
   active: boolean;
 }) => {
   const [slicedValidators, setSlicedValidators] = useState<string[]>([]);
@@ -447,9 +422,17 @@ const Filtered = ({
         <>
           <div className="flex flex-col gap-6">
             {slicedValidators?.map((validator, index) => {
-              let validatorsSet = validators.active;
-              if (!active) {
+              let validatorsSet;
+              let rank;
+              if (active) {
+                validatorsSet = validators.active;
+                rank = getValidatorRank(validator, validators.activeSorted);
+              } else {
                 validatorsSet = validators.inactive;
+                rank = getValidatorRank(validator, [
+                  ...validators.activeSorted,
+                  ...validators.inactiveSorted,
+                ]);
               }
               const moniker = validatorsSet[validator]?.description.moniker;
               const identity = validatorsSet[validator]?.description.identity;
@@ -457,7 +440,6 @@ const Filtered = ({
                 Number(
                   validatorsSet[validator]?.commission?.commission_rates.rate
                 ) * 100;
-              const tokens = Number(validatorsSet[validator]?.tokens);
               const jailed = validatorsSet[validator]?.jailed;
               const status = validatorsSet[validator]?.status;
 
@@ -467,11 +449,10 @@ const Filtered = ({
                   moniker={moniker}
                   identity={identity}
                   commission={commission}
-                  tokens={tokens}
-                  currency={currency}
                   jailed={jailed}
                   status={status}
                   active={active}
+                  rank={rank}
                 />
               );
             })}

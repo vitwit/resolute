@@ -3,8 +3,6 @@ import Image from 'next/image';
 import React from 'react';
 import StakingStatsCard from './StakingStatsCard';
 
-// TODO: Create css classes for repeated styles
-
 const StakingOverviewSidebar = ({
   totalStakedAmount,
 }: {
@@ -18,7 +16,7 @@ const StakingOverviewSidebar = ({
             name={'Staked Balance'}
             value={formatDollarAmount(totalStakedAmount)}
           />
-          {/* TODO: Send total rewards as prop  */}
+          {/* TODO: Send total rewards as prop to value */}
           <StakingStatsCard name={'Rewards'} value={'0'} />
         </div>
         <div className="staking-sidebar-actions">
@@ -30,15 +28,17 @@ const StakingOverviewSidebar = ({
       </div>
       <div className="mt-10 space-y-10">
         <Image
-          src="https://dummyimage.com/445X166/000/fff&text=Ad1"
+          className="cursor-pointer"
+          src="/staking-ad-1.png"
           width={445}
           height={166}
           alt="Ad"
         />
         <Image
-          src="https://dummyimage.com/445X312/000/fff&text=Ad2"
+          className="cursor-pointer"
+          src="/staking-ad-2.png"
           width={445}
-          height={166}
+          height={312}
           alt="Ad"
         />
       </div>
