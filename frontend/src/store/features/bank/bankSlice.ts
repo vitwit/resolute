@@ -10,6 +10,7 @@ import { MultiTxnsInputs, TxSendInputs } from '../../../types/bank';
 import { TxStatus } from '../../../types/enums';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
+import { NewTransaction } from '@/utils/transaction';
 
 interface Balance {
   list: Coin[];
@@ -89,10 +90,11 @@ export const txBankSend = createAsyncThunk(
     data: TxSendInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
+    const chainID = data.basicChainInfo.chainID;
     try {
       const msg = SendMsg(data.from, data.to, data.amount, data.denom);
       const result = await signAndBroadcast(
-        data.basicChainInfo.chainID,
+        chainID,
         data.basicChainInfo.aminoConfig,
         data.prefix,
         [msg],
@@ -102,27 +104,15 @@ export const txBankSend = createAsyncThunk(
         data.basicChainInfo.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
-      if (result?.code === 0) {
-        const transaction: Transaction = {
-          code: 0,
-          transactionHash: result.transactionHash,
-          height: result.height || '-',
-          rawLog: result.rawLog || '-',
-          gasUsed: result.gasUsed || '-',
-          gasWanted: result.gasWanted || '-',
-          fee: result.fee || [],
-          time: result.time || '-',
-          msgs: [msg],
+      const tx = NewTransaction(result, [msg], chainID, data.from);
+      dispatch(
+        addTransactions({
           chainID: data.basicChainInfo.chainID,
           address: data.from,
-        };
-        dispatch(
-          addTransactions({
-            chainID: data.basicChainInfo.chainID,
-            address: data.from,
-            transactions: [transaction],
-          })
-        );
+          transactions: [tx],
+        })
+      );
+      if (result?.code === 0) {
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);
