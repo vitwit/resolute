@@ -359,6 +359,7 @@ const ValidatorComponent = ({
   active: boolean;
   rank: string;
 }) => {
+  const validatorStatus = getValidatorStatus(jailed, status);
   return (
     <div className="flex justify-between items-center txt-sm text-white font-normal">
       <div className="flex gap-4 items-center">
@@ -381,11 +382,17 @@ const ValidatorComponent = ({
       </div>
       {active ? null : (
         <div className="min-w-[102px] text-center leading-3">
-          {getValidatorStatus(jailed, status)}
+          {validatorStatus}
         </div>
       )}
       <div>
-        <button className="px-3 py-[6px] primary-gradient text-[12px] leading-[20px] rounded-lg font-medium">
+        <button
+          className={
+            validatorStatus.toLowerCase() !== 'jailed'
+              ? `delegate-button`
+              : `delegate-button delegate-button-inactive`
+          }
+        >
           Delegate
         </button>
       </div>

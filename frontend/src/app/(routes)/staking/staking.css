@@ -57,3 +57,13 @@
   border-radius: 24px;
   opacity: 0.95;
 }
+
+.delegate-button {
+  @apply px-3 py-[6px] text-[12px] leading-[20px] rounded-lg font-medium;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.delegate-button-inactive {
+  @apply bg-[#FFFFFF1A] text-[#FFFFFF1A];
+  background: #FFFFFF1A;
+}
