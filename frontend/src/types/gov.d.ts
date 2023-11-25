@@ -35,7 +35,7 @@ interface GovPagination {
 }
 
 interface GetProposalsInVotingResponse {
-  proposals: ActiveProposal[];
+  proposals: GovProposal[];
   pagination: GovPagination;
 }
 
@@ -144,5 +144,11 @@ interface GetProposalTallyInputs {
 
 interface GetDepositParamsInputs {
   baseURL: string;
+  chainID: string;
+}
+
+interface GetProposalInputs {
+  baseURL: string;
+  proposalId: number;
   chainID: string;
 }

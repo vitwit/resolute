@@ -1,6 +1,10 @@
 import Axios, { AxiosResponse } from 'axios';
 import { convertPaginationToParams, cleanURL } from '../../../utils/util';
-import { GetProposalsInVotingResponse, ProposalVote } from '@/types/gov';
+import {
+  GetProposalsInVotingResponse,
+  GovProposal,
+  ProposalVote,
+} from '@/types/gov';
 
 const proposalsURL = '/cosmos/gov/v1beta1/proposals';
 const proposalTallyURL = (id: number): string =>
@@ -56,7 +60,7 @@ const fetchVoterVote = (
 const fetchProposal = (
   baseURL: string,
   proposalId: number
-): Promise<AxiosResponse> =>
+): Promise<AxiosResponse<{ proposal: GovProposal }>> =>
   Axios.get(`${cleanURL(baseURL)}${proposalsURL}/${proposalId}`);
 
 const fetchDepositParams = (baseURL: string): Promise<AxiosResponse> =>

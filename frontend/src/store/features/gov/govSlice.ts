@@ -17,7 +17,9 @@ import {
   GovPagination,
   DepositParams,
   GetDepositParamsInputs,
+  GetProposalInputs,
 } from '@/types/gov';
+import { PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
 
 interface Chain {
   active: {
@@ -48,6 +50,10 @@ interface Chains {
 interface GovState {
   chains: Chains;
   defaultState: Chain;
+  proposalInfo: {
+    status: TxStatus;
+    errMsg: string;
+  };
 }
 
 const EMPTY_PAGINATION = {
@@ -100,7 +106,28 @@ const initialState: GovState = {
       proposalTally: {},
     },
   },
+  proposalInfo: {
+    status: TxStatus.INIT,
+    errMsg: '',
+  },
 };
+
+export const getProposal = createAsyncThunk(
+  'gov/proposal-info',
+  async (data: GetProposalInputs, { rejectWithValue }) => {
+    try {
+      const response = await govService.proposal(data.baseURL, data.proposalId);
+      return {
+        chainID: data.chainID,
+        data: response.data,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
 
 export const getProposalsInDeposit = createAsyncThunk(
   'gov/deposit-proposals',
@@ -401,6 +428,48 @@ export const govSlice = createSlice({
         const payload = action.payload as { message: string };
         state.chains[chainID].depositParams.status = TxStatus.REJECTED;
         state.chains[chainID].depositParams.errMsg = payload.message || '';
+      });
+
+    // get one proposal
+    builder
+      .addCase(getProposal.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
+        state.proposalInfo.status = TxStatus.PENDING;
+      })
+      .addCase(getProposal.fulfilled, (state, action) => {
+        const chainID = action.meta.arg?.chainID || '';
+        if (
+          action.payload.data?.proposal.status === PROPOSAL_STATUS_VOTING_PERIOD
+        ) {
+          const currentProposalsState = state.chains[chainID].active.proposals;
+          if (!currentProposalsState.length) {
+            const result = {
+              status: TxStatus.IDLE,
+              errMsg: '',
+              proposals: [action.payload.data.proposal],
+            };
+            state.chains[chainID].active = result;
+          }
+        } else {
+          const currentProposalsState = state.chains[chainID].deposit.proposals;
+          if (!currentProposalsState.length) {
+            const result = {
+              status: TxStatus.IDLE,
+              errMsg: '',
+              proposals: [action.payload.data.proposal],
+            };
+            state.chains[chainID].deposit = result;
+          }
+        }
+        state.proposalInfo.status = TxStatus.IDLE;
+        state.proposalInfo.errMsg = '';
+      })
+      .addCase(getProposal.rejected, (state, action) => {
+        state.proposalInfo.status = TxStatus.REJECTED;
+        const payload = action.payload as { message: string };
+        state.proposalInfo.errMsg = payload.message || '';
       });
   },
 });
