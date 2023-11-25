@@ -3,10 +3,10 @@ import { convertPaginationToParams, cleanURL } from '../../../utils/util';
 import { GetProposalsInVotingResponse, ProposalVote } from '@/types/gov';
 
 const proposalsURL = '/cosmos/gov/v1beta1/proposals';
-const proposalTallyURL = (id: string): string =>
+const proposalTallyURL = (id: number): string =>
   `/cosmos/gov/v1beta1/proposals/${id}/tally`;
 
-const voterVoteURL = (id: string, voter: string): string =>
+const voterVoteURL = (id: number, voter: string): string =>
   `/cosmos/gov/v1beta1/proposals/${id}/votes/${voter}`;
 
 const depositParamsURL = `/cosmos/gov/v1beta1/params/deposit`;
@@ -31,7 +31,7 @@ const fetchProposals = (
 
 const fetchProposalTally = (
   baseURL: string,
-  proposalId: string
+  proposalId: number
 ): Promise<AxiosResponse> => {
   const uri = `${cleanURL(baseURL)}${proposalTallyURL(proposalId)}`;
   return Axios.get(uri);
@@ -39,7 +39,7 @@ const fetchProposalTally = (
 
 const fetchVoterVote = (
   baseURL: string,
-  proposalId: string,
+  proposalId: number,
   voter: string,
   key: string | undefined,
   limit: number | undefined

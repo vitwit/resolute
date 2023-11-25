@@ -72,7 +72,7 @@ export const getProposalsInVoting = createAsyncThunk(
           dispatch(
             getProposalTally({
               baseURL: data.baseURL,
-              proposalId: proposals[i].proposal_id,
+              proposalId: Number(proposals[i].proposal_id),
               chainID: data.chainID,
             })
           );
@@ -80,7 +80,7 @@ export const getProposalsInVoting = createAsyncThunk(
           dispatch(
             getVotes({
               baseURL: data.baseURL,
-              proposalId: proposals[i].proposal_id,
+              proposalId: Number(proposals[i].proposal_id),
               voter: data.voter,
               chainID: data.chainID,
             })

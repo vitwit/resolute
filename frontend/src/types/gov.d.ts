@@ -45,7 +45,7 @@ interface VoteOption {
 }
 
 interface Vote {
-  proposal_id: string;
+  proposal_id: number;
   voter: string;
   option: string;
   options: VoteOption[];
@@ -98,7 +98,7 @@ interface GetProposalsInVotingInputs {
 
 interface GetVotesInputs {
   baseURL: string;
-  proposalId: string;
+  proposalId: number;
   voter: string;
   chainID: string;
   key?: string;
@@ -107,6 +107,6 @@ interface GetVotesInputs {
 
 interface GetProposalTallyInputs {
   baseURL: string;
-  proposalId: string;
+  proposalId: number;
   chainID: string;
 }
