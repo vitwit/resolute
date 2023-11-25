@@ -7,19 +7,28 @@ import { AxiosError } from 'axios';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { TxStatus } from '@/types/enums';
 import {
-  ActiveProposal,
+  GovProposal,
   GetProposalTallyInputs,
+  GetProposalsInDepositInputs,
   GetProposalsInVotingInputs,
   GetVotesInputs,
   ProposalTallyData,
   VotesData,
+  GovPagination,
 } from '@/types/gov';
 
 interface Chain {
   active: {
     status: TxStatus;
     errMsg: string;
-    proposals: ActiveProposal[];
+    proposals: GovProposal[];
+    pagination?: GovPagination;
+  };
+  deposit: {
+    status: TxStatus;
+    errMsg: string;
+    proposals: GovProposal[];
+    pagination?: GovPagination;
   };
   votes: VotesData;
   tally: ProposalTallyData;
@@ -34,6 +43,11 @@ interface GovState {
   defaultState: Chain;
 }
 
+const EMPTY_PAGINATION = {
+  next_key: '',
+  total: '',
+};
+
 const initialState: GovState = {
   chains: {},
   defaultState: {
@@ -41,6 +55,19 @@ const initialState: GovState = {
       status: TxStatus.INIT,
       errMsg: '',
       proposals: [],
+      pagination: {
+        next_key: '',
+        total: '',
+      },
+    },
+    deposit: {
+      status: TxStatus.INIT,
+      errMsg: '',
+      proposals: [],
+      pagination: {
+        next_key: '',
+        total: '',
+      },
     },
     votes: {
       status: TxStatus.INIT,
@@ -54,6 +81,23 @@ const initialState: GovState = {
     },
   },
 };
+
+export const getProposalsInDeposit = createAsyncThunk(
+  'gov/deposit-proposals',
+  async (data: GetProposalsInDepositInputs) => {
+    const response = await govService.proposals(
+      data.baseURL,
+      data?.key,
+      data?.limit,
+      1
+    );
+
+    return {
+      chainID: data.chainID,
+      data: response.data,
+    };
+  }
+);
 
 export const getProposalsInVoting = createAsyncThunk(
   'gov/active-proposals',
@@ -144,14 +188,23 @@ export const govSlice = createSlice({
         const chainID = action.meta?.arg?.chainID;
         if (!state.chains[chainID])
           state.chains[chainID] = cloneDeep(initialState.defaultState);
+        const chainProposals = state.chains[chainID].active.proposals || {};
+        const result = {
+          status: TxStatus.PENDING,
+          errMsg: '',
+          proposals: chainProposals,
+          pagination: EMPTY_PAGINATION,
+        };
+        state.chains[chainID].active = result;
       })
       .addCase(getProposalsInVoting.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || '';
-        if (chainID.length > 0) {
+        if (chainID.length) {
           const result = {
             status: TxStatus.IDLE,
             errMsg: '',
             proposals: action.payload?.data?.proposals,
+            pagination: action.payload?.data?.pagination,
           };
           state.chains[chainID].active = result;
         }
@@ -163,8 +216,48 @@ export const govSlice = createSlice({
           status: TxStatus.REJECTED,
           errMsg: action.error.message || '',
           proposals: chainProposals,
+          pagination: EMPTY_PAGINATION,
         };
         state.chains[chainID].active = result;
+      });
+
+    //proposals in deposit period
+    builder
+      .addCase(getProposalsInDeposit.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
+        const chainProposals = state.chains[chainID].deposit.proposals || {};
+        const result = {
+          status: TxStatus.PENDING,
+          errMsg: '',
+          proposals: chainProposals,
+          pagination: EMPTY_PAGINATION,
+        };
+        state.chains[chainID].deposit = result;
+      })
+      .addCase(getProposalsInDeposit.fulfilled, (state, action) => {
+        const chainID = action.payload?.chainID || '';
+        if (chainID.length) {
+          const result = {
+            status: TxStatus.IDLE,
+            errMsg: '',
+            proposals: action.payload?.data?.proposals,
+            pagination: action.payload?.data?.pagination,
+          };
+          state.chains[chainID].deposit = result;
+        }
+      })
+      .addCase(getProposalsInDeposit.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const chainProposals = state.chains[chainID].deposit.proposals || {};
+        const result = {
+          status: TxStatus.REJECTED,
+          errMsg: action.error.message || '',
+          proposals: chainProposals,
+          pagination: EMPTY_PAGINATION,
+        };
+        state.chains[chainID].deposit = result;
       });
 
     // votes

@@ -1,6 +1,6 @@
-import { TxStatus } from "./enums";
+import { TxStatus } from './enums';
 
-interface ActiveProposal {
+interface GovProposal {
   proposal_id: string;
   content: {
     '@type': string;
@@ -30,7 +30,7 @@ interface ActiveProposal {
 }
 
 interface GovPagination {
-  next_key: string | undefined;
+  next_key?: string;
   total: string;
 }
 
@@ -92,6 +92,13 @@ interface GetProposalsInVotingInputs {
   baseURL: string;
   chainID: string;
   voter: string;
+  key?: string;
+  limit?: number;
+}
+
+interface GetProposalsInDepositInputs {
+  baseURL: string;
+  chainID: string;
   key?: string;
   limit?: number;
 }
