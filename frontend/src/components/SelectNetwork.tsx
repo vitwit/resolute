@@ -9,12 +9,13 @@ import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import DialogAddNetwork from './DialogAddNetwork';
 
+const ALL_NETWORKS_LOGO = '/all-networks-icon.png';
+
 const SelectNetwork = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [addNetworkDialogOpen, setAddNetworkDialogOpen] =
     useState<boolean>(false);
   const pathName = usePathname();
-  const ALL_NETWORKS_LOGO = '/all-networks-icon.png';
   const handleClose = () => {
     setOpen((open) => !open);
   };
@@ -108,6 +109,8 @@ const DialogSelectNetwork = ({
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const chainIDs = Object.keys(networks);
   const pathName = usePathname();
+  const dispatch = useAppDispatch();
+
   return (
     <Dialog
       open={open}
@@ -139,15 +142,11 @@ const DialogSelectNetwork = ({
             </div>
           </div>
           <div className="py-6 px-10">
-            <div className="flex justify-between">
+            <div className="mb-6 flex justify-between">
               <div className="flex gap-6 items-center">
                 <h2 className="text-[20px] font-bold leading-normal">
                   All Networks
                 </h2>
-                <div className="text-[14px] leading-normal font-light flex gap-2">
-                  <input type="checkbox" name="" id="" />
-                  <div>Select All Networks</div>
-                </div>
               </div>
               <div>
                 <button
@@ -158,6 +157,36 @@ const DialogSelectNetwork = ({
                 </button>
               </div>
             </div>
+            <Link
+              href="/"
+              onClick={() => {
+                dispatch(setSelectedNetwork({ chainName: '' }));
+              }}
+              className={
+                selectedNetworkName.length
+                  ? 'network-item'
+                  : 'network-item network-item-selected'
+              }
+            >
+              <div className="flex justify-center items-center w-full gap-2">
+                <Image
+                  src={ALL_NETWORKS_LOGO}
+                  width={32}
+                  height={32}
+                  alt="All Networks"
+                />
+                <h3 className={`text-[14px] leading-normal opacity-100`}>
+                  <span
+                    className={
+                      selectedNetworkName.length ? `font-light` : `font-bold`
+                    }
+                  >
+                    Select All Networks
+                  </span>
+                </h3>
+              </div>
+            </Link>
+            <div className="divider-line"></div>
             <div className="networks-list">
               {chainIDs.map((chainID, index) => (
                 <NetworkItem
@@ -199,9 +228,7 @@ const NetworkItem = ({
         dispatch(setSelectedNetwork({ chainName: chainName.toLowerCase() }));
       }}
       className={
-        isSelected()
-          ? 'network-item border-[#ffffff6c] border-[0.1px]'
-          : 'network-item'
+        isSelected() ? 'network-item network-item-selected' : 'network-item'
       }
     >
       <Avatar src={logo} sx={{ width: 32, height: 32 }} />

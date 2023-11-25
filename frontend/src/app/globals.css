@@ -165,7 +165,7 @@
 /* Select Network Styling */
 
 .select-network {
-  @apply text-white rounded-3xl opacity-95;
+  @apply text-white rounded-3xl;
 }
 
 .add-network-button {
@@ -174,13 +174,22 @@
 }
 
 .networks-list {
-  @apply mt-6 grid grid-cols-5 gap-6;
+  @apply grid grid-cols-5 gap-6;
 }
 
 .network-item {
-  @apply p-4 rounded-2xl h-16 flex gap-2 items-center cursor-pointer bg-[#FFFFFF0D] hover:bg-[#ffffff24];
+  @apply p-4 rounded-2xl h-16 flex gap-2 items-center cursor-pointer bg-[#FFFFFF0D] hover:bg-[#ffffff2b];
+}
+
+.network-item-selected {
+  @apply border-[#ffffff3d] border-[0.1px] bg-[#ffffff24];
 }
 
 .wallet-address {
   @apply flex gap-2 items-center h-6 p-2 text-white text-[14px] font-normal leading-normal rounded-lg opacity-80 bg-[#FFFFFF1A] w-[168px];
+}
+
+.divider-line {
+  @apply h-[1px] w-full my-4;
+  background: linear-gradient(90deg, #4aa29c 7.46%, #8b3da7 94.28%);
 }
