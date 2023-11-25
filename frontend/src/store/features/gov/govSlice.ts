@@ -6,10 +6,18 @@ import { cloneDeep } from 'lodash';
 import { AxiosError } from 'axios';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { TxStatus } from '@/types/enums';
+import {
+  ActiveProposal,
+  GetProposalTallyInputs,
+  GetProposalsInVotingInputs,
+  GetVotesInputs,
+  ProposalTallyData,
+  VotesData,
+} from '@/types/gov';
 
 interface Chain {
   active: {
-    status: string;
+    status: TxStatus;
     errMsg: string;
     proposals: ActiveProposal[];
   };
@@ -140,23 +148,32 @@ export const govSlice = createSlice({
       .addCase(getProposalsInVoting.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || '';
         if (chainID.length > 0) {
-          let result = {
-            status: 'idle',
+          const result = {
+            status: TxStatus.IDLE,
             errMsg: '',
             proposals: action.payload?.data?.proposals,
           };
           state.chains[chainID].active = result;
         }
       })
-      .addCase(getProposalsInVoting.rejected, (state, action) => {});
+      .addCase(getProposalsInVoting.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const chainProposals = state.chains[chainID].active.proposals || {};
+        const result = {
+          status: TxStatus.REJECTED,
+          errMsg: action.error.message || '',
+          proposals: chainProposals,
+        };
+        state.chains[chainID].active = result;
+      });
 
     // votes
     builder
       .addCase(getVotes.pending, () => {})
       .addCase(getVotes.fulfilled, (state, action) => {
         const chainID = action.payload.chainID;
-        let result: VotesData = {
-          status: 'idle',
+        const result: VotesData = {
+          status: TxStatus.IDLE,
           errMsg: '',
           proposals: state.chains[chainID].votes?.proposals || {},
         };
@@ -173,8 +190,8 @@ export const govSlice = createSlice({
       .addCase(getProposalTally.pending, () => {})
       .addCase(getProposalTally.fulfilled, (state, action) => {
         const chainID = action.payload.chainID;
-        let result = {
-          status: 'idle',
+        const result = {
+          status: TxStatus.IDLE,
           errMsg: '',
           proposalTally: state.chains[chainID].tally?.proposalTally || {},
         };

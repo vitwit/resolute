@@ -1,3 +1,5 @@
+import { TxStatus } from "./enums";
+
 interface ActiveProposal {
   proposal_id: string;
   content: {
@@ -27,12 +29,6 @@ interface ActiveProposal {
   voting_end_time: string;
 }
 
-interface CosmosHubProposal {
-  status: string;
-  errMsg: string;
-  proposals: ActiveProposal[];
-}
-
 interface GovPagination {
   next_key: string | undefined;
   total: string;
@@ -60,7 +56,7 @@ interface ProposalVote {
 }
 
 interface VotesData {
-  status: string;
+  status: TxStatus;
   errMsg: string;
   proposals: {
     [key: string]: ProposalVote;
@@ -87,7 +83,7 @@ interface GetProposalTallyResponse {
 }
 
 interface ProposalTallyData {
-  status: string;
+  status: TxStatus;
   errMsg: string;
   proposalTally: ProposalTally;
 }
