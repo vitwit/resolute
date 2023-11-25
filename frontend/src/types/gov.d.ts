@@ -88,6 +88,30 @@ interface ProposalTallyData {
   proposalTally: ProposalTally;
 }
 
+interface DepositParams {
+  min_deposit: {
+    denom: string;
+    amount: string;
+  }[];
+  max_deposit_period: string;
+}
+
+interface TallyParams {
+  quorum: string;
+  threshold: string;
+  vote_threshold: string;
+}
+
+interface VotingParams {
+  voting_period: string;
+}
+
+interface GovParamsResponse {
+  voting_params: VotingParams;
+  deposit_params: DepositParams;
+  tally_params: TallyParams;
+}
+
 interface GetProposalsInVotingInputs {
   baseURL: string;
   chainID: string;
@@ -115,5 +139,10 @@ interface GetVotesInputs {
 interface GetProposalTallyInputs {
   baseURL: string;
   proposalId: number;
+  chainID: string;
+}
+
+interface GetDepositParamsInputs {
+  baseURL: string;
   chainID: string;
 }

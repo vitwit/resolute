@@ -15,6 +15,8 @@ import {
   ProposalTallyData,
   VotesData,
   GovPagination,
+  DepositParams,
+  GetDepositParamsInputs,
 } from '@/types/gov';
 
 interface Chain {
@@ -29,6 +31,11 @@ interface Chain {
     errMsg: string;
     proposals: GovProposal[];
     pagination?: GovPagination;
+  };
+  depositParams: {
+    status: TxStatus;
+    errMsg: string;
+    params: DepositParams;
   };
   votes: VotesData;
   tally: ProposalTallyData;
@@ -69,6 +76,19 @@ const initialState: GovState = {
         total: '',
       },
     },
+    depositParams: {
+      status: TxStatus.INIT,
+      errMsg: '',
+      params: {
+        min_deposit: [
+          {
+            denom: '',
+            amount: '',
+          },
+        ],
+        max_deposit_period: '',
+      },
+    },
     votes: {
       status: TxStatus.INIT,
       errMsg: '',
@@ -84,18 +104,51 @@ const initialState: GovState = {
 
 export const getProposalsInDeposit = createAsyncThunk(
   'gov/deposit-proposals',
-  async (data: GetProposalsInDepositInputs) => {
-    const response = await govService.proposals(
-      data.baseURL,
-      data?.key,
-      data?.limit,
-      1
-    );
+  async (data: GetProposalsInDepositInputs, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await govService.proposals(
+        data.baseURL,
+        data?.key,
+        data?.limit,
+        1
+      );
 
-    return {
-      chainID: data.chainID,
-      data: response.data,
-    };
+      if (response?.data?.proposals?.length && data?.chainID?.length) {
+        dispatch(
+          getDepositParams({
+            baseURL: data.baseURL,
+            chainID: data.chainID,
+          })
+        );
+      }
+
+      return {
+        chainID: data.chainID,
+        data: response.data,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const getDepositParams = createAsyncThunk(
+  'gov/deposit-params',
+  async (data: GetDepositParamsInputs, { rejectWithValue }) => {
+    try {
+      const response = await govService.depositParams(data.baseURL);
+
+      return {
+        chainID: data.chainID,
+        data: response.data,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
   }
 );
 
@@ -110,7 +163,7 @@ export const getProposalsInVoting = createAsyncThunk(
         2
       );
 
-      if (response?.data?.proposals?.length > 0) {
+      if (response?.data?.proposals?.length) {
         const proposals = response?.data?.proposals;
         for (let i = 0; i < proposals.length; i++) {
           dispatch(
@@ -137,43 +190,56 @@ export const getProposalsInVoting = createAsyncThunk(
         data: response.data,
       };
     } catch (error) {
-      if (error instanceof AxiosError) return rejectWithValue(error.message);
-      return rejectWithValue(ERR_UNKNOWN);
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
     }
   }
 );
 
 export const getVotes = createAsyncThunk(
   'gov/voter-votes',
-  async (data: GetVotesInputs) => {
-    const response = await govService.votes(
-      data.baseURL,
-      data.proposalId,
-      data.voter,
-      data.key,
-      data.limit
-    );
+  async (data: GetVotesInputs, { rejectWithValue }) => {
+    try {
+      const response = await govService.votes(
+        data.baseURL,
+        data.proposalId,
+        data.voter,
+        data.key,
+        data.limit
+      );
 
-    response.data.vote.proposal_id = data.proposalId;
+      response.data.vote.proposal_id = data.proposalId;
 
-    return {
-      chainID: data.chainID,
-      data: response.data,
-    };
+      return {
+        chainID: data.chainID,
+        data: response.data,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
   }
 );
 
 export const getProposalTally = createAsyncThunk(
   'gov/proposal-tally',
-  async (data: GetProposalTallyInputs) => {
-    const response = await govService.tally(data.baseURL, data.proposalId);
+  async (data: GetProposalTallyInputs, { rejectWithValue }) => {
+    try {
+      const response = await govService.tally(data.baseURL, data.proposalId);
 
-    response.data.tally.proposal_id = data.proposalId;
+      response.data.tally.proposal_id = data.proposalId;
 
-    return {
-      chainID: data.chainID,
-      data: response.data,
-    };
+      return {
+        chainID: data.chainID,
+        data: response.data,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
   }
 );
 
@@ -211,10 +277,11 @@ export const govSlice = createSlice({
       })
       .addCase(getProposalsInVoting.rejected, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
+        const payload = action.payload as { message: string };
         const chainProposals = state.chains[chainID].active.proposals || {};
         const result = {
           status: TxStatus.REJECTED,
-          errMsg: action.error.message || '',
+          errMsg: payload.message || '',
           proposals: chainProposals,
           pagination: EMPTY_PAGINATION,
         };
@@ -250,10 +317,11 @@ export const govSlice = createSlice({
       })
       .addCase(getProposalsInDeposit.rejected, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
+        const payload = action.payload as { message: string };
         const chainProposals = state.chains[chainID].deposit.proposals || {};
         const result = {
           status: TxStatus.REJECTED,
-          errMsg: action.error.message || '',
+          errMsg: payload.message || '',
           proposals: chainProposals,
           pagination: EMPTY_PAGINATION,
         };
@@ -262,7 +330,10 @@ export const govSlice = createSlice({
 
     // votes
     builder
-      .addCase(getVotes.pending, () => {})
+      .addCase(getVotes.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].votes.status = TxStatus.PENDING;
+      })
       .addCase(getVotes.fulfilled, (state, action) => {
         const chainID = action.payload.chainID;
         const result: VotesData = {
@@ -276,11 +347,19 @@ export const govSlice = createSlice({
 
         state.chains[chainID].votes = result;
       })
-      .addCase(getVotes.rejected, () => {});
+      .addCase(getVotes.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const payload = action.payload as { message: string };
+        state.chains[chainID].votes.status = TxStatus.REJECTED;
+        state.chains[chainID].votes.errMsg = payload.message || '';
+      });
 
     // tally
     builder
-      .addCase(getProposalTally.pending, () => {})
+      .addCase(getProposalTally.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tally.status = TxStatus.PENDING;
+      })
       .addCase(getProposalTally.fulfilled, (state, action) => {
         const chainID = action.payload.chainID;
         const result = {
@@ -293,7 +372,36 @@ export const govSlice = createSlice({
           action.payload?.data.tally;
         state.chains[chainID].tally = result;
       })
-      .addCase(getProposalTally.rejected, () => {});
+      .addCase(getProposalTally.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const payload = action.payload as { message: string };
+        state.chains[chainID].tally.status = TxStatus.REJECTED;
+        state.chains[chainID].tally.errMsg = payload.message || '';
+      });
+
+    //deposit params
+    builder
+      .addCase(getDepositParams.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].depositParams.status = TxStatus.PENDING;
+      })
+      .addCase(getDepositParams.fulfilled, (state, action) => {
+        const chainID = action.payload?.chainID || '';
+        if (chainID.length) {
+          const result = {
+            status: TxStatus.IDLE,
+            errMsg: '',
+            params: action.payload?.data?.deposit_params,
+          };
+          state.chains[chainID].depositParams = result;
+        }
+      })
+      .addCase(getDepositParams.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const payload = action.payload as { message: string };
+        state.chains[chainID].depositParams.status = TxStatus.REJECTED;
+        state.chains[chainID].depositParams.errMsg = payload.message || '';
+      });
   },
 });
 
