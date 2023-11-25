@@ -2,15 +2,10 @@ import { TxStatus } from './enums';
 
 interface GovProposal {
   proposal_id: string;
-  content: {
+  content?: {
     '@type': string;
     title: string;
     description: string;
-    changes?: {
-      subspace: string;
-      key: string;
-      value: string;
-    }[];
   };
   status: string;
   final_tally_result: {
@@ -151,4 +146,34 @@ interface GetProposalInputs {
   baseURL: string;
   proposalId: number;
   chainID: string;
+}
+
+interface TxVoteInputs {
+  voter: string;
+  proposalId: number;
+  option: number;
+  denom: string;
+  chainID: string;
+  rpc: string;
+  rest: string;
+  aminoConfig: AminoConfig;
+  prefix: string;
+  feeAmount: number;
+  feegranter: string;
+  justification?: string;
+}
+
+interface TxDepositInputs {
+  depositer: string;
+  proposalId: number;
+  amount: number;
+  denom: string;
+  chainID: string;
+  rpc: string;
+  rest: string;
+  aminoConfig: AminoConfig;
+  prefix: string;
+  feeAmount: number;
+  feegranter: string;
+  justification?: string;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import govService from './govService';
 import { cloneDeep } from 'lodash';
 import { AxiosError } from 'axios';
@@ -18,8 +18,13 @@ import {
   DepositParams,
   GetDepositParamsInputs,
   GetProposalInputs,
+  TxVoteInputs,
+  TxDepositInputs,
 } from '@/types/gov';
 import { PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
+import { signAndBroadcast } from '@/utils/signing';
+import { setError, setTxHash } from '../common/commonSlice';
+import { GovDepositMsg, GovVoteMsg } from '@/txns/gov';
 
 const PROPSAL_STATUS_DEPOSIT = 1;
 const PROPOSAL_STATUS_ACTIVE = 2;
@@ -44,6 +49,10 @@ interface Chain {
   };
   votes: VotesData;
   tally: ProposalTallyData;
+  tx: {
+    status: TxStatus;
+    txHash: string;
+  };
 }
 
 interface Chains {
@@ -57,6 +66,8 @@ interface GovState {
     status: TxStatus;
     errMsg: string;
   };
+  activeProposalsLoading: number;
+  depositProposalsLoading: number;
 }
 
 const EMPTY_PAGINATION = {
@@ -66,6 +77,8 @@ const EMPTY_PAGINATION = {
 
 const initialState: GovState = {
   chains: {},
+  activeProposalsLoading: 0,
+  depositProposalsLoading: 0,
   defaultState: {
     active: {
       status: TxStatus.INIT,
@@ -107,6 +120,10 @@ const initialState: GovState = {
       status: TxStatus.INIT,
       errMsg: '',
       proposalTally: {},
+    },
+    tx: {
+      status: TxStatus.INIT,
+      txHash: '',
     },
   },
   proposalInfo: {
@@ -273,10 +290,148 @@ export const getProposalTally = createAsyncThunk(
   }
 );
 
+export const txVote = createAsyncThunk(
+  'gov/tx-vote',
+  async (
+    data: TxVoteInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const msg = GovVoteMsg(data.proposalId, data.voter, data.option);
+      const result = await signAndBroadcast(
+        data.chainID,
+        data.aminoConfig,
+        data.prefix,
+        [msg],
+        860000,
+        data?.justification || '',
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: 'error',
+            message: result?.rawLog || '',
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        dispatch(
+          setError({
+            type: 'error',
+            message: error.message,
+          })
+        );
+        return rejectWithValue(error.response);
+      }
+      dispatch(
+        setError({
+          type: 'error',
+          message: ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
+export const txDeposit = createAsyncThunk(
+  'gov/tx-deposit',
+  async (
+    data: TxDepositInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const msg = GovDepositMsg(
+        data.proposalId,
+        data.depositer,
+        data.amount,
+        data.denom
+      );
+      const result = await signAndBroadcast(
+        data.chainID,
+        data.aminoConfig,
+        data.prefix,
+        [msg],
+        860000,
+        data?.justification || '',
+        `${data.feeAmount}${data.denom}`,
+        data.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: 'error',
+            message: result?.rawLog || '',
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        dispatch(
+          setError({
+            type: 'error',
+            message: error.message,
+          })
+        );
+        return rejectWithValue(error.response);
+      }
+      dispatch(
+        setError({
+          type: 'error',
+          message: ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
 export const govSlice = createSlice({
   name: 'gov',
   initialState,
-  reducers: {},
+  reducers: {
+    resetTx: (state, action: PayloadAction<{ chainID: string }>) => {
+      const chainID = action.payload.chainID;
+      state.chains[chainID].tx = {
+        status: TxStatus.INIT,
+        txHash: '',
+      };
+    },
+    resetState: (state, action: PayloadAction<{ chainID: string }>) => {
+      const { chainID } = action.payload;
+      state.chains[chainID] = cloneDeep(initialState.defaultState);
+    },
+    resetDefaultState: (state, action: PayloadAction<string[]>) => {
+      const chainsMap: Chains = {};
+      const chains = action.payload;
+      chains.map((chainID) => {
+        chainsMap[chainID] = cloneDeep(initialState.defaultState);
+      });
+      state.chains = chainsMap;
+    },
+  },
   extraReducers: (builder) => {
     // active proposals
     builder
@@ -292,6 +447,7 @@ export const govSlice = createSlice({
           pagination: EMPTY_PAGINATION,
         };
         state.chains[chainID].active = result;
+        state.activeProposalsLoading++;
       })
       .addCase(getProposalsInVoting.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || '';
@@ -303,6 +459,7 @@ export const govSlice = createSlice({
             pagination: action.payload?.data?.pagination,
           };
           state.chains[chainID].active = result;
+          state.activeProposalsLoading--;
         }
       })
       .addCase(getProposalsInVoting.rejected, (state, action) => {
@@ -316,6 +473,7 @@ export const govSlice = createSlice({
           pagination: EMPTY_PAGINATION,
         };
         state.chains[chainID].active = result;
+        state.activeProposalsLoading--;
       });
 
     //proposals in deposit period
@@ -332,6 +490,7 @@ export const govSlice = createSlice({
           pagination: EMPTY_PAGINATION,
         };
         state.chains[chainID].deposit = result;
+        state.depositProposalsLoading++;
       })
       .addCase(getProposalsInDeposit.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || '';
@@ -343,6 +502,7 @@ export const govSlice = createSlice({
             pagination: action.payload?.data?.pagination,
           };
           state.chains[chainID].deposit = result;
+          state.depositProposalsLoading--;
         }
       })
       .addCase(getProposalsInDeposit.rejected, (state, action) => {
@@ -356,6 +516,7 @@ export const govSlice = createSlice({
           pagination: EMPTY_PAGINATION,
         };
         state.chains[chainID].deposit = result;
+        state.depositProposalsLoading--;
       });
 
     // votes
@@ -474,8 +635,43 @@ export const govSlice = createSlice({
         const payload = action.payload as { message: string };
         state.proposalInfo.errMsg = payload.message || '';
       });
+
+    // tx-vote
+    builder
+      .addCase(txVote.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = TxStatus.PENDING;
+        state.chains[chainID].tx.txHash = '';
+      })
+      .addCase(txVote.fulfilled, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = TxStatus.IDLE;
+        state.chains[chainID].tx.txHash = action.payload.txHash;
+      })
+      .addCase(txVote.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = TxStatus.REJECTED;
+        state.chains[chainID].tx.txHash = '';
+      });
+
+    builder
+      .addCase(txDeposit.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = TxStatus.PENDING;
+        state.chains[chainID].tx.txHash = '';
+      })
+      .addCase(txDeposit.fulfilled, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = TxStatus.IDLE;
+        state.chains[chainID].tx.txHash = action.payload.txHash;
+      })
+      .addCase(txDeposit.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tx.status = TxStatus.REJECTED;
+        state.chains[chainID].tx.txHash = '';
+      });
   },
 });
 
-export const {} = govSlice.actions;
+export const { resetTx, resetState, resetDefaultState } = govSlice.actions;
 export default govSlice.reducer;
