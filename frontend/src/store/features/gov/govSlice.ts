@@ -21,6 +21,9 @@ import {
 } from '@/types/gov';
 import { PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
 
+const PROPSAL_STATUS_DEPOSIT = 1;
+const PROPOSAL_STATUS_ACTIVE = 2;
+
 interface Chain {
   active: {
     status: TxStatus;
@@ -137,7 +140,7 @@ export const getProposalsInDeposit = createAsyncThunk(
         data.baseURL,
         data?.key,
         data?.limit,
-        1
+        PROPSAL_STATUS_DEPOSIT
       );
 
       if (response?.data?.proposals?.length && data?.chainID?.length) {
@@ -187,7 +190,7 @@ export const getProposalsInVoting = createAsyncThunk(
         data.baseURL,
         data.key,
         data.limit,
-        2
+        PROPOSAL_STATUS_ACTIVE
       );
 
       if (response?.data?.proposals?.length) {
