@@ -7,13 +7,19 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import DialogAddNetwork from './DialogAddNetwork';
 
 const SelectNetwork = () => {
   const [open, setOpen] = useState<boolean>(false);
+  const [addNetworkDialogOpen, setAddNetworkDialogOpen] =
+    useState<boolean>(false);
   const pathName = usePathname();
   const ALL_NETWORKS_LOGO = '/all-networks-icon.png';
   const handleClose = () => {
     setOpen((open) => !open);
+  };
+  const handleCloseAddNetworkDialog = () => {
+    setAddNetworkDialogOpen((addNetworkDialogOpen) => !addNetworkDialogOpen);
   };
   const selectedNetwork = useAppSelector(
     (state: RootState) => state.common.selectedNetwork
@@ -76,6 +82,11 @@ const SelectNetwork = () => {
         open={open}
         handleClose={handleClose}
         selectedNetworkName={selectedNetwork.chainName}
+        handleCloseAddNetworkDialog={handleCloseAddNetworkDialog}
+      />
+      <DialogAddNetwork
+        open={addNetworkDialogOpen}
+        handleClose={handleCloseAddNetworkDialog}
       />
     </div>
   );
@@ -87,10 +98,12 @@ const DialogSelectNetwork = ({
   open,
   handleClose,
   selectedNetworkName,
+  handleCloseAddNetworkDialog,
 }: {
   open: boolean;
   handleClose: () => void;
   selectedNetworkName: string;
+  handleCloseAddNetworkDialog: () => void;
 }) => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const chainIDs = Object.keys(networks);
@@ -137,7 +150,12 @@ const DialogSelectNetwork = ({
                 </div>
               </div>
               <div>
-                <button className="add-network-button">Add New Network</button>
+                <button
+                  className="add-network-button"
+                  onClick={handleCloseAddNetworkDialog}
+                >
+                  Add New Network
+                </button>
               </div>
             </div>
             <div className="networks-list">
