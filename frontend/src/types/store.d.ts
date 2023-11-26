@@ -4,6 +4,7 @@ interface BasicChainInfo {
   aminoConfig: AminoConfig;
   rest: string;
   rpc: string;
+  cosmosAddress: string;
 }
 
 interface Coin {

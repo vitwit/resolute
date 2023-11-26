@@ -1,5 +1,3 @@
-import { BasicChainInfo } from './store';
-
 interface MultiTxnsInputs {
   basicChainInfo: BasicChainInfo;
   address: string;
