@@ -19,8 +19,5 @@ interface AddTransanctionInputs {
 }
 
 interface LoadTransactionsInputs {
-  chains: {
-    chainID: string;
-    address: string;
-  }[];
+  address: string;
 }

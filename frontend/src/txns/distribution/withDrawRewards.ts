@@ -1,6 +1,6 @@
 import { MsgWithdrawDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1beta1/tx';
 
-const msgWithdrawRewards =
+export const msgWithdrawRewards =
   '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward';
 
 export function WithdrawAllRewardsMsg(
@@ -14,4 +14,9 @@ export function WithdrawAllRewardsMsg(
       validatorAddress: validator,
     }),
   };
+}
+
+export function serialize(msg: Msg): string {
+  const { delegatorAddress, validatorAddress } = msg.value;
+  return `$${delegatorAddress} withdrew rewards from ${validatorAddress}`;
 }
