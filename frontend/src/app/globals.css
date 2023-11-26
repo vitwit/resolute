@@ -162,9 +162,10 @@
   }
 }
 
-/* Select Network Styling */
+/* Select Network styles */
 
-.select-network {
+.select-network,
+.add-network {
   @apply text-white rounded-3xl;
 }
 
@@ -192,4 +193,46 @@
 .divider-line {
   @apply h-[1px] w-full my-4;
   background: linear-gradient(90deg, #4aa29c 7.46%, #8b3da7 94.28%);
+}
+
+/* Add new network styles  */
+
+.add-network {
+  @apply w-[890px] min-h-[485px];
+}
+
+.file-upload-box {
+  @apply flex justify-center items-center px-4 py-10 bg-[#FFFFFF1A] min-h-[152px] rounded-3xl w-full cursor-pointer;
+}
+
+.add-network-json-sample-link {
+  @apply underline underline-offset-2 cursor-pointer;
+}
+
+.show-more-errors {
+  @apply underline underline-offset-2 cursor-pointer text-[12px];
+}
+
+.gradient-bg {
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.add-network-button-2 {
+  @apply text-center px-10 py-[10px] text-[16px] leading-[20px] rounded-2xl w-[144px] font-medium;
+}
+
+.custom-radio-button {
+  @apply border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center;
+}
+
+.custom-radio-button-label {
+  @apply flex items-center cursor-pointer gap-2;
+}
+
+.custom-radio-button-checked {
+  @apply h-[6px] w-[6px] bg-white rounded-full;
+}
+
+.chain-exist-error {
+  @apply text-red-600 font-bold;
 }

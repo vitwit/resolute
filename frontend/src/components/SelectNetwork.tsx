@@ -8,31 +8,38 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import DialogAddNetwork from './DialogAddNetwork';
+import { resetConnectWalletStatus } from '@/store/features/wallet/walletSlice';
 
 const ALL_NETWORKS_LOGO = '/all-networks-icon.png';
 
 const SelectNetwork = () => {
+  const pathName = usePathname();
+  const dispatch = useAppDispatch();
+
   const [open, setOpen] = useState<boolean>(false);
   const [addNetworkDialogOpen, setAddNetworkDialogOpen] =
     useState<boolean>(false);
-  const pathName = usePathname();
-  const handleClose = () => {
-    setOpen((open) => !open);
-  };
-  const handleCloseAddNetworkDialog = () => {
-    setAddNetworkDialogOpen((addNetworkDialogOpen) => !addNetworkDialogOpen);
-  };
+  const [chainLogo, setChainLogo] = useState(ALL_NETWORKS_LOGO);
+  const [walletAddress, setWalletAddress] = useState('');
+
   const selectedNetwork = useAppSelector(
     (state: RootState) => state.common.selectedNetwork
   );
-  const [chainLogo, setChainLogo] = useState(ALL_NETWORKS_LOGO);
-  const [walletAddress, setWalletAddress] = useState('');
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
 
-  const dispatch = useAppDispatch();
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleCloseAddNetworkDialog = () => {
+    setAddNetworkDialogOpen(false);
+  };
+  const openAddNetworkDialog = () => {
+    setAddNetworkDialogOpen(true);
+  };
+
   useEffect(() => {
     const pathParts = pathName.split('/') || [];
     if (pathParts.length === 3) {
@@ -53,6 +60,7 @@ const SelectNetwork = () => {
       setWalletAddress('');
     }
   }, [selectedNetwork]);
+
   return (
     <div>
       <div className="flex gap-2 items-center cursor-pointer">
@@ -83,7 +91,7 @@ const SelectNetwork = () => {
         open={open}
         handleClose={handleClose}
         selectedNetworkName={selectedNetwork.chainName}
-        handleCloseAddNetworkDialog={handleCloseAddNetworkDialog}
+        openAddNetworkDialog={openAddNetworkDialog}
       />
       <DialogAddNetwork
         open={addNetworkDialogOpen}
@@ -99,12 +107,12 @@ const DialogSelectNetwork = ({
   open,
   handleClose,
   selectedNetworkName,
-  handleCloseAddNetworkDialog,
+  openAddNetworkDialog,
 }: {
   open: boolean;
   handleClose: () => void;
   selectedNetworkName: string;
-  handleCloseAddNetworkDialog: () => void;
+  openAddNetworkDialog: () => void;
 }) => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const chainIDs = Object.keys(networks);
@@ -114,7 +122,7 @@ const DialogSelectNetwork = ({
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={() => handleClose()}
       maxWidth="lg"
       PaperProps={{
         sx: {
@@ -143,15 +151,17 @@ const DialogSelectNetwork = ({
           </div>
           <div className="py-6 px-10">
             <div className="mb-6 flex justify-between">
-              <div className="flex gap-6 items-center">
-                <h2 className="text-[20px] font-bold leading-normal">
-                  All Networks
-                </h2>
-              </div>
+              <h2 className="text-[20px] font-bold leading-normal">
+                All Networks
+              </h2>
               <div>
                 <button
-                  className="add-network-button"
-                  onClick={handleCloseAddNetworkDialog}
+                  className="add-network-button gradient-bg"
+                  onClick={() => {
+                    handleClose();
+                    dispatch(resetConnectWalletStatus());
+                    openAddNetworkDialog();
+                  }}
                 >
                   Add New Network
                 </button>

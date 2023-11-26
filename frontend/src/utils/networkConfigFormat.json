@@ -1,0 +1,377 @@
+{
+    "type": "object",
+    "properties": {
+      "enableModules": {
+        "type": "object",
+        "properties": {
+          "authz": {
+            "type": "boolean"
+          },
+          "feegrant": {
+            "type": "boolean"
+          },
+          "group": {
+            "type": "boolean"
+          }
+        },
+        "required": ["authz", "feegrant", "group"]
+      },
+      "aminoConfig": {
+        "type": "object",
+        "properties": {
+          "authz": {
+            "type": "boolean"
+          },
+          "feegrant": {
+            "type": "boolean"
+          },
+          "group": {
+            "type": "boolean"
+          }
+        },
+        "required": ["authz", "feegrant", "group"]
+      },
+      "showAirdrop": {
+        "type": "boolean"
+      },
+      "logos": {
+        "type": "object",
+        "properties": {
+          "menu": {
+            "type": "string",
+            "format": "uri"
+          },
+          "toolbar": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": ["menu", "toolbar"]
+      },
+      "keplrExperimental": {
+        "type": "boolean"
+      },
+      "leapExperimental": {
+        "type": "boolean"
+      },
+      "isTestnet": {
+        "type": "boolean"
+      },
+      "explorerTxHashEndpoint": {
+        "type": "string",
+        "format": "uri"
+      },
+      "config": {
+        "type": "object",
+        "properties": {
+          "chainId": {
+            "type": "string",
+            "pattern": "^[^\\s]*$",
+            "minLength": 1,
+            "message": {
+              "pattern": "chainId cannot contain spaces",
+              "minLength": "chainId cannot be empty"
+            }
+          },
+          "chainName": {
+            "type": "string",
+            "pattern": "^[^\\s]*$",
+            "minLength": 1,
+            "message": {
+              "pattern": "chainName cannot contain spaces",
+              "minLength": "chainName cannot be empty"
+            }
+          },
+          "rest": {
+            "type": "string",
+            "format": "uri"
+          },
+          "rpc": {
+            "type": "string",
+            "format": "uri"
+          },
+          "currencies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "coinDenom": {
+                  "type": "string",
+                  "pattern": "^[^\\s]*$",
+                  "minLength": 1,
+                  "message": {
+                    "pattern": "coinDenom cannot contain spaces",
+                    "minLength": "coinDenom cannot be empty"
+                  }
+                },
+                "coinMinimalDenom": {
+                  "type": "string",
+                  "pattern": "^[^\\s]*$",
+                  "minLength": 1,
+                  "message": {
+                    "pattern": "coinMinimalDenom cannot contain spaces",
+                    "minLength": "coinMinimalDenom cannot be empty"
+                  }
+                },
+                "coinDecimals": {
+                  "type": "number",
+                  "minimum": 1,
+                  "message": {
+                    "minimum": "coinDecimals value must the positive"
+                  }
+                }
+              },
+              "required": ["coinDenom", "coinMinimalDenom", "coinDecimals"]
+            }
+          },
+          "bip44": {
+            "type": "object",
+            "properties": {
+              "coinType": {
+                "type": "number",
+                "minimum": 1,
+                "message": {
+                  "minimum": "bip44 value must be positive"
+                }
+              }
+            },
+            "required": ["coinType"]
+          },
+          "bech32Config": {
+            "type": "object",
+            "properties": {
+              "bech32PrefixAccAddr": {
+                "type": "string",
+                "pattern": "^[^\\s]*$",
+                "minLength": 1,
+                "message": {
+                  "pattern": "bech32PrefixAccAddr cannot contain spaces",
+                  "minLength": "bech32PrefixAccAddr cannot be empty"
+                }
+              },
+              "bech32PrefixAccPub": {
+                "type": "string",
+                "pattern": "^[^\\s]*$",
+                "minLength": 1,
+                "message": {
+                  "pattern": "bech32PrefixAccPub cannot contain spaces",
+                  "minLength": "bech32PrefixAccPub cannot be empty"
+                }
+              },
+              "bech32PrefixValAddr": {
+                "type": "string",
+                "pattern": "^[^\\s]*$",
+                "minLength": 1,
+                "message": {
+                  "pattern": "bech32PrefixValAddr cannot contain spaces",
+                  "minLength": "bech32PrefixValAddr cannot be empty"
+                }
+              },
+              "bech32PrefixValPub": {
+                "type": "string",
+                "pattern": "^[^\\s]*$",
+                "minLength": 1,
+                "message": {
+                  "pattern": "bech32PrefixValPub cannot contain spaces",
+                  "minLength": "bech32PrefixValPub cannot be empty"
+                }
+              },
+              "bech32PrefixConsAddr": {
+                "type": "string",
+                "pattern": "^[^\\s]*$",
+                "minLength": 1,
+                "message": {
+                  "pattern": "bech32PrefixConsAddr cannot contain spaces",
+                  "minLength": "bech32PrefixConsAddr cannot be empty"
+                }
+              },
+              "bech32PrefixConsPub": {
+                "type": "string",
+                "pattern": "^[^\\s]*$",
+                "minLength": 1,
+                "message": {
+                  "pattern": "bech32PrefixConsPub cannot contain spaces",
+                  "minLength": "bech32PrefixConsPub cannot be empty"
+                }
+              }
+            },
+            "required": [
+              "bech32PrefixAccAddr",
+              "bech32PrefixAccPub",
+              "bech32PrefixValAddr",
+              "bech32PrefixValPub",
+              "bech32PrefixConsAddr",
+              "bech32PrefixConsPub"
+            ]
+          },
+          "walletUrlForStaking": {
+            "type": "string",
+            "format": "uri"
+          },
+          "feeCurrencies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "coinDenom": {
+                  "type": "string",
+                  "pattern": "^[^\\s]*$",
+                  "minLength": 1,
+                  "message": {
+                    "pattern": "coinDenom cannot contain spaces",
+                    "minLength": "coinDenom cannot be empty"
+                  }
+                },
+                "coinMinimalDenom": {
+                  "type": "string",
+                  "pattern": "^[^\\s]*$",
+                  "minLength": 1,
+                  "message": {
+                    "pattern": "coinMinimalDenom cannot contain spaces",
+                    "minLength": "coinMinimalDenom cannot be empty"
+                  }
+                },
+                "coinDecimals": {
+                  "type": "number",
+                  "minimum": 1,
+                  "message": {
+                    "minimum": "coinDecimals value must the positive"
+                  }
+                },
+                "coinGeckoId": {
+                  "type": "string",
+                  "pattern": "^[^\\s]*$",
+                  "message": {
+                    "pattern": "coinGeckoId cannot contain spaces"
+                  }
+                },
+                "gasPriceStep": {
+                  "type": "object",
+                  "properties": {
+                    "low": {
+                      "type": "number",
+                      "minimum": 0,
+                      "message": {
+                        "minimum": "gasPriceStep low value cannot be negative"
+                      }
+                    },
+                    "average": {
+                      "type": "number",
+                      "minimum": 0,
+                      "message": {
+                        "minimum": "gasPriceStep average value cannot be negative"
+                      }
+                    },
+                    "high": {
+                      "type": "number",
+                      "minimum": 0,
+                      "message": {
+                        "minimum": "gasPriceStep high value cannot be negative"
+                      }
+                    }
+                  },
+                  "required": ["low", "average", "high"]
+                }
+              },
+              "required": [
+                "coinDenom",
+                "coinMinimalDenom",
+                "coinDecimals",
+                "coinGeckoId",
+                "gasPriceStep"
+              ]
+            }
+          },
+          "stakeCurrency": {
+            "type": "object",
+            "properties": {
+              "coinDenom": {
+                "type": "string",
+                "pattern": "^[^\\s]*$",
+                "minLength": 1,
+                "message": {
+                  "pattern": "coinDenom cannot contain spaces",
+                  "minLength": "coinDenom cannot be empty"
+                }
+              },
+              "coinMinimalDenom": {
+                "type": "string",
+                "pattern": "^[^\\s]*$",
+                "minLength": 1,
+                "message": {
+                  "pattern": "coinMinimalDenom cannot contain spaces",
+                  "minLength": "coinMinimalDenom cannot be empty"
+                }
+              },
+              "coinDecimals": {
+                "type": "number",
+                "minimum": 1,
+                "message": {
+                  "minimum": "coinDecimals value must the positive"
+                }
+              },
+              "coinGeckoId": {
+                "type": "string",
+                "pattern": "^[^\\s]*$",
+                "message": {
+                  "pattern": "coinGeckoId cannot contain spaces"
+                }
+              }
+            },
+            "required": [
+              "coinDenom",
+              "coinMinimalDenom",
+              "coinDecimals",
+              "coinGeckoId"
+            ]
+          },
+          "image": {
+            "type": "string",
+            "format": "uri"
+          },
+          "theme": {
+            "type": "object",
+            "properties": {
+              "primaryColor": {
+                "type": "string",
+                "pattern": "^[^\\s]*$",
+                "message": {
+                  "pattern": "primaryColor cannot contain spaces"
+                }
+              },
+              "gradient": {
+                "type": "string"
+              }
+            },
+            "required": ["primaryColor", "gradient"]
+          }
+        },
+        "required": [
+          "chainId",
+          "chainName",
+          "rest",
+          "rpc",
+          "currencies",
+          "bip44",
+          "bech32Config",
+          "walletUrlForStaking",
+          "feeCurrencies",
+          "stakeCurrency",
+          "image",
+          "theme"
+        ]
+      }
+    },
+    "required": [
+      "enableModules",
+      "aminoConfig",
+      "showAirdrop",
+      "logos",
+      "keplrExperimental",
+      "leapExperimental",
+      "isTestnet",
+      "explorerTxHashEndpoint",
+      "config"
+    ]
+  }
+  
