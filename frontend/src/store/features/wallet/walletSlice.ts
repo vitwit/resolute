@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getWalletAmino } from '../../../txns/execute';
 import { isWalletInstalled } from './walletService';
 import { setConnected, setWalletName } from '../../../utils/localStorage';
-import { loadChainTransactions } from '../transactionHistory/transactionHistorySlice';
+import { loadTransactions } from '../transactionHistory/transactionHistorySlice';
 
 declare let window: WalletWindow;
 
@@ -85,12 +85,6 @@ export const establishWalletConnection = createAsyncThunk(
           walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString(
             'base64'
           );
-          dispatch(
-            loadChainTransactions({
-              chainID: chainId,
-              address: walletInfo.bech32Address,
-            })
-          );
           delete walletInfo?.address;
           walletName = walletInfo?.name;
           isNanoLedger = walletInfo?.isNanoLedger || false;
@@ -114,7 +108,11 @@ export const establishWalletConnection = createAsyncThunk(
       } else {
         setConnected();
         setWalletName(data.walletName);
-
+        dispatch(
+          loadTransactions({
+            address: chainInfos['cosmoshub-4'].walletInfo.bech32Address,
+          })
+        );
         return fulfillWithValue({
           chainInfos,
           nameToChainIDs,

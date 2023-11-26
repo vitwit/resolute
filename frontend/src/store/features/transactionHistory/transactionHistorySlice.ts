@@ -4,41 +4,43 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { addTransanctions, getTransactions } from '@/utils/localStorage';
 
 type TransactionHistoryState = {
-  [chainID: string]: Transaction[];
+  chains: { [chainID: string]: Transaction[] };
+  allTransactions: Transaction[];
 };
 
-const initialState: TransactionHistoryState = {};
+const initialState: TransactionHistoryState = {
+  chains: {},
+  allTransactions: [],
+};
 
 export const transactionHistorySlice = createSlice({
   name: 'transactionHistory',
   initialState,
   reducers: {
     addTransactions: (state, action: PayloadAction<AddTransanctionInputs>) => {
-      const { transactions, address, chainID } = action.payload;
-      state[chainID] = [...state[chainID], ...transactions];
-      addTransanctions(chainID, address, transactions);
+      const { transactions, chainID, address } = action.payload;
+      state.allTransactions = [...state.allTransactions, ...transactions];
+      state.chains[chainID] = [...state.chains[chainID], ...transactions];
+      addTransanctions(transactions, address);
     },
+
     loadTransactions: (
       state,
       action: PayloadAction<LoadTransactionsInputs>
     ) => {
-      const { chains } = action.payload;
-      chains.forEach((chain) => {
-        const { chainID, address } = chain;
-        state[chainID] = getTransactions(chainID, address);
+      const { address } = action.payload;
+      const transactions = getTransactions(address);
+      state.allTransactions = transactions;
+      transactions.forEach((tx) => {
+        const { chainID } = tx;
+        if (!state.chains[chainID]) state.chains[chainID] = [];
+        state.chains[chainID] = [...state.chains[chainID], tx];
       });
-    },
-    loadChainTransactions: (
-      state,
-      action: PayloadAction<{ chainID: string; address: string }>
-    ) => {
-      const { chainID, address } = action.payload;
-      state[chainID] = getTransactions(chainID, address);
     },
   },
 });
 
-export const { addTransactions, loadTransactions, loadChainTransactions } =
+export const { addTransactions, loadTransactions } =
   transactionHistorySlice.actions;
 
 export default transactionHistorySlice.reducer;

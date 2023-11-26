@@ -1,8 +1,7 @@
-import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
-import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
+import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
+import { MsgDelegate } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 
-
-const msgDelegate = "/cosmos.staking.v1beta1.MsgDelegate";
+export const msgDelegate = '/cosmos.staking.v1beta1.MsgDelegate';
 
 export function Delegate(
   delegator: string,
@@ -21,4 +20,9 @@ export function Delegate(
       }),
     }),
   };
+}
+
+export function serialize(msg: Msg): string {
+  const { delegatorAddress, validatorAddress, amount } = msg.value;
+  return `$${delegatorAddress} delegated $${amount[0].amount} ${amount[0].denom} to $${validatorAddress}`;
 }

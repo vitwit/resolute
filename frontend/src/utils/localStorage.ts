@@ -1,5 +1,6 @@
 export const KEY_WALLET_NAME: string = 'WALLET_NAME';
 export const KEY_DARK_MODE: string = 'DARK_MODE';
+const KEY_TRANSACTIONS = (address: string) => 'transactions' + ' ' + address;
 
 export function setConnected() {
   localStorage.setItem('CONNECTED', 'true');
@@ -41,23 +42,15 @@ export function getMainnets(): Network[] {
   return [];
 }
 
-export function getTransactions(
-  chainID: string,
-  address: string
-): Transaction[] {
-  const key = address + ' ' + chainID;
-  const transactions = localStorage.getItem(key);
+export function getTransactions(address: string): Transaction[] {
+  const transactions = localStorage.getItem(KEY_TRANSACTIONS(address));
   if (transactions) return JSON.parse(transactions);
   return [];
 }
 
-export function addTransanctions(
-  chainID: string,
-  address: string,
-  transactions: Transaction[]
-) {
-  let storedTransactions = getTransactions(chainID, address);
+export function addTransanctions(transactions: Transaction[], address: string) {
+  const key = KEY_TRANSACTIONS(address);
+  let storedTransactions = getTransactions(key);
   storedTransactions = [...storedTransactions, ...transactions];
-  const key = address + ' ' + chainID;
   localStorage.set(key, JSON.stringify(storedTransactions));
 }
