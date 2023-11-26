@@ -198,115 +198,127 @@ const DialogAddNetwork = ({
                   <div>Request Network</div>
                 </div>
               </div>
-              <div className="">
-                <div
-                  className="file-upload-box"
-                  onClick={() => {
-                    document.getElementById('multisig_file')!.click();
-                  }}
-                >
-                  <div className="flex flex-col items-center justify-center">
-                    {uploadedFileName ? (
-                      <>
-                        <div className="font-bold">
-                          {uploadedFileName}{' '}
-                          <Tooltip title="Remove" placement="top">
-                            <IconButton
-                              aria-label="delete txn"
-                              color="error"
-                              onClick={(e) => {
-                                setUploadedFileName('');
-                                setChainIDExist(false);
-                                setChainNameExist(false);
-                                setShowErrors(false);
-                                e.stopPropagation();
-                              }}
-                            >
-                              <ClearIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <Image
-                          src="/file-upload-icon.svg"
-                          width={32}
-                          height={32}
-                          alt="Upload file"
-                        />
-                        <div className="mt-2">Upload file here</div>
-                      </>
-                    )}
+              {requestNetwork ? (
+                <>
+                  <div className='min-h-[272px] flex justify-center items-center'>
+                    Coming soon...
                   </div>
-                  <input
-                    id="multisig_file"
-                    accept=".json"
-                    hidden
-                    type="file"
-                    onChange={handleFileChange}
-                  />
-                </div>
-                <div className="mt-3 text-[14px] leading-normal font-light">
-                  Download sample JSON file&nbsp;
-                  <a
-                    className="add-network-json-sample-link"
-                    onClick={() => {
-                      window.open(
-                        ADD_NETWORK_TEMPLATE_URL,
-                        '_blank',
-                        'noopener,noreferrer'
-                      );
-                    }}
-                  >
-                    here
-                  </a>
-                </div>
-              </div>
-              {uploadedFileName && validationErrors?.length ? (
-                <div className="w-full">
-                  <div className="flex gap-4 items-center">
-                    <div className="text-red-600 font-bold">
-                      Invalid json file
-                    </div>
-                    <div
-                      className="show-more-errors"
-                      onClick={() => setShowErrors((showErrors) => !showErrors)}
-                    >
-                      show more
-                    </div>
-                  </div>
-                  {showErrors &&
-                    validationErrors?.map((item, index) => (
-                      <li key={index}>{item.stack}</li>
-                    ))}
-                </div>
+                </>
               ) : (
-                <div>
-                  {chainNameExist ? (
-                    <li className="chain-exist-error">
-                      {CHAIN_NAME_EXIST_ERROR}
-                    </li>
+                <>
+                  <div className="">
+                    <div
+                      className="file-upload-box"
+                      onClick={() => {
+                        document.getElementById('multisig_file')!.click();
+                      }}
+                    >
+                      <div className="flex flex-col items-center justify-center">
+                        {uploadedFileName ? (
+                          <>
+                            <div className="font-bold">
+                              {uploadedFileName}{' '}
+                              <Tooltip title="Remove" placement="top">
+                                <IconButton
+                                  aria-label="delete txn"
+                                  color="error"
+                                  onClick={(e) => {
+                                    setUploadedFileName('');
+                                    setChainIDExist(false);
+                                    setChainNameExist(false);
+                                    setShowErrors(false);
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  <ClearIcon />
+                                </IconButton>
+                              </Tooltip>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <Image
+                              src="/file-upload-icon.svg"
+                              width={32}
+                              height={32}
+                              alt="Upload file"
+                            />
+                            <div className="mt-2">Upload file here</div>
+                          </>
+                        )}
+                      </div>
+                      <input
+                        id="multisig_file"
+                        accept=".json"
+                        hidden
+                        type="file"
+                        onChange={handleFileChange}
+                      />
+                    </div>
+                    <div className="mt-3 text-[14px] leading-normal font-light">
+                      Download sample JSON file&nbsp;
+                      <a
+                        className="add-network-json-sample-link"
+                        onClick={() => {
+                          window.open(
+                            ADD_NETWORK_TEMPLATE_URL,
+                            '_blank',
+                            'noopener,noreferrer'
+                          );
+                        }}
+                      >
+                        here
+                      </a>
+                    </div>
+                  </div>
+                  {uploadedFileName && validationErrors?.length ? (
+                    <div className="w-full">
+                      <div className="flex gap-4 items-center">
+                        <div className="text-red-600 font-bold">
+                          Invalid json file
+                        </div>
+                        <div
+                          className="show-more-errors"
+                          onClick={() =>
+                            setShowErrors((showErrors) => !showErrors)
+                          }
+                        >
+                          show more
+                        </div>
+                      </div>
+                      {showErrors &&
+                        validationErrors?.map((item, index) => (
+                          <li key={index}>{item.stack}</li>
+                        ))}
+                    </div>
                   ) : (
-                    <></>
+                    <div>
+                      {chainNameExist ? (
+                        <li className="chain-exist-error">
+                          {CHAIN_NAME_EXIST_ERROR}
+                        </li>
+                      ) : (
+                        <></>
+                      )}
+                      {chainIDExist ? (
+                        <li className="chain-exist-error">
+                          {CHAIN_ID_EXIST_ERROR}
+                        </li>
+                      ) : (
+                        <></>
+                      )}
+                    </div>
                   )}
-                  {chainIDExist ? (
-                    <li className="chain-exist-error">
-                      {CHAIN_ID_EXIST_ERROR}
-                    </li>
-                  ) : (
-                    <></>
-                  )}
-                </div>
+                  <div>
+                    <button
+                      className="add-network-button-2 gradient-bg"
+                      onClick={() => addNetwork()}
+                    >
+                      {connectWalletStatus === 'pending' ? 'Loading..' : 'Add'}
+                    </button>
+                  </div>
+                </>
               )}
-              <div>
-                <button
-                  className="add-network-button-2 gradient-bg"
-                  onClick={() => addNetwork()}
-                >
-                  {connectWalletStatus === 'pending' ? 'Loading..' : 'Add'}
-                </button>
-              </div>
             </div>
           </div>
         </div>
