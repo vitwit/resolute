@@ -108,7 +108,7 @@ export const txBankSend = createAsyncThunk(
       dispatch(
         addTransactions({
           chainID: data.basicChainInfo.chainID,
-          address: data.from,
+          address: cosmosAddress,
           transactions: [tx],
         })
       );
