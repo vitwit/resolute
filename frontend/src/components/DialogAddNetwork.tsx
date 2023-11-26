@@ -3,21 +3,19 @@ import { Dialog, DialogContent, IconButton, Tooltip } from '@mui/material';
 import Image from 'next/image';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
-import networkConfigFormat from '@/utils/networkConfigFormat.json';
+import networkConfigFormat from '@/utils/networkConfigSchema.json';
 import { ValidationError, validate } from 'jsonschema';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { get } from 'lodash';
 import { establishWalletConnection } from '@/store/features/wallet/walletSlice';
-import {
-  ADD_NETWORK_TEMPLATE_URL,
-  NETWORK_CONFIG_EMPTY,
-} from '@/utils/constants';
+import { ADD_NETWORK_TEMPLATE_URL } from '@/utils/constants';
 import { networks } from '@/utils/chainsInfo';
 import { getLocalNetworks, setLocalNetwork } from '@/utils/localStorage';
 import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
 import { CHAIN_ID_EXIST_ERROR, CHAIN_NAME_EXIST_ERROR } from '@/utils/errors';
+import { convertKeysToCamelCase } from '@/utils/util';
 
 const DialogAddNetwork = ({
   open,
@@ -34,8 +32,7 @@ const DialogAddNetwork = ({
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
     []
   );
-  const [networkConfig, setNetworkConfig] =
-    useState<Network>(NETWORK_CONFIG_EMPTY);
+  const [networkConfig, setNetworkConfig] = useState({});
 
   const nameToChainIDs: Record<string, string> = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
@@ -69,14 +66,16 @@ const DialogAddNetwork = ({
       const res = validate(parsedData, networkConfigFormat);
       setValidationErrors(res.errors);
       if (!get(res, 'errors.length')) {
-        setChainNameExist(chainNameExists(get(parsedData, 'config.chainName')));
-        setChainIDExist(chainIDExists(get(parsedData, 'config.chainId')));
+        setChainNameExist(
+          chainNameExists(get(parsedData, 'config.chain_name'))
+        );
+        setChainIDExist(chainIDExists(get(parsedData, 'config.chain_id')));
         setNetworkConfig(parsedData);
       } else {
-        setNetworkConfig(NETWORK_CONFIG_EMPTY);
+        setNetworkConfig({});
       }
     } catch (e) {
-      setNetworkConfig(NETWORK_CONFIG_EMPTY);
+      setNetworkConfig({});
       console.log(e);
     }
   };
@@ -103,9 +102,10 @@ const DialogAddNetwork = ({
   };
 
   const addNetwork = () => {
-    const chainID = get(networkConfig, 'config.chainId');
+    const chainID = get(networkConfig, 'config.chain_id');
     if (!chainIDExist && !chainNameExist && chainID) {
-      setLocalNetwork(networkConfig, chainID);
+      const networkConfigFormatted = convertKeysToCamelCase(networkConfig);
+      setLocalNetwork(networkConfigFormatted, chainID);
       dispatch(
         establishWalletConnection({
           walletName: 'keplr',
@@ -113,7 +113,7 @@ const DialogAddNetwork = ({
         })
       );
     } else {
-      setNetworkConfig(NETWORK_CONFIG_EMPTY);
+      setNetworkConfig({});
       setError({
         type: 'error',
         message: 'Invalid JSON file',
@@ -200,7 +200,7 @@ const DialogAddNetwork = ({
               </div>
               {requestNetwork ? (
                 <>
-                  <div className='min-h-[272px] flex justify-center items-center'>
+                  <div className="min-h-[272px] flex justify-center items-center">
                     Coming soon...
                   </div>
                 </>

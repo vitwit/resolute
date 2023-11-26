@@ -134,3 +134,32 @@ export function shortenAddress(bech32: string, maxCharacters: number) {
 
   return prefix + '1' + former + '...' + latter;
 }
+
+function convertSnakeToCamelCase(key: string): string {
+  return key.replace(/_([a-z])/g, (match, group1) => group1.toUpperCase());
+}
+
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+export function convertKeysToCamelCase(data: any): any {
+  if (Array.isArray(data)) {
+    return data.map(convertKeysToCamelCase);
+  }
+
+  if (typeof data === 'object' && data !== null) {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    const convertedData: Record<string, any> = {};
+    for (const [key, value] of Object.entries(data)) {
+      const cleanedKey = removeQuotesFromKey(key);
+      const camelCaseKey = convertSnakeToCamelCase(cleanedKey);
+      convertedData[camelCaseKey] = convertKeysToCamelCase(value);
+      console.log(camelCaseKey);
+    }
+    return convertedData;
+  }
+
+  return data;
+}
+
+function removeQuotesFromKey(key: string): string {
+  return key.replace(/"/g, '');
+}
