@@ -6,7 +6,6 @@ import bankService from './bankService';
 import { signAndBroadcast } from '../../../utils/signing';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { GAS_FEE } from '../../../utils/constants';
-import { MultiTxnsInputs, TxSendInputs } from '../../../types/bank';
 import { TxStatus } from '../../../types/enums';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
@@ -90,7 +89,8 @@ export const txBankSend = createAsyncThunk(
     data: TxSendInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
-    const chainID = data.basicChainInfo.chainID;
+    const { chainID, cosmosAddress } = data.basicChainInfo;
+
     try {
       const msg = SendMsg(data.from, data.to, data.amount, data.denom);
       const result = await signAndBroadcast(
