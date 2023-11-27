@@ -87,23 +87,23 @@ const DialogAllValidators = ({
           <div className="mt-4 py-2">
             <div className="flex gap-6 text-white">
               <div
-                className="flex items-center cursor-pointer gap-2"
+                className="custom-radio-button-label"
                 onClick={() => setActive(true)}
               >
-                <div className="border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center">
+                <div className="custom-ratio-button">
                   {active ? (
-                    <div className="h-[6px] w-[6px] bg-white rounded-full"></div>
+                    <div className="custom-radio-button-checked"></div>
                   ) : null}
                 </div>
                 <div>Active</div>
               </div>
               <div
-                className="flex items-center cursor-pointer gap-2"
+                className="custom-radio-button-label"
                 onClick={() => setActive(false)}
               >
-                <div className="border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center">
+                <div className="custom-ratio-button">
                   {!active ? (
-                    <div className="h-[6px] w-[6px] bg-white rounded-full"></div>
+                    <div className="custom-radio-button-checked"></div>
                   ) : null}
                 </div>
                 <div>Inactive</div>
@@ -121,7 +121,7 @@ const DialogAllValidators = ({
             </div>
             <div className="w-full">
               <input
-                className="w-full pl-2 border-none cursor-pointer focus:outline-none bg-transparent placeholder:font-custom1 placeholder:text-[14px] placeholder:text-[#FFFFFFBF] placeholder:font-extralight text-[#FFFFFFBF]"
+                className="search-validator-input"
                 type="text"
                 placeholder="Search Chain"
                 value={searchTerm}

@@ -70,9 +70,9 @@ const StakingOverview = () => {
     }
   }, []);
   return (
-    <div className="px-10 py-6 flex-1 h-screen min-h-[800px] overflow-y-scroll">
+    <div className="staking-main">
       <h2 className="txt-lg font-medium mb-6">Staking</h2>
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="overview-grid">
         {chainIDs.map((chainID, index) => {
           const delegations = stakingData[chainID]?.delegations.delegations;
           const validators = stakingData[chainID]?.validators;
@@ -93,7 +93,7 @@ const StakingOverview = () => {
         })}
       </div>
       <h2 className="txt-lg font-medium my-6">Unbonding</h2>
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="overview-grid">
         {chainIDs.map((chainID, index) => {
           const unbondingDelegations =
             stakingData[chainID]?.unbonding.unbonding;

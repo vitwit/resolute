@@ -1,4 +1,4 @@
-import { ERR_UNKNOWN } from '@/utils/errors';
+import { ERR_UNKNOWN, GET_VALIDATOR_LOGO_ERROR } from '@/utils/errors';
 import { Avatar } from '@mui/material';
 import Axios, { AxiosError } from 'axios';
 import { get } from 'lodash';
@@ -28,8 +28,8 @@ const ValidatorLogo = ({
         }
       } catch (error) {
         if (error instanceof AxiosError)
-          console.log('Error while getting validator logo', error.message);
-        console.log('Error while getting validator logo', ERR_UNKNOWN);
+          console.log(GET_VALIDATOR_LOGO_ERROR, error.message);
+        console.log(GET_VALIDATOR_LOGO_ERROR, ERR_UNKNOWN);
       }
     })();
   }, [identity]);
