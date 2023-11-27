@@ -1,14 +1,16 @@
 'use client';
-import {
-  GetDelegationsResponse,
-  StakingMenuAction,
-  Validators,
-} from '@/types/staking';
-import React, { useEffect } from 'react';
+import { GetDelegationsResponse, Validator, Validators } from '@/types/staking';
+import React, { useEffect, useState } from 'react';
 import StakingCard from './StakingCard';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { DelegatorRewards } from '@/types/distribution';
+import { useRouter } from 'next/navigation';
+import { txDelegate } from '@/store/features/staking/stakeSlice';
+import DialogDelegate from './DialogDelegate';
+import { parseBalance } from '@/utils/denom';
+import DialogUndelegate from './DialogUndelegate';
+import DialogRedelegate from './DialogRedelegate';
 
 const ChainDelegations = ({
   chainID,
@@ -17,7 +19,9 @@ const ChainDelegations = ({
   currency,
   chainName,
   rewards,
-  onMenuAction,
+  validatorAddress,
+  action,
+  chainSpecific,
 }: {
   chainID: string;
   chainName: string;
@@ -25,14 +29,125 @@ const ChainDelegations = ({
   validators: Validators;
   currency: Currency;
   rewards: DelegatorRewards[];
-  onMenuAction: StakingMenuAction;
+  validatorAddress: string;
+  action: string;
+  chainSpecific: boolean;
 }) => {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const networkLogo = networks[chainID].network.logos.menu;
 
   const [validatorRewards, setValidatorRewards] = React.useState<{
     [key: string]: number;
   }>({});
+
+  const txStatus = useAppSelector(
+    (state: RootState) => state.staking.chains[chainID]?.tx
+  );
+  const balance = useAppSelector(
+    (state: RootState) => state.bank.balances[chainID]
+  );
+  const stakingParams = useAppSelector(
+    (state: RootState) => state.staking.chains[chainID]?.params
+  );
+
+  const [availableBalance, setAvailableBalance] = useState(0);
+  const [delegateOpen, setDelegateOpen] = useState(false);
+  const [undelegateOpen, setUndelegateOpen] = useState(false);
+  const [redelegateOpen, setRedelegateOpen] = useState(false);
+  const [selectedValidator, setSelectedValidator] = useState<Validator>();
+
+  const handleDialogClose = () => {
+    if (chainSpecific) {
+      //TODO: Add chainName from selectedNetwork
+      router.push(`/staking/${chainName.toLowerCase()}`);
+    }
+    setDelegateOpen(false);
+    setUndelegateOpen(false);
+    setRedelegateOpen(false);
+  };
+
+  const onMenuAction = (type: string, validator: Validator) => {
+    const valAddress = validator.operator_address;
+
+    setSelectedValidator(validator);
+
+    switch (type) {
+      case 'delegate':
+        setDelegateOpen(true);
+        break;
+      case 'undelegate':
+        setUndelegateOpen(true);
+        break;
+      case 'redelegate':
+        setRedelegateOpen(true);
+        break;
+      default:
+        console.log('unsupported type');
+    }
+    if (chainSpecific) {
+      router.push(`?validator_address=${valAddress}&action=${type}`);
+    }
+  };
+
+  const allChainInfo = networks[chainID];
+  const chainInfo = allChainInfo?.network;
+  const address = allChainInfo?.walletInfo?.bech32Address;
+  const baseURL = chainInfo?.config?.rest;
+
+  const onDelegateTx = (data: { validator: string; amount: number }) => {
+    dispatch(
+      txDelegate({
+        basicChainInfo: {
+          baseURL: baseURL,
+          chainID: chainID,
+          aminoConfig: chainInfo.aminoConfig,
+          rest: chainInfo.config.rest,
+          rpc: chainInfo.config.rpc,
+        },
+        delegator: address,
+        validator: data.validator,
+        amount: data.amount * 10 ** currency.coinDecimals,
+        denom: currency.coinMinimalDenom,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+        feeAmount:
+          (chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average || 0) *
+          10 ** currency?.coinDecimals,
+        feegranter: '',
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (chainInfo.config.currencies.length > 0) {
+      setAvailableBalance(
+        parseBalance(
+          balance?.list?.length ? balance.list : [],
+          currency.coinDecimals,
+          currency.coinMinimalDenom
+        )
+      );
+    }
+  }, [balance]);
+
+  useEffect(() => {
+    if (validatorAddress.length && action.length && validators?.active) {
+      const validatorInfo =
+        validators.active[validatorAddress] ||
+        validators.inactive[validatorAddress] ||
+        {};
+      const validatorExist = Object.keys(validatorInfo).length ? true : false;
+      setSelectedValidator(validatorInfo);
+      if (action === 'delegate' && validatorExist) {
+        setDelegateOpen(true);
+      } else if (action === 'undelegate' && validatorExist) {
+        setUndelegateOpen(true);
+      } else if (action === 'redelegate' && validatorExist) {
+        setRedelegateOpen(true);
+      }
+    }
+  }, [validatorAddress, action, validators]);
 
   useEffect(() => {
     if (rewards?.length > 0) {
@@ -88,6 +203,18 @@ const ChainDelegations = ({
           validatorInfo={validators?.active[row.delegation.validator_address]}
         />
       ))}
+      <DialogDelegate
+        onClose={handleDialogClose}
+        open={delegateOpen}
+        validator={selectedValidator}
+        stakingParams={stakingParams}
+        availableBalance={availableBalance}
+        loading={txStatus?.status}
+        displayDenom={currency.coinDenom}
+        onDelegate={onDelegateTx}
+      />
+      <DialogUndelegate onClose={handleDialogClose} open={undelegateOpen} />
+      <DialogRedelegate onClose={handleDialogClose} open={redelegateOpen} />
     </>
   );
 };

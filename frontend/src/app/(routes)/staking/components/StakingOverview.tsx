@@ -7,11 +7,13 @@ import { RootState } from '@/store/store';
 import {
   getAllValidators,
   getDelegations,
+  getParams,
   getUnbonding,
 } from '@/store/features/staking/stakeSlice';
 import ChainDelegations from './ChainDelegations';
 import ChainUnbondings from './ChainUnbondings';
 import { getDelegatorTotalRewards } from '@/store/features/distribution/distributionSlice';
+import { getBalances } from '@/store/features/bank/bankSlice';
 
 const StakingOverview = () => {
   const dispatch = useAppDispatch();
@@ -66,6 +68,14 @@ const StakingOverview = () => {
             denom: currency.coinMinimalDenom,
           })
         );
+        dispatch(
+          getBalances({
+            baseURL,
+            address,
+            chainID,
+          })
+        );
+        dispatch(getParams({ baseURL, chainID }));
       });
     }
   }, []);
@@ -88,6 +98,9 @@ const StakingOverview = () => {
               rewards={rewards}
               validators={validators}
               currency={currency}
+              validatorAddress=""
+              action=""
+              chainSpecific={false}
             />
           );
         })}
