@@ -20,7 +20,7 @@ import {
   TxVoteInputs,
   TxDepositInputs,
 } from '@/types/gov';
-import { PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
+import { GAS_FEE, PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
 import { signAndBroadcast } from '@/utils/signing';
 import { setError, setTxHash } from '../common/commonSlice';
 import { GovDepositMsg, GovVoteMsg } from '@/txns/gov';
@@ -209,31 +209,30 @@ export const getProposalsInVoting = createAsyncThunk(
         PROPOSAL_STATUS_ACTIVE
       );
 
-      if (response?.data?.proposals?.length) {
-        const proposals = response?.data?.proposals;
-        for (let i = 0; i < proposals.length; i++) {
-          dispatch(
-            getProposalTally({
-              baseURL: data.baseURL,
-              proposalId: Number(proposals[i].proposal_id),
-              chainID: data.chainID,
-            })
-          );
-
-          dispatch(
-            getVotes({
-              baseURL: data.baseURL,
-              proposalId: Number(proposals[i].proposal_id),
-              voter: data.voter,
-              chainID: data.chainID,
-            })
-          );
-        }
-      }
+      const { data: responseData } = response || {};
+      const proposals = responseData?.proposals || [];
+      proposals.forEach((proposal) => {
+        const proposalId = Number(proposal.proposal_id);
+        dispatch(
+          getProposalTally({
+            baseURL: data?.baseURL,
+            proposalId,
+            chainID: data?.chainID,
+          })
+        );
+        dispatch(
+          getVotes({
+            baseURL: data?.baseURL,
+            proposalId,
+            voter: data?.voter,
+            chainID: data?.chainID,
+          })
+        );
+      });
 
       return {
         chainID: data.chainID,
-        data: response.data,
+        data: responseData,
       };
     } catch (error) {
       if (error instanceof AxiosError)
@@ -302,7 +301,7 @@ export const txVote = createAsyncThunk(
         data.aminoConfig,
         data.prefix,
         [msg],
-        860000,
+        GAS_FEE,
         data?.justification || '',
         `${data.feeAmount}${data.denom}`,
         data.rest,
@@ -370,21 +369,14 @@ export const txDeposit = createAsyncThunk(
         data.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
-      if (result?.code === 0) {
-        dispatch(
-          setTxHash({
-            hash: result?.transactionHash,
-          })
-        );
-        return fulfillWithValue({ txHash: result?.transactionHash });
+      const { code, transactionHash, rawLog } = result || {};
+
+      if (code === 0) {
+        dispatch(setTxHash({ hash: transactionHash }));
+        return fulfillWithValue({ txHash: transactionHash });
       } else {
-        dispatch(
-          setError({
-            type: 'error',
-            message: result?.rawLog || '',
-          })
-        );
-        return rejectWithValue(result?.rawLog);
+        dispatch(setError({ type: 'error', message: rawLog || '' }));
+        return rejectWithValue(rawLog);
       }
     } catch (error) {
       if (error instanceof AxiosError) {
