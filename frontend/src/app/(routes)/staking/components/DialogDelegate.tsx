@@ -2,7 +2,6 @@ import { TxStatus } from '@/types/enums';
 import { Params, Validator } from '@/types/staking';
 import { formatCoin } from '@/utils/util';
 import {
-  CircularProgress,
   Dialog,
   DialogContent,
   InputAdornment,

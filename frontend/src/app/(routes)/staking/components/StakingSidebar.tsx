@@ -135,6 +135,9 @@ const AllValidators = ({
               commission={commission}
               tokens={tokens}
               currency={currency}
+              onMenuAction={onMenuAction}
+              validators={validators}
+              validator={validator}
             />
           </>
         );
@@ -155,12 +158,18 @@ const ValidatorItem = ({
   commission,
   tokens,
   currency,
+  onMenuAction,
+  validators,
+  validator,
 }: {
   moniker: string;
   identity: string;
   commission: number;
   tokens: number;
   currency: Currency;
+  onMenuAction: (type: string, validator: Validator) => void;
+  validators: Validators;
+  validator: string;
 }) => {
   return (
     <div className="flex justify-between items-center">
@@ -185,7 +194,10 @@ const ValidatorItem = ({
         {commission ? String(commission) + '%' : '-'} Commission
       </div>
       <div>
-        <button className="px-3 py-[6px] primary-gradient text-[12px] leading-[20px] rounded-lg font-medium">
+        <button
+          className="px-3 py-[6px] primary-gradient text-[12px] leading-[20px] rounded-lg font-medium"
+          onClick={() => onMenuAction('delegate', validators.active[validator])}
+        >
           Delegate
         </button>
       </div>
