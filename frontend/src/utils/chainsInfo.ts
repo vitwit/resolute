@@ -569,80 +569,154 @@ export const networks: Network[] = [
       },
     },
   },
-  // {
-  //   enableModules: {
-  //     authz: true,
-  //     feegrant: true,
-  //     group: false,
-  //   },
-  //   aminoConfig: {
-  //     authz: false,
-  //     feegrant: false,
-  //     group: false,
-  //   },
-  //   showAirdrop: true,
-  //   logos: {
-  //     menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/passage/pasg.png',
-  //     toolbar:
-  //       'https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png',
-  //   },
-  //   keplrExperimental: true,
-  //   leapExperimental: true,
-  //   isTestnet: false,
-  //   explorerTxHashEndpoint: 'https://passage.aneka.io/txs/',
-  //   config: {
-  //     chainId: 'passage-2',
-  //     chainName: 'Passage',
-  //     rest: 'https://api.passage.vitwit.com',
-  //     rpc: 'https://rpc.passage.vitwit.com',
-  //     bip44: {
-  //       coinType: 118,
-  //     },
-  //     currencies: [
-  //       {
-  //         coinDenom: 'PASG',
-  //         coinMinimalDenom: 'upasg',
-  //         coinDecimals: 6,
-  //         coinGeckoId: 'passage',
-  //       },
-  //     ],
-  //     walletUrlForStaking: 'https://resolute.vitwit.com/passage/staking',
-  //     bech32Config: {
-  //       bech32PrefixAccAddr: 'pasg',
-  //       bech32PrefixAccPub: 'pasgpub',
-  //       bech32PrefixValAddr: 'pasgvaloper',
-  //       bech32PrefixValPub: 'pasgvaloperpub',
-  //       bech32PrefixConsAddr: 'pasgvalcons',
-  //       bech32PrefixConsPub: 'pasgvalconspub',
-  //     },
-  //     feeCurrencies: [
-  //       {
-  //         coinDenom: 'PASG',
-  //         coinMinimalDenom: 'upasg',
-  //         coinDecimals: 6,
-  //         coinGeckoId: 'passage',
-  //         gasPriceStep: {
-  //           low: 0,
-  //           average: 0,
-  //           high: 0.01,
-  //         },
-  //       },
-  //     ],
-  //     stakeCurrency: {
-  //       coinDenom: 'PASG',
-  //       coinMinimalDenom: 'upasg',
-  //       coinDecimals: 6,
-  //       coinGeckoId: 'passage',
-  //     },
-  //     image:
-  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
-  //     theme: {
-  //       primaryColor: '#fff',
-  //       gradient:
-  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
-  //     },
-  //   },
-  // },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    showAirdrop: true,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/passage/pasg.png',
+      toolbar:
+        'https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png',
+    },
+    keplrExperimental: true,
+    leapExperimental: true,
+    isTestnet: false,
+    explorerTxHashEndpoint: 'https://passage.aneka.io/txs/',
+    config: {
+      chainId: 'passage-testnet-1',
+      chainName: 'Passage-testnet',
+      rest: 'https://api.resolute.vitwit.com/passage_testapi',
+      rpc: 'https://api.resolute.vitwit.com/passage_testrpc',
+      bip44: {
+        coinType: 118,
+      },
+      currencies: [
+        {
+          coinDenom: 'PASG',
+          coinMinimalDenom: 'upasg',
+          coinDecimals: 6,
+          coinGeckoId: 'passage',
+        },
+      ],
+      walletUrlForStaking: 'https://resolute.vitwit.com/passage/staking',
+      bech32Config: {
+        bech32PrefixAccAddr: 'pasg',
+        bech32PrefixAccPub: 'pasgpub',
+        bech32PrefixValAddr: 'pasgvaloper',
+        bech32PrefixValPub: 'pasgvaloperpub',
+        bech32PrefixConsAddr: 'pasgvalcons',
+        bech32PrefixConsPub: 'pasgvalconspub',
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'PASG',
+          coinMinimalDenom: 'upasg',
+          coinDecimals: 6,
+          coinGeckoId: 'passage',
+          gasPriceStep: {
+            low: 0,
+            average: 0,
+            high: 0.01,
+          },
+        },
+      ],
+      stakeCurrency: {
+        coinDenom: 'PASG',
+        coinMinimalDenom: 'upasg',
+        coinDecimals: 6,
+        coinGeckoId: 'passage',
+      },
+      image:
+        'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    showAirdrop: true,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/passage/pasg.png',
+      toolbar:
+        'https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png',
+    },
+    keplrExperimental: true,
+    leapExperimental: true,
+    isTestnet: false,
+    explorerTxHashEndpoint: 'https://passage.aneka.io/txs/',
+    config: {
+      chainId: 'passage-2',
+      chainName: 'Passage',
+      rest: 'https://api.passage.vitwit.com',
+      rpc: 'https://rpc.passage.vitwit.com',
+      bip44: {
+        coinType: 118,
+      },
+      currencies: [
+        {
+          coinDenom: 'PASG',
+          coinMinimalDenom: 'upasg',
+          coinDecimals: 6,
+          coinGeckoId: 'passage',
+        },
+      ],
+      walletUrlForStaking: 'https://resolute.vitwit.com/passage/staking',
+      bech32Config: {
+        bech32PrefixAccAddr: 'pasg',
+        bech32PrefixAccPub: 'pasgpub',
+        bech32PrefixValAddr: 'pasgvaloper',
+        bech32PrefixValPub: 'pasgvaloperpub',
+        bech32PrefixConsAddr: 'pasgvalcons',
+        bech32PrefixConsPub: 'pasgvalconspub',
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'PASG',
+          coinMinimalDenom: 'upasg',
+          coinDecimals: 6,
+          coinGeckoId: 'passage',
+          gasPriceStep: {
+            low: 0,
+            average: 0,
+            high: 0.01,
+          },
+        },
+      ],
+      stakeCurrency: {
+        coinDenom: 'PASG',
+        coinMinimalDenom: 'upasg',
+        coinDecimals: 6,
+        coinGeckoId: 'passage',
+      },
+      image:
+        'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
   {
     enableModules: {
       authz: true,
