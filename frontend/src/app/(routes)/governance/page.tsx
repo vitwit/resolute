@@ -1,10 +1,12 @@
 import React from 'react';
-import ProposalOverviewVote from './ProposalOverviewVote';
+import Proposals from './Proposals';
+import AllProposals from './AllProposals';
 
 const page = () => {
   return (
     <div className="page">
-      <ProposalOverviewVote />
+      <Proposals />
+      <AllProposals />
     </div>
   );
 };
