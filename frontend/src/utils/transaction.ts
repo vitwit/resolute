@@ -34,7 +34,7 @@ export function NewTransaction(
     gasUsed: txResponse.gasUsed || '-',
     gasWanted: txResponse.gasWanted || '-',
     fee: txResponse.fee || [],
-    time: txResponse.time || '-',
+    time: txResponse.time || new Date().toTimeString(),
     msgs,
     chainID,
     address,

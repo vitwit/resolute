@@ -299,14 +299,14 @@ async function broadcast(
 
 function parseTxResult(result: TxResponse): ParsedTxResponse {
   return {
-    code: result.code,
-    height: result.height,
-    rawLog: result.raw_log,
-    transactionHash: result.txhash,
-    gasUsed: result.gas_used,
-    gasWanted: result.gas_wanted,
-    fee: result.tx.auth_info.fee.amount,
-    time: result.timestamp,
+    code: result?.code || 0,
+    height: result?.height,
+    rawLog: result?.raw_log,
+    transactionHash: result?.txhash || '',
+    gasUsed: result?.gas_used,
+    gasWanted: result?.gas_wanted,
+    fee: result?.tx?.auth_info?.fee?.amount,
+    time: result?.timestamp,
   };
 }
 

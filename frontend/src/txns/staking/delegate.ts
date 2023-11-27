@@ -1,3 +1,4 @@
+import { shortenMsg } from '@/utils/util';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { MsgDelegate } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 
@@ -23,6 +24,10 @@ export function Delegate(
 }
 
 export function serialize(msg: Msg): string {
-  const { delegatorAddress, validatorAddress, amount } = msg.value;
-  return `$${delegatorAddress} delegated $${amount[0].amount} ${amount[0].denom} to $${validatorAddress}`;
+  const delegatorAddress = msg.value.delegatorAddress;
+  const validatorAddress = msg.value.validatorAddress;
+  const amount = msg.value.amount;
+  return `${shortenMsg(delegatorAddress, 10)} delegated ${amount.amount} ${
+    amount.denom
+  } to ${shortenMsg(validatorAddress, 10)}`;
 }

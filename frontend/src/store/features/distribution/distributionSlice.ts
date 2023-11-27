@@ -16,6 +16,8 @@ import { signAndBroadcast } from '@/utils/signing';
 import { WithdrawAllRewardsMsg } from '@/txns/distribution/withDrawRewards';
 import { TxStatus } from '@/types/enums';
 import { GAS_FEE } from '@/utils/constants';
+import { NewTransaction } from '@/utils/transaction';
+import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 
 const initialState: DistributionStoreInitialState = {
   chains: {},
@@ -57,6 +59,15 @@ export const txWithdrawAllRewards = createAsyncThunk(
         data.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
+      const tx = NewTransaction(result, msgs, data.chainID, data.address);
+      dispatch(
+        addTransactions({
+          chainID: data.chainID,
+          address: data.cosmosAddress,
+          transactions: [tx],
+        })
+      );
+
       if (result?.code === 0) {
         dispatch(
           setTxHash({
@@ -142,7 +153,7 @@ export const distSlice = createSlice({
       })
       .addCase(getDelegatorTotalRewards.fulfilled, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
-        const denom = action.meta?.arg?.denom || '';
+        const denom = action.meta.arg.denom;
         if (state.chains[chainID]) {
           state.chains[chainID].delegatorRewards.status = TxStatus.IDLE;
           state.chains[chainID].delegatorRewards.list =

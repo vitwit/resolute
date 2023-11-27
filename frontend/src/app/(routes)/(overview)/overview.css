@@ -32,7 +32,7 @@
 }
 
 .asset-action {
-    @apply w-8 h-8 rounded-lg flex justify-center items-center;
+    @apply w-8 h-8 rounded-lg flex justify-center items-center cursor-pointer;
     background: linear-gradient(180deg,
             rgba(74, 162, 156, 0.8) 0%,
             rgba(139, 61, 167, 0.8) 100%),

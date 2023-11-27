@@ -5,6 +5,9 @@ interface BasicChainInfo {
   rest: string;
   rpc: string;
   cosmosAddress: string;
+  prefix: string;
+  feeAmount: number;
+  address: string;
 }
 
 interface Coin {
