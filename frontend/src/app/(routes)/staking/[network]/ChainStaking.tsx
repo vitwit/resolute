@@ -4,7 +4,13 @@ import StakingPage from '../components/StakingPage';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 
-const ChainStaking = ({ paramChain }: { paramChain: string }) => {
+const ChainStaking = ({
+  paramChain,
+  queryParams,
+}: {
+  paramChain: string;
+  queryParams?: { [key: string]: string | undefined };
+}) => {
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -14,10 +20,13 @@ const ChainStaking = ({ paramChain }: { paramChain: string }) => {
       validChain = true;
     }
   });
+  const validatorAddress = queryParams?.validator_address || '';
+  const action = queryParams?.action || '';
+
   return (
     <div>
       {validChain ? (
-        <StakingPage chainName={paramChain} />
+        <StakingPage chainName={paramChain} validatorAddress={validatorAddress} action={action} />
       ) : (
         <>
           <div className="flex justify-center items-center h-screen w-full text-white txt-lg">

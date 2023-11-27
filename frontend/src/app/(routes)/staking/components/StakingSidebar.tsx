@@ -1,6 +1,6 @@
 'use client';
 
-import { Validators } from '@/types/staking';
+import { Validator, Validators } from '@/types/staking';
 import { Tooltip } from '@mui/material';
 import React, { useState } from 'react';
 import DialogAllValidators from './DialogAllValidators';
@@ -15,10 +15,12 @@ const StakingSidebar = ({
   validators,
   currency,
   chainID,
+  onMenuAction,
 }: {
   validators: Validators;
   currency: Currency;
   chainID: string;
+  onMenuAction: (type: string, validator: Validator) => void;
 }) => {
   const stakedBalance = useAppSelector(
     (state: RootState) =>
@@ -75,7 +77,11 @@ const StakingSidebar = ({
         </div>
       </div>
       <div className="mt-10">
-        <AllValidators validators={validators} currency={currency} />
+        <AllValidators
+          validators={validators}
+          currency={currency}
+          onMenuAction={onMenuAction}
+        />
       </div>
     </div>
   );
@@ -86,9 +92,11 @@ export default StakingSidebar;
 const AllValidators = ({
   validators,
   currency,
+  onMenuAction,
 }: {
   validators: Validators;
   currency: Currency;
+  onMenuAction: (type: string, validator: Validator) => void;
 }) => {
   const [allValidatorsDialogOpen, setAllValidatorsDialogOpen] =
     useState<boolean>(false);
@@ -120,7 +128,7 @@ const AllValidators = ({
 
         return (
           <>
-            <Validator
+            <ValidatorItem
               key={index}
               moniker={moniker}
               identity={identity}
@@ -135,12 +143,13 @@ const AllValidators = ({
         handleClose={handleClose}
         open={allValidatorsDialogOpen}
         validators={validators}
+        onMenuAction={onMenuAction}
       />
     </div>
   );
 };
 
-const Validator = ({
+const ValidatorItem = ({
   moniker,
   identity,
   commission,
@@ -173,7 +182,7 @@ const Validator = ({
         </div>
       </div>
       <div className="text-[12px] text-[#FFFFFFBF] font-extralight leading-3">
-      {commission ? String(commission) + '%' : '-'} Commission
+        {commission ? String(commission) + '%' : '-'} Commission
       </div>
       <div>
         <button className="px-3 py-[6px] primary-gradient text-[12px] leading-[20px] rounded-lg font-medium">

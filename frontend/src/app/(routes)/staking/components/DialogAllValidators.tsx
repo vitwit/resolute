@@ -1,4 +1,4 @@
-import { Validators } from '@/types/staking';
+import { Validator, Validators } from '@/types/staking';
 import { getValidatorRank, getValidatorStatus } from '@/utils/util';
 import { Dialog, DialogContent, Pagination, Tooltip } from '@mui/material';
 import Image from 'next/image';
@@ -39,10 +39,12 @@ const DialogAllValidators = ({
   handleClose,
   open,
   validators,
+  onMenuAction,
 }: {
   handleClose: HandleClose;
   open: boolean;
   validators: Validators;
+  onMenuAction: (type: string, validator: Validator) => void;
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [active, setActive] = useState<boolean>(true);
@@ -131,9 +133,17 @@ const DialogAllValidators = ({
           </div>
         </div>
         {active ? (
-          <ActiveValidators validators={validators} searchTerm={searchTerm} />
+          <ActiveValidators
+            validators={validators}
+            searchTerm={searchTerm}
+            onMenuAction={onMenuAction}
+          />
         ) : (
-          <InactiveValidators validators={validators} searchTerm={searchTerm} />
+          <InactiveValidators
+            validators={validators}
+            searchTerm={searchTerm}
+            onMenuAction={onMenuAction}
+          />
         )}
       </DialogContent>
     </Dialog>
@@ -145,9 +155,11 @@ export default DialogAllValidators;
 const ActiveValidators = ({
   validators,
   searchTerm,
+  onMenuAction,
 }: {
   validators: Validators;
   searchTerm: string;
+  onMenuAction: (type: string, validator: Validator) => void;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const PER_PAGE = 7;
@@ -182,6 +194,7 @@ const ActiveValidators = ({
               filtered={filtered}
               validators={validators}
               active={true}
+              onMenuAction={onMenuAction}
             />
           </>
         ) : (
@@ -214,6 +227,8 @@ const ActiveValidators = ({
                     status={status}
                     active={true}
                     rank={rank}
+                    onMenuAction={onMenuAction}
+                    validator={validators.active[validator]}
                   />
                 );
               })}
@@ -245,9 +260,11 @@ const ActiveValidators = ({
 const InactiveValidators = ({
   validators,
   searchTerm,
+  onMenuAction,
 }: {
   validators: Validators;
   searchTerm: string;
+  onMenuAction: (type: string, validator: Validator) => void;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const PER_PAGE = 7;
@@ -282,6 +299,7 @@ const InactiveValidators = ({
               filtered={filtered}
               validators={validators}
               active={false}
+              onMenuAction={onMenuAction}
             />
           </>
         ) : (
@@ -314,6 +332,8 @@ const InactiveValidators = ({
                     status={status}
                     active={false}
                     rank={rank}
+                    onMenuAction={onMenuAction}
+                    validator={validators.inactive[validator]}
                   />
                 );
               })}
@@ -350,6 +370,8 @@ const ValidatorComponent = ({
   status,
   active,
   rank,
+  onMenuAction,
+  validator,
 }: {
   moniker: string;
   identity: string;
@@ -358,6 +380,8 @@ const ValidatorComponent = ({
   status: string;
   active: boolean;
   rank: string;
+  onMenuAction: (type: string, validator: Validator) => void;
+  validator: Validator;
 }) => {
   const validatorStatus = getValidatorStatus(jailed, status);
   return (
@@ -392,6 +416,7 @@ const ValidatorComponent = ({
               ? `delegate-button`
               : `delegate-button delegate-button-inactive`
           }
+          onClick={() => onMenuAction('delegate', validator)}
         >
           Delegate
         </button>
@@ -404,10 +429,12 @@ const Filtered = ({
   filtered,
   validators,
   active,
+  onMenuAction,
 }: {
   filtered: string[];
   validators: Validators;
   active: boolean;
+  onMenuAction: (type: string, validator: Validator) => void;
 }) => {
   const [slicedValidators, setSlicedValidators] = useState<string[]>([]);
 
@@ -460,6 +487,8 @@ const Filtered = ({
                   status={status}
                   active={active}
                   rank={rank}
+                  onMenuAction={onMenuAction}
+                  validator={validators.active[validator]}
                 />
               );
             })}

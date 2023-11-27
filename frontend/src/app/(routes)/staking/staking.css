@@ -91,3 +91,12 @@
 .search-validator-input {
   @apply w-full pl-2 border-none cursor-pointer focus:outline-none bg-transparent placeholder:text-[14px] placeholder:text-[#FFFFFFBF] placeholder:font-extralight text-[#FFFFFFBF];
 }
+
+.dialog-delegate-button {
+  @apply py-[10px] px-10 rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.cancel-button {
+  @apply text-[16px] leading-[20px] font-medium tracking-[0.64px] underline underline-offset-2 cursor-pointer;
+}
