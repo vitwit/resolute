@@ -51,7 +51,6 @@ const useGetTxInputs = () => {
     const basicChainInfo = getChainInfo(chainID);
     const { minimalDenom, decimals } = getDenomInfo(chainID);
     const rewards = rewardsChains[chainID].delegatorRewards;
-    console.log(rewards);
     const msgs: Msg[] = [];
     const delegator = basicChainInfo.address;
 
@@ -81,7 +80,7 @@ const useGetTxInputs = () => {
       feegranter: '',
     };
   };
-  
+
   return { txWithdrawAllRewardsInputs, txRestakeInputs };
 };
 
