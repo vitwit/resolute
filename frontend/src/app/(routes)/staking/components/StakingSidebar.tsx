@@ -1,6 +1,6 @@
 'use client';
 
-import { StakingMenuAction, Validator, Validators } from '@/types/staking';
+import { StakingMenuAction, Validators } from '@/types/staking';
 import { Tooltip } from '@mui/material';
 import React, { useState } from 'react';
 import DialogAllValidators from './DialogAllValidators';

@@ -82,14 +82,12 @@ const DialogDelegate = ({
             </div>
           </div>
           <div className="mt-6 mb-[72px] flex gap-6 pr-10 pl-6 items-center">
-            <div>
-              <Image
-                src="/delegate-popup-image.png"
-                height={360}
-                width={235}
-                alt="Delegate"
-              />
-            </div>
+            <Image
+              src="/delegate-popup-image.png"
+              height={360}
+              width={235}
+              alt="Delegate"
+            />
             <div className="flex flex-col gap-10 w-full">
               <h2 className="text-[20px] font-bold leading-3">
                 {validator?.description?.moniker || '-'}
@@ -163,11 +161,22 @@ const DialogDelegate = ({
                     }}
                     render={({ field }) => (
                       <TextField
+                        className="bg-[#FFFFFF0D] rounded-2xl"
                         {...field}
                         required
                         fullWidth
                         size="small"
                         placeholder="Enter Amount here"
+                        sx={{
+                          '& .MuiTypography-body1': {
+                            color: 'white',
+                            fontSize: '12px',
+                            fontWeight: 200,
+                          },
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            border: 'none',
+                          },
+                        }}
                         InputProps={{
                           endAdornment: (
                             <InputAdornment position="start">
@@ -178,6 +187,7 @@ const DialogDelegate = ({
                             input: {
                               color: 'white',
                               fontSize: '14px',
+                              padding: 2,
                             },
                           },
                         }}
