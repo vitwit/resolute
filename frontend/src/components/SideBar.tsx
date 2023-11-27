@@ -10,7 +10,6 @@ import { logout } from '@/utils/localStorage';
 import { RootState } from '@/store/store';
 import { tabLink } from '../utils/util';
 import { Tooltip } from '@mui/material';
-const getRoute = () => {};
 
 const menuItems = [
   {
