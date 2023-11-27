@@ -19,8 +19,14 @@ export const transactionHistorySlice = createSlice({
   reducers: {
     addTransactions: (state, action: PayloadAction<AddTransanctionInputs>) => {
       const { transactions, chainID, address } = action.payload;
-      state.allTransactions = [...state.allTransactions, ...transactions];
-      state.chains[chainID] = [...state.chains[chainID], ...transactions];
+      state.allTransactions = [
+        ...transactions,
+        ...(state.allTransactions || []),
+      ];
+      state.chains[chainID] = [
+        ...transactions,
+        ...(state.chains[chainID] || []),
+      ];
       addTransanctions(transactions, address);
     },
 

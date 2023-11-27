@@ -6,6 +6,7 @@ import { formatDollarAmount } from '@/utils/util';
 import Profile from './Profile';
 import TransactionItem from './TransactionItem';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { RootState } from '@/store/store';
 
 const History = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
@@ -76,16 +77,16 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
 };
 
 const RecentTransactions = ({ chainIDs }: { chainIDs: string[] }) => {
-
   /**
    * Note: Currently, this implementation of recent transactions addresses scenarios involving either a single chain or all chains.
    *        If the system evolves to support multiple selected chains in the future,
    *        modifications to this logic will be necessary.
    */
-  const transactions = useAppSelector((state) =>
-    chainIDs.length == 1
-      ? state.transactionHistory.chains[chainIDs[0]]
-      : state.transactionHistory.allTransactions
+  const transactions = useAppSelector(
+    (state:RootState) =>
+      (chainIDs.length == 1
+        ? state.transactionHistory.chains[chainIDs[0]]
+        : state.transactionHistory.allTransactions) || []
   );
   return (
     <div className="flex-1 overflow-y-scroll">

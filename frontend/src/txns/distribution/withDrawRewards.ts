@@ -1,3 +1,4 @@
+import { shortenMsg } from '@/utils/util';
 import { MsgWithdrawDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1beta1/tx';
 
 export const msgWithdrawRewards =
@@ -18,5 +19,8 @@ export function WithdrawAllRewardsMsg(
 
 export function serialize(msg: Msg): string {
   const { delegatorAddress, validatorAddress } = msg.value;
-  return `$${delegatorAddress} withdrew rewards from ${validatorAddress}`;
+  return `${shortenMsg(
+    delegatorAddress,
+    10
+  )} withdrew rewards from ${shortenMsg(validatorAddress, 10)}`;
 }

@@ -50,7 +50,7 @@ export function getTransactions(address: string): Transaction[] {
 
 export function addTransanctions(transactions: Transaction[], address: string) {
   const key = KEY_TRANSACTIONS(address);
-  let storedTransactions = getTransactions(key);
-  storedTransactions = [...storedTransactions, ...transactions];
-  localStorage.set(key, JSON.stringify(storedTransactions));
+  let storedTransactions = getTransactions(address);
+  storedTransactions = [...transactions, ...storedTransactions];
+  localStorage.setItem(key, JSON.stringify(storedTransactions));
 }
