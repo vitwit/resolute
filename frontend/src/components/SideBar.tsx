@@ -4,49 +4,53 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getSelectedPartFromURL } from '../utils/util';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { resetWallet } from '@/store/features/wallet/walletSlice';
 import { logout } from '@/utils/localStorage';
+import { RootState } from '@/store/store';
+import { tabLink } from '../utils/util';
+import { Tooltip } from '@mui/material';
+const getRoute = () => {};
 
 const menuItems = [
   {
-    name: '',
+    name: 'Overview',
     icon: '/overview-icon.svg',
     activeIcon: '/overview-icon-active.svg',
     link: '/',
   },
   {
-    name: '',
+    name: 'Transfers',
     icon: '/transfers-icon.svg',
     activeIcon: '/transfers-icon-active.svg',
     link: '/transfers',
   },
   {
-    name: '',
+    name: 'Governance',
     icon: '/gov-icon.svg',
     activeIcon: '/gov-icon-active.svg',
     link: '/governance',
   },
   {
-    name: '',
+    name: 'Staking',
     icon: '/staking-icon.svg',
     activeIcon: '/staking-icon-active.svg',
     link: '/staking',
   },
   {
-    name: '',
-    icon: '/groups-icon.svg',
-    activeIcon: '/groups-icon-active.svg',
-    link: '/groups',
-  },
-  {
-    name: '',
+    name: 'Multisig',
     icon: '/multisig-icon.svg',
     activeIcon: '/multisig-icon-active.svg',
     link: '/multisig',
   },
   {
-    name: '',
+    name: 'Groups',
+    icon: '/groups-icon.svg',
+    activeIcon: '/groups-icon-active.svg',
+    link: '/groups',
+  },
+  {
+    name: 'Authz',
     icon: '/authz-icon.svg',
     activeIcon: '/authz-icon-active.svg',
     link: '/authz',
@@ -77,41 +81,45 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
           ))}
         </div>
         <div className="flex flex-col gap-6">
-          <Link href="/history">
+          <Tooltip title="History" placement="right">
+            <Link href="/history">
+              <div
+                className={`sidebar-menu-item ${
+                  selectedPart === 'history' ? 'sidebar-menu-item-selected' : ''
+                }`}
+              >
+                <Image
+                  src={
+                    selectedPart === 'history'
+                      ? '/history-icon-active.svg'
+                      : '/history-icon.svg'
+                  }
+                  height={40}
+                  width={40}
+                  alt="Resolute"
+                />
+              </div>
+            </Link>
+          </Tooltip>
+          <Tooltip title="Logout" placement="right">
             <div
-              className={`sidebar-menu-item ${
-                selectedPart === 'history' ? 'sidebar-menu-item-selected' : ''
-              }`}
+              className="sidebar-menu-item w-12 h-12 cursor-pointer"
+              onClick={() => {
+                dispatch(resetWallet());
+                logout();
+              }}
             >
               <Image
-                src={
-                  selectedPart === 'history'
-                    ? '/history-icon-active.svg'
-                    : '/history-icon.svg'
-                }
+                src="/logout-icon.svg"
                 height={40}
                 width={40}
                 alt="Resolute"
               />
             </div>
-          </Link>
-          <div
-            className="sidebar-menu-item w-12 h-12 cursor-pointer"
-            onClick={() => {
-              dispatch(resetWallet());
-              logout();
-            }}
-          >
-            <Image
-              src="/logout-icon.svg"
-              height={40}
-              width={40}
-              alt="Resolute"
-            />
-          </div>
+          </Tooltip>
         </div>
       </div>
-      <div className='flex-1'>{children}</div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 };
@@ -131,24 +139,29 @@ const MenuItem = ({
   activeIcon: string;
   link: string;
 }) => {
-  pathName = pathName;
-  pathName = pathName === 'overview' ? '/' : `/${pathName}`;
+  const path = pathName === 'overview' ? '/' : `/${pathName}`;
+  const selectedNetwork = useAppSelector(
+    (state: RootState) => state.common.selectedNetwork.chainName
+  );
+
   return (
-    <Link href={link}>
-      <div
-        className={`sidebar-menu-item ${
-          pathName === link ? 'sidebar-menu-item-selected' : ''
-        }`}
-      >
-        <div>
-          <Image
-            src={pathName === link ? activeIcon : icon}
-            height={45}
-            width={45}
-            alt={itemName}
-          />
+    <Link href={tabLink(link, selectedNetwork)}>
+      <Tooltip title={itemName} placement="right">
+        <div
+          className={`sidebar-menu-item ${
+            path === link ? 'sidebar-menu-item-selected' : ''
+          }`}
+        >
+          <div>
+            <Image
+              src={path === link ? activeIcon : icon}
+              height={45}
+              width={45}
+              alt={itemName}
+            />
+          </div>
         </div>
-      </div>
+      </Tooltip>
     </Link>
   );
 };

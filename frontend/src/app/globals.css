@@ -150,7 +150,7 @@
   }
 
   .sidebar-menu-item {
-    @apply cursor-pointer w-12 h-12 flex items-center justify-center rounded-lg;
+    @apply cursor-pointer w-12 h-12 flex items-center justify-center rounded-lg hover:bg-[#221F38];
   }
 
   .sidebar-menu-item-selected {

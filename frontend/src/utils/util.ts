@@ -163,3 +163,23 @@ export function convertKeysToCamelCase(data: any): any {
 function removeQuotesFromKey(key: string): string {
   return key.replace(/"/g, '');
 }
+
+export const tabLink = (link: string, chainName: string): string => {
+  return (
+    (link === '/' && chainName.length ? '/overview' : link) + '/' + chainName
+  );
+};
+
+export const allNetworksLink = (pathParts: string[]): string => {
+  return pathParts[1] === 'overview' || pathParts[1] === ''
+    ? '/'
+    : '/' + pathParts[1];
+};
+
+export const changeNetworkRoute = (
+  pathName: string,
+  chainName: string
+): string => {
+  const route = pathName === '/' ? '/overview' : '/' + pathName.split('/')?.[1];
+  return `${route}/${chainName.toLowerCase()}`;
+};

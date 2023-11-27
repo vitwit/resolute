@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import DialogAddNetwork from './DialogAddNetwork';
 import { resetConnectWalletStatus } from '@/store/features/wallet/walletSlice';
+import { allNetworksLink, changeNetworkRoute } from '@/utils/util';
 
 const ALL_NETWORKS_LOGO = '/all-networks-icon.png';
 
@@ -63,7 +64,10 @@ const SelectNetwork = () => {
 
   return (
     <div>
-      <div className="flex gap-2 items-center cursor-pointer">
+      <div
+        className="flex gap-2 items-center cursor-pointer"
+        onClick={() => setOpen(true)}
+      >
         <Image src={chainLogo} height={32} width={32} alt="All Networks" />
         {/* TODO: Integrate copy to clipboard */}
         {walletAddress ? (
@@ -78,7 +82,7 @@ const SelectNetwork = () => {
             </div>
           </>
         )}
-        <div onClick={() => setOpen(true)}>
+        <div>
           <Image
             src="/drop-down-icon.svg"
             height={16}
@@ -118,7 +122,7 @@ const DialogSelectNetwork = ({
   const chainIDs = Object.keys(networks);
   const pathName = usePathname();
   const dispatch = useAppDispatch();
-
+  const pathParts = pathName.split('/');
   return (
     <Dialog
       open={open}
@@ -127,7 +131,6 @@ const DialogSelectNetwork = ({
       PaperProps={{
         sx: {
           borderRadius: '24px',
-          opacity: '0.95',
           background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
         },
       }}
@@ -168,7 +171,7 @@ const DialogSelectNetwork = ({
               </div>
             </div>
             <Link
-              href="/"
+              href={allNetworksLink(pathParts)}
               onClick={() => {
                 dispatch(setSelectedNetwork({ chainName: '' }));
               }}
@@ -205,6 +208,7 @@ const DialogSelectNetwork = ({
                   logo={networks[chainID].network.logos.menu}
                   pathName={pathName}
                   selectedNetworkName={selectedNetworkName}
+                  handleClose={handleClose}
                 />
               ))}
             </div>
@@ -220,22 +224,24 @@ const NetworkItem = ({
   logo,
   pathName,
   selectedNetworkName,
+  handleClose,
 }: {
   chainName: string;
   logo: string;
   pathName: string;
   selectedNetworkName: string;
+  handleClose: () => void;
 }) => {
-  const route = pathName === '/' ? '/overview' : '/' + pathName.split('/')?.[1];
   const dispatch = useAppDispatch();
   const isSelected = (): boolean => {
     return selectedNetworkName.toLowerCase() === chainName.toLowerCase();
   };
   return (
     <Link
-      href={`${route}/${chainName.toLowerCase()}`}
+      href={changeNetworkRoute(pathName, chainName)}
       onClick={() => {
         dispatch(setSelectedNetwork({ chainName: chainName.toLowerCase() }));
+        handleClose();
       }}
       className={
         isSelected() ? 'network-item network-item-selected' : 'network-item'
