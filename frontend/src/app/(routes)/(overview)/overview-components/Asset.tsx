@@ -8,6 +8,7 @@ import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { TxStatus } from '@/types/enums';
 import { txRestake } from '@/store/features/staking/stakeSlice';
 import { RootState } from '@/store/store';
+import { CircularProgress } from '@mui/material';
 
 const Asset = ({
   asset,
@@ -88,18 +89,26 @@ const Asset = ({
       <td>
         <div className="flex justify-between gap-1">
           <div className="asset-action" onClick={() => claim(asset.chainID)}>
-            <Image src="/claim-icon.svg" height={16} width={16} alt="Claim" />
+            {txClaimStatus === TxStatus.PENDING ? (
+              <CircularProgress size={16} />
+            ) : (
+              <Image src="/claim-icon.svg" height={16} width={16} alt="Claim" />
+            )}
           </div>
           <div
             className="asset-action"
             onClick={() => claimAndStake(asset.chainID)}
           >
-            <Image
-              src="/claim-stake-icon.svg"
-              height={16}
-              width={16}
-              alt="Claim and Stake"
-            />
+            {txRestakeStatus === TxStatus.PENDING ? (
+              <CircularProgress size={16}/>
+            ) : (
+              <Image
+                src="/claim-stake-icon.svg"
+                height={16}
+                width={16}
+                alt="Claim and Stake"
+              />
+            )}
           </div>
         </div>
       </td>
