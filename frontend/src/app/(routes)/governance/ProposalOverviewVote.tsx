@@ -3,42 +3,18 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import CustomPieChart from './CustomPiechart';
 import './style.css';
-import ProposalDetailsCard from './ProposalDetailsCard';
+import ProposalDetailsVoteCard from './ProposalDetailsVoteCard';
 import VotePopup from './VotePopup';
+import proposalOverviewVoteData from './proposalvoteData.json';
 
-const ProposalOverviewVote = ({
-  proposalId,
-  proposalText,
-  proposalname,
-}: {
-  proposalId: string;
-  proposalText: string;
-  proposalname: string;
-}) => {
+const ProposalOverviewVote = () => {
   const [isVotePopupOpen, setVotePopupOpen] = useState(false);
   const toggleVotePopup = () => {
     setVotePopupOpen(!isVotePopupOpen);
   };
-  const quorum = 50;
-  const createdAt = '23rd October 2023';
-  const startedAt = '24th October 2023';
-  const endsAt = '29th October 2023';
-  const proposalNetwork = 'Cosmos';
-  const data = [
-    { value: 75, color: '#4AA29C', label: 'Yes' },
-    { value: 23, color: '#E57575', label: 'No' },
-    { value: 2, color: '#EFFF34', label: 'Veto' },
-    { value: 0, color: '#EFFF34', label: 'Veto' },
-  ];
-  const dataset = [
-    { value: 75, color: '#759BE5', label: 'Quorum' },
-    { value: 23, color: '#75E5A2', label: 'Turn out' },
-    { value: 2, color: '#B373CA', label: 'Threhold' },
-  ];
+
   return (
     <div className="space-y-6 pl-10 pr-0 pt-6 pb-0">
-      <div>topnav</div>
-
       <div className="flex space-x-1">
         <Image
           src="./backarrow-icon.svg"
@@ -61,7 +37,8 @@ const ProposalOverviewVote = ({
                   alt="Cosmos-Logo"
                 />
                 <p className="proposal-text-normal flex items-center">
-                  {proposalId} | Proposal
+                  {proposalOverviewVoteData.proposalOverviewVoteData.proposalId}{' '}
+                  | Proposal
                 </p>
               </div>
               <div>
@@ -72,9 +49,13 @@ const ProposalOverviewVote = ({
             </div>
           </div>
           <div className="space-y-6">
-            <div className="proposal-text-medium">{proposalname}</div>
+            <div className="proposal-text-medium">
+              {proposalOverviewVoteData.proposalOverviewVoteData.proposalname}
+            </div>
 
-            <p className="proposal-text-normal">{proposalText}</p>
+            <p className="proposal-text-normal">
+              {proposalOverviewVoteData.proposalOverviewVoteData.proposalText}
+            </p>
           </div>
         </div>
         {isVotePopupOpen && (
@@ -109,16 +90,18 @@ const ProposalOverviewVote = ({
                 </div>
                 <div>
                   <div className="flex justify-between items-start gap-2">
-                    {dataset.map((item, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <CustomPieChart
-                          value={item.value}
-                          color={item.color}
-                          label={item.label}
-                        />
-                        <div className="proposal-text-extralight">{`${item.value}% ${item.label}`}</div>
-                      </div>
-                    ))}
+                    {proposalOverviewVoteData.proposalOverviewVoteData.dataset.map(
+                      (item, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <CustomPieChart
+                            value={item.value}
+                            color={item.color}
+                            label={item.label}
+                          />
+                          <div className="proposal-text-extralight">{`${item.value}% ${item.label}`}</div>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               </div>
@@ -138,7 +121,12 @@ const ProposalOverviewVote = ({
                     <p className="proposal-text-small">Total Votes</p>
                   </div>
 
-                  <p className="proposal-text-big">123,345,876</p>
+                  <p className="proposal-text-big">
+                    {
+                      proposalOverviewVoteData.proposalOverviewVoteData
+                        .totalvotes
+                    }
+                  </p>
                 </div>
               </div>
               <div className="w-full text-white flex flex-col justify-center items-center space-y-2">
@@ -147,31 +135,49 @@ const ProposalOverviewVote = ({
                 <div className="bg-white w-full h-[10px] rounded-full">
                   <div
                     className={
-                      `bg-[#2DC5A4] h-[10px] rounded-l-full ` + `w-[${quorum}%]`
+                      `bg-[#2DC5A4] h-[10px] rounded-l-full ` +
+                      `w-[${proposalOverviewVoteData.proposalOverviewVoteData.quorum}%]`
                     }
                   ></div>
                 </div>
               </div>
 
               <div className="flex justify-between items-start gap-2">
-                {data.map((item, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <CustomPieChart
-                      value={item.value}
-                      color={item.color}
-                      label={item.label}
-                    />
-                    <div className="proposal-text-extralight">{`${item.value}% ${item.label}`}</div>
-                  </div>
-                ))}
+                {proposalOverviewVoteData.proposalOverviewVoteData.data.map(
+                  (item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 justify-between"
+                    >
+                      <CustomPieChart
+                        value={item.value}
+                        color={item.color}
+                        label={item.label}
+                      />
+                      <div className="proposal-text-extralight">{`${item.value}% ${item.label}`}</div>
+                    </div>
+                  )
+                )}
               </div>
             </div>
           </div>
-          <ProposalDetailsCard
-            createdAt={createdAt}
-            startedAt={startedAt}
-            endsAt={endsAt}
-            proposalNetwork={proposalNetwork}
+          <ProposalDetailsVoteCard
+            createdAt={
+              proposalOverviewVoteData.proposalOverviewVoteData.createdAt
+            }
+            startedAt={
+              proposalOverviewVoteData.proposalOverviewVoteData.startedAt
+            }
+            endsAt={proposalOverviewVoteData.proposalOverviewVoteData.endsAt}
+            proposalNetwork={
+              proposalOverviewVoteData.proposalOverviewVoteData.proposalNetwork
+            }
+            createdby={
+              proposalOverviewVoteData.proposalOverviewVoteData.createdby
+            }
+            depositamount={
+              proposalOverviewVoteData.proposalOverviewVoteData.depositamount
+            }
           />
         </div>
       </div>

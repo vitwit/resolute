@@ -1,13 +1,13 @@
 import React from 'react';
 
 const ProposalDetailsCard = ({
-  createdAt,
-  startedAt,
+  submittedAt,
   endsAt,
+  depositrequired,
   proposalNetwork,
 }: {
-  createdAt: string;
-  startedAt: string;
+  submittedAt: string;
+  depositrequired: string;
   endsAt: string;
   proposalNetwork: string;
 }) => {
@@ -15,16 +15,16 @@ const ProposalDetailsCard = ({
     <div>
       <div className="proposal-details-grid space-y-4">
         <div className="proposal-details proposal-text-normal">
-          <p>Proposal created at</p>
-          <p>{createdAt}</p>
+          <p>Submitted Time</p>
+          <p>{submittedAt}</p>
         </div>
         <div className="proposal-details proposal-text-normal">
-          <p>Proposal Started at</p>
-          <p>{startedAt}</p>
-        </div>
-        <div className="proposal-details proposal-text-normal">
-          <p>Proposal ends at</p>
+          <p>Deposit Period Ends</p>
           <p>{endsAt}</p>
+        </div>
+        <div className="proposal-details proposal-text-normal">
+          <p>Deposit Required</p>
+          <p>{depositrequired}</p>
         </div>
         <div className="proposal-details proposal-text-normal">
           <p>Proposal Network</p>

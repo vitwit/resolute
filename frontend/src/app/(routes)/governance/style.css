@@ -79,35 +79,35 @@
   background: #0e0b26;
 }
 .status-grid {
-  @apply flex flex-col w-[486px] h-[132px] justify-center items-start gap-4 self-stretch backdrop-blur-[2px] px-0 py-6 rounded-2xl;
+  @apply flex flex-col w-[486px] h-[132px] justify-center items-start gap-4 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
   background: #0e0b26;
 }
 .status-view-grid {
-  @apply flex flex-col justify-center items-start gap-6 self-stretch px-6 py-0;
+  @apply flex flex-col justify-center items-start gap-6 px-6 py-6;
 }
 .status-view {
-  @apply flex flex-col justify-center items-start gap-6 self-stretch;
+  @apply flex flex-col justify-center items-start gap-6;
 }
 .status-pass {
   @apply flex justify-center items-start gap-2.5 self-stretch px-2 py-0;
 }
 .voting-grid {
-  @apply flex flex-col h-[253px] justify-center items-start gap-4 self-stretch backdrop-blur-[2px] px-6 py-6 rounded-2xl;
+  @apply flex flex-col h-[253px] w-[437px] justify-center items-start gap-4 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
   background: #0e0b26;
 }
 .voting-view {
-  @apply flex flex-col justify-center items-start gap-6 self-stretch px-6 py-0;
+  @apply flex flex-col justify-center items-start gap-6 px-6 py-0;
 }
 .horizontal-line {
   @apply h-2 rounded-[100px];
   background: white;
 }
 .proposal-details-grid {
-  @apply flex flex-col justify-center items-start gap-6 self-stretch backdrop-blur-[2px] px-0 py-6 rounded-2xl;
+  @apply flex flex-col justify-center items-start gap-6 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
   background: #0e0b26;
 }
 .proposal-details {
-  @apply flex justify-between items-start self-stretch px-6 py-0;
+  @apply flex justify-between items-start px-6 py-0;
 }
 .right-bar {
   @apply flex w-[500px] h-screen flex-col items-center gap-10 shrink-0 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-6;
@@ -133,5 +133,5 @@
   background: rgba(255, 255, 255, 0.05);
 }
 .view-full {
-  @apply flex h-8 flex-col justify-center self-stretch text-white text-center text-sm not-italic font-normal leading-[normal] underline cursor-pointer;
+  @apply flex h-8 flex-col justify-center text-white text-center text-sm font-normal leading-[normal] underline cursor-pointer;
 }

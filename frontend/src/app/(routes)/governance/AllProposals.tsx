@@ -2,35 +2,9 @@
 import React from 'react';
 import Image from 'next/image';
 import './style.css';
+import proposalData from './proposalData.json';
 
 const AllProposals = () => {
-  const proposalData = [
-    {
-      id: '123',
-      title: 'Introduce Take Rate and deployment deposit for axlUSDC',
-      expires: 'Expires in two days',
-      votingStatus: 'Active Voting',
-    },
-    {
-      id: '123',
-      title: 'Introduce Take Rate and deployment deposit for axlUSDC',
-      expires: 'Expires in two days',
-      votingStatus: 'Active Voting',
-    },
-    {
-      id: '123',
-      title: 'Introduce Take Rate and deployment deposit for axlUSDC',
-      expires: 'Expires in two days',
-      votingStatus: 'Active Voting',
-    },
-    {
-      id: '123',
-      title: 'Introduce Take Rate and deployment deposit for axlUSDC',
-      expires: 'Expires in two days',
-      votingStatus: 'Active Voting',
-    },
-  ];
-
   return (
     <div className="main-page">
       <div className="space-y-4 w-full">

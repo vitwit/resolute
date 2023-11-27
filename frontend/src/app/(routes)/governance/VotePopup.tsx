@@ -5,7 +5,15 @@ import './style.css';
 import RadioButtons from './CustomRadioButton';
 import { Dialog, DialogContent } from '@mui/material';
 
-const VotePopup = ({ votingEndsInDays, proposalId, proposalname}: { votingEndsInDays: number; proposalId: number; proposalname: string }) => {
+const VotePopup = ({
+  votingEndsInDays,
+  proposalId,
+  proposalname,
+}: {
+  votingEndsInDays: number;
+  proposalId: number;
+  proposalname: string;
+}) => {
   const [voteOption, setVoteOption] = useState<string>('');
   const [isOpen, setIsOpen] = useState(true);
 
@@ -58,13 +66,13 @@ const VotePopup = ({ votingEndsInDays, proposalId, proposalname}: { votingEndsIn
                         height={40}
                         alt="Cosmos-Logo"
                       />
-                      <p className="proposal-text-small">{proposalId} | Proposal</p>
+                      <p className="proposal-text-small">
+                        {proposalId} | Proposal
+                      </p>
                     </div>
-                    <div className="proposal-text-normal">
-                     {proposalname}
-                    </div>
-                    <div className="proposal-text-small">{`Voting ends in ${votingEndsInDays} days`}
-                      
+                    <div className="proposal-text-normal">{proposalname}</div>
+                    <div className="proposal-text-small">
+                      {`Voting ends in ${votingEndsInDays} days`}
                     </div>
                   </div>
                 </div>
