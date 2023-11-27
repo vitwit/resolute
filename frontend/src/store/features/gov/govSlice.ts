@@ -14,7 +14,6 @@ import {
   GetVotesInputs,
   ProposalTallyData,
   VotesData,
-  GovPagination,
   DepositParams,
   GetDepositParamsInputs,
   GetProposalInputs,
@@ -34,13 +33,13 @@ interface Chain {
     status: TxStatus;
     errMsg: string;
     proposals: GovProposal[];
-    pagination?: GovPagination;
+    pagination?: Pagination;
   };
   deposit: {
     status: TxStatus;
     errMsg: string;
     proposals: GovProposal[];
-    pagination?: GovPagination;
+    pagination?: Pagination;
   };
   depositParams: {
     status: TxStatus;

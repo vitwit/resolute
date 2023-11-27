@@ -24,11 +24,6 @@ interface GovProposal {
   voting_end_time: string;
 }
 
-interface GovPagination {
-  next_key?: string;
-  total: string;
-}
-
 interface GetProposalsInVotingResponse {
   proposals: GovProposal[];
   pagination: GovPagination;
