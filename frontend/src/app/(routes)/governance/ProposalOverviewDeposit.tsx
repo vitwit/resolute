@@ -38,8 +38,6 @@ const ProposalOverviewDeposit = ({
   const atomsValue = 'ATOMS';
   return (
     <div className="space-y-6 pl-10 pr-0 pt-6 pb-0">
-      <div>topnav</div>
-
       <div className="flex space-x-1">
         <Image
           src="./backarrow-icon.svg"

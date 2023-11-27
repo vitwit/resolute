@@ -6,13 +6,31 @@ import CustomPieChart from './CustomPiechart';
 import './style.css';
 import AllProposals from './AllProposals';
 
-const RightOverview = () => {
+const RightOverview = ({
+  votingEndsInDays,
+  proposalId,
+  proposalname,
+}: {
+  votingEndsInDays: number;
+  proposalId: string;
+
+  proposalname: string;
+}) => {
   const data = [
     { value: 75, color: '#4AA29C', label: 'Yes' },
     { value: 23, color: '#E57575', label: 'No' },
     { value: 2, color: '#EFFF34', label: 'Veto' },
     { value: 0, color: '#EFFF34', label: 'Veto' },
   ];
+  const proposalsubmittedOn = '23rd October 2023';
+  const Totalvotes = '123,345,876';
+  const proposal = `Proposal for the partial activation of Aave Governance v3 in an
+  interim Aave Governance v2.5 version, wition layer,
+  Robot).Proposal for the partial activation of Aave Governance v3
+  in an inte2layer, Robot).er ave Governance v3 in an interim Aave
+  Governance v2.5 versioancProposal for the partial activation of
+  Aave Governance v3 in nce v3 in an inte2layer, GovernancProposal
+  for the partial activation of Aave.`;
   const [isRightBarOpen, setIsRightBarOpen] = useState(true);
   const quorum = 50;
   const handleCloseClick = () => {
@@ -48,28 +66,20 @@ const RightOverview = () => {
                     alt="Comsos-Logo"
                   />
                   <p className="proposal-text-extralight items-center flex">
-                    #123 | Proposal
+                    {proposalId} | Proposal
                   </p>
                 </div>
                 <div className="flex items-center proposal-text-extralight">
-                  Voting ends in 2 days
+                  {`Voting ends in ${votingEndsInDays} days`}
                 </div>
               </div>
               <div className="font-bold text-base text-white">
-                Introduce Take Rate and deployment deposit for axlUSDC
+                {proposalname}
               </div>
             </div>
             <div className="view-full">View Full Proposal</div>
             <div className="space-y-6">
-              <div className="proposal-text-normal">
-                Proposal for the partial activation of Aave Governance v3 in an
-                interim Aave Governance v2.5 version, wition layer,
-                Robot).Proposal for the partial activation of Aave Governance v3
-                in an inte2layer, Robot).er ave Governance v3 in an interim Aave
-                Governance v2.5 versioancProposal for the partial activation of
-                Aave Governance v3 in nce v3 in an inte2layer, GovernancProposal
-                for the partial activation of Aave.
-              </div>
+              <div className="proposal-text-normal">{proposal}</div>
 
               <div className="flex justify-between">
                 <button className="button">
@@ -95,7 +105,7 @@ const RightOverview = () => {
                           <p className="proposal-text-small">Total Votes</p>
                         </div>
 
-                        <p className="proposal-text-big">123,345,876</p>
+                        <p className="proposal-text-big">{Totalvotes}</p>
                       </div>
                     </div>
                     <div className="w-full text-white flex flex-col justify-center items-center space-y-2">
@@ -125,7 +135,7 @@ const RightOverview = () => {
                     </div>
                     <div className="flex justify-between w-full">
                       <div className="flex proposal-text-extralight">
-                        Proposal submiited on 23rd October 2023
+                        Proposal submiited on {proposalsubmittedOn}
                       </div>
                       <div className="flex space-x-2">
                         <Image

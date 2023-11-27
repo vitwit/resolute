@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Proposals from './Proposals';
 import AllProposals from './AllProposals';
 
@@ -7,6 +8,7 @@ const page = () => {
     <div className="page">
       <Proposals />
       <AllProposals />
+     
     </div>
   );
 };
