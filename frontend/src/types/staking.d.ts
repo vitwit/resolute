@@ -161,3 +161,5 @@ interface TxReStakeInputs {
   denom: string;
   feegranter: string;
 }
+
+type StakingMenuAction = (type: string, validator: Validator) => void;

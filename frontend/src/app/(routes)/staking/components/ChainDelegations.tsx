@@ -1,5 +1,9 @@
 'use client';
-import { GetDelegationsResponse, Validators } from '@/types/staking';
+import {
+  GetDelegationsResponse,
+  StakingMenuAction,
+  Validators,
+} from '@/types/staking';
 import React, { useEffect } from 'react';
 import StakingCard from './StakingCard';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
@@ -13,6 +17,7 @@ const ChainDelegations = ({
   currency,
   chainName,
   rewards,
+  onMenuAction,
 }: {
   chainID: string;
   chainName: string;
@@ -20,6 +25,7 @@ const ChainDelegations = ({
   validators: Validators;
   currency: Currency;
   rewards: DelegatorRewards[];
+  onMenuAction: StakingMenuAction;
 }) => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const networkLogo = networks[chainID].network.logos.menu;
@@ -50,7 +56,6 @@ const ChainDelegations = ({
     }
   }, [rewards]);
 
-
   return (
     <>
       {delegations?.delegation_responses.map((row, index) => (
@@ -79,6 +84,8 @@ const ChainDelegations = ({
           rewards={validatorRewards?.[row.delegation.validator_address] || 0}
           networkLogo={networkLogo}
           coinDenom={currency.coinDenom}
+          onMenuAction={onMenuAction}
+          validatorInfo={validators?.active[row.delegation.validator_address]}
         />
       ))}
     </>

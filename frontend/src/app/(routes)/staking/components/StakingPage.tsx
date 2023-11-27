@@ -185,14 +185,13 @@ const StakingPage = ({
         validators.active[validatorAddress] ||
         validators.inactive[validatorAddress] ||
         {};
+      const validatorExist = Object.keys(validatorInfo).length ? true : false;
       setSelectedValidator(validatorInfo);
-      if (action === 'delegate') {
+      if (action === 'delegate' && validatorExist) {
         setDelegateOpen(true);
-      }
-      if (action === 'undelegate') {
+      } else if (action === 'undelegate' && validatorExist) {
         setUndelegateOpen(true);
-      }
-      if (action === 'redelegate') {
+      } else if (action === 'redelegate' && validatorExist) {
         setRedelegateOpen(true);
       }
     }
@@ -210,6 +209,7 @@ const StakingPage = ({
             validators={validators}
             currency={currency}
             rewards={rewards}
+            onMenuAction={onMenuAction}
           />
         </div>
 

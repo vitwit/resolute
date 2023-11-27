@@ -1,6 +1,6 @@
 'use client';
 
-import { Validator, Validators } from '@/types/staking';
+import { StakingMenuAction, Validator, Validators } from '@/types/staking';
 import { Tooltip } from '@mui/material';
 import React, { useState } from 'react';
 import DialogAllValidators from './DialogAllValidators';
@@ -20,7 +20,7 @@ const StakingSidebar = ({
   validators: Validators;
   currency: Currency;
   chainID: string;
-  onMenuAction: (type: string, validator: Validator) => void;
+  onMenuAction: StakingMenuAction;
 }) => {
   const stakedBalance = useAppSelector(
     (state: RootState) =>
@@ -96,7 +96,7 @@ const AllValidators = ({
 }: {
   validators: Validators;
   currency: Currency;
-  onMenuAction: (type: string, validator: Validator) => void;
+  onMenuAction: StakingMenuAction;
 }) => {
   const [allValidatorsDialogOpen, setAllValidatorsDialogOpen] =
     useState<boolean>(false);
@@ -167,7 +167,7 @@ const ValidatorItem = ({
   commission: number;
   tokens: number;
   currency: Currency;
-  onMenuAction: (type: string, validator: Validator) => void;
+  onMenuAction: StakingMenuAction;
   validators: Validators;
   validator: string;
 }) => {

@@ -6,6 +6,7 @@ import StakingActionsMenu from './StakingActionsMenu';
 import StakingCardStats from './StakingCardStats';
 import { Tooltip } from '@mui/material';
 import ValidatorLogo from './ValidatorLogo';
+import { StakingMenuAction, Validator } from '@/types/staking';
 
 type ToogleMenu = () => void;
 
@@ -18,6 +19,8 @@ const StakingCard = ({
   networkLogo,
   rewards,
   coinDenom,
+  onMenuAction,
+  validatorInfo,
 }: {
   validator: string;
   identity: string;
@@ -27,6 +30,8 @@ const StakingCard = ({
   networkLogo: string;
   coinDenom: string;
   rewards: number;
+  onMenuAction: StakingMenuAction;
+  validatorInfo: Validator;
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -34,6 +39,10 @@ const StakingCard = ({
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
+  };
+
+  const handleMenuAction = (type: string) => {
+    onMenuAction(type, validatorInfo);
   };
 
   useEffect(() => {
@@ -74,7 +83,7 @@ const StakingCard = ({
       </div>
       {isMenuOpen && (
         <div ref={menuRef} className="absolute top-[82%] right-[13%] z-10">
-          <StakingActionsMenu />
+          <StakingActionsMenu handleMenuAction={handleMenuAction} />
         </div>
       )}
     </div>

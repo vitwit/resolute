@@ -1,4 +1,4 @@
-import { Validator, Validators } from '@/types/staking';
+import { StakingMenuAction, Validator, Validators } from '@/types/staking';
 import { getValidatorRank, getValidatorStatus } from '@/utils/util';
 import { Dialog, DialogContent, Pagination, Tooltip } from '@mui/material';
 import Image from 'next/image';
@@ -44,7 +44,7 @@ const DialogAllValidators = ({
   handleClose: HandleClose;
   open: boolean;
   validators: Validators;
-  onMenuAction: (type: string, validator: Validator) => void;
+  onMenuAction: StakingMenuAction;
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [active, setActive] = useState<boolean>(true);
@@ -159,7 +159,7 @@ const ActiveValidators = ({
 }: {
   validators: Validators;
   searchTerm: string;
-  onMenuAction: (type: string, validator: Validator) => void;
+  onMenuAction: StakingMenuAction;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const PER_PAGE = 7;
@@ -264,7 +264,7 @@ const InactiveValidators = ({
 }: {
   validators: Validators;
   searchTerm: string;
-  onMenuAction: (type: string, validator: Validator) => void;
+  onMenuAction: StakingMenuAction;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const PER_PAGE = 7;
@@ -380,7 +380,7 @@ const ValidatorComponent = ({
   status: string;
   active: boolean;
   rank: string;
-  onMenuAction: (type: string, validator: Validator) => void;
+  onMenuAction: StakingMenuAction;
   validator: Validator;
 }) => {
   const validatorStatus = getValidatorStatus(jailed, status);
@@ -434,7 +434,7 @@ const Filtered = ({
   filtered: string[];
   validators: Validators;
   active: boolean;
-  onMenuAction: (type: string, validator: Validator) => void;
+  onMenuAction: StakingMenuAction;
 }) => {
   const [slicedValidators, setSlicedValidators] = useState<string[]>([]);
 

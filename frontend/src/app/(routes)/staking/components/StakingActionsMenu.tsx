@@ -1,11 +1,19 @@
 import React from 'react';
 
-const StakingActionsMenu = () => {
-  const actions = ['Delegate', 'Un-Delegate', 'Re-Delegate'];
+const StakingActionsMenu = ({
+  handleMenuAction,
+}: {
+  handleMenuAction: (type: string) => void;
+}) => {
+  const actions = ['Delegate', 'Undelegate', 'Redelegate'];
   return (
     <div className="staking-actions-menu py-4 flex flex-col gap-2">
       {actions.map((action, index) => (
-        <div key={index} className="staking-actions-menu-item">
+        <div
+          key={index}
+          className="staking-actions-menu-item"
+          onClick={() => handleMenuAction(action.toLowerCase())}
+        >
           {action}
         </div>
       ))}
