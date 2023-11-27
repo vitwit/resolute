@@ -47,7 +47,7 @@ const Asset = ({
   };
 
   return (
-    <tr key={asset.chainID + asset.denom}>
+    <tr>
       <td>
         <div>{formatCoin(asset.balance, asset.displayDenom)}</div>
         {showChainName && (
@@ -108,6 +108,3 @@ const Asset = ({
 };
 
 export default Asset;
-function txWithdrawAllRewardsInputs(chainID: string) {
-  throw new Error('Function not implemented.');
-}

@@ -9,7 +9,6 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
   const stakingChains = useAppSelector(
     (state: RootState) => state.staking.chains
   );
-  const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const balanceChains = useAppSelector(
     (state: RootState) => state.bank.balances
   );

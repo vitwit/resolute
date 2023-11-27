@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { RootState } from '@/store/store';
 import { useAppSelector } from './StateHooks';
 
@@ -10,7 +10,7 @@ export interface DenomInfo {
 
 const useGetChainInfo = () => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
-  
+
   const getDenomInfo = useCallback(
     (chainID: string): DenomInfo => {
       const config = networks?.[chainID]?.network?.config;

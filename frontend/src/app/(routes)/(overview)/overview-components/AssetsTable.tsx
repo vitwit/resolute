@@ -32,7 +32,11 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
               </thead>
               <tbody>
                 {sortedAssets.map((asset) => (
-                  <Asset asset={asset} showChainName={chainIDs.length > 1} />
+                  <Asset
+                    asset={asset}
+                    key={asset.chainID + asset.denom}
+                    showChainName={chainIDs.length > 1}
+                  />
                 ))}
               </tbody>
             </table>
