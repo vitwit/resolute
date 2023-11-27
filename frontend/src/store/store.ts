@@ -9,6 +9,7 @@ import bankSlice from './features/bank/bankSlice';
 import distributionSlice from './features/distribution/distributionSlice';
 import transactionHistorySlice from './features/transactionHistory/transactionHistorySlice';
 import authSlice from './features/auth/authSlice';
+import govSlice from './features/gov/govSlice';
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
     bank: bankSlice,
     auth: authSlice,
     distribution: distributionSlice,
+    gov: govSlice,
     transactionHistory: transactionHistorySlice,
   },
 });
