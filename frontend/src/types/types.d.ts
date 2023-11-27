@@ -8,3 +8,8 @@ type KeyLimitPagination = {
   key?: string;
   limit?: number;
 }
+
+interface Pagination {
+  next_key?: string;
+  total: string;
+}
