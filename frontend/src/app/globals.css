@@ -33,7 +33,8 @@
 }
 
 @layer utilities {
-  @variants responsive {}
+  @variants responsive {
+  }
 }
 
 /* Home page styles  */
@@ -80,9 +81,12 @@
 
   .primary-action-btn {
     @apply w-[152px] h-[44px] rounded-2xl text-white text-[16px] font-medium leading-3;
-    background: linear-gradient(180deg,
+    background:
+      linear-gradient(
+        180deg,
         rgba(74, 162, 156, 0.9) 0%,
-        rgba(139, 61, 167, 0.9) 100%),
+        rgba(139, 61, 167, 0.9) 100%
+      ),
       lightgray 50% / cover no-repeat;
   }
 }
@@ -141,12 +145,12 @@
 
   .sidebar {
     @apply h-screen min-h-[800px] w-[87px] px-4 py-10 flex flex-col justify-between items-center;
-    background: #0E0B26;
+    background: #0e0b26;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   }
 
   .sidebar-menu-item {
-    @apply cursor-pointer w-12 h-12 flex items-center justify-center rounded-lg;
+    @apply cursor-pointer w-12 h-12 flex items-center justify-center rounded-lg hover:bg-[#221F38];
   }
 
   .sidebar-menu-item-selected {
@@ -156,4 +160,79 @@
   .main {
     @apply flex;
   }
+}
+
+/* Select Network styles */
+
+.select-network,
+.add-network {
+  @apply text-white rounded-3xl;
+}
+
+.add-network-button {
+  @apply text-white rounded-lg px-4 py-[6px] text-[12px] font-medium leading-[20px] tracking-[0.48px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.networks-list {
+  @apply grid grid-cols-5 gap-6;
+}
+
+.network-item {
+  @apply p-4 rounded-2xl h-16 flex gap-2 items-center cursor-pointer bg-[#FFFFFF0D] hover:bg-[#ffffff2b];
+}
+
+.network-item-selected {
+  @apply border-[#ffffff3d] border-[0.1px] bg-[#ffffff24];
+}
+
+.wallet-address {
+  @apply flex gap-2 items-center h-6 p-2 text-white text-[14px] font-normal leading-normal rounded-lg opacity-80 bg-[#FFFFFF1A] w-[168px];
+}
+
+.divider-line {
+  @apply h-[1px] w-full my-4;
+  background: linear-gradient(90deg, #4aa29c 7.46%, #8b3da7 94.28%);
+}
+
+/* Add new network styles  */
+
+.add-network {
+  @apply w-[890px] min-h-[485px];
+}
+
+.file-upload-box {
+  @apply flex justify-center items-center px-4 py-10 bg-[#FFFFFF1A] min-h-[152px] rounded-3xl w-full cursor-pointer;
+}
+
+.add-network-json-sample-link {
+  @apply underline underline-offset-2 cursor-pointer;
+}
+
+.show-more-errors {
+  @apply underline underline-offset-2 cursor-pointer text-[12px];
+}
+
+.gradient-bg {
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.add-network-button-2 {
+  @apply text-center px-10 py-[10px] text-[16px] leading-[20px] rounded-2xl w-[144px] font-medium;
+}
+
+.custom-radio-button {
+  @apply border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center;
+}
+
+.custom-radio-button-label {
+  @apply flex items-center cursor-pointer gap-2;
+}
+
+.custom-radio-button-checked {
+  @apply h-[6px] w-[6px] bg-white rounded-full;
+}
+
+.chain-exist-error {
+  @apply text-red-600 font-bold;
 }
