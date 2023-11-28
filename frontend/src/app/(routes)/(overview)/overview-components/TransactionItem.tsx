@@ -8,12 +8,12 @@ const TransactionItem = ({ transaction }: { transaction: Transaction }) => {
     <div className="w-full flex gap-4">
       <div className="flex gap-2 min-w-[88px] max-w-[88px]">
         <div className="space-y-4">
-          <div className="ml-auto text-right text-[12px] max-w-[68px]">
+          <div className="ml-auto text-right text-[12px] max-w-[68px] min-w-[68px]">
             {uiTx.time}
           </div>
           <Image
             className="ml-auto"
-            src="/back-arrow.svg"
+            src="/swap.svg"
             width={24}
             height={24}
             alt="transaction"
