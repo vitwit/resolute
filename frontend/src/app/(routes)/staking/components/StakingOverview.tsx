@@ -120,7 +120,7 @@ const StakingOverview = () => {
       {hasUnbonding ? (
         <>
           <h2 className="txt-lg font-medium my-6">Unbonding</h2>
-          <div className="unbonding-grid">
+          <div className="unbondings-grid">
             {chainIDs.map((chainID, index) => {
               const unbondingDelegations =
                 stakingData[chainID]?.unbonding.unbonding;

@@ -4,6 +4,8 @@ import { GetUnbondingResponse, Validators } from '@/types/staking';
 import React from 'react';
 import UnbondingCard from './UnbondingCard';
 
+//TODO: Add cancelUnbondingDelegation msg and reducer
+
 const ChainUnbondings = ({
   chainID,
   unbondings,
@@ -31,7 +33,9 @@ const ChainUnbondings = ({
               validator={
                 validators?.active[row.validator_address]?.description.moniker
               }
-              identity={validators?.active[row.validator_address]?.description.identity}
+              identity={
+                validators?.active[row.validator_address]?.description.identity
+              }
               chainName={chainName}
               amount={parseFloat(entry.balance) / 10 ** currency?.coinDecimals}
               currency={currency}

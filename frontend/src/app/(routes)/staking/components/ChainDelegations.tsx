@@ -239,6 +239,7 @@ const ChainDelegations = ({
           coinDenom={currency.coinDenom}
           onMenuAction={onMenuAction}
           validatorInfo={validators?.active[row.delegation.validator_address]}
+          chainID={chainID}
         />
       ))}
       <DialogDelegate

@@ -49,6 +49,37 @@ const useGetTxInputs = () => {
     };
   };
 
+  const txWithdrawValidatorRewardsInputs = (
+    chainID: string,
+    validatorAddress: string,
+    delegatorAddress: string
+  ): TxWithdrawAllRewardsInputs => {
+    const delegationPairs: DelegationsPairs[] = [
+      {
+        validator: validatorAddress,
+        delegator: delegatorAddress,
+      },
+    ];
+
+    const { minimalDenom, decimals } = getDenomInfo(chainID);
+    const basicChainInfo = getChainInfo(chainID);
+    const { aminoConfig, prefix, rest, feeAmount, address, cosmosAddress } =
+      basicChainInfo;
+
+    return {
+      msgs: delegationPairs,
+      denom: minimalDenom,
+      chainID,
+      aminoConfig,
+      prefix,
+      rest,
+      feeAmount: feeAmount * 10 ** decimals,
+      feegranter: '',
+      address,
+      cosmosAddress,
+    };
+  };
+
   const txRestakeInputs = (chainID: string): TxReStakeInputs => {
     const basicChainInfo = getChainInfo(chainID);
     const { minimalDenom, decimals } = getDenomInfo(chainID);
@@ -83,7 +114,11 @@ const useGetTxInputs = () => {
     };
   };
 
-  return { txWithdrawAllRewardsInputs, txRestakeInputs };
+  return {
+    txWithdrawAllRewardsInputs,
+    txRestakeInputs,
+    txWithdrawValidatorRewardsInputs,
+  };
 };
 
 export default useGetTxInputs;
