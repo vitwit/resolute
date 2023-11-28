@@ -20,9 +20,11 @@ const useGetTxInputs = () => {
   const txWithdrawAllRewardsInputs = (
     chainID: string
   ): TxWithdrawAllRewardsInputs => {
-    const delegations = stakingChains[chainID];
+    const delegations =
+      stakingChains[chainID].delegations.delegations.delegation_responses;
     const delegationPairs: DelegationsPairs[] = [];
-    delegations.delegations.delegations.delegation_responses.forEach((item) => {
+
+    delegations.forEach((item) => {
       delegationPairs.push({
         validator: item.delegation.validator_address,
         delegator: item.delegation.delegator_address,

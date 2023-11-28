@@ -42,7 +42,7 @@ const TransactionItem = ({ transaction }: { transaction: Transaction }) => {
         <div className="flex gap-4">
           {uiTx.showMsgs[0] && <Chip msg={uiTx.showMsgs[0]} />}
           {uiTx.showMsgs[1] && <Chip msg={uiTx.showMsgs[1]} />}
-          {uiTx.showMsgs[2] && <FilledChip count={uiTx.showMsgs.length - 2} />}
+          {uiTx.showMsgs[2] && <FilledChip count={uiTx.msgCount - 2} />}
         </div>
       </div>
     </div>

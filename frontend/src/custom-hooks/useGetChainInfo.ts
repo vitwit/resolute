@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { RootState } from '@/store/store';
 import { useAppSelector } from './StateHooks';
+import { COSMOS_CHAIN_ID } from '@/utils/constants';
 
 export interface DenomInfo {
   minimalDenom: string;
@@ -26,15 +27,15 @@ const useGetChainInfo = () => {
     [networks]
   );
   const getChainInfo = (chainID: string): BasicChainInfo => {
-    const rest = networks[chainID].network.config.rest;
-    const rpc = networks[chainID].network.config.rpc;
-    const aminoCfg = networks[chainID].network.aminoConfig;
-    const cosmosAddress = networks['cosmoshub-4'].walletInfo.bech32Address;
-    const prefix =
-      networks[chainID].network.config.bech32Config.bech32PrefixAccAddr;
-    const feeAmount =
-      networks[chainID].network.config.feeCurrencies[0].gasPriceStep?.average ||
-      0;
+    const network = networks[chainID].network;
+    const config = network.config;
+    const rest = config.rest;
+    const rpc = config.rpc;
+
+    const aminoCfg = network.aminoConfig;
+    const cosmosAddress = networks[COSMOS_CHAIN_ID].walletInfo.bech32Address;
+    const prefix = config.bech32Config.bech32PrefixAccAddr;
+    const feeAmount = config.feeCurrencies[0].gasPriceStep?.average || 0;
     const address = networks[chainID].walletInfo.bech32Address;
     return {
       baseURL: rest,

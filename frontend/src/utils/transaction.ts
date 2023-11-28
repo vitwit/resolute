@@ -88,6 +88,7 @@ export const formatTransaction = (tx: Transaction) => {
   if (msgs.length > 2) {
     showMsgs[2] = true;
   }
+  const msgCount = msgs.length;
   const isTxSuccess = tx.code === 0;
   const time = getTimeDifference(tx.time);
   const firstMessage = serializeMsg(tx.msgs[0]);
@@ -96,5 +97,6 @@ export const formatTransaction = (tx: Transaction) => {
     isTxSuccess,
     time,
     firstMessage,
+    msgCount,
   };
 };
