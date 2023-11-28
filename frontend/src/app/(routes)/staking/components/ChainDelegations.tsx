@@ -93,6 +93,9 @@ const ChainDelegations = ({
   const allChainInfo = networks[chainID];
   const chainInfo = allChainInfo?.network;
   const address = allChainInfo?.walletInfo?.bech32Address;
+  const feeAmount =
+    (chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average || 0) *
+    10 ** currency?.coinDecimals;
 
   const { getChainInfo } = useGetChainInfo();
 
@@ -104,10 +107,7 @@ const ChainDelegations = ({
         validator: data.validator,
         amount: data.amount * 10 ** currency.coinDecimals,
         denom: currency.coinMinimalDenom,
-        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-        feeAmount:
-          (chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average || 0) *
-          10 ** currency?.coinDecimals,
+        feeAmount: feeAmount,
         feegranter: '',
       })
     );
@@ -121,10 +121,7 @@ const ChainDelegations = ({
         validator: data.validator,
         amount: data.amount * 10 ** currency.coinDecimals,
         denom: currency.coinMinimalDenom,
-        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-        feeAmount:
-          (chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average || 0) *
-          10 ** currency?.coinDecimals,
+        feeAmount: feeAmount,
         feegranter: '',
       })
     );
@@ -139,10 +136,7 @@ const ChainDelegations = ({
         destVal: data.dest,
         amount: data.amount * 10 ** currency.coinDecimals,
         denom: currency.coinMinimalDenom,
-        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-        feeAmount:
-          (chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average || 0) *
-          10 ** currency?.coinDecimals,
+        feeAmount: feeAmount,
         feegranter: '',
       })
     );
@@ -161,25 +155,7 @@ const ChainDelegations = ({
   }, [balance]);
 
   useEffect(() => {
-    if (validatorAddress.length && action.length && validators?.active) {
-      const validatorInfo =
-        validators.active[validatorAddress] ||
-        validators.inactive[validatorAddress] ||
-        {};
-      const validatorExist = Object.keys(validatorInfo).length ? true : false;
-      setSelectedValidator(validatorInfo);
-      if (action === 'delegate' && validatorExist) {
-        setDelegateOpen(true);
-      } else if (action === 'undelegate' && validatorExist) {
-        setUndelegateOpen(true);
-      } else if (action === 'redelegate' && validatorExist) {
-        setRedelegateOpen(true);
-      }
-    }
-  }, [validatorAddress, action, validators]);
-
-  useEffect(() => {
-    if (rewards?.length > 0) {
+    if (rewards?.length) {
       for (let i = 0; i < rewards.length; i++) {
         if (rewards[i].reward.length > 0) {
           const reward = rewards[i].reward;
@@ -199,6 +175,24 @@ const ChainDelegations = ({
       }
     }
   }, [rewards]);
+
+  useEffect(() => {
+    if (validatorAddress.length && action.length && validators?.active) {
+      const validatorInfo =
+        validators.active[validatorAddress] ||
+        validators.inactive[validatorAddress] ||
+        {};
+      const validatorExist = Object.keys(validatorInfo).length ? true : false;
+      setSelectedValidator(validatorInfo);
+      if (action === 'delegate' && validatorExist) {
+        setDelegateOpen(true);
+      } else if (action === 'undelegate' && validatorExist) {
+        setUndelegateOpen(true);
+      } else if (action === 'redelegate' && validatorExist) {
+        setRedelegateOpen(true);
+      }
+    }
+  }, [validatorAddress, action, validators]);
 
   return (
     <>

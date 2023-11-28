@@ -125,7 +125,6 @@ interface TxRedelegateInputs {
   destVal: string;
   amount: number;
   denom: string;
-  prefix: string;
   feeAmount: number;
   feegranter: string;
 }
@@ -136,7 +135,6 @@ interface TxUndelegateInputs {
   validator: string;
   amount: number;
   denom: string;
-  prefix: string;
   feeAmount: number;
   feegranter: string;
 }
@@ -147,7 +145,6 @@ interface TxDelegateInputs {
   validator: string;
   amount: number;
   denom: string;
-  prefix: string;
   feeAmount: number;
   feegranter: string;
 }

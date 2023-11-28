@@ -182,7 +182,7 @@ export const txDelegate = createAsyncThunk(
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
-        data.prefix,
+        data.basicChainInfo.prefix,
         [msg],
         860000,
         '',
@@ -226,7 +226,7 @@ export const txReDelegate = createAsyncThunk(
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
-        data.prefix,
+        data.basicChainInfo.prefix,
         [msg],
         GAS_FEE,
         '',
@@ -266,7 +266,7 @@ export const txUnDelegate = createAsyncThunk(
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
-        data.prefix,
+        data.basicChainInfo.prefix,
         [msg],
         860000,
         '',
@@ -508,7 +508,6 @@ export const stakeSlice = createSlice({
         const result: { validators: Validator[] } = { validators: [] };
         result.validators = action.payload.data.validators;
         const res = action.payload.data.validators;
-        console.log(res);
         for (let index = 0; index < res.length; index++) {
           const element = res[index];
           if (
