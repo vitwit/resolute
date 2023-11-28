@@ -105,7 +105,11 @@
   @apply text-[16px] leading-[20px] font-medium tracking-[0.64px] underline underline-offset-2 cursor-pointer;
 }
 
-/* Side ads styles  */
+.no-delegations {
+  @apply mt-36 text-[16px] font-medium text-center;
+}
+
+/* Side ads styles */
 .ad-close {
   @apply absolute right-3 top-1 cursor-pointer rounded-full bg-[#ffffff1a];
 }

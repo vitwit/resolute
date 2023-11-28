@@ -162,3 +162,88 @@ interface TxReStakeInputs {
 }
 
 type StakingMenuAction = (type: string, validator: Validator) => void;
+
+interface ChainDelegationsProps {
+  chainID: string;
+  chainName: string;
+  delegations: GetDelegationsResponse;
+  validators: Validators;
+  currency: Currency;
+  rewards: DelegatorRewards[];
+  validatorAddress: string;
+  action: string;
+  chainSpecific: boolean;
+}
+
+interface ChainUnbondingsProps {
+  chainID: string;
+  chainName: string;
+  unbondings: GetUnbondingResponse;
+  validators: Validators;
+  currency: Currency;
+}
+
+interface DelegateTxInputs {
+  validator: string;
+  amount: number;
+}
+
+interface UndelegateTxInputs {
+  validator: string;
+  amount: number;
+}
+
+interface RedelegateTxInputs {
+  src: string;
+  amount: number;
+  dest: string;
+}
+
+interface StakingCardProps {
+  validator: string;
+  identity: string;
+  chainName: string;
+  commission: number;
+  delegated: number;
+  networkLogo: string;
+  coinDenom: string;
+  rewards: number;
+  onMenuAction: StakingMenuAction;
+  validatorInfo: Validator;
+  chainID: string;
+}
+
+interface DialogDelegateProps {
+  open: boolean;
+  onClose: () => void;
+  validator: Validator | undefined;
+  stakingParams: Params | undefined;
+  availableBalance: number;
+  loading: TxStatus;
+  displayDenom: string;
+  onDelegate: (data: { validator: string; amount: number }) => void;
+}
+
+interface DialogUndelegateProps {
+  open: boolean;
+  onClose: () => void;
+  validator: Validator | undefined;
+  stakingParams: Params | undefined;
+  onUndelegate: (data: { validator: string; amount: number }) => void;
+  loading: TxStatus;
+  delegations: DelegationResponse[];
+  currency: Currency;
+}
+
+interface DialogRedelegateProps {
+  open: boolean;
+  onClose: () => void;
+  validator: Validator | undefined;
+  stakingParams: Params | undefined;
+  loading: TxStatus;
+  active: ValidatorSet;
+  inactive: ValidatorSet;
+  delegations: DelegationResponse[];
+  onRedelegate: (data: { src: string; amount: number; dest: string }) => void;
+  currency: Currency;
+}

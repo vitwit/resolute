@@ -6,7 +6,7 @@ import StakingActionsMenu from './StakingActionsMenu';
 import StakingCardStats from './StakingCardStats';
 import { CircularProgress, Tooltip } from '@mui/material';
 import ValidatorLogo from './ValidatorLogo';
-import { StakingMenuAction, Validator } from '@/types/staking';
+import { StakingCardProps } from '@/types/staking';
 import { capitalizeFirstLetter } from '@/utils/util';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
@@ -29,19 +29,7 @@ const StakingCard = ({
   onMenuAction,
   validatorInfo,
   chainID,
-}: {
-  validator: string;
-  identity: string;
-  chainName: string;
-  commission: number;
-  delegated: number;
-  networkLogo: string;
-  coinDenom: string;
-  rewards: number;
-  onMenuAction: StakingMenuAction;
-  validatorInfo: Validator;
-  chainID: string;
-}) => {
+}: StakingCardProps) => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuRef2 = useRef<HTMLDivElement>(null);

@@ -1,5 +1,8 @@
-import { TxStatus } from '@/types/enums';
-import { DelegationResponse, Params, Validator } from '@/types/staking';
+import {
+  DelegationResponse,
+  DialogUndelegateProps,
+  Validator,
+} from '@/types/staking';
 import { formatCoin } from '@/utils/util';
 import {
   Dialog,
@@ -40,16 +43,7 @@ const DialogUndelegate = ({
   loading,
   delegations,
   currency,
-}: {
-  open: boolean;
-  onClose: () => void;
-  validator: Validator | undefined;
-  stakingParams: Params | undefined;
-  onUndelegate: (data: { validator: string; amount: number }) => void;
-  loading: TxStatus;
-  delegations: DelegationResponse[];
-  currency: Currency;
-}) => {
+}: DialogUndelegateProps) => {
   const handleClose = () => {
     onClose();
   };

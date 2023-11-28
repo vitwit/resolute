@@ -1,5 +1,4 @@
-import { TxStatus } from '@/types/enums';
-import { Params, Validator } from '@/types/staking';
+import { DialogDelegateProps } from '@/types/staking';
 import { formatCoin } from '@/utils/util';
 import {
   Dialog,
@@ -20,16 +19,7 @@ const DialogDelegate = ({
   loading,
   displayDenom,
   onDelegate,
-}: {
-  open: boolean;
-  onClose: () => void;
-  validator: Validator | undefined;
-  stakingParams: Params | undefined;
-  availableBalance: number;
-  loading: TxStatus;
-  displayDenom: string;
-  onDelegate: (data: { validator: string; amount: number }) => void;
-}) => {
+}: DialogDelegateProps) => {
   const handleClose = () => {
     onClose();
   };

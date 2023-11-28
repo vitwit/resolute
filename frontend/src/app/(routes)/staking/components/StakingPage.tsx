@@ -127,7 +127,7 @@ const StakingPage = ({
             />
           </div>
         ) : (
-          <div className="mt-36 txt-md font-medium text-center">
+          <div className="no-delegations">
             - No Delegations -
           </div>
         )}

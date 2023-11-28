@@ -1,10 +1,15 @@
 'use client';
-import { GetDelegationsResponse, Validator, Validators } from '@/types/staking';
+import {
+  ChainDelegationsProps,
+  DelegateTxInputs,
+  RedelegateTxInputs,
+  UndelegateTxInputs,
+  Validator,
+} from '@/types/staking';
 import React, { useEffect, useState } from 'react';
 import StakingCard from './StakingCard';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
-import { DelegatorRewards } from '@/types/distribution';
 import { useRouter } from 'next/navigation';
 import {
   txDelegate,
@@ -27,17 +32,7 @@ const ChainDelegations = ({
   validatorAddress,
   action,
   chainSpecific,
-}: {
-  chainID: string;
-  chainName: string;
-  delegations: GetDelegationsResponse;
-  validators: Validators;
-  currency: Currency;
-  rewards: DelegatorRewards[];
-  validatorAddress: string;
-  action: string;
-  chainSpecific: boolean;
-}) => {
+}: ChainDelegationsProps) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
@@ -101,7 +96,7 @@ const ChainDelegations = ({
 
   const { getChainInfo } = useGetChainInfo();
 
-  const onDelegateTx = (data: { validator: string; amount: number }) => {
+  const onDelegateTx = (data: DelegateTxInputs) => {
     dispatch(
       txDelegate({
         basicChainInfo: getChainInfo(chainID),
@@ -118,7 +113,7 @@ const ChainDelegations = ({
     );
   };
 
-  const onUndelegateTx = (data: { validator: string; amount: number }) => {
+  const onUndelegateTx = (data: UndelegateTxInputs) => {
     dispatch(
       txUnDelegate({
         basicChainInfo: getChainInfo(chainID),
@@ -135,11 +130,7 @@ const ChainDelegations = ({
     );
   };
 
-  const onRedelegateTx = (data: {
-    src: string;
-    amount: number;
-    dest: string;
-  }) => {
+  const onRedelegateTx = (data: RedelegateTxInputs) => {
     dispatch(
       txReDelegate({
         basicChainInfo: getChainInfo(chainID),
@@ -158,7 +149,7 @@ const ChainDelegations = ({
   };
 
   useEffect(() => {
-    if (chainInfo.config.currencies.length > 0) {
+    if (chainInfo.config.currencies?.length) {
       setAvailableBalance(
         parseBalance(
           balance?.list?.length ? balance.list : [],

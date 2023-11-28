@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
-import { GetUnbondingResponse, Validators } from '@/types/staking';
+import { ChainUnbondingsProps } from '@/types/staking';
 import React from 'react';
 import UnbondingCard from './UnbondingCard';
 
@@ -12,13 +12,7 @@ const ChainUnbondings = ({
   validators,
   currency,
   chainName,
-}: {
-  chainID: string;
-  chainName: string;
-  unbondings: GetUnbondingResponse;
-  validators: Validators;
-  currency: Currency;
-}) => {
+}: ChainUnbondingsProps) => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const networkLogo = networks[chainID].network.logos.menu;
 

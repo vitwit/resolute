@@ -1,5 +1,4 @@
-import { TxStatus } from '@/types/enums';
-import { DelegationResponse, Params, Validator } from '@/types/staking';
+import { DialogRedelegateProps, Validator } from '@/types/staking';
 import { formatCoin, parseDelegation } from '@/utils/util';
 import {
   Autocomplete,
@@ -58,18 +57,7 @@ const DialogRedelegate = ({
   delegations,
   onRedelegate,
   currency,
-}: {
-  open: boolean;
-  onClose: () => void;
-  validator: Validator | undefined;
-  stakingParams: Params | undefined;
-  loading: TxStatus;
-  active: ValidatorSet;
-  inactive: ValidatorSet;
-  delegations: DelegationResponse[];
-  onRedelegate: (data: { src: string; amount: number; dest: string }) => void;
-  currency: Currency;
-}) => {
+}: DialogRedelegateProps) => {
   const handleClose = () => {
     onClose();
   };
