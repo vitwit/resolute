@@ -76,7 +76,7 @@ export const serializeMsg = (msg: Msg): string => {
   }
 };
 
-export const formatTransaction = (tx: Transaction) => {
+export const formatTransaction = (tx: Transaction, msgFilters: string[]) => {
   const msgs = tx.msgs;
   const showMsgs: [string, string, boolean] = ['', '', false];
   if (msgs[0]) {
@@ -88,6 +88,16 @@ export const formatTransaction = (tx: Transaction) => {
   if (msgs.length > 2) {
     showMsgs[2] = true;
   }
+  let showTx = false;
+  if (msgFilters.length === 0) showTx = true;
+  else {
+    msgs.forEach((msg) => {
+      msgFilters.forEach((msgFilter) => {
+        if (MsgType(msg.typeUrl) === msgFilter) showTx = true;
+      });
+    });
+  }
+
   const msgCount = msgs.length;
   const isTxSuccess = tx.code === 0;
   const time = getTimeDifference(tx.time);
@@ -98,5 +108,6 @@ export const formatTransaction = (tx: Transaction) => {
     time,
     firstMessage,
     msgCount,
+    showTx,
   };
 };
