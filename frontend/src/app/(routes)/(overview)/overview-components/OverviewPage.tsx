@@ -15,6 +15,7 @@ import PageAd from './PageAd';
 import AssetsTable from './AssetsTable';
 import AccountSummery from './AccountSummary';
 import { getAccountInfo } from '@/store/features/auth/authSlice';
+import { getDelegatorTotalRewards } from '@/store/features/distribution/distributionSlice';
 
 const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
@@ -25,6 +26,8 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
       const allChainInfo = networks[chainID];
       const chainInfo = allChainInfo.network;
       const address = allChainInfo?.walletInfo?.bech32Address;
+      const minimalDenom =
+        allChainInfo.network.config.stakeCurrency.coinMinimalDenom;
       const basicChainInputs = {
         baseURL: chainInfo.config.rest,
         address,
@@ -40,16 +43,14 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
         })
       );
       dispatch(getAccountInfo(basicChainInputs));
-
-      // Todo: after distribution slice
-      //   dispatch(
-      //     getDelegatorTotalRewards({
-      //       baseURL: chainInfo.config.rest,
-      //       address: address,
-      //       chainID: chainID,
-      //       denom: denom,
-      //     })
-      //   );
+      dispatch(
+        getDelegatorTotalRewards({
+          baseURL: chainInfo.config.rest,
+          address: address,
+          chainID: chainID,
+          denom: minimalDenom,
+        })
+      );
     });
   }, []);
 

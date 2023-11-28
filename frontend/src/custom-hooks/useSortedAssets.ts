@@ -13,6 +13,9 @@ const useSortedAssets = (chainIDs: string[]): [ParsedAsset[]] => {
   const stakingChains = useAppSelector(
     (state: RootState) => state.staking.chains
   );
+  const rewardsChains = useAppSelector(
+    (state: RootState) => state.distribution.chains
+  );
 
   const tokensPriceInfo = useAppSelector(
     (state) => state.common.allTokensInfoState.info
@@ -43,8 +46,8 @@ const useSortedAssets = (chainIDs: string[]): [ParsedAsset[]] => {
           const stakedAmountInMinDenoms: number =
             stakingChains?.[chainID]?.delegations?.totalStaked || 0;
 
-          // Todo: distribution slice
-          const rewardsAmountInMinDenoms: number = 0;
+          const rewardsAmountInMinDenoms: number =
+            rewardsChains?.[chainID]?.delegatorRewards?.totalRewards || 0;
           const stakedAmountInDenoms = stakedAmountInMinDenoms / 10 ** decimals;
           const rewardsAmountInDenoms =
             rewardsAmountInMinDenoms / 10 ** decimals;
