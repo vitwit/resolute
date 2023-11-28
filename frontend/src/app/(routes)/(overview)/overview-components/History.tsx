@@ -35,6 +35,7 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
     <div>
       <div className="text-white text-center my-6">
+        <div className="text-white text-sm font-extralight">Total Balance</div>
         <span className="text-[32px] leading-normal font-bold">
           {formatDollarAmount(staked + available + rewards)}
         </span>
@@ -54,7 +55,7 @@ const RecentTransactions = ({ chainIDs }: { chainIDs: string[] }) => {
    *        modifications to this logic will be necessary.
    */
   const transactions = useAppSelector(
-    (state:RootState) =>
+    (state: RootState) =>
       (chainIDs.length == 1
         ? state.transactionHistory.chains[chainIDs[0]]
         : state.transactionHistory.allTransactions) || []
