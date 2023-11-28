@@ -36,6 +36,8 @@ const ChainDelegations = ({
 }: ChainDelegationsProps) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { getChainInfo } = useGetChainInfo();
+
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const networkLogo = networks[chainID]?.network.logos.menu;
 
@@ -93,12 +95,8 @@ const ChainDelegations = ({
 
   const allChainInfo = networks[chainID];
   const chainInfo = allChainInfo?.network;
-  const address = allChainInfo?.walletInfo?.bech32Address;
-  const feeAmount =
-    (chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average || 0) *
-    10 ** currency?.coinDecimals;
-
-  const { getChainInfo } = useGetChainInfo();
+  const { feeAmount: avgFeeAmount, address } = getChainInfo(chainID);
+  const feeAmount = avgFeeAmount * 10 ** currency?.coinDecimals;
 
   const onDelegateTx = (data: DelegateTxInputs) => {
     dispatch(

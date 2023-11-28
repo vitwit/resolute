@@ -14,6 +14,7 @@ import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { TxStatus } from '@/types/enums';
 import { txWithdrawAllRewards } from '@/store/features/distribution/distributionSlice';
 import { txRestake } from '@/store/features/staking/stakeSlice';
+import Link from 'next/link';
 
 type ToogleMenu = () => void;
 
@@ -115,12 +116,14 @@ export const StakingCardHeader = ({
           <div className="txt-md font-medium truncate">{validator || '-'}</div>
         </div>
       </Tooltip>
-      <div className="flex-center-center gap-2">
-        <Image src={networkLogo} height={20} width={20} alt={network} />
-        <div className="txt-sm font-normal">
-          {capitalizeFirstLetter(network)}
+      <Link href={`/staking/${network.toLowerCase()}`}>
+        <div className="flex-center-center gap-2">
+          <Image src={networkLogo} height={20} width={20} alt={network} />
+          <div className="txt-sm font-normal">
+            {capitalizeFirstLetter(network)}
+          </div>
         </div>
-      </div>
+      </Link>
     </div>
   );
 };
@@ -148,7 +151,7 @@ const StakingCardActions = ({
   );
 
   const dispatch = useAppDispatch();
-  const { txWithdrawValidatorRewardsInputs, txRestakeInputs } =
+  const { txWithdrawValidatorRewardsInputs, txRestakeValidatorInputs } =
     useGetTxInputs();
 
   const claim = () => {
@@ -170,7 +173,7 @@ const StakingCardActions = ({
       alert('A restake transaction is already pending...');
       return;
     }
-    const txInputs = txRestakeInputs(chainID);
+    const txInputs = txRestakeValidatorInputs(chainID, validatorAddress);
     if (txInputs.msgs.length) dispatch(txRestake(txInputs));
     else alert('Not enough rewards to claim');
   };

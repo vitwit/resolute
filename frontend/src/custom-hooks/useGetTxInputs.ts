@@ -114,10 +114,45 @@ const useGetTxInputs = () => {
     };
   };
 
+  const txRestakeValidatorInputs = (
+    chainID: string,
+    validatorAddress: string
+  ): TxReStakeInputs => {
+    const basicChainInfo = getChainInfo(chainID);
+    const { minimalDenom, decimals } = getDenomInfo(chainID);
+    const rewards = rewardsChains[chainID].delegatorRewards;
+    const msgs: Msg[] = [];
+    const delegator = basicChainInfo.address;
+
+    for (const delegation of rewards.list) {
+      if (delegation?.validator_address === validatorAddress) {
+        for (const reward of delegation.reward || []) {
+          if (reward.denom === minimalDenom) {
+            const amount = parseInt(reward.amount);
+            if (amount < 1) continue;
+            msgs.push(
+              Delegate(delegator, validatorAddress, amount, minimalDenom)
+            );
+          }
+        }
+      }
+    }
+
+    return {
+      msgs: msgs,
+      basicChainInfo,
+      memo: '',
+      denom: minimalDenom,
+      feeAmount: basicChainInfo.feeAmount * 10 ** decimals,
+      feegranter: '',
+    };
+  };
+
   return {
     txWithdrawAllRewardsInputs,
     txRestakeInputs,
     txWithdrawValidatorRewardsInputs,
+    txRestakeValidatorInputs
   };
 };
 
