@@ -1,5 +1,9 @@
 import { StakingMenuAction, Validator, Validators } from '@/types/staking';
-import { getValidatorRank, getValidatorStatus } from '@/utils/util';
+import {
+  canDelegate,
+  getValidatorRank,
+  getValidatorStatus,
+} from '@/utils/util';
 import { Dialog, DialogContent, Pagination, Tooltip } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
@@ -57,7 +61,6 @@ const DialogAllValidators = ({
         handleClose();
       }}
       maxWidth="lg"
-      className="opacity-95"
       PaperProps={{
         sx: {
           position: 'relative',
@@ -384,6 +387,7 @@ const ValidatorComponent = ({
   validator: Validator;
 }) => {
   const validatorStatus = getValidatorStatus(jailed, status);
+  const enableDelegate = canDelegate(validatorStatus);
   return (
     <div className="flex justify-between items-center txt-sm text-white font-normal">
       <div className="flex gap-4 items-center">
@@ -402,7 +406,7 @@ const ValidatorComponent = ({
       </div>
       <div className="leading-3">{rank}</div>
       <div className="leading-3 min-w-[132px] text-center">
-        {commission ? String(commission) + '%' : '-'} Commission
+        {commission ? String(commission.toFixed(0)) + '%' : '-'} Commission
       </div>
       {active ? null : (
         <div className="min-w-[102px] text-center leading-3">
@@ -412,11 +416,15 @@ const ValidatorComponent = ({
       <div>
         <button
           className={
-            validatorStatus.toLowerCase() !== 'jailed'
+            enableDelegate
               ? `delegate-button`
               : `delegate-button delegate-button-inactive`
           }
-          onClick={() => onMenuAction('delegate', validator)}
+          onClick={() => {
+            if (enableDelegate) {
+              onMenuAction('delegate', validator);
+            }
+          }}
         >
           Delegate
         </button>

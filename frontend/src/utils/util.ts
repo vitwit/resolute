@@ -1,4 +1,4 @@
-import { DelegationResponse, Validator } from "@/types/staking";
+import { DelegationResponse, Validator } from '@/types/staking';
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -238,4 +238,8 @@ export function parseDelegation({
   });
 
   return result;
+}
+
+export function canDelegate(validatorStatus: string): boolean {
+  return validatorStatus.toLowerCase() !== 'jailed';
 }

@@ -24,7 +24,7 @@ const StakingCardStats = ({
       />
       <StakingCardStatsItem
         name={'Commision'}
-        value={commission ? String(commission) + '%' : '-'}
+        value={commission ? String(commission.toFixed(0)) + '%' : '-'}
       />
     </div>
   );

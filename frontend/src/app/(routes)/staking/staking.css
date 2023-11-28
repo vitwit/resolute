@@ -81,7 +81,11 @@
 }
 
 .overview-grid {
-  @apply grid grid-cols-2 lg:grid-cols-3 gap-6;
+  @apply grid grid-cols-2 gap-6;
+}
+
+.unbondings-grid {
+  @apply grid grid-cols-3 gap-6;
 }
 
 .staking-main {
@@ -99,4 +103,9 @@
 
 .cancel-button {
   @apply text-[16px] leading-[20px] font-medium tracking-[0.64px] underline underline-offset-2 cursor-pointer;
+}
+
+/* Side ads styles  */
+.ad-close {
+  @apply absolute right-3 top-1 cursor-pointer rounded-full bg-[#ffffff1a];
 }

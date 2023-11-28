@@ -7,6 +7,7 @@ import StakingCardStats from './StakingCardStats';
 import { Tooltip } from '@mui/material';
 import ValidatorLogo from './ValidatorLogo';
 import { StakingMenuAction, Validator } from '@/types/staking';
+import { capitalizeFirstLetter } from '@/utils/util';
 
 type ToogleMenu = () => void;
 
@@ -106,17 +107,18 @@ export const StakingCardHeader = ({
   return (
     <div className="flex justify-between">
       <Tooltip title={validator} placement="top-start">
-        <div className="flex-center-center gap-1 h-10 cursor-default">
+        <div className="flex-center-center gap-2 h-10 cursor-default">
           <ValidatorLogo identity={identity} width={24} height={24} />
-          <div className="txt-md font-medium w-[100px] truncate">
+          <div className="txt-md font-medium truncate">
             {validator || '-'}
           </div>
         </div>
       </Tooltip>
-      <div className="flex-center-center gap-1">
-        <Tooltip title={network} placement="left">
-          <Image src={networkLogo} height={24} width={24} alt={network} />
-        </Tooltip>
+      <div className="flex-center-center gap-2">
+        <Image src={networkLogo} height={20} width={20} alt={network} />
+        <div className="txt-sm font-normal">
+          {capitalizeFirstLetter(network)}
+        </div>
       </div>
     </div>
   );

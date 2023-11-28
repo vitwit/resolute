@@ -31,6 +31,12 @@ const StakingOverview = () => {
   const rewardsData = useAppSelector(
     (state: RootState) => state.distribution.chains
   );
+  const hasDelegations = useAppSelector(
+    (state: RootState) => state.staking.hasDelegations
+  );
+  const hasUnbonding = useAppSelector(
+    (state: RootState) => state.staking.hasUnbonding
+  );
   useEffect(() => {
     if (chainIDs) {
       chainIDs.forEach((chainID) => {
@@ -82,49 +88,60 @@ const StakingOverview = () => {
   return (
     <div className="staking-main">
       <h2 className="txt-lg font-medium mb-6">Staking</h2>
-      <div className="overview-grid">
-        {chainIDs.map((chainID, index) => {
-          const delegations = stakingData[chainID]?.delegations.delegations;
-          const validators = stakingData[chainID]?.validators;
-          const currency = networks[chainID]?.network?.config?.currencies[0];
-          const chainName = networks[chainID]?.network?.config?.chainName;
-          const rewards = rewardsData[chainID]?.delegatorRewards?.list;
-          return (
-            <ChainDelegations
-              key={index}
-              chainID={chainID}
-              chainName={chainName}
-              delegations={delegations}
-              rewards={rewards}
-              validators={validators}
-              currency={currency}
-              validatorAddress=""
-              action=""
-              chainSpecific={false}
-            />
-          );
-        })}
-      </div>
-      <h2 className="txt-lg font-medium my-6">Unbonding</h2>
-      <div className="overview-grid">
-        {chainIDs.map((chainID, index) => {
-          const unbondingDelegations =
-            stakingData[chainID]?.unbonding.unbonding;
-          const validators = stakingData[chainID]?.validators;
-          const currency = networks[chainID]?.network?.config?.currencies[0];
-          const chainName = networks[chainID]?.network?.config?.chainName;
-          return (
-            <ChainUnbondings
-              key={index}
-              chainID={chainID}
-              chainName={chainName}
-              unbondings={unbondingDelegations}
-              validators={validators}
-              currency={currency}
-            />
-          );
-        })}
-      </div>
+      {hasDelegations ? (
+        <div className="overview-grid">
+          {chainIDs.map((chainID, index) => {
+            const delegations = stakingData[chainID]?.delegations.delegations;
+            const validators = stakingData[chainID]?.validators;
+            const currency = networks[chainID]?.network?.config?.currencies[0];
+            const chainName = networks[chainID]?.network?.config?.chainName;
+            const rewards = rewardsData[chainID]?.delegatorRewards?.list;
+            return (
+              <ChainDelegations
+                key={index}
+                chainID={chainID}
+                chainName={chainName}
+                delegations={delegations}
+                rewards={rewards}
+                validators={validators}
+                currency={currency}
+                validatorAddress=""
+                action=""
+                chainSpecific={false}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <div className="mt-36 txt-md font-medium text-center">
+          - No Delegations -
+        </div>
+      )}
+      {hasUnbonding ? (
+        <>
+          <h2 className="txt-lg font-medium my-6">Unbonding</h2>
+          <div className="unbonding-grid">
+            {chainIDs.map((chainID, index) => {
+              const unbondingDelegations =
+                stakingData[chainID]?.unbonding.unbonding;
+              const validators = stakingData[chainID]?.validators;
+              const currency =
+                networks[chainID]?.network?.config?.currencies[0];
+              const chainName = networks[chainID]?.network?.config?.chainName;
+              return (
+                <ChainUnbondings
+                  key={index}
+                  chainID={chainID}
+                  chainName={chainName}
+                  unbondings={unbondingDelegations}
+                  validators={validators}
+                  currency={currency}
+                />
+              );
+            })}
+          </div>
+        </>
+      ) : null}
     </div>
   );
 };

@@ -91,7 +91,6 @@ const DialogRedelegate = ({
     amount: number;
     destination: null | { addr: string; label: string };
   }) => {
-    alert(JSON.stringify(data));
     onRedelegate({
       amount: data.amount,
       dest: data?.destination?.addr || '',

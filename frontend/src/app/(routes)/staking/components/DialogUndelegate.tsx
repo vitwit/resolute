@@ -164,7 +164,7 @@ const DialogUndelegate = ({
                           )}
                           + days after the undelegation.
                         </li>
-                      </ol>z
+                      </ol>
                     </div>
                   </div>
                 </div>

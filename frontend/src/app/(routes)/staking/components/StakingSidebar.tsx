@@ -1,16 +1,20 @@
 'use client';
 
 import { StakingMenuAction, Validators } from '@/types/staking';
-import { Tooltip } from '@mui/material';
+import { CircularProgress, Tooltip } from '@mui/material';
 import React, { useState } from 'react';
 import DialogAllValidators from './DialogAllValidators';
 import { formatVotingPower, parseBalance } from '@/utils/denom';
 import ValidatorLogo from './ValidatorLogo';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { formatCoin } from '@/utils/util';
 import StakingStatsCard from './StakingStatsCard';
 import TopNav from '@/components/TopNav';
+import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
+import { txWithdrawAllRewards } from '@/store/features/distribution/distributionSlice';
+import { TxStatus } from '@/types/enums';
+import { txRestake } from '@/store/features/staking/stakeSlice';
 
 const StakingSidebar = ({
   validators,
@@ -43,6 +47,37 @@ const StakingSidebar = ({
       denom: currency.coinMinimalDenom,
     },
   ];
+
+  const txClaimStatus = useAppSelector(
+    (state: RootState) => state.distribution.chains[chainID]?.tx.status
+  );
+  const txRestakeStatus = useAppSelector(
+    (state: RootState) => state.staking.chains[chainID]?.reStakeTxStatus
+  );
+
+  const dispatch = useAppDispatch();
+  const { txWithdrawAllRewardsInputs, txRestakeInputs } = useGetTxInputs();
+
+  const claim = (chainID: string) => {
+    if (txClaimStatus === TxStatus.PENDING) {
+      alert('A claim transaction is already in pending...');
+      return;
+    }
+    const txInputs = txWithdrawAllRewardsInputs(chainID);
+    if (txInputs.msgs.length) dispatch(txWithdrawAllRewards(txInputs));
+    else alert('no delegations');
+  };
+
+  const claimAndStake = (chainID: string) => {
+    if (txRestakeStatus === TxStatus.PENDING) {
+      alert('A restake transaction is already pending...');
+      return;
+    }
+    const txInputs = txRestakeInputs(chainID);
+    if (txInputs.msgs.length) dispatch(txRestake(txInputs));
+    else alert('no rewards');
+  };
+
   return (
     <div className="staking-sidebar">
       <div className="flex flex-col gap-6">
@@ -72,9 +107,25 @@ const StakingSidebar = ({
           />
         </div>
         <div className="staking-sidebar-actions">
-          <button className="staking-sidebar-actions-btn">Claim All</button>
-          <button className="staking-sidebar-actions-btn">
-            Claim and stake all
+          <button
+            className="staking-sidebar-actions-btn"
+            onClick={() => claim(chainID)}
+          >
+            {txClaimStatus === TxStatus.PENDING ? (
+              <CircularProgress size={16} sx={{ color: 'purple' }} />
+            ) : (
+              'Claim All'
+            )}
+          </button>
+          <button
+            className="staking-sidebar-actions-btn"
+            onClick={() => claimAndStake(chainID)}
+          >
+            {txRestakeStatus === TxStatus.PENDING ? (
+              <CircularProgress size={16} sx={{ color: 'purple' }} />
+            ) : (
+              'Claim & Stake All'
+            )}
           </button>
         </div>
       </div>
@@ -193,7 +244,7 @@ const ValidatorItem = ({
         </div>
       </div>
       <div className="text-[12px] text-[#FFFFFFBF] font-extralight leading-3">
-        {commission ? String(commission) + '%' : '-'} Commission
+        {commission ? String(commission.toFixed(0)) + '%' : '-'} Commission
       </div>
       <div>
         <button

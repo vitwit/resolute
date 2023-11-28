@@ -51,6 +51,13 @@ const StakingPage = ({
     (state: RootState) =>
       state.distribution.chains?.[chainID]?.delegatorRewards.list
   );
+  const hasUnbondings = useAppSelector(
+    (state: RootState) => state.staking.chains[chainID]?.unbonding?.hasUnbonding
+  );
+  const hasDelegations = useAppSelector(
+    (state: RootState) =>
+      state.staking.chains[chainID]?.delegations?.hasDelegations
+  );
 
   const allChainInfo = networks[chainID];
   const chainInfo = allChainInfo?.network;
@@ -105,32 +112,40 @@ const StakingPage = ({
     <div className="flex justify-between">
       <div className="staking-main">
         <h2 className="txt-lg font-medium mb-6">Staking</h2>
-        <div className="overview-grid">
-          <ChainDelegations
-            chainID={chainID}
-            chainName={chainName}
-            delegations={delegations}
-            validators={validators}
-            currency={currency}
-            rewards={rewards}
-            validatorAddress={validatorAddress}
-            action={action}
-            chainSpecific={true}
-          />
-        </div>
-
-        <div>
-          <h2 className="txt-lg font-medium my-6">Unbonding</h2>
+        {hasDelegations ? (
           <div className="overview-grid">
-            <ChainUnbondings
+            <ChainDelegations
               chainID={chainID}
               chainName={chainName}
-              unbondings={unbondingDelegations}
+              delegations={delegations}
               validators={validators}
               currency={currency}
+              rewards={rewards}
+              validatorAddress={validatorAddress}
+              action={action}
+              chainSpecific={true}
             />
           </div>
-        </div>
+        ) : (
+          <div className="mt-36 txt-md font-medium text-center">
+            - No Delegations -
+          </div>
+        )}
+
+        {hasUnbondings ? (
+          <div>
+            <h2 className="txt-lg font-medium my-6">Unbonding</h2>
+            <div className="unbondings-grid">
+              <ChainUnbondings
+                chainID={chainID}
+                chainName={chainName}
+                unbondings={unbondingDelegations}
+                validators={validators}
+                currency={currency}
+              />
+            </div>
+          </div>
+        ) : null}
       </div>
       <StakingSidebar
         chainID={chainID}

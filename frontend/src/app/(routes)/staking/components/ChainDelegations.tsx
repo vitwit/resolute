@@ -15,6 +15,7 @@ import DialogDelegate from './DialogDelegate';
 import { parseBalance } from '@/utils/denom';
 import DialogUndelegate from './DialogUndelegate';
 import DialogRedelegate from './DialogRedelegate';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 const ChainDelegations = ({
   chainID,
@@ -97,18 +98,13 @@ const ChainDelegations = ({
   const allChainInfo = networks[chainID];
   const chainInfo = allChainInfo?.network;
   const address = allChainInfo?.walletInfo?.bech32Address;
-  const baseURL = chainInfo?.config?.rest;
+
+  const { getChainInfo } = useGetChainInfo();
 
   const onDelegateTx = (data: { validator: string; amount: number }) => {
     dispatch(
       txDelegate({
-        basicChainInfo: {
-          baseURL: baseURL,
-          chainID: chainID,
-          aminoConfig: chainInfo.aminoConfig,
-          rest: chainInfo.config.rest,
-          rpc: chainInfo.config.rpc,
-        },
+        basicChainInfo: getChainInfo(chainID),
         delegator: address,
         validator: data.validator,
         amount: data.amount * 10 ** currency.coinDecimals,
@@ -125,13 +121,7 @@ const ChainDelegations = ({
   const onUndelegateTx = (data: { validator: string; amount: number }) => {
     dispatch(
       txUnDelegate({
-        basicChainInfo: {
-          baseURL: baseURL,
-          chainID: chainID,
-          aminoConfig: chainInfo.aminoConfig,
-          rest: chainInfo.config.rest,
-          rpc: chainInfo.config.rpc,
-        },
+        basicChainInfo: getChainInfo(chainID),
         delegator: address,
         validator: data.validator,
         amount: data.amount * 10 ** currency.coinDecimals,
@@ -152,13 +142,7 @@ const ChainDelegations = ({
   }) => {
     dispatch(
       txReDelegate({
-        basicChainInfo: {
-          baseURL: baseURL,
-          chainID: chainID,
-          aminoConfig: chainInfo.aminoConfig,
-          rest: chainInfo.config.rest,
-          rpc: chainInfo.config.rpc,
-        },
+        basicChainInfo: getChainInfo(chainID),
         delegator: address,
         srcVal: data.src,
         destVal: data.dest,
