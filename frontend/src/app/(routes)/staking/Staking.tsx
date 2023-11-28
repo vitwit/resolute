@@ -3,7 +3,6 @@
 import React, { useEffect } from 'react';
 import StakingOverview from './components/StakingOverview';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import { RootState } from '@/store/store';
 import { getDelegations } from '@/store/features/staking/stakeSlice';
 import StakingOverviewSidebar from './components/StakingOverviewSidebar';
@@ -18,16 +17,14 @@ const Staking = () => {
     (chainName) => nameToChainIDs[chainName]
   );
 
-  const [totalStakedAmount] =
-    useGetAssetsAmount(chainIDs);
-
   useEffect(() => {
     chainIDs.forEach((chainID) => {
       const allChainInfo = networks[chainID];
       const chainInfo = allChainInfo.network;
       const address = allChainInfo?.walletInfo?.bech32Address;
+      const baseURL = chainInfo.config.rest;
       const basicChainInputs = {
-        baseURL: chainInfo.config.rest,
+        baseURL,
         address,
         chainID,
       };
@@ -39,7 +36,7 @@ const Staking = () => {
   return (
     <div className="flex justify-between">
       <StakingOverview />
-      <StakingOverviewSidebar totalStakedAmount={totalStakedAmount} />
+      <StakingOverviewSidebar />
     </div>
   );
 };

@@ -7,17 +7,13 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import StakingSideBarAds from './StakingSideBarAds';
 
-const StakingOverviewSidebar = ({
-  totalStakedAmount,
-}: {
-  totalStakedAmount: number;
-}) => {
+const StakingOverviewSidebar = () => {
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
   const chainIDs = Object.values(nameToChainIDs);
 
-  const [, , rewards] = useGetAssetsAmount(chainIDs);
+  const [totalStakedAmount, , rewards] = useGetAssetsAmount(chainIDs);
   return (
     <div className="staking-sidebar">
       <div className="flex flex-col gap-6">
