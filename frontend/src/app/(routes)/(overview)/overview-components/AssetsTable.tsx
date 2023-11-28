@@ -1,9 +1,7 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
-import { formatAmount, formatCoin, formatDollarAmount } from '@/utils/util';
-import Image from 'next/image';
-import Link from 'next/link';
 import React from 'react';
+import Asset from './Asset';
 
 const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets] = useSortedAssets(chainIDs);
@@ -13,6 +11,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
   const delegationsLoading = useAppSelector(
     (state) => state.staking.delegationsLoading > 0
   );
+
   return (
     <>
       {sortedAssets.length ? (
@@ -33,70 +32,11 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
               </thead>
               <tbody>
                 {sortedAssets.map((asset) => (
-                  <tr key={asset.chainID + asset.denom}>
-                    <td>
-                      <div>{formatCoin(asset.balance, asset.displayDenom)}</div>
-                      {chainIDs.length > 1 && (
-                        <div className="text-xs text-[#a7a2b5] font-thin leading-[normal]">
-                          on{' '}
-                          <Link href={`/overview/${asset.chainName}`}>
-                            {asset.chainName}
-                          </Link>
-                        </div>
-                      )}
-                    </td>
-                    <td>
-                      {asset.type === 'native'
-                        ? formatCoin(asset.staked, asset.displayDenom)
-                        : '-'}
-                    </td>
-                    <td>
-                      {asset.type === 'native'
-                        ? formatCoin(asset.rewards, asset.displayDenom)
-                        : '-'}
-                    </td>
-                    <td>
-                      <div
-                        className="flex gap-2"
-                        style={{ alignItems: 'flex-end' }}
-                      >
-                        <div>{formatDollarAmount(asset.usdPrice)}</div>
-                        <div className="flex">
-                          <Image
-                            src={`/${
-                              asset.inflation >= 0 ? 'up' : 'down'
-                            }-arrow-filled-icon.svg`}
-                            height={16}
-                            width={16}
-                            alt="inflation change"
-                          />
-                          <div className="text-[#E57575] text-[12px]">
-                            {formatAmount(Math.abs(asset.inflation))}%
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="flex justify-between gap-1">
-                        <div className="asset-action">
-                          <Image
-                            src="/claim-icon.svg"
-                            height={16}
-                            width={16}
-                            alt="Claim"
-                          />
-                        </div>
-                        <div className="asset-action">
-                          <Image
-                            src="/claim-stake-icon.svg"
-                            height={16}
-                            width={16}
-                            alt="Claim and Stake"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
+                  <Asset
+                    asset={asset}
+                    key={asset.chainID + asset.denom}
+                    showChainName={chainIDs.length > 1}
+                  />
                 ))}
               </tbody>
             </table>

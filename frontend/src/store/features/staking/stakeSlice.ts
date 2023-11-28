@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Delegate, UnDelegate, Redelegate } from '../../../txns/staking';
@@ -20,6 +20,8 @@ import {
 } from '../../../types/staking';
 import { AxiosError } from 'axios';
 import { TxStatus } from '../../../types/enums';
+import { NewTransaction } from '@/utils/transaction';
+import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 
 interface Validators {
   status: TxStatus;
@@ -129,18 +131,34 @@ const initialState: StakingState = {
 
 export const txRestake = createAsyncThunk(
   'staking/restake',
-  async (data: TxReStakeInputs, { rejectWithValue, fulfillWithValue }) => {
+  async (
+    data: TxReStakeInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
     try {
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
-        data.prefix,
+        data.basicChainInfo.prefix,
         data.msgs,
         399999 + Math.ceil(399999 * 0.1 * (data.msgs?.length || 1)),
         data.memo,
         `${data.feeAmount}${data.denom}`,
         data.basicChainInfo.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      const tx = NewTransaction(
+        result,
+        data.msgs,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
+          transactions: [tx],
+        })
       );
       if (result?.code === 0) {
         return fulfillWithValue({ txHash: result?.transactionHash });

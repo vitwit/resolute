@@ -4,6 +4,7 @@ import { getWalletAmino } from '../../../txns/execute';
 import { isWalletInstalled } from './walletService';
 import { setConnected, setWalletName } from '../../../utils/localStorage';
 import { TxStatus } from '@/types/enums';
+import { loadTransactions } from '../transactionHistory/transactionHistorySlice';
 
 declare let window: WalletWindow;
 
@@ -46,7 +47,7 @@ export const establishWalletConnection = createAsyncThunk(
       networks: Network[];
       walletName: string;
     },
-    { rejectWithValue, fulfillWithValue }
+    { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     const networks = data.networks;
 
@@ -110,7 +111,11 @@ export const establishWalletConnection = createAsyncThunk(
       } else {
         setConnected();
         setWalletName(data.walletName);
-
+        dispatch(
+          loadTransactions({
+            address: chainInfos['cosmoshub-4'].walletInfo.bech32Address,
+          })
+        );
         return fulfillWithValue({
           chainInfos,
           nameToChainIDs,

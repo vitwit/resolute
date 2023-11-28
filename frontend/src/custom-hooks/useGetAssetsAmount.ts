@@ -1,37 +1,25 @@
 import { RootState } from '@/store/store';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useAppSelector } from './StateHooks';
 import { parseBalance } from '@/utils/denom';
 import { getIBCBalances } from '@/utils/ibc';
+import useGetChainInfo from './useGetChainInfo';
 
 const useGetAssetsAmount = (chainIDs: string[]) => {
   const stakingChains = useAppSelector(
     (state: RootState) => state.staking.chains
   );
-  const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const balanceChains = useAppSelector(
     (state: RootState) => state.bank.balances
+  );
+  const rewardsChains = useAppSelector(
+    (state: RootState) => state.distribution.chains
   );
   const tokensPriceInfo = useAppSelector(
     (state) => state.common.allTokensInfoState.info
   );
 
-  const getDenomInfo = useCallback(
-    (
-      chainID: string
-    ): { minimalDenom: string; decimals: number; chainName: string } => {
-      const config = networks?.[chainID]?.network?.config;
-      const currency = config?.currencies?.[0];
-      const chainName = config?.chainName.toLowerCase();
-
-      return {
-        minimalDenom: currency.coinMinimalDenom,
-        decimals: currency.coinDecimals || 0,
-        chainName,
-      };
-    },
-    [networks]
-  );
+  const { getDenomInfo } = useGetChainInfo();
 
   // calculates staked amount in usd
   const totalStakedAmount = useMemo(() => {
@@ -91,9 +79,20 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
 
   // calculates rewards amount in usd
   const rewardsAmount = useMemo(() => {
-    // Todo: implement distribution slice
-    return 0;
-  }, []);
+    let totalRewardsAmount = 0;
+    chainIDs.forEach((chainID) => {
+      const rewards =
+        rewardsChains?.[chainID]?.delegatorRewards?.totalRewards || 0;
+      if (rewards > 0) {
+        const { decimals, minimalDenom } = getDenomInfo(chainID);
+        const usdPriceInfo: TokenInfo | undefined =
+          tokensPriceInfo?.[minimalDenom]?.info;
+        const usdDenomPrice = usdPriceInfo?.usd || 0;
+        totalRewardsAmount += (rewards / 10 ** decimals) * usdDenomPrice;
+      }
+    });
+    return totalRewardsAmount;
+  }, [chainIDs, rewardsChains, getDenomInfo, tokensPriceInfo]);
 
   return [totalStakedAmount, availableAmount, rewardsAmount];
 };
