@@ -39,6 +39,8 @@ const paginationComponentStyles = {
   },
 };
 
+const PER_PAGE = 7;
+
 const DialogAllValidators = ({
   handleClose,
   open,
@@ -165,7 +167,6 @@ const ActiveValidators = ({
   onMenuAction: StakingMenuAction;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const PER_PAGE = 7;
   const [slicedValidators, setSlicedValidators] = useState<string[]>([]);
   const [filtered, setFiltered] = useState<string[]>([]);
 
@@ -270,7 +271,6 @@ const InactiveValidators = ({
   onMenuAction: StakingMenuAction;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const PER_PAGE = 7;
   const [slicedValidators, setSlicedValidators] = useState<string[]>([]);
   const [filtered, setFiltered] = useState<string[]>([]);
 
@@ -447,7 +447,6 @@ const Filtered = ({
   const [slicedValidators, setSlicedValidators] = useState<string[]>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const PER_PAGE = 7;
 
   useEffect(() => {
     if (filtered.length < PER_PAGE) {
@@ -496,7 +495,7 @@ const Filtered = ({
                   active={active}
                   rank={rank}
                   onMenuAction={onMenuAction}
-                  validator={validators.active[validator]}
+                  validator={validatorsSet[validator]}
                 />
               );
             })}

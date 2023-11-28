@@ -21,6 +21,7 @@ import { parseBalance } from '@/utils/denom';
 import DialogUndelegate from './DialogUndelegate';
 import DialogRedelegate from './DialogRedelegate';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { parseDenomAmount } from '@/utils/util';
 
 const ChainDelegations = ({
   chainID,
@@ -36,7 +37,7 @@ const ChainDelegations = ({
   const router = useRouter();
   const dispatch = useAppDispatch();
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
-  const networkLogo = networks[chainID].network.logos.menu;
+  const networkLogo = networks[chainID]?.network.logos.menu;
 
   const [validatorRewards, setValidatorRewards] = React.useState<{
     [key: string]: number;
@@ -162,8 +163,10 @@ const ChainDelegations = ({
           for (let j = 0; j < reward.length; j++) {
             if (reward[j].denom === currency.coinMinimalDenom) {
               const valReward = validatorRewards;
-              valReward[rewards[i].validator_address] =
-                parseFloat(reward[j].amount) / 10 ** currency?.coinDecimals;
+              valReward[rewards[i].validator_address] = parseDenomAmount(
+                reward[j].amount,
+                currency?.coinDecimals
+              );
               setValidatorRewards(valReward);
             }
           }
@@ -216,9 +219,10 @@ const ChainDelegations = ({
               ]?.commission?.commission_rates.rate
             ) * 100
           }
-          delegated={
-            parseFloat(row?.delegation?.shares) / 10 ** currency?.coinDecimals
-          }
+          delegated={parseDenomAmount(
+            row?.delegation?.shares,
+            currency?.coinDecimals
+          )}
           rewards={validatorRewards?.[row.delegation.validator_address] || 0}
           networkLogo={networkLogo}
           coinDenom={currency.coinDenom}

@@ -17,6 +17,7 @@ import { getDelegatorTotalRewards } from '@/store/features/distribution/distribu
 import { Validator } from '@/types/staking';
 import { useRouter } from 'next/navigation';
 import { getBalances } from '@/store/features/bank/bankSlice';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 const StakingPage = ({
   chainName,
@@ -29,7 +30,6 @@ const StakingPage = ({
 }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const nameToChainIDs: Record<string, string> = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -45,7 +45,7 @@ const StakingPage = ({
   );
   const currency = useAppSelector(
     (state: RootState) =>
-      state.wallet.networks[chainID].network?.config?.currencies[0]
+      state.wallet.networks[chainID]?.network?.config?.currencies[0]
   );
   const rewards = useAppSelector(
     (state: RootState) =>
@@ -59,10 +59,8 @@ const StakingPage = ({
       state.staking.chains[chainID]?.delegations?.hasDelegations
   );
 
-  const allChainInfo = networks[chainID];
-  const chainInfo = allChainInfo?.network;
-  const address = allChainInfo?.walletInfo?.bech32Address;
-  const baseURL = chainInfo?.config?.rest;
+  const { getChainInfo } = useGetChainInfo();
+  const { address, baseURL } = getChainInfo(chainID);
 
   useEffect(() => {
     dispatch(
@@ -104,8 +102,10 @@ const StakingPage = ({
   }, [chainID]);
 
   const onMenuAction = (type: string, validator: Validator) => {
-    const valAddress = validator.operator_address;
-    router.push(`?validator_address=${valAddress}&action=${type}`);
+    const valAddress = validator?.operator_address;
+    if (valAddress?.length) {
+      router.push(`?validator_address=${valAddress}&action=${type}`);
+    }
   };
 
   return (
@@ -127,9 +127,7 @@ const StakingPage = ({
             />
           </div>
         ) : (
-          <div className="no-delegations">
-            - No Delegations -
-          </div>
+          <div className="no-delegations">- No Delegations -</div>
         )}
 
         {hasUnbondings ? (

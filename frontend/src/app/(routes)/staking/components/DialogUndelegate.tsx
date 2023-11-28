@@ -3,7 +3,7 @@ import {
   DialogUndelegateProps,
   Validator,
 } from '@/types/staking';
-import { formatCoin } from '@/utils/util';
+import { formatCoin, parseDenomAmount } from '@/utils/util';
 import {
   Dialog,
   DialogContent,
@@ -26,8 +26,7 @@ function parseDelegation({
   let result = 0.0;
   delegations?.map((item) => {
     if (item.delegation.validator_address === validator?.operator_address) {
-      result +=
-        parseFloat(item.delegation.shares) / 10 ** currency?.coinDecimals;
+      result += parseDenomAmount(item.delegation.shares, currency.coinDecimals);
     }
   });
 

@@ -3,6 +3,7 @@ import { RootState } from '@/store/store';
 import { ChainUnbondingsProps } from '@/types/staking';
 import React from 'react';
 import UnbondingCard from './UnbondingCard';
+import { parseDenomAmount } from '@/utils/util';
 
 //TODO: Add cancelUnbondingDelegation msg and reducer
 
@@ -14,7 +15,7 @@ const ChainUnbondings = ({
   chainName,
 }: ChainUnbondingsProps) => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
-  const networkLogo = networks[chainID].network.logos.menu;
+  const networkLogo = networks[chainID]?.network.logos.menu;
 
   return (
     <>
@@ -31,7 +32,7 @@ const ChainUnbondings = ({
                 validators?.active[row.validator_address]?.description.identity
               }
               chainName={chainName}
-              amount={parseFloat(entry.balance) / 10 ** currency?.coinDecimals}
+              amount={parseDenomAmount(entry.balance, currency.coinDecimals)}
               currency={currency}
               networkLogo={networkLogo}
               completionTime={entry.completion_time}

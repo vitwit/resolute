@@ -109,6 +109,10 @@
   @apply mt-36 text-[16px] font-medium text-center;
 }
 
+.sidebar-delegate-button {
+  @apply px-3 py-[6px] text-[12px] leading-[20px] rounded-lg font-medium;
+}
+
 /* Side ads styles */
 .ad-close {
   @apply absolute right-3 top-1 cursor-pointer rounded-full bg-[#ffffff1a];

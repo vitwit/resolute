@@ -244,3 +244,27 @@ interface DialogRedelegateProps {
   onRedelegate: (data: { src: string; amount: number; dest: string }) => void;
   currency: Currency;
 }
+
+interface ValidatorLogoProps {
+  identity: string;
+  width: number;
+  height: number;
+}
+
+interface StakingSidebarProps {
+  validators: Validators;
+  currency: Currency;
+  chainID: string;
+  onMenuAction: StakingMenuAction;
+}
+
+interface ValidatorItemProps {
+  moniker: string;
+  identity: string;
+  commission: number;
+  tokens: number;
+  currency: Currency;
+  onMenuAction: StakingMenuAction;
+  validators: Validators;
+  validator: string;
+}

@@ -1,4 +1,5 @@
 import { DelegationResponse, Validator } from '@/types/staking';
+import { parseBalance } from './denom';
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -242,4 +243,20 @@ export function parseDelegation({
 
 export function canDelegate(validatorStatus: string): boolean {
   return validatorStatus.toLowerCase() !== 'jailed';
+}
+
+export function formatStakedAmount(tokens: Coin[], currency: Currency): string {
+  const balance = parseBalance(
+    tokens,
+    currency.coinDecimals,
+    currency.coinMinimalDenom
+  );
+  return formatCoin(balance, currency.coinDenom);
+}
+
+export function parseDenomAmount(
+  balance: string,
+  coinDecimals: number
+): number {
+  return parseFloat(balance) / 10.0 ** coinDecimals;
 }
