@@ -100,7 +100,7 @@ const DialogUndelegate = ({
               src="/delegate-popup-image.png"
               height={360}
               width={235}
-              alt="Delegate"
+              alt="Undelegate"
             />
             <div className="flex flex-col gap-10 w-full">
               <h2 className="text-[20px] font-bold leading-3">

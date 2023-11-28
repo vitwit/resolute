@@ -5,3 +5,4 @@ export const PROPOSAL_STATUS_VOTING_PERIOD = 'PROPOSAL_STATUS_VOTING_PERIOD';
 export const COSMOS_CHAIN_ID = 'cosmoshub-4';
 export const VALIDATOR_LOGO_URL = (identity: string) =>
   `https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`;
+export const VALIDATORS_PER_PAGE = 7;

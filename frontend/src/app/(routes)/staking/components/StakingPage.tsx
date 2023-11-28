@@ -112,23 +112,22 @@ const StakingPage = ({
     <div className="flex justify-between">
       <div className="staking-main">
         <h2 className="txt-lg font-medium mb-6">Staking</h2>
-        {hasDelegations ? (
-          <div className="overview-grid">
-            <ChainDelegations
-              chainID={chainID}
-              chainName={chainName}
-              delegations={delegations}
-              validators={validators}
-              currency={currency}
-              rewards={rewards}
-              validatorAddress={validatorAddress}
-              action={action}
-              chainSpecific={true}
-            />
-          </div>
-        ) : (
+        <div className="overview-grid">
+          <ChainDelegations
+            chainID={chainID}
+            chainName={chainName}
+            delegations={delegations}
+            validators={validators}
+            currency={currency}
+            rewards={rewards}
+            validatorAddress={validatorAddress}
+            action={action}
+            chainSpecific={true}
+          />
+        </div>
+        {!hasDelegations ? (
           <div className="no-delegations">- No Delegations -</div>
-        )}
+        ) : null}
 
         {hasUnbondings ? (
           <div>

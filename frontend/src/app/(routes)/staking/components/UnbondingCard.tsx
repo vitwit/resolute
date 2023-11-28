@@ -3,6 +3,11 @@ import { StakingCardHeader } from './StakingCard';
 import { formatCoin, getDaysLeftString } from '@/utils/util';
 import { getDaysLeft } from '@/utils/datetime';
 import { Tooltip } from '@mui/material';
+import {
+  UnbondingCardProps,
+  UnbondingCardStatsItemProps,
+  UnbondingCardStatsProps,
+} from '@/types/staking';
 
 const UnbondingCard = ({
   validator,
@@ -12,15 +17,7 @@ const UnbondingCard = ({
   networkLogo,
   currency,
   completionTime,
-}: {
-  validator: string;
-  identity: string;
-  chainName: string;
-  amount: number;
-  networkLogo: string;
-  currency: Currency;
-  completionTime: string;
-}) => {
+}: UnbondingCardProps) => {
   return (
     <div className="unbonding-card">
       <StakingCardHeader
@@ -51,11 +48,7 @@ const UnbodingCardStats = ({
   completionTime,
   amount,
   coinDenom,
-}: {
-  completionTime: string;
-  amount: number;
-  coinDenom: string;
-}) => {
+}: UnbondingCardStatsProps) => {
   const daysLeft = getDaysLeft(completionTime);
   return (
     <div className="flex justify-between">
@@ -74,10 +67,7 @@ const UnbodingCardStats = ({
 export const UnbondingCardStatsItem = ({
   name,
   value,
-}: {
-  name: string;
-  value: string;
-}) => {
+}: UnbondingCardStatsItemProps) => {
   return (
     <div className="flex flex-col gap-2">
       <div className="txt-sm font-extralight text-right">{name}</div>

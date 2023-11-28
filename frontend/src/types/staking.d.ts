@@ -268,3 +268,59 @@ interface ValidatorItemProps {
   validators: Validators;
   validator: string;
 }
+
+interface UnbondingCardProps {
+  validator: string;
+  identity: string;
+  chainName: string;
+  amount: number;
+  networkLogo: string;
+  currency: Currency;
+  completionTime: string;
+}
+
+interface UnbondingCardStatsItemProps {
+  name: string;
+  value: string;
+}
+
+interface UnbondingCardStatsProps {
+  completionTime: string;
+  amount: number;
+  coinDenom: string;
+}
+
+interface StakingCardHeaderProps {
+  validator: string;
+  identity: string;
+  network: string;
+  networkLogo: string;
+}
+
+interface StakingCardStatsProps {
+  delegated: number;
+  rewards: number;
+  commission: number;
+  coinDenom: string;
+}
+
+interface StakingCardsStatsItemProps {
+  name: string;
+  value: string;
+}
+
+type ToogleMenu = () => void;
+
+interface StakingCardActionsProps {
+  toggleMenu: ToogleMenu;
+  menuRef: React.RefObject<HTMLDivElement>;
+  chainID: string;
+  validatorAddress: string;
+}
+
+interface StakingCardActionButtonProps {
+  name: string;
+  icon: string;
+  action: () => void;
+  txStatus: string;
+}

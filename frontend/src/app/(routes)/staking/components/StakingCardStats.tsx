@@ -1,3 +1,7 @@
+import {
+  StakingCardStatsProps,
+  StakingCardsStatsItemProps,
+} from '@/types/staking';
 import { formatCoin } from '@/utils/util';
 import React from 'react';
 
@@ -6,12 +10,7 @@ const StakingCardStats = ({
   rewards,
   commission,
   coinDenom,
-}: {
-  delegated: number;
-  rewards: number;
-  commission: number;
-  coinDenom: string;
-}) => {
+}: StakingCardStatsProps) => {
   return (
     <div className="flex justify-between mt-4">
       <StakingCardStatsItem
@@ -32,13 +31,7 @@ const StakingCardStats = ({
 
 export default StakingCardStats;
 
-const StakingCardStatsItem = ({
-  name,
-  value,
-}: {
-  name: string;
-  value: string;
-}) => {
+const StakingCardStatsItem = ({ name, value }: StakingCardsStatsItemProps) => {
   return (
     <div className="flex flex-col gap-2">
       <div className="txt-sm font-extralight">{name}</div>

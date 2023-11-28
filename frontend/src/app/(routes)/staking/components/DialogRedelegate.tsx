@@ -120,7 +120,7 @@ const DialogRedelegate = ({
               src="/delegate-popup-image.png"
               height={360}
               width={235}
-              alt="Delegate"
+              alt="Redelegate"
             />
             <div className="flex flex-col gap-10 w-full">
               <h2 className="text-[20px] font-bold leading-3">
@@ -272,7 +272,7 @@ const DialogRedelegate = ({
                   </div>
                   <div className="mt-10 flex gap-10 items-center">
                     <button type="submit" className="dialog-delegate-button">
-                      {loading === 'pending' ? 'Loading...' : 'Delegate'}
+                      {loading === 'pending' ? 'Loading...' : 'Redelegate'}
                     </button>
                     <button
                       type="button"

@@ -79,7 +79,7 @@ const DialogDelegate = ({
               alt="Delegate"
             />
             <div className="flex flex-col gap-10 w-full">
-              <h2 className="text-[20px] font-bold leading-3">
+              <h2 className="text-[20px] font-bold leading-normal">
                 {validator?.description?.moniker || '-'}
               </h2>
               <div className="space-y-6">

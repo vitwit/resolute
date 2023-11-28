@@ -6,7 +6,12 @@ import StakingActionsMenu from './StakingActionsMenu';
 import StakingCardStats from './StakingCardStats';
 import { CircularProgress, Tooltip } from '@mui/material';
 import ValidatorLogo from './ValidatorLogo';
-import { StakingCardProps } from '@/types/staking';
+import {
+  StakingCardActionButtonProps,
+  StakingCardActionsProps,
+  StakingCardHeaderProps,
+  StakingCardProps,
+} from '@/types/staking';
 import { capitalizeFirstLetter } from '@/utils/util';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
@@ -15,8 +20,6 @@ import { TxStatus } from '@/types/enums';
 import { txWithdrawAllRewards } from '@/store/features/distribution/distributionSlice';
 import { txRestake } from '@/store/features/staking/stakeSlice';
 import Link from 'next/link';
-
-type ToogleMenu = () => void;
 
 const StakingCard = ({
   validator,
@@ -81,7 +84,7 @@ const StakingCard = ({
         />
         <StakingCardActions
           toggleMenu={toggleMenu}
-          menuRef2={menuRef2}
+          menuRef={menuRef2}
           chainID={chainID}
           validatorAddress={validatorAddress}
         />
@@ -102,12 +105,7 @@ export const StakingCardHeader = ({
   identity,
   network,
   networkLogo,
-}: {
-  validator: string;
-  identity: string;
-  network: string;
-  networkLogo: string;
-}) => {
+}: StakingCardHeaderProps) => {
   return (
     <div className="flex justify-between">
       <Tooltip title={validator} placement="top-start">
@@ -130,15 +128,10 @@ export const StakingCardHeader = ({
 
 const StakingCardActions = ({
   toggleMenu,
-  menuRef2,
+  menuRef,
   chainID,
   validatorAddress,
-}: {
-  toggleMenu: ToogleMenu;
-  menuRef2: React.RefObject<HTMLDivElement>;
-  chainID: string;
-  validatorAddress: string;
-}) => {
+}: StakingCardActionsProps) => {
   const delegatorAddress = useAppSelector(
     (state: RootState) =>
       state.wallet.networks[chainID]?.walletInfo?.bech32Address
@@ -193,7 +186,7 @@ const StakingCardActions = ({
           txStatus={txRestakeStatus}
         />
       </div>
-      <Tooltip ref={menuRef2} title="More options" placement="top">
+      <Tooltip ref={menuRef} title="More options" placement="top">
         <div className="cursor-pointer" onClick={() => toggleMenu()}>
           <Image src="/menu-icon.svg" height={32} width={32} alt="Actions" />
         </div>
@@ -207,12 +200,7 @@ const StakingCardActionButton = ({
   icon,
   action,
   txStatus,
-}: {
-  name: string;
-  icon: string;
-  action: () => void;
-  txStatus: string;
-}) => {
+}: StakingCardActionButtonProps) => {
   return (
     <Tooltip title={name}>
       <div
