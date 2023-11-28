@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { DelegatorRewards } from '@/types/distribution';
 import { useRouter } from 'next/navigation';
-import { txDelegate } from '@/store/features/staking/stakeSlice';
+import { txDelegate, txUnDelegate } from '@/store/features/staking/stakeSlice';
 import DialogDelegate from './DialogDelegate';
 import { parseBalance } from '@/utils/denom';
 import DialogUndelegate from './DialogUndelegate';
@@ -60,7 +60,6 @@ const ChainDelegations = ({
 
   const handleDialogClose = () => {
     if (chainSpecific) {
-      //TODO: Add chainName from selectedNetwork
       router.push(`/staking/${chainName.toLowerCase()}`);
     }
     setDelegateOpen(false);
@@ -69,7 +68,7 @@ const ChainDelegations = ({
   };
 
   const onMenuAction = (type: string, validator: Validator) => {
-    const valAddress = validator.operator_address;
+    const valAddress = validator?.operator_address;
 
     setSelectedValidator(validator);
 
@@ -99,6 +98,29 @@ const ChainDelegations = ({
   const onDelegateTx = (data: { validator: string; amount: number }) => {
     dispatch(
       txDelegate({
+        basicChainInfo: {
+          baseURL: baseURL,
+          chainID: chainID,
+          aminoConfig: chainInfo.aminoConfig,
+          rest: chainInfo.config.rest,
+          rpc: chainInfo.config.rpc,
+        },
+        delegator: address,
+        validator: data.validator,
+        amount: data.amount * 10 ** currency.coinDecimals,
+        denom: currency.coinMinimalDenom,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+        feeAmount:
+          (chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average || 0) *
+          10 ** currency?.coinDecimals,
+        feegranter: '',
+      })
+    );
+  };
+
+  const onUndelegateTx = (data: { validator: string; amount: number }) => {
+    dispatch(
+      txUnDelegate({
         basicChainInfo: {
           baseURL: baseURL,
           chainID: chainID,
@@ -213,7 +235,16 @@ const ChainDelegations = ({
         displayDenom={currency.coinDenom}
         onDelegate={onDelegateTx}
       />
-      <DialogUndelegate onClose={handleDialogClose} open={undelegateOpen} />
+      <DialogUndelegate
+        onClose={handleDialogClose}
+        open={undelegateOpen}
+        validator={selectedValidator}
+        stakingParams={stakingParams}
+        onUndelegate={onUndelegateTx}
+        loading={txStatus?.status}
+        delegations={delegations?.delegation_responses}
+        currency={currency}
+      />
       <DialogRedelegate onClose={handleDialogClose} open={redelegateOpen} />
     </>
   );

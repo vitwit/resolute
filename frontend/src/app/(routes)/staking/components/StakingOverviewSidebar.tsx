@@ -2,6 +2,7 @@ import { formatDollarAmount } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 import StakingStatsCard from './StakingStatsCard';
+import TopNav from '@/components/TopNav';
 
 const StakingOverviewSidebar = ({
   totalStakedAmount,
@@ -11,6 +12,7 @@ const StakingOverviewSidebar = ({
   return (
     <div className="staking-sidebar">
       <div className="flex flex-col gap-6">
+        <TopNav />
         <div className="flex gap-10">
           <StakingStatsCard
             name={'Staked Balance'}

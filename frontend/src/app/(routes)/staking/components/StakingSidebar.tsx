@@ -10,6 +10,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { formatCoin } from '@/utils/util';
 import StakingStatsCard from './StakingStatsCard';
+import TopNav from '@/components/TopNav';
 
 const StakingSidebar = ({
   validators,
@@ -45,6 +46,7 @@ const StakingSidebar = ({
   return (
     <div className="staking-sidebar">
       <div className="flex flex-col gap-6">
+        <TopNav />
         <div className="flex gap-10">
           <StakingStatsCard
             name={'Staked Balance'}
