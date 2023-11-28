@@ -3,7 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { networks } from '../utils/chainsInfo';
 import Image from 'next/image';
 import Walletpage from './popups/WalletPage';
-import { getWalletName, isConnected } from '../utils/localStorage';
+import {
+  getLocalNetworks,
+  getWalletName,
+  isConnected,
+} from '../utils/localStorage';
 import { establishWalletConnection } from '../store/features/wallet/walletSlice';
 import { RootState } from '../store/store';
 import { getAllTokensPrice } from '@/store/features/common/commonSlice';
@@ -35,7 +39,7 @@ export const ConnectWalletButton = ({
     dispatch(
       establishWalletConnection({
         walletName,
-        networks: networks,
+        networks: [...networks, ...getLocalNetworks()],
       })
     );
   };

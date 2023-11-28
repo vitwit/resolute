@@ -168,3 +168,52 @@ export const getValidatorRank = (
   }
   return '#-';
 };
+
+function convertSnakeToCamelCase(key: string): string {
+  return key.replace(/_([a-z])/g, (match, group1) => group1.toUpperCase());
+}
+
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+export function convertKeysToCamelCase(data: any): any {
+  if (Array.isArray(data)) {
+    return data.map(convertKeysToCamelCase);
+  }
+
+  if (typeof data === 'object' && data !== null) {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    const convertedData: Record<string, any> = {};
+    for (const [key, value] of Object.entries(data)) {
+      const cleanedKey = removeQuotesFromKey(key);
+      const camelCaseKey = convertSnakeToCamelCase(cleanedKey);
+      convertedData[camelCaseKey] = convertKeysToCamelCase(value);
+      console.log(camelCaseKey);
+    }
+    return convertedData;
+  }
+
+  return data;
+}
+
+function removeQuotesFromKey(key: string): string {
+  return key.replace(/"/g, '');
+}
+
+export const tabLink = (link: string, chainName: string): string => {
+  return (
+    (link === '/' && chainName.length ? '/overview' : link) + '/' + chainName
+  );
+};
+
+export const allNetworksLink = (pathParts: string[]): string => {
+  return pathParts[1] === 'overview' || pathParts[1] === ''
+    ? '/'
+    : '/' + pathParts[1];
+};
+
+export const changeNetworkRoute = (
+  pathName: string,
+  chainName: string
+): string => {
+  const route = pathName === '/' ? '/overview' : '/' + pathName.split('/')?.[1];
+  return `${route}/${chainName.toLowerCase()}`;
+};

@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getWalletAmino } from '../../../txns/execute';
 import { isWalletInstalled } from './walletService';
 import { setConnected, setWalletName } from '../../../utils/localStorage';
+import { TxStatus } from '@/types/enums';
 
 declare let window: WalletWindow;
 
@@ -25,6 +26,7 @@ interface WalletState {
   pubKey: string;
   networks: Record<string, ChainInfo>;
   nameToChainIDs: Record<string, string>;
+  status: TxStatus;
 }
 
 const initialState: WalletState = {
@@ -34,6 +36,7 @@ const initialState: WalletState = {
   pubKey: '',
   networks: {},
   nameToChainIDs: {},
+  status: TxStatus.INIT,
 };
 
 export const establishWalletConnection = createAsyncThunk(
@@ -135,11 +138,17 @@ const walletSlice = createSlice({
       state.pubKey = '';
       state.nameToChainIDs = {};
       state.networks = {};
+      state.status = TxStatus.INIT;
     },
+    resetConnectWalletStatus: (state) => {
+      state.status = TxStatus.INIT;
+    }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(establishWalletConnection.pending, () => {})
+      .addCase(establishWalletConnection.pending, (state) => {
+        state.status = TxStatus.PENDING;
+      })
       .addCase(establishWalletConnection.fulfilled, (state, action) => {
         const networks = action.payload.chainInfos;
         const nameToChainIDs = action.payload.nameToChainIDs;
@@ -148,11 +157,14 @@ const walletSlice = createSlice({
         state.connected = true;
         state.isNanoLedger = action.payload.isNanoLedger;
         state.name = action.payload.walletName;
+        state.status = TxStatus.IDLE;
       })
-      .addCase(establishWalletConnection.rejected, () => {});
+      .addCase(establishWalletConnection.rejected, (state) => {
+        state.status = TxStatus.REJECTED;
+      });
   },
 });
 
-export const { setWallet, resetWallet } = walletSlice.actions;
+export const { setWallet, resetWallet, resetConnectWalletStatus } = walletSlice.actions;
 
 export default walletSlice.reducer;

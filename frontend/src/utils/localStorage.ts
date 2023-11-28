@@ -1,6 +1,10 @@
 export const KEY_WALLET_NAME: string = 'WALLET_NAME';
 export const KEY_DARK_MODE: string = 'DARK_MODE';
 
+interface LocalNetworks {
+  [key: string]: Network;
+}
+
 export function setConnected() {
   localStorage.setItem('CONNECTED', 'true');
 }
@@ -28,6 +32,28 @@ export function isConnected(): boolean {
 export function logout() {
   localStorage.removeItem('CONNECTED');
   removeWalletName();
+}
+
+export function setLocalNetwork(networkConfig: Network, chainID: string) {
+  const localNetworks = localStorage.getItem('localNetworks');
+  let localNetworksParsed: LocalNetworks = {};
+  if (localNetworks) {
+    localNetworksParsed = JSON.parse(localNetworks);
+  }
+  localNetworksParsed[chainID] = networkConfig;
+  localStorage.setItem('localNetworks', JSON.stringify(localNetworksParsed));
+}
+
+export function getLocalNetworks(): Network[] {
+  const localNetworks = localStorage.getItem('localNetworks');
+  const networks: Network[] = [];
+  if (localNetworks) {
+    const localNetworksParsed = JSON.parse(localNetworks);
+    Object.keys(localNetworksParsed).forEach((chainID) => {
+      networks.push(localNetworksParsed[chainID]);
+    });
+  }
+  return networks;
 }
 
 export function getMainnets(): Network[] {
