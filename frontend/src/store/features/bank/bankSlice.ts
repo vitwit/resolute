@@ -6,9 +6,10 @@ import bankService from './bankService';
 import { signAndBroadcast } from '../../../utils/signing';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { GAS_FEE } from '../../../utils/constants';
-import { MultiTxnsInputs, TxSendInputs } from '../../../types/bank';
 import { TxStatus } from '../../../types/enums';
 import { ERR_UNKNOWN } from '@/utils/errors';
+import { addTransactions } from '../transactionHistory/transactionHistorySlice';
+import { NewTransaction } from '@/utils/transaction';
 
 interface Balance {
   list: Coin[];
@@ -84,11 +85,16 @@ export const multiTxns = createAsyncThunk(
 
 export const txBankSend = createAsyncThunk(
   'bank/tx-bank-send',
-  async (data: TxSendInputs, { rejectWithValue, fulfillWithValue }) => {
+  async (
+    data: TxSendInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    const { chainID, cosmosAddress } = data.basicChainInfo;
+
     try {
       const msg = SendMsg(data.from, data.to, data.amount, data.denom);
       const result = await signAndBroadcast(
-        data.basicChainInfo.chainID,
+        chainID,
         data.basicChainInfo.aminoConfig,
         data.prefix,
         [msg],
@@ -97,6 +103,14 @@ export const txBankSend = createAsyncThunk(
         `${data.feeAmount}${data.denom}`,
         data.basicChainInfo.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      const tx = NewTransaction(result, [msg], chainID, data.from);
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: cosmosAddress,
+          transactions: [tx],
+        })
       );
       if (result?.code === 0) {
         return fulfillWithValue({ txHash: result?.transactionHash });
