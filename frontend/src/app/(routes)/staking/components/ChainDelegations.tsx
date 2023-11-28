@@ -6,7 +6,11 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { DelegatorRewards } from '@/types/distribution';
 import { useRouter } from 'next/navigation';
-import { txDelegate, txUnDelegate } from '@/store/features/staking/stakeSlice';
+import {
+  txDelegate,
+  txReDelegate,
+  txUnDelegate,
+} from '@/store/features/staking/stakeSlice';
 import DialogDelegate from './DialogDelegate';
 import { parseBalance } from '@/utils/denom';
 import DialogUndelegate from './DialogUndelegate';
@@ -141,6 +145,34 @@ const ChainDelegations = ({
     );
   };
 
+  const onRedelegateTx = (data: {
+    src: string;
+    amount: number;
+    dest: string;
+  }) => {
+    dispatch(
+      txReDelegate({
+        basicChainInfo: {
+          baseURL: baseURL,
+          chainID: chainID,
+          aminoConfig: chainInfo.aminoConfig,
+          rest: chainInfo.config.rest,
+          rpc: chainInfo.config.rpc,
+        },
+        delegator: address,
+        srcVal: data.src,
+        destVal: data.dest,
+        amount: data.amount * 10 ** currency.coinDecimals,
+        denom: currency.coinMinimalDenom,
+        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+        feeAmount:
+          (chainInfo?.config?.feeCurrencies?.[0]?.gasPriceStep?.average || 0) *
+          10 ** currency?.coinDecimals,
+        feegranter: '',
+      })
+    );
+  };
+
   useEffect(() => {
     if (chainInfo.config.currencies.length > 0) {
       setAvailableBalance(
@@ -245,7 +277,18 @@ const ChainDelegations = ({
         delegations={delegations?.delegation_responses}
         currency={currency}
       />
-      <DialogRedelegate onClose={handleDialogClose} open={redelegateOpen} />
+      <DialogRedelegate
+        onClose={handleDialogClose}
+        open={redelegateOpen}
+        validator={selectedValidator}
+        stakingParams={stakingParams}
+        active={validators?.active}
+        inactive={validators?.inactive}
+        delegations={delegations?.delegation_responses}
+        loading={txStatus?.status}
+        onRedelegate={onRedelegateTx}
+        currency={currency}
+      />
     </>
   );
 };

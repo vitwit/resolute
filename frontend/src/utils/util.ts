@@ -1,3 +1,5 @@
+import { DelegationResponse, Validator } from "@/types/staking";
+
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
 ): string => {
@@ -217,3 +219,23 @@ export const changeNetworkRoute = (
   const route = pathName === '/' ? '/overview' : '/' + pathName.split('/')?.[1];
   return `${route}/${chainName.toLowerCase()}`;
 };
+
+export function parseDelegation({
+  delegations,
+  validator,
+  currency,
+}: {
+  delegations: DelegationResponse[];
+  validator: Validator | undefined;
+  currency: Currency;
+}) {
+  let result = 0.0;
+  delegations?.map((item) => {
+    if (item.delegation.validator_address === validator?.operator_address) {
+      result +=
+        parseFloat(item.delegation.shares) / 10 ** currency?.coinDecimals;
+    }
+  });
+
+  return result;
+}
