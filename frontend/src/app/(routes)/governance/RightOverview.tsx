@@ -5,6 +5,7 @@ import Image from 'next/image';
 import CustomPieChart from './CustomPiechart';
 import './style.css';
 import AllProposals from './AllProposals';
+import VotePopup from './VotePopup';
 
 const RightOverview = ({
   votingEndsInDays,
@@ -32,15 +33,20 @@ const RightOverview = ({
   Aave Governance v3 in nce v3 in an inte2layer, GovernancProposal
   for the partial activation of Aave.`;
   const [isRightBarOpen, setIsRightBarOpen] = useState(true);
+  const [isVotePopupOpen, setIsVotePopupOpen] = useState(false);
+  const toggleVotePopup = () => {
+    setIsVotePopupOpen(!isVotePopupOpen);
+  };
   const quorum = 50;
+  
   const handleCloseClick = () => {
     setIsRightBarOpen(false);
   };
   return (
     <div className="w-full flex justify-end">
       <div className="flex-1">
-        <Proposals />
-        <AllProposals />
+        <Proposals isRightBarOpen={isRightBarOpen}/>
+        <AllProposals isRightBarOpen={isRightBarOpen}/>
       </div>
       {isRightBarOpen && (
         <div className="right-bar">
@@ -82,13 +88,22 @@ const RightOverview = ({
               <div className="proposal-text-normal">{proposal}</div>
 
               <div className="flex justify-between">
-                <button className="button">
+                <button className="button" onClick={toggleVotePopup}>
                   <p className="proposal-text-medium">Vote</p>
                 </button>
               </div>
             </div>
           </div>
           <div>
+          {isVotePopupOpen && (
+          <>
+            <VotePopup
+              votingEndsInDays={2}
+              proposalId={123}
+              proposalname={'Adjust Trade and Earn Rewards Margined Protocol'}
+            />
+          </>
+        )}
             <div className="mt-20">
               <div className="space-y-2">
                 <div className="vote-grid ">

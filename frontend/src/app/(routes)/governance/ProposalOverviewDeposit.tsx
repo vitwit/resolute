@@ -77,9 +77,9 @@ const ProposalOverviewDeposit = () => {
         )}
         <div className="space-y-4">
           <div className="voting-grid">
-            <div className="voting-view">
-              <div className="status-pass">
-                <div className="flex flex-col items-center space-y-2">
+            <div className="voting-view w-full">
+              <div className="status-pass w-full">
+                <div className="flex flex-col items-center space-y-2 w-full">
                   <div className="flex space-x-2 ">
                     <Image
                       src="./vote-icon.svg"

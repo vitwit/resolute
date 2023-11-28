@@ -4,7 +4,7 @@ import Image from 'next/image';
 import './style.css';
 import proposalData from './proposalData.json';
 
-const AllProposals = () => {
+const AllProposals = ({ isRightBarOpen }: { isRightBarOpen: boolean }) => {
   return (
     <div className="main-page">
       <div className="space-y-4 w-full">
@@ -32,26 +32,30 @@ const AllProposals = () => {
                 <p className="proposal-text-normal">{proposal.title}</p>
               </div>
               <div className="flex space-x-6"></div>
-              <div className="flex space-x-6">
-                <div className="flex space-x-1">
-                  <Image
-                    src="./timer-icon.svg"
-                    width={24}
-                    height={24}
-                    alt="Timer-Icon"
-                  />
-                  <p className="proposal-text-small">{proposal.expires}</p>
+              {!isRightBarOpen && (
+                <div className="flex space-x-6">
+                  <div className="flex space-x-1">
+                    <Image
+                      src="./timer-icon.svg"
+                      width={24}
+                      height={24}
+                      alt="Timer-Icon"
+                    />
+                    <p className="proposal-text-small">{proposal.expires}</p>
+                  </div>
+                  <div className="flex space-x-1">
+                    <Image
+                      src="./vote-icon.svg"
+                      width={24}
+                      height={24}
+                      alt="Vote-Icon"
+                    />
+                    <p className="proposal-text-small">
+                      {proposal.votingStatus}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex space-x-1">
-                  <Image
-                    src="./vote-icon.svg"
-                    width={24}
-                    height={24}
-                    alt="Vote-Icon"
-                  />
-                  <p className="proposal-text-small">{proposal.votingStatus}</p>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         ))}

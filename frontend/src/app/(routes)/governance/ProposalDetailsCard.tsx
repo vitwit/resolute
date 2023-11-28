@@ -14,19 +14,19 @@ const ProposalDetailsCard = ({
   return (
     <div>
       <div className="proposal-details-grid space-y-4">
-        <div className="proposal-details proposal-text-normal">
+        <div className="proposal-details proposal-text-normal w-full">
           <p>Submitted Time</p>
           <p>{submittedAt}</p>
         </div>
-        <div className="proposal-details proposal-text-normal">
+        <div className="proposal-details proposal-text-normal w-full">
           <p>Deposit Period Ends</p>
           <p>{endsAt}</p>
         </div>
-        <div className="proposal-details proposal-text-normal">
+        <div className="proposal-details proposal-text-normal w-full">
           <p>Deposit Required</p>
           <p>{depositrequired}</p>
         </div>
-        <div className="proposal-details proposal-text-normal">
+        <div className="proposal-details proposal-text-normal w-full">
           <p>Proposal Network</p>
           <p>{proposalNetwork}</p>
         </div>

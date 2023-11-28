@@ -114,10 +114,10 @@
   background: #0e0b26;
 }
 .radio-buttons {
-  @apply flex flex-row w-full justify-between;
+  @apply flex flex-row w-full justify-between items-center;
 }
 .radio-container {
-  @apply relative cursor-pointer block mb-2.5 pl-[30px];
+  @apply relative cursor-pointer block mb-2.5 pl-[30px] text-white items-center;
 }
 .radio-container input {
   @apply absolute opacity-0 cursor-pointer;
