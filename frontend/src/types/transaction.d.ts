@@ -10,6 +10,7 @@ interface Transaction {
   msgs: Msg[];
   chainID: string;
   address: string;
+  memo: string;
 }
 
 interface AddTransanctionInputs {

@@ -129,4 +129,5 @@ interface ParsedTxResponse {
   gasWanted?: string;
   fee?: Coin[];
   time?: string;
+  memo?: string;
 }
