@@ -3,10 +3,15 @@ import React from 'react';
 import Image from 'next/image';
 import './style.css';
 import proposalData from './proposalData.json';
+import TopNav from '@/components/TopNav';
 
 const Proposals = ({ isRightBarOpen }: { isRightBarOpen: boolean }) => {
   return (
     <div className="main-page">
+      <div className='flex justify-between w-full'>
+      <div className='proposal-text-big'>Governance</div>
+      <TopNav />
+      </div>
       <div>
         <Image
           src="/ad.png"
