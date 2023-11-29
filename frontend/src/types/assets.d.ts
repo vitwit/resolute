@@ -9,6 +9,7 @@ interface ParsedIBCAsset {
   denomInfo: (IBCAsset | NativeAsset)[];
   displayDenom: string;
   denom: string;
+  chainLogoURL: string;
 }
 
 interface ParsedNativeAsset {
@@ -23,6 +24,7 @@ interface ParsedNativeAsset {
   chainName: string;
   displayDenom: string;
   denom: string;
+  chainLogoURL: string;
 }
 
 type ParsedAsset = ParsedIBCAsset | ParsedNativeAsset;

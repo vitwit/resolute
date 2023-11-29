@@ -14,7 +14,7 @@ export interface TransfersTab {
   current: string;
   to: string;
 }
-const TransfersPage = ({ chainID }: { chainID: string }) => {
+const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [tab, setTab] = useState<TransfersTab>(TRANSFERS_TAB1);
   const changeTab = (tab: TransfersTab) => {
     if (tab === TRANSFERS_TAB1) setTab(TRANSFERS_TAB2);
@@ -24,17 +24,19 @@ const TransfersPage = ({ chainID }: { chainID: string }) => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
 
   useEffect(() => {
-    const allChainInfo = networks[chainID];
-    const chainInfo = allChainInfo.network;
-    const address = allChainInfo?.walletInfo?.bech32Address;
-    const basicChainInputs = {
-      baseURL: chainInfo.config.rest,
-      address,
-      chainID,
-    };
-    dispatch(getBalances(basicChainInputs));
-  }, [chainID]);
-  
+    chainIDs.forEach((chainID) => {
+      const allChainInfo = networks[chainID];
+      const chainInfo = allChainInfo.network;
+      const address = allChainInfo?.walletInfo?.bech32Address;
+      const basicChainInputs = {
+        baseURL: chainInfo.config.rest,
+        address,
+        chainID,
+      };
+      dispatch(getBalances(basicChainInputs));
+    });
+  }, []);
+
   return (
     <div className="w-full flex justify-between h-screen text-white">
       <div
@@ -45,18 +47,28 @@ const TransfersPage = ({ chainID }: { chainID: string }) => {
         <div className="h-full rounded-2xl bg-[#0e0b26] p-6 space-y-6">
           <div className="flex justify-between">
             <div>{tab.current}</div>
-            <Button onClick={() => changeTab(tab)} variant="outlined">
+
+            <Button
+              onClick={() => {
+                if (chainIDs.length > 1) {
+                  alert('Multi transfer is not available for All networks!');
+                  return;
+                }
+                changeTab(tab);
+              }}
+              variant="outlined"
+            >
               {tab.to}
             </Button>
           </div>
           {tab.current === SINGLE_TAB_TEXT ? (
-            <SingleTransfer chainID={chainID} />
+            <SingleTransfer chainIDs={chainIDs} />
           ) : (
-            <MultiTransfer chainID={chainID} />
+            <MultiTransfer chainID={chainIDs[0]} />
           )}
         </div>
       </div>
-      <TransfersHistory chainIDs={[chainID]} />
+      <TransfersHistory chainIDs={chainIDs} />
     </div>
   );
 };
