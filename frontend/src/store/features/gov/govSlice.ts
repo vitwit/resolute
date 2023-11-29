@@ -67,7 +67,8 @@ interface GovState {
   };
   activeProposalsLoading: number;
   depositProposalsLoading: number;
-  proposalDetails: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  proposalDetails: any;  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }
 
 const EMPTY_PAGINATION = {
@@ -613,10 +614,10 @@ export const govSlice = createSlice({
             state.chains[chainID].active = result;
           }
 
-          const result = {
-            status: TxStatus.IDLE,
-            proposal: action.payload.data.proposal
-          };
+          // const result = {
+          //   status: TxStatus.IDLE,
+          //   proposal: action.payload.data.proposal
+          // };
 
           state.proposalDetails = action.payload.data.proposal
         

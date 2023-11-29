@@ -5,9 +5,8 @@ import './style.css';
 import RadioButtons from './CustomRadioButton';
 import { Dialog, DialogContent } from '@mui/material';
 
-import { RootState } from '@/store/store';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { txVote } from '@/store/features/gov/govSlice';
 
 interface VoteOptionNumber {

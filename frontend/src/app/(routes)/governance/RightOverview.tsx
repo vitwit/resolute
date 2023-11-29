@@ -1,10 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import Proposals from './Proposals';
 import Image from 'next/image';
 import CustomPieChart from './CustomPiechart';
 import './style.css';
-import AllProposals from './AllProposals';
 import VotePopup from './VotePopup';
 
 
@@ -17,16 +15,12 @@ import { getTimeDifference, getTimeDifferenceToFutureDate } from '@/utils/dataTi
 type handleCloseOverview = () => void;
 
 const RightOverview = ({
-  votingEndsInDays,
   proposalId,
-  proposalname,
   handleCloseOverview,
   chainID
 }: {
-  votingEndsInDays: number;
   proposalId: number;
   handleCloseOverview: handleCloseOverview;
-  proposalname: string;
   chainID: string;
 }) => {
   const dispatch = useAppDispatch();
@@ -57,14 +51,14 @@ const RightOverview = ({
 
   const proposalsubmittedOn = getTimeDifference(get(proposalInfo, 'submit_time'));
   const Totalvotes = totalVotes;
-  const proposal = `Proposal for the partial activation of Aave Governance v3 in an
-  interim Aave Governance v2.5 version, wition layer,
-  Robot).Proposal for the partial activation of Aave Governance v3
-  in an inte2layer, Robot).er ave Governance v3 in an interim Aave
-  Governance v2.5 versioancProposal for the partial activation of
-  Aave Governance v3 in nce v3 in an inte2layer, GovernancProposal
-  for the partial activation of Aave.`;
-  const [isRightBarOpen, setIsRightBarOpen] = useState(true);
+  // const proposal = `Proposal for the partial activation of Aave Governance v3 in an
+  // interim Aave Governance v2.5 version, wition layer,
+  // Robot).Proposal for the partial activation of Aave Governance v3
+  // in an inte2layer, Robot).er ave Governance v3 in an interim Aave
+  // Governance v2.5 versioancProposal for the partial activation of
+  // Aave Governance v3 in nce v3 in an inte2layer, GovernancProposal
+  // for the partial activation of Aave.`;
+  // const [isRightBarOpen, setIsRightBarOpen] = useState(true);
   const [isVotePopupOpen, setIsVotePopupOpen] = useState(false);
   const toggleVotePopup = () => {
     setIsVotePopupOpen(!isVotePopupOpen);

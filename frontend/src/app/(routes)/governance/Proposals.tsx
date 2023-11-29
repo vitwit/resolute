@@ -1,42 +1,18 @@
 'use client';
-import React, {useEffect} from 'react';
+import React from 'react';
 import Image from 'next/image';
 import './style.css';
-import { RootState } from '@/store/store';
-import proposalData from './proposalData.json';
+// import { RootState } from '@/store/store';
 import TopNav from '@/components/TopNav';
 
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getProposalsInDeposit } from '@/store/features/gov/govSlice';
-
-import { getTimeDifference, getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+// import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 
 type ProposalStatusUpdate = (status: string) => void;
 
-const Proposals = ({ isRightBarOpen,
-  handleChangeProposalState,
-  chainIDs }: { isRightBarOpen: boolean, handleChangeProposalState: ProposalStatusUpdate, chainIDs: string[]  }) => {
-  const dispatch = useAppDispatch();
-  const networks = useAppSelector((state: RootState) => state.wallet.networks);
-
-  const allChainProposals = useAppSelector(
-    (state) => state.gov.chains
-  );
-
-  const getDepositProposals = () => {
-    chainIDs.forEach((chainID) => {
-      const allChainInfo = networks[chainID];
-      const chainInfo = allChainInfo.network;
-
-      const basicChainInputs = {
-        baseURL: chainInfo.config.rest,
-        chainID,
-      };
-
-      dispatch(getProposalsInDeposit(basicChainInputs));
-
-    });
-  }
+const Proposals = ({ 
+  handleChangeProposalState }: { handleChangeProposalState: ProposalStatusUpdate  }) => {
+  // const dispatch = useAppDispatch();
+  // const networks = useAppSelector((state: RootState) => state.wallet.networks);
 
 
   return (
