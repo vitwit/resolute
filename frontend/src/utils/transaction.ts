@@ -38,6 +38,7 @@ export function NewTransaction(
     msgs,
     chainID,
     address,
+    memo: txResponse.memo || '',
   };
   return transaction;
 }
