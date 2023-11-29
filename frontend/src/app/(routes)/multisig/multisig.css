@@ -1,0 +1,11 @@
+.multisig-box {
+  @apply flex flex-col h-[177px] justify-center items-start gap-2 backdrop-blur-[2px] p-4 rounded-2xl;
+  background: #0e0b26;
+}
+.multisig-text {
+  @apply text-white text-sm font-normal leading-[normal];
+  font-family: Inter;
+}
+.multisig-text-l {
+  @apply text-white text-base font-bold leading-5;
+}
