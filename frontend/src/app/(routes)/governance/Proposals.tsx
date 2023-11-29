@@ -1,11 +1,44 @@
 'use client';
-import React from 'react';
+import React, {useEffect} from 'react';
 import Image from 'next/image';
 import './style.css';
+import { RootState } from '@/store/store';
 import proposalData from './proposalData.json';
 import TopNav from '@/components/TopNav';
 
-const Proposals = ({ isRightBarOpen }: { isRightBarOpen: boolean }) => {
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { getProposalsInDeposit } from '@/store/features/gov/govSlice';
+
+import { getTimeDifference, getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+
+type ProposalStatusUpdate = (status: string) => void;
+
+const Proposals = ({ isRightBarOpen,
+  handleChangeProposalState,
+  chainIDs }: { isRightBarOpen: boolean, handleChangeProposalState: ProposalStatusUpdate, chainIDs: string[]  }) => {
+  const dispatch = useAppDispatch();
+  const networks = useAppSelector((state: RootState) => state.wallet.networks);
+
+  const allChainProposals = useAppSelector(
+    (state) => state.gov.chains
+  );
+
+  const getDepositProposals = () => {
+    chainIDs.forEach((chainID) => {
+      const allChainInfo = networks[chainID];
+      const chainInfo = allChainInfo.network;
+
+      const basicChainInputs = {
+        baseURL: chainInfo.config.rest,
+        chainID,
+      };
+
+      dispatch(getProposalsInDeposit(basicChainInputs));
+
+    });
+  }
+
+
   return (
     <div className="main-page">
       <div className='flex justify-between w-full'>
@@ -23,20 +56,20 @@ const Proposals = ({ isRightBarOpen }: { isRightBarOpen: boolean }) => {
       <div className="proposals-head">
         <div className="proposal-text-medium">Proposals</div>
         <div className="flex space-x-6">
-          <button className="cstm-btn">
+          <button className="cstm-btn" onClick={()=>handleChangeProposalState('all')}>
             <p className="proposal-text-extralight">All Proposals</p>
           </button>
-          <button className="cstm-btn">
+          {/* <button className="cstm-btn" >
             <p className="proposal-text-extralight">Voting ending in 2 days</p>
-          </button>
-          <button className="cstm-btn">
+          </button> */}
+          <button className="cstm-btn" onClick={()=>handleChangeProposalState('deposit')}>
             <p className="proposal-text-extralight">
               Proposals in deposit period
             </p>
           </button>
         </div>
       </div>
-
+{/* 
       <div className="space-y-4 w-full">
         <div className="flex justify-between">
           <div className="flex space-x-2">
@@ -90,7 +123,7 @@ const Proposals = ({ isRightBarOpen }: { isRightBarOpen: boolean }) => {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

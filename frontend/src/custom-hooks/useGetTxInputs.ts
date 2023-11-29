@@ -8,6 +8,28 @@ import useGetChainInfo from './useGetChainInfo';
 import { TxReStakeInputs } from '@/types/staking';
 import { Delegate } from '@/txns/staking';
 
+export const useGetVoteTxInputs = (chainID: string) => {
+  const { getDenomInfo, getChainInfo } = useGetChainInfo();
+
+  const basicChainInfo = getChainInfo(chainID);
+  const { aminoConfig, prefix, rest, rpc, feeAmount, address,  cosmosAddress } =
+    basicChainInfo;
+  
+  const denomInfo = getDenomInfo(chainID)
+  const {minimalDenom} = denomInfo
+
+    return {
+      aminoConfig,
+      prefix,
+      rest,
+      feeAmount,
+      address,
+      cosmosAddress,
+      rpc,
+      minimalDenom,
+    }
+}
+
 const useGetTxInputs = () => {
   const stakingChains = useAppSelector(
     (state: RootState) => state.staking.chains

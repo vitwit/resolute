@@ -67,6 +67,7 @@ interface GovState {
   };
   activeProposalsLoading: number;
   depositProposalsLoading: number;
+  proposalDetails: any;
 }
 
 const EMPTY_PAGINATION = {
@@ -134,8 +135,10 @@ const initialState: GovState = {
 export const getProposal = createAsyncThunk(
   'gov/proposal-info',
   async (data: GetProposalInputs, { rejectWithValue }) => {
+    console.log('proposal uRL', data)
     try {
       const response = await govService.proposal(data.baseURL, data.proposalId);
+      console.log('proposal Result', response)
       return {
         chainID: data.chainID,
         data: response.data,
@@ -208,6 +211,8 @@ export const getProposalsInVoting = createAsyncThunk(
         data.limit,
         PROPOSAL_STATUS_ACTIVE
       );
+
+      console.log('response--------', response)
 
       const { data: responseData } = response || {};
       const proposals = responseData?.proposals || [];
@@ -607,6 +612,14 @@ export const govSlice = createSlice({
             };
             state.chains[chainID].active = result;
           }
+
+          const result = {
+            status: TxStatus.IDLE,
+            proposal: action.payload.data.proposal
+          };
+
+          state.proposalDetails = action.payload.data.proposal
+        
         } else {
           const currentProposalsState = state.chains[chainID].deposit.proposals;
           if (!currentProposalsState.length) {

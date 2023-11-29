@@ -61,7 +61,8 @@ const ProposalOverviewVote = () => {
         {isVotePopupOpen && (
           <>
             <VotePopup
-              votingEndsInDays={2}
+              chainID=''
+              votingEndsInDays={'2'}
               proposalId={123}
               proposalname={'Adjust Trade and Earn Rewards Margined Protocol'}
             />

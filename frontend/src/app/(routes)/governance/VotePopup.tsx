@@ -5,14 +5,32 @@ import './style.css';
 import RadioButtons from './CustomRadioButton';
 import { Dialog, DialogContent } from '@mui/material';
 
+import { RootState } from '@/store/store';
+import {useGetVoteTxInputs} from '@/custom-hooks/useGetTxInputs';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { txVote } from '@/store/features/gov/govSlice';
+
+interface VoteOptionNumber {
+  [key: string]: number
+}
+
+const voteOptionNumber : VoteOptionNumber  = {
+  'yes': 1,
+  'no': 2,
+  'abstain': 3,
+  'veto': 4
+}
+
 const VotePopup = ({
   votingEndsInDays,
   proposalId,
   proposalname,
+  chainID,
 }: {
-  votingEndsInDays: number;
+  votingEndsInDays: string;
   proposalId: number;
   proposalname: string;
+  chainID:string
 }) => {
   const [voteOption, setVoteOption] = useState<string>('');
   const [isOpen, setIsOpen] = useState(true);
@@ -20,12 +38,33 @@ const VotePopup = ({
   const handleVoteChange = (option: string) => {
     setVoteOption(option);
   };
+
   const handleClose = () => {
     setIsOpen(false);
   };
+
   if (!isOpen) {
     return null;
   }
+
+  const handleVote = () => {
+    const { aminoConfig, prefix, rest,  feeAmount, address, rpc, minimalDenom} = useGetVoteTxInputs(chainID);
+    txVote({
+      voter: address,
+      proposalId: proposalId,
+      option: voteOptionNumber[voteOption],
+      denom: minimalDenom,
+      chainID: chainID,
+      rpc: rpc,
+      rest: rest,
+      aminoConfig: aminoConfig,
+      prefix: prefix,
+      feeAmount: feeAmount,
+      feegranter: '',
+      justification: ''
+    })
+  }
+
   return (
     <Dialog
       open={isOpen}
@@ -72,7 +111,7 @@ const VotePopup = ({
                     </div>
                     <div className="proposal-text-normal">{proposalname}</div>
                     <div className="proposal-text-small">
-                      {`Voting ends in ${votingEndsInDays} days`}
+                      {`Voting ends in ${votingEndsInDays}`}
                     </div>
                   </div>
                 </div>
@@ -111,7 +150,7 @@ const VotePopup = ({
                   ></input>
                 </div>
                 <div>
-                  <button className="button w-36">
+                  <button onClick={handleVote} className="button w-36">
                     <p className="proposal-text-medium">Vote</p>
                   </button>
                 </div>
