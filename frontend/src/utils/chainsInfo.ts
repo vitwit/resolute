@@ -440,8 +440,8 @@ export const networks: Network[] = [
     config: {
       chainId: "evmos_9001-2",
       chainName: "Evmos",
-      rest: "https://evmos.kingnodes.com",
-      rpc: "https://rpc-evmos.ecostake.com",
+      rest: "https://evmos-api.polkachu.com",
+      rpc: "https://evmos-rpc.polkachu.com",
       currencies: [
         {
           coinDenom: "EVMOS",
@@ -804,8 +804,8 @@ export const networks: Network[] = [
           coinDecimals: 6,
           coinGeckoId: "passage",
           gasPriceStep: {
-            low: 0,
-            average: 0,
+            low: 0.011,
+            average: 0.005,
             high: 0.01
           }
         }
