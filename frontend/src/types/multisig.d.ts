@@ -80,3 +80,17 @@ interface GetMultisigBalanceInputs {
   address: string;
   denom: string;
 }
+
+interface FeeObject {
+  amount: {
+    amount: string;
+    denom: any;
+  }[];
+  gas: string;
+  granter: string;
+}
+
+interface CreateTxnInputs {
+  data: CreateTxnPayload;
+  queryParams: QueryParams;
+}

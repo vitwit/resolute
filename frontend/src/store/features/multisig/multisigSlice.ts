@@ -56,6 +56,11 @@ interface Balance {
   error: string;
 }
 
+interface CreateTxnRes {
+  status: TxStatus;
+  error: string;
+}
+
 interface MultisigState {
   multisigAccounts: MultisigAccounts;
   verifyAccountRes: VerifyAcccountRes;
@@ -63,6 +68,7 @@ interface MultisigState {
   deleteTxnRes: DeleteTxnRes;
   multisigAccount: MultisigAccount;
   balance: Balance;
+  createTxnRes: CreateTxnRes;
 }
 
 const initialState: MultisigState = {
@@ -104,6 +110,10 @@ const initialState: MultisigState = {
       amount: '',
       denom: '',
     },
+    status: TxStatus.INIT,
+    error: '',
+  },
+  createTxnRes: {
     status: TxStatus.INIT,
     error: '',
   },
@@ -228,6 +238,24 @@ export const getMultisigBalance = createAsyncThunk(
   }
 );
 
+export const createTxn = createAsyncThunk(
+  'multisig/createTxn',
+  async (data: CreateTxnInputs, { rejectWithValue }) => {
+    try {
+      const response = await multisigService.createTxn(
+        data.queryParams,
+        data.data.address,
+        data.data
+      );
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
 export const multisigSlice = createSlice({
   name: 'multisig',
   initialState,
@@ -328,6 +356,19 @@ export const multisigSlice = createSlice({
         state.balance.status = TxStatus.REJECTED;
         const payload = action.payload as { message: string };
         state.balance.error = payload.message || '';
+      });
+    builder
+      .addCase(createTxn.pending, (state) => {
+        state.createTxnRes.status = TxStatus.PENDING;
+        state.createTxnRes.error = '';
+      })
+      .addCase(createTxn.fulfilled, (state, result) => {
+        state.createTxnRes.status = TxStatus.IDLE;
+      })
+      .addCase(createTxn.rejected, (state, action) => {
+        state.createTxnRes.status = TxStatus.REJECTED;
+        const payload = action.payload as { message: string };
+        state.createTxnRes.error = payload.message || '';
       });
   },
 });
