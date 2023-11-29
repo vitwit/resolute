@@ -6,7 +6,6 @@ import MainTopNav from '@/components/MainTopNav';
 import TransfersHistory from './TransfersHistory';
 import { TRANSFERS_TAB2 } from '../../../../utils/constants';
 import { SINGLE_TAB_TEXT, TRANSFERS_TAB1 } from '@/utils/constants';
-import { Button } from '@mui/material';
 import SingleTransfer from './SingleTransfer';
 import MultiTransfer from './MultiTransfer';
 
@@ -46,9 +45,12 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
         <MainTopNav title="Transfers" />
         <div className="h-full rounded-2xl bg-[#0e0b26] p-6 space-y-6">
           <div className="flex justify-between">
-            <div>{tab.current}</div>
+            <div className="text-base not-italic font-normal leading-[normal]">
+              {tab.current}
+            </div>
 
-            <Button
+            <button
+              className="primary-action-btn px-3 py-[6px]"
               onClick={() => {
                 if (chainIDs.length > 1) {
                   alert('Multi transfer is not available for All networks!');
@@ -56,10 +58,9 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
                 }
                 changeTab(tab);
               }}
-              variant="outlined"
             >
               {tab.to}
-            </Button>
+            </button>
           </div>
           {tab.current === SINGLE_TAB_TEXT ? (
             <SingleTransfer chainIDs={chainIDs} />
