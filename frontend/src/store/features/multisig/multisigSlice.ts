@@ -125,17 +125,16 @@ export const verifyAccount = createAsyncThunk(
         data.address,
         OFFCHAIN_VERIFICATION_MESSAGE
       );
-
+      const salt = new Date().getTime();
       try {
-        const response = await multisigService.verifyUser({
+        await multisigService.verifyUser({
           address: data.address,
           signature: token.signature,
-          salt: 10,
+          salt: salt,
           pubKey: JSON.stringify(token.pub_key),
         });
 
         return {
-          response,
           token,
         };
       } catch (error) {
@@ -420,7 +419,7 @@ export const multisigSlice = createSlice({
         state.txns.list = [];
       })
       .addCase(getTxns.fulfilled, (state, action) => {
-        state.txns.status = TxStatus.PENDING;
+        state.txns.status = TxStatus.IDLE;
         state.txns.error = '';
         state.txns.list = action.payload?.data || [];
       })

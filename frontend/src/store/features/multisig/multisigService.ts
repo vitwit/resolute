@@ -1,6 +1,6 @@
 'use client';
 
-import Axios, { AxiosPromise, AxiosResponse } from 'axios';
+import Axios, { AxiosResponse } from 'axios';
 import { cleanURL } from '../../../utils/util';
 import {
   CreateAccountPayload,
@@ -33,13 +33,13 @@ const SIGN_URL = (
   SIGNATURE_PARAMS_STRING(queryParams);
 
 const VERIFY_ACCOUNT_URL = (address: string): string =>
-  `/users/${address}/signature`;
+  `${BASE_URL}/users/${address}/signature`;
 
 const CREATE_TXN_URL = (address: string, queryParams: QueryParams): string =>
   `${BASE_URL}/multisig/${address}/tx` + SIGNATURE_PARAMS_STRING(queryParams);
 
-const verifyUser = (data: VerifyUserPayload): Promise<AxiosPromise> =>
-  Axios.post(`${BASE_URL}${VERIFY_ACCOUNT_URL(data.address)}`, data);
+const verifyUser = (data: VerifyUserPayload): Promise<AxiosResponse> =>
+  Axios.post(`${VERIFY_ACCOUNT_URL(data.address)}`, data);
 
 const createAccount = (
   queryParams: QueryParams,
