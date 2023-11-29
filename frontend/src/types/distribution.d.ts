@@ -57,4 +57,6 @@ interface TxWithdrawAllRewardsInputs {
   rest: string;
   feeAmount: number;
   feegranter: string;
+  address: string;
+  cosmosAddress:string
 }

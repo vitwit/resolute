@@ -27,87 +27,107 @@ interface FeeForAuthInfoBytes {
   granter?: string | undefined;
 }
 
-interface LogEvent {
-  type: string;
-  attributes: Array<{ key: string; value: string }>;
+interface Message {
+  type_url: string;
+  value: string;
 }
 
-interface TxLog {
-  msg_index: number;
-  log: string;
-  events: LogEvent[];
+interface ExtensionOption {
+  type_url: string;
+  value: string;
 }
 
-interface AuthInfo {
-  public_key: PubKey;
+interface SignerInfo {
+  public_key: {
+    type_url: string;
+    value: string;
+  };
   mode_info: {
-    single: {
-      mode: string;
+    single?: {
+      mode: 'SIGN_MODE_UNSPECIFIED';
+    };
+    multi?: {
+      bitarray: {
+        extra_bits_stored: number;
+        elems: string;
+      };
+      mode_infos: string[];
     };
   };
   sequence: string;
 }
 
 interface Fee {
-  amount: Array<{ denom: string; amount: string }>;
+  amount: Coin[];
   gas_limit: string;
   payer: string;
   granter: string;
 }
 
-interface MessageBody {
-  '@type': string;
-  delegator_address: string;
-  validator_address: string;
+interface Tip {
+  amount: Coin[];
+  tipper: string;
 }
 
-interface TxBody {
-  messages: MessageBody[];
-  memo: string;
-  timeout_height: string;
-  extension_options: never[]; // Use an empty array for no data
-  non_critical_extension_options: never[]; // Use an empty array for no data
+interface AuthInfo {
+  signer_infos: SignerInfo[];
+  fee: Fee;
+  tip: Tip;
 }
 
-interface TxSignature {
+interface LogEventAttribute {
+  key: string;
+  value: string;
+}
+
+interface LogEvent {
+  type: string;
+  attributes: LogEventAttribute[];
+}
+
+interface Log {
+  msg_index: number;
+  log: string;
+  events: LogEvent[];
+}
+
+interface Tx {
   '@type': string;
-  body: TxBody;
+  body: {
+    messages: Message[];
+    memo: string;
+    timeout_height: string;
+    extension_options: ExtensionOption[];
+    non_critical_extension_options: ExtensionOption[];
+  };
   auth_info: AuthInfo;
   signatures: string[];
 }
 
-interface EventAttribute {
-  key: string;
-  value: string;
-  index: boolean;
-}
-
-interface Event {
-  type: string;
-  attributes: EventAttribute[];
-}
-
-type TxResponse = {
-  height?: string;
+interface TxResponse {
+  height: string;
   txhash: string;
-  codespace?: string;
+  tx: Tx;
+  codespace: string;
   code: number;
-  data?: string;
-  raw_log?: string;
-  logs?: TxLog[];
-  info?: string;
-  gas_wanted?: string;
-  gas_used?: string;
-  tx?: TxSignature;
-  timestamp?: string;
-  events?: Event[];
-};
+  data: string;
+  raw_log: string;
+  logs: Log[];
+  info: string;
+  gas_wanted: string;
+  gas_used: string;
+  timestamp: string;
+  events: LogEvent[];
+}
 
-type ParsedTxResponse = {
+interface ParsedTxResponse {
   code: number;
   height?: string;
   rawLog?: string;
   transactionHash: string;
   gasUsed?: string;
   gasWanted?: string;
-};
+  fee?: Coin[];
+  time?: string;
+  memo?: string;
+}

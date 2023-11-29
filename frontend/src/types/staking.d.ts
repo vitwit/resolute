@@ -154,7 +154,6 @@ interface TxDelegateInputs {
 
 interface TxReStakeInputs {
   basicChainInfo: BasicChainInfo;
-  prefix: string;
   msgs: Msg[];
   memo: string;
   feeAmount: number;

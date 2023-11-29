@@ -3,6 +3,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getWalletAmino } from '../../../txns/execute';
 import { isWalletInstalled } from './walletService';
 import { setConnected, setWalletName } from '../../../utils/localStorage';
+import { TxStatus } from '@/types/enums';
+import { loadTransactions } from '../transactionHistory/transactionHistorySlice';
 
 declare let window: WalletWindow;
 
@@ -25,6 +27,7 @@ interface WalletState {
   pubKey: string;
   networks: Record<string, ChainInfo>;
   nameToChainIDs: Record<string, string>;
+  status: TxStatus;
 }
 
 const initialState: WalletState = {
@@ -34,6 +37,7 @@ const initialState: WalletState = {
   pubKey: '',
   networks: {},
   nameToChainIDs: {},
+  status: TxStatus.INIT,
 };
 
 export const establishWalletConnection = createAsyncThunk(
@@ -43,7 +47,7 @@ export const establishWalletConnection = createAsyncThunk(
       networks: Network[];
       walletName: string;
     },
-    { rejectWithValue, fulfillWithValue }
+    { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     const networks = data.networks;
 
@@ -107,7 +111,11 @@ export const establishWalletConnection = createAsyncThunk(
       } else {
         setConnected();
         setWalletName(data.walletName);
-
+        dispatch(
+          loadTransactions({
+            address: chainInfos['cosmoshub-4'].walletInfo.bech32Address,
+          })
+        );
         return fulfillWithValue({
           chainInfos,
           nameToChainIDs,
@@ -135,11 +143,17 @@ const walletSlice = createSlice({
       state.pubKey = '';
       state.nameToChainIDs = {};
       state.networks = {};
+      state.status = TxStatus.INIT;
     },
+    resetConnectWalletStatus: (state) => {
+      state.status = TxStatus.INIT;
+    }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(establishWalletConnection.pending, () => {})
+      .addCase(establishWalletConnection.pending, (state) => {
+        state.status = TxStatus.PENDING;
+      })
       .addCase(establishWalletConnection.fulfilled, (state, action) => {
         const networks = action.payload.chainInfos;
         const nameToChainIDs = action.payload.nameToChainIDs;
@@ -148,11 +162,14 @@ const walletSlice = createSlice({
         state.connected = true;
         state.isNanoLedger = action.payload.isNanoLedger;
         state.name = action.payload.walletName;
+        state.status = TxStatus.IDLE;
       })
-      .addCase(establishWalletConnection.rejected, () => {});
+      .addCase(establishWalletConnection.rejected, (state) => {
+        state.status = TxStatus.REJECTED;
+      });
   },
 });
 
-export const { setWallet, resetWallet } = walletSlice.actions;
+export const { setWallet, resetWallet, resetConnectWalletStatus } = walletSlice.actions;
 
 export default walletSlice.reducer;
