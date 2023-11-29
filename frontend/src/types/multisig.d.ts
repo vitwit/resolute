@@ -1,4 +1,4 @@
-import { TxStatus } from './enums';
+import { MultisigTxStatus, TxStatus } from './enums';
 
 interface QueryParams {
   address: string;
@@ -6,7 +6,7 @@ interface QueryParams {
 }
 
 interface UpdateTxPayload {
-  status: string;
+  status: MultisigTxStatus;
   hash: string;
   error_message: string;
 }
@@ -17,7 +17,10 @@ interface SignTxPayload {
 }
 
 interface Fee {
-  amount: { amount: string; denom: string }[];
+  amount: {
+    amount: string;
+    denom: string;
+  }[];
   gas: string;
   granter: string;
 }
