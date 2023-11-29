@@ -10,8 +10,9 @@ import {
   UpdateTxPayload,
   VerifyUserPayload,
 } from '@/types/multisig';
+import { API_URL } from '@/utils/constants';
 
-const BASE_URL: string = cleanURL('https://api.resolute.vitwit.com');
+const BASE_URL: string = cleanURL(API_URL);
 
 const GET_ACCOUNTS_URL = '/multisig/accounts';
 
@@ -38,7 +39,6 @@ const CREATE_TXN_URL = (address: string, queryParams: QueryParams): string =>
 const verifyUser = (data: VerifyUserPayload): Promise<AxiosPromise> =>
   Axios.post(`${BASE_URL}${VERIFY_ACCOUNT_URL(data.address)}`, data);
 
-//TODO: Create interface for 'data'
 const createAccount = (
   queryParams: QueryParams,
   data: CreateAccountPayload

@@ -8,38 +8,16 @@ import { OFFCHAIN_VERIFICATION_MESSAGE } from '@/utils/constants';
 import { TxStatus } from '@/types/enums';
 import bankService from '@/store/features/bank/bankService';
 import {
-  Balance,
   CreateAccountPayload,
-  CreateMultisigAccountRes,
   CreateTxnInputs,
-  CreateTxnRes,
   DeleteTxnInputs,
-  DeleteTxnRes,
   GetMultisigBalanceInputs,
   GetTxnsInputs,
-  MultisigAccount,
-  MultisigAccounts,
+  MultisigState,
   QueryParams,
   SignTxInputs,
-  SignTxRes,
-  Txns,
   UpdateTxnInputs,
-  UpdateTxnRes,
-  VerifyAcccountRes,
 } from '@/types/multisig';
-
-interface MultisigState {
-  multisigAccounts: MultisigAccounts;
-  verifyAccountRes: VerifyAcccountRes;
-  createMultisigAccountRes: CreateMultisigAccountRes;
-  deleteTxnRes: DeleteTxnRes;
-  multisigAccount: MultisigAccount;
-  balance: Balance;
-  createTxnRes: CreateTxnRes;
-  updateTxnRes: UpdateTxnRes;
-  txns: Txns;
-  signTxRes: SignTxRes;
-}
 
 const initialState: MultisigState = {
   createMultisigAccountRes: {
@@ -72,7 +50,7 @@ const initialState: MultisigState = {
   },
   verifyAccountRes: {
     token: '',
-    status: TxStatus.IDLE,
+    status: TxStatus.INIT,
     error: '',
   },
   balance: {

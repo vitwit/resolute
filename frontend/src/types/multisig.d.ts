@@ -114,23 +114,26 @@ interface MultisigAccount {
   error: string;
 }
 
+interface MultisigState {
+  multisigAccounts: MultisigAccounts;
+  verifyAccountRes: VerifyAcccountRes;
+  createMultisigAccountRes: TxRes;
+  deleteTxnRes: TxRes;
+  multisigAccount: MultisigAccount;
+  balance: Balance;
+  createTxnRes: TxRes;
+  updateTxnRes: TxRes;
+  txns: Txns;
+  signTxRes: TxRes;
+}
+
 interface VerifyAcccountRes {
   token: string;
   status: TxStatus;
   error: string;
 }
 
-interface CreateMultisigAccountRes {
-  status: TxStatus;
-  error: string;
-}
-
-interface DeleteTxnRes {
-  status: TxStatus;
-  error: string;
-}
-
-interface SignTxRes {
+interface TxRes {
   status: TxStatus;
   error: string;
 }
@@ -140,16 +143,6 @@ interface Balance {
     denom: string;
     amount: string;
   };
-  status: TxStatus;
-  error: string;
-}
-
-interface CreateTxnRes {
-  status: TxStatus;
-  error: string;
-}
-
-interface UpdateTxnRes {
   status: TxStatus;
   error: string;
 }
