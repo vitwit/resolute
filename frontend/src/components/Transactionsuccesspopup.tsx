@@ -1,13 +1,11 @@
-"use client"
+'use client';
 import { Dialog, DialogContent } from '@mui/material';
 import React, { useState } from 'react';
 import Image from 'next/image';
 
-const Transactionsuccesspopup = ({
-  tx
-}:{
-  tx:Transaction
-})=> {
+const Transactionsuccesspopup = ({ tx }: { tx: Transaction }) => {
+  const feeAmount = tx.fee && tx.fee.length > 0 ? tx.fee[0].amount : '0.012';
+  const feeDenom = tx.fee && tx.fee.length > 0 ? tx.fee[0].denom : 'ATOMS';
   const [isOpen, setIsOpen] = useState(true);
   const handleClose = () => {
     setIsOpen(false);
@@ -15,7 +13,7 @@ const Transactionsuccesspopup = ({
   if (!isOpen) {
     return null;
   }
-  
+
   return (
     <Dialog
       open={isOpen}
@@ -63,7 +61,9 @@ const Transactionsuccesspopup = ({
                     <div className="popup-text font-light flex w-[140px]">
                       Fees
                     </div>
-                    <div className="popup-text font-medium">{tx.fee[0].amount} {tx.fee[0].denom}</div>
+                    <div className="popup-text font-medium">
+                      {feeAmount} {feeDenom}
+                    </div>
                   </div>
                   <div className="flex gap-x-4">
                     <div className="popup-text font-light flex w-[140px]">
@@ -74,9 +74,11 @@ const Transactionsuccesspopup = ({
                     </div>
                   </div>
                   <div className="flex gap-x-4">
-                    <div className="popup-text font-light flex w-[140px]">Memo</div>
+                    <div className="popup-text font-light flex w-[140px]">
+                      Memo
+                    </div>
                     <div className="popup-text font-medium w-[621px]">
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                      {tx.memo}
                     </div>
                   </div>
                 </div>

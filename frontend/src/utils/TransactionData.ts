@@ -1,6 +1,3 @@
-import { time } from 'console';
-import React from 'react';
-
 const TransactionData: () => Transaction = () => {
   const transactionHash = '9EE782AA6EA9FA411244716523498C711';
   const fee: Coin[] = [];
