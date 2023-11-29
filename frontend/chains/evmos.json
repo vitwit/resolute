@@ -21,8 +21,8 @@
     "config": {
         "chain_id": "evmos_9001-2",
         "chain_name": "Evmos",
-        "rest": "https://evmos.kingnodes.com",
-        "rpc": "https://rpc-evmos.ecostake.com",
+        "rest": "https://evmos-api.polkachu.com",
+        "rpc": "https://evmos-rpc.polkachu.com",
         "currencies": [
             {
                 "coin_denom": "EVMOS",

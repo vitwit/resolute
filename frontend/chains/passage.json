@@ -50,8 +50,8 @@
         "coin_decimals": 6,
         "coin_gecko_id": "passage",
         "gas_price_step": {
-          "low": 0.0,
-          "average": 0.0,
+          "low": 0.001,
+          "average": 0.005,
           "high": 0.01
         }
       }
