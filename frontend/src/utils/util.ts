@@ -68,6 +68,15 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
   }
 };
 
+export const capitalizeFirstLetter = (inputString: string): string => {
+  if (inputString.length === 0) {
+    return inputString;
+  }
+  const firstLetter = inputString.charAt(0).toUpperCase();
+  const restOfString = inputString.slice(1);
+  return firstLetter + restOfString;
+};
+
 export const formatDollarAmount = (amount: number): string => {
   if (amount === 0) return '$0';
   if (amount < 0.1) return '< $0.1';
