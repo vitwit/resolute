@@ -21,6 +21,7 @@ import {
   MultisigAccounts,
   QueryParams,
   SignTxInputs,
+  SignTxRes,
   Txns,
   UpdateTxnInputs,
   UpdateTxnRes,
@@ -37,6 +38,7 @@ interface MultisigState {
   createTxnRes: CreateTxnRes;
   updateTxnRes: UpdateTxnRes;
   txns: Txns;
+  signTxRes: SignTxRes;
 }
 
 const initialState: MultisigState = {
@@ -86,6 +88,10 @@ const initialState: MultisigState = {
     error: '',
   },
   updateTxnRes: {
+    status: TxStatus.INIT,
+    error: '',
+  },
+  signTxRes: {
     status: TxStatus.INIT,
     error: '',
   },
@@ -292,6 +298,21 @@ export const multisigSlice = createSlice({
   name: 'multisig',
   initialState,
   reducers: {
+    resetCreateMultisigRes: (state) => {
+      state.createMultisigAccountRes = initialState.createMultisigAccountRes;
+    },
+    resetCreateTxnState: (state) => {
+      state.createTxnRes = initialState.createTxnRes;
+    },
+    resetDeleteTxnState: (state) => {
+      state.deleteTxnRes = initialState.deleteTxnRes;
+    },
+    resetUpdateTxnState: (state) => {
+      state.updateTxnRes = initialState.updateTxnRes;
+    },
+    resetSignTxnState: (state) => {
+      state.signTxRes = initialState.signTxRes;
+    },
     resetVerifyAccountRes: (state) => {
       state.verifyAccountRes = initialState.verifyAccountRes;
     },
@@ -429,6 +450,18 @@ export const multisigSlice = createSlice({
         state.txns.status = TxStatus.REJECTED;
         const payload = action.payload as { message: string };
         state.txns.error = payload.message || '';
+      });
+    builder
+      .addCase(signTx.pending, (state) => {
+        state.signTxRes.status = TxStatus.PENDING;
+      })
+      .addCase(signTx.fulfilled, (state) => {
+        state.signTxRes.status = TxStatus.IDLE;
+      })
+      .addCase(signTx.rejected, (state, action) => {
+        state.signTxRes.status = TxStatus.REJECTED;
+        const payload = action.payload as { message: string };
+        state.signTxRes.error = payload.message || '';
       });
   },
 });

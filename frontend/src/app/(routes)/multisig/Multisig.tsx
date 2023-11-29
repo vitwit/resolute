@@ -1,9 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import {
-  getMultisigAccounts,
-  verifyAccount,
-} from '../../../store/features/multisig/multisigSlice';
+import { verifyAccount } from '../../../store/features/multisig/multisigSlice';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 
 const Multisig = () => {

@@ -130,6 +130,11 @@ interface DeleteTxnRes {
   error: string;
 }
 
+interface SignTxRes {
+  status: TxStatus;
+  error: string;
+}
+
 interface Balance {
   balance: {
     denom: string;

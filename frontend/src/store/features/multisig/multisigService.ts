@@ -14,8 +14,6 @@ import {
 const BASE_URL: string = cleanURL('https://api.resolute.vitwit.com');
 
 const GET_ACCOUNTS_URL = '/multisig/accounts';
-const MULTI_ACCOUNT_URL = '/accounts';
-const TXNS_URL = '/txs';
 
 const SIGNATURE_PARAMS_STRING = (queryParams: QueryParams): string =>
   `?address=${queryParams.address}&signature=${queryParams.signature}`;
@@ -58,7 +56,7 @@ const createTxn = (
   address: string,
   payload: CreateTxnPayload
 ): Promise<AxiosResponse> => {
-  let uri = CREATE_TXN_URL(address, queryParams);
+  const uri = CREATE_TXN_URL(address, queryParams);
   return Axios.post(uri, payload);
 };
 
