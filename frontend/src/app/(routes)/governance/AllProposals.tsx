@@ -6,9 +6,9 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getProposalsInVoting } from '@/store/features/gov/govSlice';
 
 import './style.css';
-import proposalData from './proposalData.json';
+// import proposalData from './proposalData.json';
 import { get } from 'lodash';
-import { getTimeDifference, getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+import {  getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 
 type handleOpenOverview = () => void;
 type handleSetCurrentOverviewId = (id: number, chainID: string) => void;
@@ -20,16 +20,18 @@ const AllProposals = ({ isRightBarOpen, chainIDs, status, handleOpenOverview, ha
   const dispatch = useAppDispatch();
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
 
-  var allChainProposals = useAppSelector(
+  const allChainProposals = useAppSelector(
     (state) => state.gov.chains
   );
 
   console.log({allChainProposals})
 
-  var allProposalsLength = 0;
+  let allProposalsLength = 0;
 
   if (allChainProposals) {
-    Object.entries(allChainProposals).map(([chainName, chainProposal]) => {
+    
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Object.entries(allChainProposals).map(([_chainName, chainProposal]) => {
       allProposalsLength += get(chainProposal, `${status === 'deposit' ? 'deposit' : 'active'}.proposals.length`)
     })
   }

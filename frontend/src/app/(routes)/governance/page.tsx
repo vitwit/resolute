@@ -1,17 +1,17 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import Proposals from './Proposals';
 import AllProposals from './AllProposals';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import RightOverview from './RightOverview';
 
-const page = () => {
-  const [proposalState, setProposalState] = useState('');
-  const [isOverviewOpen, setIsOverviewOpen] = useState(false);
-  const [currentOverviewId, setCurrentOverviewId] = useState(0);
-  const [chainID, setChainID] = useState('');
-  const [baseURL, setBaseURL] = useState('');
+const Page = () => {
+  const [proposalState, setProposalState] = React.useState('');
+  const [isOverviewOpen, setIsOverviewOpen] = React.useState(false);
+  const [currentOverviewId, setCurrentOverviewId] = React.useState(0);
+  const [chainID, setChainID] = React.useState('');
+  // const [baseURL, setBaseURL] = React.useState('');
 
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
@@ -49,7 +49,9 @@ const page = () => {
       <div className="flex-1">
         <Proposals
           handleChangeProposalState={handleChangeProposalState}
-          chainIDs={chainIDs} isRightBarOpen={false} />
+          // chainIDs={chainIDs} 
+          // isRightBarOpen={false}
+           />
         <AllProposals
           handleOpenOverview={handleOpenOverview}
           status={proposalState}
@@ -58,15 +60,17 @@ const page = () => {
           isRightBarOpen={false} />
       </div>
       {
-        isOverviewOpen && <RightOverview votingEndsInDays={2}
+        isOverviewOpen && <RightOverview 
+        // votingEndsInDays={'2'}
           proposalId={currentOverviewId}
           chainID={chainID}
           handleCloseOverview={handleCloseOverview}
-          proposalname="name" /> || null
+          // proposalname="name"
+           /> || null
       }
 
     </div>
   );
 };
 
-export default page;
+export default Page;
