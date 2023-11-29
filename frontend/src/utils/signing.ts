@@ -307,6 +307,7 @@ function parseTxResult(result: TxResponse): ParsedTxResponse {
     gasWanted: result?.gas_wanted,
     fee: result?.tx?.auth_info?.fee?.amount,
     time: result?.timestamp,
+    memo: result?.tx?.body?.memo,
   };
 }
 
