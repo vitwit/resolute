@@ -6,20 +6,20 @@ import RadioButtons from './CustomRadioButton';
 import { Dialog, DialogContent } from '@mui/material';
 
 import { RootState } from '@/store/store';
-import {useGetVoteTxInputs} from '@/custom-hooks/useGetTxInputs';
+import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { txVote } from '@/store/features/gov/govSlice';
 
 interface VoteOptionNumber {
-  [key: string]: number
+  [key: string]: number;
 }
 
-const voteOptionNumber : VoteOptionNumber  = {
-  'yes': 1,
-  'no': 2,
-  'abstain': 3,
-  'veto': 4
-}
+const voteOptionNumber: VoteOptionNumber = {
+  yes: 1,
+  no: 2,
+  abstain: 3,
+  veto: 4,
+};
 
 const VotePopup = ({
   votingEndsInDays,
@@ -30,7 +30,7 @@ const VotePopup = ({
   votingEndsInDays: string;
   proposalId: number;
   proposalname: string;
-  chainID:string
+  chainID: string;
 }) => {
   const [voteOption, setVoteOption] = useState<string>('');
   const [isOpen, setIsOpen] = useState(true);
@@ -43,27 +43,29 @@ const VotePopup = ({
     setIsOpen(false);
   };
 
-  if (!isOpen) {
-    return null;
-  }
+  const dispatch = useAppDispatch();
+  const { getVoteTxInputs } = useGetTxInputs();
 
   const handleVote = () => {
-    const { aminoConfig, prefix, rest,  feeAmount, address, rpc, minimalDenom} = useGetVoteTxInputs(chainID);
-    txVote({
-      voter: address,
-      proposalId: proposalId,
-      option: voteOptionNumber[voteOption],
-      denom: minimalDenom,
-      chainID: chainID,
-      rpc: rpc,
-      rest: rest,
-      aminoConfig: aminoConfig,
-      prefix: prefix,
-      feeAmount: feeAmount,
-      feegranter: '',
-      justification: ''
-    })
-  }
+    const { aminoConfig, prefix, rest, feeAmount, address, rpc, minimalDenom } =
+      getVoteTxInputs(chainID);
+    dispatch(
+      txVote({
+        voter: address,
+        proposalId: proposalId,
+        option: voteOptionNumber[voteOption],
+        denom: minimalDenom,
+        chainID: chainID,
+        rpc: rpc,
+        rest: rest,
+        aminoConfig: aminoConfig,
+        prefix: prefix,
+        feeAmount: feeAmount,
+        feegranter: '',
+        justification: '',
+      })
+    );
+  };
 
   return (
     <Dialog
