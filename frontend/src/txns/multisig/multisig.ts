@@ -1,13 +1,14 @@
-import { createMultisigThresholdPubkey, pubkeyToAddress } from "@cosmjs/amino";
+import { AddressPubkey } from '@/types/multisig';
+import { createMultisigThresholdPubkey, pubkeyToAddress } from '@cosmjs/amino';
 
-export const isValidPubKey = (pubKey: any): boolean => {
+export const isValidPubKey = (pubKey: string): boolean => {
   try {
     pubkeyToAddress(
       {
-        type: "tendermint/PubKeySecp256k1",
+        type: 'tendermint/PubKeySecp256k1',
         value: pubKey,
       },
-      "test"
+      'test'
     );
   } catch (error) {
     return false;
@@ -16,13 +17,13 @@ export const isValidPubKey = (pubKey: any): boolean => {
 };
 
 export const generateMultisigAccount = (
-  pubKeysArr: any[],
+  pubKeysArr: string[],
   threshold: number,
   addressPrefix: string
 ): MultisigAccountI => {
   const pubkeys = pubKeysArr.map((compressedPubkey) => {
     return {
-      type: "tendermint/PubKeySecp256k1",
+      type: 'tendermint/PubKeySecp256k1',
       value: compressedPubkey,
     };
   });
@@ -47,6 +48,6 @@ export const generateMultisigAccount = (
 
 export interface MultisigAccountI {
   address: string;
-  pubkeys: any[];
+  pubkeys: AddressPubkey[];
   threshold: number;
 }
