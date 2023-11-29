@@ -804,7 +804,7 @@ export const networks: Network[] = [
           coinDecimals: 6,
           coinGeckoId: "passage",
           gasPriceStep: {
-            low: 0.011,
+            low: 0.001,
             average: 0.005,
             high: 0.01
           }
