@@ -1,3 +1,5 @@
+import { TxStatus } from './enums';
+
 interface QueryParams {
   address: string;
   signature: string;
@@ -12,12 +14,6 @@ interface UpdateTxPayload {
 interface SignTxPayload {
   signer: string;
   signature: string;
-}
-
-interface Msg {
-  typeUrl: string;
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  value: any;
 }
 
 interface Fee {
@@ -84,13 +80,124 @@ interface GetMultisigBalanceInputs {
 interface FeeObject {
   amount: {
     amount: string;
-    denom: any;
+    denom: string;
   }[];
   gas: string;
-  granter: string;
+  granter?: string;
+}
+
+interface Account {
+  address: string;
+  threshhold: number;
+  chain_id: string;
+  pubkey_type: string;
+  created_at: string;
+  created_by: string;
+  name: string;
 }
 
 interface CreateTxnInputs {
   data: CreateTxnPayload;
+  queryParams: QueryParams;
+}
+
+interface MultisigAccounts {
+  status: TxStatus;
+  accounts: Account[];
+  txnCounts: { [address: string]: number };
+  total: number;
+}
+interface MultisigAccount {
+  account: Account;
+  pubkeys: MultisigAddressPubkey[];
+  status: TxStatus;
+  error: string;
+}
+
+interface VerifyAcccountRes {
+  token: string;
+  status: TxStatus;
+  error: string;
+}
+
+interface CreateMultisigAccountRes {
+  status: TxStatus;
+  error: string;
+}
+
+interface DeleteTxnRes {
+  status: TxStatus;
+  error: string;
+}
+
+interface Balance {
+  balance: {
+    denom: string;
+    amount: string;
+  };
+  status: TxStatus;
+  error: string;
+}
+
+interface CreateTxnRes {
+  status: TxStatus;
+  error: string;
+}
+
+interface UpdateTxnRes {
+  status: TxStatus;
+  error: string;
+}
+
+interface UpdateTxnInputs {
+  queryParams: QueryParams;
+  data: {
+    txId: number;
+    address: string;
+    body: {
+      status: string;
+      hash: string;
+      error_message: '';
+    };
+  };
+}
+
+interface GetTxnsInputs {
+  address: string;
+  status: string;
+}
+
+interface Signature {
+  address: string;
+  signature: string;
+}
+
+interface Txn {
+  id: string;
+  multisig_Address: string;
+  fee: FeeObject;
+  status: string;
+  messages: Msg[];
+  hash: string;
+  err_msg: '';
+  memo: string;
+  signatures: Signature[];
+  last_updated: string;
+  created_at: string;
+}
+
+interface Txns {
+  list: Txn[];
+  status: TxStatus;
+  error: string;
+}
+
+interface SignTxInputs {
+  data: {
+    signer: string;
+    txId: number;
+    address: string;
+    signature: string;
+  };
   queryParams: QueryParams;
 }

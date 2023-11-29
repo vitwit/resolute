@@ -2,6 +2,14 @@
 
 import Axios, { AxiosPromise, AxiosResponse } from 'axios';
 import { cleanURL } from '../../../utils/util';
+import {
+  CreateAccountPayload,
+  CreateTxnPayload,
+  QueryParams,
+  SignTxPayload,
+  UpdateTxPayload,
+  VerifyUserPayload,
+} from '@/types/multisig';
 
 const BASE_URL: string = cleanURL('https://api.resolute.vitwit.com');
 
@@ -18,7 +26,7 @@ const CREATE_ACCOUNT = (queryParams: QueryParams): string =>
 const SIGN_URL = (
   queryParams: QueryParams,
   address: string,
-  txId: string
+  txId: number
 ): string =>
   `${BASE_URL}/multisig/${address}/sign-tx/${txId}` +
   SIGNATURE_PARAMS_STRING(queryParams);
@@ -57,7 +65,7 @@ const createTxn = (
 const signTx = (
   queryParams: QueryParams,
   address: string,
-  txId: string,
+  txId: number,
   payload: SignTxPayload
 ): Promise<AxiosResponse> =>
   Axios.post(SIGN_URL(queryParams, address, txId), payload);
@@ -65,7 +73,7 @@ const signTx = (
 const updateTx = (
   queryParams: QueryParams,
   address: string,
-  txId: string,
+  txId: number,
   payload: UpdateTxPayload
 ): Promise<AxiosResponse> =>
   Axios.post(

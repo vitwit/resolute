@@ -7,59 +7,25 @@ import { ERR_UNKNOWN, WALLET_REQUEST_ERROR } from '../../../utils/errors';
 import { OFFCHAIN_VERIFICATION_MESSAGE } from '@/utils/constants';
 import { TxStatus } from '@/types/enums';
 import bankService from '@/store/features/bank/bankService';
-
-interface MultisigAccounts {
-  status: TxStatus;
-  accounts: Account[];
-  txnCounts: { [address: string]: number };
-  total: number;
-}
-interface MultisigAccount {
-  account: Account;
-  pubkeys: MultisigAddressPubkey[];
-  status: TxStatus;
-  error: string;
-}
-
-interface Account {
-  address: string;
-  threshhold: number;
-  chain_id: string;
-  pubkey_type: string;
-  created_at: string;
-  created_by: string;
-  name: string;
-}
-
-interface VerifyAcccountRes {
-  token: string;
-  status: TxStatus;
-  error: string;
-}
-
-interface CreateMultisigAccountRes {
-  status: TxStatus;
-  error: string;
-}
-
-interface DeleteTxnRes {
-  status: TxStatus;
-  error: string;
-}
-
-interface Balance {
-  balance: {
-    denom: string;
-    amount: string;
-  };
-  status: TxStatus;
-  error: string;
-}
-
-interface CreateTxnRes {
-  status: TxStatus;
-  error: string;
-}
+import {
+  Balance,
+  CreateAccountPayload,
+  CreateMultisigAccountRes,
+  CreateTxnInputs,
+  CreateTxnRes,
+  DeleteTxnInputs,
+  DeleteTxnRes,
+  GetMultisigBalanceInputs,
+  GetTxnsInputs,
+  MultisigAccount,
+  MultisigAccounts,
+  QueryParams,
+  SignTxInputs,
+  Txns,
+  UpdateTxnInputs,
+  UpdateTxnRes,
+  VerifyAcccountRes,
+} from '@/types/multisig';
 
 interface MultisigState {
   multisigAccounts: MultisigAccounts;
@@ -69,6 +35,8 @@ interface MultisigState {
   multisigAccount: MultisigAccount;
   balance: Balance;
   createTxnRes: CreateTxnRes;
+  updateTxnRes: UpdateTxnRes;
+  txns: Txns;
 }
 
 const initialState: MultisigState = {
@@ -114,6 +82,15 @@ const initialState: MultisigState = {
     error: '',
   },
   createTxnRes: {
+    status: TxStatus.INIT,
+    error: '',
+  },
+  updateTxnRes: {
+    status: TxStatus.INIT,
+    error: '',
+  },
+  txns: {
+    list: [],
     status: TxStatus.INIT,
     error: '',
   },
@@ -256,6 +233,61 @@ export const createTxn = createAsyncThunk(
   }
 );
 
+export const getTxns = createAsyncThunk(
+  'multisig/getTxns',
+  async (data: GetTxnsInputs, { rejectWithValue }) => {
+    try {
+      const response = await multisigService.getTxns(data.address, data.status);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const updateTxn = createAsyncThunk(
+  'multisig/updateTxn',
+  async (data: UpdateTxnInputs, { rejectWithValue }) => {
+    try {
+      const response = await multisigService.updateTx(
+        data.queryParams,
+        data.data.address,
+        data.data.txId,
+        data.data.body
+      );
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const signTx = createAsyncThunk(
+  'multisig/signTx',
+  async (data: SignTxInputs, { rejectWithValue }) => {
+    try {
+      const response = await multisigService.signTx(
+        data.queryParams,
+        data.data.address,
+        data.data.txId,
+        {
+          signer: data.data.signer,
+          signature: data.data.signature,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
 export const multisigSlice = createSlice({
   name: 'multisig',
   initialState,
@@ -362,13 +394,41 @@ export const multisigSlice = createSlice({
         state.createTxnRes.status = TxStatus.PENDING;
         state.createTxnRes.error = '';
       })
-      .addCase(createTxn.fulfilled, (state, result) => {
+      .addCase(createTxn.fulfilled, (state) => {
         state.createTxnRes.status = TxStatus.IDLE;
       })
       .addCase(createTxn.rejected, (state, action) => {
         state.createTxnRes.status = TxStatus.REJECTED;
         const payload = action.payload as { message: string };
         state.createTxnRes.error = payload.message || '';
+      });
+    builder
+      .addCase(updateTxn.pending, (state) => {
+        state.updateTxnRes.status = TxStatus.PENDING;
+      })
+      .addCase(updateTxn.fulfilled, (state) => {
+        state.updateTxnRes.status = TxStatus.IDLE;
+      })
+      .addCase(updateTxn.rejected, (state, action) => {
+        state.updateTxnRes.status = TxStatus.REJECTED;
+        const payload = action.payload as { message: string };
+        state.updateTxnRes.error = payload.message || '';
+      });
+    builder
+      .addCase(getTxns.pending, (state) => {
+        state.txns.status = TxStatus.PENDING;
+        state.txns.error = '';
+        state.txns.list = [];
+      })
+      .addCase(getTxns.fulfilled, (state, action) => {
+        state.txns.status = TxStatus.PENDING;
+        state.txns.error = '';
+        state.txns.list = action.payload?.data || [];
+      })
+      .addCase(getTxns.rejected, (state, action) => {
+        state.txns.status = TxStatus.REJECTED;
+        const payload = action.payload as { message: string };
+        state.txns.error = payload.message || '';
       });
   },
 });
