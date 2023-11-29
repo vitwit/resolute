@@ -394,6 +394,7 @@ export const multisigSlice = createSlice({
       })
       .addCase(createTxn.fulfilled, (state) => {
         state.createTxnRes.status = TxStatus.IDLE;
+        state.createTxnRes.error = '';
       })
       .addCase(createTxn.rejected, (state, action) => {
         state.createTxnRes.status = TxStatus.REJECTED;
