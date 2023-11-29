@@ -18,10 +18,12 @@ const Asset = ({
   showChainName: boolean;
 }) => {
   const txClaimStatus = useAppSelector(
-    (state: RootState) => state.distribution.chains[asset.chainID].tx.status
+    (state: RootState) =>
+      state.distribution.chains[asset.chainID]?.tx?.status || TxStatus.IDLE
   );
   const txRestakeStatus = useAppSelector(
-    (state: RootState) => state.staking.chains[asset.chainID].reStakeTxStatus
+    (state: RootState) =>
+      state.staking.chains[asset.chainID]?.reStakeTxStatus || TxStatus.IDLE
   );
 
   const dispatch = useAppDispatch();
@@ -100,7 +102,7 @@ const Asset = ({
             onClick={() => claimAndStake(asset.chainID)}
           >
             {txRestakeStatus === TxStatus.PENDING ? (
-              <CircularProgress size={16}/>
+              <CircularProgress size={16} />
             ) : (
               <Image
                 src="/claim-stake-icon.svg"

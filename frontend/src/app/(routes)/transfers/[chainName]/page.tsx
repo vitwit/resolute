@@ -1,5 +1,5 @@
 import React from 'react';
-import '../transfer.css';
+import '../transfers.css';
 import Transfers from './Transfers';
 
 const page = ({ params }: { params: { chainName: string } }) => {
