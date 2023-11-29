@@ -17,7 +17,9 @@ const BASE_URL: string = cleanURL(API_URL);
 const GET_ACCOUNTS_URL = '/multisig/accounts';
 
 const SIGNATURE_PARAMS_STRING = (queryParams: QueryParams): string =>
-  `?address=${queryParams.address}&signature=${queryParams.signature}`;
+  `?address=${encodeURIComponent(
+    queryParams.address
+  )}&signature=${encodeURIComponent(queryParams.signature)}`;
 
 const CREATE_ACCOUNT = (queryParams: QueryParams): string =>
   `/multisig` + SIGNATURE_PARAMS_STRING(queryParams);

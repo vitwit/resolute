@@ -77,18 +77,9 @@ interface GetMultisigBalanceInputs {
   denom: string;
 }
 
-interface FeeObject {
-  amount: {
-    amount: string;
-    denom: string;
-  }[];
-  gas: string;
-  granter?: string;
-}
-
 interface Account {
   address: string;
-  threshhold: number;
+  threshold: number;
   chain_id: string;
   pubkey_type: string;
   created_at: string;
@@ -153,9 +144,9 @@ interface UpdateTxnInputs {
     txId: number;
     address: string;
     body: {
-      status: string;
+      status: MultisigTxStatus;
       hash: string;
-      error_message: '';
+      error_message: string;
     };
   };
 }
@@ -172,12 +163,12 @@ interface Signature {
 
 interface Txn {
   id: string;
-  multisig_Address: string;
-  fee: FeeObject;
+  multisig_address: string;
+  fee: Fee;
   status: string;
   messages: Msg[];
   hash: string;
-  err_msg: '';
+  err_msg: string;
   memo: string;
   signatures: Signature[];
   last_updated: string;

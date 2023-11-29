@@ -33,7 +33,7 @@ const initialState: MultisigState = {
   multisigAccount: {
     account: {
       address: '',
-      threshhold: 0,
+      threshold: 0,
       chain_id: '',
       pubkey_type: '',
       created_at: '',
