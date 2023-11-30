@@ -34,7 +34,7 @@ const AllMultisigs = ({
   const [accountInfo] = useGetAccountInfo(chainID);
   const { pubkey } = accountInfo;
   const { getChainInfo } = useGetChainInfo();
-  const { prefix } = getChainInfo(chainID);
+  const { prefix, baseURL } = getChainInfo(chainID);
 
   useEffect(() => {
     if (address) {
@@ -91,6 +91,7 @@ const AllMultisigs = ({
         chainID={chainID}
         address={address}
         pubKey={pubkey}
+        baseURL={baseURL}
       />
     </div>
   );
