@@ -9,4 +9,4 @@ export const OFFCHAIN_VERIFICATION_MESSAGE =
  * The base URL for the Multisig API.
  * @constant
  */
-export const API_URL = process.env.REACT_APP_API_URI;
+export const API_URL = process.env.NEXT_PUBLIC_APP_API_URI;
