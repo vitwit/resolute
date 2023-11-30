@@ -3,7 +3,7 @@ import React from 'react';
 
 const MultisigSidebar = () => {
   return (
-    <div className="w-[500px]">
+    <div className="multisig-sidebar">
       <TopNav />
     </div>
   );

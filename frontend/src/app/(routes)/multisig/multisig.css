@@ -7,3 +7,46 @@
   @apply p-4 rounded-2xl bg-[#0E0B26] cursor-pointer hover:bg-[#FFFFFF0D];
   backdrop-filter: blur(2px);
 }
+
+.multisig-info-title {
+  @apply relative rounded-t-2xl flex px-6 py-4 h-[78px] justify-between items-center;
+  background: linear-gradient(90deg, #704290 0.19%, #241b61 79.25%);
+}
+
+.account-info-item {
+  @apply text-[14px] space-y-2 justify-center p-2 rounded-2xl bg-[#FFFFFF0D] overflow-hidden;
+}
+
+.account-members {
+  @apply min-h-[216px] p-2 pb-4 flex flex-col gap-2 rounded-2xl bg-[#FFFFFF0D];
+}
+
+.member-address {
+  @apply text-[12px] font-medium h-8 flex gap-[10px] justify-center items-center p-1 rounded-lg;
+  background: linear-gradient(
+    180deg,
+    rgba(74, 162, 156, 0.1) 0%,
+    rgba(139, 61, 167, 0.1) 100%
+  );
+}
+
+.members-list {
+  @apply grid grid-cols-3 gap-6 px-2;
+}
+
+.delete-multisig-btn {
+  @apply px-10 py-[10px] rounded-2xl font-medium leading-[20px] tracking-[0.64px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.multisig-sidebar {
+  @apply p-6 w-[500px] bg-[#0E0B26] h-screen min-h-[800px] overflow-y-scroll;
+}
+
+.multisig-account-info {
+  @apply flex-1 flex flex-col pl-10 py-6 text-white space-y-6 h-screen min-h-[800px] overflow-y-scroll;
+}
+
+.multisig-account-address {
+  @apply flex gap-2 px-2 text-[14px] leading-[20px];
+}

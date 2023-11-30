@@ -11,12 +11,15 @@ import React, { useEffect, useState } from 'react';
 import DialogCreateMultisig from './DialogCreateMultisig';
 import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import Link from 'next/link';
 
 const AllMultisigs = ({
   address,
+  chainName,
   chainID,
 }: {
   address: string;
+  chainName: string;
   chainID: string;
 }) => {
   const dispatch = useAppDispatch();
@@ -77,6 +80,7 @@ const AllMultisigs = ({
             created_at={account.created_at}
             name={account.name}
             actionsRequired={pendingTxns?.[account.address]}
+            chainName={chainName}
           />
         ))}
       </div>
@@ -100,6 +104,7 @@ interface MultisigAccountCardProps {
   created_at: string;
   name: string;
   actionsRequired: number;
+  chainName: string;
 }
 
 const MultisigAccountCard = ({
@@ -108,38 +113,41 @@ const MultisigAccountCard = ({
   created_at,
   name,
   actionsRequired,
+  chainName,
 }: MultisigAccountCardProps) => {
   return (
-    <div className="space-y-4 text-[14px] multisig-account-card">
-      <div className="flex justify-between">
-        <div>{name}</div>
-        <div>{getLocalTime(created_at)}</div>
-      </div>
-      <div className="space-y-2">
-        <div>Address</div>
-        <div className="flex gap-2 items-center">
-          <div className="text-[16px] leading-[20px] font-bold">
-            {shortenAddress(address, 27)}
-          </div>
-          <div>
-            <Image src="/copy.svg" width={24} height={24} alt="copy" />
-          </div>
-        </div>
-      </div>
-      <div className="flex justify-between">
-        <div className="space-y-2">
-          <div>Actions Required</div>
-          <div className="text-[16px] leading-[20px] font-bold">
-            {actionsRequired}
-          </div>
+    <Link href={`/multisig/${chainName}/${address}`}>
+      <div className="space-y-4 text-[14px] multisig-account-card">
+        <div className="flex justify-between">
+          <div>{name}</div>
+          <div>{getLocalTime(created_at)}</div>
         </div>
         <div className="space-y-2">
-          <div>Threshold</div>
-          <div className="text-[16px] leading-[20px] font-bold">
-            {threshold}
+          <div>Address</div>
+          <div className="flex gap-2 items-center">
+            <div className="text-[16px] leading-[20px] font-bold">
+              {shortenAddress(address, 27)}
+            </div>
+            <div>
+              <Image src="/copy.svg" width={24} height={24} alt="copy" />
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-between">
+          <div className="space-y-2">
+            <div>Actions Required</div>
+            <div className="text-[16px] leading-[20px] font-bold">
+              {actionsRequired}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div>Threshold</div>
+            <div className="text-[16px] leading-[20px] font-bold">
+              {threshold}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
