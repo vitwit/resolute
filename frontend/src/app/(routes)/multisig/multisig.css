@@ -1,0 +1,23 @@
+.custom-table {
+    @apply w-[443px];
+  }
+  .custom-table td {
+    @apply pt-6 text-white text-sm not-italic font-normal leading-5;
+  }
+  .custom-table-head {
+    @apply pb-4 border-b-[0.5px] border-[#43ff64d9];
+    @apply pb-4 border-b-[0.5px] border-[#8b3da780] ;
+  
+  }
+  .custom-table-head th {
+    @apply text-[16px] leading-3 font-normal h-10;
+    @apply text-[16px] leading-3 font-normal h-10  text-white;
+  }
+  .table {
+    @apply flex flex-col items-start gap-6 self-stretch px-0 py-6;
+  }
+  .image-style {
+    @apply rounded-lg w-[32px] h-[32px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+  }
+  
