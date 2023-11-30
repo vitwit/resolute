@@ -10,6 +10,8 @@ import {
 import Image from 'next/image';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { dialogBoxStyles } from '../styles';
+import { CLOSE_ICON_PATH } from '@/utils/constants';
 
 interface ValidatorSet {
   [key: string]: Validator;
@@ -32,11 +34,13 @@ function parseValidators({
   let result: ValidatorInfo[] = [];
 
   for (const v in active) {
-    result = [...result, { addr: v, label: active[v]?.description?.moniker }];
+    if (active[v]) {
+      result = [...result, { addr: v, label: active[v]?.description?.moniker }];
+    }
   }
 
   for (const v in inactive) {
-    if (v !== validator?.operator_address)
+    if (inactive[v] && v !== validator?.operator_address)
       result.push({
         addr: v,
         label: inactive[v].description.moniker,
@@ -91,12 +95,7 @@ const DialogRedelegate = ({
       onClose={handleClose}
       open={open}
       maxWidth="lg"
-      PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
-        },
-      }}
+      PaperProps={dialogBoxStyles}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
@@ -108,7 +107,7 @@ const DialogRedelegate = ({
             >
               <Image
                 className="cursor-pointer"
-                src="/close-icon.svg"
+                src={CLOSE_ICON_PATH}
                 width={24}
                 height={24}
                 alt="Close"
@@ -158,10 +157,12 @@ const DialogRedelegate = ({
                       <p>Staking will lock your</p>
                       <p>
                         funds for{' '}
-                        {Math.floor(
-                          parseInt(stakingParams?.unbonding_time || '') /
-                            (3600 * 24)
-                        )}{' '}
+                        {stakingParams?.unbonding_time
+                          ? Math.floor(
+                              parseInt(stakingParams?.unbonding_time || '') /
+                                (3600 * 24)
+                            )
+                          : '-'}{' '}
                         days
                       </p>
                     </div>

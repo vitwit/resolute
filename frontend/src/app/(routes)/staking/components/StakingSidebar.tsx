@@ -20,6 +20,7 @@ import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txWithdrawAllRewards } from '@/store/features/distribution/distributionSlice';
 import { TxStatus } from '@/types/enums';
 import { txRestake } from '@/store/features/staking/stakeSlice';
+import { setError } from '@/store/features/common/commonSlice';
 
 interface AllValidatorsProps {
   validators: Validators;
@@ -70,22 +71,46 @@ const StakingSidebar = ({
 
   const claim = (chainID: string) => {
     if (txClaimStatus === TxStatus.PENDING) {
-      alert('A claim transaction is already in pending...');
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'A claim transaction is already in pending',
+        })
+      );
       return;
     }
     const txInputs = txWithdrawAllRewardsInputs(chainID);
     if (txInputs.msgs.length) dispatch(txWithdrawAllRewards(txInputs));
-    else alert('no delegations');
+    else {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'On Delegations',
+        })
+      );
+    }
   };
 
   const claimAndStake = (chainID: string) => {
     if (txRestakeStatus === TxStatus.PENDING) {
-      alert('A restake transaction is already pending...');
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'A restake transaction is already pending',
+        })
+      );
       return;
     }
     const txInputs = txRestakeInputs(chainID);
     if (txInputs.msgs.length) dispatch(txRestake(txInputs));
-    else alert('no rewards');
+    else {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'No rewards',
+        })
+      );
+    }
   };
 
   return (
@@ -148,9 +173,7 @@ const AllValidators = ({
   const [allValidatorsDialogOpen, setAllValidatorsDialogOpen] =
     useState<boolean>(false);
   const handleClose = () => {
-    setAllValidatorsDialogOpen(
-      (allValidatorsDialogOpen) => !allValidatorsDialogOpen
-    );
+    setAllValidatorsDialogOpen(false);
   };
   const slicedValidatorsList = validators?.activeSorted.slice(0, 10) || [];
   return (
@@ -180,21 +203,18 @@ const AllValidators = ({
                 validators.active[validator]?.commission?.commission_rates.rate
               ) * 100;
             const tokens = Number(validators.active[validator]?.tokens);
-            console.log(validator);
             return (
-              <>
-                <ValidatorItem
-                  key={validator}
-                  moniker={moniker}
-                  identity={identity}
-                  commission={commission}
-                  tokens={tokens}
-                  currency={currency}
-                  onMenuAction={onMenuAction}
-                  validators={validators}
-                  validator={validator}
-                />
-              </>
+              <ValidatorItem
+                key={validator}
+                moniker={moniker}
+                identity={identity}
+                commission={commission}
+                tokens={tokens}
+                currency={currency}
+                onMenuAction={onMenuAction}
+                validators={validators}
+                validator={validator}
+              />
             );
           })}
         </>

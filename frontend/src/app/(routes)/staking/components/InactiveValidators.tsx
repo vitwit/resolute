@@ -18,7 +18,6 @@ const InactiveValidators = ({
   searchTerm,
   onMenuAction,
 }: InactiveValidators) => {
-  const [currentPage, setCurrentPage] = useState(1);
   const [slicedValidators, setSlicedValidators] = useState<string[]>([]);
   const [filtered, setFiltered] = useState<string[]>([]);
 
@@ -26,7 +25,6 @@ const InactiveValidators = ({
     if (validators?.activeSorted.length < VALIDATORS_PER_PAGE) {
       setSlicedValidators(validators?.inactiveSorted);
     } else {
-      setCurrentPage(1);
       setSlicedValidators(
         validators?.inactiveSorted?.slice(0, 1 * VALIDATORS_PER_PAGE)
       );
@@ -41,7 +39,6 @@ const InactiveValidators = ({
           .includes(searchTerm.toLowerCase())
     );
     setFiltered(filteredValidators);
-    setCurrentPage(1);
   }, [searchTerm, validators?.inactiveSorted]);
   return (
     <>
@@ -58,7 +55,7 @@ const InactiveValidators = ({
         ) : (
           <>
             <div className="flex flex-col gap-6">
-              {slicedValidators?.map((validator, index) => {
+              {slicedValidators?.map((validator) => {
                 const moniker =
                   validators.inactive[validator]?.description.moniker;
                 const identity =
@@ -100,7 +97,6 @@ const InactiveValidators = ({
                 )}
                 shape="circular"
                 onChange={(_, v) => {
-                  setCurrentPage(v);
                   setSlicedValidators(
                     validators?.inactiveSorted?.slice(
                       (v - 1) * VALIDATORS_PER_PAGE,

@@ -21,13 +21,10 @@ const FilteredValidators = ({
 }: FilteredValidatorsProps) => {
   const [slicedValidators, setSlicedValidators] = useState<string[]>([]);
 
-  const [currentPage, setCurrentPage] = useState(1);
-
   useEffect(() => {
     if (filtered.length < VALIDATORS_PER_PAGE) {
       setSlicedValidators(filtered);
     } else {
-      setCurrentPage(1);
       setSlicedValidators(filtered?.slice(0, 1 * VALIDATORS_PER_PAGE));
     }
   }, [filtered]);
@@ -37,31 +34,35 @@ const FilteredValidators = ({
       {slicedValidators.length ? (
         <>
           <div className="flex flex-col gap-6">
-            {slicedValidators?.map((validator, index) => {
+            {slicedValidators?.map((validatorAddress) => {
               let validatorsSet;
               let rank;
               if (active) {
                 validatorsSet = validators.active;
-                rank = getValidatorRank(validator, validators.activeSorted);
+                rank = getValidatorRank(
+                  validatorAddress,
+                  validators.activeSorted
+                );
               } else {
                 validatorsSet = validators.inactive;
-                rank = getValidatorRank(validator, [
+                rank = getValidatorRank(validatorAddress, [
                   ...validators.activeSorted,
                   ...validators.inactiveSorted,
                 ]);
               }
-              const moniker = validatorsSet[validator]?.description.moniker;
-              const identity = validatorsSet[validator]?.description.identity;
+              const { moniker, identity } =
+                validatorsSet[validatorAddress]?.description;
               const commission =
                 Number(
-                  validatorsSet[validator]?.commission?.commission_rates.rate
+                  validatorsSet[validatorAddress]?.commission?.commission_rates
+                    .rate
                 ) * 100;
-              const jailed = validatorsSet[validator]?.jailed;
-              const status = validatorsSet[validator]?.status;
+              const jailed = validatorsSet[validatorAddress]?.jailed;
+              const status = validatorsSet[validatorAddress]?.status;
 
               return (
                 <ValidatorComponent
-                  key={validator}
+                  key={validatorAddress}
                   moniker={moniker}
                   identity={identity}
                   commission={commission}
@@ -70,7 +71,7 @@ const FilteredValidators = ({
                   active={active}
                   rank={rank}
                   onMenuAction={onMenuAction}
-                  validator={validatorsSet[validator]}
+                  validator={validatorsSet[validatorAddress]}
                 />
               );
             })}
@@ -82,7 +83,6 @@ const FilteredValidators = ({
               count={Math.ceil(filtered?.length / VALIDATORS_PER_PAGE)}
               shape="circular"
               onChange={(_, v) => {
-                setCurrentPage(v);
                 setSlicedValidators(
                   filtered?.slice(
                     (v - 1) * VALIDATORS_PER_PAGE,

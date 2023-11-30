@@ -9,6 +9,8 @@ import {
 import Image from 'next/image';
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { dialogBoxStyles } from '../styles';
+import { CLOSE_ICON_PATH } from '@/utils/constants';
 
 const DialogDelegate = ({
   open,
@@ -47,12 +49,7 @@ const DialogDelegate = ({
       onClose={handleClose}
       open={open}
       maxWidth="lg"
-      PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
-        },
-      }}
+      PaperProps={dialogBoxStyles}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
@@ -64,7 +61,7 @@ const DialogDelegate = ({
             >
               <Image
                 className="cursor-pointer"
-                src="/close-icon.svg"
+                src={CLOSE_ICON_PATH}
                 width={24}
                 height={24}
                 alt="Close"
@@ -128,10 +125,12 @@ const DialogDelegate = ({
                       </p>
                       <p>
                         This process will take{' '}
-                        {Math.floor(
-                          parseInt(stakingParams?.unbonding_time || '') /
-                            (3600 * 24)
-                        )}{' '}
+                        {stakingParams?.unbonding_time
+                          ? Math.floor(
+                              parseInt(stakingParams?.unbonding_time || '') /
+                                (3600 * 24)
+                            )
+                          : '-'}{' '}
                         days to complete.
                       </p>
                     </div>

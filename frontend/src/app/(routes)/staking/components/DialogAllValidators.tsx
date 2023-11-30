@@ -4,6 +4,7 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import ActiveValidators from './ActiveValidators';
 import InactiveValidators from './InactiveValidators';
+import { CLOSE_ICON_PATH } from '@/utils/constants';
 
 type HandleClose = () => void;
 
@@ -29,6 +30,7 @@ const DialogAllValidators = ({
       onClose={() => {
         setSearchTerm('');
         handleClose();
+        setActive(true);
       }}
       maxWidth="lg"
       PaperProps={{
@@ -50,7 +52,7 @@ const DialogAllValidators = ({
           >
             <Image
               className="cursor-pointer"
-              src="/close-icon.svg"
+              src={CLOSE_ICON_PATH}
               width={24}
               height={24}
               alt="Close"

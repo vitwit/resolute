@@ -13,6 +13,8 @@ import {
 import Image from 'next/image';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { dialogBoxStyles } from '../styles';
+import { CLOSE_ICON_PATH } from '@/utils/constants';
 
 function parseDelegation({
   delegations,
@@ -24,7 +26,7 @@ function parseDelegation({
   currency: Currency;
 }) {
   let result = 0.0;
-  delegations?.map((item) => {
+  delegations?.forEach((item) => {
     if (item.delegation.validator_address === validator?.operator_address) {
       result += parseDenomAmount(item.delegation.shares, currency.coinDecimals);
     }
@@ -71,15 +73,10 @@ const DialogUndelegate = ({
       onClose={handleClose}
       open={open}
       maxWidth="lg"
-      PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
-        },
-      }}
+      PaperProps={dialogBoxStyles}
     >
       <DialogContent sx={{ padding: 0 }}>
-        <div className="w-[890px] text-white">
+        <div className="max-w-[890px] text-white">
           <div className="px-10 py-6 flex justify-end">
             <div
               onClick={() => {
@@ -88,7 +85,7 @@ const DialogUndelegate = ({
             >
               <Image
                 className="cursor-pointer"
-                src="/close-icon.svg"
+                src={CLOSE_ICON_PATH}
                 width={24}
                 height={24}
                 alt="Close"
@@ -138,10 +135,12 @@ const DialogUndelegate = ({
                       <p>Staking will lock your</p>
                       <p>
                         funds for{' '}
-                        {Math.floor(
-                          parseInt(stakingParams?.unbonding_time || '') /
-                            (3600 * 24)
-                        )}{' '}
+                        {stakingParams?.unbonding_time
+                          ? Math.floor(
+                              parseInt(stakingParams?.unbonding_time || '') /
+                                (3600 * 24)
+                            )
+                          : '-'}{' '}
                         days
                       </p>
                     </div>
@@ -177,7 +176,6 @@ const DialogUndelegate = ({
                       <TextField
                         className="bg-[#FFFFFF0D] rounded-2xl"
                         {...field}
-                        type="number"
                         required
                         fullWidth
                         size="small"
