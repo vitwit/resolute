@@ -18,18 +18,18 @@ const ActiveValidators = ({
   searchTerm,
   onMenuAction,
 }: ActiveValidators) => {
-  const [currentPage, setCurrentPage] = useState(1);
   const [slicedValidators, setSlicedValidators] = useState<string[]>([]);
   const [filtered, setFiltered] = useState<string[]>([]);
 
   useEffect(() => {
-    if (validators?.activeSorted.length < VALIDATORS_PER_PAGE) {
-      setSlicedValidators(validators?.activeSorted);
-    } else {
-      setCurrentPage(1);
-      setSlicedValidators(
-        validators?.activeSorted?.slice(0, 1 * VALIDATORS_PER_PAGE)
-      );
+    if (validators?.activeSorted) {
+      if (validators.activeSorted.length < VALIDATORS_PER_PAGE) {
+        setSlicedValidators(validators?.activeSorted);
+      } else {
+        setSlicedValidators(
+          validators?.activeSorted?.slice(0, 1 * VALIDATORS_PER_PAGE)
+        );
+      }
     }
   }, [validators?.activeSorted]);
 
@@ -41,7 +41,6 @@ const ActiveValidators = ({
           .includes(searchTerm.toLowerCase())
     );
     setFiltered(filteredValidators);
-    setCurrentPage(1);
   }, [searchTerm, validators?.activeSorted]);
   return (
     <>
@@ -58,7 +57,7 @@ const ActiveValidators = ({
         ) : (
           <>
             <div className="flex flex-col gap-6">
-              {slicedValidators?.map((validator, index) => {
+              {slicedValidators?.map((validator) => {
                 const moniker =
                   validators.active[validator]?.description.moniker;
                 const identity =
@@ -77,7 +76,7 @@ const ActiveValidators = ({
 
                 return (
                   <ValidatorComponent
-                    key={index + VALIDATORS_PER_PAGE * (currentPage - 1)}
+                    key={validator}
                     moniker={moniker}
                     identity={identity}
                     commission={commission}
@@ -100,7 +99,6 @@ const ActiveValidators = ({
                 )}
                 shape="circular"
                 onChange={(_, v) => {
-                  setCurrentPage(v);
                   setSlicedValidators(
                     validators?.activeSorted?.slice(
                       (v - 1) * VALIDATORS_PER_PAGE,

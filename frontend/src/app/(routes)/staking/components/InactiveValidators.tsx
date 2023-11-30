@@ -77,7 +77,7 @@ const InactiveValidators = ({
 
                 return (
                   <ValidatorComponent
-                    key={index + VALIDATORS_PER_PAGE * (currentPage - 1)}
+                    key={validator}
                     moniker={moniker}
                     identity={identity}
                     commission={commission}

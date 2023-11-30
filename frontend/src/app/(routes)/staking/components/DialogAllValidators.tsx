@@ -101,6 +101,7 @@ const DialogAllValidators = ({
                 placeholder="Search Chain"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                autoFocus={true}
               />
             </div>
           </div>

@@ -26,7 +26,7 @@ const UnbondingCard = ({
         network={chainName}
         networkLogo={networkLogo}
       />
-      <UnbodingCardStats
+      <UnbondingCardStats
         completionTime={completionTime}
         amount={amount}
         coinDenom={currency.coinDenom}
@@ -44,7 +44,7 @@ const UnbondingCard = ({
 
 export default UnbondingCard;
 
-const UnbodingCardStats = ({
+const UnbondingCardStats = ({
   completionTime,
   amount,
   coinDenom,

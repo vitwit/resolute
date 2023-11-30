@@ -83,7 +83,7 @@ const StakingOverview = () => {
         dispatch(getParams({ baseURL, chainID }));
       });
     }
-  }, []);
+  }, [chainIDs]);
 
   return (
     <div className="staking-main">

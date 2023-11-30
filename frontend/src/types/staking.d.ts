@@ -309,10 +309,10 @@ interface StakingCardsStatsItemProps {
   value: string;
 }
 
-type ToogleMenu = () => void;
+type ToggleMenu = () => void;
 
 interface StakingCardActionsProps {
-  toggleMenu: ToogleMenu;
+  toggleMenu: ToggleMenu;
   menuRef: React.RefObject<HTMLDivElement>;
   chainID: string;
   validatorAddress: string;

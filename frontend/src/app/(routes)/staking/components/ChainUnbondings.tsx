@@ -19,12 +19,12 @@ const ChainUnbondings = ({
 
   return (
     <>
-      {unbondings?.unbonding_responses?.map((row, index) => {
+      {unbondings?.unbonding_responses?.map((row) => {
         const entries = row.entries;
-        return entries.map((entry, index2) => {
+        return entries.map((entry) => {
           return (
             <UnbondingCard
-              key={index.toString() + index2.toString()}
+              key={row.validator_address + entry.completion_time}
               validator={
                 validators?.active[row.validator_address]?.description.moniker
               }

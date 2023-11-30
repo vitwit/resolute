@@ -16,7 +16,7 @@ const StakingSideBarAds = () => {
               src="/close.svg"
               width={30}
               height={30}
-              alt="Ad"
+              alt="Close ad"
             />
           </div>
           <Image
@@ -36,7 +36,7 @@ const StakingSideBarAds = () => {
               src="/close.svg"
               width={30}
               height={30}
-              alt="Ad"
+              alt="Close ad"
             />
           </div>
           <Image

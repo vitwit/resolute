@@ -172,7 +172,7 @@ const AllValidators = ({
         </div>
       ) : (
         <>
-          {slicedValidatorsList.map((validator, index) => {
+          {slicedValidatorsList.map((validator) => {
             const { moniker, identity } =
               validators.active[validator]?.description;
             const commission =
@@ -180,11 +180,11 @@ const AllValidators = ({
                 validators.active[validator]?.commission?.commission_rates.rate
               ) * 100;
             const tokens = Number(validators.active[validator]?.tokens);
-
+            console.log(validator);
             return (
               <>
                 <ValidatorItem
-                  key={index}
+                  key={validator}
                   moniker={moniker}
                   identity={identity}
                   commission={commission}
