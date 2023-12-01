@@ -1,4 +1,3 @@
-import WalletPopup from '@/components/WalletPopup';
 import React from 'react';
 
 const page = () => {
