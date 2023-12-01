@@ -15,7 +15,7 @@ const Summary = ({ chainIDs }: { chainIDs: string[] }) => {
     if (nameToChainIDs[name] === chainIDs[0]) firstChainName = name;
   });
   const chainImageURL = useAppSelector(
-    (state) => state.wallet.networks[chainIDs[0]].network.logos.menu
+    (state) => state.wallet.networks[chainIDs[0]]?.network?.logos?.menu || ''
   );
 
   if (chainIDs.length === 1) {

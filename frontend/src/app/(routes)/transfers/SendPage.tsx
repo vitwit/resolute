@@ -1,13 +1,13 @@
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { capitalizeFirstLetter } from '../../../utils/util';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { CircularProgress, InputAdornment, TextField } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import AllAssets from './components/AllAssets';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txBankSend } from '@/store/features/bank/bankSlice';
+import { SEND_TX_FEE } from '@/utils/constants';
 
 const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets] = useSortedAssets(chainIDs);
@@ -31,7 +31,7 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   });
 
   const onSelectAsset = (asset: ParsedAsset) => {
-    if(selectedAsset == asset) return
+    if (selectedAsset == asset) return;
     setSelectedAsset(asset);
     reset();
   };
@@ -109,7 +109,7 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
                       },
                     },
                   }}
-                  error={!!errors.amount}
+                  error={!!errors.address}
                 />
               )}
             />
@@ -133,12 +133,14 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
                   message: 'Please enter a valid number',
                 },
                 validate: {
-                  invalid: (value) => Number(value) > 0 || 'Amount can\'t be zero',
+                  invalid: (value) =>
+                    Number(value) > 0 || "Amount can't be zero",
                   insufficient: (value) =>
                     Number(selectedAsset?.balance) >
                       Number(value) +
-                        Number(25000 / 10 ** (selectedAsset?.decimals || 0)) ||
-                    'Insufficient funds',
+                        Number(
+                          SEND_TX_FEE / 10 ** (selectedAsset?.decimals || 0)
+                        ) || 'Insufficient funds',
                 },
               }}
               render={({ field }) => (
@@ -267,14 +269,14 @@ const Cards = ({
   onSelectAsset: (asset: ParsedAsset) => void;
 }) => {
   const balancesLoading = useAppSelector((state) => state.bank.balancesLoading);
-  
+
   return (
-    <div className="flex items-center justify-start gap-4 min-h-[100px] max-h-[100px]">
+    <div className=" items-center justify-start gap-4 min-h-[100px] max-h-[100px] grid grid-cols-4">
       {assets.length ? (
         assets.map((asset) => (
           <div
             className={
-              'w-1/4 card p-4 cursor-pointer' +
+              'card p-4 cursor-pointer' +
               (asset.denom === selectedAsset?.denom &&
               asset.chainID === selectedAsset?.chainID
                 ? ' selected'
@@ -290,8 +292,8 @@ const Cards = ({
                 height={32}
                 alt={asset.chainName}
               />
-              <div className="flex items-center text-[14]">
-                {capitalizeFirstLetter(asset.chainName)}
+              <div className="flex items-center text-[14] text-transform">
+                {asset.chainName}
               </div>
             </div>
             <div className="flex gap-2">

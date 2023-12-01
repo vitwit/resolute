@@ -50,7 +50,7 @@ export const MsgType = (msg: string): string => {
     case msgUnDelegate:
       return 'Un-delegate';
     case msgReDelegate:
-      return 'Re-delate';
+      return 'Re-delegate';
     case msgSendTypeUrl:
       return 'Send';
     case msgWithdrawRewards:
@@ -92,10 +92,9 @@ export const formatTransaction = (tx: Transaction, msgFilters: string[]) => {
   let showTx = false;
   if (msgFilters.length === 0) showTx = true;
   else {
+    const filterSet = new Set(msgFilters);
     msgs.forEach((msg) => {
-      msgFilters.forEach((msgFilter) => {
-        if (MsgType(msg.typeUrl) === msgFilter) showTx = true;
-      });
+      if (filterSet.has(MsgType(msg.typeUrl))) showTx = true;
     });
   }
 

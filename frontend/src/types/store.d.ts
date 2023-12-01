@@ -8,7 +8,6 @@ interface BasicChainInfo {
   address: string
   prefix: string;
   feeAmount: number;
-  address: string;
 }
 
 interface Coin {

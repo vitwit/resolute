@@ -24,17 +24,19 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
 
   useEffect(() => {
     chainIDs.forEach((chainID) => {
-      const allChainInfo = networks[chainID];
-      const chainInfo = allChainInfo.network;
-      const address = allChainInfo?.walletInfo?.bech32Address;
-      const basicChainInputs = {
-        baseURL: chainInfo.config.rest,
-        address,
-        chainID,
-      };
-      dispatch(getBalances(basicChainInputs));
+      if (networks.hasOwnProperty(chainID)) {
+        const allChainInfo = networks[chainID];
+        const chainInfo = allChainInfo.network;
+        const address = allChainInfo?.walletInfo?.bech32Address;
+        const basicChainInputs = {
+          baseURL: chainInfo.config.rest,
+          address,
+          chainID,
+        };
+        dispatch(getBalances(basicChainInputs));
+      }
     });
-  }, []);
+  }, [chainIDs]);
 
   return (
     <div className="w-full flex justify-between h-screen text-white">

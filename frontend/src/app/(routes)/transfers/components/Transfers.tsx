@@ -10,12 +10,13 @@ const Transfers = ({ chainNames }: { chainNames: string[] }) => {
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
+
   const chainIDs: string[] = [];
-  Object.keys(nameToChainIDs).forEach((chain) => {
-    chainNames.forEach((paramChain) => {
-      if (chain === paramChain) chainIDs.push(nameToChainIDs[chain]);
-    });
+
+  chainNames.forEach((chainName) => {
+    if (nameToChainIDs[chainName]) chainIDs.push(nameToChainIDs[chainName]);
   });
+
   return chainIDs.length ? (
     <TransfersPage chainIDs={chainIDs} />
   ) : (

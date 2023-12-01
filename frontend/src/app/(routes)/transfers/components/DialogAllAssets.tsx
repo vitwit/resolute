@@ -2,6 +2,7 @@ import React from 'react';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import { capitalizeFirstLetter } from '@/utils/util';
+import { customDialogPaper } from '../styles';
 
 const DialogAllAssets = ({
   dialogOpen,
@@ -16,18 +17,12 @@ const DialogAllAssets = ({
   onSelectAsset: (asset: ParsedAsset) => void;
   handleDialogClose: () => void;
 }) => {
-  
   return (
     <Dialog
       open={dialogOpen}
       onClose={handleDialogClose}
       maxWidth="lg"
-      PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
-        },
-      }}
+      PaperProps={{ sx: customDialogPaper }}
     >
       <DialogContent className="flex flex-col text-white p-0">
         <div className="w-[890px] px-10 pt-6 pb-10">
@@ -64,7 +59,7 @@ const DialogAllAssets = ({
                     ? ' selected'
                     : '')
                 }
-                key={asset.chainName + ' ' + asset.displayDenom}
+                key={asset.chainID + ' ' + asset.denom}
                 onClick={() => {
                   onSelectAsset(asset);
                   handleDialogClose();

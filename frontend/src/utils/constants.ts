@@ -16,3 +16,4 @@ export const TRANSFERS_TAB2 = {
   current: MULTI_TAB_TEXT,
   to: SINGLE_BTN_TEXT,
 };
+export const SEND_TX_FEE = 25000;
