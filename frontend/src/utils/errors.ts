@@ -10,4 +10,4 @@ export const CHAIN_ID_EXIST_ERROR =
 export const TXN_PENDING_ERROR = (type: string) =>
   `A ${type} transaction is already in pending`;
 export const NO_DELEGATIONS_ERROR = 'No Delegations';
-export const NO_REWARDS_ERROR = 'No Delegations';
+export const NO_REWARDS_ERROR = 'No Rewards';

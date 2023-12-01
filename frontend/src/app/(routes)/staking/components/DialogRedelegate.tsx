@@ -87,7 +87,7 @@ const DialogRedelegate = ({
     amount: number;
     destination: null | { addr: string; label: string };
   }) => {
-    if (validator) {
+    if (validator && data.destination) {
       onRedelegate({
         amount: data.amount,
         dest: data?.destination?.addr || '',

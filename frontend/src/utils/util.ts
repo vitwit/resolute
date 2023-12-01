@@ -229,7 +229,7 @@ export function parseDelegation({
   delegations: DelegationResponse[];
   validator: Validator | undefined;
   currency: Currency;
-}) {
+}): number {
   let result = 0.0;
   delegations?.forEach((item) => {
     if (item.delegation.validator_address === validator?.operator_address) {
