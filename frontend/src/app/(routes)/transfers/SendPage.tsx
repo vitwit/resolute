@@ -276,51 +276,45 @@ const Cards = ({
 }) => {
   const balancesLoading = useAppSelector((state) => state.bank.balancesLoading);
 
-  return (
+  return assets.length ? (
     <div className=" items-center justify-start gap-4 min-h-[100px] max-h-[100px] grid grid-cols-4">
-      {assets.length ? (
-        assets.map((asset) => (
-          <div
-            className={
-              'card p-4 cursor-pointer' +
-              (asset.denom === selectedAsset?.denom &&
-              asset.chainID === selectedAsset?.chainID
-                ? ' selected'
-                : '')
-            }
-            key={asset.chainName + ' ' + asset.displayDenom}
-            onClick={() => onSelectAsset(asset)}
-          >
-            <div className="flex gap-2">
-              <Image
-                src={asset.chainLogoURL}
-                width={32}
-                height={32}
-                alt={asset.chainName}
-              />
-              <div className="flex items-center text-[14] text-transform">
-                {asset.chainName}
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <div className="text-base not-italic font-bold leading-[normal]">
-                {asset.balance}
-              </div>
-              <div className="text-[#9c95ac] text-xs not-italic font-normal leading-[normal] flex items-center">
-                {asset.displayDenom}
-              </div>
+      {assets.map((asset) => (
+        <div
+          className={
+            'card p-4 cursor-pointer' +
+            (asset.denom === selectedAsset?.denom &&
+            asset.chainID === selectedAsset?.chainID
+              ? ' selected'
+              : '')
+          }
+          key={asset.chainName + ' ' + asset.displayDenom}
+          onClick={() => onSelectAsset(asset)}
+        >
+          <div className="flex gap-2">
+            <Image
+              src={asset.chainLogoURL}
+              width={32}
+              height={32}
+              alt={asset.chainName}
+            />
+            <div className="flex items-center text-[14] text-transform">
+              {asset.chainName}
             </div>
           </div>
-        ))
-      ) : (
-        <div className="w-full h-full flex justify-center items-center">
-          {balancesLoading ? (
-            <CircularProgress size={30} />
-          ) : (
-            <>- No Assets -</>
-          )}
+          <div className="flex gap-2">
+            <div className="text-base not-italic font-bold leading-[normal]">
+              {asset.balance}
+            </div>
+            <div className="text-[#9c95ac] text-xs not-italic font-normal leading-[normal] flex items-center">
+              {asset.displayDenom}
+            </div>
+          </div>
         </div>
-      )}
+      ))}
+    </div>
+  ) : (
+    <div className="min-h-[100px] max-h-[100px] flex justify-center items-center">
+      {balancesLoading ? <CircularProgress size={30} /> : <>- No Assets -</>}
     </div>
   );
 };
