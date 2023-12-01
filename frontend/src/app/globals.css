@@ -257,3 +257,19 @@
 .popup-text {
   @apply text-white text-sm not-italic leading-[normal];
 }
+
+
+/* WalletPopup */
+
+.wallet-box {
+  @apply flex w-[889px] flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
+  background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%);
+}
+
+.connect-wallet-box{
+  @apply flex w-[497px] flex-col justify-center items-start gap-6 self-stretch;
+}
+.wallet-grid {
+  @apply flex flex-col items-start gap-4 p-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.05);
+}
