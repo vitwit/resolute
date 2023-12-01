@@ -8,6 +8,7 @@ import AllAssets from './components/AllAssets';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txBankSend } from '@/store/features/bank/bankSlice';
 import { SEND_TX_FEE } from '@/utils/constants';
+import { TxStatus } from '@/types/enums';
 
 const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets] = useSortedAssets(chainIDs);
@@ -16,6 +17,7 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const slicedAssets = sortedAssets.slice(0, 4);
   const dispatch = useAppDispatch();
   const { txSendInputs } = useGetTxInputs();
+  const sendTxStatus = useAppSelector((state) => state.bank.tx.status);
 
   const {
     handleSubmit,
@@ -249,7 +251,11 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
             type="submit"
             className="primary-action-btn w-[152px] h-[44px]"
           >
-            Send
+            {sendTxStatus === TxStatus.PENDING ? (
+              <CircularProgress size={24} />
+            ) : (
+              'Send'
+            )}
           </button>
         </div>
       </form>
