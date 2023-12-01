@@ -35,13 +35,17 @@ const Summary = ({ chainIDs }: { chainIDs: string[] }) => {
       <div className="flex w-full justify-between">
         <div className="flex items-center gap-2">
           <Image src={imageURL} width={40} height={40} alt={chainName} />
-          <div>{capitalizeFirstLetter(chainName)}</div>
+          <div className="text-sm not-italic font-normal leading-[normal]">
+            {capitalizeFirstLetter(chainName)}
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <div className="font-bold text-2xl">
             {formatDollarAmount(available)}
           </div>
-          <div>Total Balance</div>
+          <div className="text-right text-xs not-italic font-normal leading-[normal]">
+            Total Balance
+          </div>
         </div>
       </div>
     </div>

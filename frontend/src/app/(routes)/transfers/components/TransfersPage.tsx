@@ -50,7 +50,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
             </div>
 
             <button
-              className="primary-action-btn px-3 py-[6px]"
+              className="primary-action-btn w-auto h-auto px-3 py-[10px] rounded-lg"
               onClick={() => {
                 if (chainIDs.length > 1) {
                   alert('Multi transfer is not available for All networks!');

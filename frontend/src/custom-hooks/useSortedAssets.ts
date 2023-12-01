@@ -81,6 +81,7 @@ const useSortedAssets = (chainIDs: string[]): [ParsedAsset[]] => {
             rewards: rewardsAmountInDenoms,
             denom: minimalDenom,
             chainLogoURL,
+            decimals,
           };
         } else if (denomInfo?.length) {
           const usdPriceInfo: TokenInfo | undefined =
@@ -106,6 +107,7 @@ const useSortedAssets = (chainIDs: string[]): [ParsedAsset[]] => {
             inflation: inflation,
             chainID: chainID,
             chainLogoURL,
+            decimals: denomInfo[0].decimals,
           };
         }
         if (asset && asset.usdPrice) {

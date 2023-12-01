@@ -10,6 +10,7 @@ interface ParsedIBCAsset {
   displayDenom: string;
   denom: string;
   chainLogoURL: string;
+  decimals: number;
 }
 
 interface ParsedNativeAsset {
@@ -25,6 +26,7 @@ interface ParsedNativeAsset {
   displayDenom: string;
   denom: string;
   chainLogoURL: string;
+  decimals: number;
 }
 
 type ParsedAsset = ParsedIBCAsset | ParsedNativeAsset;

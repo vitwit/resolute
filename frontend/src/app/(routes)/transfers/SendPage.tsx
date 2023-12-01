@@ -2,23 +2,25 @@ import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { capitalizeFirstLetter } from '../../../utils/util';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { CircularProgress, InputAdornment, TextField } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-
-type SetSelectedAssetAction = React.Dispatch<
-  React.SetStateAction<ParsedAsset | undefined>
->;
+import AllAssets from './components/AllAssets';
+import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
+import { txBankSend } from '@/store/features/bank/bankSlice';
 
 const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets] = useSortedAssets(chainIDs);
   const [openMemo, setOpenMemo] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<ParsedAsset | undefined>();
   const slicedAssets = sortedAssets.slice(0, 4);
+  const dispatch = useAppDispatch();
+  const { txSendInputs } = useGetTxInputs();
+
   const {
     handleSubmit,
     control,
-
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -28,8 +30,28 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
     },
   });
 
-  const onSubmit = (data: { amount: number; address: string }) => {
-    alert('submitted...' + data.address);
+  const onSelectAsset = (asset: ParsedAsset) => {
+    if(selectedAsset == asset) return
+    setSelectedAsset(asset);
+    reset();
+  };
+
+  const onSubmit = (data: {
+    amount: number;
+    address: string;
+    memo: string;
+  }) => {
+    if (!selectedAsset) {
+      alert('Please select an asset');
+      return;
+    }
+    const txInputs = txSendInputs(
+      selectedAsset.chainID,
+      data.address,
+      data.amount,
+      data.memo
+    );
+    dispatch(txBankSend(txInputs));
   };
 
   return (
@@ -39,11 +61,14 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
         <Cards
           assets={slicedAssets}
           selectedAsset={selectedAsset}
-          setSelectedAsset={setSelectedAsset}
+          onSelectAsset={onSelectAsset}
         />
-        <div className="w-fill flex justify-center h-6 text-[#c3c2c9] text-xs not-italic font-normal leading-6 underline">
-          {sortedAssets.length > 4 ? 'View All' : ''}
-        </div>
+
+        <AllAssets
+          assets={sortedAssets}
+          selectedAsset={selectedAsset}
+          onSelectAsset={onSelectAsset}
+        />
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
@@ -56,9 +81,6 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
               control={control}
               rules={{
                 required: 'Address is required',
-                validate: (value) => {
-                  return value.length > 0 && value.length <= 5;
-                },
               }}
               render={({ field }) => (
                 <TextField
@@ -106,8 +128,17 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
               control={control}
               rules={{
                 required: 'Amount is required',
-                validate: (value) => {
-                  return Number(value) > 0;
+                pattern: {
+                  value: /^[0-9]+(\.[0-9]+)?$/,
+                  message: 'Please enter a valid number',
+                },
+                validate: {
+                  invalid: (value) => Number(value) > 0 || 'Amount can\'t be zero',
+                  insufficient: (value) =>
+                    Number(selectedAsset?.balance) >
+                      Number(value) +
+                        Number(25000 / 10 ** (selectedAsset?.decimals || 0)) ||
+                    'Insufficient funds',
                 },
               }}
               render={({ field }) => (
@@ -150,9 +181,13 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
             <div
               className={`text-red-500 text-xs px-4 opacity-95 mt-1 min-h-[24px]`}
             >
-              {errors.amount?.type === 'validate'
-                ? 'Insufficient funds. Please make sure you have enough balance.'
-                : errors.amount?.message}
+              {!sortedAssets.length
+                ? 'No Assets Found.'
+                : !selectedAsset
+                  ? 'Please select an Asset'
+                  : errors.amount
+                    ? errors.amount?.message
+                    : ''}
             </div>
             <div className="min-h-[96px]">
               <div className="flex items-center gap-2  mb-2">
@@ -208,7 +243,10 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
           </div>
         </div>
         <div className="h-full flex gap-10 items-center">
-          <button type="submit" className="primary-action-btn">
+          <button
+            type="submit"
+            className="primary-action-btn w-[152px] h-[44px]"
+          >
             Send
           </button>
         </div>
@@ -222,13 +260,14 @@ export default SendPage;
 const Cards = ({
   assets,
   selectedAsset,
-  setSelectedAsset,
+  onSelectAsset,
 }: {
   assets: ParsedAsset[];
   selectedAsset: ParsedAsset | undefined;
-  setSelectedAsset: SetSelectedAssetAction;
+  onSelectAsset: (asset: ParsedAsset) => void;
 }) => {
   const balancesLoading = useAppSelector((state) => state.bank.balancesLoading);
+  
   return (
     <div className="flex items-center justify-start gap-4 min-h-[100px] max-h-[100px]">
       {assets.length ? (
@@ -242,7 +281,7 @@ const Cards = ({
                 : '')
             }
             key={asset.chainName + ' ' + asset.displayDenom}
-            onClick={() => setSelectedAsset(asset)}
+            onClick={() => onSelectAsset(asset)}
           >
             <div className="flex gap-2">
               <Image

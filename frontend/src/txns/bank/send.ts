@@ -24,8 +24,8 @@ export function SendMsg(
 }
 
 export function serialize(msg: Msg): string {
-  const { fromAddress, toAddress, amount } = msg.value;
-  return `${shortenMsg(fromAddress, 10)} sent ${amount[0].amount} ${
+  const { toAddress, amount } = msg.value;
+  return `sent ${amount[0].amount} ${
     amount[0].denom
-  } to ${shortenMsg(toAddress, 10)}`;
+  } to ${shortenMsg(toAddress, 20)}`;
 }
