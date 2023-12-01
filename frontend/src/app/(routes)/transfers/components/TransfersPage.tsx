@@ -41,7 +41,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
     <div className="w-full flex justify-between h-screen text-white">
       <div
-        className="w-full px-10 py-6 space-y-6 overflow-hidden"
+        className="w-full px-10 py-6 space-y-6 overflow-y-scroll"
         style={{ height: 'calc(100% - 24px)' }}
       >
         <MainTopNav title="Transfers" />
