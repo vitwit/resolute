@@ -14,6 +14,11 @@ import { txRestake } from '@/store/features/staking/stakeSlice';
 import { setError } from '@/store/features/common/commonSlice';
 import AllValidators from './AllValidators';
 import { formatStakedAmount } from '@/utils/util';
+import {
+  NO_DELEGATIONS_ERROR,
+  NO_REWARDS_ERROR,
+  TXN_PENDING_ERROR,
+} from '@/utils/errors';
 
 const StakingSidebar = ({
   validators,
@@ -60,7 +65,7 @@ const StakingSidebar = ({
       dispatch(
         setError({
           type: 'error',
-          message: 'A claim transaction is already in pending',
+          message: TXN_PENDING_ERROR('Claim'),
         })
       );
       return;
@@ -71,7 +76,7 @@ const StakingSidebar = ({
       dispatch(
         setError({
           type: 'error',
-          message: 'On Delegations',
+          message: NO_DELEGATIONS_ERROR,
         })
       );
     }
@@ -82,7 +87,7 @@ const StakingSidebar = ({
       dispatch(
         setError({
           type: 'error',
-          message: 'A restake transaction is already pending',
+          message: TXN_PENDING_ERROR('Restake'),
         })
       );
       return;
@@ -93,7 +98,7 @@ const StakingSidebar = ({
       dispatch(
         setError({
           type: 'error',
-          message: 'No rewards',
+          message: NO_REWARDS_ERROR,
         })
       );
     }

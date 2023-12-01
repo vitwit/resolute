@@ -18,9 +18,6 @@ export const paginationComponentStyles = {
   '& .MuiPaginationItem-icon': {
     color: '#fff',
   },
-  '&.Mui-disabled': {
-    color: 'red',
-  },
   '& .MuiPaginationItem-ellipsis, & .MuiPaginationItem-ellipsisIcon': {
     color: 'white',
   },

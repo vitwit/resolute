@@ -1,4 +1,4 @@
-import { DelegationResponse, Validator } from '@/types/staking';
+import { DelegationResponse, Params, Validator } from '@/types/staking';
 import { parseBalance } from './denom';
 
 export const convertPaginationToParams = (
@@ -233,8 +233,10 @@ export function parseDelegation({
   let result = 0.0;
   delegations?.forEach((item) => {
     if (item.delegation.validator_address === validator?.operator_address) {
-      result +=
-        parseFloat(item.delegation.shares) / 10 ** currency?.coinDecimals;
+      if (currency && currency.coinDecimals) {
+        result +=
+          parseFloat(item.delegation.shares) / 10 ** currency?.coinDecimals;
+      }
     }
   });
 
@@ -263,4 +265,14 @@ export function parseDenomAmount(
 
 export function formatCommission(commission: number): string {
   return commission ? String(commission.toFixed(0)) + '%' : '-';
+}
+
+export function formatUnbondingPeriod(
+  stakingParams: Params | undefined
+): string {
+  return stakingParams?.unbonding_time
+    ? Math.floor(
+        parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
+      ).toString()
+    : '-';
 }

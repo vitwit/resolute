@@ -7,3 +7,7 @@ export const CHAIN_NAME_EXIST_ERROR =
   'Chain already exist with the given chainName';
 export const CHAIN_ID_EXIST_ERROR =
   'Chain already exist with the given chainId';
+export const TXN_PENDING_ERROR = (type: string) =>
+  `A ${type} transaction is already in pending`;
+export const NO_DELEGATIONS_ERROR = 'No Delegations';
+export const NO_REWARDS_ERROR = 'No Delegations';

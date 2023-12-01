@@ -1,5 +1,9 @@
 import { DialogUndelegateProps } from '@/types/staking';
-import { formatCoin, parseDelegation } from '@/utils/util';
+import {
+  formatCoin,
+  formatUnbondingPeriod,
+  parseDelegation,
+} from '@/utils/util';
 import {
   Dialog,
   DialogContent,
@@ -39,10 +43,12 @@ const DialogUndelegate = ({
   });
 
   const onSubmit = (data: { amount: number }) => {
-    onUndelegate({
-      validator: validator?.operator_address || '',
-      amount: data?.amount || 0,
-    });
+    if (validator) {
+      onUndelegate({
+        validator: validator?.operator_address || '',
+        amount: data?.amount || 0,
+      });
+    }
   };
 
   return (
@@ -111,14 +117,7 @@ const DialogUndelegate = ({
                     <div className="w-[200px] text-[14px] font-light leading-[24px] my-auto">
                       <p>Staking will lock your</p>
                       <p>
-                        funds for{' '}
-                        {stakingParams?.unbonding_time
-                          ? Math.floor(
-                              parseInt(stakingParams?.unbonding_time || '') /
-                                (3600 * 24)
-                            )
-                          : '-'}{' '}
-                        days
+                        funds for {formatUnbondingPeriod(stakingParams)} days
                       </p>
                     </div>
                     <div className="font-medium leading-6 flex-1">
@@ -127,11 +126,8 @@ const DialogUndelegate = ({
                         <li>You will not be able to cancel the unbonding.</li>
                         <li>
                           You will not be able to withdraw your funds until{' '}
-                          {Math.floor(
-                            parseInt(stakingParams?.unbonding_time || '') /
-                              (3600 * 24)
-                          )}
-                          + days after the undelegation.
+                          {formatUnbondingPeriod(stakingParams)}+ days after the
+                          undelegation.
                         </li>
                       </ol>
                     </div>

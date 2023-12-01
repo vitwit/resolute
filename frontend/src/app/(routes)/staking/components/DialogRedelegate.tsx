@@ -1,5 +1,9 @@
 import { DialogRedelegateProps, Validator } from '@/types/staking';
-import { formatCoin, parseDelegation } from '@/utils/util';
+import {
+  formatCoin,
+  formatUnbondingPeriod,
+  parseDelegation,
+} from '@/utils/util';
 import {
   Autocomplete,
   Dialog,
@@ -83,11 +87,13 @@ const DialogRedelegate = ({
     amount: number;
     destination: null | { addr: string; label: string };
   }) => {
-    onRedelegate({
-      amount: data.amount,
-      dest: data?.destination?.addr || '',
-      src: validator?.operator_address || '',
-    });
+    if (validator) {
+      onRedelegate({
+        amount: data.amount,
+        dest: data?.destination?.addr || '',
+        src: validator?.operator_address || '',
+      });
+    }
   };
 
   return (
@@ -156,14 +162,7 @@ const DialogRedelegate = ({
                     <div className="w-[200px] text-[14px] font-light leading-[24px] my-auto">
                       <p>Staking will lock your</p>
                       <p>
-                        funds for{' '}
-                        {stakingParams?.unbonding_time
-                          ? Math.floor(
-                              parseInt(stakingParams?.unbonding_time || '') /
-                                (3600 * 24)
-                            )
-                          : '-'}{' '}
-                        days
+                        funds for {formatUnbondingPeriod(stakingParams)} days
                       </p>
                     </div>
                     <div className="font-medium leading-6 flex-1">
@@ -173,11 +172,7 @@ const DialogRedelegate = ({
                       </p>
                       <p>
                         This process will take{' '}
-                        {Math.floor(
-                          parseInt(stakingParams?.unbonding_time || '') /
-                            (3600 * 24)
-                        )}{' '}
-                        days to complete.
+                        {formatUnbondingPeriod(stakingParams)} days to complete.
                       </p>
                     </div>
                   </div>

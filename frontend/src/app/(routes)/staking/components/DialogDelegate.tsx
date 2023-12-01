@@ -1,5 +1,5 @@
 import { DialogDelegateProps } from '@/types/staking';
-import { formatCoin } from '@/utils/util';
+import { formatCoin, formatUnbondingPeriod } from '@/utils/util';
 import {
   Dialog,
   DialogContent,
@@ -38,10 +38,12 @@ const DialogDelegate = ({
   });
 
   const onSubmit = (data: { amount: number }) => {
-    onDelegate({
-      validator: validator?.operator_address || '',
-      amount: data?.amount || 0,
-    });
+    if (validator) {
+      onDelegate({
+        validator: validator?.operator_address || '',
+        amount: data?.amount || 0,
+      });
+    }
   };
 
   return (
@@ -110,12 +112,7 @@ const DialogDelegate = ({
                     <div className="w-[200px] text-[14px] font-light leading-[24px] my-auto">
                       <p>Staking will lock your</p>
                       <p>
-                        funds for{' '}
-                        {Math.floor(
-                          parseInt(stakingParams?.unbonding_time || '') /
-                            (3600 * 24)
-                        )}{' '}
-                        days
+                        funds for {formatUnbondingPeriod(stakingParams)} days
                       </p>
                     </div>
                     <div className="font-medium leading-6 flex-1">
@@ -125,13 +122,7 @@ const DialogDelegate = ({
                       </p>
                       <p>
                         This process will take{' '}
-                        {stakingParams?.unbonding_time
-                          ? Math.floor(
-                              parseInt(stakingParams?.unbonding_time || '') /
-                                (3600 * 24)
-                            )
-                          : '-'}{' '}
-                        days to complete.
+                        {formatUnbondingPeriod(stakingParams)} days to complete.
                       </p>
                     </div>
                   </div>

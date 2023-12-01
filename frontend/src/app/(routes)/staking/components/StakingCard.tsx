@@ -20,6 +20,8 @@ import { TxStatus } from '@/types/enums';
 import { txWithdrawAllRewards } from '@/store/features/distribution/distributionSlice';
 import { txRestake } from '@/store/features/staking/stakeSlice';
 import Link from 'next/link';
+import { setError } from '@/store/features/common/commonSlice';
+import { NO_DELEGATIONS_ERROR, NO_REWARDS_ERROR, TXN_PENDING_ERROR } from '@/utils/errors';
 
 const StakingCard = ({
   validator,
@@ -149,7 +151,12 @@ const StakingCardActions = ({
 
   const claim = () => {
     if (txClaimStatus === TxStatus.PENDING) {
-      alert('A claim transaction is already in pending...');
+      dispatch(
+        setError({
+          type: 'error',
+          message: TXN_PENDING_ERROR('Claim'),
+        })
+      );
       return;
     }
     const txInputs = txWithdrawValidatorRewardsInputs(
@@ -158,17 +165,36 @@ const StakingCardActions = ({
       delegatorAddress
     );
     if (txInputs.msgs.length) dispatch(txWithdrawAllRewards(txInputs));
-    else alert('no delegations');
+    else {
+      dispatch(
+        setError({
+          type: 'error',
+          message: NO_DELEGATIONS_ERROR,
+        })
+      );
+    }
   };
 
   const claimAndStake = () => {
     if (txRestakeStatus === TxStatus.PENDING) {
-      alert('A restake transaction is already pending...');
+      dispatch(
+        setError({
+          type: 'error',
+          message: TXN_PENDING_ERROR('Restake'),
+        })
+      );
       return;
     }
     const txInputs = txRestakeValidatorInputs(chainID, validatorAddress);
     if (txInputs.msgs.length) dispatch(txRestake(txInputs));
-    else alert('Not enough rewards to claim');
+    else {
+      dispatch(
+        setError({
+          type: 'error',
+          message: NO_REWARDS_ERROR,
+        })
+      );
+    }
   };
   return (
     <div className="mt-6 flex justify-between items-center">
