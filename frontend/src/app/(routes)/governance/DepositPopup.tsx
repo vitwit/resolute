@@ -23,10 +23,15 @@ const DepositPopup = ({
   proposalId: number;
   proposalname: string;
 }) => {
+  console.log(denom)
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const allChainInfo = networks[chainID];
-  const chainInfo = allChainInfo.network;
-  const address = allChainInfo?.walletInfo?.bech32Address;
+
+  const { getVoteTxInputs } = useGetTxInputs();
+  const dispatch = useAppDispatch();
+
+  // const chainInfo = allChainInfo.network;
+  // const address = allChainInfo?.walletInfo?.bech32Address;
   const minimalDenom =
     allChainInfo.network.config.stakeCurrency.coinMinimalDenom;
 
@@ -40,9 +45,6 @@ const DepositPopup = ({
   if (!isOpen) {
     return null;
   }
-
-  const dispatch = useAppDispatch();
-  const { getVoteTxInputs } = useGetTxInputs();
 
   const handleDeposit = () => {
     const { aminoConfig, prefix, rest, feeAmount, address, rpc, minimalDenom } =

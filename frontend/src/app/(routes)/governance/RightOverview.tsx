@@ -124,7 +124,7 @@ const RightOverview = ({
         </div>
       </div>
       <div>
-        {isVotePopupOpen && get(proposalInfo, 'status') === '1PROPOSAL_STATUS_VOTING_PERIOD' && (
+        {isVotePopupOpen && get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD' && (
           <>
             <VotePopup
               chainID={chainID}
@@ -134,7 +134,7 @@ const RightOverview = ({
             />
           </>
         )}
-        {isVotePopupOpen && get(proposalInfo, 'status') !== 'PROPOSAL_STATUS_DEPOSIT_PERIOD' && (
+        {isVotePopupOpen && get(proposalInfo, 'status') === 'PROPOSAL_STATUS_DEPOSIT_PERIOD' && (
           <>
             <DepositPopup
               chainID={chainID}

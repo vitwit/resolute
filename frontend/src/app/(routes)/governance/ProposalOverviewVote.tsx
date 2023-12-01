@@ -14,7 +14,6 @@ import proposalOverviewVoteData from './proposalvoteData.json';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getProposal, getGovTallyParams } from '@/store/features/gov/govSlice';
 import { get, parseInt } from 'lodash';
-import { number } from 'mathjs';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 
 function parseNumber(value: string | string[]) {
@@ -48,7 +47,7 @@ const ProposalOverviewVote = () => {
     }
   })
 
-  const tallyParams = useAppSelector((state: RootState) => state.gov.chains[chainID]?.tallyParams)
+  // const tallyParams = useAppSelector((state: RootState) => state.gov.chains[chainID]?.tallyParams)
 
   const totalVotes = Number(get(tallyResult, 'yes')) + Number(get(tallyResult, 'no')) +
     Number(get(tallyResult, 'abstain')) + Number(get(tallyResult, 'no_with_veto'))

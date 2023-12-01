@@ -5,9 +5,9 @@ import './style.css';
 import RadioButtons from './CustomRadioButton';
 import { Dialog, DialogContent } from '@mui/material';
 
-import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { txVote } from '@/store/features/gov/govSlice';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 interface VoteOptionNumber {
   [key: string]: number;
@@ -38,16 +38,19 @@ const VotePopup = ({
     setVoteOption(option);
   };
 
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
+
   const handleClose = () => {
     setIsOpen(false);
   };
 
   const dispatch = useAppDispatch();
-  const { getVoteTxInputs } = useGetTxInputs();
 
   const handleVote = () => {
-    const { aminoConfig, prefix, rest, feeAmount, address, rpc, minimalDenom } =
-      getVoteTxInputs(chainID);
+    
+    const { address, aminoConfig, feeAmount, prefix, rest, rpc } = getChainInfo(chainID);
+    const { minimalDenom } = getDenomInfo(chainID);
+    
     dispatch(
       txVote({
         voter: address,
