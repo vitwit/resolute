@@ -1,16 +1,17 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link'
 import CustomPieChart from './CustomPiechart';
 import './style.css';
 import VotePopup from './VotePopup';
-
 
 import { RootState } from '@/store/store';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getProposal } from '@/store/features/gov/govSlice';
 import { get } from 'lodash';
 import { getTimeDifference, getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+import DepositPopup from './DepositPopup';
 
 type handleCloseOverview = () => void;
 
@@ -66,7 +67,7 @@ const RightOverview = ({
   const quorum = 50;
 
   const handleCloseClick = () => {
-    setIsRightBarOpen(false);
+    // setIsRightBarOpen(false);
     handleCloseOverview()
   };
   return (<div>
@@ -111,7 +112,7 @@ const RightOverview = ({
             {get(proposalInfo, 'content.title')}
           </div>
         </div>
-        <div className="view-full">View Full Proposal</div>
+        <div className="view-full" ><Link href={`/governance/${proposalId}?chainId=${chainID}`}>View Full Proposal</Link></div>
         <div className="space-y-6">
           <div className="proposal-text-normal">{get(proposalInfo, 'content.description')}</div>
 
@@ -123,9 +124,19 @@ const RightOverview = ({
         </div>
       </div>
       <div>
-        {isVotePopupOpen && (
+        {isVotePopupOpen && get(proposalInfo, 'status') === '1PROPOSAL_STATUS_VOTING_PERIOD' && (
           <>
             <VotePopup
+              chainID={chainID}
+              votingEndsInDays={getTimeDifferenceToFutureDate(get(proposalInfo, 'voting_end_time'))}
+              proposalId={proposalId}
+              proposalname={get(proposalInfo, 'content.title')}
+            />
+          </>
+        )}
+        {isVotePopupOpen && get(proposalInfo, 'status') !== 'PROPOSAL_STATUS_DEPOSIT_PERIOD' && (
+          <>
+            <DepositPopup
               chainID={chainID}
               votingEndsInDays={getTimeDifferenceToFutureDate(get(proposalInfo, 'voting_end_time'))}
               proposalId={proposalId}
@@ -169,7 +180,7 @@ const RightOverview = ({
                   {data.map((item, index) => (
                     <div key={index} className="flex items-center gap-2">
                       <CustomPieChart
-                        value={item.value}
+                        value={parseInt(item.value)}
                         color={item.color}
                         label={item.label}
                       />

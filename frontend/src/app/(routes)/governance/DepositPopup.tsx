@@ -1,21 +1,37 @@
 'use client';
 import React, { useState } from 'react';
 import { Dialog, DialogContent } from '@mui/material';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import Image from 'next/image';
+import { RootState } from '@/store/store';
 import './style.css';
 
+
+import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
+import { txDeposit } from '@/store/features/gov/govSlice';
+
 const DepositPopup = ({
+  chainID,
   votingEndsInDays,
   denom,
   proposalId,
   proposalname,
 }: {
-  votingEndsInDays: number;
-  denom: string;
+  chainID: string,
+  votingEndsInDays: string;
+  denom?: string;
   proposalId: number;
   proposalname: string;
 }) => {
+  const networks = useAppSelector((state: RootState) => state.wallet.networks);
+  const allChainInfo = networks[chainID];
+  const chainInfo = allChainInfo.network;
+  const address = allChainInfo?.walletInfo?.bech32Address;
+  const minimalDenom =
+    allChainInfo.network.config.stakeCurrency.coinMinimalDenom;
+
   const [isOpen, setIsOpen] = useState(true);
+  const [amount, setAmount] = useState(0);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -24,6 +40,31 @@ const DepositPopup = ({
   if (!isOpen) {
     return null;
   }
+
+  const dispatch = useAppDispatch();
+  const { getVoteTxInputs } = useGetTxInputs();
+
+  const handleDeposit = () => {
+    const { aminoConfig, prefix, rest, feeAmount, address, rpc, minimalDenom } =
+      getVoteTxInputs(chainID);
+
+    dispatch(
+      txDeposit({
+        depositer: address,
+        proposalId: proposalId,
+        amount: amount,
+        denom: minimalDenom,
+        chainID: chainID,
+        rpc: rpc,
+        rest: rest,
+        aminoConfig: aminoConfig,
+        prefix: prefix,
+        feeAmount: feeAmount,
+        feegranter: ''
+      })
+    );
+  };
+
 
   return (
     <Dialog
@@ -76,14 +117,14 @@ const DepositPopup = ({
 
                 <div className="placeholder-text ">
                   <div className="flex w-full justify-between">
-                    <input type="text" placeholder="Enter Amount Here" />
+                    <input type="text" value={amount} onChange={(e) => setAmount(parseInt(e.target.value))} placeholder="Enter Amount Here" />
                     <div className="proposal-text-extralight flex items-center">
-                      {denom}
+                      {minimalDenom}
                     </div>
                   </div>
                 </div>
                 <div>
-                  <button className="button w-36">
+                  <button onClick={handleDeposit} disabled={!amount || amount < 0} className="button w-36">
                     <p className="proposal-text-medium">Deposit</p>
                   </button>
                 </div>

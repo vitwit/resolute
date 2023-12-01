@@ -68,7 +68,7 @@ const ProposalOverviewDeposit = () => {
         {isDepositPopupOpen && (
           <>
             <DepositPopup
-              votingEndsInDays={2}
+              votingEndsInDays={'2'}
               denom={atomsValue}
               proposalId={123}
               proposalname={'Adjust Trade and Earn Rewards Margined Protocol'}

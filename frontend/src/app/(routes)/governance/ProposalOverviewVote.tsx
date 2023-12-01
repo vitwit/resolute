@@ -1,17 +1,84 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+
+import { RootState } from '@/store/store';
+import { useSearchParams, useParams } from 'next/navigation';
+
 import CustomPieChart from './CustomPiechart';
 import './style.css';
 import ProposalDetailsVoteCard from './ProposalDetailsVoteCard';
 import VotePopup from './VotePopup';
 import proposalOverviewVoteData from './proposalvoteData.json';
 
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { getProposal, getGovTallyParams } from '@/store/features/gov/govSlice';
+import { get, parseInt } from 'lodash';
+import { number } from 'mathjs';
+import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+
+function parseNumber(value: string | string[]) {
+  if (typeof value === 'string') {
+    return parseInt(value)
+  }
+
+  return 0
+}
+
 const ProposalOverviewVote = () => {
   const [isVotePopupOpen, setVotePopupOpen] = useState(false);
   const toggleVotePopup = () => {
     setVotePopupOpen(!isVotePopupOpen);
   };
+
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const { govId } = params;
+  const proposalId: number = parseNumber(govId)
+  const chainID = searchParams.getAll("chainId")[0]
+
+  const dispatch = useAppDispatch();
+  const proposalInfo = useAppSelector((state: RootState) => state.gov.proposalDetails);
+  console.log('proposal info', proposalInfo, chainID)
+  const networks = useAppSelector((state: RootState) => state.wallet.networks);
+  const tallyResult = useAppSelector((state: RootState) => {
+    if (state.gov.chains[chainID] && state.gov.chains[chainID].tally && state.gov.chains[chainID].tally.proposalTally) {
+      console.log('tally===', chainID, state.gov.chains)
+      return state.gov.chains[chainID].tally.proposalTally[proposalId]
+    }
+  })
+
+  const tallyParams = useAppSelector((state: RootState) => state.gov.chains[chainID]?.tallyParams)
+
+  const totalVotes = Number(get(tallyResult, 'yes')) + Number(get(tallyResult, 'no')) +
+    Number(get(tallyResult, 'abstain')) + Number(get(tallyResult, 'no_with_veto'))
+
+  const getVotesPercentage = (votesCount: number) => {
+    return votesCount && totalVotes && ((votesCount / totalVotes) * 100).toFixed(2) || 0
+  }
+
+  const tallyData = [
+    { value: Number(get(tallyResult, 'yes', 0)) || 0, color: '#4AA29C', label: 'Yes' },
+    { value: Number(get(tallyResult, 'no', 0)) || 0, color: '#E57575', label: 'No' },
+    { value: Number(get(tallyResult, 'abstain', 0)) || 0, color: '#EFFF34', label: 'Abstain' },
+    { value: Number(get(tallyResult, 'no_with_veto', 0)) || 0, color: '#EFFF34', label: 'Veto' },
+  ];
+
+
+  const data = [
+    { value: getVotesPercentage(Number(get(tallyResult, 'yes', 0))) || 0, color: '#4AA29C', label: 'Yes' },
+    { value: getVotesPercentage(Number(get(tallyResult, 'no', 0))) || 0, color: '#E57575', label: 'No' },
+    { value: getVotesPercentage(Number(get(tallyResult, 'abstain', 0))) || 0, color: '#EFFF34', label: 'Abstain' },
+    { value: getVotesPercentage(Number(get(tallyResult, 'no_with_veto', 0))) || 0, color: '#EFFF34', label: 'Veto' },
+  ];
+
+  useEffect(() => {
+    const allChainInfo = networks[chainID];
+    const chainInfo = allChainInfo.network;
+    dispatch(getProposal({ chainID, baseURL: chainInfo.config.rest, proposalId: proposalId }))
+
+    dispatch(getGovTallyParams({chainID, baseURL: chainInfo.config.rest}))
+  }, [])
 
   return (
     <div className="space-y-6 pl-10 pr-0 pt-6 pb-0">
@@ -37,7 +104,7 @@ const ProposalOverviewVote = () => {
                   alt="Cosmos-Logo"
                 />
                 <p className="proposal-text-normal flex items-center">
-                  {proposalOverviewVoteData.proposalOverviewVoteData.proposalId}{' '}
+                  {get(proposalInfo, 'proposal_id')}{' '}
                   | Proposal
                 </p>
               </div>
@@ -50,21 +117,21 @@ const ProposalOverviewVote = () => {
           </div>
           <div className="space-y-6">
             <div className="proposal-text-medium">
-              {proposalOverviewVoteData.proposalOverviewVoteData.proposalname}
+              {get(proposalInfo, 'content.title')}
             </div>
 
             <p className="proposal-text-normal">
-              {proposalOverviewVoteData.proposalOverviewVoteData.proposalText}
+              {get(proposalInfo, 'content.description')}
             </p>
           </div>
         </div>
-        {isVotePopupOpen && (
+        {isVotePopupOpen && get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD' && (
           <>
             <VotePopup
-              chainID=''
-              votingEndsInDays={'2'}
-              proposalId={123}
-              proposalname={'Adjust Trade and Earn Rewards Margined Protocol'}
+              chainID={chainID}
+              votingEndsInDays={getTimeDifferenceToFutureDate(get(proposalInfo, 'voting_end_time'))}
+              proposalId={proposalId}
+              proposalname={get(proposalInfo, 'content.title')}
             />
           </>
         )}
@@ -91,15 +158,15 @@ const ProposalOverviewVote = () => {
                 </div>
                 <div>
                   <div className="flex justify-between items-start gap-2">
-                    {proposalOverviewVoteData.proposalOverviewVoteData.dataset.map(
+                    {tallyData.map(
                       (item, index) => (
                         <div key={index} className="flex items-center gap-2">
                           <CustomPieChart
-                            value={item.value}
+                            value={Number(item.value)}
                             color={item.color}
                             label={item.label}
                           />
-                          <div className="proposal-text-extralight">{`${item.value}% ${item.label}`}</div>
+                          <div className="proposal-text-extralight">{`${item.value} ${item.label}`}</div>
                         </div>
                       )
                     )}
@@ -123,10 +190,7 @@ const ProposalOverviewVote = () => {
                   </div>
 
                   <p className="proposal-text-big">
-                    {
-                      proposalOverviewVoteData.proposalOverviewVoteData
-                        .totalvotes
-                    }
+                    {totalVotes | 0}
                   </p>
                 </div>
               </div>
@@ -144,14 +208,14 @@ const ProposalOverviewVote = () => {
               </div>
 
               <div className="flex justify-between items-start gap-2">
-                {proposalOverviewVoteData.proposalOverviewVoteData.data.map(
+                {data.map(
                   (item, index) => (
                     <div
                       key={index}
                       className="flex items-center gap-2 justify-between"
                     >
                       <CustomPieChart
-                        value={item.value}
+                        value={Number(item.value)}
                         color={item.color}
                         label={item.label}
                       />
@@ -164,20 +228,20 @@ const ProposalOverviewVote = () => {
           </div>
           <ProposalDetailsVoteCard
             createdAt={
-              proposalOverviewVoteData.proposalOverviewVoteData.createdAt
+              get(proposalInfo, 'submit_time', '-')
             }
             startedAt={
-              proposalOverviewVoteData.proposalOverviewVoteData.startedAt
+              get(proposalInfo, 'voting_start_time', '-')
             }
-            endsAt={proposalOverviewVoteData.proposalOverviewVoteData.endsAt}
+            endsAt={get(proposalInfo, 'voting_end_time', '-')}
             proposalNetwork={
-              proposalOverviewVoteData.proposalOverviewVoteData.proposalNetwork
+              chainID
             }
             createdby={
               proposalOverviewVoteData.proposalOverviewVoteData.createdby
             }
             depositamount={
-              proposalOverviewVoteData.proposalOverviewVoteData.depositamount
+              `${get(proposalInfo, 'total_deposit[0].amount')} ${get(proposalInfo, 'total_deposit[0].denom')}`
             }
           />
         </div>

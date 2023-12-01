@@ -19,6 +19,7 @@ import {
   GetProposalInputs,
   TxVoteInputs,
   TxDepositInputs,
+  GovParamsResponse,
 } from '@/types/gov';
 import { GAS_FEE, PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
 import { signAndBroadcast } from '@/utils/signing';
@@ -46,6 +47,11 @@ interface Chain {
     errMsg: string;
     params: DepositParams;
   };
+  tallyParams: {
+    status: TxStatus;
+    errMsg: string;
+    params: GovParamsResponse;
+  },
   votes: VotesData;
   tally: ProposalTallyData;
   tx: {
@@ -140,6 +146,24 @@ export const getProposal = createAsyncThunk(
     try {
       const response = await govService.proposal(data.baseURL, data.proposalId);
       console.log('proposal Result', response)
+      return {
+        chainID: data.chainID,
+        data: response.data,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const getGovTallyParams = createAsyncThunk(
+  'gov/tally-params',
+  async (data: GetDepositParamsInputs, { rejectWithValue }) => {
+    try {
+      const response = await govService.govTallyParams(data.baseURL);
+      console.log('tally params 111', response, data)
       return {
         chainID: data.chainID,
         data: response.data,
@@ -311,8 +335,10 @@ export const txVote = createAsyncThunk(
         data?.justification || '',
         `${data.feeAmount}${data.denom}`,
         data.rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined
+        // data.feegranter?.length > 0 ? data.feegranter : undefined
       );
+
+      console.log('tx result==============', result)
       if (result?.code === 0) {
         dispatch(
           setTxHash({
@@ -331,6 +357,7 @@ export const txVote = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
+      console.log('err in catch ', error)
       if (error instanceof AxiosError) {
         dispatch(
           setError({
@@ -471,6 +498,38 @@ export const govSlice = createSlice({
         };
         state.chains[chainID].active = result;
         state.activeProposalsLoading--;
+      });
+
+    //proposals in tally params
+    builder
+      .addCase(getGovTallyParams.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].tallyParams = {
+          status: TxStatus.PENDING,
+          errMsg: '',
+          params: state.chains[chainID].tallyParams.params,
+        }
+      })
+      .addCase(getGovTallyParams.fulfilled, (state, action) => {
+        const chainID = action.payload?.chainID || '';
+        if (chainID.length) {
+          const result = {
+            status: TxStatus.IDLE,
+            errMsg: '',
+            params: action.payload?.data,
+          };
+          state.chains[chainID].tallyParams = result;
+        }
+      })
+      .addCase(getGovTallyParams.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const payload = action.payload as { message: string };
+        state.chains[chainID].tallyParams = {
+          status: TxStatus.REJECTED,
+          errMsg: payload?.message,
+          params: state.chains[chainID]?.tallyParams?.params,
+        }
+
       });
 
     //proposals in deposit period
@@ -620,7 +679,7 @@ export const govSlice = createSlice({
           // };
 
           state.proposalDetails = action.payload.data.proposal
-        
+
         } else {
           const currentProposalsState = state.chains[chainID].deposit.proposals;
           if (!currentProposalsState.length) {

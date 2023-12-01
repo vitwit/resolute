@@ -24,6 +24,14 @@ interface GovProposal {
   voting_end_time: string;
 }
 
+interface ProposalInfo{
+  status: TxStatus;
+  errMsg: string;
+  proposal: GovProposal
+}
+
+
+
 interface GetProposalsInVotingResponse {
   proposals: GovProposal[];
   pagination: GovPagination;
