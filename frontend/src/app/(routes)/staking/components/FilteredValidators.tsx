@@ -35,16 +35,16 @@ const FilteredValidators = ({
         <>
           <div className="flex flex-col gap-6">
             {slicedValidators?.map((validatorAddress) => {
-              let validatorsSet;
+              const validatorsSet = active
+                ? validators.active
+                : validators.inactive;
               let rank;
               if (active) {
-                validatorsSet = validators.active;
                 rank = getValidatorRank(
                   validatorAddress,
                   validators.activeSorted
                 );
               } else {
-                validatorsSet = validators.inactive;
                 rank = getValidatorRank(validatorAddress, [
                   ...validators.activeSorted,
                   ...validators.inactiveSorted,

@@ -1,5 +1,9 @@
 import { StakingMenuAction, Validator } from '@/types/staking';
-import { canDelegate, getValidatorStatus } from '@/utils/util';
+import {
+  canDelegate,
+  formatCommission,
+  getValidatorStatus,
+} from '@/utils/util';
 import React from 'react';
 import ValidatorLogo from './ValidatorLogo';
 import { Tooltip } from '@mui/material';
@@ -47,7 +51,7 @@ const ValidatorComponent = ({
       </div>
       <div className="leading-3">{rank}</div>
       <div className="leading-3 min-w-[132px] text-center">
-        {commission ? String(commission.toFixed(0)) + '%' : '-'} Commission
+        {formatCommission(commission)} Commission
       </div>
       {active ? null : (
         <div className="min-w-[102px] text-center leading-3">

@@ -25,7 +25,7 @@ interface Validator {
 
 interface Validators {
   status: TxStatus;
-  active: { [key: string]: Validator };
+  active: Record<string, Validator>;
   inactive: Record<string, Validator>;
   activeSorted: string[];
   inactiveSorted: string[];
@@ -323,4 +323,11 @@ interface StakingCardActionButtonProps {
   icon: string;
   action: () => void;
   txStatus: string;
+}
+
+interface AllValidatorsProps {
+  validators: Validators;
+  currency: Currency;
+  onMenuAction: StakingMenuAction;
+  validatorsStatus: TxStatus;
 }

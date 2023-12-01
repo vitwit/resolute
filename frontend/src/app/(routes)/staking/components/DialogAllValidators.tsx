@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import ActiveValidators from './ActiveValidators';
 import InactiveValidators from './InactiveValidators';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
+import { allValidatorDialogStyles } from '../styles';
 
 type HandleClose = () => void;
 
@@ -33,14 +34,7 @@ const DialogAllValidators = ({
         setActive(true);
       }}
       maxWidth="lg"
-      PaperProps={{
-        sx: {
-          position: 'relative',
-          height: '800px',
-          borderRadius: '16px',
-          background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
-        },
-      }}
+      PaperProps={allValidatorDialogStyles}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="allvalidators px-10 py-6 flex justify-end w-[890px]">

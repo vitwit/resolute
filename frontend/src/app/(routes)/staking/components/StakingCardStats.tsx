@@ -2,7 +2,7 @@ import {
   StakingCardStatsProps,
   StakingCardsStatsItemProps,
 } from '@/types/staking';
-import { formatCoin } from '@/utils/util';
+import { formatCoin, formatCommission } from '@/utils/util';
 import React from 'react';
 
 const StakingCardStats = ({
@@ -23,7 +23,7 @@ const StakingCardStats = ({
       />
       <StakingCardStatsItem
         name={'Commission'}
-        value={commission ? String(commission.toFixed(0)) + '%' : '-'}
+        value={formatCommission(commission)}
       />
     </div>
   );

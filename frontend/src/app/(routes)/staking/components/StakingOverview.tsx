@@ -83,14 +83,14 @@ const StakingOverview = () => {
         dispatch(getParams({ baseURL, chainID }));
       });
     }
-  }, [chainIDs]);
+  }, []);
 
   return (
     <div className="staking-main">
       <h2 className="txt-lg font-medium mb-6">Staking</h2>
       {hasDelegations ? (
         <div className="overview-grid">
-          {chainIDs.map((chainID, index) => {
+          {chainIDs.map((chainID) => {
             const delegations = stakingData[chainID]?.delegations.delegations;
             const validators = stakingData[chainID]?.validators;
             const currency = networks[chainID]?.network?.config?.currencies[0];
@@ -99,7 +99,7 @@ const StakingOverview = () => {
 
             return (
               <ChainDelegations
-                key={index}
+                key={chainID}
                 chainID={chainID}
                 chainName={chainName}
                 delegations={delegations}
@@ -120,7 +120,7 @@ const StakingOverview = () => {
         <>
           <h2 className="txt-lg font-medium my-6">Unbonding</h2>
           <div className="unbondings-grid">
-            {chainIDs.map((chainID, index) => {
+            {chainIDs.map((chainID) => {
               const unbondingDelegations =
                 stakingData[chainID]?.unbonding.unbonding;
               const validators = stakingData[chainID]?.validators;
@@ -129,7 +129,7 @@ const StakingOverview = () => {
 
               return (
                 <ChainUnbondings
-                  key={index}
+                  key={chainID}
                   chainID={chainID}
                   chainName={chainName}
                   unbondings={unbondingDelegations}

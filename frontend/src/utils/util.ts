@@ -231,7 +231,7 @@ export function parseDelegation({
   currency: Currency;
 }) {
   let result = 0.0;
-  delegations?.map((item) => {
+  delegations?.forEach((item) => {
     if (item.delegation.validator_address === validator?.operator_address) {
       result +=
         parseFloat(item.delegation.shares) / 10 ** currency?.coinDecimals;
@@ -259,4 +259,8 @@ export function parseDenomAmount(
   coinDecimals: number
 ): number {
   return parseFloat(balance) / 10.0 ** coinDecimals;
+}
+
+export function formatCommission(commission: number): string {
+  return commission ? String(commission.toFixed(0)) + '%' : '-';
 }

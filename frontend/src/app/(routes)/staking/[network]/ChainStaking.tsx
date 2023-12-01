@@ -14,19 +14,20 @@ const ChainStaking = ({
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
-  let validChain = false;
-  Object.keys(nameToChainIDs).forEach((chain) => {
-    if (paramChain.toLowerCase() === chain.toLowerCase()) {
-      validChain = true;
-    }
-  });
+  const validChain = Object.keys(nameToChainIDs).some(
+    (chain) => paramChain.toLowerCase() === chain.toLowerCase()
+  );
   const validatorAddress = queryParams?.validator_address || '';
   const action = queryParams?.action || '';
 
   return (
     <div>
       {validChain ? (
-        <StakingPage chainName={paramChain} validatorAddress={validatorAddress} action={action} />
+        <StakingPage
+          chainName={paramChain}
+          validatorAddress={validatorAddress}
+          action={action}
+        />
       ) : (
         <>
           <div className="flex justify-center items-center h-screen w-full text-white txt-lg">

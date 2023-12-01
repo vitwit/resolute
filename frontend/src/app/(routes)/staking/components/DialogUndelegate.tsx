@@ -1,9 +1,5 @@
-import {
-  DelegationResponse,
-  DialogUndelegateProps,
-  Validator,
-} from '@/types/staking';
-import { formatCoin, parseDenomAmount } from '@/utils/util';
+import { DialogUndelegateProps } from '@/types/staking';
+import { formatCoin, parseDelegation } from '@/utils/util';
 import {
   Dialog,
   DialogContent,
@@ -14,26 +10,7 @@ import Image from 'next/image';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { dialogBoxStyles } from '../styles';
-import { CLOSE_ICON_PATH } from '@/utils/constants';
-
-function parseDelegation({
-  delegations,
-  validator,
-  currency,
-}: {
-  delegations: DelegationResponse[];
-  validator: Validator | undefined;
-  currency: Currency;
-}) {
-  let result = 0.0;
-  delegations?.forEach((item) => {
-    if (item.delegation.validator_address === validator?.operator_address) {
-      result += parseDenomAmount(item.delegation.shares, currency.coinDecimals);
-    }
-  });
-
-  return result;
-}
+import { CLOSE_ICON_PATH, STAKING_DIALOG_IMAGE_PATH } from '@/utils/constants';
 
 const DialogUndelegate = ({
   open,
@@ -94,7 +71,7 @@ const DialogUndelegate = ({
           </div>
           <div className="mt-6 mb-[72px] flex gap-6 pr-10 pl-6 items-center">
             <Image
-              src="/delegate-popup-image.png"
+              src={STAKING_DIALOG_IMAGE_PATH}
               height={360}
               width={235}
               alt="Undelegate"

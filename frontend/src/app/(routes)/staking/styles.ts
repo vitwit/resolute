@@ -32,3 +32,12 @@ export const dialogBoxStyles = {
     background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
   },
 };
+
+export const allValidatorDialogStyles = {
+  sx: {
+    position: 'relative',
+    height: '800px',
+    borderRadius: '16px',
+    background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
+  },
+};

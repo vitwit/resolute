@@ -165,13 +165,16 @@ const ChainDelegations = ({
                 reward[j].amount,
                 currency?.coinDecimals
               );
-              setValidatorRewards(valReward);
+              setValidatorRewards((prevState) => ({
+                ...prevState,
+                ...valReward,
+              }));
             }
           }
         } else {
           const valReward = validatorRewards;
           valReward[rewards[i].validator_address] = 0.0;
-          setValidatorRewards(valReward);
+          setValidatorRewards((prevState) => ({ ...prevState, ...valReward }));
         }
       }
     }
@@ -197,9 +200,9 @@ const ChainDelegations = ({
 
   return (
     <>
-      {delegations?.delegation_responses.map((row, index) => (
+      {delegations?.delegation_responses.map((row) => (
         <StakingCard
-          key={index}
+          key={row.delegation.validator_address}
           validator={
             validators?.active[row.delegation.validator_address]?.description
               .moniker
