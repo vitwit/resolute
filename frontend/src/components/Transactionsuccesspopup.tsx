@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 
 const Transactionsuccesspopup = ({ tx }: { tx: Transaction }) => {
-  const feeAmount = tx.fee && tx.fee.length > 0 ? tx.fee[0].amount : '0.012';
-  const feeDenom = tx.fee && tx.fee.length > 0 ? tx.fee[0].denom : 'ATOMS';
+  const feeAmount = tx.fee && tx.fee.length > 0 ? tx.fee[0].amount : '0';
+  const feeDenom = tx.fee && tx.fee.length > 0 ? tx.fee[0].denom : '';
   const [isOpen, setIsOpen] = useState(true);
   const handleClose = () => {
     setIsOpen(false);
