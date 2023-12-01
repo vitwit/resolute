@@ -201,6 +201,7 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
                 <Image
                   onClick={() => setOpenMemo((openMemo) => !openMemo)}
                   src="/drop-down-icon.svg"
+                  className='cursor-pointer'
                   width={16}
                   height={16}
                   alt=""
