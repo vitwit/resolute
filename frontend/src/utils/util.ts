@@ -1,3 +1,6 @@
+import { DelegationResponse, Validator } from '@/types/staking';
+import { parseBalance } from './denom';
+
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
 ): string => {
@@ -157,6 +160,7 @@ export function shortenAddress(bech32: string, maxCharacters: number) {
 
   return prefix + '1' + former + '...' + latter;
 }
+
 export const getValidatorRank = (
   validator: string,
   validatorsList: string[]
@@ -216,3 +220,43 @@ export const changeNetworkRoute = (
   const route = pathName === '/' ? '/overview' : '/' + pathName.split('/')?.[1];
   return `${route}/${chainName.toLowerCase()}`;
 };
+
+export function parseDelegation({
+  delegations,
+  validator,
+  currency,
+}: {
+  delegations: DelegationResponse[];
+  validator: Validator | undefined;
+  currency: Currency;
+}) {
+  let result = 0.0;
+  delegations?.map((item) => {
+    if (item.delegation.validator_address === validator?.operator_address) {
+      result +=
+        parseFloat(item.delegation.shares) / 10 ** currency?.coinDecimals;
+    }
+  });
+
+  return result;
+}
+
+export function canDelegate(validatorStatus: string): boolean {
+  return validatorStatus.toLowerCase() !== 'jailed';
+}
+
+export function formatStakedAmount(tokens: Coin[], currency: Currency): string {
+  const balance = parseBalance(
+    tokens,
+    currency.coinDecimals,
+    currency.coinMinimalDenom
+  );
+  return formatCoin(balance, currency.coinDenom);
+}
+
+export function parseDenomAmount(
+  balance: string,
+  coinDecimals: number
+): number {
+  return parseFloat(balance) / 10.0 ** coinDecimals;
+}

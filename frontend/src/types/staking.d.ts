@@ -125,7 +125,6 @@ interface TxRedelegateInputs {
   destVal: string;
   amount: number;
   denom: string;
-  prefix: string;
   feeAmount: number;
   feegranter: string;
 }
@@ -136,7 +135,6 @@ interface TxUndelegateInputs {
   validator: string;
   amount: number;
   denom: string;
-  prefix: string;
   feeAmount: number;
   feegranter: string;
 }
@@ -147,7 +145,6 @@ interface TxDelegateInputs {
   validator: string;
   amount: number;
   denom: string;
-  prefix: string;
   feeAmount: number;
   feegranter: string;
 }
@@ -159,4 +156,171 @@ interface TxReStakeInputs {
   feeAmount: number;
   denom: string;
   feegranter: string;
+}
+
+type StakingMenuAction = (type: string, validator: Validator) => void;
+
+interface ChainDelegationsProps {
+  chainID: string;
+  chainName: string;
+  delegations: GetDelegationsResponse;
+  validators: Validators;
+  currency: Currency;
+  rewards: DelegatorRewards[];
+  validatorAddress: string;
+  action: string;
+  chainSpecific: boolean;
+}
+
+interface ChainUnbondingsProps {
+  chainID: string;
+  chainName: string;
+  unbondings: GetUnbondingResponse;
+  validators: Validators;
+  currency: Currency;
+}
+
+interface DelegateTxInputs {
+  validator: string;
+  amount: number;
+}
+
+interface UndelegateTxInputs {
+  validator: string;
+  amount: number;
+}
+
+interface RedelegateTxInputs {
+  src: string;
+  amount: number;
+  dest: string;
+}
+
+interface StakingCardProps {
+  validator: string;
+  identity: string;
+  chainName: string;
+  commission: number;
+  delegated: number;
+  networkLogo: string;
+  coinDenom: string;
+  rewards: number;
+  onMenuAction: StakingMenuAction;
+  validatorInfo: Validator;
+  chainID: string;
+}
+
+interface DialogDelegateProps {
+  open: boolean;
+  onClose: () => void;
+  validator: Validator | undefined;
+  stakingParams: Params | undefined;
+  availableBalance: number;
+  loading: TxStatus;
+  displayDenom: string;
+  onDelegate: (data: { validator: string; amount: number }) => void;
+}
+
+interface DialogUndelegateProps {
+  open: boolean;
+  onClose: () => void;
+  validator: Validator | undefined;
+  stakingParams: Params | undefined;
+  onUndelegate: (data: { validator: string; amount: number }) => void;
+  loading: TxStatus;
+  delegations: DelegationResponse[];
+  currency: Currency;
+}
+
+interface DialogRedelegateProps {
+  open: boolean;
+  onClose: () => void;
+  validator: Validator | undefined;
+  stakingParams: Params | undefined;
+  loading: TxStatus;
+  active: ValidatorSet;
+  inactive: ValidatorSet;
+  delegations: DelegationResponse[];
+  onRedelegate: (data: { src: string; amount: number; dest: string }) => void;
+  currency: Currency;
+}
+
+interface ValidatorLogoProps {
+  identity: string;
+  width: number;
+  height: number;
+}
+
+interface StakingSidebarProps {
+  validators: Validators;
+  currency: Currency;
+  chainID: string;
+  onMenuAction: StakingMenuAction;
+}
+
+interface ValidatorItemProps {
+  moniker: string;
+  identity: string;
+  commission: number;
+  tokens: number;
+  currency: Currency;
+  onMenuAction: StakingMenuAction;
+  validators: Validators;
+  validator: string;
+}
+
+interface UnbondingCardProps {
+  validator: string;
+  identity: string;
+  chainName: string;
+  amount: number;
+  networkLogo: string;
+  currency: Currency;
+  completionTime: string;
+}
+
+interface UnbondingCardStatsItemProps {
+  name: string;
+  value: string;
+}
+
+interface UnbondingCardStatsProps {
+  completionTime: string;
+  amount: number;
+  coinDenom: string;
+}
+
+interface StakingCardHeaderProps {
+  validator: string;
+  identity: string;
+  network: string;
+  networkLogo: string;
+}
+
+interface StakingCardStatsProps {
+  delegated: number;
+  rewards: number;
+  commission: number;
+  coinDenom: string;
+}
+
+interface StakingCardsStatsItemProps {
+  name: string;
+  value: string;
+}
+
+type ToggleMenu = () => void;
+
+interface StakingCardActionsProps {
+  toggleMenu: ToggleMenu;
+  menuRef: React.RefObject<HTMLDivElement>;
+  chainID: string;
+  validatorAddress: string;
+}
+
+interface StakingCardActionButtonProps {
+  name: string;
+  icon: string;
+  action: () => void;
+  txStatus: string;
 }

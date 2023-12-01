@@ -6,6 +6,7 @@ import { RootState } from '@/store/store';
 import {
   getAllValidators,
   getDelegations,
+  getParams,
   getUnbonding,
 } from '@/store/features/staking/stakeSlice';
 
@@ -13,10 +14,22 @@ import ChainDelegations from './ChainDelegations';
 import StakingSidebar from './StakingSidebar';
 import ChainUnbondings from './ChainUnbondings';
 import { getDelegatorTotalRewards } from '@/store/features/distribution/distributionSlice';
+import { Validator } from '@/types/staking';
+import { useRouter } from 'next/navigation';
+import { getBalances } from '@/store/features/bank/bankSlice';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
-const StakingPage = ({ chainName }: { chainName: string }) => {
+const StakingPage = ({
+  chainName,
+  validatorAddress,
+  action,
+}: {
+  chainName: string;
+  validatorAddress: string;
+  action: string;
+}) => {
   const dispatch = useAppDispatch();
-  const networks = useAppSelector((state: RootState) => state.wallet.networks);
+  const router = useRouter();
   const nameToChainIDs: Record<string, string> = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -32,16 +45,22 @@ const StakingPage = ({ chainName }: { chainName: string }) => {
   );
   const currency = useAppSelector(
     (state: RootState) =>
-      state.wallet.networks[chainID].network?.config?.currencies[0]
+      state.wallet.networks[chainID]?.network?.config?.currencies[0]
   );
   const rewards = useAppSelector(
     (state: RootState) =>
       state.distribution.chains?.[chainID]?.delegatorRewards.list
   );
-  const allChainInfo = networks[chainID];
-  const chainInfo = allChainInfo?.network;
-  const address = allChainInfo?.walletInfo?.bech32Address;
-  const baseURL = chainInfo?.config?.rest;
+  const hasUnbondings = useAppSelector(
+    (state: RootState) => state.staking.chains[chainID]?.unbonding?.hasUnbonding
+  );
+  const hasDelegations = useAppSelector(
+    (state: RootState) =>
+      state.staking.chains[chainID]?.delegations?.hasDelegations
+  );
+
+  const { getChainInfo } = useGetChainInfo();
+  const { address, baseURL } = getChainInfo(chainID);
 
   useEffect(() => {
     dispatch(
@@ -72,7 +91,22 @@ const StakingPage = ({ chainName }: { chainName: string }) => {
         denom: currency.coinMinimalDenom,
       })
     );
-  }, []);
+    dispatch(
+      getBalances({
+        baseURL,
+        address,
+        chainID,
+      })
+    );
+    dispatch(getParams({ baseURL, chainID }));
+  }, [chainID]);
+
+  const onMenuAction = (type: string, validator: Validator) => {
+    const valAddress = validator?.operator_address;
+    if (valAddress?.length) {
+      router.push(`?validator_address=${valAddress}&action=${type}`);
+    }
+  };
 
   return (
     <div className="flex justify-between">
@@ -86,26 +120,35 @@ const StakingPage = ({ chainName }: { chainName: string }) => {
             validators={validators}
             currency={currency}
             rewards={rewards}
+            validatorAddress={validatorAddress}
+            action={action}
+            chainSpecific={true}
           />
         </div>
+        {!hasDelegations ? (
+          <div className="no-delegations">- No Delegations -</div>
+        ) : null}
 
-        <div>
-          <h2 className="txt-lg font-medium my-6">Unbonding</h2>
-          <div className="overview-grid">
-            <ChainUnbondings
-              chainID={chainID}
-              chainName={chainName}
-              unbondings={unbondingDelegations}
-              validators={validators}
-              currency={currency}
-            />
+        {hasUnbondings ? (
+          <div>
+            <h2 className="txt-lg font-medium my-6">Unbonding</h2>
+            <div className="unbondings-grid">
+              <ChainUnbondings
+                chainID={chainID}
+                chainName={chainName}
+                unbondings={unbondingDelegations}
+                validators={validators}
+                currency={currency}
+              />
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
       <StakingSidebar
         chainID={chainID}
         validators={validators}
         currency={currency}
+        onMenuAction={onMenuAction}
       />
     </div>
   );

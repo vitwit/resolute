@@ -29,6 +29,7 @@ interface Chain {
   delegations: {
     status: TxStatus;
     delegations: GetDelegationsResponse;
+    hasDelegations: boolean;
     errMsg: string;
     pagination: Pagination | undefined;
     delegatedTo: Record<string, boolean>;
@@ -37,6 +38,7 @@ interface Chain {
   unbonding: {
     status: TxStatus;
     unbonding: GetUnbondingResponse;
+    hasUnbonding: boolean;
     errMsg: string;
     pagination: Pagination | undefined;
   };
@@ -58,6 +60,8 @@ interface StakingState {
   validatorsLoading: number;
   delegationsLoading: number;
   chains: Chains;
+  hasDelegations: boolean;
+  hasUnbonding: boolean;
   defaultState: Chain;
 }
 
@@ -65,6 +69,8 @@ const initialState: StakingState = {
   chains: {},
   validatorsLoading: 0,
   delegationsLoading: 0,
+  hasUnbonding: false,
+  hasDelegations: false,
   defaultState: {
     paramsStatus: TxStatus.INIT,
     validators: {
@@ -89,6 +95,7 @@ const initialState: StakingState = {
           total: '',
         },
       },
+      hasDelegations: false,
       errMsg: '',
       pagination: undefined,
       delegatedTo: {},
@@ -103,6 +110,7 @@ const initialState: StakingState = {
           total: '',
         },
       },
+      hasUnbonding: false,
       errMsg: '',
       pagination: undefined,
     },
@@ -174,7 +182,7 @@ export const txDelegate = createAsyncThunk(
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
-        data.prefix,
+        data.basicChainInfo.prefix,
         [msg],
         860000,
         '',
@@ -218,7 +226,7 @@ export const txReDelegate = createAsyncThunk(
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
-        data.prefix,
+        data.basicChainInfo.prefix,
         [msg],
         GAS_FEE,
         '',
@@ -258,7 +266,7 @@ export const txUnDelegate = createAsyncThunk(
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
-        data.prefix,
+        data.basicChainInfo.prefix,
         [msg],
         860000,
         '',
@@ -500,7 +508,6 @@ export const stakeSlice = createSlice({
         const result: { validators: Validator[] } = { validators: [] };
         result.validators = action.payload.data.validators;
         const res = action.payload.data.validators;
-        console.log(res)
         for (let index = 0; index < res.length; index++) {
           const element = res[index];
           if (
@@ -624,14 +631,19 @@ export const stakeSlice = createSlice({
         state.delegationsLoading--;
         const chainID = action.meta?.arg?.chainID;
         if (state.chains[chainID]) {
+          const delegation_responses = action.payload.delegations;
+          if (delegation_responses?.length) {
+            state.chains[chainID].delegations.hasDelegations = true;
+            state.hasDelegations = true;
+          }
           state.chains[chainID].delegations.status = TxStatus.IDLE;
           state.chains[chainID].delegations.delegations.delegation_responses =
-            action.payload.delegations;
+            delegation_responses;
           state.chains[chainID].delegations.errMsg = '';
 
           let total = 0.0;
-          for (let i = 0; i < action.payload.delegations.length; i++) {
-            const delegation = action.payload.delegations[i];
+          for (let i = 0; i < delegation_responses.length; i++) {
+            const delegation = delegation_responses[i];
             state.chains[chainID].delegations.delegatedTo[
               delegation?.delegation?.validator_address
             ] = true;
@@ -672,9 +684,16 @@ export const stakeSlice = createSlice({
       })
       .addCase(getUnbonding.fulfilled, (state, action) => {
         const { chainID } = action.meta.arg;
+        const unbonding_responses = action.payload.data.unbonding_responses;
+        if (unbonding_responses?.length) {
+          if (unbonding_responses[0].entries.length) {
+            state.chains[chainID].unbonding.hasUnbonding = true;
+            state.hasUnbonding = true;
+          }
+        }
         state.chains[chainID].unbonding.status = TxStatus.IDLE;
         state.chains[chainID].unbonding.unbonding.unbonding_responses =
-          action.payload.data.unbonding_responses;
+          unbonding_responses;
         state.chains[chainID].unbonding.pagination =
           action.payload.data.pagination;
         state.chains[chainID].unbonding.errMsg = '';

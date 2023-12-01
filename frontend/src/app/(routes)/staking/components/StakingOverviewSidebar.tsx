@@ -1,23 +1,32 @@
 import { formatDollarAmount } from '@/utils/util';
-import Image from 'next/image';
 import React from 'react';
 import StakingStatsCard from './StakingStatsCard';
+import TopNav from '@/components/TopNav';
+import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { RootState } from '@/store/store';
+import StakingSideBarAds from './StakingSideBarAds';
 
-const StakingOverviewSidebar = ({
-  totalStakedAmount,
-}: {
-  totalStakedAmount: number;
-}) => {
+const StakingOverviewSidebar = () => {
+  const nameToChainIDs = useAppSelector(
+    (state: RootState) => state.wallet.nameToChainIDs
+  );
+  const chainIDs = Object.values(nameToChainIDs);
+
+  const [totalStakedAmount, , rewards] = useGetAssetsAmount(chainIDs);
   return (
     <div className="staking-sidebar">
       <div className="flex flex-col gap-6">
+        <TopNav />
         <div className="flex gap-10">
           <StakingStatsCard
             name={'Staked Balance'}
             value={formatDollarAmount(totalStakedAmount)}
           />
-          {/* TODO: Send total rewards as prop to value */}
-          <StakingStatsCard name={'Rewards'} value={'0'} />
+          <StakingStatsCard
+            name={'Rewards'}
+            value={formatDollarAmount(rewards)}
+          />
         </div>
         <div className="staking-sidebar-actions">
           <button className="staking-sidebar-actions-btn">Claim All</button>
@@ -26,22 +35,7 @@ const StakingOverviewSidebar = ({
           </button>
         </div>
       </div>
-      <div className="mt-10 space-y-10">
-        <Image
-          className="cursor-pointer"
-          src="/staking-ad-1.png"
-          width={445}
-          height={166}
-          alt="Ad"
-        />
-        <Image
-          className="cursor-pointer"
-          src="/staking-ad-2.png"
-          width={445}
-          height={312}
-          alt="Ad"
-        />
-      </div>
+      <StakingSideBarAds />
     </div>
   );
 };

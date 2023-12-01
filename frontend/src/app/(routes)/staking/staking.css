@@ -81,7 +81,11 @@
 }
 
 .overview-grid {
-  @apply grid grid-cols-2 lg:grid-cols-3 gap-6;
+  @apply grid grid-cols-2 gap-6;
+}
+
+.unbondings-grid {
+  @apply grid grid-cols-3 gap-6;
 }
 
 .staking-main {
@@ -90,4 +94,26 @@
 
 .search-validator-input {
   @apply w-full pl-2 border-none cursor-pointer focus:outline-none bg-transparent placeholder:text-[14px] placeholder:text-[#FFFFFFBF] placeholder:font-extralight text-[#FFFFFFBF];
+}
+
+.dialog-delegate-button {
+  @apply py-[10px] px-10 rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.cancel-button {
+  @apply text-[16px] leading-[20px] font-medium tracking-[0.64px] underline underline-offset-2 cursor-pointer;
+}
+
+.no-delegations {
+  @apply mt-36 text-[16px] font-medium text-center;
+}
+
+.sidebar-delegate-button {
+  @apply px-3 py-[6px] text-[12px] leading-[20px] rounded-lg font-medium;
+}
+
+/* Side ads styles */
+.ad-close {
+  @apply absolute right-3 top-1 cursor-pointer rounded-full bg-[#ffffff1a];
 }
