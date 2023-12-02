@@ -1,11 +1,8 @@
 import Image from 'next/image';
 import React from 'react';
-import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
-import { formatDollarAmount } from '@/utils/util';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 
 const Summary = ({ chainIDs }: { chainIDs: string[] }) => {
-  const [, available] = useGetAssetsAmount(chainIDs);
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   let chainName = 'All Networks';
   let imageURL = '/all-networks-icon.png';
@@ -37,14 +34,6 @@ const Summary = ({ chainIDs }: { chainIDs: string[] }) => {
           <Image src={imageURL} width={40} height={40} alt={chainName} />
           <div className="text-sm not-italic font-normal leading-[normal] text-capitalize">
             {chainName}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="font-bold text-2xl">
-            {formatDollarAmount(available)}
-          </div>
-          <div className="text-right text-xs not-italic font-normal leading-[normal]">
-            Total Balance
           </div>
         </div>
       </div>

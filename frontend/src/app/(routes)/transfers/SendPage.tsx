@@ -206,7 +206,7 @@ const Cards = ({
 
   return assets.length ? (
     <div className=" items-center justify-start gap-4 min-h-[100px] max-h-[100px] grid grid-cols-4">
-      {assets.map((asset) => (
+      {assets.map((asset, index) => (
         <div
           className={
             'card p-4 cursor-pointer' +
@@ -215,7 +215,7 @@ const Cards = ({
               ? ' selected'
               : '')
           }
-          key={asset.chainID + ' ' + asset.displayDenom}
+          key={index + ' ' + asset.chainID + ' ' + asset.displayDenom}
           onClick={() => onSelectAsset(asset)}
         >
           <div className="flex gap-2">
