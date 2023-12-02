@@ -6,8 +6,8 @@ export const COSMOS_CHAIN_ID = 'cosmoshub-4';
 export const TRANSFERS_MSG_FILTERS = ['Send'];
 export const SINGLE_TAB_TEXT = 'Single Transfer';
 export const MULTI_TAB_TEXT = 'Multi Transfer';
-export const SINGLE_BTN_TEXT = 'send single';
-export const MULTI_BTN_TEXT = 'send multiple';
+export const SINGLE_BTN_TEXT = 'Send single';
+export const MULTI_BTN_TEXT = 'Send multiple';
 export const TRANSFERS_TAB1 = {
   current: SINGLE_TAB_TEXT,
   to: MULTI_BTN_TEXT,

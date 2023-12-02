@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
-import { capitalizeFirstLetter, formatDollarAmount } from '@/utils/util';
+import { formatDollarAmount } from '@/utils/util';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 
 const Summary = ({ chainIDs }: { chainIDs: string[] }) => {
@@ -35,8 +35,8 @@ const Summary = ({ chainIDs }: { chainIDs: string[] }) => {
       <div className="flex w-full justify-between">
         <div className="flex items-center gap-2">
           <Image src={imageURL} width={40} height={40} alt={chainName} />
-          <div className="text-sm not-italic font-normal leading-[normal]">
-            {capitalizeFirstLetter(chainName)}
+          <div className="text-sm not-italic font-normal leading-[normal] text-capitalize">
+            {chainName}
           </div>
         </div>
         <div className="flex items-center gap-2">

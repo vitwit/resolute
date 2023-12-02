@@ -35,7 +35,7 @@
 @layer utilities {
   @variants responsive {}
 
-  .text-transform {
+  .text-capitalize {
     text-transform: capitalize;
   }
 }

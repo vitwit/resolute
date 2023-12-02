@@ -1,7 +1,6 @@
 import React from 'react';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
-import { capitalizeFirstLetter } from '@/utils/util';
 import { customDialogPaper } from '../styles';
 
 const DialogAllAssets = ({
@@ -72,8 +71,8 @@ const DialogAllAssets = ({
                     height={32}
                     alt={asset.chainName}
                   />
-                  <div className="flex items-center text-[14]">
-                    {capitalizeFirstLetter(asset.chainName)}
+                  <div className="flex items-center text-[14] text-capitalize">
+                    {asset.chainName}
                   </div>
                 </div>
                 <div className="flex gap-2">

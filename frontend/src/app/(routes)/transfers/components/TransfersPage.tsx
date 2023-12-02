@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { RootState } from '@/store/store';
-import { getBalances } from '@/store/features/bank/bankSlice';
+import React, { useState } from 'react';
 import MainTopNav from '@/components/MainTopNav';
 import TransfersHistory from './TransfersHistory';
 import { TRANSFERS_TAB2 } from '../../../../utils/constants';
 import { SINGLE_TAB_TEXT, TRANSFERS_TAB1 } from '@/utils/constants';
 import SingleTransfer from './SingleTransfer';
 import MultiTransfer from './MultiTransfer';
+import useInitBalances from '@/custom-hooks/useInitBalances';
 
 export interface TransfersTab {
   current: string;
@@ -19,24 +17,8 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
     if (tab === TRANSFERS_TAB1) setTab(TRANSFERS_TAB2);
     else setTab(TRANSFERS_TAB1);
   };
-  const dispatch = useAppDispatch();
-  const networks = useAppSelector((state: RootState) => state.wallet.networks);
 
-  useEffect(() => {
-    chainIDs.forEach((chainID) => {
-      if (networks.hasOwnProperty(chainID)) {
-        const allChainInfo = networks[chainID];
-        const chainInfo = allChainInfo.network;
-        const address = allChainInfo?.walletInfo?.bech32Address;
-        const basicChainInputs = {
-          baseURL: chainInfo.config.rest,
-          address,
-          chainID,
-        };
-        dispatch(getBalances(basicChainInputs));
-      }
-    });
-  }, [chainIDs]);
+  useInitBalances({ chainIDs });
 
   return (
     <div className="w-full flex justify-between h-screen text-white">

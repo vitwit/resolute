@@ -2,13 +2,15 @@ import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { CircularProgress, InputAdornment, TextField } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
+import { CircularProgress, InputAdornment } from '@mui/material';
+import { useForm } from 'react-hook-form';
 import AllAssets from './components/AllAssets';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txBankSend } from '@/store/features/bank/bankSlice';
 import { SEND_TX_FEE } from '@/utils/constants';
-import { TxStatus } from '@/types/enums';
+import CustomTextField from '@/components/CustomTextField';
+import sendProps from './sendProps.json';
+import CustomSubmitButton from '@/components/CustomButton';
 
 const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets] = useSortedAssets(chainIDs);
@@ -18,6 +20,26 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
   const { txSendInputs } = useGetTxInputs();
   const sendTxStatus = useAppSelector((state) => state.bank.tx.status);
+
+  const amountRules = {
+    ...sendProps.amount,
+    validate: {
+      invalid: (value: string) => Number(value) > 0 || "Amount can't be zero",
+      insufficient: (value: string) =>
+        Number(selectedAsset?.balance) >
+          Number(value) +
+            Number(SEND_TX_FEE / 10 ** (selectedAsset?.decimals || 0)) ||
+        'Insufficient funds',
+    },
+  };
+  const amountInputProps = {
+    sx: sendProps.amount.inputProps.sx,
+    endAdornment: (
+      <InputAdornment position="start">
+        {selectedAsset?.displayDenom}
+      </InputAdornment>
+    ),
+  };
 
   const {
     handleSubmit,
@@ -78,43 +100,19 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
             <div className="text-sm not-italic font-normal leading-[normal] mb-2">
               Enter Address
             </div>
-            <Controller
-              name="address"
+            <CustomTextField
+              name={sendProps.address.name}
+              rules={sendProps.address.rules}
               control={control}
-              rules={{
-                required: 'Address is required',
-              }}
-              render={({ field }) => (
-                <TextField
-                  className="bg-[#FFFFFF0D] rounded-2xl"
-                  {...field}
-                  required
-                  fullWidth
-                  size="small"
-                  placeholder="Enter Address here"
-                  sx={{
-                    '& .MuiTypography-body1': {
-                      color: 'white',
-                      fontSize: '12px',
-                      fontWeight: 200,
-                    },
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      border: 'none',
-                    },
-                  }}
-                  InputProps={{
-                    sx: {
-                      input: {
-                        color: 'white',
-                        fontSize: '14px',
-                        padding: 2,
-                      },
-                    },
-                  }}
-                  error={!!errors.address}
-                />
-              )}
+              error={!!errors.address}
+              textFieldStyle={sendProps.address.textFieldStyle}
+              textFieldSize={sendProps.address.textFieldSize}
+              placeHolder={sendProps.address.placeHolder}
+              textFeildCustomMuiSx={sendProps.address.textFeildCustomMuiSx}
+              inputProps={sendProps.address.inputProps}
+              required={true}
             />
+
             <div
               className={`text-red-500 text-xs px-4 opacity-95 mt-1 min-h-[24px]`}
             >
@@ -125,61 +123,17 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
             <div className="text-sm not-italic font-normal leading-[normal] mb-2">
               Amount
             </div>
-            <Controller
-              name="amount"
+            <CustomTextField
+              name={sendProps.amount.name}
+              rules={amountRules}
               control={control}
-              rules={{
-                required: 'Amount is required',
-                pattern: {
-                  value: /^[0-9]+(\.[0-9]+)?$/,
-                  message: 'Please enter a valid number',
-                },
-                validate: {
-                  invalid: (value) =>
-                    Number(value) > 0 || "Amount can't be zero",
-                  insufficient: (value) =>
-                    Number(selectedAsset?.balance) >
-                      Number(value) +
-                        Number(
-                          SEND_TX_FEE / 10 ** (selectedAsset?.decimals || 0)
-                        ) || 'Insufficient funds',
-                },
-              }}
-              render={({ field }) => (
-                <TextField
-                  className="bg-[#FFFFFF0D] rounded-2xl"
-                  {...field}
-                  required
-                  fullWidth
-                  size="small"
-                  placeholder="Enter Amount here"
-                  sx={{
-                    '& .MuiTypography-body1': {
-                      color: 'white',
-                      fontSize: '12px',
-                      fontWeight: 200,
-                    },
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      border: 'none',
-                    },
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="start">
-                        {selectedAsset?.displayDenom}
-                      </InputAdornment>
-                    ),
-                    sx: {
-                      input: {
-                        color: 'white',
-                        fontSize: '14px',
-                        padding: 2,
-                      },
-                    },
-                  }}
-                  error={!!errors.amount}
-                />
-              )}
+              error={!!errors.amount}
+              textFieldStyle={sendProps.amount.textFieldStyle}
+              textFieldSize={sendProps.amount.textFieldSize}
+              placeHolder={sendProps.amount.placeHolder}
+              textFeildCustomMuiSx={sendProps.amount.textFeildCustomMuiSx}
+              inputProps={amountInputProps}
+              required={true}
             />
 
             <div
@@ -201,63 +155,36 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
                 <Image
                   onClick={() => setOpenMemo((openMemo) => !openMemo)}
                   src="/drop-down-icon.svg"
-                  className='cursor-pointer'
+                  className="cursor-pointer"
                   width={16}
                   height={16}
                   alt=""
                 />
               </div>
               {openMemo ? (
-                <Controller
-                  name="memo"
+                <CustomTextField
+                  name={sendProps.memo.name}
                   control={control}
-                  render={({ field }) => (
-                    <TextField
-                      className="bg-[#FFFFFF0D] rounded-2xl"
-                      {...field}
-                      required
-                      fullWidth
-                      size="small"
-                      placeholder="Enter Memo here"
-                      sx={{
-                        '& .MuiTypography-body1': {
-                          color: 'white',
-                          fontSize: '12px',
-                          fontWeight: 200,
-                          height: '100px',
-                        },
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          border: 'none',
-                        },
-                      }}
-                      InputProps={{
-                        sx: {
-                          input: {
-                            color: 'white',
-                            fontSize: '14px',
-                            padding: 2,
-                          },
-                        },
-                      }}
-                      error={!!errors.memo}
-                    />
-                  )}
+                  error={!!errors.memo}
+                  textFieldStyle={sendProps.memo.textFieldStyle}
+                  rules={sendProps.memo.rules}
+                  textFieldSize={sendProps.memo.textFieldSize}
+                  placeHolder={sendProps.memo.placeHolder}
+                  textFeildCustomMuiSx={sendProps.memo.textFeildCustomMuiSx}
+                  inputProps={sendProps.memo.inputProps}
+                  required={false}
                 />
               ) : null}
             </div>
           </div>
         </div>
         <div className="h-full flex gap-10 items-center">
-          <button
-            type="submit"
-            className="primary-action-btn w-[152px] h-[44px]"
-          >
-            {sendTxStatus === TxStatus.PENDING ? (
-              <CircularProgress size={24} />
-            ) : (
-              'Send'
-            )}
-          </button>
+          <CustomSubmitButton
+            pendingStatus={sendTxStatus}
+            buttonStyle="primary-action-btn w-[152px] h-[44px]"
+            circularProgressSize={24}
+            buttonContent="Send"
+          />
         </div>
       </form>
     </div>
@@ -298,7 +225,7 @@ const Cards = ({
               height={32}
               alt={asset.chainName}
             />
-            <div className="flex items-center text-[14] text-transform">
+            <div className="flex items-center text-[14] text-capitalize">
               {asset.chainName}
             </div>
           </div>
