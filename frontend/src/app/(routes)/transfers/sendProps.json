@@ -4,10 +4,10 @@
       "rules": {
         "required": "Address is required"
       },
-      "textFieldStyle": "bg-[#FFFFFF0D] rounded-2xl",
+      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
       "textFieldSize": "small",
       "placeHolder": "Enter Address Here",
-      "textFeildCustomMuiSx": {
+      "textFieldCustomMuiSx": {
         "& .MuiTypography-body1": {
           "color": "white",
           "fontSize": "12px",
@@ -36,10 +36,10 @@
           "message": "Please enter a valid number"
         }
       },
-      "textFieldStyle": "bg-[#FFFFFF0D] rounded-2xl",
+      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
       "textFieldSize": "small",
       "placeHolder": "Enter Amount here",
-      "textFeildCustomMuiSx": {
+      "textFieldCustomMuiSx": {
         "& .MuiTypography-body1": {
           "color": "white",
           "fontSize": "12px",
@@ -61,11 +61,11 @@
     },
     "memo": {
       "name": "memo",
-      "textFieldStyle": "bg-[#FFFFFF0D] rounded-2xl",
+      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
       "rules": {},
       "textFieldSize": "small",
       "placeHolder": "Enter Memo here",
-      "textFeildCustomMuiSx": {
+      "textFieldCustomMuiSx": {
         "& .MuiTypography-body1": {
           "color": "white",
           "fontSize": "12px",

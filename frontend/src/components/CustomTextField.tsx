@@ -8,10 +8,10 @@ const CustomTextField = ({
   rules,
   control,
   error,
-  textFieldStyle,
+  textFieldClassName,
   textFieldSize,
   placeHolder,
-  textFeildCustomMuiSx,
+  textFieldCustomMuiSx,
   inputProps,
   required,
 }: {
@@ -19,10 +19,10 @@ const CustomTextField = ({
   rules: any;
   control: any;
   error: boolean;
-  textFieldStyle: string;
+  textFieldClassName: string;
   textFieldSize: any;
   placeHolder: string;
-  textFeildCustomMuiSx: any;
+  textFieldCustomMuiSx: any;
   inputProps: any;
   required: boolean;
 }) => {
@@ -34,13 +34,13 @@ const CustomTextField = ({
       rules={rules}
       render={({ field }) => (
         <TextField
-          className={textFieldStyle}
+          className={textFieldClassName}
           {...field}
           fullWidth
           required={required}
           size={textFieldSize}
           placeholder={placeHolder}
-          sx={textFeildCustomMuiSx}
+          sx={textFieldCustomMuiSx}
           InputProps={inputProps}
           error={error}
         />

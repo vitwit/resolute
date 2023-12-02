@@ -105,10 +105,10 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
               rules={sendProps.address.rules}
               control={control}
               error={!!errors.address}
-              textFieldStyle={sendProps.address.textFieldStyle}
+              textFieldClassName={sendProps.address.textFieldClassName}
               textFieldSize={sendProps.address.textFieldSize}
               placeHolder={sendProps.address.placeHolder}
-              textFeildCustomMuiSx={sendProps.address.textFeildCustomMuiSx}
+              textFieldCustomMuiSx={sendProps.address.textFieldCustomMuiSx}
               inputProps={sendProps.address.inputProps}
               required={true}
             />
@@ -128,10 +128,10 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
               rules={amountRules}
               control={control}
               error={!!errors.amount}
-              textFieldStyle={sendProps.amount.textFieldStyle}
+              textFieldClassName={sendProps.amount.textFieldClassName}
               textFieldSize={sendProps.amount.textFieldSize}
               placeHolder={sendProps.amount.placeHolder}
-              textFeildCustomMuiSx={sendProps.amount.textFeildCustomMuiSx}
+              textFieldCustomMuiSx={sendProps.amount.textFieldCustomMuiSx}
               inputProps={amountInputProps}
               required={true}
             />
@@ -166,11 +166,11 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
                   name={sendProps.memo.name}
                   control={control}
                   error={!!errors.memo}
-                  textFieldStyle={sendProps.memo.textFieldStyle}
+                  textFieldClassName={sendProps.memo.textFieldClassName}
                   rules={sendProps.memo.rules}
                   textFieldSize={sendProps.memo.textFieldSize}
                   placeHolder={sendProps.memo.placeHolder}
-                  textFeildCustomMuiSx={sendProps.memo.textFeildCustomMuiSx}
+                  textFieldCustomMuiSx={sendProps.memo.textFieldCustomMuiSx}
                   inputProps={sendProps.memo.inputProps}
                   required={false}
                 />

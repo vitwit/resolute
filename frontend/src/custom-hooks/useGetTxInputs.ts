@@ -148,12 +148,6 @@ const useGetTxInputs = () => {
     };
   };
 
-  return {
-    txWithdrawAllRewardsInputs,
-    txRestakeInputs,
-    txWithdrawValidatorRewardsInputs,
-    txRestakeValidatorInputs
-  };
   const txSendInputs = (
     chainID: string,
     recipient: string,
@@ -175,7 +169,13 @@ const useGetTxInputs = () => {
     };
   };
 
-  return { txWithdrawAllRewardsInputs, txRestakeInputs, txSendInputs };
+  return {
+    txWithdrawAllRewardsInputs,
+    txRestakeInputs,
+    txWithdrawValidatorRewardsInputs,
+    txRestakeValidatorInputs,
+    txSendInputs,
+  };
 };
 
 export default useGetTxInputs;
