@@ -215,7 +215,7 @@ const Cards = ({
               ? ' selected'
               : '')
           }
-          key={asset.chainName + ' ' + asset.displayDenom}
+          key={asset.chainID + ' ' + asset.displayDenom}
           onClick={() => onSelectAsset(asset)}
         >
           <div className="flex gap-2">
