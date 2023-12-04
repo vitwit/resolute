@@ -1,3 +1,6 @@
+import { DelegationResponse, Params, Validator } from '@/types/staking';
+import { parseBalance } from './denom';
+
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
 ): string => {
@@ -68,6 +71,17 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
   }
 };
 
+export const capitalizeFirstLetter = (inputString: string): string => {
+  if (inputString.length === 0) {
+    return inputString;
+  }
+
+  const firstLetter = inputString.charAt(0).toUpperCase();
+  const restOfString = inputString.slice(1);
+
+  return firstLetter + restOfString;
+};
+
 export const formatDollarAmount = (amount: number): string => {
   if (amount === 0) return '$0';
   if (amount < 0.1) return '< $0.1';
@@ -97,6 +111,18 @@ export const formatCoin = (amount: number, denom: string): string => {
       maximumFractionDigits: 2,
     });
   return parsedAmount + ' ' + denom;
+};
+
+export const getDaysLeftString = (daysLeft: number): string => {
+  return daysLeft === 1 ? `1 Day` : `${daysLeft} Days`;
+};
+
+export const getValidatorStatus = (jailed: boolean, status: string): string => {
+  return jailed
+    ? 'Jailed'
+    : status === 'BOND_STATUS_UNBONDING'
+      ? 'Unbonding'
+      : 'Unbonded';
 };
 
 export function shortenMsg(Msg: string, maxCharacters: number) {
@@ -134,6 +160,17 @@ export function shortenAddress(bech32: string, maxCharacters: number) {
 
   return prefix + '1' + former + '...' + latter;
 }
+
+export const getValidatorRank = (
+  validator: string,
+  validatorsList: string[]
+): string => {
+  const index = validatorsList.indexOf(validator);
+  if (index !== -1) {
+    return '#' + String(index + 1);
+  }
+  return '#-';
+};
 
 function convertSnakeToCamelCase(key: string): string {
   return key.replace(/_([a-z])/g, (match, group1) => group1.toUpperCase());
@@ -183,3 +220,59 @@ export const changeNetworkRoute = (
   const route = pathName === '/' ? '/overview' : '/' + pathName.split('/')?.[1];
   return `${route}/${chainName.toLowerCase()}`;
 };
+
+export function parseDelegation({
+  delegations,
+  validator,
+  currency,
+}: {
+  delegations: DelegationResponse[];
+  validator: Validator | undefined;
+  currency: Currency;
+}): number {
+  let result = 0.0;
+  delegations?.forEach((item) => {
+    if (item.delegation.validator_address === validator?.operator_address) {
+      if (currency && currency.coinDecimals) {
+        result +=
+          parseFloat(item.delegation.shares) / 10 ** currency?.coinDecimals;
+      }
+    }
+  });
+
+  return result;
+}
+
+export function canDelegate(validatorStatus: string): boolean {
+  return validatorStatus.toLowerCase() !== 'jailed';
+}
+
+export function formatStakedAmount(tokens: Coin[], currency: Currency): string {
+  const balance = parseBalance(
+    tokens,
+    currency.coinDecimals,
+    currency.coinMinimalDenom
+  );
+  return formatCoin(balance, currency.coinDenom);
+}
+
+export function parseDenomAmount(
+  balance: string,
+  coinDecimals: number
+): number {
+  return parseFloat(balance) / 10.0 ** coinDecimals;
+}
+
+export function formatCommission(commission: number): string {
+  return commission ? String(commission.toFixed(0)) + '%' : '-';
+}
+
+export function formatUnbondingPeriod(
+  stakingParams: Params | undefined
+): string {
+  return stakingParams?.unbonding_time
+    ? Math.floor(
+        parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
+      ).toString()
+    : '-';
+}
