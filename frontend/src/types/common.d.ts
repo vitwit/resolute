@@ -5,6 +5,7 @@ interface ErrorState {
 
 interface TxSuccess {
   hash: string;
+  tx?: Transaction;
 }
 
 interface TxLoadRes {

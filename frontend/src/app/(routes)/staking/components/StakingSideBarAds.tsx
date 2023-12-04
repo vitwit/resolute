@@ -3,8 +3,8 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 
 const StakingSideBarAds = () => {
-  const [ad1Open, setAd1Open] = useState<boolean>(true);
-  const [ad2Open, setAd2Open] = useState<boolean>(true);
+  const [ad1Open, setAd1Open] = useState<boolean>(false);
+  const [ad2Open, setAd2Open] = useState<boolean>(false);
 
   return (
     <div className="mt-10 space-y-10">
