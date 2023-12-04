@@ -24,7 +24,7 @@ const RadioButtons = ({
         <span className="radio-checkmark">
           <span className="radio-check"></span>
         </span>
-        {value}
+        <span className="flex relative bottom-1">{value}</span>
       </div>
     </label>
   );

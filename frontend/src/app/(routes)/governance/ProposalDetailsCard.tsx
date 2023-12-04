@@ -13,7 +13,7 @@ const ProposalDetailsCard = ({
 }) => {
   return (
     <div>
-      <div className="proposal-details-grid space-y-4">
+      <div className="proposal-details-grid">
         <div className="proposal-details proposal-text-normal w-full">
           <p>Submitted Time</p>
           <p>{submittedAt}</p>

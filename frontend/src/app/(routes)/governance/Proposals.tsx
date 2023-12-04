@@ -1,51 +1,54 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
+
 import './style.css';
 // import { RootState } from '@/store/store';
 import TopNav from '@/components/TopNav';
+import GovAds from './GovAds';
 
 // import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 
 type ProposalStatusUpdate = (status: string) => void;
 
-const Proposals = ({ 
-  handleChangeProposalState }: { handleChangeProposalState: ProposalStatusUpdate  }) => {
+const Proposals = ({
+  handleChangeProposalState,
+}: {
+  handleChangeProposalState: ProposalStatusUpdate;
+}) => {
   // const dispatch = useAppDispatch();
   // const networks = useAppSelector((state: RootState) => state.wallet.networks);
 
-
   return (
     <div className="main-page">
-      <div className='flex justify-between w-full'>
-      <div className='proposal-text-big'>Governance</div>
-      <TopNav />
+      <div className="flex justify-between w-full">
+        <div className="proposal-text-big">Governance</div>
+        <TopNav />
       </div>
-      <div>
-        <Image
-          src="/ad.png"
-          height={80}
-          width={1800}
-          alt="Advertisement-Image"
-        />
-      </div>
+      <GovAds />
+
       <div className="proposals-head">
-        <div className="proposal-text-medium">Proposals</div>
+        <div className="proposal-text-medium font-normal">Proposals</div>
         <div className="flex space-x-6">
-          <button className="cstm-btn" onClick={()=>handleChangeProposalState('all')}>
+          <button
+            className="cstm-btn"
+            onClick={() => handleChangeProposalState('all')}
+          >
             <p className="proposal-text-extralight">All Proposals</p>
           </button>
           {/* <button className="cstm-btn" >
             <p className="proposal-text-extralight">Voting ending in 2 days</p>
           </button> */}
-          <button className="cstm-btn" onClick={()=>handleChangeProposalState('deposit')}>
+          <button
+            className="cstm-btn"
+            onClick={() => handleChangeProposalState('deposit')}
+          >
             <p className="proposal-text-extralight">
               Proposals in deposit period
             </p>
           </button>
         </div>
       </div>
-{/* 
+      {/* 
       <div className="space-y-4 w-full">
         <div className="flex justify-between">
           <div className="flex space-x-2">

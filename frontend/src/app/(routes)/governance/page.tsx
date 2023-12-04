@@ -29,46 +29,47 @@ const Page = () => {
     } else {
       setProposalState('active');
     }
-  }
+  };
 
   const handleOpenOverview = () => {
     setIsOverviewOpen(true);
-  }
+  };
 
   const handleCloseOverview = () => {
     setIsOverviewOpen(false);
-  }
+  };
 
   const handleSetCurrentOverviewId = (id: number, chainID: string) => {
-    setCurrentOverviewId(id)
+    setCurrentOverviewId(id);
     setChainID(chainID);
-  }
+  };
 
   return (
-    <div className="w-full flex justify-end">
-      <div className="flex-1">
+    <div className="w-full flex justify-end ">
+      <div className="flex-1 scrollable-container">
         <Proposals
           handleChangeProposalState={handleChangeProposalState}
-          // chainIDs={chainIDs} 
+          // chainIDs={chainIDs}
           // isRightBarOpen={false}
-           />
+        />
         <AllProposals
           handleOpenOverview={handleOpenOverview}
           status={proposalState}
           chainIDs={chainIDs}
           handleSetCurrentOverviewId={handleSetCurrentOverviewId}
-          isRightBarOpen={false} />
+          isRightBarOpen={false}
+        />
       </div>
-      {
-        isOverviewOpen && <RightOverview 
-        // votingEndsInDays={'2'}
+      {(isOverviewOpen && (
+        <RightOverview
+          // votingEndsInDays={'2'}
           proposalId={currentOverviewId}
           chainID={chainID}
           handleCloseOverview={handleCloseOverview}
           // proposalname="name"
-           /> || null
-      }
-
+        />
+      )) ||
+        null}
     </div>
   );
 };

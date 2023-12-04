@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { RootState } from '@/store/store';
 import './style.css';
 
-
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txDeposit } from '@/store/features/gov/govSlice';
 
@@ -17,15 +16,16 @@ const DepositPopup = ({
   proposalId,
   proposalname,
 }: {
-  chainID: string,
+  chainID: string;
   votingEndsInDays: string;
   denom?: string;
   proposalId: number;
   proposalname: string;
 }) => {
-  console.log(denom)
+  console.log(denom);
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const allChainInfo = networks[chainID];
+  console.log(chainID);
 
   const { getVoteTxInputs } = useGetTxInputs();
   const dispatch = useAppDispatch();
@@ -62,11 +62,10 @@ const DepositPopup = ({
         aminoConfig: aminoConfig,
         prefix: prefix,
         feeAmount: feeAmount,
-        feegranter: ''
+        feegranter: '',
       })
     );
   };
-
 
   return (
     <Dialog
@@ -119,14 +118,23 @@ const DepositPopup = ({
 
                 <div className="placeholder-text ">
                   <div className="flex w-full justify-between">
-                    <input type="text" value={amount} onChange={(e) => setAmount(parseInt(e.target.value))} placeholder="Enter Amount Here" />
+                    <input
+                      type="text"
+                      value={amount}
+                      onChange={(e) => setAmount(parseInt(e.target.value))}
+                      placeholder="Enter Amount Here"
+                    />
                     <div className="proposal-text-extralight flex items-center">
                       {minimalDenom}
                     </div>
                   </div>
                 </div>
                 <div>
-                  <button onClick={handleDeposit} disabled={!amount || amount < 0} className="button w-36">
+                  <button
+                    onClick={handleDeposit}
+                    disabled={!amount || amount < 0}
+                    className="button w-36"
+                  >
                     <p className="proposal-text-medium">Deposit</p>
                   </button>
                 </div>

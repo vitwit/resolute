@@ -12,7 +12,7 @@
   @apply flex flex-col justify-center cursor-pointer text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal] underline;
 }
 .v-line {
-  @apply h-[0.5px] self-stretch;
+  @apply h-[0.5px];
   background: linear-gradient(
     90deg,
     rgba(74, 162, 156, 0.5) 7.46%,
@@ -22,6 +22,10 @@
 .proposal-id {
   @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px];
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+.proposal-id-static {
+  @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px];
+  background: rgba(255, 255, 255, 0.05);
 }
 .proposal {
   @apply flex items-start gap-4;
@@ -39,6 +43,9 @@
   @apply flex items-center text-white text-base font-medium;
 }
 .proposal-text-big {
+  @apply text-white text-xl leading-[normal];
+}
+.proposal-text-big {
   @apply text-white text-xl font-bold leading-[normal];
 }
 .proposal-text-main {
@@ -52,7 +59,7 @@
   @apply flex justify-end items-center gap-2.5 self-stretch pl-6 pr-10 py-6;
 }
 .image-grid {
-  @apply flex justify-end items-center gap-10 self-stretch pr-0;
+  @apply flex justify-end items-center gap-10 pr-0;
 }
 .text-grid {
   @apply flex w-[451px] flex-col justify-center items-start gap-6;
@@ -75,11 +82,11 @@
   @apply flex justify-between gap-10 space-y-6;
 }
 .proposal-brief {
-  @apply flex-1 flex-col items-start gap-4 self-stretch p-6 rounded-2xl;
+  @apply flex-1 flex-col items-start gap-4 p-6 rounded-2xl;
   background: #0e0b26;
 }
 .status-grid {
-  @apply flex flex-col w-[486px] h-[132px] justify-center items-start gap-4 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
+  @apply flex flex-col justify-center items-start gap-4 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
   background: #0e0b26;
 }
 .status-view-grid {
@@ -89,14 +96,14 @@
   @apply flex flex-col justify-center items-start gap-6;
 }
 .status-pass {
-  @apply flex justify-center items-start gap-2.5 self-stretch px-2 py-0;
+  @apply flex justify-center items-center gap-2.5 px-2 py-0;
 }
 .voting-grid {
-  @apply flex flex-col h-[253px] w-[437px] justify-center items-start gap-4 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
+  @apply flex flex-col justify-center items-start gap-4 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
   background: #0e0b26;
 }
 .voting-view {
-  @apply flex flex-col justify-center items-start gap-6 px-6 py-0;
+  @apply flex flex-col justify-center items-center gap-6 px-6 py-0;
 }
 .horizontal-line {
   @apply h-2 rounded-[100px];
@@ -110,7 +117,7 @@
   @apply flex justify-between items-start px-6 py-0;
 }
 .right-bar {
-  @apply flex w-[500px] h-screen flex-col items-center gap-10 shrink-0 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-6;
+  @apply flex w-[500px] h-screen flex-col items-center gap-10 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-6;
   background: #0e0b26;
 }
 .radio-buttons {
@@ -129,9 +136,30 @@
   @apply bg-white w-[6px] h-[6px] rounded-full;
 }
 .vote-grid {
-  @apply flex flex-col items-start gap-4 self-stretch backdrop-blur-[2px] px-0 py-4 rounded-2xl;
+  @apply flex flex-col w-full items-start gap-4 backdrop-blur-[2px] py-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.05);
 }
 .view-full {
   @apply flex h-8 flex-col justify-center text-white text-center text-sm font-normal leading-[normal] underline cursor-pointer;
+}
+
+.scrollable-container {
+  max-height: 800px;
+  overflow-y: auto;
+  padding: 10px;
+}
+.ad-close {
+  @apply absolute right-[-2px] top-[-2px] cursor-pointer rounded-full bg-[#ffffff1a];
+}
+
+.custom-radio-button-label {
+  @apply flex items-center cursor-pointer gap-2;
+}
+
+.custom-ratio-button {
+  @apply border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center;
+}
+
+.custom-radio-button-checked {
+  @apply h-[6px] w-[6px] bg-white rounded-full;
 }

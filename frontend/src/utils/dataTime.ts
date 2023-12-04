@@ -42,7 +42,7 @@ export function getTimeDifferenceToFutureDate(futureDate: string): string {
   const years = Math.floor(days / 365);
 
   const getTimeString = (value: number, unit: string) =>
-    `${value} ${value === 1 ? unit.slice(0, -1) : unit}s from now`;
+    `${value} ${value === 1 ? unit : unit + `s`}`;
 
   if (seconds < 60) {
     return getTimeString(seconds, 'second');

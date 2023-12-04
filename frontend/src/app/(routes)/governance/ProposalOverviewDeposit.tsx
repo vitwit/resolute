@@ -71,7 +71,7 @@ const ProposalOverviewDeposit = () => {
               votingEndsInDays={'2'}
               denom={atomsValue}
               proposalId={123}
-              chainID=''
+              chainID=""
               proposalname={'Adjust Trade and Earn Rewards Margined Protocol'}
             />
           </>

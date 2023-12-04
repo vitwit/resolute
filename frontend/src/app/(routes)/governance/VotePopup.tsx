@@ -47,10 +47,10 @@ const VotePopup = ({
   const dispatch = useAppDispatch();
 
   const handleVote = () => {
-    
-    const { address, aminoConfig, feeAmount, prefix, rest, rpc } = getChainInfo(chainID);
+    const { address, aminoConfig, feeAmount, prefix, rest, rpc } =
+      getChainInfo(chainID);
     const { minimalDenom } = getDenomInfo(chainID);
-    
+
     dispatch(
       txVote({
         voter: address,
@@ -110,7 +110,7 @@ const VotePopup = ({
                         alt="Cosmos-Logo"
                       />
                       <p className="proposal-text-small">
-                        {proposalId} | Proposal
+                        #{proposalId} | Proposal
                       </p>
                     </div>
                     <div className="proposal-text-normal">{proposalname}</div>
@@ -119,8 +119,8 @@ const VotePopup = ({
                     </div>
                   </div>
                 </div>
-                <div className="flex w-full justify-between">
-                  <div className="radio-buttons items-center">
+                <div className="flex w-full justify-between relative top-1">
+                  <div className="radio-buttons">
                     <RadioButtons
                       name="voteOption"
                       value={'yes'}
