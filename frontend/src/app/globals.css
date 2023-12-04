@@ -36,15 +36,19 @@
   .txt-xs {
     @apply text-[12px] leading-normal;
   }
+
   .txt-sm {
     @apply text-[14px] leading-normal;
   }
+
   .txt-md {
     @apply text-[16px] leading-normal;
   }
+
   .txt-lg {
     @apply text-[20px] leading-normal;
   }
+
   .txt-xl {
     @apply text-[24px] leading-normal;
   }
@@ -105,12 +109,15 @@
   .primary-action-btn {
     @apply w-[152px] h-[44px] rounded-2xl text-white text-[16px] font-medium leading-3;
     background:
-      linear-gradient(
-        180deg,
+      linear-gradient(180deg,
         rgba(74, 162, 156, 0.9) 0%,
-        rgba(139, 61, 167, 0.9) 100%
-      ),
+        rgba(139, 61, 167, 0.9) 100%),
       lightgray 50% / cover no-repeat;
+  }
+
+  .disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
   }
 }
 
@@ -158,6 +165,7 @@
     @apply flex w-[788px] h-[376px] flex-col justify-center items-start gap-10 relative backdrop-blur-[2px] px-6 py-10 rounded-2xl;
     background: #20172f;
   }
+
 }
 
 /* Sidebar styles  */
@@ -182,6 +190,11 @@
 
   .main {
     @apply flex;
+  }
+
+  /* Side ads styles */
+  .ad-close {
+    @apply absolute right-3 top-1 cursor-pointer rounded-full bg-[#ffffff1a];
   }
 }
 
@@ -263,20 +276,24 @@
 
 /* Transaction success Popup styles */
 .transaction-box {
-  @apply flex  h-[485px] flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
+  @apply flex h-[485px] flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
   background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%);
 }
+
 .cross {
   @apply flex justify-end items-center gap-2.5 pl-6 pr-10 py-6;
 }
+
 .transaction-inner-grid {
   @apply flex flex-col justify-center items-start gap-4 self-stretch opacity-80 px-4 py-2 rounded-2xl;
   background: rgba(255, 255, 255, 0.05);
 }
+
 .button {
   @apply flex justify-center items-center gap-6 px-10 py-2.5 rounded-2xl;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
+
 .popup-text {
   @apply text-white text-sm not-italic leading-[normal];
 }
@@ -289,9 +306,10 @@
   background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%);
 }
 
-.connect-wallet-box{
+.connect-wallet-box {
   @apply flex w-[497px] flex-col justify-center items-start gap-6 self-stretch;
 }
+
 .wallet-grid {
   @apply flex flex-col items-start gap-4 p-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.05);
