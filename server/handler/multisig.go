@@ -293,23 +293,3 @@ func (h *Handler) GetMultisigAccount(c echo.Context) error {
 		},
 	})
 }
-
-func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
-	address := c.Param("address")
-
-	_, err := h.DB.Exec(`DELETE from multisig_accounts WHERE address=$1`, address)
-
-	if err != nil {
-		fmt.Println("Error while deleting multisig account ", err.Error())
-
-		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
-			Status:  "error",
-			Message: "failed to delete multisig account",
-			Log:     err.Error(),
-		})
-	}
-
-	return c.JSON(http.StatusOK, model.SuccessResponse{
-		Status: "multisig account deleted",
-	})
-}
