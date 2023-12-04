@@ -329,14 +329,14 @@ func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Status:  "error",
 				Message: fmt.Sprintf("no accounts with address %s", address),
-				Log:     err.Error(),
+				Log:     fmt.Sprintf("address: %s, error: %s", address, err.Error()),
 			})
 		}
 
 		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Status:  "error",
 			Message: "failed to get accounts",
-			Log:     err.Error(),
+			Log:     fmt.Sprintf("address: %s, error: %s", address, err.Error()),
 		})
 	}
 
@@ -344,8 +344,8 @@ func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Status:  "error",
-			Message: "failed to delete multisig account",
-			Log:     err.Error(),
+			Message: "failed to delete transactions for multisig account",
+			Log:     fmt.Sprintf("address: %s, error: %s", address, err.Error()),
 		})
 	}
 
@@ -354,7 +354,7 @@ func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Status:  "error",
 			Message: "failed to delete multisig account",
-			Log:     err.Error(),
+			Log:     fmt.Sprintf("address: %s, error: %s", address, err.Error()),
 		})
 	}
 
