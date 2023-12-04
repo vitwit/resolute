@@ -10,3 +10,8 @@ export const OFFCHAIN_VERIFICATION_MESSAGE =
  * @constant
  */
 export const API_URL = process.env.NEXT_PUBLIC_APP_API_URI;
+export const VALIDATOR_LOGO_URL = (identity: string) =>
+  `https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`;
+export const VALIDATORS_PER_PAGE = 7;
+export const CLOSE_ICON_PATH = '/close-icon.svg';
+export const STAKING_DIALOG_IMAGE_PATH = '/delegate-popup-image.png';
