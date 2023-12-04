@@ -1,18 +1,25 @@
 'use client';
-import { Dialog, DialogContent } from '@mui/material';
-import React, { useState } from 'react';
-import Image from 'next/image';
 
-const Transactionsuccesspopup = ({ tx }: { tx: Transaction }) => {
-  const feeAmount = tx.fee && tx.fee.length > 0 ? tx.fee[0].amount : '0';
-  const feeDenom = tx.fee && tx.fee.length > 0 ? tx.fee[0].denom : '';
-  const [isOpen, setIsOpen] = useState(true);
+import { Dialog, DialogContent } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+
+const TransactionSuccessPopup = () => {
+  const tx = useAppSelector((state) => state.common.txSuccess.tx);
+  const feeAmount = tx?.fee?.[0]?.amount || '-';
+  const feeDenom = tx?.fee?.[0]?.denom || '-';
+
+  useEffect(() => {
+    if (tx) {
+      setIsOpen(true);
+    }
+  }, [tx]);
+
+  const [isOpen, setIsOpen] = useState(false);
   const handleClose = () => {
     setIsOpen(false);
   };
-  if (!isOpen) {
-    return null;
-  }
 
   return (
     <Dialog
@@ -46,7 +53,7 @@ const Transactionsuccesspopup = ({ tx }: { tx: Transaction }) => {
                     </div>
                     <div className="flex space-x-2">
                       <div className="popup-text font-medium">
-                        {tx.transactionHash}
+                        {tx?.transactionHash || '-'}
                       </div>
                       <Image
                         src="./copy.svg"
@@ -70,7 +77,7 @@ const Transactionsuccesspopup = ({ tx }: { tx: Transaction }) => {
                       Gas used / wanted
                     </div>
                     <div className="popup-text font-medium">
-                      {tx.gasUsed} / {tx.gasWanted}
+                      {tx?.gasUsed || '-'} / {tx?.gasWanted || '-'}
                     </div>
                   </div>
                   <div className="flex gap-x-4">
@@ -78,7 +85,7 @@ const Transactionsuccesspopup = ({ tx }: { tx: Transaction }) => {
                       Memo
                     </div>
                     <div className="popup-text font-medium w-[621px]">
-                      {tx.memo}
+                      {tx?.memo || '-'}
                     </div>
                   </div>
                 </div>
@@ -100,4 +107,4 @@ const Transactionsuccesspopup = ({ tx }: { tx: Transaction }) => {
   );
 };
 
-export default Transactionsuccesspopup;
+export default TransactionSuccessPopup;

@@ -12,6 +12,7 @@ const initialState: CommonState = {
   },
   txSuccess: {
     hash: '',
+    tx: undefined,
   },
   txLoadRes: { load: false },
   tokensInfoState: {
@@ -71,9 +72,10 @@ export const commonSlice = createSlice({
         type: action.payload.type,
       };
     },
-    setTxHash: (state, action: PayloadAction<TxSuccess>) => {
+    setTxAndHash: (state, action: PayloadAction<TxSuccess>) => {
       state.txSuccess = {
         hash: action.payload.hash,
+        tx: action.payload.tx,
       };
     },
     setTxLoad: (state) => {
@@ -82,9 +84,10 @@ export const commonSlice = createSlice({
     resetTxLoad: (state) => {
       state.txLoadRes = { load: false };
     },
-    resetTxHash: (state) => {
+    resetTxAndHash: (state) => {
       state.txSuccess = {
         hash: '',
+        tx: undefined,
       };
     },
     resetError: (state) => {
@@ -146,8 +149,8 @@ export const {
   resetError,
   setTxLoad,
   resetTxLoad,
-  setTxHash,
-  resetTxHash,
+  setTxAndHash,
+  resetTxAndHash,
   setSelectedNetwork,
 } = commonSlice.actions;
 
