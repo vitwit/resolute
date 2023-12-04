@@ -49,7 +49,7 @@ const WalletPopup = ({
                     onClick={() => {
                       selectWallet(wallet.name.toLocaleLowerCase());
                     }}
-                    key={index}
+                    key={wallet.name}
                   >
                     <div className="flex space-x-2">
                       <Image
