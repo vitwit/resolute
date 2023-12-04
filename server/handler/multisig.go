@@ -297,12 +297,61 @@ func (h *Handler) GetMultisigAccount(c echo.Context) error {
 func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
 	address := c.Param("address")
 
-	_, err := h.DB.Exec(`DELETE from multisig_accounts WHERE address=$1`, address)
+	row := h.DB.QueryRow(`SELECT address,threshold,chain_id,pubkey_type,created_at,name,created_by FROM
+	 multisig_accounts WHERE address=$1`, address)
+	if row.Err() != nil {
+		if sql.ErrNoRows == row.Err() {
+			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Status:  "error",
+				Message: fmt.Sprintf("no accounts with address %s", address),
+				Log:     row.Err().Error(),
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to query accounts",
+			Log:     row.Err().Error(),
+		})
+	}
 
+	var account schema.MultisigAccount
+
+	if err := row.Scan(
+		&account.Address,
+		&account.Threshold,
+		&account.ChainID,
+		&account.PubkeyType,
+		&account.CreatedAt,
+		&account.Name,
+		&account.CreatedBy,
+	); err != nil {
+		if sql.ErrNoRows.Error() == err.Error() {
+			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Status:  "error",
+				Message: fmt.Sprintf("no accounts with address %s", address),
+				Log:     err.Error(),
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to get accounts",
+			Log:     err.Error(),
+		})
+	}
+
+	_, err := h.DB.Exec(`DELETE from transactions WHERE multisig_address=$1`, address)
 	if err != nil {
-		fmt.Println("Error while deleting multisig account ", err.Error())
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to delete multisig account",
+			Log:     err.Error(),
+		})
+	}
 
-		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+	_, err = h.DB.Exec(`DELETE from multisig_accounts WHERE address=$1`, address)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Status:  "error",
 			Message: "failed to delete multisig account",
 			Log:     err.Error(),
