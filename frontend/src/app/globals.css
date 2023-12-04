@@ -294,3 +294,40 @@
 .chain-exist-error {
   @apply text-red-600 font-bold;
 }
+
+
+/* Transaction success Popup styles */
+.transaction-box {
+  @apply flex  h-[485px] flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
+  background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%);
+}
+.cross {
+  @apply flex justify-end items-center gap-2.5 pl-6 pr-10 py-6;
+}
+.transaction-inner-grid {
+  @apply flex flex-col justify-center items-start gap-4 self-stretch opacity-80 px-4 py-2 rounded-2xl;
+  background: rgba(255, 255, 255, 0.05);
+}
+.button {
+  @apply flex justify-center items-center gap-6 px-10 py-2.5 rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+.popup-text {
+  @apply text-white text-sm not-italic leading-[normal];
+}
+
+
+/* WalletPopup */
+
+.wallet-box {
+  @apply flex w-[889px] flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
+  background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%);
+}
+
+.connect-wallet-box{
+  @apply flex w-[497px] flex-col justify-center items-start gap-6 self-stretch;
+}
+.wallet-grid {
+  @apply flex flex-col items-start gap-4 p-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.05);
+}
