@@ -16,7 +16,7 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets] = useSortedAssets(chainIDs);
   const [openMemo, setOpenMemo] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<ParsedAsset | undefined>();
-  const slicedAssets = sortedAssets.slice(0, 4);
+  const [slicedAssetsIndex, setSlicedAssetIndex] = useState(0);
   const dispatch = useAppDispatch();
   const { txSendInputs } = useGetTxInputs();
   const sendTxStatus = useAppSelector((state) => state.bank.tx.status);
@@ -54,9 +54,10 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
     },
   });
 
-  const onSelectAsset = (asset: ParsedAsset) => {
+  const onSelectAsset = (asset: ParsedAsset, index: number) => {
     if (selectedAsset == asset) return;
     setSelectedAsset(asset);
+    setSlicedAssetIndex(Math.floor(index / 4)*4);
     reset();
   };
 
@@ -83,7 +84,8 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
       <div className="space-y-4">
         <div>Assets</div>
         <Cards
-          assets={slicedAssets}
+          assets={sortedAssets}
+          slicedAssetsIndex={slicedAssetsIndex}
           selectedAsset={selectedAsset}
           onSelectAsset={onSelectAsset}
         />
@@ -197,48 +199,52 @@ const Cards = ({
   assets,
   selectedAsset,
   onSelectAsset,
+  slicedAssetsIndex,
 }: {
   assets: ParsedAsset[];
+  slicedAssetsIndex: number;
   selectedAsset: ParsedAsset | undefined;
-  onSelectAsset: (asset: ParsedAsset) => void;
+  onSelectAsset: (asset: ParsedAsset, index: number) => void;
 }) => {
   const balancesLoading = useAppSelector((state) => state.bank.balancesLoading);
 
   return assets.length ? (
     <div className=" items-center justify-start gap-4 min-h-[100px] max-h-[100px] grid grid-cols-4">
-      {assets.map((asset, index) => (
-        <div
-          className={
-            'card p-4 cursor-pointer' +
-            (asset.denom === selectedAsset?.denom &&
-            asset.chainID === selectedAsset?.chainID
-              ? ' selected'
-              : '')
-          }
-          key={index + ' ' + asset.chainID + ' ' + asset.displayDenom}
-          onClick={() => onSelectAsset(asset)}
-        >
-          <div className="flex gap-2">
-            <Image
-              src={asset.chainLogoURL}
-              width={32}
-              height={32}
-              alt={asset.chainName}
-            />
-            <div className="flex items-center text-[14] text-capitalize">
-              {asset.chainName}
+      {assets
+        .slice(slicedAssetsIndex, slicedAssetsIndex + 4)
+        .map((asset, index) => (
+          <div
+            className={
+              'card p-4 cursor-pointer' +
+              (asset.denom === selectedAsset?.denom &&
+              asset.chainID === selectedAsset?.chainID
+                ? ' selected'
+                : '')
+            }
+            key={index + ' ' + asset.chainID + ' ' + asset.displayDenom}
+            onClick={() => onSelectAsset(asset, index)}
+          >
+            <div className="flex gap-2">
+              <Image
+                src={asset.chainLogoURL}
+                width={32}
+                height={32}
+                alt={asset.chainName}
+              />
+              <div className="flex items-center text-[14] text-capitalize">
+                {asset.chainName}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <div className="text-base not-italic font-bold leading-[normal]">
+                {asset.balance}
+              </div>
+              <div className="text-[#9c95ac] text-xs not-italic font-normal leading-[normal] flex items-center">
+                {asset.displayDenom}
+              </div>
             </div>
           </div>
-          <div className="flex gap-2">
-            <div className="text-base not-italic font-bold leading-[normal]">
-              {asset.balance}
-            </div>
-            <div className="text-[#9c95ac] text-xs not-italic font-normal leading-[normal] flex items-center">
-              {asset.displayDenom}
-            </div>
-          </div>
-        </div>
-      ))}
+        ))}
     </div>
   ) : (
     <div className="min-h-[100px] max-h-[100px] flex justify-center items-center">

@@ -8,7 +8,7 @@ const AllAssets = ({
 }: {
   assets: ParsedAsset[];
   selectedAsset: ParsedAsset | undefined;
-  onSelectAsset: (asset: ParsedAsset) => void;
+  onSelectAsset: (asset: ParsedAsset, index:number) => void;
 }) => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const handleDialogClose = () => setDialogOpen(false);

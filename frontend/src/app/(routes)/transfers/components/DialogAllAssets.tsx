@@ -13,7 +13,7 @@ const DialogAllAssets = ({
   dialogOpen: boolean;
   assets: ParsedAsset[];
   selectedAsset: ParsedAsset | undefined;
-  onSelectAsset: (asset: ParsedAsset) => void;
+  onSelectAsset: (asset: ParsedAsset, index:number) => void;
   handleDialogClose: () => void;
 }) => {
   return (
@@ -49,7 +49,7 @@ const DialogAllAssets = ({
           </div>
 
           <div className="grid grid-cols-4 gap-x-4 gap-y-6">
-            {assets.map((asset) => (
+            {assets.map((asset, index) => (
               <div
                 className={
                   'w-full card p-4 cursor-pointer' +
@@ -60,7 +60,7 @@ const DialogAllAssets = ({
                 }
                 key={asset.chainID + ' ' + asset.denom}
                 onClick={() => {
-                  onSelectAsset(asset);
+                  onSelectAsset(asset, index);
                   handleDialogClose();
                 }}
               >
