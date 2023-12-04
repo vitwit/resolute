@@ -10,18 +10,21 @@ const TransactionSuccessPopup = () => {
   const feeAmount = tx?.fee?.[0]?.amount || '-';
   const feeDenom = tx?.fee?.[0]?.denom || '-';
 
-  useEffect(() => {
-    if (tx) {
-      setIsOpen(true);
-    }
-  }, [tx]);
-
   const [isOpen, setIsOpen] = useState(false);
+
   const handleClose = () => {
     setIsOpen(false);
   };
 
-  return (
+  useEffect(() => {
+    if (tx) {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  }, [tx]);
+
+  return isOpen ? (
     <Dialog
       open={isOpen}
       onClose={handleClose}
@@ -104,7 +107,7 @@ const TransactionSuccessPopup = () => {
         </div>
       </DialogContent>
     </Dialog>
-  );
+  ) : null;
 };
 
 export default TransactionSuccessPopup;

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 
 const PageAd = () => {
-  const [adOpen, setAdOpen] = useState<boolean>(true);
+  const [adOpen, setAdOpen] = useState<boolean>(false);
 
   return adOpen ? (
     <div className="my-10 flex cursor-pointer text-white relative">
