@@ -6,6 +6,7 @@ import TopNav from '@/components/TopNav';
 import TransactionItem from './TransactionItem';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
+import { useRouter } from 'next/navigation';
 
 const History = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
@@ -31,6 +32,18 @@ const History = ({ chainIDs }: { chainIDs: string[] }) => {
 export default History;
 
 const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
+  const router = useRouter();
+  const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
+  const getPath = (chainIDs: string[], module: string) => {
+    if (chainIDs.length !== 1) {
+      return '/' + module;
+    }
+    let curChainName: string = '';
+    Object.keys(nameToChainIDs).forEach((chainName) => {
+      if (nameToChainIDs[chainName] === chainIDs[0]) curChainName = chainName;
+    });
+    return '/' + module + '/' + curChainName;
+  };
   const [staked, available, rewards] = useGetAssetsAmount(chainIDs);
   return (
     <div>
@@ -41,8 +54,22 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
         </span>
       </div>
       <div className="flex justify-center gap-6">
-        <button className="primary-action-btn">Send</button>
-        <button className="primary-action-btn">Delegate</button>
+        <button
+          className="primary-action-btn"
+          onClick={() => {
+            router.push(getPath(chainIDs, 'transfers'));
+          }}
+        >
+          Send
+        </button>
+        <button
+          className="primary-action-btn"
+          onClick={() => {
+            router.push(getPath(chainIDs, 'staking'));
+          }}
+        >
+          Delegate
+        </button>
       </div>
     </div>
   );
