@@ -7,10 +7,10 @@ import { RootState } from '@/store/store';
 import RightOverview from './RightOverview';
 
 const Page = () => {
-  const [proposalState, setProposalState] = React.useState('');
-  const [isOverviewOpen, setIsOverviewOpen] = React.useState(false);
-  const [currentOverviewId, setCurrentOverviewId] = React.useState(0);
-  const [chainID, setChainID] = React.useState('');
+  const [proposalState, setProposalState] = useState('');
+  const [isOverviewOpen, setIsOverviewOpen] = useState(false);
+  const [currentOverviewId, setCurrentOverviewId] = useState(0);
+  const [chainID, setChainID] = useState('');
   const [isSelected, setIsSelected] = useState<boolean>(false);
 
   const handleProposalSelected = (value: boolean) => {

@@ -97,7 +97,7 @@ const RightOverview = ({
     },
   ];
 
-  const proposalsubmittedOn = getTimeDifference(
+  const proposalSubmittedOn = getTimeDifference(
     get(proposalInfo, 'submit_time')
   );
   const Totalvotes = totalVotes;
@@ -246,7 +246,7 @@ const RightOverview = ({
                 </div>
                 <div className="flex justify-between w-full">
                   <div className="flex proposal-text-extralight">
-                    Proposal submiited on {proposalsubmittedOn}
+                    Proposal submiited on {proposalSubmittedOn}
                   </div>
                   <div className="flex space-x-2">
                     <Image
