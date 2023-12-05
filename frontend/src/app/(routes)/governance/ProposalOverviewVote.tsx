@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
 
 import { RootState } from '@/store/store';
 import { useSearchParams, useParams } from 'next/navigation';
-
 import CustomPieChart from './CustomPiechart';
 import './style.css';
 import ProposalDetailsVoteCard from './ProposalDetailsVoteCard';
@@ -150,7 +150,7 @@ const ProposalOverviewVote = () => {
         <div className="proposal-text-big">Proposal Overview</div>
       </div>
       <div className="flex gap-10">
-        <div className="proposal-brief overflow-y-scroll min-h-screen">
+        <div className="proposal-brief overflow-y-scroll max-h-screen">
           <div className="proposal-div w-full">
             <div className="flex justify-between w-full">
               <div className="flex space-x-2">
@@ -173,12 +173,14 @@ const ProposalOverviewVote = () => {
           </div>
           <div className="space-y-6">
             <div className="proposal-text-medium">
+              <ReactMarkdown>
               {get(proposalInfo, 'content.title')}
+              </ReactMarkdown>
             </div>
 
-            <p className="proposal-text-normal">
+            <ReactMarkdown className="proposal-text-normal">
               {get(proposalInfo, 'content.description')}
-            </p>
+            </ReactMarkdown>
           </div>
         </div>
         {isVotePopupOpen &&
@@ -194,7 +196,9 @@ const ProposalOverviewVote = () => {
               />
             </>
           )}
+          <div className='flex w-[480px]'>
         <div className="space-y-4">
+          
           <div className="status-grid">
             <div className="status-view-grid w-full">
               <div className="status-view w-full">
@@ -294,6 +298,7 @@ const ProposalOverviewVote = () => {
               'total_deposit[0].amount'
             )} ${get(proposalInfo, 'total_deposit[0].denom')}`}
           />
+          </div>
         </div>
       </div>
     </div>

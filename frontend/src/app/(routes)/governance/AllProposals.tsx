@@ -7,6 +7,7 @@ import { getProposalsInVoting } from '@/store/features/gov/govSlice';
 import './style.css';
 import { get } from 'lodash';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+import { useSearchParams } from 'next/navigation';
 
 type handleOpenOverview = () => void;
 type handleSetCurrentOverviewId = (id: number, chainID: string) => void;
@@ -37,6 +38,12 @@ const AllProposals = ({
   const allChainProposals = useAppSelector((state) => state.gov.chains);
 
   console.log({ allChainProposals });
+  
+  const searchParams = useSearchParams();
+  const chainID = searchParams.getAll('chainId')[0];
+  const networkLogo = useAppSelector(
+    (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
+  );
 
   let allProposalsLength = 0;
 
@@ -87,10 +94,10 @@ const AllProposals = ({
               <div className="flex justify-between">
                 <div className="flex space-x-2">
                   <Image
-                    src="/allnetworks.png"
+                    src={networkLogo}
                     width={32}
                     height={32}
-                    alt="AllNetworks-Logo"
+                    alt="Networks-Logo"
                   />
                   <p className="proposal-text-medium">{chainName}</p>
                 </div>
