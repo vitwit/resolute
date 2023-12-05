@@ -24,7 +24,7 @@ const History = ({ chainIDs }: { chainIDs: string[] }) => {
           View All
         </div>
       </div>
-      <RecentTransactions chainIDs={chainIDs} />
+      <RecentTransactions chainIDs={chainIDs} msgFilters={[]} />
     </div>
   );
 };
@@ -75,7 +75,13 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
   );
 };
 
-const RecentTransactions = ({ chainIDs }: { chainIDs: string[] }) => {
+export const RecentTransactions = ({
+  chainIDs,
+  msgFilters,
+}: {
+  chainIDs: string[];
+  msgFilters: string[];
+}) => {
   /**
    * Note: Currently, this implementation of recent transactions addresses scenarios involving either a single chain or all chains.
    *        If the system evolves to support multiple selected chains in the future,
@@ -91,7 +97,11 @@ const RecentTransactions = ({ chainIDs }: { chainIDs: string[] }) => {
     <div className="flex-1 overflow-y-scroll">
       <div className="text-white w-full space-y-2 mt-6">
         {transactions.map((tx) => (
-          <TransactionItem key={tx.transactionHash} transaction={tx} />
+          <TransactionItem
+            key={tx.transactionHash}
+            transaction={tx}
+            msgFilters={msgFilters}
+          />
         ))}
       </div>
     </div>
