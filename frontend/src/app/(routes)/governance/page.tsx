@@ -11,7 +11,7 @@ const Page = () => {
   const [isOverviewOpen, setIsOverviewOpen] = useState(false);
   const [currentOverviewId, setCurrentOverviewId] = useState(0);
   const [chainID, setChainID] = useState('');
-  const [isSelected, setIsSelected] = useState<boolean>(false);
+  const [isSelected, setIsSelected] = React.useState<boolean>(false);
 
   const handleProposalSelected = (value: boolean) => {
     setIsSelected(value);

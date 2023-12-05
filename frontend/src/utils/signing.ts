@@ -102,7 +102,6 @@ export const signAndBroadcast = async (
     console.log('error while getting client ', error);
     throw new Error('failed to get wallet');
   }
-  console.log('signer------', signer);
 
   const accounts = await signer.getAccounts();
   const registry = new Registry(defaultStargateTypes);
@@ -142,8 +141,6 @@ export const signAndBroadcast = async (
     restUrl,
     registry
   );
-
-  console.log('txbody', txBody);
 
   return await broadcast(txBody, restUrl);
 };

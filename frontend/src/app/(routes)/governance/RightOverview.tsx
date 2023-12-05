@@ -36,13 +36,13 @@ const RightOverview = ({
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
   );
-  console.log('proposal info', proposalInfo, chainID);
+
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const tallyResult = useAppSelector(
     (state: RootState) =>
       state.gov.chains[chainID].tally.proposalTally[proposalId]
   );
-  console.log('tallyResult', tallyResult);
+
   useEffect(() => {
     const allChainInfo = networks[chainID];
     const chainInfo = allChainInfo.network;
@@ -120,7 +120,7 @@ const RightOverview = ({
             src="./close.svg"
             width={24}
             height={24}
-            alt="Close-Icon"
+            alt="Close icon"
             className="cursor-pointer"
             onClick={() => {
               handleCloseClick();
@@ -136,7 +136,7 @@ const RightOverview = ({
                   src={networkLogo}
                   width={32}
                   height={32}
-                  alt="Comsos-Logo"
+                  alt="Network Logo"
                 />
                 <p className="proposal-text-extralight items-center flex">
                   #{get(proposalInfo, 'proposal_id')} | Proposal
@@ -208,7 +208,7 @@ const RightOverview = ({
                         src="./vote-icon.svg"
                         width={20}
                         height={20}
-                        alt="Vote-Icon"
+                        alt="Vote icon"
                       />
                       <p className="proposal-text-small">Total Votes</p>
                     </div>
@@ -253,7 +253,7 @@ const RightOverview = ({
                       src="./done-icon.svg"
                       width={16}
                       height={16}
-                      alt="Done-icon"
+                      alt="Quorum reached icon"
                     />
                     <div className="flex proposal-text-extralight">
                       Quorum Reached

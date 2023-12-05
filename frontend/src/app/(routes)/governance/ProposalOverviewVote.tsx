@@ -33,7 +33,6 @@ const ProposalOverviewVote = () => {
 
   const params = useParams();
   const searchParams = useSearchParams();
-  console.log('par', searchParams, params);
   const { govId } = params;
   const proposalId: number = parseNumber(govId);
   const chainID = searchParams.getAll('chainId')[0];
@@ -45,7 +44,7 @@ const ProposalOverviewVote = () => {
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
   );
-  console.log('proposal info', proposalInfo, chainID);
+
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const tallyResult = useAppSelector((state: RootState) => {
     if (
@@ -174,7 +173,7 @@ const ProposalOverviewVote = () => {
           <div className="space-y-6">
             <div className="proposal-text-medium">
               <ReactMarkdown>
-              {get(proposalInfo, 'content.title')}
+                {get(proposalInfo, 'content.title')}
               </ReactMarkdown>
             </div>
 
@@ -196,32 +195,81 @@ const ProposalOverviewVote = () => {
               />
             </>
           )}
-          <div className='flex w-[480px]'>
-        <div className="space-y-4">
-          
-          <div className="status-grid">
-            <div className="status-view-grid w-full">
-              <div className="status-view w-full">
-                <div className="status-pass w-full">
+        <div className="flex w-[480px]">
+          <div className="space-y-4">
+            <div className="status-grid">
+              <div className="status-view-grid w-full">
+                <div className="status-view w-full">
+                  <div className="status-pass w-full">
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="flex space-x-2 w-full">
+                        <Image
+                          src="/vote-icon.svg"
+                          width={20}
+                          height={20}
+                          alt="Vote-Icon"
+                        />
+                        <p className="proposal-text-small">
+                          Proposal Projection
+                        </p>
+                      </div>
+
+                      <p className="text-[#E57575] text-xl font-bold">
+                        Will be Rejected
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-start w-full">
+                    {tallyData.map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col items-center gap-2 justify-between"
+                      >
+                        <CustomPieChart
+                          value={Number(item.value)}
+                          color={item.color}
+                          label={item.label}
+                        />
+                        <div className="proposal-text-extralight">{`${item.value} ${item.label}`}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="voting-grid">
+              <div className="voting-view w-full">
+                <div className="status-pass">
                   <div className="flex flex-col items-center space-y-2">
-                    <div className="flex space-x-2 w-full">
+                    <div className="flex space-x-2">
                       <Image
                         src="/vote-icon.svg"
                         width={20}
                         height={20}
                         alt="Vote-Icon"
                       />
-                      <p className="proposal-text-small">Proposal Projection</p>
+                      <p className="proposal-text-small">Total Votes</p>
                     </div>
 
-                    <p className="text-[#E57575] text-xl font-bold">
-                      Will be Rejected
-                    </p>
+                    <p className="proposal-text-big">{totalVotes | 0}</p>
+                  </div>
+                </div>
+                <div className="w-full text-white flex flex-col justify-center items-center space-y-2">
+                  <div>Quorum</div>
+
+                  <div className="bg-white w-full h-[10px] rounded-full">
+                    <div
+                      className={
+                        `bg-[#2DC5A4] h-[10px] rounded-l-full ` +
+                        `w-[${proposalOverviewVoteData.proposalOverviewVoteData.quorum}%]`
+                      }
+                    ></div>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-start w-full">
-                  {tallyData.map((item, index) => (
+                  {data.map((item, index) => (
                     <div
                       key={index}
                       className="flex flex-col items-center gap-2 justify-between"
@@ -231,73 +279,25 @@ const ProposalOverviewVote = () => {
                         color={item.color}
                         label={item.label}
                       />
-                      <div className="proposal-text-extralight">{`${item.value} ${item.label}`}</div>
+                      <div className="proposal-text-extralight">{`${item.value}% ${item.label}`}</div>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-          </div>
-          <div className="voting-grid">
-            <div className="voting-view w-full">
-              <div className="status-pass">
-                <div className="flex flex-col items-center space-y-2">
-                  <div className="flex space-x-2">
-                    <Image
-                      src="/vote-icon.svg"
-                      width={20}
-                      height={20}
-                      alt="Vote-Icon"
-                    />
-                    <p className="proposal-text-small">Total Votes</p>
-                  </div>
-
-                  <p className="proposal-text-big">{totalVotes | 0}</p>
-                </div>
-              </div>
-              <div className="w-full text-white flex flex-col justify-center items-center space-y-2">
-                <div>Quorum</div>
-
-                <div className="bg-white w-full h-[10px] rounded-full">
-                  <div
-                    className={
-                      `bg-[#2DC5A4] h-[10px] rounded-l-full ` +
-                      `w-[${proposalOverviewVoteData.proposalOverviewVoteData.quorum}%]`
-                    }
-                  ></div>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-start w-full">
-                {data.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col items-center gap-2 justify-between"
-                  >
-                    <CustomPieChart
-                      value={Number(item.value)}
-                      color={item.color}
-                      label={item.label}
-                    />
-                    <div className="proposal-text-extralight">{`${item.value}% ${item.label}`}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          <ProposalDetailsVoteCard
-            createdAt={get(proposalInfo, 'submit_time', '-')}
-            startedAt={get(proposalInfo, 'voting_start_time', '-')}
-            endsAt={get(proposalInfo, 'voting_end_time', '-')}
-            proposalNetwork={chainID}
-            createdby={
-              proposalOverviewVoteData.proposalOverviewVoteData.createdby
-            }
-            depositamount={`${get(
-              proposalInfo,
-              'total_deposit[0].amount'
-            )} ${get(proposalInfo, 'total_deposit[0].denom')}`}
-          />
+            <ProposalDetailsVoteCard
+              createdAt={get(proposalInfo, 'submit_time', '-')}
+              startedAt={get(proposalInfo, 'voting_start_time', '-')}
+              endsAt={get(proposalInfo, 'voting_end_time', '-')}
+              proposalNetwork={chainID}
+              createdby={
+                proposalOverviewVoteData.proposalOverviewVoteData.createdby
+              }
+              depositamount={`${get(
+                proposalInfo,
+                'total_deposit[0].amount'
+              )} ${get(proposalInfo, 'total_deposit[0].denom')}`}
+            />
           </div>
         </div>
       </div>
