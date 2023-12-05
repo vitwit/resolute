@@ -1,6 +1,6 @@
 import React from 'react';
 
-const RadioButtons = ({
+const RadioButton = ({
   name,
   value,
   voteOption,
@@ -30,4 +30,4 @@ const RadioButtons = ({
   );
 };
 
-export default RadioButtons;
+export default RadioButton;

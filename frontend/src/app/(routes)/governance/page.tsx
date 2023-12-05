@@ -17,8 +17,6 @@ const Page = () => {
     setIsSelected(value);
   };
 
-  // const [baseURL, setBaseURL] = React.useState('');
-
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -53,11 +51,7 @@ const Page = () => {
   return (
     <div className="w-full flex justify-end ">
       <div className="flex-1 scrollable-container">
-        <Proposals
-          handleChangeProposalState={handleChangeProposalState}
-          // chainIDs={chainIDs}
-          // isRightBarOpen={false}
-        />
+        <Proposals handleChangeProposalState={handleChangeProposalState} />
         <AllProposals
           handleOpenOverview={handleOpenOverview}
           status={proposalState}
@@ -71,11 +65,9 @@ const Page = () => {
       </div>
       {(isOverviewOpen && (
         <RightOverview
-          // votingEndsInDays={'2'}
           proposalId={currentOverviewId}
           chainID={chainID}
           handleCloseOverview={handleCloseOverview}
-          // proposalname="name"
           handleProposalSelected={handleProposalSelected}
         />
       )) ||

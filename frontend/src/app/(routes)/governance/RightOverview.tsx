@@ -101,14 +101,7 @@ const RightOverview = ({
     get(proposalInfo, 'submit_time')
   );
   const Totalvotes = totalVotes;
-  // const proposal = `Proposal for the partial activation of Aave Governance v3 in an
-  // interim Aave Governance v2.5 version, wition layer,
-  // Robot).Proposal for the partial activation of Aave Governance v3
-  // in an inte2layer, Robot).er ave Governance v3 in an interim Aave
-  // Governance v2.5 versioancProposal for the partial activation of
-  // Aave Governance v3 in nce v3 in an inte2layer, GovernancProposal
-  // for the partial activation of Aave.`;
-  // const [isRightBarOpen, setIsRightBarOpen] = useState(true);
+
   const [isVotePopupOpen, setIsVotePopupOpen] = useState(false);
   const toggleVotePopup = () => {
     setIsVotePopupOpen(!isVotePopupOpen);
@@ -116,18 +109,10 @@ const RightOverview = ({
   const quorum = 50;
 
   const handleCloseClick = () => {
-    // setIsRightBarOpen(false);
     handleCloseOverview();
   };
   return (
     <div>
-      {/* // <div className="w-full flex justify-end"> */}
-      {/* <div className="flex-1">
-        <Proposals isRightBarOpen={isRightBarOpen}/>
-        <AllProposals isRightBarOpen={isRightBarOpen}/>
-      </div>
-      {isRightBarOpen && ( */}
-
       <div className="right-bar">
         <div className="flex justify-between w-full">
           <div className="proposal-text-main">Proposal Overview</div>
@@ -280,8 +265,6 @@ const RightOverview = ({
           </div>
         </div>
       </div>
-      {/* // )} */}
-      {/* </div> */}
     </div>
   );
 };

@@ -1,12 +1,10 @@
 'use client';
-import React, { useEffect} from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { RootState } from '@/store/store';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getProposalsInVoting } from '@/store/features/gov/govSlice';
-
 import './style.css';
-// import proposalData from './proposalData.json';
 import { get } from 'lodash';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 
@@ -43,7 +41,6 @@ const AllProposals = ({
   let allProposalsLength = 0;
 
   if (allChainProposals) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     Object.entries(allChainProposals).map(([_chainName, chainProposal]) => {
       allProposalsLength += get(
         chainProposal,
@@ -154,7 +151,7 @@ const AllProposals = ({
                             </p>
                           ) : (
                             <p className="proposal-text-small">
-                              expires in{' '}
+                              Expires in{' '}
                               {getTimeDifferenceToFutureDate(
                                 get(proposal, 'voting_end_time')
                               )}

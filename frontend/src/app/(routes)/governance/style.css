@@ -45,9 +45,6 @@
 .proposal-text-big {
   @apply text-white text-xl leading-[normal];
 }
-.proposal-text-big {
-  @apply text-white text-xl font-bold leading-[normal];
-}
 .proposal-text-main {
   @apply text-white text-xl font-medium leading-[normal];
 }

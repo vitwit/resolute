@@ -2,9 +2,8 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import './style.css';
-import RadioButtons from './CustomRadioButton';
+import RadioButton from './CustomRadioButton';
 import { Dialog, DialogContent } from '@mui/material';
-
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { txVote } from '@/store/features/gov/govSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
@@ -121,26 +120,26 @@ const VotePopup = ({
                 </div>
                 <div className="flex w-full justify-between relative top-1">
                   <div className="radio-buttons">
-                    <RadioButtons
+                    <RadioButton
                       name="voteOption"
                       value={'yes'}
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
-                    <RadioButtons
-                      name="votOption"
+                    <RadioButton
+                      name="voteOption"
                       value={'no'}
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
-                    <RadioButtons
+                    <RadioButton
                       name="voteOption"
                       value={'abstain'}
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
-                    <RadioButtons
-                      name="votOption"
+                    <RadioButton
+                      name="voteOption"
                       value={'no with veto'}
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}

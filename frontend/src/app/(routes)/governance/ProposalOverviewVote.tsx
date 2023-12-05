@@ -53,12 +53,9 @@ const ProposalOverviewVote = () => {
       state.gov.chains[chainID].tally &&
       state.gov.chains[chainID].tally.proposalTally
     ) {
-      console.log('tally===', chainID, state.gov.chains);
       return state.gov.chains[chainID].tally.proposalTally[proposalId];
     }
   });
-
-  // const tallyParams = useAppSelector((state: RootState) => state.gov.chains[chainID]?.tallyParams)
 
   const totalVotes =
     Number(get(tallyResult, 'yes')) +

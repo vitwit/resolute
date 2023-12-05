@@ -27,7 +27,7 @@ interface GovProposal {
 interface ProposalInfo{
   status: TxStatus;
   errMsg: string;
-  proposal: GovProposal
+  proposal: GovProposal;
 }
 
 

@@ -62,12 +62,11 @@ const getClient = async (
   messages: Msg[]
 ): Promise<OfflineSigner> => {
   let signer;
-  console.log("without======================")
+
   if (!canUseAmino(aminoConfig, messages)) {
     try {
       await window.wallet.enable(chainId);
       signer = window.wallet.getOfflineSigner(chainId);
-      console.log('signer==========', signer)
     } catch (error) {
       console.log(error);
       throw new Error('failed to get wallet');
@@ -76,7 +75,6 @@ const getClient = async (
     try {
       await window.wallet.enable(chainId);
       signer = window.wallet.getOfflineSignerOnlyAmino(chainId);
-      console.log("else condition ===== ", signer)
     } catch (error) {
       console.log(error);
       throw new Error('failed to get wallet');
@@ -97,14 +95,14 @@ export const signAndBroadcast = async (
   granter?: string
 ): Promise<ParsedTxResponse> => {
   let signer: OfflineSigner;
-  console.log("messages=", messages)
+
   try {
     signer = await getClient(aminoConfig, chainId, messages);
   } catch (error) {
-    console.log('error while getting client ', error)
+    console.log('error while getting client ', error);
     throw new Error('failed to get wallet');
   }
-  console.log('signer------', signer)
+  console.log('signer------', signer);
 
   const accounts = await signer.getAccounts();
   const registry = new Registry(defaultStargateTypes);
@@ -145,7 +143,7 @@ export const signAndBroadcast = async (
     registry
   );
 
-  console.log('txbody', txBody)
+  console.log('txbody', txBody);
 
   return await broadcast(txBody, restUrl);
 };
@@ -269,7 +267,7 @@ async function broadcast(
       const result = parseTxResult(response.data.tx_response);
       return result;
     } catch (error) {
-      console.log('getting txn id error ', error)
+      console.log('getting txn id error ', error);
       // if transaction index is disabled return txhash
       if (error instanceof AxiosError) {
         if (
@@ -290,7 +288,7 @@ async function broadcast(
     tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
     mode: 'BROADCAST_MODE_SYNC',
   });
-  console.log('response of the post txn error ', response)
+  console.log('response of the post txn error ', response);
   const result = parseTxResult(response.data.tx_response);
   // have ambiguous issues, todo...
   //assertIsDeliverTxSuccess(result);

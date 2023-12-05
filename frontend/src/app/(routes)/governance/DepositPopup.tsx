@@ -121,7 +121,7 @@ const DepositPopup = ({
                     <input
                       type="text"
                       value={amount}
-                      onChange={(e) => setAmount(parseInt(e.target.value))}
+                      onChange={(e) => setAmount(parseFloat(e.target.value))}
                       placeholder="Enter Amount Here"
                     />
                     <div className="proposal-text-extralight flex items-center">
@@ -132,7 +132,7 @@ const DepositPopup = ({
                 <div>
                   <button
                     onClick={handleDeposit}
-                    disabled={!amount || amount < 0}
+                    disabled={isNaN(amount) || amount < 0}
                     className="button w-36"
                   >
                     <p className="proposal-text-medium">Deposit</p>
