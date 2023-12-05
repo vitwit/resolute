@@ -258,7 +258,7 @@ const ProposalOverviewVote = () => {
                   <div
                     className={
                       `bg-[#2DC5A4] h-[10px] rounded-l-full ` +
-                      `w-[${proposalOverviewVoteData.quorum}%]`
+                      `w-[${proposalOverviewVoteData.proposalOverviewVoteData.quorum}%]`
                     }
                   ></div>
                 </div>
