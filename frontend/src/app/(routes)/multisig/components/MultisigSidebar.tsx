@@ -6,12 +6,14 @@ import TransactionsList from './TransactionsList';
 import { RootState } from '@/store/store';
 
 interface MultisigSidebarProps {
+  chainID: string;
   accountSpecific: boolean;
   address?: string;
   walletAddress: string;
 }
 
 const MultisigSidebar = ({
+  chainID,
   accountSpecific,
   address,
   walletAddress,
@@ -94,7 +96,12 @@ const MultisigSidebar = ({
           </div>
         </div>
       </div>
-      <TransactionsList isMember={isMember} txnsState={txnsState} />
+      <TransactionsList
+        chainID={chainID}
+        isMember={isMember}
+        txnsState={txnsState}
+        isHistory={isHistory}
+      />
     </div>
   );
 };

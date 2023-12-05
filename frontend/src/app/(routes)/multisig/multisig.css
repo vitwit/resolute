@@ -72,26 +72,21 @@
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 
-/* Trasactions list styles */
-.custom-table {
-  @apply w-full;
+.divider {
+  @apply h-[1px] mt-4;
+  background: linear-gradient(
+    90deg,
+    rgba(74, 162, 156, 0.5) 7.46%,
+    rgba(139, 61, 167, 0.5) 94.28%
+  );
 }
-.custom-table td {
-  @apply pt-6 text-white text-sm not-italic font-normal leading-5;
-}
-.custom-table-head {
-  @apply pb-4 border-b-[0.5px] border-[#43ff64d9];
-  @apply pb-4 border-b-[0.5px] border-[#8b3da780];
-}
-.custom-table-head th {
-  @apply text-[16px] leading-3 font-normal h-10;
-  @apply text-[16px] leading-3 font-normal h-10  text-white;
-}
-.table {
-  @apply flex flex-col items-start gap-6 self-stretch px-0 py-6;
-}
-.image-style {
-  @apply rounded-lg w-[32px] h-[32px];
+
+.action-image {
+  @apply rounded-lg w-8 h-8 cursor-pointer;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
-/* Trasactions list styles end */
+
+.sign-broadcast-btn {
+  @apply flex-1 text-[12px] font-medium leading-[20px] px-3 py-[6px] rounded-lg cursor-pointer;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}

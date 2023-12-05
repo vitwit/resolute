@@ -123,6 +123,7 @@ const PageMultisigInfo = ({
         />
       ) : null}
       <MultisigSidebar
+        chainID={chainID}
         accountSpecific={true}
         address={address}
         walletAddress={walletAddress}
