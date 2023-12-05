@@ -96,6 +96,8 @@ export const signAndBroadcast = async (
   let signer: OfflineSigner;
   try {
     signer = await getClient(aminoConfig, chainId, messages);
+    alert('her....');
+    console.log(signer);
   } catch (error) {
     throw new Error('failed to get wallet');
   }

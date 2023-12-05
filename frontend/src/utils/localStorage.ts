@@ -90,7 +90,7 @@ export function addTransanctions(transactions: Transaction[], address: string) {
 
 export function setAuthToken(authToken: AuthToken) {
   const tokens = localStorage.getItem(AUTH_TOKEN_KEY_NAME);
-  var authTokens = [];
+  let authTokens = [];
 
   if (tokens) {
     authTokens = JSON.parse(tokens);
@@ -117,7 +117,7 @@ export function getAuthToken(chainID: string): AuthToken | null {
   const tokens = localStorage.getItem(AUTH_TOKEN_KEY_NAME);
 
   if (tokens) {
-    var authTokens = JSON.parse(tokens);
+    const authTokens = JSON.parse(tokens);
 
     const token = authTokens.filter((item: AuthToken) => {
       return item.chainID === chainID;

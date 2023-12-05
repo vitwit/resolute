@@ -11,7 +11,6 @@ import { setError } from '@/store/features/common/commonSlice';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { deepPurple } from '@mui/material/colors';
 import Axios from 'axios';
-import authService from '@/store/features/auth/authService';
 import { cleanURL } from '@/utils/util';
 
 interface DialogCreateMultisigProps {

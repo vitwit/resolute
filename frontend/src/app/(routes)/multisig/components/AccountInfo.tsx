@@ -2,19 +2,29 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { MultisigAccount } from '@/types/multisig';
 import { getLocalTime } from '@/utils/datetime';
-import { shortenAddress } from '@/utils/util';
+import { parseBalance } from '@/utils/denom';
+import { formatCoin, formatStakedAmount, shortenAddress } from '@/utils/util';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const AccountInfo = ({
+  chainID,
   chainName,
   address,
+  coinMinimalDenom,
+  coinDecimals,
+  coinDenom,
 }: {
+  chainID: string;
   chainName: string;
   address: string;
+  coinMinimalDenom: string;
+  coinDecimals: number;
+  coinDenom: string;
 }) => {
   const router = useRouter();
+  const [availableBalance, setAvailableBalance] = useState<number>(0);
 
   const handleGoBack = () => {
     router.push(`/multisig/${chainName}`);
@@ -26,8 +36,27 @@ const AccountInfo = ({
   const multisigAccounts = useAppSelector(
     (state: RootState) => state.multisig.multisigAccounts
   );
+  const balance = useAppSelector(
+    (state: RootState) => state.multisig.balance.balance
+  );
+  const totalStaked = useAppSelector(
+    (state: RootState) => state.staking.chains[chainID]?.delegations.totalStaked
+  );
+  const stakedTokens = [
+    {
+      amount: totalStaked?.toString() || '',
+      denom: coinMinimalDenom,
+    },
+  ];
+
   const { txnCounts } = multisigAccounts;
   const actionsRequired = txnCounts[address];
+
+  useEffect(() => {
+    setAvailableBalance(
+      parseBalance([balance], coinDecimals, coinMinimalDenom)
+    );
+  }, [balance]);
 
   return (
     <div className="multisig-account-info">
@@ -43,6 +72,12 @@ const AccountInfo = ({
       <AccountDetails
         multisigAccount={multisigAccount}
         actionsRequired={actionsRequired}
+        balance={formatCoin(availableBalance, coinDenom)}
+        stakedBalance={formatStakedAmount(stakedTokens, {
+          coinDenom,
+          coinMinimalDenom,
+          coinDecimals,
+        })}
       />
     </div>
   );
@@ -53,9 +88,13 @@ export default AccountInfo;
 const AccountDetails = ({
   multisigAccount,
   actionsRequired,
+  balance,
+  stakedBalance,
 }: {
   multisigAccount: MultisigAccount;
   actionsRequired: number;
+  balance: string;
+  stakedBalance: string;
 }) => {
   const { account: accountInfo, pubkeys } = multisigAccount;
   const { address, name, created_at, threshold } = accountInfo;
@@ -91,7 +130,7 @@ const AccountDetails = ({
           <AccountInfoItem
             icon={'/staking-icon.svg'}
             name={'Staked'}
-            value={651237}
+            value={stakedBalance}
           />
         </div>
         <div className="grid grid-cols-3 gap-6">
@@ -108,7 +147,7 @@ const AccountDetails = ({
           <AccountInfoItem
             icon={'/tokens-icon.svg'}
             name={'Available Tokens'}
-            value={'0.092 ATOM'}
+            value={balance}
           />
         </div>
         <div className="account-members">

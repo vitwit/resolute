@@ -7,6 +7,7 @@ export interface DenomInfo {
   minimalDenom: string;
   decimals: number;
   chainName: string;
+  displayDenom: string;
 }
 
 const useGetChainInfo = () => {
@@ -22,6 +23,7 @@ const useGetChainInfo = () => {
         minimalDenom: currency.coinMinimalDenom,
         decimals: currency.coinDecimals || 0,
         chainName,
+        displayDenom: currency.coinDenom,
       };
     },
     [networks]

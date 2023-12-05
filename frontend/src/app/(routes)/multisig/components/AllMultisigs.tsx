@@ -5,7 +5,6 @@ import { TxStatus } from '@/types/enums';
 import { getLocalTime } from '@/utils/datetime';
 import { shortenAddress } from '@/utils/util';
 import { CircularProgress } from '@mui/material';
-import { deepPurple } from '@mui/material/colors';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import DialogCreateMultisig from './DialogCreateMultisig';

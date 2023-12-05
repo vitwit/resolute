@@ -4,12 +4,10 @@ import MultisigSidebar from './MultisigSidebar';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
-import {
-  getMultisigAccounts,
-  verifyAccount,
-} from '@/store/features/multisig/multisigSlice';
+import { verifyAccount } from '@/store/features/multisig/multisigSlice';
 import { getAuthToken, setAuthToken } from '@/utils/localStorage';
 import { setError } from '@/store/features/common/commonSlice';
+import VerifyAccount from './VerifyAccount';
 
 const PageMultisig = ({ chainName }: { chainName: string }) => {
   const dispatch = useAppDispatch();
@@ -76,8 +74,16 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
 
   return (
     <div className="flex gap-10">
-      <AllMultisigs address={address} chainName={chainName} chainID={chainID} />
-      <MultisigSidebar />
+      {verified ? (
+        <AllMultisigs
+          address={address}
+          chainName={chainName}
+          chainID={chainID}
+        />
+      ) : (
+        <VerifyAccount chainID={chainID} walletAddress={address} />
+      )}
+      <MultisigSidebar accountSpecific={false} />
     </div>
   );
 };

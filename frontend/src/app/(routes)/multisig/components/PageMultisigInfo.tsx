@@ -9,7 +9,10 @@ import {
   verifyAccount,
 } from '@/store/features/multisig/multisigSlice';
 import { getAuthToken, setAuthToken } from '@/utils/localStorage';
-import { setError } from '@/store/features/common/commonSlice';
+import {
+  setError,
+  setSelectedNetwork,
+} from '@/store/features/common/commonSlice';
 import {
   getAllValidators,
   getDelegations,
@@ -36,7 +39,11 @@ const PageMultisigInfo = ({
 
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { address: walletAddress, baseURL } = getChainInfo(chainID);
-  const { minimalDenom: denom } = getDenomInfo(chainID);
+  const {
+    minimalDenom: coinMinimalDenom,
+    decimals: coinDecimals,
+    displayDenom: coinDenom,
+  } = getDenomInfo(chainID);
 
   useEffect(() => {
     setTimeout(() => {
@@ -79,13 +86,19 @@ const PageMultisigInfo = ({
 
   useEffect(() => {
     if (chainID && isVerified()) {
-      dispatch(getMultisigBalance({ baseURL, address, denom }));
+      dispatch(
+        getMultisigBalance({ baseURL, address, denom: coinMinimalDenom })
+      );
       dispatch(getDelegations({ baseURL, address, chainID }));
       dispatch(getAllValidators({ baseURL, chainID }));
       dispatch(multisigByAddress({ address }));
       dispatch(getMultisigAccounts(walletAddress));
     }
   }, [chainID]);
+
+  useEffect(() => {
+    dispatch(setSelectedNetwork({ chainName: chainName }));
+  }, [chainName]);
 
   const isVerified = () => {
     const token = getAuthToken(chainID);
@@ -99,8 +112,21 @@ const PageMultisigInfo = ({
 
   return (
     <div className="flex gap-10 justify-between">
-      <AccountInfo chainName={chainName} address={address} />
-      <MultisigSidebar />
+      {verified ? (
+        <AccountInfo
+          chainID={chainID}
+          chainName={chainName}
+          address={address}
+          coinMinimalDenom={coinMinimalDenom}
+          coinDecimals={coinDecimals}
+          coinDenom={coinDenom}
+        />
+      ) : null}
+      <MultisigSidebar
+        accountSpecific={true}
+        address={address}
+        walletAddress={walletAddress}
+      />
     </div>
   );
 };

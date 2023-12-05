@@ -40,7 +40,7 @@
 }
 
 .multisig-sidebar {
-  @apply p-6 w-[500px] bg-[#0E0B26] h-screen min-h-[800px] overflow-y-scroll;
+  @apply space-y-6 p-6 w-[500px] bg-[#0E0B26] h-screen min-h-[800px] overflow-y-scroll;
 }
 
 .multisig-account-info {
@@ -50,3 +50,48 @@
 .multisig-account-address {
   @apply flex gap-2 px-2 text-[14px] leading-[20px];
 }
+
+.custom-radio-button-label {
+  @apply flex items-center cursor-pointer gap-2;
+}
+
+.custom-ratio-button {
+  @apply border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center;
+}
+
+.custom-radio-button-checked {
+  @apply h-[6px] w-[6px] bg-white rounded-full;
+}
+
+.verify-account {
+  @apply flex-1 h-screen flex flex-col gap-4 justify-center items-center;
+}
+
+.create-txn-btn {
+  @apply rounded-lg font-medium leading-[20px] tracking-[0.64px] px-3 py-[6px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+/* Trasactions list styles */
+.custom-table {
+  @apply w-full;
+}
+.custom-table td {
+  @apply pt-6 text-white text-sm not-italic font-normal leading-5;
+}
+.custom-table-head {
+  @apply pb-4 border-b-[0.5px] border-[#43ff64d9];
+  @apply pb-4 border-b-[0.5px] border-[#8b3da780];
+}
+.custom-table-head th {
+  @apply text-[16px] leading-3 font-normal h-10;
+  @apply text-[16px] leading-3 font-normal h-10  text-white;
+}
+.table {
+  @apply flex flex-col items-start gap-6 self-stretch px-0 py-6;
+}
+.image-style {
+  @apply rounded-lg w-[32px] h-[32px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+/* Trasactions list styles end */
