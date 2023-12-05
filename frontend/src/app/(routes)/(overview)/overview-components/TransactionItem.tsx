@@ -1,10 +1,16 @@
 import { formatTransaction } from '@/utils/transaction';
 import Image from 'next/image';
 
-const TransactionItem = ({ transaction }: { transaction: Transaction }) => {
-  const uiTx = formatTransaction(transaction);
+const TransactionItem = ({
+  transaction,
+  msgFilters,
+}: {
+  transaction: Transaction;
+  msgFilters: string[];
+}) => {
+  const uiTx = formatTransaction(transaction, msgFilters);
 
-  return (
+  return uiTx.showTx ? (
     <div className="w-full flex gap-4">
       <div className="flex gap-2 min-w-[88px] max-w-[88px]">
         <div className="space-y-4">
@@ -46,7 +52,7 @@ const TransactionItem = ({ transaction }: { transaction: Transaction }) => {
         </div>
       </div>
     </div>
-  );
+  ) : null;
 };
 
 export const Chip = ({ msg }: { msg: string }) => {

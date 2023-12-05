@@ -1,4 +1,5 @@
 import { Pagination } from '../proposals';
+import { TxStatus } from './enums';
 
 interface DelegatorTotalRewardsRequest {
   baseURL: string;
@@ -27,7 +28,7 @@ interface DefaultState {
     pagination: Pagination;
   };
   tx: {
-    status: string;
+    status: TxStatus;
     txHash: string;
   };
 }
@@ -58,5 +59,5 @@ interface TxWithdrawAllRewardsInputs {
   feeAmount: number;
   feegranter: string;
   address: string;
-  cosmosAddress:string
+  cosmosAddress: string;
 }

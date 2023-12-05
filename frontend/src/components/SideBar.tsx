@@ -10,6 +10,7 @@ import { logout } from '@/utils/localStorage';
 import { RootState } from '@/store/store';
 import { tabLink } from '../utils/util';
 import { Tooltip } from '@mui/material';
+import TransactionSuccessPopup from './TransactionSuccessPopup';
 
 const menuItems = [
   {
@@ -63,6 +64,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   return (
     <div className="main">
+      <TransactionSuccessPopup />
       <div className="sidebar">
         <div className="">
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />

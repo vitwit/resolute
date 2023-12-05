@@ -1,0 +1,90 @@
+{
+    "address": {
+      "name": "address",
+      "rules": {
+        "required": "Address is required"
+      },
+      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
+      "textFieldSize": "small",
+      "placeHolder": "Enter Address Here",
+      "textFieldCustomMuiSx": {
+        "& .MuiTypography-body1": {
+          "color": "white",
+          "fontSize": "12px",
+          "fontWeight": 200
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
+          "border": "none"
+        }
+      },
+      "inputProps": {
+        "sx": {
+          "input": {
+            "color": "white",
+            "fontSize": "14px",
+            "padding": 2
+          }
+        }
+      }
+    },
+    "amount": {
+      "name": "amount",
+      "rules": {
+        "required": "Amount is required",
+        "pattern": {
+          "value": "^[0-9]+(\\.[0-9]+)?$",
+          "message": "Please enter a valid number"
+        }
+      },
+      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
+      "textFieldSize": "small",
+      "placeHolder": "Enter Amount here",
+      "textFieldCustomMuiSx": {
+        "& .MuiTypography-body1": {
+          "color": "white",
+          "fontSize": "12px",
+          "fontWeight": 200
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
+          "border": "none"
+        }
+      },
+      "inputProps": {
+        "sx": {
+          "input": {
+            "color": "white",
+            "fontSize": "14px",
+            "padding": 2
+          }
+        }
+      }
+    },
+    "memo": {
+      "name": "memo",
+      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
+      "rules": {},
+      "textFieldSize": "small",
+      "placeHolder": "Enter Memo here",
+      "textFieldCustomMuiSx": {
+        "& .MuiTypography-body1": {
+          "color": "white",
+          "fontSize": "12px",
+          "fontWeight": 200,
+          "height": "100px"
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
+          "border": "none"
+        }
+      },
+      "inputProps": {
+        "sx": {
+          "input": {
+            "color": "white",
+            "fontSize": "14px",
+            "padding": 2
+          }
+        }
+      }
+    }
+  }
+  

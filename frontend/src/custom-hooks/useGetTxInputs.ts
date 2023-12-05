@@ -175,6 +175,27 @@ const useGetTxInputs = () => {
     };
   };
 
+  const txSendInputs = (
+    chainID: string,
+    recipient: string,
+    amount: number,
+    memo: string
+  ): TxSendInputs => {
+    const basicChainInfo = getChainInfo(chainID);
+    const { minimalDenom, decimals } = getDenomInfo(chainID);
+    return {
+      basicChainInfo,
+      from: basicChainInfo.address,
+      to: recipient,
+      amount: amount * 10 ** decimals,
+      denom: minimalDenom,
+      feeAmount: basicChainInfo.feeAmount * 10 ** decimals,
+      feegranter: '',
+      memo,
+      prefix: basicChainInfo.prefix,
+    };
+  };
+
   return {
     txWithdrawAllRewardsInputs,
     txRestakeInputs,
