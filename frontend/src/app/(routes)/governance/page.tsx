@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import Proposals from './Proposals';
 import AllProposals from './AllProposals';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
@@ -11,6 +11,12 @@ const Page = () => {
   const [isOverviewOpen, setIsOverviewOpen] = React.useState(false);
   const [currentOverviewId, setCurrentOverviewId] = React.useState(0);
   const [chainID, setChainID] = React.useState('');
+  const [isSelected, setIsSelected] = useState<boolean>(false);
+
+  const handleProposalSelected = (value: boolean) => {
+    setIsSelected(value);
+  };
+
   // const [baseURL, setBaseURL] = React.useState('');
 
   const nameToChainIDs = useAppSelector(
@@ -58,6 +64,9 @@ const Page = () => {
           chainIDs={chainIDs}
           handleSetCurrentOverviewId={handleSetCurrentOverviewId}
           isRightBarOpen={false}
+          currentOverviewId={currentOverviewId}
+          handleProposalSelected={handleProposalSelected}
+          isSelected={isSelected}
         />
       </div>
       {(isOverviewOpen && (
@@ -67,6 +76,7 @@ const Page = () => {
           chainID={chainID}
           handleCloseOverview={handleCloseOverview}
           // proposalname="name"
+          handleProposalSelected={handleProposalSelected}
         />
       )) ||
         null}

@@ -51,7 +51,7 @@ interface Chain {
     status: TxStatus;
     errMsg: string;
     params: GovParamsResponse;
-  },
+  };
   votes: VotesData;
   tally: ProposalTallyData;
   tx: {
@@ -74,7 +74,7 @@ interface GovState {
   activeProposalsLoading: number;
   depositProposalsLoading: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  proposalDetails: any;  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  proposalDetails: any; // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }
 
 const EMPTY_PAGINATION = {
@@ -132,20 +132,44 @@ const initialState: GovState = {
       status: TxStatus.INIT,
       txHash: '',
     },
+    tallyParams: {
+      errMsg: '',
+      status: TxStatus.INIT,
+      params: {
+        voting_params: {
+          voting_period: '',
+        },
+        deposit_params: {
+          min_deposit: [
+            {
+              denom: '',
+              amount: '',
+            },
+          ],
+          max_deposit_period: '',
+        },
+        tally_params: {
+          quorum: '',
+          threshold: '',
+          vote_threshold: '',
+        },
+      },
+    },
   },
   proposalInfo: {
     status: TxStatus.INIT,
     errMsg: '',
   },
+  proposalDetails: {},
 };
 
 export const getProposal = createAsyncThunk(
   'gov/proposal-info',
   async (data: GetProposalInputs, { rejectWithValue }) => {
-    console.log('proposal uRL', data)
+    console.log('proposal uRL', data);
     try {
       const response = await govService.proposal(data.baseURL, data.proposalId);
-      console.log('proposal Result', response)
+      console.log('proposal Result', response);
       return {
         chainID: data.chainID,
         data: response.data,
@@ -163,7 +187,7 @@ export const getGovTallyParams = createAsyncThunk(
   async (data: GetDepositParamsInputs, { rejectWithValue }) => {
     try {
       const response = await govService.govTallyParams(data.baseURL);
-      console.log('tally params 111', response, data)
+      console.log('tally params 111', response, data);
       return {
         chainID: data.chainID,
         data: response.data,
@@ -237,7 +261,7 @@ export const getProposalsInVoting = createAsyncThunk(
         PROPOSAL_STATUS_ACTIVE
       );
 
-      console.log('response--------', response)
+      console.log('response--------', response);
 
       const { data: responseData } = response || {};
       const proposals = responseData?.proposals || [];
@@ -334,11 +358,11 @@ export const txVote = createAsyncThunk(
         GAS_FEE,
         data?.justification || '',
         `${data.feeAmount}${data.denom}`,
-        data.rest,
+        data.rest
         // data.feegranter?.length > 0 ? data.feegranter : undefined
       );
 
-      console.log('tx result==============', result)
+      console.log('tx result==============', result);
       if (result?.code === 0) {
         dispatch(
           setTxHash({
@@ -357,7 +381,7 @@ export const txVote = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-      console.log('err in catch ', error)
+      console.log('err in catch ', error);
       if (error instanceof AxiosError) {
         dispatch(
           setError({
@@ -508,7 +532,7 @@ export const govSlice = createSlice({
           status: TxStatus.PENDING,
           errMsg: '',
           params: state.chains[chainID].tallyParams.params,
-        }
+        };
       })
       .addCase(getGovTallyParams.fulfilled, (state, action) => {
         const chainID = action.payload?.chainID || '';
@@ -528,8 +552,7 @@ export const govSlice = createSlice({
           status: TxStatus.REJECTED,
           errMsg: payload?.message,
           params: state.chains[chainID]?.tallyParams?.params,
-        }
-
+        };
       });
 
     //proposals in deposit period
@@ -678,8 +701,7 @@ export const govSlice = createSlice({
           //   proposal: action.payload.data.proposal
           // };
 
-          state.proposalDetails = action.payload.data.proposal
-
+          state.proposalDetails = action.payload.data.proposal;
         } else {
           const currentProposalsState = state.chains[chainID].deposit.proposals;
           if (!currentProposalsState.length) {

@@ -19,15 +19,20 @@ const AllProposals = ({
   status,
   handleOpenOverview,
   handleSetCurrentOverviewId,
+  currentOverviewId,
+  handleProposalSelected,
+  isSelected,
 }: {
   isRightBarOpen: boolean;
   chainIDs: string[];
   status: string;
   handleOpenOverview: handleOpenOverview;
   handleSetCurrentOverviewId: handleSetCurrentOverviewId;
+  currentOverviewId: number;
+  handleProposalSelected: (value: boolean) => void;
+  isSelected: boolean;
 }) => {
   const dispatch = useAppDispatch();
-  const [isClickable, SetIsClikable] = useState(true);
 
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
 
@@ -105,7 +110,7 @@ const AllProposals = ({
                       parseInt(get(proposal, 'proposal_id')),
                       chainName
                     );
-                    SetIsClikable(false);
+                    handleProposalSelected(true);
                   }}
                   className="proposal"
                   key={index}
@@ -114,7 +119,11 @@ const AllProposals = ({
                     <div className="space-x-2 flex items-center cursor-pointer">
                       <div
                         className={
-                          isClickable ? 'proposal-id-static' : 'proposal-id'
+                          isSelected &&
+                          currentOverviewId.toString() ===
+                            get(proposal, 'proposal_id')
+                            ? 'proposal-id'
+                            : 'proposal-id-static'
                         }
                       >
                         <p className="proposal-text-extralight">

@@ -22,10 +22,12 @@ const RightOverview = ({
   proposalId,
   handleCloseOverview,
   chainID,
+  handleProposalSelected,
 }: {
   proposalId: number;
   handleCloseOverview: handleCloseOverview;
   chainID: string;
+  handleProposalSelected: (value: boolean) => void;
 }) => {
   const dispatch = useAppDispatch();
   const proposalInfo = useAppSelector(
@@ -135,7 +137,10 @@ const RightOverview = ({
             height={24}
             alt="Close-Icon"
             className="cursor-pointer"
-            onClick={handleCloseClick}
+            onClick={() => {
+              handleCloseClick();
+              handleProposalSelected(false);
+            }}
           />
         </div>
         <div className="space-y-4">
