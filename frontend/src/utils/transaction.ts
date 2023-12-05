@@ -90,7 +90,7 @@ export const formatTransaction = (tx: Transaction, msgFilters: string[]) => {
     showMsgs[2] = true;
   }
   let showTx = false;
-  if (msgFilters.length === 0) showTx = true;
+  if (!msgFilters.length) showTx = true;
   else {
     const filterSet = new Set(msgFilters);
     msgs.forEach((msg) => {

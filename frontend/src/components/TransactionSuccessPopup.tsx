@@ -36,15 +36,10 @@ const TransactionSuccessPopup = () => {
         <div className="transaction-box flex-col">
           <div className="space-y-4">
             <div className="cross" onClick={handleClose}>
-              <Image
-                src="./close-icon.svg"
-                width={24}
-                height={24}
-                alt="Close"
-              />
+              <Image src="/close-icon.svg" width={24} height={24} alt="Close" />
             </div>
             <div className="px-10 py-0">
-              <div className="sapce-y-10">
+              <div className="space-y-10">
                 <div className="text-white text-xl font-bold">
                   Transaction Successful
                 </div>
@@ -59,7 +54,7 @@ const TransactionSuccessPopup = () => {
                         {tx?.transactionHash || '-'}
                       </div>
                       <Image
-                        src="./copy.svg"
+                        src="/copy.svg"
                         width={24}
                         height={24}
                         alt="Copy-icon"
