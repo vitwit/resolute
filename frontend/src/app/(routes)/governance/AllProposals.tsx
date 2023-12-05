@@ -41,6 +41,7 @@ const AllProposals = ({
   let allProposalsLength = 0;
 
   if (allChainProposals) {
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     Object.entries(allChainProposals).map(([_chainName, chainProposal]) => {
       allProposalsLength += get(
         chainProposal,
