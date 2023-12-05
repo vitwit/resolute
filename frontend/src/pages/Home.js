@@ -45,6 +45,7 @@ import AirdropEligibility from "./passage/AirdropEligibility";
 import { FeegrantOverview } from "./feegrant/FeegrantOverview";
 import { AuthzOverview } from "./authz/AuthzOverview";
 import ConnectWallet from "../components/ConnectWallet";
+import DelegatorSendPage from "./additional/DelegatorSend";
 
 export const ContextData = React.createContext();
 
@@ -106,10 +107,11 @@ function getTabIndex(path) {
   else if (path.includes("feegrant")) return 6;
   else if (path.includes("groups")) return 7;
   else if (path.includes("airdrop-check")) return 8;
+  else if (path.includes("validator-delegator")) return 9;
   else return 0;
 }
 
-export default function Home(props) {
+export default function Home() {
   const authzEnabled = useSelector((state) => state.common.authzMode);
   const [value, setValue] = React.useState(0);
   const selectedNetwork = useSelector(
@@ -192,11 +194,7 @@ export default function Home(props) {
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="menu bar"
-        >
+        <Tabs value={value} onChange={handleChange} aria-label="menu bar">
           {selectedNetwork?.length ? (
             <Tab
               label="Home"
@@ -387,6 +385,10 @@ export default function Home(props) {
               <Route
                 path="/:networkName/airdrop-check"
                 element={<AirdropEligibility />}
+              />
+              <Route
+                path="/:networkName/validator-delegator"
+                element={<DelegatorSendPage />}
               />
 
               <Route path="*" element={<Page404 />}></Route>

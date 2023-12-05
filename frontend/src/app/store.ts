@@ -13,6 +13,7 @@ import multiSlice from "../features/multisig/multisigSlice";
 import groupSlice from "../features/group/groupSlice";
 import slashingSlice from "../features/slashing/slashingSlice";
 import authReducer from "../features/auth/slice";
+import validatorSlice from "../features/validator/validatorSlice";
 
 export const store = configureStore({
   reducer: {
@@ -30,6 +31,7 @@ export const store = configureStore({
     slashing: slashingSlice,
     node: nodeReducer,
     auth: authReducer,
+    validator: validatorSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
