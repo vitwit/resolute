@@ -206,6 +206,21 @@ export const authzExecHelper = (dispatch, data) => {
       );
       break;
     }
+    case "validatorSend": {
+      dispatch(
+        txAuthzExec({
+          msgs: data.msgs,
+          denom: data.denom,
+          rest: data.rest,
+          aminoConfig: data.aminoConfig,
+          feeAmount: data.feeAmount,
+          prefix: data.prefix,
+          chainId: data.chainId,
+          feegranter: data.feegranter,
+        })
+      );
+      break;
+    }
     case "vote": {
       const msg = AuthzExecVoteMsg(
         data.from,

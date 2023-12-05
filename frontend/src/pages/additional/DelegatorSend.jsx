@@ -10,18 +10,11 @@ import {
   resetError,
   resetTxHash,
   setError,
-  removeFeegrant as removeFeegrantState,
-  setFeegrant as setFeegrantState,
 } from "./../../features/common/commonSlice";
 import { getBalances, txBankSend } from "../../features/bank/bankSlice";
 import Alert from "@mui/material/Alert";
-import FeegranterInfo from "../../components/FeegranterInfo";
 import { useParams, useNavigate } from "react-router-dom";
 import { parseBalance } from "../../utils/denom";
-import {
-  getFeegrant,
-  removeFeegrant as removeFeegrantLocalState,
-} from "../../utils/localStorage";
 import Box from "@mui/material/Box";
 import SelectNetwork from "../../components/common/SelectNetwork";
 import { Typography } from "@mui/material";
@@ -81,9 +74,6 @@ export default function DelegatorSendPage() {
   const [balance, setBalance] = useState({});
   const authzExecTx = useSelector((state) => state.authz.execTx);
   const grantsToMe = useSelector((state) => state.authz.grantsToMe);
-  const feegrant = useSelector(
-    (state) => state.common.feegrant?.[currentNetwork] || {}
-  );
   const selectedAuthz = useSelector((state) => state.authz.selected);
   const isAuthzMode = useSelector((state) => state.common.authzMode);
 
@@ -162,83 +152,8 @@ export default function DelegatorSendPage() {
     }
   }, [chainInfo, currentNetwork, granter, isAuthzMode, sendTx?.status]);
 
-  useEffect(() => {
-    const currentChainGrants = getFeegrant()?.[currentNetwork];
-    dispatch(
-      setFeegrantState({
-        grants: currentChainGrants,
-        chainName: currentNetwork.toLowerCase(),
-      })
-    );
-  }, [currentNetwork]);
-
-  const onSendTx = (data) => {
-    const amount = Number(data.amount);
-    if (!isAuthzMode) {
-      if (
-        Number(balance) <
-        amount + Number(25000 / 10 ** currency[0].coinDecimals)
-      ) {
-        dispatch(
-          setError({
-            type: "error",
-            message: "Not enough balance",
-          })
-        );
-      } else {
-        dispatch(
-          txBankSend({
-            from: from,
-            to: data.to,
-            amount: amount,
-            denom: currency[0].coinMinimalDenom,
-            chainId: chainInfo.config.chainId,
-            rest: chainInfo.config.rest,
-            aminoConfig: chainInfo.aminoConfig,
-            prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-            feeAmount:
-              chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
-              10 ** currency[0].coinDecimals,
-            feegranter: feegrant?.granter,
-          })
-        );
-      }
-    } else {
-      authzExecHelper(dispatch, {
-        type: "send",
-        from: address,
-        granter: data.granter,
-        recipient: data.to,
-        amount: amount,
-        denom: currency[0].coinMinimalDenom,
-        chainId: chainInfo.config.chainId,
-        rest: chainInfo.config.rest,
-        aminoConfig: chainInfo.aminoConfig,
-        prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
-        feeAmount:
-          chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
-          10 ** currency[0].coinDecimals,
-        feegranter: feegrant?.granter,
-      });
-    }
-  };
-
-  const removeFeegrant = () => {
-    // Should we completely remove feegrant or only for this session.
-    dispatch(removeFeegrantState(currentNetwork));
-    removeFeegrantLocalState(currentNetwork);
-  };
-
   return (
     <>
-      {feegrant?.granter?.length > 0 ? (
-        <FeegranterInfo
-          feegrant={feegrant}
-          onRemove={() => {
-            removeFeegrant();
-          }}
-        />
-      ) : null}
       <Box sx={{ width: "100%" }}>
         <Box
           sx={{
@@ -249,7 +164,7 @@ export default function DelegatorSendPage() {
         >
           <SelectNetwork
             onSelect={(name) => {
-              navigate(`/${name}/transfers`);
+              navigate(`/${name}/validator-delegator`);
             }}
             networks={Object.keys(nameToChainIDs)}
             defaultNetwork={
@@ -278,6 +193,7 @@ export default function DelegatorSendPage() {
                   <DelegatorTransfer
                     chainInfo={chainInfo}
                     chainID={chainID}
+                    currentNetwork={currentNetwork}
                     available={
                       currency?.length > 0 && balances?.length > 0
                         ? parseBalance(
@@ -287,7 +203,6 @@ export default function DelegatorSendPage() {
                           )
                         : 0
                     }
-                    onSend={onSendTx}
                     sendTx={sendTx}
                     authzTx={authzExecTx}
                     isAuthzMode={isAuthzMode}

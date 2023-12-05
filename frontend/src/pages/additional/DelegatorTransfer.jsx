@@ -21,9 +21,21 @@ import {
 import { multiTxns } from "../../features/bank/bankSlice";
 import { SEND_TYPE_URL } from "../multisig/tx/utils";
 import { parseCoins } from "@cosmjs/amino";
+import { authzExecHelper } from "../../features/authz/authzSlice";
 
 export default function DelegatorTransfer(props) {
-  const { chainInfo, chainID, available, currentNetwork } = props;
+  const {
+    chainInfo,
+    chainID,
+    available,
+    currentNetwork,
+    isAuthzMode,
+    grantsToMe,
+    setGranter,
+    granter,
+    sendTx,
+    authzTx,
+  } = props;
 
   const currency = chainInfo?.config?.currencies[0];
   const delegators = useSelector(
@@ -34,7 +46,6 @@ export default function DelegatorTransfer(props) {
 
   const from =
     networks[nameToChainIDs[currentNetwork]]?.walletInfo.bech32Address;
-
   const { handleSubmit, control, setValue, setError, watch } = useForm({
     defaultValues: {
       amount: 0,
@@ -52,7 +63,7 @@ export default function DelegatorTransfer(props) {
         const msg = {
           typeUrl: SEND_TYPE_URL,
           value: {
-            fromAddress: from,
+            fromAddress: isAuthzMode ? granter : from,
             toAddress: delegatorsAddr[i],
             amount: parseCoins(
               `${data.amount * 10 ** currency.coinDecimals}${
@@ -64,8 +75,24 @@ export default function DelegatorTransfer(props) {
         msgs.push(msg);
       }
 
-      dispatch(
-        multiTxns({
+      if (!isAuthzMode) {
+        dispatch(
+          multiTxns({
+            msgs: msgs,
+            denom: currency.coinMinimalDenom,
+            chainId: chainInfo.config.chainId,
+            rest: chainInfo.config.rest,
+            aminoConfig: chainInfo.aminoConfig,
+            prefix: chainInfo.config.bech32Config.bech32PrefixAccAddr,
+            feeAmount:
+              chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
+              10 ** currency.coinDecimals,
+            memo: "",
+          })
+        );
+      } else {
+        authzExecHelper(dispatch, {
+          type: "validatorSend",
           msgs: msgs,
           denom: currency.coinMinimalDenom,
           chainId: chainInfo.config.chainId,
@@ -75,9 +102,9 @@ export default function DelegatorTransfer(props) {
           feeAmount:
             chainInfo.config?.feeCurrencies?.[0]?.gasPriceStep.average *
             10 ** currency.coinDecimals,
-          memo: "",
-        })
-      );
+          feegranter: '',
+        });
+      }
     }
   };
 
@@ -176,11 +203,12 @@ export default function DelegatorTransfer(props) {
         }}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* {isAuthzMode && grantsToMe?.length > 0 ? (
+          {isAuthzMode && grantsToMe?.length > 0 ? (
             <FormControl
               fullWidth
               sx={{
                 mt: 1,
+                mb: 3,
               }}
             >
               <InputLabel id="granter-label">From *</InputLabel>
@@ -193,6 +221,7 @@ export default function DelegatorTransfer(props) {
                   setGranter(e.target.value);
                 }}
                 size="small"
+                sx={{ p: 1 }}
               >
                 {grantsToMe.map((granter, index) => (
                   <MenuItem id={index} value={granter}>
@@ -201,7 +230,7 @@ export default function DelegatorTransfer(props) {
                 ))}
               </Select>
             </FormControl>
-          ) : null} */}
+          ) : null}
 
           <div>
             <Controller
@@ -289,17 +318,16 @@ export default function DelegatorTransfer(props) {
               type="submit"
               variant="outlined"
               disableElevation
-              //   disabled={
-              //     sendTx.status === "pending" || authzTx.status === "pending"
-              //   }
+              disabled={
+                sendTx.status === "pending" || authzTx.status === "pending"
+              }
               sx={{
                 textTransform: "none",
                 mt: 2,
               }}
               size="medium"
             >
-              {/* {sendTx.status === "pending" || authzTx.status === "pending" ? ( */}
-              {false ? (
+              {sendTx.status === "pending" || authzTx.status === "pending" ? (
                 <>
                   <CircularProgress size={18} />
                   &nbsp;&nbsp;Please wait...
@@ -317,7 +345,13 @@ export default function DelegatorTransfer(props) {
 
 DelegatorTransfer.propTypes = {
   chainInfo: PropTypes.object.isRequired,
-  available: PropTypes.object.isRequired,
+  available: PropTypes.number.isRequired,
   currentNetwork: PropTypes.string.isRequired,
   chainID: PropTypes.string.isRequired,
+  sendTx: PropTypes.object.isRequired,
+  authzTx: PropTypes.object.isRequired,
+  isAuthzMode: PropTypes.bool.isRequired,
+  grantsToMe: PropTypes.array.isRequired,
+  setGranter: PropTypes.func.isRequired,
+  granter: PropTypes.func.isRequired,
 };
