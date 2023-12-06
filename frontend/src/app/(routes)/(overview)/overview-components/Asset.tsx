@@ -8,7 +8,7 @@ import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { TxStatus } from '@/types/enums';
 import { txRestake } from '@/store/features/staking/stakeSlice';
 import { RootState } from '@/store/store';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Tooltip } from '@mui/material';
 
 const Asset = ({
   asset,
@@ -18,10 +18,12 @@ const Asset = ({
   showChainName: boolean;
 }) => {
   const txClaimStatus = useAppSelector(
-    (state: RootState) => state.distribution.chains[asset.chainID].tx.status
+    (state: RootState) =>
+      state.distribution.chains[asset.chainID]?.tx?.status || TxStatus.IDLE
   );
   const txRestakeStatus = useAppSelector(
-    (state: RootState) => state.staking.chains[asset.chainID].reStakeTxStatus
+    (state: RootState) =>
+      state.staking.chains[asset.chainID]?.reStakeTxStatus || TxStatus.IDLE
   );
 
   const dispatch = useAppDispatch();
@@ -80,7 +82,12 @@ const Asset = ({
               width={16}
               alt="inflation change"
             />
-            <div className="text-[#E57575] text-[12px]">
+            <div
+              className={
+                'text-[12px] ' +
+                (asset.inflation >= 0 ? 'text-[#238636]' : 'text-[#E57575]')
+              }
+            >
               {formatAmount(Math.abs(asset.inflation))}%
             </div>
           </div>
@@ -88,28 +95,50 @@ const Asset = ({
       </td>
       <td>
         <div className="flex justify-between gap-1">
-          <div className="asset-action" onClick={() => claim(asset.chainID)}>
-            {txClaimStatus === TxStatus.PENDING ? (
-              <CircularProgress size={16} />
-            ) : (
-              <Image src="/claim-icon.svg" height={16} width={16} alt="Claim" />
-            )}
-          </div>
-          <div
-            className="asset-action"
-            onClick={() => claimAndStake(asset.chainID)}
-          >
-            {txRestakeStatus === TxStatus.PENDING ? (
-              <CircularProgress size={16}/>
-            ) : (
-              <Image
-                src="/claim-stake-icon.svg"
-                height={16}
-                width={16}
-                alt="Claim and Stake"
-              />
-            )}
-          </div>
+          <Tooltip title="Stake" placement="top-end">
+            <div
+              className={
+                'asset-action ' +
+                (asset.type === 'ibc' ? 'disabled' : 'cursor-pointer')
+              }
+              onClick={() => {
+                if (asset.type === 'native') claim(asset.chainID);
+              }}
+            >
+              {txClaimStatus === TxStatus.PENDING ? (
+                <CircularProgress size={16} />
+              ) : (
+                <Image
+                  src="/claim-icon.svg"
+                  height={16}
+                  width={16}
+                  alt="Claim"
+                />
+              )}
+            </div>
+          </Tooltip>
+          <Tooltip title="Claim & Stake" placement="top-start">
+            <div
+              className={
+                'asset-action ' +
+                (asset.type === 'ibc' ? 'disabled' : 'cursor-pointer')
+              }
+              onClick={() => {
+                if (asset.type === 'native') claimAndStake(asset.chainID);
+              }}
+            >
+              {txRestakeStatus === TxStatus.PENDING ? (
+                <CircularProgress size={16} />
+              ) : (
+                <Image
+                  src="/claim-stake-icon.svg"
+                  height={16}
+                  width={16}
+                  alt="Claim and Stake"
+                />
+              )}
+            </div>
+          </Tooltip>
         </div>
       </td>
     </tr>
