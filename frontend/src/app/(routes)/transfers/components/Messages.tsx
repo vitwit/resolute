@@ -79,6 +79,7 @@ const Message = ({
       </div>
       <Image
         src="/close.svg"
+        className='cursor-pointer'
         width={16}
         height={16}
         alt="cancel"
