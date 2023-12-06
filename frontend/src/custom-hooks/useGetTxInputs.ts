@@ -200,8 +200,10 @@ const useGetTxInputs = () => {
     txWithdrawAllRewardsInputs,
     txRestakeInputs,
     txWithdrawValidatorRewardsInputs,
-    txRestakeValidatorInputs
- , getVoteTxInputs };
+    txRestakeValidatorInputs,
+    txSendInputs,
+    getVoteTxInputs,
+  };
 };
 
 export default useGetTxInputs;
