@@ -4,7 +4,7 @@
 }
 
 .multisig-account-card {
-  @apply p-4 rounded-2xl bg-[#0E0B26] cursor-pointer hover:bg-[#FFFFFF0D];
+  @apply p-4 rounded-2xl bg-[#0E0B26] cursor-pointer hover:bg-[#FFFFFF0D] truncate;
   backdrop-filter: blur(2px);
 }
 
@@ -76,8 +76,8 @@
   @apply h-[1px] mt-4;
   background: linear-gradient(
     90deg,
-    rgba(74, 162, 156, 0.5) 7.46%,
-    rgba(139, 61, 167, 0.5) 94.28%
+    rgba(74, 162, 156, 0.352) 7.46%,
+    rgba(139, 61, 167, 0.354) 94.28%
   );
 }
 
@@ -87,6 +87,19 @@
 }
 
 .sign-broadcast-btn {
-  @apply flex-1 text-[12px] font-medium leading-[20px] px-3 py-[6px] rounded-lg cursor-pointer;
+  @apply min-w-[87px] text-[12px] font-medium leading-[20px] px-3 py-[6px] rounded-lg cursor-pointer;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.raw-content {
+  @apply p-2 bg-black max-h-[600px] overflow-y-scroll;
+}
+
+.account-address {
+  @apply w-fit flex gap-2 items-center h-6 p-2 text-white text-[14px] font-normal leading-normal rounded-lg opacity-80 bg-[#FFFFFF1A];
+}
+
+.txn-card {
+  @apply bg-[#FFFFFF0D] p-4 rounded-2xl space-y-6;
+  backdrop-filter: blur(2px);
 }

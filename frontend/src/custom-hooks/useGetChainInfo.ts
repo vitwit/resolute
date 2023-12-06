@@ -20,25 +20,25 @@ const useGetChainInfo = () => {
       const chainName = config?.chainName.toLowerCase();
 
       return {
-        minimalDenom: currency.coinMinimalDenom,
-        decimals: currency.coinDecimals || 0,
+        minimalDenom: currency?.coinMinimalDenom,
+        decimals: currency?.coinDecimals || 0,
         chainName,
-        displayDenom: currency.coinDenom,
+        displayDenom: currency?.coinDenom,
       };
     },
     [networks]
   );
   const getChainInfo = (chainID: string): BasicChainInfo => {
-    const network = networks[chainID].network;
-    const config = network.config;
-    const rest = config.rest;
-    const rpc = config.rpc;
+    const network = networks[chainID]?.network;
+    const config = network?.config;
+    const rest = config?.rest;
+    const rpc = config?.rpc;
 
-    const aminoCfg = network.aminoConfig;
+    const aminoCfg = network?.aminoConfig;
     const cosmosAddress = networks[COSMOS_CHAIN_ID].walletInfo.bech32Address;
-    const prefix = config.bech32Config.bech32PrefixAccAddr;
-    const feeAmount = config.feeCurrencies[0].gasPriceStep?.average || 0;
-    const address = networks[chainID].walletInfo.bech32Address;
+    const prefix = config?.bech32Config.bech32PrefixAccAddr;
+    const feeAmount = config?.feeCurrencies[0].gasPriceStep?.average || 0;
+    const address = networks[chainID]?.walletInfo.bech32Address;
     return {
       baseURL: rest,
       chainID,

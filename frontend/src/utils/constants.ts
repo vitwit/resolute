@@ -15,3 +15,7 @@ export const VALIDATOR_LOGO_URL = (identity: string) =>
 export const VALIDATORS_PER_PAGE = 7;
 export const CLOSE_ICON_PATH = '/close-icon.svg';
 export const STAKING_DIALOG_IMAGE_PATH = '/delegate-popup-image.png';
+export const SEND_TYPE_URL = "/cosmos.bank.v1beta1.MsgSend";
+export const DELEGATE_TYPE_URL = "/cosmos.staking.v1beta1.MsgDelegate";
+export const UNDELEGATE_TYPE_URL = "/cosmos.staking.v1beta1.MsgUndelegate";
+export const REDELEGATE_TYPE_URL = "/cosmos.staking.v1beta1.MsgBeginRedelegate";

@@ -118,19 +118,12 @@ const MultisigAccountCard = ({
   return (
     <Link href={`/multisig/${chainName}/${address}`}>
       <div className="space-y-4 text-[14px] multisig-account-card">
-        <div className="flex justify-between">
-          <div>{name}</div>
-          <div>{getLocalTime(created_at)}</div>
-        </div>
+        <div className="text-[16px]">{name}</div>
         <div className="space-y-2">
           <div>Address</div>
-          <div className="flex gap-2 items-center">
-            <div className="text-[16px] leading-[20px] font-bold">
-              {shortenAddress(address, 27)}
-            </div>
-            <div>
-              <Image src="/copy.svg" width={24} height={24} alt="copy" />
-            </div>
+          <div className="account-address">
+            <span className="truncate">{shortenAddress(address, 27)}</span>
+            <Image src="/copy.svg" width={24} height={24} alt="copy" />
           </div>
         </div>
         <div className="flex justify-between">

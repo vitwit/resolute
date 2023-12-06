@@ -3,10 +3,17 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { RootState } from '@/store/store';
 import { MultisigTxStatus } from '@/types/enums';
 import { MultisigAccount, Txn, Txns } from '@/types/multisig';
-import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { parseTokens } from '@/utils/denom';
+import {
+  CLOSE_ICON_PATH,
+  DELEGATE_TYPE_URL,
+  REDELEGATE_TYPE_URL,
+  SEND_TYPE_URL,
+  UNDELEGATE_TYPE_URL,
+} from '@/utils/constants';
+import { parseBalance, parseTokens } from '@/utils/denom';
 import { shortenAddress } from '@/utils/util';
 import {
+  Box,
   Chip,
   Dialog,
   DialogContent,
@@ -18,6 +25,7 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import SignTxn from './SignTxn';
 import BroadCastTxn from './BroadCastTxn';
+import DialogViewRaw from './DialogViewRaw';
 
 interface TransactionsListProps {
   chainID: string;
@@ -33,7 +41,21 @@ interface TransactionItemProps {
   membersCount: number;
   chainID: string;
   onViewMoreAction: (txn: Txn) => void;
+  onViewRawAction: (txn: Txn) => void;
   isHistory: boolean;
+  currency: Currency;
+}
+
+interface TransactionCardProps {
+  isMember: boolean;
+  txn: Txn | undefined;
+  multisigAccount: MultisigAccount;
+  membersCount: number;
+  chainID: string;
+  onViewMoreAction: (txn: Txn) => void;
+  onViewRawAction: (txn: Txn) => void;
+  isHistory: boolean;
+  currency: Currency;
 }
 
 interface DialogViewTxnMessagesProps {
@@ -45,7 +67,9 @@ interface DialogViewTxnMessagesProps {
   chainID: string;
   toggleMsgDialogOpen: () => void;
   onViewMoreAction: (txn: Txn) => void;
+  onViewRawAction: (txn: Txn) => void;
   isHistory: boolean;
+  currency: Currency;
 }
 
 const mapTxns = {
@@ -54,32 +78,6 @@ const mapTxns = {
   '/cosmos.staking.v1beta1.MsgBeginRedelegate': 'ReDelegate',
   '/cosmos.staking.v1beta1.MsgUndelegate': 'UnDelegate',
   Msg: 'Tx Msg',
-};
-
-const getTxStatusComponent = (status: string, onShowError: () => void) => {
-  return (
-    <>
-      {status === 'SUCCESS' ? (
-        <Chip size="small" label="Success" color="success" variant="outlined" />
-      ) : (
-        <>
-          <Chip size="small" label="Failed" color="error" variant="outlined" />
-          <Typography
-            color="primary"
-            variant="body2"
-            sx={{
-              textDecoration: 'underline',
-              mt: 1,
-              cursor: 'pointer',
-            }}
-            onClick={() => onShowError()}
-          >
-            Error message
-          </Typography>
-        </>
-      )}
-    </>
-  );
 };
 
 const TransactionsList = ({
@@ -93,9 +91,14 @@ const TransactionsList = ({
   );
   const members = multisigAccount.pubkeys || [];
   const [msgDialogOpen, setMsgDialogOpen] = useState<boolean>(false);
+  const [viewRawOpen, setViewRawDialogOpen] = useState<boolean>(false);
 
   const toggleMsgDialogOpen = () => {
     setMsgDialogOpen((prevState) => !prevState);
+  };
+
+  const toggleViewRawDialogOpen = () => {
+    setViewRawDialogOpen((prevState) => !prevState);
   };
 
   const [selectedTxn, setSelectedTxn] = useState<Txn>();
@@ -105,19 +108,23 @@ const TransactionsList = ({
     setMsgDialogOpen(true);
   };
 
+  const onViewRawAction = (txn: Txn) => {
+    setSelectedTxn(txn);
+    setViewRawDialogOpen(true);
+  };
+
+  const { getDenomInfo } = useGetChainInfo();
+  const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
+  const currency = {
+    coinMinimalDenom: minimalDenom,
+    coinDecimals: decimals,
+    coinDenom: displayDenom,
+  };
+
   return (
-    <div className="py-6 space-y-6 text-[14px] flex flex-col justify-between">
-      <div>
-        <div className="flex justify-between gap-6">
-          <div className="flex-1">Messages</div>
-          <div className="w-[50px]">Signed</div>
-          {isHistory ? <div className="w-[80px]">Status</div> : null}
-          <div className={isHistory ? `w-[100px]` : `w-[180px]`}>Actions</div>
-        </div>
-        <div className="divider"></div>
-      </div>
+    <div className="pb-6 space-y-6 text-[14px] flex flex-col justify-between">
       {txnsState.list.map((txn, index) => (
-        <TransactionItem
+        <TransactionCard
           key={index}
           isMember={isMember}
           txn={txn}
@@ -126,6 +133,8 @@ const TransactionsList = ({
           chainID={chainID}
           isHistory={isHistory}
           onViewMoreAction={onViewMoreAction}
+          currency={currency}
+          onViewRawAction={onViewRawAction}
         />
       ))}
       <DialogViewTxnMessages
@@ -138,12 +147,123 @@ const TransactionsList = ({
         isHistory={isHistory}
         toggleMsgDialogOpen={toggleMsgDialogOpen}
         onViewMoreAction={onViewMoreAction}
+        currency={currency}
+        onViewRawAction={onViewRawAction}
+      />
+      <DialogViewRaw
+        open={viewRawOpen}
+        onClose={toggleViewRawDialogOpen}
+        txn={selectedTxn}
       />
     </div>
   );
 };
 
 export default TransactionsList;
+
+const TransactionCard = ({
+  isMember,
+  txn,
+  multisigAccount,
+  membersCount,
+  chainID,
+  onViewMoreAction,
+  isHistory,
+  currency,
+  onViewRawAction,
+}: TransactionCardProps) => {
+  const isReadyToBroadcast = () => {
+    let signs = txn?.signatures || [];
+    if (signs?.length >= multisigAccount?.account?.threshold) return true;
+    else return false;
+  };
+  return (
+    <div className="txn-card">
+      <div className="flex-1 flex gap-1 items-center truncate">
+        <div className="overflow-hidden text-ellipsis w-[250px]">
+          {txn?.messages?.length === 0 ? (
+            <div>-</div>
+          ) : (
+            <div>
+              <RenderTxnMsg msg={txn?.messages[0]} currency={currency} />
+            </div>
+          )}
+        </div>
+        {txn?.messages.length ? (
+          <Tooltip title="View More" placement="top">
+            <Image
+              src="/view-more-icon.svg"
+              height={16}
+              width={16}
+              alt="View More"
+              className="cursor-pointer"
+              onClick={() => onViewMoreAction(txn)}
+            />
+          </Tooltip>
+        ) : null}
+      </div>
+      <div>
+        <div className="flex justify-between gap-4 items-center">
+          {!isHistory ? (
+            <>
+              {isReadyToBroadcast() ? (
+                txn?.status === 'DONE' || txn?.status === 'FAILED' ? (
+                  txn?.status
+                ) : (
+                  <BroadCastTxn />
+                )
+              ) : (
+                <SignTxn />
+              )}
+            </>
+          ) : (
+            <div className="cursor-pointer">
+              {txn?.status === 'SUCCESS' ? (
+                <span className="underline underline-offset-2 text-[#4AA29C]">
+                  Transaction Successful
+                </span>
+              ) : (
+                <span className="text-[#E57575] underline underline-offset-2">
+                  Transaction Failed
+                </span>
+              )}
+            </div>
+          )}
+          <div className="flex gap-6">
+            <div
+              className="relative action-image justify-center flex"
+              onClick={() => {
+                if (txn) {
+                  onViewRawAction(txn);
+                }
+              }}
+            >
+              <Image
+                src="/raw-icon.svg"
+                height={14}
+                width={14}
+                alt="Raw-Icon"
+                className="cursor-pointer"
+              />
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-[4px] font-medium">
+                RAW
+              </div>
+            </div>
+            <div className="action-image justify-center flex">
+              <Image
+                src="/delete-icon.svg"
+                width={14}
+                height={14}
+                alt="Delete-Icon"
+                className="cursor-pointer"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const TransactionItem = ({
   isMember,
@@ -153,20 +273,13 @@ const TransactionItem = ({
   chainID,
   onViewMoreAction,
   isHistory,
+  currency,
+  onViewRawAction,
 }: TransactionItemProps) => {
   const threshold = multisigAccount.account.threshold || 0;
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const { displayDenom: coinDenom, decimals: coinDecimals } =
-    getDenomInfo(chainID);
-  const { address: walletAddress } = getChainInfo(chainID);
 
-  const displayDenom = (amountObj: Coin[] | Coin) => {
-    if (Array.isArray(amountObj)) {
-      return parseTokens(amountObj, coinDenom, coinDecimals);
-    } else {
-      return parseTokens([amountObj], coinDenom, coinDecimals);
-    }
-  };
+  const { address: walletAddress } = getChainInfo(chainID);
 
   const isWalletSigned = () => {
     let signs = txn?.signatures || [];
@@ -187,100 +300,18 @@ const TransactionItem = ({
   return (
     <div className="flex gap-6 justify-between items-center text-white">
       <div className="flex-1 flex gap-1 items-center truncate">
-        <div className=" truncate">
-          {txn?.messages?.length === 0 ? (
-            <div>-</div>
-          ) : (
-            <div>
-              {txn?.messages[0].typeUrl === '/cosmos.bank.v1beta1.MsgSend' ? (
-                <p>
-                  <span className="font-bold">
-                    {mapTxns[txn?.messages[0]?.typeUrl]}
-                  </span>{' '}
-                  &nbsp;
-                  <span>{displayDenom(txn?.messages[0]?.value?.amount)}</span>
-                  &nbsp;To&nbsp;{' '}
-                  <span>
-                    {' '}
-                    {shortenAddress(txn?.messages[0]?.value?.toAddress, 20)}
-                  </span>
-                </p>
-              ) : null}
-
-              {txn?.messages[0].typeUrl ===
-              '/cosmos.staking.v1beta1.MsgDelegate' ? (
-                <p>
-                  <span className="font-bold">
-                    {mapTxns[txn?.messages[0]?.typeUrl]}
-                  </span>{' '}
-                  <span>{displayDenom(txn?.messages[0]?.value?.amount)}</span>
-                  &nbsp; To &nbsp;
-                  <span>
-                    {shortenAddress(
-                      txn?.messages[0]?.value?.validatorAddress,
-                      20
-                    )}
-                  </span>
-                </p>
-              ) : null}
-
-              {txn?.messages[0].typeUrl ===
-              '/cosmos.staking.v1beta1.MsgUndelegate' ? (
-                <p>
-                  <span className="font-bold">
-                    {mapTxns[txn?.messages[0]?.typeUrl]}
-                  </span>{' '}
-                  <span>{displayDenom(txn?.messages[0]?.value?.amount)}</span>
-                  &nbsp; From &nbsp;
-                  <span>
-                    {shortenAddress(
-                      txn?.messages[0]?.value?.validatorAddress,
-                      20
-                    )}
-                  </span>
-                </p>
-              ) : null}
-
-              {txn?.messages[0].typeUrl ===
-              '/cosmos.staking.v1beta1.MsgBeginRedelegate' ? (
-                <p>
-                  <span className="font-bold">
-                    {mapTxns[txn?.messages[0]?.typeUrl]}
-                  </span>{' '}
-                  <span>{displayDenom(txn?.messages[0]?.value?.amount)}</span>
-                  &nbsp;
-                  <br />
-                  From &nbsp;
-                  <span>
-                    {shortenAddress(
-                      txn?.messages[0]?.value?.validatorSrcAddress,
-                      20
-                    )}
-                  </span>
-                  &nbsp; To &nbsp;
-                  <span>
-                    {shortenAddress(
-                      txn?.messages[0]?.value?.validatorDstAddress,
-                      20
-                    )}
-                  </span>
-                </p>
-              ) : null}
-            </div>
-          )}
+        <div className=" truncate flex flex-col gap-4">
+          {txn?.messages.map((msg, index) => {
+            return (
+              <div key={index}>
+                <div className="flex gap-2">
+                  <div className="font-bold">{`#${index + 1}`}</div>
+                  <RenderTxnMsg msg={msg} currency={currency} />
+                </div>
+              </div>
+            );
+          })}
         </div>
-        {txn?.messages.length ? (
-          <Tooltip title="View More">
-            <Image
-              src="/view-more-icon.svg"
-              height={16}
-              width={16}
-              alt="View More"
-              className="cursor-pointer"
-              onClick={() => onViewMoreAction(txn)}
-            />
-          </Tooltip>
-        ) : null}
       </div>
       <div className="w-[50px] truncate">
         {txn?.signatures?.length || 0}/{membersCount}
@@ -288,9 +319,11 @@ const TransactionItem = ({
       {isHistory ? (
         <div className="w-[80px] cursor-pointer">
           {txn?.status === 'SUCCESS' ? (
-            <span className='underline underline-offset-2'>Success</span>
+            <span className="underline underline-offset-2">Success</span>
           ) : (
-            <span className='text-red-500 underline underline-offset-2'>Failed</span>
+            <span className="text-red-500 underline underline-offset-2">
+              Failed
+            </span>
           )}
         </div>
       ) : null}
@@ -314,7 +347,14 @@ const TransactionItem = ({
             )}
           </>
         ) : null}
-        <div className="relative action-image justify-center flex">
+        <div
+          className="relative action-image justify-center flex"
+          onClick={() => {
+            if (txn) {
+              onViewRawAction(txn);
+            }
+          }}
+        >
           <Image
             src="/raw-icon.svg"
             height={14}
@@ -350,6 +390,8 @@ const DialogViewTxnMessages = ({
   toggleMsgDialogOpen,
   onViewMoreAction,
   isHistory,
+  currency,
+  onViewRawAction,
 }: DialogViewTxnMessagesProps) => {
   return (
     <Dialog
@@ -400,10 +442,79 @@ const DialogViewTxnMessages = ({
               chainID={chainID}
               isHistory={isHistory}
               onViewMoreAction={onViewMoreAction}
+              currency={currency}
+              onViewRawAction={onViewRawAction}
             />
           </div>
         </div>
       </DialogContent>
     </Dialog>
+  );
+};
+
+export const RenderTxnMsg = ({
+  msg,
+  currency,
+}: {
+  msg: Msg | undefined;
+  currency: Currency;
+}) => {
+  const displayDenom = (amountObj: Coin[] | Coin) => {
+    if (Array.isArray(amountObj)) {
+      return parseTokens(amountObj, currency.coinDenom, currency.coinDecimals);
+    } else {
+      return parseTokens(
+        [amountObj],
+        currency.coinDenom,
+        currency.coinDecimals
+      );
+    }
+  };
+  return (
+    <div>
+      {msg ? (
+        <div>
+          {msg.typeUrl === SEND_TYPE_URL ? (
+            <p>
+              <span className="font-bold">{mapTxns[msg?.typeUrl]}</span> &nbsp;
+              <span>{displayDenom(msg?.value?.amount)}</span>
+              &nbsp;To&nbsp;{' '}
+              <span> {shortenAddress(msg?.value?.toAddress, 20)}</span>
+            </p>
+          ) : null}
+
+          {msg.typeUrl === DELEGATE_TYPE_URL ? (
+            <p>
+              <span className="font-bold">{mapTxns[msg?.typeUrl]}</span>{' '}
+              <span>{displayDenom(msg?.value?.amount)}</span>
+              &nbsp; To &nbsp;
+              <span>{shortenAddress(msg?.value?.validatorAddress, 20)}</span>
+            </p>
+          ) : null}
+
+          {msg.typeUrl === UNDELEGATE_TYPE_URL ? (
+            <p>
+              <span className="font-bold">{mapTxns[msg?.typeUrl]}</span>{' '}
+              <span>{displayDenom(msg?.value?.amount)}</span>
+              &nbsp; From &nbsp;
+              <span>{shortenAddress(msg?.value?.validatorAddress, 20)}</span>
+            </p>
+          ) : null}
+
+          {msg.typeUrl === REDELEGATE_TYPE_URL ? (
+            <p>
+              <span className="font-bold">{mapTxns[msg?.typeUrl]}</span>{' '}
+              <span>{displayDenom(msg?.value?.amount)}</span>
+              &nbsp;
+              <br />
+              From &nbsp;
+              <span>{shortenAddress(msg?.value?.validatorSrcAddress, 20)}</span>
+              &nbsp; To &nbsp;
+              <span>{shortenAddress(msg?.value?.validatorDstAddress, 20)}</span>
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
   );
 };
