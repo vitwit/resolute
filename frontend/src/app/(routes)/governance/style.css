@@ -83,7 +83,7 @@
   background: #0e0b26;
 }
 .status-grid {
-  @apply flex flex-col justify-center items-start gap-4 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
+  @apply flex flex-col justify-center items-start gap-4 backdrop-blur-[2px] px-0 py-6 rounded-2xl;
   background: #0e0b26;
 }
 .status-view-grid {
@@ -159,4 +159,7 @@
 
 .custom-radio-button-checked {
   @apply h-[6px] w-[6px] bg-white rounded-full;
+}
+.cstm-btn:hover {
+  background-color: #8f8a8a1a;
 }

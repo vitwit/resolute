@@ -34,11 +34,17 @@ const AllProposals = ({
   const dispatch = useAppDispatch();
 
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
+  const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
+  const getChainName = (chainID: string) => {
+    let chain: string = '';
+    Object.keys(nameToChainIDs).forEach((chainName) => {
+      if (nameToChainIDs[chainName] === chainID) chain = chainName;
+    });
+    return chain;
+  };
 
   const allChainProposals = useAppSelector((state) => state.gov.chains);
 
-  console.log({ allChainProposals });
-  
   const searchParams = useSearchParams();
   const chainID = searchParams.getAll('chainId')[0];
   const networkLogo = useAppSelector(
@@ -89,7 +95,7 @@ const AllProposals = ({
           {get(
             chainProposal,
             `${status === 'deposit' ? 'deposit' : 'active'}.proposals.length`
-          ) && (
+          ) ? (
             <div className="space-y-4 w-full">
               <div className="flex justify-between">
                 <div className="flex space-x-2">
@@ -99,7 +105,9 @@ const AllProposals = ({
                     height={32}
                     alt="Networks-Logo"
                   />
-                  <p className="proposal-text-medium">{chainName}</p>
+                  <p className="proposal-text-medium ">
+                    {getChainName(chainName)}
+                  </p>
                 </div>
               </div>
               <div className="v-line"></div>
@@ -158,7 +166,7 @@ const AllProposals = ({
                               )}
                             </p>
                           ) : (
-                            <p className="proposal-text-small">
+                            <p className="proposal-text-small w-[124px]">
                               Expires in{' '}
                               {getTimeDifferenceToFutureDate(
                                 get(proposal, 'voting_end_time')
@@ -166,7 +174,7 @@ const AllProposals = ({
                             </p>
                           )}
                         </div>
-                        <div className="flex space-x-1">
+                        {/* <div className="flex space-x-1">
                           <Image
                             src="./vote-icon.svg"
                             width={24}
@@ -179,14 +187,14 @@ const AllProposals = ({
                               ? 'Active'
                               : 'Deposit'}
                           </p>
-                        </div>
+                        </div> */}
                       </div>
                     )}
                   </div>
                 </div>
               ))}
             </div>
-          )}
+          ) : null}
         </>
       ))}
     </div>

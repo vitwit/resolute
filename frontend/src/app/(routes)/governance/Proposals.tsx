@@ -1,8 +1,8 @@
 'use client';
+
 import React from 'react';
 import './style.css';
 import TopNav from '@/components/TopNav';
-import GovAds from './GovAds';
 
 type ProposalStatusUpdate = (status: string) => void;
 
@@ -17,7 +17,6 @@ const Proposals = ({
         <div className="proposal-text-big">Governance</div>
         <TopNav />
       </div>
-      <GovAds />
 
       <div className="proposals-head">
         <div className="proposal-text-medium font-normal">Proposals</div>
@@ -26,7 +25,9 @@ const Proposals = ({
             className="cstm-btn"
             onClick={() => handleChangeProposalState('all')}
           >
-            <p className="proposal-text-extralight">All Proposals</p>
+            <p className="proposal-text-extralight">
+              Proposals in voting period
+            </p>
           </button>
 
           <button

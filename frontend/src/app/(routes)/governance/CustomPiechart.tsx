@@ -7,7 +7,7 @@ const CustomPieChart = ({
   color,
   label,
 }: {
-  value: number;
+  value: number | string;
   color: string;
   label: string;
 }) => {
@@ -15,14 +15,14 @@ const CustomPieChart = ({
     datasets: [
       {
         label: label,
-        data: [100 - value, value],
+        data: [100 - Number(value), Number(value)],
         backgroundColor: ['#FFFFFF1A', color],
         borderWidth: 0,
       },
     ],
   };
   return (
-    <div className="w-[36px] h-[36px]">
+    <div className="w-[40px] h-[40px]">
       <Pie data={data} />
     </div>
   );

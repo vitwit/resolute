@@ -98,7 +98,7 @@ const VotePopup = ({
             </div>
             <div className="text-grid">
               <div className="space-y-6">
-                <div className="proposal-text-big">vote</div>
+                <div className="proposal-text-big">Vote</div>
                 <div className="text-form">
                   <div className="space-y-1">
                     <div className="space-x-2 flex">
@@ -122,25 +122,25 @@ const VotePopup = ({
                   <div className="radio-buttons">
                     <RadioButton
                       name="voteOption"
-                      value={'yes'}
+                      value={'Yes'}
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
                     <RadioButton
                       name="voteOption"
-                      value={'no'}
+                      value={'No'}
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
                     <RadioButton
                       name="voteOption"
-                      value={'abstain'}
+                      value={'Abstain'}
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
                     <RadioButton
                       name="voteOption"
-                      value={'no with veto'}
+                      value={'No With Veto'}
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />

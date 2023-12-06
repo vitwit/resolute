@@ -5,7 +5,7 @@ import Link from 'next/link';
 import CustomPieChart from './CustomPiechart';
 import './style.css';
 import VotePopup from './VotePopup';
-
+import { Tooltip } from '@mui/material';
 import { RootState } from '@/store/store';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getProposal } from '@/store/features/gov/govSlice';
@@ -55,6 +55,15 @@ const RightOverview = ({
     );
   }, [proposalId]);
 
+  const poolInfo = useAppSelector(
+    (state: RootState) => state.staking.chains[chainID]?.pool
+  );
+  const tallyParams = useAppSelector(
+    (state: RootState) =>
+      state.gov.chains[chainID]?.tallyParams.params.tally_params
+  );
+  const quorumRequired = (parseFloat(tallyParams.quorum) * 100).toFixed(1);
+
   const totalVotes =
     Number(get(tallyResult, 'yes')) +
     Number(get(tallyResult, 'no')) +
@@ -100,17 +109,25 @@ const RightOverview = ({
   const proposalSubmittedOn = getTimeDifference(
     get(proposalInfo, 'submit_time')
   );
-  const Totalvotes = totalVotes;
+  const Totalvotes = totalVotes.toLocaleString();
 
   const [isVotePopupOpen, setIsVotePopupOpen] = useState(false);
   const toggleVotePopup = () => {
     setIsVotePopupOpen(!isVotePopupOpen);
   };
-  const quorum = 50;
 
   const handleCloseClick = () => {
     handleCloseOverview();
   };
+
+  const [quorumPercent, setQuorumPercent] = useState<string>('0');
+  useEffect(() => {
+    if (poolInfo?.bonded_tokens) {
+      const value = totalVotes / parseInt(poolInfo.bonded_tokens);
+      setQuorumPercent((value * 100).toFixed(1));
+    }
+  }, [poolInfo]);
+
   return (
     <div>
       <div className="right-bar">
@@ -219,14 +236,16 @@ const RightOverview = ({
                 <div className="w-full text-white flex flex-col justify-center items-center space-y-2">
                   <div>Quorum</div>
 
-                  <div className="bg-white w-full h-[10px] rounded-full">
-                    <div
-                      className={
-                        `bg-[#2DC5A4] h-[10px] rounded-l-full` +
-                        `w-[${quorum}%]`
-                      }
-                    ></div>
-                  </div>
+                  {quorumPercent ? (
+                    <Tooltip title={`${quorumPercent}% / ${quorumRequired}%`}>
+                      <div className="bg-white w-full h-[10px] rounded-full">
+                        <div
+                          style={{ width: `${quorumPercent}%` }}
+                          className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
+                        ></div>
+                      </div>
+                    </Tooltip>
+                  ) : null}
                 </div>
 
                 <div className="flex justify-between items-start w-full">
@@ -240,13 +259,15 @@ const RightOverview = ({
                         color={item.color}
                         label={item.label}
                       />
-                      <div className="proposal-text-extralight">{`${item.value}% ${item.label}`}</div>
+                      <div className="proposal-text-extralight">{`${Math.floor(
+                        parseFloat(item.value)
+                      )}% ${item.label}`}</div>
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between w-full">
                   <div className="flex proposal-text-extralight">
-                    Proposal submiited on {proposalSubmittedOn}
+                    Proposal submitted on {proposalSubmittedOn}
                   </div>
                   <div className="flex space-x-2">
                     <Image
