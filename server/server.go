@@ -68,6 +68,7 @@ func main() {
 	e.DELETE("/multisig/:address/tx/:id", h.DeleteTransaction)
 	e.POST("/multisig/:address/sign-tx/:id", h.SignTransaction)
 	e.GET("/multisig/:address/txs", h.GetTransactions)
+	e.GET("/accounts/:address/all-txns", h.GetAllMultisigTxns)
 
 	e.GET("/tokens-info", h.GetTokensInfo)
 	e.GET("/tokens-info/:denom", h.GetTokenInfo)
