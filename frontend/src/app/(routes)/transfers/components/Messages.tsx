@@ -36,12 +36,16 @@ const Messages = ({
               MULTI_TRANSFER_MSG_COUNT * index,
               MULTI_TRANSFER_MSG_COUNT * index + MULTI_TRANSFER_MSG_COUNT
             )
-            .map((msg, index, array) => (
-              <div key={index}>
-                <Message msg={msg} onDelete={onDelete} index={index} />
-                {index !== array.length - 1 && (
-                  <div style={{ marginBottom: '28px' }} />
-                )}
+            .map((msg, offset) => (
+              <div key={offset}>
+                <Message
+                  msg={msg}
+                  onDelete={onDelete}
+                  index={MULTI_TRANSFER_MSG_COUNT * index + offset}
+                />
+                
+                  <div style={{ marginBottom: '26px' }} />
+                
               </div>
             ))}
         </div>
@@ -72,7 +76,7 @@ const Message = ({
 }) => {
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center justify-between">
       <Image src="/back-arrow.svg" width={24} height={24} alt="msg" />
       <div className="overflowed-text max-w-[250px] text-sm not-italic font-normal leading-[normal]">
         {serialize(msg)}

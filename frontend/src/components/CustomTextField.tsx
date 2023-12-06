@@ -26,7 +26,6 @@ const CustomTextField = ({
   inputProps: any;
   required: boolean;
 }) => {
-  
   return (
     <Controller
       name={name}
@@ -76,7 +75,6 @@ export const CustomMultiLineTextField = ({
   required: boolean;
   rows: number;
 }) => {
-  console.log(textFieldCustomMuiSx);
   return (
     <Controller
       name={name}

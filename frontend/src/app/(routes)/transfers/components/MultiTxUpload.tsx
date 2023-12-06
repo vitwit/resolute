@@ -29,7 +29,6 @@ const MultiTxUpload = ({
         })
       );
     } else {
-      console.log(parsedTxns);
       addMsgs(parsedTxns);
     }
   };
