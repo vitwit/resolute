@@ -148,6 +148,14 @@
     max-width: 293px;
   }
 
+  .overflowed-text {
+    @apply text-sm font-normal leading-[14px];
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+  }
+
   .disabled {
     opacity: 0.3;
     cursor: not-allowed;
@@ -170,14 +178,6 @@
 
   .fill {
     background: linear-gradient(180deg, #4AA29C 0%, #8B3DA7 100%);
-  }
-
-  .formatted-text-1 {
-    @apply text-sm font-normal leading-[14px];
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 293px;
   }
 }
 

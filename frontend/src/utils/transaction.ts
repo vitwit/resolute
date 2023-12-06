@@ -27,7 +27,7 @@ export function NewTransaction(
   address: string
 ): Transaction {
   const transaction: Transaction = {
-    code: 0,
+    code: txResponse.code,
     transactionHash: txResponse.transactionHash,
     height: txResponse.height || '-',
     rawLog: txResponse.rawLog || '-',
@@ -61,6 +61,7 @@ export const MsgType = (msg: string): string => {
 };
 
 export const serializeMsg = (msg: Msg): string => {
+  if (!msg) return 'No Message';
   switch (msg.typeUrl) {
     case msgDelegate:
       return serializeMsgDelegate(msg);
@@ -93,6 +94,7 @@ export const formatTransaction = (tx: Transaction, msgFilters: string[]) => {
   if (!msgFilters.length) showTx = true;
   else {
     const filterSet = new Set(msgFilters);
+    if (!msgs.length) showTx = true;
     msgs.forEach((msg) => {
       if (filterSet.has(MsgType(msg.typeUrl))) showTx = true;
     });

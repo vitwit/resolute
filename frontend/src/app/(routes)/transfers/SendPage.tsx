@@ -9,7 +9,7 @@ import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txBankSend } from '@/store/features/bank/bankSlice';
 import { SEND_TX_FEE } from '@/utils/constants';
 import CustomTextField from '@/components/CustomTextField';
-import sendProps from './sendProps.json';
+import props from './customTextFeilds.json';
 import CustomSubmitButton from '@/components/CustomButton';
 
 const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
@@ -20,6 +20,7 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
   const { txSendInputs } = useGetTxInputs();
   const sendTxStatus = useAppSelector((state) => state.bank.tx.status);
+  const sendProps = props.send;
 
   const amountRules = {
     ...sendProps.amount,
@@ -57,7 +58,7 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const onSelectAsset = (asset: ParsedAsset, index: number) => {
     if (selectedAsset == asset) return;
     setSelectedAsset(asset);
-    setSlicedAssetIndex(Math.floor(index / 4)*4);
+    setSlicedAssetIndex(Math.floor(index / 4) * 4);
     reset();
   };
 
