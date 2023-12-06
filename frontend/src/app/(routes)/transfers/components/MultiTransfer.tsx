@@ -4,7 +4,7 @@ import Summary from './Summary';
 import MultiTxUpload from './MultiTxUpload';
 import { useForm } from 'react-hook-form';
 import { CustomMultiLineTextField } from '@/components/CustomTextField';
-import props from '../customTextFeilds.json';
+import props from '../customTextFields.json';
 import CustomSubmitButton from '@/components/CustomButton';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '../../../../custom-hooks/useGetChainInfo';

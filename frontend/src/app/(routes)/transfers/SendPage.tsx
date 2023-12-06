@@ -9,7 +9,7 @@ import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txBankSend } from '@/store/features/bank/bankSlice';
 import { SEND_TX_FEE } from '@/utils/constants';
 import CustomTextField from '@/components/CustomTextField';
-import props from './customTextFeilds.json';
+import props from './customTextFields.json';
 import CustomSubmitButton from '@/components/CustomButton';
 
 const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
