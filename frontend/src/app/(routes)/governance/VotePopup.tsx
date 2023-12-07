@@ -14,8 +14,8 @@ interface VoteOptionNumber {
 
 const voteOptionNumber: VoteOptionNumber = {
   yes: 1,
-  no: 2,
-  abstain: 3,
+  no: 3,
+  abstain: 2,
   veto: 4,
 };
 
@@ -26,6 +26,7 @@ const VotePopup = ({
   chainID,
   open,
   onClose,
+  networkLogo,
 }: {
   votingEndsInDays: string;
   proposalId: number;
@@ -33,6 +34,7 @@ const VotePopup = ({
   chainID: string;
   open: boolean;
   onClose: () => void;
+  networkLogo: string;
 }) => {
   const [voteOption, setVoteOption] = useState<string>('');
 
@@ -106,10 +108,10 @@ const VotePopup = ({
                   <div className="space-y-1">
                     <div className="space-x-2 flex">
                       <Image
-                        src="/cosmos-logo.svg"
+                        src={networkLogo}
                         width={40}
                         height={40}
-                        alt="Cosmos-Logo"
+                        alt="logo"
                       />
                       <p className="proposal-text-small">
                         #{proposalId} | Proposal

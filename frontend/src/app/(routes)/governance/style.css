@@ -65,7 +65,7 @@
   @apply flex justify-end items-center gap-10 pr-0;
 }
 .text-grid {
-  @apply flex w-[451px] flex-col justify-center items-start gap-6;
+  @apply  w-[451px]
 }
 .placeholder-text {
   @apply flex h-[54px] flex-col justify-center items-start gap-2 px-4 py-0 rounded-2xl;
@@ -103,7 +103,6 @@
 }
 .voting-grid {
   @apply flex flex-col justify-center items-start gap-4 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
-  background: #0e0b26;
 }
 .voting-view {
   @apply flex flex-col justify-center items-center gap-6 px-6 py-0;

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 
 import { RootState } from '@/store/store';
-import { useSearchParams, useParams } from 'next/navigation';
 import CustomPieChart from './CustomPiechart';
 import './style.css';
 import ProposalDetailsVoteCard from './ProposalDetailsVoteCard';
@@ -16,6 +15,7 @@ import {
   getProposal,
   getGovTallyParams,
   getProposalTally,
+  getDepositParams,
 } from '@/store/features/gov/govSlice';
 import { get, parseInt } from 'lodash';
 import { getLocalTime, getTimeDifferenceToFutureDate } from '@/utils/dataTime';
@@ -24,14 +24,9 @@ import { parseBalance } from '@/utils/denom';
 import { formatCoin } from '@/utils/util';
 import { getPoolInfo } from '@/store/features/staking/stakeSlice';
 import { Tooltip } from '@mui/material';
-
-function parseNumber(value: string | string[]) {
-  if (typeof value === 'string') {
-    return parseInt(value);
-  }
-
-  return 0;
-}
+import DepositProposalDetails from './DepositProposalDetails';
+import DepositProposalInfo from './DepositProposalInfo';
+import DepositPopup from './DepositPopup';
 
 const ProposalOverviewVote = ({
   chainName,
@@ -40,6 +35,7 @@ const ProposalOverviewVote = ({
   chainName: string;
   proposalId: number;
 }) => {
+  const [depositRequired, setDepositRequired] = useState(0);
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -50,12 +46,17 @@ const ProposalOverviewVote = ({
   const proposalInfo = useAppSelector(
     (state: RootState) => state.gov.proposalDetails
   );
+  const isStatusVoting =
+    get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD';
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
   );
   const currency = useAppSelector(
     (state: RootState) =>
       state.wallet.networks[chainID]?.network.config.currencies[0]
+  );
+  const depositParams = useAppSelector(
+    (state: RootState) => state.gov.chains[chainID]?.depositParams.params
   );
 
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
@@ -131,6 +132,11 @@ const ProposalOverviewVote = ({
     setIsVotePopupOpen(false);
   };
 
+  const [isDepositPopupOpen, setIsDepositPopupOpen] = useState(false);
+  const handleCloseDepositPopup = () => {
+    setIsDepositPopupOpen(false);
+  };
+
   useEffect(() => {
     const allChainInfo = networks[chainID];
     const chainInfo = allChainInfo?.network;
@@ -157,6 +163,13 @@ const ProposalOverviewVote = ({
       })
     );
 
+    dispatch(
+      getDepositParams({
+        baseURL: chainInfo?.config.rest,
+        chainID: chainID,
+      })
+    );
+
     dispatch(getGovTallyParams({ chainID, baseURL: chainInfo?.config.rest }));
   }, []);
 
@@ -167,6 +180,28 @@ const ProposalOverviewVote = ({
       setQuorumPercent((value * 100).toFixed(1));
     }
   }, [poolInfo]);
+
+  useEffect(() => {
+    if (
+      depositParams?.min_deposit?.length &&
+      proposalInfo?.total_deposit?.length
+    ) {
+      const min_deposit = parseBalance(
+        depositParams.min_deposit,
+        currency.coinDecimals,
+        currency.coinMinimalDenom
+      );
+      const total_deposit = parseBalance(
+        proposalInfo.total_deposit,
+        currency.coinDecimals,
+        currency.coinMinimalDenom
+      );
+      const deposit_percent = Math.floor((total_deposit / min_deposit) * 100);
+      console.log(deposit_percent, total_deposit, min_deposit);
+      const deposit_required = min_deposit - total_deposit;
+      setDepositRequired(deposit_required);
+    }
+  }, [depositParams, proposalInfo]);
 
   return (
     <div className="space-y-6 pl-10 pr-10 pt-6 pb-0">
@@ -202,9 +237,17 @@ const ProposalOverviewVote = ({
               <div>
                 <button
                   className="button"
-                  onClick={() => setIsVotePopupOpen(true)}
+                  onClick={() => {
+                    if (isStatusVoting) {
+                      setIsVotePopupOpen(true);
+                    } else {
+                      setIsDepositPopupOpen(true);
+                    }
+                  }}
                 >
-                  <p className="proposal-text-medium">Vote</p>
+                  <p className="proposal-text-medium">
+                    {isStatusVoting ? 'Vote' : 'Deposit'}
+                  </p>
                 </button>
               </div>
             </div>
@@ -231,114 +274,148 @@ const ProposalOverviewVote = ({
           onClose={handleCloseVotePopup}
           proposalId={proposalId}
           proposalname={get(proposalInfo, 'content.title')}
+          networkLogo={networkLogo}
         />
 
-        <div className="flex">
-          <div className="space-y-4">
-            <div className="status-grid w-[480px]">
-              <div className="status-view-grid w-full">
-                <div className="status-view w-full">
-                  <div className="status-pass w-full">
+        <DepositPopup
+          chainID={chainID}
+          votingEndsInDays={getTimeDifferenceToFutureDate(
+            get(proposalInfo, 'deposit_end_time')
+          )}
+          proposalId={proposalId}
+          proposalname={get(proposalInfo, 'content.title')}
+          onClose={handleCloseDepositPopup}
+          open={isDepositPopupOpen}
+          networkLogo={networkLogo}
+        />
+
+        {isStatusVoting ? (
+          <div className="flex">
+            <div className="space-y-4">
+              <div className="status-grid w-[480px]">
+                <div className="status-view-grid w-full">
+                  <div className="status-view w-full">
+                    <div className="status-pass w-full">
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="flex space-x-2 w-full">
+                          <Image
+                            src="/vote-icon.svg"
+                            width={20}
+                            height={20}
+                            alt="Vote-Icon"
+                          />
+                          <p className="proposal-text-small">
+                            Proposal Projection
+                          </p>
+                        </div>
+
+                        <p className="text-[#E57575] text-xl font-bold">-</p>
+                      </div>
+                    </div>
+
+                    {/* TODO: Write explaination for proposal Rejected */}
+                    <div className="flex justify-between items-start w-full">
+                      {''}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="voting-grid">
+                <div className="voting-view w-full">
+                  <div className="status-pass">
                     <div className="flex flex-col items-center space-y-2">
-                      <div className="flex space-x-2 w-full">
+                      <div className="flex space-x-2">
                         <Image
                           src="/vote-icon.svg"
-                          width={40}
-                          height={40}
+                          width={20}
+                          height={20}
                           alt="Vote-Icon"
                         />
-                        <p className="proposal-text-small">
-                          Proposal Projection
-                        </p>
+                        <p className="proposal-text-small">Total Votes</p>
                       </div>
 
-                      <p className="text-[#E57575] text-xl font-bold">
-                        Will be Rejected
-                      </p>
+                      <p className="proposal-text-big">{formattedTotalVotes}</p>
                     </div>
                   </div>
+                  <div className="w-full text-white flex flex-col justify-center items-center space-y-2">
+                    <div>Quorum</div>
 
-                  {/* TODO: Write explaination for proposal Rejected */}
+                    {quorumPercent ? (
+                      <Tooltip title={`${quorumPercent}% / ${quorumRequired}%`}>
+                        <div className="bg-white w-full h-[10px] rounded-full">
+                          <div
+                            style={{ width: `${quorumPercent}%` }}
+                            className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
+                          ></div>
+                        </div>
+                      </Tooltip>
+                    ) : null}
+                  </div>
+
                   <div className="flex justify-between items-start w-full">
-                    {''}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="voting-grid">
-              <div className="voting-view w-full">
-                <div className="status-pass">
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="flex space-x-2">
-                      <Image
-                        src="/vote-icon.svg"
-                        width={20}
-                        height={20}
-                        alt="Vote-Icon"
-                      />
-                      <p className="proposal-text-small">Total Votes</p>
-                    </div>
-
-                    <p className="proposal-text-big">{formattedTotalVotes}</p>
-                  </div>
-                </div>
-                <div className="w-full text-white flex flex-col justify-center items-center space-y-2">
-                  <div>Quorum</div>
-
-                  {quorumPercent ? (
-                    <Tooltip title={`${quorumPercent}% / ${quorumRequired}%`}>
-                      <div className="bg-white w-full h-[10px] rounded-full">
-                        <div
-                          style={{ width: `${quorumPercent}%` }}
-                          className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
-                        ></div>
+                    {data.map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col items-center gap-2 justify-between"
+                      >
+                        <CustomPieChart
+                          value={Number(item.value)}
+                          color={item.color}
+                          label={item.label}
+                        />
+                        <div className="proposal-text-extralight">{`${Math.floor(
+                          parseFloat(String(item.value))
+                        )}% ${item.label}`}</div>
                       </div>
-                    </Tooltip>
-                  ) : null}
-                </div>
-
-                <div className="flex justify-between items-start w-full">
-                  {data.map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col items-center gap-2 justify-between"
-                    >
-                      <CustomPieChart
-                        value={Number(item.value)}
-                        color={item.color}
-                        label={item.label}
-                      />
-                      <div className="proposal-text-extralight">{`${Math.floor(
-                        parseFloat(String(item.value))
-                      )}% ${item.label}`}</div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
+              <ProposalDetailsVoteCard
+                createdAt={getLocalTime(get(proposalInfo, 'submit_time', '-'))}
+                startedAt={getLocalTime(
+                  get(proposalInfo, 'voting_start_time', '-')
+                )}
+                endsAt={getLocalTime(get(proposalInfo, 'voting_end_time', '-'))}
+                proposalNetwork={getChainName(chainID)}
+                createdby={'-'}
+                // depositamount={`${get(
+                //   proposalInfo,
+                //   'total_deposit[0].amount'
+                // )} ${get(proposalInfo, 'total_deposit[0].denom')}`}
+                depositamount={formatCoin(
+                  parseBalance(
+                    get(proposalInfo, 'total_deposit', []),
+                    currency?.coinDecimals,
+                    currency?.coinMinimalDenom
+                  ),
+                  currency?.coinDenom
+                )}
+              />
             </div>
-            <ProposalDetailsVoteCard
-              createdAt={getLocalTime(get(proposalInfo, 'submit_time', '-'))}
-              startedAt={getLocalTime(
-                get(proposalInfo, 'voting_start_time', '-')
-              )}
-              endsAt={getLocalTime(get(proposalInfo, 'voting_end_time', '-'))}
-              proposalNetwork={getChainName(chainID)}
-              createdby={'-'}
-              // depositamount={`${get(
-              //   proposalInfo,
-              //   'total_deposit[0].amount'
-              // )} ${get(proposalInfo, 'total_deposit[0].denom')}`}
-              depositamount={formatCoin(
-                parseBalance(
-                  get(proposalInfo, 'total_deposit', []),
-                  currency?.coinDecimals,
-                  currency?.coinMinimalDenom
-                ),
-                currency?.coinDenom
-              )}
-            />
           </div>
-        </div>
+        ) : (
+          <div className="flex w-[480px]">
+            <div className="space-y-4 w-full">
+              <div className="bg-[#0E0B26]">
+                <DepositProposalInfo chainID={chainID} />
+              </div>
+              <DepositProposalDetails
+                submittedAt={getLocalTime(
+                  get(proposalInfo, 'submit_time', '-')
+                )}
+                endsAt={getLocalTime(
+                  get(proposalInfo, 'deposit_end_time', '-')
+                )}
+                depositrequired={formatCoin(
+                  depositRequired,
+                  currency.coinDenom
+                )}
+                proposalNetwork={getChainName(chainID)}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

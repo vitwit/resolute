@@ -1,6 +1,11 @@
 'use client';
 import React, { useState } from 'react';
-import { Dialog, DialogContent } from '@mui/material';
+import {
+  Dialog,
+  DialogContent,
+  InputAdornment,
+  TextField,
+} from '@mui/material';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import Image from 'next/image';
 import { RootState } from '@/store/store';
@@ -8,6 +13,7 @@ import './style.css';
 
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txDeposit } from '@/store/features/gov/govSlice';
+import { Controller, useForm } from 'react-hook-form';
 
 const DepositPopup = ({
   chainID,
@@ -17,6 +23,7 @@ const DepositPopup = ({
   proposalname,
   open,
   onClose,
+  networkLogo,
 }: {
   chainID: string;
   votingEndsInDays: string;
@@ -25,6 +32,7 @@ const DepositPopup = ({
   proposalname: string;
   open: boolean;
   onClose: () => void;
+  networkLogo: string;
 }) => {
   console.log(denom);
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
@@ -34,24 +42,35 @@ const DepositPopup = ({
   const { getVoteTxInputs } = useGetTxInputs();
   const dispatch = useAppDispatch();
 
-  const minimalDenom =
-    allChainInfo.network.config.stakeCurrency.coinMinimalDenom;
+  const currency = allChainInfo.network.config.currencies[0];
 
   const [amount, setAmount] = useState(0);
+
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      amount: 0,
+    },
+  });
 
   const handleClose = () => {
     onClose();
   };
 
-  const handleDeposit = () => {
+  const handleDeposit = (data: { amount: number }) => {
     const { aminoConfig, prefix, rest, feeAmount, address, rpc, minimalDenom } =
       getVoteTxInputs(chainID);
+    console.log(data);
 
     dispatch(
       txDeposit({
         depositer: address,
         proposalId: proposalId,
-        amount: amount,
+        amount: Number(data.amount) * 10 ** currency.coinDecimals,
         denom: minimalDenom,
         chainID: chainID,
         rpc: rpc,
@@ -99,42 +118,77 @@ const DepositPopup = ({
                   <div className="space-y-2">
                     <div className="space-x-2 flex">
                       <Image
-                        src="/cosmos-logo.svg"
+                        src={networkLogo}
                         width={40}
                         height={40}
-                        alt="Cosmos-Logo"
+                        alt="logo"
                       />
                       <p className="proposal-text-small">
                         {proposalId} | Proposal
                       </p>
                     </div>
                     <div className="proposal-text-normal">{proposalname}</div>
-                    <div className="proposal-text-small">{`Voting ends in ${votingEndsInDays} days`}</div>
+                    <div className="proposal-text-small">{`Deposit period ends in ${votingEndsInDays} days`}</div>
                   </div>
                 </div>
 
-                <div className="placeholder-text ">
-                  <div className="flex w-full justify-between">
-                    <input
-                      type="text"
-                      value={amount}
-                      onChange={(e) => setAmount(parseFloat(e.target.value))}
-                      placeholder="Enter Amount Here"
-                    />
-                    <div className="proposal-text-extralight flex items-center">
-                      {minimalDenom}
-                    </div>
+                <form onSubmit={handleSubmit(handleDeposit)}>
+                  <Controller
+                    name="amount"
+                    control={control}
+                    rules={{
+                      required: 'Amount is required',
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        className="bg-[#FFFFFF0D] rounded-2xl"
+                        {...field}
+                        required
+                        fullWidth
+                        size="small"
+                        placeholder="Enter Amount here"
+                        sx={{
+                          '& .MuiTypography-body1': {
+                            color: 'white',
+                            fontSize: '12px',
+                            fontWeight: 200,
+                          },
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            border: 'none',
+                          },
+                        }}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="start">
+                              {currency?.coinDenom}
+                            </InputAdornment>
+                          ),
+                          sx: {
+                            input: {
+                              color: 'white',
+                              fontSize: '14px',
+                              padding: 2,
+                            },
+                          },
+                        }}
+                        error={!!errors.amount}
+                        helperText={
+                          errors.amount?.type === 'validate'
+                            ? 'Insufficient balance'
+                            : errors.amount?.message
+                        }
+                      />
+                    )}
+                  />
+                  <div className="mt-6">
+                    <button
+                      disabled={isNaN(amount) || amount < 0}
+                      className="button w-36"
+                    >
+                      <p className="proposal-text-medium">Deposit</p>
+                    </button>
                   </div>
-                </div>
-                <div>
-                  <button
-                    onClick={handleDeposit}
-                    disabled={isNaN(amount) || amount < 0}
-                    className="button w-36"
-                  >
-                    <p className="proposal-text-medium">Deposit</p>
-                  </button>
-                </div>
+                </form>
               </div>
               <div className="cross"></div>
             </div>

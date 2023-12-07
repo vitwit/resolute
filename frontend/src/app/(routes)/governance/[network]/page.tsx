@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import React from 'react';
 import GovPage from '../GovPage';
 
-const page = () => {
+const ChainProposals = () => {
   const params = useParams();
   const paramChain = params.network;
   const chainName = typeof paramChain === 'string' ? paramChain : '';
@@ -16,7 +16,6 @@ const page = () => {
   Object.keys(nameToChainIDs).forEach((chain) => {
     if (chain === chainName) chainID = nameToChainIDs[chain];
   });
-  console.log("111111",chainID)
   return (
     <>
       {chainID.length ? (
@@ -30,4 +29,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ChainProposals;
