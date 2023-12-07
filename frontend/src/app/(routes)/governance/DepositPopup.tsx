@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -44,12 +44,9 @@ const DepositPopup = ({
 
   const currency = allChainInfo.network.config.currencies[0];
 
-  const [amount, setAmount] = useState(0);
-
   const {
     handleSubmit,
     control,
-    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -181,10 +178,7 @@ const DepositPopup = ({
                     )}
                   />
                   <div className="mt-6">
-                    <button
-                      disabled={isNaN(amount) || amount < 0}
-                      className="button w-36"
-                    >
+                    <button className="button w-36">
                       <p className="proposal-text-medium">Deposit</p>
                     </button>
                   </div>
