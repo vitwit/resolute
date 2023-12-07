@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Messages from './Messages';
-import Summary from './Summary';
 import MultiTxUpload from './MultiTxUpload';
 import { useForm } from 'react-hook-form';
 import { CustomMultiLineTextField } from '@/components/CustomTextField';
@@ -67,9 +66,9 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="w-full h-[605px] flex">
         <div className="w-1/2 flex flex-col justify-between pr-5">
-          <div>
+          {/* <div>
             <Summary chainIDs={[chainID]} />
-          </div>
+          </div> */}
           <MultiTxUpload addMsgs={addMsgs} chainID={chainID} />
           <div>
             <div className="text-sm not-italic font-normal leading-[normal] mb-2">
