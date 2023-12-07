@@ -9,7 +9,7 @@ import {
   TxWithdrawAllRewardsInputs,
 } from '@/types/distribution';
 import { getDenomBalance } from '@/utils/denom';
-import { setError, setTxHash } from '../common/commonSlice';
+import { setError, setTxAndHash } from '../common/commonSlice';
 import { AxiosError } from 'axios';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { signAndBroadcast } from '@/utils/signing';
@@ -70,8 +70,9 @@ export const txWithdrawAllRewards = createAsyncThunk(
 
       if (result?.code === 0) {
         dispatch(
-          setTxHash({
+          setTxAndHash({
             hash: result?.transactionHash,
+            tx: tx,
           })
         );
         return fulfillWithValue({ txHash: result?.transactionHash });

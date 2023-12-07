@@ -10,6 +10,20 @@ export const OFFCHAIN_VERIFICATION_MESSAGE =
  * @constant
  */
 export const API_URL = process.env.NEXT_PUBLIC_APP_API_URI;
+export const TRANSFERS_MSG_FILTERS = ['Send'];
+export const SINGLE_TAB_TEXT = 'Single Transfer';
+export const MULTI_TAB_TEXT = 'Multi Transfer';
+export const SINGLE_BTN_TEXT = 'Send single';
+export const MULTI_BTN_TEXT = 'Send multiple';
+export const TRANSFERS_TAB1 = {
+  current: SINGLE_TAB_TEXT,
+  to: MULTI_BTN_TEXT,
+};
+export const TRANSFERS_TAB2 = {
+  current: MULTI_TAB_TEXT,
+  to: SINGLE_BTN_TEXT,
+};
+export const SEND_TX_FEE = 25000;
 export const VALIDATOR_LOGO_URL = (identity: string) =>
   `https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`;
 export const VALIDATORS_PER_PAGE = 7;

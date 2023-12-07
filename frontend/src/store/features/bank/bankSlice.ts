@@ -10,6 +10,7 @@ import { TxStatus } from '../../../types/enums';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { NewTransaction } from '@/utils/transaction';
+import { setTxAndHash } from '../common/commonSlice';
 
 interface Balance {
   list: Coin[];
@@ -112,6 +113,7 @@ export const txBankSend = createAsyncThunk(
           transactions: [tx],
         })
       );
+      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
       if (result?.code === 0) {
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {

@@ -159,6 +159,78 @@ func (h *Handler) GetTransactions(c echo.Context) error {
 	})
 }
 
+func (h *Handler) GetAllMultisigTxns(c echo.Context) error {
+	address := c.Param("address")
+	page, limit, _, err := utils.ParsePaginationParams(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+			Log:     err.Error(),
+		})
+	}
+
+	status := utils.GetStatus(c.QueryParam("status"))
+	var rows *sql.Rows
+
+	if status == model.Pending {
+		rows, err = h.DB.Query(`SELECT id,multisig_address,fee,status,created_at,messages,hash,
+		err_msg,last_updated,memo,signatures FROM transactions WHERE multisig_address in (select multisig_address from pubkeys where address=$1) AND status=$2 order by created_at desc LIMIT $3 OFFSET $4`,
+			address, status, limit, (page-1)*limit)
+	} else {
+		rows, err = h.DB.Query(`SELECT id,multisig_address,fee,status,created_at,messages,hash,
+		err_msg,last_updated,memo,signatures FROM transactions WHERE multisig_address in (select multisig_address from pubkeys where address=$1) order by created_at desc LIMIT $2 OFFSET $3`,
+			address, limit, (page-1)*limit)
+	}
+
+	if err != nil {
+		if rows != nil && sql.ErrNoRows == rows.Err() {
+			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Status:  "error",
+				Message: fmt.Sprintf("no transactions with address %s", address),
+				Log:     rows.Err().Error(),
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to query transaction",
+			Log:     err.Error(),
+		})
+	}
+
+	transactions := make([]schema.Transaction, 0)
+	for rows.Next() {
+		var transaction schema.Transaction
+		if err := rows.Scan(
+			&transaction.ID,
+			&transaction.MultisigAddress,
+			&transaction.Fee,
+			&transaction.Status,
+			&transaction.CreatedAt,
+			&transaction.Messages,
+			&transaction.Hash,
+			&transaction.ErrMsg,
+			&transaction.LastUpdated,
+			&transaction.Memo,
+			&transaction.Signatures,
+		); err != nil {
+			return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+				Status:  "error",
+				Message: "failed to decode transaction",
+				Log:     err.Error(),
+			})
+		}
+		transactions = append(transactions, transaction)
+	}
+	rows.Close()
+
+	return c.JSON(http.StatusOK, model.SuccessResponse{
+		Data:   transactions,
+		Status: "success",
+	})
+}
+
 func (h *Handler) GetTransaction(c echo.Context) error {
 	id := c.Param("id")
 	address := c.Param("address")
