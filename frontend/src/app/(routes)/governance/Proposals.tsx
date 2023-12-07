@@ -19,7 +19,7 @@ const Proposals = ({
       </div>
 
       <div className="proposals-head">
-        <div className="proposal-text-medium font-normal">Proposals</div>
+        <div className="text-[20px]">Proposals</div>
         <div className="flex space-x-6">
           <button
             className="cstm-btn"

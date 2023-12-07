@@ -141,9 +141,7 @@
 }
 
 .scrollable-container {
-  max-height: 800px;
-  overflow-y: auto;
-  padding: 10px;
+  @apply max-h-screen overflow-y-scroll p-[10px];
 }
 .ad-close {
   @apply absolute right-[-2px] top-[-2px] cursor-pointer rounded-full bg-[#ffffff1a];

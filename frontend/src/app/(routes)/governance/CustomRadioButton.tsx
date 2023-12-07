@@ -5,11 +5,13 @@ const RadioButton = ({
   value,
   voteOption,
   handleVoteChange,
+  displayOption,
 }: {
   name: string;
   value: string;
   voteOption: string;
   handleVoteChange: (value: string) => void;
+  displayOption: string;
 }) => {
   return (
     <label className="radio-container">
@@ -24,7 +26,7 @@ const RadioButton = ({
         <span className="radio-checkmark">
           <span className="radio-check"></span>
         </span>
-        <span className="flex relative bottom-1">{value}</span>
+        <span className="flex relative bottom-1">{displayOption}</span>
       </div>
     </label>
   );

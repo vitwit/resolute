@@ -8,13 +8,19 @@ import VotePopup from './VotePopup';
 import { Tooltip } from '@mui/material';
 import { RootState } from '@/store/store';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getProposal } from '@/store/features/gov/govSlice';
+import {
+  getGovTallyParams,
+  getProposal,
+  getProposalTally,
+} from '@/store/features/gov/govSlice';
 import { get } from 'lodash';
 import {
   getTimeDifference,
   getTimeDifferenceToFutureDate,
 } from '@/utils/dataTime';
 import DepositPopup from './DepositPopup';
+import { getPoolInfo } from '@/store/features/staking/stakeSlice';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 type handleCloseOverview = () => void;
 
@@ -43,6 +49,9 @@ const RightOverview = ({
       state.gov.chains[chainID].tally.proposalTally[proposalId]
   );
 
+  const { getChainInfo } = useGetChainInfo();
+  const { chainName } = getChainInfo(chainID);
+
   useEffect(() => {
     const allChainInfo = networks[chainID];
     const chainInfo = allChainInfo.network;
@@ -51,6 +60,18 @@ const RightOverview = ({
         chainID,
         baseURL: chainInfo.config.rest,
         proposalId: proposalId,
+      })
+    );
+    dispatch(
+      getGovTallyParams({
+        chainID,
+        baseURL: chainInfo.config.rest,
+      })
+    );
+    dispatch(
+      getPoolInfo({
+        baseURL: chainInfo.config.rest,
+        chainID: chainID,
       })
     );
   }, [proposalId]);
@@ -170,7 +191,7 @@ const RightOverview = ({
             </div>
           </div>
           <div className="view-full">
-            <Link href={`/governance/${proposalId}?chainId=${chainID}`}>
+            <Link href={`/governance/${chainName}/${proposalId}`}>
               View Full Proposal
             </Link>
           </div>
@@ -277,7 +298,9 @@ const RightOverview = ({
                       alt="Quorum reached icon"
                     />
                     <div className="flex proposal-text-extralight">
-                      Quorum Reached
+                      {parseFloat(quorumPercent) >= parseFloat(quorumRequired)
+                        ? 'Quorum Reached'
+                        : 'Quorum Not Reached'}
                     </div>
                   </div>
                 </div>

@@ -31,6 +31,7 @@ const useGetChainInfo = () => {
     const config = network.config;
     const rest = config.rest;
     const rpc = config.rpc;
+    const chainName = config.chainName.toLowerCase();
 
     const aminoCfg = network.aminoConfig;
     const cosmosAddress = networks[COSMOS_CHAIN_ID].walletInfo.bech32Address;
@@ -47,6 +48,7 @@ const useGetChainInfo = () => {
       prefix,
       feeAmount,
       address,
+      chainName,
     };
   };
   return { getDenomInfo, getChainInfo };

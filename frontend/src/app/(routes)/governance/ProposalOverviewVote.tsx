@@ -33,17 +33,23 @@ function parseNumber(value: string | string[]) {
   return 0;
 }
 
-const ProposalOverviewVote = () => {
+const ProposalOverviewVote = ({
+  chainName,
+  proposalId,
+}: {
+  chainName: string;
+  proposalId: number;
+}) => {
   const [isVotePopupOpen, setVotePopupOpen] = useState(false);
   const toggleVotePopup = () => {
     setVotePopupOpen(!isVotePopupOpen);
   };
 
-  const params = useParams();
-  const searchParams = useSearchParams();
-  const { govId } = params;
-  const proposalId: number = parseNumber(govId);
-  const chainID = searchParams.getAll('chainId')[0];
+  const nameToChainIDs = useAppSelector(
+    (state: RootState) => state.wallet.nameToChainIDs
+  );
+
+  const chainID = nameToChainIDs[chainName];
 
   const dispatch = useAppDispatch();
   const proposalInfo = useAppSelector(
@@ -74,7 +80,7 @@ const ProposalOverviewVote = () => {
     (state: RootState) =>
       state.gov.chains[chainID]?.tallyParams.params.tally_params
   );
-  const quorumRequired = (parseFloat(tallyParams.quorum) * 100).toFixed(1);
+  const quorumRequired = (parseFloat(tallyParams?.quorum) * 100).toFixed(1);
 
   const totalVotes =
     Number(get(tallyResult, 'yes')) +
@@ -117,7 +123,6 @@ const ProposalOverviewVote = () => {
     },
   ];
 
-  const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   const getChainName = (chainID: string) => {
     let chain: string = '';
     Object.keys(nameToChainIDs).forEach((chainName) => {
@@ -128,19 +133,18 @@ const ProposalOverviewVote = () => {
 
   useEffect(() => {
     const allChainInfo = networks[chainID];
-    console.log('here', chainID);
-    const chainInfo = allChainInfo.network;
+    const chainInfo = allChainInfo?.network;
     dispatch(
       getProposal({
         chainID,
-        baseURL: chainInfo.config.rest,
+        baseURL: chainInfo?.config.rest,
         proposalId: proposalId,
       })
     );
 
     dispatch(
       getProposalTally({
-        baseURL: chainInfo.config.rest,
+        baseURL: chainInfo?.config.rest,
         proposalId,
         chainID: chainID,
       })
@@ -148,12 +152,12 @@ const ProposalOverviewVote = () => {
 
     dispatch(
       getPoolInfo({
-        baseURL: chainInfo.config.rest,
+        baseURL: chainInfo?.config.rest,
         chainID: chainID,
       })
     );
 
-    dispatch(getGovTallyParams({ chainID, baseURL: chainInfo.config.rest }));
+    dispatch(getGovTallyParams({ chainID, baseURL: chainInfo?.config.rest }));
   }, []);
 
   const [quorumPercent, setQuorumPercent] = useState<string>('0');
@@ -324,10 +328,10 @@ const ProposalOverviewVote = () => {
               depositamount={formatCoin(
                 parseBalance(
                   get(proposalInfo, 'total_deposit', []),
-                  currency.coinDecimals,
-                  currency.coinMinimalDenom
+                  currency?.coinDecimals,
+                  currency?.coinMinimalDenom
                 ),
-                currency.coinDenom
+                currency?.coinDenom
               )}
             />
           </div>

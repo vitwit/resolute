@@ -28,7 +28,7 @@ const ProposalDetailsCard = ({
         </div>
         <div className="proposal-details proposal-text-normal w-full">
           <p>Proposal Network</p>
-          <p>{proposalNetwork}</p>
+          <p className='text-capitalize'>{proposalNetwork}</p>
         </div>
       </div>
     </div>
