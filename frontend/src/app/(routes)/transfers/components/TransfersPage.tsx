@@ -22,7 +22,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
 
   return (
     <div className="w-full flex justify-between max-h-screen text-white">
-      <div className="w-full px-10 py-6 space-y-6 overflow-y-scroll">
+      <div className="w-full page-padding space-y-6 overflow-y-scroll">
         <MainTopNav title="Transfers" />
         <div className="flex flex-col rounded-2xl bg-[#0e0b26] p-6 space-y-6">
           <div className="flex justify-between">
