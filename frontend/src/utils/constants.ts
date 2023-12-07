@@ -22,3 +22,5 @@ export const VALIDATOR_LOGO_URL = (identity: string) =>
 export const VALIDATORS_PER_PAGE = 7;
 export const CLOSE_ICON_PATH = '/close-icon.svg';
 export const STAKING_DIALOG_IMAGE_PATH = '/delegate-popup-image.png';
+export const SEND_TEMPLATE = 'https://api.resolute.vitwit.com/_static/send.csv';
+export const MULTI_TRANSFER_MSG_COUNT = 10;
