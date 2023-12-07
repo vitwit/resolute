@@ -78,6 +78,7 @@ const useGetChainInfo = () => {
           originDenom: coinDenom,
           decimals: coinDecimals,
         };
+        return;
       }
     });
     return originDenomInfo;
