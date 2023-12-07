@@ -8,11 +8,7 @@ import VotePopup from './VotePopup';
 import { Tooltip } from '@mui/material';
 import { RootState } from '@/store/store';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import {
-  getGovTallyParams,
-  getProposal,
-  getProposalTally,
-} from '@/store/features/gov/govSlice';
+import { getGovTallyParams, getProposal } from '@/store/features/gov/govSlice';
 import { get } from 'lodash';
 import {
   getTimeDifference,
@@ -28,13 +24,16 @@ const RightOverview = ({
   proposalId,
   handleCloseOverview,
   chainID,
+  status,
   handleProposalSelected,
 }: {
   proposalId: number;
   handleCloseOverview: handleCloseOverview;
   chainID: string;
+  status: string;
   handleProposalSelected: (value: boolean) => void;
 }) => {
+  console.log(proposalId, chainID);
   const dispatch = useAppDispatch();
   const proposalInfo = useAppSelector(
     (state: RootState) => state.gov.proposalDetails
@@ -49,6 +48,8 @@ const RightOverview = ({
       state.gov.chains[chainID].tally.proposalTally[proposalId]
   );
 
+  const isStatusVoting =
+    get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD';
   const { getChainInfo } = useGetChainInfo();
   const { chainName } = getChainInfo(chainID);
 
@@ -133,8 +134,13 @@ const RightOverview = ({
   const Totalvotes = totalVotes.toLocaleString();
 
   const [isVotePopupOpen, setIsVotePopupOpen] = useState(false);
-  const toggleVotePopup = () => {
-    setIsVotePopupOpen(!isVotePopupOpen);
+  const handleCloseVotePopup = () => {
+    setIsVotePopupOpen(false);
+  };
+
+  const [isDepositPopupOpen, setIsDepositPopupOpen] = useState(false);
+  const handleCloseDepositPopup = () => {
+    setIsDepositPopupOpen(false);
   };
 
   const handleCloseClick = () => {
@@ -155,7 +161,7 @@ const RightOverview = ({
         <div className="flex justify-between w-full">
           <div className="proposal-text-main">Proposal Overview</div>
           <Image
-            src="./close.svg"
+            src="/close.svg"
             width={24}
             height={24}
             alt="Close icon"
@@ -201,40 +207,46 @@ const RightOverview = ({
               {isDescriptionTruncated && '...'}
             </div>
             <div className="flex justify-between">
-              <button className="button" onClick={toggleVotePopup}>
-                <p className="proposal-text-medium">Vote</p>
+              <button
+                className="button"
+                onClick={() => {
+                  if (isStatusVoting) {
+                    setIsVotePopupOpen(true);
+                  } else {
+                    setIsDepositPopupOpen(true);
+                  }
+                }}
+              >
+                <p className="proposal-text-medium">
+                  {isStatusVoting ? 'Vote' : 'Deposit'}
+                </p>
               </button>
             </div>
           </div>
         </div>
         <div className="w-full">
-          {isVotePopupOpen &&
-            get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD' && (
-              <>
-                <VotePopup
-                  chainID={chainID}
-                  votingEndsInDays={getTimeDifferenceToFutureDate(
-                    get(proposalInfo, 'voting_end_time')
-                  )}
-                  proposalId={proposalId}
-                  proposalname={get(proposalInfo, 'content.title')}
-                />
-              </>
+          <VotePopup
+            chainID={chainID}
+            votingEndsInDays={getTimeDifferenceToFutureDate(
+              get(proposalInfo, 'voting_end_time')
             )}
-          {isVotePopupOpen &&
-            get(proposalInfo, 'status') ===
-              'PROPOSAL_STATUS_DEPOSIT_PERIOD' && (
-              <>
-                <DepositPopup
-                  chainID={chainID}
-                  votingEndsInDays={getTimeDifferenceToFutureDate(
-                    get(proposalInfo, 'voting_end_time')
-                  )}
-                  proposalId={proposalId}
-                  proposalname={get(proposalInfo, 'content.title')}
-                />
-              </>
+            proposalId={proposalId}
+            proposalname={get(proposalInfo, 'content.title')}
+            open={isVotePopupOpen}
+            onClose={handleCloseVotePopup}
+          />
+
+          <DepositPopup
+            chainID={chainID}
+            votingEndsInDays={getTimeDifferenceToFutureDate(
+              get(proposalInfo, 'voting_end_time')
             )}
+            proposalId={proposalId}
+            proposalname={get(proposalInfo, 'content.title')}
+            onClose={handleCloseDepositPopup}
+            open={isDepositPopupOpen}
+          />
+
           <div className="mt-20"> </div>
           <div className="space-y-2 w-full">
             <div className="vote-grid">
@@ -243,7 +255,7 @@ const RightOverview = ({
                   <div className="flex flex-col items-center space-y-2">
                     <div className="flex">
                       <Image
-                        src="./vote-icon.svg"
+                        src="/vote-icon.svg"
                         width={20}
                         height={20}
                         alt="Vote icon"
@@ -292,7 +304,7 @@ const RightOverview = ({
                   </div>
                   <div className="flex space-x-2">
                     <Image
-                      src="./done-icon.svg"
+                      src="/done-icon.svg"
                       width={16}
                       height={16}
                       alt="Quorum reached icon"

@@ -24,14 +24,17 @@ const VotePopup = ({
   proposalId,
   proposalname,
   chainID,
+  open,
+  onClose,
 }: {
   votingEndsInDays: string;
   proposalId: number;
   proposalname: string;
   chainID: string;
+  open: boolean;
+  onClose: () => void;
 }) => {
   const [voteOption, setVoteOption] = useState<string>('');
-  const [isOpen, setIsOpen] = useState(true);
 
   const handleVoteChange = (option: string) => {
     setVoteOption(option);
@@ -40,7 +43,7 @@ const VotePopup = ({
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
   };
 
   const dispatch = useAppDispatch();
@@ -70,7 +73,7 @@ const VotePopup = ({
 
   return (
     <Dialog
-      open={isOpen}
+      open={open}
       onClose={handleClose}
       maxWidth="lg"
       className="blur-effect"

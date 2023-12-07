@@ -15,12 +15,16 @@ const DepositPopup = ({
   denom,
   proposalId,
   proposalname,
+  open,
+  onClose,
 }: {
   chainID: string;
   votingEndsInDays: string;
   denom?: string;
   proposalId: number;
   proposalname: string;
+  open: boolean;
+  onClose: () => void;
 }) => {
   console.log(denom);
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
@@ -30,21 +34,14 @@ const DepositPopup = ({
   const { getVoteTxInputs } = useGetTxInputs();
   const dispatch = useAppDispatch();
 
-  // const chainInfo = allChainInfo.network;
-  // const address = allChainInfo?.walletInfo?.bech32Address;
   const minimalDenom =
     allChainInfo.network.config.stakeCurrency.coinMinimalDenom;
 
-  const [isOpen, setIsOpen] = useState(true);
   const [amount, setAmount] = useState(0);
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
   };
-
-  if (!isOpen) {
-    return null;
-  }
 
   const handleDeposit = () => {
     const { aminoConfig, prefix, rest, feeAmount, address, rpc, minimalDenom } =
@@ -69,7 +66,7 @@ const DepositPopup = ({
 
   return (
     <Dialog
-      open={isOpen}
+      open={open}
       onClose={handleClose}
       maxWidth="lg"
       className="blur-effect"
@@ -79,7 +76,7 @@ const DepositPopup = ({
         <div className="popup-grid">
           <div className="cross" onClick={handleClose}>
             <Image
-              src="./plainclose-icon.svg"
+              src="/plainclose-icon.svg"
               width={24}
               height={24}
               className="cursor-pointer"
@@ -102,7 +99,7 @@ const DepositPopup = ({
                   <div className="space-y-2">
                     <div className="space-x-2 flex">
                       <Image
-                        src="./cosmos-logo.svg"
+                        src="/cosmos-logo.svg"
                         width={40}
                         height={40}
                         alt="Cosmos-Logo"

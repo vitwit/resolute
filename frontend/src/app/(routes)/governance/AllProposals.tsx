@@ -1,9 +1,10 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { RootState } from '@/store/store';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
+  Chains,
   getProposalsInDeposit,
   getProposalsInVoting,
 } from '@/store/features/gov/govSlice';
@@ -34,9 +35,13 @@ const AllProposals = ({
   isSelected: boolean;
 }) => {
   const dispatch = useAppDispatch();
+  const [selectedChainsProposals, setSelectedChainsProposals] =
+    useState<Chains>({});
 
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
-  const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
+  const nameToChainIDs = useAppSelector(
+    (state: RootState) => state.wallet.nameToChainIDs
+  );
   const getChainName = (chainID: string) => {
     let chain: string = '';
     Object.keys(nameToChainIDs).forEach((chainName) => {
@@ -45,18 +50,22 @@ const AllProposals = ({
     return chain;
   };
 
-  const allChainProposals = useAppSelector((state) => state.gov.chains);
+  const chainsProposals = useAppSelector(
+    (state: RootState) => state.gov.chains
+  );
 
   let allProposalsLength = 0;
 
-  if (allChainProposals) {
+  if (selectedChainsProposals) {
     /* eslint-disable @typescript-eslint/no-unused-vars */
-    Object.entries(allChainProposals).map(([_chainName, chainProposal]) => {
-      allProposalsLength += get(
-        chainProposal,
-        `${status === 'deposit' ? 'deposit' : 'active'}.proposals.length`
-      );
-    });
+    Object.entries(selectedChainsProposals).map(
+      ([_chainName, chainProposal]) => {
+        allProposalsLength += get(
+          chainProposal,
+          `${status === 'deposit' ? 'deposit' : 'active'}.proposals.length`
+        );
+      }
+    );
   }
 
   useEffect(() => {
@@ -80,6 +89,15 @@ const AllProposals = ({
     });
   }, []);
 
+  useEffect(() => {
+    chainIDs.forEach((chainID) =>
+      setSelectedChainsProposals((selectedChainsProposals) => {
+        selectedChainsProposals[chainID] = chainsProposals[chainID];
+        return selectedChainsProposals;
+      })
+    );
+  }, [chainsProposals]);
+
   return (
     <div className="main-page">
       {allProposalsLength === 0 ? (
@@ -92,95 +110,98 @@ const AllProposals = ({
         </div>
       ) : null}
 
-      {Object.entries(allChainProposals).map(([chainID, chainProposal]) => {
-        const chainLogo = networks[chainID]?.network?.logos?.menu || '';
-        return (
-          <>
-            {get(
-              chainProposal,
-              `${status === 'deposit' ? 'deposit' : 'active'}.proposals.length`
-            ) ? (
-              <div className="space-y-4 w-full">
-                <div className="flex justify-between">
-                  <div className="flex space-x-2">
-                    <Image
-                      src={chainLogo}
-                      width={32}
-                      height={32}
-                      alt="Networks-Logo"
-                    />
-                    <p className="proposal-text-medium text-capitalize">
-                      {getChainName(chainID)}
-                    </p>
+      {Object.entries(selectedChainsProposals).map(
+        ([chainID, chainProposal]) => {
+          const chainLogo = networks[chainID]?.network?.logos?.menu || '';
+          return (
+            <>
+              {get(
+                chainProposal,
+                `${
+                  status === 'deposit' ? 'deposit' : 'active'
+                }.proposals.length`
+              ) ? (
+                <div className="space-y-4 w-full">
+                  <div className="flex justify-between">
+                    <div className="flex space-x-2">
+                      <Image
+                        src={chainLogo}
+                        width={32}
+                        height={32}
+                        alt="Networks-Logo"
+                      />
+                      <p className="proposal-text-medium text-capitalize">
+                        {getChainName(chainID)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="v-line"></div>
+                  <div className="v-line"></div>
 
-                {get(
-                  chainProposal,
-                  `${status === 'deposit' ? 'deposit' : 'active'}.proposals`
-                ).map((proposal, index) => (
-                  <div
-                    onClick={() => {
-                      handleOpenOverview();
-                      handleSetCurrentOverviewId(
-                        parseInt(get(proposal, 'proposal_id')),
-                        chainID
-                      );
-                      handleProposalSelected(true);
-                    }}
-                    className="proposal"
-                    key={index}
-                  >
-                    <div className="flex justify-between items-center w-full">
-                      <div className="space-x-2 flex items-center cursor-pointer">
-                        <div
-                          className={
-                            isSelected &&
-                            currentOverviewId.toString() ===
-                              get(proposal, 'proposal_id')
-                              ? 'proposal-id'
-                              : 'proposal-id-static'
-                          }
-                        >
-                          <p className="proposal-text-extralight">
-                            {get(proposal, 'proposal_id')}
+                  {get(
+                    chainProposal,
+                    `${status === 'deposit' ? 'deposit' : 'active'}.proposals`
+                  ).map((proposal, index) => (
+                    <div
+                      onClick={() => {
+                        handleOpenOverview();
+                        handleSetCurrentOverviewId(
+                          parseInt(get(proposal, 'proposal_id')),
+                          chainID
+                        );
+                        handleProposalSelected(true);
+                      }}
+                      className="proposal"
+                      key={index}
+                    >
+                      <div className="flex justify-between items-center w-full">
+                        <div className="space-x-2 flex items-center cursor-pointer">
+                          <div
+                            className={
+                              isSelected &&
+                              currentOverviewId.toString() ===
+                                get(proposal, 'proposal_id')
+                                ? 'proposal-id'
+                                : 'proposal-id-static'
+                            }
+                          >
+                            <p className="proposal-text-extralight">
+                              {get(proposal, 'proposal_id')}
+                            </p>
+                          </div>
+
+                          <p className="proposal-text-normal">
+                            {get(proposal, 'content.title')}
                           </p>
                         </div>
-
-                        <p className="proposal-text-normal">
-                          {get(proposal, 'content.title')}
-                        </p>
-                      </div>
-                      <div className="flex space-x-6"></div>
-                      {!isRightBarOpen && (
-                        <div className="flex space-x-6">
-                          <div className="flex space-x-1">
+                        <div className="flex space-x-6"></div>
+                        {!isRightBarOpen && (
+                          <div className="flex space-x-6">
+                            <div className="flex space-x-1">
+                              <Image
+                                src="/timer-icon.svg"
+                                width={24}
+                                height={24}
+                                alt="Timer-Icon"
+                              />
+                              {status === 'deposit' ? (
+                                <p className="proposal-text-small">
+                                  Deposit ends in{' '}
+                                  {getTimeDifferenceToFutureDate(
+                                    get(proposal, 'deposit_end_time')
+                                  )}
+                                </p>
+                              ) : (
+                                <p className="proposal-text-small w-[124px]">
+                                  Expires in{' '}
+                                  {getTimeDifferenceToFutureDate(
+                                    get(proposal, 'voting_end_time')
+                                  )}
+                                </p>
+                              )}
+                            </div>
+                            {/* <div className="flex space-x-1">
                             <Image
-                              src="/timer-icon.svg"
-                              width={24}
-                              height={24}
-                              alt="Timer-Icon"
-                            />
-                            {status === 'deposit' ? (
-                              <p className="proposal-text-small">
-                                Deposit ends in{' '}
-                                {getTimeDifferenceToFutureDate(
-                                  get(proposal, 'deposit_end_time')
-                                )}
-                              </p>
-                            ) : (
-                              <p className="proposal-text-small w-[124px]">
-                                Expires in{' '}
-                                {getTimeDifferenceToFutureDate(
-                                  get(proposal, 'voting_end_time')
-                                )}
-                              </p>
-                            )}
-                          </div>
-                          {/* <div className="flex space-x-1">
-                            <Image
-                              src="./vote-icon.svg"
+                              src="/vote-icon.svg"
                               width={24}
                               height={24}
                               alt="Vote-Icon"
@@ -192,16 +213,17 @@ const AllProposals = ({
                                 : 'Deposit'}
                             </p>
                           </div> */}
-                        </div>
-                      )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </>
-        );
-      })}
+                  ))}
+                </div>
+              ) : null}
+            </>
+          );
+        }
+      )}
     </div>
   );
 };

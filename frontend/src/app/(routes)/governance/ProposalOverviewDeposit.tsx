@@ -20,16 +20,16 @@ const ProposalOverviewDeposit = () => {
     atomsValue,
   } = proposalOverviewData.proposalOverviewData;
 
-  const [isDepositPopupOpen, setDepositPopupOpen] = useState(false);
-  const toggleDepositPopup = () => {
-    setDepositPopupOpen(!isDepositPopupOpen);
+  const [isDepositPopupOpen, setIsDepositPopupOpen] = useState(false);
+  const handleCloseDepositPopup = () => {
+    setIsDepositPopupOpen(false);
   };
 
   return (
     <div className="space-y-6 pl-10 pr-0 pt-6 pb-0">
       <div className="flex space-x-1">
         <Image
-          src="./backarrow-icon.svg"
+          src="/backarrow-icon.svg"
           width={24}
           height={24}
           alt="Go Back"
@@ -43,7 +43,7 @@ const ProposalOverviewDeposit = () => {
             <div className="flex justify-between w-full">
               <div className="flex space-x-2">
                 <Image
-                  src="./cosmos-logo.svg"
+                  src="/cosmos-logo.svg"
                   width={40}
                   height={40}
                   alt="Cosmos-Logo"
@@ -53,7 +53,10 @@ const ProposalOverviewDeposit = () => {
                 </p>
               </div>
               <div>
-                <button className="button" onClick={toggleDepositPopup}>
+                <button
+                  className="button"
+                  onClick={() => setIsDepositPopupOpen(true)}
+                >
                   <p className="proposal-text-medium">Deposit</p>
                 </button>
               </div>
@@ -65,17 +68,17 @@ const ProposalOverviewDeposit = () => {
             <p className="proposal-text-normal">{proposalText}</p>
           </div>
         </div>
-        {isDepositPopupOpen && (
-          <>
-            <DepositPopup
-              votingEndsInDays={'2'}
-              denom={atomsValue}
-              proposalId={123}
-              chainID=""
-              proposalname={'Adjust Trade and Earn Rewards Margined Protocol'}
-            />
-          </>
-        )}
+
+        <DepositPopup
+          votingEndsInDays={'2'}
+          denom={atomsValue}
+          proposalId={123}
+          chainID=""
+          open={isDepositPopupOpen}
+          onClose={handleCloseDepositPopup}
+          proposalname={'Adjust Trade and Earn Rewards Margined Protocol'}
+        />
+
         <div className="space-y-4">
           <div className="voting-grid">
             <div className="voting-view w-full">
@@ -83,7 +86,7 @@ const ProposalOverviewDeposit = () => {
                 <div className="flex flex-col items-center space-y-2 w-full">
                   <div className="flex space-x-2 ">
                     <Image
-                      src="./vote-icon.svg"
+                      src="/vote-icon.svg"
                       width={20}
                       height={20}
                       alt="Vote-Icon"

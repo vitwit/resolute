@@ -40,11 +40,6 @@ const ProposalOverviewVote = ({
   chainName: string;
   proposalId: number;
 }) => {
-  const [isVotePopupOpen, setVotePopupOpen] = useState(false);
-  const toggleVotePopup = () => {
-    setVotePopupOpen(!isVotePopupOpen);
-  };
-
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -131,6 +126,11 @@ const ProposalOverviewVote = ({
     return chain;
   };
 
+  const [isVotePopupOpen, setIsVotePopupOpen] = useState(false);
+  const handleCloseVotePopup = () => {
+    setIsVotePopupOpen(false);
+  };
+
   useEffect(() => {
     const allChainInfo = networks[chainID];
     const chainInfo = allChainInfo?.network;
@@ -187,8 +187,9 @@ const ProposalOverviewVote = ({
         <div className="proposal-brief overflow-y-scroll max-h-screen">
           <div className="proposal-div w-full">
             <div className="flex justify-between w-full">
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 items-center">
                 <Image
+                  className="w-[32px] h-[32px]"
                   src={networkLogo}
                   width={32}
                   height={32}
@@ -199,7 +200,10 @@ const ProposalOverviewVote = ({
                 </p>
               </div>
               <div>
-                <button className="button" onClick={toggleVotePopup}>
+                <button
+                  className="button"
+                  onClick={() => setIsVotePopupOpen(true)}
+                >
                   <p className="proposal-text-medium">Vote</p>
                 </button>
               </div>
@@ -217,19 +221,18 @@ const ProposalOverviewVote = ({
             </ReactMarkdown>
           </div>
         </div>
-        {isVotePopupOpen &&
-          get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD' && (
-            <>
-              <VotePopup
-                chainID={chainID}
-                votingEndsInDays={getTimeDifferenceToFutureDate(
-                  get(proposalInfo, 'voting_end_time')
-                )}
-                proposalId={proposalId}
-                proposalname={get(proposalInfo, 'content.title')}
-              />
-            </>
+
+        <VotePopup
+          chainID={chainID}
+          votingEndsInDays={getTimeDifferenceToFutureDate(
+            get(proposalInfo, 'voting_end_time')
           )}
+          open={isVotePopupOpen}
+          onClose={handleCloseVotePopup}
+          proposalId={proposalId}
+          proposalname={get(proposalInfo, 'content.title')}
+        />
+
         <div className="flex">
           <div className="space-y-4">
             <div className="status-grid w-[480px]">

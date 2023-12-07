@@ -16,7 +16,7 @@ const page = () => {
   Object.keys(nameToChainIDs).forEach((chain) => {
     if (chain === chainName) chainID = nameToChainIDs[chain];
   });
-
+  console.log("111111",chainID)
   return (
     <>
       {chainID.length ? (

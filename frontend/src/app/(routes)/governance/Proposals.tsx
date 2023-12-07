@@ -8,8 +8,10 @@ type ProposalStatusUpdate = (status: string) => void;
 
 const Proposals = ({
   handleChangeProposalState,
+  proposalStatus,
 }: {
   handleChangeProposalState: ProposalStatusUpdate;
+  proposalStatus: string;
 }) => {
   return (
     <div className="main-page">
@@ -22,8 +24,10 @@ const Proposals = ({
         <div className="text-[20px]">Proposals</div>
         <div className="flex space-x-6">
           <button
-            className="cstm-btn"
-            onClick={() => handleChangeProposalState('all')}
+            className={
+              proposalStatus === 'active' ? 'cstm-btn-selected' : 'cstm-btn'
+            }
+            onClick={() => handleChangeProposalState('active')}
           >
             <p className="proposal-text-extralight">
               Proposals in voting period
@@ -31,7 +35,9 @@ const Proposals = ({
           </button>
 
           <button
-            className="cstm-btn"
+            className={
+              proposalStatus === 'deposit' ? 'cstm-btn-selected' : 'cstm-btn'
+            }
             onClick={() => handleChangeProposalState('deposit')}
           >
             <p className="proposal-text-extralight">
