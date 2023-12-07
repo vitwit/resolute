@@ -2,8 +2,9 @@ import { Pagination } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { paginationComponentStyles } from '../../staking/styles';
-import { serialize } from '@/txns/bank/send';
+import { formattedSerialize } from '@/txns/bank/send';
 import { MULTI_TRANSFER_MSG_COUNT } from '../../../../utils/constants';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 const Messages = ({
   msgs,
@@ -30,7 +31,7 @@ const Messages = ({
             clear
           </div>
         </div>
-        <div className="flex h-full flex-col">
+        <div className="flex h-full flex-col relative">
           {msgs
             .slice(
               MULTI_TRANSFER_MSG_COUNT * index,
@@ -43,9 +44,8 @@ const Messages = ({
                   onDelete={onDelete}
                   index={MULTI_TRANSFER_MSG_COUNT * index + offset}
                 />
-                
-                  <div style={{ marginBottom: '26px' }} />
-                
+
+                <div style={{ marginTop: `48px` }} />
               </div>
             ))}
         </div>
@@ -74,16 +74,24 @@ const Message = ({
   msg: Msg;
   onDelete: (index: number) => void;
 }) => {
+  const { getOriginDenomInfo } = useGetChainInfo();
+  const originDenomInfo = getOriginDenomInfo(
+    msg.value?.amount?.[0]?.denom || ''
+  );
 
   return (
-    <div className="flex items-center justify-between">
+    <div className={`flex items-center justify-between absolute`}>
       <Image src="/back-arrow.svg" width={24} height={24} alt="msg" />
       <div className="overflowed-text max-w-[250px] text-sm not-italic font-normal leading-[normal]">
-        {serialize(msg)}
+        {formattedSerialize(
+          msg,
+          originDenomInfo.decimals,
+          originDenomInfo.originDenom
+        )}
       </div>
       <Image
         src="/close.svg"
-        className='cursor-pointer'
+        className="cursor-pointer"
         width={16}
         height={16}
         alt="cancel"
