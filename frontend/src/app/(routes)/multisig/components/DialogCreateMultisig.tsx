@@ -1,4 +1,6 @@
 import {
+  Button,
+  CircularProgress,
   Dialog,
   DialogContent,
   InputAdornment,
@@ -8,10 +10,17 @@ import Image from 'next/image';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { setError } from '@/store/features/common/commonSlice';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { deepPurple } from '@mui/material/colors';
 import Axios from 'axios';
 import { cleanURL } from '@/utils/util';
+import {
+  generateMultisigAccount,
+  isValidPubKey,
+} from '@/txns/multisig/multisig';
+import { getAuthToken } from '@/utils/localStorage';
+import { createAccount } from '@/store/features/multisig/multisigSlice';
+import { RootState } from '@/store/store';
 
 interface DialogCreateMultisigProps {
   open: boolean;
@@ -59,7 +68,6 @@ const InputTextComponent = ({
   index,
   handleChangeValue,
   handleRemoveValue,
-  handleBlur,
 }: any) => {
   return (
     <>
@@ -73,7 +81,6 @@ const InputTextComponent = ({
         sx={textFieldStyles}
         fullWidth
         disabled={field.disabled}
-        onBlur={(e) => handleBlur(index, e)}
         InputProps={{
           endAdornment:
             index !== 0 ? (
@@ -102,7 +109,9 @@ const InputTextComponent = ({
           },
         }}
       />
-      <div>{field.error.length ? field.error : ''}</div>
+      <div className="text-[14px] text-[#E57575]">
+        {field.error.length ? field.error : ''}
+      </div>
     </>
   );
 };
@@ -137,6 +146,10 @@ const DialogCreateMultisig = ({
   const [pubKeyFields, setPubKeyFields] = useState<PubKeyFields[]>([]);
   const [threshold, setThreshold] = useState(0);
   const [formError, setFormError] = useState('');
+
+  const createMultiAccRes = useAppSelector(
+    (state: RootState) => state.multisig.createMultisigAccountRes
+  );
 
   const pubKeyObj = {
     name: 'pubKey',
@@ -177,9 +190,10 @@ const DialogCreateMultisig = ({
     setName(e.target.value);
   };
 
-  const usePubkey = (index: number) => {
+  const togglePubKey = (index: number) => {
     const pubKeysList = [...pubKeyFields];
     pubKeysList[index].isPubKey = !pubKeysList[index].isPubKey;
+    pubKeysList[index].error = '';
     setPubKeyFields(pubKeysList);
   };
 
@@ -199,15 +213,18 @@ const DialogCreateMultisig = ({
       if (e.target.name === 'address') {
         if (index === key) {
           value['address'] = e.target.value;
+          value['value'] = e.target.value;
         }
         return value;
       } else {
         if (index === key) {
           value['pubKey'] = e.target.value;
+          value['value'] = e.target.value;
         }
         return value;
       }
     });
+    console.log(newInputFields);
 
     setPubKeyFields(newInputFields);
   };
@@ -226,36 +243,143 @@ const DialogCreateMultisig = ({
     }
   };
 
-  const handleBlur = async (
-    index: number,
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    let pubKey;
-    const pubKeysList = [...pubKeyFields];
-    const address = e.target.value;
-    if (!pubKeysList[index].isPubKey && address.length) {
-      pubKey = await getPubkey(address, baseURL);
-      if (pubKey.length) {
-        pubKeysList[index].pubKey = pubKey;
-        pubKeysList[index].error = '';
-        setPubKeyFields((pubKeyFields) => {
-          const pubKeysList2 = [...pubKeyFields];
-          pubKeysList2[index].pubKey = pubKeysList[index].pubKey;
-          pubKeysList2[index].error = pubKeysList[index].error;
-          return pubKeysList2;
-        });
-      } else {
-        pubKeysList[index].error =
-          'Address not found on chain, please enter pubKey';
-        setPubKeyFields((pubKeyFields) => {
-          const pubKeysList2 = [...pubKeyFields];
-          pubKeysList2[index].pubKey = pubKeysList[index].pubKey;
-          pubKeysList2[index].error = pubKeysList[index].error;
-          return pubKeysList2;
-        });
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (parseInt(e.target.value) > pubKeyFields?.length) {
+      alert('Threshold can not be greater than pubkeys');
+      return;
+    }
+    setThreshold(parseInt(e.target.value));
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setFormError('');
+    console.log(pubKeyFields);
+
+    if (Number(threshold) < 1) {
+      dispatch(
+        setError({ type: 'error', message: 'Threshold must be greater than 1' })
+      );
+      return;
+    }
+
+    const pubKeys = pubKeyFields.map((v) => v.value);
+
+    if (!pubKeys?.length) {
+      dispatch(
+        setError({ type: 'error', message: 'At least 1 pubkey is required' })
+      );
+      return;
+    }
+
+    let isValid = true;
+    pubKeyFields.forEach(async (field, index) => {
+      if (!field.isPubKey) {
+        const pubKey = await getPubkey(field.address, baseURL);
+        const pubKeysList = [...pubKeyFields];
+        if (!pubKeysList[index].isPubKey) {
+          if (pubKey.length) {
+            setPubKeyFields((pubKeyFields) => {
+              const pubKeysList2 = [...pubKeyFields];
+              pubKeysList2[index].pubKey = pubKey;
+              pubKeysList2[index].error = '';
+              return pubKeysList2;
+            });
+          } else {
+            isValid = false;
+            pubKeysList[index].error =
+              'Address not found on chain, please enter pubKey';
+            setPubKeyFields((pubKeyFields) => {
+              const pubKeysList2 = [...pubKeyFields];
+              pubKeysList2[index].pubKey = pubKey;
+              pubKeysList2[index].error =
+                'Address not found on chain, please enter pubKey';
+              return pubKeysList2;
+            });
+          }
+        }
+      } else if (field.pubKey.length) {
+        const pubKeysList = [...pubKeyFields];
+        if (!isValidPubKey(field.pubKey)) {
+          isValid = false;
+          pubKeysList[index].error = 'Invalid pubKey';
+          setPubKeyFields((pubKeyFields) => {
+            const pubKeysList2 = [...pubKeyFields];
+            pubKeysList2[index].pubKey = pubKeysList[index].pubKey;
+            pubKeysList2[index].error = pubKeysList[index].error;
+            return pubKeysList2;
+          });
+        } else {
+          pubKeysList[index].error = '';
+          setPubKeyFields((pubKeyFields) => {
+            const pubKeysList2 = [...pubKeyFields];
+            pubKeysList2[index].pubKey = pubKeysList[index].pubKey;
+            pubKeysList2[index].error = pubKeysList[index].error;
+            return pubKeysList2;
+          });
+        }
+      }
+    });
+
+    if (!isValid) {
+      return;
+    }
+
+    const uniquePubKeys = Array.from(new Set(pubKeys));
+    if (uniquePubKeys?.length !== pubKeys?.length) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'You have entered duplicate pubkeys',
+        })
+      );
+      return;
+    }
+
+    for (let i = 0; i < uniquePubKeys.length; i++) {
+      if (!isValidPubKey(uniquePubKeys[i])) {
+        setFormError(`pubKey at ${i + 1} is invalid`);
+        return;
       }
     }
+
+    try {
+      const res = generateMultisigAccount(
+        pubKeys,
+        Number(threshold),
+        addressPrefix
+      );
+      const authToken = getAuthToken(chainID);
+      const queryParams = {
+        address: address,
+        signature: authToken?.signature || '',
+      };
+      dispatch(
+        createAccount({
+          queryParams: queryParams,
+          data: {
+            address: res.address,
+            chainId: chainID,
+            pubkeys: res.pubkeys,
+            createdBy: address,
+            name: name,
+            threshold: res.threshold,
+          },
+        })
+      );
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      dispatch(setError({ type: 'error', message: error }));
+    }
   };
+
+  useEffect(() => {
+    if (createMultiAccRes?.status === 'idle') {
+      dispatch(setError({ type: 'success', message: 'Successfully created' }));
+    } else if (createMultiAccRes?.status === 'rejected') {
+      dispatch(setError({ type: 'error', message: createMultiAccRes?.error }));
+    }
+  }, [createMultiAccRes]);
 
   return (
     <Dialog
@@ -297,7 +421,7 @@ const DialogCreateMultisig = ({
               <h2 className="text-[20px] font-bold leading-normal">
                 Create Multisig
               </h2>
-              <form>
+              <form onSubmit={handleSubmit}>
                 <TextField
                   className="bg-[#FFFFFF0D] rounded-2xl"
                   onChange={handleNameChange}
@@ -325,17 +449,15 @@ const DialogCreateMultisig = ({
                       handleChangeValue={handleChangeValue}
                       index={index}
                       field={field}
-                      handleBlur={handleBlur}
                     />
-                    <div className="">
+                    <div className="text-right font-light">
                       {index !== 0 ? (
                         <button
                           onClick={() => {
-                            usePubkey(index);
-                            console.log(pubKeyFields);
+                            togglePubKey(index);
                           }}
                           type="button"
-                          className="text-[12px] underline"
+                          className="text-[12px] underline underline-offset-2"
                         >
                           {field.isPubKey ? 'Use Address' : 'Use PubKey'}
                         </button>
@@ -343,7 +465,7 @@ const DialogCreateMultisig = ({
                     </div>
                   </>
                 ))}
-                <div className="text-right text-[12px] font-extralight">
+                <div className="text-center text-[12px] font-light">
                   <span
                     className="border-b cursor-pointer"
                     onClick={handleAddPubKey}
@@ -351,6 +473,70 @@ const DialogCreateMultisig = ({
                     Add New Member
                   </span>
                 </div>
+                <div className="my-6 flex items-center gap-4">
+                  <TextField
+                    className="bg-[#FFFFFF0D] rounded-[4px]"
+                    name={'threshold'}
+                    defaultValue={0}
+                    value={threshold}
+                    required
+                    inputProps={{ maxLength: 1 }}
+                    onChange={handleChange}
+                    label=""
+                    type="number"
+                    size="small"
+                    style={{ maxWidth: 75 }}
+                    sx={textFieldStyles}
+                    InputProps={{
+                      sx: {
+                        input: {
+                          color: 'white',
+                          fontSize: '14px',
+                        },
+                      },
+                    }}
+                  />
+                  <div className="font-extralight text-[14px] text-[#FFFFFF80]">
+                    of
+                  </div>
+                  <TextField
+                    className="bg-[#FFFFFF0D] rounded-[4px]"
+                    name={'threshold'}
+                    value={pubKeyFields?.length}
+                    label=""
+                    disabled
+                    size="small"
+                    style={{ maxWidth: 75 }}
+                    sx={textFieldStyles}
+                    InputProps={{
+                      sx: {
+                        input: {
+                          color: 'white',
+                          fontSize: '14px',
+                        },
+                      },
+                    }}
+                  />
+                  <div className="font-extralight text-[14px]">Threshold</div>
+                </div>
+                <div>{formError}</div>
+                <Button
+                  disabled={createMultiAccRes?.status === 'pending'}
+                  sx={{
+                    width: '144px',
+                    color: 'white',
+                    fontWeight: 500,
+                    textTransform: 'none',
+                  }}
+                  className="create-account-btn"
+                  type="submit"
+                >
+                  {createMultiAccRes?.status === 'pending' ? (
+                    <CircularProgress size={25} />
+                  ) : (
+                    'Create'
+                  )}
+                </Button>
               </form>
             </div>
           </div>

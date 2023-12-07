@@ -103,3 +103,8 @@
   @apply bg-[#FFFFFF0D] p-4 rounded-2xl space-y-6;
   backdrop-filter: blur(2px);
 }
+
+.create-account-btn {
+  @apply rounded-2xl px-10 py-[10px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}

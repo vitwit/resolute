@@ -1,8 +1,10 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getMultisigAccounts } from '@/store/features/multisig/multisigSlice';
+import {
+  getMultisigAccounts,
+  resetCreateMultisigRes,
+} from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { TxStatus } from '@/types/enums';
-import { getLocalTime } from '@/utils/datetime';
 import { shortenAddress } from '@/utils/util';
 import { CircularProgress } from '@mui/material';
 import Image from 'next/image';
@@ -26,6 +28,9 @@ const AllMultisigs = ({
   const multisigAccounts = useAppSelector(
     (state: RootState) => state.multisig.multisigAccounts
   );
+  const createMultiAccRes = useAppSelector(
+    (state: RootState) => state.multisig.createMultisigAccountRes
+  );
   const accounts = multisigAccounts.accounts;
   const pendingTxns = multisigAccounts.txnCounts;
   const status = multisigAccounts.status;
@@ -45,8 +50,16 @@ const AllMultisigs = ({
     setDialogOpen(false);
   };
 
+  useEffect(() => {
+    if (createMultiAccRes.status === 'idle') {
+      setDialogOpen(false);
+      dispatch(getMultisigAccounts(address));
+      dispatch(resetCreateMultisigRes());
+    }
+  }, [createMultiAccRes]);
+
   return (
-    <div className="flex-1 pl-10 pt-6 text-white space-y-6">
+    <div className="flex-1 pl-10 py-6 text-white space-y-6 max-h-screen overflow-y-scroll">
       <h2 className="text-[20px] leading-normal font-normal">Multisig</h2>
       <div className="flex justify-between items-center">
         <h3>All Accounts</h3>
@@ -76,7 +89,6 @@ const AllMultisigs = ({
             key={index}
             address={account.address}
             threshold={account.threshold}
-            created_at={account.created_at}
             name={account.name}
             actionsRequired={pendingTxns?.[account.address]}
             chainName={chainName}
@@ -101,7 +113,6 @@ export default AllMultisigs;
 interface MultisigAccountCardProps {
   address: string;
   threshold: number;
-  created_at: string;
   name: string;
   actionsRequired: number;
   chainName: string;
@@ -110,7 +121,6 @@ interface MultisigAccountCardProps {
 const MultisigAccountCard = ({
   address,
   threshold,
-  created_at,
   name,
   actionsRequired,
   chainName,

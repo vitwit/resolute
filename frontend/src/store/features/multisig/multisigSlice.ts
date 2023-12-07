@@ -444,4 +444,12 @@ export const multisigSlice = createSlice({
   },
 });
 
+export const {
+  resetCreateMultisigRes,
+  resetCreateTxnState,
+  resetDeleteTxnState,
+  resetUpdateTxnState,
+  resetSignTxnState,
+} = multisigSlice.actions;
+
 export default multisigSlice.reducer;

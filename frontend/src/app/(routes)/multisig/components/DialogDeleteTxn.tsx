@@ -16,7 +16,7 @@ const DialogDeleteTxn = ({ open, onClose, txn }: DialogDeleteTxnProps) => {
   };
   return (
     <Dialog
-      open={true}
+      open={open}
       onClose={() => handleClose()}
       maxWidth="lg"
       PaperProps={{
