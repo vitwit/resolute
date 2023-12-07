@@ -38,8 +38,6 @@ export default function DelegatorTransfer(props) {
     authzTx,
   } = props;
 
-  const params = useParams();
-
   const currency = chainInfo?.config?.currencies[0];
   const delegators = useSelector(
     (state) => state.validator.chains[chainID]?.delegations
@@ -121,7 +119,7 @@ export default function DelegatorTransfer(props) {
         status: null,
       })
     );
-  }, [params]);
+  }, [chainInfo]);
 
   const validators = useSelector(
     (state) => state.staking.chains[chainID]?.validators
@@ -159,7 +157,7 @@ export default function DelegatorTransfer(props) {
       getAllDelegators({
         baseURL: baseURL,
         chainID: chainID,
-        validator: data.addr,
+        validator: data?.addr,
         pagination: null,
       })
     );
