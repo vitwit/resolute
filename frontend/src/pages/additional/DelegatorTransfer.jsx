@@ -22,6 +22,7 @@ import { multiTxns } from "../../features/bank/bankSlice";
 import { SEND_TYPE_URL } from "../multisig/tx/utils";
 import { parseCoins } from "@cosmjs/amino";
 import { authzExecHelper } from "../../features/authz/authzSlice";
+import { useParams } from "react-router-dom";
 
 export default function DelegatorTransfer(props) {
   const {
@@ -36,6 +37,8 @@ export default function DelegatorTransfer(props) {
     sendTx,
     authzTx,
   } = props;
+
+  const params = useParams();
 
   const currency = chainInfo?.config?.currencies[0];
   const delegators = useSelector(
@@ -118,7 +121,7 @@ export default function DelegatorTransfer(props) {
         status: null,
       })
     );
-  }, []);
+  }, [params]);
 
   const validators = useSelector(
     (state) => state.staking.chains[chainID]?.validators
