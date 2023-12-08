@@ -264,7 +264,11 @@ export function parseDenomAmount(
 }
 
 export function formatCommission(commission: number): string {
-  return commission ? String(commission.toFixed(0)) + '%' : '-';
+  return commission === 0
+    ? '0%'
+    : commission
+      ? String(commission.toFixed(0)) + '%'
+      : '-';
 }
 
 export function formatUnbondingPeriod(
