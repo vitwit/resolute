@@ -14,8 +14,8 @@ interface VoteOptionNumber {
 
 const voteOptionNumber: VoteOptionNumber = {
   yes: 1,
-  no: 2,
-  abstain: 3,
+  no: 3,
+  abstain: 2,
   veto: 4,
 };
 
@@ -24,14 +24,19 @@ const VotePopup = ({
   proposalId,
   proposalname,
   chainID,
+  open,
+  onClose,
+  networkLogo,
 }: {
   votingEndsInDays: string;
   proposalId: number;
   proposalname: string;
   chainID: string;
+  open: boolean;
+  onClose: () => void;
+  networkLogo: string;
 }) => {
   const [voteOption, setVoteOption] = useState<string>('');
-  const [isOpen, setIsOpen] = useState(true);
 
   const handleVoteChange = (option: string) => {
     setVoteOption(option);
@@ -40,7 +45,7 @@ const VotePopup = ({
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
   };
 
   const dispatch = useAppDispatch();
@@ -70,7 +75,7 @@ const VotePopup = ({
 
   return (
     <Dialog
-      open={isOpen}
+      open={open}
       onClose={handleClose}
       maxWidth="lg"
       className="blur-effect"
@@ -80,7 +85,7 @@ const VotePopup = ({
         <div className="popup-grid">
           <div className="cross" onClick={handleClose}>
             <Image
-              src="./plainclose-icon.svg"
+              src="/plainclose-icon.svg"
               width={24}
               height={24}
               className="cursor-pointer"
@@ -103,10 +108,10 @@ const VotePopup = ({
                   <div className="space-y-1">
                     <div className="space-x-2 flex">
                       <Image
-                        src="./cosmos-logo.svg"
+                        src={networkLogo}
                         width={40}
                         height={40}
-                        alt="Cosmos-Logo"
+                        alt="logo"
                       />
                       <p className="proposal-text-small">
                         #{proposalId} | Proposal
@@ -122,25 +127,29 @@ const VotePopup = ({
                   <div className="radio-buttons">
                     <RadioButton
                       name="voteOption"
-                      value={'Yes'}
+                      value={'yes'}
+                      displayOption={'Yes'}
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
                     <RadioButton
                       name="voteOption"
-                      value={'No'}
+                      value={'no'}
+                      displayOption={'No'}
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
                     <RadioButton
                       name="voteOption"
-                      value={'Abstain'}
+                      value={'abstain'}
+                      displayOption={'Abstain'}
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
                     <RadioButton
                       name="voteOption"
-                      value={'No With Veto'}
+                      value={'veto'}
+                      displayOption={'No With Veto'}
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />

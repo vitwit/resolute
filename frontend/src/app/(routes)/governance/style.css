@@ -5,6 +5,12 @@
   @apply flex h-8 flex-col justify-center items-start gap-2 backdrop-blur-[2px] px-6 py-2 rounded-[100px];
   background: rgba(255, 255, 255, 0.1);
 }
+
+.cstm-btn-selected {
+  @apply flex h-8 flex-col justify-center items-start gap-2 backdrop-blur-[2px] px-6 py-2 rounded-[100px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
 .main-page {
   @apply flex flex-col items-start gap-10 px-10 py-6;
 }
@@ -12,11 +18,11 @@
   @apply flex flex-col justify-center cursor-pointer text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal] underline;
 }
 .v-line {
-  @apply h-[0.5px];
+  @apply h-[1px];
   background: linear-gradient(
     90deg,
-    rgba(74, 162, 156, 0.5) 7.46%,
-    rgba(139, 61, 167, 0.5) 94.28%
+    rgba(74, 162, 156, 0.279) 7.46%,
+    rgba(139, 61, 167, 0.3) 94.28%
   );
 }
 .proposal-id {
@@ -59,7 +65,7 @@
   @apply flex justify-end items-center gap-10 pr-0;
 }
 .text-grid {
-  @apply flex w-[451px] flex-col justify-center items-start gap-6;
+  @apply  w-[451px]
 }
 .placeholder-text {
   @apply flex h-[54px] flex-col justify-center items-start gap-2 px-4 py-0 rounded-2xl;
@@ -97,7 +103,6 @@
 }
 .voting-grid {
   @apply flex flex-col justify-center items-start gap-4 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
-  background: #0e0b26;
 }
 .voting-view {
   @apply flex flex-col justify-center items-center gap-6 px-6 py-0;
@@ -141,9 +146,7 @@
 }
 
 .scrollable-container {
-  max-height: 800px;
-  overflow-y: auto;
-  padding: 10px;
+  @apply max-h-screen overflow-y-scroll;
 }
 .ad-close {
   @apply absolute right-[-2px] top-[-2px] cursor-pointer rounded-full bg-[#ffffff1a];

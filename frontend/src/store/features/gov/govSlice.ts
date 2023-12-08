@@ -60,7 +60,7 @@ interface Chain {
   };
 }
 
-interface Chains {
+export interface Chains {
   [key: string]: Chain;
 }
 
@@ -700,8 +700,6 @@ export const govSlice = createSlice({
           //   status: TxStatus.IDLE,
           //   proposal: action.payload.data.proposal
           // };
-
-          state.proposalDetails = action.payload.data.proposal;
         } else {
           const currentProposalsState = state.chains[chainID].deposit.proposals;
           if (!currentProposalsState.length) {
@@ -713,6 +711,7 @@ export const govSlice = createSlice({
             state.chains[chainID].deposit = result;
           }
         }
+        state.proposalDetails = action.payload.data.proposal;
         state.proposalInfo.status = TxStatus.IDLE;
         state.proposalInfo.errMsg = '';
       })
