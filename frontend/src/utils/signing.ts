@@ -287,6 +287,7 @@ async function broadcast(
   });
   console.log('response of the post txn error ', response);
   const result = parseTxResult(response.data.tx_response);
+  if (result.code !== 0) return result;
   // have ambiguous issues, todo...
   //assertIsDeliverTxSuccess(result);
   return pollForTx(result.transactionHash).then(

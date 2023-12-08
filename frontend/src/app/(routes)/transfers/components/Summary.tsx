@@ -21,21 +21,21 @@ const Summary = ({ chainIDs }: { chainIDs: string[] }) => {
   }
 
   return (
-    <div className="coloured-container relative h-[72px]">
-      <Image
-        src="/printed-color.png"
-        width={560}
-        height={72}
-        alt=""
-        className="absolute left-[86px] top-[-2px]"
-      />
-      <div className="flex w-full justify-between">
-        <div className="flex items-center gap-2">
-          <Image src={imageURL} width={40} height={40} alt={chainName} />
-          <div className="text-sm not-italic font-normal leading-[normal] text-capitalize">
-            {chainName}
-          </div>
+    <div className="coloured-container relative h-[72px] flex items-center overflow-hidden">
+      <div className="flex items-center gap-2">
+        <Image src={imageURL} width={40} height={40} alt={chainName} />
+        <div className="text-sm not-italic font-normal leading-[normal] text-capitalize">
+          {chainName}
         </div>
+      </div>
+      <div className="flex-shrink-0 relative">
+        <Image
+          src="/printed-color.png"
+          width={560}
+          height={72}
+          alt=""
+          className="object-cover h-full w-full mr-[360px]"
+        />
       </div>
     </div>
   );
