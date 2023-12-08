@@ -27,6 +27,7 @@ import { Tooltip } from '@mui/material';
 import DepositProposalDetails from './DepositProposalDetails';
 import DepositProposalInfo from './DepositProposalInfo';
 import DepositPopup from './DepositPopup';
+import { setSelectedNetwork } from '@/store/features/common/commonSlice';
 
 const ProposalOverviewVote = ({
   chainName,
@@ -203,6 +204,12 @@ const ProposalOverviewVote = ({
     }
   }, [depositParams, proposalInfo]);
 
+  useEffect(() => {
+    if (chainName?.length) {
+      dispatch(setSelectedNetwork({ chainName: chainName }));
+    }
+  }, [chainName]);
+
   return (
     <div className="space-y-6 pl-10 pr-10 pt-6 pb-0">
       <div className="flex space-x-1">
@@ -320,7 +327,7 @@ const ProposalOverviewVote = ({
                   </div>
                 </div>
               </div>
-              <div className="voting-grid">
+              <div className="voting-grid bg-[#0E0B26]">
                 <div className="voting-view w-full">
                   <div className="status-pass">
                     <div className="flex flex-col items-center space-y-2">

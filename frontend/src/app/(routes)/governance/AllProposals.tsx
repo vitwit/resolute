@@ -184,14 +184,14 @@ const AllProposals = ({
                                 alt="Timer-Icon"
                               />
                               {status === 'deposit' ? (
-                                <p className="proposal-text-small">
+                                <p className="proposal-text-small w-[164px]">
                                   Deposit ends in{' '}
                                   {getTimeDifferenceToFutureDate(
                                     get(proposal, 'deposit_end_time')
                                   )}
                                 </p>
                               ) : (
-                                <p className="proposal-text-small w-[124px]">
+                                <p className="proposal-text-small w-[144px]">
                                   Expires in{' '}
                                   {getTimeDifferenceToFutureDate(
                                     get(proposal, 'voting_end_time')

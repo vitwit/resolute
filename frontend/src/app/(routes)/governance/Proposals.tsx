@@ -15,9 +15,11 @@ const Proposals = ({
 }) => {
   return (
     <div className="main-page">
-      <div className="flex justify-between w-full">
+      <div className="flex justify-between items-center w-full">
         <div className="proposal-text-big">Governance</div>
-        <TopNav />
+        <div className='w-[480px]'>
+          <TopNav />
+        </div>
       </div>
 
       <div className="proposals-head">

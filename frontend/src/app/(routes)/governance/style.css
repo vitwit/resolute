@@ -18,11 +18,11 @@
   @apply flex flex-col justify-center cursor-pointer text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal] underline;
 }
 .v-line {
-  @apply h-[0.5px];
+  @apply h-[1px];
   background: linear-gradient(
     90deg,
-    rgba(74, 162, 156, 0.5) 7.46%,
-    rgba(139, 61, 167, 0.5) 94.28%
+    rgba(74, 162, 156, 0.279) 7.46%,
+    rgba(139, 61, 167, 0.3) 94.28%
   );
 }
 .proposal-id {
@@ -146,7 +146,7 @@
 }
 
 .scrollable-container {
-  @apply max-h-screen overflow-y-scroll p-[10px];
+  @apply max-h-screen overflow-y-scroll;
 }
 .ad-close {
   @apply absolute right-[-2px] top-[-2px] cursor-pointer rounded-full bg-[#ffffff1a];
