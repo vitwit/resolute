@@ -17,32 +17,20 @@ import {
   TxReStakeInputs,
   TxUndelegateInputs,
   Validator,
+  Validators,
 } from '../../../types/staking';
 import { AxiosError } from 'axios';
 import { TxStatus } from '../../../types/enums';
 import { NewTransaction } from '@/utils/transaction';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
-
-interface Validators {
-  status: TxStatus;
-  active: { [key: string]: Validator };
-  inactive: Record<string, Validator>;
-  activeSorted: string[];
-  inactiveSorted: string[];
-  errMsg: string;
-  pagination: {
-    next_key: string | null;
-  };
-  totalActive: number;
-  totalInactive: number;
-  witvalValidator?: Validator;
-}
+import { setTxAndHash } from '../common/commonSlice';
 
 interface Chain {
   validators: Validators;
   delegations: {
     status: TxStatus;
     delegations: GetDelegationsResponse;
+    hasDelegations: boolean;
     errMsg: string;
     pagination: Pagination | undefined;
     delegatedTo: Record<string, boolean>;
@@ -51,6 +39,7 @@ interface Chain {
   unbonding: {
     status: TxStatus;
     unbonding: GetUnbondingResponse;
+    hasUnbonding: boolean;
     errMsg: string;
     pagination: Pagination | undefined;
   };
@@ -72,6 +61,8 @@ interface StakingState {
   validatorsLoading: number;
   delegationsLoading: number;
   chains: Chains;
+  hasDelegations: boolean;
+  hasUnbonding: boolean;
   defaultState: Chain;
 }
 
@@ -79,6 +70,8 @@ const initialState: StakingState = {
   chains: {},
   validatorsLoading: 0,
   delegationsLoading: 0,
+  hasUnbonding: false,
+  hasDelegations: false,
   defaultState: {
     paramsStatus: TxStatus.INIT,
     validators: {
@@ -103,6 +96,7 @@ const initialState: StakingState = {
           total: '',
         },
       },
+      hasDelegations: false,
       errMsg: '',
       pagination: undefined,
       delegatedTo: {},
@@ -117,6 +111,7 @@ const initialState: StakingState = {
           total: '',
         },
       },
+      hasUnbonding: false,
       errMsg: '',
       pagination: undefined,
     },
@@ -160,6 +155,7 @@ export const txRestake = createAsyncThunk(
           transactions: [tx],
         })
       );
+      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
       if (result?.code === 0) {
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
@@ -188,14 +184,31 @@ export const txDelegate = createAsyncThunk(
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
-        data.prefix,
+        data.basicChainInfo.prefix,
         [msg],
-        860000,
+        GAS_FEE,
         '',
         `${data.feeAmount}${data.denom}`,
         data.basicChainInfo.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
+      const tx = NewTransaction(
+        result,
+        [msg],
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
+          transactions: [tx],
+        })
+      );
+
+      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+
       if (result?.code === 0) {
         dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
         dispatch(
@@ -232,7 +245,7 @@ export const txReDelegate = createAsyncThunk(
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
-        data.prefix,
+        data.basicChainInfo.prefix,
         [msg],
         GAS_FEE,
         '',
@@ -240,6 +253,24 @@ export const txReDelegate = createAsyncThunk(
         data.basicChainInfo.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
+
+      const tx = NewTransaction(
+        result,
+        [msg],
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
+          transactions: [tx],
+        })
+      );
+
+      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+
       if (result?.code === 0) {
         dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
         dispatch(
@@ -261,7 +292,10 @@ export const txReDelegate = createAsyncThunk(
 
 export const txUnDelegate = createAsyncThunk(
   'staking/undelegate',
-  async (data: TxUndelegateInputs, { rejectWithValue, fulfillWithValue }) => {
+  async (
+    data: TxUndelegateInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
     try {
       const msg = UnDelegate(
         data.delegator,
@@ -272,7 +306,7 @@ export const txUnDelegate = createAsyncThunk(
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
-        data.prefix,
+        data.basicChainInfo.prefix,
         [msg],
         860000,
         '',
@@ -280,6 +314,24 @@ export const txUnDelegate = createAsyncThunk(
         data.basicChainInfo.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
+
+      const tx = NewTransaction(
+        result,
+        [msg],
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
+          transactions: [tx],
+        })
+      );
+
+      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+
       if (result?.code === 0) {
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
@@ -637,14 +689,19 @@ export const stakeSlice = createSlice({
         state.delegationsLoading--;
         const chainID = action.meta?.arg?.chainID;
         if (state.chains[chainID]) {
+          const delegation_responses = action.payload.delegations;
+          if (delegation_responses?.length) {
+            state.chains[chainID].delegations.hasDelegations = true;
+            state.hasDelegations = true;
+          }
           state.chains[chainID].delegations.status = TxStatus.IDLE;
           state.chains[chainID].delegations.delegations.delegation_responses =
-            action.payload.delegations;
+            delegation_responses;
           state.chains[chainID].delegations.errMsg = '';
 
           let total = 0.0;
-          for (let i = 0; i < action.payload.delegations.length; i++) {
-            const delegation = action.payload.delegations[i];
+          for (let i = 0; i < delegation_responses.length; i++) {
+            const delegation = delegation_responses[i];
             state.chains[chainID].delegations.delegatedTo[
               delegation?.delegation?.validator_address
             ] = true;
@@ -685,9 +742,16 @@ export const stakeSlice = createSlice({
       })
       .addCase(getUnbonding.fulfilled, (state, action) => {
         const { chainID } = action.meta.arg;
+        const unbonding_responses = action.payload.data.unbonding_responses;
+        if (unbonding_responses?.length) {
+          if (unbonding_responses[0].entries.length) {
+            state.chains[chainID].unbonding.hasUnbonding = true;
+            state.hasUnbonding = true;
+          }
+        }
         state.chains[chainID].unbonding.status = TxStatus.IDLE;
         state.chains[chainID].unbonding.unbonding.unbonding_responses =
-          action.payload.data.unbonding_responses;
+          unbonding_responses;
         state.chains[chainID].unbonding.pagination =
           action.payload.data.pagination;
         state.chains[chainID].unbonding.errMsg = '';

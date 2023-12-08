@@ -1,4 +1,4 @@
-import { shortenMsg } from '@/utils/util';
+import { parseBalance } from '@/utils/denom';
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx';
 export const msgSendTypeUrl: string = '/cosmos.bank.v1beta1.MsgSend';
 
@@ -24,8 +24,16 @@ export function SendMsg(
 }
 
 export function serialize(msg: Msg): string {
-  const { fromAddress, toAddress, amount } = msg.value;
-  return `${shortenMsg(fromAddress, 10)} sent ${amount[0].amount} ${
-    amount[0].denom
-  } to ${shortenMsg(toAddress, 10)}`;
+  const { toAddress, amount } = msg.value;
+  return `Sent ${amount[0].amount} ${amount[0].denom} to ${toAddress}`;
+}
+
+export function formattedSerialize(
+  msg: Msg,
+  decimals: number,
+  originalDenom: string
+) {
+  const { toAddress, amount } = msg.value;
+  const parsedAmount = parseBalance(amount, decimals, amount[0].denom);
+  return `Send ${parsedAmount} ${originalDenom} to ${toAddress}`;
 }

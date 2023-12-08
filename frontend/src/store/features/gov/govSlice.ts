@@ -22,7 +22,7 @@ import {
 } from '@/types/gov';
 import { GAS_FEE, PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
 import { signAndBroadcast } from '@/utils/signing';
-import { setError, setTxHash } from '../common/commonSlice';
+import { setError, setTxAndHash } from '../common/commonSlice';
 import { GovDepositMsg, GovVoteMsg } from '@/txns/gov';
 
 const PROPSAL_STATUS_DEPOSIT = 1;
@@ -309,7 +309,7 @@ export const txVote = createAsyncThunk(
       );
       if (result?.code === 0) {
         dispatch(
-          setTxHash({
+          setTxAndHash({
             hash: result?.transactionHash,
           })
         );
@@ -372,7 +372,7 @@ export const txDeposit = createAsyncThunk(
       const { code, transactionHash, rawLog } = result || {};
 
       if (code === 0) {
-        dispatch(setTxHash({ hash: transactionHash }));
+        dispatch(setTxAndHash({ hash: transactionHash }));
         return fulfillWithValue({ txHash: transactionHash });
       } else {
         dispatch(setError({ type: 'error', message: rawLog || '' }));

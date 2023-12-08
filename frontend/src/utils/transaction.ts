@@ -27,7 +27,7 @@ export function NewTransaction(
   address: string
 ): Transaction {
   const transaction: Transaction = {
-    code: 0,
+    code: txResponse.code,
     transactionHash: txResponse.transactionHash,
     height: txResponse.height || '-',
     rawLog: txResponse.rawLog || '-',
@@ -50,7 +50,7 @@ export const MsgType = (msg: string): string => {
     case msgUnDelegate:
       return 'Un-delegate';
     case msgReDelegate:
-      return 'Re-delate';
+      return 'Re-delegate';
     case msgSendTypeUrl:
       return 'Send';
     case msgWithdrawRewards:
@@ -61,6 +61,7 @@ export const MsgType = (msg: string): string => {
 };
 
 export const serializeMsg = (msg: Msg): string => {
+  if (!msg) return 'No Message';
   switch (msg.typeUrl) {
     case msgDelegate:
       return serializeMsgDelegate(msg);
@@ -77,7 +78,7 @@ export const serializeMsg = (msg: Msg): string => {
   }
 };
 
-export const formatTransaction = (tx: Transaction) => {
+export const formatTransaction = (tx: Transaction, msgFilters: string[]) => {
   const msgs = tx.msgs;
   const showMsgs: [string, string, boolean] = ['', '', false];
   if (msgs[0]) {
@@ -89,6 +90,16 @@ export const formatTransaction = (tx: Transaction) => {
   if (msgs.length > 2) {
     showMsgs[2] = true;
   }
+  let showTx = false;
+  if (!msgFilters.length) showTx = true;
+  else {
+    const filterSet = new Set(msgFilters);
+    if (!msgs.length) showTx = true;
+    msgs.forEach((msg) => {
+      if (filterSet.has(MsgType(msg.typeUrl))) showTx = true;
+    });
+  }
+
   const msgCount = msgs.length;
   const isTxSuccess = tx.code === 0;
   const time = getTimeDifference(tx.time);
@@ -99,5 +110,6 @@ export const formatTransaction = (tx: Transaction) => {
     time,
     firstMessage,
     msgCount,
+    showTx,
   };
 };

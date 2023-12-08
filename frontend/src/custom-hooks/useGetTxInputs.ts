@@ -49,6 +49,37 @@ const useGetTxInputs = () => {
     };
   };
 
+  const txWithdrawValidatorRewardsInputs = (
+    chainID: string,
+    validatorAddress: string,
+    delegatorAddress: string
+  ): TxWithdrawAllRewardsInputs => {
+    const delegationPairs: DelegationsPairs[] = [
+      {
+        validator: validatorAddress,
+        delegator: delegatorAddress,
+      },
+    ];
+
+    const { minimalDenom, decimals } = getDenomInfo(chainID);
+    const basicChainInfo = getChainInfo(chainID);
+    const { aminoConfig, prefix, rest, feeAmount, address, cosmosAddress } =
+      basicChainInfo;
+
+    return {
+      msgs: delegationPairs,
+      denom: minimalDenom,
+      chainID,
+      aminoConfig,
+      prefix,
+      rest,
+      feeAmount: feeAmount * 10 ** decimals,
+      feegranter: '',
+      address,
+      cosmosAddress,
+    };
+  };
+
   const txRestakeInputs = (chainID: string): TxReStakeInputs => {
     const basicChainInfo = getChainInfo(chainID);
     const { minimalDenom, decimals } = getDenomInfo(chainID);
@@ -83,7 +114,68 @@ const useGetTxInputs = () => {
     };
   };
 
-  return { txWithdrawAllRewardsInputs, txRestakeInputs };
+  const txRestakeValidatorInputs = (
+    chainID: string,
+    validatorAddress: string
+  ): TxReStakeInputs => {
+    const basicChainInfo = getChainInfo(chainID);
+    const { minimalDenom, decimals } = getDenomInfo(chainID);
+    const rewards = rewardsChains[chainID].delegatorRewards;
+    const msgs: Msg[] = [];
+    const delegator = basicChainInfo.address;
+
+    for (const delegation of rewards.list) {
+      if (delegation?.validator_address === validatorAddress) {
+        for (const reward of delegation.reward || []) {
+          if (reward.denom === minimalDenom) {
+            const amount = parseInt(reward.amount);
+            if (amount < 1) continue;
+            msgs.push(
+              Delegate(delegator, validatorAddress, amount, minimalDenom)
+            );
+          }
+        }
+      }
+    }
+
+    return {
+      msgs: msgs,
+      basicChainInfo,
+      memo: '',
+      denom: minimalDenom,
+      feeAmount: basicChainInfo.feeAmount * 10 ** decimals,
+      feegranter: '',
+    };
+  };
+
+  const txSendInputs = (
+    chainID: string,
+    recipient: string,
+    amount: number,
+    memo: string
+  ): TxSendInputs => {
+    const basicChainInfo = getChainInfo(chainID);
+    const { minimalDenom, decimals } = getDenomInfo(chainID);
+    return {
+      basicChainInfo,
+      from: basicChainInfo.address,
+      to: recipient,
+      amount: amount * 10 ** decimals,
+      denom: minimalDenom,
+      feeAmount: basicChainInfo.feeAmount * 10 ** decimals,
+      feegranter: '',
+      memo,
+      prefix: basicChainInfo.prefix,
+    };
+  };
+
+  return {
+    txWithdrawAllRewardsInputs,
+    txRestakeInputs,
+    txWithdrawValidatorRewardsInputs,
+    txRestakeValidatorInputs,
+    txSendInputs,
+  };
 };
 
 export default useGetTxInputs;
