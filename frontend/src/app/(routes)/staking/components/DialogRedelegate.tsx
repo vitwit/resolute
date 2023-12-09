@@ -199,14 +199,39 @@ const DialogRedelegate = ({
                           onChange={(event, item) => {
                             onChange(item);
                           }}
+                          sx={{
+                            '& .MuiAutocomplete-inputRoot': {
+                              padding: '12px !important',
+                              '& input': {
+                                color: 'white',
+                              },
+                              '& button': {
+                                color: 'white'
+                              }
+                            },
+                            '& .MuiAutocomplete-popper': {
+                              display: 'none !important'
+                            }
+                          }}
                           renderInput={(params) => (
                             <TextField
+                              className="bg-[#FFFFFF0D] rounded-2xl"
                               {...params}
                               required
-                              placeholder="select validator"
+                              placeholder="Destinaiton Validator"
                               error={!!error}
                               helperText={error ? error.message : null}
-                              label="destination"
+                              // label="destination"
+                              sx={{
+                                '& .MuiTypography-body1': {
+                                  color: 'white',
+                                  fontSize: '12px',
+                                  fontWeight: 200,
+                                },
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                  border: 'none',
+                                },
+                              }}
                             />
                           )}
                         />

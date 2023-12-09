@@ -105,7 +105,7 @@ const StakingSidebar = ({
   };
 
   return (
-    <div className="staking-sidebar flex flex-col">
+    <div className="staking-sidebar flex flex-col justify-between">
       <div className="flex flex-col gap-6">
         <TopNav />
         <div className="flex gap-6">
@@ -141,7 +141,7 @@ const StakingSidebar = ({
           </button>
         </div>
       </div>
-      <div className="mt-10 flex-1 overflow-y-scroll">
+      <div className="mt-10 overflow-y-scroll">
         <AllValidators
           validators={validators}
           currency={currency}
