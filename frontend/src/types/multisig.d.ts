@@ -29,7 +29,7 @@ interface CreateTxnPayload {
   address: string;
   chain_id: string;
   messages: Msg[];
-  fee: Fee;
+  fee: StdFee;
   memo: string;
   gas: number;
 }

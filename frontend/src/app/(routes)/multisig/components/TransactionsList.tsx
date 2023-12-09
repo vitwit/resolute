@@ -347,25 +347,27 @@ const TransactionItem = ({
             )}
           </>
         ) : null}
-        <div
-          className="relative action-image justify-center flex"
-          onClick={() => {
-            if (txn) {
-              onViewRawAction(txn);
-            }
-          }}
-        >
-          <Image
-            src="/raw-icon.svg"
-            height={14}
-            width={14}
-            alt="Raw-Icon"
-            className="cursor-pointer"
-          />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-[4px] font-medium">
-            RAW
+        <Tooltip title="View raw" placement="top">
+          <div
+            className="relative action-image justify-center flex"
+            onClick={() => {
+              if (txn) {
+                onViewRawAction(txn);
+              }
+            }}
+          >
+            <Image
+              src="/raw-icon.svg"
+              height={14}
+              width={14}
+              alt="Raw-Icon"
+              className="cursor-pointer"
+            />
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-[4px] font-medium">
+              RAW
+            </div>
           </div>
-        </div>
+        </Tooltip>
         <div className="action-image justify-center flex">
           <Image
             src="/delete-icon.svg"

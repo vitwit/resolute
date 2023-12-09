@@ -129,13 +129,14 @@ const DialogCreateTxn = ({
   };
 
   const { getDenomInfo, getChainInfo } = useGetChainInfo();
-  const { feeAmount } = getChainInfo(chainID);
+  const { feeAmount, feeCurrencies } = getChainInfo(chainID);
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
   const currency = {
     coinDenom: displayDenom,
     coinDecimals: decimals,
     coinMinimalDenom: minimalDenom,
   };
+  const { gasPriceStep = {} } = feeCurrencies[0];
 
   useEffect(() => {
     if (balance) {
@@ -196,7 +197,22 @@ const DialogCreateTxn = ({
   const onSubmit = (data: any) => {
     const feeObj = fee(currency.coinMinimalDenom, data.fees, data.gas);
     const authToken = getAuthToken(chainID);
-    console.log('submit...');
+    dispatch(
+      createTxn({
+        data: {
+          address: address,
+          chain_id: chainID,
+          messages: messages,
+          fee: feeObj,
+          memo: data.memo,
+          gas: data.gas,
+        },
+        queryParams: {
+          address: walletAddress,
+          signature: authToken?.signature || '',
+        },
+      })
+    );
   };
 
   return (
@@ -261,7 +277,7 @@ const DialogCreateTxn = ({
                           color: 'white',
                         },
                         '& .MuiOutlinedInput-root': {
-                          padding: '12px !important',
+                          padding: '0px !important',
                           border: 'none',
                         },
                         '& .MuiSvgIcon-root': {
@@ -386,6 +402,19 @@ const DialogCreateTxn = ({
                         )}
                       />
                     </div>
+                    <div>
+                      <FeeComponent
+                        onSetFeeChange={(v) => {
+                          setValue(
+                            'fees',
+                            Number(v) * 10 ** currency.coinDecimals
+                          );
+                        }}
+                        gasPriceStep={feeCurrencies[0].gasPriceStep}
+                        coinDenom={currency.coinDenom}
+                      />
+                    </div>
+                    <button className="create-txn-form-btn mt-6">Create</button>
                   </form>
                 </div>
               ) : (
@@ -532,6 +561,84 @@ export const RenderReDelegateMessage = ({
         <span>{shortenAddress(msg.value.validatorDstAddress, 21)}</span>
       </div>
       {onDelete ? <span onClick={() => onDelete(index)}>x</span> : null}
+    </div>
+  );
+};
+
+const feeComponentIcons: Record<string, string> = {
+  low: '/low-fee-icon.svg',
+  high: '/high-fee-icon.svg',
+  average: '/average-fee-icon.svg',
+};
+
+const FeeComponent = ({
+  onSetFeeChange,
+  gasPriceStep,
+  coinDenom,
+}: {
+  onSetFeeChange: (value: number) => void;
+  gasPriceStep: GasPrice | undefined;
+  coinDenom: string;
+}) => {
+  const [active, setActive] = useState('average');
+  const handleFeeChange = (value: string) => {
+    setActive(value);
+  };
+  return (
+    <div className="space-y-4">
+      <div className="text-[14px] font-light">Fee</div>
+      <div className="flex gap-4">
+        {gasPriceStep
+          ? Object.entries(gasPriceStep).map(([key, value], index) => (
+              <div
+                className="flex-1"
+                onClick={() => {
+                  handleFeeChange(key);
+                  onSetFeeChange(value);
+                }}
+              >
+                <FeeComponentButton
+                  icon={feeComponentIcons[key]}
+                  value={value}
+                  name={key}
+                  denom={coinDenom}
+                  active={active}
+                />
+              </div>
+            ))
+          : null}
+      </div>
+    </div>
+  );
+};
+
+const FeeComponentButton = ({
+  icon,
+  name,
+  value,
+  denom,
+  active,
+}: {
+  icon: string;
+  name: string;
+  value: number;
+  denom: string;
+  active: string;
+}) => {
+  return (
+    <div
+      className={
+        active === name ? `fee-component-btn fee-selected` : `fee-component-btn`
+      }
+    >
+      <div className="flex gap-2 items-center">
+        <Image src={icon} height={24} width={24} alt={name} />
+        <div className="text-[14px] font-light text-capitalize">{name}</div>
+      </div>
+      <div className="flex gap-2 items-center">
+        <div className="font-bold text-[16px]">{value}</div>
+        <div className="text-[12px] font-light text-[#FFFFFF80]">{denom}</div>
+      </div>
     </div>
   );
 };

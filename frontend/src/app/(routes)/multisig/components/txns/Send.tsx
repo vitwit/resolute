@@ -189,25 +189,7 @@ const Send = ({
         )}
       />
 
-      <Box
-        component="div"
-        sx={{
-          textAlign: 'center',
-        }}
-      >
-        <Button
-          type="submit"
-          variant="contained"
-          disableElevation
-          sx={{
-            mt: 2,
-            justifyContent: 'center',
-            textTransform: 'none',
-          }}
-        >
-          Add transaction
-        </Button>
-      </Box>
+      <button className="create-txn-form-btn">Add</button>
     </form>
   );
 };
