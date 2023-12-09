@@ -4,6 +4,7 @@ import { getTxns } from '@/store/features/multisig/multisigSlice';
 import React, { useEffect, useState } from 'react';
 import TransactionsList from './TransactionsList';
 import { RootState } from '@/store/store';
+import DialogCreateTxn from './DialogCreateTxn';
 
 interface MultisigSidebarProps {
   chainID: string;
@@ -21,6 +22,7 @@ const MultisigSidebar = ({
   const dispatch = useAppDispatch();
   const [isHistory, setIsHistory] = useState<boolean>(false);
   const [isMember, setIsMember] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState<boolean>(false);
   const multisigAccount = useAppSelector(
     (state: RootState) => state.multisig.multisigAccount
   );
@@ -40,6 +42,10 @@ const MultisigSidebar = ({
       }
     } else {
     }
+  };
+
+  const handleCreateDialogClose = () => {
+    setCreateDialogOpen(false);
   };
 
   useEffect(() => {
@@ -63,7 +69,10 @@ const MultisigSidebar = ({
           <div className="flex justify-between h-9">
             <div className="text-[16px] leading-normal">Transactions</div>
             <div>
-              <button className="create-multisig-btn">
+              <button
+                className="create-multisig-btn"
+                onClick={() => setCreateDialogOpen(true)}
+              >
                 Create Transaction
               </button>
             </div>
@@ -102,6 +111,15 @@ const MultisigSidebar = ({
         txnsState={txnsState}
         isHistory={isHistory}
       />
+      {accountSpecific ? (
+        <DialogCreateTxn
+          open={createDialogOpen}
+          onClose={handleCreateDialogClose}
+          chainID={chainID}
+          address={address || ''}
+          walletAddress={walletAddress}
+        />
+      ) : null}
     </div>
   );
 };
