@@ -33,3 +33,5 @@ export const SEND_TYPE_URL = "/cosmos.bank.v1beta1.MsgSend";
 export const DELEGATE_TYPE_URL = "/cosmos.staking.v1beta1.MsgDelegate";
 export const UNDELEGATE_TYPE_URL = "/cosmos.staking.v1beta1.MsgUndelegate";
 export const REDELEGATE_TYPE_URL = "/cosmos.staking.v1beta1.MsgBeginRedelegate";
+export const SEND_TEMPLATE = 'https://api.resolute.vitwit.com/_static/send.csv';
+export const MULTI_TRANSFER_MSG_COUNT = 10;
