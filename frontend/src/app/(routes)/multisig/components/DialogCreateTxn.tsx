@@ -28,7 +28,12 @@ import { paginationComponentStyles } from '../../staking/styles';
 import { Controller, useForm } from 'react-hook-form';
 import { getAuthToken } from '@/utils/localStorage';
 import { fee } from '@/txns/execute';
-import { createTxn } from '@/store/features/multisig/multisigSlice';
+import {
+  createTxn,
+  resetCreateTxnState,
+} from '@/store/features/multisig/multisigSlice';
+import Delegate from './txns/Delegate';
+import { resetError, setError } from '@/store/features/common/commonSlice';
 
 interface DialogCreateTxnProps {
   open: boolean;
@@ -104,7 +109,7 @@ const DialogCreateTxn = ({
   walletAddress,
 }: DialogCreateTxnProps) => {
   const [isFileUpload, setIsFileUpload] = useState<boolean>(false);
-  const [txType, setTxType] = useState('');
+  const [txType, setTxType] = useState('Send');
   const [messages, setMessages] = useState<Msg[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [slicedMsgs, setSlicedMsgs] = useState<Msg[]>([]);
@@ -114,6 +119,9 @@ const DialogCreateTxn = ({
 
   const balance = useAppSelector(
     (state: RootState) => state.multisig.balance.balance
+  );
+  const createRes = useAppSelector(
+    (state: RootState) => state.multisig.createTxnRes
   );
 
   const handleClose = () => {
@@ -136,7 +144,6 @@ const DialogCreateTxn = ({
     coinDecimals: decimals,
     coinMinimalDenom: minimalDenom,
   };
-  const { gasPriceStep = {} } = feeCurrencies[0];
 
   useEffect(() => {
     if (balance) {
@@ -158,6 +165,32 @@ const DialogCreateTxn = ({
       setSlicedMsgs(messages?.slice(0, 1 * PER_PAGE));
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (createRes?.status === 'rejected') {
+      dispatch(
+        setError({
+          type: 'error',
+          message: createRes?.error,
+        })
+      );
+    } else if (createRes?.status === 'idle') {
+      handleClose();
+      dispatch(
+        setError({
+          type: 'success',
+          message: 'Transaction created',
+        })
+      );
+    }
+  }, [createRes]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetError());
+      dispatch(resetCreateTxnState());
+    };
+  }, []);
 
   const renderMessage = (
     msg: Msg,
@@ -310,6 +343,17 @@ const DialogCreateTxn = ({
                       availableBalance={availableBalance}
                     />
                   ) : null}
+                  {txType === 'Delegate' ? (
+                    <Delegate
+                      chainID={chainID}
+                      address={address}
+                      onDelegate={(payload) => {
+                        setMessages([...messages, payload]);
+                      }}
+                      currency={currency}
+                      availableBalance={availableBalance}
+                    />
+                  ) : null}
                 </>
               )}
             </div>
@@ -414,7 +458,11 @@ const DialogCreateTxn = ({
                         coinDenom={currency.coinDenom}
                       />
                     </div>
-                    <button className="create-txn-form-btn mt-6">Create</button>
+                    <button className="create-txn-form-btn mt-6">
+                      {createRes.status === 'pending'
+                        ? 'Please wait...'
+                        : 'Create'}
+                    </button>
                   </form>
                 </div>
               ) : (
@@ -489,22 +537,40 @@ export const RenderDelegateMessage = ({
   onDelete,
 }: RenderMsgProps) => {
   return (
-    <div>
-      <div>
-        <span>#{index + 1}&nbsp;&nbsp;</span>
-        <span>Delegate&nbsp;</span>
-        <span>
-          {parseBalance(
-            [msg.value.amount],
-            currency.coinDecimals,
-            currency.coinMinimalDenom
-          )}
-          {currency.coinDenom}&nbsp;
-        </span>
-        <span>to&nbsp;</span>
-        <span>{shortenAddress(msg.value.validatorAddress, 21)}</span>
+    <div className="flex justify-between items-center text-[14px] font-extralight">
+      <div className="flex gap-2">
+        <Image
+          className="bg-[#FFFFFF1A] rounded-lg"
+          src="/solid-arrow-icon.svg"
+          height={24}
+          width={24}
+          alt=""
+        />
+        <div className="truncate max-w-[280px]">
+          <span>Delegate&nbsp;</span>
+          <span>
+            {parseBalance(
+              msg.value.amount,
+              currency.coinDecimals,
+              currency.coinMinimalDenom
+            )}
+            &nbsp;
+            {currency.coinDenom}&nbsp;
+          </span>
+          <span>to&nbsp;</span>
+          <span>{shortenAddress(msg.value.validatorAddress, 21)}</span>
+        </div>
       </div>
-      {onDelete ? <span onClick={() => onDelete(index)}>x</span> : null}
+      {onDelete ? (
+        <span className="cursor-pointer" onClick={() => onDelete(index)}>
+          <Image
+            src="/delete-cross-icon.svg"
+            height={16}
+            width={16}
+            alt="Remove"
+          />
+        </span>
+      ) : null}
     </div>
   );
 };
