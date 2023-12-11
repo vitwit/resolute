@@ -17,7 +17,7 @@ const Proposals = ({
     <div className="main-page">
       <div className="flex justify-between items-center w-full">
         <div className="proposal-text-big">Governance</div>
-        <div className='w-[480px]'>
+        <div className='w-[412px]'>
           <TopNav />
         </div>
       </div>

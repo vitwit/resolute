@@ -3,7 +3,7 @@ import ProposalPage from '../../ProposalPage';
 
 const page = () => {
   return (
-    <div>
+    <div  className="max-h-screen overflow-y-scroll">
       <ProposalPage />
     </div>
   );

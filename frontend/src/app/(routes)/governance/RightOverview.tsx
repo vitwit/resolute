@@ -270,7 +270,7 @@ const RightOverview = ({
               {isStatusVoting ? (
                 <div className="space-y-2 w-full">
                   <div className="vote-grid">
-                    <div className="voting-view w-full">
+                    <div className="voting-view w-full my-2">
                       <div className="status-pass">
                         <div className="flex flex-col items-center space-y-2">
                           <div className="flex">

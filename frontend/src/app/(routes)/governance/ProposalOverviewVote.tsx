@@ -246,7 +246,7 @@ const ProposalOverviewVote = ({
                   height={32}
                   alt="Network-Logo"
                 />
-                <p className="proposal-text-normal flex items-center">
+                <p className="font-bold text-[16px] flex items-center">
                   #{get(proposalInfo, 'proposal_id')} | Proposal
                 </p>
               </div>
@@ -268,15 +268,15 @@ const ProposalOverviewVote = ({
               </div>
             </div>
           </div>
-          <div className="space-y-6">
-            <div className="proposal-text-medium">
+          <div className="space-y-6 mt-4">
+            <div className="font-bold text-[20px] leading-6">
               <ReactMarkdown>
                 {get(proposalInfo, 'content.title') ||
                   get(proposalInfo, 'content.@type')}
               </ReactMarkdown>
             </div>
 
-            <ReactMarkdown className="proposal-text-normal">
+            <ReactMarkdown className="text-[#FFFFFFCC] leading-6 text-[16px]">
               {get(proposalInfo, 'content.description')}
             </ReactMarkdown>
           </div>
@@ -424,7 +424,7 @@ const ProposalOverviewVote = ({
         ) : (
           <div className="flex w-[480px]">
             <div className="space-y-4 w-full">
-              <div className="bg-[#0E0B26]">
+              <div className="bg-[#0E0B26] rounded-2xl">
                 <DepositProposalInfo chainID={chainID} />
               </div>
               <DepositProposalDetails

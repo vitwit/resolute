@@ -22,7 +22,7 @@ const CustomPieChart = ({
     ],
   };
   return (
-    <div className="w-[40px] h-[40px]">
+    <div className="w-[48px] h-[48px]">
       <Pie data={data} />
     </div>
   );

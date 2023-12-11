@@ -26,7 +26,7 @@ const ProposalPage = () => {
     <div>
       <div className="flex justify-between w-full px-10 pt-6">
         <div className="proposal-text-big">Governance</div>
-        <div className="w-[480px]">
+        <div className="w-[412px]">
           <TopNav />
         </div>
       </div>
