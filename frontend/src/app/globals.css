@@ -18,7 +18,10 @@
 
 .main {
   @apply leading-[normal] m-0 text-white;
-  background-color: #0b071d;
+  /* background-color: #0b071d; */
+  /* background: linear-gradient(180deg, #8b3da7,#4aa29c); */
+  background: linear-gradient(107deg, #1F184E 1.65%, #8B3DA7 100%);
+
   font-family: 'Inter', sans-serif;
 }
 
@@ -388,3 +391,74 @@
   @apply flex flex-col items-start gap-4 p-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.05);
 }
+
+
+ /* Landingpage */
+ .powered-by {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  animation: scrollText 10s linear infinite;
+}
+
+@keyframes scrollText {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+.powered-by-background {
+  @apply flex w-full justify-center items-center gap-2.5 p-2.5;
+  background: rgba(255, 255, 255, 0.05);
+}
+.text {
+  @apply text-white text-base not-italic font-light leading-7 tracking-[0.96px];
+}
+
+/* Add the Pac-Man game-like structure background */
+.pacman-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      45deg,
+      #ffb6c1 25%,
+      transparent 25%,
+      transparent 75%,
+      #ffb6c1 75%
+    ),
+    linear-gradient(
+      -45deg,
+      #ffb6c1 25%,
+      transparent 25%,
+      transparent 75%,
+      #ffb6c1 75%
+    );
+  background-size: 20px 20px;
+  background-position:
+    0 0,
+    10px 10px;
+  z-index: -1;
+}
+
+/* Style adjustments for video and image placement */
+.landing-container {
+  position: relative;
+}
+
+.video-container {
+  position: absolute;
+  top: 20px;
+  left: 40px;
+  z-index: 1;
+}
+
+.image-container {
+  position: relative;
+  z-index: 2;
+}
+
