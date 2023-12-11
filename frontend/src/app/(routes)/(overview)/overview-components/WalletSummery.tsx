@@ -60,7 +60,7 @@ const WalletSummaryCard = (props: AssetSummary) => {
           </div>
         </div>
       </div>
-      <div className="ml-2 text-white text-2xl font-bold leading-[normal]">
+      <div className="ml-2 text-base not-italic font-bold leading-[normal]">
         {amount}
       </div>
     </div>
