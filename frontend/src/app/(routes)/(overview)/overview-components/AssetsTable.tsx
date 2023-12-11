@@ -68,15 +68,15 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
               {balancesLoading || delegationsLoading ? (
                 <CircularProgress size={32} />
               ) : (
-                <div className="space-y-3">
-                  <div className="text-sm not-italic font-normal leading-[normal] flex justify-center">
+                <div className="space-y-2">
+                  <div className="text-sm not-italic font-normal leading-[normal] flex justify-center items-center h-8">
                     {msgs.noData}
                   </div>
                   <CustomButton
                     onClick={() => {}}
                     pendingStatus={TxStatus.IDLE}
                     circularProgressSize={24}
-                    buttonStyle="custom-btn px-10 w-[142px] h-10"
+                    buttonStyle="primary-custom-btn"
                     buttonContent="Explore"
                   />
                 </div>
