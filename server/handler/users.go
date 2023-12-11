@@ -8,7 +8,30 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/vitwit/resolute/server/model"
+	"github.com/vitwit/resolute/server/schema"
 )
+
+func (h *Handler) GetUser(c echo.Context) error {
+	address := c.Param("address")
+
+	row := h.DB.QueryRow(`SELECT address, signature, pub_key FROM users where address=$1`, address)
+
+	var userDetails schema.Users
+
+	if err := row.Scan(
+		&userDetails.Address,
+		&userDetails.Signature,
+		&userDetails.PubKey,
+	); err != nil {
+		return c.JSON(http.StatusOK, model.SuccessResponse{
+			Data: nil,
+		})
+	}
+
+	return c.JSON(http.StatusOK, model.SuccessResponse{
+		Data: userDetails,
+	})
+}
 
 func (h *Handler) CreateUserSignature(c echo.Context) error {
 	address := c.Param("address")
