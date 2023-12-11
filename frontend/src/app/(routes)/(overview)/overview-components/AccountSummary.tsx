@@ -63,7 +63,9 @@ const AccountSummaryCard = (props: AssetSummary) => {
           <Image src={icon} width={40} height={40} alt={alt}></Image>
         </div>
         <div className="flex items-center">
-          <div className="text-white text-sm font-extralight">{type}</div>
+          <div className="text-sm not-italic font-normal leading-[normal]">
+            {type}
+          </div>
         </div>
       </div>
       <div className="ml-2 text-white text-2xl font-bold leading-[normal]">

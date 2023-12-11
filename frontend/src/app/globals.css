@@ -141,6 +141,30 @@
       lightgray 50% / cover no-repeat;
   }
 
+  .custom-btn {
+    @apply rounded-2xl text-white text-[16px] font-medium leading-3;
+    background: linear-gradient(180deg,
+        rgba(74, 162, 156, 0.9) 0%,
+        rgba(139, 61, 167, 0.9) 100%),
+      lightgray 50% / cover no-repeat;
+  }
+
+  .primary-custom-btn {
+    @apply rounded-2xl text-white text-base not-italic font-medium leading-5 tracking-[0.64px] h-10 flex items-center justify-center px-10;
+    background: linear-gradient(180deg,
+        rgba(74, 162, 156, 0.9) 0%,
+        rgba(139, 61, 167, 0.9) 100%),
+      lightgray 50% / cover no-repeat;
+  }
+
+  .secondary-custom-btn {
+    @apply rounded-lg text-white text-xs not-italic font-medium leading-5 tracking-[0.48px] h-8 flex items-center justify-center px-3;
+    background: linear-gradient(180deg,
+        rgba(74, 162, 156, 0.9) 0%,
+        rgba(139, 61, 167, 0.9) 100%),
+      lightgray 50% / cover no-repeat;
+  }
+
 
 
   .recent-txn-item-icon {
@@ -158,11 +182,7 @@
   }
 
   .formatted-text-1 {
-    @apply text-sm font-normal leading-[14px];
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 293px;
+    @apply text-sm font-normal leading-[14px] max-w-[293px] truncate;
   }
 
   .overflowed-text {
@@ -170,15 +190,12 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-
   }
 
   .disabled {
     opacity: 0.3;
     cursor: not-allowed;
   }
-
-
 
   .recent-txn-item-icon {
     @apply rounded-lg;

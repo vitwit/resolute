@@ -24,4 +24,28 @@ const CustomSubmitButton = ({
   );
 };
 
+export const CustomButton = ({
+  pendingStatus,
+  circularProgressSize,
+  buttonStyle,
+  buttonContent,
+  onClick,
+}: {
+  pendingStatus: TxStatus;
+  circularProgressSize: number;
+  buttonStyle: string;
+  buttonContent: string;
+  onClick: () => void;
+}) => {
+  return (
+    <button className={buttonStyle} onClick={onClick}>
+      {pendingStatus === TxStatus.PENDING ? (
+        <CircularProgress size={circularProgressSize} />
+      ) : (
+        <>{buttonContent}</>
+      )}
+    </button>
+  );
+};
+
 export default CustomSubmitButton;
