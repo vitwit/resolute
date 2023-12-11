@@ -18,10 +18,7 @@
 
 .main {
   @apply leading-[normal] m-0 text-white;
-  /* background-color: #0b071d; */
-  /* background: linear-gradient(180deg, #8b3da7,#4aa29c); */
-  background: linear-gradient(107deg, #1F184E 1.65%, #8B3DA7 100%);
-
+  background-color: #0b071d;
   font-family: 'Inter', sans-serif;
 }
 
@@ -78,7 +75,8 @@
 }
 
 @layer utilities {
-  @variants responsive {}
+  @variants responsive {
+  }
 
   .text-capitalize {
     text-transform: capitalize;
@@ -138,13 +136,13 @@
   .primary-action-btn {
     @apply w-[152px] h-[44px] rounded-2xl text-white text-[16px] font-medium leading-3;
     background:
-      linear-gradient(180deg,
+      linear-gradient(
+        180deg,
         rgba(74, 162, 156, 0.9) 0%,
-        rgba(139, 61, 167, 0.9) 100%),
+        rgba(139, 61, 167, 0.9) 100%
+      ),
       lightgray 50% / cover no-repeat;
   }
-
-
 
   .recent-txn-item-icon {
     @apply rounded-lg;
@@ -153,11 +151,11 @@
   }
 
   .chip {
-    @apply rounded-2xl px-2 py-1 text-[12px]
+    @apply rounded-2xl px-2 py-1 text-[12px];
   }
 
   .fill {
-    background: linear-gradient(180deg, #4AA29C 0%, #8B3DA7 100%);
+    background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
   }
 
   .formatted-text-1 {
@@ -173,15 +171,12 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-
   }
 
   .disabled {
     opacity: 0.3;
     cursor: not-allowed;
   }
-
-
 
   .recent-txn-item-icon {
     @apply rounded-lg;
@@ -190,11 +185,11 @@
   }
 
   .chip {
-    @apply rounded-2xl px-2 py-1 text-[12px]
+    @apply rounded-2xl px-2 py-1 text-[12px];
   }
 
   .fill {
-    background: linear-gradient(180deg, #4AA29C 0%, #8B3DA7 100%);
+    background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
   }
 }
 
@@ -242,7 +237,6 @@
     @apply flex w-[788px] h-[376px] flex-col justify-center items-start gap-10 relative backdrop-blur-[2px] px-6 py-10 rounded-2xl;
     background: #20172f;
   }
-
 }
 
 /* Sidebar styles  */
@@ -350,7 +344,6 @@
   @apply text-red-600 font-bold;
 }
 
-
 /* Transaction success Popup styles */
 .transaction-box {
   @apply flex h-[485px] flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
@@ -375,7 +368,6 @@
   @apply text-white text-sm not-italic leading-[normal];
 }
 
-
 /* WalletPopup */
 
 .wallet-box {
@@ -392,9 +384,8 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
-
- /* Landingpage */
- .powered-by {
+/* Landingpage */
+.powered-by {
   color: white;
   font-size: 16px;
   font-weight: bold;
@@ -416,49 +407,6 @@
 .text {
   @apply text-white text-base not-italic font-light leading-7 tracking-[0.96px];
 }
-
-/* Add the Pac-Man game-like structure background */
-.pacman-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-      45deg,
-      #ffb6c1 25%,
-      transparent 25%,
-      transparent 75%,
-      #ffb6c1 75%
-    ),
-    linear-gradient(
-      -45deg,
-      #ffb6c1 25%,
-      transparent 25%,
-      transparent 75%,
-      #ffb6c1 75%
-    );
-  background-size: 20px 20px;
-  background-position:
-    0 0,
-    10px 10px;
-  z-index: -1;
+.landingpage-background {
+  background: linear-gradient(107deg, #1f184e 1.65%, #8b3da7 100%);
 }
-
-/* Style adjustments for video and image placement */
-.landing-container {
-  position: relative;
-}
-
-.video-container {
-  position: absolute;
-  top: 20px;
-  left: 40px;
-  z-index: 1;
-}
-
-.image-container {
-  position: relative;
-  z-index: 2;
-}
-
