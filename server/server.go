@@ -73,6 +73,7 @@ func main() {
 
 	// users
 	e.POST("/users/:address/signature", h.CreateUserSignature)
+	e.GET("/users/:address", h.GetUser)
 
 	e.GET("/tokens-info", h.GetTokensInfo)
 	e.GET("/tokens-info/:denom", h.GetTokenInfo)
