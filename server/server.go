@@ -45,6 +45,9 @@ func main() {
 
 	defer db.Close()
 
+	db.SetMaxOpenConns(5)
+	db.SetMaxIdleConns(5)
+
 	// check db
 	if err := db.Ping(); err != nil {
 		log.Fatal(err)
