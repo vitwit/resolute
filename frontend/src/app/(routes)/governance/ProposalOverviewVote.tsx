@@ -28,6 +28,15 @@ import DepositProposalDetails from './DepositProposalDetails';
 import DepositProposalInfo from './DepositProposalInfo';
 import DepositPopup from './DepositPopup';
 import { setSelectedNetwork } from '@/store/features/common/commonSlice';
+import ProposalProjection from './ProposalProjection';
+
+const emptyTallyResult = {
+  yes: '',
+  abstain: '',
+  no: '',
+  no_with_veto: '',
+  proposal_id: '',
+};
 
 const ProposalOverviewVote = ({
   chainName,
@@ -262,7 +271,8 @@ const ProposalOverviewVote = ({
           <div className="space-y-6">
             <div className="proposal-text-medium">
               <ReactMarkdown>
-                {get(proposalInfo, 'content.title')}
+                {get(proposalInfo, 'content.title') ||
+                  get(proposalInfo, 'content.@type')}
               </ReactMarkdown>
             </div>
 
@@ -304,7 +314,7 @@ const ProposalOverviewVote = ({
                   <div className="status-view w-full">
                     <div className="status-pass w-full">
                       <div className="flex flex-col items-center space-y-2">
-                        <div className="flex space-x-2 w-full">
+                        <div className="flex space-x-2 w-full justify-center">
                           <Image
                             src="/vote-icon.svg"
                             width={20}
@@ -315,8 +325,18 @@ const ProposalOverviewVote = ({
                             Proposal Projection
                           </p>
                         </div>
-
-                        <p className="text-[#E57575] text-xl font-bold">-</p>
+                        <div>
+                          <ProposalProjection
+                            quorumReached={
+                              parseFloat(quorumPercent) >=
+                              parseFloat(quorumRequired)
+                            }
+                            quorumPercent={quorumPercent}
+                            quorumRequired={quorumRequired}
+                            totalVotes={totalVotes}
+                            tallyResult={tallyResult || emptyTallyResult}
+                          />
+                        </div>
                       </div>
                     </div>
 

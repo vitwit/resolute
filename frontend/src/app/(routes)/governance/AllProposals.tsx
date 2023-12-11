@@ -170,7 +170,8 @@ const AllProposals = ({
                           </div>
 
                           <p className="proposal-text-normal">
-                            {get(proposal, 'content.title')}
+                            {get(proposal, 'content.title') ||
+                              get(proposal, 'content.@type')}
                           </p>
                         </div>
                         <div className="flex space-x-6"></div>

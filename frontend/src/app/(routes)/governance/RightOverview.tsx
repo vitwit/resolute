@@ -209,7 +209,8 @@ const RightOverview = ({
                   </div>
                 </div>
                 <div className="font-bold text-base text-white">
-                  {get(proposalInfo, 'content.title')}
+                  {get(proposalInfo, 'content.title') ||
+                    get(proposalInfo, 'content.@type')}
                 </div>
               </div>
               <div className="view-full">
