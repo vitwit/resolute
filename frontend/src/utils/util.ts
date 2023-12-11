@@ -1,5 +1,6 @@
 import { DelegationResponse, Params, Validator } from '@/types/staking';
 import { parseBalance } from './denom';
+import { MultisigThresholdPubkey, SinglePubkey } from "@cosmjs/amino";
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -275,4 +276,17 @@ export function formatUnbondingPeriod(
         parseInt(stakingParams?.unbonding_time || '', 10) / (3600 * 24)
       ).toString()
     : '-';
+}
+
+export function NewMultisigThreshoPubkey(
+  pubkeys: SinglePubkey[],
+  threshold: string
+): MultisigThresholdPubkey {
+  return {
+    type: "tendermint/PubKeyMultisigThreshold",
+    value: {
+      pubkeys: pubkeys,
+      threshold: threshold,
+    },
+  };
 }

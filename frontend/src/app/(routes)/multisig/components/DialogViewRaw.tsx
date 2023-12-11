@@ -7,7 +7,7 @@ import React from 'react';
 interface DialogViewRawProps {
   open: boolean;
   onClose: () => void;
-  txn: Txn | undefined;
+  txn: Txn;
 }
 
 const DialogViewRaw = ({ open, onClose, txn }: DialogViewRawProps) => {

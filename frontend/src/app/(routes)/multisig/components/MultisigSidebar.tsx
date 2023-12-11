@@ -5,6 +5,8 @@ import React, { useEffect, useState } from 'react';
 import TransactionsList from './TransactionsList';
 import { RootState } from '@/store/store';
 import DialogCreateTxn from './DialogCreateTxn';
+import { setError } from '@/store/features/common/commonSlice';
+import { TxStatus } from '@/types/enums';
 
 interface MultisigSidebarProps {
   chainID: string;
@@ -27,6 +29,12 @@ const MultisigSidebar = ({
     (state: RootState) => state.multisig.multisigAccount
   );
   const txnsState = useAppSelector((state: RootState) => state.multisig.txns);
+  const updateTxnStatus = useAppSelector(
+    (state: RootState) => state.multisig.updateTxnRes
+  );
+  const createSignRes = useAppSelector(
+    (state: RootState) => state.multisig.signTxRes
+  );
 
   const { pubkeys } = multisigAccount;
 
@@ -60,6 +68,26 @@ const MultisigSidebar = ({
       setIsMember(true);
     }
   }, [pubkeys]);
+
+  useEffect(() => {
+    if (updateTxnStatus.status === 'idle') {
+      getAllTxs(isHistory ? 'history' : 'current');
+    }
+  }, [updateTxnStatus]);
+
+  useEffect(() => {
+    if (createSignRes.status === TxStatus.IDLE) {
+      dispatch(setError({ type: 'success', message: 'Successfully signed' }));
+      getAllTxs(isHistory ? 'history' : 'current');
+    } else if (createSignRes.status === TxStatus.REJECTED) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'Error while signing the transaction',
+        })
+      );
+    }
+  }, [createSignRes]);
 
   return (
     <div className="multisig-sidebar">

@@ -7,7 +7,7 @@ import React from 'react';
 interface DialogDeleteTxnProps {
   open: boolean;
   onClose: () => void;
-  txn: Txn | undefined;
+  txn: Txn;
 }
 
 const DialogDeleteTxn = ({ open, onClose, txn }: DialogDeleteTxnProps) => {

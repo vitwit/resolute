@@ -657,6 +657,7 @@ const FeeComponent = ({
         {gasPriceStep
           ? Object.entries(gasPriceStep).map(([key, value], index) => (
               <div
+                key={index}
                 className="flex-1"
                 onClick={() => {
                   handleFeeChange(key);

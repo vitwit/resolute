@@ -36,7 +36,7 @@ interface TransactionsListProps {
 
 interface TransactionItemProps {
   isMember: boolean;
-  txn: Txn | undefined;
+  txn: Txn;
   multisigAccount: MultisigAccount;
   membersCount: number;
   chainID: string;
@@ -48,7 +48,7 @@ interface TransactionItemProps {
 
 interface TransactionCardProps {
   isMember: boolean;
-  txn: Txn | undefined;
+  txn: Txn;
   multisigAccount: MultisigAccount;
   membersCount: number;
   chainID: string;
@@ -61,7 +61,7 @@ interface TransactionCardProps {
 interface DialogViewTxnMessagesProps {
   open: boolean;
   isMember: boolean;
-  txn: Txn | undefined;
+  txn: Txn;
   multisigAccount: MultisigAccount;
   membersCount: number;
   chainID: string;
@@ -78,6 +78,39 @@ const mapTxns = {
   '/cosmos.staking.v1beta1.MsgBeginRedelegate': 'ReDelegate',
   '/cosmos.staking.v1beta1.MsgUndelegate': 'UnDelegate',
   Msg: 'Tx Msg',
+};
+
+const emptyTxn = {
+  id: NaN,
+  multisig_address: '',
+  fee: {
+    amount: [
+      {
+        amount: '',
+        denom: '',
+      },
+    ],
+    gas: '',
+    granter: '',
+  },
+  status: '',
+  messages: [
+    {
+      typeUrl: '',
+      value: {},
+    },
+  ],
+  hash: '',
+  err_msg: '',
+  memo: '',
+  signatures: [
+    {
+      signature: '',
+      address: '',
+    },
+  ],
+  last_updated: '',
+  created_at: '',
 };
 
 const TransactionsList = ({
@@ -101,7 +134,7 @@ const TransactionsList = ({
     setViewRawDialogOpen((prevState) => !prevState);
   };
 
-  const [selectedTxn, setSelectedTxn] = useState<Txn>();
+  const [selectedTxn, setSelectedTxn] = useState<Txn>(emptyTxn);
 
   const onViewMoreAction = (txn: Txn) => {
     setSelectedTxn(txn);
@@ -210,10 +243,20 @@ const TransactionCard = ({
                 txn?.status === 'DONE' || txn?.status === 'FAILED' ? (
                   txn?.status
                 ) : (
-                  <BroadCastTxn />
+                  <BroadCastTxn
+                    txn={txn}
+                    multisigAccount={multisigAccount}
+                    chainID={chainID}
+                  />
                 )
               ) : (
-                <SignTxn />
+                <SignTxn
+                  address={multisigAccount.account.address}
+                  isMember={isMember}
+                  unSignedTxn={txn}
+                  txId={txn?.id}
+                  chainID={chainID}
+                />
               )}
             </>
           ) : (
@@ -340,10 +383,20 @@ const TransactionItem = ({
               txn?.status === 'DONE' || txn?.status === 'FAILED' ? (
                 txn?.status
               ) : (
-                <BroadCastTxn />
+                <BroadCastTxn
+                  txn={txn}
+                  multisigAccount={multisigAccount}
+                  chainID={chainID}
+                />
               )
             ) : (
-              <SignTxn />
+              <SignTxn
+                address={multisigAccount.account.address}
+                isMember={isMember}
+                unSignedTxn={txn}
+                txId={txn?.id}
+                chainID={chainID}
+              />
             )}
           </>
         ) : null}
@@ -458,7 +511,7 @@ export const RenderTxnMsg = ({
   msg,
   currency,
 }: {
-  msg: Msg | undefined;
+  msg: Msg;
   currency: Currency;
 }) => {
   const displayDenom = (amountObj: Coin[] | Coin) => {

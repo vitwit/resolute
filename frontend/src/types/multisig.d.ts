@@ -165,7 +165,7 @@ interface Signature {
 }
 
 interface Txn {
-  id: string;
+  id: number;
   multisig_address: string;
   fee: Fee;
   status: string;
