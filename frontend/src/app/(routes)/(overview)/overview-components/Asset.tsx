@@ -52,27 +52,42 @@ const Asset = ({
   return (
     <tr>
       <td>
-        <div>{formatCoin(asset.balance, asset.displayDenom)}</div>
-        {showChainName && (
-          <div className="text-xs text-[#a7a2b5] font-thin leading-[normal]">
-            on{' '}
-            <Link href={`/overview/${asset.chainName}`}>{asset.chainName}</Link>
+        <div className="h-[36px] flex flex-col justify-between">
+          <div className="text-sm not-italic font-normal leading-[normal] h-[14px]">
+            {formatCoin(asset.balance, asset.displayDenom)}
           </div>
-        )}
+          {showChainName && (
+            <div className="text-[10px] not-italic font-normal leading-[normal] h-[14px]">
+              on{' '}
+              <Link href={`/overview/${asset.chainName}`}>
+                {asset.chainName}
+              </Link>
+            </div>
+          )}
+        </div>
       </td>
       <td>
-        {asset.type === 'native'
-          ? formatCoin(asset.staked, asset.displayDenom)
-          : '-'}
+        <div className="text-sm not-italic font-normal leading-[normal]">
+          {asset.type === 'native'
+            ? formatCoin(asset.staked, asset.displayDenom)
+            : '-'}
+        </div>
       </td>
       <td>
-        {asset.type === 'native'
-          ? formatCoin(asset.rewards, asset.displayDenom)
-          : '-'}
+        <div className="text-sm not-italic font-normal leading-[normal]">
+          {asset.type === 'native'
+            ? formatCoin(asset.rewards, asset.displayDenom)
+            : '-'}
+        </div>
       </td>
       <td>
-        <div className="flex gap-2" style={{ alignItems: 'flex-end' }}>
-          <div>{formatDollarAmount(asset.usdPrice)}</div>
+        <div
+          className="flex flex-col gap-1"
+          style={{ alignItems: 'flex-start' }}
+        >
+          <div className="text-sm not-italic font-normal leading-[normal]">
+            {formatDollarAmount(asset.usdPrice)}
+          </div>
           <div className="flex">
             <Image
               src={`/${
@@ -84,7 +99,7 @@ const Asset = ({
             />
             <div
               className={
-                'text-[12px] ' +
+                'text-[10px] not-italic font-normal leading-[normal] ' +
                 (asset.inflation >= 0 ? 'text-[#238636]' : 'text-[#E57575]')
               }
             >
@@ -94,8 +109,11 @@ const Asset = ({
         </div>
       </td>
       <td>
-        <div className="flex justify-between gap-1">
-          <Tooltip title="Stake" placement="top-end">
+        <div className="flex gap-10 justify-center">
+          <Tooltip
+            title={asset.type === 'ibc' ? '' : 'Claim'}
+            placement="top-end"
+          >
             <div
               className={
                 'asset-action ' +
@@ -117,7 +135,10 @@ const Asset = ({
               )}
             </div>
           </Tooltip>
-          <Tooltip title="Claim & Stake" placement="top-start">
+          <Tooltip
+            title={asset.type === 'ibc' ? '' : 'Claim & Stake'}
+            placement="top-start"
+          >
             <div
               className={
                 'asset-action ' +

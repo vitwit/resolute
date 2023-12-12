@@ -54,7 +54,7 @@ const DialogAllValidators = ({
           </div>
         </div>
         <div className="px-10">
-          <h2 className="txt-lg font-bold text-white">All Validators</h2>
+          <h2 className="txt-lg font-medium text-white">All Validators</h2>
           <div className="mt-4 py-2">
             <div className="flex gap-6 text-white">
               <div

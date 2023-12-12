@@ -8,7 +8,7 @@
 }
 
 .assets-table {
-    @apply rounded-3xl text-white bg-[#0e0b26];
+    @apply rounded-3xl text-white bg-[#0e0b26] flex flex-col flex-1;
     backdrop-filter: blur(2px);
 }
 
@@ -21,7 +21,7 @@
 }
 
 .assets-table tbody tr {
-    @apply hover:bg-[#343142];
+    @apply hover:bg-[#1a1731];
 }
 
 .border-1 {
@@ -37,4 +37,15 @@
             rgba(74, 162, 156, 0.8) 0%,
             rgba(139, 61, 167, 0.8) 100%),
         lightgray 50% / cover no-repeat;
+}
+
+.asset-action-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.h-line {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(74, 162, 156, 0.50) 7.46%, rgba(139, 61, 167, 0.50) 94.28%);
+    opacity: 50%;
 }

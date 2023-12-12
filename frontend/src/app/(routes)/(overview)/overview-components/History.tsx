@@ -17,10 +17,10 @@ const History = ({ chainIDs }: { chainIDs: string[] }) => {
       <SideAd />
 
       <div className="flex justify-between items-center">
-        <h2 className="text-white text-md font-bold leading-normal">
+        <h2 className="text-xl not-italic font-bold leading-[normal]">
           Recent Transactions
         </h2>
-        <div className="text-[#9C9C9C] cursor-pointer text-sm font-extralight leading-normal underline underline-offset-2">
+        <div className="text-right text-xs not-italic font-normal leading-[normal] underline">
           View All
         </div>
       </div>
@@ -48,14 +48,16 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
     <div>
       <div className="text-white text-center my-6">
-        <div className="text-white text-sm font-extralight">Total Balance</div>
-        <span className="text-[32px] leading-normal font-bold">
+        <div className="text-sm not-italic font-normal leading-[normal] mb-2">
+          Total Balance
+        </div>
+        <span className="text-center text-[32px] not-italic font-bold leading-[normal]">
           {formatDollarAmount(staked + available + rewards)}
         </span>
       </div>
       <div className="flex justify-center gap-6">
         <button
-          className="primary-action-btn"
+          className="primary-custom-btn"
           onClick={() => {
             router.push(getPath(chainIDs, 'transfers'));
           }}
@@ -63,7 +65,7 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
           Send
         </button>
         <button
-          className="primary-action-btn"
+          className="primary-custom-btn"
           onClick={() => {
             router.push(getPath(chainIDs, 'staking'));
           }}

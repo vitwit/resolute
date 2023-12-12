@@ -24,7 +24,7 @@ const WalletPopup = ({
         <div className="wallet-box">
           <div className="cross w-full" onClick={onClose}>
             <Image
-              src="./close-icon.svg"
+              src="/close-icon.svg"
               width={24}
               height={24}
               alt="Close"
