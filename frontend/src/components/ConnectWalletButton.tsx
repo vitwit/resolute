@@ -102,7 +102,7 @@ export const ConnectWalletButton = ({
                   </div>
                 </div>
                 <div
-                  className="flex w-[220px] justify-center items-center gap-6 px-10 py-6 rounded-[100px] border-2 border-solid border-[#4AA29C] cursor-pointer"
+                  className="landingpage-button"
                   onClick={() => setConnectWalletDialogOpen(true)}
                 >
                   <p className="text-white text-lg font-bold">Connect Wallet</p>
@@ -127,14 +127,15 @@ export const ConnectWalletButton = ({
           </div>
           <div className="flex justify-end w-full">
             <div className="flex absolute  mt-20">
-              <video width={812} height={800} controls loop muted autoPlay>
+              {/* controls loop muted autoPlay */}
+              <video width={802} height={10} controls>
                 <source src="/video.mp4" type="video/mp4" />
               </video>
             </div>
             <Image
               src="/landingpage.png"
-              width={975}
-              height={500}
+              width={967}
+              height={581}
               alt="landing page image"
             />
           </div>

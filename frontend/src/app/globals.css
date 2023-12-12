@@ -411,6 +411,7 @@
   @apply flex flex-col min-h-screen;
   background: linear-gradient(107deg, #1f184e 1.65%, #8b3da7 100%);
 }
-
-
-
+.landingpage-button {
+  @apply flex justify-center items-center gap-6 px-10 py-6 rounded-[100px] w-[226px] cursor-pointer;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
