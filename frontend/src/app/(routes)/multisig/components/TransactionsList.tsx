@@ -316,17 +316,17 @@ const TransactionItem = ({
   explorerTxHashEndpoint,
   onViewError,
 }: TransactionItemProps) => {
-  const { getChainInfo } = useGetChainInfo();
+  // const { getChainInfo } = useGetChainInfo();
 
-  const { address: walletAddress } = getChainInfo(chainID);
+  // const { address: walletAddress } = getChainInfo(chainID);
 
-  const isWalletSigned = () => {
-    const signs = txn?.signatures || [];
-    const existedAddress = signs.filter((k) => k.address === walletAddress);
+  // const isWalletSigned = () => {
+  //   const signs = txn?.signatures || [];
+  //   const existedAddress = signs.filter((k) => k.address === walletAddress);
 
-    if (existedAddress && existedAddress?.length) return true;
-    else return false;
-  };
+  //   if (existedAddress && existedAddress?.length) return true;
+  //   else return false;
+  // };
 
   const isReadyToBroadcast = () => {
     const signs = txn?.signatures || [];
