@@ -1,36 +1,22 @@
-import { useAppSelector } from '@/custom-hooks/StateHooks';
-import { resetDeleteTxnState } from '@/store/features/multisig/multisigSlice';
-import { RootState } from '@/store/store';
-import { TxStatus } from '@/types/enums';
 import {
   CLOSE_ICON_PATH,
   DELETE_TXN_DIALOG_IMAGE_PATH,
 } from '@/utils/constants';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
-import React, { useEffect } from 'react';
+import React from 'react';
 
-interface DialogDeleteTxnProps {
+interface DialogTxnFailedProps {
   open: boolean;
   onClose: () => void;
-  deleteTx: () => void;
+  errMsg: string;
 }
 
-const DialogDeleteTxn = ({ open, onClose, deleteTx }: DialogDeleteTxnProps) => {
+const DialogTxnFailed = ({ open, onClose, errMsg }: DialogTxnFailedProps) => {
   const handleClose = () => {
     onClose();
   };
-  const deleteTxnStatus = useAppSelector(
-    (state: RootState) => state.multisig.deleteTxnRes.status
-  );
 
-  useEffect(() => {
-    if (deleteTxnStatus === TxStatus.IDLE) handleClose();
-  }, [deleteTxnStatus]);
-
-  useEffect(() => {
-    resetDeleteTxnState();
-  }, []);
   return (
     <Dialog
       open={open}
@@ -60,7 +46,7 @@ const DialogDeleteTxn = ({ open, onClose, deleteTx }: DialogDeleteTxnProps) => {
               />
             </div>
           </div>
-          <div className="mt-6 mb-[72px] flex gap-6 pr-10 pl-6 items-center">
+          <div className="mt-6 mb-[72px] flex gap-10 pr-10 pl-6 items-center">
             <Image
               src={DELETE_TXN_DIALOG_IMAGE_PATH}
               height={238}
@@ -68,27 +54,18 @@ const DialogDeleteTxn = ({ open, onClose, deleteTx }: DialogDeleteTxnProps) => {
               alt="Delete Txn"
             />
             <div className="flex flex-col gap-10 w-full">
-              <h2 className="text-[20px] font-bold leading-normal">
-                Delete Transaction
-              </h2>
               <div className="space-y-6">
+                <h2 className="text-[20px] font-bold leading-normal">
+                  Status : Failed
+                </h2>
+                <div className="p-4 rounded-2xl bg-[#FFFFFF1A] font-extralight text-[14px]">
+                  {errMsg}
+                </div>
                 <div className="mt-10 flex gap-10 items-center">
                   <button
                     type="submit"
                     className="create-account-btn"
-                    onClick={() => deleteTx()}
-                    disabled={deleteTxnStatus === TxStatus.PENDING}
-                  >
-                    {deleteTxnStatus === TxStatus.PENDING
-                      ? 'Loading'
-                      : 'Delete'}
-                  </button>
-                  <button
-                    type="button"
-                    className="cancel-button"
-                    onClick={() => {
-                      handleClose();
-                    }}
+                    onClick={() => handleClose()}
                   >
                     Cancel
                   </button>
@@ -101,4 +78,5 @@ const DialogDeleteTxn = ({ open, onClose, deleteTx }: DialogDeleteTxnProps) => {
     </Dialog>
   );
 };
-export default DialogDeleteTxn;
+
+export default DialogTxnFailed;

@@ -1,4 +1,4 @@
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { RootState } from '@/store/store';
 import { MultisigTxStatus } from '@/types/enums';
@@ -10,22 +10,18 @@ import {
   SEND_TYPE_URL,
   UNDELEGATE_TYPE_URL,
 } from '@/utils/constants';
-import { parseBalance, parseTokens } from '@/utils/denom';
+import { parseTokens } from '@/utils/denom';
 import { shortenAddress } from '@/utils/util';
-import {
-  Box,
-  Chip,
-  Dialog,
-  DialogContent,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Dialog, DialogContent, Tooltip } from '@mui/material';
 import Image from 'next/image';
-import Link from 'next/link';
 import React, { useState } from 'react';
 import SignTxn from './SignTxn';
 import BroadCastTxn from './BroadCastTxn';
 import DialogViewRaw from './DialogViewRaw';
+import { deleteTxn } from '@/store/features/multisig/multisigSlice';
+import { getAuthToken } from '@/utils/localStorage';
+import DialogDeleteTxn from './DialogDeleteTxn';
+import DialogTxnFailed from './DialogTxnFailed';
 
 interface TransactionsListProps {
   chainID: string;
@@ -56,6 +52,7 @@ interface TransactionCardProps {
   onViewRawAction: (txn: Txn) => void;
   isHistory: boolean;
   currency: Currency;
+  onViewError: (errMsg: string) => void;
 }
 
 interface DialogViewTxnMessagesProps {
@@ -125,6 +122,7 @@ const TransactionsList = ({
   const members = multisigAccount.pubkeys || [];
   const [msgDialogOpen, setMsgDialogOpen] = useState<boolean>(false);
   const [viewRawOpen, setViewRawDialogOpen] = useState<boolean>(false);
+  const [viewErrorOpen, setViewErrorDialogOpen] = useState<boolean>(false);
 
   const toggleMsgDialogOpen = () => {
     setMsgDialogOpen((prevState) => !prevState);
@@ -135,6 +133,7 @@ const TransactionsList = ({
   };
 
   const [selectedTxn, setSelectedTxn] = useState<Txn>(emptyTxn);
+  const [errMsg, setErrMsg] = useState('');
 
   const onViewMoreAction = (txn: Txn) => {
     setSelectedTxn(txn);
@@ -144,6 +143,11 @@ const TransactionsList = ({
   const onViewRawAction = (txn: Txn) => {
     setSelectedTxn(txn);
     setViewRawDialogOpen(true);
+  };
+
+  const onViewError = (errMsg: string) => {
+    setErrMsg(errMsg);
+    setViewErrorDialogOpen(true);
   };
 
   const { getDenomInfo } = useGetChainInfo();
@@ -168,6 +172,7 @@ const TransactionsList = ({
           onViewMoreAction={onViewMoreAction}
           currency={currency}
           onViewRawAction={onViewRawAction}
+          onViewError={onViewError}
         />
       ))}
       <DialogViewTxnMessages
@@ -188,6 +193,11 @@ const TransactionsList = ({
         onClose={toggleViewRawDialogOpen}
         txn={selectedTxn}
       />
+      <DialogTxnFailed
+        open={viewErrorOpen}
+        onClose={() => setViewErrorDialogOpen(false)}
+        errMsg={errMsg}
+      />
     </div>
   );
 };
@@ -204,6 +214,7 @@ const TransactionCard = ({
   isHistory,
   currency,
   onViewRawAction,
+  onViewError,
 }: TransactionCardProps) => {
   const isReadyToBroadcast = () => {
     let signs = txn?.signatures || [];
@@ -266,7 +277,10 @@ const TransactionCard = ({
                   Transaction Successful
                 </span>
               ) : (
-                <span className="text-[#E57575] underline underline-offset-2">
+                <span
+                  className="text-[#E57575] underline underline-offset-2"
+                  onClick={() => onViewError(txn?.err_msg || '')}
+                >
                   Transaction Failed
                 </span>
               )}
@@ -292,15 +306,11 @@ const TransactionCard = ({
                 RAW
               </div>
             </div>
-            <div className="action-image justify-center flex">
-              <Image
-                src="/delete-icon.svg"
-                width={14}
-                height={14}
-                alt="Delete-Icon"
-                className="cursor-pointer"
-              />
-            </div>
+            <DeleteTxn
+              txId={txn.id}
+              address={multisigAccount.account.address}
+              chainID={chainID}
+            />
           </div>
         </div>
       </div>
@@ -421,15 +431,11 @@ const TransactionItem = ({
             </div>
           </div>
         </Tooltip>
-        <div className="action-image justify-center flex">
-          <Image
-            src="/delete-icon.svg"
-            width={14}
-            height={14}
-            alt="Delete-Icon"
-            className="cursor-pointer"
-          />
-        </div>
+        <DeleteTxn
+          txId={txn.id}
+          address={multisigAccount.account.address}
+          chainID={chainID}
+        />
       </div>
     </div>
   );
@@ -571,5 +577,60 @@ export const RenderTxnMsg = ({
         </div>
       ) : null}
     </div>
+  );
+};
+
+interface DeleteTxnProps {
+  txId: number;
+  address: string;
+  chainID: string;
+}
+
+const DeleteTxn = ({ txId, address, chainID }: DeleteTxnProps) => {
+  const dispatch = useAppDispatch();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const { getChainInfo } = useGetChainInfo();
+  const { address: walletAddress } = getChainInfo(chainID);
+  const authToken = getAuthToken(chainID);
+
+  const deleteTx = () => {
+    dispatch(
+      deleteTxn({
+        queryParams: {
+          address: walletAddress,
+          signature: authToken?.signature || '',
+        },
+        data: {
+          address: address,
+          id: txId,
+        },
+      })
+    );
+  };
+
+  const handleDeleteDialogClose = () => {
+    setDeleteDialogOpen(false);
+  };
+
+  return (
+    <>
+      <div
+        className="action-image justify-center flex"
+        onClick={() => setDeleteDialogOpen(true)}
+      >
+        <Image
+          src="/delete-icon.svg"
+          width={14}
+          height={14}
+          alt="Delete-Icon"
+          className="cursor-pointer"
+        />
+      </div>
+      <DialogDeleteTxn
+        open={deleteDialogOpen}
+        onClose={() => handleDeleteDialogClose()}
+        deleteTx={deleteTx}
+      />
+    </>
   );
 };

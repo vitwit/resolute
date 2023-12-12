@@ -121,3 +121,7 @@
   @apply px-10 py-[10px] rounded-2xl;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
+
+.cancel-button {
+  @apply underline underline-offset-[4px] font-medium;
+}
