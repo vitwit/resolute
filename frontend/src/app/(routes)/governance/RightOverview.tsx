@@ -127,7 +127,7 @@ const RightOverview = ({
     },
     {
       value: getVotesPercentage(Number(get(tallyResult, 'no_with_veto'))),
-      color: '#EFFF34',
+      color: '#5885AF',
       label: 'Veto',
     },
   ];
@@ -179,7 +179,7 @@ const RightOverview = ({
         {proposalLoadingStatus !== 'pending' ? (
           <>
             <div className="space-y-4">
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex justify-between w-full">
                   <div className="flex space-x-2">
                     <Image
@@ -293,7 +293,7 @@ const RightOverview = ({
                           <Tooltip
                             title={`${quorumPercent}% / ${quorumRequired}%`}
                           >
-                            <div className="bg-white w-full h-[10px] rounded-full">
+                            <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
                               <div
                                 style={{ width: `${quorumPercent}%` }}
                                 className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}

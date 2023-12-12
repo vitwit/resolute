@@ -124,7 +124,7 @@ const ProposalOverviewVote = ({
     {
       value:
         getVotesPercentage(Number(get(tallyResult, 'no_with_veto', 0))) || 0,
-      color: '#EFFF34',
+      color: '#5885AF',
       label: 'Veto',
     },
   ];
@@ -369,7 +369,7 @@ const ProposalOverviewVote = ({
 
                     {quorumPercent ? (
                       <Tooltip title={`${quorumPercent}% / ${quorumRequired}%`}>
-                        <div className="bg-white w-full h-[10px] rounded-full">
+                        <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
                           <div
                             style={{ width: `${quorumPercent}%` }}
                             className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
