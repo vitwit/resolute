@@ -55,10 +55,12 @@ const WalletSummaryCard = (props: AssetSummary) => {
           <Image src={icon} width={24} height={24} alt={alt}></Image>
         </div>
         <div className="flex items-center">
-          <div className="text-white text-sm font-extralight">{type}</div>
+          <div className="text-sm not-italic font-normal leading-[normal]">
+            {type}
+          </div>
         </div>
       </div>
-      <div className="ml-2 text-white text-2xl font-bold leading-[normal]">
+      <div className="ml-2 text-base not-italic font-bold leading-[normal]">
         {amount}
       </div>
     </div>
