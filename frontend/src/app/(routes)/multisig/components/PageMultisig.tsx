@@ -83,7 +83,11 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
       ) : (
         <VerifyAccount chainID={chainID} walletAddress={address} />
       )}
-      <MultisigSidebar accountSpecific={false} />
+      <MultisigSidebar
+        chainID={chainID}
+        walletAddress={address}
+        accountSpecific={false}
+      />
     </div>
   );
 };

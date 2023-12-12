@@ -48,6 +48,7 @@ const useGetChainInfo = () => {
     const feeAmount = config?.feeCurrencies[0].gasPriceStep?.average || 0;
     const address = networks[chainID]?.walletInfo.bech32Address;
     const feeCurrencies = config?.feeCurrencies;
+    const explorerTxHashEndpoint = network?.explorerTxHashEndpoint;
 
     return {
       baseURL: rest,
@@ -59,7 +60,8 @@ const useGetChainInfo = () => {
       prefix,
       feeAmount,
       address,
-      feeCurrencies
+      feeCurrencies,
+      explorerTxHashEndpoint,
     };
   };
 

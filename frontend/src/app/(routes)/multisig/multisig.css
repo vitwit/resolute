@@ -123,5 +123,5 @@
 }
 
 .cancel-button {
-  @apply underline underline-offset-[4px] font-medium;
+  @apply underline underline-offset-[3px] font-medium;
 }

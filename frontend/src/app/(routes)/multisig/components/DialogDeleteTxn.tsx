@@ -39,7 +39,7 @@ const DialogDeleteTxn = ({ open, onClose, deleteTx }: DialogDeleteTxnProps) => {
       PaperProps={{
         sx: {
           borderRadius: '24px',
-          background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
+          background: 'linear-gradient(90deg, #1F184E 27.66%, #8B3DA7 99.91%)',
         },
       }}
     >
@@ -60,7 +60,7 @@ const DialogDeleteTxn = ({ open, onClose, deleteTx }: DialogDeleteTxnProps) => {
               />
             </div>
           </div>
-          <div className="mt-6 mb-[72px] flex gap-6 pr-10 pl-6 items-center">
+          <div className="mt-6 mb-[72px] flex gap-16 pr-10 pl-6 items-center">
             <Image
               src={DELETE_TXN_DIALOG_IMAGE_PATH}
               height={238}
@@ -68,10 +68,14 @@ const DialogDeleteTxn = ({ open, onClose, deleteTx }: DialogDeleteTxnProps) => {
               alt="Delete Txn"
             />
             <div className="flex flex-col gap-10 w-full">
-              <h2 className="text-[20px] font-bold leading-normal">
-                Delete Transaction
-              </h2>
               <div className="space-y-6">
+                <h2 className="text-[20px] font-bold leading-normal">
+                  Delete Transaction
+                </h2>
+                <div className="font-light text-[14px]">
+                  Are you sure you want to delete this transaction ? This action
+                  cannot be undone
+                </div>
                 <div className="mt-10 flex gap-10 items-center">
                   <button
                     type="submit"

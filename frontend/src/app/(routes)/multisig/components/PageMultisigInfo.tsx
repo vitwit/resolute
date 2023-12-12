@@ -19,6 +19,7 @@ import {
 } from '@/store/features/staking/stakeSlice';
 import AccountInfo from './AccountInfo';
 import MultisigSidebar from './MultisigSidebar';
+import VerifyAccount from './VerifyAccount';
 
 const PageMultisigInfo = ({
   chainName,
@@ -94,7 +95,7 @@ const PageMultisigInfo = ({
       dispatch(multisigByAddress({ address }));
       dispatch(getMultisigAccounts(walletAddress));
     }
-  }, [chainID]);
+  }, [chainID, verifyAccountRes]);
 
   useEffect(() => {
     dispatch(setSelectedNetwork({ chainName: chainName }));
@@ -121,7 +122,9 @@ const PageMultisigInfo = ({
           coinDecimals={coinDecimals}
           coinDenom={coinDenom}
         />
-      ) : null}
+      ) : (
+        <VerifyAccount chainID={chainID} walletAddress={walletAddress} />
+      )}
       <MultisigSidebar
         chainID={chainID}
         accountSpecific={true}

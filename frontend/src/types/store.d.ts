@@ -9,6 +9,7 @@ interface BasicChainInfo {
   prefix: string;
   feeAmount: number;
   feeCurrencies: Currency[];
+  explorerTxHashEndpoint: string;
 }
 
 interface Coin {

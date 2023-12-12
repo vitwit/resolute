@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { RootState } from '@/store/store';
-import { MultisigTxStatus } from '@/types/enums';
+import { MultisigTxStatus, TxStatus } from '@/types/enums';
 import { MultisigAccount, Txn, Txns } from '@/types/multisig';
 import {
   CLOSE_ICON_PATH,
@@ -11,10 +11,10 @@ import {
   UNDELEGATE_TYPE_URL,
 } from '@/utils/constants';
 import { parseTokens } from '@/utils/denom';
-import { shortenAddress } from '@/utils/util';
+import { cleanURL, shortenAddress } from '@/utils/util';
 import { Dialog, DialogContent, Tooltip } from '@mui/material';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SignTxn from './SignTxn';
 import BroadCastTxn from './BroadCastTxn';
 import DialogViewRaw from './DialogViewRaw';
@@ -22,6 +22,7 @@ import { deleteTxn } from '@/store/features/multisig/multisigSlice';
 import { getAuthToken } from '@/utils/localStorage';
 import DialogDeleteTxn from './DialogDeleteTxn';
 import DialogTxnFailed from './DialogTxnFailed';
+import Link from 'next/link';
 
 interface TransactionsListProps {
   chainID: string;
@@ -40,6 +41,8 @@ interface TransactionItemProps {
   onViewRawAction: (txn: Txn) => void;
   isHistory: boolean;
   currency: Currency;
+  explorerTxHashEndpoint: string;
+  onViewError: (errMsg: string) => void;
 }
 
 interface TransactionCardProps {
@@ -53,6 +56,7 @@ interface TransactionCardProps {
   isHistory: boolean;
   currency: Currency;
   onViewError: (errMsg: string) => void;
+  explorerTxHashEndpoint: string;
 }
 
 interface DialogViewTxnMessagesProps {
@@ -67,6 +71,8 @@ interface DialogViewTxnMessagesProps {
   onViewRawAction: (txn: Txn) => void;
   isHistory: boolean;
   currency: Currency;
+  explorerTxHashEndpoint: string;
+  onViewError: (errMsg: string) => void;
 }
 
 const mapTxns = {
@@ -150,7 +156,8 @@ const TransactionsList = ({
     setViewErrorDialogOpen(true);
   };
 
-  const { getDenomInfo } = useGetChainInfo();
+  const { getDenomInfo, getChainInfo } = useGetChainInfo();
+  const { explorerTxHashEndpoint } = getChainInfo(chainID);
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
   const currency = {
     coinMinimalDenom: minimalDenom,
@@ -173,6 +180,7 @@ const TransactionsList = ({
           currency={currency}
           onViewRawAction={onViewRawAction}
           onViewError={onViewError}
+          explorerTxHashEndpoint={explorerTxHashEndpoint}
         />
       ))}
       <DialogViewTxnMessages
@@ -187,6 +195,8 @@ const TransactionsList = ({
         onViewMoreAction={onViewMoreAction}
         currency={currency}
         onViewRawAction={onViewRawAction}
+        explorerTxHashEndpoint={explorerTxHashEndpoint}
+        onViewError={onViewError}
       />
       <DialogViewRaw
         open={viewRawOpen}
@@ -215,6 +225,7 @@ const TransactionCard = ({
   currency,
   onViewRawAction,
   onViewError,
+  explorerTxHashEndpoint,
 }: TransactionCardProps) => {
   const isReadyToBroadcast = () => {
     let signs = txn?.signatures || [];
@@ -223,43 +234,48 @@ const TransactionCard = ({
   };
   return (
     <div className="txn-card">
-      <div className="flex-1 flex gap-1 items-center truncate">
-        <div className="overflow-hidden text-ellipsis w-[250px]">
-          {txn?.messages?.length === 0 ? (
-            <div>-</div>
-          ) : (
-            <div>
-              <RenderTxnMsg msg={txn?.messages[0]} currency={currency} />
-            </div>
-          )}
+      <div className="flex justify-between">
+        <div className="flex-1 flex gap-1 items-center truncate">
+          <div className="overflow-hidden text-ellipsis w-[250px]">
+            {txn?.messages?.length === 0 ? (
+              <div>-</div>
+            ) : (
+              <div>
+                <RenderTxnMsg msg={txn?.messages[0]} currency={currency} />
+              </div>
+            )}
+          </div>
+          {txn?.messages.length ? (
+            <Tooltip title="View More" placement="top">
+              <Image
+                src="/view-more-icon.svg"
+                height={16}
+                width={16}
+                alt="View More"
+                className="cursor-pointer"
+                onClick={() => onViewMoreAction(txn)}
+              />
+            </Tooltip>
+          ) : null}
         </div>
-        {txn?.messages.length ? (
-          <Tooltip title="View More" placement="top">
-            <Image
-              src="/view-more-icon.svg"
-              height={16}
-              width={16}
-              alt="View More"
-              className="cursor-pointer"
-              onClick={() => onViewMoreAction(txn)}
-            />
-          </Tooltip>
-        ) : null}
+        <div>
+          {' '}
+          <span>
+            {txn?.signatures?.length || 0}/{membersCount}
+          </span>{' '}
+          <span>Signed</span>
+        </div>
       </div>
       <div>
         <div className="flex justify-between gap-4 items-center">
           {!isHistory ? (
             <>
               {isReadyToBroadcast() ? (
-                txn?.status === 'DONE' || txn?.status === 'FAILED' ? (
-                  txn?.status
-                ) : (
-                  <BroadCastTxn
-                    txn={txn}
-                    multisigAccount={multisigAccount}
-                    chainID={chainID}
-                  />
-                )
+                <BroadCastTxn
+                  txn={txn}
+                  multisigAccount={multisigAccount}
+                  chainID={chainID}
+                />
               ) : (
                 <SignTxn
                   address={multisigAccount.account.address}
@@ -273,9 +289,12 @@ const TransactionCard = ({
           ) : (
             <div className="cursor-pointer">
               {txn?.status === 'SUCCESS' ? (
-                <span className="underline underline-offset-2 text-[#4AA29C]">
+                <Link
+                  href={`${cleanURL(explorerTxHashEndpoint)}/${txn.hash}`}
+                  className="underline underline-offset-2 text-[#4AA29C]"
+                >
                   Transaction Successful
-                </span>
+                </Link>
               ) : (
                 <span
                   className="text-[#E57575] underline underline-offset-2"
@@ -328,6 +347,8 @@ const TransactionItem = ({
   isHistory,
   currency,
   onViewRawAction,
+  explorerTxHashEndpoint,
+  onViewError,
 }: TransactionItemProps) => {
   const threshold = multisigAccount.account.threshold || 0;
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
@@ -372,9 +393,18 @@ const TransactionItem = ({
       {isHistory ? (
         <div className="w-[80px] cursor-pointer">
           {txn?.status === 'SUCCESS' ? (
-            <span className="underline underline-offset-2">Success</span>
+            <Link
+              href={`${cleanURL(explorerTxHashEndpoint)}/${txn.hash}`}
+              className="underline underline-offset-2 text-[#4AA29C]"
+              target="_blank"
+            >
+              Success
+            </Link>
           ) : (
-            <span className="text-red-500 underline underline-offset-2">
+            <span
+              className="text-[#E57575] underline underline-offset-2"
+              onClick={() => onViewError(txn?.err_msg || '')}
+            >
               Failed
             </span>
           )}
@@ -390,15 +420,11 @@ const TransactionItem = ({
         {!isHistory ? (
           <>
             {isReadyToBroadcast() ? (
-              txn?.status === 'DONE' || txn?.status === 'FAILED' ? (
-                txn?.status
-              ) : (
-                <BroadCastTxn
-                  txn={txn}
-                  multisigAccount={multisigAccount}
-                  chainID={chainID}
-                />
-              )
+              <BroadCastTxn
+                txn={txn}
+                multisigAccount={multisigAccount}
+                chainID={chainID}
+              />
             ) : (
               <SignTxn
                 address={multisigAccount.account.address}
@@ -453,7 +479,17 @@ const DialogViewTxnMessages = ({
   isHistory,
   currency,
   onViewRawAction,
+  explorerTxHashEndpoint,
+  onViewError,
 }: DialogViewTxnMessagesProps) => {
+  const deleteTxnRes = useAppSelector(
+    (state: RootState) => state.multisig.deleteTxnRes
+  );
+  useEffect(() => {
+    if (deleteTxnRes.status === TxStatus.IDLE) {
+      toggleMsgDialogOpen();
+    }
+  }, [deleteTxnRes]);
   return (
     <Dialog
       open={open}
@@ -505,6 +541,8 @@ const DialogViewTxnMessages = ({
               onViewMoreAction={onViewMoreAction}
               currency={currency}
               onViewRawAction={onViewRawAction}
+              explorerTxHashEndpoint={explorerTxHashEndpoint}
+              onViewError={onViewError}
             />
           </div>
         </div>

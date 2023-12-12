@@ -35,6 +35,12 @@ const MultisigSidebar = ({
   const createSignRes = useAppSelector(
     (state: RootState) => state.multisig.signTxRes
   );
+  const createTxnRes = useAppSelector(
+    (state: RootState) => state.multisig.createTxnRes
+  );
+  const deleteTxnRes = useAppSelector(
+    (state: RootState) => state.multisig.deleteTxnRes
+  );
 
   const { pubkeys } = multisigAccount;
 
@@ -89,6 +95,45 @@ const MultisigSidebar = ({
     }
   }, [createSignRes]);
 
+  useEffect(() => {
+    if (createTxnRes.status === TxStatus.IDLE) {
+      dispatch(
+        setError({
+          type: 'success',
+          message: 'Transaction created successfully',
+        })
+      );
+      setIsHistory(false);
+      getAllTxs('current');
+    } else if (createTxnRes.status === TxStatus.REJECTED) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'Error while creating the transaction',
+        })
+      );
+    }
+  }, [createTxnRes]);
+
+  useEffect(() => {
+    if (deleteTxnRes.status === TxStatus.IDLE) {
+      dispatch(
+        setError({
+          type: 'success',
+          message: 'Transaction deleted successfully',
+        })
+      );
+      getAllTxs(isHistory ? 'history' : 'current');
+    } else if (deleteTxnRes.status === TxStatus.REJECTED) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'Error while deleting the transaction',
+        })
+      );
+    }
+  }, [deleteTxnRes]);
+
   return (
     <div className="multisig-sidebar">
       <TopNav />
@@ -133,20 +178,23 @@ const MultisigSidebar = ({
           </div>
         </div>
       </div>
-      <TransactionsList
-        chainID={chainID}
-        isMember={isMember}
-        txnsState={txnsState}
-        isHistory={isHistory}
-      />
+
       {accountSpecific ? (
-        <DialogCreateTxn
-          open={createDialogOpen}
-          onClose={handleCreateDialogClose}
-          chainID={chainID}
-          address={address || ''}
-          walletAddress={walletAddress}
-        />
+        <>
+          <TransactionsList
+            chainID={chainID}
+            isMember={isMember}
+            txnsState={txnsState}
+            isHistory={isHistory}
+          />
+          <DialogCreateTxn
+            open={createDialogOpen}
+            onClose={handleCreateDialogClose}
+            chainID={chainID}
+            address={address || ''}
+            walletAddress={walletAddress}
+          />
+        </>
       ) : null}
     </div>
   );

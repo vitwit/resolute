@@ -66,7 +66,7 @@ const AccountInfo = ({
           <Image src="/go-back-icon.svg" width={36} height={36} alt="Go Back" />
         </div>
         <div className="text-[16px] leading-10 tracking-[0.64px]">
-          Multisig Name
+          {multisigAccount.account.name}
         </div>
       </div>
       <AccountDetails
