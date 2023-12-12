@@ -4,7 +4,7 @@ import SelectNetwork from './SelectNetwork';
 
 const TopNav = () => {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between gap-6">
       <SelectNetwork />
       <Profile />
     </div>

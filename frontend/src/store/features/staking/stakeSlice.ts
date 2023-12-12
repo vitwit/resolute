@@ -50,6 +50,11 @@ interface Chain {
     status: TxStatus;
     type: string;
   };
+  pool: {
+    not_bonded_tokens: string;
+    bonded_tokens: string;
+  };
+  poolStatus: TxStatus;
   reStakeTxStatus: TxStatus;
 }
 
@@ -115,6 +120,11 @@ const initialState: StakingState = {
       errMsg: '',
       pagination: undefined,
     },
+    pool: {
+      not_bonded_tokens: '0',
+      bonded_tokens: '0',
+    },
+    poolStatus: TxStatus.INIT,
     params: undefined,
     tx: {
       status: TxStatus.INIT,
@@ -412,6 +422,17 @@ export const getAllValidators = createAsyncThunk(
       if (error instanceof AxiosError) return rejectWithValue(error.message);
       return rejectWithValue(ERR_UNKNOWN);
     }
+  }
+);
+
+export const getPoolInfo = createAsyncThunk(
+  'staking/poolInfo',
+  async (data: { baseURL: string; chainID: string }) => {
+    const response = await stakingService.poolInfo(data.baseURL);
+    return {
+      chainID: data.chainID,
+      data: response.data,
+    };
   }
 );
 
@@ -717,6 +738,23 @@ export const stakeSlice = createSlice({
           state.chains[chainID].delegations.status = TxStatus.REJECTED;
           state.chains[chainID].delegations.errMsg = action.error.message || '';
         }
+      });
+
+    builder
+      .addCase(getPoolInfo.pending, (state, action) => {
+        const { chainID } = action.meta.arg;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
+        state.chains[chainID].poolStatus = TxStatus.PENDING;
+      })
+      .addCase(getPoolInfo.fulfilled, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].poolStatus = TxStatus.IDLE;
+        state.chains[chainID].pool = action.payload.data.pool;
+      })
+      .addCase(getPoolInfo.rejected, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].poolStatus = TxStatus.REJECTED;
       });
 
     builder
