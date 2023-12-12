@@ -8,7 +8,11 @@ import { TxStatus } from '@/types/enums';
 import msgs from '@/utils/messages.json';
 
 const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
-  const [sortedAssets] = useSortedAssets(chainIDs);
+  const [sortedAssets] = useSortedAssets(chainIDs, {
+    showAvailable: true,
+    showRewards: true,
+    showStaked: true,
+  });
   const balancesLoading = useAppSelector(
     (state) => state.bank.balancesLoading > 0
   );
@@ -52,7 +56,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className='flex-1'>
+                <tbody className="flex-1">
                   {sortedAssets.map((asset) => (
                     <Asset
                       asset={asset}

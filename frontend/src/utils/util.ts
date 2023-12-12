@@ -1,5 +1,6 @@
 import { DelegationResponse, Params, Validator } from '@/types/staking';
 import { parseBalance } from './denom';
+import { Options } from '@/custom-hooks/useSortedAssets';
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -276,3 +277,25 @@ export function formatUnbondingPeriod(
       ).toString()
     : '-';
 }
+
+export const filterAsset = (
+  asset: ParsedAsset | undefined,
+  options: Options
+) => {
+  if (!asset) return false;
+  let includedAsset = false;
+  if (options.showAvailable && asset.balance) {
+    includedAsset = true;
+  }
+  if (options.showValuedTokens && asset.usdValue) {
+    includedAsset = true;
+  }
+  if (asset.type === 'ibc') return includedAsset;
+  if (options.showRewards && asset.rewards) {
+    includedAsset = true;
+  }
+  if (options.showStaked && asset.staked) {
+    includedAsset = true;
+  }
+  return includedAsset;
+};

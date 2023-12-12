@@ -24,19 +24,21 @@ const CustomSubmitButton = ({
   );
 };
 
-export const CustomButton = ({
-  pendingStatus,
-  circularProgressSize,
-  buttonStyle,
-  buttonContent,
-  onClick,
-}: {
+interface propsToAccept {
   pendingStatus: TxStatus;
   circularProgressSize: number;
   buttonStyle: string;
   buttonContent: string;
   onClick: () => void;
-}) => {
+}
+
+export const CustomButton: React.FC<propsToAccept> = ({
+  pendingStatus,
+  circularProgressSize,
+  buttonStyle,
+  buttonContent,
+  onClick,
+}: propsToAccept) => {
   return (
     <button className={buttonStyle} onClick={onClick}>
       {pendingStatus === TxStatus.PENDING ? (
