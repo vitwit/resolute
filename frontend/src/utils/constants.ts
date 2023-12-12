@@ -36,3 +36,42 @@ export const REDELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgBeginRedelegate';
 export const SEND_TEMPLATE = 'https://api.resolute.vitwit.com/_static/send.csv';
 export const MULTI_TRANSFER_MSG_COUNT = 10;
 export const DELETE_TXN_DIALOG_IMAGE_PATH = '/delete-txn-popup-image.png';
+export const EMPTY_TXN = {
+  id: NaN,
+  multisig_address: '',
+  fee: {
+    amount: [
+      {
+        amount: '',
+        denom: '',
+      },
+    ],
+    gas: '',
+    granter: '',
+  },
+  status: '',
+  messages: [
+    {
+      typeUrl: '',
+      value: {},
+    },
+  ],
+  hash: '',
+  err_msg: '',
+  memo: '',
+  signatures: [
+    {
+      signature: '',
+      address: '',
+    },
+  ],
+  last_updated: '',
+  created_at: '',
+};
+export const MAP_TXNS = {
+  '/cosmos.staking.v1beta1.MsgDelegate': 'Delegate',
+  '/cosmos.bank.v1beta1.MsgSend': 'Send',
+  '/cosmos.staking.v1beta1.MsgBeginRedelegate': 'ReDelegate',
+  '/cosmos.staking.v1beta1.MsgUndelegate': 'UnDelegate',
+  Msg: 'Tx Msg',
+};

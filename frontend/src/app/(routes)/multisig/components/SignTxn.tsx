@@ -9,11 +9,6 @@ import { SigningStargateClient } from '@cosmjs/stargate';
 import { toBase64 } from '@cosmjs/encoding';
 import React, { useState } from 'react';
 
-interface Signature {
-  address: string;
-  signature: string;
-}
-
 interface SignTxnProps {
   address: string;
   txId: number;
@@ -48,8 +43,8 @@ const SignTxn = ({
     try {
       const client = await SigningStargateClient.connect(rpc);
 
-      let result = await getWalletAmino(chainID);
-      var wallet = result[0];
+      const result = await getWalletAmino(chainID);
+      const wallet = result[0];
       const signingClient = await SigningStargateClient.offline(wallet);
 
       const multisigAcc = await client.getAccount(address);
@@ -70,7 +65,7 @@ const SignTxn = ({
         chainId: chainID,
       };
 
-      let msgs = unSignedTxn?.messages || [];
+      const msgs = unSignedTxn?.messages || [];
 
       const { signatures } = await signingClient.sign(
         walletAddress,

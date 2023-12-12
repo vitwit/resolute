@@ -227,8 +227,17 @@ const DialogCreateTxn = ({
     },
   });
 
-  const onSubmit = (data: any) => {
-    const feeObj = fee(currency.coinMinimalDenom, data.fees, data.gas);
+  const onSubmit = (data: {
+    msgs: never[];
+    gas: number;
+    memo: string;
+    fees: number;
+  }) => {
+    const feeObj = fee(
+      currency.coinMinimalDenom,
+      data.fees.toString(),
+      data.gas
+    );
     const authToken = getAuthToken(chainID);
     dispatch(
       createTxn({

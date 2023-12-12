@@ -1,11 +1,13 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { RootState } from '@/store/store';
-import { MultisigTxStatus, TxStatus } from '@/types/enums';
+import { TxStatus } from '@/types/enums';
 import { MultisigAccount, Txn, Txns } from '@/types/multisig';
 import {
   CLOSE_ICON_PATH,
   DELEGATE_TYPE_URL,
+  EMPTY_TXN,
+  MAP_TXNS,
   REDELEGATE_TYPE_URL,
   SEND_TYPE_URL,
   UNDELEGATE_TYPE_URL,
@@ -37,7 +39,6 @@ interface TransactionItemProps {
   multisigAccount: MultisigAccount;
   membersCount: number;
   chainID: string;
-  onViewMoreAction: (txn: Txn) => void;
   onViewRawAction: (txn: Txn) => void;
   isHistory: boolean;
   currency: Currency;
@@ -67,54 +68,13 @@ interface DialogViewTxnMessagesProps {
   membersCount: number;
   chainID: string;
   toggleMsgDialogOpen: () => void;
-  onViewMoreAction: (txn: Txn) => void;
   onViewRawAction: (txn: Txn) => void;
   isHistory: boolean;
   currency: Currency;
   explorerTxHashEndpoint: string;
   onViewError: (errMsg: string) => void;
+  handleMsgDialogClose: () => void;
 }
-
-const mapTxns = {
-  '/cosmos.staking.v1beta1.MsgDelegate': 'Delegate',
-  '/cosmos.bank.v1beta1.MsgSend': 'Send',
-  '/cosmos.staking.v1beta1.MsgBeginRedelegate': 'ReDelegate',
-  '/cosmos.staking.v1beta1.MsgUndelegate': 'UnDelegate',
-  Msg: 'Tx Msg',
-};
-
-const emptyTxn = {
-  id: NaN,
-  multisig_address: '',
-  fee: {
-    amount: [
-      {
-        amount: '',
-        denom: '',
-      },
-    ],
-    gas: '',
-    granter: '',
-  },
-  status: '',
-  messages: [
-    {
-      typeUrl: '',
-      value: {},
-    },
-  ],
-  hash: '',
-  err_msg: '',
-  memo: '',
-  signatures: [
-    {
-      signature: '',
-      address: '',
-    },
-  ],
-  last_updated: '',
-  created_at: '',
-};
 
 const TransactionsList = ({
   chainID,
@@ -138,7 +98,11 @@ const TransactionsList = ({
     setViewRawDialogOpen((prevState) => !prevState);
   };
 
-  const [selectedTxn, setSelectedTxn] = useState<Txn>(emptyTxn);
+  const handleMsgDialogClose = () => {
+    setMsgDialogOpen(false);
+  };
+
+  const [selectedTxn, setSelectedTxn] = useState<Txn>(EMPTY_TXN);
   const [errMsg, setErrMsg] = useState('');
 
   const onViewMoreAction = (txn: Txn) => {
@@ -183,6 +147,9 @@ const TransactionsList = ({
           explorerTxHashEndpoint={explorerTxHashEndpoint}
         />
       ))}
+      {!txnsState.list.length ? (
+        <div className="mt-16 text-[14px] text-center">- No Transactions -</div>
+      ) : null}
       <DialogViewTxnMessages
         open={msgDialogOpen}
         isMember={isMember}
@@ -192,11 +159,11 @@ const TransactionsList = ({
         chainID={chainID}
         isHistory={isHistory}
         toggleMsgDialogOpen={toggleMsgDialogOpen}
-        onViewMoreAction={onViewMoreAction}
         currency={currency}
         onViewRawAction={onViewRawAction}
         explorerTxHashEndpoint={explorerTxHashEndpoint}
         onViewError={onViewError}
+        handleMsgDialogClose={handleMsgDialogClose}
       />
       <DialogViewRaw
         open={viewRawOpen}
@@ -228,7 +195,7 @@ const TransactionCard = ({
   explorerTxHashEndpoint,
 }: TransactionCardProps) => {
   const isReadyToBroadcast = () => {
-    let signs = txn?.signatures || [];
+    const signs = txn?.signatures || [];
     if (signs?.length >= multisigAccount?.account?.threshold) return true;
     else return false;
   };
@@ -343,30 +310,26 @@ const TransactionItem = ({
   multisigAccount,
   membersCount,
   chainID,
-  onViewMoreAction,
   isHistory,
   currency,
   onViewRawAction,
   explorerTxHashEndpoint,
   onViewError,
 }: TransactionItemProps) => {
-  const threshold = multisigAccount.account.threshold || 0;
-  const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { getChainInfo } = useGetChainInfo();
 
   const { address: walletAddress } = getChainInfo(chainID);
 
   const isWalletSigned = () => {
-    let signs = txn?.signatures || [];
-    let existedAddress = signs.filter((k) => k.address === walletAddress);
+    const signs = txn?.signatures || [];
+    const existedAddress = signs.filter((k) => k.address === walletAddress);
 
     if (existedAddress && existedAddress?.length) return true;
     else return false;
   };
 
-  const onShowError = () => {};
-
   const isReadyToBroadcast = () => {
-    let signs = txn?.signatures || [];
+    const signs = txn?.signatures || [];
     if (signs?.length >= multisigAccount?.account?.threshold) return true;
     else return false;
   };
@@ -475,19 +438,19 @@ const DialogViewTxnMessages = ({
   membersCount,
   chainID,
   toggleMsgDialogOpen,
-  onViewMoreAction,
   isHistory,
   currency,
   onViewRawAction,
   explorerTxHashEndpoint,
   onViewError,
+  handleMsgDialogClose,
 }: DialogViewTxnMessagesProps) => {
   const deleteTxnRes = useAppSelector(
     (state: RootState) => state.multisig.deleteTxnRes
   );
   useEffect(() => {
     if (deleteTxnRes.status === TxStatus.IDLE) {
-      toggleMsgDialogOpen();
+      handleMsgDialogClose();
     }
   }, [deleteTxnRes]);
   return (
@@ -538,7 +501,6 @@ const DialogViewTxnMessages = ({
               membersCount={membersCount}
               chainID={chainID}
               isHistory={isHistory}
-              onViewMoreAction={onViewMoreAction}
               currency={currency}
               onViewRawAction={onViewRawAction}
               explorerTxHashEndpoint={explorerTxHashEndpoint}
@@ -575,7 +537,7 @@ export const RenderTxnMsg = ({
         <div>
           {msg.typeUrl === SEND_TYPE_URL ? (
             <p>
-              <span className="font-bold">{mapTxns[msg?.typeUrl]}</span> &nbsp;
+              <span className="font-bold">{MAP_TXNS[msg?.typeUrl]}</span> &nbsp;
               <span>{displayDenom(msg?.value?.amount)}</span>
               &nbsp;To&nbsp;{' '}
               <span> {shortenAddress(msg?.value?.toAddress, 20)}</span>
@@ -584,7 +546,7 @@ export const RenderTxnMsg = ({
 
           {msg.typeUrl === DELEGATE_TYPE_URL ? (
             <p>
-              <span className="font-bold">{mapTxns[msg?.typeUrl]}</span>{' '}
+              <span className="font-bold">{MAP_TXNS[msg?.typeUrl]}</span>{' '}
               <span>{displayDenom(msg?.value?.amount)}</span>
               &nbsp; To &nbsp;
               <span>{shortenAddress(msg?.value?.validatorAddress, 20)}</span>
@@ -593,7 +555,7 @@ export const RenderTxnMsg = ({
 
           {msg.typeUrl === UNDELEGATE_TYPE_URL ? (
             <p>
-              <span className="font-bold">{mapTxns[msg?.typeUrl]}</span>{' '}
+              <span className="font-bold">{MAP_TXNS[msg?.typeUrl]}</span>{' '}
               <span>{displayDenom(msg?.value?.amount)}</span>
               &nbsp; From &nbsp;
               <span>{shortenAddress(msg?.value?.validatorAddress, 20)}</span>
@@ -602,7 +564,7 @@ export const RenderTxnMsg = ({
 
           {msg.typeUrl === REDELEGATE_TYPE_URL ? (
             <p>
-              <span className="font-bold">{mapTxns[msg?.typeUrl]}</span>{' '}
+              <span className="font-bold">{MAP_TXNS[msg?.typeUrl]}</span>{' '}
               <span>{displayDenom(msg?.value?.amount)}</span>
               &nbsp;
               <br />

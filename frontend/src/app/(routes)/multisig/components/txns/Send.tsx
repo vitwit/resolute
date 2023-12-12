@@ -1,12 +1,4 @@
-import { useAppSelector } from '@/custom-hooks/StateHooks';
-import { RootState } from '@/store/store';
-import {
-  Box,
-  Button,
-  InputAdornment,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { InputAdornment, TextField } from '@mui/material';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { fromBech32 } from '@cosmjs/encoding';
@@ -35,13 +27,7 @@ const textFieldStyles = {
   },
 };
 
-const Send = ({
-  chainID,
-  address,
-  onSend,
-  currency,
-  availableBalance,
-}: SendProps) => {
+const Send = ({ address, onSend, currency, availableBalance }: SendProps) => {
   const {
     handleSubmit,
     control,
@@ -55,9 +41,13 @@ const Send = ({
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: {
+    amount: number;
+    recipient: string;
+    from: string;
+  }) => {
     const amountInAtomics = Decimal.fromUserInput(
-      data.amount,
+      data.amount.toString(),
       Number(currency.coinDecimals)
     ).atomics;
 

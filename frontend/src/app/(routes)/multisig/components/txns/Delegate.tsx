@@ -77,9 +77,15 @@ const Delegate = ({
     setData(data);
   }, [validators]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: {
+    amount: number;
+    validator: null | {
+      value: string;
+    };
+    delegator: string;
+  }) => {
     const baseAmount = Decimal.fromUserInput(
-      data.amount,
+      data.amount.toString(),
       Number(currency?.coinDecimals)
     ).atomics;
 

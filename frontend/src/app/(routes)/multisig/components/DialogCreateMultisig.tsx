@@ -32,6 +32,16 @@ interface DialogCreateMultisigProps {
   baseURL: string;
 }
 
+interface InputTextComponentProps {
+  index: number;
+  field: PubKeyFields;
+  handleRemoveValue: (index: number) => void;
+  handleChangeValue: (
+    index: number,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+}
+
 interface PubKeyFields {
   name: string;
   value: string;
@@ -68,7 +78,7 @@ const InputTextComponent = ({
   index,
   handleChangeValue,
   handleRemoveValue,
-}: any) => {
+}: InputTextComponentProps) => {
   return (
     <>
       <TextField
@@ -206,7 +216,7 @@ const DialogCreateMultisig = ({
 
   const handleChangeValue = (
     index: number,
-    e: ChangeEvent<HTMLInputElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     console.log(index, e.target.name, e.target.value);
     const newInputFields = pubKeyFields.map((value, key) => {
@@ -251,7 +261,7 @@ const DialogCreateMultisig = ({
     setThreshold(parseInt(e.target.value));
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError('');
     console.log(pubKeyFields);
@@ -421,7 +431,7 @@ const DialogCreateMultisig = ({
               <h2 className="text-[20px] font-bold leading-normal">
                 Create Multisig
               </h2>
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={(e) => handleSubmit(e)}>
                 <TextField
                   className="bg-[#FFFFFF0D] rounded-2xl"
                   onChange={handleNameChange}

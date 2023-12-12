@@ -127,7 +127,7 @@ const MultisigAccountCard = ({
 }: MultisigAccountCardProps) => {
   return (
     <Link href={`/multisig/${chainName}/${address}`}>
-      <div className="space-y-4 text-[14px] multisig-account-card">
+      <div className="space-y-5 text-[14px] multisig-account-card">
         <div className="text-[16px]">{name}</div>
         <div className="space-y-2">
           <div>Address</div>
