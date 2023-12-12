@@ -105,7 +105,7 @@ const StakingSidebar = ({
   };
 
   return (
-    <div className="staking-sidebar flex flex-col justify-between">
+    <div className="staking-sidebar flex flex-col">
       <div className="flex flex-col gap-6">
         <TopNav />
         <div className="flex gap-6">
