@@ -401,12 +401,16 @@
   }
 }
 .powered-by-background {
-  @apply flex w-full justify-center items-center gap-2.5 p-2.5;
+  @apply flex w-full grow-0 justify-center items-center gap-2.5 p-2.5 fixed bottom-0;
   background: rgba(255, 255, 255, 0.05);
 }
 .text {
   @apply text-white text-base not-italic font-light leading-7 tracking-[0.96px];
 }
 .landingpage-background {
+  @apply flex flex-col min-h-screen;
   background: linear-gradient(107deg, #1f184e 1.65%, #8b3da7 100%);
 }
+
+
+

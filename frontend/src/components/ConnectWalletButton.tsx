@@ -116,7 +116,7 @@ export const ConnectWalletButton = ({
               selectWallet={selectWallet}
             />
           </div>
-          {/* w-[682px] h-[356px] absolute left-[521px] top-[38px] */}
+
           <div className="absolute left-[521px] top-[38px]">
             <Image
               src="/background-circle.png"
@@ -139,7 +139,7 @@ export const ConnectWalletButton = ({
             />
           </div>
         </div>
-        <div className="flex mb-28"></div>
+
         <div className="powered-by-background">
           <div className="powered-by text">Powered by VitWit</div>
         </div>
