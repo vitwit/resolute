@@ -28,7 +28,7 @@ export function serialize(msg: Msg): string {
   return `${shortenMsg(
     delegatorAddress,
     10
-  )} un-delegated ${amount?.amount} ${amount?.denom}from ${shortenMsg(
+  )} un-delegated ${amount?.amount} ${amount?.denom} from ${shortenMsg(
     validatorAddress,
     10
   )}`;
