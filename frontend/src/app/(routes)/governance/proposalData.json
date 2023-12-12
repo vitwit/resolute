@@ -1,0 +1,26 @@
+[
+  {
+    "id": "123",
+    "title": "Introduce Take Rate and deployment deposit for axlUSDC",
+    "expires": "Expires in two days",
+    "votingStatus": "Active Voting"
+  },
+  {
+    "id": "124",
+    "title": "Introduce Take Rate and deployment deposit for axlUSDC",
+    "expires": "Expires in two days",
+    "votingStatus": "Active Voting"
+  },
+  {
+    "id": "125",
+    "title": "Yet Another Proposal",
+    "expires": "Expires in four days",
+    "votingStatus": "Active Voting"
+  },
+  {
+    "id": "126",
+    "title": "One More Proposal",
+    "expires": "Expires in five days",
+    "votingStatus": "Active Voting"
+  }
+]

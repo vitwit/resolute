@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import Axios, { AxiosResponse } from 'axios';
 import { convertPaginationToParams, cleanURL } from '../../../utils/util';
@@ -14,6 +14,7 @@ const delegationsURL = '/cosmos/staking/v1beta1/delegations/';
 const unbondingDelegationsURL = (address: string) =>
   `/cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`;
 const paramsURL = '/cosmos/staking/v1beta1/params';
+const poolURL = '/cosmos/staking/v1beta1/pool';
 
 const fetchValidators = (
   baseURL: string,
@@ -59,11 +60,15 @@ const fetchParams = (
 ): Promise<AxiosResponse<GetParamsResponse>> =>
   Axios.get(`${cleanURL(baseURL)}${paramsURL}`);
 
+const fetchPoolInfo = (baseURL: string): Promise<AxiosResponse> =>
+  Axios.get(`${cleanURL(baseURL)}${poolURL}`);
+
 const result = {
   validators: fetchValidators,
   delegations: fetchdelegations,
   unbonding: fetchUnbonding,
   params: fetchParams,
+  poolInfo: fetchPoolInfo,
 };
 
 export default result;

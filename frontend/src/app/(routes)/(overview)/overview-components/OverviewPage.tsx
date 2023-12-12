@@ -56,11 +56,16 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
 
   return (
     <div className="w-full flex justify-between">
-      <div className="w-full px-10 py-6 space-y-6 overflow-y-scroll min-h-[800px] h-screen">
+      <div className="flex flex-col w-full px-10 py-6 space-y-6 min-h-screen max-h-screen">
         <TopNav />
         <WalletSummery chainIDs={chainIDs} />
         {chainIDs.length === 1 && <AccountSummery chainID={chainIDs[0]} />}
         <PageAd />
+        <div className="flex items-center min-h-[36px] h-8">
+          <h2 className="text-xl not-italic font-normal leading-[normal]">
+            Asset Information
+          </h2>
+        </div>
         <AssetsTable chainIDs={chainIDs} />
       </div>
       <History chainIDs={chainIDs} />

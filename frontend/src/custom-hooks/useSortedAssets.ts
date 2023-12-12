@@ -3,9 +3,20 @@ import { useMemo } from 'react';
 import { useAppSelector } from './StateHooks';
 import { RootState } from '@/store/store';
 import chainDenoms from '@/utils/chainDenoms.json';
+import { filterAsset } from '@/utils/util';
 const chainDenomsData = chainDenoms as AssetData;
 
-const useSortedAssets = (chainIDs: string[]): [ParsedAsset[]] => {
+export interface Options {
+  showStaked?: boolean;
+  showRewards?: boolean;
+  showAvailable?: boolean;
+  showValuedTokens?: boolean;
+}
+
+const useSortedAssets = (
+  chainIDs: string[],
+  options: Options
+): [ParsedAsset[]] => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const balanceChains = useAppSelector(
     (state: RootState) => state.bank.balances
@@ -110,7 +121,7 @@ const useSortedAssets = (chainIDs: string[]): [ParsedAsset[]] => {
             decimals: denomInfo[0].decimals,
           };
         }
-        if (asset && asset.usdPrice) {
+        if (asset && filterAsset(asset, options)) {
           sortedAssets = [...sortedAssets, asset];
         }
       });
