@@ -130,7 +130,7 @@ const StakingPage = ({
         ) : null}
 
         {hasUnbondings ? (
-          <div>
+          <div className='mt-16'>
             <h2 className="txt-lg font-medium my-6">Unbonding</h2>
             <div className="unbondings-grid">
               <ChainUnbondings

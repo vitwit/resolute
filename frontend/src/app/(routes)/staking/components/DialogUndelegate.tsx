@@ -113,11 +113,12 @@ const DialogUndelegate = ({
                   </div>
                 </div>
                 <div className="bg-[#FFFFFF0D] px-4 rounded-2xl opacity-80 py-4 w-full space-y-4">
-                  <div className="flex gap-2">
-                    <div className="w-[200px] text-[14px] font-light leading-[24px] my-auto">
-                      <p>Staking will lock your</p>
+                  <div className="flex gap-2 text-[14px]">
+                    <div className="w-[200px] font-light leading-[24px] my-auto">
+                      <p>Undelegating will lock</p>
                       <p>
-                        funds for {formatUnbondingPeriod(stakingParams)} days
+                        your funds for {formatUnbondingPeriod(stakingParams)}{' '}
+                        days
                       </p>
                     </div>
                     <div className="font-medium leading-6 flex-1">
