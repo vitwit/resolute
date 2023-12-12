@@ -49,6 +49,33 @@ const useGetTxInputs = () => {
     };
   };
 
+  const getVoteTxInputs = (chainID: string) => {
+    const basicChainInfo = getChainInfo(chainID);
+    const {
+      aminoConfig,
+      prefix,
+      rest,
+      rpc,
+      feeAmount,
+      address,
+      cosmosAddress,
+    } = basicChainInfo;
+
+    const denomInfo = getDenomInfo(chainID);
+    const { minimalDenom, decimals } = denomInfo;
+
+    return {
+      aminoConfig,
+      prefix,
+      rest,
+      feeAmount: feeAmount * 10 ** decimals,
+      address,
+      cosmosAddress,
+      rpc,
+      minimalDenom,
+    };
+  };
+
   const txWithdrawValidatorRewardsInputs = (
     chainID: string,
     validatorAddress: string,
@@ -175,6 +202,7 @@ const useGetTxInputs = () => {
     txWithdrawValidatorRewardsInputs,
     txRestakeValidatorInputs,
     txSendInputs,
+    getVoteTxInputs,
   };
 };
 

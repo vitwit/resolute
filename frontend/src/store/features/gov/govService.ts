@@ -15,6 +15,8 @@ const voterVoteURL = (id: number, voter: string): string =>
 
 const depositParamsURL = `/cosmos/gov/v1beta1/params/deposit`;
 
+const govTallyParamsURL = `/cosmos/gov/v1beta1/params/tallying`;
+
 const fetchProposals = (
   baseURL: string,
   key: string | undefined,
@@ -66,12 +68,16 @@ const fetchProposal = (
 const fetchDepositParams = (baseURL: string): Promise<AxiosResponse> =>
   Axios.get(`${cleanURL(baseURL)}${depositParamsURL}`);
 
+const fetchGovTallyParams = (baseURL: string): Promise<AxiosResponse> =>
+  Axios.get(`${cleanURL(baseURL)}${govTallyParamsURL}`);
+
 const result = {
   proposals: fetchProposals,
   tally: fetchProposalTally,
   votes: fetchVoterVote,
   proposal: fetchProposal,
   depositParams: fetchDepositParams,
+  govTallyParams: fetchGovTallyParams,
 };
 
 export default result;
