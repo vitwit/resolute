@@ -73,7 +73,7 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
           <MultiTxUpload addMsgs={addMsgs} chainID={chainID} />
           <div>
             <div className="text-sm not-italic font-normal leading-[normal] mb-2">
-              Enter Memo
+              Memo
             </div>
             <CustomMultiLineTextField
               rows={4}
@@ -91,12 +91,12 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
           </div>
           <CustomSubmitButton
             pendingStatus={txPendingStatus}
-            circularProgressSize={24}
-            buttonStyle="primary-action-btn w-[144px] h-[40px]"
+            circularProgressSize={12}
+            buttonStyle="primary-custom-btn"
             buttonContent="Send"
           />
         </div>
-        <div className="w-[1px] bg-[#6e6d7d]"></div>
+        <div className="w-[1px] bg-[#6e6d7d] opacity-30"></div>
         <div className="w-1/2 h-full pl-[20px] flex flex-col">
           <Messages msgs={msgs} onDelete={onDelete} onDeleteAll={onDeleteAll} />
         </div>

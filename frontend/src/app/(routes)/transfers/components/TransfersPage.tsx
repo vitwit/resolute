@@ -25,13 +25,13 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
       <div className="w-full page-padding space-y-6 overflow-y-scroll">
         <MainTopNav title="Transfers" />
         <div className="flex flex-col rounded-2xl bg-[#0e0b26] p-6 space-y-6">
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <div className="text-base not-italic font-normal leading-[normal]">
               {tab.current}
             </div>
 
             <button
-              className="primary-action-btn w-auto h-auto px-3 py-[10px] rounded-lg"
+              className="secondary-custom-btn"
               onClick={() => {
                 if (chainIDs.length > 1) {
                   alert('Multi transfer is not available for All networks!');

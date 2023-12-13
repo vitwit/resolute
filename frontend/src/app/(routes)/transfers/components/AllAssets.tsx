@@ -8,22 +8,22 @@ const AllAssets = ({
 }: {
   assets: ParsedAsset[];
   selectedAsset: ParsedAsset | undefined;
-  onSelectAsset: (asset: ParsedAsset, index:number) => void;
+  onSelectAsset: (asset: ParsedAsset, index: number) => void;
 }) => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const handleDialogClose = () => setDialogOpen(false);
-  
+
   return (
     <div>
-      <div className="w-fill flex justify-center h-6 text-[#c3c2c9] text-xs not-italic font-normal leading-6 underline">
-        {assets.length > 4 ? (
-          <div className=" cursor-pointer" onClick={() => setDialogOpen(true)}>
-            View All
-          </div>
-        ) : (
-          ''
-        )}
-      </div>
+      {assets.length > 4 ? (
+        <div
+          className="cursor-pointer w-fill flex justify-center h-6 text-[#c3c2c9] text-xs not-italic font-normal leading-6 underline"
+          onClick={() => setDialogOpen(true)}
+        >
+          View All
+        </div>
+      ) : null}
+
       <DialogAllAssets
         dialogOpen={dialogOpen}
         assets={assets}
