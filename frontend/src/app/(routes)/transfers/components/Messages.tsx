@@ -1,6 +1,6 @@
 import { Pagination } from '@mui/material';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { paginationComponentStyles } from '../../staking/styles';
 import { formattedSerialize } from '@/txns/bank/send';
 import { MULTI_TRANSFER_MSG_COUNT } from '../../../../utils/constants';
@@ -15,20 +15,29 @@ const Messages = ({
   onDelete: (index: number) => void;
   onDeleteAll: () => void;
 }) => {
+
   const [index, setIndex] = useState(0);
+  const pagesCount = useMemo(() => {
+    const pages = Math.ceil(msgs.length / MULTI_TRANSFER_MSG_COUNT);
+    if (index >= pages) setIndex(Math.max(pages - 1, 0));
+    return pages;
+  }, [msgs]);
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex flex-col h-full space-y-6 pb-6">
-        <div className="flex justify-between">
+      <div className="flex flex-col h-full space-y-6">
+        <div className="flex justify-between ">
           <div className="text-sm not-italic font-normal leading-[normal]">
             Messages
           </div>
           <div
-            className="text-xs not-italic font-bold leading-[normal] underline cursor-pointer opacity-60"
-            onClick={onDeleteAll}
+            className="text-right text-xs not-italic font-normal leading-[normal] underline cursor-pointer"
+            onClick={() => {
+              onDeleteAll();
+              setIndex(0);
+            }}
           >
-            clear
+            Clear All
           </div>
         </div>
         <div className="flex h-full flex-col relative">
@@ -45,21 +54,24 @@ const Messages = ({
                   index={MULTI_TRANSFER_MSG_COUNT * index + offset}
                 />
 
-                <div style={{ marginTop: `48px` }} />
+                <div style={{ marginTop: `50px` }} />
               </div>
             ))}
         </div>
       </div>
-      <div className="w-full h-[0.25px] bg-[#6e6d7d]"></div>
-      <div className="flex flex-row-reverse mt-3">
-        <Pagination
-          sx={paginationComponentStyles}
-          count={Math.ceil(msgs.length / MULTI_TRANSFER_MSG_COUNT)}
-          shape="circular"
-          onChange={(_, v) => {
-            setIndex(v - 1);
-          }}
-        />
+      <div className="w-full h-[0.25px] bg-[#6e6d7d] opacity-30"></div>
+      <div className="flex flex-row-reverse mt-6 h-10 items-center">
+        {pagesCount > 1 ? (
+          <Pagination
+            page={index + 1}
+            sx={paginationComponentStyles}
+            count={pagesCount}
+            shape="circular"
+            onChange={(_, v) => {
+              setIndex(v - 1);
+            }}
+          />
+        ) : null}
       </div>
     </div>
   );
@@ -80,14 +92,16 @@ const Message = ({
   );
 
   return (
-    <div className={`flex items-center justify-between absolute`}>
-      <Image src="/back-arrow.svg" width={24} height={24} alt="msg" />
-      <div className="overflowed-text max-w-[250px] text-sm not-italic font-normal leading-[normal]">
-        {formattedSerialize(
-          msg,
-          originDenomInfo.decimals,
-          originDenomInfo.originDenom
-        )}
+    <div className={`flex items-center justify-between w-full absolute`}>
+      <div className="flex gap-1 items-center">
+        <Image src="/back-arrow.svg" width={24} height={24} alt="msg" />
+        <div className="overflowed-text max-w-[275px] text-sm not-italic font-normal leading-[normal]">
+          {formattedSerialize(
+            msg,
+            originDenomInfo.decimals,
+            originDenomInfo.originDenom
+          )}
+        </div>
       </div>
       <Image
         src="/close.svg"

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React from 'react';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 
-const Summary = ({ chainIDs }: { chainIDs: string[] }) => {
+const Summary = ({ chainIDs, borderStyle }: { chainIDs: string[], borderStyle: string }) => {
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   let chainName = 'All Networks';
   let imageURL = '/all-networks-icon.png';
@@ -21,10 +21,10 @@ const Summary = ({ chainIDs }: { chainIDs: string[] }) => {
   }
 
   return (
-    <div className="coloured-container relative h-[72px] flex items-center overflow-hidden">
-      <div className="flex items-center gap-2">
+    <div className={"coloured-container relative h-[72px] flex items-center overflow-hidden "+borderStyle}>
+      <div className="flex items-center gap-2 absolute">
         <Image src={imageURL} width={40} height={40} alt={chainName} />
-        <div className="text-sm not-italic font-normal leading-[normal] text-capitalize">
+        <div className="text-sm not-italic font-normal leading-[normal] text-capitalize flex-1">
           {chainName}
         </div>
       </div>
