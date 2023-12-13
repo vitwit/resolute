@@ -14,8 +14,8 @@ const RadioButton = ({
   displayOption: string;
 }) => {
   return (
-    <label className="radio-container">
-      <div className="flex space-x-2">
+    <label className="radio-container space-x-2">
+      <div className="">
         <input
           type="radio"
           name={name}

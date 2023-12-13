@@ -103,23 +103,28 @@ const VotePopup = ({
             </div>
             <div className="text-grid">
               <div className="space-y-6">
-                <div className="proposal-text-big">Vote</div>
+                <div className="proposal-text-big font-bold">Vote</div>
                 <div className="text-form">
                   <div className="space-y-1">
+                    <div className='space-y-4'>
+                    <div className='flex justify-between'>
                     <div className="space-x-2 flex">
                       <Image
                         src={networkLogo}
-                        width={40}
-                        height={40}
+                        width={32}
+                        height={32}
                         alt="logo"
                       />
                       <p className="proposal-text-small">
                         #{proposalId} | Proposal
                       </p>
+                      
                     </div>
-                    <div className="proposal-text-normal">{proposalname}</div>
                     <div className="proposal-text-small">
                       {`Voting ends in ${votingEndsInDays}`}
+                    </div>
+                    </div>
+                    <div className="proposal-text-normal-base">{proposalname}</div>
                     </div>
                   </div>
                 </div>
@@ -155,8 +160,9 @@ const VotePopup = ({
                     />
                   </div>
                 </div>
-                <div className="placeholder-text">
+                <div className="placeholder-text w-full">
                   <input
+                   className="search-validator-input"
                     type="text"
                     placeholder="Enter Justification here"
                   ></input>
