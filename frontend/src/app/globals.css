@@ -74,9 +74,7 @@
   }
 }
 
-@layer utilities {
-  @variants responsive {}
-
+@layer components {
   .text-capitalize {
     text-transform: capitalize;
   }
@@ -135,37 +133,46 @@
   .primary-action-btn {
     @apply w-[152px] h-[44px] rounded-2xl text-white text-[16px] font-medium leading-3;
     background:
-      linear-gradient(180deg,
+      linear-gradient(
+        180deg,
         rgba(74, 162, 156, 0.9) 0%,
-        rgba(139, 61, 167, 0.9) 100%),
+        rgba(139, 61, 167, 0.9) 100%
+      ),
       lightgray 50% / cover no-repeat;
   }
 
   .custom-btn {
     @apply rounded-2xl text-white text-[16px] font-medium leading-3;
-    background: linear-gradient(180deg,
+    background:
+      linear-gradient(
+        180deg,
         rgba(74, 162, 156, 0.9) 0%,
-        rgba(139, 61, 167, 0.9) 100%),
+        rgba(139, 61, 167, 0.9) 100%
+      ),
       lightgray 50% / cover no-repeat;
   }
 
   .primary-custom-btn {
     @apply rounded-2xl text-white text-base not-italic font-medium leading-5 tracking-[0.64px] h-10 flex items-center justify-center px-10;
-    background: linear-gradient(180deg,
+    background:
+      linear-gradient(
+        180deg,
         rgba(74, 162, 156, 0.9) 0%,
-        rgba(139, 61, 167, 0.9) 100%),
+        rgba(139, 61, 167, 0.9) 100%
+      ),
       lightgray 50% / cover no-repeat;
   }
 
   .secondary-custom-btn {
     @apply rounded-lg text-white text-xs not-italic font-medium leading-5 tracking-[0.48px] h-8 flex items-center justify-center px-3;
-    background: linear-gradient(180deg,
+    background:
+      linear-gradient(
+        180deg,
         rgba(74, 162, 156, 0.9) 0%,
-        rgba(139, 61, 167, 0.9) 100%),
+        rgba(139, 61, 167, 0.9) 100%
+      ),
       lightgray 50% / cover no-repeat;
   }
-
-
 
   .recent-txn-item-icon {
     @apply rounded-lg;
@@ -174,11 +181,11 @@
   }
 
   .chip {
-    @apply rounded-2xl px-2 py-1 text-[12px]
+    @apply rounded-2xl px-2 py-1 text-[12px];
   }
 
   .fill {
-    background: linear-gradient(180deg, #4AA29C 0%, #8B3DA7 100%);
+    background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
   }
 
   .formatted-text-1 {
@@ -204,11 +211,11 @@
   }
 
   .chip {
-    @apply rounded-2xl px-2 py-1 text-[12px]
+    @apply rounded-2xl px-2 py-1 text-[12px];
   }
 
   .fill {
-    background: linear-gradient(180deg, #4AA29C 0%, #8B3DA7 100%);
+    background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
   }
 }
 
@@ -256,7 +263,6 @@
     @apply flex w-[788px] h-[376px] flex-col justify-center items-start gap-10 relative backdrop-blur-[2px] px-6 py-10 rounded-2xl;
     background: #20172f;
   }
-
 }
 
 /* Sidebar styles  */
@@ -364,7 +370,6 @@
   @apply text-red-600 font-bold;
 }
 
-
 /* Transaction success Popup styles */
 .transaction-box {
   @apply flex h-[485px] flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
@@ -388,7 +393,6 @@
 .popup-text {
   @apply text-white text-sm not-italic leading-[normal];
 }
-
 
 /* WalletPopup */
 
