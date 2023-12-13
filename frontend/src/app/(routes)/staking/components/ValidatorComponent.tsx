@@ -20,6 +20,10 @@ interface ValidatorComponentProps {
   validator: Validator;
 }
 
+const isJailed = (validatorStatus: string) => {
+  return validatorStatus.toLowerCase() === 'jailed';
+};
+
 const ValidatorComponent = ({
   moniker,
   identity,
@@ -50,12 +54,14 @@ const ValidatorComponent = ({
         </div>
       </div>
       <div className="leading-3">{rank}</div>
-      <div className="leading-3 min-w-[132px] text-center">
+      <div className="leading-3  min-w-[132px]">
         {formatCommission(commission)} Commission
       </div>
       {active ? null : (
-        <div className="min-w-[102px] text-center leading-3">
-          {validatorStatus}
+        <div className="min-w-[102px] leading-3">
+          <span className={isJailed(validatorStatus) ? `text-[#E57575]` : ``}>
+            {validatorStatus}
+          </span>
         </div>
       )}
       <div>
