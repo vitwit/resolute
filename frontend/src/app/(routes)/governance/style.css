@@ -31,7 +31,8 @@
 }
 .proposal-id-static {
   @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px];
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.10);
+  
 }
 .proposal {
   @apply flex items-start gap-4;
@@ -44,6 +45,9 @@
 }
 .proposal-text-normal {
   @apply text-white text-sm font-normal leading-6;
+}
+.proposal-text-normal-base {
+  @apply text-white text-base font-normal leading-[18px];
 }
 .proposal-text-medium {
   @apply flex items-center text-white text-base font-medium;
@@ -165,4 +169,7 @@
 }
 .cstm-btn:hover {
   background-color: #8f8a8a1a;
+}
+.search-validator-input {
+  @apply w-full pl-2 border-none cursor-pointer focus:outline-none bg-transparent placeholder:text-[14px] placeholder:text-[#FFFFFFBF] placeholder:font-extralight text-[#FFFFFFBF];
 }
