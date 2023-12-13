@@ -52,18 +52,18 @@ const Asset = ({
   return (
     <tr>
       <td>
-        <div className="h-[36px] flex flex-col justify-between">
+        <div className="h-[36px] flex flex-col justify-center gap-1">
           <div className="text-sm not-italic font-normal leading-[normal] h-[14px]">
             {formatCoin(asset.balance, asset.displayDenom)}
           </div>
-          {showChainName && (
+          {showChainName ? (
             <div className="text-[10px] not-italic font-normal leading-[normal] h-[14px]">
               on{' '}
               <Link href={`/overview/${asset.chainName}`}>
                 {asset.chainName}
               </Link>
             </div>
-          )}
+          ) : null}
         </div>
       </td>
       <td>
@@ -106,6 +106,13 @@ const Asset = ({
               {formatAmount(Math.abs(asset.inflation))}%
             </div>
           </div>
+        </div>
+      </td>
+      <td>
+        <div className="text-sm not-italic font-normal leading-[normal]">
+          {asset.type === 'native'
+            ? formatDollarAmount(asset.usdValue)
+            : '-'}
         </div>
       </td>
       <td>
