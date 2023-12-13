@@ -1,10 +1,7 @@
 interface MultiTxnsInputs {
   basicChainInfo: BasicChainInfo;
-  address: string;
   msgs: Msg[];
-  prefix: string;
   memo: string;
-  feeAmount: number;
   denom: string;
   feegranter: string;
 }

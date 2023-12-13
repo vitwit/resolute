@@ -1,10 +1,16 @@
 import { formatTransaction } from '@/utils/transaction';
 import Image from 'next/image';
 
-const TransactionItem = ({ transaction }: { transaction: Transaction }) => {
-  const uiTx = formatTransaction(transaction);
+const TransactionItem = ({
+  transaction,
+  msgFilters,
+}: {
+  transaction: Transaction;
+  msgFilters: string[];
+}) => {
+  const uiTx = formatTransaction(transaction, msgFilters);
 
-  return (
+  return uiTx.showTx ? (
     <div className="w-full flex gap-4">
       <div className="flex gap-2 min-w-[88px] max-w-[88px]">
         <div className="space-y-4">
@@ -12,7 +18,7 @@ const TransactionItem = ({ transaction }: { transaction: Transaction }) => {
             {uiTx.time}
           </div>
           <Image
-            className="ml-auto"
+            className="ml-auto bg-[#26233b] rounded-sm"
             src="/swap.svg"
             width={24}
             height={24}
@@ -27,15 +33,13 @@ const TransactionItem = ({ transaction }: { transaction: Transaction }) => {
         />
       </div>
       <div className="space-y-2">
-        <div className="formatted-text-1">{uiTx.firstMessage}</div>
+        <div className="flex h-6 items-center">
+          <div className="text-sm font-normal leading-[14px] max-w-[293px] truncate">
+            {uiTx.firstMessage}
+          </div>
+        </div>
         <div className="flex gap-2">
-          <Image
-            width={20}
-            height={20}
-            alt="success"
-            src="/round-checked.svg"
-          />
-          <div className="text-xs not-italic font-normal leading-4 tracking-[0.48px]">
+          <div className="text-xs not-italic font-normal leading-4 tracking-[0.48px] flex items-center">
             {uiTx.isTxSuccess ? 'Transaction Successful' : 'Transaction Failed'}
           </div>
         </div>
@@ -46,11 +50,15 @@ const TransactionItem = ({ transaction }: { transaction: Transaction }) => {
         </div>
       </div>
     </div>
-  );
+  ) : null;
 };
 
 export const Chip = ({ msg }: { msg: string }) => {
-  return <div className="chip bg-[#26233b]">{msg}</div>;
+  return (
+    <div className="chip bg-[#26233b] text-center text-xs not-italic font-normal leading-3">
+      {msg}
+    </div>
+  );
 };
 
 export const FilledChip = ({ count }: { count: number }) => {

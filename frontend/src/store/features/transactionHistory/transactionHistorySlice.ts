@@ -37,11 +37,13 @@ export const transactionHistorySlice = createSlice({
       const { address } = action.payload;
       const transactions = getTransactions(address);
       state.allTransactions = transactions;
+      const chains: { [key: string]: Transaction[] } = {};
       transactions.forEach((tx) => {
         const { chainID } = tx;
-        if (!state.chains[chainID]) state.chains[chainID] = [];
-        state.chains[chainID] = [...state.chains[chainID], tx];
+        if (!chains[chainID]) chains[chainID] = [];
+        chains[chainID] = [...chains[chainID], tx];
       });
+      state.chains = chains;
     },
   },
 });
