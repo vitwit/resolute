@@ -39,12 +39,6 @@ const TransactionItem = ({
           </div>
         </div>
         <div className="flex gap-2">
-          {/* <Image
-            width={20}
-            height={20}
-            alt="success"
-            src="/round-checked.svg"
-          /> */}
           <div className="text-xs not-italic font-normal leading-4 tracking-[0.48px] flex items-center">
             {uiTx.isTxSuccess ? 'Transaction Successful' : 'Transaction Failed'}
           </div>
