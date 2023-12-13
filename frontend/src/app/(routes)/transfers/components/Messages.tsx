@@ -5,6 +5,7 @@ import { paginationComponentStyles } from '../../staking/styles';
 import { formattedSerialize } from '@/txns/bank/send';
 import { MULTI_TRANSFER_MSG_COUNT } from '../../../../utils/constants';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import page from '../../feegrant/page';
 
 const Messages = ({
   msgs,
@@ -15,10 +16,13 @@ const Messages = ({
   onDelete: (index: number) => void;
   onDeleteAll: () => void;
 }) => {
+  
   const [index, setIndex] = useState(0);
   const pagesCount = useMemo(() => {
-    return Math.ceil(msgs.length / MULTI_TRANSFER_MSG_COUNT);
-  }, msgs);
+    const pages = Math.ceil(msgs.length / MULTI_TRANSFER_MSG_COUNT);
+    if (index >= pages) setIndex(Math.max(pages - 1, 0));
+    return pages;
+  }, [msgs]);
 
   return (
     <div className="flex flex-col h-full">
@@ -29,7 +33,10 @@ const Messages = ({
           </div>
           <div
             className="text-right text-xs not-italic font-normal leading-[normal] underline cursor-pointer"
-            onClick={onDeleteAll}
+            onClick={() => {
+              onDeleteAll();
+              setIndex(0);
+            }}
           >
             Clear All
           </div>
@@ -57,6 +64,7 @@ const Messages = ({
       <div className="flex flex-row-reverse mt-6 h-10 items-center">
         {pagesCount > 1 ? (
           <Pagination
+            page={index + 1}
             sx={paginationComponentStyles}
             count={pagesCount}
             shape="circular"
