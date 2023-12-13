@@ -12,7 +12,7 @@ export const CopyToClipboard = ({
 }) => {
   return (
     <Chip
-      className="text-white text-2xl font-bold leading-[normal]"
+      className="text-white text-base not-italic font-bold leading-[normal]"
       label={formattedMessage}
       size="small"
       deleteIcon={

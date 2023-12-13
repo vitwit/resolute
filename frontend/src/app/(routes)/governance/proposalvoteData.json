@@ -1,0 +1,26 @@
+{
+  "proposalOverviewVoteData": {
+    "proposalId": "#123",
+    "proposalText": "Your proposal text goes here...",
+    "proposalname": "Introduce Take Rate and deployment deposit for axlUSDC",
+    "quorum": 50,
+    "createdAt": "23rd October 2023",
+    "startedAt": "24th October 2023",
+    "endsAt": "29th October 2023",
+    "proposalNetwork": "Cosmos",
+    "totalvotes": "123,345,876",
+    "createdby": "Name of the creator",
+    "depositamount": "123 ATOMS",
+    "data": [
+      { "value": 75, "color": "#4AA29C", "label": "Yes" },
+      { "value": 23, "color": "#E57575", "label": "No" },
+      { "value": 2, "color": "#EFFF34", "label": "Veto" },
+      { "value": 0, "color": "#EFFF34", "label": "Veto" }
+    ],
+    "dataset": [
+      { "value": 75, "color": "#759BE5", "label": "Quorum" },
+      { "value": 23, "color": "#75E5A2", "label": "Turn out" },
+      { "value": 2, "color": "#B373CA", "label": "Threshold" }
+    ]
+  }
+}

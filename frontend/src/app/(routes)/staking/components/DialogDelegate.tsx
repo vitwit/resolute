@@ -108,8 +108,8 @@ const DialogDelegate = ({
                   </div>
                 </div>
                 <div className="bg-[#FFFFFF0D] px-4 rounded-2xl opacity-80 py-4 w-full space-y-4">
-                  <div className="flex gap-2">
-                    <div className="w-[200px] text-[14px] font-light leading-[24px] my-auto">
+                  <div className="flex gap-2 text-[14px]">
+                    <div className="w-[200px] font-light leading-[24px] my-auto">
                       <p>Staking will lock your</p>
                       <p>
                         funds for {formatUnbondingPeriod(stakingParams)} days

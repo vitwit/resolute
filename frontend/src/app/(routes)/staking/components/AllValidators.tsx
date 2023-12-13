@@ -19,8 +19,8 @@ const AllValidators = ({
   const slicedValidatorsList = validators?.activeSorted.slice(0, 10) || [];
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-[20px] leading-normal font-bold">All Validators</h2>
+      <div className="flex justify-between items-center sticky top-0 z-10 bg-[#0E0B26]">
+        <h2 className="text-[20px] leading-normal font-medium">All Validators</h2>
         {validatorsStatus === TxStatus.IDLE ? (
           <div
             className="cursor-pointer text-[#FFFFFFBF] text-[12px] font-extralight underline underline-offset-2"

@@ -10,6 +10,7 @@ interface BasicChainInfo {
   feeAmount: number;
   feeCurrencies: Currency[];
   explorerTxHashEndpoint: string;
+  chainName: string;
 }
 
 interface Coin {

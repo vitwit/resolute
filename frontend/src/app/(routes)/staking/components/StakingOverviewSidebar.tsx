@@ -18,7 +18,7 @@ const StakingOverviewSidebar = () => {
     <div className="staking-sidebar">
       <div className="flex flex-col gap-6">
         <TopNav />
-        <div className="flex gap-10">
+        <div className="flex gap-6">
           <StakingStatsCard
             name={'Staked Balance'}
             value={formatDollarAmount(totalStakedAmount)}

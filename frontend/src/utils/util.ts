@@ -1,6 +1,7 @@
 import { DelegationResponse, Params, Validator } from '@/types/staking';
 import { parseBalance } from './denom';
 import { MultisigThresholdPubkey, SinglePubkey } from "@cosmjs/amino";
+import { Options } from '@/custom-hooks/useSortedAssets';
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -265,7 +266,11 @@ export function parseDenomAmount(
 }
 
 export function formatCommission(commission: number): string {
-  return commission ? String(commission.toFixed(0)) + '%' : '-';
+  return commission === 0
+    ? '0%'
+    : commission
+      ? String(commission.toFixed(0)) + '%'
+      : '-';
 }
 
 export function formatUnbondingPeriod(
@@ -290,3 +295,24 @@ export function NewMultisigThreshoPubkey(
     },
   };
 }
+export const filterAsset = (
+  asset: ParsedAsset | undefined,
+  options: Options
+) => {
+  if (!asset) return false;
+  let includedAsset = false;
+  if (options.showAvailable && asset.balance) {
+    includedAsset = true;
+  }
+  if (options.showValuedTokens && asset.usdValue) {
+    includedAsset = true;
+  }
+  if (asset.type === 'ibc') return includedAsset;
+  if (options.showRewards && asset.rewards) {
+    includedAsset = true;
+  }
+  if (options.showStaked && asset.staked) {
+    includedAsset = true;
+  }
+  return includedAsset;
+};

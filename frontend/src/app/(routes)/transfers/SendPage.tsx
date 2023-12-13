@@ -13,7 +13,7 @@ import props from './customTextFields.json';
 import CustomSubmitButton from '@/components/CustomButton';
 
 const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
-  const [sortedAssets] = useSortedAssets(chainIDs);
+  const [sortedAssets] = useSortedAssets(chainIDs, {showAvailable:true});
   const [openMemo, setOpenMemo] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<ParsedAsset | undefined>();
   const [slicedAssetsIndex, setSlicedAssetIndex] = useState(0);
