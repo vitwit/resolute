@@ -9,7 +9,7 @@ export const OFFCHAIN_VERIFICATION_MESSAGE =
  * The base URL for the Multisig API.
  * @constant
  */
-export const API_URL = process.env.NEXT_PUBLIC_APP_API_URI;
+export const API_URL = process.env.NEXT_PUBLIC_APP_API_URI || '';
 export const TRANSFERS_MSG_FILTERS = ['Send'];
 export const SINGLE_TAB_TEXT = 'Single Transfer';
 export const MULTI_TAB_TEXT = 'Multi Transfer';
