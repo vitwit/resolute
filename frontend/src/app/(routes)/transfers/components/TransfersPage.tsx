@@ -42,7 +42,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
             {tab.to}
           </button>
         </div>
-        <div className="flex flex-col rounded-2xl bg-[#0e0b26] p-6 space-y-6 mt-6">
+        <div className="flex flex-col rounded-2xl bg-[#0e0b26] space-y-6 mt-6">
           {tab.current === SINGLE_TAB_TEXT ? (
             <SingleTransfer chainIDs={chainIDs} />
           ) : (

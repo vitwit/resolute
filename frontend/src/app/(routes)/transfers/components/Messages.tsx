@@ -1,6 +1,6 @@
 import { Pagination } from '@mui/material';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { paginationComponentStyles } from '../../staking/styles';
 import { formattedSerialize } from '@/txns/bank/send';
 import { MULTI_TRANSFER_MSG_COUNT } from '../../../../utils/constants';
@@ -16,6 +16,9 @@ const Messages = ({
   onDeleteAll: () => void;
 }) => {
   const [index, setIndex] = useState(0);
+  const pagesCount = useMemo(() => {
+    return Math.ceil(msgs.length / MULTI_TRANSFER_MSG_COUNT);
+  }, msgs);
 
   return (
     <div className="flex flex-col h-full">
@@ -52,14 +55,16 @@ const Messages = ({
       </div>
       <div className="w-full h-[0.25px] bg-[#6e6d7d] opacity-30"></div>
       <div className="flex flex-row-reverse mt-6 h-10 items-center">
-        <Pagination
-          sx={paginationComponentStyles}
-          count={Math.ceil(msgs.length / MULTI_TRANSFER_MSG_COUNT)}
-          shape="circular"
-          onChange={(_, v) => {
-            setIndex(v - 1);
-          }}
-        />
+        {pagesCount > 1 ? (
+          <Pagination
+            sx={paginationComponentStyles}
+            count={pagesCount}
+            shape="circular"
+            onChange={(_, v) => {
+              setIndex(v - 1);
+            }}
+          />
+        ) : null}
       </div>
     </div>
   );

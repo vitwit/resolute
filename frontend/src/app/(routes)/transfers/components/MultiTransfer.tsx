@@ -64,11 +64,12 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <div className='p-6'>
+      <form onSubmit={handleSubmit(onSubmit)}>
       <div className="w-full h-[605px] flex">
         <div className="w-1/2 flex flex-col justify-between pr-5">
           <div>
-            <Summary chainIDs={[chainID]} />
+            <Summary chainIDs={[chainID]} borderStyle="rounded-2xl" />
           </div>
           <MultiTxUpload addMsgs={addMsgs} chainID={chainID} />
           <div>
@@ -102,6 +103,7 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
         </div>
       </div>
     </form>
+    </div>
   );
 };
 
