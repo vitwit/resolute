@@ -5,7 +5,6 @@ import { paginationComponentStyles } from '../../staking/styles';
 import { formattedSerialize } from '@/txns/bank/send';
 import { MULTI_TRANSFER_MSG_COUNT } from '../../../../utils/constants';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import page from '../../feegrant/page';
 
 const Messages = ({
   msgs,
@@ -16,7 +15,7 @@ const Messages = ({
   onDelete: (index: number) => void;
   onDeleteAll: () => void;
 }) => {
-  
+
   const [index, setIndex] = useState(0);
   const pagesCount = useMemo(() => {
     const pages = Math.ceil(msgs.length / MULTI_TRANSFER_MSG_COUNT);
