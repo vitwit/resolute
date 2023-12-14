@@ -8,6 +8,7 @@ export const textFieldStyles = {
     border: 'none',
   },
   '& .Mui-disabled': {
+    //Important is used here to override the mui's styling
     '-webkit-text-fill-color': '#ffffff6b !important',
   },
 };
@@ -100,4 +101,9 @@ export const selectTxnStyles = {
     fontSize: '12px',
     fontWeight: 200,
   },
+};
+
+export const dialogTxnFailedStyles = {
+  borderRadius: '24px',
+  background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
 }

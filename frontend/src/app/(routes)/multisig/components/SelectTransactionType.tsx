@@ -13,19 +13,19 @@ const SelectTransactionType: React.FC<SelectTransactionTypeProps> = (props) => {
         className="custom-radio-button-label"
         onClick={() => onSelect(false)}
       >
-        <div className="custom-radio-button">
+        <button className="custom-radio-button">
           {!isFileUpload ? (
             <div className="custom-radio-button-checked"></div>
           ) : null}
-        </div>
+        </button>
         <div className="text-[14px] font-medium">Add Manually</div>
       </div>
       <div className="custom-radio-button-label" onClick={() => onSelect(true)}>
-        <div className="custom-radio-button">
+        <button className="custom-radio-button">
           {isFileUpload ? (
             <div className="custom-radio-button-checked"></div>
           ) : null}
-        </div>
+        </button>
         <div className="text-[14px] font-medium">File Upload</div>
       </div>
     </div>

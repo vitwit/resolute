@@ -14,7 +14,7 @@ const SendMessage: React.FC<TxnMsgProps> = (props) => {
           src="/solid-arrow-icon.svg"
           height={24}
           width={24}
-          alt=""
+          alt={index.toString()}
         />
         <div className="truncate max-w-[280px]">
           <span>Send&nbsp;</span>

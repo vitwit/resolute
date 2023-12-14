@@ -5,6 +5,7 @@ import {
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
+import { dialogTxnFailedStyles } from '../styles';
 
 interface DialogTxnFailedProps {
   open: boolean;
@@ -17,19 +18,16 @@ const DialogTxnFailed: React.FC<DialogTxnFailedProps> = (props) => {
   return (
     <Dialog
       open={open}
-      onClose={() => onClose()}
+      onClose={onClose}
       maxWidth="lg"
       PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
-        },
+        sx: dialogTxnFailedStyles,
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
-        <div className="w-[890px] text-white">
+        <div className="min-w-[890px] text-white">
           <div className="px-10 py-6 flex justify-end">
-            <div onClick={() => onClose()}>
+            <div onClick={onClose}>
               <Image
                 className="cursor-pointer"
                 src={CLOSE_ICON_PATH}
@@ -56,7 +54,6 @@ const DialogTxnFailed: React.FC<DialogTxnFailedProps> = (props) => {
                 </div>
                 <div className="mt-10 flex gap-10 items-center">
                   <button
-                    type="submit"
                     className="create-account-btn"
                     onClick={() => onClose()}
                   >

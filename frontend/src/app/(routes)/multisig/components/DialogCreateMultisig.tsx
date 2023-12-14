@@ -57,6 +57,8 @@ interface PubKeyFields {
   error: string;
 }
 
+const MAX_PUB_KEYS = 7;
+
 const InputTextComponent: React.FC<InputTextComponentProps> = (props) => {
   const { field, index, handleChangeValue, handleRemoveValue } = props;
   return (
@@ -99,7 +101,7 @@ const InputTextComponent: React.FC<InputTextComponentProps> = (props) => {
           },
         }}
       />
-      <div className="text-[14px] text-[#E57575]">
+      <div className="address-pubkey-field-error">
         {field.error.length ? field.error : ''}
       </div>
     </>
@@ -213,7 +215,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
   };
 
   const handleAddPubKey = () => {
-    if (pubKeyFields?.length > 6) {
+    if (pubKeyFields?.length >= MAX_PUB_KEYS) {
       dispatch(
         setError({
           type: 'error',

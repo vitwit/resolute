@@ -1,4 +1,5 @@
-.create-multisig-btn, .verify-btn {
+.create-multisig-btn,
+.verify-btn {
   @apply rounded-lg px-3 py-[6px] text-[12px] font-medium leading-[20px] tracking-[0.48px];
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
@@ -124,4 +125,12 @@
 
 .cancel-button {
   @apply underline underline-offset-[3px] font-medium;
+}
+
+.circular-progress-custom {
+  color: purple;
+}
+
+.address-pubkey-field-error {
+  @apply text-[14px] text-[#E57575];
 }

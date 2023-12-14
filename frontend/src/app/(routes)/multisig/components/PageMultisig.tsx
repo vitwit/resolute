@@ -28,8 +28,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
   const { address } = getChainInfo(chainID);
 
   useEffect(() => {
-    const timeoutId = 1;
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       if (!isVerified({ chainID, address }) && chainID?.length) {
         dispatch(
           verifyAccount({

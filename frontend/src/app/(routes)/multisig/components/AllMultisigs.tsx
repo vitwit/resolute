@@ -78,14 +78,14 @@ const AllMultisigs: React.FC<AllMultisigsProps> = (props) => {
       )}
       {status === TxStatus.PENDING ? (
         <div className="mt-36 text-center">
-          <CircularProgress size={48} sx={{ color: 'purple' }} />
+          <CircularProgress size={48} className="circular-progress-custom" />
         </div>
       ) : null}
 
       <div className="grid grid-cols-2 gap-6">
-        {accounts?.map((account, index) => (
+        {accounts?.map((account) => (
           <MultisigAccountCard
-            key={index}
+            key={account.address}
             address={account.address}
             threshold={account.threshold}
             name={account.name}

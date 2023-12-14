@@ -3,7 +3,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { RootState } from '@/store/store';
 import { Txn, Txns } from '@/types/multisig';
 import { EMPTY_TXN } from '@/utils/constants';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import DialogViewRaw from './DialogViewRaw';
 import DialogTxnFailed from './DialogTxnFailed';
 import DialogViewTxnMessages from './DialogViewTxnMessages';
@@ -59,17 +59,20 @@ const TransactionsList: React.FC<TransactionsListProps> = (props) => {
   const { getDenomInfo, getChainInfo } = useGetChainInfo();
   const { explorerTxHashEndpoint } = getChainInfo(chainID);
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
-  const currency = {
-    coinMinimalDenom: minimalDenom,
-    coinDecimals: decimals,
-    coinDenom: displayDenom,
-  };
+  const currency = useMemo(
+    () => ({
+      coinMinimalDenom: minimalDenom,
+      coinDecimals: decimals,
+      coinDenom: displayDenom,
+    }),
+    [minimalDenom, decimals, displayDenom]
+  );
 
   return (
     <div className="pb-6 space-y-6 text-[14px] flex flex-col justify-between">
-      {txnsState.list.map((txn, index) => (
+      {txnsState.list.map((txn) => (
         <TransactionCard
-          key={index}
+          key={txn.id}
           isMember={isMember}
           txn={txn}
           multisigAccount={multisigAccount}

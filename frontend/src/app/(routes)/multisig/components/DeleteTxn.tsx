@@ -41,8 +41,8 @@ const DeleteTxn: React.FC<DeleteTxnProps> = (props) => {
 
   return (
     <>
-      <div
-        className="action-image justify-center flex"
+      <button
+        className="action-image justify-center items-center flex"
         onClick={() => setDeleteDialogOpen(true)}
       >
         <Image
@@ -52,7 +52,7 @@ const DeleteTxn: React.FC<DeleteTxnProps> = (props) => {
           alt="Delete-Icon"
           className="cursor-pointer"
         />
-      </div>
+      </button>
       <DialogDeleteTxn
         open={deleteDialogOpen}
         onClose={() => handleDeleteDialogClose()}

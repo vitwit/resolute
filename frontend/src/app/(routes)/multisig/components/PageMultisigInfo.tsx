@@ -48,8 +48,7 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
   } = getDenomInfo(chainID);
 
   useEffect(() => {
-    const timeoutId = 1;
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       if (!isVerified({ chainID, address: walletAddress }) && chainID?.length) {
         dispatch(
           verifyAccount({
