@@ -13,7 +13,7 @@ import { getAllTokensPrice } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import WalletPopup from './WalletPopup';
 
-export const ConnectWalletButton = ({
+export const Landingpage = ({
   children,
 }: {
   children: React.ReactNode;
