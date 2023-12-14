@@ -325,7 +325,7 @@
 }
 
 .wallet-address {
-  @apply flex items-center gap-2 opacity-80 text-white text-center text-sm not-italic font-normal leading-[normal] p-2 rounded-lg w-[176px] h-[36px];
+  @apply flex items-center gap-2 opacity-80 text-white text-center text-sm font-normal leading-[normal] p-2 rounded-lg w-[176px] h-[36px];
   background: rgba(255, 255, 255, 0.1);
 }
 
