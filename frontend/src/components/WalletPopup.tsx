@@ -43,13 +43,13 @@ const WalletPopup = ({
             <div className="connect-wallet-box">
               <div className="text-white text-xl font-bold">Connect Wallet</div>
               <div className="flex space-x-6">
-                {supportedWallets.map((wallet, index) => (
+                {supportedWallets.map((wallet) => (
                   <div
                     className="wallet-grid"
                     onClick={() => {
                       selectWallet(wallet.name.toLocaleLowerCase());
                     }}
-                    key={index}
+                    key={wallet.name}
                   >
                     <div className="flex space-x-2">
                       <Image
