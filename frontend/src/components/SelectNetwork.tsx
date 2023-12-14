@@ -234,12 +234,7 @@ const NetworkItem = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  const limitChainName = (name: string, maxLength: number): string => {
-    if (name.length > maxLength) {
-      return name.substring(0, maxLength) + '...'; 
-    }
-    return name;
-  };
+const shortenName = (name: string, maxLength: number): string => name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
 
   const isSelected = (): boolean => {
     return selectedNetworkName.toLowerCase() === chainName.toLowerCase();
