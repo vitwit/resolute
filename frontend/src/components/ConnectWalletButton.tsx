@@ -53,8 +53,8 @@ export const ConnectWalletButton = ({
 
     const accountChangeListener = () => {
       setTimeout(() => tryConnectWallet(walletName), 1000);
-      window.location.reload();
       removeAllAuthTokens();
+      window.location.reload();
     };
 
     window.addEventListener(

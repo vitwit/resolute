@@ -4,17 +4,12 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import PageMultisig from '../components/PageMultisig';
 
-const ChainMultisig = ({ paramChain }: { paramChain: string }) => {
+const ChainMultisig = ({ network }: { network: string }) => {
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
-  let validChain = false;
-  const chainName = paramChain.toLowerCase();
-  Object.keys(nameToChainIDs).forEach((chain) => {
-    if (paramChain.toLowerCase() === chain.toLowerCase()) {
-      validChain = true;
-    }
-  });
+  const chainName = network.toLowerCase();
+  const validChain = chainName in nameToChainIDs;
   return (
     <div>
       {validChain ? (

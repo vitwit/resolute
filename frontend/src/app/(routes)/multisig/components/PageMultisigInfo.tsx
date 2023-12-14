@@ -8,7 +8,7 @@ import {
   multisigByAddress,
   verifyAccount,
 } from '@/store/features/multisig/multisigSlice';
-import { getAuthToken, setAuthToken } from '@/utils/localStorage';
+import { setAuthToken } from '@/utils/localStorage';
 import {
   setError,
   setSelectedNetwork,
@@ -20,14 +20,15 @@ import {
 import AccountInfo from './AccountInfo';
 import MultisigSidebar from './MultisigSidebar';
 import VerifyAccount from './VerifyAccount';
+import { isVerified } from '@/utils/util';
 
-const PageMultisigInfo = ({
-  chainName,
-  address,
-}: {
+interface PageMultisigInfoProps {
   chainName: string;
   address: string;
-}) => {
+}
+
+const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
+  const { chainName, address } = props;
   const dispatch = useAppDispatch();
   const [verified, setVerified] = useState(false);
   const nameToChainIDs = useAppSelector(
@@ -47,8 +48,9 @@ const PageMultisigInfo = ({
   } = getDenomInfo(chainID);
 
   useEffect(() => {
+    const timeoutId = 1;
     setTimeout(() => {
-      if (!isVerified() && chainID?.length) {
+      if (!isVerified({ chainID, address: walletAddress }) && chainID?.length) {
         dispatch(
           verifyAccount({
             chainID: chainID,
@@ -57,6 +59,7 @@ const PageMultisigInfo = ({
         );
       }
     }, 1200);
+    return () => clearTimeout(timeoutId);
   }, [walletAddress, chainID]);
 
   useEffect(() => {
@@ -78,7 +81,7 @@ const PageMultisigInfo = ({
   }, [verifyAccountRes]);
 
   useEffect(() => {
-    if (isVerified()) {
+    if (isVerified({ chainID, address: walletAddress })) {
       setVerified(true);
     } else {
       setVerified(false);
@@ -86,7 +89,7 @@ const PageMultisigInfo = ({
   }, [address, chainID]);
 
   useEffect(() => {
-    if (chainID && isVerified()) {
+    if (chainID && isVerified({ chainID, address: walletAddress })) {
       dispatch(
         getMultisigBalance({ baseURL, address, denom: coinMinimalDenom })
       );
@@ -100,16 +103,6 @@ const PageMultisigInfo = ({
   useEffect(() => {
     dispatch(setSelectedNetwork({ chainName: chainName }));
   }, [chainName]);
-
-  const isVerified = () => {
-    const token = getAuthToken(chainID);
-    if (token) {
-      if (token.address === walletAddress && token.chainID === chainID) {
-        return true;
-      }
-    }
-    return false;
-  };
 
   return (
     <div className="flex gap-10 justify-between">

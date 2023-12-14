@@ -14,13 +14,8 @@ const MultisigAccount = ({
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
-  let validChain = false;
   const chainName = paramChain.toLowerCase();
-  Object.keys(nameToChainIDs).forEach((chain) => {
-    if (paramChain.toLowerCase() === chain.toLowerCase()) {
-      validChain = true;
-    }
-  });
+  const validChain = chainName in nameToChainIDs;
   return (
     <div>
       {validChain ? (

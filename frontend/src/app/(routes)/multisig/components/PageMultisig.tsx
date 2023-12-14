@@ -4,10 +4,14 @@ import MultisigSidebar from './MultisigSidebar';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
-import { verifyAccount } from '@/store/features/multisig/multisigSlice';
-import { getAuthToken, setAuthToken } from '@/utils/localStorage';
+import {
+  resetVerifyAccountRes,
+  verifyAccount,
+} from '@/store/features/multisig/multisigSlice';
+import { setAuthToken } from '@/utils/localStorage';
 import { setError } from '@/store/features/common/commonSlice';
 import VerifyAccount from './VerifyAccount';
+import { isVerified } from '@/utils/util';
 
 const PageMultisig = ({ chainName }: { chainName: string }) => {
   const dispatch = useAppDispatch();
@@ -24,8 +28,9 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
   const { address } = getChainInfo(chainID);
 
   useEffect(() => {
+    const timeoutId = 1;
     setTimeout(() => {
-      if (!isVerified() && chainID?.length) {
+      if (!isVerified({ chainID, address }) && chainID?.length) {
         dispatch(
           verifyAccount({
             chainID: chainID,
@@ -34,6 +39,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
         );
       }
     }, 1200);
+    return () => clearTimeout(timeoutId);
   }, [address, chainID]);
 
   useEffect(() => {
@@ -44,6 +50,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
         signature: verifyAccountRes.token,
       });
       setVerified(true);
+      dispatch(resetVerifyAccountRes());
     } else if (verifyAccountRes.status === 'rejected') {
       dispatch(
         setError({
@@ -55,22 +62,12 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
   }, [verifyAccountRes]);
 
   useEffect(() => {
-    if (isVerified()) {
+    if (isVerified({ chainID, address })) {
       setVerified(true);
     } else {
       setVerified(false);
     }
   }, [address, chainID]);
-
-  const isVerified = () => {
-    const token = getAuthToken(chainID);
-    if (token) {
-      if (token.address === address && token.chainID === chainID) {
-        return true;
-      }
-    }
-    return false;
-  };
 
   return (
     <div className="flex gap-10">

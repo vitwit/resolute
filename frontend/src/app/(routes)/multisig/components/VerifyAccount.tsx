@@ -7,7 +7,8 @@ interface VerifyAccountProps {
   walletAddress: string;
 }
 
-const VerifyAccount = ({ chainID, walletAddress }: VerifyAccountProps) => {
+const VerifyAccount: React.FC<VerifyAccountProps> = (props) => {
+  const { chainID, walletAddress } = props;
   const dispatch = useAppDispatch();
   const handleVerifyAccountEvent = () => {
     dispatch(verifyAccount({ chainID, address: walletAddress }));
@@ -18,7 +19,7 @@ const VerifyAccount = ({ chainID, walletAddress }: VerifyAccountProps) => {
         Please verify your account ownership to proceed.
       </div>
       <button
-        className="create-multisig-btn"
+        className="verify-btn"
         onClick={() => {
           handleVerifyAccountEvent();
         }}

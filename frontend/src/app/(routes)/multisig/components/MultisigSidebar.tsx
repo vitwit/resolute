@@ -15,12 +15,8 @@ interface MultisigSidebarProps {
   walletAddress: string;
 }
 
-const MultisigSidebar = ({
-  chainID,
-  accountSpecific,
-  address,
-  walletAddress,
-}: MultisigSidebarProps) => {
+const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
+  const { chainID, accountSpecific, address, walletAddress } = props;
   const dispatch = useAppDispatch();
   const [isHistory, setIsHistory] = useState<boolean>(false);
   const [isMember, setIsMember] = useState(false);
@@ -54,7 +50,6 @@ const MultisigSidebar = ({
           })
         );
       }
-    } else {
     }
   };
 
@@ -157,7 +152,7 @@ const MultisigSidebar = ({
               className="custom-radio-button-label"
               onClick={() => setIsHistory(false)}
             >
-              <div className="custom-ratio-button">
+              <div className="custom-radio-button">
                 {!isHistory ? (
                   <div className="custom-radio-button-checked"></div>
                 ) : null}
@@ -168,7 +163,7 @@ const MultisigSidebar = ({
               className="custom-radio-button-label"
               onClick={() => setIsHistory(true)}
             >
-              <div className="custom-ratio-button">
+              <div className="custom-radio-button">
                 {isHistory ? (
                   <div className="custom-radio-button-checked"></div>
                 ) : null}

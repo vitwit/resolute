@@ -4,30 +4,17 @@ import { Controller, useForm } from 'react-hook-form';
 import { fromBech32 } from '@cosmjs/encoding';
 import { formatCoin } from '@/utils/util';
 import { Decimal } from '@cosmjs/math';
+import { sendTxnTextFieldStyles } from '../../styles';
 
 interface SendProps {
-  chainID: string;
   address: string;
   onSend: (payload: Msg) => void;
   currency: Currency;
   availableBalance: number;
 }
 
-const textFieldStyles = {
-  '& .MuiTypography-body1': {
-    color: 'white',
-    fontSize: '12px',
-    fontWeight: 200,
-  },
-  '& .MuiOutlinedInput-notchedOutline': {
-    border: 'none',
-  },
-  '& .Mui-disabled': {
-    '-webkit-text-fill-color': '#ffffff6b !important',
-  },
-};
-
-const Send = ({ address, onSend, currency, availableBalance }: SendProps) => {
+const Send: React.FC<SendProps> = (props) => {
+  const { address, onSend, currency, availableBalance } = props;
   const {
     handleSubmit,
     control,
@@ -78,7 +65,7 @@ const Send = ({ address, onSend, currency, availableBalance }: SendProps) => {
           <TextField
             className="bg-[#FFFFFF1A] rounded-2xl mb-6"
             {...field}
-            sx={textFieldStyles}
+            sx={sendTxnTextFieldStyles}
             placeholder="From"
             disabled
             fullWidth
@@ -112,7 +99,7 @@ const Send = ({ address, onSend, currency, availableBalance }: SendProps) => {
           <TextField
             className="bg-[#FFFFFF1A] rounded-2xl mb-6"
             {...field}
-            sx={textFieldStyles}
+            sx={sendTxnTextFieldStyles}
             placeholder="Recipient"
             fullWidth
             error={!!error}
@@ -145,18 +132,18 @@ const Send = ({ address, onSend, currency, availableBalance }: SendProps) => {
         rules={{
           required: 'Amount is required',
           validate: (value) => {
-            return Number(value) > 0;
+            return Number(value) > 0 && Number(value) <= availableBalance;
           },
         }}
         render={({ field, fieldState: { error } }) => (
           <TextField
             className="bg-[#FFFFFF1A] rounded-2xl mb-6"
             {...field}
-            sx={textFieldStyles}
+            sx={sendTxnTextFieldStyles}
             error={!!error}
             helperText={
               errors.amount?.type === 'validate'
-                ? 'Invalid amount'
+                ? 'Insufficient balance'
                 : error?.message
             }
             placeholder="Amount"
@@ -179,7 +166,9 @@ const Send = ({ address, onSend, currency, availableBalance }: SendProps) => {
         )}
       />
 
-      <button className="create-txn-form-btn">Add</button>
+      <button type="submit" className="create-txn-form-btn">
+        Add
+      </button>
     </form>
   );
 };

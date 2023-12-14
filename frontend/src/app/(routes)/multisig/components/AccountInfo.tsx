@@ -1,28 +1,31 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { MultisigAccount } from '@/types/multisig';
-import { getLocalTime } from '@/utils/datetime';
+import { getLocalDate } from '@/utils/datetime';
 import { parseBalance } from '@/utils/denom';
 import { formatCoin, formatStakedAmount, shortenAddress } from '@/utils/util';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
-const AccountInfo = ({
-  chainID,
-  chainName,
-  address,
-  coinMinimalDenom,
-  coinDecimals,
-  coinDenom,
-}: {
+interface AccountInfoProps {
   chainID: string;
   chainName: string;
   address: string;
   coinMinimalDenom: string;
   coinDecimals: number;
   coinDenom: string;
-}) => {
+}
+
+const AccountInfo: React.FC<AccountInfoProps> = (props) => {
+  const {
+    chainID,
+    chainName,
+    address,
+    coinMinimalDenom,
+    coinDecimals,
+    coinDenom,
+  } = props;
   const router = useRouter();
   const [availableBalance, setAvailableBalance] = useState<number>(0);
 
@@ -49,8 +52,8 @@ const AccountInfo = ({
     },
   ];
 
-  const { txnCounts } = multisigAccounts;
-  const actionsRequired = txnCounts[address];
+  const { txnCounts = {} } = multisigAccounts;
+  const actionsRequired = txnCounts?.[address] || 0;
 
   useEffect(() => {
     setAvailableBalance(
@@ -66,7 +69,7 @@ const AccountInfo = ({
           <Image src="/go-back-icon.svg" width={36} height={36} alt="Go Back" />
         </div>
         <div className="text-[16px] leading-10 tracking-[0.64px]">
-          {multisigAccount.account.name}
+          {multisigAccount.account.name || '-'}
         </div>
       </div>
       <AccountDetails
@@ -110,7 +113,7 @@ const AccountDetails = ({
         />
         <div className="w-full flex justify-between">
           <h2 className="text-[16px] font-bold">{name}</h2>
-          <h3 className="text-[14px] font-bold">{getLocalTime(created_at)}</h3>
+          <h3 className="text-[14px] font-bold">{getLocalDate(created_at)}</h3>
         </div>
       </div>
       <div className="p-6 space-y-6">

@@ -1,11 +1,11 @@
 import React from 'react';
 import ChainMultisig from './ChainMultisig';
-import '../multisig.css'
+import '../multisig.css';
 
 const page = ({ params }: { params: { network: string } }) => {
-  const { network: paramChain } = params;
+  const { network } = params;
 
-  return <ChainMultisig paramChain={paramChain} />;
+  return <ChainMultisig network={network} />;
 };
 
 export default page;

@@ -75,3 +75,12 @@ export const MAP_TXNS = {
   '/cosmos.staking.v1beta1.MsgUndelegate': 'UnDelegate',
   Msg: 'Tx Msg',
 };
+export const FAILED_TO_BROADCAST_ERROR = 'Failed to broadcast transaction';
+export const ADDRESS_NOT_FOUND =
+  'Address not found on chain, please enter pubKey';
+export const MULTISIG_TX_TYPES = {
+  send: 'Send',
+  delegate: 'Delegate',
+  undelegate: 'Undelegate',
+  redelegate: 'Redelegate',
+};
