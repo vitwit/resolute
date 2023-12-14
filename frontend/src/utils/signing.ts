@@ -98,8 +98,6 @@ export const signAndBroadcast = async (
 
   try {
     signer = await getClient(aminoConfig, chainId, messages);
-    alert('her....');
-    console.log(signer);
   } catch (error) {
     console.log('error while getting client ', error);
     throw new Error('failed to get wallet');

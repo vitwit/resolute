@@ -5,8 +5,13 @@ import { Controller, useForm } from 'react-hook-form';
 import { Decimal } from '@cosmjs/math';
 import { Autocomplete, InputAdornment, TextField } from '@mui/material';
 import { formatCoin } from '@/utils/util';
+import {
+  autoCompleteStyles,
+  autoCompleteTextFieldStyles,
+  textFieldStyles,
+} from '../../styles';
 
-interface SendProps {
+interface DelegateProps {
   chainID: string;
   address: string;
   onDelegate: (payload: Msg) => void;
@@ -14,27 +19,8 @@ interface SendProps {
   availableBalance: number;
 }
 
-const textFieldStyles = {
-  '& .MuiTypography-body1': {
-    color: 'white',
-    fontSize: '12px',
-    fontWeight: 200,
-  },
-  '& .MuiOutlinedInput-notchedOutline': {
-    border: 'none',
-  },
-  '& .Mui-disabled': {
-    '-webkit-text-fill-color': '#ffffff6b !important',
-  },
-};
-
-const Delegate = ({
-  chainID,
-  address,
-  onDelegate,
-  currency,
-  availableBalance,
-}: SendProps) => {
+const Delegate: React.FC<DelegateProps> = (props: DelegateProps) => {
+  const { chainID, address, onDelegate, currency, availableBalance } = props;
   const {
     handleSubmit,
     control,
@@ -73,7 +59,6 @@ const Delegate = ({
         data.push(temp);
       }
     }
-    console.log(data.length);
     setData(data);
   }, [validators]);
 
@@ -84,24 +69,29 @@ const Delegate = ({
     };
     delegator: string;
   }) => {
-    const baseAmount = Decimal.fromUserInput(
-      data.amount.toString(),
-      Number(currency?.coinDecimals)
-    ).atomics;
+    if (data.validator) {
+      const baseAmount = Decimal.fromUserInput(
+        data.amount.toString(),
+        Number(currency?.coinDecimals)
+      ).atomics;
+      const msgDelegate = {
+        delegatorAddress: data.delegator,
+        validatorAddress: data.validator?.value,
+        amount: {
+          amount: baseAmount,
+          denom: currency?.coinMinimalDenom,
+        },
+      };
 
-    const msgDelegate = {
-      delegatorAddress: data.delegator,
-      validatorAddress: data.validator?.value,
-      amount: {
-        amount: baseAmount,
-        denom: currency?.coinMinimalDenom,
-      },
-    };
+      onDelegate({
+        typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
+        value: msgDelegate,
+      });
+    }
+  };
 
-    onDelegate({
-      typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
-      value: msgDelegate,
-    });
+  const setAmountValue = () => {
+    setValue('amount', availableBalance);
   };
 
   return (
@@ -138,20 +128,7 @@ const Delegate = ({
           <Autocomplete
             disablePortal
             value={value}
-            sx={{
-              '& .MuiAutocomplete-inputRoot': {
-                padding: '7px !important',
-                '& input': {
-                  color: 'white',
-                },
-                '& button': {
-                  color: 'white',
-                },
-              },
-              '& .MuiAutocomplete-popper': {
-                display: 'none !important',
-              },
-            }}
+            sx={autoCompleteStyles}
             isOptionEqualToValue={(option, value) =>
               option.value === value.value
             }
@@ -167,16 +144,7 @@ const Delegate = ({
                 placeholder="Select validator"
                 error={!!error}
                 helperText={error ? error.message : null}
-                sx={{
-                  '& .MuiTypography-body1': {
-                    color: 'white',
-                    fontSize: '12px',
-                    fontWeight: 200,
-                  },
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    border: 'none',
-                  },
-                }}
+                sx={autoCompleteTextFieldStyles}
               />
             )}
           />
@@ -184,7 +152,7 @@ const Delegate = ({
       />
       <div
         className="text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
-        onClick={() => setValue('amount', availableBalance)}
+        onClick={setAmountValue}
       >
         {formatCoin(availableBalance, currency.coinDenom)}
       </div>
@@ -194,7 +162,7 @@ const Delegate = ({
         rules={{
           required: 'Amount is required',
           validate: (value) => {
-            return Number(value) > 0;
+            return Number(value) > 0 && Number(value) <= availableBalance;
           },
         }}
         render={({ field, fieldState: { error } }) => (
@@ -205,8 +173,8 @@ const Delegate = ({
             error={!!error}
             helperText={
               errors.amount?.type === 'validate'
-                ? 'Invalid amount'
-                : error?.message
+                ? 'Insufficient balance'
+                : errors.amount?.message
             }
             placeholder="Amount"
             fullWidth
@@ -228,7 +196,9 @@ const Delegate = ({
         )}
       />
 
-      <button className="create-txn-form-btn">Add</button>
+      <button className="create-txn-form-btn" type="submit">
+        Add
+      </button>
     </form>
   );
 };

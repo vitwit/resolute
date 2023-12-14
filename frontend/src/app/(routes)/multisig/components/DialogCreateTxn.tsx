@@ -82,7 +82,7 @@ const SelectTransactionType = ({
         className="custom-radio-button-label"
         onClick={() => onSelect(false)}
       >
-        <div className="custom-ratio-button">
+        <div className="custom-radio-button">
           {!isFileUpload ? (
             <div className="custom-radio-button-checked"></div>
           ) : null}
@@ -90,7 +90,7 @@ const SelectTransactionType = ({
         <div className="text-[14px] font-medium">Add Manually</div>
       </div>
       <div className="custom-radio-button-label" onClick={() => onSelect(true)}>
-        <div className="custom-ratio-button">
+        <div className="custom-radio-button">
           {isFileUpload ? (
             <div className="custom-radio-button-checked"></div>
           ) : null}

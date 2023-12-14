@@ -450,6 +450,7 @@ export const {
   resetDeleteTxnState,
   resetUpdateTxnState,
   resetSignTxnState,
+  resetVerifyAccountRes
 } = multisigSlice.actions;
 
 export default multisigSlice.reducer;

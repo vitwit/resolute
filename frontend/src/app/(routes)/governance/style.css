@@ -156,7 +156,7 @@
   @apply flex items-center cursor-pointer gap-2;
 }
 
-.custom-ratio-button {
+.custom-radio-button {
   @apply border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center;
 }
 

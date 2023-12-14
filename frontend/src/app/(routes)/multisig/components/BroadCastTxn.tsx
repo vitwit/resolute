@@ -9,7 +9,7 @@ import { RootState } from '@/store/store';
 import { getWalletAmino } from '@/txns/execute';
 import { MultisigAccount, Pubkey, Txn } from '@/types/multisig';
 import { getAuthToken } from '@/utils/localStorage';
-import { NewMultisigThreshoPubkey } from '@/utils/util';
+import { NewMultisigThresholdPubkey } from '@/utils/util';
 import { SigningStargateClient, makeMultisignedTx } from '@cosmjs/stargate';
 import { fromBase64 } from '@cosmjs/encoding';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
@@ -85,7 +85,7 @@ const BroadCastTxn = ({ txn, multisigAccount, chainID }: BroadCastTxnProps) => {
         pubkeys = [...pubkeys, obj];
       });
 
-      const multisigThresholdPK = NewMultisigThreshoPubkey(
+      const multisigThresholdPK = NewMultisigThresholdPubkey(
         pubkeys,
         `${multisigAccount?.account?.threshold}`
       );

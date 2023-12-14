@@ -13,14 +13,10 @@ interface DialogTxnFailedProps {
 }
 
 const DialogTxnFailed = ({ open, onClose, errMsg }: DialogTxnFailedProps) => {
-  const handleClose = () => {
-    onClose();
-  };
-
   return (
     <Dialog
       open={open}
-      onClose={() => handleClose()}
+      onClose={() => onClose()}
       maxWidth="lg"
       PaperProps={{
         sx: {
@@ -32,11 +28,7 @@ const DialogTxnFailed = ({ open, onClose, errMsg }: DialogTxnFailedProps) => {
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
           <div className="px-10 py-6 flex justify-end">
-            <div
-              onClick={() => {
-                handleClose();
-              }}
-            >
+            <div onClick={() => onClose()}>
               <Image
                 className="cursor-pointer"
                 src={CLOSE_ICON_PATH}
@@ -65,7 +57,7 @@ const DialogTxnFailed = ({ open, onClose, errMsg }: DialogTxnFailedProps) => {
                   <button
                     type="submit"
                     className="create-account-btn"
-                    onClick={() => handleClose()}
+                    onClick={() => onClose()}
                   >
                     Cancel
                   </button>

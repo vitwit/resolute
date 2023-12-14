@@ -1,7 +1,7 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { MultisigAccount } from '@/types/multisig';
-import { getLocalTime } from '@/utils/datetime';
+import { getLocalDate, getLocalTime } from '@/utils/datetime';
 import { parseBalance } from '@/utils/denom';
 import { formatCoin, formatStakedAmount, shortenAddress } from '@/utils/util';
 import Image from 'next/image';
@@ -110,7 +110,7 @@ const AccountDetails = ({
         />
         <div className="w-full flex justify-between">
           <h2 className="text-[16px] font-bold">{name}</h2>
-          <h3 className="text-[14px] font-bold">{getLocalTime(created_at)}</h3>
+          <h3 className="text-[14px] font-bold">{getLocalDate(created_at)}</h3>
         </div>
       </div>
       <div className="p-6 space-y-6">

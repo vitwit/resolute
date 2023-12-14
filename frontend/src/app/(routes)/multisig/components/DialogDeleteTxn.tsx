@@ -1,4 +1,4 @@
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { resetDeleteTxnState } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { TxStatus } from '@/types/enums';
@@ -17,24 +17,22 @@ interface DialogDeleteTxnProps {
 }
 
 const DialogDeleteTxn = ({ open, onClose, deleteTx }: DialogDeleteTxnProps) => {
-  const handleClose = () => {
-    onClose();
-  };
+  const dispatch = useAppDispatch();
   const deleteTxnStatus = useAppSelector(
     (state: RootState) => state.multisig.deleteTxnRes.status
   );
 
   useEffect(() => {
-    if (deleteTxnStatus === TxStatus.IDLE) handleClose();
+    if (deleteTxnStatus === TxStatus.IDLE) onClose();
   }, [deleteTxnStatus]);
 
   useEffect(() => {
-    resetDeleteTxnState();
+    dispatch(resetDeleteTxnState());
   }, []);
   return (
     <Dialog
       open={open}
-      onClose={() => handleClose()}
+      onClose={onClose}
       maxWidth="lg"
       PaperProps={{
         sx: {
@@ -46,11 +44,7 @@ const DialogDeleteTxn = ({ open, onClose, deleteTx }: DialogDeleteTxnProps) => {
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
           <div className="px-10 py-6 flex justify-end">
-            <div
-              onClick={() => {
-                handleClose();
-              }}
-            >
+            <div onClick={onClose}>
               <Image
                 className="cursor-pointer"
                 src={CLOSE_ICON_PATH}
@@ -80,7 +74,7 @@ const DialogDeleteTxn = ({ open, onClose, deleteTx }: DialogDeleteTxnProps) => {
                   <button
                     type="submit"
                     className="create-account-btn"
-                    onClick={() => deleteTx()}
+                    onClick={deleteTx}
                     disabled={deleteTxnStatus === TxStatus.PENDING}
                   >
                     {deleteTxnStatus === TxStatus.PENDING
@@ -90,9 +84,7 @@ const DialogDeleteTxn = ({ open, onClose, deleteTx }: DialogDeleteTxnProps) => {
                   <button
                     type="button"
                     className="cancel-button"
-                    onClick={() => {
-                      handleClose();
-                    }}
+                    onClick={onClose}
                   >
                     Cancel
                   </button>

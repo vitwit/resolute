@@ -54,7 +54,6 @@ const MultisigSidebar = ({
           })
         );
       }
-    } else {
     }
   };
 
@@ -157,7 +156,7 @@ const MultisigSidebar = ({
               className="custom-radio-button-label"
               onClick={() => setIsHistory(false)}
             >
-              <div className="custom-ratio-button">
+              <div className="custom-radio-button">
                 {!isHistory ? (
                   <div className="custom-radio-button-checked"></div>
                 ) : null}
@@ -168,7 +167,7 @@ const MultisigSidebar = ({
               className="custom-radio-button-label"
               onClick={() => setIsHistory(true)}
             >
-              <div className="custom-ratio-button">
+              <div className="custom-radio-button">
                 {isHistory ? (
                   <div className="custom-radio-button-checked"></div>
                 ) : null}
