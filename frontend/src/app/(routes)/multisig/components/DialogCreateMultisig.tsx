@@ -21,6 +21,7 @@ import {
 import { getAuthToken } from '@/utils/localStorage';
 import { createAccount } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
+import { ADDRESS_NOT_FOUND } from '@/utils/constants';
 
 interface DialogCreateMultisigProps {
   open: boolean;
@@ -138,6 +139,7 @@ const getPubkey = async (address: string, baseURL: string) => {
       return '';
     }
   } catch (error) {
+    console.log(error);
     return '';
   }
 };
@@ -218,7 +220,6 @@ const DialogCreateMultisig = ({
     index: number,
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    console.log(index, e.target.name, e.target.value);
     const newInputFields = pubKeyFields.map((value, key) => {
       if (e.target.name === 'address') {
         if (index === key) {
@@ -234,7 +235,6 @@ const DialogCreateMultisig = ({
         return value;
       }
     });
-    console.log(newInputFields);
 
     setPubKeyFields(newInputFields);
   };
@@ -264,7 +264,6 @@ const DialogCreateMultisig = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError('');
-    console.log(pubKeyFields);
 
     if (Number(threshold) < 1) {
       dispatch(
@@ -297,13 +296,11 @@ const DialogCreateMultisig = ({
             });
           } else {
             isValid = false;
-            pubKeysList[index].error =
-              'Address not found on chain, please enter pubKey';
+            pubKeysList[index].error = ADDRESS_NOT_FOUND;
             setPubKeyFields((pubKeyFields) => {
               const pubKeysList2 = [...pubKeyFields];
               pubKeysList2[index].pubKey = pubKey;
-              pubKeysList2[index].error =
-                'Address not found on chain, please enter pubKey';
+              pubKeysList2[index].error = ADDRESS_NOT_FOUND;
               return pubKeysList2;
             });
           }

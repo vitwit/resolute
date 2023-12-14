@@ -8,7 +8,7 @@ import {
   multisigByAddress,
   verifyAccount,
 } from '@/store/features/multisig/multisigSlice';
-import { getAuthToken, setAuthToken } from '@/utils/localStorage';
+import { setAuthToken } from '@/utils/localStorage';
 import {
   setError,
   setSelectedNetwork,
@@ -48,6 +48,7 @@ const PageMultisigInfo = ({
   } = getDenomInfo(chainID);
 
   useEffect(() => {
+    const timeoutId = 1;
     setTimeout(() => {
       if (!isVerified({ chainID, address: walletAddress }) && chainID?.length) {
         dispatch(
@@ -58,6 +59,7 @@ const PageMultisigInfo = ({
         );
       }
     }, 1200);
+    return () => clearTimeout(timeoutId);
   }, [walletAddress, chainID]);
 
   useEffect(() => {

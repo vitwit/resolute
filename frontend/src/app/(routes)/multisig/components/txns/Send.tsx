@@ -6,7 +6,6 @@ import { formatCoin } from '@/utils/util';
 import { Decimal } from '@cosmjs/math';
 
 interface SendProps {
-  chainID: string;
   address: string;
   onSend: (payload: Msg) => void;
   currency: Currency;
@@ -145,7 +144,7 @@ const Send = ({ address, onSend, currency, availableBalance }: SendProps) => {
         rules={{
           required: 'Amount is required',
           validate: (value) => {
-            return Number(value) > 0;
+            return Number(value) > 0 && Number(value) <= availableBalance;
           },
         }}
         render={({ field, fieldState: { error } }) => (
@@ -156,7 +155,7 @@ const Send = ({ address, onSend, currency, availableBalance }: SendProps) => {
             error={!!error}
             helperText={
               errors.amount?.type === 'validate'
-                ? 'Invalid amount'
+                ? 'Insufficient balance'
                 : error?.message
             }
             placeholder="Amount"
@@ -179,7 +178,9 @@ const Send = ({ address, onSend, currency, availableBalance }: SendProps) => {
         )}
       />
 
-      <button className="create-txn-form-btn">Add</button>
+      <button type="submit" className="create-txn-form-btn">
+        Add
+      </button>
     </form>
   );
 };

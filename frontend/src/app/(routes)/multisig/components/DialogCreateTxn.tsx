@@ -343,7 +343,6 @@ const DialogCreateTxn = ({
                   </FormControl>
                   {txType === 'Send' ? (
                     <Send
-                      chainID={chainID}
                       address={address}
                       onSend={(payload) => {
                         setMessages([...messages, payload]);

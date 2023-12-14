@@ -8,7 +8,7 @@ import {
   resetVerifyAccountRes,
   verifyAccount,
 } from '@/store/features/multisig/multisigSlice';
-import { getAuthToken, setAuthToken } from '@/utils/localStorage';
+import { setAuthToken } from '@/utils/localStorage';
 import { setError } from '@/store/features/common/commonSlice';
 import VerifyAccount from './VerifyAccount';
 import { isVerified } from '@/utils/util';
@@ -28,7 +28,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
   const { address } = getChainInfo(chainID);
 
   useEffect(() => {
-    let timeoutId = 1;
+    const timeoutId = 1;
     setTimeout(() => {
       if (!isVerified({ chainID, address }) && chainID?.length) {
         dispatch(

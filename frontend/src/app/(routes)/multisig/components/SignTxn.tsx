@@ -86,6 +86,7 @@ const SignTxn = ({
       dispatch(
         signTx({
           data: payload,
+          // below object's data in passed as query params to api request
           queryParams: {
             address: walletAddress,
             signature: authToken?.signature || '',

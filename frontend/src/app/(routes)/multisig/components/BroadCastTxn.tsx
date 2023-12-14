@@ -15,6 +15,7 @@ import { fromBase64 } from '@cosmjs/encoding';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import React, { useEffect, useState } from 'react';
 import { MultisigTxStatus } from '@/types/enums';
+import { FAILED_TO_BROADCAST_ERROR } from '@/utils/constants';
 
 interface BroadCastTxnProps {
   txn: Txn;
@@ -37,7 +38,7 @@ const BroadCastTxn = ({ txn, multisigAccount, chainID }: BroadCastTxnProps) => {
       dispatch(
         setError({
           type: 'error',
-          message: updateTxnRes?.error || 'something went wrong',
+          message: updateTxnRes?.error || FAILED_TO_BROADCAST_ERROR,
         })
       );
     }
@@ -76,13 +77,13 @@ const BroadCastTxn = ({ txn, multisigAccount, chainID }: BroadCastTxnProps) => {
       const mapData = multisigAccount.pubkeys || {};
       let pubkeys: Pubkey[] = [];
 
-      mapData.map((p) => {
+      pubkeys = mapData.map((p) => {
         const parsed = p?.pubkey;
         const obj = {
           type: parsed?.type,
           value: parsed?.value,
         };
-        pubkeys = [...pubkeys, obj];
+        return obj;
       });
 
       const multisigThresholdPK = NewMultisigThresholdPubkey(
@@ -136,7 +137,7 @@ const BroadCastTxn = ({ txn, multisigAccount, chainID }: BroadCastTxnProps) => {
         dispatch(
           setError({
             type: 'error',
-            message: result?.rawLog || 'Failed to broadcast transaction',
+            message: result?.rawLog || FAILED_TO_BROADCAST_ERROR,
           })
         );
         dispatch(
@@ -148,8 +149,7 @@ const BroadCastTxn = ({ txn, multisigAccount, chainID }: BroadCastTxnProps) => {
               body: {
                 status: MultisigTxStatus.FAILED,
                 hash: result?.transactionHash || '',
-                error_message:
-                  result?.rawLog || 'Failed to broadcast transaction',
+                error_message: result?.rawLog || FAILED_TO_BROADCAST_ERROR,
               },
             },
           })
@@ -161,10 +161,9 @@ const BroadCastTxn = ({ txn, multisigAccount, chainID }: BroadCastTxnProps) => {
       dispatch(
         setError({
           type: 'error',
-          message: error?.message || 'Failed to broadcast transaction',
+          message: error?.message || FAILED_TO_BROADCAST_ERROR,
         })
       );
-      console.log('result');
 
       dispatch(
         updateTxn({
@@ -175,8 +174,7 @@ const BroadCastTxn = ({ txn, multisigAccount, chainID }: BroadCastTxnProps) => {
             body: {
               status: MultisigTxStatus.FAILED,
               hash: '',
-              error_message:
-                error?.message || 'Failed to broadcast transaction',
+              error_message: error?.message || FAILED_TO_BROADCAST_ERROR,
             },
           },
         })
