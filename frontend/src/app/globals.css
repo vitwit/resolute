@@ -322,11 +322,11 @@
     rgba(74, 162, 156, 0.4) 0%,
     rgba(139, 61, 167, 0.4) 100%
   );
-  
 }
 
 .wallet-address {
-  @apply flex gap-2 items-center h-6 p-2 text-white text-[14px] font-normal leading-normal rounded-lg opacity-80 bg-[#FFFFFF1A] w-[168px];
+  @apply flex items-center gap-2 opacity-80 text-white text-center text-sm not-italic font-normal leading-[normal] p-2 rounded-lg w-[176px] h-[36px];
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .divider-line {
