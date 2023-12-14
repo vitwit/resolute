@@ -64,16 +64,17 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <div className='p-6'>
+      <form onSubmit={handleSubmit(onSubmit)}>
       <div className="w-full h-[605px] flex">
         <div className="w-1/2 flex flex-col justify-between pr-5">
           <div>
-            <Summary chainIDs={[chainID]} />
+            <Summary chainIDs={[chainID]} borderStyle="rounded-2xl" />
           </div>
           <MultiTxUpload addMsgs={addMsgs} chainID={chainID} />
           <div>
             <div className="text-sm not-italic font-normal leading-[normal] mb-2">
-              Enter Memo
+              Memo
             </div>
             <CustomMultiLineTextField
               rows={4}
@@ -91,17 +92,18 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
           </div>
           <CustomSubmitButton
             pendingStatus={txPendingStatus}
-            circularProgressSize={24}
-            buttonStyle="primary-action-btn w-[144px] h-[40px]"
+            circularProgressSize={12}
+            buttonStyle="primary-custom-btn"
             buttonContent="Send"
           />
         </div>
-        <div className="w-[1px] bg-[#6e6d7d]"></div>
+        <div className="w-[1px] bg-[#6e6d7d] opacity-30"></div>
         <div className="w-1/2 h-full pl-[20px] flex flex-col">
           <Messages msgs={msgs} onDelete={onDelete} onDeleteAll={onDeleteAll} />
         </div>
       </div>
     </form>
+    </div>
   );
 };
 

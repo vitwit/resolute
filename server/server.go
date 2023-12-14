@@ -62,6 +62,7 @@ func main() {
 	e.POST("/multisig", h.CreateMultisigAccount)
 	e.GET("/multisig/accounts/:address", h.GetMultisigAccounts)
 	e.GET("/multisig/:address", h.GetMultisigAccount)
+	e.DELETE("/multisig/:address", h.DeleteMultisigAccount)
 	e.POST("/multisig/:address/tx", h.CreateTransaction)
 	e.GET("/multisig/:address/tx/:id", h.GetTransaction)
 	e.POST("/multisig/:address/tx/:id", h.UpdateTransactionInfo)

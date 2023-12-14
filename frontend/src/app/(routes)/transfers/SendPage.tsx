@@ -13,7 +13,7 @@ import props from './customTextFields.json';
 import CustomSubmitButton from '@/components/CustomButton';
 
 const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
-  const [sortedAssets] = useSortedAssets(chainIDs, {showAvailable:true});
+  const [sortedAssets] = useSortedAssets(chainIDs, { showAvailable: true });
   const [openMemo, setOpenMemo] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<ParsedAsset | undefined>();
   const [slicedAssetsIndex, setSlicedAssetIndex] = useState(0);
@@ -49,7 +49,7 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      amount: 0,
+      amount: undefined,
       address: '',
       memo: '',
     },
@@ -63,12 +63,16 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   };
 
   const onSubmit = (data: {
-    amount: number;
+    amount: number | undefined;
     address: string;
     memo: string;
   }) => {
     if (!selectedAsset) {
       alert('Please select an asset');
+      return;
+    }
+    if (!data.amount) {
+      alert("amount can't be zero");
       return;
     }
     const txInputs = txSendInputs(
@@ -97,91 +101,87 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
           onSelectAsset={onSelectAsset}
         />
       </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <div>
-            <div className="text-sm not-italic font-normal leading-[normal] mb-2">
-              Enter Address
-            </div>
-            <CustomTextField
-              name={sendProps.address.name}
-              rules={sendProps.address.rules}
-              control={control}
-              error={!!errors.address}
-              textFieldClassName={sendProps.address.textFieldClassName}
-              textFieldSize={sendProps.address.textFieldSize}
-              placeHolder={sendProps.address.placeHolder}
-              textFieldCustomMuiSx={sendProps.address.textFieldCustomMuiSx}
-              inputProps={sendProps.address.inputProps}
-              required={true}
-            />
-
-            <div
-              className={`text-red-500 text-xs px-4 opacity-95 mt-1 min-h-[24px]`}
-            >
-              {errors.address?.type === 'validate'
-                ? 'Enter a valid address.'
-                : errors.address?.message}
-            </div>
-            <div className="text-sm not-italic font-normal leading-[normal] mb-2">
-              Amount
-            </div>
-            <CustomTextField
-              name={sendProps.amount.name}
-              rules={amountRules}
-              control={control}
-              error={!!errors.amount}
-              textFieldClassName={sendProps.amount.textFieldClassName}
-              textFieldSize={sendProps.amount.textFieldSize}
-              placeHolder={sendProps.amount.placeHolder}
-              textFieldCustomMuiSx={sendProps.amount.textFieldCustomMuiSx}
-              inputProps={amountInputProps}
-              required={true}
-            />
-
-            <div
-              className={`text-red-500 text-xs px-4 opacity-95 mt-1 min-h-[24px]`}
-            >
-              {!sortedAssets.length
-                ? 'No Assets Found.'
-                : !selectedAsset
-                  ? 'Please select an Asset'
-                  : errors.amount
-                    ? errors.amount?.message
-                    : ''}
-            </div>
-            <div className="min-h-[96px]">
-              <div className="flex items-center gap-2  mb-2">
-                <div className="flex items-center text-sm not-italic font-normal leading-[normal]">
-                  Memo
-                </div>
-                <Image
-                  onClick={() => setOpenMemo((openMemo) => !openMemo)}
-                  src="/drop-down-icon.svg"
-                  className="cursor-pointer"
-                  width={16}
-                  height={16}
-                  alt=""
-                />
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+        <div className="w-full">
+          <div className="flex gap-4 justify-between w-full mt-6">
+            <div className="flex-1 space-y-2">
+              <div className="text-sm not-italic font-normal leading-[normal]">
+              Enter Recipient Address
               </div>
-              {openMemo ? (
-                <CustomTextField
-                  name={sendProps.memo.name}
-                  control={control}
-                  error={!!errors.memo}
-                  textFieldClassName={sendProps.memo.textFieldClassName}
-                  rules={sendProps.memo.rules}
-                  textFieldSize={sendProps.memo.textFieldSize}
-                  placeHolder={sendProps.memo.placeHolder}
-                  textFieldCustomMuiSx={sendProps.memo.textFieldCustomMuiSx}
-                  inputProps={sendProps.memo.inputProps}
-                  required={false}
-                />
+              <CustomTextField
+                name={sendProps.address.name}
+                rules={sendProps.address.rules}
+                control={control}
+                error={!!errors.address}
+                textFieldClassName={sendProps.address.textFieldClassName}
+                textFieldSize={sendProps.address.textFieldSize}
+                placeHolder={sendProps.address.placeHolder}
+                textFieldCustomMuiSx={sendProps.address.textFieldCustomMuiSx}
+                inputProps={sendProps.address.inputProps}
+                required={true}
+              />
+
+              {errors.address ? (
+                <div className="errors-chip">{errors.address?.message}</div>
+              ) : null}
+            </div>
+            <div className="w-[33%] space-y-2">
+              <div className="text-sm not-italic font-normal leading-[normal]">
+                Amount
+              </div>
+              <CustomTextField
+                name={sendProps.amount.name}
+                rules={amountRules}
+                control={control}
+                error={!!errors.amount}
+                textFieldClassName={sendProps.amount.textFieldClassName}
+                textFieldSize={sendProps.amount.textFieldSize}
+                placeHolder={sendProps.amount.placeHolder}
+                textFieldCustomMuiSx={sendProps.amount.textFieldCustomMuiSx}
+                inputProps={amountInputProps}
+                required={true}
+              />
+
+              {!sortedAssets.length ? (
+                <div className="errors-chip">No Assets Found</div>
+              ) : !selectedAsset ? (
+                <div className="errors-chip">Please select an Asset</div>
+              ) : errors.amount ? (
+                <div className="errors-chip">{errors.amount?.message}</div>
               ) : null}
             </div>
           </div>
+          <div className="min-h-[72px] mt-6">
+            <div className="flex items-center gap-2  mb-2">
+              <div className="flex items-center text-sm not-italic font-normal leading-[normal]">
+                Memo
+              </div>
+              <Image
+                onClick={() => setOpenMemo((openMemo) => !openMemo)}
+                src="/drop-down-icon.svg"
+                className="cursor-pointer"
+                width={16}
+                height={16}
+                alt=""
+              />
+            </div>
+            {openMemo ? (
+              <CustomTextField
+                name={sendProps.memo.name}
+                control={control}
+                error={!!errors.memo}
+                textFieldClassName={sendProps.memo.textFieldClassName}
+                rules={sendProps.memo.rules}
+                textFieldSize={sendProps.memo.textFieldSize}
+                placeHolder={sendProps.memo.placeHolder}
+                textFieldCustomMuiSx={sendProps.memo.textFieldCustomMuiSx}
+                inputProps={sendProps.memo.inputProps}
+                required={false}
+              />
+            ) : null}
+          </div>
         </div>
-        <div className="h-full flex gap-10 items-center">
+        <div className="h-full flex gap-10 items-center mt-6">
           <CustomSubmitButton
             pendingStatus={sendTxStatus}
             buttonStyle="primary-action-btn w-[152px] h-[44px]"
@@ -223,7 +223,7 @@ const Cards = ({
                 : '')
             }
             key={index + ' ' + asset.chainID + ' ' + asset.displayDenom}
-            onClick={() => onSelectAsset(asset, index)}
+            onClick={() => onSelectAsset(asset, slicedAssetsIndex+index)}
           >
             <div className="flex gap-2">
               <Image
@@ -232,7 +232,7 @@ const Cards = ({
                 height={32}
                 alt={asset.chainName}
               />
-              <div className="flex items-center text-[14] text-capitalize">
+              <div className="flex items-center text-sm not-italic font-normal leading-[normal] text-capitalize">
                 {asset.chainName}
               </div>
             </div>

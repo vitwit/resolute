@@ -1,15 +1,24 @@
 .card {
   @apply flex flex-col items-start gap-4 self-stretch p-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.05);
+
+  /* &:hover {
+    background: linear-gradient(180deg, rgba(74, 162, 156, 0.40) 0%, rgba(139, 61, 167, 0.40) 100%);
+  } */
 }
 
-
 .selected {
+  box-sizing: border-box;
   border: 1px solid #4AA29C;
   background: linear-gradient(180deg, rgba(74, 162, 156, 0.40) 0%, rgba(139, 61, 167, 0.40) 100%);
 }
 
-.coloured-container {
-  @apply flex justify-between items-center self-stretch px-6 py-4 rounded-2xl;
+.coloured-container { 
+  @apply flex justify-between items-center self-stretch px-6 py-4;
   background: linear-gradient(90deg, #704290 0.19%, #241b61 79.25%);
+}
+
+.errors-chip {
+  @apply opacity-80 rounded-lg text-[#E57575] text-center text-sm not-italic font-normal leading-[normal] max-w-fit py-1 px-2 truncate;
+  background: rgba(229, 117, 117, 0.2);
 }

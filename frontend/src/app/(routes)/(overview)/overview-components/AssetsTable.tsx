@@ -29,24 +29,29 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
               <table className="w-full text-sm leading-normal">
                 <thead className="border-b-[0.5px] border-[#B0B0B033] relative">
                   <tr className="text-left">
-                    <th className="w-1/4">
+                    <th className="w-1/5">
                       <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
                         Available
                       </div>
                     </th>
-                    <th className="w-1/4">
+                    <th className="w-1/5">
                       <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
                         Staked
                       </div>
                     </th>
-                    <th className="w-1/4">
+                    <th className="w-1/5">
                       <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
                         Rewards
                       </div>
                     </th>
-                    <th className="w-1/4">
+                    <th className="w-1/5">
                       <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
                         Price
+                      </div>
+                    </th>
+                    <th className="w-1/5">
+                      <div className="min-h-[17px] flex items-center text-sm not-italic font-normal leading-[normal]">
+                        Value
                       </div>
                     </th>
                     <th className="max-h-[104px]">
