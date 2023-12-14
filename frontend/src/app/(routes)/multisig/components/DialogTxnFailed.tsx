@@ -12,7 +12,8 @@ interface DialogTxnFailedProps {
   errMsg: string;
 }
 
-const DialogTxnFailed = ({ open, onClose, errMsg }: DialogTxnFailedProps) => {
+const DialogTxnFailed: React.FC<DialogTxnFailedProps> = (props) => {
+  const { open, onClose, errMsg } = props;
   return (
     <Dialog
       open={open}

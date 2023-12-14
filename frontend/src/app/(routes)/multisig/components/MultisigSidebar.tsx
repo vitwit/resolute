@@ -15,12 +15,8 @@ interface MultisigSidebarProps {
   walletAddress: string;
 }
 
-const MultisigSidebar = ({
-  chainID,
-  accountSpecific,
-  address,
-  walletAddress,
-}: MultisigSidebarProps) => {
+const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
+  const { chainID, accountSpecific, address, walletAddress } = props;
   const dispatch = useAppDispatch();
   const [isHistory, setIsHistory] = useState<boolean>(false);
   const [isMember, setIsMember] = useState(false);

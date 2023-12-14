@@ -16,7 +16,8 @@ interface DialogDeleteTxnProps {
   deleteTx: () => void;
 }
 
-const DialogDeleteTxn = ({ open, onClose, deleteTx }: DialogDeleteTxnProps) => {
+const DialogDeleteTxn: React.FC<DialogDeleteTxnProps> = (props) => {
+  const { open, onClose, deleteTx } = props;
   const dispatch = useAppDispatch();
   const deleteTxnStatus = useAppSelector(
     (state: RootState) => state.multisig.deleteTxnRes.status

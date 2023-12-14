@@ -19,7 +19,7 @@ interface DelegateProps {
   availableBalance: number;
 }
 
-const Delegate: React.FC<DelegateProps> = (props: DelegateProps) => {
+const Delegate: React.FC<DelegateProps> = (props) => {
   const { chainID, address, onDelegate, currency, availableBalance } = props;
   const {
     handleSubmit,

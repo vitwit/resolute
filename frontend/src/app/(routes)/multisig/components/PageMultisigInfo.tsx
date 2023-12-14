@@ -22,13 +22,13 @@ import MultisigSidebar from './MultisigSidebar';
 import VerifyAccount from './VerifyAccount';
 import { isVerified } from '@/utils/util';
 
-const PageMultisigInfo = ({
-  chainName,
-  address,
-}: {
+interface PageMultisigInfoProps {
   chainName: string;
   address: string;
-}) => {
+}
+
+const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
+  const { chainName, address } = props;
   const dispatch = useAppDispatch();
   const [verified, setVerified] = useState(false);
   const nameToChainIDs = useAppSelector(

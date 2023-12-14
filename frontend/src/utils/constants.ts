@@ -78,3 +78,9 @@ export const MAP_TXNS = {
 export const FAILED_TO_BROADCAST_ERROR = 'Failed to broadcast transaction';
 export const ADDRESS_NOT_FOUND =
   'Address not found on chain, please enter pubKey';
+export const MULTISIG_TX_TYPES = {
+  send: 'Send',
+  delegate: 'Delegate',
+  undelegate: 'Undelegate',
+  redelegate: 'Redelegate',
+};

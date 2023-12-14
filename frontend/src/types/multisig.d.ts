@@ -193,3 +193,10 @@ interface SignTxInputs {
   };
   queryParams: QueryParams;
 }
+
+interface TxnMsgProps {
+  msg: Msg;
+  onDelete: (index: number) => void;
+  currency: Currency;
+  index: number;
+}

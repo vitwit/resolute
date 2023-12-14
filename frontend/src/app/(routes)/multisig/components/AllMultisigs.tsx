@@ -14,15 +14,14 @@ import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Link from 'next/link';
 
-const AllMultisigs = ({
-  address,
-  chainName,
-  chainID,
-}: {
+interface AllMultisigsProps {
   address: string;
   chainName: string;
   chainID: string;
-}) => {
+}
+
+const AllMultisigs: React.FC<AllMultisigsProps> = (props) => {
+  const { address, chainName, chainID } = props;
   const dispatch = useAppDispatch();
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const multisigAccounts = useAppSelector(
@@ -72,11 +71,11 @@ const AllMultisigs = ({
           </button>
         </div>
       </div>
-      {status !== TxStatus.PENDING && !accounts?.length ? (
+      {status !== TxStatus.PENDING && !accounts?.length && (
         <div className="mt-36 text-[16px] font-medium text-center">
           No Multisig account found on your address
         </div>
-      ) : null}
+      )}
       {status === TxStatus.PENDING ? (
         <div className="mt-36 text-center">
           <CircularProgress size={48} sx={{ color: 'purple' }} />

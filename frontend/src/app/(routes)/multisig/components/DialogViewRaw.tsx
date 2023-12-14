@@ -10,7 +10,8 @@ interface DialogViewRawProps {
   txn: Txn;
 }
 
-const DialogViewRaw = ({ open, onClose, txn }: DialogViewRawProps) => {
+const DialogViewRaw: React.FC<DialogViewRawProps> = (props) => {
+  const { open, onClose, txn } = props;
   const handleClose = () => {
     onClose();
   };

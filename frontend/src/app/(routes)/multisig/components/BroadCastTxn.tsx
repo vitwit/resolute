@@ -23,7 +23,8 @@ interface BroadCastTxnProps {
   chainID: string;
 }
 
-const BroadCastTxn = ({ txn, multisigAccount, chainID }: BroadCastTxnProps) => {
+const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
+  const { txn, multisigAccount, chainID } = props;
   const dispatch = useAppDispatch();
   const [load, setLoad] = useState(false);
   const { getChainInfo } = useGetChainInfo();
