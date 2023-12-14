@@ -15,7 +15,7 @@ import { fromBase64 } from '@cosmjs/encoding';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import React, { useEffect, useState } from 'react';
 import { MultisigTxStatus } from '@/types/enums';
-import { FAILED_TO_BROADCAST_ERROR } from '@/utils/constants';
+import { FAILED_TO_BROADCAST_ERROR } from '@/utils/errors';
 
 interface BroadCastTxnProps {
   txn: Txn;

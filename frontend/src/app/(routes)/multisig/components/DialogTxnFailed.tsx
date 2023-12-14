@@ -53,10 +53,7 @@ const DialogTxnFailed: React.FC<DialogTxnFailedProps> = (props) => {
                   {errMsg}
                 </div>
                 <div className="mt-10 flex gap-10 items-center">
-                  <button
-                    className="create-account-btn"
-                    onClick={() => onClose()}
-                  >
+                  <button className="create-account-btn" onClick={onClose}>
                     Cancel
                   </button>
                 </div>

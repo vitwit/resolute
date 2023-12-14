@@ -21,8 +21,17 @@ import {
 import { getAuthToken } from '@/utils/localStorage';
 import { createAccount } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
-import { ADDRESS_NOT_FOUND } from '@/utils/constants';
 import { createMultisigTextFieldStyles } from '../styles';
+import {
+  ADDRESS_NOT_FOUND,
+  DUPLICATE_PUBKEYS_ERROR,
+  FAILED_TO_GENERATE_MULTISIG,
+  INVALID_PUBKEY,
+  MAX_PUBKEYS_ERROR,
+  MAX_THRESHOLD_ERROR,
+  MIN_PUBKEYS_ERROR,
+  MIN_THRESHOLD_ERROR,
+} from '@/utils/errors';
 
 interface DialogCreateMultisigProps {
   open: boolean;
@@ -167,7 +176,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       },
       { ...pubKeyObj },
     ]);
-  }, []);
+  }, [pubKey]);
 
   const handleClose = () => {
     onClose();
@@ -216,10 +225,11 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
 
   const handleAddPubKey = () => {
     if (pubKeyFields?.length >= MAX_PUB_KEYS) {
+      alert(MAX_PUBKEYS_ERROR);
       dispatch(
         setError({
           type: 'error',
-          message: "You can't add more than 7 pub keys",
+          message: MAX_PUBKEYS_ERROR,
         })
       );
       return;
@@ -230,7 +240,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (parseInt(e.target.value) > pubKeyFields?.length) {
-      alert('Threshold can not be greater than pubkeys');
+      alert(MAX_THRESHOLD_ERROR);
       return;
     }
     setThreshold(parseInt(e.target.value));
@@ -241,78 +251,59 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     setFormError('');
 
     if (Number(threshold) < 1) {
-      dispatch(
-        setError({ type: 'error', message: 'Threshold must be greater than 1' })
-      );
+      alert(MIN_THRESHOLD_ERROR);
+      dispatch(setError({ type: 'error', message: MIN_THRESHOLD_ERROR }));
       return;
     }
 
-    const pubKeys = pubKeyFields.map((v) => v.value);
-
-    if (!pubKeys?.length) {
-      dispatch(
-        setError({ type: 'error', message: 'At least 1 pubkey is required' })
-      );
+    if (!pubKeyFields?.length) {
+      alert(MIN_PUBKEYS_ERROR);
+      dispatch(setError({ type: 'error', message: MIN_PUBKEYS_ERROR }));
       return;
     }
 
     let isValid = true;
-    pubKeyFields.forEach(async (field, index) => {
+    const pubKeyValidationPromises = pubKeyFields.map(async (field, index) => {
       if (!field.isPubKey) {
         const pubKey = await getPubkey(field.address, baseURL);
-        const pubKeysList = [...pubKeyFields];
-        if (!pubKeysList[index].isPubKey) {
-          if (pubKey.length) {
-            setPubKeyFields((pubKeyFields) => {
-              const pubKeysList2 = [...pubKeyFields];
-              pubKeysList2[index].pubKey = pubKey;
-              pubKeysList2[index].error = '';
-              return pubKeysList2;
-            });
-          } else {
-            isValid = false;
-            pubKeysList[index].error = ADDRESS_NOT_FOUND;
-            setPubKeyFields((pubKeyFields) => {
-              const pubKeysList2 = [...pubKeyFields];
-              pubKeysList2[index].pubKey = pubKey;
-              pubKeysList2[index].error = ADDRESS_NOT_FOUND;
-              return pubKeysList2;
-            });
-          }
+        if (pubKey.length) {
+          return { index, pubKey, error: '' };
+        } else {
+          isValid = false;
+          return { index, pubKey: '', error: ADDRESS_NOT_FOUND };
         }
       } else if (field.pubKey.length) {
-        const pubKeysList = [...pubKeyFields];
         if (!isValidPubKey(field.pubKey)) {
           isValid = false;
-          pubKeysList[index].error = 'Invalid pubKey';
-          setPubKeyFields((pubKeyFields) => {
-            const pubKeysList2 = [...pubKeyFields];
-            pubKeysList2[index].pubKey = pubKeysList[index].pubKey;
-            pubKeysList2[index].error = pubKeysList[index].error;
-            return pubKeysList2;
-          });
+          return { index, pubKey: field.pubKey, error: INVALID_PUBKEY };
         } else {
-          pubKeysList[index].error = '';
-          setPubKeyFields((pubKeyFields) => {
-            const pubKeysList2 = [...pubKeyFields];
-            pubKeysList2[index].pubKey = pubKeysList[index].pubKey;
-            pubKeysList2[index].error = pubKeysList[index].error;
-            return pubKeysList2;
-          });
+          return { index, pubKey: field.pubKey, error: '' };
         }
       }
+      return { index, pubKey: '', error: '' };
+    });
+
+    const results = await Promise.all(pubKeyValidationPromises);
+    results.forEach((result) => {
+      const pubKeysList = [...pubKeyFields];
+      pubKeysList[result.index].pubKey = result.pubKey;
+      pubKeysList[result.index].error = result.error;
+      setPubKeyFields(pubKeysList);
     });
 
     if (!isValid) {
       return;
     }
 
+    const pubKeys = pubKeyFields.map((v) => v.pubKey);
+
     const uniquePubKeys = Array.from(new Set(pubKeys));
     if (uniquePubKeys?.length !== pubKeys?.length) {
+      alert(DUPLICATE_PUBKEYS_ERROR);
       dispatch(
         setError({
           type: 'error',
-          message: 'You have entered duplicate pubkeys',
+          message: DUPLICATE_PUBKEYS_ERROR,
         })
       );
       return;
@@ -351,7 +342,13 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       );
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      dispatch(setError({ type: 'error', message: error }));
+      alert(error || FAILED_TO_GENERATE_MULTISIG);
+      dispatch(
+        setError({
+          type: 'error',
+          message: error || FAILED_TO_GENERATE_MULTISIG,
+        })
+      );
     }
   };
 
@@ -359,6 +356,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     if (createMultiAccRes?.status === 'idle') {
       dispatch(setError({ type: 'success', message: 'Successfully created' }));
     } else if (createMultiAccRes?.status === 'rejected') {
+      alert(createMultiAccRes?.error);
       dispatch(setError({ type: 'error', message: createMultiAccRes?.error }));
     }
   }, [createMultiAccRes]);

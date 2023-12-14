@@ -96,7 +96,9 @@ export const createAccount = createAsyncThunk(
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError)
-        return rejectWithValue({ message: error.message });
+        return rejectWithValue({
+          message: error?.response?.data?.message || ERR_UNKNOWN,
+        });
       return rejectWithValue({ message: ERR_UNKNOWN });
     }
   }
@@ -450,7 +452,7 @@ export const {
   resetDeleteTxnState,
   resetUpdateTxnState,
   resetSignTxnState,
-  resetVerifyAccountRes
+  resetVerifyAccountRes,
 } = multisigSlice.actions;
 
 export default multisigSlice.reducer;
