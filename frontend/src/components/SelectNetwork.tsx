@@ -233,6 +233,14 @@ const NetworkItem = ({
   handleClose: () => void;
 }) => {
   const dispatch = useAppDispatch();
+
+  const limitChainName = (name: string, maxLength: number): string => {
+    if (name.length > maxLength) {
+      return name.substring(0, maxLength) + '...'; 
+    }
+    return name;
+  };
+
   const isSelected = (): boolean => {
     return selectedNetworkName.toLowerCase() === chainName.toLowerCase();
   };
@@ -250,7 +258,7 @@ const NetworkItem = ({
       <Avatar src={logo} sx={{ width: 32, height: 32 }} />
       <h3 className={`text-[14px] leading-normal opacity-100`}>
         <span className={isSelected() ? ` font-semibold` : ` font-light`}>
-          {chainName}
+          {limitChainName(chainName, 15)}
         </span>
       </h3>
     </Link>
