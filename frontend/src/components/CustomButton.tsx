@@ -14,13 +14,15 @@ const CustomSubmitButton = ({
   buttonContent: string;
 }) => {
   return (
-    <button type="submit" className={buttonStyle}>
-      {pendingStatus === TxStatus.PENDING ? (
-        <CircularProgress size={circularProgressSize} />
-      ) : (
-        <>{buttonContent}</>
-      )}
-    </button>
+    <div>
+      <button type="submit" className={buttonStyle}>
+        {pendingStatus === TxStatus.PENDING ? (
+          <CircularProgress size={circularProgressSize} />
+        ) : (
+          <>{buttonContent}</>
+        )}
+      </button>
+    </div>
   );
 };
 

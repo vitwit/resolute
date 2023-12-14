@@ -127,7 +127,7 @@ const RightOverview = ({
     },
     {
       value: getVotesPercentage(Number(get(tallyResult, 'no_with_veto'))),
-      color: '#EFFF34',
+      color: '#5885AF',
       label: 'Veto',
     },
   ];
@@ -178,95 +178,96 @@ const RightOverview = ({
         </div>
         {proposalLoadingStatus !== 'pending' ? (
           <>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between w-full">
-                  <div className="flex space-x-2">
-                    <Image
-                      src={networkLogo}
-                      width={32}
-                      height={32}
-                      alt="Network Logo"
-                    />
-                    <p className="proposal-text-extralight items-center flex">
-                      #{get(proposalInfo, 'proposal_id')} | Proposal
-                    </p>
+            <div className="flex-1 flex flex-col justify-between">
+              <div className="space-y-4 w-full">
+                <div className="space-y-3">
+                  <div className="flex justify-between w-full">
+                    <div className="flex space-x-2">
+                      <Image
+                        src={networkLogo}
+                        width={32}
+                        height={32}
+                        alt="Network Logo"
+                      />
+                      <p className="proposal-text-extralight items-center flex">
+                        #{get(proposalInfo, 'proposal_id')} | Proposal
+                      </p>
+                    </div>
+                    <div className="flex items-center proposal-text-extralight">
+                      {status === 'active' ? (
+                        <>
+                          {`Voting ends in ${getTimeDifferenceToFutureDate(
+                            get(proposalInfo, 'voting_end_time')
+                          )}`}
+                        </>
+                      ) : (
+                        <>
+                          {`Deposit period ends in ${getTimeDifferenceToFutureDate(
+                            get(proposalInfo, 'deposit_end_time')
+                          )}`}
+                        </>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center proposal-text-extralight">
-                    {status === 'active' ? (
-                      <>
-                        {`Voting ends in ${getTimeDifferenceToFutureDate(
-                          get(proposalInfo, 'voting_end_time')
-                        )}`}
-                      </>
-                    ) : (
-                      <>
-                        {`Deposit period ends in ${getTimeDifferenceToFutureDate(
-                          get(proposalInfo, 'deposit_end_time')
-                        )}`}
-                      </>
-                    )}
+                  <div className="font-bold text-base text-white">
+                    {get(proposalInfo, 'content.title') ||
+                      get(proposalInfo, 'content.@type')}
                   </div>
                 </div>
-                <div className="font-bold text-base text-white">
-                  {get(proposalInfo, 'content.title') ||
-                    get(proposalInfo, 'content.@type')}
-                </div>
-              </div>
-              <div className="view-full">
+
+                <div className="space-y-6">
+                  <div className="proposal-text-normal">
+                    {truncatedDescription}
+                    {isDescriptionTruncated && '...'}
+                  </div>
+                  <div className="flex justify-between">
+                    <button
+                      className="button"
+                      onClick={() => {
+                        if (isStatusVoting) {
+                          setIsVotePopupOpen(true);
+                        } else {
+                          setIsDepositPopupOpen(true);
+                        }
+                      }}
+                    >
+                      <p className="proposal-text-medium">
+                        {isStatusVoting ? 'Vote' : 'Deposit'}
+                      </p>
+                    </button>
+                    <div className="view-full">
                 <Link href={`/governance/${chainName}/${proposalId}`}>
                   View Full Proposal
                 </Link>
               </div>
-              <div className="space-y-6">
-                <div className="proposal-text-normal">
-                  {truncatedDescription}
-                  {isDescriptionTruncated && '...'}
-                </div>
-                <div className="flex justify-between">
-                  <button
-                    className="button"
-                    onClick={() => {
-                      if (isStatusVoting) {
-                        setIsVotePopupOpen(true);
-                      } else {
-                        setIsDepositPopupOpen(true);
-                      }
-                    }}
-                  >
-                    <p className="proposal-text-medium">
-                      {isStatusVoting ? 'Vote' : 'Deposit'}
-                    </p>
-                  </button>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="w-full">
-              <VotePopup
-                chainID={chainID}
-                votingEndsInDays={getTimeDifferenceToFutureDate(
-                  get(proposalInfo, 'voting_end_time')
-                )}
-                proposalId={proposalId}
-                proposalname={get(proposalInfo, 'content.title')}
-                open={isVotePopupOpen}
-                onClose={handleCloseVotePopup}
-                networkLogo={networkLogo}
-              />
+              <div className="w-full">
+                <VotePopup
+                  chainID={chainID}
+                  votingEndsInDays={getTimeDifferenceToFutureDate(
+                    get(proposalInfo, 'voting_end_time')
+                  )}
+                  proposalId={proposalId}
+                  proposalname={get(proposalInfo, 'content.title')}
+                  open={isVotePopupOpen}
+                  onClose={handleCloseVotePopup}
+                  networkLogo={networkLogo}
+                />
 
-              <DepositPopup
-                chainID={chainID}
-                votingEndsInDays={getTimeDifferenceToFutureDate(
-                  get(proposalInfo, 'deposit_end_time')
-                )}
-                proposalId={proposalId}
-                proposalname={get(proposalInfo, 'content.title')}
-                onClose={handleCloseDepositPopup}
-                open={isDepositPopupOpen}
-                networkLogo={networkLogo}
-              />
-
-              <div className="mt-20"></div>
+                <DepositPopup
+                  chainID={chainID}
+                  votingEndsInDays={getTimeDifferenceToFutureDate(
+                    get(proposalInfo, 'deposit_end_time')
+                  )}
+                  proposalId={proposalId}
+                  proposalname={get(proposalInfo, 'content.title')}
+                  onClose={handleCloseDepositPopup}
+                  open={isDepositPopupOpen}
+                  networkLogo={networkLogo}
+                />
+              </div>
               {isStatusVoting ? (
                 <div className="space-y-2 w-full">
                   <div className="vote-grid">
@@ -293,7 +294,7 @@ const RightOverview = ({
                           <Tooltip
                             title={`${quorumPercent}% / ${quorumRequired}%`}
                           >
-                            <div className="bg-white w-full h-[10px] rounded-full">
+                            <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
                               <div
                                 style={{ width: `${quorumPercent}%` }}
                                 className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}

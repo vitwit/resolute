@@ -124,7 +124,7 @@ const ProposalOverviewVote = ({
     {
       value:
         getVotesPercentage(Number(get(tallyResult, 'no_with_veto', 0))) || 0,
-      color: '#EFFF34',
+      color: '#5885AF',
       label: 'Veto',
     },
   ];
@@ -235,81 +235,82 @@ const ProposalOverviewVote = ({
         <div className="proposal-text-big">Proposal Overview</div>
       </div>
       <div className="flex gap-10">
-        <div className="proposal-brief overflow-y-scroll max-h-screen">
-          <div className="proposal-div w-full">
-            <div className="flex justify-between w-full">
-              <div className="flex space-x-2 items-center">
-                <Image
-                  className="w-[32px] h-[32px]"
-                  src={networkLogo}
-                  width={32}
-                  height={32}
-                  alt="Network-Logo"
-                />
-                <p className="font-bold text-[16px] flex items-center">
-                  #{get(proposalInfo, 'proposal_id')} | Proposal
-                </p>
-              </div>
-              <div>
-                <button
-                  className="button"
-                  onClick={() => {
-                    if (isStatusVoting) {
-                      setIsVotePopupOpen(true);
-                    } else {
-                      setIsDepositPopupOpen(true);
-                    }
-                  }}
-                >
-                  <p className="proposal-text-medium">
-                    {isStatusVoting ? 'Vote' : 'Deposit'}
+        
+          <div className="proposal-brief overflow-y-scroll max-h-screen">
+            <div className="proposal-div w-full">
+              <div className="flex justify-between w-full">
+                <div className="flex space-x-2 items-center">
+                  <Image
+                    className="w-[32px] h-[32px]"
+                    src={networkLogo}
+                    width={32}
+                    height={32}
+                    alt="Network-Logo"
+                  />
+                  <p className="font-bold text-[16px] flex items-center">
+                    #{get(proposalInfo, 'proposal_id')} | Proposal
                   </p>
-                </button>
+                </div>
+                <div>
+                  <button
+                    className="button"
+                    onClick={() => {
+                      if (isStatusVoting) {
+                        setIsVotePopupOpen(true);
+                      } else {
+                        setIsDepositPopupOpen(true);
+                      }
+                    }}
+                  >
+                    <p className="proposal-text-medium">
+                      {isStatusVoting ? 'Vote' : 'Deposit'}
+                    </p>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="space-y-6 mt-4">
-            <div className="font-bold text-[20px] leading-6">
-              <ReactMarkdown>
-                {get(proposalInfo, 'content.title') ||
-                  get(proposalInfo, 'content.@type')}
+            <div className="space-y-6 mt-4">
+              <div className="font-bold text-[20px] leading-6">
+                <ReactMarkdown>
+                  {get(proposalInfo, 'content.title') ||
+                    get(proposalInfo, 'content.@type')}
+                </ReactMarkdown>
+              </div>
+
+              <ReactMarkdown className="text-[#FFFFFFCC] leading-6 text-[16px]">
+                {get(proposalInfo, 'content.description')}
               </ReactMarkdown>
             </div>
-
-            <ReactMarkdown className="text-[#FFFFFFCC] leading-6 text-[16px]">
-              {get(proposalInfo, 'content.description')}
-            </ReactMarkdown>
           </div>
-        </div>
 
-        <VotePopup
-          chainID={chainID}
-          votingEndsInDays={getTimeDifferenceToFutureDate(
-            get(proposalInfo, 'voting_end_time')
-          )}
-          open={isVotePopupOpen}
-          onClose={handleCloseVotePopup}
-          proposalId={proposalId}
-          proposalname={get(proposalInfo, 'content.title')}
-          networkLogo={networkLogo}
-        />
+          <VotePopup
+            chainID={chainID}
+            votingEndsInDays={getTimeDifferenceToFutureDate(
+              get(proposalInfo, 'voting_end_time')
+            )}
+            open={isVotePopupOpen}
+            onClose={handleCloseVotePopup}
+            proposalId={proposalId}
+            proposalname={get(proposalInfo, 'content.title')}
+            networkLogo={networkLogo}
+          />
 
-        <DepositPopup
-          chainID={chainID}
-          votingEndsInDays={getTimeDifferenceToFutureDate(
-            get(proposalInfo, 'deposit_end_time')
-          )}
-          proposalId={proposalId}
-          proposalname={get(proposalInfo, 'content.title')}
-          onClose={handleCloseDepositPopup}
-          open={isDepositPopupOpen}
-          networkLogo={networkLogo}
-        />
-
+          <DepositPopup
+            chainID={chainID}
+            votingEndsInDays={getTimeDifferenceToFutureDate(
+              get(proposalInfo, 'deposit_end_time')
+            )}
+            proposalId={proposalId}
+            proposalname={get(proposalInfo, 'content.title')}
+            onClose={handleCloseDepositPopup}
+            open={isDepositPopupOpen}
+            networkLogo={networkLogo}
+          />
+        
         {isStatusVoting ? (
           <div className="flex">
             <div className="space-y-4">
-              <div className="status-grid w-[480px]">
+              <div className="status-grid w-[450px]">
                 <div className="status-view-grid w-full">
                   <div className="status-view w-full">
                     <div className="status-pass w-full">
@@ -369,7 +370,7 @@ const ProposalOverviewVote = ({
 
                     {quorumPercent ? (
                       <Tooltip title={`${quorumPercent}% / ${quorumRequired}%`}>
-                        <div className="bg-white w-full h-[10px] rounded-full">
+                        <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
                           <div
                             style={{ width: `${quorumPercent}%` }}
                             className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}

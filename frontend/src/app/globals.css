@@ -74,10 +74,7 @@
   }
 }
 
-@layer utilities {
-  @variants responsive {
-  }
-
+@layer components {
   .text-capitalize {
     text-transform: capitalize;
   }
@@ -146,29 +143,36 @@
 
   .custom-btn {
     @apply rounded-2xl text-white text-[16px] font-medium leading-3;
-    background: linear-gradient(180deg,
+    background:
+      linear-gradient(
+        180deg,
         rgba(74, 162, 156, 0.9) 0%,
-        rgba(139, 61, 167, 0.9) 100%),
+        rgba(139, 61, 167, 0.9) 100%
+      ),
       lightgray 50% / cover no-repeat;
   }
 
   .primary-custom-btn {
     @apply rounded-2xl text-white text-base not-italic font-medium leading-5 tracking-[0.64px] h-10 flex items-center justify-center px-10;
-    background: linear-gradient(180deg,
+    background:
+      linear-gradient(
+        180deg,
         rgba(74, 162, 156, 0.9) 0%,
-        rgba(139, 61, 167, 0.9) 100%),
+        rgba(139, 61, 167, 0.9) 100%
+      ),
       lightgray 50% / cover no-repeat;
   }
 
   .secondary-custom-btn {
     @apply rounded-lg text-white text-xs not-italic font-medium leading-5 tracking-[0.48px] h-8 flex items-center justify-center px-3;
-    background: linear-gradient(180deg,
+    background:
+      linear-gradient(
+        180deg,
         rgba(74, 162, 156, 0.9) 0%,
-        rgba(139, 61, 167, 0.9) 100%),
+        rgba(139, 61, 167, 0.9) 100%
+      ),
       lightgray 50% / cover no-repeat;
   }
-
-
 
   .recent-txn-item-icon {
     @apply rounded-lg;
@@ -308,19 +312,25 @@
 }
 
 .network-item {
-  @apply p-4 rounded-2xl h-16 flex gap-2 items-center cursor-pointer bg-[#FFFFFF0D] hover:bg-[#ffffff2b];
+  @apply p-4 rounded-2xl h-16 flex gap-2 items-center cursor-pointer bg-[#FFFFFF0D];
 }
 
 .network-item-selected {
-  @apply border-[#ffffff3d] border-[0.1px] bg-[#ffffff24];
+  @apply border rounded-2xl border-solid border-[#4AA29C];
+  background: linear-gradient(
+    180deg,
+    rgba(74, 162, 156, 0.4) 0%,
+    rgba(139, 61, 167, 0.4) 100%
+  );
 }
 
 .wallet-address {
-  @apply flex gap-2 items-center h-6 p-2 text-white text-[14px] font-normal leading-normal rounded-lg opacity-80 bg-[#FFFFFF1A] w-[168px];
+  @apply flex items-center gap-2 opacity-80 text-white text-center text-sm font-normal leading-[normal] p-2 rounded-lg w-[176px] h-[36px];
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .divider-line {
-  @apply h-[1px] w-full my-4;
+  @apply h-[1px] w-full my-4 opacity-50;
   background: linear-gradient(90deg, #4aa29c 7.46%, #8b3da7 94.28%);
 }
 
@@ -437,3 +447,4 @@
   @apply flex justify-center items-center gap-6 px-10 py-6 rounded-[100px] w-[226px] cursor-pointer;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
+

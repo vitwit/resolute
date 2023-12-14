@@ -137,7 +137,7 @@ const DialogSelectNetwork = ({
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="pb-12 select-network">
-          <div className="px-10 py-6 flex justify-end">
+          <div className="px-10 py-10 flex justify-end">
             <div
               onClick={() => {
                 handleClose();
@@ -233,6 +233,9 @@ const NetworkItem = ({
   handleClose: () => void;
 }) => {
   const dispatch = useAppDispatch();
+
+const shortenName = (name: string, maxLength: number): string => name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
+
   const isSelected = (): boolean => {
     return selectedNetworkName.toLowerCase() === chainName.toLowerCase();
   };
@@ -250,7 +253,7 @@ const NetworkItem = ({
       <Avatar src={logo} sx={{ width: 32, height: 32 }} />
       <h3 className={`text-[14px] leading-normal opacity-100`}>
         <span className={isSelected() ? ` font-semibold` : ` font-light`}>
-          {chainName}
+          {shortenName(chainName, 15)}
         </span>
       </h3>
     </Link>
