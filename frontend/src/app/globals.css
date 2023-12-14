@@ -330,7 +330,7 @@
 }
 
 .divider-line {
-  @apply h-[1px] w-full my-4;
+  @apply h-[1px] w-full my-4 opacity-50;
   background: linear-gradient(90deg, #4aa29c 7.46%, #8b3da7 94.28%);
 }
 
