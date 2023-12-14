@@ -1,6 +1,6 @@
 import { DialogContent, Dialog } from '@mui/material';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import { supportedWallets } from '@/utils/contants';
 
 const WalletPopup = ({
@@ -12,6 +12,13 @@ const WalletPopup = ({
   onClose: () => void;
   selectWallet: (walletName: string) => void;
 }) => {
+  const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
+
+  const handleWalletClick = (walletName: string) => {
+    setSelectedWallet(walletName);
+    selectWallet(walletName); // Pass the walletName directly
+  };
+
   return (
     <Dialog
       open={isOpen}
@@ -45,10 +52,14 @@ const WalletPopup = ({
               <div className="flex space-x-6">
                 {supportedWallets.map((wallet) => (
                   <div
-                    className="wallet-grid"
-                    onClick={() => {
-                      selectWallet(wallet.name.toLocaleLowerCase());
-                    }}
+                    className={`wallet-grid ${
+                      selectedWallet === wallet.name.toLocaleLowerCase()
+                        ? 'selected-wallet'
+                        : ''
+                    }`}
+                    onClick={() =>
+                      handleWalletClick(wallet.name.toLocaleLowerCase())
+                    }
                     key={wallet.name}
                   >
                     <div className="flex space-x-2">
