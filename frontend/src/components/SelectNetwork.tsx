@@ -253,7 +253,7 @@ const shortenName = (name: string, maxLength: number): string => name.length > m
       <Avatar src={logo} sx={{ width: 32, height: 32 }} />
       <h3 className={`text-[14px] leading-normal opacity-100`}>
         <span className={isSelected() ? ` font-semibold` : ` font-light`}>
-          {limitChainName(chainName, 15)}
+          {shortenName(chainName, 15)}
         </span>
       </h3>
     </Link>
