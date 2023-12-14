@@ -65,7 +65,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="main">
       <TransactionSuccessPopup />
-      <div className="sidebar">
+      <div className="sidebar overflow-y-scroll">
         <div className="">
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
         </div>
@@ -81,7 +81,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
             />
           ))}
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
           <Tooltip title="History" placement="right">
             <Link href="/history">
               <div
