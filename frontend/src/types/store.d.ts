@@ -5,9 +5,10 @@ interface BasicChainInfo {
   rest: string;
   rpc: string;
   cosmosAddress: string;
+  address: string;
   prefix: string;
   feeAmount: number;
-  address: string;
+  chainName: string;
 }
 
 interface Coin {

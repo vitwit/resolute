@@ -3,9 +3,20 @@ import { useMemo } from 'react';
 import { useAppSelector } from './StateHooks';
 import { RootState } from '@/store/store';
 import chainDenoms from '@/utils/chainDenoms.json';
+import { filterAsset } from '@/utils/util';
 const chainDenomsData = chainDenoms as AssetData;
 
-const useSortedAssets = (chainIDs: string[]): [ParsedAsset[]] => {
+export interface Options {
+  showStaked?: boolean;
+  showRewards?: boolean;
+  showAvailable?: boolean;
+  showValuedTokens?: boolean;
+}
+
+const useSortedAssets = (
+  chainIDs: string[],
+  options: Options
+): [ParsedAsset[]] => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const balanceChains = useAppSelector(
     (state: RootState) => state.bank.balances
@@ -26,10 +37,12 @@ const useSortedAssets = (chainIDs: string[]): [ParsedAsset[]] => {
 
     chainIDs.forEach((chainID) => {
       const config = networks?.[chainID]?.network?.config;
+      const network = networks?.[chainID]?.network;
       const currency = config?.currencies?.[0];
       const chainName = config?.chainName.toLowerCase();
       const nativeMinimalDenom = currency.coinMinimalDenom;
       const chainBalances = balanceChains?.[chainID]?.list || [];
+      const chainLogoURL = network?.logos?.menu;
 
       chainBalances.forEach((balance) => {
         const denomInfo = chainDenomsData[chainName]?.filter((denomInfo) => {
@@ -78,6 +91,8 @@ const useSortedAssets = (chainIDs: string[]): [ParsedAsset[]] => {
             staked: stakedAmountInDenoms,
             rewards: rewardsAmountInDenoms,
             denom: minimalDenom,
+            chainLogoURL,
+            decimals,
           };
         } else if (denomInfo?.length) {
           const usdPriceInfo: TokenInfo | undefined =
@@ -102,9 +117,11 @@ const useSortedAssets = (chainIDs: string[]): [ParsedAsset[]] => {
             denomInfo: denomInfo,
             inflation: inflation,
             chainID: chainID,
+            chainLogoURL,
+            decimals: denomInfo[0].decimals,
           };
         }
-        if (asset && asset.usdPrice) {
+        if (asset && filterAsset(asset, options)) {
           sortedAssets = [...sortedAssets, asset];
         }
       });

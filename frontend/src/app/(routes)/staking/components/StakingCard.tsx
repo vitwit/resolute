@@ -92,7 +92,7 @@ const StakingCard = ({
         />
       </div>
       {isMenuOpen && (
-        <div ref={menuRef} className="absolute top-[82%] right-[13%] z-10">
+        <div ref={menuRef} className="absolute top-[85%] right-[8%] z-10">
           <StakingActionsMenu handleMenuAction={handleMenuAction} />
         </div>
       )}
@@ -109,7 +109,7 @@ export const StakingCardHeader = ({
   networkLogo,
 }: StakingCardHeaderProps) => {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between items-center">
       <Tooltip title={validator} placement="top-start">
         <div className="flex-center-center gap-2 h-10 cursor-default">
           <ValidatorLogo identity={identity} width={24} height={24} />

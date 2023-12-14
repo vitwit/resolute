@@ -8,7 +8,7 @@
 }
 
 .assets-table {
-    @apply rounded-3xl text-white bg-[#0e0b26];
+    @apply rounded-3xl text-white bg-[#0e0b26] flex flex-col flex-1;
     backdrop-filter: blur(2px);
 }
 
@@ -21,7 +21,7 @@
 }
 
 .assets-table tbody tr {
-    @apply hover:bg-[#343142];
+    @apply hover:bg-[#1a1731];
 }
 
 .border-1 {
@@ -32,36 +32,20 @@
 }
 
 .asset-action {
-    @apply w-8 h-8 rounded-lg flex justify-center items-center cursor-pointer;
+    @apply w-8 h-8 rounded-lg flex justify-center items-center;
     background: linear-gradient(180deg,
             rgba(74, 162, 156, 0.8) 0%,
             rgba(139, 61, 167, 0.8) 100%),
         lightgray 50% / cover no-repeat;
 }
 
-.right-section {
-    @apply flex flex-col p-6 bg-[#0e0b26] min-w-[500px] min-h-screen max-h-screen overflow-y-scroll;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+.asset-action-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
-.recent-txn-item-icon {
-    @apply rounded-lg;
-    background: linear-gradient(180deg, #0b071d 0%, #0e0b26 100%);
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset;
-}
-
-.chip {
-    @apply rounded-2xl px-2 py-1 text-[12px]
-}
-
-.fill {
-    background: linear-gradient(180deg, #4AA29C 0%, #8B3DA7 100%);
-}
-
-.formatted-text-1 {
-    @apply text-sm font-normal leading-[14px];
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 293px;
+.h-line {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(74, 162, 156, 0.50) 7.46%, rgba(139, 61, 167, 0.50) 94.28%);
+    opacity: 50%;
 }

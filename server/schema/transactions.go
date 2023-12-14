@@ -8,7 +8,7 @@ import (
 type Transaction struct {
 	ID              int             `pg:"id,pk" json:"id"`
 	MultisigAddress string          `pg:"multisig_address,use_zero" json:"multisig_address"`
-	Fee             json.RawMessage `pg:"fee" json:"fee"`
+	Fee             json.RawMessage `pg:"fee" json:"fee" sql:"-"`
 	Status          string          `pg:"status,use_zero" json:"status"`
 	Messages        json.RawMessage `pg:"messages" json:"messages"`
 	Hash            *string         `pg:"hash" json:"hash"`

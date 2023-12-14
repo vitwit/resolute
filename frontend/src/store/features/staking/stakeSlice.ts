@@ -23,6 +23,7 @@ import { AxiosError } from 'axios';
 import { TxStatus } from '../../../types/enums';
 import { NewTransaction } from '@/utils/transaction';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
+import { setTxAndHash } from '../common/commonSlice';
 
 interface Chain {
   validators: Validators;
@@ -49,6 +50,11 @@ interface Chain {
     status: TxStatus;
     type: string;
   };
+  pool: {
+    not_bonded_tokens: string;
+    bonded_tokens: string;
+  };
+  poolStatus: TxStatus;
   reStakeTxStatus: TxStatus;
 }
 
@@ -114,6 +120,11 @@ const initialState: StakingState = {
       errMsg: '',
       pagination: undefined,
     },
+    pool: {
+      not_bonded_tokens: '0',
+      bonded_tokens: '0',
+    },
+    poolStatus: TxStatus.INIT,
     params: undefined,
     tx: {
       status: TxStatus.INIT,
@@ -154,6 +165,7 @@ export const txRestake = createAsyncThunk(
           transactions: [tx],
         })
       );
+      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
       if (result?.code === 0) {
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
@@ -184,12 +196,29 @@ export const txDelegate = createAsyncThunk(
         data.basicChainInfo.aminoConfig,
         data.basicChainInfo.prefix,
         [msg],
-        860000,
+        GAS_FEE,
         '',
         `${data.feeAmount}${data.denom}`,
         data.basicChainInfo.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
+      const tx = NewTransaction(
+        result,
+        [msg],
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
+          transactions: [tx],
+        })
+      );
+
+      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+
       if (result?.code === 0) {
         dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
         dispatch(
@@ -234,6 +263,24 @@ export const txReDelegate = createAsyncThunk(
         data.basicChainInfo.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
+
+      const tx = NewTransaction(
+        result,
+        [msg],
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
+          transactions: [tx],
+        })
+      );
+
+      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+
       if (result?.code === 0) {
         dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
         dispatch(
@@ -255,7 +302,10 @@ export const txReDelegate = createAsyncThunk(
 
 export const txUnDelegate = createAsyncThunk(
   'staking/undelegate',
-  async (data: TxUndelegateInputs, { rejectWithValue, fulfillWithValue }) => {
+  async (
+    data: TxUndelegateInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
     try {
       const msg = UnDelegate(
         data.delegator,
@@ -274,6 +324,24 @@ export const txUnDelegate = createAsyncThunk(
         data.basicChainInfo.rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined
       );
+
+      const tx = NewTransaction(
+        result,
+        [msg],
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
+          transactions: [tx],
+        })
+      );
+
+      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+
       if (result?.code === 0) {
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
@@ -354,6 +422,17 @@ export const getAllValidators = createAsyncThunk(
       if (error instanceof AxiosError) return rejectWithValue(error.message);
       return rejectWithValue(ERR_UNKNOWN);
     }
+  }
+);
+
+export const getPoolInfo = createAsyncThunk(
+  'staking/poolInfo',
+  async (data: { baseURL: string; chainID: string }) => {
+    const response = await stakingService.poolInfo(data.baseURL);
+    return {
+      chainID: data.chainID,
+      data: response.data,
+    };
   }
 );
 
@@ -659,6 +738,23 @@ export const stakeSlice = createSlice({
           state.chains[chainID].delegations.status = TxStatus.REJECTED;
           state.chains[chainID].delegations.errMsg = action.error.message || '';
         }
+      });
+
+    builder
+      .addCase(getPoolInfo.pending, (state, action) => {
+        const { chainID } = action.meta.arg;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
+        state.chains[chainID].poolStatus = TxStatus.PENDING;
+      })
+      .addCase(getPoolInfo.fulfilled, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].poolStatus = TxStatus.IDLE;
+        state.chains[chainID].pool = action.payload.data.pool;
+      })
+      .addCase(getPoolInfo.rejected, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.chains[chainID].poolStatus = TxStatus.REJECTED;
       });
 
     builder

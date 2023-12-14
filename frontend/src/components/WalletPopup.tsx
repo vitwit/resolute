@@ -24,7 +24,7 @@ const WalletPopup = ({
         <div className="wallet-box">
           <div className="cross w-full" onClick={onClose}>
             <Image
-              src="./close-icon.svg"
+              src="/close-icon.svg"
               width={24}
               height={24}
               alt="Close"
@@ -43,7 +43,7 @@ const WalletPopup = ({
             <div className="connect-wallet-box">
               <div className="text-white text-xl font-bold">Connect Wallet</div>
               <div className="flex space-x-6">
-                {supportedWallets.map((wallet, index) => (
+                {supportedWallets.map((wallet) => (
                   <div
                     className="wallet-grid"
                     onClick={() => {
