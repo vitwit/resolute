@@ -65,7 +65,8 @@ const WalletPopup = ({
                   </div>
                 ))}
               </div>
-              {/* <div>
+              {/* TODO: Re-enable this button in the future when the connect feature is implemented
+              <div>
                 <button className="button">
                   <p className="popup-text">Connect</p>
                 </button>
