@@ -23,7 +23,7 @@ const Summary = ({ chainIDs, borderStyle }: { chainIDs: string[], borderStyle: s
   return (
     <div className={"coloured-container relative h-[72px] flex items-center overflow-hidden "+borderStyle}>
       <div className="flex items-center gap-2 absolute">
-        <Image src={imageURL} width={40} height={40} alt={chainName} />
+        <Image src={imageURL} width={26} height={26} alt={chainName} />
         <div className="text-sm not-italic font-normal leading-[normal] text-capitalize flex-1">
           {chainName}
         </div>
