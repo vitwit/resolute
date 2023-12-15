@@ -96,7 +96,9 @@ export const createAccount = createAsyncThunk(
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError)
-        return rejectWithValue({ message: error.message });
+        return rejectWithValue({
+          message: error?.response?.data?.message || ERR_UNKNOWN,
+        });
       return rejectWithValue({ message: ERR_UNKNOWN });
     }
   }
@@ -125,7 +127,7 @@ export const verifyAccount = createAsyncThunk(
         data.address,
         OFFCHAIN_VERIFICATION_MESSAGE
       );
-      const salt = new Date().getTime();
+      const salt = 10;
       try {
         await multisigService.verifyUser({
           address: data.address,
@@ -443,5 +445,14 @@ export const multisigSlice = createSlice({
       });
   },
 });
+
+export const {
+  resetCreateMultisigRes,
+  resetCreateTxnState,
+  resetDeleteTxnState,
+  resetUpdateTxnState,
+  resetSignTxnState,
+  resetVerifyAccountRes,
+} = multisigSlice.actions;
 
 export default multisigSlice.reducer;

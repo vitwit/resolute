@@ -29,7 +29,7 @@ interface CreateTxnPayload {
   address: string;
   chain_id: string;
   messages: Msg[];
-  fee: Fee;
+  fee: StdFee;
   memo: string;
   gas: number;
 }
@@ -165,7 +165,7 @@ interface Signature {
 }
 
 interface Txn {
-  id: string;
+  id: number;
   multisig_address: string;
   fee: Fee;
   status: string;
@@ -192,4 +192,11 @@ interface SignTxInputs {
     signature: string;
   };
   queryParams: QueryParams;
+}
+
+interface TxnMsgProps {
+  msg: Msg;
+  onDelete: (index: number) => void;
+  currency: Currency;
+  index: number;
 }

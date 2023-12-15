@@ -238,7 +238,7 @@ const ProposalOverviewVote = ({
         <div className="proposal-text-big">Proposal Overview</div>
       </div>
       <div className="flex gap-10">
-        <div>
+        
           <div className="proposal-brief overflow-y-scroll max-h-screen">
             <div className="proposal-div w-full">
               <div className="flex justify-between w-full">
@@ -309,7 +309,7 @@ const ProposalOverviewVote = ({
             open={isDepositPopupOpen}
             networkLogo={networkLogo}
           />
-        </div>
+        
         {isStatusVoting ? (
           <div className="flex">
             <div className="space-y-4">

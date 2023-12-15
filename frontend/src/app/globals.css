@@ -272,7 +272,7 @@
   }
 
   .sidebar {
-    @apply h-screen min-h-[800px] w-[87px] px-4 py-10 flex flex-col justify-between items-center;
+    @apply flex w-[87px] flex-col justify-between items-center shrink-0 px-4 py-8 h-screen;
     background: #0e0b26;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   }
@@ -312,19 +312,25 @@
 }
 
 .network-item {
-  @apply p-4 rounded-2xl h-16 flex gap-2 items-center cursor-pointer bg-[#FFFFFF0D] hover:bg-[#ffffff2b];
+  @apply p-4 rounded-2xl h-16 flex gap-2 items-center cursor-pointer bg-[#FFFFFF0D];
 }
 
 .network-item-selected {
-  @apply border-[#ffffff3d] border-[0.1px] bg-[#ffffff24];
+  @apply border rounded-2xl border-solid border-[#4AA29C];
+  background: linear-gradient(
+    180deg,
+    rgba(74, 162, 156, 0.4) 0%,
+    rgba(139, 61, 167, 0.4) 100%
+  );
 }
 
 .wallet-address {
-  @apply flex gap-2 items-center h-6 p-2 text-white text-[14px] font-normal leading-normal rounded-lg opacity-80 bg-[#FFFFFF1A] w-[168px];
+  @apply flex items-center gap-2 opacity-80 text-white text-center text-sm font-normal leading-[normal] p-2 rounded-lg w-[176px] h-[36px];
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .divider-line {
-  @apply h-[1px] w-full my-4;
+  @apply h-[1px] w-full my-4 opacity-50;
   background: linear-gradient(90deg, #4aa29c 7.46%, #8b3da7 94.28%);
 }
 
