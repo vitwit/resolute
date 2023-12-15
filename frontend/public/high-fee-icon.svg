@@ -1,0 +1,11 @@
+<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="keyboard_double_arrow_down_FILL0_wght400_GRAD0_opsz24 1">
+<path id="Vector" d="M12.583 5.91641L18.583 11.9164L17.183 13.3164L12.583 8.74141L7.98301 13.3164L6.58301 11.9164L12.583 5.91641ZM12.583 11.9164L18.583 17.9164L17.183 19.3164L12.583 14.7414L7.98301 19.3164L6.58301 17.9164L12.583 11.9164Z" fill="url(#paint0_linear_32_37908)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_32_37908" x1="12.583" y1="19.3164" x2="12.583" y2="5.91641" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4AA29C"/>
+<stop offset="1" stop-color="#8B3DA7"/>
+</linearGradient>
+</defs>
+</svg>
