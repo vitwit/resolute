@@ -81,3 +81,4 @@ export const MULTISIG_TX_TYPES = {
   undelegate: 'Undelegate',
   redelegate: 'Redelegate',
 };
+export const ALERT_HIDE_DURATION = 3000;
