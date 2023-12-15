@@ -236,10 +236,10 @@ const RightOverview = ({
                       </p>
                     </button>
                     <div className="view-full">
-                <Link href={`/governance/${chainName}/${proposalId}`}>
-                  View Full Proposal
-                </Link>
-              </div>
+                      <Link href={`/governance/${chainName}/${proposalId}`}>
+                        View Full Proposal
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -291,14 +291,18 @@ const RightOverview = ({
                         <div>Quorum</div>
 
                         {quorumPercent ? (
-                          <Tooltip
-                            title={`${quorumPercent}% / ${quorumRequired}%`}
-                          >
-                            <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
-                              <div
-                                style={{ width: `${quorumPercent}%` }}
-                                className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
-                              ></div>
+                          <Tooltip title={`${quorumPercent}%`}>
+                            <div className="flex w-full flex-col">
+                              <div className="flex flex-col items-center">
+                                <div>{quorumRequired}%</div>
+                                <div className="bg-[#26233C] h-[10px] w-[1px]"></div>
+                              </div>
+                              <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
+                                <div
+                                  style={{ width: `${quorumPercent}%` }}
+                                  className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
+                                ></div>
+                              </div>
                             </div>
                           </Tooltip>
                         ) : null}
