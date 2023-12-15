@@ -4,7 +4,7 @@ import { ALERT_HIDE_DURATION } from '@/utils/constants';
 import { Alert, Snackbar } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-const CustomAlertBar = () => {
+const SnackBar = () => {
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
   const commonState = useAppSelector((state: RootState) => state.common);
   const errState = commonState.errState;
@@ -46,4 +46,4 @@ const CustomAlertBar = () => {
   );
 };
 
-export default CustomAlertBar;
+export default SnackBar;
