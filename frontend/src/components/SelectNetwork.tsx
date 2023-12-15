@@ -68,7 +68,7 @@ const SelectNetwork = () => {
         className="flex gap-2 items-center cursor-pointer"
         onClick={() => setOpen(true)}
       >
-        <Image src={chainLogo} height={32} width={32} alt="All Networks" />
+        <Image src={chainLogo} height={26} width={26} alt="All Networks" />
         {/* TODO: Integrate copy to clipboard */}
         {walletAddress ? (
           <div className="wallet-address">
