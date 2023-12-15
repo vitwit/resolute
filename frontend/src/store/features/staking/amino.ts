@@ -5,10 +5,10 @@ import { MsgCancelUnbondingDelegation } from 'cosmjs-types/cosmos/staking/v1beta
 export interface AminoCancelUnbonding extends AminoMsg {
   type: 'cosmos-sdk/MsgCancelUnbondingDelegation';
   value: {
-    delegatorAddress: string;
-    validatorAddress: string;
+    delegator_address: string;
+    validator_address: string;
     amount: Coin;
-    creationHeight: bigint;
+    creation_height: bigint;
   };
 }
 
@@ -23,23 +23,23 @@ export const cancelUnbondingAminoConverter = (): AminoConverters => {
           creationHeight,
         }: MsgCancelUnbondingDelegation): AminoCancelUnbonding['value'] => {
           return {
-            delegatorAddress,
-            validatorAddress,
+            delegator_address: delegatorAddress,
+            validator_address: validatorAddress,
             amount,
-            creationHeight,
+            creation_height: creationHeight,
           };
         },
         fromAmino: ({
-          delegatorAddress,
-          validatorAddress,
+          delegator_address,
+          validator_address,
           amount,
-          creationHeight,
+          creation_height,
         }: AminoCancelUnbonding['value']): MsgCancelUnbondingDelegation => {
           return {
-            delegatorAddress,
-            validatorAddress,
+            delegatorAddress: delegator_address,
+            validatorAddress: validator_address,
             amount,
-            creationHeight,
+            creationHeight: creation_height,
           };
         },
       },
