@@ -8,7 +8,7 @@ import VotePopup from './VotePopup';
 import { CircularProgress, Tooltip } from '@mui/material';
 import { RootState } from '@/store/store';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getGovTallyParams, getProposal } from '@/store/features/gov/govSlice';
+import { getGovTallyParams } from '@/store/features/gov/govSlice';
 import { get } from 'lodash';
 import {
   getTimeDifference,
@@ -36,9 +36,26 @@ const RightOverview = ({
   handleProposalSelected: (value: boolean) => void;
 }) => {
   const dispatch = useAppDispatch();
-  const proposalInfo = useAppSelector(
-    (state: RootState) => state.gov.proposalDetails
+
+  const chainsProposals = useAppSelector(
+    (state: RootState) => state.gov.chains[chainID]
   );
+
+  let proposalInfo;
+  if (status === 'active') {
+    get(chainsProposals[status], 'proposals', []).forEach(p => {
+      if (Number(get(p, 'proposal_id')) === proposalId) {
+        proposalInfo = p;
+      }
+    }) 
+  } else if (status === 'deposit') {
+    get(chainsProposals[status], 'proposals', []).forEach(p => {
+      if (Number(get(p, 'proposal_id')) === proposalId) {
+        proposalInfo = p;
+      }
+    }) 
+  }
+ 
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
   );
@@ -49,21 +66,22 @@ const RightOverview = ({
       state.gov.chains[chainID].tally.proposalTally[proposalId]
   );
 
+  const currency = useAppSelector(
+    (state: RootState) =>
+      state.wallet.networks[chainID]?.network.config.currencies[0]
+  );
+
   const isStatusVoting =
     get(proposalInfo, 'status') === 'PROPOSAL_STATUS_VOTING_PERIOD';
   const { getChainInfo } = useGetChainInfo();
   const { chainName } = getChainInfo(chainID);
 
+
+
   useEffect(() => {
     const allChainInfo = networks[chainID];
     const chainInfo = allChainInfo.network;
-    dispatch(
-      getProposal({
-        chainID,
-        baseURL: chainInfo.config.rest,
-        proposalId: proposalId,
-      })
-    );
+
     dispatch(
       getGovTallyParams({
         chainID,
@@ -90,14 +108,16 @@ const RightOverview = ({
   );
   const quorumRequired = (parseFloat(tallyParams.quorum) * 100).toFixed(1);
 
-  const totalVotes =
-    Number(get(tallyResult, 'yes')) +
-    Number(get(tallyResult, 'no')) +
-    Number(get(tallyResult, 'abstain')) +
-    Number(get(tallyResult, 'no_with_veto'));
+  let totalVotes =
+    Number(get(tallyResult, 'yes', 0)) +
+    Number(get(tallyResult, 'no', 0)) +
+    Number(get(tallyResult, 'abstain', 0)) +
+    Number(get(tallyResult, 'no_with_veto', 0));
+
+  totalVotes = Number((totalVotes / 10 ** currency.coinDecimals).toFixed(2))
 
   const getVotesPercentage = (votesCount: number) => {
-    return ((votesCount / totalVotes) * 100).toFixed(2);
+    return (((votesCount /(10 ** currency.coinDecimals)) / totalVotes) * 100).toFixed(2);
   };
   const maxCharacters = 400;
   const truncatedDescription = get(
@@ -111,29 +131,29 @@ const RightOverview = ({
 
   const data = [
     {
-      value: getVotesPercentage(Number(get(tallyResult, 'yes'))),
+      value: getVotesPercentage(Number(get(tallyResult, 'yes', 0))),
       color: '#4AA29C',
       label: 'Yes',
     },
     {
-      value: getVotesPercentage(Number(get(tallyResult, 'no'))),
+      value: getVotesPercentage(Number(get(tallyResult, 'no', 0))),
       color: '#E57575',
       label: 'No',
     },
     {
-      value: getVotesPercentage(Number(get(tallyResult, 'abstain'))),
+      value: getVotesPercentage(Number(get(tallyResult, 'abstain', 0))),
       color: '#EFFF34',
       label: 'Abstain',
     },
     {
-      value: getVotesPercentage(Number(get(tallyResult, 'no_with_veto'))),
+      value: getVotesPercentage(Number(get(tallyResult, 'no_with_veto', 0))),
       color: '#5885AF',
       label: 'Veto',
     },
   ];
 
   const proposalSubmittedOn = getTimeDifference(
-    get(proposalInfo, 'submit_time')
+    get(proposalInfo, 'submit_time', '')
   );
   const Totalvotes = totalVotes.toLocaleString();
 
@@ -197,13 +217,13 @@ const RightOverview = ({
                       {status === 'active' ? (
                         <>
                           {`Voting ends in ${getTimeDifferenceToFutureDate(
-                            get(proposalInfo, 'voting_end_time')
+                            get(proposalInfo, 'voting_end_time', '')
                           )}`}
                         </>
                       ) : (
                         <>
                           {`Deposit period ends in ${getTimeDifferenceToFutureDate(
-                            get(proposalInfo, 'deposit_end_time')
+                            get(proposalInfo, 'deposit_end_time', '')
                           )}`}
                         </>
                       )}
@@ -247,10 +267,10 @@ const RightOverview = ({
                 <VotePopup
                   chainID={chainID}
                   votingEndsInDays={getTimeDifferenceToFutureDate(
-                    get(proposalInfo, 'voting_end_time')
+                    get(proposalInfo, 'voting_end_time', '')
                   )}
                   proposalId={proposalId}
-                  proposalname={get(proposalInfo, 'content.title')}
+                  proposalname={get(proposalInfo, 'content.title', '')}
                   open={isVotePopupOpen}
                   onClose={handleCloseVotePopup}
                   networkLogo={networkLogo}
@@ -259,10 +279,10 @@ const RightOverview = ({
                 <DepositPopup
                   chainID={chainID}
                   votingEndsInDays={getTimeDifferenceToFutureDate(
-                    get(proposalInfo, 'deposit_end_time')
+                    get(proposalInfo, 'deposit_end_time', '')
                   )}
                   proposalId={proposalId}
-                  proposalname={get(proposalInfo, 'content.title')}
+                  proposalname={get(proposalInfo, 'content.title', '')}
                   onClose={handleCloseDepositPopup}
                   open={isDepositPopupOpen}
                   networkLogo={networkLogo}

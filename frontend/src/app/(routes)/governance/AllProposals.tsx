@@ -34,6 +34,8 @@ const AllProposals = ({
   handleProposalSelected: (value: boolean) => void;
   isSelected: boolean;
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const dispatch = useAppDispatch();
   const [selectedChainsProposals, setSelectedChainsProposals] =
     useState<Chains>({});
@@ -57,18 +59,25 @@ const AllProposals = ({
   let allProposalsLength = 0;
 
   if (selectedChainsProposals) {
+     
     /* eslint-disable @typescript-eslint/no-unused-vars */
     Object.entries(selectedChainsProposals).map(
-      ([_chainName, chainProposal]) => {
+      ([_chainName, chainProposal], index, array) => {
         allProposalsLength += get(
           chainProposal,
           `${status === 'deposit' ? 'deposit' : 'active'}.proposals.length`
         );
+
+        if (index === array.length - 1) {
+          setIsLoading(false)
+        }
       }
     );
   }
 
   useEffect(() => {
+    setIsLoading(true)
+
     chainIDs.forEach((chainID) => {
       const allChainInfo = networks[chainID];
       const chainInfo = allChainInfo.network;
@@ -87,20 +96,30 @@ const AllProposals = ({
         })
       );
     });
-  }, []);
+  }, [chainIDs]);
 
   useEffect(() => {
     chainIDs.forEach((chainID) =>
       setSelectedChainsProposals((selectedChainsProposals) => {
         selectedChainsProposals[chainID] = chainsProposals[chainID];
-        return selectedChainsProposals;
+        return { ...selectedChainsProposals, [chainID]: chainsProposals[chainID] }
       })
     );
   }, [chainsProposals]);
 
   return (
     <div className="main-page">
-      {allProposalsLength === 0 ? (
+      {
+        isLoading && <div className="space-y-4 w-full">
+        <div className="flex justify-between">
+          <div className="flex space-x-2">
+            <p className="proposal-text-medium">Loading...</p>
+          </div>
+        </div>
+      </div>
+      }
+
+      {allProposalsLength === 0 && !isLoading ? (
         <div className="space-y-4 w-full">
           <div className="flex justify-between">
             <div className="flex space-x-2">

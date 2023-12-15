@@ -82,17 +82,20 @@ const ProposalOverviewVote = ({
   const poolInfo = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.pool
   );
+
   const tallyParams = useAppSelector(
     (state: RootState) =>
       state.gov.chains[chainID]?.tallyParams.params.tally_params
   );
+
   const quorumRequired = (parseFloat(tallyParams?.quorum) * 100).toFixed(1);
 
-  const totalVotes =
-    Number(get(tallyResult, 'yes')) +
-    Number(get(tallyResult, 'no')) +
-    Number(get(tallyResult, 'abstain')) +
-    Number(get(tallyResult, 'no_with_veto'));
+  let totalVotes =
+    Number(get(tallyResult, 'yes', 0)) +
+    Number(get(tallyResult, 'no', 0)) +
+    Number(get(tallyResult, 'abstain', 0)) +
+    Number(get(tallyResult, 'no_with_veto', 0));
+  totalVotes = totalVotes / 10 ** parseInt(currency.coinMinimalDenom)
 
   const getVotesPercentage = (votesCount: number) => {
     return (
