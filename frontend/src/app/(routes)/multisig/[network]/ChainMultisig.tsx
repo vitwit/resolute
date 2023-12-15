@@ -17,7 +17,7 @@ const ChainMultisig = ({ network }: { network: string }) => {
       ) : (
         <>
           <div className="flex justify-center items-center h-screen w-full text-white txt-lg">
-            - Chain not found -
+            - The {chainName} is not supported -
           </div>
         </>
       )}
