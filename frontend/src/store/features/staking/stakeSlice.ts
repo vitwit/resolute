@@ -364,7 +364,7 @@ export const txCancelUnbonding = createAsyncThunk(
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     try {
-      let msg = Unbonding(
+      const msg = Unbonding(
         data.delegator,
         data.validator,
         data.amount,
