@@ -184,8 +184,8 @@ const DialogSelectNetwork = ({
               <div className="flex justify-center items-center w-full gap-2">
                 <Image
                   src={ALL_NETWORKS_LOGO}
-                  width={32}
-                  height={32}
+                  width={26}
+                  height={26}
                   alt="All Networks"
                 />
                 <h3 className={`text-[14px] leading-normal opacity-100`}>
