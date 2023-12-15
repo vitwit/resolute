@@ -11,6 +11,7 @@ import { RootState } from '@/store/store';
 import { tabLink } from '../utils/util';
 import { Tooltip } from '@mui/material';
 import TransactionSuccessPopup from './TransactionSuccessPopup';
+import CustomAlertBar from './CustomAlertBar';
 
 const menuItems = [
   {
@@ -62,9 +63,11 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathParts = pathName.split('/');
   const selectedPart = getSelectedPartFromURL(pathParts).toLowerCase();
   const dispatch = useAppDispatch();
+
   return (
     <div className="main">
       <TransactionSuccessPopup />
+      <CustomAlertBar />
       <div className="sidebar overflow-y-scroll">
         <div className="">
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
