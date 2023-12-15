@@ -34,6 +34,8 @@ const AllProposals = ({
   handleProposalSelected: (value: boolean) => void;
   isSelected: boolean;
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const dispatch = useAppDispatch();
   const [selectedChainsProposals, setSelectedChainsProposals] =
     useState<Chains>({});
@@ -55,7 +57,6 @@ const AllProposals = ({
   );
 
   let allProposalsLength = 0;
-  let isLoading = false;
 
   if (selectedChainsProposals) {
      
@@ -68,14 +69,14 @@ const AllProposals = ({
         );
 
         if (index === array.length - 1) {
-          isLoading = false
+          setIsLoading(false)
         }
       }
     );
   }
 
   useEffect(() => {
-    isLoading = true;
+    setIsLoading(true)
 
     chainIDs.forEach((chainID) => {
       const allChainInfo = networks[chainID];
@@ -101,7 +102,7 @@ const AllProposals = ({
     chainIDs.forEach((chainID) =>
       setSelectedChainsProposals((selectedChainsProposals) => {
         selectedChainsProposals[chainID] = chainsProposals[chainID];
-        return selectedChainsProposals;
+        return { ...selectedChainsProposals, [chainID]: chainsProposals[chainID] }
       })
     );
   }, [chainsProposals]);

@@ -49,7 +49,7 @@ const DepositPopup = ({
     if (get(txDepositStatus, 'tx.status') === 'idle') {
       onClose()
     }
-  }, [txDepositStatus])
+  }, [txDepositStatus?.tx?.status])
 
   const currency = allChainInfo.network.config.currencies[0];
 
