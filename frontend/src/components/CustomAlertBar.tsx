@@ -1,19 +1,23 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
+import { ALERT_HIDE_DURATION } from '@/utils/constants';
 import { Alert, Snackbar } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
 const CustomAlertBar = () => {
   const [snackOpen, setSnackOpen] = useState<boolean>(false);
-  const showSnack = (value: boolean) => setSnackOpen(value);
   const commonState = useAppSelector((state: RootState) => state.common);
   const errState = commonState.errState;
 
+  const handleClose = () => {
+    setSnackOpen(false);
+  };
+
   useEffect(() => {
     if (errState?.message?.length > 0 && errState?.type?.length > 0) {
-      showSnack(true);
+      setSnackOpen(true);
     } else {
-      showSnack(false);
+      setSnackOpen(false);
     }
   }, [errState]);
   return (
@@ -25,13 +29,13 @@ const CustomAlertBar = () => {
             errState?.message?.length > 0 &&
             errState?.type?.length > 0
           }
-          autoHideDuration={3000}
-          onClose={() => showSnack(false)}
+          autoHideDuration={ALERT_HIDE_DURATION}
+          onClose={handleClose}
           anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
           <Alert
             variant="filled"
-            onClose={() => showSnack(false)}
+            onClose={handleClose}
             severity={errState.type === 'success' ? 'success' : 'error'}
           >
             {errState.message}
