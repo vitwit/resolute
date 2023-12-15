@@ -64,7 +64,6 @@
 }
 .cross {
   @apply flex justify-end items-center gap-2.5 self-stretch pl-6 pr-10 py-10;
-  /* @apply flex justify-end items-center gap-2.5 pl-6 pr-10 py-6 */
 }
 .image-grid {
   @apply flex justify-end items-center gap-10 pr-0;
@@ -174,7 +173,7 @@
 .search-validator-input {
   @apply w-full pl-2 border-none cursor-pointer focus:outline-none bg-transparent placeholder:text-[14px] placeholder:text-[#FFFFFFBF] placeholder:font-extralight text-[#FFFFFFBF];
 }
-.errors-alert {
+.amount-chip {
   @apply opacity-80 rounded-lg text-[#E57575] text-center text-sm not-italic font-normal leading-[normal] max-w-fit py-1 px-2 truncate;
   background: rgba(229, 117, 117, 0.2);
 }

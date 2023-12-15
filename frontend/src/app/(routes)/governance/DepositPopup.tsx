@@ -180,7 +180,7 @@ const DepositPopup = ({
                       )}
                     />
 
-                    <div className="errors-alert">Amount is Required</div>
+                    <div className="amount-chip">Amount is Required</div>
                   </div>
                   <div className="mt-6">
                     <button className="button w-36">
