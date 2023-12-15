@@ -84,7 +84,7 @@ const SelectNetwork = () => {
         )}
         <div>
           <Image
-            src="/drop-down-icon.svg"
+            src="/new-drop-down-icon.svg"
             height={16}
             width={16}
             alt="Select Network"
