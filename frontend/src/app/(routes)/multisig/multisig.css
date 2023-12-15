@@ -1,0 +1,136 @@
+.create-multisig-btn,
+.verify-btn {
+  @apply rounded-lg px-3 py-[6px] text-[12px] font-medium leading-[20px] tracking-[0.48px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.multisig-account-card {
+  @apply p-4 rounded-2xl bg-[#0E0B26] cursor-pointer hover:bg-[#FFFFFF0D] truncate;
+  backdrop-filter: blur(2px);
+}
+
+.multisig-info-title {
+  @apply relative rounded-t-2xl flex px-6 py-4 h-[78px] justify-between items-center;
+  background: linear-gradient(90deg, #704290 0.19%, #241b61 79.25%);
+}
+
+.account-info-item {
+  @apply text-[14px] space-y-2 justify-center p-2 rounded-2xl bg-[#FFFFFF0D] overflow-hidden;
+}
+
+.account-members {
+  @apply min-h-[216px] p-2 pb-4 flex flex-col gap-2 rounded-2xl bg-[#FFFFFF0D];
+}
+
+.member-address {
+  @apply text-[12px] font-medium h-8 flex gap-[10px] justify-center items-center p-1 rounded-lg;
+  background: linear-gradient(
+    180deg,
+    rgba(74, 162, 156, 0.1) 0%,
+    rgba(139, 61, 167, 0.1) 100%
+  );
+}
+
+.members-list {
+  @apply grid grid-cols-3 gap-6 px-2;
+}
+
+.delete-multisig-btn {
+  @apply px-10 py-[10px] rounded-2xl font-medium leading-[20px] tracking-[0.64px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.multisig-sidebar {
+  @apply space-y-6 p-6 w-[500px] bg-[#0E0B26] h-screen min-h-[800px] overflow-y-scroll;
+}
+
+.multisig-account-info {
+  @apply flex-1 flex flex-col pl-10 py-6 text-white space-y-6 h-screen min-h-[800px] overflow-y-scroll;
+}
+
+.multisig-account-address {
+  @apply flex gap-2 px-2 text-[14px] leading-[20px];
+}
+
+.custom-radio-button-label {
+  @apply flex items-center cursor-pointer gap-2;
+}
+
+.custom-radio-button {
+  @apply border-2 w-4 h-4 border-[#FFFFFF80] rounded-full flex justify-center items-center;
+}
+
+.custom-radio-button-checked {
+  @apply h-[6px] w-[6px] bg-white rounded-full;
+}
+
+.verify-account {
+  @apply flex-1 h-screen flex flex-col gap-4 justify-center items-center;
+}
+
+.create-txn-btn {
+  @apply rounded-lg font-medium leading-[20px] tracking-[0.64px] px-3 py-[6px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.divider {
+  @apply h-[1px] mt-4;
+  background: linear-gradient(
+    90deg,
+    rgba(74, 162, 156, 0.352) 7.46%,
+    rgba(139, 61, 167, 0.354) 94.28%
+  );
+}
+
+.action-image {
+  @apply rounded-lg w-8 h-8 cursor-pointer;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.sign-broadcast-btn {
+  @apply min-w-[87px] text-[12px] font-medium leading-[20px] px-3 py-[6px] rounded-lg cursor-pointer;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.raw-content {
+  @apply p-2 bg-black max-h-[600px] overflow-y-scroll;
+}
+
+.account-address {
+  @apply w-fit flex gap-2 items-center h-6 p-2 text-white text-[14px] font-normal leading-normal rounded-lg opacity-80 bg-[#FFFFFF1A];
+}
+
+.txn-card {
+  @apply bg-[#FFFFFF0D] p-4 rounded-2xl space-y-6;
+  backdrop-filter: blur(2px);
+}
+
+.create-account-btn {
+  @apply rounded-2xl px-10 py-[10px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.fee-selected {
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.fee-component-btn {
+  @apply rounded-2xl p-4 space-y-4 bg-[#FFFFFF0D] cursor-pointer hover:bg-[#ffffff17];
+}
+
+.create-txn-form-btn {
+  @apply px-10 py-[10px] rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.cancel-button {
+  @apply underline underline-offset-[3px] font-medium;
+}
+
+.circular-progress-custom {
+  color: purple;
+}
+
+.address-pubkey-field-error {
+  @apply text-[14px] text-[#E57575];
+}

@@ -7,6 +7,7 @@ import {
   getLocalNetworks,
   getWalletName,
   isConnected,
+  removeAllAuthTokens,
 } from '../utils/localStorage';
 import { establishWalletConnection } from '../store/features/wallet/walletSlice';
 import { RootState } from '../store/store';
@@ -52,6 +53,7 @@ export const ConnectWalletButton = ({
 
     const accountChangeListener = () => {
       setTimeout(() => tryConnectWallet(walletName), 1000);
+      removeAllAuthTokens();
       window.location.reload();
     };
 
