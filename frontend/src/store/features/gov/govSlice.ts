@@ -362,7 +362,8 @@ export const txVote = createAsyncThunk(
         // data.feegranter?.length > 0 ? data.feegranter : undefined
       );
 
-      console.log('tx result==============', result);
+      console.log('tx vote result ==============', result);
+
       if (result?.code === 0) {
         dispatch(
           setTxAndHash({

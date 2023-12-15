@@ -1,6 +1,7 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
+  CircularProgress,
   Dialog,
   DialogContent,
   InputAdornment,
@@ -14,6 +15,7 @@ import './style.css';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txDeposit } from '@/store/features/gov/govSlice';
 import { Controller, useForm } from 'react-hook-form';
+import { get } from 'lodash';
 
 const DepositPopup = ({
   chainID,
@@ -34,7 +36,6 @@ const DepositPopup = ({
   onClose: () => void;
   networkLogo: string;
 }) => {
-  console.log(denom);
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const allChainInfo = networks[chainID];
   console.log(chainID);
@@ -42,12 +43,20 @@ const DepositPopup = ({
   const { getVoteTxInputs } = useGetTxInputs();
   const dispatch = useAppDispatch();
 
+  const txDepositStatus = useAppSelector(state => state.gov.chains[chainID])
+
+  useEffect(() => {
+    if (get(txDepositStatus, 'tx.status') === 'idle') {
+      onClose()
+    }
+  }, [txDepositStatus])
+
   const currency = allChainInfo.network.config.currencies[0];
 
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm({
     defaultValues: {
       amount: 0,
@@ -114,21 +123,21 @@ const DepositPopup = ({
                 <div className="text-form">
                   <div className="space-y-2">
                     <div className='flex justify-between'>
-                    <div className="space-x-2 flex">
-                      <Image
-                        src={networkLogo}
-                        width={32}
-                        height={32}
-                        alt="logo"
-                      />
-                      <p className="proposal-text-small">
-                        {proposalId} | Proposal
-                      </p>
+                      <div className="space-x-2 flex">
+                        <Image
+                          src={networkLogo}
+                          width={32}
+                          height={32}
+                          alt="logo"
+                        />
+                        <p className="proposal-text-small">
+                          {proposalId} | Proposal
+                        </p>
                       </div>
                       <div className="proposal-text-small">{`Deposit period ends in ${votingEndsInDays} `}</div>
                     </div>
                     <div className="proposal-text-normal-base">{proposalname}</div>
-                   
+
                   </div>
                 </div>
 
@@ -138,6 +147,7 @@ const DepositPopup = ({
                     control={control}
                     rules={{
                       required: 'Amount is required',
+                      min: 1
                     }}
                     render={({ field }) => (
                       <TextField
@@ -181,9 +191,15 @@ const DepositPopup = ({
                     )}
                   />
                   <div className="mt-6">
-                    <button className="button w-36">
-                      <p className="proposal-text-medium">Deposit</p>
-                    </button>
+                    {
+                      get(txDepositStatus, 'tx.status') === 'pending' ?
+                        <button disabled={true} className="button w-36">
+                          <CircularProgress size={20} />
+                        </button> : <button disabled={!isValid} className="button w-36">
+                          <p className="proposal-text-medium">Deposit</p>
+                        </button>
+                    }
+
                   </div>
                 </form>
               </div>

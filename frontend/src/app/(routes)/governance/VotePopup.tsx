@@ -1,12 +1,13 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import './style.css';
 import RadioButton from './CustomRadioButton';
-import { Dialog, DialogContent } from '@mui/material';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { CircularProgress, Dialog, DialogContent } from '@mui/material';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { txVote } from '@/store/features/gov/govSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { get } from 'lodash';
 
 interface VoteOptionNumber {
   [key: string]: number;
@@ -19,15 +20,7 @@ const voteOptionNumber: VoteOptionNumber = {
   veto: 4,
 };
 
-const VotePopup = ({
-  votingEndsInDays,
-  proposalId,
-  proposalname,
-  chainID,
-  open,
-  onClose,
-  networkLogo,
-}: {
+interface VotePopupProps {
   votingEndsInDays: string;
   proposalId: number;
   proposalname: string;
@@ -35,8 +28,19 @@ const VotePopup = ({
   open: boolean;
   onClose: () => void;
   networkLogo: string;
+}
+
+const VotePopup: React.FC<VotePopupProps> = ({
+  votingEndsInDays,
+  proposalId,
+  proposalname,
+  chainID,
+  open,
+  onClose,
+  networkLogo,
 }) => {
   const [voteOption, setVoteOption] = useState<string>('');
+  const [voteMemo, setVoteMemo] = useState<string>('');
 
   const handleVoteChange = (option: string) => {
     setVoteOption(option);
@@ -48,11 +52,20 @@ const VotePopup = ({
     onClose();
   };
 
+  const txVoteStatus = useAppSelector(state => state.gov.chains[chainID])
+
+  useEffect(()=>{
+    if (get(txVoteStatus, 'tx.status') === 'idle') {
+      onClose()
+    }
+  }, [txVoteStatus])
+
   const dispatch = useAppDispatch();
 
-  const handleVote = () => {
+  const handleVote = async () => {
     const { address, aminoConfig, feeAmount, prefix, rest, rpc } =
       getChainInfo(chainID);
+
     const { minimalDenom } = getDenomInfo(chainID);
 
     dispatch(
@@ -68,7 +81,7 @@ const VotePopup = ({
         prefix: prefix,
         feeAmount: feeAmount,
         feegranter: '',
-        justification: '',
+        justification: voteMemo,
       })
     );
   };
@@ -107,24 +120,24 @@ const VotePopup = ({
                 <div className="text-form">
                   <div className="space-y-1">
                     <div className='space-y-4'>
-                    <div className='flex justify-between'>
-                    <div className="space-x-2 flex">
-                      <Image
-                        src={networkLogo}
-                        width={32}
-                        height={32}
-                        alt="logo"
-                      />
-                      <p className="proposal-text-small">
-                        #{proposalId} | Proposal
-                      </p>
-                      
-                    </div>
-                    <div className="proposal-text-small">
-                      {`Voting ends in ${votingEndsInDays}`}
-                    </div>
-                    </div>
-                    <div className="proposal-text-normal-base">{proposalname}</div>
+                      <div className='flex justify-between'>
+                        <div className="space-x-2 flex">
+                          <Image
+                            src={networkLogo}
+                            width={32}
+                            height={32}
+                            alt="logo"
+                          />
+                          <p className="proposal-text-small">
+                            #{proposalId} | Proposal
+                          </p>
+
+                        </div>
+                        <div className="proposal-text-small">
+                          {`Voting ends in ${votingEndsInDays}`}
+                        </div>
+                      </div>
+                      <div className="proposal-text-normal-base">{proposalname}</div>
                     </div>
                   </div>
                 </div>
@@ -162,15 +175,23 @@ const VotePopup = ({
                 </div>
                 <div className="placeholder-text w-full">
                   <input
-                   className="search-validator-input"
+                    className="search-validator-input"
                     type="text"
+                    value={voteMemo}
+                    onChange={e => setVoteMemo(e.target.value)}
                     placeholder="Enter Justification here"
                   ></input>
                 </div>
                 <div>
-                  <button onClick={handleVote} className="button w-36">
-                    <p className="proposal-text-medium">Vote</p>
-                  </button>
+                  {
+                    get(txVoteStatus, 'tx.status') === 'pending' ?
+                      <button disabled={true} className="button w-36">
+                       <CircularProgress size={20} />
+                      </button> : <button disabled={!voteOption} onClick={handleVote} className="button w-36">
+                        <p className="proposal-text-medium">Vote</p>
+                      </button>
+                  }
+
                 </div>
               </div>
               <div className="cross"></div>

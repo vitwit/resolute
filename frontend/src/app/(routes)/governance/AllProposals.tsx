@@ -55,20 +55,28 @@ const AllProposals = ({
   );
 
   let allProposalsLength = 0;
+  let isLoading = false;
 
   if (selectedChainsProposals) {
+     
     /* eslint-disable @typescript-eslint/no-unused-vars */
     Object.entries(selectedChainsProposals).map(
-      ([_chainName, chainProposal]) => {
+      ([_chainName, chainProposal], index, array) => {
         allProposalsLength += get(
           chainProposal,
           `${status === 'deposit' ? 'deposit' : 'active'}.proposals.length`
         );
+
+        if (index === array.length - 1) {
+          isLoading = false
+        }
       }
     );
   }
 
   useEffect(() => {
+    isLoading = true;
+
     chainIDs.forEach((chainID) => {
       const allChainInfo = networks[chainID];
       const chainInfo = allChainInfo.network;
@@ -87,7 +95,7 @@ const AllProposals = ({
         })
       );
     });
-  }, []);
+  }, [chainIDs]);
 
   useEffect(() => {
     chainIDs.forEach((chainID) =>
@@ -100,7 +108,17 @@ const AllProposals = ({
 
   return (
     <div className="main-page">
-      {allProposalsLength === 0 ? (
+      {
+        isLoading && <div className="space-y-4 w-full">
+        <div className="flex justify-between">
+          <div className="flex space-x-2">
+            <p className="proposal-text-medium">Loading...</p>
+          </div>
+        </div>
+      </div>
+      }
+
+      {allProposalsLength === 0 && !isLoading ? (
         <div className="space-y-4 w-full">
           <div className="flex justify-between">
             <div className="flex space-x-2">
