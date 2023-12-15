@@ -113,73 +113,75 @@ const DepositPopup = ({
                 <div className="proposal-text-big font-bold">Deposit</div>
                 <div className="text-form">
                   <div className="space-y-2">
-                    <div className='flex justify-between'>
-                    <div className="space-x-2 flex">
-                      <Image
-                        src={networkLogo}
-                        width={32}
-                        height={32}
-                        alt="logo"
-                      />
-                      <p className="proposal-text-small">
-                        {proposalId} | Proposal
-                      </p>
+                    <div className="flex justify-between">
+                      <div className="space-x-2 flex">
+                        <Image
+                          src={networkLogo}
+                          width={32}
+                          height={32}
+                          alt="logo"
+                        />
+                        <p className="proposal-text-small">
+                          {proposalId} | Proposal
+                        </p>
                       </div>
                       <div className="proposal-text-small">{`Deposit period ends in ${votingEndsInDays} `}</div>
                     </div>
-                    <div className="proposal-text-normal-base">{proposalname}</div>
-                   
+                    <div className="proposal-text-normal-base">
+                      {proposalname}
+                    </div>
                   </div>
                 </div>
 
                 <form onSubmit={handleSubmit(handleDeposit)}>
-                  <Controller
-                    name="amount"
-                    control={control}
-                    rules={{
-                      required: 'Amount is required',
-                    }}
-                    render={({ field }) => (
-                      <TextField
-                        className="bg-[#FFFFFF0D] rounded-2xl"
-                        {...field}
-                        required
-                        fullWidth
-                        size="small"
-                        placeholder="Enter Amount here"
-                        sx={{
-                          '& .MuiTypography-body1': {
-                            color: 'white',
-                            fontSize: '12px',
-                            fontWeight: 200,
-                          },
-                          '& .MuiOutlinedInput-notchedOutline': {
-                            border: 'none',
-                          },
-                        }}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              {currency?.coinDenom}
-                            </InputAdornment>
-                          ),
-                          sx: {
-                            input: {
+                  <div className="space-y-2">
+                    <Controller
+                      name="amount"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          className="bg-[#FFFFFF0D] rounded-2xl"
+                          {...field}
+                          required
+                          fullWidth
+                          size="small"
+                          placeholder="Enter Amount here"
+                          sx={{
+                            '& .MuiTypography-body1': {
                               color: 'white',
-                              fontSize: '14px',
-                              padding: 2,
+                              fontSize: '12px',
+                              fontWeight: 200,
                             },
-                          },
-                        }}
-                        error={!!errors.amount}
-                        helperText={
-                          errors.amount?.type === 'validate'
-                            ? 'Insufficient balance'
-                            : errors.amount?.message
-                        }
-                      />
-                    )}
-                  />
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              border: 'none',
+                            },
+                          }}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="start">
+                                {currency?.coinDenom}
+                              </InputAdornment>
+                            ),
+                            sx: {
+                              input: {
+                                color: 'white',
+                                fontSize: '14px',
+                                padding: 2,
+                              },
+                            },
+                          }}
+                          error={!!errors.amount}
+                          helperText={
+                            errors.amount?.type === 'validate'
+                              ? 'Insufficient balance'
+                              : errors.amount?.message
+                          }
+                        />
+                      )}
+                    />
+
+                    <div className="errors-alert">Amount is Required</div>
+                  </div>
                   <div className="mt-6">
                     <button className="button w-36">
                       <p className="proposal-text-medium">Deposit</p>
