@@ -29,6 +29,7 @@ const DialogUndelegate = ({
 }: DialogUndelegateProps) => {
   const handleClose = () => {
     onClose();
+    reset();
   };
 
   const delegationShare = parseDelegation({ delegations, validator, currency });
@@ -37,6 +38,7 @@ const DialogUndelegate = ({
     control,
     setValue,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       amount: 0,
@@ -63,9 +65,7 @@ const DialogUndelegate = ({
         <div className="max-w-[890px] text-white">
           <div className="px-10 py-6 pt-10 flex justify-end">
             <div
-              onClick={() => {
-                handleClose();
-              }}
+              onClick={handleClose}
             >
               <Image
                 className="cursor-pointer"

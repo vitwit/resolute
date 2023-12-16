@@ -24,7 +24,9 @@ const AmountInputField: React.FC<AmountInputField> = (props) => {
         rules={{
           required: 'Amount is required',
           validate: (value) => {
-            return Number(value) > 0 && Number(value) <= availableAmount;
+            const amount = Number(value);
+            if(amount <= 0) return "Invalid Amount";
+            if(amount > availableAmount) return INSUFFICIENT_BALANCE;
           },
         }}
         render={({ field }) => (
@@ -44,19 +46,14 @@ const AmountInputField: React.FC<AmountInputField> = (props) => {
               ),
               sx: textFieldInputPropStyles,
             }}
-            error={!!errors.amount}
           />
         )}
       />
-      {!!errors.amount ? (
-        <div className="flex justify-end mt-2">
-          <span className="errors-chip">
-            {errors.amount?.type === 'validate'
-              ? INSUFFICIENT_BALANCE
-              : errors.amount?.message}
+        <div className="error-box">
+          <span className={!!errors.amount ? "error-chip opacity-80" : "error-chip opacity-0"}>
+            {errors.amount?.message}
           </span>
         </div>
-      ) : null}
     </>
   );
 };
