@@ -14,8 +14,13 @@ import {
 import Image from 'next/image';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { dialogBoxStyles } from '../styles';
+import {
+  dialogBoxStyles,
+  textFieldInputPropStyles,
+  textFieldStyles,
+} from '../styles';
 import { CLOSE_ICON_PATH, STAKING_DIALOG_IMAGE_PATH } from '@/utils/constants';
+import { INSUFFICIENT_BALANCE } from '@/utils/errors';
 
 interface ValidatorSet {
   [key: string]: Validator;
@@ -206,12 +211,12 @@ const DialogRedelegate = ({
                                 color: 'white',
                               },
                               '& button': {
-                                color: 'white'
-                              }
+                                color: 'white',
+                              },
                             },
                             '& .MuiAutocomplete-popper': {
-                              display: 'none !important'
-                            }
+                              display: 'none !important',
+                            },
                           }}
                           renderInput={(params) => (
                             <TextField
@@ -237,59 +242,51 @@ const DialogRedelegate = ({
                         />
                       )}
                     />
-                    <Controller
-                      name="amount"
-                      control={control}
-                      rules={{
-                        required: 'Amount is required',
-                        validate: (value) => {
-                          return (
-                            Number(value) > 0 &&
-                            Number(value) <= delegationShare
-                          );
-                        },
-                      }}
-                      render={({ field }) => (
-                        <TextField
-                          className="bg-[#FFFFFF0D] rounded-2xl"
-                          {...field}
-                          required
-                          fullWidth
-                          size="small"
-                          placeholder="Enter Amount here"
-                          sx={{
-                            '& .MuiTypography-body1': {
-                              color: 'white',
-                              fontSize: '12px',
-                              fontWeight: 200,
-                            },
-                            '& .MuiOutlinedInput-notchedOutline': {
-                              border: 'none',
-                            },
-                          }}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="start">
-                                {currency.coinDenom}
-                              </InputAdornment>
-                            ),
-                            sx: {
-                              input: {
-                                color: 'white',
-                                fontSize: '14px',
-                                padding: 2,
-                              },
-                            },
-                          }}
-                          error={!!errors.amount}
-                          helperText={
-                            errors.amount?.type === 'validate'
-                              ? 'Insufficient balance'
-                              : errors.amount?.message
-                          }
-                        />
-                      )}
-                    />
+                    <div>
+                      <Controller
+                        name="amount"
+                        control={control}
+                        rules={{
+                          required: 'Amount is required',
+                          validate: (value) => {
+                            return (
+                              Number(value) > 0 &&
+                              Number(value) <= delegationShare
+                            );
+                          },
+                        }}
+                        render={({ field }) => (
+                          <TextField
+                            className="bg-[#FFFFFF0D] rounded-2xl"
+                            {...field}
+                            required
+                            fullWidth
+                            size="small"
+                            type="number"
+                            placeholder="Enter Amount here"
+                            sx={textFieldStyles}
+                            InputProps={{
+                              endAdornment: (
+                                <InputAdornment position="start">
+                                  {currency.coinDenom}
+                                </InputAdornment>
+                              ),
+                              sx: textFieldInputPropStyles,
+                            }}
+                            error={!!errors.amount}
+                          />
+                        )}
+                      />
+                      {!!errors.amount ? (
+                        <div className="flex justify-end mt-2">
+                          <span className="errors-chip">
+                            {errors.amount?.type === 'validate'
+                              ? INSUFFICIENT_BALANCE
+                              : errors.amount?.message}
+                          </span>
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                   <div className="mt-10 flex gap-10 items-center">
                     <button type="submit" className="dialog-delegate-button">

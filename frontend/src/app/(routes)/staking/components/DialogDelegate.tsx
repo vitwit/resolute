@@ -9,8 +9,13 @@ import {
 import Image from 'next/image';
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { dialogBoxStyles } from '../styles';
+import {
+  dialogBoxStyles,
+  textFieldInputPropStyles,
+  textFieldStyles,
+} from '../styles';
 import { CLOSE_ICON_PATH, STAKING_DIALOG_IMAGE_PATH } from '@/utils/constants';
+import { INSUFFICIENT_BALANCE } from '@/utils/errors';
 
 const DialogDelegate = ({
   open,
@@ -145,41 +150,32 @@ const DialogDelegate = ({
                         {...field}
                         required
                         fullWidth
+                        type="number"
                         size="small"
+                        autoFocus={true}
                         placeholder="Enter Amount here"
-                        sx={{
-                          '& .MuiTypography-body1': {
-                            color: 'white',
-                            fontSize: '12px',
-                            fontWeight: 200,
-                          },
-                          '& .MuiOutlinedInput-notchedOutline': {
-                            border: 'none',
-                          },
-                        }}
+                        sx={textFieldStyles}
                         InputProps={{
                           endAdornment: (
                             <InputAdornment position="start">
                               {displayDenom}
                             </InputAdornment>
                           ),
-                          sx: {
-                            input: {
-                              color: 'white',
-                              fontSize: '14px',
-                              padding: 2,
-                            },
-                          },
+                          sx: textFieldInputPropStyles,
                         }}
                         error={!!errors.amount}
-                        helperText={
-                          errors.amount?.type === 'validate'
-                            ? 'Insufficient balance'
-                            : errors.amount?.message
-                        }
                       />
                     )}
                   />
+                  {!!errors.amount ? (
+                    <div className='flex justify-end mt-2'>
+                      <span className="errors-chip">
+                        {errors.amount?.type === 'validate'
+                          ? INSUFFICIENT_BALANCE
+                          : errors.amount?.message}
+                      </span>
+                    </div>
+                  ) : null}
                   <div className="mt-10 flex gap-10 items-center">
                     <button type="submit" className="dialog-delegate-button">
                       {loading === 'pending' ? 'Loading...' : 'Delegate'}

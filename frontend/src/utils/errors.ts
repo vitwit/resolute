@@ -22,3 +22,4 @@ export const DUPLICATE_PUBKEYS_ERROR = 'You have entered duplicate pubkeys';
 export const MAX_THRESHOLD_ERROR = 'Threshold can not be greater than pubkeys';
 export const MAX_PUBKEYS_ERROR = "You can't add more than 7 pub keys";
 export const FAILED_TO_GENERATE_MULTISIG = 'Failed to create multisig account';
+export const INSUFFICIENT_BALANCE = 'Insufficient balance';
