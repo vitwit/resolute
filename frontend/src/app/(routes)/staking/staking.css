@@ -75,8 +75,8 @@
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 
-.delegate-button-inactive {
-  @apply bg-[#FFFFFF1A] text-[#FFFFFF1A];
+.delegate-button-disabled {
+  @apply bg-[#FFFFFF1A] text-[#FFFFFF1A] cursor-not-allowed;
   background: #ffffff1a;
 }
 

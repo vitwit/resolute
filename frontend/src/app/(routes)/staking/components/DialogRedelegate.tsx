@@ -8,7 +8,6 @@ import {
   Autocomplete,
   Dialog,
   DialogContent,
-  InputAdornment,
   TextField,
 } from '@mui/material';
 import Image from 'next/image';
@@ -16,11 +15,9 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
   dialogBoxStyles,
-  textFieldInputPropStyles,
-  textFieldStyles,
 } from '../styles';
 import { CLOSE_ICON_PATH, STAKING_DIALOG_IMAGE_PATH } from '@/utils/constants';
-import { INSUFFICIENT_BALANCE } from '@/utils/errors';
+import AmountInputField from './AmountInputField';
 
 interface ValidatorSet {
   [key: string]: Validator;
@@ -243,49 +240,12 @@ const DialogRedelegate = ({
                       )}
                     />
                     <div>
-                      <Controller
-                        name="amount"
+                      <AmountInputField
                         control={control}
-                        rules={{
-                          required: 'Amount is required',
-                          validate: (value) => {
-                            return (
-                              Number(value) > 0 &&
-                              Number(value) <= delegationShare
-                            );
-                          },
-                        }}
-                        render={({ field }) => (
-                          <TextField
-                            className="bg-[#FFFFFF0D] rounded-2xl"
-                            {...field}
-                            required
-                            fullWidth
-                            size="small"
-                            type="number"
-                            placeholder="Enter Amount here"
-                            sx={textFieldStyles}
-                            InputProps={{
-                              endAdornment: (
-                                <InputAdornment position="start">
-                                  {currency.coinDenom}
-                                </InputAdornment>
-                              ),
-                              sx: textFieldInputPropStyles,
-                            }}
-                            error={!!errors.amount}
-                          />
-                        )}
+                        availableAmount={delegationShare}
+                        displayDenom={currency.coinDenom}
+                        errors={errors}
                       />
-                      {!!errors.amount ? (
-                        <div className="flex justify-end mt-2">
-                          <span className="errors-chip">
-                            {errors.amount?.type === 'validate'
-                              ? INSUFFICIENT_BALANCE
-                              : errors.amount?.message}
-                          </span>
-                        </div>
-                      ) : null}
                     </div>
                   </div>
                   <div className="mt-10 flex gap-10 items-center">
