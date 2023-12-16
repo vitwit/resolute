@@ -1,6 +1,6 @@
 import TopNav from '@/components/TopNav';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getTxns } from '@/store/features/multisig/multisigSlice';
+import { getAccountAllMultisigTxns, getTxns } from '@/store/features/multisig/multisigSlice';
 import React, { useEffect, useState } from 'react';
 import TransactionsList from './TransactionsList';
 import { RootState } from '@/store/store';
@@ -25,6 +25,7 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
     (state: RootState) => state.multisig.multisigAccount
   );
   const txnsState = useAppSelector((state: RootState) => state.multisig.txns);
+
   const updateTxnStatus = useAppSelector(
     (state: RootState) => state.multisig.updateTxnRes
   );
@@ -50,6 +51,8 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
           })
         );
       }
+    } else {
+      dispatch(getAccountAllMultisigTxns({ address: walletAddress, status }))
     }
   };
 
@@ -190,7 +193,21 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
             walletAddress={walletAddress}
           />
         </>
-      ) : null}
+      ) : <>
+        <TransactionsList
+          chainID={chainID}
+          isMember={isMember}
+          txnsState={txnsState}
+          isHistory={isHistory}
+        />
+        <DialogCreateTxn
+          open={createDialogOpen}
+          onClose={handleCreateDialogClose}
+          chainID={chainID}
+          address={address || ''}
+          walletAddress={walletAddress}
+        />
+      </>}
     </div>
   );
 };

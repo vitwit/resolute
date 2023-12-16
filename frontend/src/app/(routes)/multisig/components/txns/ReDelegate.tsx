@@ -22,7 +22,7 @@ interface ReDelegateProps {
 }
 
 const ReDelegate: React.FC<ReDelegateProps> = (props) => {
-  const { chainID, address, onDelegate, currency, availableBalance, baseURL } = props;
+  const { chainID, address, onDelegate, currency, baseURL } = props;
   const dispatch = useAppDispatch();
 
   const {
@@ -68,7 +68,7 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
     const totalDelegations = delegations?.delegations?.delegation_responses || []
 
     for (let j = 0; j < totalDelegations.length; j++) {
-      let del = totalDelegations[j]
+      const del = totalDelegations[j]
 
       for (let i = 0; i < validators.activeSorted.length; i++) {
         const validator = validators.active[validators.activeSorted[i]];

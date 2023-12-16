@@ -90,6 +90,14 @@ export const getTxns = (
   return Axios.get(uri);
 };
 
+export const getAccountAllMultisigTxns = (
+  address: string,
+  status: string
+): Promise<AxiosResponse> => {
+  const uri = `${BASE_URL}/accounts/${address}/all-txns?status=${status}`;
+  return Axios.get(uri);
+};
+
 export const deleteTx = (
   queryParams: QueryParams,
   address: string,
@@ -110,4 +118,5 @@ export default {
   updateTx,
   deleteTx,
   verifyUser,
+  getAccountAllMultisigTxns,
 };

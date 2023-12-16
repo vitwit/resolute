@@ -137,7 +137,7 @@ const TransactionCard: React.FC<TransactionCardProps> = (props) => {
             </div>
             <DeleteTxn
               txId={txn.id}
-              address={multisigAccount.account.address}
+              address={multisigAccount.account.address || txn?.multisig_address}
               chainID={chainID}
             />
           </div>

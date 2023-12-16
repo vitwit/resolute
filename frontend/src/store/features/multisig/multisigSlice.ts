@@ -232,6 +232,20 @@ export const getTxns = createAsyncThunk(
   }
 );
 
+export const getAccountAllMultisigTxns = createAsyncThunk(
+  'multisig/getAccountAllMultisigTxns',
+  async (data: GetTxnsInputs, { rejectWithValue }) => {
+    try {
+      const response = await multisigService.getAccountAllMultisigTxns(data.address, data.status);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
 export const updateTxn = createAsyncThunk(
   'multisig/updateTxn',
   async (data: UpdateTxnInputs, { rejectWithValue }) => {
@@ -427,6 +441,22 @@ export const multisigSlice = createSlice({
         state.txns.list = action.payload?.data || [];
       })
       .addCase(getTxns.rejected, (state, action) => {
+        state.txns.status = TxStatus.REJECTED;
+        const payload = action.payload as { message: string };
+        state.txns.error = payload.message || '';
+      });
+    builder
+      .addCase(getAccountAllMultisigTxns.pending, (state) => {
+        state.txns.status = TxStatus.PENDING;
+        state.txns.error = '';
+        state.txns.list = [];
+      })
+      .addCase(getAccountAllMultisigTxns.fulfilled, (state, action) => {
+        state.txns.status = TxStatus.IDLE;
+        state.txns.error = '';
+        state.txns.list = action.payload?.data || [];
+      })
+      .addCase(getAccountAllMultisigTxns.rejected, (state, action) => {
         state.txns.status = TxStatus.REJECTED;
         const payload = action.payload as { message: string };
         state.txns.error = payload.message || '';
