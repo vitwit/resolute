@@ -113,6 +113,7 @@ interface MultisigState {
   verifyAccountRes: VerifyAcccountRes;
   createMultisigAccountRes: TxRes;
   deleteTxnRes: TxRes;
+  deleteMultisigRes: TxRes;
   multisigAccount: MultisigAccount;
   balance: Balance;
   createTxnRes: TxRes;

@@ -150,6 +150,24 @@ export const verifyAccount = createAsyncThunk(
   }
 );
 
+export const deleteMultisig = createAsyncThunk(
+  'multisig/deleteMultisig',
+  async (data: DeleteTxnInputs, { rejectWithValue }) => {
+    try {
+      const response = await multisigService.deleteMultisig(
+        data.queryParams,
+        data.data.address,
+        data.data.id
+      );
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
 export const deleteTxn = createAsyncThunk(
   'multisig/deleteTxn',
   async (data: DeleteTxnInputs, { rejectWithValue }) => {
@@ -369,6 +387,26 @@ export const multisigSlice = createSlice({
         state.deleteTxnRes.status = TxStatus.REJECTED;
         const payload = action.payload as { message: string };
         state.deleteTxnRes.error = payload.message || '';
+      });
+    builder
+      .addCase(deleteMultisig.pending, (state) => {
+        state.deleteMultisigRes = {
+          status: TxStatus.PENDING,
+          error: ''
+        }
+      })
+      .addCase(deleteMultisig.fulfilled, (state) => {
+        state.deleteMultisigRes = {
+          status:  TxStatus.IDLE,
+          error: ''
+        }
+      })
+      .addCase(deleteMultisig.rejected, (state, action) => {
+        const payload = action.payload as { message: string };
+        state.deleteMultisigRes = {
+          status: TxStatus.REJECTED,
+          error: payload.message || '',
+        }
       });
     builder
       .addCase(multisigByAddress.pending, (state) => {
