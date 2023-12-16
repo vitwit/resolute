@@ -40,6 +40,8 @@ import DelegateMessage from './msgs/DelegateMessage';
 import UndelegateMessage from './msgs/UndelegateMessage';
 import RedelegateMessage from './msgs/RedelegateMessage';
 import SelectTransactionType from './SelectTransactionType';
+import UnDelegate from './txns/UnDelegate';
+import ReDelegate from './txns/ReDelegate';
 
 interface DialogCreateTxnProps {
   open: boolean;
@@ -82,7 +84,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
   };
 
   const { getDenomInfo, getChainInfo } = useGetChainInfo();
-  const { feeAmount } = getChainInfo(chainID);
+  const { feeAmount, baseURL } = getChainInfo(chainID);
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
   const currency = {
     coinDenom: displayDenom,
@@ -287,6 +289,32 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                       chainID={chainID}
                       address={address}
                       onDelegate={(payload) => {
+                        setMessages([...messages, payload]);
+                      }}
+                      currency={currency}
+                      availableBalance={availableBalance}
+                    />
+                  )}
+                  {txType === MULTISIG_TX_TYPES.undelegate && (
+                    <UnDelegate
+                      chainID={chainID}
+                      address={address}
+                      baseURL={baseURL}
+                      onDelegate={(payload) => {
+                        console.log('payload', payload)
+                        setMessages([...messages, payload]);
+                      }}
+                      currency={currency}
+                      availableBalance={availableBalance}
+                    />
+                  )}
+                  {txType === MULTISIG_TX_TYPES.redelegate && (
+                    <ReDelegate
+                      chainID={chainID}
+                      address={address}
+                      baseURL={baseURL}
+                      onDelegate={(payload) => {
+                        console.log('payload', payload)
                         setMessages([...messages, payload]);
                       }}
                       currency={currency}
