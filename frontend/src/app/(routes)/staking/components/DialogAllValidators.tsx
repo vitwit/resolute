@@ -7,17 +7,15 @@ import InactiveValidators from './InactiveValidators';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { allValidatorDialogStyles } from '../styles';
 
-type HandleClose = () => void;
-
 interface DialogAllValidatorsProps {
-  handleClose: HandleClose;
+  toggleValidatorsDialog: () => void;
   open: boolean;
   validators: Validators;
   onMenuAction: StakingMenuAction;
 }
 
 const DialogAllValidators = ({
-  handleClose,
+  toggleValidatorsDialog,
   open,
   validators,
   onMenuAction,
@@ -30,7 +28,7 @@ const DialogAllValidators = ({
       open={open}
       onClose={() => {
         setSearchTerm('');
-        handleClose();
+        toggleValidatorsDialog();
         setActive(true);
       }}
       maxWidth="lg"
@@ -42,7 +40,7 @@ const DialogAllValidators = ({
             <div
               onClick={() => {
                 setSearchTerm('');
-                handleClose();
+                toggleValidatorsDialog();
               }}
             >
               <Image

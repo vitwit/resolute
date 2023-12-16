@@ -1,7 +1,7 @@
 import { TxStatus } from '@/types/enums';
 import { AllValidatorsProps } from '@/types/staking';
 import { CircularProgress } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import ValidatorItem from './ValidatorItem';
 import DialogAllValidators from './DialogAllValidators';
 
@@ -10,21 +10,20 @@ const AllValidators = ({
   currency,
   onMenuAction,
   validatorsStatus,
+  allValidatorsDialogOpen,
+  toggleValidatorsDialog,
 }: AllValidatorsProps) => {
-  const [allValidatorsDialogOpen, setAllValidatorsDialogOpen] =
-    useState<boolean>(false);
-  const handleClose = () => {
-    setAllValidatorsDialogOpen(false);
-  };
   const slicedValidatorsList = validators?.activeSorted.slice(0, 10) || [];
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center sticky top-0 z-10 bg-[#0E0B26]">
-        <h2 className="text-[20px] leading-normal font-medium">All Validators</h2>
+        <h2 className="text-[20px] leading-normal font-medium">
+          All Validators
+        </h2>
         {validatorsStatus === TxStatus.IDLE ? (
           <div
             className="cursor-pointer text-[#FFFFFFBF] text-[12px] font-extralight underline underline-offset-2"
-            onClick={() => setAllValidatorsDialogOpen(true)}
+            onClick={toggleValidatorsDialog}
           >
             View All
           </div>
@@ -61,7 +60,7 @@ const AllValidators = ({
         </>
       )}
       <DialogAllValidators
-        handleClose={handleClose}
+        toggleValidatorsDialog={toggleValidatorsDialog}
         open={allValidatorsDialogOpen}
         validators={validators}
         onMenuAction={onMenuAction}

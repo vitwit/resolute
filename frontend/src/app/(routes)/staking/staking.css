@@ -117,3 +117,7 @@
   @apply opacity-80 rounded-lg text-[#E57575] text-center text-sm not-italic font-normal leading-[normal] max-w-fit py-1 px-2 truncate;
   background: rgba(229, 117, 117, 0.2);
 }
+
+.no-data {
+  @apply h-[50%] flex-1 flex flex-col gap-2 justify-center items-center;
+}

@@ -25,6 +25,8 @@ const StakingSidebar = ({
   currency,
   chainID,
   onMenuAction,
+  allValidatorsDialogOpen,
+  toggleValidatorsDialog
 }: StakingSidebarProps) => {
   const stakedBalance = useAppSelector(
     (state: RootState) =>
@@ -147,6 +149,8 @@ const StakingSidebar = ({
           currency={currency}
           onMenuAction={onMenuAction}
           validatorsStatus={validatorsStatus}
+          allValidatorsDialogOpen={allValidatorsDialogOpen}
+          toggleValidatorsDialog={toggleValidatorsDialog}
         />
       </div>
     </div>
