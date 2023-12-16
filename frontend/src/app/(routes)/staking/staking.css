@@ -1,5 +1,5 @@
 .staking-sidebar {
-  @apply p-6 w-[500px] bg-[#0E0B26] h-screen  overflow-y-hidden;
+  @apply p-6 w-[500px] bg-[#0E0B26] h-screen max-h-screen overflow-y-hidden;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
@@ -28,7 +28,7 @@
 
 .staking-card,
 .unbonding-card {
-  @apply p-4 rounded-2xl bg-[#0E0B26];
+  @apply p-4 rounded-2xl bg-[#0E0B26] overflow-x-hidden;
   backdrop-filter: blur(2px);
 }
 
@@ -81,15 +81,15 @@
 }
 
 .overview-grid {
-  @apply grid grid-cols-2 gap-6;
+  @apply grid grid-cols-1 gap-6 md:grid-cols-2;
 }
 
 .unbondings-grid {
-  @apply grid grid-cols-2 lg:grid-cols-3 gap-6;
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
 }
 
 .staking-main {
-  @apply px-10 py-6 flex-1 h-screen min-h-[800px] overflow-y-scroll;
+  @apply px-10 py-6 flex-1 h-screen max-h-screen overflow-y-scroll;
 }
 
 .search-validator-input {
