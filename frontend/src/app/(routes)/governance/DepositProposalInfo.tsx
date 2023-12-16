@@ -1,4 +1,4 @@
-import TopNav from '@/components/TopNav';
+
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { parseBalance } from '@/utils/denom';
