@@ -29,6 +29,7 @@ import DepositProposalInfo from './DepositProposalInfo';
 import DepositPopup from './DepositPopup';
 import { setSelectedNetwork } from '@/store/features/common/commonSlice';
 import ProposalProjection from './ProposalProjection';
+import TopNav from '@/components/TopNav';
 
 const emptyTallyResult = {
   yes: '',
@@ -221,22 +222,26 @@ const ProposalOverviewVote = ({
 
   return (
     <div className="space-y-6 pl-10 pr-10 pt-6 pb-0">
-      <div className="flex space-x-1">
-        <Link href="/governance">
-          <Image
-            src="/backarrow-icon.svg"
-            width={24}
-            height={24}
-            alt="BackArrow"
-            className="cursor-pointer"
-          />
-        </Link>
+      {/* <div className="flex justify-between w-full px-10 pt-6"> */}
 
-        <div className="proposal-text-big">Proposal Overview</div>
-      </div>
       <div className="flex gap-10">
-        
-          <div className="proposal-brief overflow-y-scroll max-h-screen">
+        <div className="flex flex-col space-y-4">
+          <div className="proposal-text-big">Governance</div>
+
+          <div className="flex space-x-1">
+            <Link href="/governance">
+              <Image
+                src="/backarrow-icon.svg"
+                width={24}
+                height={24}
+                alt="BackArrow"
+                className="cursor-pointer"
+              />
+            </Link>
+
+            <div className="proposal-text-big">Proposal Overview</div>
+          </div>
+          <div className="proposal-brief overflow-y-scroll flex flex-1 max-h-screen">
             <div className="proposal-div w-full">
               <div className="flex justify-between w-full">
                 <div className="flex space-x-2 items-center">
@@ -306,10 +311,13 @@ const ProposalOverviewVote = ({
             open={isDepositPopupOpen}
             networkLogo={networkLogo}
           />
-        
+        </div>
         {isStatusVoting ? (
-          <div className="flex">
+          <div className="flex max-h-screen justify-between">
             <div className="space-y-4">
+              <div className="w-[412px]">
+                <TopNav />
+              </div>
               <div className="status-grid w-[450px]">
                 <div className="status-view-grid w-full">
                   <div className="status-view w-full">
@@ -423,8 +431,11 @@ const ProposalOverviewVote = ({
             </div>
           </div>
         ) : (
-          <div className="flex w-[480px]">
+          <div className="flex w-[480px] flex-end">
             <div className="space-y-4 w-full">
+              <div className="w-[412px]">
+                <TopNav />
+              </div>
               <div className="bg-[#0E0B26] rounded-2xl">
                 <DepositProposalInfo chainID={chainID} />
               </div>

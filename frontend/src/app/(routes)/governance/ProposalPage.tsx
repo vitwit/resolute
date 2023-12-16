@@ -24,12 +24,12 @@ const ProposalPage = () => {
   };
   return (
     <div>
-      <div className="flex justify-between w-full px-10 pt-6">
+      {/* <div className="flex justify-between w-full px-10 pt-6">
         <div className="proposal-text-big">Governance</div>
         <div className="w-[412px]">
           <TopNav />
         </div>
-      </div>
+      </div> */}
       {validChain && validId() ? (
         <ProposalOverviewVote
           chainName={chainName}
