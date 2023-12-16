@@ -107,7 +107,7 @@ const DialogRedelegate = ({
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
-          <div className="px-10 py-6 flex justify-end">
+          <div className="px-10 py-6 pt-10 flex justify-end">
             <div
               onClick={() => {
                 handleClose();
@@ -223,7 +223,7 @@ const DialogRedelegate = ({
                               placeholder="Destinaiton Validator"
                               error={!!error}
                               helperText={error ? error.message : null}
-                              // label="destination"
+                              autoFocus={true}
                               sx={{
                                 '& .MuiTypography-body1': {
                                   color: 'white',
