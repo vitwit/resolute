@@ -6,6 +6,7 @@ import DialogViewRaw from './DialogViewRaw';
 import DialogTxnFailed from './DialogTxnFailed';
 import DialogViewTxnMessages from './DialogViewTxnMessages';
 import TransactionCard from './TransactionCard';
+import { isMultisigMember } from '@/utils/util';
 
 interface AllTransactionsListProps {
   chainID: string;
@@ -57,7 +58,7 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
   };
 
   const { getDenomInfo, getChainInfo } = useGetChainInfo();
-  const { explorerTxHashEndpoint } = getChainInfo(chainID);
+  const { explorerTxHashEndpoint, address: walletAddress } = getChainInfo(chainID);
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
   const currency = useMemo(
     () => ({
@@ -70,12 +71,11 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
 
   return (
     <div className="pb-6 space-y-6 text-[14px] flex flex-col justify-between">
-      {/* TODO: extract pubkeys, memberscount, address from txn  */}
       {txnsState.list.map((txn) => {
-        const isMember = true;
         const mAddress = txn.multisig_address;
         const pKeys = txn.pubkeys || [];
         const threshold_value = txn.threshold || 0;
+        const isMember = isMultisigMember(pubKeys, walletAddress);
 
         return (
           <TransactionCard

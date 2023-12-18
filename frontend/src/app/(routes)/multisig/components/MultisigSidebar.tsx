@@ -146,6 +146,7 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
             <div>
               <button
                 className="create-multisig-btn"
+                disabled={!isMember}
                 onClick={() => setCreateDialogOpen(true)}
               >
                 Create Transaction

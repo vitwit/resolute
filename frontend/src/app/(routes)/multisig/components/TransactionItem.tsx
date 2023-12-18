@@ -1,13 +1,14 @@
 import { MultisigAddressPubkey, Txn } from '@/types/multisig';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import TxnMsg from './msgs/TxnMsg';
 import Link from 'next/link';
-import { cleanURL } from '@/utils/util';
+import { cleanURL, isMultisigMember } from '@/utils/util';
 import BroadCastTxn from './BroadCastTxn';
 import SignTxn from './SignTxn';
 import Image from 'next/image';
 import { Tooltip } from '@mui/material';
 import DeleteTxn from './DeleteTxn';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 interface TransactionItemProps {
   txn: Txn;
@@ -42,6 +43,19 @@ const TransactionItem: React.FC<TransactionItemProps> = (props) => {
     if (signs?.length >= threshold) return true;
     else return false;
   };
+
+  const [isMember, setIsMember] = useState<boolean>(false);
+  const { getChainInfo } = useGetChainInfo();
+  const { address: walletAddress } = getChainInfo(chainID);
+
+  console.log(pubKeys)
+  console.log(walletAddress)
+  console.log(isMultisigMember(pubKeys, walletAddress))
+
+  useEffect(() => {
+    const result = isMultisigMember(pubKeys, walletAddress);
+    setIsMember(result);
+  }, [pubKeys]);
 
   return (
     <div className="flex gap-6 justify-between items-center text-white">
@@ -97,13 +111,13 @@ const TransactionItem: React.FC<TransactionItemProps> = (props) => {
                 multisigAddress={multisigAddress}
                 pubKeys={pubKeys}
                 threshold={threshold}
-                isMember={true}
+                isMember={isMember}
                 chainID={chainID}
               />
             ) : (
               <SignTxn
                 address={multisigAddress}
-                isMember={true}
+                isMember={isMember}
                 unSignedTxn={txn}
                 txId={txn?.id}
                 chainID={chainID}
@@ -132,11 +146,7 @@ const TransactionItem: React.FC<TransactionItemProps> = (props) => {
             </div>
           </div>
         </Tooltip>
-        <DeleteTxn
-          txId={txn.id}
-          address={multisigAddress}
-          chainID={chainID}
-        />
+        <DeleteTxn txId={txn.id} address={multisigAddress} chainID={chainID} />
       </div>
     </div>
   );

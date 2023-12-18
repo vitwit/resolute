@@ -89,7 +89,7 @@ const TransactionCard: React.FC<TransactionCardProps> = (props) => {
                   pubKeys={txn.pubkeys || []}
                   threshold={threshold}
                   chainID={chainID}
-                  isMember={true}
+                  isMember={isMember}
                 />
               ) : (
                 <SignTxn
@@ -144,6 +144,7 @@ const TransactionCard: React.FC<TransactionCardProps> = (props) => {
               txId={txn.id}
               address={multisigAddress || ''}
               chainID={chainID}
+              isMember={isMember}
             />
           </div>
         </div>

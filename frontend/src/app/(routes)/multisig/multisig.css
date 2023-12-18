@@ -83,7 +83,7 @@
 }
 
 .action-image {
-  @apply rounded-lg w-8 h-8 cursor-pointer;
+  @apply rounded-lg w-8 h-8 cursor-pointer justify-center items-center flex;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 
