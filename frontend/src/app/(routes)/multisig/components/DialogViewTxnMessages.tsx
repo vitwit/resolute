@@ -1,7 +1,7 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { TxStatus } from '@/types/enums';
-import { MultisigAddressPubkey, Pubkey, Txn } from '@/types/multisig';
+import { MultisigAddressPubkey, Txn } from '@/types/multisig';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';

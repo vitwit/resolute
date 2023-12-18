@@ -1,5 +1,5 @@
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { MultisigAddressPubkey, Pubkey, Txn, Txns } from '@/types/multisig';
+import { MultisigAddressPubkey, Txn, Txns } from '@/types/multisig';
 import { EMPTY_TXN } from '@/utils/constants';
 import React, { useMemo, useState } from 'react';
 import DialogViewRaw from './DialogViewRaw';
