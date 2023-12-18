@@ -3,6 +3,7 @@ import { parseBalance } from './denom';
 import { MultisigThresholdPubkey, SinglePubkey } from '@cosmjs/amino';
 import { Options } from '@/custom-hooks/useSortedAssets';
 import { getAuthToken } from './localStorage';
+import { MultisigAddressPubkey } from '@/types/multisig';
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -333,3 +334,10 @@ export const isVerified = ({
   }
   return false;
 };
+
+export const isMultisigMember = (pubkeys: MultisigAddressPubkey[], walletAddress: string): boolean => {
+  const result = pubkeys?.filter((keys) => {
+    return keys.address === walletAddress;
+  });
+  return !!result?.length
+}

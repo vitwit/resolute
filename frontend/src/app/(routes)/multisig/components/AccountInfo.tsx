@@ -131,7 +131,7 @@ const AccountDetails = ({
 
   const handleDelete = () => {
     dispatch(deleteMultisig({
-      data: { address: multisigAccount?.account?.address, id: 0 },
+      data: { address: multisigAccount?.account?.address },
       queryParams: { address: '', signature: '' }
     }))
   }

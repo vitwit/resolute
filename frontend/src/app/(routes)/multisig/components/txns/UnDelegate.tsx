@@ -140,7 +140,7 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
         control={control}
         render={({ field }) => (
           <TextField
-            className="bg-[#FFFFFF1A] rounded-2xl mb-6"
+            className="bg-[#FFFFFF1A]"
             {...field}
             sx={textFieldStyles}
             placeholder="From"
@@ -178,7 +178,7 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
             }}
             renderInput={(params) => (
               <TextField
-                className="bg-[#FFFFFF1A] rounded-2xl mb-6"
+                className="bg-[#FFFFFF1A]"
                 {...params}
                 required
                 placeholder="Select validator"
@@ -207,7 +207,7 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
         }}
         render={({ field, fieldState: { error } }) => (
           <TextField
-            className="bg-[#FFFFFF1A] rounded-2xl mb-6"
+            className="bg-[#FFFFFF1A]"
             {...field}
             sx={textFieldStyles}
             error={!!error}

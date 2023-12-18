@@ -177,6 +177,8 @@ interface Txn {
   signatures: Signature[];
   last_updated: string;
   created_at: string;
+  pubkeys?: MultisigAddressPubkey[];
+  threshold?: number;
 }
 
 interface Txns {
@@ -200,4 +202,11 @@ interface TxnMsgProps {
   onDelete: (index: number) => void;
   currency: Currency;
   index: number;
+}
+
+interface DeleteMultisigInputs {
+  queryParams: QueryParams;
+  data: {
+    address: string;
+  };
 }

@@ -11,6 +11,8 @@ export const textFieldStyles = {
     //Important is used here to override the mui's styling
     '-webkit-text-fill-color': '#ffffff6b !important',
   },
+  mb: "24px",
+  borderRadius: "16px"
 };
 
 export const autoCompleteStyles = {
@@ -26,6 +28,8 @@ export const autoCompleteStyles = {
   '& .MuiAutocomplete-popper': {
     display: 'none !important',
   },
+  mb: "24px",
+  borderRadius: "16px"
 };
 
 export const autoCompleteTextFieldStyles = {
@@ -37,6 +41,7 @@ export const autoCompleteTextFieldStyles = {
   '& .MuiOutlinedInput-notchedOutline': {
     border: 'none',
   },
+  borderRadius: "16px"
 };
 
 export const sendTxnTextFieldStyles = {
@@ -51,6 +56,8 @@ export const sendTxnTextFieldStyles = {
   '& .Mui-disabled': {
     '-webkit-text-fill-color': '#ffffff6b !important',
   },
+  mb: "24px",
+  borderRadius: "16px"
 };
 
 export const createMultisigTextFieldStyles = {
@@ -80,6 +87,8 @@ export const createTxnTextFieldStyles = {
   '& .MuiOutlinedInput-notchedOutline': {
     border: 'none',
   },
+  mb: "24px",
+  borderRadius: "16px"
 };
 
 export const selectTxnStyles = {
@@ -101,6 +110,8 @@ export const selectTxnStyles = {
     fontSize: '12px',
     fontWeight: 200,
   },
+  borderRadius: "16px",
+  mb: "24px",
 };
 
 export const dialogTxnFailedStyles = {

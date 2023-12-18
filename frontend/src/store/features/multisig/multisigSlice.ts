@@ -10,6 +10,7 @@ import bankService from '@/store/features/bank/bankService';
 import {
   CreateAccountPayload,
   CreateTxnInputs,
+  DeleteMultisigInputs,
   DeleteTxnInputs,
   GetMultisigBalanceInputs,
   GetTxnsInputs,
@@ -78,6 +79,10 @@ const initialState: MultisigState = {
     status: TxStatus.INIT,
     error: '',
   },
+  deleteMultisigRes: {
+    status: TxStatus.INIT,
+    error: '',
+  }
 };
 
 declare let window: WalletWindow;
@@ -152,12 +157,11 @@ export const verifyAccount = createAsyncThunk(
 
 export const deleteMultisig = createAsyncThunk(
   'multisig/deleteMultisig',
-  async (data: DeleteTxnInputs, { rejectWithValue }) => {
+  async (data: DeleteMultisigInputs, { rejectWithValue }) => {
     try {
       const response = await multisigService.deleteMultisig(
         data.queryParams,
         data.data.address,
-        data.data.id
       );
       return response.data;
     } catch (error) {

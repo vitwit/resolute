@@ -243,7 +243,6 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                 <>
                   <FormControl
                     fullWidth
-                    className="mb-6"
                     sx={{
                       '& .MuiFormLabel-root': {
                         display: 'none',
@@ -255,7 +254,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                     </InputLabel>
                     <Select
                       labelId="tx-type"
-                      className="bg-[#FFFFFF1A] rounded-2xl"
+                      className="bg-[#FFFFFF1A]"
                       id="tx-type"
                       value={txType}
                       label="Select Transaction"
@@ -368,7 +367,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                         rules={{ required: 'Gas is required' }}
                         render={({ field, fieldState: { error } }) => (
                           <TextField
-                            className="bg-[#FFFFFF1A] rounded-2xl mb-6"
+                            className="bg-[#FFFFFF1A]"
                             {...field}
                             sx={createTxnTextFieldStyles}
                             error={!!error}
@@ -395,7 +394,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                         control={control}
                         render={({ field }) => (
                           <TextField
-                            className="bg-[#FFFFFF1A] rounded-2xl mb-6"
+                            className="bg-[#FFFFFF1A]"
                             {...field}
                             sx={createTxnTextFieldStyles}
                             placeholder="Memo"
