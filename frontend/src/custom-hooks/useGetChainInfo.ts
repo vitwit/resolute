@@ -93,7 +93,34 @@ const useGetChainInfo = () => {
     return originDenomInfo;
   };
 
-  return { getDenomInfo, getChainInfo, getOriginDenomInfo };
+  const isNativeTransaction = (chainID: string, toAddress: string) => {
+    const { prefix } = getChainInfo(chainID);
+    if (toAddress.startsWith(prefix)) return true;
+    // osmosis bech32Accountaddr prefix is not matching with address
+    if (prefix === 'osmosis' && toAddress.startsWith('osmo')) return true;
+    return false;
+  };
+
+  const getChainIDFromAddress = (address: string) => {
+    let chainID = '';
+    Object.keys(networks).forEach((chainIDItem) => {
+      const prefix =
+        networks[chainIDItem].network.config.bech32Config.bech32PrefixAccAddr;
+      if (address.startsWith(prefix)) chainID = chainIDItem;
+      if (prefix === 'osmosis' && address.startsWith('osmo'))
+        chainID = chainIDItem;
+    });
+
+    return chainID;
+  };
+
+  return {
+    getDenomInfo,
+    getChainInfo,
+    getOriginDenomInfo,
+    isNativeTransaction,
+    getChainIDFromAddress,
+  };
 };
 
 export default useGetChainInfo;

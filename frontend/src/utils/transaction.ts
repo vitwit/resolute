@@ -19,12 +19,18 @@ import {
   serialize as serializeMsgUndelegte,
 } from '@/txns/staking/undelegate';
 import { getTimeDifference } from './dataTime';
+import {
+  msgTransfer,
+  serialize as serializeMsgTransfer,
+} from '@/txns/ibc/transfer';
 
 export function NewTransaction(
   txResponse: ParsedTxResponse,
   msgs: Msg[],
   chainID: string,
-  address: string
+  address: string,
+  isIBC?: boolean,
+  isIBCPending?: boolean
 ): Transaction {
   const transaction: Transaction = {
     code: txResponse.code,
@@ -39,6 +45,8 @@ export function NewTransaction(
     chainID,
     address,
     memo: txResponse.memo || '',
+    isIBC: !!isIBC,
+    isIBCPending: !!isIBCPending,
   };
   return transaction;
 }
@@ -55,6 +63,8 @@ export const MsgType = (msg: string): string => {
       return 'Send';
     case msgWithdrawRewards:
       return 'Claim';
+    case msgTransfer:
+      return 'IBC';
     default:
       return 'Todo: add type';
   }
@@ -73,6 +83,8 @@ export const serializeMsg = (msg: Msg): string => {
       return serializeMsgSend(msg);
     case msgWithdrawRewards:
       return serializeMsgClaim(msg);
+    case msgTransfer:
+      return serializeMsgTransfer(msg);
     default:
       return `Todo: serialize message ${msg.typeUrl}`;
   }
@@ -111,5 +123,7 @@ export const formatTransaction = (tx: Transaction, msgFilters: string[]) => {
     firstMessage,
     msgCount,
     showTx,
+    isIBC: tx.isIBC,
+    isIBCPending: tx.isIBCPending,
   };
 };

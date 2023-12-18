@@ -1,7 +1,12 @@
 'use client';
 
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { addTransanctions, getTransactions } from '@/utils/localStorage';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  addTransanctions,
+  getTransactions,
+  updateIBCStatus,
+} from '@/utils/localStorage';
+import { trackTx } from '../ibc/ibcSlice';
 
 type TransactionHistoryState = {
   chains: { [chainID: string]: Transaction[] };
@@ -12,6 +17,28 @@ const initialState: TransactionHistoryState = {
   chains: {},
   allTransactions: [],
 };
+
+export const loadTransactions = createAsyncThunk(
+  'transactions/load',
+  async (
+    data: LoadTransactionsInputs,
+    { dispatch }
+  ) => {
+    const transactions = getTransactions(data.address);
+    transactions.forEach((tx) => {
+      if (tx.isIBCPending) {
+        dispatch(
+          trackTx({
+            chainID: tx.chainID,
+            txHash: tx.transactionHash,
+            cosmosAddress: data.address,
+          })
+        );
+      }
+    });
+    return transactions;
+  }
+);
 
 export const transactionHistorySlice = createSlice({
   name: 'transactionHistory',
@@ -30,25 +57,52 @@ export const transactionHistorySlice = createSlice({
       addTransanctions(transactions, address);
     },
 
-    loadTransactions: (
+    updateIBCTransaction: (
       state,
-      action: PayloadAction<LoadTransactionsInputs>
+      action: PayloadAction<UpdateIBCTransactionInputs>
     ) => {
-      const { address } = action.payload;
-      const transactions = getTransactions(address);
-      state.allTransactions = transactions;
-      const chains: { [key: string]: Transaction[] } = {};
-      transactions.forEach((tx) => {
-        const { chainID } = tx;
-        if (!chains[chainID]) chains[chainID] = [];
-        chains[chainID] = [...chains[chainID], tx];
+      const { txHash, chainID, address } = action.payload;
+      const allTransactions = state.allTransactions;
+      const updatedAllTransactions = allTransactions.map((tx) => {
+        if (tx.transactionHash === txHash) {
+          return { ...tx, isIBCPending: false };
+        }
+        return tx;
       });
-      state.chains = chains;
+      state.allTransactions = updatedAllTransactions;
+
+      const chainTransactions = state.chains[chainID] || [];
+      const updatedChainTransactions = chainTransactions.map((tx) => {
+        if (tx.transactionHash === txHash) {
+          return { ...tx, isIBCPending: false };
+        }
+        return tx;
+      });
+      state.chains[chainID] = updatedChainTransactions;
+
+      updateIBCStatus(address, txHash);
     },
+  },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(loadTransactions.pending, () => {})
+      .addCase(loadTransactions.fulfilled, (state, action) => {
+        const transactions = action.payload;
+        state.allTransactions = transactions;
+        const chains: { [key: string]: Transaction[] } = {};
+        transactions.forEach((tx) => {
+          const { chainID } = tx;
+          if (!chains[chainID]) chains[chainID] = [];
+          chains[chainID] = [...chains[chainID], tx];
+        });
+        state.chains = chains;
+      })
+      .addCase(loadTransactions.rejected, () => {});
   },
 });
 
-export const { addTransactions, loadTransactions } =
+export const { addTransactions, updateIBCTransaction } =
   transactionHistorySlice.actions;
 
 export default transactionHistorySlice.reducer;

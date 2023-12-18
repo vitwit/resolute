@@ -303,7 +303,7 @@ async function broadcast(
   );
 }
 
-function parseTxResult(result: TxResponse): ParsedTxResponse {
+export function parseTxResult(result: TxResponse): ParsedTxResponse {
   return {
     code: result?.code || 0,
     height: result?.height,

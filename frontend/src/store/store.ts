@@ -10,6 +10,7 @@ import distributionSlice from './features/distribution/distributionSlice';
 import transactionHistorySlice from './features/transactionHistory/transactionHistorySlice';
 import authSlice from './features/auth/authSlice';
 import govSlice from './features/gov/govSlice';
+import ibcSlice from './features/ibc/ibcSlice';
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     distribution: distributionSlice,
     gov: govSlice,
     transactionHistory: transactionHistorySlice,
+    ibc: ibcSlice,
   },
 });
 
