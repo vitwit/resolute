@@ -29,6 +29,7 @@ import DepositProposalInfo from './DepositProposalInfo';
 import DepositPopup from './DepositPopup';
 import { setSelectedNetwork } from '@/store/features/common/commonSlice';
 import ProposalProjection from './ProposalProjection';
+import TopNav from '@/components/TopNav';
 
 const emptyTallyResult = {
   yes: '',
@@ -206,8 +207,7 @@ const ProposalOverviewVote = ({
         currency.coinDecimals,
         currency.coinMinimalDenom
       );
-      const deposit_percent = Math.floor((total_deposit / min_deposit) * 100);
-      console.log(deposit_percent, total_deposit, min_deposit);
+      // const deposit_percent = Math.floor((total_deposit / min_deposit) * 100);
       const deposit_required = min_deposit - total_deposit;
       setDepositRequired(deposit_required);
     }
@@ -220,23 +220,27 @@ const ProposalOverviewVote = ({
   }, [chainName]);
 
   return (
-    <div className="space-y-6 pl-10 pr-10 pt-6 pb-0">
-      <div className="flex space-x-1">
-        <Link href="/governance">
-          <Image
-            src="/backarrow-icon.svg"
-            width={24}
-            height={24}
-            alt="BackArrow"
-            className="cursor-pointer"
-          />
-        </Link>
+    <div className=" px-10 py-6">
+      <div className="flex gap-10 h-screen">
+        <div className="flex-1 flex flex-col space-y-4">
+          <div className="flex space-y-10 flex-col">
+            <div className="proposal-text-big">Governance</div>
 
-        <div className="proposal-text-big">Proposal Overview</div>
-      </div>
-      <div className="flex gap-10">
-        
-          <div className="proposal-brief overflow-y-scroll max-h-screen">
+            <div className="flex space-x-1">
+              <Link href="/governance">
+                <Image
+                  src="/backarrow-icon.svg"
+                  width={24}
+                  height={24}
+                  alt="BackArrow"
+                  className="cursor-pointer"
+                />
+              </Link>
+
+              <div className="proposal-text-big">Proposal Overview</div>
+            </div>
+          </div>
+          <div className="proposal-brief overflow-y-scroll flex flex-1">
             <div className="proposal-div w-full">
               <div className="flex justify-between w-full">
                 <div className="flex space-x-2 items-center">
@@ -306,44 +310,50 @@ const ProposalOverviewVote = ({
             open={isDepositPopupOpen}
             networkLogo={networkLogo}
           />
-        
+        </div>
         {isStatusVoting ? (
-          <div className="flex">
+          <div className="flex justify-between">
             <div className="space-y-4">
-              <div className="status-grid w-[450px]">
-                <div className="status-view-grid w-full">
-                  <div className="status-view w-full">
-                    <div className="status-pass w-full">
-                      <div className="flex flex-col items-center space-y-2">
-                        <div className="flex space-x-2 w-full justify-center">
-                          <Image
-                            src="/vote-icon.svg"
-                            width={20}
-                            height={20}
-                            alt="Vote-Icon"
-                          />
-                          <p className="proposal-text-small">
-                            Proposal Projection
-                          </p>
-                        </div>
-                        <div>
-                          <ProposalProjection
-                            quorumReached={
-                              parseFloat(quorumPercent) >=
-                              parseFloat(quorumRequired)
-                            }
-                            quorumPercent={quorumPercent}
-                            quorumRequired={quorumRequired}
-                            totalVotes={totalVotes}
-                            tallyResult={tallyResult || emptyTallyResult}
-                          />
+              <div className="flex space-y-[68px] flex-col">
+                <div className="w-[412px]">
+                  <TopNav />
+                </div>
+
+                <div className="status-grid w-[450px]">
+                  <div className="status-view-grid w-full">
+                    <div className="status-view w-full">
+                      <div className="status-pass w-full">
+                        <div className="flex flex-col items-center space-y-2">
+                          <div className="flex space-x-2 w-full justify-center">
+                            <Image
+                              src="/vote-icon.svg"
+                              width={20}
+                              height={20}
+                              alt="Vote-Icon"
+                            />
+                            <p className="proposal-text-small">
+                              Proposal Projection
+                            </p>
+                          </div>
+                          <div>
+                            <ProposalProjection
+                              quorumReached={
+                                parseFloat(quorumPercent) >=
+                                parseFloat(quorumRequired)
+                              }
+                              quorumPercent={quorumPercent}
+                              quorumRequired={quorumRequired}
+                              totalVotes={totalVotes}
+                              tallyResult={tallyResult || emptyTallyResult}
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* TODO: Write explaination for proposal Rejected */}
-                    <div className="flex justify-between items-start w-full">
-                      {''}
+                      {/* TODO: Write explaination for proposal Rejected */}
+                      <div className="flex justify-between items-start w-full">
+                        {''}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -369,8 +379,13 @@ const ProposalOverviewVote = ({
                     <div>Quorum</div>
 
                     {quorumPercent ? (
-                      <Tooltip title={`${quorumPercent}% / ${quorumRequired}%`}>
-                        <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
+                      <Tooltip title={`${quorumPercent}%`}>
+                        <div className="flex w-full flex-col">
+                          <div className="flex flex-col items-center">
+                            <div>{quorumRequired}%</div>
+                            <div className="bg-[#26233C] h-[10px] w-[1px]"></div>
+                          </div>
+                          <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full"></div>
                           <div
                             style={{ width: `${quorumPercent}%` }}
                             className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
@@ -423,10 +438,15 @@ const ProposalOverviewVote = ({
             </div>
           </div>
         ) : (
-          <div className="flex w-[480px]">
+          <div className="flex w-[480px] flex-end">
             <div className="space-y-4 w-full">
-              <div className="bg-[#0E0B26] rounded-2xl">
-                <DepositProposalInfo chainID={chainID} />
+              <div className="flex space-y-[68px] flex-col">
+                <div className="w-[412px]">
+                  <TopNav />
+                </div>
+                <div className="bg-[#0E0B26] rounded-2xl">
+                  <DepositProposalInfo chainID={chainID} />
+                </div>
               </div>
               <DepositProposalDetails
                 submittedAt={getLocalTime(

@@ -5,7 +5,6 @@ import React from 'react';
 import ProposalOverviewVote from './ProposalOverviewVote';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
-import TopNav from '@/components/TopNav';
 
 const ProposalPage = () => {
   const params = useParams();
@@ -24,12 +23,6 @@ const ProposalPage = () => {
   };
   return (
     <div>
-      <div className="flex justify-between w-full px-10 pt-6">
-        <div className="proposal-text-big">Governance</div>
-        <div className="w-[412px]">
-          <TopNav />
-        </div>
-      </div>
       {validChain && validId() ? (
         <ProposalOverviewVote
           chainName={chainName}
