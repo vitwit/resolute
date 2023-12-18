@@ -40,11 +40,12 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
   const [threshold, setThreshold] = useState<number>(0);
 
   const onViewMoreAction = (txn: Txn) => {
+    const { pubkeys=[], multisig_address="", threshold=0 } = txn;
     setSelectedTxn(txn);
     setMsgDialogOpen(true);
-    setPubKeys(txn.pubkeys || []);
-    setMultisigAddress(txn.multisig_address);
-    setThreshold(txn.threshold || 0);
+    setPubKeys(pubkeys);
+    setMultisigAddress(multisig_address);
+    setThreshold(threshold);
   };
 
   const onViewRawAction = (txn: Txn) => {
