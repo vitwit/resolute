@@ -69,13 +69,12 @@ const ValidatorComponent = ({
           className={
             enableDelegate
               ? `delegate-button`
-              : `delegate-button delegate-button-inactive`
+              : `delegate-button delegate-button-disabled`
           }
           onClick={() => {
-            if (enableDelegate) {
               onMenuAction('delegate', validator);
-            }
           }}
+          disabled={!enableDelegate}
         >
           Delegate
         </button>
