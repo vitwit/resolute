@@ -221,27 +221,29 @@ const ProposalOverviewVote = ({
   }, [chainName]);
 
   return (
-    <div className="space-y-6 pl-10 pr-10 pt-6 pb-0">
+    <div className="">
       {/* <div className="flex justify-between w-full px-10 pt-6"> */}
 
-      <div className="flex gap-10">
-        <div className="flex flex-col space-y-4">
-          <div className="proposal-text-big">Governance</div>
+      <div className="flex gap-10 h-screen">
+        <div className="flex-1 flex flex-col space-y-4">
+          <div>
+            <div className="proposal-text-big">Governance</div>
 
-          <div className="flex space-x-1">
-            <Link href="/governance">
-              <Image
-                src="/backarrow-icon.svg"
-                width={24}
-                height={24}
-                alt="BackArrow"
-                className="cursor-pointer"
-              />
-            </Link>
+            <div className="flex space-x-1">
+              <Link href="/governance">
+                <Image
+                  src="/backarrow-icon.svg"
+                  width={24}
+                  height={24}
+                  alt="BackArrow"
+                  className="cursor-pointer"
+                />
+              </Link>
 
-            <div className="proposal-text-big">Proposal Overview</div>
+              <div className="proposal-text-big">Proposal Overview</div>
+            </div>
           </div>
-          <div className="proposal-brief overflow-y-scroll flex flex-1 max-h-screen">
+          <div className="proposal-brief overflow-y-scroll flex flex-1">
             <div className="proposal-div w-full">
               <div className="flex justify-between w-full">
                 <div className="flex space-x-2 items-center">
@@ -313,7 +315,7 @@ const ProposalOverviewVote = ({
           />
         </div>
         {isStatusVoting ? (
-          <div className="flex max-h-screen justify-between">
+          <div className="flex justify-between">
             <div className="space-y-4">
               <div className="w-[412px]">
                 <TopNav />
