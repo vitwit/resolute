@@ -90,15 +90,19 @@ export function addTransactions(transactions: Transaction[], address: string) {
 
 export function updateIBCStatus(address: string, txHash: string) {
   const txns = getTransactions(address);
+  let updateNeeded = false;
   const updatedTxns = txns.map((tx) => {
     if (tx.transactionHash === txHash) {
+      updateNeeded = true;
       return { ...tx, isIBCPending: false };
     }
     return tx;
   });
 
-  const key = KEY_TRANSACTIONS(address);
-  localStorage.setItem(key, JSON.stringify(updatedTxns));
+  if (updateNeeded) {
+    const key = KEY_TRANSACTIONS(address);
+    localStorage.setItem(key, JSON.stringify(updatedTxns));
+  }
 }
 
 export function setAuthToken(authToken: AuthToken) {
