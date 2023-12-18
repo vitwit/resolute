@@ -412,7 +412,7 @@
 }
 
 .wallet-grid {
-  @apply flex flex-col items-start gap-4 p-4 rounded-2xl;
+  @apply flex flex-col items-start gap-4 p-4 rounded-2xl cursor-pointer hover:bg-[#7e74cc];
   background: rgba(255, 255, 255, 0.05);
 }
 .selected-wallet {
