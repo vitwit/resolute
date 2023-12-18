@@ -378,12 +378,12 @@
 
 /* Transaction success Popup styles */
 .transaction-box {
-  @apply flex h-[485px] flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
+  @apply flex flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
   background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%);
 }
 
 .cross {
-  @apply flex justify-end items-center gap-2.5 pl-6 pr-10 py-6;
+  @apply flex justify-end items-center self-stretch gap-2.5 pl-6 pr-10 py-4;
 }
 
 .transaction-inner-grid {
@@ -392,12 +392,12 @@
 }
 
 .button {
-  @apply flex justify-center items-center gap-6 px-10 py-2.5 rounded-2xl;
+  @apply flex justify-center items-center gap-6 px-10 py-2.5 rounded-2xl text-white text-base font-medium leading-5 tracking-[0.64px];
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 
 .popup-text {
-  @apply text-white text-sm not-italic leading-[normal];
+  @apply text-white text-sm leading-[normal];
 }
 
 /* WalletPopup */
