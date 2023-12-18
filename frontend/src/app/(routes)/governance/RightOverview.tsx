@@ -327,7 +327,7 @@ const RightOverview = ({
                       </div>
                       <div className="flex justify-between w-full">
                         <div className="flex proposal-text-extralight">
-                          Proposal submitted on {proposalSubmittedOn}
+                          Submitted on {proposalSubmittedOn}
                         </div>
                         <div className="flex space-x-2">
                           <Image
