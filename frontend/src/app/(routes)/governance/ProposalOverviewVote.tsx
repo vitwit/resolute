@@ -208,7 +208,6 @@ const ProposalOverviewVote = ({
         currency.coinMinimalDenom
       );
       const deposit_percent = Math.floor((total_deposit / min_deposit) * 100);
-      console.log(deposit_percent, total_deposit, min_deposit);
       const deposit_required = min_deposit - total_deposit;
       setDepositRequired(deposit_required);
     }
@@ -319,6 +318,7 @@ const ProposalOverviewVote = ({
                 <div className="w-[412px]">
                   <TopNav />
                 </div>
+
                 <div className="status-grid w-[450px]">
                   <div className="status-view-grid w-full">
                     <div className="status-view w-full">
