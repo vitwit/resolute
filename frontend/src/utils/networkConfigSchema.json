@@ -329,18 +329,18 @@
         "theme": {
           "type": "object",
           "properties": {
-            "primaryColor": {
+            "primary_color": {
               "type": "string",
               "pattern": "^[^\\s]*$",
               "message": {
-                "pattern": "primaryColor cannot contain spaces"
+                "pattern": "primary_color cannot contain spaces"
               }
             },
             "gradient": {
               "type": "string"
             }
           },
-          "required": ["primaryColor", "gradient"]
+          "required": ["primary_color", "gradient"]
         }
       },
       "required": [
