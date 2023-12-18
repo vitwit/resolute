@@ -222,11 +222,9 @@ const ProposalOverviewVote = ({
 
   return (
     <div className=" px-10 py-6">
-      {/* <div className="flex justify-between w-full px-10 pt-6"> */}
-
       <div className="flex gap-10 h-screen">
         <div className="flex-1 flex flex-col space-y-4">
-          <div className='flex space-y-10 flex-col'>
+          <div className="flex space-y-10 flex-col">
             <div className="proposal-text-big">Governance</div>
 
             <div className="flex space-x-1">
@@ -316,50 +314,49 @@ const ProposalOverviewVote = ({
         </div>
         {isStatusVoting ? (
           <div className="flex justify-between">
-          
             <div className="space-y-4">
-            <div className='flex space-y-[68px] flex-col' >
-              <div className="w-[412px]">
-                <TopNav />
-              </div>
-              <div className="status-grid w-[450px]">
-                <div className="status-view-grid w-full">
-                  <div className="status-view w-full">
-                    <div className="status-pass w-full">
-                      <div className="flex flex-col items-center space-y-2">
-                        <div className="flex space-x-2 w-full justify-center">
-                          <Image
-                            src="/vote-icon.svg"
-                            width={20}
-                            height={20}
-                            alt="Vote-Icon"
-                          />
-                          <p className="proposal-text-small">
-                            Proposal Projection
-                          </p>
-                        </div>
-                        <div>
-                          <ProposalProjection
-                            quorumReached={
-                              parseFloat(quorumPercent) >=
-                              parseFloat(quorumRequired)
-                            }
-                            quorumPercent={quorumPercent}
-                            quorumRequired={quorumRequired}
-                            totalVotes={totalVotes}
-                            tallyResult={tallyResult || emptyTallyResult}
-                          />
+              <div className="flex space-y-[68px] flex-col">
+                <div className="w-[412px]">
+                  <TopNav />
+                </div>
+                <div className="status-grid w-[450px]">
+                  <div className="status-view-grid w-full">
+                    <div className="status-view w-full">
+                      <div className="status-pass w-full">
+                        <div className="flex flex-col items-center space-y-2">
+                          <div className="flex space-x-2 w-full justify-center">
+                            <Image
+                              src="/vote-icon.svg"
+                              width={20}
+                              height={20}
+                              alt="Vote-Icon"
+                            />
+                            <p className="proposal-text-small">
+                              Proposal Projection
+                            </p>
+                          </div>
+                          <div>
+                            <ProposalProjection
+                              quorumReached={
+                                parseFloat(quorumPercent) >=
+                                parseFloat(quorumRequired)
+                              }
+                              quorumPercent={quorumPercent}
+                              quorumRequired={quorumRequired}
+                              totalVotes={totalVotes}
+                              tallyResult={tallyResult || emptyTallyResult}
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* TODO: Write explaination for proposal Rejected */}
-                    <div className="flex justify-between items-start w-full">
-                      {''}
+                      {/* TODO: Write explaination for proposal Rejected */}
+                      <div className="flex justify-between items-start w-full">
+                        {''}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
               </div>
               <div className="voting-grid bg-[#0E0B26]">
                 <div className="voting-view w-full">
@@ -438,13 +435,13 @@ const ProposalOverviewVote = ({
         ) : (
           <div className="flex w-[480px] flex-end">
             <div className="space-y-4 w-full">
-              <div className='flex space-y-[68px] flex-col'>
-              <div className="w-[412px]">
-                <TopNav />
-              </div>
-              <div className="bg-[#0E0B26] rounded-2xl">
-                <DepositProposalInfo chainID={chainID} />
-              </div>
+              <div className="flex space-y-[68px] flex-col">
+                <div className="w-[412px]">
+                  <TopNav />
+                </div>
+                <div className="bg-[#0E0B26] rounded-2xl">
+                  <DepositProposalInfo chainID={chainID} />
+                </div>
               </div>
               <DepositProposalDetails
                 submittedAt={getLocalTime(
