@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@cosmjs/amino": "^0.31.3",
-    "@cosmjs/proto-signing": "^0.31.3",
+    "@cosmjs/proto-signing": "^0.32.1",
     "@cosmjs/stargate": "^0.32.1",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",

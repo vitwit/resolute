@@ -2,7 +2,7 @@
 
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-  addTransanctions,
+  addTransactions as addTxsInLocalStorage,
   getTransactions,
   updateIBCStatus,
 } from '@/utils/localStorage';
@@ -20,10 +20,7 @@ const initialState: TransactionHistoryState = {
 
 export const loadTransactions = createAsyncThunk(
   'transactions/load',
-  async (
-    data: LoadTransactionsInputs,
-    { dispatch }
-  ) => {
+  async (data: LoadTransactionsInputs, { dispatch }) => {
     const transactions = getTransactions(data.address);
     transactions.forEach((tx) => {
       if (tx.isIBCPending) {
@@ -44,7 +41,7 @@ export const transactionHistorySlice = createSlice({
   name: 'transactionHistory',
   initialState,
   reducers: {
-    addTransactions: (state, action: PayloadAction<AddTransanctionInputs>) => {
+    addTransactions: (state, action: PayloadAction<AddTransactionInputs>) => {
       const { transactions, chainID, address } = action.payload;
       state.allTransactions = [
         ...transactions,
@@ -54,7 +51,7 @@ export const transactionHistorySlice = createSlice({
         ...transactions,
         ...(state.chains[chainID] || []),
       ];
-      addTransanctions(transactions, address);
+      addTxsInLocalStorage(transactions, address);
     },
 
     updateIBCTransaction: (

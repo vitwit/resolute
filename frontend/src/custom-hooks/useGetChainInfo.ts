@@ -102,16 +102,17 @@ const useGetChainInfo = () => {
   };
 
   const getChainIDFromAddress = (address: string) => {
-    let chainID = '';
-    Object.keys(networks).forEach((chainIDItem) => {
+    for (const chainIDItem of Object.keys(networks)) {
       const prefix =
         networks[chainIDItem].network.config.bech32Config.bech32PrefixAccAddr;
-      if (address.startsWith(prefix)) chainID = chainIDItem;
-      if (prefix === 'osmosis' && address.startsWith('osmo'))
-        chainID = chainIDItem;
-    });
-
-    return chainID;
+      if (
+        address.startsWith(prefix) ||
+        (prefix === 'osmosis' && address.startsWith('osmo'))
+      ) {
+        return chainIDItem;
+      }
+    }
+    return '';
   };
 
   return {

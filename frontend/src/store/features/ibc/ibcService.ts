@@ -7,6 +7,15 @@ import { capitalize } from 'lodash';
 
 declare let window: WalletWindow;
 
+function createSkipRouterClient() {
+  return new SkipRouter({
+    apiURL: SKIP_API_URL,
+    getCosmosSigner: async (chainID) => {
+      return window.wallet.getOfflineSigner(chainID);
+    },
+  });
+}
+
 export const txIBCTransfer = async (
   sourceDenom: string,
   sourceChainID: string,
@@ -23,12 +32,7 @@ export const txIBCTransfer = async (
     destChain: string
   ) => void
 ) => {
-  const client = new SkipRouter({
-    apiURL: SKIP_API_URL,
-    getCosmosSigner: async (chainID) => {
-      return window.wallet.getOfflineSigner(chainID);
-    },
-  });
+  const client = createSkipRouterClient();
 
   const request: AssetsFromSourceRequest = {
     sourceAssetDenom: sourceDenom,
@@ -41,7 +45,7 @@ export const txIBCTransfer = async (
   let destinationDenom;
   Object.keys(possibleDestinations).forEach((chainIDItem) => {
     if (chainIDItem === destChainID) {
-      destinationDenom = possibleDestinations[chainIDItem][0].denom;
+      destinationDenom = possibleDestinations?.[chainIDItem]?.[0]?.denom;
     }
   });
 
@@ -85,7 +89,7 @@ export const txIBCTransfer = async (
     });
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   } catch (err: any) {
-    throw new Error(err.message);
+    throw err;
   }
 };
 
@@ -94,12 +98,7 @@ export const trackIBCTx = async (
   chainID: string,
   onDestChainTxSuccess: (chainID: string, txHash: string) => void
 ): Promise<void> => {
-  const client = new SkipRouter({
-    apiURL: SKIP_API_URL,
-    getCosmosSigner: async (chainID) => {
-      return window.wallet.getOfflineSigner(chainID);
-    },
-  });
+  const client = createSkipRouterClient();
 
   async function checkTransactionStatus() {
     const result = await client.transactionStatus({

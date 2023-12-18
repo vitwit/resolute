@@ -15,7 +15,7 @@ interface Transaction {
   isIBCPending: boolean;
 }
 
-interface AddTransanctionInputs {
+interface AddTransactionInputs {
   transactions: Transaction[];
   address: string;
   chainID: string;
