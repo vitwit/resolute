@@ -1,7 +1,7 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { TxStatus } from '@/types/enums';
-import { MultisigAccount, Txn } from '@/types/multisig';
+import { MultisigAddressPubkey, Pubkey, Txn } from '@/types/multisig';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
@@ -10,9 +10,10 @@ import TransactionItem from './TransactionItem';
 
 interface DialogViewTxnMessagesProps {
   open: boolean;
-  isMember: boolean;
   txn: Txn;
-  multisigAccount: MultisigAccount;
+  multisigAddress: string;
+  threshold: number;
+  pubKeys: MultisigAddressPubkey[];
   membersCount: number;
   chainID: string;
   toggleMsgDialogOpen: () => void;
@@ -27,11 +28,12 @@ interface DialogViewTxnMessagesProps {
 const DialogViewTxnMessages: React.FC<DialogViewTxnMessagesProps> = (props) => {
   const {
     open,
-    isMember,
     txn,
-    multisigAccount,
+    multisigAddress,
+    threshold,
     membersCount,
     chainID,
+    pubKeys,
     toggleMsgDialogOpen,
     isHistory,
     currency,
@@ -90,9 +92,10 @@ const DialogViewTxnMessages: React.FC<DialogViewTxnMessagesProps> = (props) => {
               <div className="divider"></div>
             </div>
             <TransactionItem
-              isMember={isMember}
               txn={txn}
-              multisigAccount={multisigAccount}
+              multisigAddress={multisigAddress}
+              threshold={threshold}
+              pubKeys={pubKeys}
               membersCount={membersCount}
               chainID={chainID}
               isHistory={isHistory}

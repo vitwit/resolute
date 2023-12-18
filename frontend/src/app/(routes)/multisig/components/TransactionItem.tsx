@@ -1,4 +1,4 @@
-import { MultisigAccount, Txn } from '@/types/multisig';
+import { MultisigAddressPubkey, Txn } from '@/types/multisig';
 import React from 'react';
 import TxnMsg from './msgs/TxnMsg';
 import Link from 'next/link';
@@ -10,9 +10,10 @@ import { Tooltip } from '@mui/material';
 import DeleteTxn from './DeleteTxn';
 
 interface TransactionItemProps {
-  isMember: boolean;
   txn: Txn;
-  multisigAccount: MultisigAccount;
+  multisigAddress: string;
+  threshold: number;
+  pubKeys: MultisigAddressPubkey[];
   membersCount: number;
   chainID: string;
   onViewRawAction: (txn: Txn) => void;
@@ -24,9 +25,10 @@ interface TransactionItemProps {
 
 const TransactionItem: React.FC<TransactionItemProps> = (props) => {
   const {
-    isMember,
     txn,
-    multisigAccount,
+    multisigAddress,
+    pubKeys,
+    threshold,
     membersCount,
     chainID,
     isHistory,
@@ -37,7 +39,7 @@ const TransactionItem: React.FC<TransactionItemProps> = (props) => {
   } = props;
   const isReadyToBroadcast = () => {
     const signs = txn?.signatures || [];
-    if (signs?.length >= multisigAccount?.account?.threshold) return true;
+    if (signs?.length >= threshold) return true;
     else return false;
   };
 
@@ -92,13 +94,16 @@ const TransactionItem: React.FC<TransactionItemProps> = (props) => {
             {isReadyToBroadcast() ? (
               <BroadCastTxn
                 txn={txn}
-                multisigAccount={multisigAccount}
+                multisigAddress={multisigAddress}
+                pubKeys={pubKeys}
+                threshold={threshold}
+                isMember={true}
                 chainID={chainID}
               />
             ) : (
               <SignTxn
-                address={multisigAccount.account.address}
-                isMember={isMember}
+                address={multisigAddress}
+                isMember={true}
                 unSignedTxn={txn}
                 txId={txn?.id}
                 chainID={chainID}
@@ -129,7 +134,7 @@ const TransactionItem: React.FC<TransactionItemProps> = (props) => {
         </Tooltip>
         <DeleteTxn
           txId={txn.id}
-          address={multisigAccount.account.address}
+          address={multisigAddress}
           chainID={chainID}
         />
       </div>

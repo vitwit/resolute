@@ -1,12 +1,16 @@
 import TopNav from '@/components/TopNav';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getAccountAllMultisigTxns, getTxns } from '@/store/features/multisig/multisigSlice';
+import {
+  getAccountAllMultisigTxns,
+  getTxns,
+} from '@/store/features/multisig/multisigSlice';
 import React, { useEffect, useState } from 'react';
 import TransactionsList from './TransactionsList';
 import { RootState } from '@/store/store';
 import DialogCreateTxn from './DialogCreateTxn';
 import { setError } from '@/store/features/common/commonSlice';
 import { TxStatus } from '@/types/enums';
+import AllTransactionsList from './AllTransactionsList';
 
 interface MultisigSidebarProps {
   chainID: string;
@@ -52,7 +56,7 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
         );
       }
     } else {
-      dispatch(getAccountAllMultisigTxns({ address: walletAddress, status }))
+      dispatch(getAccountAllMultisigTxns({ address: walletAddress, status }));
     }
   };
 
@@ -193,21 +197,15 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
             walletAddress={walletAddress}
           />
         </>
-      ) : <>
-        <TransactionsList
-          chainID={chainID}
-          isMember={isMember}
-          txnsState={txnsState}
-          isHistory={isHistory}
-        />
-        <DialogCreateTxn
-          open={createDialogOpen}
-          onClose={handleCreateDialogClose}
-          chainID={chainID}
-          address={address || ''}
-          walletAddress={walletAddress}
-        />
-      </>}
+      ) : (
+        <>
+          <AllTransactionsList
+            chainID={chainID}
+            txnsState={txnsState}
+            isHistory={isHistory}
+          />
+        </>
+      )}
     </div>
   );
 };
