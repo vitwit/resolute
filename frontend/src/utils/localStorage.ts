@@ -1,9 +1,16 @@
 export const KEY_WALLET_NAME: string = 'WALLET_NAME';
 export const KEY_DARK_MODE: string = 'DARK_MODE';
+const AUTH_TOKEN_KEY_NAME: string = 'AUTH_TOKEN';
 const KEY_TRANSACTIONS = (address: string) => 'transactions' + ' ' + address;
 
 interface LocalNetworks {
   [key: string]: Network;
+}
+
+interface AuthToken {
+  chainID: string;
+  address: string;
+  signature: string;
 }
 
 export function setConnected() {
@@ -79,4 +86,48 @@ export function addTransanctions(transactions: Transaction[], address: string) {
   let storedTransactions = getTransactions(address);
   storedTransactions = [...transactions, ...storedTransactions];
   localStorage.setItem(key, JSON.stringify(storedTransactions));
+}
+
+export function setAuthToken(authToken: AuthToken) {
+  const tokens = localStorage.getItem(AUTH_TOKEN_KEY_NAME);
+  let authTokens = [];
+
+  if (tokens) {
+    authTokens = JSON.parse(tokens);
+  }
+
+  const token = authTokens.filter((item: AuthToken) => {
+    return item.chainID === authToken.chainID;
+  });
+
+  if (token.length) {
+    return;
+  }
+  if (authToken.chainID && authToken.address && authToken.signature) {
+    authTokens.push({
+      chainID: authToken.chainID,
+      address: authToken.address,
+      signature: authToken.signature,
+    });
+    localStorage.setItem(AUTH_TOKEN_KEY_NAME, JSON.stringify(authTokens));
+  }
+}
+
+export function getAuthToken(chainID: string): AuthToken | null {
+  const tokens = localStorage.getItem(AUTH_TOKEN_KEY_NAME);
+
+  if (tokens) {
+    const authTokens = JSON.parse(tokens);
+
+    const token = authTokens.filter((item: AuthToken) => {
+      return item.chainID === chainID;
+    });
+    return token[0];
+  }
+
+  return null;
+}
+
+export function removeAllAuthTokens() {
+  localStorage.removeItem(AUTH_TOKEN_KEY_NAME);
 }

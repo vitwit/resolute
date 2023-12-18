@@ -7,6 +7,7 @@ export interface DenomInfo {
   minimalDenom: string;
   decimals: number;
   chainName: string;
+  displayDenom: string;
 }
 
 export interface OriginDenomInfo {
@@ -26,9 +27,10 @@ const useGetChainInfo = () => {
       const chainName = config?.chainName.toLowerCase();
 
       return {
-        minimalDenom: currency.coinMinimalDenom,
-        decimals: currency.coinDecimals || 0,
+        minimalDenom: currency?.coinMinimalDenom,
+        decimals: currency?.coinDecimals || 0,
         chainName,
+        displayDenom: currency?.coinDenom,
       };
     },
     [networks]
@@ -41,11 +43,14 @@ const useGetChainInfo = () => {
     const rpc = config.rpc;
     const chainName = config.chainName.toLowerCase();
 
-    const aminoCfg = network.aminoConfig;
+    const aminoCfg = network?.aminoConfig;
     const cosmosAddress = networks[COSMOS_CHAIN_ID].walletInfo.bech32Address;
-    const prefix = config.bech32Config.bech32PrefixAccAddr;
-    const feeAmount = config.feeCurrencies[0].gasPriceStep?.average || 0;
-    const address = networks[chainID].walletInfo.bech32Address;
+    const prefix = config?.bech32Config.bech32PrefixAccAddr;
+    const feeAmount = config?.feeCurrencies[0].gasPriceStep?.average || 0;
+    const address = networks[chainID]?.walletInfo.bech32Address;
+    const feeCurrencies = config?.feeCurrencies;
+    const explorerTxHashEndpoint = network?.explorerTxHashEndpoint;
+
     return {
       baseURL: rest,
       chainID,
@@ -56,6 +61,8 @@ const useGetChainInfo = () => {
       prefix,
       feeAmount,
       address,
+      feeCurrencies,
+      explorerTxHashEndpoint,
       chainName,
     };
   };

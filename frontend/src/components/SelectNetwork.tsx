@@ -68,7 +68,7 @@ const SelectNetwork = () => {
         className="flex gap-2 items-center cursor-pointer"
         onClick={() => setOpen(true)}
       >
-        <Image src={chainLogo} height={32} width={32} alt="All Networks" />
+        <Image src={chainLogo} height={26} width={26} alt="All Networks" />
         {/* TODO: Integrate copy to clipboard */}
         {walletAddress ? (
           <div className="wallet-address">
@@ -84,7 +84,7 @@ const SelectNetwork = () => {
         )}
         <div>
           <Image
-            src="/drop-down-icon.svg"
+            src="/new-drop-down-icon.svg"
             height={16}
             width={16}
             alt="Select Network"
@@ -184,8 +184,8 @@ const DialogSelectNetwork = ({
               <div className="flex justify-center items-center w-full gap-2">
                 <Image
                   src={ALL_NETWORKS_LOGO}
-                  width={32}
-                  height={32}
+                  width={26}
+                  height={26}
                   alt="All Networks"
                 />
                 <h3 className={`text-[14px] leading-normal opacity-100`}>
