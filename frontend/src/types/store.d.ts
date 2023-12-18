@@ -8,6 +8,8 @@ interface BasicChainInfo {
   address: string;
   prefix: string;
   feeAmount: number;
+  feeCurrencies: Currency[];
+  explorerTxHashEndpoint: string;
   chainName: string;
 }
 

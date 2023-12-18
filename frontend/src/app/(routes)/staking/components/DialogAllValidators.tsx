@@ -61,7 +61,7 @@ const DialogAllValidators = ({
                 className="custom-radio-button-label"
                 onClick={() => setActive(true)}
               >
-                <div className="custom-ratio-button">
+                <div className="custom-radio-button">
                   {active ? (
                     <div className="custom-radio-button-checked"></div>
                   ) : null}
@@ -72,7 +72,7 @@ const DialogAllValidators = ({
                 className="custom-radio-button-label"
                 onClick={() => setActive(false)}
               >
-                <div className="custom-ratio-button">
+                <div className="custom-radio-button">
                   {!active ? (
                     <div className="custom-radio-button-checked"></div>
                   ) : null}

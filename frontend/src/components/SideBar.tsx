@@ -11,6 +11,7 @@ import { RootState } from '@/store/store';
 import { tabLink } from '../utils/util';
 import { Tooltip } from '@mui/material';
 import TransactionSuccessPopup from './TransactionSuccessPopup';
+import SnackBar from './SnackBar';
 
 const menuItems = [
   {
@@ -62,10 +63,12 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathParts = pathName.split('/');
   const selectedPart = getSelectedPartFromURL(pathParts).toLowerCase();
   const dispatch = useAppDispatch();
+
   return (
     <div className="main">
       <TransactionSuccessPopup />
-      <div className="sidebar">
+      <SnackBar />
+      <div className="sidebar overflow-y-scroll">
         <div className="">
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
         </div>
@@ -81,7 +84,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
             />
           ))}
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
           <Tooltip title="History" placement="right">
             <Link href="/history">
               <div

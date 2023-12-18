@@ -1,6 +1,8 @@
 import { DelegationResponse, Params, Validator } from '@/types/staking';
 import { parseBalance } from './denom';
+import { MultisigThresholdPubkey, SinglePubkey } from '@cosmjs/amino';
 import { Options } from '@/custom-hooks/useSortedAssets';
+import { getAuthToken } from './localStorage';
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -282,6 +284,18 @@ export function formatUnbondingPeriod(
     : '-';
 }
 
+export function NewMultisigThresholdPubkey(
+  pubkeys: SinglePubkey[],
+  threshold: string
+): MultisigThresholdPubkey {
+  return {
+    type: 'tendermint/PubKeyMultisigThreshold',
+    value: {
+      pubkeys: pubkeys,
+      threshold: threshold,
+    },
+  };
+}
 export const filterAsset = (
   asset: ParsedAsset | undefined,
   options: Options
@@ -302,4 +316,20 @@ export const filterAsset = (
     includedAsset = true;
   }
   return includedAsset;
+};
+
+export const isVerified = ({
+  chainID,
+  address,
+}: {
+  chainID: string;
+  address: string;
+}) => {
+  const token = getAuthToken(chainID);
+  if (token) {
+    if (token.address === address && token.chainID === chainID) {
+      return true;
+    }
+  }
+  return false;
 };
