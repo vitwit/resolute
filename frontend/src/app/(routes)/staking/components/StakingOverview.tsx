@@ -117,7 +117,7 @@ const StakingOverview = () => {
         <div className="no-delegations">- No Delegations -</div>
       )}
       {hasUnbonding ? (
-        <>
+        <div className="mt-12">
           <h2 className="txt-lg font-medium my-6">Unbonding</h2>
           <div className="unbondings-grid">
             {chainIDs.map((chainID) => {
@@ -139,7 +139,7 @@ const StakingOverview = () => {
               );
             })}
           </div>
-        </>
+        </div>
       ) : null}
     </div>
   );
