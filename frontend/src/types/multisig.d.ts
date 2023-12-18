@@ -201,3 +201,10 @@ interface TxnMsgProps {
   currency: Currency;
   index: number;
 }
+
+interface DeleteMultisigInputs {
+  queryParams: QueryParams;
+  data: {
+    address: string;
+  };
+}

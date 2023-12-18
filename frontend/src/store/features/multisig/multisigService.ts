@@ -111,7 +111,6 @@ export const deleteTx = (
 export const deleteMultisig = (
   queryParams: QueryParams,
   address: string,
-  txId: number
 ): Promise<AxiosResponse> =>
   Axios.delete(
     `${BASE_URL}/multisig/${address}` +

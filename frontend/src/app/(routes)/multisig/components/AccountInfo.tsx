@@ -8,7 +8,6 @@ import { formatCoin, formatStakedAmount, shortenAddress } from '@/utils/util';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import DialogDeleteTxn from './DialogDeleteTxn';
 import DailogDeleteMultisig from './DialogDeleteMultisig';
 
 interface AccountInfoProps {
@@ -132,7 +131,7 @@ const AccountDetails = ({
 
   const handleDelete = () => {
     dispatch(deleteMultisig({
-      data: { address: multisigAccount?.account?.address, id: 0 },
+      data: { address: multisigAccount?.account?.address },
       queryParams: { address: '', signature: '' }
     }))
   }
