@@ -221,12 +221,12 @@ const ProposalOverviewVote = ({
   }, [chainName]);
 
   return (
-    <div className="">
+    <div className=" px-10 py-6">
       {/* <div className="flex justify-between w-full px-10 pt-6"> */}
 
       <div className="flex gap-10 h-screen">
         <div className="flex-1 flex flex-col space-y-4">
-          <div>
+          <div className='flex space-y-10 flex-col'>
             <div className="proposal-text-big">Governance</div>
 
             <div className="flex space-x-1">
@@ -316,7 +316,9 @@ const ProposalOverviewVote = ({
         </div>
         {isStatusVoting ? (
           <div className="flex justify-between">
+          
             <div className="space-y-4">
+            <div className='flex space-y-[68px] flex-col' >
               <div className="w-[412px]">
                 <TopNav />
               </div>
@@ -357,6 +359,7 @@ const ProposalOverviewVote = ({
                     </div>
                   </div>
                 </div>
+              </div>
               </div>
               <div className="voting-grid bg-[#0E0B26]">
                 <div className="voting-view w-full">
@@ -435,11 +438,13 @@ const ProposalOverviewVote = ({
         ) : (
           <div className="flex w-[480px] flex-end">
             <div className="space-y-4 w-full">
+              <div className='flex space-y-[68px] flex-col'>
               <div className="w-[412px]">
                 <TopNav />
               </div>
               <div className="bg-[#0E0B26] rounded-2xl">
                 <DepositProposalInfo chainID={chainID} />
+              </div>
               </div>
               <DepositProposalDetails
                 submittedAt={getLocalTime(
