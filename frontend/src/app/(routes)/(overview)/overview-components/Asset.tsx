@@ -110,9 +110,7 @@ const Asset = ({
       </td>
       <td>
         <div className="text-sm not-italic font-normal leading-[normal]">
-          {asset.type === 'native'
-            ? formatDollarAmount(asset.usdValue)
-            : '-'}
+          {asset.type === 'native' ? formatDollarAmount(asset.usdValue) : '-'}
         </div>
       </td>
       <td>
@@ -155,7 +153,7 @@ const Asset = ({
                 if (asset.type === 'native') claimAndStake(asset.chainID);
               }}
             >
-              {txRestakeStatus === TxStatus.PENDING ? (
+              {txRestakeStatus === TxStatus.PENDING && asset.type !== 'ibc' ? (
                 <CircularProgress size={16} />
               ) : (
                 <Image

@@ -13,7 +13,7 @@ const DialogAllAssets = ({
   dialogOpen: boolean;
   assets: ParsedAsset[];
   selectedAsset: ParsedAsset | undefined;
-  onSelectAsset: (asset: ParsedAsset, index:number) => void;
+  onSelectAsset: (asset: ParsedAsset, index: number) => void;
   handleDialogClose: () => void;
 }) => {
   return (

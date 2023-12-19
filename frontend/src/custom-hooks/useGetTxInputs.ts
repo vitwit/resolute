@@ -179,14 +179,17 @@ const useGetTxInputs = () => {
     chainID: string,
     recipient: string,
     amount: number,
-    memo: string
+    memo: string,
+    assetDenom: string,
+    decimals: number
   ): TxSendInputs => {
     const basicChainInfo = getChainInfo(chainID);
-    const { minimalDenom, decimals } = getDenomInfo(chainID);
+    const { minimalDenom } = getDenomInfo(chainID);
     return {
       basicChainInfo,
       from: basicChainInfo.address,
       to: recipient,
+      assetDenom,
       amount: amount * 10 ** decimals,
       denom: minimalDenom,
       feeAmount: basicChainInfo.feeAmount * 10 ** decimals,
@@ -196,6 +199,32 @@ const useGetTxInputs = () => {
     };
   };
 
+  const txTransferInputs = (
+    chainID: string,
+    destChainID: string,
+    to: string,
+    amount: number,
+    denom: string,
+    decimals: number
+  ) => {
+    const sourceBasicChainInfo = getChainInfo(chainID);
+    const destBasicChainInfo = getChainInfo(destChainID);
+    const transfersRequestInputs: TransferRequestInputs = {
+      cosmosAddress: sourceBasicChainInfo.cosmosAddress,
+      sourceChain: sourceBasicChainInfo.chainName,
+      sourceChainID: chainID,
+      destChain: destBasicChainInfo.chainName,
+      destChainID: destChainID,
+      amount: (amount * 10 ** decimals).toString(),
+      sourceDenom: denom,
+      from: sourceBasicChainInfo.address,
+      to,
+      rest: sourceBasicChainInfo.rest,
+    };
+
+    return transfersRequestInputs;
+  };
+
   return {
     txWithdrawAllRewardsInputs,
     txRestakeInputs,
@@ -203,6 +232,7 @@ const useGetTxInputs = () => {
     txRestakeValidatorInputs,
     txSendInputs,
     getVoteTxInputs,
+    txTransferInputs,
   };
 };
 

@@ -4,7 +4,6 @@ import React from 'react';
 import Asset from './Asset';
 import { CircularProgress } from '@mui/material';
 import { CustomButton } from '@/components/CustomButton';
-import { TxStatus } from '@/types/enums';
 import msgs from '@/utils/messages.json';
 
 const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
@@ -83,7 +82,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
                   </div>
                   <CustomButton
                     onClick={() => {}}
-                    pendingStatus={TxStatus.IDLE}
+                    pendingStatus={false}
                     circularProgressSize={24}
                     buttonStyle="primary-custom-btn"
                     buttonContent="Explore"

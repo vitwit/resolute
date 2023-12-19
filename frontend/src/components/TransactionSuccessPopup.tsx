@@ -40,7 +40,9 @@ const TransactionSuccessPopup = () => {
           <div className="px-10 py-0">
             <div className="space-y-10">
               <div className="text-white text-xl font-bold">
-                Transaction Successful
+                {tx?.code === 0
+                  ? 'Transaction Successful'
+                  : 'Transaction Failed'}
               </div>
 
               <div className="transaction-inner-grid mt-10 mb-10">
