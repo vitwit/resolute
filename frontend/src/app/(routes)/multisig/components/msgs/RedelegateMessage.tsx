@@ -20,7 +20,7 @@ const RedelegateMessage: React.FC<TxnMsgProps> = (props) => {
           <span>ReDelegate1111&nbsp;</span>
           <span>
             {parseBalance(
-              [msg.value.amount],
+              msg.value.amount,
               currency.coinDecimals,
               currency.coinMinimalDenom
             )}

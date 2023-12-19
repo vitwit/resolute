@@ -82,3 +82,11 @@ export const MULTISIG_TX_TYPES = {
   redelegate: 'Redelegate',
 };
 export const ALERT_HIDE_DURATION = 3000;
+export const MULTISIG_SEND_TEMPLATE =
+  "https://api.resolute.vitwit.com/_static/send.csv";
+export const MULTISIG_DELEGATE_TEMPLATE =
+  "https://api.resolute.vitwit.com/_static/delegate.csv";
+export const MULTISIG_UNDELEGATE_TEMPLATE =
+  "https://api.resolute.vitwit.com/_static/undelegate.csv";
+export const MULTISIG_REDELEGATE_TEMPLATE =
+  "https://api.resolute.vitwit.com/_static/redelegate.csv";

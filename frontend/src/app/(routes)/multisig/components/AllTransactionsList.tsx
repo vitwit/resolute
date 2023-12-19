@@ -76,7 +76,7 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
         const mAddress = txn.multisig_address;
         const pKeys = txn.pubkeys || [];
         const threshold_value = txn.threshold || 0;
-        const isMember = isMultisigMember(pubKeys, walletAddress);
+        const isMember = isMultisigMember(pKeys, walletAddress);
 
         return (
           <TransactionCard

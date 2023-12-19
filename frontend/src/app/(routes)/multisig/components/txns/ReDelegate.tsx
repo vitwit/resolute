@@ -139,13 +139,12 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
         delegatorAddress: data.delegator,
         validatorSrcAddress: data.validatorSrcAddress?.value,
         validatorDstAddress: data.validatorDstAddress?.value,
-        amount: {
+        amount: [{
           amount: baseAmount,
           denom: currency?.coinMinimalDenom,
-        },
+        }],
       };
 
-      console.log('redelegate====', msgReDelegate)
       onDelegate({
         typeUrl: '/cosmos.staking.v1beta1.MsgBeginRedelegate',
         value: msgReDelegate,

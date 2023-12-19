@@ -331,6 +331,9 @@ export const multisigSlice = createSlice({
     resetVerifyAccountRes: (state) => {
       state.verifyAccountRes = initialState.verifyAccountRes;
     },
+    resetDeleteMultisigRes: (state) => {
+      state.deleteMultisigRes = initialState.deleteMultisigRes;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -525,6 +528,7 @@ export const {
   resetUpdateTxnState,
   resetSignTxnState,
   resetVerifyAccountRes,
+  resetDeleteMultisigRes
 } = multisigSlice.actions;
 
 export default multisigSlice.reducer;
