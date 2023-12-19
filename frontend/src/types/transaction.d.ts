@@ -11,9 +11,11 @@ interface Transaction {
   chainID: string;
   address: string;
   memo: string;
+  isIBC: boolean;
+  isIBCPending: boolean;
 }
 
-interface AddTransanctionInputs {
+interface AddTransactionInputs {
   transactions: Transaction[];
   address: string;
   chainID: string;
@@ -21,4 +23,21 @@ interface AddTransanctionInputs {
 
 interface LoadTransactionsInputs {
   address: string;
+}
+
+interface UpdateIBCTransactionInputs {
+  txHash: string;
+  address: string;
+  chainID: string;
+}
+
+interface UiTx {
+  showMsgs: [string, string, boolean];
+  isTxSuccess: boolean;
+  time: string;
+  firstMessage: string;
+  msgCount: number;
+  showTx: boolean;
+  isIBC: boolean;
+  isIBCPending: boolean;
 }

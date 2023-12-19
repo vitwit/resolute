@@ -81,11 +81,28 @@ export function getTransactions(address: string): Transaction[] {
   return [];
 }
 
-export function addTransanctions(transactions: Transaction[], address: string) {
+export function addTransactions(transactions: Transaction[], address: string) {
   const key = KEY_TRANSACTIONS(address);
   let storedTransactions = getTransactions(address);
   storedTransactions = [...transactions, ...storedTransactions];
   localStorage.setItem(key, JSON.stringify(storedTransactions));
+}
+
+export function updateIBCStatus(address: string, txHash: string) {
+  const txns = getTransactions(address);
+  let updateNeeded = false;
+  const updatedTxns = txns.map((tx) => {
+    if (tx.transactionHash === txHash) {
+      updateNeeded = true;
+      return { ...tx, isIBCPending: false };
+    }
+    return tx;
+  });
+
+  if (updateNeeded) {
+    const key = KEY_TRANSACTIONS(address);
+    localStorage.setItem(key, JSON.stringify(updatedTxns));
+  }
 }
 
 export function setAuthToken(authToken: AuthToken) {

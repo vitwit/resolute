@@ -11,6 +11,10 @@ import { SEND_TX_FEE } from '@/utils/constants';
 import CustomTextField from '@/components/CustomTextField';
 import props from './customTextFields.json';
 import CustomSubmitButton from '@/components/CustomButton';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { txTransfer } from '@/store/features/ibc/ibcSlice';
+import { TxStatus } from '@/types/enums';
+import { setError } from '@/store/features/common/commonSlice';
 
 const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets] = useSortedAssets(chainIDs, { showAvailable: true });
@@ -18,8 +22,10 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [selectedAsset, setSelectedAsset] = useState<ParsedAsset | undefined>();
   const [slicedAssetsIndex, setSlicedAssetIndex] = useState(0);
   const dispatch = useAppDispatch();
-  const { txSendInputs } = useGetTxInputs();
+  const { txSendInputs, txTransferInputs } = useGetTxInputs();
+  const { isNativeTransaction, getChainIDFromAddress } = useGetChainInfo();
   const sendTxStatus = useAppSelector((state) => state.bank.tx.status);
+  const ibcTxStatus = useAppSelector((state) => state.ibc.txStatus);
   const sendProps = props.send;
 
   const amountRules = {
@@ -75,13 +81,41 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
       alert("amount can't be zero");
       return;
     }
-    const txInputs = txSendInputs(
-      selectedAsset.chainID,
-      data.address,
-      data.amount,
-      data.memo
-    );
-    dispatch(txBankSend(txInputs));
+
+    if (isNativeTransaction(selectedAsset.chainID, data.address)) {
+      const txInputs = txSendInputs(
+        selectedAsset.chainID,
+        data.address,
+        data.amount,
+        data.memo,
+        selectedAsset.denom,
+        selectedAsset.decimals
+      );
+      dispatch(txBankSend(txInputs));
+    } else {
+      const destChainID = getChainIDFromAddress(data.address);
+
+      if (!destChainID) {
+        dispatch(
+          setError({
+            type: 'error',
+            message: 'Invalid Address',
+          })
+        );
+        return;
+      }
+
+      const txInputs = txTransferInputs(
+        selectedAsset.chainID,
+        destChainID,
+        data.address,
+        data.amount,
+        selectedAsset.denom,
+        selectedAsset.decimals
+      );
+
+      dispatch(txTransfer(txInputs));
+    }
   };
 
   return (
@@ -106,7 +140,7 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
           <div className="flex gap-4 justify-between w-full mt-6">
             <div className="flex-1 space-y-2">
               <div className="text-sm not-italic font-normal leading-[normal]">
-              Enter Recipient Address
+                Recipient Address
               </div>
               <CustomTextField
                 name={sendProps.address.name}
@@ -183,7 +217,10 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
         </div>
         <div className="h-full flex gap-10 items-center mt-6">
           <CustomSubmitButton
-            pendingStatus={sendTxStatus}
+            pendingStatus={
+              sendTxStatus === TxStatus.PENDING ||
+              ibcTxStatus === TxStatus.PENDING
+            }
             buttonStyle="primary-action-btn w-[152px] h-[44px]"
             circularProgressSize={24}
             buttonContent="Send"
@@ -223,7 +260,7 @@ const Cards = ({
                 : '')
             }
             key={index + ' ' + asset.chainID + ' ' + asset.displayDenom}
-            onClick={() => onSelectAsset(asset, slicedAssetsIndex+index)}
+            onClick={() => onSelectAsset(asset, slicedAssetsIndex + index)}
           >
             <div className="flex gap-2">
               <Image

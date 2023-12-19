@@ -17,14 +17,14 @@ const ValidatorItem = ({
 }: ValidatorItemProps) => {
   return (
     <div className="flex justify-between items-center">
-      <div className="flex gap-4">
+      <div className="flex items-center gap-4">
         <div className="bg-[#fff] rounded-full">
           <ValidatorLogo identity={identity} height={40} width={40} />
         </div>
         <div className="flex flex-col justify-center gap-2 w-[130px]">
           <div className="flex gap-2 items-center cursor-default">
             <Tooltip title={moniker} placement="top">
-              <div className="text-[14px] font-light leading-3 truncate">
+              <div className="text-[14px] font-light leading-normal truncate">
                 {moniker}
               </div>
             </Tooltip>

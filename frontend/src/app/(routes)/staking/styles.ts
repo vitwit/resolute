@@ -32,9 +32,30 @@ export const dialogBoxStyles = {
 
 export const allValidatorDialogStyles = {
   sx: {
-    position: 'relative',
-    height: '800px',
     borderRadius: '16px',
     background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
+  },
+};
+
+export const textFieldStyles = {
+  '& .MuiTypography-body1': {
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: 200,
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
+};
+
+export const textFieldInputPropStyles = {
+  input: {
+    color: 'white',
+    fontSize: '14px',
+    padding: 2,
+  },
+  'input[type=number]::-webkit-inner-spin-button ': {
+    WebkitAppearance: 'none',
+    appearance: 'none',
   },
 };
