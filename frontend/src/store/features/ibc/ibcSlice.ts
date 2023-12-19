@@ -13,6 +13,7 @@ import {
 import { NewTransaction } from '@/utils/transaction';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { capitalize } from 'lodash';
+import { getBalances } from '../bank/bankSlice';
 
 export interface IBCState {
   txStatus: TxStatus;
@@ -73,7 +74,7 @@ export const txTransfer = createAsyncThunk(
         chainID,
         data.from,
         true,
-        true
+        result.code === 0
       );
       dispatch(
         setTxAndHash({
@@ -90,6 +91,9 @@ export const txTransfer = createAsyncThunk(
       );
 
       dispatch(addToPending({ chainID, txHash }));
+      dispatch(
+        getBalances({ baseURL: data.rest, address: data.from, chainID })
+      );
       return result;
     };
 
