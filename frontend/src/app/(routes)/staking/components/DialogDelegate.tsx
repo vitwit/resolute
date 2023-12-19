@@ -3,14 +3,15 @@ import { formatCoin, formatUnbondingPeriod } from '@/utils/util';
 import {
   Dialog,
   DialogContent,
-  InputAdornment,
-  TextField,
 } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { dialogBoxStyles } from '../styles';
+import { useForm } from 'react-hook-form';
+import {
+  dialogBoxStyles,
+} from '../styles';
 import { CLOSE_ICON_PATH, STAKING_DIALOG_IMAGE_PATH } from '@/utils/constants';
+import AmountInputField from './AmountInputField';
 
 const DialogDelegate = ({
   open,
@@ -24,6 +25,7 @@ const DialogDelegate = ({
 }: DialogDelegateProps) => {
   const handleClose = () => {
     onClose();
+    reset();
   };
 
   const {
@@ -31,6 +33,7 @@ const DialogDelegate = ({
     control,
     setValue,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       amount: 0,
@@ -55,11 +58,9 @@ const DialogDelegate = ({
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
-          <div className="px-10 py-6 flex justify-end">
+          <div className="px-10 py-6 pt-10 flex justify-end">
             <div
-              onClick={() => {
-                handleClose();
-              }}
+              onClick={handleClose}
             >
               <Image
                 className="cursor-pointer"
@@ -128,57 +129,11 @@ const DialogDelegate = ({
                   </div>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                  <Controller
-                    name="amount"
+                  <AmountInputField
                     control={control}
-                    rules={{
-                      required: 'Amount is required',
-                      validate: (value) => {
-                        return (
-                          Number(value) > 0 && Number(value) <= availableBalance
-                        );
-                      },
-                    }}
-                    render={({ field }) => (
-                      <TextField
-                        className="bg-[#FFFFFF0D] rounded-2xl"
-                        {...field}
-                        required
-                        fullWidth
-                        size="small"
-                        placeholder="Enter Amount here"
-                        sx={{
-                          '& .MuiTypography-body1': {
-                            color: 'white',
-                            fontSize: '12px',
-                            fontWeight: 200,
-                          },
-                          '& .MuiOutlinedInput-notchedOutline': {
-                            border: 'none',
-                          },
-                        }}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              {displayDenom}
-                            </InputAdornment>
-                          ),
-                          sx: {
-                            input: {
-                              color: 'white',
-                              fontSize: '14px',
-                              padding: 2,
-                            },
-                          },
-                        }}
-                        error={!!errors.amount}
-                        helperText={
-                          errors.amount?.type === 'validate'
-                            ? 'Insufficient balance'
-                            : errors.amount?.message
-                        }
-                      />
-                    )}
+                    availableAmount={availableBalance}
+                    displayDenom={displayDenom}
+                    errors={errors}
                   />
                   <div className="mt-10 flex gap-10 items-center">
                     <button type="submit" className="dialog-delegate-button">

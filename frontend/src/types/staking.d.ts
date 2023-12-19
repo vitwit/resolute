@@ -267,6 +267,8 @@ interface StakingSidebarProps {
   currency: Currency;
   chainID: string;
   onMenuAction: StakingMenuAction;
+  allValidatorsDialogOpen: boolean;
+  toggleValidatorsDialog: () => void;
 }
 
 interface ValidatorItemProps {
@@ -344,4 +346,6 @@ interface AllValidatorsProps {
   currency: Currency;
   onMenuAction: StakingMenuAction;
   validatorsStatus: TxStatus;
+  allValidatorsDialogOpen: boolean;
+  toggleValidatorsDialog: () => void;
 }

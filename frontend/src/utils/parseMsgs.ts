@@ -21,7 +21,7 @@ export const parseSendMsgsFromContent = (
   }
 
   const msgs = [];
-  for (let i = 1; i < messages.length; i++) {
+  for (let i = 0; i < messages.length; i++) {
     try {
       const tx = parseSendTx(from, messages[i]);
       if (tx && Object.keys(tx)?.length) msgs.push(tx);
@@ -105,7 +105,7 @@ const parseDelegateMsg = (delegator: string, msg: string): Msg | null => {
     value: {
       delegatorAddress: delegator,
       validatorAddress: validator,
-      amount: amount,
+      amount: amount[0],
     },
   };
 };
@@ -155,7 +155,7 @@ const parseUnDelegateMsg = (delegator: string, msg: string): Msg | null => {
     value: {
       delegatorAddress: delegator,
       validatorAddress: validator,
-      amount: amount,
+      amount: amount[0],
     },
   };
 };
@@ -208,7 +208,7 @@ const parseReDelegateMsg = (delegator: string, msg: string): Msg | null => {
       validatorDstAddress: dest,
       validatorSrcAddress: src,
       delegatorAddress: delegator,
-      amount: amount,
+      amount: amount[0],
     },
   };
 };

@@ -39,9 +39,7 @@ const TransactionItem = ({
           </div>
         </div>
         <div className="flex gap-2">
-          <div className="text-xs not-italic font-normal leading-4 tracking-[0.48px] flex items-center">
-            {uiTx.isTxSuccess ? 'Transaction Successful' : 'Transaction Failed'}
-          </div>
+          <TransactionStatus uiTx={uiTx} />
         </div>
         <div className="flex gap-4">
           {uiTx.showMsgs[0] && <Chip msg={uiTx.showMsgs[0]} />}
@@ -63,6 +61,28 @@ export const Chip = ({ msg }: { msg: string }) => {
 
 export const FilledChip = ({ count }: { count: number }) => {
   return <div className="chip fill">+ {count} more</div>;
+};
+
+export const TransactionStatus = ({ uiTx }: { uiTx: UiTx }) => {
+  const txStatus = uiTx.isTxSuccess
+    ? 'Transaction Successful'
+    : 'Transaction Failed';
+  return uiTx.isIBCPending ? (
+    <div className="flex items-center">
+      <StatusContent content="Transaction Pending" />
+      <div className="dots-flashing"></div>
+    </div>
+  ) : (
+    <StatusContent content={txStatus} />
+  );
+};
+
+export const StatusContent = ({ content }: { content: string }) => {
+  return (
+    <div className="text-xs not-italic font-normal leading-4 tracking-[0.48px] flex items-center">
+      {content}
+    </div>
+  );
 };
 
 export default TransactionItem;

@@ -10,6 +10,7 @@ import bankService from '@/store/features/bank/bankService';
 import {
   CreateAccountPayload,
   CreateTxnInputs,
+  DeleteMultisigInputs,
   DeleteTxnInputs,
   GetMultisigBalanceInputs,
   GetTxnsInputs,
@@ -78,6 +79,10 @@ const initialState: MultisigState = {
     status: TxStatus.INIT,
     error: '',
   },
+  deleteMultisigRes: {
+    status: TxStatus.INIT,
+    error: '',
+  }
 };
 
 declare let window: WalletWindow;
@@ -146,6 +151,23 @@ export const verifyAccount = createAsyncThunk(
       }
     } catch (error) {
       return rejectWithValue(WALLET_REQUEST_ERROR);
+    }
+  }
+);
+
+export const deleteMultisig = createAsyncThunk(
+  'multisig/deleteMultisig',
+  async (data: DeleteMultisigInputs, { rejectWithValue }) => {
+    try {
+      const response = await multisigService.deleteMultisig(
+        data.queryParams,
+        data.data.address,
+      );
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
     }
   }
 );
@@ -232,6 +254,20 @@ export const getTxns = createAsyncThunk(
   }
 );
 
+export const getAccountAllMultisigTxns = createAsyncThunk(
+  'multisig/getAccountAllMultisigTxns',
+  async (data: GetTxnsInputs, { rejectWithValue }) => {
+    try {
+      const response = await multisigService.getAccountAllMultisigTxns(data.address, data.status);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({ message: error.message });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
 export const updateTxn = createAsyncThunk(
   'multisig/updateTxn',
   async (data: UpdateTxnInputs, { rejectWithValue }) => {
@@ -295,6 +331,9 @@ export const multisigSlice = createSlice({
     resetVerifyAccountRes: (state) => {
       state.verifyAccountRes = initialState.verifyAccountRes;
     },
+    resetDeleteMultisigRes: (state) => {
+      state.deleteMultisigRes = initialState.deleteMultisigRes;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -355,6 +394,26 @@ export const multisigSlice = createSlice({
         state.deleteTxnRes.status = TxStatus.REJECTED;
         const payload = action.payload as { message: string };
         state.deleteTxnRes.error = payload.message || '';
+      });
+    builder
+      .addCase(deleteMultisig.pending, (state) => {
+        state.deleteMultisigRes = {
+          status: TxStatus.PENDING,
+          error: ''
+        }
+      })
+      .addCase(deleteMultisig.fulfilled, (state) => {
+        state.deleteMultisigRes = {
+          status:  TxStatus.IDLE,
+          error: ''
+        }
+      })
+      .addCase(deleteMultisig.rejected, (state, action) => {
+        const payload = action.payload as { message: string };
+        state.deleteMultisigRes = {
+          status: TxStatus.REJECTED,
+          error: payload.message || '',
+        }
       });
     builder
       .addCase(multisigByAddress.pending, (state) => {
@@ -432,6 +491,22 @@ export const multisigSlice = createSlice({
         state.txns.error = payload.message || '';
       });
     builder
+      .addCase(getAccountAllMultisigTxns.pending, (state) => {
+        state.txns.status = TxStatus.PENDING;
+        state.txns.error = '';
+        state.txns.list = [];
+      })
+      .addCase(getAccountAllMultisigTxns.fulfilled, (state, action) => {
+        state.txns.status = TxStatus.IDLE;
+        state.txns.error = '';
+        state.txns.list = action.payload?.data || [];
+      })
+      .addCase(getAccountAllMultisigTxns.rejected, (state, action) => {
+        state.txns.status = TxStatus.REJECTED;
+        const payload = action.payload as { message: string };
+        state.txns.error = payload.message || '';
+      });
+    builder
       .addCase(signTx.pending, (state) => {
         state.signTxRes.status = TxStatus.PENDING;
       })
@@ -453,6 +528,7 @@ export const {
   resetUpdateTxnState,
   resetSignTxnState,
   resetVerifyAccountRes,
+  resetDeleteMultisigRes
 } = multisigSlice.actions;
 
 export default multisigSlice.reducer;

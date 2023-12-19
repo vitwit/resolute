@@ -94,7 +94,12 @@ const MultiTxUpload = ({
                 onFileContents(contents);
               };
               reader.onerror = (e) => {
-                alert(e);
+                dispatch(
+                  setError({
+                    type: 'error',
+                    message: '' + (e.target?.error || 'Something went wrong. '),
+                  })
+                );
               };
               reader.readAsText(file);
               e.target.value = '';

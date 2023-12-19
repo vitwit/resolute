@@ -19,11 +19,11 @@
 }
 
 .account-members {
-  @apply min-h-[216px] p-2 pb-4 flex flex-col gap-2 rounded-2xl bg-[#FFFFFF0D];
+  @apply flex-1 p-2 pb-4 flex flex-col gap-2 rounded-2xl bg-[#FFFFFF0D];
 }
 
 .member-address {
-  @apply text-[12px] font-medium h-8 flex gap-[10px] justify-center items-center p-1 rounded-lg;
+  @apply text-[12px] font-medium h-[36px] flex gap-[10px] justify-center items-center p-2 rounded-lg;
   background: linear-gradient(
     180deg,
     rgba(74, 162, 156, 0.1) 0%,
@@ -83,12 +83,12 @@
 }
 
 .action-image {
-  @apply rounded-lg w-8 h-8 cursor-pointer;
+  @apply rounded-lg w-8 h-8 cursor-pointer justify-center items-center flex;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 
 .sign-broadcast-btn {
-  @apply min-w-[87px] text-[12px] font-medium leading-[20px] px-3 py-[6px] rounded-lg cursor-pointer;
+  @apply min-w-[87px] text-[12px] font-medium leading-[20px] px-3 py-[6px] rounded-lg cursor-pointer  justify-center flex;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 
@@ -133,4 +133,9 @@
 
 .address-pubkey-field-error {
   @apply text-[14px] text-[#E57575];
+}
+
+.btn-disabled {
+  @apply text-[#FFFFFF1A] cursor-not-allowed;
+  background: #FFFFFF1A;
 }

@@ -63,7 +63,7 @@ const Send: React.FC<SendProps> = (props) => {
         control={control}
         render={({ field }) => (
           <TextField
-            className="bg-[#FFFFFF1A] rounded-2xl mb-6"
+            className="bg-[#FFFFFF1A]"
             {...field}
             sx={sendTxnTextFieldStyles}
             placeholder="From"
@@ -97,7 +97,7 @@ const Send: React.FC<SendProps> = (props) => {
         }}
         render={({ field, fieldState: { error } }) => (
           <TextField
-            className="bg-[#FFFFFF1A] rounded-2xl mb-6"
+            className="bg-[#FFFFFF1A]"
             {...field}
             sx={sendTxnTextFieldStyles}
             placeholder="Recipient"
@@ -137,7 +137,7 @@ const Send: React.FC<SendProps> = (props) => {
         }}
         render={({ field, fieldState: { error } }) => (
           <TextField
-            className="bg-[#FFFFFF1A] rounded-2xl mb-6"
+            className="bg-[#FFFFFF1A]"
             {...field}
             sx={sendTxnTextFieldStyles}
             error={!!error}

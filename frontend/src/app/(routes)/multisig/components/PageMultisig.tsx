@@ -5,11 +5,12 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import {
+  resetDeleteMultisigRes,
   resetVerifyAccountRes,
   verifyAccount,
 } from '@/store/features/multisig/multisigSlice';
 import { setAuthToken } from '@/utils/localStorage';
-import { setError } from '@/store/features/common/commonSlice';
+import { resetError, setError } from '@/store/features/common/commonSlice';
 import VerifyAccount from './VerifyAccount';
 import { isVerified } from '@/utils/util';
 
@@ -67,6 +68,11 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
       setVerified(false);
     }
   }, [address, chainID]);
+
+  useEffect(() => {
+    dispatch(resetError());
+    dispatch(resetDeleteMultisigRes());
+  }, []);
 
   return (
     <div className="flex gap-10">

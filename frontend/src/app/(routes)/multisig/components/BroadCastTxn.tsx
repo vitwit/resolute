@@ -7,7 +7,7 @@ import {
 } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { getWalletAmino } from '@/txns/execute';
-import { MultisigAccount, Pubkey, Txn } from '@/types/multisig';
+import { MultisigAddressPubkey, Pubkey, Txn } from '@/types/multisig';
 import { getAuthToken } from '@/utils/localStorage';
 import { NewMultisigThresholdPubkey } from '@/utils/util';
 import { SigningStargateClient, makeMultisignedTx } from '@cosmjs/stargate';
@@ -19,12 +19,15 @@ import { FAILED_TO_BROADCAST_ERROR } from '@/utils/errors';
 
 interface BroadCastTxnProps {
   txn: Txn;
-  multisigAccount: MultisigAccount;
+  multisigAddress: string;
+  threshold: number;
+  pubKeys: MultisigAddressPubkey[];
   chainID: string;
+  isMember: boolean;
 }
 
 const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
-  const { txn, multisigAccount, chainID } = props;
+  const { txn, multisigAddress, pubKeys, threshold, chainID, isMember } = props;
   const dispatch = useAppDispatch();
   const [load, setLoad] = useState(false);
   const { getChainInfo } = useGetChainInfo();
@@ -62,7 +65,7 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
       const client = await SigningStargateClient.connect(rpc);
 
       const multisigAcc = await client.getAccount(
-        multisigAccount?.account.address
+        multisigAddress
       );
       if (!multisigAcc) {
         dispatch(
@@ -75,10 +78,10 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
         return;
       }
 
-      const mapData = multisigAccount.pubkeys || {};
-      let pubkeys: Pubkey[] = [];
+      const mapData = pubKeys || [];
+      let pubkeys_list: Pubkey[] = [];
 
-      pubkeys = mapData.map((p) => {
+      pubkeys_list = mapData.map((p) => {
         const parsed = p?.pubkey;
         const obj = {
           type: parsed?.type,
@@ -88,8 +91,8 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
       });
 
       const multisigThresholdPK = NewMultisigThresholdPubkey(
-        pubkeys,
-        `${multisigAccount?.account?.threshold}`
+        pubkeys_list,
+        `${threshold}`
       );
 
       const txBody = {
@@ -125,7 +128,7 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
             queryParams: queryParams,
             data: {
               txId: txn?.id,
-              address: multisigAccount?.account.address,
+              address: multisigAddress,
               body: {
                 status: MultisigTxStatus.SUCCESS,
                 hash: result?.transactionHash || '',
@@ -146,7 +149,7 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
             queryParams: queryParams,
             data: {
               txId: txn.id,
-              address: multisigAccount?.account.address,
+              address: multisigAddress,
               body: {
                 status: MultisigTxStatus.FAILED,
                 hash: result?.transactionHash || '',
@@ -171,7 +174,7 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
           queryParams: queryParams,
           data: {
             txId: txn?.id,
-            address: multisigAccount?.account.address,
+            address: multisigAddress,
             body: {
               status: MultisigTxStatus.FAILED,
               hash: '',
@@ -184,7 +187,7 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
   };
   return (
     <button
-      className="sign-broadcast-btn justify-center flex"
+      className={isMember ? 'sign-broadcast-btn' : 'sign-broadcast-btn btn-disabled'}
       onClick={() => {
         broadcastTxn();
       }}

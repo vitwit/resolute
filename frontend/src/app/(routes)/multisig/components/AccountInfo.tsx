@@ -1,4 +1,5 @@
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { deleteMultisig } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { MultisigAccount } from '@/types/multisig';
 import { getLocalDate } from '@/utils/datetime';
@@ -7,6 +8,8 @@ import { formatCoin, formatStakedAmount, shortenAddress } from '@/utils/util';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import DialogDeleteMultisig from './DialogDeleteMultisig';
+import { copyToClipboard } from '@/utils/copyToClipboard';
 
 interface AccountInfoProps {
   chainID: string;
@@ -73,6 +76,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
         </div>
       </div>
       <AccountDetails
+        chainName={chainName}
         multisigAccount={multisigAccount}
         actionsRequired={actionsRequired}
         balance={formatCoin(availableBalance, coinDenom)}
@@ -93,16 +97,50 @@ const AccountDetails = ({
   actionsRequired,
   balance,
   stakedBalance,
+  chainName,
 }: {
   multisigAccount: MultisigAccount;
   actionsRequired: number;
   balance: string;
   stakedBalance: string;
+  chainName: string;
 }) => {
   const { account: accountInfo, pubkeys } = multisigAccount;
   const { address, name, created_at, threshold } = accountInfo;
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const deleteMultisigRes = useAppSelector(
+    (state: RootState) => state.multisig.deleteMultisigRes
+  );
+
+  const router = useRouter();
+
+  const handleGoBack = () => {
+    router.push(`/multisig/${chainName}`);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setDeleteDialogOpen(false);
+  };
+
+  useEffect(() => {
+    if (deleteMultisigRes?.status === 'idle') {
+      handleDeleteDialogClose();
+      handleGoBack();
+    }
+  }, [deleteMultisigRes?.status]);
+
+  const handleDelete = () => {
+    dispatch(
+      deleteMultisig({
+        data: { address: multisigAccount?.account?.address },
+        queryParams: { address: '', signature: '' },
+      })
+    );
+  };
+
   return (
-    <div className="rounded-2xl w-full bg-[#0E0B26] h-full">
+    <div className="flex flex-col rounded-2xl w-full bg-[#0E0B26] h-full">
       <div className="multisig-info-title">
         <Image
           src="/printed-color.png"
@@ -116,7 +154,7 @@ const AccountDetails = ({
           <h3 className="text-[14px] font-bold">{getLocalDate(created_at)}</h3>
         </div>
       </div>
-      <div className="p-6 space-y-6">
+      <div className="flex-1 p-6 space-y-6 flex flex-col h-full">
         <div className="grid grid-cols-2 gap-6">
           <AccountInfoItem
             icon={'/address-icon.svg'}
@@ -165,9 +203,20 @@ const AccountDetails = ({
           </div>
         </div>
         <div>
-          <button className="delete-multisig-btn">Delete Multisig</button>
+          <button
+            onClick={() => setDeleteDialogOpen(true)}
+            className="delete-multisig-btn"
+          >
+            Delete Multisig
+          </button>
         </div>
       </div>
+
+      <DialogDeleteMultisig
+        open={deleteDialogOpen}
+        onClose={() => handleDeleteDialogClose()}
+        deleteTx={handleDelete}
+      />
     </div>
   );
 };
@@ -196,7 +245,16 @@ const MemberAddress = ({ address }: { address: string }) => {
   return (
     <div className="member-address">
       <div className="overflow-hidden">{shortenAddress(address, 28)}</div>
-      <Image src="/copy.svg" width={24} height={24} alt="copy" />
+      <Image
+        onClick={() => {
+          copyToClipboard(address);
+        }}
+        className="cursor-pointer"
+        src="/copy.svg"
+        width={24}
+        height={24}
+        alt="copy"
+      />
     </div>
   );
 };

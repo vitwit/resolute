@@ -6,12 +6,15 @@ import { SINGLE_TAB_TEXT, TRANSFERS_TAB1 } from '@/utils/constants';
 import SingleTransfer from './SingleTransfer';
 import MultiTransfer from './MultiTransfer';
 import useInitBalances from '@/custom-hooks/useInitBalances';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { setError } from '@/store/features/common/commonSlice';
 
 export interface TransfersTab {
   current: string;
   to: string;
 }
 const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
+  const dispatch = useAppDispatch();
   const [tab, setTab] = useState<TransfersTab>(TRANSFERS_TAB1);
   const changeTab = (tab: TransfersTab) => {
     if (tab === TRANSFERS_TAB1) setTab(TRANSFERS_TAB2);
@@ -33,7 +36,14 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
             className="secondary-custom-btn"
             onClick={() => {
               if (chainIDs.length > 1) {
-                alert('Multi transfer is not available for All networks!');
+                dispatch(
+                  setError({
+                    type: 'error',
+                    message:
+                      'Multi transfer is not available for All networks!',
+                  })
+                );
+
                 return;
               }
               changeTab(tab);

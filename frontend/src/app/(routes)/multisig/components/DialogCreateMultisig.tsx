@@ -446,12 +446,12 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                   </>
                 ))}
                 <div className="text-center text-[12px] font-light">
-                  <span
-                    className="border-b cursor-pointer"
+                  <button
+                    className="create-multisig-btn cursor-pointer"
                     onClick={handleAddPubKey}
                   >
                     Add New Member
-                  </span>
+                  </button>
                 </div>
                 <div className="my-6 flex items-center gap-4">
                   <TextField

@@ -9,6 +9,8 @@ import { TxStatus } from '@/types/enums';
 import { txRestake } from '@/store/features/staking/stakeSlice';
 import { RootState } from '@/store/store';
 import { CircularProgress, Tooltip } from '@mui/material';
+import { setError } from '@/store/features/common/commonSlice';
+import { capitalize } from 'lodash';
 
 const Asset = ({
   asset,
@@ -31,22 +33,53 @@ const Asset = ({
 
   const claim = (chainID: string) => {
     if (txClaimStatus === TxStatus.PENDING) {
-      alert('A claim transaction is already in pending...');
+      dispatch(
+        setError({
+          type: 'error',
+          message: `A claim transaction is still pending on ${capitalize(
+            asset.chainName
+          )} network...`,
+        })
+      );
       return;
     }
     const txInputs = txWithdrawAllRewardsInputs(chainID);
     if (txInputs.msgs.length) dispatch(txWithdrawAllRewards(txInputs));
-    else alert('no delegations');
+    else {
+      dispatch(
+        setError({
+          type: 'error',
+          message: `You don't have any rewards on ${capitalize(
+            asset.chainName
+          )} network`,
+        })
+      );
+    }
   };
 
   const claimAndStake = (chainID: string) => {
     if (txRestakeStatus === TxStatus.PENDING) {
-      alert('A restake transaction is already pending...');
+      dispatch(
+        setError({
+          type: 'error',
+          message: `A reStake transaction is still pending on ${capitalize(
+            asset.chainName
+          )} network...`,
+        })
+      );
       return;
     }
     const txInputs = txRestakeInputs(chainID);
     if (txInputs.msgs.length) dispatch(txRestake(txInputs));
-    else alert('no rewards');
+    else
+      dispatch(
+        setError({
+          type: 'error',
+          message: `You don't have any rewards on ${capitalize(
+            asset.chainName
+          )} network`,
+        })
+      );
   };
 
   return (
@@ -110,9 +143,7 @@ const Asset = ({
       </td>
       <td>
         <div className="text-sm not-italic font-normal leading-[normal]">
-          {asset.type === 'native'
-            ? formatDollarAmount(asset.usdValue)
-            : '-'}
+          {asset.type === 'native' ? formatDollarAmount(asset.usdValue) : '-'}
         </div>
       </td>
       <td>
@@ -130,7 +161,7 @@ const Asset = ({
                 if (asset.type === 'native') claim(asset.chainID);
               }}
             >
-              {txClaimStatus === TxStatus.PENDING ? (
+              {asset.type !== 'ibc' && txClaimStatus === TxStatus.PENDING ? (
                 <CircularProgress size={16} />
               ) : (
                 <Image
@@ -155,7 +186,7 @@ const Asset = ({
                 if (asset.type === 'native') claimAndStake(asset.chainID);
               }}
             >
-              {txRestakeStatus === TxStatus.PENDING ? (
+              {txRestakeStatus === TxStatus.PENDING && asset.type !== 'ibc' ? (
                 <CircularProgress size={16} />
               ) : (
                 <Image

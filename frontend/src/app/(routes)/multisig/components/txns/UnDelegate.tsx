@@ -1,4 +1,4 @@
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -10,17 +10,21 @@ import {
   autoCompleteTextFieldStyles,
   textFieldStyles,
 } from '../../styles';
+import { getDelegations } from '@/store/features/staking/stakeSlice';
 
-interface DelegateProps {
+interface UnDelegateProps {
   chainID: string;
   address: string;
   onDelegate: (payload: Msg) => void;
   currency: Currency;
   availableBalance: number;
+  baseURL: string;
 }
 
-const Delegate: React.FC<DelegateProps> = (props) => {
-  const { chainID, address, onDelegate, currency, availableBalance } = props;
+const UnDelegate: React.FC<UnDelegateProps> = (props) => {
+  const { chainID, address, onDelegate, currency, baseURL } = props;
+  const dispatch = useAppDispatch();
+
   const {
     handleSubmit,
     control,
@@ -33,32 +37,67 @@ const Delegate: React.FC<DelegateProps> = (props) => {
       delegator: address,
     },
   });
+
   const validators = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.validators
   );
-  const [data, setData] = useState<{ label: string; value: string }[]>([]);
+
+  const delegations = useAppSelector(
+    (state: RootState) => state.staking.chains[chainID].delegations
+  )
+
+
+  useEffect(() => {
+    dispatch(getDelegations({ address, chainID, baseURL }))
+  }, [])
+
+  interface stakeBal {
+    amount: string;
+    denom: string;
+  }
+
+  const [selectedValBal, setSelectedValBal] = useState<stakeBal>({amount: '', denom: ''});
+
+  const [data, setData] = useState<{ label: string; value: string, amount: stakeBal }[]>([]);
 
   useEffect(() => {
     const data = [];
-    for (let i = 0; i < validators.activeSorted.length; i++) {
-      const validator = validators.active[validators.activeSorted[i]];
-      const temp = {
-        label: validator.description.moniker,
-        value: validators.activeSorted[i],
-      };
-      data.push(temp);
-    }
 
-    for (let i = 0; i < validators.inactiveSorted.length; i++) {
-      const validator = validators.inactive[validators.inactiveSorted[i]];
-      if (!validator.jailed) {
-        const temp = {
-          label: validator.description.moniker,
-          value: validators.inactiveSorted[i],
-        };
-        data.push(temp);
+    const totalDelegations = delegations?.delegations?.delegation_responses || []
+
+    for (let j = 0; j < totalDelegations.length; j++) {
+      const del = totalDelegations[j]
+
+      for (let i = 0; i < validators.activeSorted.length; i++) {
+        const validator = validators.active[validators.activeSorted[i]];
+        if (del?.delegation?.validator_address === validator.operator_address) {
+          const temp = {
+            label: validator.description.moniker,
+            value: validators.activeSorted[i],
+            amount: del.balance
+          };
+
+          data.push(temp);
+        }
+      }
+
+      for (let i = 0; i < validators.inactiveSorted.length; i++) {
+        const validator = validators.inactive[validators.inactiveSorted[i]];
+        if (!validator.jailed) {
+          if (del?.delegation?.validator_address === validator.operator_address) {
+            const temp = {
+              label: validator.description.moniker,
+              value: validators.inactiveSorted[i],
+              amount: del.balance
+            };
+
+            data.push(temp);
+          }
+        }
       }
     }
+
+
     setData(data);
   }, [validators]);
 
@@ -74,7 +113,7 @@ const Delegate: React.FC<DelegateProps> = (props) => {
         data.amount.toString(),
         Number(currency?.coinDecimals)
       ).atomics;
-      const msgDelegate = {
+      const msgUnDelegate = {
         delegatorAddress: data.delegator,
         validatorAddress: data.validator?.value,
         amount: {
@@ -84,14 +123,14 @@ const Delegate: React.FC<DelegateProps> = (props) => {
       };
 
       onDelegate({
-        typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
-        value: msgDelegate,
+        typeUrl: '/cosmos.staking.v1beta1.MsgUndelegate',
+        value: msgUnDelegate,
       });
     }
   };
 
   const setAmountValue = () => {
-    setValue('amount', availableBalance);
+    setValue('amount', Number(selectedValBal?.amount));
   };
 
   return (
@@ -135,6 +174,7 @@ const Delegate: React.FC<DelegateProps> = (props) => {
             options={data}
             onChange={(event, item) => {
               onChange(item);
+              setSelectedValBal({amount: (Number(item?.amount?.amount)/10 ** currency.coinDecimals).toFixed(2) || '', denom: item?.amount?.denom || ''})
             }}
             renderInput={(params) => (
               <TextField
@@ -154,7 +194,7 @@ const Delegate: React.FC<DelegateProps> = (props) => {
         className="text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
         onClick={setAmountValue}
       >
-        {formatCoin(availableBalance, currency.coinDenom)}
+        {formatCoin(Number(selectedValBal?.amount), currency?.coinDenom)}
       </div>
       <Controller
         name="amount"
@@ -162,7 +202,7 @@ const Delegate: React.FC<DelegateProps> = (props) => {
         rules={{
           required: 'Amount is required',
           validate: (value) => {
-            return Number(value) > 0 && Number(value) <= availableBalance;
+            return Number(value) > 0 && Number(value) <= Number(selectedValBal?.amount);
           },
         }}
         render={({ field, fieldState: { error } }) => (
@@ -203,4 +243,4 @@ const Delegate: React.FC<DelegateProps> = (props) => {
   );
 };
 
-export default Delegate;
+export default UnDelegate;

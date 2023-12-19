@@ -1,12 +1,16 @@
 import TopNav from '@/components/TopNav';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getTxns } from '@/store/features/multisig/multisigSlice';
+import {
+  getAccountAllMultisigTxns,
+  getTxns,
+} from '@/store/features/multisig/multisigSlice';
 import React, { useEffect, useState } from 'react';
 import TransactionsList from './TransactionsList';
 import { RootState } from '@/store/store';
 import DialogCreateTxn from './DialogCreateTxn';
 import { setError } from '@/store/features/common/commonSlice';
 import { TxStatus } from '@/types/enums';
+import AllTransactionsList from './AllTransactionsList';
 
 interface MultisigSidebarProps {
   chainID: string;
@@ -25,6 +29,7 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
     (state: RootState) => state.multisig.multisigAccount
   );
   const txnsState = useAppSelector((state: RootState) => state.multisig.txns);
+
   const updateTxnStatus = useAppSelector(
     (state: RootState) => state.multisig.updateTxnRes
   );
@@ -50,6 +55,8 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
           })
         );
       }
+    } else {
+      dispatch(getAccountAllMultisigTxns({ address: walletAddress, status }));
     }
   };
 
@@ -139,6 +146,7 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
             <div>
               <button
                 className="create-multisig-btn"
+                disabled={!isMember}
                 onClick={() => setCreateDialogOpen(true)}
               >
                 Create Transaction
@@ -146,7 +154,7 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
             </div>
           </div>
         ) : null}
-        <div className="mt-4 py-2">
+        <div className="mt-4 py-2 flex flex-col items-center">
           <div className="flex gap-6 text-white">
             <div
               className="custom-radio-button-label"
@@ -190,7 +198,15 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
             walletAddress={walletAddress}
           />
         </>
-      ) : null}
+      ) : (
+        <>
+          <AllTransactionsList
+            chainID={chainID}
+            txnsState={txnsState}
+            isHistory={isHistory}
+          />
+        </>
+      )}
     </div>
   );
 };

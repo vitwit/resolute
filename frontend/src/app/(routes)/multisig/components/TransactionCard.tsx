@@ -7,12 +7,13 @@ import BroadCastTxn from './BroadCastTxn';
 import SignTxn from './SignTxn';
 import { Tooltip } from '@mui/material';
 import TxnMsg from './msgs/TxnMsg';
-import { MultisigAccount, Txn } from '@/types/multisig';
+import { Txn } from '@/types/multisig';
 
 interface TransactionCardProps {
   isMember: boolean;
   txn: Txn;
-  multisigAccount: MultisigAccount;
+  multisigAddress: string;
+  threshold: number;
   membersCount: number;
   chainID: string;
   onViewMoreAction: (txn: Txn) => void;
@@ -27,7 +28,8 @@ const TransactionCard: React.FC<TransactionCardProps> = (props) => {
   const {
     isMember,
     txn,
-    multisigAccount,
+    multisigAddress,
+    threshold,
     membersCount,
     chainID,
     onViewMoreAction,
@@ -39,7 +41,7 @@ const TransactionCard: React.FC<TransactionCardProps> = (props) => {
   } = props;
   const isReadyToBroadcast = () => {
     const signs = txn?.signatures || [];
-    if (signs?.length >= multisigAccount?.account?.threshold) return true;
+    if (signs?.length >= threshold) return true;
     else return false;
   };
   return (
@@ -83,12 +85,15 @@ const TransactionCard: React.FC<TransactionCardProps> = (props) => {
               {isReadyToBroadcast() ? (
                 <BroadCastTxn
                   txn={txn}
-                  multisigAccount={multisigAccount}
+                  multisigAddress={multisigAddress}
+                  pubKeys={txn.pubkeys || []}
+                  threshold={threshold}
                   chainID={chainID}
+                  isMember={isMember}
                 />
               ) : (
                 <SignTxn
-                  address={multisigAccount.account.address}
+                  address={multisigAddress}
                   isMember={isMember}
                   unSignedTxn={txn}
                   txId={txn?.id}
@@ -137,8 +142,9 @@ const TransactionCard: React.FC<TransactionCardProps> = (props) => {
             </div>
             <DeleteTxn
               txId={txn.id}
-              address={multisigAccount.account.address}
+              address={multisigAddress || ''}
               chainID={chainID}
+              isMember={isMember}
             />
           </div>
         </div>
