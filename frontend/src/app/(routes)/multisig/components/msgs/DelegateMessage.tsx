@@ -20,7 +20,7 @@ const DelegateMessage: React.FC<TxnMsgProps> = (props) => {
           <span>Delegate&nbsp;</span>
           <span>
             {parseBalance(
-              msg.value.amount,
+              [msg.value.amount],
               currency.coinDecimals,
               currency.coinMinimalDenom
             )}

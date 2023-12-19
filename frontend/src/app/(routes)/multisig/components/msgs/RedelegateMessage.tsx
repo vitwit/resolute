@@ -17,10 +17,10 @@ const RedelegateMessage: React.FC<TxnMsgProps> = (props) => {
           alt=""
         />
         <div className="truncate max-w-[280px]">
-          <span>ReDelegate1111&nbsp;</span>
+          <span>ReDelegate&nbsp;</span>
           <span>
             {parseBalance(
-              msg.value.amount,
+              [msg.value.amount],
               currency.coinDecimals,
               currency.coinMinimalDenom
             )}

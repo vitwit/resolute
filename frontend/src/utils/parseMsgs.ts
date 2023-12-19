@@ -105,7 +105,7 @@ const parseDelegateMsg = (delegator: string, msg: string): Msg | null => {
     value: {
       delegatorAddress: delegator,
       validatorAddress: validator,
-      amount: amount,
+      amount: amount[0],
     },
   };
 };
@@ -155,7 +155,7 @@ const parseUnDelegateMsg = (delegator: string, msg: string): Msg | null => {
     value: {
       delegatorAddress: delegator,
       validatorAddress: validator,
-      amount: amount,
+      amount: amount[0],
     },
   };
 };
@@ -208,7 +208,7 @@ const parseReDelegateMsg = (delegator: string, msg: string): Msg | null => {
       validatorDstAddress: dest,
       validatorSrcAddress: src,
       delegatorAddress: delegator,
-      amount: amount,
+      amount: amount[0],
     },
   };
 };

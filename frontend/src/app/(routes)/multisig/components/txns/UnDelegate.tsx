@@ -116,10 +116,10 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
       const msgUnDelegate = {
         delegatorAddress: data.delegator,
         validatorAddress: data.validator?.value,
-        amount: [{
+        amount: {
           amount: baseAmount,
           denom: currency?.coinMinimalDenom,
-        }],
+        },
       };
 
       onDelegate({
@@ -194,7 +194,7 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
         className="text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
         onClick={setAmountValue}
       >
-        {formatCoin(Number(selectedValBal?.amount), selectedValBal?.denom)}
+        {formatCoin(Number(selectedValBal?.amount), currency?.coinDenom)}
       </div>
       <Controller
         name="amount"

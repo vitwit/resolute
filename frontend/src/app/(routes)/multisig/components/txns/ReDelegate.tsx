@@ -148,12 +148,11 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
         delegatorAddress: data.delegator,
         validatorSrcAddress: data.validatorSrcAddress?.value,
         validatorDstAddress: data.validatorDstAddress?.value,
-        amount: [
+        amount: 
           {
             amount: baseAmount,
             denom: currency?.coinMinimalDenom,
           },
-        ],
       };
 
       onDelegate({

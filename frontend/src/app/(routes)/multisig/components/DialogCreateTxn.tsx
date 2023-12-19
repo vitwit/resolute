@@ -331,6 +331,8 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
             })
           );
         } else {
+          console.log("here...")
+          console.log(parsedTxns)
           setMessages(parsedTxns);
         }
         break;
@@ -340,6 +342,8 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
           address,
           content
         );
+        console.log("here...")
+        console.log(parsedTxns)
         if (error) {
           dispatch(
             setError({
