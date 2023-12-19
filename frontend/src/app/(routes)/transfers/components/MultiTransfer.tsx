@@ -91,7 +91,7 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
             />
           </div>
           <CustomSubmitButton
-            pendingStatus={txPendingStatus}
+            pendingStatus={txPendingStatus === TxStatus.PENDING}
             circularProgressSize={12}
             buttonStyle="primary-custom-btn"
             buttonContent="Send"
