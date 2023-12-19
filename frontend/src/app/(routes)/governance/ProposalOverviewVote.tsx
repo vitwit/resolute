@@ -379,21 +379,22 @@ const ProposalOverviewVote = ({
                     <div>Quorum</div>
 
                     {quorumPercent ? (
-                      <Tooltip title={`${quorumPercent}%`}>
-                        <div className="flex w-full flex-col">
-                          <div className="flex flex-col items-center">
-                            <div>{quorumRequired}%</div>
-                            <div className="bg-[#26233C] h-[10px] w-[1px]"></div>
-                          </div>
-                          <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full"></div>
-                          <div
-                            style={{ width: `${quorumPercent}%` }}
-                            className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
-                          ></div>
-                        </div>
-                      </Tooltip>
-                    ) : null}
-                  </div>
+                          <Tooltip title={`${quorumPercent}%`}>
+                            <div className="flex w-full flex-col">
+                              <div className="flex flex-col items-center">
+                                <div>{quorumRequired}%</div>
+                                <div className="bg-[#26233C] h-[10px] w-[1px]"></div>
+                              </div>
+                              <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
+                                <div
+                                  style={{ width: `${quorumPercent}%` }}
+                                  className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
+                                ></div>
+                              </div>
+                            </div>
+                          </Tooltip>
+                        ) : null}
+                      </div>
 
                   <div className="flex justify-between items-start w-full">
                     {data.map((item, index) => (
