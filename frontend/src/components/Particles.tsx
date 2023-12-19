@@ -21,10 +21,9 @@ const CustomParticles = () => {
       init={particlesInit}
       loaded={particlesLoaded}
       options={{
-        
         particles: {
           number: {
-            value: 10,
+            value: 20,
             density: {
               enable: false,
               value_area: 800,
@@ -68,7 +67,7 @@ const CustomParticles = () => {
           },
           line_linked: {
             enable: true,
-            distance: 600,
+            distance: 400,
             color: '#ffffff',
             opacity: 0.4,
             width: 2,
@@ -128,82 +127,6 @@ const CustomParticles = () => {
         },
       }}
     />
-    // <Particles
-    //   id="tsparticles"
-    //   style={{zIndex: -100, position: "absolute"}}
-    //   init={particlesInit}
-    //   loaded={particlesLoaded}
-    //   options={{
-    //     background: {
-    //       color: {
-    //         value: '',
-    //       },
-    //     },
-    //     fpsLimit: 120,
-    //     interactivity: {
-    //       events: {
-    //         onClick: {
-    //           enable: true,
-    //           mode: 'push',
-    //         },
-    //         onHover: {
-    //           enable: true,
-    //           mode: 'repulse',
-    //         },
-    //         resize: true,
-    //       },
-    //       modes: {
-    //         push: {
-    //           quantity: 4,
-    //         },
-    //         repulse: {
-    //           distance: 200,
-    //           duration: 0.4,
-    //         },
-    //       },
-    //     },
-    //     particles: {
-    //       color: {
-    //         value: '#ffffff',
-    //       },
-    //       links: {
-    //         color: '#ffffff',
-    //         distance: 150,
-    //         enable: true,
-    //         opacity: 0.3,
-    //         width: 1,
-    //       },
-    //       move: {
-    //         direction: 'none',
-    //         enable: true,
-    //         outModes: {
-    //           default: 'bounce',
-    //         },
-    //         random: false,
-    //         speed: 6,
-    //         straight: false,
-    //       },
-    //       number: {
-    //         density: {
-    //           enable: true,
-    //           area: 800,
-    //         },
-    //         value: 80,
-    //       },
-    //       opacity: {
-    //         value: 0.3,
-    //       },
-    //       shape: {
-    //         type: 'circle',
-    //       },
-    //       size: {
-    //         value: { min: 1, max: 5 },
-    //       },
-    //     },
-    //     detectRetina: true,
-    //   }}
-    // />
-   
   );
 };
 

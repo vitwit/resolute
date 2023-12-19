@@ -441,7 +441,7 @@
   }
 }
 .powered-by-background {
-  @apply flex w-full grow-0 justify-center items-center gap-2.5 p-2.5 fixed bottom-0;
+  @apply flex w-full grow-0 justify-center items-center gap-2.5 p-2.5 fixed bottom-0 opacity-100;
   background: rgba(255, 255, 255, 0.05);
 }
 .text {
@@ -455,6 +455,3 @@
   @apply flex justify-center items-center gap-6 px-10 py-6 rounded-[100px] w-[226px] cursor-pointer;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
-
-
-

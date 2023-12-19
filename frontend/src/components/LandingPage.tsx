@@ -72,6 +72,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   ) : (
     <div>
       <CustomParticles />
+
       <div className="landingpage-background">
         <div className="flex justify-center items-center gap-2.5 p-2.5 w-full h-8"></div>
 
@@ -103,7 +104,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
                   className="landingpage-button"
                   onClick={() => setConnectWalletDialogOpen(true)}
                 >
-                  <p className="text-white text-lg font-bold">Connect Wallet</p>
+                  <p className="text-white text-lg font-bold z-10">Connect Wallet</p>
                 </div>
               </div>
             </div>
@@ -116,8 +117,8 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <div className="flex justify-end w-full z-10">
-            <div className="flex absolute mt-10 inside-laptop">
-              <Image src="/insidelaptop.png" height={600} width={810} alt="" />
+            <div className="flex absolute mt-10 ">
+              <Image src="/insidelaptop.png" height={550} width={820} alt="" />
             </div>
             <Image
               src="/landingpage.png"
