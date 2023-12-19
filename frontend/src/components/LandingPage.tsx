@@ -117,11 +117,11 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <div className="flex justify-end w-full z-10">
-            <div className="flex absolute mt-10 ">
+            {/* <div className="flex absolute mt-10 ">
               <Image src="/insidelaptop.png" height={550} width={820} alt="" />
-            </div>
+            </div> */}
             <Image
-              src="/landingpage.png"
+              src="/landingpage.svg"
               width={967}
               height={581}
               alt="landing page image"
