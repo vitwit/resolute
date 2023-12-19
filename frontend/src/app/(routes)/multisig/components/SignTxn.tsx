@@ -8,6 +8,8 @@ import { getAuthToken } from '@/utils/localStorage';
 import { SigningStargateClient } from '@cosmjs/stargate';
 import { toBase64 } from '@cosmjs/encoding';
 import React, { useState } from 'react';
+import { CircularProgress } from '@mui/material';
+import { ERR_UNKNOWN } from '@/utils/errors';
 
 interface SignTxnProps {
   address: string;
@@ -89,22 +91,28 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
         })
       );
       setLoad(false);
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      setLoad(false);
-      dispatch(setError({ type: 'error', message: error.message }));
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setLoad(false);
+        dispatch(setError({ type: 'error', message: error.message }));
+      } else {
+        dispatch(setError({ type: 'error', message: ERR_UNKNOWN }));
+        console.log(ERR_UNKNOWN);
+      }
     }
   };
 
   return (
     <button
-      className="sign-broadcast-btn justify-center flex"
+      className={
+        isMember ? 'sign-broadcast-btn' : 'sign-broadcast-btn btn-disabled'
+      }
       onClick={() => {
         signTheTx();
       }}
       disabled={!isMember}
     >
-      {load ? 'Loading...' : 'Sign'}
+      {load ? <CircularProgress size={24} /> : 'Sign'}
     </button>
   );
 };

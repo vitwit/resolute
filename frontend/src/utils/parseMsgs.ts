@@ -21,7 +21,7 @@ export const parseSendMsgsFromContent = (
   }
 
   const msgs = [];
-  for (let i = 1; i < messages.length; i++) {
+  for (let i = 0; i < messages.length; i++) {
     try {
       const tx = parseSendTx(from, messages[i]);
       if (tx && Object.keys(tx)?.length) msgs.push(tx);

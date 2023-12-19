@@ -78,7 +78,7 @@ const updateTx = (
 ): Promise<AxiosResponse> =>
   Axios.post(
     `${BASE_URL}/multisig/${address}/tx/${txId}` +
-      SIGNATURE_PARAMS_STRING(queryParams),
+    SIGNATURE_PARAMS_STRING(queryParams),
     payload
   );
 
@@ -90,6 +90,14 @@ export const getTxns = (
   return Axios.get(uri);
 };
 
+export const getAccountAllMultisigTxns = (
+  address: string,
+  status: string
+): Promise<AxiosResponse> => {
+  const uri = `${BASE_URL}/accounts/${address}/all-txns?status=${status}`;
+  return Axios.get(uri);
+};
+
 export const deleteTx = (
   queryParams: QueryParams,
   address: string,
@@ -97,7 +105,16 @@ export const deleteTx = (
 ): Promise<AxiosResponse> =>
   Axios.delete(
     `${BASE_URL}/multisig/${address}/tx/${txId}` +
-      SIGNATURE_PARAMS_STRING(queryParams)
+    SIGNATURE_PARAMS_STRING(queryParams)
+  );
+
+export const deleteMultisig = (
+  queryParams: QueryParams,
+  address: string
+): Promise<AxiosResponse> =>
+  Axios.delete(
+    `${BASE_URL}/multisig/${address}` +
+    SIGNATURE_PARAMS_STRING(queryParams)
   );
 
 export default {
@@ -109,5 +126,7 @@ export default {
   signTx,
   updateTx,
   deleteTx,
+  deleteMultisig,
   verifyUser,
+  getAccountAllMultisigTxns,
 };

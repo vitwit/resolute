@@ -1,4 +1,5 @@
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { deleteMultisig } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { MultisigAccount } from '@/types/multisig';
 import { getLocalDate } from '@/utils/datetime';
@@ -7,6 +8,7 @@ import { formatCoin, formatStakedAmount, shortenAddress } from '@/utils/util';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import DialogDeleteMultisig from './DialogDeleteMultisig';
 
 interface AccountInfoProps {
   chainID: string;
@@ -73,6 +75,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
         </div>
       </div>
       <AccountDetails
+        chainName={chainName}
         multisigAccount={multisigAccount}
         actionsRequired={actionsRequired}
         balance={formatCoin(availableBalance, coinDenom)}
@@ -93,14 +96,46 @@ const AccountDetails = ({
   actionsRequired,
   balance,
   stakedBalance,
+  chainName,
 }: {
   multisigAccount: MultisigAccount;
   actionsRequired: number;
   balance: string;
   stakedBalance: string;
+  chainName: string;
 }) => {
   const { account: accountInfo, pubkeys } = multisigAccount;
   const { address, name, created_at, threshold } = accountInfo;
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const deleteMultisigRes = useAppSelector(
+    (state: RootState) => state.multisig.deleteMultisigRes
+  )
+
+  const router = useRouter();
+
+  const handleGoBack = () => {
+    router.push(`/multisig/${chainName}`);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setDeleteDialogOpen(false);
+  };
+
+  useEffect(()=>{
+    if (deleteMultisigRes?.status === 'idle') {
+      handleDeleteDialogClose();
+      handleGoBack();
+    }
+  }, [deleteMultisigRes?.status])
+
+  const handleDelete = () => {
+    dispatch(deleteMultisig({
+      data: { address: multisigAccount?.account?.address },
+      queryParams: { address: '', signature: '' }
+    }))
+  }
+
   return (
     <div className="rounded-2xl w-full bg-[#0E0B26] h-full">
       <div className="multisig-info-title">
@@ -165,9 +200,17 @@ const AccountDetails = ({
           </div>
         </div>
         <div>
-          <button className="delete-multisig-btn">Delete Multisig</button>
+          <button 
+           onClick={() => setDeleteDialogOpen(true)}
+          className="delete-multisig-btn">Delete Multisig</button>
         </div>
       </div>
+
+      <DialogDeleteMultisig
+        open={deleteDialogOpen}
+        onClose={() => handleDeleteDialogClose()}
+        deleteTx={handleDelete}
+      />
     </div>
   );
 };

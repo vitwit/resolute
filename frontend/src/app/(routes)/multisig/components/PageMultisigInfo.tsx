@@ -10,6 +10,7 @@ import {
 } from '@/store/features/multisig/multisigSlice';
 import { setAuthToken } from '@/utils/localStorage';
 import {
+  resetError,
   setError,
   setSelectedNetwork,
 } from '@/store/features/common/commonSlice';
@@ -102,6 +103,10 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
   useEffect(() => {
     dispatch(setSelectedNetwork({ chainName: chainName }));
   }, [chainName]);
+  
+  useEffect(() => {
+    dispatch(resetError());
+  }, []);
 
   return (
     <div className="flex gap-10 justify-between">

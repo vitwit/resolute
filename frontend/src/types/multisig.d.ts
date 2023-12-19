@@ -110,9 +110,10 @@ interface MultisigAccount {
 
 interface MultisigState {
   multisigAccounts: MultisigAccounts;
-  verifyAccountRes: VerifyAcccountRes;
+  verifyAccountRes: VerifyAccountRes;
   createMultisigAccountRes: TxRes;
   deleteTxnRes: TxRes;
+  deleteMultisigRes: TxRes;
   multisigAccount: MultisigAccount;
   balance: Balance;
   createTxnRes: TxRes;
@@ -121,7 +122,7 @@ interface MultisigState {
   signTxRes: TxRes;
 }
 
-interface VerifyAcccountRes {
+interface VerifyAccountRes {
   token: string;
   status: TxStatus;
   error: string;
@@ -176,6 +177,8 @@ interface Txn {
   signatures: Signature[];
   last_updated: string;
   created_at: string;
+  pubkeys?: MultisigAddressPubkey[];
+  threshold?: number;
 }
 
 interface Txns {
@@ -199,4 +202,11 @@ interface TxnMsgProps {
   onDelete: (index: number) => void;
   currency: Currency;
   index: number;
+}
+
+interface DeleteMultisigInputs {
+  queryParams: QueryParams;
+  data: {
+    address: string;
+  };
 }
