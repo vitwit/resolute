@@ -17,7 +17,7 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
   const txPendingStatus = useAppSelector((state) => state.bank.tx.status);
 
   useEffect(() => {
-    if (txPendingStatus != TxStatus.PENDING) {
+    if (txPendingStatus === TxStatus.IDLE) {
       setMsgs([]);
     }
   }, [txPendingStatus]);
