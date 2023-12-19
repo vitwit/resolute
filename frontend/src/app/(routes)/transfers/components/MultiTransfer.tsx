@@ -73,6 +73,7 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
       feegranter: '',
     };
     dispatch(multiTxns(txnInputs));
+    setMsgs([]);
   };
 
   return (
