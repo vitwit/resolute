@@ -12,12 +12,9 @@ import { RootState } from '../store/store';
 import { getAllTokensPrice } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import WalletPopup from './WalletPopup';
+import CustomParticles from './Particles';
 
-export const Landingpage = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   const connected = useAppSelector(
     (state: RootState) => state.wallet.connected
@@ -74,6 +71,7 @@ export const Landingpage = ({
     <>{children}</>
   ) : (
     <div>
+      <CustomParticles />
       <div className="landingpage-background">
         <div className="flex justify-center items-center gap-2.5 p-2.5 w-full h-8"></div>
 
@@ -94,7 +92,7 @@ export const Landingpage = ({
               <div className="flex flex-col space-y-10">
                 <div className="flex flex-col space-y-2 w-[512px]">
                   <div className="text-white text-[28px] font-light">
-                    Interface Interchain
+                    Interchain Interface
                   </div>
                   <div className="text-white text-lg font-thin leading-normal">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
@@ -117,20 +115,9 @@ export const Landingpage = ({
             />
           </div>
 
-          <div className="absolute left-[521px] top-[38px]">
-            <Image
-              src="/background-circle.png"
-              width={402}
-              height={456}
-              alt="background-circle"
-            />
-          </div>
-          <div className="flex justify-end w-full">
-            <div className="flex absolute  mt-20">
-              {/* controls loop muted autoPlay */}
-              <video width={802} height={10} controls>
-                <source src="/video.mp4" type="video/mp4" />
-              </video>
+          <div className="flex justify-end w-full z-10">
+            <div className="flex absolute mt-10 inside-laptop">
+              <Image src="/insidelaptop.png" height={600} width={810} alt="" />
             </div>
             <Image
               src="/landingpage.png"
