@@ -9,7 +9,7 @@ import {
   verifyAccount,
 } from '@/store/features/multisig/multisigSlice';
 import { setAuthToken } from '@/utils/localStorage';
-import { setError } from '@/store/features/common/commonSlice';
+import { resetError, setError } from '@/store/features/common/commonSlice';
 import VerifyAccount from './VerifyAccount';
 import { isVerified } from '@/utils/util';
 
@@ -67,6 +67,10 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
       setVerified(false);
     }
   }, [address, chainID]);
+
+  useEffect(() => {
+    dispatch(resetError());
+  }, []);
 
   return (
     <div className="flex gap-10">
