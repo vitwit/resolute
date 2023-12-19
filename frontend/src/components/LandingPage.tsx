@@ -79,7 +79,6 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
         <div className="pl-20">
           <Image
             src="/vitwit-logo-main.png"
-            layout='responsive'
             width={180}
             height={475}
             alt="Vitwit-Logo"
@@ -125,7 +124,6 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
             </div> */}
             <Image
               src="/landingpage.svg"
-              layout='responsive'
               width={967}
               height={581}
               alt="landing page image"
