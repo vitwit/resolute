@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Messages from './Messages';
 import Summary from './Summary';
 import MultiTxUpload from './MultiTxUpload';
@@ -15,6 +15,12 @@ import { setError } from '@/store/features/common/commonSlice';
 const MultiTransfer = ({ chainID }: { chainID: string }) => {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const txPendingStatus = useAppSelector((state) => state.bank.tx.status);
+
+  useEffect(() => {
+    if (txPendingStatus != TxStatus.PENDING) {
+      setMsgs([]);
+    }
+  }, [txPendingStatus]);
 
   const multiSendProps = props['multi-send'];
   const dispatch = useAppDispatch();
@@ -73,7 +79,6 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
       feegranter: '',
     };
     dispatch(multiTxns(txnInputs));
-    setMsgs([]);
   };
 
   return (
