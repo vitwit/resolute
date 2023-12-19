@@ -15,7 +15,6 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { txTransfer } from '@/store/features/ibc/ibcSlice';
 import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
-import { number } from 'mathjs';
 
 const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets] = useSortedAssets(chainIDs, { showAvailable: true });
@@ -35,7 +34,7 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
       invalid: (value: string) =>
         !isNaN(Number(value)) || 'Please enter a valid amount',
       zeroAmount: (value: string) =>
-        number(value) !== 0 || 'Amount should be greater than 0',
+        Number(value) !== 0 || 'Amount should be greater than 0',
       insufficient: (value: string) =>
         Number(selectedAsset?.balance) >
           Number(value) +
