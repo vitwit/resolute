@@ -20,7 +20,7 @@ const UndelegateMessage: React.FC<TxnMsgProps> = (props) => {
           <span>UnDelegate&nbsp;</span>
           <span>
             {parseBalance(
-              msg.value.amount,
+              [msg.value.amount],
               currency.coinDecimals,
               currency.coinMinimalDenom
             )}

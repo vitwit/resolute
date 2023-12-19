@@ -1,6 +1,6 @@
 'use client';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { setSelectedNetwork } from '@/store/features/common/commonSlice';
+import { setError, setSelectedNetwork } from '@/store/features/common/commonSlice';
 import { RootState } from '@/store/store';
 import { Avatar, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import DialogAddNetwork from './DialogAddNetwork';
 import { resetConnectWalletStatus } from '@/store/features/wallet/walletSlice';
 import { allNetworksLink, changeNetworkRoute } from '@/utils/util';
+import { copyToClipboard } from '@/utils/copyToClipboard';
 
 const ALL_NETWORKS_LOGO = '/all-networks-icon.png';
 
@@ -73,7 +74,14 @@ const SelectNetwork = () => {
         {walletAddress ? (
           <div className="wallet-address">
             <span className="truncate">{walletAddress}</span>
-            <Image src="/copy.svg" width={16} height={16} alt="copy" />
+            <Image onClick={(e) => {
+              copyToClipboard(walletAddress);
+              dispatch(setError({
+                type: 'success',
+                message: "Copied"
+              }))
+              e.stopPropagation();
+            }} src="/copy.svg" width={24} height={24} alt="copy" />
           </div>
         ) : (
           <>
