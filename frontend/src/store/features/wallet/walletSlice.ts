@@ -5,6 +5,7 @@ import { isWalletInstalled } from './walletService';
 import { setConnected, setWalletName } from '../../../utils/localStorage';
 import { TxStatus } from '@/types/enums';
 import { loadTransactions } from '../transactionHistory/transactionHistorySlice';
+import { setError } from '../common/commonSlice';
 
 declare let window: WalletWindow;
 
@@ -52,7 +53,8 @@ export const establishWalletConnection = createAsyncThunk(
     const networks = data.networks;
 
     if (!isWalletInstalled(data.walletName)) {
-      alert('wallet is not installed');
+      dispatch(setError({ type: 'error', message: 'Wallet is not installed' }));
+
       return rejectWithValue('wallet is not installed');
     } else {
       window.wallet.defaultOptions = {
@@ -106,7 +108,13 @@ export const establishWalletConnection = createAsyncThunk(
       }
 
       if (Object.keys(chainInfos).length === 0) {
-        alert('Permission denied for all the networks');
+        dispatch(
+          setError({
+            type: 'error',
+            message: 'Permission denied for all the networks',
+          })
+        );
+
         return rejectWithValue('Permission denied for all the networks');
       } else {
         setConnected();

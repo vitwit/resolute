@@ -15,6 +15,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { txTransfer } from '@/store/features/ibc/ibcSlice';
 import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
+import { number } from 'mathjs';
 
 const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets] = useSortedAssets(chainIDs, { showAvailable: true });
@@ -31,7 +32,10 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const amountRules = {
     ...sendProps.amount,
     validate: {
-      invalid: (value: string) => Number(value) > 0 || "Amount can't be zero",
+      invalid: (value: string) =>
+        !isNaN(Number(value)) || 'Please enter a valid amount',
+      zeroAmount: (value: string) =>
+        number(value) !== 0 || 'Amount should be greater than 0',
       insufficient: (value: string) =>
         Number(selectedAsset?.balance) >
           Number(value) +
@@ -51,7 +55,6 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const {
     handleSubmit,
     control,
-    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -65,7 +68,6 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
     if (selectedAsset == asset) return;
     setSelectedAsset(asset);
     setSlicedAssetIndex(Math.floor(index / 4) * 4);
-    reset();
   };
 
   const onSubmit = (data: {
@@ -74,11 +76,22 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
     memo: string;
   }) => {
     if (!selectedAsset) {
-      alert('Please select an asset');
+      dispatch(
+        setError({
+          type: 'error',
+          message: `Please select an asset`,
+        })
+      );
       return;
     }
     if (!data.amount) {
-      alert("amount can't be zero");
+      dispatch(
+        setError({
+          type: 'error',
+          message: `Amount can't be zero`,
+        })
+      );
+
       return;
     }
 
