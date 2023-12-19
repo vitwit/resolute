@@ -111,7 +111,7 @@ const useSortedAssets = (
             usdValue: usdDenomValue,
             usdPrice: usdDenomPrice,
             balance: balanceAmount,
-            denom: denomInfo[0].origin_denom,
+            denom: balance.denom,
             displayDenom: denomInfo[0].symbol,
             chainName: chainName,
             denomInfo: denomInfo,

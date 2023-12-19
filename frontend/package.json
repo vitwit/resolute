@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@cosmjs/amino": "^0.31.3",
-    "@cosmjs/proto-signing": "^0.31.3",
-    "@cosmjs/stargate": "^0.31.3",
+    "@cosmjs/proto-signing": "^0.32.1",
+    "@cosmjs/stargate": "^0.32.1",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
@@ -20,6 +20,7 @@
     "@mui/icons-material": "^5.14.11",
     "@mui/material": "^5.14.10",
     "@reduxjs/toolkit": "^1.9.7",
+    "@skip-router/core": "^1.1.1",
     "@types/node": "20.6.5",
     "@types/react": "18.2.37",
     "@types/react-dom": "18.2.15",

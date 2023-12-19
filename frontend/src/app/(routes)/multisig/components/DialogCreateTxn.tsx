@@ -1,7 +1,11 @@
 import {
   CLOSE_ICON_PATH,
   DELEGATE_TYPE_URL,
+  MULTISIG_DELEGATE_TEMPLATE,
+  MULTISIG_REDELEGATE_TEMPLATE,
+  MULTISIG_SEND_TEMPLATE,
   MULTISIG_TX_TYPES,
+  MULTISIG_UNDELEGATE_TEMPLATE,
   REDELEGATE_TYPE_URL,
   SEND_TYPE_URL,
   UNDELEGATE_TYPE_URL,
@@ -10,12 +14,14 @@ import {
   Dialog,
   DialogContent,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Pagination,
   Select,
   SelectChangeEvent,
   TextField,
+  Tooltip,
 } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
@@ -40,6 +46,15 @@ import DelegateMessage from './msgs/DelegateMessage';
 import UndelegateMessage from './msgs/UndelegateMessage';
 import RedelegateMessage from './msgs/RedelegateMessage';
 import SelectTransactionType from './SelectTransactionType';
+import UnDelegate from './txns/UnDelegate';
+import ReDelegate from './txns/ReDelegate';
+import {
+  parseDelegateMsgsFromContent,
+  parseReDelegateMsgsFromContent,
+  parseSendMsgsFromContent,
+  parseUnDelegateMsgsFromContent,
+} from '@/utils/parseMsgs';
+import ClearIcon from '@mui/icons-material/Clear';
 
 interface DialogCreateTxnProps {
   open: boolean;
@@ -50,6 +65,131 @@ interface DialogCreateTxnProps {
 }
 
 const PER_PAGE = 5;
+
+interface FileUploadProps {
+  onFileContents: (content: string, type: string) => void;
+  txType: string;
+  resetMessages: () => void;
+}
+
+const FileUpload = (props: FileUploadProps) => {
+  const {onFileContents, resetMessages, txType} = props;
+  const [uploadedFileName, setUploadedFileName] = useState<string>('');
+
+  return (
+    <div className="">
+      <div
+        className="file-upload-box"
+        onClick={() => {
+          document.getElementById('multisig_file')!.click();
+        }}
+      >
+        <div className="flex flex-col items-center justify-center">
+          {uploadedFileName ? (
+            <>
+              <div className="font-bold">
+                {uploadedFileName}{' '}
+                <Tooltip title="Remove" placement="top">
+                  <IconButton
+                    aria-label="delete txn"
+                    color="error"
+                    onClick={(e) => {
+                      setUploadedFileName('');
+                      resetMessages();
+                      e.stopPropagation();
+                    }}
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            </>
+          ) : (
+            <>
+              <Image
+                src="/file-upload-icon.svg"
+                width={32}
+                height={32}
+                alt="Upload file"
+              />
+              <div className="mt-2">Upload file here</div>
+            </>
+          )}
+        </div>
+        <input
+          id="multisig_file"
+          accept=".csv"
+          hidden
+          type="file"
+          onChange={(e) => {
+            const files = e.target.files;
+            if (!files) {
+              return;
+            }
+            const file = files[0];
+            if (!file) {
+              return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const contents = (e?.target?.result as string) || '';
+              setUploadedFileName(file?.name);
+              onFileContents(contents, txType);
+            };
+            reader.onerror = (e) => {
+              alert(e);
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+          }}
+        />
+      </div>
+      <div className="mt-2 text-[14px] leading-normal font-light">
+        Download sample CSV file&nbsp;
+        <a
+          className="add-network-json-sample-link"
+          onClick={() => {
+            switch (txType) {
+              case MULTISIG_TX_TYPES.send:
+                window.open(
+                  MULTISIG_SEND_TEMPLATE,
+                  '_blank',
+                  'noopener,noreferrer'
+                );
+                break;
+              case MULTISIG_TX_TYPES.delegate:
+                window.open(
+                  MULTISIG_DELEGATE_TEMPLATE,
+                  '_blank',
+                  'noopener,noreferrer'
+                );
+                break;
+              case MULTISIG_TX_TYPES.undelegate:
+                window.open(
+                  MULTISIG_UNDELEGATE_TEMPLATE,
+                  '_blank',
+                  'noopener,noreferrer'
+                );
+                break;
+              case MULTISIG_TX_TYPES.redelegate:
+                window.open(
+                  MULTISIG_REDELEGATE_TEMPLATE,
+                  '_blank',
+                  'noopener,noreferrer'
+                );
+                break;
+              default:
+                alert('unknown message type');
+            }
+          }}
+        >
+          here
+        </a>
+      </div>
+    </div>
+  );
+};
 
 const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
   const { open, onClose, chainID, address, walletAddress } = props;
@@ -82,7 +222,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
   };
 
   const { getDenomInfo, getChainInfo } = useGetChainInfo();
-  const { feeAmount } = getChainInfo(chainID);
+  const { feeAmount, baseURL } = getChainInfo(chainID);
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
   const currency = {
     coinDenom: displayDenom,
@@ -130,6 +270,14 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
     }
   }, [createRes]);
 
+  const resetMessages = () => {
+    setMessages([]);
+  }
+
+  useEffect(() => {
+    resetMessages();
+  }, [isFileUpload]);
+
   useEffect(() => {
     return () => {
       dispatch(resetError());
@@ -170,6 +318,78 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
       fees: feeAmount * 10 ** currency.coinDecimals,
     },
   });
+
+  const onFileContents = (content: string, type: string) => {
+    switch (type) {
+      case MULTISIG_TX_TYPES.send: {
+        const [parsedTxns, error] = parseSendMsgsFromContent(address, content);
+        if (error) {
+          dispatch(
+            setError({
+              type: 'error',
+              message: error,
+            })
+          );
+        } else {
+          setMessages(parsedTxns);
+        }
+        break;
+      }
+      case MULTISIG_TX_TYPES.delegate: {
+        const [parsedTxns, error] = parseDelegateMsgsFromContent(
+          address,
+          content
+        );
+        if (error) {
+          dispatch(
+            setError({
+              type: 'error',
+              message: error,
+            })
+          );
+        } else {
+          setMessages(parsedTxns);
+        }
+        break;
+      }
+      case MULTISIG_TX_TYPES.redelegate: {
+        const [parsedTxns, error] = parseReDelegateMsgsFromContent(
+          address,
+          content
+        );
+        if (error) {
+          dispatch(
+            setError({
+              type: 'error',
+              message: error,
+            })
+          );
+        } else {
+          setMessages(parsedTxns);
+        }
+        break;
+      }
+      case MULTISIG_TX_TYPES.undelegate: {
+        const [parsedTxns, error] = parseUnDelegateMsgsFromContent(
+          address,
+          content
+        );
+        if (error) {
+          dispatch(
+            setError({
+              type: 'error',
+              message: error,
+            })
+          );
+        } else {
+          setMessages(parsedTxns);
+        }
+        break;
+      }
+      default:
+        setMessages([]);
+    }
+  };
 
   const onSubmit = (data: {
     msgs: never[];
@@ -214,7 +434,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
-        <div className="w-[890px] min-h-[610px] text-white">
+        <div className="w-[890px] text-white">
           <div className="px-10 py-6 flex justify-end">
             <div
               onClick={() => {
@@ -231,47 +451,54 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
             </div>
           </div>
           <div className="mt-6 mb-[72px] pl-6 pr-10 text-white flex h-full gap-6">
-            <div className="flex-1 px-6 h-full border-r-[0.5px] border-[#ffffff2e]">
+            <div className="flex-1 pl-6 pr-0 h-full">
               <div className="text-[20px] font-bold">Create Transaction</div>
               <SelectTransactionType
                 onSelect={onSelect}
                 isFileUpload={isFileUpload}
               />
-              {isFileUpload ? null : (
+              <FormControl
+                fullWidth
+                sx={{
+                  '& .MuiFormLabel-root': {
+                    display: 'none',
+                  },
+                }}
+              >
+                <InputLabel className="text-white" id="tx-type">
+                  Select Transaction
+                </InputLabel>
+                <Select
+                  labelId="tx-type"
+                  className="bg-[#FFFFFF1A]"
+                  id="tx-type"
+                  value={txType}
+                  label="Select Transaction"
+                  onChange={(e) => handleTypeChange(e)}
+                  sx={selectTxnStyles}
+                >
+                  <MenuItem value={MULTISIG_TX_TYPES.send}>Send</MenuItem>
+                  <MenuItem value={MULTISIG_TX_TYPES.delegate}>
+                    Delegate
+                  </MenuItem>
+                  <MenuItem value={MULTISIG_TX_TYPES.redelegate}>
+                    Redelegate
+                  </MenuItem>
+                  <MenuItem value={MULTISIG_TX_TYPES.undelegate}>
+                    Undelegate
+                  </MenuItem>
+                </Select>
+              </FormControl>
+              {isFileUpload ? (
+                <FileUpload
+                  onFileContents={(content: string, type: string) =>
+                    onFileContents(content, type)
+                  }
+                  txType={txType}
+                  resetMessages={resetMessages}
+                />
+              ) : (
                 <>
-                  <FormControl
-                    fullWidth
-                    className="mb-6"
-                    sx={{
-                      '& .MuiFormLabel-root': {
-                        display: 'none',
-                      },
-                    }}
-                  >
-                    <InputLabel className="text-white" id="tx-type">
-                      Select Transaction
-                    </InputLabel>
-                    <Select
-                      labelId="tx-type"
-                      className="bg-[#FFFFFF1A] rounded-2xl"
-                      id="tx-type"
-                      value={txType}
-                      label="Select Transaction"
-                      onChange={(e) => handleTypeChange(e)}
-                      sx={selectTxnStyles}
-                    >
-                      <MenuItem value={MULTISIG_TX_TYPES.send}>Send</MenuItem>
-                      <MenuItem value={MULTISIG_TX_TYPES.delegate}>
-                        Delegate
-                      </MenuItem>
-                      <MenuItem value={MULTISIG_TX_TYPES.redelegate}>
-                        Redelegate
-                      </MenuItem>
-                      <MenuItem value={MULTISIG_TX_TYPES.undelegate}>
-                        Undelegate
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
                   {txType === MULTISIG_TX_TYPES.send && (
                     <Send
                       address={address}
@@ -293,10 +520,34 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                       availableBalance={availableBalance}
                     />
                   )}
+                  {txType === MULTISIG_TX_TYPES.undelegate && (
+                    <UnDelegate
+                      chainID={chainID}
+                      address={address}
+                      baseURL={baseURL}
+                      onDelegate={(payload) => {
+                        setMessages([...messages, payload]);
+                      }}
+                      currency={currency}
+                      availableBalance={availableBalance}
+                    />
+                  )}
+                  {txType === MULTISIG_TX_TYPES.redelegate && (
+                    <ReDelegate
+                      chainID={chainID}
+                      address={address}
+                      baseURL={baseURL}
+                      onDelegate={(payload) => {
+                        setMessages([...messages, payload]);
+                      }}
+                      currency={currency}
+                      availableBalance={availableBalance}
+                    />
+                  )}
                 </>
               )}
             </div>
-            <div className="flex-1 h-full">
+            <div className="flex-1 h-full pl-6 border-l-[0.5px] border-[#ffffff2e]">
               <div className="text-[20px] font-bold mb-6">Messages</div>
               {messages.length ? (
                 <div className="flex flex-col justify-between gap-6">
@@ -316,7 +567,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                       })}
                     </div>
 
-                    {messages.length > 0 ? (
+                    {messages.length > PER_PAGE ? (
                       <div className="mt-2 flex justify-end">
                         <Pagination
                           sx={paginationComponentStyles}
@@ -340,7 +591,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                         rules={{ required: 'Gas is required' }}
                         render={({ field, fieldState: { error } }) => (
                           <TextField
-                            className="bg-[#FFFFFF1A] rounded-2xl mb-6"
+                            className="bg-[#FFFFFF1A]"
                             {...field}
                             sx={createTxnTextFieldStyles}
                             error={!!error}
@@ -367,7 +618,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                         control={control}
                         render={({ field }) => (
                           <TextField
-                            className="bg-[#FFFFFF1A] rounded-2xl mb-6"
+                            className="bg-[#FFFFFF1A]"
                             {...field}
                             sx={createTxnTextFieldStyles}
                             placeholder="Memo"

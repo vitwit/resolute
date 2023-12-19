@@ -10,10 +10,11 @@ interface DeleteTxnProps {
   txId: number;
   address: string;
   chainID: string;
+  isMember: boolean;
 }
 
 const DeleteTxn: React.FC<DeleteTxnProps> = (props) => {
-  const { txId, address, chainID } = props;
+  const { txId, address, chainID, isMember } = props;
   const dispatch = useAppDispatch();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const { getChainInfo } = useGetChainInfo();
@@ -43,6 +44,7 @@ const DeleteTxn: React.FC<DeleteTxnProps> = (props) => {
     <>
       <button
         className="action-image justify-center items-center flex"
+        disabled={!isMember}
         onClick={() => setDeleteDialogOpen(true)}
       >
         <Image

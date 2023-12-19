@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import {
@@ -18,6 +18,7 @@ import { Validator } from '@/types/staking';
 import { useRouter } from 'next/navigation';
 import { getBalances } from '@/store/features/bank/bankSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import msgs from '@/utils/messages.json';
 
 const StakingPage = ({
   chainName,
@@ -30,6 +31,11 @@ const StakingPage = ({
 }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const [allValidatorsDialogOpen, setAllValidatorsDialogOpen] =
+    useState<boolean>(false);
+  const toggleValidatorsDialog = () => {
+    setAllValidatorsDialogOpen((prevState) => !prevState);
+  };
   const nameToChainIDs: Record<string, string> = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -126,11 +132,19 @@ const StakingPage = ({
           />
         </div>
         {!hasDelegations ? (
-          <div className="no-delegations">- No Delegations -</div>
+          <div className="no-data">
+            <div className="leading-8">{msgs.noData}</div>
+              <button
+                onClick={toggleValidatorsDialog}
+                className="primary-custom-btn"
+              >
+                Explore
+              </button>
+          </div>
         ) : null}
 
         {hasUnbondings ? (
-          <div className='mt-16'>
+          <div className="mt-12">
             <h2 className="txt-lg font-medium my-6">Unbonding</h2>
             <div className="unbondings-grid">
               <ChainUnbondings
@@ -149,6 +163,8 @@ const StakingPage = ({
         validators={validators}
         currency={currency}
         onMenuAction={onMenuAction}
+        allValidatorsDialogOpen={allValidatorsDialogOpen}
+        toggleValidatorsDialog={toggleValidatorsDialog}
       />
     </div>
   );

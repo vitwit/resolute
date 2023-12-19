@@ -3,6 +3,7 @@ import { parseBalance } from './denom';
 import { MultisigThresholdPubkey, SinglePubkey } from '@cosmjs/amino';
 import { Options } from '@/custom-hooks/useSortedAssets';
 import { getAuthToken } from './localStorage';
+import { MultisigAddressPubkey } from '@/types/multisig';
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -137,9 +138,9 @@ export function shortenAddress(bech32: string, maxCharacters: number) {
     return bech32;
   }
 
-  const i = bech32.indexOf('1');
-  const prefix = bech32.slice(0, i);
-  const address = bech32.slice(i + 1);
+  const i = bech32 ? bech32.indexOf('1') : -1;
+  const prefix = bech32 ? bech32.slice(0, i) : '';
+  const address = bech32 ? bech32.slice(i + 1) : '';
 
   maxCharacters -= prefix?.length;
   maxCharacters -= 3; // For "..."
@@ -150,8 +151,8 @@ export function shortenAddress(bech32: string, maxCharacters: number) {
   }
 
   const mid = Math.floor(address?.length / 2);
-  let former = address.slice(0, mid);
-  let latter = address.slice(mid);
+  let former = address?.slice(0, mid);
+  let latter = address?.slice(mid);
 
   while (maxCharacters < former?.length + latter?.length) {
     if ((former?.length + latter?.length) % 2 === 1 && former?.length > 0) {
@@ -333,3 +334,10 @@ export const isVerified = ({
   }
   return false;
 };
+
+export const isMultisigMember = (pubkeys: MultisigAddressPubkey[], walletAddress: string): boolean => {
+  const result = pubkeys?.filter((keys) => {
+    return keys.address === walletAddress;
+  });
+  return !!result?.length
+}

@@ -1,18 +1,20 @@
-import { MultisigAccount, Txn } from '@/types/multisig';
-import React from 'react';
+import { MultisigAddressPubkey, Txn } from '@/types/multisig';
+import React, { useEffect, useState } from 'react';
 import TxnMsg from './msgs/TxnMsg';
 import Link from 'next/link';
-import { cleanURL } from '@/utils/util';
+import { cleanURL, isMultisigMember } from '@/utils/util';
 import BroadCastTxn from './BroadCastTxn';
 import SignTxn from './SignTxn';
 import Image from 'next/image';
 import { Tooltip } from '@mui/material';
 import DeleteTxn from './DeleteTxn';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 interface TransactionItemProps {
-  isMember: boolean;
   txn: Txn;
-  multisigAccount: MultisigAccount;
+  multisigAddress: string;
+  threshold: number;
+  pubKeys: MultisigAddressPubkey[];
   membersCount: number;
   chainID: string;
   onViewRawAction: (txn: Txn) => void;
@@ -24,9 +26,10 @@ interface TransactionItemProps {
 
 const TransactionItem: React.FC<TransactionItemProps> = (props) => {
   const {
-    isMember,
     txn,
-    multisigAccount,
+    multisigAddress,
+    pubKeys,
+    threshold,
     membersCount,
     chainID,
     isHistory,
@@ -37,9 +40,18 @@ const TransactionItem: React.FC<TransactionItemProps> = (props) => {
   } = props;
   const isReadyToBroadcast = () => {
     const signs = txn?.signatures || [];
-    if (signs?.length >= multisigAccount?.account?.threshold) return true;
+    if (signs?.length >= threshold) return true;
     else return false;
   };
+
+  const [isMember, setIsMember] = useState<boolean>(false);
+  const { getChainInfo } = useGetChainInfo();
+  const { address: walletAddress } = getChainInfo(chainID);
+
+  useEffect(() => {
+    const result = isMultisigMember(pubKeys, walletAddress);
+    setIsMember(result);
+  }, [pubKeys, walletAddress]);
 
   return (
     <div className="flex gap-6 justify-between items-center text-white">
@@ -92,12 +104,15 @@ const TransactionItem: React.FC<TransactionItemProps> = (props) => {
             {isReadyToBroadcast() ? (
               <BroadCastTxn
                 txn={txn}
-                multisigAccount={multisigAccount}
+                multisigAddress={multisigAddress}
+                pubKeys={pubKeys}
+                threshold={threshold}
+                isMember={isMember}
                 chainID={chainID}
               />
             ) : (
               <SignTxn
-                address={multisigAccount.account.address}
+                address={multisigAddress}
                 isMember={isMember}
                 unSignedTxn={txn}
                 txId={txn?.id}
@@ -127,11 +142,7 @@ const TransactionItem: React.FC<TransactionItemProps> = (props) => {
             </div>
           </div>
         </Tooltip>
-        <DeleteTxn
-          txId={txn.id}
-          address={multisigAccount.account.address}
-          chainID={chainID}
-        />
+        <DeleteTxn txId={txn.id} address={multisigAddress} chainID={chainID} isMember={isMember} />
       </div>
     </div>
   );

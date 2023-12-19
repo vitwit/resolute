@@ -10,7 +10,7 @@ export const OFFCHAIN_VERIFICATION_MESSAGE =
  * @constant
  */
 export const API_URL = process.env.NEXT_PUBLIC_APP_API_URI || '';
-export const TRANSFERS_MSG_FILTERS = ['Send'];
+export const TRANSFERS_MSG_FILTERS = ['Send', 'IBC'];
 export const SINGLE_TAB_TEXT = 'Single Transfer';
 export const MULTI_TAB_TEXT = 'Multi Transfer';
 export const SINGLE_BTN_TEXT = 'Send single';
@@ -82,3 +82,14 @@ export const MULTISIG_TX_TYPES = {
   redelegate: 'Redelegate',
 };
 export const ALERT_HIDE_DURATION = 3000;
+export const MULTISIG_SEND_TEMPLATE =
+  "https://api.resolute.vitwit.com/_static/send.csv";
+export const MULTISIG_DELEGATE_TEMPLATE =
+  "https://api.resolute.vitwit.com/_static/delegate.csv";
+export const MULTISIG_UNDELEGATE_TEMPLATE =
+  "https://api.resolute.vitwit.com/_static/undelegate.csv";
+export const MULTISIG_REDELEGATE_TEMPLATE =
+  "https://api.resolute.vitwit.com/_static/redelegate.csv";
+export const txBroadcastTimeoutMs = 60_000;
+export const txBroadcastPollIntervalMs = 3_000;
+export const TRACK_IBC_TX_TIME_INTERVAL = 15000;

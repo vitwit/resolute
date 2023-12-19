@@ -360,6 +360,15 @@ func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
 		})
 	}
 
+	_, err = tx.ExecContext(ctx, `DELETE from pubkeys WHERE multisig_address=$1`, address)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to delete public keys for multisig account",
+			Log:     fmt.Sprintf("address: %s, error: %s", address, err.Error()),
+		})
+	}
+
 	_, err = tx.ExecContext(ctx, `DELETE from multisig_accounts WHERE address=$1`, address)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
