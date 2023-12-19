@@ -1,4 +1,3 @@
-import { TxStatus } from '@/types/enums';
 import { CircularProgress } from '@mui/material';
 import React from 'react';
 
@@ -8,7 +7,7 @@ const CustomSubmitButton = ({
   buttonStyle,
   buttonContent,
 }: {
-  pendingStatus: TxStatus;
+  pendingStatus: boolean;
   circularProgressSize: number;
   buttonStyle: string;
   buttonContent: string;
@@ -16,7 +15,7 @@ const CustomSubmitButton = ({
   return (
     <div>
       <button type="submit" className={buttonStyle}>
-        {pendingStatus === TxStatus.PENDING ? (
+        {pendingStatus ? (
           <CircularProgress size={circularProgressSize} />
         ) : (
           <>{buttonContent}</>
@@ -27,7 +26,7 @@ const CustomSubmitButton = ({
 };
 
 interface propsToAccept {
-  pendingStatus: TxStatus;
+  pendingStatus: boolean;
   circularProgressSize: number;
   buttonStyle: string;
   buttonContent: string;
@@ -43,7 +42,7 @@ export const CustomButton: React.FC<propsToAccept> = ({
 }: propsToAccept) => {
   return (
     <button className={buttonStyle} onClick={onClick}>
-      {pendingStatus === TxStatus.PENDING ? (
+      {pendingStatus ? (
         <CircularProgress size={circularProgressSize} />
       ) : (
         <>{buttonContent}</>
