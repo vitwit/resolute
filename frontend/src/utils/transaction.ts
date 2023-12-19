@@ -40,7 +40,7 @@ export function NewTransaction(
     gasUsed: txResponse.gasUsed || '-',
     gasWanted: txResponse.gasWanted || '-',
     fee: txResponse.fee || [],
-    time: txResponse.time || new Date().toTimeString(),
+    time: txResponse.time || new Date().toISOString(),
     msgs,
     chainID,
     address,
