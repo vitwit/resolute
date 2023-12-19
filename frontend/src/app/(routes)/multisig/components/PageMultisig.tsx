@@ -5,6 +5,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import {
+  resetDeleteMultisigRes,
   resetVerifyAccountRes,
   verifyAccount,
 } from '@/store/features/multisig/multisigSlice';
@@ -70,6 +71,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
 
   useEffect(() => {
     dispatch(resetError());
+    dispatch(resetDeleteMultisigRes());
   }, []);
 
   return (
