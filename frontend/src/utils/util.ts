@@ -138,9 +138,9 @@ export function shortenAddress(bech32: string, maxCharacters: number) {
     return bech32;
   }
 
-  const i = bech32?.indexOf('1');
-  const prefix = bech32?.slice(0, i);
-  const address = bech32?.slice(i + 1);
+  const i = bech32 ? bech32.indexOf('1') : -1;
+  const prefix = bech32 ? bech32.slice(0, i) : '';
+  const address = bech32 ? bech32.slice(i + 1) : '';
 
   maxCharacters -= prefix?.length;
   maxCharacters -= 3; // For "..."

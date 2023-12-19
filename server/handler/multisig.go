@@ -364,7 +364,7 @@ func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Status:  "error",
-			Message: "failed to delete transactions in pubkeys",
+			Message: "failed to delete public keys for multisig account",
 			Log:     fmt.Sprintf("address: %s, error: %s", address, err.Error()),
 		})
 	}

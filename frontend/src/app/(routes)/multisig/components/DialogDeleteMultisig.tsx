@@ -16,7 +16,7 @@ interface DialogDeleteMultisigProps {
   deleteTx: () => void;
 }
 
-const DailogDeleteMultisig: React.FC<DialogDeleteMultisigProps> = (props) => {
+const DialogDeleteMultisig: React.FC<DialogDeleteMultisigProps> = (props) => {
   const { open, onClose, deleteTx } = props;
   const dispatch = useAppDispatch();
   const deleteTxnStatus = useAppSelector(
@@ -98,4 +98,4 @@ const DailogDeleteMultisig: React.FC<DialogDeleteMultisigProps> = (props) => {
     </Dialog>
   );
 };
-export default DailogDeleteMultisig;
+export default DialogDeleteMultisig;

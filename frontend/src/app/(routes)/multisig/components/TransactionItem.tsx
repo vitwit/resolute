@@ -48,14 +48,10 @@ const TransactionItem: React.FC<TransactionItemProps> = (props) => {
   const { getChainInfo } = useGetChainInfo();
   const { address: walletAddress } = getChainInfo(chainID);
 
-  console.log(pubKeys)
-  console.log(walletAddress)
-  console.log(isMultisigMember(pubKeys, walletAddress))
-
   useEffect(() => {
     const result = isMultisigMember(pubKeys, walletAddress);
     setIsMember(result);
-  }, [pubKeys]);
+  }, [pubKeys, walletAddress]);
 
   return (
     <div className="flex gap-6 justify-between items-center text-white">

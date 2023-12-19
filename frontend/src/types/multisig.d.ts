@@ -110,7 +110,7 @@ interface MultisigAccount {
 
 interface MultisigState {
   multisigAccounts: MultisigAccounts;
-  verifyAccountRes: VerifyAcccountRes;
+  verifyAccountRes: VerifyAccountRes;
   createMultisigAccountRes: TxRes;
   deleteTxnRes: TxRes;
   deleteMultisigRes: TxRes;
@@ -122,7 +122,7 @@ interface MultisigState {
   signTxRes: TxRes;
 }
 
-interface VerifyAcccountRes {
+interface VerifyAccountRes {
   token: string;
   status: TxStatus;
   error: string;

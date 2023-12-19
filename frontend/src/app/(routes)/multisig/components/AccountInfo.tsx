@@ -8,7 +8,7 @@ import { formatCoin, formatStakedAmount, shortenAddress } from '@/utils/util';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import DailogDeleteMultisig from './DialogDeleteMultisig';
+import DialogDeleteMultisig from './DialogDeleteMultisig';
 
 interface AccountInfoProps {
   chainID: string;
@@ -206,7 +206,7 @@ const AccountDetails = ({
         </div>
       </div>
 
-      <DailogDeleteMultisig
+      <DialogDeleteMultisig
         open={deleteDialogOpen}
         onClose={() => handleDeleteDialogClose()}
         deleteTx={handleDelete}

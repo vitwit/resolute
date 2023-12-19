@@ -45,30 +45,38 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
 
   const delegations = useAppSelector(
     (state: RootState) => state.staking.chains[chainID].delegations
-  )
+  );
 
   useEffect(() => {
-    dispatch(getDelegations({ address, chainID, baseURL }))
-  }, [])
+    dispatch(getDelegations({ address, chainID, baseURL }));
+  }, [dispatch, address, chainID, baseURL]);
 
   interface stakeBal {
     amount: string;
     denom: string;
   }
 
-  const [selectedValBal, setSelectedValBal] = useState<stakeBal>({ amount: '', denom: '' });
+  const [selectedValBal, setSelectedValBal] = useState<stakeBal>({
+    amount: '',
+    denom: '',
+  });
 
-  const [data, setData] = useState<{ label: string; value: string, amount: stakeBal }[]>([]);
-  const [destVals, setDestVals] = useState<{ label: string; value: string, amount: stakeBal }[]>([]);
+  const [data, setData] = useState<
+    { label: string; value: string; amount: stakeBal }[]
+  >([]);
+  const [destVals, setDestVals] = useState<
+    { label: string; value: string; amount: stakeBal }[]
+  >([]);
 
   useEffect(() => {
     const data = [];
     const destVals = [];
 
-    const totalDelegations = delegations?.delegations?.delegation_responses || []
+    const totalDelegations =
+      delegations?.delegations?.delegation_responses || [];
 
     for (let j = 0; j < totalDelegations.length; j++) {
-      const del = totalDelegations[j]
+      const del = totalDelegations[j];
 
       for (let i = 0; i < validators.activeSorted.length; i++) {
         const validator = validators.active[validators.activeSorted[i]];
@@ -76,7 +84,7 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
           const temp = {
             label: validator.description.moniker,
             value: validators.activeSorted[i],
-            amount: del.balance
+            amount: del.balance,
           };
 
           data.push(temp);
@@ -85,20 +93,22 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
         const temp = {
           label: validator.description.moniker,
           value: validators.activeSorted[i],
-          amount: del.balance
+          amount: del.balance,
         };
 
-        destVals.push(temp)
+        destVals.push(temp);
       }
 
       for (let i = 0; i < validators.inactiveSorted.length; i++) {
         const validator = validators.inactive[validators.inactiveSorted[i]];
         if (!validator.jailed) {
-          if (del?.delegation?.validator_address === validator.operator_address) {
+          if (
+            del?.delegation?.validator_address === validator.operator_address
+          ) {
             const temp = {
               label: validator.description.moniker,
               value: validators.inactiveSorted[i],
-              amount: del.balance
+              amount: del.balance,
             };
 
             data.push(temp);
@@ -107,18 +117,17 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
           const temp = {
             label: validator.description.moniker,
             value: validators.activeSorted[i],
-            amount: del.balance
+            amount: del.balance,
           };
-  
-          destVals.push(temp)
+
+          destVals.push(temp);
         }
       }
     }
 
-
     setData(data);
-    setDestVals(destVals)
-  }, [validators]);
+    setDestVals(destVals);
+  }, [validators, delegations]);
 
   const onSubmit = (data: {
     amount: number;
@@ -130,7 +139,7 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
     };
     delegator: string;
   }) => {
-    if (data.validatorSrcAddress) {
+    if (data?.validatorSrcAddress && data?.validatorDstAddress) {
       const baseAmount = Decimal.fromUserInput(
         data.amount.toString(),
         Number(currency?.coinDecimals)
@@ -139,10 +148,12 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
         delegatorAddress: data.delegator,
         validatorSrcAddress: data.validatorSrcAddress?.value,
         validatorDstAddress: data.validatorDstAddress?.value,
-        amount: [{
-          amount: baseAmount,
-          denom: currency?.coinMinimalDenom,
-        }],
+        amount: [
+          {
+            amount: baseAmount,
+            denom: currency?.coinMinimalDenom,
+          },
+        ],
       };
 
       onDelegate({
@@ -153,7 +164,9 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
   };
 
   const setAmountValue = () => {
-    setValue('amount', Number(selectedValBal?.amount));
+    if (selectedValBal?.amount) {
+      setValue('amount', Number(selectedValBal?.amount));
+    }
   };
 
   return (
@@ -197,7 +210,14 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
             options={data}
             onChange={(event, item) => {
               onChange(item);
-              setSelectedValBal({ amount: (Number(item?.amount?.amount) / 10 ** currency.coinDecimals).toFixed(2) || '', denom: item?.amount?.denom || '' })
+              setSelectedValBal({
+                amount:
+                  (
+                    Number(item?.amount?.amount) /
+                    10 ** currency.coinDecimals
+                  ).toFixed(2) || '',
+                denom: item?.amount?.denom || '',
+              });
             }}
             renderInput={(params) => (
               <TextField
@@ -256,7 +276,10 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
         rules={{
           required: 'Amount is required',
           validate: (value) => {
-            return Number(value) > 0 && Number(value) <= Number(selectedValBal?.amount);
+            return (
+              Number(value) > 0 &&
+              Number(value) <= Number(selectedValBal?.amount)
+            );
           },
         }}
         render={({ field, fieldState: { error } }) => (
