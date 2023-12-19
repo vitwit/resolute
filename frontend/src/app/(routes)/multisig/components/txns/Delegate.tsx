@@ -77,10 +77,10 @@ const Delegate: React.FC<DelegateProps> = (props) => {
       const msgDelegate = {
         delegatorAddress: data.delegator,
         validatorAddress: data.validator?.value,
-        amount: {
+        amount: [{
           amount: baseAmount,
           denom: currency?.coinMinimalDenom,
-        },
+        }],
       };
 
       onDelegate({

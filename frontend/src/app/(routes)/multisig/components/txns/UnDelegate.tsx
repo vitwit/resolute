@@ -116,10 +116,10 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
       const msgUnDelegate = {
         delegatorAddress: data.delegator,
         validatorAddress: data.validator?.value,
-        amount: {
+        amount: [{
           amount: baseAmount,
           denom: currency?.coinMinimalDenom,
-        },
+        }],
       };
 
       onDelegate({

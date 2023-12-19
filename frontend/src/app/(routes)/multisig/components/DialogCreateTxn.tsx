@@ -11,17 +11,17 @@ import {
   UNDELEGATE_TYPE_URL,
 } from '@/utils/constants';
 import {
-  Box,
-  Button,
   Dialog,
   DialogContent,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Pagination,
   Select,
   SelectChangeEvent,
   TextField,
+  Tooltip,
 } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
@@ -48,9 +48,13 @@ import RedelegateMessage from './msgs/RedelegateMessage';
 import SelectTransactionType from './SelectTransactionType';
 import UnDelegate from './txns/UnDelegate';
 import ReDelegate from './txns/ReDelegate';
-import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import { parseDelegateMsgsFromContent, parseReDelegateMsgsFromContent, parseSendMsgsFromContent, parseUnDelegateMsgsFromContent } from '@/utils/parseMsgs';
+import {
+  parseDelegateMsgsFromContent,
+  parseReDelegateMsgsFromContent,
+  parseSendMsgsFromContent,
+  parseUnDelegateMsgsFromContent,
+} from '@/utils/parseMsgs';
+import ClearIcon from '@mui/icons-material/Clear';
 
 interface DialogCreateTxnProps {
   open: boolean;
@@ -61,115 +65,60 @@ interface DialogCreateTxnProps {
 }
 
 const PER_PAGE = 5;
-const TYPE_SEND = 'SEND';
-const TYPE_DELEGATE = 'DELEGATE';
-const TYPE_UNDELEGATE = 'UNDELEGATE';
-const TYPE_REDELEGATE = 'REDELEGATE';
 
 interface FileUploadProps {
   onFileContents: (content: string, type: string) => void;
+  txType: string;
+  resetMessages: () => void;
 }
 
 const FileUpload = (props: FileUploadProps) => {
-  const [txType, setTxType] = useState(TYPE_SEND);
-  return (
-    <Box
-      sx={{
-        minHeight: 100,
-      }}
-    >
-      <FormControl
-        fullWidth
-        sx={{
-          mt: 1,
-        }}
-      >
-        <InputLabel id="demo-simple-select-label">
-          Select Transaction
-        </InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={txType}
-          label="Select Transaction"
-          onChange={(event) => {
-            setTxType(event.target.value);
-          }}
-        >
-          <MenuItem value={TYPE_SEND}>Send</MenuItem>
-          <MenuItem value={TYPE_DELEGATE}>Delegate</MenuItem>
-          <MenuItem value={TYPE_REDELEGATE}>Redelegate</MenuItem>
-          <MenuItem value={TYPE_UNDELEGATE}>Undelegate</MenuItem>
-        </Select>
-      </FormControl>
+  const {onFileContents, resetMessages, txType} = props;
+  const [uploadedFileName, setUploadedFileName] = useState<string>('');
 
-      <Button
-        variant="contained"
-        disableElevation
-        size="small"
-        endIcon={<FileDownloadOutlinedIcon />}
-        sx={{
-          textTransform: 'none',
-        }}
+  return (
+    <div className="">
+      <div
+        className="file-upload-box"
         onClick={() => {
-          switch (txType) {
-            case TYPE_SEND:
-              window.open(
-                MULTISIG_SEND_TEMPLATE,
-                '_blank',
-                'noopener,noreferrer'
-              );
-              break;
-            case TYPE_DELEGATE:
-              window.open(
-                MULTISIG_DELEGATE_TEMPLATE,
-                '_blank',
-                'noopener,noreferrer'
-              );
-              break;
-            case TYPE_UNDELEGATE:
-              window.open(
-                MULTISIG_UNDELEGATE_TEMPLATE,
-                '_blank',
-                'noopener,noreferrer'
-              );
-              break;
-            case TYPE_REDELEGATE:
-              window.open(
-                MULTISIG_REDELEGATE_TEMPLATE,
-                '_blank',
-                'noopener,noreferrer'
-              );
-              break;
-            default:
-              alert('unknown message type');
-          }
+          document.getElementById('multisig_file')!.click();
         }}
       >
-        Download template
-      </Button>
-      <Button
-        variant="contained"
-        disableElevation
-        aria-label="upload file"
-        size="small"
-        endIcon={<FileUploadOutlinedIcon />}
-        sx={{
-          mb: 2,
-          mt: 2,
-          ml: 1,
-          textTransform: 'none',
-        }}
-        onClick={() => {
-          const element = document.getElementById('multisig_file');
-          if (element) {
-            element.click();
-          }
-        }}
-      >
+        <div className="flex flex-col items-center justify-center">
+          {uploadedFileName ? (
+            <>
+              <div className="font-bold">
+                {uploadedFileName}{' '}
+                <Tooltip title="Remove" placement="top">
+                  <IconButton
+                    aria-label="delete txn"
+                    color="error"
+                    onClick={(e) => {
+                      setUploadedFileName('');
+                      resetMessages();
+                      e.stopPropagation();
+                    }}
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            </>
+          ) : (
+            <>
+              <Image
+                src="/file-upload-icon.svg"
+                width={32}
+                height={32}
+                alt="Upload file"
+              />
+              <div className="mt-2">Upload file here</div>
+            </>
+          )}
+        </div>
         <input
           id="multisig_file"
-          accept="*.csv"
+          accept=".csv"
           hidden
           type="file"
           onChange={(e) => {
@@ -184,8 +133,9 @@ const FileUpload = (props: FileUploadProps) => {
 
             const reader = new FileReader();
             reader.onload = (e) => {
-              const contents = e?.target?.result as string || "";
-              props.onFileContents(contents, txType);
+              const contents = (e?.target?.result as string) || '';
+              setUploadedFileName(file?.name);
+              onFileContents(contents, txType);
             };
             reader.onerror = (e) => {
               alert(e);
@@ -194,9 +144,50 @@ const FileUpload = (props: FileUploadProps) => {
             e.target.value = '';
           }}
         />
-        Upload csv file
-      </Button>
-    </Box>
+      </div>
+      <div className="mt-2 text-[14px] leading-normal font-light">
+        Download sample CSV file&nbsp;
+        <a
+          className="add-network-json-sample-link"
+          onClick={() => {
+            switch (txType) {
+              case MULTISIG_TX_TYPES.send:
+                window.open(
+                  MULTISIG_SEND_TEMPLATE,
+                  '_blank',
+                  'noopener,noreferrer'
+                );
+                break;
+              case MULTISIG_TX_TYPES.delegate:
+                window.open(
+                  MULTISIG_DELEGATE_TEMPLATE,
+                  '_blank',
+                  'noopener,noreferrer'
+                );
+                break;
+              case MULTISIG_TX_TYPES.undelegate:
+                window.open(
+                  MULTISIG_UNDELEGATE_TEMPLATE,
+                  '_blank',
+                  'noopener,noreferrer'
+                );
+                break;
+              case MULTISIG_TX_TYPES.redelegate:
+                window.open(
+                  MULTISIG_REDELEGATE_TEMPLATE,
+                  '_blank',
+                  'noopener,noreferrer'
+                );
+                break;
+              default:
+                alert('unknown message type');
+            }
+          }}
+        >
+          here
+        </a>
+      </div>
+    </div>
   );
 };
 
@@ -279,6 +270,14 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
     }
   }, [createRes]);
 
+  const resetMessages = () => {
+    setMessages([]);
+  }
+
+  useEffect(() => {
+    resetMessages();
+  }, [isFileUpload]);
+
   useEffect(() => {
     return () => {
       dispatch(resetError());
@@ -321,24 +320,22 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
   });
 
   const onFileContents = (content: string, type: string) => {
-    console.log(content, type)
     switch (type) {
-      case TYPE_SEND: {
+      case MULTISIG_TX_TYPES.send: {
         const [parsedTxns, error] = parseSendMsgsFromContent(address, content);
         if (error) {
           dispatch(
             setError({
-              type: "error",
+              type: 'error',
               message: error,
             })
           );
         } else {
           setMessages(parsedTxns);
         }
-        console.log(parsedTxns, error)
         break;
       }
-      case TYPE_DELEGATE: {
+      case MULTISIG_TX_TYPES.delegate: {
         const [parsedTxns, error] = parseDelegateMsgsFromContent(
           address,
           content
@@ -346,7 +343,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
         if (error) {
           dispatch(
             setError({
-              type: "error",
+              type: 'error',
               message: error,
             })
           );
@@ -355,7 +352,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
         }
         break;
       }
-      case TYPE_REDELEGATE: {
+      case MULTISIG_TX_TYPES.redelegate: {
         const [parsedTxns, error] = parseReDelegateMsgsFromContent(
           address,
           content
@@ -363,7 +360,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
         if (error) {
           dispatch(
             setError({
-              type: "error",
+              type: 'error',
               message: error,
             })
           );
@@ -372,7 +369,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
         }
         break;
       }
-      case TYPE_UNDELEGATE: {
+      case MULTISIG_TX_TYPES.undelegate: {
         const [parsedTxns, error] = parseUnDelegateMsgsFromContent(
           address,
           content
@@ -380,7 +377,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
         if (error) {
           dispatch(
             setError({
-              type: "error",
+              type: 'error',
               message: error,
             })
           );
@@ -437,7 +434,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
-        <div className="w-[890px] min-h-[610px] text-white">
+        <div className="w-[890px] text-white">
           <div className="px-10 py-6 flex justify-end">
             <div
               onClick={() => {
@@ -454,52 +451,54 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
             </div>
           </div>
           <div className="mt-6 mb-[72px] pl-6 pr-10 text-white flex h-full gap-6">
-            <div className="flex-1 px-6 h-full border-r-[0.5px] border-[#ffffff2e]">
+            <div className="flex-1 pl-6 pr-0 h-full">
               <div className="text-[20px] font-bold">Create Transaction</div>
               <SelectTransactionType
                 onSelect={onSelect}
                 isFileUpload={isFileUpload}
               />
+              <FormControl
+                fullWidth
+                sx={{
+                  '& .MuiFormLabel-root': {
+                    display: 'none',
+                  },
+                }}
+              >
+                <InputLabel className="text-white" id="tx-type">
+                  Select Transaction
+                </InputLabel>
+                <Select
+                  labelId="tx-type"
+                  className="bg-[#FFFFFF1A]"
+                  id="tx-type"
+                  value={txType}
+                  label="Select Transaction"
+                  onChange={(e) => handleTypeChange(e)}
+                  sx={selectTxnStyles}
+                >
+                  <MenuItem value={MULTISIG_TX_TYPES.send}>Send</MenuItem>
+                  <MenuItem value={MULTISIG_TX_TYPES.delegate}>
+                    Delegate
+                  </MenuItem>
+                  <MenuItem value={MULTISIG_TX_TYPES.redelegate}>
+                    Redelegate
+                  </MenuItem>
+                  <MenuItem value={MULTISIG_TX_TYPES.undelegate}>
+                    Undelegate
+                  </MenuItem>
+                </Select>
+              </FormControl>
               {isFileUpload ? (
                 <FileUpload
                   onFileContents={(content: string, type: string) =>
                     onFileContents(content, type)
                   }
+                  txType={txType}
+                  resetMessages={resetMessages}
                 />
               ) : (
                 <>
-                  <FormControl
-                    fullWidth
-                    sx={{
-                      '& .MuiFormLabel-root': {
-                        display: 'none',
-                      },
-                    }}
-                  >
-                    <InputLabel className="text-white" id="tx-type">
-                      Select Transaction
-                    </InputLabel>
-                    <Select
-                      labelId="tx-type"
-                      className="bg-[#FFFFFF1A]"
-                      id="tx-type"
-                      value={txType}
-                      label="Select Transaction"
-                      onChange={(e) => handleTypeChange(e)}
-                      sx={selectTxnStyles}
-                    >
-                      <MenuItem value={MULTISIG_TX_TYPES.send}>Send</MenuItem>
-                      <MenuItem value={MULTISIG_TX_TYPES.delegate}>
-                        Delegate
-                      </MenuItem>
-                      <MenuItem value={MULTISIG_TX_TYPES.redelegate}>
-                        Redelegate
-                      </MenuItem>
-                      <MenuItem value={MULTISIG_TX_TYPES.undelegate}>
-                        Undelegate
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
                   {txType === MULTISIG_TX_TYPES.send && (
                     <Send
                       address={address}
@@ -527,7 +526,6 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                       address={address}
                       baseURL={baseURL}
                       onDelegate={(payload) => {
-                        console.log('payload', payload);
                         setMessages([...messages, payload]);
                       }}
                       currency={currency}
@@ -540,7 +538,6 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                       address={address}
                       baseURL={baseURL}
                       onDelegate={(payload) => {
-                        console.log('payload', payload);
                         setMessages([...messages, payload]);
                       }}
                       currency={currency}
@@ -550,7 +547,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                 </>
               )}
             </div>
-            <div className="flex-1 h-full">
+            <div className="flex-1 h-full pl-6 border-l-[0.5px] border-[#ffffff2e]">
               <div className="text-[20px] font-bold mb-6">Messages</div>
               {messages.length ? (
                 <div className="flex flex-col justify-between gap-6">
@@ -570,7 +567,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                       })}
                     </div>
 
-                    {messages.length > 0 ? (
+                    {messages.length > PER_PAGE ? (
                       <div className="mt-2 flex justify-end">
                         <Pagination
                           sx={paginationComponentStyles}
