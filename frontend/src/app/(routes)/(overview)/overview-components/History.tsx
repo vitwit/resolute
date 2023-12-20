@@ -17,12 +17,9 @@ const History = ({ chainIDs }: { chainIDs: string[] }) => {
       <SideAd />
 
       <div className="flex justify-between items-center">
-        <h2 className="text-xl not-italic font-bold leading-[normal]">
+        <h2 className="text-xl not-italic font-normal leading-[normal]">
           Recent Transactions
-        </h2>
-        <div className="text-right text-xs not-italic font-normal leading-[normal] underline">
-          View All
-        </div>
+        </h2>        
       </div>
       <RecentTransactions chainIDs={chainIDs} msgFilters={[]} />
     </div>
@@ -48,7 +45,7 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
     <div>
       <div className="text-white text-center my-6">
-        <div className="text-sm not-italic font-normal leading-[normal] mb-2">
+        <div className="text-sm not-italic font-normal leading-[normal] mb-3">
           Total Balance
         </div>
         <span className="text-center text-[32px] not-italic font-bold leading-[normal]">
@@ -57,7 +54,7 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
       </div>
       <div className="flex justify-center gap-6">
         <button
-          className="primary-custom-btn"
+          className="primary-custom-btn w-[144px]"
           onClick={() => {
             router.push(getPath(chainIDs, 'transfers'));
           }}
@@ -65,7 +62,7 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
           Send
         </button>
         <button
-          className="primary-custom-btn"
+          className="primary-custom-btn w-[144px]"
           onClick={() => {
             router.push(getPath(chainIDs, 'staking'));
           }}
@@ -97,7 +94,7 @@ export const RecentTransactions = ({
   );
   return (
     <div className="flex-1 overflow-y-scroll">
-      <div className="text-white w-full space-y-2 mt-6">
+      <div className="text-white w-full space-y-3 mt-6">
         {transactions.map((tx) => (
           <TransactionItem
             key={tx.transactionHash}
