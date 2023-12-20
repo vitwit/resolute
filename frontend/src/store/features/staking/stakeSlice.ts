@@ -413,7 +413,7 @@ export const txCancelUnbonding = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-      console.log('err in catch ', error);
+      console.log('Error while cancel unbonding the transaction ', error);
       if (error instanceof AxiosError) {
         dispatch(
           setError({
