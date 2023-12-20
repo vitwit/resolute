@@ -92,8 +92,17 @@
   @apply px-10 py-6 flex-1 h-screen max-h-screen overflow-y-scroll;
 }
 
+.search-validator-field {
+  @apply my-6 h-12 flex bg-[#FFFFFF1A] items-center px-6 py-2 rounded-2xl hover:bg-[#ffffff11];
+  border: 1px solid transparent;
+}
+
+.search-validator-field:focus-within {
+  border: 1px solid #ffffff4a;
+}
+
 .search-validator-input {
-  @apply w-full pl-2 border-none cursor-pointer focus:outline-none bg-transparent placeholder:text-[14px] placeholder:text-[#FFFFFFBF] placeholder:font-extralight text-[#FFFFFFBF];
+  @apply w-full pl-2 border-none cursor-text focus:outline-none bg-transparent placeholder:text-[14px] placeholder:text-[#FFFFFFBF] placeholder:font-extralight text-[#FFFFFFBF];
 }
 
 .dialog-delegate-button {

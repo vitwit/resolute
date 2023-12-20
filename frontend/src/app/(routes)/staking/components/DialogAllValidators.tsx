@@ -80,7 +80,7 @@ const DialogAllValidators = ({
                 </div>
               </div>
             </div>
-            <div className="my-6 h-12 flex bg-[#FFFFFF1A] items-center px-6 py-2 rounded-2xl hover:bg-[#ffffff11]">
+            <div className="search-validator-field">
               <div>
                 <Image
                   src="/search-icon.svg"
@@ -91,7 +91,7 @@ const DialogAllValidators = ({
               </div>
               <div className="w-full">
                 <input
-                  className="search-validator-input"
+                  className="search-validator-input focus:border-[1px]"
                   type="text"
                   placeholder="Search Validator"
                   value={searchTerm}
