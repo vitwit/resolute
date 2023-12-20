@@ -16,7 +16,7 @@ import { Controller, useForm } from 'react-hook-form';
 import {
   dialogBoxStyles,
 } from '../styles';
-import { CLOSE_ICON_PATH, STAKING_DIALOG_IMAGE_PATH } from '@/utils/constants';
+import { CLOSE_ICON_PATH } from '@/utils/constants';
 import AmountInputField from './AmountInputField';
 
 interface ValidatorSet {
@@ -122,13 +122,7 @@ const DialogRedelegate = ({
               />
             </div>
           </div>
-          <div className="mt-6 mb-[72px] flex gap-6 pr-10 pl-6 items-center">
-            <Image
-              src={STAKING_DIALOG_IMAGE_PATH}
-              height={360}
-              width={235}
-              alt="Redelegate"
-            />
+          <div className="mb-10 flex gap-6 px-10 items-center">
             <div className="flex flex-col gap-10 w-full">
               <h2 className="text-[20px] font-bold leading-3">
                 {validator?.description?.moniker || '-'}
@@ -161,7 +155,7 @@ const DialogRedelegate = ({
                 </div>
                 <div className="bg-[#FFFFFF0D] px-4 rounded-2xl opacity-80 py-4 w-full space-y-4">
                   <div className="flex gap-2">
-                    <div className="w-[200px] text-[14px] font-light leading-[24px] my-auto">
+                    <div className="w-[200px] text-[14px] font-light leading-[24px]">
                       <p>Staking will lock your</p>
                       <p>
                         funds for {formatUnbondingPeriod(stakingParams)} days
@@ -248,7 +242,7 @@ const DialogRedelegate = ({
                       />
                     </div>
                   </div>
-                  <div className="mt-10 flex gap-10 items-center">
+                  <div className="flex gap-10 items-center">
                     <button type="submit" className="dialog-delegate-button">
                       {loading === 'pending' ? 'Loading...' : 'Redelegate'}
                     </button>

@@ -93,7 +93,7 @@ const DialogAllValidators = ({
                 <input
                   className="search-validator-input"
                   type="text"
-                  placeholder="Search Chain"
+                  placeholder="Search Validator"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   autoFocus={true}
