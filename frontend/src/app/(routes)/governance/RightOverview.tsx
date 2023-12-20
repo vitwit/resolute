@@ -165,7 +165,7 @@ const RightOverview = ({
         <div className="flex justify-between w-full">
           <div className="proposal-text-main">Proposal Overview</div>
           <Image
-            src="/close.svg"
+            src="/close-icon.svg"
             width={24}
             height={24}
             alt="Close icon"
