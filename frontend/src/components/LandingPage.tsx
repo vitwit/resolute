@@ -127,7 +127,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
         </div>
 
         <div className="powered-by-background">
-          <div className="powered-by text">Powered by VitWit</div>
+          <div className="powered-by text">Powered by Vitwit</div>
         </div>
       </div>
     </div>

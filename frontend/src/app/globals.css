@@ -383,7 +383,8 @@
 }
 
 .cross {
-  @apply flex justify-end items-center self-stretch gap-2.5 pl-6 pr-10 py-4;
+  /* @apply flex justify-end items-center self-stretch gap-2.5 pl-6 pr-10 py-4; */
+  @apply flex justify-end items-center gap-2.5 self-stretch pl-6 pr-10 pt-10 pb-6;
 }
 
 .transaction-inner-grid {
@@ -403,17 +404,17 @@
 /* WalletPopup */
 
 .wallet-box {
-  @apply flex w-[889px] flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
+  @apply flex flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl w-[889px];
   background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%);
 }
 
 .connect-wallet-box {
-  @apply flex w-[497px] flex-col justify-center items-start gap-6 self-stretch;
+  @apply flex-col gap-6 pl-10 pr-10;
 }
 
 .wallet-grid {
-  @apply flex flex-col items-start gap-4 p-4 rounded-2xl cursor-pointer hover:bg-[#7e74cc];
   background: rgba(255, 255, 255, 0.05);
+  @apply flex flex-col items-center gap-4 p-4 cursor-pointer rounded-2xl hover:bg-[#7e74cc] px-8 py-4 w-full;
 }
 .selected-wallet {
   @apply border rounded-2xl border-solid border-[#4AA29C];
@@ -432,14 +433,6 @@
   animation: scrollText 10s linear infinite;
 }
 
-@keyframes scrollText {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
 .powered-by-background {
   @apply flex w-full grow-0 justify-center items-center gap-2.5 p-2.5 fixed bottom-0 opacity-100;
   background: rgba(255, 255, 255, 0.05);
@@ -458,24 +451,32 @@
 
 .dots-flashing:after {
   content: ' .';
-  animation: dots 1s steps(5, end) infinite;}
+  animation: dots 1s steps(5, end) infinite;
+}
 
 @keyframes dots {
-  0%, 20% {
-    color: rgba(0,0,0,0);
+  0%,
+  20% {
+    color: rgba(0, 0, 0, 0);
     text-shadow:
-      .25em 0 0 rgba(0,0,0,0),
-      .5em 0 0 rgba(0,0,0,0);}
+      0.25em 0 0 rgba(0, 0, 0, 0),
+      0.5em 0 0 rgba(0, 0, 0, 0);
+  }
   40% {
     color: white;
     text-shadow:
-      .25em 0 0 rgba(0,0,0,0),
-      .5em 0 0 rgba(0,0,0,0);}
+      0.25em 0 0 rgba(0, 0, 0, 0),
+      0.5em 0 0 rgba(0, 0, 0, 0);
+  }
   60% {
     text-shadow:
-      .25em 0 0 white,
-      .5em 0 0 rgba(0,0,0,0);}
-  80%, 100% {
+      0.25em 0 0 white,
+      0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  80%,
+  100% {
     text-shadow:
-      .25em 0 0 white,
-      .5em 0 0 white;}}
+      0.25em 0 0 white,
+      0.5em 0 0 white;
+  }
+}
