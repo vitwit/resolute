@@ -1,15 +1,10 @@
 import { DialogDelegateProps } from '@/types/staking';
 import { formatCoin, formatUnbondingPeriod } from '@/utils/util';
-import {
-  Dialog,
-  DialogContent,
-} from '@mui/material';
+import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  dialogBoxStyles,
-} from '../styles';
+import { dialogBoxStyles } from '../styles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import AmountInputField from './AmountInputField';
 
@@ -36,15 +31,15 @@ const DialogDelegate = ({
     reset,
   } = useForm({
     defaultValues: {
-      amount: 0,
+      amount: '',
     },
   });
 
-  const onSubmit = (data: { amount: number }) => {
+  const onSubmit = (data: { amount: string }) => {
     if (validator) {
       onDelegate({
         validator: validator?.operator_address || '',
-        amount: data?.amount || 0,
+        amount: Number(data?.amount) || 0,
       });
     }
   };
@@ -59,9 +54,7 @@ const DialogDelegate = ({
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
           <div className="px-10 py-6 pt-10 flex justify-end">
-            <div
-              onClick={handleClose}
-            >
+            <div onClick={handleClose}>
               <Image
                 className="cursor-pointer"
                 src={CLOSE_ICON_PATH}
@@ -95,7 +88,7 @@ const DialogDelegate = ({
                     <div
                       className="font-medium leading-10 cursor-pointer hover:underline underline-offset-2"
                       onClick={() => {
-                        setValue('amount', availableBalance);
+                        setValue('amount', availableBalance.toString());
                       }}
                     >
                       {formatCoin(availableBalance, displayDenom)}
@@ -130,8 +123,16 @@ const DialogDelegate = ({
                     errors={errors}
                   />
                   <div className="mt-6 flex gap-10 items-center">
-                    <button type="submit" className="dialog-delegate-button">
-                      {loading === 'pending' ? 'Loading...' : 'Delegate'}
+                    <button
+                      type="submit"
+                      className="dialog-delegate-button"
+                      disabled={loading === 'pending'}
+                    >
+                      {loading === 'pending' ? (
+                        <CircularProgress size={18} sx={{ color: 'white' }} />
+                      ) : (
+                        'Delegate'
+                      )}
                     </button>
                     <button
                       type="button"
