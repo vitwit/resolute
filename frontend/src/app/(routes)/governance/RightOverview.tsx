@@ -99,7 +99,7 @@ const RightOverview = ({
   const getVotesPercentage = (votesCount: number) => {
     return ((votesCount / totalVotes) * 100).toFixed(2);
   };
-  const maxCharacters = 400;
+  const maxCharacters = 300;
   const truncatedDescription = get(
     proposalInfo,
     'content.description',
@@ -220,7 +220,7 @@ const RightOverview = ({
                     {truncatedDescription}
                     {isDescriptionTruncated && '...'}
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex space-x-6">
                     <button
                       className="button"
                       onClick={() => {
