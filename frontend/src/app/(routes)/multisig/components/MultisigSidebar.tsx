@@ -140,9 +140,9 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
     <div className="multisig-sidebar">
       <TopNav />
       <div className="space-y-4">
-        {accountSpecific ? (
-          <div className="flex justify-between h-9">
-            <div className="text-[16px] leading-normal">Transactions</div>
+        <div className="flex justify-between h-9">
+          <div className="text-[16px] leading-normal">Transactions</div>
+          {accountSpecific ? (
             <div>
               <button
                 className="create-multisig-btn"
@@ -152,9 +152,9 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
                 Create Transaction
               </button>
             </div>
-          </div>
-        ) : null}
-        <div className="mt-4 py-2 flex flex-col items-center">
+          ) : null}
+        </div>
+        <div className="mt-4 py-2 flex flex-col">
           <div className="flex gap-6 text-white">
             <div
               className="custom-radio-button-label"

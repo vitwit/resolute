@@ -129,7 +129,7 @@ const MultisigAccountCard = ({
       <div className="space-y-5 text-[14px] multisig-account-card">
         <div className="text-[16px]">{name}</div>
         <div className="space-y-2">
-          <div>Address</div>
+          <div className='opacity-50'>Address</div>
           <div className="account-address">
             <span className="truncate">{shortenAddress(address, 27)}</span>
             <Image src="/copy.svg" width={24} height={24} alt="copy" />
@@ -137,13 +137,13 @@ const MultisigAccountCard = ({
         </div>
         <div className="flex justify-between">
           <div className="space-y-2">
-            <div>Actions Required</div>
+            <div className='opacity-50'>Actions Required</div>
             <div className="text-[16px] leading-[20px] font-bold">
               {actionsRequired}
             </div>
           </div>
           <div className="space-y-2">
-            <div>Threshold</div>
+            <div className='opacity-50'>Threshold</div>
             <div className="text-[16px] leading-[20px] font-bold">
               {threshold}
             </div>

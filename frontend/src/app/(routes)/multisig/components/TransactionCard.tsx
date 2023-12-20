@@ -61,8 +61,8 @@ const TransactionCard: React.FC<TransactionCardProps> = (props) => {
             <Tooltip title="View More" placement="top">
               <Image
                 src="/view-more-icon.svg"
-                height={16}
-                width={16}
+                height={20}
+                width={20}
                 alt="View More"
                 className="cursor-pointer"
                 onClick={() => onViewMoreAction(txn)}

@@ -97,7 +97,7 @@
 }
 
 .account-address {
-  @apply w-fit flex gap-2 items-center h-6 p-2 text-white text-[14px] font-normal leading-normal rounded-lg opacity-80 bg-[#FFFFFF1A];
+  @apply w-fit flex gap-2 items-center p-2 text-white text-[14px] font-normal leading-normal rounded-lg opacity-80 bg-[#FFFFFF1A] h-[36px];
 }
 
 .txn-card {
@@ -106,7 +106,7 @@
 }
 
 .create-account-btn {
-  @apply rounded-2xl px-10 py-[10px];
+  @apply rounded-2xl px-10 py-[10px] text-[16px] font-medium leading-[20px];
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 

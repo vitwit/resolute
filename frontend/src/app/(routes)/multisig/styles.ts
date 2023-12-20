@@ -61,7 +61,7 @@ export const sendTxnTextFieldStyles = {
 };
 
 export const createMultisigTextFieldStyles = {
-  my: 1,
+  mt: 3,
   '& .MuiTypography-body1': {
     color: 'white',
     fontSize: '12px',
@@ -71,10 +71,7 @@ export const createMultisigTextFieldStyles = {
     border: 'none',
   },
   '& .Mui-disabled': {
-    '-webkit-text-fill-color': '#ffffff6b !important',
-  },
-  '& Mui-focused': {
-    border: '2px solid red',
+    'WebkitTextFillColor': '#ffffff6b !important',
   },
 };
 

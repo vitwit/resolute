@@ -98,7 +98,12 @@ const InputTextComponent: React.FC<InputTextComponentProps> = (props) => {
                   },
                 }}
               >
-                <DeleteIcon sx={{ color: deepPurple[200] }} />
+                <Image
+                  src="/delete-icon-outlined.svg"
+                  height={24}
+                  width={24}
+                  alt="Delete"
+                />
               </InputAdornment>
             ) : null,
           sx: {
@@ -375,7 +380,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     >
       <DialogContent sx={{ p: 0 }} className="text-white w-[890px]">
         <div className="w-[890px] pb-12 text-white">
-          <div className="px-10 py-6 flex justify-end">
+          <div className="px-10 pb-6 pt-10 flex justify-end">
             <div
               onClick={() => {
                 handleClose();
@@ -391,14 +396,8 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
             </div>
           </div>
           <div className="flex gap-10 items-center">
-            <Image
-              src="/multisig-popup-image.png"
-              width={336}
-              height={298}
-              alt="Create Multisig"
-            />
-            <div className="flex-1 flex flex-col gap-6 pr-10">
-              <h2 className="text-[20px] font-bold leading-normal">
+            <div className="flex-1 flex flex-col px-10">
+              <h2 className="text-[20px] font-bold leading-[21px]">
                 Create Multisig
               </h2>
               <form onSubmit={(e) => handleSubmit(e)}>
@@ -445,19 +444,19 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                     </div>
                   </>
                 ))}
-                <div className="text-center text-[12px] font-light">
+                <div className="text-right mt-4 text-[12px] font-light">
                   <button
+                    type="button"
                     className="create-multisig-btn cursor-pointer"
                     onClick={handleAddPubKey}
                   >
                     Add New Member
                   </button>
                 </div>
-                <div className="my-6 flex items-center gap-4">
+                <div className="mb-6 flex items-center gap-4">
                   <TextField
                     className="bg-[#FFFFFF0D] rounded-[4px]"
                     name={'threshold'}
-                    defaultValue={0}
                     value={threshold}
                     required
                     inputProps={{ maxLength: 1 }}
@@ -476,7 +475,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                       },
                     }}
                   />
-                  <div className="font-extralight text-[14px] text-[#FFFFFF80]">
+                  <div className="font-extralight text-[14px] mt-6 text-[#FFFFFF80]">
                     of
                   </div>
                   <TextField
@@ -497,18 +496,12 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                       },
                     }}
                   />
-                  <div className="font-extralight text-[14px]">Threshold</div>
+                  <div className="font-extralight text-[14px] mt-6">Threshold</div>
                 </div>
                 <div>{formError}</div>
-                <Button
+                <button
                   disabled={createMultiAccRes?.status === 'pending'}
-                  sx={{
-                    width: '144px',
-                    color: 'white',
-                    fontWeight: 500,
-                    textTransform: 'none',
-                  }}
-                  className="create-account-btn"
+                  className="create-account-btn min-w-[144px]"
                   type="submit"
                 >
                   {createMultiAccRes?.status === 'pending' ? (
@@ -516,7 +509,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                   ) : (
                     'Create'
                   )}
-                </Button>
+                </button>
               </form>
             </div>
           </div>
