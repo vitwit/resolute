@@ -6,11 +6,11 @@ Supported features:
 - [x] Bank
 - [x] Governance
 - [x] Authz
-- [x] Airdrops
+- [ ] Airdrops
 - [x] Multisig
-- [x] Feegrant
-- [x] Groups
-- [ ] IBC Transfer
+- [ ] Feegrant
+- [ ] Groups
+- [x] IBC Transfer
 - [ ] Cross chain swaps
 - [ ] Interchain Accounts
 - [ ] Cosmwasm contracts
@@ -42,7 +42,7 @@ Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 ```bash
 $ cd frontend
-$ yarn start
+$ yarn run
 ```
 
 ## Testing 
