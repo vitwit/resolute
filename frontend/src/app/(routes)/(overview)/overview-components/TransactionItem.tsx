@@ -17,13 +17,9 @@ const TransactionItem = ({
           <div className="ml-auto text-right text-[12px] max-w-[68px] min-w-[68px]">
             {uiTx.time}
           </div>
-          <Image
-            className="ml-auto bg-[#26233b] rounded-sm"
-            src="/swap.svg"
-            width={24}
-            height={24}
-            alt="transaction"
-          />
+          <div className="ml-auto bg-[#26233b] rounded-sm h-6 w-6 flex items-center justify-center">
+            <Image src="/swap.svg" width={20} height={20} alt="transaction" />
+          </div>
         </div>
         <Image
           width={12}
