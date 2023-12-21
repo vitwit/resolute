@@ -315,9 +315,7 @@ const ProposalOverviewVote = ({
           <div className="flex justify-between">
             <div className="space-y-4">
               <div className="flex space-y-[68px] flex-col">
-                <div className="w-[412px]">
-                  <TopNav />
-                </div>
+                <TopNav />
 
                 <div className="status-grid w-[450px]">
                   <div className="status-view-grid w-full">
@@ -379,22 +377,22 @@ const ProposalOverviewVote = ({
                     <div>Quorum</div>
 
                     {quorumPercent ? (
-                          <Tooltip title={`${quorumPercent}%`}>
-                            <div className="flex w-full flex-col">
-                              <div className="flex flex-col items-center">
-                                <div>{quorumRequired}%</div>
-                                <div className="bg-[#26233C] h-[10px] w-[1px]"></div>
-                              </div>
-                              <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
-                                <div
-                                  style={{ width: `${quorumPercent}%` }}
-                                  className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
-                                ></div>
-                              </div>
-                            </div>
-                          </Tooltip>
-                        ) : null}
-                      </div>
+                      <Tooltip title={`${quorumPercent}%`}>
+                        <div className="flex w-full flex-col">
+                          <div className="flex flex-col items-center">
+                            <div>{quorumRequired}%</div>
+                            <div className="bg-[#26233C] h-[10px] w-[1px]"></div>
+                          </div>
+                          <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
+                            <div
+                              style={{ width: `${quorumPercent}%` }}
+                              className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
+                            ></div>
+                          </div>
+                        </div>
+                      </Tooltip>
+                    ) : null}
+                  </div>
 
                   <div className="flex justify-between items-start w-full">
                     {data.map((item, index) => (
@@ -415,54 +413,63 @@ const ProposalOverviewVote = ({
                   </div>
                 </div>
               </div>
-              <ProposalDetailsVoteCard
-                createdAt={getLocalTime(get(proposalInfo, 'submit_time', '-'))}
-                startedAt={getLocalTime(
-                  get(proposalInfo, 'voting_start_time', '-')
-                )}
-                endsAt={getLocalTime(get(proposalInfo, 'voting_end_time', '-'))}
-                proposalNetwork={getChainName(chainID)}
-                createdby={'-'}
-                // depositamount={`${get(
-                //   proposalInfo,
-                //   'total_deposit[0].amount'
-                // )} ${get(proposalInfo, 'total_deposit[0].denom')}`}
-                depositamount={formatCoin(
-                  parseBalance(
-                    get(proposalInfo, 'total_deposit', []),
-                    currency?.coinDecimals,
-                    currency?.coinMinimalDenom
-                  ),
-                  currency?.coinDenom
-                )}
-              />
+              <div className="bg-[#0E0B26] rounded-2xl">
+                <ProposalDetailsVoteCard
+                  createdAt={getLocalTime(
+                    get(proposalInfo, 'submit_time', '-')
+                  )}
+                  startedAt={getLocalTime(
+                    get(proposalInfo, 'voting_start_time', '-')
+                  )}
+                  endsAt={getLocalTime(
+                    get(proposalInfo, 'voting_end_time', '-')
+                  )}
+                  proposalNetwork={getChainName(chainID)}
+                  createdby={'-'}
+                  // depositamount={`${get(
+                  //   proposalInfo,
+                  //   'total_deposit[0].amount'
+                  // )} ${get(proposalInfo, 'total_deposit[0].denom')}`}
+                  depositamount={formatCoin(
+                    parseBalance(
+                      get(proposalInfo, 'total_deposit', []),
+                      currency?.coinDecimals,
+                      currency?.coinMinimalDenom
+                    ),
+                    currency?.coinDenom
+                  )}
+                />
+              </div>
             </div>
           </div>
         ) : (
-          <div className="flex w-[480px] flex-end">
+          <div className="flex w-[480px] flex-end flex-col space-y-10">
             <div className="space-y-4 w-full">
               <div className="flex space-y-[68px] flex-col">
                 <div className="w-[412px]">
                   <TopNav />
                 </div>
+
                 <div className="bg-[#0E0B26] rounded-2xl">
                   <DepositProposalInfo chainID={chainID} />
                 </div>
               </div>
-              <DepositProposalDetails
-                submittedAt={getLocalTime(
-                  get(proposalInfo, 'submit_time', '-')
-                )}
-                endsAt={getLocalTime(
-                  get(proposalInfo, 'deposit_end_time', '-')
-                )}
-                depositrequired={formatCoin(
-                  depositRequired,
-                  currency.coinDenom
-                )}
-                proposalNetwork={getChainName(chainID)}
-              />
-            </div>
+              <div className=" bg-[#0e0b26]">
+                <DepositProposalDetails
+                  submittedAt={getLocalTime(
+                    get(proposalInfo, 'submit_time', '-')
+                  )}
+                  endsAt={getLocalTime(
+                    get(proposalInfo, 'deposit_end_time', '-')
+                  )}
+                  depositrequired={formatCoin(
+                    depositRequired,
+                    currency.coinDenom
+                  )}
+                  proposalNetwork={getChainName(chainID)}
+                />
+              </div>
+            </div>{' '}
           </div>
         )}
       </div>
