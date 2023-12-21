@@ -22,7 +22,7 @@ interface ReDelegateProps {
 }
 
 const ReDelegate: React.FC<ReDelegateProps> = (props) => {
-  const { chainID, address, onDelegate, currency, baseURL } = props;
+  const { chainID, address, onDelegate, currency, availableBalance, baseURL } = props;
   const dispatch = useAppDispatch();
 
   const {
@@ -45,11 +45,11 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
 
   const delegations = useAppSelector(
     (state: RootState) => state.staking.chains[chainID].delegations
-  );
+  )
 
   useEffect(() => {
-    dispatch(getDelegations({ address, chainID, baseURL }));
-  }, [dispatch, address, chainID, baseURL]);
+    dispatch(getDelegations({ address, chainID, baseURL }))
+  }, [])
 
   interface stakeBal {
     amount: string;
@@ -93,22 +93,20 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
         const temp = {
           label: validator.description.moniker,
           value: validators.activeSorted[i],
-          amount: del.balance,
+          amount: del.balance
         };
 
-        destVals.push(temp);
+        destVals.push(temp)
       }
 
       for (let i = 0; i < validators.inactiveSorted.length; i++) {
         const validator = validators.inactive[validators.inactiveSorted[i]];
         if (!validator.jailed) {
-          if (
-            del?.delegation?.validator_address === validator.operator_address
-          ) {
+          if (del?.delegation?.validator_address === validator.operator_address) {
             const temp = {
               label: validator.description.moniker,
               value: validators.inactiveSorted[i],
-              amount: del.balance,
+              amount: del.balance
             };
 
             data.push(temp);
@@ -117,17 +115,18 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
           const temp = {
             label: validator.description.moniker,
             value: validators.activeSorted[i],
-            amount: del.balance,
+            amount: del.balance
           };
-
-          destVals.push(temp);
+  
+          destVals.push(temp)
         }
       }
     }
 
+
     setData(data);
-    setDestVals(destVals);
-  }, [validators, delegations]);
+    setDestVals(destVals)
+  }, [validators]);
 
   const onSubmit = (data: {
     amount: number;
