@@ -10,6 +10,15 @@ type AssetSummary = {
   value: string | React.JSX.Element;
 };
 
+const numberFormat = (num: string) => {
+  return num === '-'
+    ? '-'
+    : (+num).toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      });
+};
+
 const AccountSummery = ({ chainID }: { chainID: string }) => {
   const [chainInfo] = useGetAccountInfo(chainID);
   const { pubkey, sequence, accountNumber } = chainInfo;
@@ -29,13 +38,13 @@ const AccountSummery = ({ chainID }: { chainID: string }) => {
       icon: '/avatar.svg',
       alt: 'sequence',
       type: 'Sequence',
-      value: sequence,
+      value: numberFormat(sequence),
     },
     {
       icon: '/drag-indicator.svg',
       alt: 'account-number',
       type: 'Account Number',
-      value: accountNumber,
+      value: numberFormat(accountNumber),
     },
   ];
 
