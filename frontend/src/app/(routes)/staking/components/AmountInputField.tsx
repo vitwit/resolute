@@ -10,7 +10,7 @@ interface AmountInputField {
   availableAmount: number;
   displayDenom: string;
   errors: FieldErrors<{
-    amount: number;
+    amount: string;
   }>;
 }
 
@@ -25,7 +25,7 @@ const AmountInputField: React.FC<AmountInputField> = (props) => {
           required: 'Amount is required',
           validate: (value) => {
             const amount = Number(value);
-            if(amount <= 0) return "Invalid Amount";
+            if(isNaN(amount) || amount <= 0) return "Invalid Amount";
             if(amount > availableAmount) return INSUFFICIENT_BALANCE;
           },
         }}

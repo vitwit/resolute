@@ -5,7 +5,7 @@ const StakingActionsMenu = ({
 }: {
   handleMenuAction: (type: string) => void;
 }) => {
-  const actions = ['Delegate', 'Undelegate', 'Redelegate'];
+  const actions = ['Undelegate', 'Redelegate'];
   return (
     <div className="staking-actions-menu py-4 flex flex-col gap-2">
       {actions.map((action, index) => (

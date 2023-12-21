@@ -31,7 +31,7 @@ const StakingOverviewSidebar = () => {
         <div className="staking-sidebar-actions">
           <button className="staking-sidebar-actions-btn">Claim All</button>
           <button className="staking-sidebar-actions-btn">
-            Claim and stake all
+            Claim & Stake All
           </button>
         </div>
       </div>
