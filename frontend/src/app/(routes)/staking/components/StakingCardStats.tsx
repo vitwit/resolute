@@ -34,7 +34,7 @@ export default StakingCardStats;
 const StakingCardStatsItem = ({ name, value }: StakingCardsStatsItemProps) => {
   return (
     <div className="flex flex-col gap-2">
-      <div className="txt-sm font-extralight">{name}</div>
+      <div className="txt-sm font-extralight opacity-50">{name}</div>
       <div className="txt-md font-bold">{value}</div>
     </div>
   );

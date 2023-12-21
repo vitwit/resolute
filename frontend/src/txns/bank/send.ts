@@ -1,4 +1,5 @@
 import { parseBalance } from '@/utils/denom';
+import { formatNumber } from '@/utils/util';
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx';
 export const msgSendTypeUrl: string = '/cosmos.bank.v1beta1.MsgSend';
 
@@ -35,5 +36,5 @@ export function formattedSerialize(
 ) {
   const { toAddress, amount } = msg.value;
   const parsedAmount = parseBalance(amount, decimals, amount[0].denom);
-  return `Send ${parsedAmount} ${originalDenom} to ${toAddress}`;
+  return `Send ${formatNumber(parsedAmount)} ${originalDenom} to ${toAddress}`;
 }
