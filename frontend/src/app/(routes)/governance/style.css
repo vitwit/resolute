@@ -103,13 +103,13 @@
   @apply flex flex-col justify-center items-start gap-6;
 }
 .status-pass {
-  @apply flex justify-center items-center gap-2.5 px-2 py-0;
+  @apply flex justify-center items-center gap-2.5  py-0;
 }
 .voting-grid {
   @apply flex flex-col justify-center items-start gap-4 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
 }
 .voting-view {
-  @apply flex flex-col justify-center items-center gap-6 px-6 py-0;
+  @apply flex flex-col justify-center items-center gap-6;
 }
 .horizontal-line {
   @apply h-2 rounded-[100px];
@@ -142,7 +142,7 @@
   @apply bg-white w-[6px] h-[6px] rounded-full;
 }
 .vote-grid {
-  @apply flex flex-col w-full items-start gap-4 backdrop-blur-[2px] py-4 rounded-2xl;
+  @apply flex flex-col w-full items-start gap-4 backdrop-blur-[2px] py-6 px-6 rounded-2xl;
   background: rgba(255, 255, 255, 0.05);
 }
 .view-full {

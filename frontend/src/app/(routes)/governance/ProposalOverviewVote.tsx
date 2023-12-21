@@ -320,8 +320,8 @@ const ProposalOverviewVote = ({
                 </div>
 
                 <div className="status-grid w-[450px]">
-                  <div className="status-view-grid w-full">
-                    <div className="status-view w-full">
+                  <div className=" w-full">
+                    <div className="w-full">
                       <div className="status-pass w-full">
                         <div className="flex flex-col items-center space-y-2">
                           <div className="flex space-x-2 w-full justify-center">
@@ -360,41 +360,26 @@ const ProposalOverviewVote = ({
               </div>
               <div className="voting-grid bg-[#0E0B26]">
                 <div className="voting-view w-full">
-                  <div className="status-pass">
-                    <div className="flex flex-col items-center space-y-2">
-                      <div className="flex space-x-2">
-                        <Image
-                          src="/vote-icon.svg"
-                          width={20}
-                          height={20}
-                          alt="Vote-Icon"
-                        />
-                        <p className="proposal-text-small">Total Votes</p>
-                      </div>
-
-                      <p className="proposal-text-big">{formattedTotalVotes}</p>
-                    </div>
-                  </div>
                   <div className="w-full text-white flex flex-col justify-center items-center space-y-2">
                     <div>Quorum</div>
 
                     {quorumPercent ? (
-                          <Tooltip title={`${quorumPercent}%`}>
-                            <div className="flex w-full flex-col">
-                              <div className="flex flex-col items-center">
-                                <div>{quorumRequired}%</div>
-                                <div className="bg-[#26233C] h-[10px] w-[1px]"></div>
-                              </div>
-                              <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
-                                <div
-                                  style={{ width: `${quorumPercent}%` }}
-                                  className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
-                                ></div>
-                              </div>
-                            </div>
-                          </Tooltip>
-                        ) : null}
-                      </div>
+                      <Tooltip title={`${quorumPercent}%`}>
+                        <div className="flex w-full flex-col">
+                          <div className="flex flex-col items-center">
+                            <div>{quorumRequired}%</div>
+                            <div className="bg-[#26233C] h-[10px] w-[1px]"></div>
+                          </div>
+                          <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
+                            <div
+                              style={{ width: `${quorumPercent}%` }}
+                              className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
+                            ></div>
+                          </div>
+                        </div>
+                      </Tooltip>
+                    ) : null}
+                  </div>
 
                   <div className="flex justify-between items-start w-full">
                     {data.map((item, index) => (

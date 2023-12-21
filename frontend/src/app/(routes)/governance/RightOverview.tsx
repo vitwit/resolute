@@ -178,7 +178,7 @@ const RightOverview = ({
         </div>
         {proposalLoadingStatus !== 'pending' ? (
           <>
-            <div className="flex-1 flex flex-col justify-between">
+            <div className="flex-1 flex flex-col space-y-16">
               <div className="space-y-4 w-full">
                 <div className="space-y-3">
                   <div className="flex justify-between w-full">
@@ -269,33 +269,21 @@ const RightOverview = ({
                 />
               </div>
               {isStatusVoting ? (
-                <div className="space-y-2 w-full">
-                  <div className="vote-grid">
-                    <div className="voting-view w-full my-2">
-                      <div className="status-pass">
-                        <div className="flex flex-col items-center space-y-2">
-                          <div className="flex">
-                            <Image
-                              src="/vote-icon.svg"
-                              width={20}
-                              height={20}
-                              alt="Vote icon"
-                            />
-                            <p className="proposal-text-small">Total Votes</p>
-                          </div>
+                <div className="space-y-4 w-full">
+                  <div className="vote-grid space-y-4">
+                    <div className="voting-view w-full">
 
-                          <p className="proposal-text-big">{Totalvotes}</p>
-                        </div>
-                      </div>
-                      <div className="w-full text-white flex flex-col justify-center items-center space-y-2">
-                        <div>Quorum</div>
+                      <div className="w-full  text-white flex flex-col justify-center items-center space-y-4">
+                        <div className='text-[20px]'>Quorum</div>
 
                         {quorumPercent ? (
                           <Tooltip title={`${quorumPercent}%`}>
                             <div className="flex w-full flex-col">
                               <div className="flex flex-col items-center">
-                                <div>{quorumRequired}%</div>
-                                <div className="bg-[#26233C] h-[10px] w-[1px]"></div>
+                                <div>
+                                  {quorumPercent}/{quorumRequired}
+                                </div>
+                                <div className="bg-[#f0f0f3] h-[10px] w-[2px]"></div>
                               </div>
                               <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
                                 <div
