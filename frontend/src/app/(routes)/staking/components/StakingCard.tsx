@@ -21,7 +21,11 @@ import { txWithdrawAllRewards } from '@/store/features/distribution/distribution
 import { txRestake } from '@/store/features/staking/stakeSlice';
 import Link from 'next/link';
 import { setError } from '@/store/features/common/commonSlice';
-import { NO_DELEGATIONS_ERROR, NO_REWARDS_ERROR, TXN_PENDING_ERROR } from '@/utils/errors';
+import {
+  NO_DELEGATIONS_ERROR,
+  NO_REWARDS_ERROR,
+  TXN_PENDING_ERROR,
+} from '@/utils/errors';
 
 const StakingCard = ({
   validator,
@@ -89,6 +93,7 @@ const StakingCard = ({
           menuRef={menuRef2}
           chainID={chainID}
           validatorAddress={validatorAddress}
+          handleMenuAction={handleMenuAction}
         />
       </div>
       {isMenuOpen && (
@@ -133,6 +138,7 @@ const StakingCardActions = ({
   menuRef,
   chainID,
   validatorAddress,
+  handleMenuAction,
 }: StakingCardActionsProps) => {
   const delegatorAddress = useAppSelector(
     (state: RootState) =>
@@ -198,7 +204,7 @@ const StakingCardActions = ({
   };
   return (
     <div className="mt-6 flex justify-between items-center">
-      <div className="flex gap-10">
+      <div className="flex gap-6">
         <StakingCardActionButton
           name={'Claim'}
           icon={'/claim-icon.svg'}
@@ -211,6 +217,14 @@ const StakingCardActions = ({
           action={claimAndStake}
           txStatus={txRestakeStatus}
         />
+        <Tooltip title={"Delegate"}>
+          <div
+            className="primary-gradient staking-card-action-button"
+            onClick={() => handleMenuAction("delegate")}
+          >
+            <Image src={'/delegate-icon.svg'} height={16} width={16} alt={'Delegate'} />
+          </div>
+        </Tooltip>
       </div>
       <Tooltip ref={menuRef} title="More options" placement="top">
         <div className="cursor-pointer" onClick={() => toggleMenu()}>

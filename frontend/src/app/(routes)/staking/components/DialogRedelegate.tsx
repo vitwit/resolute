@@ -6,6 +6,7 @@ import {
 } from '@/utils/util';
 import {
   Autocomplete,
+  CircularProgress,
   Dialog,
   DialogContent,
   TextField,
@@ -13,10 +14,8 @@ import {
 import Image from 'next/image';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  dialogBoxStyles,
-} from '../styles';
-import { CLOSE_ICON_PATH, STAKING_DIALOG_IMAGE_PATH } from '@/utils/constants';
+import { dialogBoxStyles } from '../styles';
+import { CLOSE_ICON_PATH } from '@/utils/constants';
 import AmountInputField from './AmountInputField';
 
 interface ValidatorSet {
@@ -83,17 +82,17 @@ const DialogRedelegate = ({
     reset,
   } = useForm({
     defaultValues: {
-      amount: 0,
+      amount: '',
       destination: null,
     },
   });
   const onSubmit = (data: {
-    amount: number;
+    amount: string;
     destination: null | { addr: string; label: string };
   }) => {
     if (validator && data.destination) {
       onRedelegate({
-        amount: data.amount,
+        amount: Number(data.amount) || 0,
         dest: data?.destination?.addr || '',
         src: validator?.operator_address || '',
       });
@@ -110,9 +109,7 @@ const DialogRedelegate = ({
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
           <div className="px-10 py-6 pt-10 flex justify-end">
-            <div
-              onClick={handleClose}
-            >
+            <div onClick={handleClose}>
               <Image
                 className="cursor-pointer"
                 src={CLOSE_ICON_PATH}
@@ -122,13 +119,7 @@ const DialogRedelegate = ({
               />
             </div>
           </div>
-          <div className="mt-6 mb-[72px] flex gap-6 pr-10 pl-6 items-center">
-            <Image
-              src={STAKING_DIALOG_IMAGE_PATH}
-              height={360}
-              width={235}
-              alt="Redelegate"
-            />
+          <div className="mb-10 flex gap-6 px-10 items-center">
             <div className="flex flex-col gap-10 w-full">
               <h2 className="text-[20px] font-bold leading-3">
                 {validator?.description?.moniker || '-'}
@@ -152,7 +143,7 @@ const DialogRedelegate = ({
                     <div
                       className="font-medium leading-10 cursor-pointer hover:underline underline-offset-2"
                       onClick={() => {
-                        setValue('amount', delegationShare);
+                        setValue('amount', delegationShare.toString());
                       }}
                     >
                       {formatCoin(delegationShare, currency.coinDenom)}
@@ -161,7 +152,7 @@ const DialogRedelegate = ({
                 </div>
                 <div className="bg-[#FFFFFF0D] px-4 rounded-2xl opacity-80 py-4 w-full space-y-4">
                   <div className="flex gap-2">
-                    <div className="w-[200px] text-[14px] font-light leading-[24px] my-auto">
+                    <div className="w-[200px] text-[14px] font-light leading-[24px]">
                       <p>Staking will lock your</p>
                       <p>
                         funds for {formatUnbondingPeriod(stakingParams)} days
@@ -248,9 +239,17 @@ const DialogRedelegate = ({
                       />
                     </div>
                   </div>
-                  <div className="mt-10 flex gap-10 items-center">
-                    <button type="submit" className="dialog-delegate-button">
-                      {loading === 'pending' ? 'Loading...' : 'Redelegate'}
+                  <div className="mt-6 flex gap-10 items-center">
+                    <button
+                      type="submit"
+                      className="dialog-delegate-button"
+                      disabled={loading === 'pending'}
+                    >
+                      {loading === 'pending' ? (
+                        <CircularProgress size={18} sx={{ color: 'white' }} />
+                      ) : (
+                        'Redelegate'
+                      )}
                     </button>
                     <button
                       type="button"

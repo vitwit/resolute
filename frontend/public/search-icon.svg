@@ -4,9 +4,7 @@
 </g>
 <defs>
 <linearGradient id="paint0_linear_32_43802" x1="11.9999" y1="3.76929" x2="11.9999" y2="20.1539" gradientUnits="userSpaceOnUse">
-<stop stop-color="#4AA29C"/>
-<stop offset="0.9999" stop-color="#8B3DA7"/>
-<stop offset="1" stop-opacity="0"/>
+<stop stop-color="#fff"/>
 </linearGradient>
 </defs>
 </svg>

@@ -318,6 +318,7 @@ interface StakingCardActionsProps {
   menuRef: React.RefObject<HTMLDivElement>;
   chainID: string;
   validatorAddress: string;
+  handleMenuAction: (type: string) => void;
 }
 
 interface StakingCardActionButtonProps {
