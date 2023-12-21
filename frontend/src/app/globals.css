@@ -384,7 +384,8 @@
 }
 
 .cross {
-  @apply flex justify-end items-center self-stretch gap-2.5 pl-6 pr-10 py-4;
+  /* @apply flex justify-end items-center self-stretch gap-2.5 pl-6 pr-10 py-4; */
+  @apply flex justify-end items-center gap-2.5 self-stretch pl-6 pr-10 pt-10 pb-6;
 }
 
 .transaction-inner-grid {
@@ -404,39 +405,85 @@
 /* WalletPopup */
 
 .wallet-box {
-  @apply flex w-[889px] flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
-  background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%);
+  @apply flex flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl w-[889px];
+  /* background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%); */
+  background: linear-gradient(
+    178deg,
+    #241b61 1.71%,
+    #69448d 98.35%,
+    #69448d 98.35%
+  );
 }
 
 .connect-wallet-box {
-  @apply flex w-[497px] flex-col justify-center items-start gap-6 self-stretch;
+  @apply flex-col gap-6 pl-10 pr-10;
 }
 
 .wallet-grid {
-  @apply flex flex-col items-start gap-4 p-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.05);
+  @apply flex flex-col items-center gap-4 p-4 cursor-pointer rounded-2xl hover:bg-[#585287] px-8 py-4 w-full;
+}
+.selected-wallet {
+  @apply opacity-100;
+  background: linear-gradient(
+    180deg,
+    rgba(74, 162, 156, 0.4) 0%,
+    rgba(139, 61, 167, 0.4) 100%
+  );
+}
+
+/* Landingpage */
+.powered-by {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  animation: scrollText 10s linear infinite;
+}
+
+.powered-by-background {
+  @apply flex w-full grow-0 justify-center items-center gap-2.5 p-2.5 fixed bottom-0 opacity-100 h-12;
+  background: rgba(255, 255, 255, 0.05);
+}
+.text {
+  @apply text-white text-base not-italic font-light leading-7 tracking-[0.96px];
+}
+.landingpage-background {
+  @apply flex flex-col min-h-screen;
+  background: linear-gradient(107deg, #1f184e 1.65%, #8b3da7 100%);
+}
+.landingpage-button {
+  @apply flex justify-center items-center gap-6 px-6 py-4 rounded-[100px] w-[226px] cursor-pointer;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 
 .dots-flashing:after {
   content: ' .';
-  animation: dots 1s steps(5, end) infinite;}
+  animation: dots 1s steps(5, end) infinite;
+}
 
 @keyframes dots {
-  0%, 20% {
-    color: rgba(0,0,0,0);
+  0%,
+  20% {
+    color: rgba(0, 0, 0, 0);
     text-shadow:
-      .25em 0 0 rgba(0,0,0,0),
-      .5em 0 0 rgba(0,0,0,0);}
+      0.25em 0 0 rgba(0, 0, 0, 0),
+      0.5em 0 0 rgba(0, 0, 0, 0);
+  }
   40% {
     color: white;
     text-shadow:
-      .25em 0 0 rgba(0,0,0,0),
-      .5em 0 0 rgba(0,0,0,0);}
+      0.25em 0 0 rgba(0, 0, 0, 0),
+      0.5em 0 0 rgba(0, 0, 0, 0);
+  }
   60% {
     text-shadow:
-      .25em 0 0 white,
-      .5em 0 0 rgba(0,0,0,0);}
-  80%, 100% {
+      0.25em 0 0 white,
+      0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  80%,
+  100% {
     text-shadow:
-      .25em 0 0 white,
-      .5em 0 0 white;}}
+      0.25em 0 0 white,
+      0.5em 0 0 white;
+  }
+}
