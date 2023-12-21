@@ -114,14 +114,11 @@ const Asset = ({
         </div>
       </td>
       <td>
-        <div
-          className="flex flex-col gap-1"
-          style={{ alignItems: 'flex-start' }}
-        >
+        <div className="flex gap-1" style={{ alignItems: 'flex-start' }}>
           <div className="text-sm not-italic font-normal leading-[normal]">
             {formatDollarAmount(asset.usdPrice)}
           </div>
-          <div className="flex">
+          <div className="flex items-center">
             <Image
               src={`/${
                 asset.inflation >= 0 ? 'up' : 'down'
@@ -132,7 +129,7 @@ const Asset = ({
             />
             <div
               className={
-                'text-[10px] not-italic font-normal leading-[normal] ' +
+                'text-sm not-italic font-normal leading-[normal] ' +
                 (asset.inflation >= 0 ? 'text-[#238636]' : 'text-[#E57575]')
               }
             >
@@ -154,8 +151,7 @@ const Asset = ({
           >
             <div
               className={
-                'asset-action ' +
-                (asset.type === 'ibc' ? 'disabled' : 'cursor-pointer')
+                'asset-action ' + (asset.type === 'ibc' ? 'disabled' : 'active')
               }
               onClick={() => {
                 if (asset.type === 'native') claim(asset.chainID);
@@ -165,7 +161,12 @@ const Asset = ({
                 <CircularProgress size={16} />
               ) : (
                 <Image
-                  src="/claim-icon.svg"
+                  src={
+                    '/' +
+                    (asset.type === 'ibc'
+                      ? 'disable-claim-icon.svg'
+                      : 'claim-icon.svg')
+                  }
                   height={16}
                   width={16}
                   alt="Claim"
@@ -179,8 +180,7 @@ const Asset = ({
           >
             <div
               className={
-                'asset-action ' +
-                (asset.type === 'ibc' ? 'disabled' : 'cursor-pointer')
+                'asset-action ' + (asset.type === 'ibc' ? 'disabled' : 'active')
               }
               onClick={() => {
                 if (asset.type === 'native') claimAndStake(asset.chainID);
@@ -190,7 +190,12 @@ const Asset = ({
                 <CircularProgress size={16} />
               ) : (
                 <Image
-                  src="/claim-stake-icon.svg"
+                  src={
+                    '/' +
+                    (asset.type === 'ibc'
+                      ? 'disable-restake.svg'
+                      : 'claim-stake-icon.svg')
+                  }
                   height={16}
                   width={16}
                   alt="Claim and Stake"

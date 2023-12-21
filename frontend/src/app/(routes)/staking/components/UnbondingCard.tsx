@@ -123,7 +123,7 @@ export const UnbondingCardStatsItem = ({
 }: UnbondingCardStatsItemProps) => {
   return (
     <div className="flex flex-col gap-2">
-      <div className="txt-sm font-extralight text-right">{name}</div>
+      <div className="txt-sm font-extralight text-right opacity-50">{name}</div>
       <div className="txt-md font-bold">{value}</div>
     </div>
   );
