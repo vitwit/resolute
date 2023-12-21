@@ -558,8 +558,8 @@ export const networks: Network[] = [
       group: true
     },
     aminoConfig: {
-      authz: true,
-      feegrant: true,
+      authz: false,
+      feegrant: false,
       group: false
     },
     showAirdrop: false,
@@ -897,8 +897,8 @@ export const networks: Network[] = [
       group: true
     },
     aminoConfig: {
-      authz: true,
-      feegrant: true,
+      authz: false,
+      feegrant: false,
       group: false
     },
     showAirdrop: false,
@@ -1168,8 +1168,8 @@ export const networks: Network[] = [
       group: true
     },
     aminoConfig: {
-      authz: true,
-      feegrant: true,
+      authz: false,
+      feegrant: false,
       group: false
     },
     showAirdrop: false,
