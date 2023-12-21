@@ -7,7 +7,7 @@ import { setError } from '@/store/features/common/commonSlice';
 const CommonCopy = ({ message, style }: { message: string; style: string }) => {
   const dispatch = useAppDispatch();
   return (
-    <div className={style + ' common-copy'}>
+    <div className={`${style} common-copy`}>
       <span className="truncate">{message}</span>
       <Image
         className="cursor-pointer"
