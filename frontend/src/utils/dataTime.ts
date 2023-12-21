@@ -1,4 +1,4 @@
- import moment from "moment/moment";
+import moment from 'moment/moment';
 
 export function getTimeDifference(timestamp: string): string {
   const now: Date = new Date();
@@ -31,7 +31,7 @@ export function getLocalTime(value: string): string {
 
 export function getTimeDifferenceToFutureDate(
   futureDate: string,
-  past?: boolean,
+  past?: boolean
 ): string {
   const now = new Date();
   const futureDateObj = new Date(futureDate);
@@ -66,10 +66,3 @@ export function getTimeDifferenceToFutureDate(
     return getTimeString(years, 'year');
   }
 }
-
-
-
-
-
-
-

@@ -44,7 +44,7 @@ const ProposalDetailsVoteCard = ({
           </Tooltip>
         </div>
         <div className="proposal-details proposal-text-normal w-full">
-          <p>Voting ends in</p>
+          <p>Voting ends </p>
           <Tooltip
             title={` ${getLocalTime(get(proposalInfo, 'voting_end_time'))}`}
           >
