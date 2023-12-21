@@ -1,6 +1,5 @@
-import { CopyToClipboard } from '@/components/CopyToClipboard';
+import CommonCopy from '@/components/CommonCopy';
 import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
-import { shortenMsg } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 type AssetSummary = {
@@ -28,9 +27,9 @@ const AccountSummery = ({ chainID }: { chainID: string }) => {
       alt: 'public-key',
       type: 'Public Key',
       value: (
-        <CopyToClipboard
+        <CommonCopy
           message={pubkey}
-          formattedMessage={shortenMsg(pubkey, 15)}
+          style="text-white text-base not-italic font-bold leading-[normal] max-w-[200px]"
         />
       ),
     },
