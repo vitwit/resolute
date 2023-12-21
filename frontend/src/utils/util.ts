@@ -117,6 +117,22 @@ export const formatCoin = (amount: number, denom: string): string => {
   return parsedAmount + ' ' + denom;
 };
 
+export function formatNumber(number: number): string {
+  const suffixes = ['', 'K', 'M', 'B', 'T'];
+  const tier = (Math.log10(Math.abs(number)) / 3) | 0;
+
+  if (tier === 0) return number.toString();
+
+  const suffix = suffixes[tier];
+  const scale = Math.pow(10, tier * 3);
+
+  const scaledNumber = number / scale;
+
+  const formattedNumber = parseFloat(scaledNumber.toFixed(2));
+
+  return formattedNumber.toString() + suffix;
+}
+
 export const getDaysLeftString = (daysLeft: number): string => {
   return daysLeft === 1 ? `1 Day` : `${daysLeft} Days`;
 };
@@ -335,9 +351,12 @@ export const isVerified = ({
   return false;
 };
 
-export const isMultisigMember = (pubkeys: MultisigAddressPubkey[], walletAddress: string): boolean => {
+export const isMultisigMember = (
+  pubkeys: MultisigAddressPubkey[],
+  walletAddress: string
+): boolean => {
   const result = pubkeys?.filter((keys) => {
     return keys.address === walletAddress;
   });
-  return !!result?.length
-}
+  return !!result?.length;
+};
