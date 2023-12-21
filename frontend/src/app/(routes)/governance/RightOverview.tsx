@@ -188,8 +188,12 @@ const RightOverview = ({
                         height={32}
                         alt="Network Logo"
                       />
+
+                      <p className="items-center flex space-x-1 text-[14px] font-bold">
+                        #{get(proposalInfo, 'proposal_id')}
+                      </p>
                       <p className="proposal-text-extralight items-center flex">
-                        #{get(proposalInfo, 'proposal_id')} | Proposal
+                        | Proposal
                       </p>
                     </div>
                     <div className="flex items-center proposal-text-extralight">
@@ -284,9 +288,10 @@ const RightOverview = ({
                                 <div className="bg-[#f0f0f3] h-[10px] w-[2px]"></div>
                               </div>
                               <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
+                                <div className="bg-[#f0f0f3] h-[10px] w-[2px] absolute  flex left-[225px]"></div>
                                 <div
                                   style={{ width: `${quorumPercent}%` }}
-                                  className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
+                                  className={`bg-[#2DC5A4] h-[10px] rounded-l-full`}
                                 ></div>
                               </div>
                             </div>

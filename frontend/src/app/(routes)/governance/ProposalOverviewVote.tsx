@@ -368,9 +368,10 @@ const ProposalOverviewVote = ({
                             <div>
                               {quorumPercent}/{quorumRequired}
                             </div>
-                            <div className="bg-[#f0f0f3] h-[10px] w-[1px]"></div>
+                            <div className="bg-[#f0f0f3] h-[10px] w-[2px]"></div>
                           </div>
                           <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
+                          <div className="bg-[#f0f0f3] h-[10px] w-[2px] absolute  flex left-[224px]"></div>
                             <div
                               style={{ width: `${quorumPercent}%` }}
                               className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
