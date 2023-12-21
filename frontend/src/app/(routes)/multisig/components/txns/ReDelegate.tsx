@@ -283,7 +283,7 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
         className="mb-1 text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
         onClick={setAmountValue}
       >
-        {formatCoin(Number(selectedValBal?.amount), selectedValBal?.denom)}
+        {formatCoin(Number(selectedValBal?.amount), currency.coinDenom)}
       </div>
       <div className="mb-2">
         <Controller
