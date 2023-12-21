@@ -73,9 +73,9 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
         </div>
         <div className="flex flex-col gap-4 items-center">
-          {menuItems.map((item, index) => (
+          {menuItems.map((item) => (
             <MenuItem
-              key={index}
+              key={item.name}
               pathName={selectedPart}
               itemName={item.name}
               icon={item.icon}
