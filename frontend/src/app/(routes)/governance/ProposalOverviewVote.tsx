@@ -104,8 +104,6 @@ const ProposalOverviewVote = ({
     );
   };
 
-  const formattedTotalVotes = totalVotes.toLocaleString();
-
   const data = [
     {
       value: getVotesPercentage(Number(get(tallyResult, 'yes', 0))) || 0,
@@ -361,7 +359,7 @@ const ProposalOverviewVote = ({
               <div className="voting-grid bg-[#0E0B26]">
                 <div className="voting-view w-full">
                   <div className="w-full text-white flex flex-col justify-center items-center space-y-2">
-                    <div className='text-[20px]'>Quorum</div>
+                    <div className="text-[20px]">Quorum</div>
 
                     {quorumPercent ? (
                       <Tooltip title={`${quorumPercent}%`}>

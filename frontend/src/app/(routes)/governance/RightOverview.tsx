@@ -135,7 +135,6 @@ const RightOverview = ({
   const proposalSubmittedOn = getTimeDifference(
     get(proposalInfo, 'submit_time')
   );
-  const Totalvotes = totalVotes.toLocaleString();
 
   const [isVotePopupOpen, setIsVotePopupOpen] = useState(false);
   const handleCloseVotePopup = () => {
@@ -272,9 +271,8 @@ const RightOverview = ({
                 <div className="space-y-4 w-full">
                   <div className="vote-grid space-y-4">
                     <div className="voting-view w-full">
-
                       <div className="w-full  text-white flex flex-col justify-center items-center space-y-4">
-                        <div className='text-[20px]'>Quorum</div>
+                        <div className="text-[20px]">Quorum</div>
 
                         {quorumPercent ? (
                           <Tooltip title={`${quorumPercent}%`}>
