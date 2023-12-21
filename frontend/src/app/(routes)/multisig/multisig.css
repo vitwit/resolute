@@ -139,3 +139,7 @@
   @apply text-[#FFFFFF1A] cursor-not-allowed;
   background: #FFFFFF1A;
 }
+
+.file-upload-box {
+  @apply flex justify-center items-center px-4 py-10 bg-[#FFFFFF1A] min-h-[262px] rounded-3xl w-full cursor-pointer;
+}

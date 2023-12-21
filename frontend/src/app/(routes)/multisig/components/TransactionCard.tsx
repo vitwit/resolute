@@ -48,7 +48,7 @@ const TransactionCard: React.FC<TransactionCardProps> = (props) => {
     <div className="txn-card">
       <div className="flex justify-between">
         <div className="flex-1 flex gap-1 items-center truncate">
-          <div className="overflow-hidden text-ellipsis w-[250px]">
+          <div className="overflow-hidden text-ellipsis w-[250px] truncate">
             {txn?.messages?.length === 0 ? (
               <div>-</div>
             ) : (

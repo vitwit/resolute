@@ -29,7 +29,7 @@ const DialogViewRaw: React.FC<DialogViewRawProps> = (props) => {
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
-          <div className="px-10 py-6 flex justify-end">
+          <div className="px-10 pb-6 pt-10 flex justify-end">
             <div
               onClick={() => {
                 handleClose();
@@ -44,7 +44,7 @@ const DialogViewRaw: React.FC<DialogViewRawProps> = (props) => {
               />
             </div>
           </div>
-          <div className="mt-6 mb-[72px] space-y-6 px-10 text-white">
+          <div className="mb-10 space-y-6 px-10 text-white">
             <div className="text-[20px] leading-normal font-bold">Raw</div>
             <div className="raw-content">
               {txn ? (

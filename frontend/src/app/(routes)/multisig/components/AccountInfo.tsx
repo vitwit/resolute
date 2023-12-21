@@ -2,7 +2,6 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { deleteMultisig } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { MultisigAccount } from '@/types/multisig';
-import { getLocalDate } from '@/utils/datetime';
 import { parseBalance } from '@/utils/denom';
 import { formatCoin, formatStakedAmount, shortenAddress } from '@/utils/util';
 import Image from 'next/image';
@@ -10,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import DialogDeleteMultisig from './DialogDeleteMultisig';
 import { copyToClipboard } from '@/utils/copyToClipboard';
+import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 
 interface AccountInfoProps {
   chainID: string;
@@ -151,7 +151,7 @@ const AccountDetails = ({
         />
         <div className="w-full flex justify-between">
           <h2 className="text-[16px] font-bold">{name}</h2>
-          <h3 className="text-[14px] font-bold">{getLocalDate(created_at)}</h3>
+          <h3 className="text-[14px] font-bold">Created&nbsp;{getTimeDifferenceToFutureDate(created_at, true)}</h3>
         </div>
       </div>
       <div className="flex-1 p-6 space-y-6 flex flex-col h-full">

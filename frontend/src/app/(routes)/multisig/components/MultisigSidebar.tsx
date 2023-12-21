@@ -140,7 +140,7 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
     <div className="multisig-sidebar">
       <TopNav />
       <div className="space-y-4">
-        <div className="flex justify-between h-9">
+        <div className="flex justify-between items-center h-9">
           <div className="text-[16px] leading-normal">Transactions</div>
           {accountSpecific ? (
             <div>

@@ -44,29 +44,34 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
 
   const delegations = useAppSelector(
     (state: RootState) => state.staking.chains[chainID].delegations
-  )
-
+  );
 
   useEffect(() => {
-    dispatch(getDelegations({ address, chainID, baseURL }))
-  }, [])
+    dispatch(getDelegations({ address, chainID, baseURL }));
+  }, []);
 
   interface stakeBal {
     amount: string;
     denom: string;
   }
 
-  const [selectedValBal, setSelectedValBal] = useState<stakeBal>({amount: '', denom: ''});
+  const [selectedValBal, setSelectedValBal] = useState<stakeBal>({
+    amount: '',
+    denom: '',
+  });
 
-  const [data, setData] = useState<{ label: string; value: string, amount: stakeBal }[]>([]);
+  const [data, setData] = useState<
+    { label: string; value: string; amount: stakeBal }[]
+  >([]);
 
   useEffect(() => {
     const data = [];
 
-    const totalDelegations = delegations?.delegations?.delegation_responses || []
+    const totalDelegations =
+      delegations?.delegations?.delegation_responses || [];
 
     for (let j = 0; j < totalDelegations.length; j++) {
-      const del = totalDelegations[j]
+      const del = totalDelegations[j];
 
       for (let i = 0; i < validators.activeSorted.length; i++) {
         const validator = validators.active[validators.activeSorted[i]];
@@ -74,7 +79,7 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
           const temp = {
             label: validator.description.moniker,
             value: validators.activeSorted[i],
-            amount: del.balance
+            amount: del.balance,
           };
 
           data.push(temp);
@@ -84,11 +89,13 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
       for (let i = 0; i < validators.inactiveSorted.length; i++) {
         const validator = validators.inactive[validators.inactiveSorted[i]];
         if (!validator.jailed) {
-          if (del?.delegation?.validator_address === validator.operator_address) {
+          if (
+            del?.delegation?.validator_address === validator.operator_address
+          ) {
             const temp = {
               label: validator.description.moniker,
               value: validators.inactiveSorted[i],
-              amount: del.balance
+              amount: del.balance,
             };
 
             data.push(temp);
@@ -96,7 +103,6 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
         }
       }
     }
-
 
     setData(data);
   }, [validators]);
@@ -174,7 +180,14 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
             options={data}
             onChange={(event, item) => {
               onChange(item);
-              setSelectedValBal({amount: (Number(item?.amount?.amount)/10 ** currency.coinDecimals).toFixed(2) || '', denom: item?.amount?.denom || ''})
+              setSelectedValBal({
+                amount:
+                  (
+                    Number(item?.amount?.amount) /
+                    10 ** currency.coinDecimals
+                  ).toFixed(2) || '',
+                denom: item?.amount?.denom || '',
+              });
             }}
             renderInput={(params) => (
               <TextField
@@ -190,51 +203,57 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
           />
         )}
       />
-      <div
-        className="text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
-        onClick={setAmountValue}
-      >
-        {formatCoin(Number(selectedValBal?.amount), currency?.coinDenom)}
-      </div>
-      <Controller
-        name="amount"
-        control={control}
-        rules={{
-          required: 'Amount is required',
-          validate: (value) => {
-            return Number(value) > 0 && Number(value) <= Number(selectedValBal?.amount);
-          },
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <TextField
-            className="bg-[#FFFFFF1A]"
-            {...field}
-            sx={textFieldStyles}
-            error={!!error}
-            helperText={
-              errors.amount?.type === 'validate'
-                ? 'Insufficient balance'
-                : errors.amount?.message
-            }
-            placeholder="Amount"
-            fullWidth
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="start">
-                  {currency.coinDenom}
-                </InputAdornment>
-              ),
-              sx: {
-                input: {
-                  color: 'white',
-                  fontSize: '14px',
-                  padding: 2,
+
+      <div className="mb-6">
+        <Controller
+          name="amount"
+          control={control}
+          rules={{
+            required: 'Amount is required',
+            validate: (value) => {
+              return (
+                Number(value) > 0 &&
+                Number(value) <= Number(selectedValBal?.amount)
+              );
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              className="bg-[#FFFFFF1A]"
+              {...field}
+              sx={{ ...textFieldStyles, ...{ mb: '0' } }}
+              error={!!error}
+              helperText={
+                errors.amount?.type === 'validate'
+                  ? 'Insufficient balance'
+                  : errors.amount?.message
+              }
+              placeholder="Amount"
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    {currency.coinDenom}
+                  </InputAdornment>
+                ),
+                sx: {
+                  input: {
+                    color: 'white',
+                    fontSize: '14px',
+                    padding: 2,
+                  },
                 },
-              },
-            }}
-          />
-        )}
-      />
+              }}
+            />
+          )}
+        />
+        <div
+          className="mt-1 text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
+          onClick={setAmountValue}
+        >
+          {formatCoin(Number(selectedValBal?.amount), currency?.coinDenom)}
+        </div>
+      </div>
 
       <button className="create-txn-form-btn" type="submit">
         Add

@@ -1,4 +1,4 @@
- import moment from "moment/moment";
+import moment from 'moment/moment';
 
 export function getTimeDifference(timestamp: string): string {
   const now: Date = new Date();
@@ -29,7 +29,10 @@ export function getLocalTime(value: string): string {
   return moment(value).format('YYYY-MM-DD HH:m:s');
 }
 
-export function getTimeDifferenceToFutureDate(futureDate: string): string {
+export function getTimeDifferenceToFutureDate(
+  futureDate: string,
+  past?: boolean,
+): string {
   const now = new Date();
   const futureDateObj = new Date(futureDate);
 
@@ -37,7 +40,12 @@ export function getTimeDifferenceToFutureDate(futureDate: string): string {
     return 'Invalid date';
   }
 
-  const timeDifference = futureDateObj.getTime() - now.getTime();
+  let timeDifference;
+  if (past) {
+    timeDifference = now.getTime() - futureDateObj.getTime();
+  } else {
+    timeDifference = futureDateObj.getTime() - now.getTime();
+  }
 
   const seconds = Math.floor(timeDifference / 1000);
   const minutes = Math.floor(seconds / 60);

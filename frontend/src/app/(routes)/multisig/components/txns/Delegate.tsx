@@ -150,51 +150,54 @@ const Delegate: React.FC<DelegateProps> = (props) => {
           />
         )}
       />
-      <div
-        className="text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
-        onClick={setAmountValue}
-      >
-        {formatCoin(availableBalance, currency.coinDenom)}
-      </div>
-      <Controller
-        name="amount"
-        control={control}
-        rules={{
-          required: 'Amount is required',
-          validate: (value) => {
-            return Number(value) > 0 && Number(value) <= availableBalance;
-          },
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <TextField
-            className="bg-[#FFFFFF1A]"
-            {...field}
-            sx={textFieldStyles}
-            error={!!error}
-            helperText={
-              errors.amount?.type === 'validate'
-                ? 'Insufficient balance'
-                : errors.amount?.message
-            }
-            placeholder="Amount"
-            fullWidth
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="start">
-                  {currency.coinDenom}
-                </InputAdornment>
-              ),
-              sx: {
-                input: {
-                  color: 'white',
-                  fontSize: '14px',
-                  padding: 2,
+
+      <div className="mb-6">
+        <Controller
+          name="amount"
+          control={control}
+          rules={{
+            required: 'Amount is required',
+            validate: (value) => {
+              return Number(value) > 0 && Number(value) <= availableBalance;
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              className="bg-[#FFFFFF1A]"
+              {...field}
+              sx={{...textFieldStyles, ...{mb: "0"}}}
+              error={!!error}
+              helperText={
+                errors.amount?.type === 'validate'
+                  ? 'Insufficient balance'
+                  : errors.amount?.message
+              }
+              placeholder="Amount"
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    {currency.coinDenom}
+                  </InputAdornment>
+                ),
+                sx: {
+                  input: {
+                    color: 'white',
+                    fontSize: '14px',
+                    padding: 2,
+                  },
                 },
-              },
-            }}
-          />
-        )}
-      />
+              }}
+            />
+          )}
+        />
+        <div
+          className="mt-1 text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
+          onClick={setAmountValue}
+        >
+          {formatCoin(availableBalance, currency.coinDenom)}
+        </div>
+      </div>
 
       <button className="create-txn-form-btn" type="submit">
         Add

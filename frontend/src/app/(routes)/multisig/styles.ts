@@ -29,7 +29,8 @@ export const autoCompleteStyles = {
     display: 'none !important',
   },
   mb: "24px",
-  borderRadius: "16px"
+  borderRadius: "16px",
+  width: "100%"
 };
 
 export const autoCompleteTextFieldStyles = {

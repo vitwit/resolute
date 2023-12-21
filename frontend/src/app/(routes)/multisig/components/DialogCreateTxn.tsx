@@ -64,7 +64,7 @@ interface DialogCreateTxnProps {
   walletAddress: string;
 }
 
-const PER_PAGE = 5;
+const PER_PAGE = 6;
 
 interface FileUploadProps {
   onFileContents: (content: string, type: string) => void;
@@ -73,7 +73,7 @@ interface FileUploadProps {
 }
 
 const FileUpload = (props: FileUploadProps) => {
-  const {onFileContents, resetMessages, txType} = props;
+  const { onFileContents, resetMessages, txType } = props;
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
 
   return (
@@ -145,8 +145,8 @@ const FileUpload = (props: FileUploadProps) => {
           }}
         />
       </div>
-      <div className="mt-2 text-[14px] leading-normal font-light">
-        Download sample CSV file&nbsp;
+      <div className="mt-2 text-[14px] leading-normal font-light flex items-center">
+        Download sample CSV file
         <a
           className="add-network-json-sample-link"
           onClick={() => {
@@ -184,7 +184,12 @@ const FileUpload = (props: FileUploadProps) => {
             }
           }}
         >
-          here
+          <Image
+            src="/download-icon.svg"
+            height={24}
+            width={24}
+            alt="download"
+          />
         </a>
       </div>
     </div>
@@ -211,6 +216,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
 
   const handleClose = () => {
     onClose();
+    setMessages([]);
   };
 
   const onSelect = (value: boolean) => {
@@ -272,7 +278,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
 
   const resetMessages = () => {
     setMessages([]);
-  }
+  };
 
   useEffect(() => {
     resetMessages();
@@ -429,13 +435,13 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
       PaperProps={{
         sx: {
           borderRadius: '24px',
-          background: 'linear-gradient(90deg, #1F184E 27.66%, #8B3DA7 99.91%)',
+          background: 'linear-gradient(178deg, #241B61 1.71%, #69448D 98.35%, #69448D 98.35%)',
         },
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
-          <div className="px-10 py-6 flex justify-end">
+          <div className="px-10 pb-6 pt-10 flex justify-end">
             <div
               onClick={() => {
                 handleClose();
@@ -450,7 +456,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
               />
             </div>
           </div>
-          <div className="mt-6 mb-[72px] pl-6 pr-10 text-white flex h-full gap-6">
+          <div className="mt-6 mb-10 pl-6 pr-10 text-white flex h-full gap-6">
             <div className="flex-1 pl-6 pr-0 h-full">
               <div className="text-[20px] font-bold">Create Transaction</div>
               <SelectTransactionType
@@ -547,12 +553,13 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                 </>
               )}
             </div>
-            <div className="flex-1 h-full pl-6 border-l-[0.5px] border-[#ffffff2e]">
+            <div className="border-l-[0.5px] border-[#ffffff2e]"></div>
+            <div className="flex-1 h-full">
               <div className="text-[20px] font-bold mb-6">Messages</div>
               {messages.length ? (
                 <div className="flex flex-col justify-between gap-6">
                   <div>
-                    <div className="space-y-4 min-h-[196px] pb-4 border-b-[0.5px] border-[#ffffff2e]">
+                    <div className="space-y-4 min-h-[236px] pb-4 border-b-[0.5px] border-[#ffffff2e]">
                       {slicedMsgs.map((msg, index) => {
                         return (
                           <div key={index + PER_PAGE * (currentPage - 1)}>
@@ -567,52 +574,28 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                       })}
                     </div>
 
-                    {messages.length > PER_PAGE ? (
-                      <div className="mt-2 flex justify-end">
-                        <Pagination
-                          sx={paginationComponentStyles}
-                          count={Math.ceil(messages.length / PER_PAGE)}
-                          shape="circular"
-                          onChange={(_, v) => {
-                            setCurrentPage(v);
-                            setSlicedMsgs(
-                              messages?.slice((v - 1) * PER_PAGE, v * PER_PAGE)
-                            );
-                          }}
-                        />
-                      </div>
-                    ) : null}
+                    <div
+                      className={
+                        messages.length > PER_PAGE
+                          ? 'mt-2 flex justify-end opacity-100'
+                          : 'mt-2 flex justify-end opacity-0'
+                      }
+                    >
+                      <Pagination
+                        sx={paginationComponentStyles}
+                        count={Math.ceil(messages.length / PER_PAGE)}
+                        shape="circular"
+                        onChange={(_, v) => {
+                          setCurrentPage(v);
+                          setSlicedMsgs(
+                            messages?.slice((v - 1) * PER_PAGE, v * PER_PAGE)
+                          );
+                        }}
+                      />
+                    </div>
                   </div>
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex gap-4">
-                      <Controller
-                        name="gas"
-                        control={control}
-                        rules={{ required: 'Gas is required' }}
-                        render={({ field, fieldState: { error } }) => (
-                          <TextField
-                            className="bg-[#FFFFFF1A]"
-                            {...field}
-                            sx={createTxnTextFieldStyles}
-                            error={!!error}
-                            size="small"
-                            helperText={error ? error.message : null}
-                            type="number"
-                            required
-                            placeholder="Gas"
-                            fullWidth
-                            InputProps={{
-                              sx: {
-                                input: {
-                                  color: 'white',
-                                  fontSize: '14px',
-                                  padding: 2,
-                                },
-                              },
-                            }}
-                          />
-                        )}
-                      />
                       <Controller
                         name="memo"
                         control={control}
@@ -620,7 +603,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                           <TextField
                             className="bg-[#FFFFFF1A]"
                             {...field}
-                            sx={createTxnTextFieldStyles}
+                            sx={{ ...createTxnTextFieldStyles, ...{ mb: '0' } }}
                             placeholder="Memo"
                             fullWidth
                             InputProps={{

@@ -44,7 +44,7 @@ const DialogDeleteTxn: React.FC<DialogDeleteTxnProps> = (props) => {
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
-          <div className="px-10 py-6 flex justify-end">
+          <div className="px-10 pb-6 pt-10 flex justify-end">
             <div onClick={onClose}>
               <Image
                 className="cursor-pointer"
@@ -55,7 +55,7 @@ const DialogDeleteTxn: React.FC<DialogDeleteTxnProps> = (props) => {
               />
             </div>
           </div>
-          <div className="mt-6 mb-[72px] flex gap-16 pr-10 pl-6 items-center">
+          <div className="mt-6 mb-10 flex gap-16 pr-10 pl-6 items-center">
             <Image
               src={DELETE_TXN_DIALOG_IMAGE_PATH}
               height={238}

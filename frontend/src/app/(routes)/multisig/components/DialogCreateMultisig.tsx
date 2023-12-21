@@ -1,5 +1,4 @@
 import {
-  Button,
   CircularProgress,
   Dialog,
   DialogContent,
@@ -8,10 +7,8 @@ import {
 } from '@mui/material';
 import Image from 'next/image';
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { setError } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { deepPurple } from '@mui/material/colors';
 import Axios from 'axios';
 import { cleanURL } from '@/utils/util';
 import {
