@@ -1,6 +1,6 @@
 import { DialogContent, Dialog } from '@mui/material';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import { supportedWallets } from '@/utils/contants';
 
 const WalletPopup = ({
@@ -12,6 +12,13 @@ const WalletPopup = ({
   onClose: () => void;
   selectWallet: (walletName: string) => void;
 }) => {
+  const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
+
+  const handleWalletClick = (walletName: string) => {
+    setSelectedWallet(walletName);
+    selectWallet(walletName); // Pass the walletName directly
+  };
+
   return (
     <Dialog
       open={isOpen}
@@ -31,44 +38,37 @@ const WalletPopup = ({
               className="cursor-pointer"
             />
           </div>
-          <div className="flex justify-end items-center gap-10 px-10 py-0">
-            <div>
-              <Image
-                src="/blocks.png"
-                width={272}
-                height={222}
-                alt="Block-structure"
-              />
-            </div>
-            <div className="connect-wallet-box">
-              <div className="text-white text-xl font-bold">Connect Wallet</div>
-              <div className="flex space-x-6">
+          <div className="flex justify-end items-center gap-10 px-10 py-0 w-full">
+            <div className="connect-wallet-box space-y-6 w-full">
+              <div className="text-white text-xl font-bold ">
+                Connect Wallet
+              </div>
+              <div className="flex space-x-6 justify-center">
                 {supportedWallets.map((wallet) => (
                   <div
-                    className="wallet-grid"
-                    onClick={() => {
-                      selectWallet(wallet.name.toLocaleLowerCase());
-                    }}
+                    className={`wallet-grid ${
+                      selectedWallet === wallet.name.toLocaleLowerCase()
+                        ? 'selected-wallet'
+                        : ''
+                    }`}
+                    onClick={() =>
+                      handleWalletClick(wallet.name.toLocaleLowerCase())
+                    }
                     key={wallet.name}
                   >
                     <div className="flex space-x-2">
                       <Image
                         src={wallet.logo}
-                        width={32}
-                        height={32}
+                        width={100}
+                        height={100}
                         alt={wallet.name}
                       />
-                      <div className="popup-text font-light items-center flex">
-                        {wallet.name}
-                      </div>
+                    </div>
+                    <div className="popup-text font-light items-center flex-col">
+                      {wallet.name} Wallet
                     </div>
                   </div>
                 ))}
-              </div>
-              <div>
-                <button className="button">
-                  <p className="popup-text">Connect</p>
-                </button>
               </div>
             </div>
           </div>
