@@ -39,7 +39,7 @@ const WalletPopup = ({
             />
           </div>
           <div className="flex justify-end items-center gap-10 px-10 py-0 w-full">
-            <div className="connect-wallet-box space-y-4 w-full">
+            <div className="connect-wallet-box space-y-6 w-full">
               <div className="text-white text-xl font-bold ">
                 Connect Wallet
               </div>

@@ -73,19 +73,21 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     <div>
       <CustomParticles />
 
-      <div className="landingpage-background">
-        <div className="flex justify-center items-center gap-2.5 p-2.5 w-full h-8"></div>
+      <div className="landingpage-background justify-between">
+        <div>
+          <div className="flex justify-center items-center h-8 w-full "></div>
 
-        <div className="pl-20">
-          <Image
-            src="/vitwit-logo-main.png"
-            width={180}
-            height={475}
-            alt="Vitwit-Logo"
-          />
+          <div className="pl-20">
+            <Image
+              src="/vitwit-logo-main.png"
+              width={180}
+              height={475}
+              alt="Vitwit-Logo"
+            />
+          </div>
         </div>
-        <div className="flex items-center gap-10 pl-20 py-0 ">
-          <div className="space-y-40">
+        <div className="flex items-center  pl-20 py-0 h-full">
+          <div className="">
             <div className="flex flex-col space-y-6">
               <div className="flex text-white text-center text-[100px] not-italic font-extrabold leading-[100px] tracking-[7px]">
                 Resolute
@@ -116,7 +118,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
             />
           </div>
 
-          <div className="flex justify-end w-full z-10">
+          <div className="flex items-center justify-end w-full z-10">
             <Image
               src="/landingpage.svg"
               width={967}
@@ -126,8 +128,11 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
           </div>
         </div>
 
-        <div className="powered-by-background">
-          <div className="powered-by text">Powered by Vitwit</div>
+        <div>
+          <div className="flex justify-center items-center  h-10"></div>
+          <div className="powered-by-background">
+            <div className="powered-by text">Powered by Vitwit</div>
+          </div>
         </div>
       </div>
     </div>

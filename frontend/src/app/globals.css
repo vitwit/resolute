@@ -405,7 +405,13 @@
 
 .wallet-box {
   @apply flex flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl w-[889px];
-  background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%);
+  /* background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%); */
+  background: linear-gradient(
+    178deg,
+    #241b61 1.71%,
+    #69448d 98.35%,
+    #69448d 98.35%
+  );
 }
 
 .connect-wallet-box {
@@ -414,10 +420,10 @@
 
 .wallet-grid {
   background: rgba(255, 255, 255, 0.05);
-  @apply flex flex-col items-center gap-4 p-4 cursor-pointer rounded-2xl hover:bg-[#7e74cc] px-8 py-4 w-full;
+  @apply flex flex-col items-center gap-4 p-4 cursor-pointer rounded-2xl hover:bg-[#585287] px-8 py-4 w-full;
 }
 .selected-wallet {
-  @apply border rounded-2xl border-solid border-[#4AA29C];
+  @apply opacity-100;
   background: linear-gradient(
     180deg,
     rgba(74, 162, 156, 0.4) 0%,
@@ -434,7 +440,7 @@
 }
 
 .powered-by-background {
-  @apply flex w-full grow-0 justify-center items-center gap-2.5 p-2.5 fixed bottom-0 opacity-100;
+  @apply flex w-full grow-0 justify-center items-center gap-2.5 p-2.5 fixed bottom-0 opacity-100 h-12;
   background: rgba(255, 255, 255, 0.05);
 }
 .text {
@@ -445,7 +451,7 @@
   background: linear-gradient(107deg, #1f184e 1.65%, #8b3da7 100%);
 }
 .landingpage-button {
-  @apply flex justify-center items-center gap-6 px-10 py-6 rounded-[100px] w-[226px] cursor-pointer;
+  @apply flex justify-center items-center gap-6 px-6 py-4 rounded-[100px] w-[226px] cursor-pointer;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 
