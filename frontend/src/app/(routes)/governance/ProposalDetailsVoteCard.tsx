@@ -20,15 +20,15 @@ const ProposalDetailsVoteCard = ({
     <div>
       <div className="proposal-details-grid">
         <div className="proposal-details proposal-text-normal w-full">
-          <p>Proposal created at</p>
+          <p>Proposal created </p>
           <p>{createdAt}</p>
         </div>
         <div className="proposal-details proposal-text-normal w-full">
-          <p>Proposal Started at</p>
+          <p>Voting Started </p>
           <p>{startedAt}</p>
         </div>
         <div className="proposal-details proposal-text-normal w-full">
-          <p>Proposal ends at</p>
+          <p>Voting ends in</p>
           <p>{endsAt}</p>
         </div>
         <div className="proposal-details proposal-text-normal w-full">
