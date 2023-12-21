@@ -420,7 +420,6 @@ const ProposalOverviewVote = ({
                   get(proposalInfo, 'submit_time'),
                   true
                 )} ago`}
-                
                 startedAt={`${getTimeDifferenceToFutureDate(
                   get(proposalInfo, 'voting_start_time'),
                   true
