@@ -92,8 +92,6 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
             </div>
           )}
         </div>
-        <div className="min-h-[24px]"></div>
-        <div className="h-line"></div>
       </div>
     </div>
   );
