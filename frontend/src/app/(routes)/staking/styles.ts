@@ -46,6 +46,14 @@ export const textFieldStyles = {
   '& .MuiOutlinedInput-notchedOutline': {
     border: 'none',
   },
+  '& .MuiOutlinedInput-root': {
+    border: '1px solid transparent',
+    borderRadius: '16px',
+  },
+  '& .Mui-focused': {
+    border: '1px solid #ffffff4a',
+    borderRadius: '16px',
+  },
 };
 
 export const textFieldInputPropStyles = {
