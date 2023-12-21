@@ -8,6 +8,7 @@ import DialogViewRaw from './DialogViewRaw';
 import DialogTxnFailed from './DialogTxnFailed';
 import DialogViewTxnMessages from './DialogViewTxnMessages';
 import TransactionCard from './TransactionCard';
+import Image from 'next/image';
 
 interface TransactionsListProps {
   chainID: string;
@@ -75,7 +76,7 @@ const TransactionsList: React.FC<TransactionsListProps> = (props) => {
           key={txn.id}
           isMember={isMember}
           txn={txn}
-          multisigAddress={multisigAccount.account.address || ""}
+          multisigAddress={multisigAccount.account.address || ''}
           threshold={multisigAccount.account.threshold || 0}
           membersCount={members.length}
           chainID={chainID}
@@ -88,12 +89,22 @@ const TransactionsList: React.FC<TransactionsListProps> = (props) => {
         />
       ))}
       {!txnsState.list.length ? (
-        <div className="mt-16 text-[14px] text-center">- No Transactions -</div>
+        <div className="mt-[50%] flex flex-col justify-center items-center">
+          <Image
+            src="/no-transactions.png"
+            width={200}
+            height={200}
+            alt={'No Transactions'}
+          />
+          <div className="text-[16px] leading-normal italic font-extralight text-center">
+            No Active Transactions
+          </div>
+        </div>
       ) : null}
       <DialogViewTxnMessages
         open={msgDialogOpen}
         txn={selectedTxn}
-        multisigAddress={multisigAccount.account.address || ""}
+        multisigAddress={multisigAccount.account.address || ''}
         pubKeys={multisigAccount.pubkeys || []}
         threshold={multisigAccount.account.threshold || 0}
         membersCount={members.length}
