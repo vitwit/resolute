@@ -19,7 +19,7 @@ const History = ({ chainIDs }: { chainIDs: string[] }) => {
       <div className="flex justify-between items-center">
         <h2 className="text-xl not-italic font-normal leading-[normal]">
           Recent Transactions
-        </h2>        
+        </h2>
       </div>
       <RecentTransactions chainIDs={chainIDs} msgFilters={[]} />
     </div>
@@ -54,15 +54,15 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
       </div>
       <div className="flex justify-center gap-6">
         <button
-          className="primary-custom-btn w-[144px]"
+          className="primary-custom-btn"
           onClick={() => {
             router.push(getPath(chainIDs, 'transfers'));
           }}
         >
-          Send
+          &nbsp;&nbsp;Send&nbsp;&nbsp;
         </button>
         <button
-          className="primary-custom-btn w-[144px]"
+          className="primary-custom-btn"
           onClick={() => {
             router.push(getPath(chainIDs, 'staking'));
           }}

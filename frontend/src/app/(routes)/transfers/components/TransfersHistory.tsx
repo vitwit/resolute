@@ -36,8 +36,8 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
         </span>
       </div>
       {/* <div className="flex justify-center gap-6">
-        <button className="primary-custom-btn-disabled w-[144px]">Send</button>
-        <button className="primary-custom-btn-disabled w-[144px]">
+        <button className="primary-custom-btn-disabled">&nbsp;&nbsp;Send&nbsp;&nbsp;</button>
+        <button className="primary-custom-btn-disabled">
           Receive
         </button>
       </div> */}
