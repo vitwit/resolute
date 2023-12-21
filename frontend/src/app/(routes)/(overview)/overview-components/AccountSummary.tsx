@@ -1,6 +1,5 @@
-import { CopyToClipboard } from '@/components/CopyToClipboard';
+import CommonCopy from '@/components/CommonCopy';
 import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
-import { shortenMsg } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 type AssetSummary = {
@@ -8,6 +7,15 @@ type AssetSummary = {
   alt: string;
   type: string;
   value: string | React.JSX.Element;
+};
+
+const numberFormat = (num: string) => {
+  return num === '-'
+    ? '-'
+    : (+num).toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      });
 };
 
 const AccountSummery = ({ chainID }: { chainID: string }) => {
@@ -19,9 +27,9 @@ const AccountSummery = ({ chainID }: { chainID: string }) => {
       alt: 'public-key',
       type: 'Public Key',
       value: (
-        <CopyToClipboard
+        <CommonCopy
           message={pubkey}
-          formattedMessage={shortenMsg(pubkey, 15)}
+          style="text-white text-base not-italic font-bold leading-[normal] max-w-[200px]"
         />
       ),
     },
@@ -29,13 +37,13 @@ const AccountSummery = ({ chainID }: { chainID: string }) => {
       icon: '/avatar.svg',
       alt: 'sequence',
       type: 'Sequence',
-      value: sequence,
+      value: numberFormat(sequence),
     },
     {
       icon: '/drag-indicator.svg',
       alt: 'account-number',
       type: 'Account Number',
-      value: accountNumber,
+      value: numberFormat(accountNumber),
     },
   ];
 
