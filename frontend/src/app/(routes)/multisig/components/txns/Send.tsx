@@ -5,6 +5,7 @@ import { fromBech32 } from '@cosmjs/encoding';
 import { formatCoin } from '@/utils/util';
 import { Decimal } from '@cosmjs/math';
 import { sendTxnTextFieldStyles } from '../../styles';
+import { INSUFFICIENT_BALANCE } from '@/utils/errors';
 
 interface SendProps {
   address: string;
@@ -81,54 +82,71 @@ const Send: React.FC<SendProps> = (props) => {
           />
         )}
       />
-      <Controller
-        name="recipient"
-        control={control}
-        rules={{
-          required: 'Recipient is required',
-          validate: (value) => {
-            try {
-              fromBech32(value);
-              return true;
-            } catch (error) {
-              return false;
-            }
-          },
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <TextField
-            className="bg-[#FFFFFF1A]"
-            {...field}
-            sx={sendTxnTextFieldStyles}
-            placeholder="Recipient"
-            fullWidth
-            error={!!error}
-            helperText={
-              errors.recipient?.type === 'validate'
-                ? 'Invalid recipient address'
-                : error?.message
-            }
-            InputProps={{
-              sx: {
-                input: {
-                  color: 'white',
-                  fontSize: '14px',
-                  padding: 2,
+      <div className="mb-2">
+        <Controller
+          name="recipient"
+          control={control}
+          rules={{
+            required: 'Recipient is required',
+            validate: (value) => {
+              try {
+                fromBech32(value);
+                return true;
+              } catch (error) {
+                return false;
+              }
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              className="bg-[#FFFFFF1A]"
+              {...field}
+              sx={{ ...sendTxnTextFieldStyles, ...{ mb: '0' } }}
+              placeholder="Recipient"
+              fullWidth
+              error={!!error}
+              InputProps={{
+                sx: {
+                  input: {
+                    color: 'white',
+                    fontSize: '14px',
+                    padding: 2,
+                  },
                 },
-              },
-            }}
-          />
-        )}
-      />
-
-      <div className='mb-6'>
+              }}
+            />
+          )}
+        />{' '}
+        <div className="error-box">
+          <span
+            className={
+              !!errors.recipient
+                ? 'error-chip opacity-80'
+                : 'error-chip opacity-0'
+            }
+          >
+            {errors?.recipient?.type === 'validate'
+              ? 'Invalid recipient address'
+              : errors?.recipient?.message}
+          </span>
+        </div>
+      </div>
+      <div
+        className="mb-1 text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
+        onClick={() => setValue('amount', availableBalance)}
+      >
+        {formatCoin(availableBalance, currency.coinDenom)}
+      </div>
+      <div className="mb-2">
         <Controller
           name="amount"
           control={control}
           rules={{
             required: 'Amount is required',
             validate: (value) => {
-              return Number(value) > 0 && Number(value) <= availableBalance;
+              const amount = Number(value);
+              if (isNaN(amount) || amount <= 0) return 'Invalid Amount';
+              if (amount > availableBalance) return INSUFFICIENT_BALANCE;
             },
           }}
           render={({ field, fieldState: { error } }) => (
@@ -137,11 +155,6 @@ const Send: React.FC<SendProps> = (props) => {
               {...field}
               sx={{ ...sendTxnTextFieldStyles, ...{ mb: '0' } }}
               error={!!error}
-              helperText={
-                errors.amount?.type === 'validate'
-                  ? 'Insufficient balance'
-                  : error?.message
-              }
               placeholder="Amount"
               fullWidth
               InputProps={{
@@ -161,11 +174,14 @@ const Send: React.FC<SendProps> = (props) => {
             />
           )}
         />
-        <div
-          className="mt-1 text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
-          onClick={() => setValue('amount', availableBalance)}
-        >
-          {formatCoin(availableBalance, currency.coinDenom)}
+        <div className="error-box">
+          <span
+            className={
+              !!errors.amount ? 'error-chip opacity-80' : 'error-chip opacity-0'
+            }
+          >
+            {errors.amount?.message}
+          </span>
         </div>
       </div>
       <button type="submit" className="create-txn-form-btn">

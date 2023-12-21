@@ -11,6 +11,7 @@ import {
   textFieldStyles,
 } from '../../styles';
 import { getDelegations } from '@/store/features/staking/stakeSlice';
+import { INSUFFICIENT_BALANCE } from '@/utils/errors';
 
 interface ReDelegateProps {
   chainID: string;
@@ -193,102 +194,116 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
         )}
       />
       <div className="flex gap-6 w-full">
-        <Controller
-          name="validatorSrcAddress"
-          control={control}
-          defaultValue={null}
-          rules={{ required: 'Source Validator is required' }}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <Autocomplete
-              disablePortal
-              value={value}
-              sx={autoCompleteStyles}
-              isOptionEqualToValue={(option, value) =>
-                option.value === value.value
+        <div className="w-full">
+          <Controller
+            name="validatorSrcAddress"
+            control={control}
+            defaultValue={null}
+            rules={{ required: 'Source Validator is required' }}
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <Autocomplete
+                disablePortal
+                value={value}
+                sx={{ ...autoCompleteStyles, ...{ mb: '16px' } }}
+                isOptionEqualToValue={(option, value) =>
+                  option.value === value.value
+                }
+                options={data}
+                onChange={(event, item) => {
+                  onChange(item);
+                  setSelectedValBal({
+                    amount:
+                      (
+                        Number(item?.amount?.amount) /
+                        10 ** currency.coinDecimals
+                      ).toFixed(2) || '',
+                    denom: item?.amount?.denom || '',
+                  });
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    className="bg-[#FFFFFF1A]"
+                    {...params}
+                    required
+                    placeholder="Source Val"
+                    error={!!error}
+                    sx={autoCompleteTextFieldStyles}
+                  />
+                )}
+              />
+            )}
+          />
+          <div className="error-box">
+            <span
+              className={
+                !!errors.validatorSrcAddress
+                  ? 'error-chip opacity-80'
+                  : 'error-chip opacity-0'
               }
-              options={data}
-              onChange={(event, item) => {
-                onChange(item);
-                setSelectedValBal({
-                  amount:
-                    (
-                      Number(item?.amount?.amount) /
-                      10 ** currency.coinDecimals
-                    ).toFixed(2) || '',
-                  denom: item?.amount?.denom || '',
-                });
-              }}
-              renderInput={(params) => (
-                <TextField
-                  className="bg-[#FFFFFF1A]"
-                  {...params}
-                  required
-                  placeholder="Source Val"
-                  error={!!error}
-                  helperText={error ? error.message : null}
-                  sx={autoCompleteTextFieldStyles}
-                />
-              )}
-            />
-          )}
-        />
-        <Controller
-          name="validatorDstAddress"
-          control={control}
-          defaultValue={null}
-          rules={{ required: 'Destination Validator is required' }}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <Autocomplete
-              disablePortal
-              value={value}
-              sx={autoCompleteStyles}
-              isOptionEqualToValue={(option, value) =>
-                option.value === value.value
-              }
-              options={destVals}
-              onChange={(event, item) => {
-                onChange(item);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  className="bg-[#FFFFFF1A]"
-                  {...params}
-                  required
-                  placeholder="Destination Val"
-                  error={!!error}
-                  helperText={error ? error.message : null}
-                  sx={autoCompleteTextFieldStyles}
-                />
-              )}
-            />
-          )}
-        />
+            >
+              {errors.validatorSrcAddress?.message}
+            </span>
+          </div>
+        </div>
+        <div className="w-full">
+          <Controller
+            name="validatorDstAddress"
+            control={control}
+            defaultValue={null}
+            rules={{ required: 'Destination Validator is required' }}
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <Autocomplete
+                disablePortal
+                value={value}
+                sx={autoCompleteStyles}
+                isOptionEqualToValue={(option, value) =>
+                  option.value === value.value
+                }
+                options={destVals}
+                onChange={(event, item) => {
+                  onChange(item);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    className="bg-[#FFFFFF1A]"
+                    {...params}
+                    required
+                    placeholder="Destination Val"
+                    error={!!error}
+                    sx={autoCompleteTextFieldStyles}
+                  />
+                )}
+              />
+            )}
+          />
+        </div>
       </div>
 
-      <div className="mb-6">
+      <div
+        className="mb-1 text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
+        onClick={setAmountValue}
+      >
+        {formatCoin(Number(selectedValBal?.amount), selectedValBal?.denom)}
+      </div>
+      <div className="mb-2">
         <Controller
           name="amount"
           control={control}
           rules={{
             required: 'Amount is required',
             validate: (value) => {
-              return (
-                Number(value) > 0 &&
-                Number(value) <= Number(selectedValBal?.amount)
-              );
+              const amount = Number(value);
+              if (isNaN(amount) || amount <= 0) return 'Invalid Amount';
+              if (amount > Number(selectedValBal?.amount))
+                return INSUFFICIENT_BALANCE;
             },
           }}
           render={({ field, fieldState: { error } }) => (
             <TextField
               className="bg-[#FFFFFF1A]"
               {...field}
-              sx={{...textFieldStyles, ...{mb: "0"}}}
+              sx={{ ...textFieldStyles, ...{ mb: '0' } }}
               error={!!error}
-              helperText={
-                errors.amount?.type === 'validate'
-                  ? 'Insufficient balance'
-                  : errors.amount?.message
-              }
               placeholder="Amount"
               fullWidth
               InputProps={{
@@ -308,11 +323,14 @@ const ReDelegate: React.FC<ReDelegateProps> = (props) => {
             />
           )}
         />
-        <div
-          className="mt-1 text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
-          onClick={setAmountValue}
-        >
-          {formatCoin(Number(selectedValBal?.amount), selectedValBal?.denom)}
+        <div className="error-box">
+          <span
+            className={
+              !!errors.amount ? 'error-chip opacity-80' : 'error-chip opacity-0'
+            }
+          >
+            {errors.amount?.message}
+          </span>
         </div>
       </div>
 

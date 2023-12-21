@@ -55,6 +55,7 @@ import {
   parseUnDelegateMsgsFromContent,
 } from '@/utils/parseMsgs';
 import ClearIcon from '@mui/icons-material/Clear';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 interface DialogCreateTxnProps {
   open: boolean;
@@ -433,10 +434,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
       onClose={() => handleClose()}
       maxWidth="lg"
       PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          background: 'linear-gradient(178deg, #241B61 1.71%, #69448D 98.35%, #69448D 98.35%)',
-        },
+        sx: dialogBoxPaperPropStyles,
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
@@ -603,7 +601,10 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                           <TextField
                             className="bg-[#FFFFFF1A]"
                             {...field}
-                            sx={{ ...createTxnTextFieldStyles, ...{ mb: '0' } }}
+                            sx={{
+                              ...createTxnTextFieldStyles,
+                              ...{ mb: '0', mt: 2 },
+                            }}
                             placeholder="Memo"
                             fullWidth
                             InputProps={{
@@ -620,7 +621,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                       />
                     </div>
 
-                    <button className="create-txn-form-btn mt-6">
+                    <button className="create-txn-form-btn mt-[42px]">
                       {createRes.status === 'pending'
                         ? 'Please wait...'
                         : 'Create'}
@@ -628,7 +629,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                   </form>
                 </div>
               ) : (
-                <div className="flex justify-center mt-20">
+                <div className="flex justify-center mt-[30%]">
                   <Image
                     src="/empty-messages-image.png"
                     width={200}

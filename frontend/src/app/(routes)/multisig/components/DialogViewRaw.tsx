@@ -1,4 +1,5 @@
 import { Txn } from '@/types/multisig';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
@@ -21,10 +22,7 @@ const DialogViewRaw: React.FC<DialogViewRawProps> = (props) => {
       onClose={() => handleClose()}
       maxWidth="lg"
       PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
-        },
+        sx: dialogBoxPaperPropStyles,
       }}
     >
       <DialogContent sx={{ padding: 0 }}>

@@ -11,6 +11,7 @@ import {
   textFieldStyles,
 } from '../../styles';
 import { getDelegations } from '@/store/features/staking/stakeSlice';
+import { INSUFFICIENT_BALANCE } from '@/utils/errors';
 
 interface UnDelegateProps {
   chainID: string;
@@ -173,7 +174,7 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
           <Autocomplete
             disablePortal
             value={value}
-            sx={autoCompleteStyles}
+            sx={{ ...autoCompleteStyles, ...{ mb: '16px' } }}
             isOptionEqualToValue={(option, value) =>
               option.value === value.value
             }
@@ -196,25 +197,41 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
                 required
                 placeholder="Select validator"
                 error={!!error}
-                helperText={error ? error.message : null}
                 sx={autoCompleteTextFieldStyles}
               />
             )}
           />
         )}
       />
+      <div className="error-box">
+        <span
+          className={
+            !!errors.validator
+              ? 'error-chip opacity-80'
+              : 'error-chip opacity-0'
+          }
+        >
+          {errors.validator?.message}
+        </span>
+      </div>
 
-      <div className="mb-6">
+      <div
+        className="mb-1 text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
+        onClick={setAmountValue}
+      >
+        {formatCoin(Number(selectedValBal?.amount), currency?.coinDenom)}
+      </div>
+      <div className="mb-2">
         <Controller
           name="amount"
           control={control}
           rules={{
             required: 'Amount is required',
             validate: (value) => {
-              return (
-                Number(value) > 0 &&
-                Number(value) <= Number(selectedValBal?.amount)
-              );
+              const amount = Number(value);
+              if (isNaN(amount) || amount <= 0) return 'Invalid Amount';
+              if (amount > Number(selectedValBal?.amount))
+                return INSUFFICIENT_BALANCE;
             },
           }}
           render={({ field, fieldState: { error } }) => (
@@ -223,11 +240,6 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
               {...field}
               sx={{ ...textFieldStyles, ...{ mb: '0' } }}
               error={!!error}
-              helperText={
-                errors.amount?.type === 'validate'
-                  ? 'Insufficient balance'
-                  : errors.amount?.message
-              }
               placeholder="Amount"
               fullWidth
               InputProps={{
@@ -247,11 +259,14 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
             />
           )}
         />
-        <div
-          className="mt-1 text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
-          onClick={setAmountValue}
-        >
-          {formatCoin(Number(selectedValBal?.amount), currency?.coinDenom)}
+        <div className="error-box">
+          <span
+            className={
+              !!errors.amount ? 'error-chip opacity-80' : 'error-chip opacity-0'
+            }
+          >
+            {errors.amount?.message}
+          </span>
         </div>
       </div>
 

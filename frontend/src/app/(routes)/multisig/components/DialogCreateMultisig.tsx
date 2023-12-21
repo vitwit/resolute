@@ -29,6 +29,7 @@ import {
   MIN_PUBKEYS_ERROR,
   MIN_THRESHOLD_ERROR,
 } from '@/utils/errors';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 interface DialogCreateMultisigProps {
   open: boolean;
@@ -369,10 +370,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       open={open}
       maxWidth="lg"
       PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
-        },
+        sx: dialogBoxPaperPropStyles,
       }}
     >
       <DialogContent sx={{ p: 0 }} className="text-white w-[890px]">
@@ -493,7 +491,9 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                       },
                     }}
                   />
-                  <div className="font-extralight text-[14px] mt-6">Threshold</div>
+                  <div className="font-extralight text-[14px] mt-6">
+                    Threshold
+                  </div>
                 </div>
                 <div>{formError}</div>
                 <button
