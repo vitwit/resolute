@@ -19,6 +19,8 @@ import { getPoolInfo } from '@/store/features/staking/stakeSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { deepPurple } from '@mui/material/colors';
 import DepositProposalInfo from './DepositProposalInfo';
+import DepositProposalDetails from './DepositProposalDetails';
+import { formatCoin } from '@/utils/util';
 
 type handleCloseOverview = () => void;
 
@@ -140,7 +142,17 @@ const RightOverview = ({
   const handleCloseVotePopup = () => {
     setIsVotePopupOpen(false);
   };
-
+  const getChainName = (chainID: string) => {
+    let chain: string = '';
+    Object.keys(nameToChainIDs).forEach((chainName) => {
+      if (nameToChainIDs[chainName] === chainID) chain = chainName;
+    });
+    return chain;
+  };
+  const currency = useAppSelector(
+    (state: RootState) =>
+      state.wallet.networks[chainID]?.network.config.currencies[0]
+  );
   const [isDepositPopupOpen, setIsDepositPopupOpen] = useState(false);
   const handleCloseDepositPopup = () => {
     setIsDepositPopupOpen(false);
@@ -339,8 +351,26 @@ const RightOverview = ({
                   </div>
                 </div>
               ) : (
-                <div className="bg-[#FFFFFF0D] rounded-2xl">
-                  <DepositProposalInfo chainID={chainID} />
+                <div className="flex flex-col space-y-20">
+                  <div className="bg-[#FFFFFF0D] rounded-2xl">
+                    <DepositProposalInfo chainID={chainID} />
+                  </div>
+                  <div className="bg-[#FFFFFF0D] rounded-2xl">
+                    <DepositProposalDetails
+                      submittedAt={getTimeDifferenceToFutureDate(
+                        get(proposalInfo, 'submit_time', '-'),
+                        true
+                      )}
+                      endsAt={getTimeDifferenceToFutureDate(
+                        get(proposalInfo, 'deposit_end_time', '-')
+                      )}
+                      depositrequired={formatCoin(
+                        depositRequired,
+                        currency.coinDenom
+                      )}
+                      proposalNetwork={getChainName(chainID)}
+                    />
+                  </div>
                 </div>
               )}
             </div>

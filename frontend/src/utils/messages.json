@@ -1,4 +1,6 @@
 {
   "chainNotFound": "- Chain not found -",
-  "noData": "No data Available"
+  "noData": "No data Available",
+  "noTransactions": "Haven’t done any transactions yet ?",
+  "noAssets": "Looks like you’ve got no assets !"
 }
