@@ -138,6 +138,11 @@ const RightOverview = ({
     get(proposalInfo, 'submit_time')
   );
 
+  const Totalvotes = totalVotes.toLocaleString();
+  const [depositRequired] = useState(0);
+  const nameToChainIDs = useAppSelector(
+    (state: RootState) => state.wallet.nameToChainIDs
+  );
   const [isVotePopupOpen, setIsVotePopupOpen] = useState(false);
   const handleCloseVotePopup = () => {
     setIsVotePopupOpen(false);
