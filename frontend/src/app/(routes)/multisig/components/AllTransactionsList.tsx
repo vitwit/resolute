@@ -103,11 +103,11 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
           <Image
             src="/no-transactions.png"
             width={200}
-            height={200}
+            height={130}
             alt={'No Transactions'}
           />
-          <div className="text-[16px] leading-normal italic font-extralight text-center">
-            No Active Transactions
+          <div className="text-[16px] my-6 leading-normal italic font-extralight text-center">
+            Haven’t done any transactions yet ?
           </div>
         </div>
       ) : null}

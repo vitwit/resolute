@@ -18,7 +18,10 @@ import {
 import { getAuthToken } from '@/utils/localStorage';
 import { createAccount } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
-import { createMultisigTextFieldStyles } from '../styles';
+import {
+  createMultisigTextFieldStyles,
+  createMultisigThresholdStyles,
+} from '../styles';
 import {
   ADDRESS_NOT_FOUND,
   DUPLICATE_PUBKEYS_ERROR,
@@ -460,7 +463,10 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                     type="number"
                     size="small"
                     style={{ maxWidth: 75 }}
-                    sx={createMultisigTextFieldStyles}
+                    sx={{
+                      ...createMultisigTextFieldStyles,
+                      ...createMultisigThresholdStyles,
+                    }}
                     InputProps={{
                       sx: {
                         input: {

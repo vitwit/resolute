@@ -74,6 +74,25 @@ export const createMultisigTextFieldStyles = {
   '& .Mui-disabled': {
     WebkitTextFillColor: '#ffffff6b !important',
   },
+  '& .MuiOutlinedInput-root': {
+    border: '1px solid transparent',
+    borderRadius: '16px',
+  },
+  '& .Mui-focused': {
+    border: '1px solid #ffffff4a',
+    borderRadius: '16px',
+  },
+};
+
+export const createMultisigThresholdStyles = {
+  '& .MuiOutlinedInput-root': {
+    border: '1px solid transparent',
+    borderRadius: '4px',
+  },
+  '& .Mui-focused': {
+    border: '1px solid #ffffff4a',
+    borderRadius: '4px',
+  },
 };
 
 export const createTxnTextFieldStyles = {

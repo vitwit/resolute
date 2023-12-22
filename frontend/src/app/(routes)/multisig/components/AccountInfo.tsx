@@ -8,8 +8,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import DialogDeleteMultisig from './DialogDeleteMultisig';
-import { copyToClipboard } from '@/utils/copyToClipboard';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+import CommonCopy from '@/components/CommonCopy';
 
 interface AccountInfoProps {
   chainID: string;
@@ -151,7 +151,10 @@ const AccountDetails = ({
         />
         <div className="w-full flex justify-between">
           <h2 className="text-[16px] font-bold">{name}</h2>
-          <h3 className="text-[14px] font-bold">Created&nbsp;{getTimeDifferenceToFutureDate(created_at, true)}&nbsp;ago</h3>
+          <h3 className="text-[14px] font-bold">
+            Created&nbsp;{getTimeDifferenceToFutureDate(created_at, true)}
+            &nbsp;ago
+          </h3>
         </div>
       </div>
       <div className="flex-1 p-6 space-y-6 flex flex-col h-full">
@@ -242,19 +245,5 @@ const AccountInfoItem = ({
 };
 
 const MemberAddress = ({ address }: { address: string }) => {
-  return (
-    <div className="member-address">
-      <div className="overflow-hidden">{shortenAddress(address, 28)}</div>
-      <Image
-        onClick={() => {
-          copyToClipboard(address);
-        }}
-        className="cursor-pointer"
-        src="/copy.svg"
-        width={24}
-        height={24}
-        alt="copy"
-      />
-    </div>
-  );
+  return <CommonCopy message={address} style="text-[14px] justify-center" />;
 };
