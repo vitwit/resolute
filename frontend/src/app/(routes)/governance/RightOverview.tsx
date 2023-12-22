@@ -370,7 +370,7 @@ const RightOverview = ({
                   <div className="bg-[#FFFFFF0D] rounded-2xl">
                     <DepositProposalDetails
                       submittedAt={getTimeDifferenceToFutureDate(
-                        get(proposalInfo, 'submit_time', '-')
+                        get(proposalInfo, 'submit_time', '-'),true
                       )}
                       endsAt={getTimeDifferenceToFutureDate(
                         get(proposalInfo, 'deposit_end_time', '-')

@@ -415,15 +415,17 @@ const ProposalOverviewVote = ({
               </div>
               <div className="bg-[#0E0B26] rounded-2xl">
                 <ProposalDetailsVoteCard
-                  createdAt={getLocalTime(
-                    get(proposalInfo, 'submit_time', '-')
-                  )}
-                  startedAt={getLocalTime(
-                    get(proposalInfo, 'voting_start_time', '-')
-                  )}
-                  endsAt={getLocalTime(
+                  createdAt={`${getTimeDifferenceToFutureDate(
+                    get(proposalInfo, 'submit_time'),
+                    true
+                  )} ago`}
+                  startedAt={`${getTimeDifferenceToFutureDate(
+                    get(proposalInfo, 'voting_start_time', '-'),
+                    true
+                  )} ago`}
+                  endsAt={`${getTimeDifferenceToFutureDate(
                     get(proposalInfo, 'voting_end_time', '-')
-                  )}
+                  )}`}
                   proposalNetwork={getChainName(chainID)}
                   createdby={'-'}
                   // depositamount={`${get(
@@ -457,7 +459,7 @@ const ProposalOverviewVote = ({
               <div className=" bg-[#0e0b26]">
                 <DepositProposalDetails
                   submittedAt={getTimeDifferenceToFutureDate(
-                    get(proposalInfo, 'submit_time', '-')
+                    get(proposalInfo, 'submit_time', '-'),true
                   )}
                   endsAt={getTimeDifferenceToFutureDate(
                     get(proposalInfo, 'deposit_end_time', '-')
