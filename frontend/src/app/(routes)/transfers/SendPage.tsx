@@ -236,7 +236,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
                     Memo
                   </div>
                 </div>
-                <div className="flex flex-1 overflow-hidden bg-[#FFFFFF0D] rounded-2xl px-6 pt-6">
+                <div className="memo-text-field">
                   <CustomMultiLineTextField
                     rows={6}
                     name={sendProps.memo.name}
