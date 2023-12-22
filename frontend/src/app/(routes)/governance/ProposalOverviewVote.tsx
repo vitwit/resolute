@@ -18,7 +18,7 @@ import {
   getDepositParams,
 } from '@/store/features/gov/govSlice';
 import { get, parseInt } from 'lodash';
-import { getLocalTime, getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { parseBalance } from '@/utils/denom';
 
 import { formatCoin } from '@/utils/util';
@@ -315,9 +315,7 @@ const ProposalOverviewVote = ({
           <div className="flex justify-between">
             <div className="space-y-4">
               <div className="flex space-y-[68px] flex-col">
-                <div className="w-[412px]">
-                  <TopNav />
-                </div>
+                <TopNav />
 
                 <div className="status-grid w-[450px]">
                   <div className="status-view-grid w-full">
@@ -415,60 +413,66 @@ const ProposalOverviewVote = ({
                   </div>
                 </div>
               </div>
-              <ProposalDetailsVoteCard
-                createdAt={`${getTimeDifferenceToFutureDate(
-                  get(proposalInfo, 'submit_time'),
-                  true
-                )} ago`}
-                startedAt={`${getTimeDifferenceToFutureDate(
-                  get(proposalInfo, 'voting_start_time'),
-                  true
-                )} ago`}
-                endsAt={`${getTimeDifferenceToFutureDate(
-                  get(proposalInfo, 'voting_end_time', '-')
-                )}`}
-                proposalNetwork={getChainName(chainID)}
-                createdby={'-'}
-                // depositamount={`${get(
-                //   proposalInfo,
-                //   'total_deposit[0].amount'
-                // )} ${get(proposalInfo, 'total_deposit[0].denom')}`}
-                depositamount={formatCoin(
-                  parseBalance(
-                    get(proposalInfo, 'total_deposit', []),
-                    currency?.coinDecimals,
-                    currency?.coinMinimalDenom
-                  ),
-                  currency?.coinDenom
-                )}
-              />
+              <div className="bg-[#0E0B26] rounded-2xl">
+                <ProposalDetailsVoteCard
+                  createdAt={`${getTimeDifferenceToFutureDate(
+                    get(proposalInfo, 'submit_time'),
+                    true
+                  )} ago`}
+                  startedAt={`${getTimeDifferenceToFutureDate(
+                    get(proposalInfo, 'voting_start_time', '-'),
+                    true
+                  )} ago`}
+                  endsAt={`${getTimeDifferenceToFutureDate(
+                    get(proposalInfo, 'voting_end_time', '-')
+                  )}`}
+                  proposalNetwork={getChainName(chainID)}
+                  createdby={'-'}
+                  // depositamount={`${get(
+                  //   proposalInfo,
+                  //   'total_deposit[0].amount'
+                  // )} ${get(proposalInfo, 'total_deposit[0].denom')}`}
+                  depositamount={formatCoin(
+                    parseBalance(
+                      get(proposalInfo, 'total_deposit', []),
+                      currency?.coinDecimals,
+                      currency?.coinMinimalDenom
+                    ),
+                    currency?.coinDenom
+                  )}
+                />
+              </div>
             </div>
           </div>
         ) : (
-          <div className="flex w-[480px] flex-end">
+          <div className="flex w-[480px] flex-end flex-col space-y-10">
             <div className="space-y-4 w-full">
               <div className="flex space-y-[68px] flex-col">
                 <div className="w-[412px]">
                   <TopNav />
                 </div>
+
                 <div className="bg-[#0E0B26] rounded-2xl">
                   <DepositProposalInfo chainID={chainID} />
                 </div>
               </div>
-              <DepositProposalDetails
-                submittedAt={getLocalTime(
-                  get(proposalInfo, 'submit_time', '-')
-                )}
-                endsAt={getLocalTime(
-                  get(proposalInfo, 'deposit_end_time', '-')
-                )}
-                depositrequired={formatCoin(
-                  depositRequired,
-                  currency.coinDenom
-                )}
-                proposalNetwork={getChainName(chainID)}
-              />
-            </div>
+              <div className=" bg-[#0e0b26]">
+                <DepositProposalDetails
+                  submittedAt={getTimeDifferenceToFutureDate(
+                    get(proposalInfo, 'submit_time', '-'),
+                    true
+                  )}
+                  endsAt={getTimeDifferenceToFutureDate(
+                    get(proposalInfo, 'deposit_end_time', '-')
+                  )}
+                  depositrequired={formatCoin(
+                    depositRequired,
+                    currency.coinDenom
+                  )}
+                  proposalNetwork={getChainName(chainID)}
+                />
+              </div>
+            </div>{' '}
           </div>
         )}
       </div>
