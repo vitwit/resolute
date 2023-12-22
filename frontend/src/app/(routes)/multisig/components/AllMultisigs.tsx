@@ -13,6 +13,8 @@ import DialogCreateMultisig from './DialogCreateMultisig';
 import useGetAccountInfo from '@/custom-hooks/useGetAccountInfo';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Link from 'next/link';
+import { copyToClipboard } from '@/utils/copyToClipboard';
+import { setError } from '@/store/features/common/commonSlice';
 
 interface AllMultisigsProps {
   address: string;
@@ -150,6 +152,7 @@ const MultisigAccountCard = ({
   actionsRequired,
   chainName,
 }: MultisigAccountCardProps) => {
+  const dispatch = useAppDispatch();
   return (
     <Link href={`/multisig/${chainName}/${address}`}>
       <div className="space-y-5 text-[14px] multisig-account-card">
@@ -158,7 +161,23 @@ const MultisigAccountCard = ({
           <div className="opacity-50">Address</div>
           <div className="account-address">
             <span className="truncate">{shortenAddress(address, 27)}</span>
-            <Image src="/copy.svg" width={24} height={24} alt="copy" />
+            <Image
+              onClick={(e) => {
+                copyToClipboard(address);
+                dispatch(
+                  setError({
+                    type: 'success',
+                    message: 'Copied',
+                  })
+                );
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              src="/copy.svg"
+              width={24}
+              height={24}
+              alt="copy"
+            />
           </div>
         </div>
         <div className="flex justify-between">

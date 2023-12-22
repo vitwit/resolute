@@ -6,6 +6,7 @@ import {
   MULTISIG_SEND_TEMPLATE,
   MULTISIG_TX_TYPES,
   MULTISIG_UNDELEGATE_TEMPLATE,
+  NO_MESSAGES_ILLUSTRATION,
   REDELEGATE_TYPE_URL,
   SEND_TYPE_URL,
   UNDELEGATE_TYPE_URL,
@@ -454,7 +455,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
               />
             </div>
           </div>
-          <div className="mt-6 mb-10 pl-6 pr-10 text-white flex h-full gap-6">
+          <div className="mb-10 pl-6 pr-10 text-white flex h-full gap-6">
             <div className="flex-1 pl-6 pr-0 h-full">
               <div className="text-[20px] font-bold">Create Transaction</div>
               <SelectTransactionType
@@ -631,9 +632,9 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
               ) : (
                 <div className="flex justify-center mt-[30%]">
                   <Image
-                    src="/empty-messages-image.png"
-                    width={200}
-                    height={200}
+                    src={NO_MESSAGES_ILLUSTRATION}
+                    width={300}
+                    height={177}
                     alt="No Messages"
                   />
                 </div>

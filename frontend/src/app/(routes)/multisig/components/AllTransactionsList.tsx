@@ -107,7 +107,7 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
             alt={'No Transactions'}
           />
           <div className="text-[16px] my-6 leading-normal italic font-extralight text-center">
-            Haven’t done any transactions yet ?
+            No Transactions
           </div>
         </div>
       ) : null}

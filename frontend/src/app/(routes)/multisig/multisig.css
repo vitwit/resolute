@@ -141,7 +141,7 @@
 }
 
 .file-upload-box {
-  @apply flex justify-center items-center px-4 py-10 bg-[#FFFFFF1A] min-h-[298px] rounded-3xl w-full cursor-pointer;
+  @apply flex justify-center items-center px-4 py-10 bg-[#FFFFFF1A] min-h-[304px] rounded-3xl w-full cursor-pointer;
 }
 
 .error-box {
