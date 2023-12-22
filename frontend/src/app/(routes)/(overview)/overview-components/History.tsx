@@ -7,6 +7,7 @@ import TransactionItem from './TransactionItem';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { useRouter } from 'next/navigation';
+import NoTransactions from '@/components/illustrations/NoTransactions';
 
 const History = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
@@ -94,15 +95,21 @@ export const RecentTransactions = ({
   );
   return (
     <div className="flex-1 overflow-y-scroll">
-      <div className="text-white w-full space-y-3 mt-6">
-        {transactions.map((tx) => (
-          <TransactionItem
-            key={tx.transactionHash}
-            transaction={tx}
-            msgFilters={msgFilters}
-          />
-        ))}
-      </div>
+      {transactions.length ? (
+        <div className="text-white w-full space-y-3 mt-6">
+          {transactions.map((tx) => (
+            <TransactionItem
+              key={tx.transactionHash}
+              transaction={tx}
+              msgFilters={msgFilters}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="h-full flex items-center">
+          <NoTransactions />
+        </div>
+      )}
     </div>
   );
 };

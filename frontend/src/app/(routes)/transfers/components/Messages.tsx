@@ -40,22 +40,33 @@ const Messages = ({
           </div>
         </div>
         <div className="flex h-full flex-col relative">
-          {msgs
-            .slice(
-              MULTI_TRANSFER_MSG_COUNT * index,
-              MULTI_TRANSFER_MSG_COUNT * index + MULTI_TRANSFER_MSG_COUNT
-            )
-            .map((msg, offset) => (
-              <div key={offset}>
-                <Message
-                  msg={msg}
-                  onDelete={onDelete}
-                  index={MULTI_TRANSFER_MSG_COUNT * index + offset}
-                />
+          {msgs.length ? (
+            msgs
+              .slice(
+                MULTI_TRANSFER_MSG_COUNT * index,
+                MULTI_TRANSFER_MSG_COUNT * index + MULTI_TRANSFER_MSG_COUNT
+              )
+              .map((msg, offset) => (
+                <div key={offset}>
+                  <Message
+                    msg={msg}
+                    onDelete={onDelete}
+                    index={MULTI_TRANSFER_MSG_COUNT * index + offset}
+                  />
 
-                <div style={{ marginTop: `50px` }} />
-              </div>
-            ))}
+                  <div style={{ marginTop: `50px` }} />
+                </div>
+              ))
+          ) : (
+            <div className="h-full flex flex-1 justify-center items-center">
+              <Image
+                src="/no-messages-illustration.png"
+                width={300}
+                height={178}
+                alt="no messages"
+              />
+            </div>
+          )}
         </div>
       </div>
       <div className="w-full h-[0.25px] bg-[#6e6d7d] opacity-30"></div>
