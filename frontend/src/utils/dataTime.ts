@@ -35,28 +35,23 @@ export function getTimeDifferenceToFutureDate(
 ): string {
   const now = new Date();
   const futureDateObj = new Date(futureDate);
-
   if (isNaN(futureDateObj.getTime())) {
     return 'Invalid date';
   }
-
   let timeDifference;
   if (past) {
     timeDifference = now.getTime() - futureDateObj.getTime();
   } else {
     timeDifference = futureDateObj.getTime() - now.getTime();
   }
-
   const seconds = Math.floor(timeDifference / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
   const months = Math.floor(days / 30);
   const years = Math.floor(days / 365);
-
   const getTimeString = (value: number, unit: string) =>
     `${value} ${value === 1 ? unit : unit + `s`}`;
-
   if (seconds < 60) {
     return getTimeString(seconds, 'second');
   } else if (minutes < 60) {
