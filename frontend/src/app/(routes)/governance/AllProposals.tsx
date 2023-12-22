@@ -104,7 +104,17 @@ const AllProposals = ({
         <div className="space-y-4 w-full">
           <div className="flex justify-between">
             <div className="flex space-x-2">
-              <p className="proposal-text-medium">No proposals found.</p>
+              <div className="flex flex-col justify-center items-center absolute right-[606px] bottom-[155.5px]">
+                <Image
+                  src="/gov-illustration.png"
+                  width={610}
+                  height={464}
+                  alt="Gov-Illustration"
+                />
+                <p className="text-white text-center text-base italic font-extralight leading-[normal]">
+                  Opps ! You have no active proposals
+                </p>
+              </div>
             </div>
           </div>
         </div>
