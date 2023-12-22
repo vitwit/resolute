@@ -1,0 +1,49 @@
+.divider {
+  @apply w-full my-6;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.txn-status-text {
+  @apply text-[28px] leading-normal font-semibold tracking-[1.12px];
+}
+
+.txn-failed-text {
+  @apply text-[#E57575];
+}
+
+.txt-success-text {
+  background: linear-gradient(90deg, #15cbab 50.13%, #1fd29e 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.message-text {
+  @apply text-[16px] font-bold leading-normal;
+}
+
+.txn-details {
+  @apply bg-[#FFFFFF0D] rounded-2xl w-full p-6 space-y-4;
+}
+
+.txn-details-item {
+  @apply flex gap-10 items-center text-[12px];
+}
+
+.txn-details-item-title {
+  @apply min-w-[120px];
+}
+
+.txn-details-item-content {
+  @apply text-[12px] leading-10 tracking-[0.48px];
+}
+
+.txn-receipt-btn {
+  @apply text-center text-[16px] font-medium leading-[20px] tracking-[0.64px] px-10 py-[10px] flex-1 rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.btn-disabled {
+  @apply bg-[#FFFFFF1A] text-[#FFFFFF1A] cursor-not-allowed;
+  background: #ffffff1a;
+}
