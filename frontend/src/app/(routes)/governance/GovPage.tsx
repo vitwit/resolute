@@ -36,7 +36,7 @@ const GovPage = ({ chainIDs }: { chainIDs: string[] }) => {
   };
 
   return (
-    <div className="w-full flex justify-end ">
+    <div className="w-full flex justify-end">
       <div className="flex-1 scrollable-container">
         <Proposals
           handleChangeProposalState={handleChangeProposalState}
