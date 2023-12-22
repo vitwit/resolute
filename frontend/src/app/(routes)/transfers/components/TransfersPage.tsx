@@ -8,6 +8,7 @@ import MultiTransfer from './MultiTransfer';
 import useInitBalances from '@/custom-hooks/useInitBalances';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
+import useSortedAssets from '@/custom-hooks/useSortedAssets';
 
 export interface TransfersTab {
   current: string;
@@ -15,6 +16,7 @@ export interface TransfersTab {
 }
 const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
+  const [sortedAssets] = useSortedAssets(chainIDs, { showAvailable: true });
   const [tab, setTab] = useState<TransfersTab>(TRANSFERS_TAB1);
   const changeTab = (tab: TransfersTab) => {
     if (tab === TRANSFERS_TAB1) setTab(TRANSFERS_TAB2);
@@ -54,7 +56,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
         </div>
         <div className="flex flex-col rounded-2xl bg-[#0e0b26] space-y-6 mt-6 flex-1">
           {tab.current === SINGLE_TAB_TEXT ? (
-            <SingleTransfer chainIDs={chainIDs} />
+            <SingleTransfer sortedAssets={sortedAssets} chainIDs={chainIDs}/>
           ) : (
             <MultiTransfer chainID={chainIDs[0]} />
           )}
