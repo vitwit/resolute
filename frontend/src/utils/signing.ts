@@ -20,6 +20,7 @@ import {
   StdFee,
   GasPrice,
 } from '@cosmjs/stargate';
+import { cancelUnbondingAminoConverter } from '@/store/features/staking/amino';
 import { sleep } from '@cosmjs/utils';
 import { multiply, format, ceil, bignumber, floor } from 'mathjs';
 import { AminoMsg, makeSignDoc as makeAminoSignDoc } from '@cosmjs/amino';
@@ -33,6 +34,7 @@ import {
 import { ERR_NO_OFFLINE_AMINO_SIGNER, ERR_UNKNOWN } from './errors';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { GAS_FEE } from './constants';
+import { MsgCancelUnbondingDelegation } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 
 declare const window: WalletWindow;
 
@@ -110,7 +112,9 @@ export const signAndBroadcast = async (
     ...createDistributionAminoConverters(),
     ...createGovAminoConverters(),
     ...createStakingAminoConverters(),
+    ...cancelUnbondingAminoConverter(),
   };
+  registry.register("/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation", MsgCancelUnbondingDelegation);
   let aminoTypes = new AminoTypes(defaultConverters);
   aminoTypes = new AminoTypes({ ...defaultConverters });
 
