@@ -12,6 +12,7 @@ import {
   GetUnbondingResponse,
   Pagination,
   Params,
+  TxCancelUnbondingInputs,
   TxDelegateInputs,
   TxRedelegateInputs,
   TxReStakeInputs,
@@ -23,7 +24,8 @@ import { AxiosError } from 'axios';
 import { TxStatus } from '../../../types/enums';
 import { NewTransaction } from '@/utils/transaction';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
-import { setTxAndHash } from '../common/commonSlice';
+import { setError, setTxAndHash } from '../common/commonSlice';
+import { Unbonding } from '@/txns/staking/unbonding';
 
 interface Chain {
   validators: Validators;
@@ -56,6 +58,7 @@ interface Chain {
   };
   poolStatus: TxStatus;
   reStakeTxStatus: TxStatus;
+  cancelUnbondingTxStatus: TxStatus;
 }
 
 interface Chains {
@@ -131,6 +134,7 @@ const initialState: StakingState = {
       type: '',
     },
     reStakeTxStatus: TxStatus.INIT,
+    cancelUnbondingTxStatus: TxStatus.INIT,
   },
 };
 
@@ -353,6 +357,83 @@ export const txUnDelegate = createAsyncThunk(
   }
 );
 
+export const txCancelUnbonding = createAsyncThunk(
+  'staking/cancel-unbonding',
+  async (
+    data: TxCancelUnbondingInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const msg = Unbonding(
+        data.delegator,
+        data.validator,
+        data.amount,
+        data.denom,
+        data.creationHeight
+      );
+      msg.value.creationHeight = msg.value.creationHeight.toString();
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        [msg],
+        GAS_FEE,
+        '',
+        `${data.feeAmount}${data.denom}`,
+        data.basicChainInfo.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      const tx = NewTransaction(
+        result,
+        [msg],
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
+          transactions: [tx],
+        })
+      );
+      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+
+      if (result?.code === 0) {
+        const inputData = {
+          baseURL: data.basicChainInfo.baseURL,
+          address: data.delegator,
+          chainID: data.basicChainInfo.chainID,
+        };
+        dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
+        dispatch(getDelegations(inputData));
+        dispatch(getUnbonding(inputData));
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      console.log('Error while cancel unbonding the transaction ', error);
+      if (error instanceof AxiosError) {
+        dispatch(
+          setError({
+            type: 'error',
+            message: error.message,
+          })
+        );
+        return rejectWithValue(error.response);
+      }
+      dispatch(
+        setError({
+          type: 'error',
+          message: ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
 export const getValidators = createAsyncThunk(
   'staking/validators',
   async (
@@ -529,6 +610,15 @@ export const stakeSlice = createSlice({
     resetState: (state, action: PayloadAction<{ chainID: string }>) => {
       const { chainID } = action.payload;
       state.chains[chainID] = cloneDeep(initialState.defaultState);
+    },
+    resetCancelUnbondingTx: (
+      state,
+      action: PayloadAction<{ chainID: string }>
+    ) => {
+      const { chainID } = action.payload;
+      state.chains[chainID].cancelUnbondingTxStatus = cloneDeep(
+        initialState.defaultState.cancelUnbondingTxStatus
+      );
     },
     resetDefaultState: (state, action: PayloadAction<string[]>) => {
       const chainsMap: Chains = {};
@@ -851,6 +941,20 @@ export const stakeSlice = createSlice({
         state.chains[chainID].tx.type = 'redelegate';
       });
 
+      builder
+      .addCase(txCancelUnbonding.pending, (state, action) => {
+        const { chainID } = action.meta.arg.basicChainInfo;
+        state.chains[chainID].cancelUnbondingTxStatus = TxStatus.PENDING;
+      })
+      .addCase(txCancelUnbonding.fulfilled, (state, action) => {
+        const { chainID } = action.meta.arg.basicChainInfo;
+        state.chains[chainID].cancelUnbondingTxStatus = TxStatus.IDLE;
+      })
+      .addCase(txCancelUnbonding.rejected, (state, action) => {
+        const { chainID } = action.meta.arg.basicChainInfo;
+        state.chains[chainID].cancelUnbondingTxStatus = TxStatus.REJECTED;
+      });
+
     // restake transaction
     builder
       .addCase(txRestake.pending, (state, action) => {
@@ -875,6 +979,7 @@ export const {
   resetTxType,
   resetDefaultState,
   resetRestakeTx,
+  resetCancelUnbondingTx,
 } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

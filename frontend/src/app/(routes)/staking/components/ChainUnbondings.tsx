@@ -25,17 +25,20 @@ const ChainUnbondings = ({
           return (
             <UnbondingCard
               key={row.validator_address + entry.completion_time}
-              validator={
+              moniker={
                 validators?.active?.[row.validator_address]?.description.moniker
               }
               identity={
                 validators?.active?.[row.validator_address]?.description.identity
               }
+              validatorAddress={row.validator_address}
               chainName={chainName}
               amount={parseDenomAmount(entry.balance, currency.coinDecimals)}
               currency={currency}
               networkLogo={networkLogo}
               completionTime={entry.completion_time}
+              creationHeight={entry.creation_height}
+              chainID={chainID}
             />
           );
         });
