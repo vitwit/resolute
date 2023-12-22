@@ -23,7 +23,7 @@
 }
 
 .memo-text-field {
-  @apply flex flex-1 overflow-hidden bg-[#FFFFFF0D] rounded-2xl px-6 pt-6;
+  @apply flex flex-1 overflow-hidden bg-[#FFFFFF0D] rounded-2xl px-4 pt-4;
   border: 1px solid transparent;
 }
 
