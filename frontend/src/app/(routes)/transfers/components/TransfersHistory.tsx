@@ -28,7 +28,7 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
     <div>
       <div className="text-white text-center mt-6">
-        <div className="text-sm not-italic font-normal leading-[normal] mb-2">
+        <div className="text-sm not-italic font-normal leading-[normal] mb-3">
           Available Balance
         </div>
         <span className="text-center text-[32px] not-italic font-bold leading-[normal]">
