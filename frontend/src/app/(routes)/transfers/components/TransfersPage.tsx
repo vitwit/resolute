@@ -24,8 +24,8 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   useInitBalances({ chainIDs });
 
   return (
-    <div className="w-full flex justify-between max-h-screen text-white">
-      <div className="w-full page-padding overflow-y-scroll">
+    <div className="w-full flex justify-between max-h-screen text-white flex-1">
+      <div className="w-full page-padding overflow-y-scroll flex flex-col flex-1">
         <MainTopNav title="Transfers" />
         <div className="flex justify-between items-center mt-10">
           <div className="text-base not-italic font-normal leading-[normal]">
@@ -52,7 +52,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
             {tab.to}
           </button>
         </div>
-        <div className="flex flex-col rounded-2xl bg-[#0e0b26] space-y-6 mt-6">
+        <div className="flex flex-col rounded-2xl bg-[#0e0b26] space-y-6 mt-6 flex-1">
           {tab.current === SINGLE_TAB_TEXT ? (
             <SingleTransfer chainIDs={chainIDs} />
           ) : (

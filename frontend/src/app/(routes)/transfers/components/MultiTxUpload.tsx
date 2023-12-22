@@ -34,7 +34,7 @@ const MultiTxUpload = ({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 flex flex-col flex-1">
       <div className="w-full flex justify-between items-center">
         <div className="text-sm not-italic font-normal leading-[normal]">
           File Upload
@@ -52,7 +52,7 @@ const MultiTxUpload = ({
         </div>
       </div>
       <div
-        className="file-upload-box"
+        className="file-upload-box flex flex-col flex-1"
         style={{
           backgroundColor: '#1a1731',
           height: '228px',

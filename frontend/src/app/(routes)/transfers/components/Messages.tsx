@@ -15,7 +15,6 @@ const Messages = ({
   onDelete: (index: number) => void;
   onDeleteAll: () => void;
 }) => {
-
   const [index, setIndex] = useState(0);
   const pagesCount = useMemo(() => {
     const pages = Math.ceil(msgs.length / MULTI_TRANSFER_MSG_COUNT);
@@ -93,8 +92,14 @@ const Message = ({
 
   return (
     <div className={`flex items-center justify-between w-full absolute`}>
-      <div className="flex gap-1 items-center">
-        <Image src="/back-arrow.svg" width={24} height={24} alt="msg" />
+      <div className="flex gap-2 items-center">
+        <Image
+          className="bg-[#ffffff1a] rounded-lg"
+          src="/solid-arrow-icon.svg"
+          width={24}
+          height={24}
+          alt="msg"
+        />
         <div className="overflowed-text max-w-[275px] text-sm not-italic font-normal leading-[normal]">
           {formattedSerialize(
             msg,
@@ -104,7 +109,7 @@ const Message = ({
         </div>
       </div>
       <Image
-        src="/close.svg"
+        src="/delete-cross-icon.svg"
         className="cursor-pointer"
         width={16}
         height={16}
