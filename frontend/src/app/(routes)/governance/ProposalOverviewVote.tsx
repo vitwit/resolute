@@ -18,7 +18,7 @@ import {
   getDepositParams,
 } from '@/store/features/gov/govSlice';
 import { get, parseInt } from 'lodash';
-import { getLocalTime, getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import { parseBalance } from '@/utils/denom';
 
 import { formatCoin } from '@/utils/util';
@@ -459,7 +459,8 @@ const ProposalOverviewVote = ({
               <div className=" bg-[#0e0b26]">
                 <DepositProposalDetails
                   submittedAt={getTimeDifferenceToFutureDate(
-                    get(proposalInfo, 'submit_time', '-'),true
+                    get(proposalInfo, 'submit_time', '-'),
+                    true
                   )}
                   endsAt={getTimeDifferenceToFutureDate(
                     get(proposalInfo, 'deposit_end_time', '-')
