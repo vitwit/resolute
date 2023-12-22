@@ -456,10 +456,10 @@ const ProposalOverviewVote = ({
               </div>
               <div className=" bg-[#0e0b26]">
                 <DepositProposalDetails
-                  submittedAt={getLocalTime(
+                  submittedAt={getTimeDifferenceToFutureDate(
                     get(proposalInfo, 'submit_time', '-')
                   )}
-                  endsAt={getLocalTime(
+                  endsAt={getTimeDifferenceToFutureDate(
                     get(proposalInfo, 'deposit_end_time', '-')
                   )}
                   depositrequired={formatCoin(

@@ -11,7 +11,6 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getGovTallyParams, getProposal } from '@/store/features/gov/govSlice';
 import { get } from 'lodash';
 import {
-  getLocalTime,
   getTimeDifference,
   getTimeDifferenceToFutureDate,
 } from '@/utils/dataTime';
@@ -139,7 +138,7 @@ const RightOverview = ({
     get(proposalInfo, 'submit_time')
   );
   const Totalvotes = totalVotes.toLocaleString();
-  const [depositRequired, setDepositRequired] = useState(0);
+  const [depositRequired] = useState(0);
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -370,10 +369,10 @@ const RightOverview = ({
                   </div>
                   <div className="bg-[#FFFFFF0D] rounded-2xl">
                     <DepositProposalDetails
-                      submittedAt={getLocalTime(
+                      submittedAt={getTimeDifferenceToFutureDate(
                         get(proposalInfo, 'submit_time', '-')
                       )}
-                      endsAt={getLocalTime(
+                      endsAt={getTimeDifferenceToFutureDate(
                         get(proposalInfo, 'deposit_end_time', '-')
                       )}
                       depositrequired={formatCoin(
