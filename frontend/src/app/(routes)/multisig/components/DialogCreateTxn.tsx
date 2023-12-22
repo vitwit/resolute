@@ -633,7 +633,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                 <div className="flex justify-center mt-[30%]">
                   <Image
                     src={NO_MESSAGES_ILLUSTRATION}
-                    width={300}
+                    width={200}
                     height={177}
                     alt="No Messages"
                   />
