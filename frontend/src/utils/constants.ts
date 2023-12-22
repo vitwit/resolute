@@ -34,7 +34,7 @@ export const DELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgDelegate';
 export const UNDELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgUndelegate';
 export const REDELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgBeginRedelegate';
 export const SEND_TEMPLATE = 'https://api.resolute.vitwit.com/_static/send.csv';
-export const MULTI_TRANSFER_MSG_COUNT = 10;
+export const MULTI_TRANSFER_MSG_COUNT = 13;
 export const DELETE_TXN_DIALOG_IMAGE_PATH = '/delete-txn-popup-image.png';
 export const EMPTY_TXN = {
   id: NaN,

@@ -118,6 +118,7 @@ export const formatCoin = (amount: number, denom: string): string => {
 };
 
 export function formatNumber(number: number): string {
+  if (number <= 999) return number + '';
   const suffixes = ['', 'K', 'M', 'B', 'T'];
   const tier = (Math.log10(Math.abs(number)) / 3) | 0;
 

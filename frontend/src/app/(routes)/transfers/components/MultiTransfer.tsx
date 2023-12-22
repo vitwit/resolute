@@ -82,13 +82,16 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
   };
 
   return (
-    <div className="p-6">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="w-full h-[605px] flex">
-          <div className="w-1/2 flex flex-col justify-between pr-5">
-            <div>
-              <Summary chainIDs={[chainID]} borderStyle="rounded-2xl" />
-            </div>
+    <div className="flex flex-col flex-1">
+      <div>
+        <Summary
+          chainIDs={[chainID]}
+          borderStyle="rounded-[16px_16px_0px_0px]"
+        />
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1">
+        <div className="w-full flex p-6 flex-1">
+          <div className="w-1/2 flex flex-col space-y-6 pr-5 flex-1">
             <MultiTxUpload addMsgs={addMsgs} chainID={chainID} />
             <div>
               <div className="text-sm not-italic font-normal leading-[normal] mb-2">
@@ -111,7 +114,7 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
             <CustomSubmitButton
               pendingStatus={txPendingStatus === TxStatus.PENDING}
               circularProgressSize={12}
-              buttonStyle="primary-custom-btn"
+              buttonStyle="primary-custom-btn w-[144px]"
               buttonContent="Send"
             />
           </div>
