@@ -33,14 +33,19 @@
 
 .asset-action {
     @apply w-8 h-8 rounded-lg flex justify-center items-center;
+}
+
+.active {
+    @apply cursor-pointer;
     background: linear-gradient(180deg,
             rgba(74, 162, 156, 0.8) 0%,
             rgba(139, 61, 167, 0.8) 100%),
         lightgray 50% / cover no-repeat;
 }
 
-.asset-action-disabled {
-    opacity: 0.5;
+.disabled {
+    background: #ffffff1a;
+    opacity: 1;
     cursor: not-allowed;
 }
 

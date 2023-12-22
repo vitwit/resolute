@@ -21,7 +21,7 @@
       "inputProps": {
         "sx": {
           "input": {
-            "minHeight":"30px",
+            "minHeight": "30px",
             "color": "white",
             "fontSize": "16px",
             "paddingX": 2,
@@ -55,7 +55,7 @@
       "inputProps": {
         "sx": {
           "input": {
-            "minHeight":"30px",
+            "minHeight": "30px",
             "color": "white",
             "fontSize": "16px",
             "paddingX": 2,
@@ -66,29 +66,33 @@
     },
     "memo": {
       "name": "memo",
-      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
+      "textFieldClassName": " rounded-2xl flex flex-col flex-1",
       "rules": {},
       "textFieldSize": "small",
-      "placeHolder": "",
+      "placeHolder": "Enter Memo Here",
       "textFieldCustomMuiSx": {
-        "& .MuiTypography-body1": {
-          "color": "white",
-          "fontSize": "12px",
-          "fontWeight": 200,
-          "height": "100px"
+        "& .MuiInputBase-input": {
+          "color": "white"
+        },
+        "& .MuiInputLabel-root": {
+          "color": "white"
         },
         "& .MuiOutlinedInput-notchedOutline": {
           "border": "none"
+        },
+        "& .MuiInputBase-root": {
+          "padding": "0"
         }
       },
+
       "inputProps": {
         "sx": {
           "input": {
-            "minHeight":"30px",
+            "minHeight": "30px",
             "color": "white",
             "fontSize": "16px",
-            "paddingX": 2,
-            "paddingY": 1
+            "paddingX": 0,
+            "paddingY": 0
           }
         }
       }

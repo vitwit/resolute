@@ -8,7 +8,9 @@ import AllAssets from './components/AllAssets';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txBankSend } from '@/store/features/bank/bankSlice';
 import { SEND_TX_FEE } from '@/utils/constants';
-import CustomTextField from '@/components/CustomTextField';
+import CustomTextField, {
+  CustomMultiLineTextField,
+} from '@/components/CustomTextField';
 import props from './customTextFields.json';
 import CustomSubmitButton from '@/components/CustomButton';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
@@ -18,7 +20,6 @@ import { setError } from '@/store/features/common/commonSlice';
 
 const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets] = useSortedAssets(chainIDs, { showAvailable: true });
-  const [openMemo, setOpenMemo] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<ParsedAsset | undefined>();
   const [slicedAssetsIndex, setSlicedAssetIndex] = useState(0);
   const dispatch = useAppDispatch();
@@ -131,9 +132,16 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
   };
 
   return (
-    <div className="h-full w-full space-y-6">
+    <div className="h-full w-full space-y-10 flex flex-col flex-1">
       <div className="space-y-4">
-        <div>Assets</div>
+        <div className="flex items-center gap-2 h-6">
+          <div>Assets</div>
+          {!sortedAssets.length ? (
+            <div className="errors-chip">No Assets Found</div>
+          ) : !selectedAsset ? (
+            <div className="errors-chip">Please select an Asset</div>
+          ) : null}
+        </div>
         <Cards
           assets={sortedAssets}
           slicedAssetsIndex={slicedAssetsIndex}
@@ -147,12 +155,20 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
           onSelectAsset={onSelectAsset}
         />
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-        <div className="w-full">
-          <div className="flex gap-4 justify-between w-full mt-6">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full flex flex-col flex-1"
+      >
+        <div className="w-full flex flex-col flex-1 mb-6">
+          <div className="flex flex-col gap-4 justify-between w-full">
             <div className="flex-1 space-y-2">
-              <div className="text-sm not-italic font-normal leading-[normal]">
-                Recipient Address
+              <div className="flex gap-2 h-6 items-center">
+                <div className="text-sm not-italic font-normal leading-[normal]">
+                  Recipient Address
+                </div>
+                {errors.address ? (
+                  <div className="errors-chip">{errors.address?.message}</div>
+                ) : null}
               </div>
               <CustomTextField
                 name={sendProps.address.name}
@@ -166,14 +182,15 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
                 inputProps={sendProps.address.inputProps}
                 required={true}
               />
-
-              {errors.address ? (
-                <div className="errors-chip">{errors.address?.message}</div>
-              ) : null}
             </div>
-            <div className="w-[33%] space-y-2">
-              <div className="text-sm not-italic font-normal leading-[normal]">
-                Amount
+            <div className="space-y-2">
+              <div className="flex gap-2 items-center h-6">
+                <div className="text-sm not-italic font-normal leading-[normal]">
+                  Amount
+                </div>
+                {!!errors.amount && (
+                  <div className="errors-chip">{errors.amount?.message}</div>
+                )}
               </div>
               <CustomTextField
                 name={sendProps.amount.name}
@@ -187,32 +204,17 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
                 inputProps={amountInputProps}
                 required={true}
               />
-
-              {!sortedAssets.length ? (
-                <div className="errors-chip">No Assets Found</div>
-              ) : !selectedAsset ? (
-                <div className="errors-chip">Please select an Asset</div>
-              ) : errors.amount ? (
-                <div className="errors-chip">{errors.amount?.message}</div>
-              ) : null}
             </div>
           </div>
-          <div className="min-h-[72px] mt-6">
+          <div className="min-h-[72px] mt-4 flex flex-col flex-1">
             <div className="flex items-center gap-2  mb-2">
               <div className="flex items-center text-sm not-italic font-normal leading-[normal]">
                 Memo
               </div>
-              <Image
-                onClick={() => setOpenMemo((openMemo) => !openMemo)}
-                src="/drop-down-icon.svg"
-                className="cursor-pointer"
-                width={16}
-                height={16}
-                alt=""
-              />
             </div>
-            {openMemo ? (
-              <CustomTextField
+            <div className="flex flex-1 overflow-hidden bg-[#FFFFFF0D] rounded-2xl px-6 pt-6">
+              <CustomMultiLineTextField
+                rows={6}
                 name={sendProps.memo.name}
                 control={control}
                 error={!!errors.memo}
@@ -224,20 +226,18 @@ const SendPage = ({ chainIDs }: { chainIDs: string[] }) => {
                 inputProps={sendProps.memo.inputProps}
                 required={false}
               />
-            ) : null}
+            </div>
           </div>
         </div>
-        <div className="h-full flex gap-10 items-center mt-6">
-          <CustomSubmitButton
-            pendingStatus={
-              sendTxStatus === TxStatus.PENDING ||
-              ibcTxStatus === TxStatus.PENDING
-            }
-            buttonStyle="primary-action-btn w-[152px] h-[44px]"
-            circularProgressSize={24}
-            buttonContent="Send"
-          />
-        </div>
+        <CustomSubmitButton
+          pendingStatus={
+            sendTxStatus === TxStatus.PENDING ||
+            ibcTxStatus === TxStatus.PENDING
+          }
+          buttonStyle="primary-custom-btn w-[144px]"
+          circularProgressSize={24}
+          buttonContent="Send"
+        />
       </form>
     </div>
   );
@@ -276,6 +276,7 @@ const Cards = ({
           >
             <div className="flex gap-2">
               <Image
+                className="rounded-full"
                 src={asset.chainLogoURL}
                 width={32}
                 height={32}
