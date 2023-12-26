@@ -10,15 +10,17 @@ const TransfersHistory = ({ chainIDs }: { chainIDs: string[] }) => {
     <div className="right-section">
       <TopNav />
       <Balance chainIDs={chainIDs} />
-      <div className="flex justify-between items-center mt-10">
-        <h2 className="text-xl not-italic font-normal leading-[normal]">
-          Recent Transactions
-        </h2>
+      <div className="mt-auto">
+        <div className="flex justify-between items-center mb-10">
+          <h2 className="text-xl not-italic font-normal leading-[normal]">
+            Recent Transactions
+          </h2>
+        </div>
+        <RecentTransactions
+          chainIDs={chainIDs}
+          msgFilters={TRANSFERS_MSG_FILTERS}
+        />
       </div>
-      <RecentTransactions
-        chainIDs={chainIDs}
-        msgFilters={TRANSFERS_MSG_FILTERS}
-      />
     </div>
   );
 };
@@ -27,7 +29,7 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
   const [, available] = useGetAssetsAmount(chainIDs);
   return (
     <div>
-      <div className="text-white text-center mt-6">
+      <div className="text-white text-center mt-10">
         <div className="text-sm not-italic font-normal leading-[normal] mb-3">
           Available Balance
         </div>

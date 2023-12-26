@@ -1,8 +1,19 @@
 import Image from 'next/image';
 import React from 'react';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { TransfersTab } from './TransfersPage';
 
-const Summary = ({ chainIDs, borderStyle }: { chainIDs: string[], borderStyle: string }) => {
+const Summary = ({
+  chainIDs,
+  borderStyle,
+  tab,
+  handleTabChange,
+}: {
+  chainIDs: string[];
+  borderStyle: string;
+  tab: TransfersTab;
+  handleTabChange: () => void;
+}) => {
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   let chainName = 'All Networks';
   let imageURL = '/all-networks-icon.png';
@@ -21,9 +32,20 @@ const Summary = ({ chainIDs, borderStyle }: { chainIDs: string[], borderStyle: s
   }
 
   return (
-    <div className={"coloured-container relative h-[72px] flex items-center overflow-hidden "+borderStyle}>
+    <div
+      className={
+        'coloured-container relative h-[72px] flex items-center overflow-hidden ' +
+        borderStyle
+      }
+    >
       <div className="flex items-center gap-2 absolute">
-        <Image src={imageURL} width={26} height={26} alt={chainName} className='rounded-full'/>
+        <Image
+          src={imageURL}
+          width={26}
+          height={26}
+          alt={chainName}
+          className="rounded-full"
+        />
         <div className="text-sm not-italic font-normal leading-[normal] text-capitalize flex-1">
           {chainName}
         </div>
@@ -37,6 +59,14 @@ const Summary = ({ chainIDs, borderStyle }: { chainIDs: string[], borderStyle: s
           className="object-cover h-full w-full mr-[360px]"
         />
       </div>
+      {chainIDs.length === 1 && (
+        <button
+          className="secondary-custom-btn ml-auto"
+          onClick={handleTabChange}
+        >
+          {tab.to}
+        </button>
+      )}
     </div>
   );
 };

@@ -60,6 +60,7 @@ const Messages = ({
           ) : (
             <div className="h-full flex flex-1 justify-center items-center">
               <Image
+                className="disable-draggable"
                 src="/no-messages-illustration.png"
                 width={300}
                 height={178}
@@ -69,7 +70,7 @@ const Messages = ({
           )}
         </div>
       </div>
-      <div className="w-full h-[0.25px] bg-[#6e6d7d] opacity-30"></div>
+      <div className="w-full h-[0.25px] bg-[#6e6d7d] opacity-10"></div>
       <div className="flex flex-row-reverse mt-6 h-10 items-center">
         {pagesCount > 1 ? (
           <Pagination

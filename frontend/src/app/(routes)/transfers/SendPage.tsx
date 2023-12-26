@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import AllAssets from './components/AllAssets';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txBankSend } from '@/store/features/bank/bankSlice';
-import { SEND_TX_FEE } from '@/utils/constants';
 import CustomTextField, {
   CustomMultiLineTextField,
 } from '@/components/CustomTextField';
@@ -23,7 +22,8 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const [slicedAssetsIndex, setSlicedAssetIndex] = useState(0);
   const dispatch = useAppDispatch();
   const { txSendInputs, txTransferInputs } = useGetTxInputs();
-  const { isNativeTransaction, getChainIDFromAddress } = useGetChainInfo();
+  const { isNativeTransaction, getChainIDFromAddress, getChainInfo } =
+    useGetChainInfo();
   const sendTxStatus = useAppSelector((state) => state.bank.tx.status);
   const ibcTxStatus = useAppSelector((state) => state.ibc.txStatus);
   const balancesLoading = useAppSelector((state) => state.bank.balancesLoading);
@@ -32,6 +32,9 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
     boolean,
     React.Dispatch<React.SetStateAction<boolean>>,
   ] = useState<boolean>(false);
+  const feeAmount = selectedAsset
+    ? getChainInfo(selectedAsset.chainID).feeAmount
+    : 0;
 
   const amountRules = {
     ...sendProps.amount,
@@ -41,19 +44,9 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
       zeroAmount: (value: string) =>
         Number(value) !== 0 || 'Amount should be greater than 0',
       insufficient: (value: string) =>
-        Number(selectedAsset?.balance) >
-          Number(value) +
-            Number(SEND_TX_FEE / 10 ** (selectedAsset?.decimals || 0)) ||
+        Number(selectedAsset?.balance) >= Number(value) + feeAmount ||
         'Insufficient funds',
     },
-  };
-  const amountInputProps = {
-    sx: sendProps.amount.inputProps.sx,
-    endAdornment: (
-      <InputAdornment position="start">
-        {selectedAsset?.displayDenom}
-      </InputAdornment>
-    ),
   };
 
   const {
@@ -61,26 +54,80 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
     control,
     formState: { errors },
     getValues,
+    setValue,
   } = useForm({
     defaultValues: {
-      amount: undefined,
+      amount: 0,
       address: '',
       memo: '',
     },
   });
 
+  const [amountOption, setAmountOption] = useState('');
+
+  const amountInputProps = {
+    sx: sendProps.amount.inputProps.sx,
+    endAdornment: selectedAsset ? (
+      <div className="flex p-2 items-center gap-6">
+        <div className="flex gap-6">
+          <button
+            type="button"
+            className={
+              'amount-options px-6 py-2 ' +
+              (amountOption === 'half'
+                ? 'amount-options-fill'
+                : 'amount-options-default')
+            }
+            onClick={() => {
+              setAmountOption('half');
+              const amount = selectedAsset.balance;
+              let halfAmount = Math.max(0, (amount || 0) - feeAmount) / 2;
+              halfAmount = +(halfAmount.toFixed(6))
+              setValue('amount', halfAmount);
+            }}
+          >
+            half
+          </button>
+          <button
+            type="button"
+            className={
+              `amount-options px-6 py-2 ` +
+              (amountOption === 'max'
+                ? 'amount-options-fill'
+                : 'amount-options-default')
+            }
+            onClick={() => {
+              setAmountOption('max');
+              const amount = selectedAsset.balance;
+              let maxAmount = Math.max(0, (amount || 0) - feeAmount);
+              maxAmount = +(maxAmount.toFixed(6));
+              setValue('amount', maxAmount);
+            }}
+          >
+            max
+          </button>
+        </div>
+        <InputAdornment position="start" className='w-[30px]'>
+          {selectedAsset?.displayDenom}
+        </InputAdornment>
+      </div>
+    ) : null,
+  };
+
   const [isIBC, setIsIBC] = useState(false);
 
   const onSelectAsset = (asset: ParsedAsset, index: number) => {
     if (selectedAsset == asset) return;
+    checkIfIBCTransaction(asset);
     setSelectedAsset(asset);
-    setSlicedAssetIndex(Math.floor(index / 4) * 4);
+    setSlicedAssetIndex(index);
   };
 
-  const checkIfIBCTransaction = () => {
+  const checkIfIBCTransaction = (asset = selectedAsset) => {
     const address = getValues('address');
+
     const destinationChainID = getChainIDFromAddress(address);
-    if (!!destinationChainID && destinationChainID != selectedAsset?.chainID)
+    if (!!asset && !!destinationChainID && destinationChainID != asset?.chainID)
       setIsIBC(true);
     else setIsIBC(false);
   };
@@ -178,7 +225,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
             onSubmit={handleSubmit(onSubmit)}
             className="w-full flex flex-col flex-1"
           >
-            <div className="w-full flex flex-col flex-1 mb-4">
+            <div className="w-full flex flex-col mb-6">
               <div className="flex flex-col gap-4 justify-between w-full">
                 <div className="flex-1 space-y-2">
                   <div className="flex gap-2 h-6 items-center">
@@ -316,44 +363,52 @@ const Cards = ({
   selectedAsset: ParsedAsset | undefined;
   onSelectAsset: (asset: ParsedAsset, index: number) => void;
 }) => {
+  const indexes = () => {
+    if (slicedAssetsIndex < 5 || !selectedAsset)
+      return { startIndex: 0, endIndex: 5 };
+    return { startIndex: slicedAssetsIndex, endIndex: slicedAssetsIndex + 1 };
+  };
+
+  const { startIndex, endIndex } = indexes();
+
   return assets.length ? (
-    <div className=" items-center justify-start gap-4 min-h-[100px] max-h-[100px] grid grid-cols-4">
-      {assets
-        .slice(slicedAssetsIndex, slicedAssetsIndex + 4)
-        .map((asset, index) => (
-          <div
-            className={
-              'card p-4 cursor-pointer' +
-              (asset.denom === selectedAsset?.denom &&
-              asset.chainID === selectedAsset?.chainID
-                ? ' selected'
-                : '')
-            }
-            key={index + ' ' + asset.chainID + ' ' + asset.displayDenom}
-            onClick={() => onSelectAsset(asset, slicedAssetsIndex + index)}
-          >
-            <div className="flex gap-2">
-              <Image
-                className="rounded-full"
-                src={asset.chainLogoURL}
-                width={32}
-                height={32}
-                alt={asset.chainName}
-              />
-              <div className="flex items-center text-sm not-italic font-normal leading-[normal] text-capitalize">
-                {asset.chainName}
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <div className="text-base not-italic font-bold leading-[normal]">
-                {asset.balance}
-              </div>
-              <div className="text-[#9c95ac] text-xs not-italic font-normal leading-[normal] flex items-center">
-                {asset.displayDenom}
-              </div>
+    <div
+      className={` items-center justify-start gap-4 min-h-[100px] max-h-[100px] grid grid-cols-5`}
+    >
+      {assets.slice(startIndex, endIndex).map((asset, index) => (
+        <div
+          className={
+            'card p-4 cursor-pointer' +
+            (asset.denom === selectedAsset?.denom &&
+            asset.chainID === selectedAsset?.chainID
+              ? ' selected'
+              : '')
+          }
+          key={index + ' ' + asset.chainID + ' ' + asset.displayDenom}
+          onClick={() => onSelectAsset(asset, index)}
+        >
+          <div className="flex gap-2">
+            <Image
+              className="rounded-full"
+              src={asset.chainLogoURL}
+              width={32}
+              height={32}
+              alt={asset.chainName}
+            />
+            <div className="flex items-center text-sm not-italic font-normal leading-[normal] text-capitalize">
+              {asset.chainName}
             </div>
           </div>
-        ))}
+          <div className="flex gap-2">
+            <div className="text-base not-italic font-bold leading-[normal]">
+              {asset.balance}
+            </div>
+            <div className="text-[#9c95ac] text-xs not-italic font-normal leading-[normal] flex items-center">
+              {asset.displayDenom}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   ) : null;
 };
