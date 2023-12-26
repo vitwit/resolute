@@ -108,7 +108,7 @@ export const RecentTransactions = ({
           ))}
         </div>
       ) : (
-        <div className="h-full flex items-center">
+        <div className="max-h-[400px] min-h-[400px] flex items-center flex-1">
           <NoTransactions />
         </div>
       )}
