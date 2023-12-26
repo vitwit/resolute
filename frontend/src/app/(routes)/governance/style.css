@@ -30,12 +30,22 @@
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 .proposal-id-static {
-  @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px];
   background: rgba(255, 255, 255, 0.1);
 }
 .proposal {
-  @apply flex items-start gap-4;
+  @apply px-2 py-4 flex items-start gap-4;
 }
+
+.proposal:hover,
+.proposal-selected {
+  @apply rounded-2xl cursor-pointer bg-[#FFFFFF0D];
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.proposal:hover .proposal-id {
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
 .proposal-text-small {
   @apply flex items-center text-[rgba(255,255,255,0.75)] text-sm font-light leading-[14px];
 }
