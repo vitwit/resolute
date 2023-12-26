@@ -58,6 +58,11 @@ const StakingSidebar = ({
   const validatorsStatus = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.validators.status
   );
+  const delegations = useAppSelector(
+    (state: RootState) =>
+      state.staking.chains[chainID]?.delegations?.delegations
+        ?.delegation_responses
+  );
 
   const dispatch = useAppDispatch();
   const { txWithdrawAllRewardsInputs, txRestakeInputs } = useGetTxInputs();
@@ -120,28 +125,30 @@ const StakingSidebar = ({
             value={formatStakedAmount(rewardTokens, currency)}
           />
         </div>
-        <div className="staking-sidebar-actions">
-          <button
-            className="staking-sidebar-actions-btn"
-            onClick={() => claim(chainID)}
-          >
-            {txClaimStatus === TxStatus.PENDING ? (
-              <CircularProgress size={16} sx={{ color: 'purple' }} />
-            ) : (
-              'Claim All'
-            )}
-          </button>
-          <button
-            className="staking-sidebar-actions-btn"
-            onClick={() => claimAndStake(chainID)}
-          >
-            {txRestakeStatus === TxStatus.PENDING ? (
-              <CircularProgress size={16} sx={{ color: 'purple' }} />
-            ) : (
-              'Restake All'
-            )}
-          </button>
-        </div>
+        {delegations?.length > 1 ? (
+          <div className="staking-sidebar-actions">
+            <button
+              className="staking-sidebar-actions-btn"
+              onClick={() => claim(chainID)}
+            >
+              {txClaimStatus === TxStatus.PENDING ? (
+                <CircularProgress size={16} sx={{ color: 'white' }} />
+              ) : (
+                'Claim All'
+              )}
+            </button>
+            <button
+              className="staking-sidebar-actions-btn"
+              onClick={() => claimAndStake(chainID)}
+            >
+              {txRestakeStatus === TxStatus.PENDING ? (
+                <CircularProgress size={16} sx={{ color: 'white' }} />
+              ) : (
+                'Restake All'
+              )}
+            </button>
+          </div>
+        ) : null}
       </div>
       <div className="mt-10 overflow-y-scroll">
         <AllValidators

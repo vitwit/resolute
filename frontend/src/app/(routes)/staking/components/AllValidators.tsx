@@ -13,7 +13,7 @@ const AllValidators = ({
   allValidatorsDialogOpen,
   toggleValidatorsDialog,
 }: AllValidatorsProps) => {
-  const slicedValidatorsList = validators?.activeSorted.slice(0, 10) || [];
+  const slicedValidatorsList = validators?.activeSorted.slice(0, 15) || [];
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center sticky top-0 z-10 bg-[#0E0B26]">
