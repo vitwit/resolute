@@ -60,6 +60,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
     handleSubmit,
     control,
     formState: { errors },
+    getValues,
   } = useForm({
     defaultValues: {
       amount: undefined,
@@ -68,10 +69,20 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
     },
   });
 
+  const [isIBC, setIsIBC] = useState(false);
+
   const onSelectAsset = (asset: ParsedAsset, index: number) => {
     if (selectedAsset == asset) return;
     setSelectedAsset(asset);
     setSlicedAssetIndex(Math.floor(index / 4) * 4);
+  };
+
+  const checkIfIBCTransaction = () => {
+    const address = getValues('address');
+    const destinationChainID = getChainIDFromAddress(address);
+    if (!!destinationChainID && destinationChainID != selectedAsset?.chainID)
+      setIsIBC(true);
+    else setIsIBC(false);
   };
 
   const onSubmit = (data: {
@@ -167,7 +178,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
             onSubmit={handleSubmit(onSubmit)}
             className="w-full flex flex-col flex-1"
           >
-            <div className="w-full flex flex-col flex-1 mb-6">
+            <div className="w-full flex flex-col flex-1 mb-4">
               <div className="flex flex-col gap-4 justify-between w-full">
                 <div className="flex-1 space-y-2">
                   <div className="flex gap-2 h-6 items-center">
@@ -193,6 +204,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
                     }
                     inputProps={sendProps.address.inputProps}
                     required={true}
+                    handleBlur={checkIfIBCTransaction}
                   />
                 </div>
                 <div className="space-y-2">
@@ -238,7 +250,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
                 </div>
                 <div className="memo-text-field">
                   <CustomMultiLineTextField
-                    rows={6}
+                    rows={5}
                     name={sendProps.memo.name}
                     control={control}
                     error={!!errors.memo}
@@ -253,6 +265,22 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
                 </div>
               </div>
             </div>
+            {isIBC && (
+              <div className="h-[46px] rounded-2xl bg-[#32226a] mb-4 px-6 py-4 flex">
+                <div className="flex flex-1 items-center gap-2">
+                  <Image
+                    src="/warning.svg"
+                    width={32}
+                    height={32}
+                    alt="warning"
+                  />
+                  <div className="text-[#EFFF34] text-base not-italic font-normal leading-[normal] flex items-center">
+                    This looks like a cross chain Transaction. Avoid IBC
+                    transfers to centralized exchanges. Your assets may be lost.
+                  </div>
+                </div>
+              </div>
+            )}
             <CustomSubmitButton
               pendingStatus={
                 sendTxStatus === TxStatus.PENDING ||

@@ -74,66 +74,68 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   ) : (
     <div>
       <CustomParticles />
+      
+      <div className="landingpage-background">
+        <div className="flex flex-col min-h-screen w-full flex-1 justify-between fixed z-50">
+          <div>
+            <div className="flex justify-center items-center h-8 w-full "></div>
 
-      <div className="landingpage-background justify-between">
-        <div>
-          <div className="flex justify-center items-center h-8 w-full "></div>
-
-          <div className="pl-20">
             <Image
+              className="ml-20"
               src="/vitwit-logo-main.png"
               width={180}
-              height={475}
+              height={47.5}
               alt="Vitwit-Logo"
             />
           </div>
-        </div>
-        <div className="flex items-center  pl-20 py-0 h-full">
-          <div className="">
-            <div className="flex flex-col space-y-6">
-              <div className="flex text-white text-center text-[100px] not-italic font-extrabold leading-[100px] tracking-[7px]">
-                Resolute
-              </div>
-              <div className="flex flex-col space-y-10">
-                <div className="flex flex-col space-y-2 w-[512px]">
-                  <div className="text-white text-[28px] font-light">
-                    Interchain Interface
+          <div className="flex items-center  pl-20 py-0 h-full">
+            <div className="">
+              <div className="flex flex-col space-y-6">
+                <div className="flex text-white text-center text-[100px] not-italic font-extrabold leading-[100px] tracking-[7px]">
+                  Resolute
+                </div>
+                <div className="flex flex-col space-y-10">
+                  <div className="flex flex-col space-y-2 w-[512px]">
+                    <div className="text-white text-[28px] font-light">
+                      Interchain Interface
+                    </div>
+                    <div className="text-white text-lg font-thin leading-normal">
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                      sed do eiusmod tempor incididun.
+                    </div>
                   </div>
-                  <div className="text-white text-lg font-thin leading-normal">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididun.
+                  <div
+                    className="landingpage-button"
+                    onClick={() => setConnectWalletDialogOpen(true)}
+                  >
+                    <p className="text-white text-lg font-bold">
+                      Connect Wallet
+                    </p>
                   </div>
                 </div>
-                <div
-                  className="landingpage-button z-10"
-                  onClick={() => setConnectWalletDialogOpen(true)}
-                >
-                  <p className="text-white text-lg font-bold">Connect Wallet</p>
-                </div>
               </div>
+
+              <WalletPopup
+                isOpen={connectWalletDialogOpen}
+                onClose={handleClose}
+                selectWallet={selectWallet}
+              />
             </div>
 
-            <WalletPopup
-              isOpen={connectWalletDialogOpen}
-              onClose={handleClose}
-              selectWallet={selectWallet}
-            />
-          </div>
-
-          <div className="flex items-center justify-end w-full z-10">
             <Image
-              src="/landingpage.svg"
+              className="ml-auto"
+              src="/laptop.svg"
               width={967}
               height={581}
               alt="landing page image"
             />
           </div>
-        </div>
 
-        <div>
-          <div className="flex justify-center items-center  h-10"></div>
-          <div className="powered-by-background">
-            <div className="powered-by text">Powered by Vitwit</div>
+          <div>
+            <div className="flex justify-center items-center  h-10"></div>
+            <div className="powered-by-background">
+              <div className="powered-by text">Powered by Vitwit</div>
+            </div>
           </div>
         </div>
       </div>

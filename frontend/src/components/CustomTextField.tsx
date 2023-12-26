@@ -14,6 +14,7 @@ const CustomTextField = ({
   textFieldCustomMuiSx,
   inputProps,
   required,
+  handleBlur,
 }: {
   name: string;
   rules: any;
@@ -25,6 +26,7 @@ const CustomTextField = ({
   textFieldCustomMuiSx: any;
   inputProps: any;
   required: boolean;
+  handleBlur?: () => void;
 }) => {
   return (
     <Controller
@@ -42,6 +44,9 @@ const CustomTextField = ({
           sx={textFieldCustomMuiSx}
           InputProps={inputProps}
           error={error}
+          onBlur={() => {
+            handleBlur?.();
+          }}
         />
       )}
     />
