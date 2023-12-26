@@ -274,7 +274,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
                     height={32}
                     alt="warning"
                   />
-                  <div className="text-[#EFFF34] text-base not-italic font-semibold leading-[normal] flex items-center">
+                  <div className="text-[#EFFF34] text-base not-italic font-normal leading-[normal] flex items-center">
                     This looks like a cross chain Transaction. Avoid IBC
                     transfers to centralized exchanges. Your assets may be lost.
                   </div>
