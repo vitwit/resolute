@@ -209,11 +209,13 @@ const StakingCardActions = ({
   return (
     <div className="mt-6 flex justify-between items-center">
       <div className="flex gap-6">
-        <StakingCardActionButton
-          name={'Delegate'}
-          action={delegate}
-          txStatus={TxStatus.IDLE}
-        />
+        <div className="hidden md:block">
+          <StakingCardActionButton
+            name={'Delegate'}
+            action={delegate}
+            txStatus={TxStatus.IDLE}
+          />
+        </div>
         <StakingCardActionButton
           name={'Claim'}
           action={claim}
