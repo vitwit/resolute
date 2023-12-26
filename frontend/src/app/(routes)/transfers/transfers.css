@@ -21,3 +21,12 @@
   @apply opacity-80 rounded-lg text-[#E57575] text-center text-[12px] not-italic font-normal leading-[normal] max-w-fit py-1 px-2 truncate;
   background: rgba(229, 117, 117, 0.2);
 }
+
+.memo-text-field {
+  @apply flex flex-1 overflow-hidden bg-[#FFFFFF0D] rounded-2xl px-4 pt-4;
+  border: 1px solid transparent;
+}
+
+.memo-text-field:focus-within {
+  border: 1px solid #ffffff4a;
+}
