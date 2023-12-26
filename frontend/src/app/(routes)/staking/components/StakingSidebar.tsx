@@ -26,7 +26,7 @@ const StakingSidebar = ({
   chainID,
   onMenuAction,
   allValidatorsDialogOpen,
-  toggleValidatorsDialog
+  toggleValidatorsDialog,
 }: StakingSidebarProps) => {
   const stakedBalance = useAppSelector(
     (state: RootState) =>
@@ -138,7 +138,7 @@ const StakingSidebar = ({
             {txRestakeStatus === TxStatus.PENDING ? (
               <CircularProgress size={16} sx={{ color: 'purple' }} />
             ) : (
-              'Claim & Stake All'
+              'Restake All'
             )}
           </button>
         </div>

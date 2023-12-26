@@ -337,7 +337,6 @@ interface StakingCardActionsProps {
 
 interface StakingCardActionButtonProps {
   name: string;
-  icon: string;
   action: () => void;
   txStatus: string;
 }

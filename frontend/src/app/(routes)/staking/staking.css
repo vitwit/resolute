@@ -32,16 +32,24 @@
   backdrop-filter: blur(2px);
 }
 
-.staking-card-action-button {
-  @apply rounded-lg h-[32px] w-[32px] flex items-center justify-center cursor-pointer;
+.staking-card-action-button,
+.cancel-unbonding-btn {
+  @apply min-w-[80px] cursor-pointer rounded-lg text-white text-xs font-medium leading-5 tracking-[0.48px] h-8 flex items-center justify-center px-3;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(74, 162, 156, 0.9) 0%,
+      rgba(139, 61, 167, 0.9) 100%
+    ),
+    lightgray 50% / cover no-repeat;
+}
+
+.cancel-unbonding-btn {
+  @apply min-w-fit;
 }
 
 .unbonding-card {
   @apply flex flex-col gap-4;
-}
-
-.cancel-unbonding-btn {
-  @apply p-2 rounded-lg text-sm leading-[20px] font-extralight;
 }
 
 .staking-sidebar-actions {

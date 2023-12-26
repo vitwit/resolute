@@ -78,7 +78,7 @@ const UnbondingCard = ({
       <div>
         <Tooltip title="Cancel unbonding" placement="right">
           <button
-            className="primary-gradient cancel-unbonding-btn"
+            className="cancel-unbonding-btn"
             onClick={() => setUnbondingDialogOpen(true)}
           >
             Cancel

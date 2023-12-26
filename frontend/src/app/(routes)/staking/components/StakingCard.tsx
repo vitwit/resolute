@@ -202,29 +202,28 @@ const StakingCardActions = ({
       );
     }
   };
+
+  const delegate = () => {
+    handleMenuAction('delegate');
+  };
   return (
     <div className="mt-6 flex justify-between items-center">
       <div className="flex gap-6">
         <StakingCardActionButton
+          name={'Delegate'}
+          action={delegate}
+          txStatus={TxStatus.IDLE}
+        />
+        <StakingCardActionButton
           name={'Claim'}
-          icon={'/claim-icon.svg'}
           action={claim}
           txStatus={txClaimStatus}
         />
         <StakingCardActionButton
-          name={'Claim & Stake'}
-          icon={'/claim-and-stake-icon.svg'}
+          name={'Restake'}
           action={claimAndStake}
           txStatus={txRestakeStatus}
         />
-        <Tooltip title={"Delegate"}>
-          <div
-            className="primary-gradient staking-card-action-button"
-            onClick={() => handleMenuAction("delegate")}
-          >
-            <Image src={'/delegate-icon.svg'} height={16} width={16} alt={'Delegate'} />
-          </div>
-        </Tooltip>
       </div>
       <Tooltip ref={menuRef} title="More options" placement="top">
         <div className="cursor-pointer" onClick={() => toggleMenu()}>
@@ -237,22 +236,20 @@ const StakingCardActions = ({
 
 const StakingCardActionButton = ({
   name,
-  icon,
   action,
   txStatus,
 }: StakingCardActionButtonProps) => {
   return (
-    <Tooltip title={name}>
-      <div
-        className="primary-gradient staking-card-action-button"
-        onClick={() => action()}
-      >
-        {txStatus === TxStatus.PENDING ? (
-          <CircularProgress size={16} sx={{ color: 'purple' }} />
-        ) : (
-          <Image src={icon} height={16} width={16} alt={name} />
-        )}
-      </div>
-    </Tooltip>
+    <button
+      className="staking-card-action-button"
+      onClick={() => action()}
+      disabled={txStatus === TxStatus.PENDING}
+    >
+      {txStatus === TxStatus.PENDING ? (
+        <CircularProgress size={16} sx={{ color: 'white' }} />
+      ) : (
+        <span>{name}</span>
+      )}
+    </button>
   );
 };
