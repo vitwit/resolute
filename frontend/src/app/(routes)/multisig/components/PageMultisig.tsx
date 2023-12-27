@@ -89,6 +89,7 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
         chainID={chainID}
         walletAddress={address}
         accountSpecific={false}
+        verified={verified}
       />
     </div>
   );
