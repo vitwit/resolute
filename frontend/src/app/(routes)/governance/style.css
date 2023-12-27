@@ -62,7 +62,12 @@
 }
 .popup-grid {
   @apply flex w-[889px]  flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
-  background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%);
+  background: linear-gradient(
+    178deg,
+    #241b61 1.71%,
+    #69448d 98.35%,
+    #69448d 98.35%
+  );
 }
 .cross {
   @apply flex justify-end items-center gap-2.5 self-stretch pl-6 pr-10 py-10;
