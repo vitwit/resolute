@@ -17,14 +17,7 @@
 .view-history {
   @apply flex flex-col justify-center cursor-pointer text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal] underline;
 }
-.v-line {
-  @apply h-[1px];
-  background: linear-gradient(
-    90deg,
-    rgba(74, 162, 156, 0.279) 7.46%,
-    rgba(139, 61, 167, 0.3) 94.28%
-  );
-}
+
 .proposal-id {
   @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px] text-[10px];
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);

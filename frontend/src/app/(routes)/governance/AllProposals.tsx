@@ -146,7 +146,7 @@ const AllProposals = ({
                       </p>
                     </div>
                   </div>
-                  <div className="v-line"></div>
+                  <div className="divider-line"></div>
 
                   <div className="space-y-2">
                     {get(
