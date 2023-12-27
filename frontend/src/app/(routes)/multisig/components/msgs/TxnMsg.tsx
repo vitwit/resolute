@@ -64,7 +64,6 @@ const TxnMsg: React.FC<TxnMsg> = (props) => {
               <span className="font-bold">{MAP_TXNS[msg?.typeUrl]}</span>{' '}
               <span>{displayDenom(msg?.value?.amount)}</span>
               &nbsp;
-              <br />
               From &nbsp;
               <span>{shortenAddress(msg?.value?.validatorSrcAddress, 20)}</span>
               &nbsp; To &nbsp;

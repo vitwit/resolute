@@ -134,3 +134,4 @@ export const GITHUB_ISSUES_PAGE_LINK =
 // TODO: Add telegram link
 export const TELEGRAM_LINK = '';
 export const LOGOUT_ICON = '/logout-icon.svg';
+export const NO_MESSAGES_ILLUSTRATION = '/no-messages-illustration.png';

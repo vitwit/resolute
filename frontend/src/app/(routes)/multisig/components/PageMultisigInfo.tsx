@@ -103,7 +103,7 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
   useEffect(() => {
     dispatch(setSelectedNetwork({ chainName: chainName }));
   }, [chainName]);
-  
+
   useEffect(() => {
     dispatch(resetError());
   }, []);
@@ -127,6 +127,7 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
         accountSpecific={true}
         address={address}
         walletAddress={walletAddress}
+        verified={verified}
       />
     </div>
   );
