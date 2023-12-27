@@ -17,14 +17,12 @@ const History = ({ chainIDs }: { chainIDs: string[] }) => {
       <Balance chainIDs={chainIDs} />
       <SideAd />
 
-      <div className="mt-auto">
-        <div className="flex justify-between items-center mb-10">
-          <h2 className="text-xl not-italic font-normal leading-[normal]">
-            Recent Transactions
-          </h2>
-        </div>
-        <RecentTransactions chainIDs={chainIDs} msgFilters={[]} />
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl not-italic font-normal leading-[normal]">
+          Recent Transactions
+        </h2>
       </div>
+      <RecentTransactions chainIDs={chainIDs} msgFilters={[]} />
     </div>
   );
 };
@@ -96,9 +94,9 @@ export const RecentTransactions = ({
         : state.transactionHistory.allTransactions) || []
   );
   return (
-    <div className="max-h-[470px] min-h-[470px] overflow-y-scroll">
+    <div className="flex-1 overflow-y-scroll">
       {transactions.length ? (
-        <div className="text-white w-full space-y-3">
+        <div className="text-white w-full space-y-3 mt-6">
           {transactions.map((tx) => (
             <TransactionItem
               key={tx.transactionHash}
@@ -108,7 +106,7 @@ export const RecentTransactions = ({
           ))}
         </div>
       ) : (
-        <div className="max-h-[400px] min-h-[400px] flex items-center flex-1">
+        <div className="h-full flex items-center">
           <NoTransactions />
         </div>
       )}

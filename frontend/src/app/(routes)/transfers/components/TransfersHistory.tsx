@@ -10,17 +10,15 @@ const TransfersHistory = ({ chainIDs }: { chainIDs: string[] }) => {
     <div className="right-section">
       <TopNav />
       <Balance chainIDs={chainIDs} />
-      <div className="mt-auto">
-        <div className="flex justify-between items-center mb-10">
-          <h2 className="text-xl not-italic font-normal leading-[normal]">
-            Recent Transactions
-          </h2>
-        </div>
-        <RecentTransactions
-          chainIDs={chainIDs}
-          msgFilters={TRANSFERS_MSG_FILTERS}
-        />
+      <div className="flex justify-between items-center mt-20">
+        <h2 className="text-xl not-italic font-normal leading-[normal]">
+          Recent Transactions
+        </h2>
       </div>
+      <RecentTransactions
+        chainIDs={chainIDs}
+        msgFilters={TRANSFERS_MSG_FILTERS}
+      />
     </div>
   );
 };
