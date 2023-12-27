@@ -182,7 +182,7 @@ const AllProposals = ({
                                   : 'proposal-id proposal-id-static'
                               }
                             >
-                              <p className="proposal-text-extralight">
+                              <p className="text-white text-xs font-extralight leading-[14px] text-[10px]">
                                 {get(proposal, 'proposal_id')}
                               </p>
                             </div>
@@ -210,7 +210,7 @@ const AllProposals = ({
                                     )}
                                   </p>
                                 ) : (
-                                  <p className="proposal-text-small w-[144px]">
+                                  <p className="proposal-text-small w-[130px]">
                                     Expires in{' '}
                                     {getTimeDifferenceToFutureDate(
                                       get(proposal, 'voting_end_time')

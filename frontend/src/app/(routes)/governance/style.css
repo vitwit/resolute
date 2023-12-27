@@ -19,7 +19,7 @@
 }
 
 .proposal-id {
-  @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px] text-[10px];
+  @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px] text-[8px];
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 .proposal-id-static {
