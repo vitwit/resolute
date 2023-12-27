@@ -11,6 +11,7 @@ import {
 import './style.css';
 import { get } from 'lodash';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+import messages from '@/utils/messages.json';
 
 type handleOpenOverview = () => void;
 type handleSetCurrentOverviewId = (id: number, chainID: string) => void;
@@ -103,8 +104,18 @@ const AllProposals = ({
       {allProposalsLength === 0 ? (
         <div className="space-y-4 w-full">
           <div className="flex justify-between">
-            <div className="flex space-x-2">
-              <p className="proposal-text-medium">No proposals found.</p>
+            <div className="flex space-x-2 flex-1">
+              <div className="flex flex-col flex-1 justify-center items-center mt-[100px]">
+                <Image
+                  src="/gov-illustration.png"
+                  width={610}
+                  height={464}
+                  alt="no action proposals"
+                />
+                <p className="text-white text-center text-base italic font-extralight leading-[normal]">
+                  {messages.noProposals}
+                </p>
+              </div>
             </div>
           </div>
         </div>

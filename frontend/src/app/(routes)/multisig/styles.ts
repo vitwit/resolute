@@ -11,8 +11,16 @@ export const textFieldStyles = {
     //Important is used here to override the mui's styling
     '-webkit-text-fill-color': '#ffffff6b !important',
   },
-  mb: "24px",
-  borderRadius: "16px"
+  mb: '24px',
+  borderRadius: '16px',
+  '& .MuiOutlinedInput-root': {
+    border: '1px solid transparent',
+    borderRadius: '16px',
+  },
+  '& .Mui-focused': {
+    border: '1px solid #ffffff4a',
+    borderRadius: '16px',
+  },
 };
 
 export const autoCompleteStyles = {
@@ -28,8 +36,9 @@ export const autoCompleteStyles = {
   '& .MuiAutocomplete-popper': {
     display: 'none !important',
   },
-  mb: "24px",
-  borderRadius: "16px"
+  mb: '24px',
+  borderRadius: '16px',
+  width: '100%',
 };
 
 export const autoCompleteTextFieldStyles = {
@@ -41,7 +50,7 @@ export const autoCompleteTextFieldStyles = {
   '& .MuiOutlinedInput-notchedOutline': {
     border: 'none',
   },
-  borderRadius: "16px"
+  borderRadius: '16px',
 };
 
 export const sendTxnTextFieldStyles = {
@@ -56,12 +65,20 @@ export const sendTxnTextFieldStyles = {
   '& .Mui-disabled': {
     '-webkit-text-fill-color': '#ffffff6b !important',
   },
-  mb: "24px",
-  borderRadius: "16px"
+  mb: '24px',
+  borderRadius: '16px',
+  '& .MuiOutlinedInput-root': {
+    border: '1px solid transparent',
+    borderRadius: '16px',
+  },
+  '& .Mui-focused': {
+    border: '1px solid #ffffff4a',
+    borderRadius: '16px',
+  },
 };
 
 export const createMultisigTextFieldStyles = {
-  my: 1,
+  mt: 3,
   '& .MuiTypography-body1': {
     color: 'white',
     fontSize: '12px',
@@ -71,10 +88,26 @@ export const createMultisigTextFieldStyles = {
     border: 'none',
   },
   '& .Mui-disabled': {
-    '-webkit-text-fill-color': '#ffffff6b !important',
+    WebkitTextFillColor: '#ffffff6b !important',
   },
-  '& Mui-focused': {
-    border: '2px solid red',
+  '& .MuiOutlinedInput-root': {
+    border: '1px solid transparent',
+    borderRadius: '16px',
+  },
+  '& .Mui-focused': {
+    border: '1px solid #ffffff4a',
+    borderRadius: '16px',
+  },
+};
+
+export const createMultisigThresholdStyles = {
+  '& .MuiOutlinedInput-root': {
+    border: '1px solid transparent',
+    borderRadius: '4px',
+  },
+  '& .Mui-focused': {
+    border: '1px solid #ffffff4a',
+    borderRadius: '4px',
   },
 };
 
@@ -87,8 +120,8 @@ export const createTxnTextFieldStyles = {
   '& .MuiOutlinedInput-notchedOutline': {
     border: 'none',
   },
-  mb: "24px",
-  borderRadius: "16px"
+  mb: '24px',
+  borderRadius: '16px',
 };
 
 export const selectTxnStyles = {
@@ -110,11 +143,6 @@ export const selectTxnStyles = {
     fontSize: '12px',
     fontWeight: 200,
   },
-  borderRadius: "16px",
-  mb: "24px",
+  borderRadius: '16px',
+  mb: '24px',
 };
-
-export const dialogTxnFailedStyles = {
-  borderRadius: '24px',
-  background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
-}

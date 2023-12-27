@@ -158,6 +158,17 @@ interface TxReStakeInputs {
   feegranter: string;
 }
 
+interface TxCancelUnbondingInputs {
+  basicChainInfo: BasicChainInfo;
+  delegator: string;
+  validator: string;
+  amount: number;
+  denom: string;
+  creationHeight: string;
+  feeAmount: number;
+  feegranter: string;
+}
+
 type StakingMenuAction = (type: string, validator: Validator) => void;
 
 interface ChainDelegationsProps {
@@ -272,13 +283,16 @@ interface ValidatorItemProps {
 }
 
 interface UnbondingCardProps {
-  validator: string;
+  moniker: string;
   identity: string;
   chainName: string;
   amount: number;
   networkLogo: string;
   currency: Currency;
   completionTime: string;
+  chainID: string;
+  validatorAddress: string;
+  creationHeight: string;
 }
 
 interface UnbondingCardStatsItemProps {

@@ -1,4 +1,3 @@
-
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { parseBalance } from '@/utils/denom';
@@ -42,7 +41,6 @@ const DepositProposalInfo = ({ chainID }: { chainID: string }) => {
   }, [depositParams, proposalInfo]);
 
   return (
-    
     <div className="voting-grid w-full">
       <div className="voting-view w-full">
         <div className="status-pass w-full">
@@ -82,7 +80,6 @@ const DepositProposalInfo = ({ chainID }: { chainID: string }) => {
         </div>
       </div>
     </div>
-    
   );
 };
 
