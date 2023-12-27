@@ -22,6 +22,7 @@ const DialogUndelegate = ({
   loading,
   delegations,
   currency,
+  feeAmount,
 }: DialogUndelegateProps) => {
   const handleClose = () => {
     onClose();
@@ -136,6 +137,8 @@ const DialogUndelegate = ({
                     availableAmount={delegationShare}
                     displayDenom={currency.coinDenom}
                     errors={errors}
+                    setValue={setValue}
+                    feeAmount={feeAmount}
                   />
                   <div className="mt-6 flex gap-10 items-center">
                     <button

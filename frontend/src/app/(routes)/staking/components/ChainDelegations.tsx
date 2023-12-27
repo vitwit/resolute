@@ -241,6 +241,7 @@ const ChainDelegations = ({
         loading={txStatus?.status}
         displayDenom={currency.coinDenom}
         onDelegate={onDelegateTx}
+        feeAmount={avgFeeAmount}
       />
       <DialogUndelegate
         onClose={handleDialogClose}
@@ -251,6 +252,7 @@ const ChainDelegations = ({
         loading={txStatus?.status}
         delegations={delegations?.delegation_responses}
         currency={currency}
+        feeAmount={avgFeeAmount}
       />
       <DialogRedelegate
         onClose={handleDialogClose}
@@ -263,6 +265,7 @@ const ChainDelegations = ({
         loading={txStatus?.status}
         onRedelegate={onRedelegateTx}
         currency={currency}
+        feeAmount={avgFeeAmount}
       />
     </>
   );

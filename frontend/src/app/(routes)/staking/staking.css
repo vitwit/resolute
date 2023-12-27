@@ -141,3 +141,23 @@
 .no-data {
   @apply h-[50%] flex-1 flex flex-col gap-2 justify-center items-center;
 }
+
+.amount-options {
+  @apply text-white text-sm not-italic font-normal leading-[normal] rounded-[100px];
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(2px);
+}
+
+.amount-options-default {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.amount-options-fill {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(74, 162, 156, 0.9) 0%,
+      rgba(139, 61, 167, 0.9) 100%
+    ),
+    lightgray 50% / cover no-repeat;
+}

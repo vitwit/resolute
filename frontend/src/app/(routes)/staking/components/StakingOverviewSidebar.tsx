@@ -6,6 +6,7 @@ import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import StakingSideBarAds from './StakingSideBarAds';
+import { Tooltip } from '@mui/material';
 
 const StakingOverviewSidebar = () => {
   const nameToChainIDs = useAppSelector(
@@ -29,8 +30,16 @@ const StakingOverviewSidebar = () => {
           />
         </div>
         <div className="staking-sidebar-actions">
-          <button className="staking-sidebar-actions-btn">Claim All</button>
-          <button className="staking-sidebar-actions-btn">Restake All</button>
+          <Tooltip title="Coming soon">
+            <button className="staking-sidebar-actions-btn cursor-not-allowed">
+              Claim All
+            </button>
+          </Tooltip>
+          <Tooltip title="Coming soon">
+            <button className="staking-sidebar-actions-btn cursor-not-allowed">
+              Restake All
+            </button>
+          </Tooltip>
         </div>
       </div>
       <StakingSideBarAds />

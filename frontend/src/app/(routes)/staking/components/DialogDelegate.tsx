@@ -18,6 +18,7 @@ const DialogDelegate = ({
   loading,
   displayDenom,
   onDelegate,
+  feeAmount,
 }: DialogDelegateProps) => {
   const handleClose = () => {
     onClose();
@@ -129,6 +130,8 @@ const DialogDelegate = ({
                     availableAmount={availableBalance}
                     displayDenom={displayDenom}
                     errors={errors}
+                    setValue={setValue}
+                    feeAmount={feeAmount}
                   />
                   <div className="mt-6 flex gap-10 items-center">
                     <button
