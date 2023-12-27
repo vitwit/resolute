@@ -7,6 +7,7 @@ import DialogTxnFailed from './DialogTxnFailed';
 import DialogViewTxnMessages from './DialogViewTxnMessages';
 import TransactionCard from './TransactionCard';
 import { isMultisigMember } from '@/utils/util';
+import Image from 'next/image';
 
 interface AllTransactionsListProps {
   chainID: string;
@@ -40,7 +41,7 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
   const [threshold, setThreshold] = useState<number>(0);
 
   const onViewMoreAction = (txn: Txn) => {
-    const { pubkeys=[], multisig_address="", threshold=0 } = txn;
+    const { pubkeys = [], multisig_address = '', threshold = 0 } = txn;
     setSelectedTxn(txn);
     setMsgDialogOpen(true);
     setPubKeys(pubkeys);
@@ -59,7 +60,8 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
   };
 
   const { getDenomInfo, getChainInfo } = useGetChainInfo();
-  const { explorerTxHashEndpoint, address: walletAddress } = getChainInfo(chainID);
+  const { explorerTxHashEndpoint, address: walletAddress } =
+    getChainInfo(chainID);
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
   const currency = useMemo(
     () => ({
@@ -97,7 +99,17 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
         );
       })}
       {!txnsState.list.length ? (
-        <div className="mt-16 text-[14px] text-center">- No Transactions -</div>
+        <div className="mt-[50%] flex flex-col justify-center items-center">
+          <Image
+            src="/no-transactions.png"
+            width={200}
+            height={130}
+            alt={'No Transactions'}
+          />
+          <div className="text-[16px] my-6 leading-normal italic font-extralight text-center">
+            No Transactions
+          </div>
+        </div>
       ) : null}
       <DialogViewTxnMessages
         open={msgDialogOpen}

@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import DialogAllAssets from './DialogAllAssets';
 
 const AllAssets = ({
   assets,
   selectedAsset,
   onSelectAsset,
+  dialogOpen,
+  setDialogOpen,
 }: {
   assets: ParsedAsset[];
   selectedAsset: ParsedAsset | undefined;
   onSelectAsset: (asset: ParsedAsset, index: number) => void;
+  dialogOpen: boolean;
+  setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const handleDialogClose = () => setDialogOpen(false);
 
   return (
