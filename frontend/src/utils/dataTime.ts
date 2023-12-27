@@ -31,7 +31,7 @@ export function getLocalTime(value: string): string {
 
 export function getTimeDifferenceToFutureDate(
   futureDate: string,
-  past?: boolean
+  past?: boolean,
 ): string {
   const now = new Date();
   const futureDateObj = new Date(futureDate);

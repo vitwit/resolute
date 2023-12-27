@@ -128,3 +128,4 @@ export const SIDENAV_MENU_ITEMS = [
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
 export const TRANSFERS_CARDS_COUNT = 5;
+export const NO_MESSAGES_ILLUSTRATION = '/no-messages-illustration.png';
