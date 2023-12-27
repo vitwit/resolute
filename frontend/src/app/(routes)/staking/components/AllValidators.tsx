@@ -31,7 +31,7 @@ const AllValidators = ({
       </div>
       {validatorsStatus === TxStatus.PENDING ? (
         <div className="text-center mt-16">
-          <CircularProgress size={32} />
+          <CircularProgress size={32} sx={{ color: 'white' }} />
         </div>
       ) : (
         <>

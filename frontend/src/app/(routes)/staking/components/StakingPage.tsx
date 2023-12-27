@@ -21,6 +21,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import msgs from '@/utils/messages.json';
 import { NO_MESSAGES_ILLUSTRATION } from '@/utils/constants';
 import Image from 'next/image';
+import { CircularProgress } from '@mui/material';
 
 const StakingPage = ({
   chainName,
@@ -65,6 +66,9 @@ const StakingPage = ({
   const hasDelegations = useAppSelector(
     (state: RootState) =>
       state.staking.chains[chainID]?.delegations?.hasDelegations
+  );
+  const delegationsLoading = useAppSelector(
+    (state: RootState) => state.staking.delegationsLoading
   );
 
   const { getChainInfo } = useGetChainInfo();
@@ -133,8 +137,8 @@ const StakingPage = ({
             chainSpecific={true}
           />
         </div>
-        {!hasDelegations ? (
-          <div className="no-data">
+        {delegationsLoading === 0 && !hasDelegations ? (
+          <div className="h-full flex flex-col justify-center items-center">
             <Image
               src={NO_MESSAGES_ILLUSTRATION}
               width={200}
@@ -150,6 +154,12 @@ const StakingPage = ({
             >
               Explore
             </button>
+          </div>
+        ) : null}
+
+        {delegationsLoading !== 0 ? (
+          <div className="no-data">
+            <CircularProgress size={32} sx={{ color: 'white' }} />
           </div>
         ) : null}
 
