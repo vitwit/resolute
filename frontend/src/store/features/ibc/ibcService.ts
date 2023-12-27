@@ -4,7 +4,6 @@ import { TRACK_IBC_TX_TIME_INTERVAL } from '@/utils/constants';
 import { SkipRouter, SKIP_API_URL } from '@skip-router/core';
 import { AssetsFromSourceRequest } from '@skip-router/core';
 import { capitalize } from 'lodash';
-import { getAccountInfo } from '../auth/authSlice';
 
 declare let window: WalletWindow;
 
@@ -71,7 +70,7 @@ export const txIBCTransfer = async (
   const addresses: Record<string, string> = {};
 
   // for all intermediary stops
-  for (let chainID of route.chainIDs) {
+  for (const chainID of route.chainIDs) {
     const account = await window.wallet.getKey(chainID);
     addresses[chainID] = account.bech32Address;
   }
