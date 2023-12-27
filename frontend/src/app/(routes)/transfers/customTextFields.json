@@ -121,7 +121,7 @@
       "rules": {},
       "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
       "textFieldSize": "lg",
-      "placeHolder": "",
+      "placeHolder": "Enter memo here (optional)",
       "textFieldCustomMuiSx": {
         "& .MuiInputBase-input": {
           "color": "white"

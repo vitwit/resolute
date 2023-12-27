@@ -25,7 +25,7 @@ const Messages = ({
   return (
     <div className="flex flex-col h-full">
       <div className="flex flex-col h-full space-y-6">
-        <div className="flex justify-between ">
+        <div className="flex justify-between h-6 items-center">
           <div className="text-sm not-italic font-normal leading-[normal]">
             Messages
           </div>
@@ -54,7 +54,7 @@ const Messages = ({
                     index={MULTI_TRANSFER_MSG_COUNT * index + offset}
                   />
 
-                  <div style={{ marginTop: `50px` }} />
+                  <div style={{ marginTop: `55px` }} />
                 </div>
               ))
           ) : (

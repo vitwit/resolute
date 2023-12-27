@@ -35,12 +35,12 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
           {formatDollarAmount(available)}
         </span>
       </div>
-      {/* <div className="flex justify-center gap-6">
+      <div className="flex justify-center gap-6 opacity-0 mt-6">
         <button className="primary-custom-btn-disabled">&nbsp;&nbsp;Send&nbsp;&nbsp;</button>
         <button className="primary-custom-btn-disabled">
           Receive
         </button>
-      </div> */}
+      </div>
     </div>
   );
 };

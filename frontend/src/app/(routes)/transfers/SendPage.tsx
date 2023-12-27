@@ -68,7 +68,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const amountInputProps = {
     sx: sendProps.amount.inputProps.sx,
     endAdornment: selectedAsset ? (
-      <div className="flex p-2 items-center gap-6">
+      <div className="flex p-1 items-center gap-6">
         <div className="flex gap-6">
           <button
             type="button"
@@ -82,11 +82,11 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
               setAmountOption('half');
               const amount = selectedAsset.balance;
               let halfAmount = Math.max(0, (amount || 0) - feeAmount) / 2;
-              halfAmount = +(halfAmount.toFixed(6))
+              halfAmount = +halfAmount.toFixed(6);
               setValue('amount', halfAmount);
             }}
           >
-            half
+            Half
           </button>
           <button
             type="button"
@@ -100,14 +100,14 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
               setAmountOption('max');
               const amount = selectedAsset.balance;
               let maxAmount = Math.max(0, (amount || 0) - feeAmount);
-              maxAmount = +(maxAmount.toFixed(6));
+              maxAmount = +maxAmount.toFixed(6);
               setValue('amount', maxAmount);
             }}
           >
-            max
+            Max
           </button>
         </div>
-        <InputAdornment position="start" className='w-[30px]'>
+        <InputAdornment position="start" className="w-[30px]">
           {selectedAsset?.displayDenom}
         </InputAdornment>
       </div>
@@ -196,8 +196,8 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   return (
     <div className="flex flex-1 flex-col">
       {sortedAssets.length ? (
-        <div className="h-full w-full space-y-10 flex flex-col flex-1">
-          <div className="space-y-4">
+        <div className="h-full w-full space-y-6 flex flex-col flex-1">
+          <div className="space-y-6">
             <div className="flex items-center gap-2 h-6">
               <div>Assets</div>
               {!sortedAssets.length ? (
@@ -290,8 +290,8 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
                 </div>
               </div>
               <div className="min-h-[72px] mt-4 flex flex-col flex-1">
-                <div className="flex items-center gap-2  mb-2">
-                  <div className="flex items-center text-sm not-italic font-normal leading-[normal]">
+                <div className="flex h-6 items-center mb-2">
+                  <div className="text-sm not-italic font-normal leading-[normal]">
                     Memo
                   </div>
                 </div>
