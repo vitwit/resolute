@@ -73,7 +73,9 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     <>{children}</>
   ) : (
     <div>
-      <CustomParticles />
+      <div className='absolute'>
+        <CustomParticles/>
+      </div>
       
       <div className="landingpage-background">
         <div className="flex flex-col min-h-screen w-full flex-1 justify-between fixed z-50">
