@@ -139,7 +139,7 @@
 }
 
 .no-data {
-  @apply h-[50%] flex-1 flex flex-col gap-2 justify-center items-center;
+  @apply h-[50%] flex-1 flex flex-col justify-center items-center;
 }
 
 .amount-options {

@@ -19,6 +19,8 @@ import { useRouter } from 'next/navigation';
 import { getBalances } from '@/store/features/bank/bankSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import msgs from '@/utils/messages.json';
+import { NO_MESSAGES_ILLUSTRATION } from '@/utils/constants';
+import Image from 'next/image';
 
 const StakingPage = ({
   chainName,
@@ -133,13 +135,21 @@ const StakingPage = ({
         </div>
         {!hasDelegations ? (
           <div className="no-data">
-            <div className="leading-8">{msgs.noData}</div>
-              <button
-                onClick={toggleValidatorsDialog}
-                className="primary-custom-btn"
-              >
-                Explore
-              </button>
+            <Image
+              src={NO_MESSAGES_ILLUSTRATION}
+              width={200}
+              height={177}
+              alt={'No Transactions'}
+            />
+            <div className="text-[16px] opacity-50 mt-2 mb-6 leading-normal italic font-extralight text-center">
+              Looks like you haven't staked anything yet, go ahead and explore !
+            </div>
+            <button
+              onClick={toggleValidatorsDialog}
+              className="primary-custom-btn"
+            >
+              Explore
+            </button>
           </div>
         ) : null}
 
