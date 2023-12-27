@@ -45,7 +45,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
         </div>
         <div className="flex flex-col gap-4">
           <Tooltip title="Report an issue" placement="right">
-            <Link href={GITHUB_ISSUES_PAGE_LINK}>
+            <Link href={GITHUB_ISSUES_PAGE_LINK} target="_blank">
               <div className="sidebar-menu-item">
                 <Image
                   src={REPORT_ICON}
@@ -57,7 +57,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
             </Link>
           </Tooltip>
           <Tooltip title="Need help?" placement="right">
-            <Link href={TELEGRAM_LINK}>
+            <Link href={TELEGRAM_LINK} target="_blank">
               <div className="sidebar-menu-item">
                 <Image src={HELP_ICON} height={40} width={40} alt="Resolute" />
               </div>
