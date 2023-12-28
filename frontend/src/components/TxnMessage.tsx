@@ -1,9 +1,12 @@
 import {
   DELEGATE_TYPE_URL,
+  DEPOSIT_TYPE_URL,
   IBC_SEND_TYPE_URL,
+  MAP_TXN_TYPES,
   REDELEGATE_TYPE_URL,
   SEND_TYPE_URL,
   UNDELEGATE_TYPE_URL,
+  VOTE_OPTIONS,
   VOTE_TYPE_URL,
 } from '@/utils/constants';
 import { parseAmount } from '@/utils/util';
@@ -13,18 +16,6 @@ import { copyToClipboard } from '@/utils/copyToClipboard';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 
-const MAP_TXNS = {
-  '/cosmos.staking.v1beta1.MsgDelegate': 'delegated',
-  '/cosmos.bank.v1beta1.MsgSend': 'sent',
-  '/cosmos.staking.v1beta1.MsgBeginRedelegate': 'redelegated',
-  '/cosmos.staking.v1beta1.MsgUndelegate': 'undelegated',
-  '/cosmos.gov.v1beta1.MsgVote': 'voted',
-  '/ibc.applications.transfer.v1.MsgTransfer': 'sent',
-  Msg: 'Tx Msg',
-};
-
-const VOTE_OPTIONS = ['Yes', 'Abstain', 'No', 'Veto'];
-
 const TxnMessage = ({
   msgs,
   currency,
@@ -33,6 +24,7 @@ const TxnMessage = ({
   currency: Currency;
 }) => {
   const dispatch = useAppDispatch();
+
   return (
     <>
       {msgs?.length ? (
@@ -42,7 +34,7 @@ const TxnMessage = ({
               <div className="truncate max-w-[260px]">
                 <span>{parseAmount(msgs[0]?.value?.amount, currency)}</span>{' '}
                 <span>successfully</span>{' '}
-                <span>{MAP_TXNS[msgs[0]?.typeUrl]}</span>
+                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
                 &nbsp;to
               </div>
               <span>
@@ -79,7 +71,7 @@ const TxnMessage = ({
               <div className="truncate max-w-[260px]">
                 <span>{parseAmount([msgs[0]?.value?.amount], currency)}</span>{' '}
                 <span>successfully</span>{' '}
-                <span>{MAP_TXNS[msgs[0]?.typeUrl]}</span>
+                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
                 &nbsp;to
               </div>
               <span>
@@ -113,7 +105,7 @@ const TxnMessage = ({
               <div className="truncate max-w-[260px]">
                 <span>{parseAmount([msgs[0]?.value?.amount], currency)}</span>{' '}
                 <span>successfully</span>{' '}
-                <span>{MAP_TXNS[msgs[0]?.typeUrl]}</span>
+                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
                 &nbsp;from
               </div>
               <span>
@@ -147,7 +139,7 @@ const TxnMessage = ({
               <div className="truncate">
                 <span>{parseAmount([msgs[0]?.value?.amount], currency)}</span>{' '}
                 <span>successfully</span>{' '}
-                <span>{MAP_TXNS[msgs[0]?.typeUrl]}</span>
+                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
               </div>
             </div>
           ) : null}
@@ -155,10 +147,20 @@ const TxnMessage = ({
             <div className="flex items-center gap-2 font-bold">
               <div className="truncate">
                 <span>Successfully</span>{' '}
-                <span>{MAP_TXNS[msgs[0]?.typeUrl]}</span>
+                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
                 <span> {VOTE_OPTIONS[msgs[0]?.value?.option - 1]}</span>
                 <span> on </span>
                 <span>proposal #{parseInt(msgs[0]?.value.proposalId)}</span>
+              </div>
+            </div>
+          ) : null}
+          {msgs[0]?.typeUrl === DEPOSIT_TYPE_URL ? (
+            <div className="flex items-center gap-2 font-bold">
+              <div className="truncate">
+                <span>{parseAmount(msgs[0]?.value?.amount, currency)}</span>{' '}
+                <span>successfully</span>{' '}
+                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
+                <span> on proposal #{parseInt(msgs[0]?.value.proposalId)}</span>
               </div>
             </div>
           ) : null}
@@ -167,7 +169,7 @@ const TxnMessage = ({
               <div className="truncate max-w-[260px]">
                 <span>{parseAmount([msgs[0]?.value?.token], currency)}</span>{' '}
                 <span>successfully</span>{' '}
-                <span>{MAP_TXNS[msgs[0]?.typeUrl]}</span>
+                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
                 &nbsp;to
               </div>
               <span>
