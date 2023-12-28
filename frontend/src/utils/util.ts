@@ -368,3 +368,10 @@ export const getTxnURL = (
 ): string => {
   return cleanURL(explorerTxHashEndpoint) + '/' + hash;
 };
+
+export const parseAmount = (amount: Coin[], currency: Currency) => {
+  return formatCoin(
+    parseBalance(amount, currency.coinDecimals, currency.coinMinimalDenom),
+    currency.coinDenom
+  );
+};

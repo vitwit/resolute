@@ -25,6 +25,7 @@ import { GAS_FEE, PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
 import { signAndBroadcast } from '@/utils/signing';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { GovDepositMsg, GovVoteMsg } from '@/txns/gov';
+import { NewTransaction } from '@/utils/transaction';
 
 const PROPSAL_STATUS_DEPOSIT = 1;
 const PROPOSAL_STATUS_ACTIVE = 2;
@@ -362,10 +363,12 @@ export const txVote = createAsyncThunk(
         // data.feegranter?.length > 0 ? data.feegranter : undefined
       );
 
-      console.log('tx result==============', result);
+      const tx = NewTransaction(result, [msg], data.chainID, data.voter);
+
       if (result?.code === 0) {
         dispatch(
           setTxAndHash({
+            tx: tx,
             hash: result?.transactionHash,
             chainID: data.chainID,
           })

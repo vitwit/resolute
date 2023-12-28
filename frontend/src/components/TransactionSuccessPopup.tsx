@@ -2,7 +2,7 @@
 import '@/app/txn.css';
 
 import { Dialog, DialogContent } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { TXN_FAILED_ICON, TXN_SUCCESS_ICON } from '@/utils/constants';
@@ -10,18 +10,35 @@ import { copyToClipboard } from '@/utils/copyToClipboard';
 import { setError } from '@/store/features/common/commonSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Link from 'next/link';
-import { getTxnURL } from '@/utils/util';
+import { formatCoin, getTxnURL, parseAmount } from '@/utils/util';
+import TxnMessage from './TxnMessage';
+import { parseBalance } from '@/utils/denom';
 
 const TransactionSuccessPopup = () => {
   const tx = useAppSelector((state) => state.common.txSuccess.tx);
-  const chainID = useAppSelector((state) => state.common.txSuccess.chainID);
+  console.log(tx);
   const feeAmount = tx?.fee?.[0]?.amount || '-';
   const feeDenom = tx?.fee?.[0]?.denom || '-';
 
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
-  const { getChainInfo } = useGetChainInfo();
-  const { explorerTxHashEndpoint = '' } = chainID ? getChainInfo(chainID) : {};
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { explorerTxHashEndpoint = '' } = tx?.chainID
+    ? getChainInfo(tx.chainID)
+    : {};
+  const {
+    decimals = 0,
+    displayDenom = '',
+    minimalDenom = '',
+  } = tx?.chainID ? getDenomInfo(tx?.chainID) : {};
+  const currency = useMemo(
+    () => ({
+      coinMinimalDenom: minimalDenom,
+      coinDecimals: decimals,
+      coinDenom: displayDenom,
+    }),
+    [minimalDenom, decimals, displayDenom]
+  );
 
   const handleClose = () => {
     setIsOpen(false);
@@ -68,13 +85,7 @@ const TransactionSuccessPopup = () => {
                 <span className="txn-failed-text">Transaction Failed !</span>
               )}
             </div>
-            {/* <div className="flex items-center gap-2">
-              <span className="message-text">2 Atom successfully sent to </span>
-              <CommonCopy
-                message="cosmoswrn34o23n093n31234324oimsf"
-                style="max-w-[176px]"
-              />
-            </div> */}
+            <TxnMessage msgs={tx?.msgs || []} currency={currency} />
           </div>
           <div className="flex justify-between items-center gap-2 w-full">
             <Image
@@ -125,7 +136,14 @@ const TransactionSuccessPopup = () => {
               <div className="txn-details-item">
                 <div className="txn-details-item-title">Fees</div>
                 <div className="txn-details-item-content">
-                  {feeAmount}&nbsp;{feeDenom}
+                  {tx?.fee?.[0]
+                    ? parseBalance(
+                        tx?.fee,
+                        currency.coinDecimals,
+                        currency.coinMinimalDenom
+                      )
+                    : '-'}{' '}
+                  {currency.coinDenom}
                 </div>
               </div>
               <div className="txn-details-item">
