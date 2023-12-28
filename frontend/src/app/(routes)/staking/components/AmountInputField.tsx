@@ -72,7 +72,7 @@ const AmountInputField: React.FC<AmountInputField> = (props) => {
                         setValue('amount', halfAmount.toString());
                       }}
                     >
-                      half
+                      Half
                     </button>
                     <button
                       type="button"
@@ -90,7 +90,7 @@ const AmountInputField: React.FC<AmountInputField> = (props) => {
                         setValue('amount', maxAmount.toString());
                       }}
                     >
-                      max
+                      Max
                     </button>
                   </div>
                   <InputAdornment position="start" className="w-[30px]">
