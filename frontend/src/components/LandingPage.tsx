@@ -14,12 +14,14 @@ import { getAllTokensPrice } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import WalletPopup from './WalletPopup';
 import CustomParticles from './Particles';
+import Loading from './Loading';
 
 export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   const connected = useAppSelector(
     (state: RootState) => state.wallet.connected
   );
+  const isLoading = useAppSelector((state) => state.wallet.isLoading);
   const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
     useState<boolean>(false);
   const handleClose = () => {
@@ -69,14 +71,18 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return connected ? (
     <>{children}</>
   ) : (
     <div>
-      <div className='absolute'>
-        <CustomParticles/>
+      <div className="absolute">
+        <CustomParticles />
       </div>
-      
+
       <div className="landingpage-background">
         <div className="flex flex-col min-h-screen w-full flex-1 justify-between fixed z-50">
           <div>
