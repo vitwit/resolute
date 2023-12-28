@@ -370,7 +370,6 @@ export const txVote = createAsyncThunk(
           setTxAndHash({
             tx: tx,
             hash: result?.transactionHash,
-            chainID: data.chainID,
           })
         );
 
@@ -433,9 +432,7 @@ export const txDeposit = createAsyncThunk(
       const { code, transactionHash, rawLog } = result || {};
 
       if (code === 0) {
-        dispatch(
-          setTxAndHash({ hash: transactionHash, chainID: data.chainID })
-        );
+        dispatch(setTxAndHash({ hash: transactionHash }));
         return fulfillWithValue({ txHash: transactionHash });
       } else {
         dispatch(setError({ type: 'error', message: rawLog || '' }));

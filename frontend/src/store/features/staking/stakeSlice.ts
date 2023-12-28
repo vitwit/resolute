@@ -173,7 +173,6 @@ export const txRestake = createAsyncThunk(
         setTxAndHash({
           tx,
           hash: tx.transactionHash,
-          chainID: data.basicChainInfo.chainID,
         })
       );
       if (result?.code === 0) {
@@ -231,7 +230,6 @@ export const txDelegate = createAsyncThunk(
         setTxAndHash({
           tx,
           hash: tx.transactionHash,
-          chainID: data.basicChainInfo.chainID,
         })
       );
 
@@ -299,7 +297,6 @@ export const txReDelegate = createAsyncThunk(
         setTxAndHash({
           tx,
           hash: tx.transactionHash,
-          chainID: data.basicChainInfo.chainID,
         })
       );
 
@@ -366,7 +363,6 @@ export const txUnDelegate = createAsyncThunk(
         setTxAndHash({
           tx,
           hash: tx.transactionHash,
-          chainID: data.basicChainInfo.chainID,
         })
       );
 
@@ -425,7 +421,6 @@ export const txCancelUnbonding = createAsyncThunk(
         setTxAndHash({
           tx,
           hash: tx.transactionHash,
-          chainID: data.basicChainInfo.chainID,
         })
       );
 

@@ -73,7 +73,6 @@ export const txWithdrawAllRewards = createAsyncThunk(
           setTxAndHash({
             hash: result?.transactionHash,
             tx: tx,
-            chainID: data.chainID,
           })
         );
         return fulfillWithValue({ txHash: result?.transactionHash });
