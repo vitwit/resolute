@@ -250,7 +250,7 @@ const ProposalOverviewVote = ({
                     alt="Network-Logo"
                   />
                   <p className="font-bold text-[16px] flex items-center">
-                    # {get(proposalInfo, 'proposal_id')} 
+                    # {get(proposalInfo, 'proposal_id')}
                   </p>
                 </div>
                 <div>
@@ -369,7 +369,7 @@ const ProposalOverviewVote = ({
                             <div className="bg-[#f0f0f3] h-[10px] w-[2px]"></div>
                           </div>
                           <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
-                          <div className="bg-[#f0f0f3] h-[10px] w-[2px] absolute  flex left-[224px]"></div>
+                            <div className="bg-[#f0f0f3] h-[10px] w-[2px] absolute  flex left-[224px]"></div>
                             <div
                               style={{ width: `${quorumPercent}%` }}
                               className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
@@ -397,7 +397,6 @@ const ProposalOverviewVote = ({
                       </div>
                     ))}
                   </div>
-                 
                 </div>
               </div>
               <div className="bg-[#0E0B26] rounded-2xl">
@@ -435,9 +434,7 @@ const ProposalOverviewVote = ({
           <div className="flex w-[480px] flex-end flex-col space-y-10">
             <div className="space-y-4 w-full">
               <div className="flex space-y-[68px] flex-col">
-                <div className="w-[412px]">
-                  <TopNav />
-                </div>
+                <TopNav />
 
                 <div className="bg-[#0E0B26] rounded-2xl">
                   <DepositProposalInfo chainID={chainID} />
