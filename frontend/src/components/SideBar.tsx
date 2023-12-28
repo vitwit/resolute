@@ -28,7 +28,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
       <TransactionSuccessPopup />
       <SnackBar />
       <div className="sidebar overflow-y-scroll">
-        <div className="">
+        <div className=''>
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
         </div>
         <div className="flex flex-col gap-4 items-center">

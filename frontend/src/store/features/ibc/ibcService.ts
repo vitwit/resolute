@@ -68,7 +68,14 @@ export const txIBCTransfer = async (
   });
 
   const addresses: Record<string, string> = {};
-  addresses[sourceChainID] = from;
+
+  // for all intermediary stops
+  for (const chainID of route.chainIDs) {
+    const account = await window.wallet.getKey(chainID);
+    addresses[chainID] = account.bech32Address;
+  }
+
+  // for destination
   addresses[destChainID] = to;
 
   try {
