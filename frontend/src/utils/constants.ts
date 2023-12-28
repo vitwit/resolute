@@ -127,5 +127,12 @@ export const SIDENAV_MENU_ITEMS = [
 ];
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
+export const HELP_ICON = '/help-icon.svg';
+export const REPORT_ICON = '/report-icon.svg';
+export const GITHUB_ISSUES_PAGE_LINK =
+  'https://github.com/vitwit/resolute/issues';
+// TODO: Add telegram link
+export const TELEGRAM_LINK = '';
+export const LOGOUT_ICON = '/logout-icon.svg';
 export const TRANSFERS_CARDS_COUNT = 5;
 export const NO_MESSAGES_ILLUSTRATION = '/no-messages-illustration.png';
