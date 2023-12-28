@@ -1,4 +1,5 @@
 import { Txn } from '@/types/multisig';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
@@ -21,15 +22,12 @@ const DialogViewRaw: React.FC<DialogViewRawProps> = (props) => {
       onClose={() => handleClose()}
       maxWidth="lg"
       PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
-        },
+        sx: dialogBoxPaperPropStyles,
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
-          <div className="px-10 py-6 flex justify-end">
+          <div className="px-10 pb-6 pt-10 flex justify-end">
             <div
               onClick={() => {
                 handleClose();
@@ -44,7 +42,7 @@ const DialogViewRaw: React.FC<DialogViewRawProps> = (props) => {
               />
             </div>
           </div>
-          <div className="mt-6 mb-[72px] space-y-6 px-10 text-white">
+          <div className="mb-10 space-y-6 px-10 text-white">
             <div className="text-[20px] leading-normal font-bold">Raw</div>
             <div className="raw-content">
               {txn ? (

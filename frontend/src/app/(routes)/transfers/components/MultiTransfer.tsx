@@ -11,8 +11,17 @@ import useGetChainInfo from '../../../../custom-hooks/useGetChainInfo';
 import { multiTxns } from '@/store/features/bank/bankSlice';
 import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
+import { TransfersTab } from './TransfersPage';
 
-const MultiTransfer = ({ chainID }: { chainID: string }) => {
+const MultiTransfer = ({
+  chainID,
+  tab,
+  handleTabChange,
+}: {
+  chainID: string;
+  tab: TransfersTab;
+  handleTabChange: () => void;
+}) => {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const txPendingStatus = useAppSelector((state) => state.bank.tx.status);
 
@@ -82,13 +91,18 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
   };
 
   return (
-    <div className="p-6">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="w-full h-[605px] flex">
-          <div className="w-1/2 flex flex-col justify-between pr-5">
-            <div>
-              <Summary chainIDs={[chainID]} borderStyle="rounded-2xl" />
-            </div>
+    <div className="flex flex-col flex-1">
+      <div>
+        <Summary
+          chainIDs={[chainID]}
+          borderStyle="rounded-[16px_16px_0px_0px]"
+          tab={tab}
+          handleTabChange={handleTabChange}
+        />
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1">
+        <div className="w-full flex p-6 flex-1">
+          <div className="w-1/2 flex flex-col space-y-6 pr-5 flex-1">
             <MultiTxUpload addMsgs={addMsgs} chainID={chainID} />
             <div>
               <div className="text-sm not-italic font-normal leading-[normal] mb-2">
@@ -111,11 +125,11 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
             <CustomSubmitButton
               pendingStatus={txPendingStatus === TxStatus.PENDING}
               circularProgressSize={12}
-              buttonStyle="primary-custom-btn"
+              buttonStyle="primary-custom-btn w-[144px]"
               buttonContent="Send"
             />
           </div>
-          <div className="w-[1px] bg-[#6e6d7d] opacity-30"></div>
+          <div className="w-[1px] bg-[#6e6d7d] opacity-10"></div>
           <div className="w-1/2 h-full pl-[20px] flex flex-col">
             <Messages
               msgs={msgs}

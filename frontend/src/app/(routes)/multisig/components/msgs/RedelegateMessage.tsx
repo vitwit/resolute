@@ -29,7 +29,6 @@ const RedelegateMessage: React.FC<TxnMsgProps> = (props) => {
           </span>
           <span>from&nbsp;</span>
           <span>{shortenAddress(msg.value.validatorSrcAddress, 21)}&nbsp;</span>
-          <br/>
           <span>to&nbsp;</span>
           <span>{shortenAddress(msg.value.validatorDstAddress, 21)}</span>
         </div>

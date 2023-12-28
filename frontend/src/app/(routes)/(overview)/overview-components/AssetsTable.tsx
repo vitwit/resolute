@@ -3,8 +3,7 @@ import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import React from 'react';
 import Asset from './Asset';
 import { CircularProgress } from '@mui/material';
-import { CustomButton } from '@/components/CustomButton';
-import msgs from '@/utils/messages.json';
+import NoAssets from '@/components/illustrations/NoAssets';
 
 const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
   const [sortedAssets] = useSortedAssets(chainIDs, {
@@ -76,24 +75,11 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
               {balancesLoading || delegationsLoading ? (
                 <CircularProgress size={32} />
               ) : (
-                <div className="space-y-2">
-                  <div className="text-sm not-italic font-normal leading-[normal] flex justify-center items-center h-8">
-                    {msgs.noData}
-                  </div>
-                  <CustomButton
-                    onClick={() => {}}
-                    pendingStatus={false}
-                    circularProgressSize={24}
-                    buttonStyle="primary-custom-btn"
-                    buttonContent="Explore"
-                  />
-                </div>
+                <NoAssets />
               )}
             </div>
           )}
         </div>
-        <div className="min-h-[24px]"></div>
-        <div className="h-line"></div>
       </div>
     </div>
   );

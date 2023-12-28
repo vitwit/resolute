@@ -16,12 +16,20 @@
         },
         "& .MuiOutlinedInput-notchedOutline": {
           "border": "none"
+        },
+        "& .MuiOutlinedInput-root": {
+          "border": "1px solid transparent",
+          "borderRadius": "16px"
+        },
+        "& .Mui-focused": {
+          "border": "1px solid #ffffff4a",
+          "borderRadius": "16px"
         }
       },
       "inputProps": {
         "sx": {
           "input": {
-            "minHeight":"30px",
+            "minHeight": "30px",
             "color": "white",
             "fontSize": "16px",
             "paddingX": 2,
@@ -50,12 +58,20 @@
         },
         "& .MuiOutlinedInput-notchedOutline": {
           "border": "none"
+        },
+        "& .MuiOutlinedInput-root": {
+          "border": "1px solid transparent",
+          "borderRadius": "16px"
+        },
+        "& .Mui-focused": {
+          "border": "1px solid #ffffff4a",
+          "borderRadius": "16px"
         }
       },
       "inputProps": {
         "sx": {
           "input": {
-            "minHeight":"30px",
+            "minHeight": "30px",
             "color": "white",
             "fontSize": "16px",
             "paddingX": 2,
@@ -66,68 +82,10 @@
     },
     "memo": {
       "name": "memo",
-      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
+      "textFieldClassName": " rounded-2xl flex flex-col flex-1",
       "rules": {},
       "textFieldSize": "small",
-      "placeHolder": "",
-      "textFieldCustomMuiSx": {
-        "& .MuiTypography-body1": {
-          "color": "white",
-          "fontSize": "12px",
-          "fontWeight": 200,
-          "height": "100px"
-        },
-        "& .MuiOutlinedInput-notchedOutline": {
-          "border": "none"
-        }
-      },
-      "inputProps": {
-        "sx": {
-          "input": {
-            "minHeight":"30px",
-            "color": "white",
-            "fontSize": "16px",
-            "paddingX": 2,
-            "paddingY": 1
-          }
-        }
-      }
-    }
-  },
-
-  "multi-send": {
-    "gas": {
-      "name": "gas",
-      "rules": {},
-      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
-      "textFieldSize": "small",
-      "placeHolder": "",
-      "textFieldCustomMuiSx": {
-        "& .MuiTypography-body1": {
-          "color": "white",
-          "fontSize": "12px",
-          "fontWeight": 200
-        },
-        "& .MuiOutlinedInput-notchedOutline": {
-          "border": "none"
-        }
-      },
-      "inputProps": {
-        "sx": {
-          "input": {
-            "color": "white",
-            "fontSize": "14px",
-            "padding": 2
-          }
-        }
-      }
-    },
-    "memo": {
-      "name": "memo",
-      "rules": {},
-      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
-      "textFieldSize": "lg",
-      "placeHolder": "",
+      "placeHolder": "Enter memo here (optional)",
       "textFieldCustomMuiSx": {
         "& .MuiInputBase-input": {
           "color": "white"
@@ -137,6 +95,50 @@
         },
         "& .MuiOutlinedInput-notchedOutline": {
           "border": "none"
+        },
+        "& .MuiInputBase-root": {
+          "padding": "0"
+        }
+      },
+
+      "inputProps": {
+        "sx": {
+          "input": {
+            "minHeight": "30px",
+            "color": "white",
+            "fontSize": "16px",
+            "paddingX": 0,
+            "paddingY": 0
+          }
+        }
+      }
+    }
+  },
+
+  "multi-send": {
+    "memo": {
+      "name": "memo",
+      "rules": {},
+      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
+      "textFieldSize": "lg",
+      "placeHolder": "Enter memo here (optional)",
+      "textFieldCustomMuiSx": {
+        "& .MuiInputBase-input": {
+          "color": "white"
+        },
+        "& .MuiInputLabel-root": {
+          "color": "white"
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
+          "border": "none"
+        },
+        "& .MuiOutlinedInput-root": {
+          "border": "1px solid transparent",
+          "borderRadius": "16px"
+        },
+        "& .Mui-focused": {
+          "border": "1px solid #ffffff4a",
+          "borderRadius": "16px"
         }
       },
       "inputProps": {

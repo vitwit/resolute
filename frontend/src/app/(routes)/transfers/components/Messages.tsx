@@ -15,7 +15,6 @@ const Messages = ({
   onDelete: (index: number) => void;
   onDeleteAll: () => void;
 }) => {
-
   const [index, setIndex] = useState(0);
   const pagesCount = useMemo(() => {
     const pages = Math.ceil(msgs.length / MULTI_TRANSFER_MSG_COUNT);
@@ -26,7 +25,7 @@ const Messages = ({
   return (
     <div className="flex flex-col h-full">
       <div className="flex flex-col h-full space-y-6">
-        <div className="flex justify-between ">
+        <div className="flex justify-between h-6 items-center">
           <div className="text-sm not-italic font-normal leading-[normal]">
             Messages
           </div>
@@ -41,25 +40,37 @@ const Messages = ({
           </div>
         </div>
         <div className="flex h-full flex-col relative">
-          {msgs
-            .slice(
-              MULTI_TRANSFER_MSG_COUNT * index,
-              MULTI_TRANSFER_MSG_COUNT * index + MULTI_TRANSFER_MSG_COUNT
-            )
-            .map((msg, offset) => (
-              <div key={offset}>
-                <Message
-                  msg={msg}
-                  onDelete={onDelete}
-                  index={MULTI_TRANSFER_MSG_COUNT * index + offset}
-                />
+          {msgs.length ? (
+            msgs
+              .slice(
+                MULTI_TRANSFER_MSG_COUNT * index,
+                MULTI_TRANSFER_MSG_COUNT * index + MULTI_TRANSFER_MSG_COUNT
+              )
+              .map((msg, offset) => (
+                <div key={offset}>
+                  <Message
+                    msg={msg}
+                    onDelete={onDelete}
+                    index={MULTI_TRANSFER_MSG_COUNT * index + offset}
+                  />
 
-                <div style={{ marginTop: `50px` }} />
-              </div>
-            ))}
+                  <div style={{ marginTop: `55px` }} />
+                </div>
+              ))
+          ) : (
+            <div className="h-full flex flex-1 justify-center items-center">
+              <Image
+                className="disable-draggable"
+                src="/no-messages-illustration.png"
+                width={300}
+                height={178}
+                alt="no messages"
+              />
+            </div>
+          )}
         </div>
       </div>
-      <div className="w-full h-[0.25px] bg-[#6e6d7d] opacity-30"></div>
+      <div className="w-full h-[0.25px] bg-[#6e6d7d] opacity-10"></div>
       <div className="flex flex-row-reverse mt-6 h-10 items-center">
         {pagesCount > 1 ? (
           <Pagination
@@ -93,8 +104,14 @@ const Message = ({
 
   return (
     <div className={`flex items-center justify-between w-full absolute`}>
-      <div className="flex gap-1 items-center">
-        <Image src="/back-arrow.svg" width={24} height={24} alt="msg" />
+      <div className="flex gap-2 items-center">
+        <Image
+          className="bg-[#ffffff1a] rounded-lg"
+          src="/solid-arrow-icon.svg"
+          width={24}
+          height={24}
+          alt="msg"
+        />
         <div className="overflowed-text max-w-[275px] text-sm not-italic font-normal leading-[normal]">
           {formattedSerialize(
             msg,
@@ -104,7 +121,7 @@ const Message = ({
         </div>
       </div>
       <Image
-        src="/close.svg"
+        src="/delete-cross-icon.svg"
         className="cursor-pointer"
         width={16}
         height={16}

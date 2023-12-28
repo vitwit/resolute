@@ -12,51 +12,8 @@ import { tabLink } from '../utils/util';
 import { Tooltip } from '@mui/material';
 import TransactionSuccessPopup from './TransactionSuccessPopup';
 import SnackBar from './SnackBar';
-
-const menuItems = [
-  {
-    name: 'Overview',
-    icon: '/overview-icon.svg',
-    activeIcon: '/overview-icon-active.svg',
-    link: '/',
-  },
-  {
-    name: 'Transfers',
-    icon: '/transfers-icon.svg',
-    activeIcon: '/transfers-icon-active.svg',
-    link: '/transfers',
-  },
-  {
-    name: 'Governance',
-    icon: '/gov-icon.svg',
-    activeIcon: '/gov-icon-active.svg',
-    link: '/governance',
-  },
-  {
-    name: 'Staking',
-    icon: '/staking-icon.svg',
-    activeIcon: '/staking-icon-active.svg',
-    link: '/staking',
-  },
-  {
-    name: 'Multisig',
-    icon: '/multisig-icon.svg',
-    activeIcon: '/multisig-icon-active.svg',
-    link: '/multisig',
-  },
-  {
-    name: 'Groups',
-    icon: '/groups-icon.svg',
-    activeIcon: '/groups-icon-active.svg',
-    link: '/groups',
-  },
-  {
-    name: 'Authz',
-    icon: '/authz-icon.svg',
-    activeIcon: '/authz-icon-active.svg',
-    link: '/authz',
-  },
-];
+import { SIDENAV_MENU_ITEMS } from '@/utils/constants';
+import { resetError } from '@/store/features/common/commonSlice';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
@@ -73,9 +30,9 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
         </div>
         <div className="flex flex-col gap-4 items-center">
-          {menuItems.map((item, index) => (
+          {SIDENAV_MENU_ITEMS.map((item) => (
             <MenuItem
-              key={index}
+              key={item.name}
               pathName={selectedPart}
               itemName={item.name}
               icon={item.icon}
@@ -109,6 +66,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
             <div
               className="sidebar-menu-item w-12 h-12 cursor-pointer"
               onClick={() => {
+                dispatch(resetError());
                 dispatch(resetWallet());
                 logout();
               }}

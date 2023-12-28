@@ -1,6 +1,9 @@
 'use client';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { setError, setSelectedNetwork } from '@/store/features/common/commonSlice';
+import {
+  setError,
+  setSelectedNetwork,
+} from '@/store/features/common/commonSlice';
 import { RootState } from '@/store/store';
 import { Avatar, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
@@ -11,8 +14,7 @@ import DialogAddNetwork from './DialogAddNetwork';
 import { resetConnectWalletStatus } from '@/store/features/wallet/walletSlice';
 import { allNetworksLink, changeNetworkRoute } from '@/utils/util';
 import { copyToClipboard } from '@/utils/copyToClipboard';
-
-const ALL_NETWORKS_LOGO = '/all-networks-icon.png';
+import { ALL_NETWORKS_ICON, CHANGE_NETWORK_ICON } from '@/utils/constants';
 
 const SelectNetwork = () => {
   const pathName = usePathname();
@@ -21,7 +23,7 @@ const SelectNetwork = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [addNetworkDialogOpen, setAddNetworkDialogOpen] =
     useState<boolean>(false);
-  const [chainLogo, setChainLogo] = useState(ALL_NETWORKS_LOGO);
+  const [chainLogo, setChainLogo] = useState(ALL_NETWORKS_ICON);
   const [walletAddress, setWalletAddress] = useState('');
 
   const selectedNetwork = useAppSelector(
@@ -58,7 +60,7 @@ const SelectNetwork = () => {
       setChainLogo(networks[chainID].network.logos.menu);
       setWalletAddress(networks[chainID].walletInfo.bech32Address);
     } else {
-      setChainLogo(ALL_NETWORKS_LOGO);
+      setChainLogo(ALL_NETWORKS_ICON);
       setWalletAddress('');
     }
   }, [selectedNetwork]);
@@ -69,30 +71,43 @@ const SelectNetwork = () => {
         className="flex gap-2 items-center cursor-pointer"
         onClick={() => setOpen(true)}
       >
-        <Image src={chainLogo} height={32} width={32} alt="All Networks" />
-        {/* TODO: Integrate copy to clipboard */}
+        <Image
+          className="rounded-full"
+          src={chainLogo}
+          height={30}
+          width={30}
+          alt="All Networks"
+        />
         {walletAddress ? (
           <div className="wallet-address">
             <span className="truncate">{walletAddress}</span>
-            <Image onClick={(e) => {
-              copyToClipboard(walletAddress);
-              dispatch(setError({
-                type: 'success',
-                message: "Copied"
-              }))
-              e.stopPropagation();
-            }} src="/copy.svg" width={24} height={24} alt="copy" />
+            <Image
+              onClick={(e) => {
+                copyToClipboard(walletAddress);
+                dispatch(
+                  setError({
+                    type: 'success',
+                    message: 'Copied',
+                  })
+                );
+                e.stopPropagation();
+              }}
+              src="/copy.svg"
+              width={24}
+              height={24}
+              alt="copy"
+            />
           </div>
         ) : (
           <>
-            <div className="text-md font-medium leading-nomral text-white">
-              All Networks
+            <div className="all-networks">
+              <span className="truncate">All Networks</span>
             </div>
           </>
         )}
         <div>
           <Image
-            src="/new-drop-down-icon.svg"
+            src={CHANGE_NETWORK_ICON}
             height={16}
             width={16}
             alt="Select Network"
@@ -191,7 +206,7 @@ const DialogSelectNetwork = ({
             >
               <div className="flex justify-center items-center w-full gap-2">
                 <Image
-                  src={ALL_NETWORKS_LOGO}
+                  src={ALL_NETWORKS_ICON}
                   width={26}
                   height={26}
                   alt="All Networks"
@@ -242,7 +257,8 @@ const NetworkItem = ({
 }) => {
   const dispatch = useAppDispatch();
 
-const shortenName = (name: string, maxLength: number): string => name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
+  const shortenName = (name: string, maxLength: number): string =>
+    name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
 
   const isSelected = (): boolean => {
     return selectedNetworkName.toLowerCase() === chainName.toLowerCase();

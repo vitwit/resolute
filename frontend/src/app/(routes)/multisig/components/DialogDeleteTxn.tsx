@@ -2,6 +2,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { resetDeleteTxnState } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { TxStatus } from '@/types/enums';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import {
   CLOSE_ICON_PATH,
   DELETE_TXN_DIALOG_IMAGE_PATH,
@@ -36,15 +37,12 @@ const DialogDeleteTxn: React.FC<DialogDeleteTxnProps> = (props) => {
       onClose={onClose}
       maxWidth="lg"
       PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          background: 'linear-gradient(90deg, #1F184E 27.66%, #8B3DA7 99.91%)',
-        },
+        sx: dialogBoxPaperPropStyles,
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
-          <div className="px-10 py-6 flex justify-end">
+          <div className="px-10 pb-6 pt-10 flex justify-end">
             <div onClick={onClose}>
               <Image
                 className="cursor-pointer"
@@ -55,7 +53,7 @@ const DialogDeleteTxn: React.FC<DialogDeleteTxnProps> = (props) => {
               />
             </div>
           </div>
-          <div className="mt-6 mb-[72px] flex gap-16 pr-10 pl-6 items-center">
+          <div className="mt-6 mb-10 flex gap-16 pr-10 pl-6 items-center">
             <Image
               src={DELETE_TXN_DIALOG_IMAGE_PATH}
               height={238}

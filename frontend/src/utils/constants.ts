@@ -34,7 +34,7 @@ export const DELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgDelegate';
 export const UNDELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgUndelegate';
 export const REDELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgBeginRedelegate';
 export const SEND_TEMPLATE = 'https://api.resolute.vitwit.com/_static/send.csv';
-export const MULTI_TRANSFER_MSG_COUNT = 10;
+export const MULTI_TRANSFER_MSG_COUNT = 13;
 export const DELETE_TXN_DIALOG_IMAGE_PATH = '/delete-txn-popup-image.png';
 export const EMPTY_TXN = {
   id: NaN,
@@ -83,13 +83,49 @@ export const MULTISIG_TX_TYPES = {
 };
 export const ALERT_HIDE_DURATION = 3000;
 export const MULTISIG_SEND_TEMPLATE =
-  "https://api.resolute.vitwit.com/_static/send.csv";
+  'https://api.resolute.vitwit.com/_static/send.csv';
 export const MULTISIG_DELEGATE_TEMPLATE =
-  "https://api.resolute.vitwit.com/_static/delegate.csv";
+  'https://api.resolute.vitwit.com/_static/delegate.csv';
 export const MULTISIG_UNDELEGATE_TEMPLATE =
-  "https://api.resolute.vitwit.com/_static/undelegate.csv";
+  'https://api.resolute.vitwit.com/_static/undelegate.csv';
 export const MULTISIG_REDELEGATE_TEMPLATE =
-  "https://api.resolute.vitwit.com/_static/redelegate.csv";
+  'https://api.resolute.vitwit.com/_static/redelegate.csv';
 export const txBroadcastTimeoutMs = 60_000;
 export const txBroadcastPollIntervalMs = 3_000;
 export const TRACK_IBC_TX_TIME_INTERVAL = 15000;
+export const SIDENAV_MENU_ITEMS = [
+  {
+    name: 'Overview',
+    icon: '/overview-icon.svg',
+    activeIcon: '/overview-icon-active.svg',
+    link: '/',
+  },
+  {
+    name: 'Transfers',
+    icon: '/transfers-icon.svg',
+    activeIcon: '/transfers-icon-active.svg',
+    link: '/transfers',
+  },
+  {
+    name: 'Governance',
+    icon: '/gov-icon.svg',
+    activeIcon: '/gov-icon-active.svg',
+    link: '/governance',
+  },
+  {
+    name: 'Staking',
+    icon: '/staking-icon.svg',
+    activeIcon: '/staking-icon-active.svg',
+    link: '/staking',
+  },
+  {
+    name: 'Multisig',
+    icon: '/multisig-icon.svg',
+    activeIcon: '/multisig-icon-active.svg',
+    link: '/multisig',
+  },
+];
+export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
+export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
+export const TRANSFERS_CARDS_COUNT = 5;
+export const NO_MESSAGES_ILLUSTRATION = '/no-messages-illustration.png';

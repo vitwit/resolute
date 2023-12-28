@@ -10,7 +10,7 @@ const TransfersHistory = ({ chainIDs }: { chainIDs: string[] }) => {
     <div className="right-section">
       <TopNav />
       <Balance chainIDs={chainIDs} />
-      <div className="flex justify-between items-center mt-10">
+      <div className="flex justify-between items-center mt-20">
         <h2 className="text-xl not-italic font-normal leading-[normal]">
           Recent Transactions
         </h2>
@@ -27,20 +27,20 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
   const [, available] = useGetAssetsAmount(chainIDs);
   return (
     <div>
-      <div className="text-white text-center mt-6">
-        <div className="text-sm not-italic font-normal leading-[normal] mb-2">
+      <div className="text-white text-center mt-10">
+        <div className="text-sm not-italic font-normal leading-[normal] mb-3">
           Available Balance
         </div>
         <span className="text-center text-[32px] not-italic font-bold leading-[normal]">
           {formatDollarAmount(available)}
         </span>
       </div>
-      {/* <div className="flex justify-center gap-6">
+      <div className="flex justify-center gap-6 opacity-0 mt-6">
         <button className="primary-custom-btn-disabled">&nbsp;&nbsp;Send&nbsp;&nbsp;</button>
         <button className="primary-custom-btn-disabled">
           Receive
         </button>
-      </div> */}
+      </div>
     </div>
   );
 };

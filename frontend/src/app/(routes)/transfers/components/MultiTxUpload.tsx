@@ -34,25 +34,30 @@ const MultiTxUpload = ({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 flex flex-col flex-1">
       <div className="w-full flex justify-between items-center">
         <div className="text-sm not-italic font-normal leading-[normal]">
           File Upload
         </div>
-        <div className="text-right text-xs not-italic font-normal leading-[normal]">
-          Download Sample{' '}
-          <span
-            className="text-xs not-italic font-bold leading-[normal] underline cursor-pointer"
-            onClick={() => {
-              window.open(SEND_TEMPLATE, '_blank', 'noopener,noreferrer');
-            }}
-          >
-            here
-          </span>
+        <div className="flex items-center">
+          <div className="text-right text-xs not-italic font-normal leading-[normal]">
+            Download Sample{' '}
+          </div>
+          <div className="w-6 h-6 flex items-center justify-center cursor-pointer">
+            <Image
+              src="/download-icon.svg"
+              width={24}
+              height={24}
+              alt="Download"
+              onClick={() => {
+                window.open(SEND_TEMPLATE, '_blank', 'noopener,noreferrer');
+              }}
+            />
+          </div>
         </div>
       </div>
       <div
-        className="file-upload-box"
+        className="file-upload-box flex flex-col flex-1"
         style={{
           backgroundColor: '#1a1731',
           height: '228px',

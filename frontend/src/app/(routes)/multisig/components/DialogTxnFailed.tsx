@@ -5,7 +5,7 @@ import {
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
-import { dialogTxnFailedStyles } from '../styles';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 interface DialogTxnFailedProps {
   open: boolean;
@@ -21,7 +21,7 @@ const DialogTxnFailed: React.FC<DialogTxnFailedProps> = (props) => {
       onClose={onClose}
       maxWidth="lg"
       PaperProps={{
-        sx: dialogTxnFailedStyles,
+        sx: dialogBoxPaperPropStyles,
       }}
     >
       <DialogContent sx={{ padding: 0 }}>

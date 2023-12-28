@@ -31,8 +31,7 @@
 }
 .proposal-id-static {
   @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px];
-  background: rgba(255, 255, 255, 0.10);
-  
+  background: rgba(255, 255, 255, 0.1);
 }
 .proposal {
   @apply flex items-start gap-4;
@@ -69,7 +68,7 @@
   @apply flex justify-end items-center gap-10 pr-0;
 }
 .text-grid {
-  @apply  w-[451px]
+  @apply w-[451px];
 }
 .placeholder-text {
   @apply flex h-[54px] flex-col justify-center items-start gap-2 px-4 py-0 rounded-2xl;
@@ -117,7 +116,6 @@
 }
 .proposal-details-grid {
   @apply flex flex-col justify-center items-start gap-6 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
-  background: #0e0b26;
 }
 .proposal-details {
   @apply flex justify-between items-start px-6 py-0;

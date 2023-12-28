@@ -2,7 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
-import { ConnectWalletButton } from '../components/ConnectWalletButton';
+import { Landingpage } from '@/components/LandingPage';
 import { StoreProvider } from '@/store/StoreProvider';
 import SideBar from '@/components/SideBar';
 
@@ -24,9 +24,9 @@ export default function RootLayout({
         {
           <StoreProvider>
             <div className="layout">
-              <ConnectWalletButton>
+              <Landingpage>
                 <SideBar> {children}</SideBar>
-              </ConnectWalletButton>
+              </Landingpage>
             </div>
           </StoreProvider>
         }
