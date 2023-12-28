@@ -105,7 +105,7 @@ const AllProposals = ({
         <div className="space-y-4 w-full">
           <div className="flex justify-between">
             <div className="flex space-x-2 flex-1">
-              <div className="flex flex-col flex-1 justify-center items-center mt-[100px]">
+              <div className="flex flex-col flex-1 justify-center items-center mt-[100px] space-y-4">
                 <Image
                   src="/gov-illustration.png"
                   width={610}

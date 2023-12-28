@@ -205,14 +205,12 @@ const RightOverview = ({
                           alt="Network Logo"
                         />
 
-                        <p className="items-center flex space-x-1 text-[14px] font-bold">
-                          #{get(proposalInfo, 'proposal_id')}
+                        <p className="items-center flex space-x-1 text-[14px] font-bold opacity-50">
+                          # {get(proposalInfo, 'proposal_id')}
                         </p>
-                        <p className="proposal-text-extralight items-center flex">
-                          | Proposal
-                        </p>
+                        {/* <p className="proposal-text-extralight items-center flex"></p> */}
                       </div>
-                      <div className="flex items-center proposal-text-extralight">
+                      <div className="flex items-center proposal-text-extralight opacity-50">
                         {status === 'active' ? (
                           <>
                             {`Voting ends in ${getTimeDifferenceToFutureDate(
@@ -289,10 +287,10 @@ const RightOverview = ({
                 </div>
 
                 {isStatusVoting ? (
-                  <div className="space-y-4 w-full">
-                    <div className="vote-grid space-y-4">
+                  <div className="space-y-6 w-full">
+                    <div className="vote-grid space-y-6">
                       <div className="voting-view w-full">
-                        <div className="w-full  text-white flex flex-col justify-center items-center space-y-4">
+                        <div className="w-full  text-white flex flex-col justify-center items-center space-y-6">
                           <div className="text-[20px]">Quorum</div>
 
                           {quorumPercent ? (

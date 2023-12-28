@@ -397,6 +397,7 @@ const ProposalOverviewVote = ({
                       </div>
                     ))}
                   </div>
+                 
                 </div>
               </div>
               <div className="bg-[#0E0B26] rounded-2xl">
