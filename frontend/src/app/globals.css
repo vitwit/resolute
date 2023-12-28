@@ -16,6 +16,15 @@
   background: #393737;
 }
 
+.disable-draggable {
+  user-drag: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
 .main {
   @apply leading-[normal] m-0 text-white;
   background-color: #0b071d;
