@@ -362,14 +362,15 @@ const ProposalOverviewVote = ({
                     {quorumPercent ? (
                       <Tooltip title={`${quorumPercent}%`}>
                         <div className="flex w-full flex-col">
-                          <div className="flex flex-col items-center">
+                          <div className="flex flex-col items-center font-bold">
+                            <div>Turnout / Quorum</div>
                             <div>
-                              {quorumPercent}/{quorumRequired}
+                              {quorumPercent}% / {quorumRequired}%
                             </div>
-                            <div className="bg-[#f0f0f3] h-[10px] w-[2px]"></div>
+                            <div className="bg-[#f0f0f3] h-[10px] w-[4px]"></div>
                           </div>
                           <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
-                            <div className="bg-[#f0f0f3] h-[10px] w-[2px] absolute  flex left-[224px]"></div>
+                            <div className="bg-[#f0f0f3] h-[10px] w-[4px] absolute  flex left-[223px]"></div>
                             <div
                               style={{ width: `${quorumPercent}%` }}
                               className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
@@ -442,13 +443,13 @@ const ProposalOverviewVote = ({
               </div>
               <div className=" bg-[#0e0b26]">
                 <DepositProposalDetails
-                  submittedAt={getTimeDifferenceToFutureDate(
+                  submittedAt={`${getTimeDifferenceToFutureDate(
                     get(proposalInfo, 'submit_time', '-'),
                     true
-                  )}
-                  endsAt={getTimeDifferenceToFutureDate(
+                  )} ago`}
+                  endsAt={`in ${getTimeDifferenceToFutureDate(
                     get(proposalInfo, 'deposit_end_time', '-')
-                  )}
+                  )}`}
                   depositrequired={formatCoin(
                     depositRequired,
                     currency.coinDenom
