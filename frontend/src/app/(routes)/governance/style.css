@@ -152,7 +152,7 @@
   background: rgba(255, 255, 255, 0.05);
 }
 .view-full {
-  @apply flex flex-col justify-center text-white text-center text-sm font-normal leading-[normal] underline cursor-pointer;
+  @apply flex flex-col justify-center text-center leading-[normal] underline cursor-pointer text-[#FFFFFFBF] text-[12px] font-extralight underline-offset-2;
 }
 
 .scrollable-container {

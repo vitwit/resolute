@@ -284,10 +284,10 @@ const ProposalOverviewVote = ({
               </ReactMarkdown>
             </div>
             <div
-              className="cursor-pointer underline justify-end"
+              className=" view-full flex w-full justify-end items-end"
               onClick={() => setShowRawData(true)}
             >
-              jsondata
+              Raw_Data
             </div>
             {showRawData && (
               <ProposalViewRaw
