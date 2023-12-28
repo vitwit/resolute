@@ -2,11 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getWalletAmino } from '../../../txns/execute';
 import { isWalletInstalled } from './walletService';
-import {
-  isConnected,
-  setConnected,
-  setWalletName,
-} from '../../../utils/localStorage';
+import { setConnected, setWalletName } from '../../../utils/localStorage';
 import { TxStatus } from '@/types/enums';
 import { loadTransactions } from '../transactionHistory/transactionHistorySlice';
 import { setError } from '../common/commonSlice';
@@ -39,11 +35,7 @@ interface WalletState {
 const initialState: WalletState = {
   name: '',
   connected: false,
-  /*
-    if any wallet is connected, isLoading is set to true till the wallet state (keplr or other wallets) is loaded into redux
-    else we can directly show landing page and there is nothing to load
-  */
-  isLoading: isConnected(),
+  isLoading: true,
   isNanoLedger: false,
   pubKey: '',
   networks: {},
@@ -176,6 +168,9 @@ const walletSlice = createSlice({
     resetConnectWalletStatus: (state) => {
       state.status = TxStatus.INIT;
     },
+    unsetIsLoading: (state) => {
+      state.isLoading = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -200,7 +195,11 @@ const walletSlice = createSlice({
   },
 });
 
-export const { setWallet, resetWallet, resetConnectWalletStatus } =
-  walletSlice.actions;
+export const {
+  setWallet,
+  resetWallet,
+  resetConnectWalletStatus,
+  unsetIsLoading,
+} = walletSlice.actions;
 
 export default walletSlice.reducer;
