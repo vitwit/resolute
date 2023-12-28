@@ -12,7 +12,7 @@ const ProposalDetailsVoteCard = ({
   startedAt,
   endsAt,
   proposalNetwork,
-  createdby,
+
   depositamount,
 }: {
   createdAt: string;
