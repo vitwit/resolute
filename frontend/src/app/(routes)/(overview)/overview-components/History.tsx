@@ -45,7 +45,7 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
   const [staked, available, rewards] = useGetAssetsAmount(chainIDs);
   return (
     <div>
-      <div className="text-white text-center my-6">
+      <div className="text-white text-center mt-10 mb-6">
         <div className="text-sm not-italic font-normal leading-[normal] mb-3">
           Total Balance
         </div>

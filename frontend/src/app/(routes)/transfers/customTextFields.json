@@ -85,7 +85,7 @@
       "textFieldClassName": " rounded-2xl flex flex-col flex-1",
       "rules": {},
       "textFieldSize": "small",
-      "placeHolder": "Enter Memo Here",
+      "placeHolder": "Enter memo here (optional)",
       "textFieldCustomMuiSx": {
         "& .MuiInputBase-input": {
           "color": "white"
@@ -121,7 +121,7 @@
       "rules": {},
       "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
       "textFieldSize": "lg",
-      "placeHolder": "",
+      "placeHolder": "Enter memo here (optional)",
       "textFieldCustomMuiSx": {
         "& .MuiInputBase-input": {
           "color": "white"

@@ -4,30 +4,33 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getSelectedPartFromURL } from '../utils/util';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { resetWallet } from '@/store/features/wallet/walletSlice';
-import { logout } from '@/utils/localStorage';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { tabLink } from '../utils/util';
 import { Tooltip } from '@mui/material';
 import TransactionSuccessPopup from './TransactionSuccessPopup';
 import SnackBar from './SnackBar';
-import { SIDENAV_MENU_ITEMS } from '@/utils/constants';
+import {
+  GITHUB_ISSUES_PAGE_LINK,
+  HELP_ICON,
+  REPORT_ICON,
+  SIDENAV_MENU_ITEMS,
+  TELEGRAM_LINK,
+} from '@/utils/constants';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
   const pathParts = pathName.split('/');
   const selectedPart = getSelectedPartFromURL(pathParts).toLowerCase();
-  const dispatch = useAppDispatch();
 
   return (
     <div className="main">
       <TransactionSuccessPopup />
       <SnackBar />
       <div className="sidebar overflow-y-scroll">
-        <div className="">
+        <Link href="/">
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
-        </div>
+        </Link>
         <div className="flex flex-col gap-4 items-center">
           {SIDENAV_MENU_ITEMS.map((item) => (
             <MenuItem
@@ -41,19 +44,11 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
           ))}
         </div>
         <div className="flex flex-col gap-4">
-          <Tooltip title="History" placement="right">
-            <Link href="/history">
-              <div
-                className={`sidebar-menu-item ${
-                  selectedPart === 'history' ? 'sidebar-menu-item-selected' : ''
-                }`}
-              >
+          <Tooltip title="Report an issue" placement="right">
+            <Link href={GITHUB_ISSUES_PAGE_LINK} target="_blank">
+              <div className="sidebar-menu-item">
                 <Image
-                  src={
-                    selectedPart === 'history'
-                      ? '/history-icon-active.svg'
-                      : '/history-icon.svg'
-                  }
+                  src={REPORT_ICON}
                   height={40}
                   width={40}
                   alt="Resolute"
@@ -61,21 +56,12 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
               </div>
             </Link>
           </Tooltip>
-          <Tooltip title="Logout" placement="right">
-            <div
-              className="sidebar-menu-item w-12 h-12 cursor-pointer"
-              onClick={() => {
-                dispatch(resetWallet());
-                logout();
-              }}
-            >
-              <Image
-                src="/logout-icon.svg"
-                height={40}
-                width={40}
-                alt="Resolute"
-              />
-            </div>
+          <Tooltip title="Need help?" placement="right">
+            <Link href={TELEGRAM_LINK} target="_blank">
+              <div className="sidebar-menu-item">
+                <Image src={HELP_ICON} height={40} width={40} alt="Resolute" />
+              </div>
+            </Link>
           </Tooltip>
         </div>
       </div>
