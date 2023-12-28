@@ -250,7 +250,7 @@ const ProposalOverviewVote = ({
                     alt="Network-Logo"
                   />
                   <p className="font-bold text-[16px] flex items-center">
-                    #{get(proposalInfo, 'proposal_id')} | Proposal
+                    # {get(proposalInfo, 'proposal_id')} 
                   </p>
                 </div>
                 <div>
