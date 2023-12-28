@@ -152,7 +152,7 @@ const StakingPage = ({
             </div>
             <button
               onClick={toggleValidatorsDialog}
-              className="primary-custom-btn"
+              className="primary-custom-btn mb-6"
             >
               Explore
             </button>

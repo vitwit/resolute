@@ -113,7 +113,7 @@ const StakingSidebar = ({
 
   return (
     <div className="staking-sidebar flex flex-col">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-10">
         <TopNav />
         <div className="flex gap-6">
           <StakingStatsCard
@@ -150,7 +150,7 @@ const StakingSidebar = ({
           </div>
         ) : null}
       </div>
-      <div className="mt-10 overflow-y-scroll">
+      <div className="mt-20 overflow-y-scroll">
         <AllValidators
           validators={validators}
           currency={currency}

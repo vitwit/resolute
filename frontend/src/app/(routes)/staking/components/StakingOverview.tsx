@@ -136,6 +136,12 @@ const StakingOverview = () => {
         </div>
       ) : null}
 
+      {delegationsLoading !== 0 ? (
+        <div className="no-data">
+          <CircularProgress size={32} sx={{ color: 'white' }} />
+        </div>
+      ) : null}
+
       {hasUnbonding ? (
         <div className="mt-12">
           <h2 className="txt-lg font-medium my-6">Unbonding</h2>
@@ -159,11 +165,6 @@ const StakingOverview = () => {
               );
             })}
           </div>
-        </div>
-      ) : null}
-      {delegationsLoading !== 0 ? (
-        <div className="no-data">
-          <CircularProgress size={32} sx={{ color: 'white' }} />
         </div>
       ) : null}
     </div>
