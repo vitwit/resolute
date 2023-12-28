@@ -18,8 +18,10 @@ import { Validator } from '@/types/staking';
 import { useRouter } from 'next/navigation';
 import { getBalances } from '@/store/features/bank/bankSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import msgs from '@/utils/messages.json';
-import { NO_MESSAGES_ILLUSTRATION } from '@/utils/constants';
+import {
+  NO_DELEGATIONS_MSG,
+  NO_MESSAGES_ILLUSTRATION,
+} from '@/utils/constants';
 import Image from 'next/image';
 import { CircularProgress } from '@mui/material';
 
@@ -138,7 +140,7 @@ const StakingPage = ({
           />
         </div>
         {delegationsLoading === 0 && !hasDelegations ? (
-          <div className="h-full flex flex-col justify-center items-center">
+          <div className="my-[5%] flex flex-col justify-center items-center">
             <Image
               src={NO_MESSAGES_ILLUSTRATION}
               width={200}
@@ -146,7 +148,7 @@ const StakingPage = ({
               alt={'No Transactions'}
             />
             <div className="text-[16px] opacity-50 mt-2 mb-6 leading-normal italic font-extralight text-center">
-              Looks like you haven't staked anything yet, go ahead and explore !
+              {NO_DELEGATIONS_MSG}
             </div>
             <button
               onClick={toggleValidatorsDialog}

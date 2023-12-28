@@ -16,7 +16,10 @@ import { getDelegatorTotalRewards } from '@/store/features/distribution/distribu
 import { getBalances } from '@/store/features/bank/bankSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Image from 'next/image';
-import { NO_MESSAGES_ILLUSTRATION } from '@/utils/constants';
+import {
+  NO_DELEGATIONS_MSG,
+  NO_MESSAGES_ILLUSTRATION,
+} from '@/utils/constants';
 import { CircularProgress } from '@mui/material';
 
 const StakingOverview = () => {
@@ -128,7 +131,7 @@ const StakingOverview = () => {
             alt={'No Transactions'}
           />
           <div className="text-[16px] opacity-50 mt-2 mb-6 leading-normal italic font-extralight text-center">
-            Looks like you haven't staked anything yet, go ahead and explore !
+            {NO_DELEGATIONS_MSG}
           </div>
         </div>
       ) : null}
