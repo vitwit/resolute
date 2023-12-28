@@ -80,6 +80,7 @@ export const txTransfer = createAsyncThunk(
         setTxAndHash({
           hash: txHash,
           tx,
+          chainID: chainID,
         })
       );
       dispatch(

@@ -92,7 +92,7 @@ export const multiTxns = createAsyncThunk(
           transactions: [tx],
         })
       );
-      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+      dispatch(setTxAndHash({ tx, hash: tx.transactionHash, chainID: chainID }));
       if (result?.code === 0) {
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
@@ -134,7 +134,7 @@ export const txBankSend = createAsyncThunk(
           transactions: [tx],
         })
       );
-      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+      dispatch(setTxAndHash({ tx, hash: tx.transactionHash, chainID: chainID }));
       if (result?.code === 0) {
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {

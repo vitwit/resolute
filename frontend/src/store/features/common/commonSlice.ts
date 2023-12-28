@@ -13,6 +13,7 @@ const initialState: CommonState = {
   txSuccess: {
     hash: '',
     tx: undefined,
+    chainID: '',
   },
   txLoadRes: { load: false },
   tokensInfoState: {
@@ -76,6 +77,7 @@ export const commonSlice = createSlice({
       state.txSuccess = {
         hash: action.payload.hash,
         tx: action.payload.tx,
+        chainID: action.payload.chainID,
       };
     },
     setTxLoad: (state) => {
@@ -88,6 +90,7 @@ export const commonSlice = createSlice({
       state.txSuccess = {
         hash: '',
         tx: undefined,
+        chainID: '',
       };
     },
     resetError: (state) => {

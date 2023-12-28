@@ -1,19 +1,27 @@
 'use client';
 import '@/app/txn.css';
 
-import { Dialog, DialogContent, Tooltip } from '@mui/material';
+import { Dialog, DialogContent } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
-import CommonCopy from './CommonCopy';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { TXN_FAILED_ICON, TXN_SUCCESS_ICON } from '@/utils/constants';
+import { copyToClipboard } from '@/utils/copyToClipboard';
+import { setError } from '@/store/features/common/commonSlice';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import Link from 'next/link';
+import { getTxnURL } from '@/utils/util';
 
 const TransactionSuccessPopup = () => {
   const tx = useAppSelector((state) => state.common.txSuccess.tx);
+  const chainID = useAppSelector((state) => state.common.txSuccess.chainID);
   const feeAmount = tx?.fee?.[0]?.amount || '-';
   const feeDenom = tx?.fee?.[0]?.denom || '-';
 
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useAppDispatch();
+  const { getChainInfo } = useGetChainInfo();
+  const { explorerTxHashEndpoint = '' } = chainID ? getChainInfo(chainID) : {};
 
   const handleClose = () => {
     setIsOpen(false);
@@ -35,7 +43,8 @@ const TransactionSuccessPopup = () => {
       PaperProps={{
         sx: {
           borderRadius: '40px',
-          background: 'linear-gradient(180deg, #2A2457 0%, #69448D 100%)',
+          background:
+            'linear-gradient(178deg, #241B61 1.71%, #69448D 98.35%, #69448D 98.35%)',
         },
       }}
     >
@@ -45,8 +54,8 @@ const TransactionSuccessPopup = () => {
             <div>
               <Image
                 src={tx?.code === 0 ? TXN_SUCCESS_ICON : TXN_FAILED_ICON}
-                height={60}
-                width={60}
+                height={48}
+                width={48}
                 alt="Transaction Successful"
               />
             </div>
@@ -67,16 +76,50 @@ const TransactionSuccessPopup = () => {
               />
             </div> */}
           </div>
-          <div className="divider"></div>
+          <div className="flex justify-between items-center gap-2 w-full">
+            <Image
+              src="/semi-circle-left.svg"
+              draggable={false}
+              height={40}
+              width={40}
+              alt=""
+            />
+            <div className="divider"></div>
+            <Image
+              src="/semi-circle-right.svg"
+              draggable={false}
+              height={40}
+              width={40}
+              alt=""
+            />
+          </div>
           <div className="px-[60px] w-full">
             <div className="txn-details">
               <div className="txn-details-item">
                 <div className="txn-details-item-title">Transaction Hash</div>
                 <div className="truncate">
-                  <CommonCopy
-                    message={tx?.transactionHash || '-'}
-                    style="w-full"
-                  />
+                  <div className="w-full common-copy">
+                    <span className="truncate">
+                      {tx?.transactionHash || '-'}
+                    </span>
+                    <Image
+                      className="cursor-pointer"
+                      onClick={(e) => {
+                        copyToClipboard(tx?.transactionHash || '-');
+                        dispatch(
+                          setError({
+                            type: 'success',
+                            message: 'Copied',
+                          })
+                        );
+                        e.stopPropagation();
+                      }}
+                      src="/copy-icon-plain.svg"
+                      width={24}
+                      height={24}
+                      alt="copy"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="txn-details-item">
@@ -93,12 +136,27 @@ const TransactionSuccessPopup = () => {
               </div>
             </div>
             <div className="flex gap-10 mt-6">
-              <Tooltip title="Coming soon...">
-                <button className="txn-receipt-btn btn-disabled">Share</button>
-              </Tooltip>
-              <Tooltip title="Coming soon...">
-                <button className="txn-receipt-btn btn-disabled">View</button>
-              </Tooltip>
+              <button
+                className="txn-receipt-btn"
+                onClick={() => {
+                  copyToClipboard(
+                    getTxnURL(explorerTxHashEndpoint, tx?.transactionHash || '')
+                  );
+                  dispatch(setError({ type: 'success', message: 'Copied' }));
+                }}
+              >
+                Share
+              </button>
+              <Link
+                className="txn-receipt-btn"
+                href={getTxnURL(
+                  explorerTxHashEndpoint,
+                  tx?.transactionHash || ''
+                )}
+                target="_blank"
+              >
+                View
+              </Link>
             </div>
           </div>
         </div>

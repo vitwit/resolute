@@ -361,3 +361,10 @@ export const isMultisigMember = (
   });
   return !!result?.length;
 };
+
+export const getTxnURL = (
+  explorerTxHashEndpoint: string,
+  hash: string
+): string => {
+  return cleanURL(explorerTxHashEndpoint) + '/' + hash;
+};

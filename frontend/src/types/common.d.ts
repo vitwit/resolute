@@ -6,6 +6,7 @@ interface ErrorState {
 interface TxSuccess {
   hash: string;
   tx?: Transaction;
+  chainID: string;
 }
 
 interface TxLoadRes {

@@ -1,10 +1,10 @@
 .divider {
-  @apply w-full my-6;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+  @apply w-full my-6 h-[1px];
+  background: repeating-linear-gradient(to right, #ffffff33, #ffffff33 12px, transparent 12px, transparent 24px);
 }
 
 .txn-status-text {
-  @apply text-[28px] leading-normal font-semibold tracking-[1.12px];
+  @apply text-[24px] leading-normal font-semibold tracking-[1.12px];
 }
 
 .txn-failed-text {
