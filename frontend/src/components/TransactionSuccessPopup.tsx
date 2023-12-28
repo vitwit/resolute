@@ -10,15 +10,12 @@ import { copyToClipboard } from '@/utils/copyToClipboard';
 import { setError } from '@/store/features/common/commonSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import Link from 'next/link';
-import { formatCoin, getTxnURL, parseAmount } from '@/utils/util';
+import { getTxnURL } from '@/utils/util';
 import TxnMessage from './TxnMessage';
 import { parseBalance } from '@/utils/denom';
 
 const TransactionSuccessPopup = () => {
   const tx = useAppSelector((state) => state.common.txSuccess.tx);
-  console.log(tx);
-  const feeAmount = tx?.fee?.[0]?.amount || '-';
-  const feeDenom = tx?.fee?.[0]?.denom || '-';
 
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
