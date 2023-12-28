@@ -218,20 +218,6 @@ const AllProposals = ({
                                   </p>
                                 )}
                               </div>
-                              {/* <div className="flex space-x-1">
-                            <Image
-                              src="/vote-icon.svg"
-                              width={24}
-                              height={24}
-                              alt="Vote-Icon"
-                            />
-                            <p className="proposal-text-small">
-                              {get(proposal, 'status') ===
-                              'PROPOSAL_STATUS_VOTING_PERIOD'
-                                ? 'Active'
-                                : 'Deposit'}
-                            </p>
-                          </div> */}
                             </div>
                           )}
                         </div>
