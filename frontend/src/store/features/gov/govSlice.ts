@@ -25,6 +25,7 @@ import { GAS_FEE, PROPOSAL_STATUS_VOTING_PERIOD } from '@/utils/constants';
 import { signAndBroadcast } from '@/utils/signing';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { GovDepositMsg, GovVoteMsg } from '@/txns/gov';
+import { NewTransaction } from '@/utils/transaction';
 
 const PROPSAL_STATUS_DEPOSIT = 1;
 const PROPOSAL_STATUS_ACTIVE = 2;
@@ -166,10 +167,8 @@ const initialState: GovState = {
 export const getProposal = createAsyncThunk(
   'gov/proposal-info',
   async (data: GetProposalInputs, { rejectWithValue }) => {
-    console.log('proposal uRL', data);
     try {
       const response = await govService.proposal(data.baseURL, data.proposalId);
-      console.log('proposal Result', response);
       return {
         chainID: data.chainID,
         data: response.data,
@@ -187,7 +186,6 @@ export const getGovTallyParams = createAsyncThunk(
   async (data: GetDepositParamsInputs, { rejectWithValue }) => {
     try {
       const response = await govService.govTallyParams(data.baseURL);
-      console.log('tally params 111', response, data);
       return {
         chainID: data.chainID,
         data: response.data,
@@ -260,8 +258,6 @@ export const getProposalsInVoting = createAsyncThunk(
         data.limit,
         PROPOSAL_STATUS_ACTIVE
       );
-
-      console.log('response--------', response);
 
       const { data: responseData } = response || {};
       const proposals = responseData?.proposals || [];
@@ -362,10 +358,12 @@ export const txVote = createAsyncThunk(
         // data.feegranter?.length > 0 ? data.feegranter : undefined
       );
 
-      console.log('tx result==============', result);
+      const tx = NewTransaction(result, [msg], data.chainID, data.voter);
+
       if (result?.code === 0) {
         dispatch(
           setTxAndHash({
+            tx: tx,
             hash: result?.transactionHash,
           })
         );
@@ -381,7 +379,6 @@ export const txVote = createAsyncThunk(
         return rejectWithValue(result?.rawLog);
       }
     } catch (error) {
-      console.log('err in catch ', error);
       if (error instanceof AxiosError) {
         dispatch(
           setError({
@@ -428,8 +425,10 @@ export const txDeposit = createAsyncThunk(
       );
       const { code, transactionHash, rawLog } = result || {};
 
+      const tx = NewTransaction(result, [msg], data.chainID, data.depositer);
+
       if (code === 0) {
-        dispatch(setTxAndHash({ hash: transactionHash }));
+        dispatch(setTxAndHash({ tx: tx, hash: transactionHash }));
         return fulfillWithValue({ txHash: transactionHash });
       } else {
         dispatch(setError({ type: 'error', message: rawLog || '' }));

@@ -24,6 +24,7 @@ interface ChainInfo {
 interface WalletState {
   name: string;
   connected: boolean;
+  isLoading: boolean;
   isNanoLedger: boolean;
   pubKey: string;
   networks: Record<string, ChainInfo>;
@@ -34,6 +35,7 @@ interface WalletState {
 const initialState: WalletState = {
   name: '',
   connected: false,
+  isLoading: true,
   isNanoLedger: false,
   pubKey: '',
   networks: {},
@@ -181,9 +183,11 @@ const walletSlice = createSlice({
         state.isNanoLedger = action.payload.isNanoLedger;
         state.name = action.payload.walletName;
         state.status = TxStatus.IDLE;
+        state.isLoading = false;
       })
       .addCase(establishWalletConnection.rejected, (state) => {
         state.status = TxStatus.REJECTED;
+        state.isLoading = false;
       });
   },
 });
