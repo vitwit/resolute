@@ -361,3 +361,17 @@ export const isMultisigMember = (
   });
   return !!result?.length;
 };
+
+export const getTxnURL = (
+  explorerTxHashEndpoint: string,
+  hash: string
+): string => {
+  return cleanURL(explorerTxHashEndpoint) + '/' + hash;
+};
+
+export const parseAmount = (amount: Coin[], currency: Currency) => {
+  return formatCoin(
+    parseBalance(amount, currency.coinDecimals, currency.coinMinimalDenom),
+    currency.coinDenom
+  );
+};

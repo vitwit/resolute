@@ -33,7 +33,10 @@ export const SEND_TYPE_URL = '/cosmos.bank.v1beta1.MsgSend';
 export const DELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgDelegate';
 export const UNDELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgUndelegate';
 export const REDELEGATE_TYPE_URL = '/cosmos.staking.v1beta1.MsgBeginRedelegate';
+export const IBC_SEND_TYPE_URL = '/ibc.applications.transfer.v1.MsgTransfer';
+export const DEPOSIT_TYPE_URL = '/cosmos.gov.v1beta1.MsgDeposit';
 export const SEND_TEMPLATE = 'https://api.resolute.vitwit.com/_static/send.csv';
+export const VOTE_TYPE_URL = '/cosmos.gov.v1beta1.MsgVote';
 export const MULTI_TRANSFER_MSG_COUNT = 13;
 export const DELETE_TXN_DIALOG_IMAGE_PATH = '/delete-txn-popup-image.png';
 export const EMPTY_TXN = {
@@ -127,5 +130,24 @@ export const SIDENAV_MENU_ITEMS = [
 ];
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
+export const TXN_SUCCESS_ICON = '/transaction-success-icon.svg';
+export const TXN_FAILED_ICON = '/transaction-failed-icon.svg';
+export const HELP_ICON = '/help-icon.svg';
+export const REPORT_ICON = '/report-icon.svg';
+export const GITHUB_ISSUES_PAGE_LINK =
+  'https://github.com/vitwit/resolute/issues';
+// TODO: Add telegram link
+export const TELEGRAM_LINK = '';
+export const LOGOUT_ICON = '/logout-icon.svg';
 export const TRANSFERS_CARDS_COUNT = 5;
 export const NO_MESSAGES_ILLUSTRATION = '/no-messages-illustration.png';
+export const VOTE_OPTIONS = ['Yes', 'Abstain', 'No', 'No With Veto'];
+export const MAP_TXN_TYPES = {
+  '/cosmos.staking.v1beta1.MsgDelegate': 'delegated',
+  '/cosmos.bank.v1beta1.MsgSend': 'sent',
+  '/cosmos.staking.v1beta1.MsgBeginRedelegate': 'redelegated',
+  '/cosmos.staking.v1beta1.MsgUndelegate': 'undelegated',
+  '/cosmos.gov.v1beta1.MsgVote': 'voted',
+  '/ibc.applications.transfer.v1.MsgTransfer': 'sent',
+  '/cosmos.gov.v1beta1.MsgDeposit': 'deposited',
+};

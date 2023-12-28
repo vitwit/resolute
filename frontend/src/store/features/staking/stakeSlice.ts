@@ -169,7 +169,12 @@ export const txRestake = createAsyncThunk(
           transactions: [tx],
         })
       );
-      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+      dispatch(
+        setTxAndHash({
+          tx,
+          hash: tx.transactionHash,
+        })
+      );
       if (result?.code === 0) {
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
@@ -221,7 +226,12 @@ export const txDelegate = createAsyncThunk(
         })
       );
 
-      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+      dispatch(
+        setTxAndHash({
+          tx,
+          hash: tx.transactionHash,
+        })
+      );
 
       if (result?.code === 0) {
         dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
@@ -283,7 +293,12 @@ export const txReDelegate = createAsyncThunk(
         })
       );
 
-      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+      dispatch(
+        setTxAndHash({
+          tx,
+          hash: tx.transactionHash,
+        })
+      );
 
       if (result?.code === 0) {
         dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
@@ -344,7 +359,12 @@ export const txUnDelegate = createAsyncThunk(
         })
       );
 
-      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+      dispatch(
+        setTxAndHash({
+          tx,
+          hash: tx.transactionHash,
+        })
+      );
 
       if (result?.code === 0) {
         return fulfillWithValue({ txHash: result?.transactionHash });
@@ -397,7 +417,12 @@ export const txCancelUnbonding = createAsyncThunk(
           transactions: [tx],
         })
       );
-      dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
+      dispatch(
+        setTxAndHash({
+          tx,
+          hash: tx.transactionHash,
+        })
+      );
 
       if (result?.code === 0) {
         const inputData = {
@@ -941,7 +966,7 @@ export const stakeSlice = createSlice({
         state.chains[chainID].tx.type = 'redelegate';
       });
 
-      builder
+    builder
       .addCase(txCancelUnbonding.pending, (state, action) => {
         const { chainID } = action.meta.arg.basicChainInfo;
         state.chains[chainID].cancelUnbondingTxStatus = TxStatus.PENDING;
