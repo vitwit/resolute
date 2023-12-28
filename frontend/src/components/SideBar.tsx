@@ -28,9 +28,9 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
       <TransactionSuccessPopup />
       <SnackBar />
       <div className="sidebar overflow-y-scroll">
-        <div className=''>
+        <Link href="/">
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
-        </div>
+        </Link>
         <div className="flex flex-col gap-4 items-center">
           {SIDENAV_MENU_ITEMS.map((item) => (
             <MenuItem
