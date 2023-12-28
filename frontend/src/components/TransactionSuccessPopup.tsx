@@ -4,7 +4,7 @@ import '@/app/txn.css';
 import { Dialog, DialogContent, Tooltip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import CommonCopy from './CommonCopy';
 import { TXN_FAILED_ICON, TXN_SUCCESS_ICON } from '@/utils/constants';
 
