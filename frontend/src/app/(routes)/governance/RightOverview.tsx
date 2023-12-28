@@ -192,7 +192,7 @@ const RightOverview = ({
         </div>
         {proposalLoadingStatus !== 'pending' ? (
           <>
-            <div className="flex justify-between h-full">
+            <div className="flex justify-between h-full w-full">
               <div className="flex-1 flex flex-col justify-between">
                 <div className="space-y-4 w-full">
                   <div className="space-y-3">

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
-
+import ProposalViewRaw from './ProposalViewRaw';
 import { RootState } from '@/store/store';
 import CustomPieChart from './CustomPiechart';
 import './style.css';
@@ -135,7 +135,7 @@ const ProposalOverviewVote = ({
     });
     return chain;
   };
-
+  const [showRawData, setShowRawData] = useState(false);
   const [isVotePopupOpen, setIsVotePopupOpen] = useState(false);
   const handleCloseVotePopup = () => {
     setIsVotePopupOpen(false);
@@ -283,6 +283,19 @@ const ProposalOverviewVote = ({
                 {get(proposalInfo, 'content.description')}
               </ReactMarkdown>
             </div>
+            <div
+              className="cursor-pointer underline justify-end"
+              onClick={() => setShowRawData(true)}
+            >
+              jsondata
+            </div>
+            {showRawData && (
+              <ProposalViewRaw
+                open={showRawData}
+                onClose={() => setShowRawData(false)}
+                proposals={proposalInfo}
+              />
+            )}
           </div>
 
           <VotePopup
@@ -309,6 +322,7 @@ const ProposalOverviewVote = ({
             networkLogo={networkLogo}
           />
         </div>
+
         {isStatusVoting ? (
           <div className="flex justify-between">
             <div className="space-y-4">
