@@ -1,16 +1,41 @@
 'use client';
+import '@/app/txn.css';
 
 import { Dialog, DialogContent } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { TXN_FAILED_ICON, TXN_SUCCESS_ICON } from '@/utils/constants';
+import { copyToClipboard } from '@/utils/copyToClipboard';
+import { setError } from '@/store/features/common/commonSlice';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import Link from 'next/link';
+import { getTxnURL } from '@/utils/util';
+import TxnMessage from './TxnMessage';
+import { parseBalance } from '@/utils/denom';
 
 const TransactionSuccessPopup = () => {
   const tx = useAppSelector((state) => state.common.txSuccess.tx);
-  const feeAmount = tx?.fee?.[0]?.amount || '-';
-  const feeDenom = tx?.fee?.[0]?.denom || '-';
 
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useAppDispatch();
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { explorerTxHashEndpoint = '' } = tx?.chainID
+    ? getChainInfo(tx.chainID)
+    : {};
+  const {
+    decimals = 0,
+    displayDenom = '',
+    minimalDenom = '',
+  } = tx?.chainID ? getDenomInfo(tx?.chainID) : {};
+  const currency = useMemo(
+    () => ({
+      coinMinimalDenom: minimalDenom,
+      coinDecimals: decimals,
+      coinDenom: displayDenom,
+    }),
+    [minimalDenom, decimals, displayDenom]
+  );
 
   const handleClose = () => {
     setIsOpen(false);
@@ -29,74 +54,124 @@ const TransactionSuccessPopup = () => {
       open={isOpen}
       onClose={handleClose}
       maxWidth="lg"
-      className="blur-effect"
-      PaperProps={{ sx: { borderRadius: '16px', backgroundColor: '#20172F' } }}
+      PaperProps={{
+        sx: {
+          borderRadius: '40px',
+          background:
+            'linear-gradient(178deg, #241B61 1.71%, #69448D 98.35%, #69448D 98.35%)',
+        },
+      }}
     >
       <DialogContent sx={{ padding: 0 }}>
-        <div className="transaction-box flex-col">
-          <div className="cross" onClick={handleClose}>
-            <Image src="/close-icon.svg" width={24} height={24} alt="Close" />
+        <div className="w-[600px] text-white flex py-[46px] flex-col justify-center items-center">
+          <div className="flex flex-col items-center gap-4  px-[60px]">
+            <div>
+              <Image
+                src={tx?.code === 0 ? TXN_SUCCESS_ICON : TXN_FAILED_ICON}
+                height={48}
+                width={48}
+                alt="Transaction Successful"
+              />
+            </div>
+            <div className="txn-status-text">
+              {tx?.code === 0 ? (
+                <span className="txt-success-text">
+                  Transaction Successful !
+                </span>
+              ) : (
+                <span className="txn-failed-text">Transaction Failed !</span>
+              )}
+            </div>
+            <TxnMessage msgs={tx?.msgs || []} currency={currency} />
           </div>
-          <div className="px-10 py-0">
-            <div className="space-y-10">
-              <div className="text-white text-xl font-bold">
-                {tx?.code === 0
-                  ? 'Transaction Successful'
-                  : 'Transaction Failed'}
-              </div>
-
-              <div className="transaction-inner-grid mt-10 mb-10">
-                <div className="flex gap-x-4">
-                  <div className="popup-text flex w-[140px] font-light ">
-                    Transaction Hash
-                  </div>
-                  <div className="flex space-x-2">
-                    <div className="popup-text font-medium">
+          <div className="flex justify-between items-center gap-2 w-full">
+            <Image
+              src="/semi-circle-left.svg"
+              draggable={false}
+              height={40}
+              width={40}
+              alt=""
+            />
+            <div className="divider"></div>
+            <Image
+              src="/semi-circle-right.svg"
+              draggable={false}
+              height={40}
+              width={40}
+              alt=""
+            />
+          </div>
+          <div className="px-[60px] w-full">
+            <div className="txn-details">
+              <div className="txn-details-item">
+                <div className="txn-details-item-title">Transaction Hash</div>
+                <div className="truncate">
+                  <div className="w-full common-copy">
+                    <span className="truncate">
                       {tx?.transactionHash || '-'}
-                    </div>
+                    </span>
                     <Image
-                      src="/copy.svg"
+                      className="cursor-pointer"
+                      onClick={(e) => {
+                        copyToClipboard(tx?.transactionHash || '-');
+                        dispatch(
+                          setError({
+                            type: 'success',
+                            message: 'Copied',
+                          })
+                        );
+                        e.stopPropagation();
+                      }}
+                      src="/copy-icon-plain.svg"
                       width={24}
                       height={24}
-                      alt="Copy-icon"
-                      className="cursor-pointer"
+                      alt="copy"
                     />
                   </div>
                 </div>
-                <div className="flex gap-x-4 h-10">
-                  <div className="popup-text font-light flex w-[140px]">
-                    Fees
-                  </div>
-                  <div className="popup-text font-medium">
-                    {feeAmount} {feeDenom}
-                  </div>
-                </div>
-                <div className="flex gap-x-4 h-10">
-                  <div className="popup-text font-light flex w-[140px]">
-                    Gas used / wanted
-                  </div>
-                  <div className="popup-text font-medium">
-                    {tx?.gasUsed || '-'} / {tx?.gasWanted || '-'}
-                  </div>
-                </div>
-                <div className="flex gap-x-4 h-10">
-                  <div className="popup-text font-light flex w-[140px]">
-                    Memo
-                  </div>
-                  <div className="popup-text font-medium w-[621px]">
-                    {tx?.memo || '-'}
-                  </div>
+              </div>
+              <div className="txn-details-item">
+                <div className="txn-details-item-title">Fees</div>
+                <div className="txn-details-item-content">
+                  {tx?.fee?.[0]
+                    ? parseBalance(
+                        tx?.fee,
+                        currency.coinDecimals,
+                        currency.coinMinimalDenom
+                      )
+                    : '-'}{' '}
+                  {currency.coinDenom}
                 </div>
               </div>
-              <div className="flex space-x-6">
-                <button className="button">
-                  <p className="">View Transaction</p>
-                </button>
-                <div className="text-white flex items-center justify-center text-base font-medium underline cursor-pointer">
-                  Share Transaction
+              <div className="txn-details-item">
+                <div className="txn-details-item-title">Memo</div>
+                <div className="txn-details-item-content">
+                  {tx?.memo || '-'}
                 </div>
               </div>
-              <div className="flex pt-6 pb-0 "></div>
+            </div>
+            <div className="flex gap-10 mt-6">
+              <button
+                className="txn-receipt-btn"
+                onClick={() => {
+                  copyToClipboard(
+                    getTxnURL(explorerTxHashEndpoint, tx?.transactionHash || '')
+                  );
+                  dispatch(setError({ type: 'success', message: 'Copied' }));
+                }}
+              >
+                Share
+              </button>
+              <Link
+                className="txn-receipt-btn"
+                href={getTxnURL(
+                  explorerTxHashEndpoint,
+                  tx?.transactionHash || ''
+                )}
+                target="_blank"
+              >
+                View
+              </Link>
             </div>
           </div>
         </div>
