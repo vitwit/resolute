@@ -11,8 +11,17 @@ import useGetChainInfo from '../../../../custom-hooks/useGetChainInfo';
 import { multiTxns } from '@/store/features/bank/bankSlice';
 import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
+import { TransfersTab } from './TransfersPage';
 
-const MultiTransfer = ({ chainID }: { chainID: string }) => {
+const MultiTransfer = ({
+  chainID,
+  tab,
+  handleTabChange,
+}: {
+  chainID: string;
+  tab: TransfersTab;
+  handleTabChange: () => void;
+}) => {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const txPendingStatus = useAppSelector((state) => state.bank.tx.status);
 
@@ -87,6 +96,8 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
         <Summary
           chainIDs={[chainID]}
           borderStyle="rounded-[16px_16px_0px_0px]"
+          tab={tab}
+          handleTabChange={handleTabChange}
         />
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1">
@@ -118,7 +129,7 @@ const MultiTransfer = ({ chainID }: { chainID: string }) => {
               buttonContent="Send"
             />
           </div>
-          <div className="w-[1px] bg-[#6e6d7d] opacity-30"></div>
+          <div className="w-[1px] bg-[#6e6d7d] opacity-10"></div>
           <div className="w-1/2 h-full pl-[20px] flex flex-col">
             <Messages
               msgs={msgs}

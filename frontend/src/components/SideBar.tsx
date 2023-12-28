@@ -13,6 +13,7 @@ import { Tooltip } from '@mui/material';
 import TransactionSuccessPopup from './TransactionSuccessPopup';
 import SnackBar from './SnackBar';
 import { SIDENAV_MENU_ITEMS } from '@/utils/constants';
+import { resetError } from '@/store/features/common/commonSlice';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
@@ -65,6 +66,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
             <div
               className="sidebar-menu-item w-12 h-12 cursor-pointer"
               onClick={() => {
+                dispatch(resetError());
                 dispatch(resetWallet());
                 logout();
               }}

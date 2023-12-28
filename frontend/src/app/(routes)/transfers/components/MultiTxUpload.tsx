@@ -46,8 +46,8 @@ const MultiTxUpload = ({
           <div className="w-6 h-6 flex items-center justify-center cursor-pointer">
             <Image
               src="/download-icon.svg"
-              width={14}
-              height={14}
+              width={24}
+              height={24}
               alt="Download"
               onClick={() => {
                 window.open(SEND_TEMPLATE, '_blank', 'noopener,noreferrer');

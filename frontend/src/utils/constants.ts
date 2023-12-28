@@ -131,4 +131,5 @@ export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
 export const TXN_SUCCESS_ICON = '/transaction-success-icon.svg';
 export const TXN_FAILED_ICON = '/transaction-failed-icon.svg';
+export const TRANSFERS_CARDS_COUNT = 5;
 export const NO_MESSAGES_ILLUSTRATION = '/no-messages-illustration.png';
