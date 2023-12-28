@@ -25,7 +25,7 @@ const Messages = ({
   return (
     <div className="flex flex-col h-full">
       <div className="flex flex-col h-full space-y-6">
-        <div className="flex justify-between ">
+        <div className="flex justify-between h-6 items-center">
           <div className="text-sm not-italic font-normal leading-[normal]">
             Messages
           </div>
@@ -54,12 +54,13 @@ const Messages = ({
                     index={MULTI_TRANSFER_MSG_COUNT * index + offset}
                   />
 
-                  <div style={{ marginTop: `50px` }} />
+                  <div style={{ marginTop: `55px` }} />
                 </div>
               ))
           ) : (
             <div className="h-full flex flex-1 justify-center items-center">
               <Image
+                className="disable-draggable"
                 src="/no-messages-illustration.png"
                 width={300}
                 height={178}
@@ -69,7 +70,7 @@ const Messages = ({
           )}
         </div>
       </div>
-      <div className="w-full h-[0.25px] bg-[#6e6d7d] opacity-30"></div>
+      <div className="w-full h-[0.25px] bg-[#6e6d7d] opacity-10"></div>
       <div className="flex flex-row-reverse mt-6 h-10 items-center">
         {pagesCount > 1 ? (
           <Pagination
