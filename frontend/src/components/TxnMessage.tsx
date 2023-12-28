@@ -69,6 +69,9 @@ const TxnMessage = ({
                   />
                 </div>
               </span>
+              {msgs.length > 1 ? (
+                <span className="more-msgs">+{msgs.length - 1}</span>
+              ) : null}
             </div>
           ) : null}
           {msgs[0]?.typeUrl === DELEGATE_TYPE_URL ? (

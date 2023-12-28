@@ -1,6 +1,12 @@
 .divider {
   @apply w-full my-6 h-[1px];
-  background: repeating-linear-gradient(to right, #ffffff33, #ffffff33 12px, transparent 12px, transparent 24px);
+  background: repeating-linear-gradient(
+    to right,
+    #ffffff33,
+    #ffffff33 12px,
+    transparent 12px,
+    transparent 24px
+  );
 }
 
 .txn-status-text {
@@ -46,4 +52,8 @@
 .btn-disabled {
   @apply bg-[#FFFFFF1A] text-[#FFFFFF1A] cursor-not-allowed;
   background: #ffffff1a;
+}
+
+.more-msgs {
+  @apply bg-[#ffffff1a] flex justify-center items-center font-normal h-8 min-w-[32px] rounded-2xl p-2;
 }
