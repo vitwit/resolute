@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { StakingCardHeader } from './StakingCard';
 import { formatCoin, getDaysLeftString } from '@/utils/util';
 import { getDaysLeft } from '@/utils/datetime';
-import { Dialog, DialogContent, Tooltip } from '@mui/material';
+import {
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  Tooltip,
+} from '@mui/material';
 import {
   UnbondingCardProps,
   UnbondingCardStatsItemProps,
@@ -176,11 +181,15 @@ const DialogCancelUnbonding: React.FC<DialogCancelUnbondingProps> = (props) => {
                 <div className="mt-10 flex gap-10 items-center">
                   <button
                     type="submit"
-                    className="primary-gradient rounded-2xl px-10 py-[10px]"
+                    className="primary-gradient rounded-2xl px-10 py-[10px] w-[144px]"
                     onClick={() => onCancelUnbondingTx()}
                     disabled={loading === TxStatus.PENDING}
                   >
-                    {loading === TxStatus.PENDING ? 'Loading' : 'Continue'}
+                    {loading === TxStatus.PENDING ? (
+                      <CircularProgress size={18} sx={{ color: 'white' }} />
+                    ) : (
+                      'Continue'
+                    )}
                   </button>
                   <button
                     type="button"

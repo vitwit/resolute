@@ -67,7 +67,6 @@ const DialogRedelegate = ({
   delegations,
   onRedelegate,
   currency,
-  feeAmount,
 }: DialogRedelegateProps) => {
   const handleClose = () => {
     onClose();
@@ -246,7 +245,7 @@ const DialogRedelegate = ({
                         displayDenom={currency.coinDenom}
                         errors={errors}
                         setValue={setValue}
-                        feeAmount={feeAmount}
+                        feeAmount={0}
                       />
                     </div>
                   </div>

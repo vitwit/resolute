@@ -242,7 +242,6 @@ interface DialogUndelegateProps {
   loading: TxStatus;
   delegations: DelegationResponse[];
   currency: Currency;
-  feeAmount: number;
 }
 
 interface DialogRedelegateProps {
@@ -256,7 +255,6 @@ interface DialogRedelegateProps {
   delegations: DelegationResponse[];
   onRedelegate: (data: { src: string; amount: number; dest: string }) => void;
   currency: Currency;
-  feeAmount: number;
 }
 
 interface ValidatorLogoProps {
