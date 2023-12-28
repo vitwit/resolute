@@ -30,6 +30,8 @@ export function removeWalletName() {
 }
 
 export function isConnected(): boolean {
+  // if accessed on server side
+  if (typeof window == 'undefined') return false;
   const connected = localStorage.getItem('CONNECTED');
   if (connected && KEY_WALLET_NAME) {
     return true;
