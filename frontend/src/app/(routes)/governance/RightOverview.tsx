@@ -252,7 +252,7 @@ const RightOverview = ({
                           {isStatusVoting ? 'Vote' : 'Deposit'}
                         </p>
                       </button>
-                      <div className="cursor-pointer text-[#FFFFFFBF] text-[12px] font-extralight underline underline-offset-2 view-full">
+                      <div className="cursor-pointer text-[#FFFFFFBF] text-[14px] font-extralight underline underline-offset-2 view-full">
                         <Link href={`/governance/${chainName}/${proposalId}`}>
                           View Full Proposal
                         </Link>
