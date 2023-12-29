@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
-
+import ProposalViewRaw from './ProposalViewRaw';
 import { RootState } from '@/store/store';
 import CustomPieChart from './CustomPiechart';
 import './style.css';
@@ -104,8 +104,6 @@ const ProposalOverviewVote = ({
     );
   };
 
-  const formattedTotalVotes = totalVotes.toLocaleString();
-
   const data = [
     {
       value: getVotesPercentage(Number(get(tallyResult, 'yes', 0))) || 0,
@@ -137,7 +135,7 @@ const ProposalOverviewVote = ({
     });
     return chain;
   };
-
+  const [showRawData, setShowRawData] = useState(false);
   const [isVotePopupOpen, setIsVotePopupOpen] = useState(false);
   const handleCloseVotePopup = () => {
     setIsVotePopupOpen(false);
@@ -252,7 +250,7 @@ const ProposalOverviewVote = ({
                     alt="Network-Logo"
                   />
                   <p className="font-bold text-[16px] flex items-center">
-                    #{get(proposalInfo, 'proposal_id')} | Proposal
+                    # {get(proposalInfo, 'proposal_id')}
                   </p>
                 </div>
                 <div>
@@ -285,6 +283,19 @@ const ProposalOverviewVote = ({
                 {get(proposalInfo, 'content.description')}
               </ReactMarkdown>
             </div>
+            <div
+              className=" view-full flex w-full justify-end items-end"
+              onClick={() => setShowRawData(true)}
+            >
+              Raw_Data
+            </div>
+            {showRawData && (
+              <ProposalViewRaw
+                open={showRawData}
+                onClose={() => setShowRawData(false)}
+                proposals={proposalInfo}
+              />
+            )}
           </div>
 
           <VotePopup
@@ -311,25 +322,26 @@ const ProposalOverviewVote = ({
             networkLogo={networkLogo}
           />
         </div>
+
         {isStatusVoting ? (
           <div className="flex justify-between">
-            <div className="space-y-4">
+            <div className="space-y-10">
               <div className="flex space-y-[68px] flex-col">
                 <TopNav />
 
                 <div className="status-grid w-[450px]">
-                  <div className="status-view-grid w-full">
-                    <div className="status-view w-full">
+                  <div className=" w-full">
+                    <div className="w-full">
                       <div className="status-pass w-full">
                         <div className="flex flex-col items-center space-y-2">
                           <div className="flex space-x-2 w-full justify-center">
                             <Image
                               src="/vote-icon.svg"
-                              width={20}
-                              height={20}
+                              width={32}
+                              height={32}
                               alt="Vote-Icon"
                             />
-                            <p className="proposal-text-small">
+                            <p className="proposal-text-small items-center">
                               Proposal Projection
                             </p>
                           </div>
@@ -356,34 +368,42 @@ const ProposalOverviewVote = ({
                   </div>
                 </div>
               </div>
-              <div className="voting-grid bg-[#0E0B26]">
+              <div className="voting-grid bg-[#0E0B26] space-y-4">
                 <div className="voting-view w-full">
-                  <div className="status-pass">
-                    <div className="flex flex-col items-center space-y-2">
-                      <div className="flex space-x-2">
-                        <Image
-                          src="/vote-icon.svg"
-                          width={20}
-                          height={20}
-                          alt="Vote-Icon"
-                        />
-                        <p className="proposal-text-small">Total Votes</p>
-                      </div>
-
-                      <p className="proposal-text-big">{formattedTotalVotes}</p>
-                    </div>
-                  </div>
-                  <div className="w-full text-white flex flex-col justify-center items-center space-y-2">
-                    <div>Quorum</div>
+                  <div className="w-full text-white flex flex-col justify-center items-center space-y-4">
+                    <div className="text-[20px]">Quorum</div>
 
                     {quorumPercent ? (
                       <Tooltip title={`${quorumPercent}%`}>
-                        <div className="flex w-full flex-col">
-                          <div className="flex flex-col items-center">
-                            <div>{quorumRequired}%</div>
-                            <div className="bg-[#26233C] h-[10px] w-[1px]"></div>
+                        <div className="flex w-full flex-col ">
+                        <div style={{ width: `${quorumPercent.toString()}%` }}></div>
+                          <div className="flex flex-col items-center space-y-4">
+                            <div className="flex flex-row space-x-2">
+                              <div className="flex-row flex space-x-2">
+                                <div className="items-center flex font-bold">
+                                  Turnout{' '}
+                                </div>
+
+                                <div className="bg-[#FFFFFF0D] rounded-lg flex items-center gap-2 opacity-80 text-white text-center px-2 py-2 w-[52px] h-[30px] text-sm">
+                                  {quorumPercent}%
+                                </div>
+                              </div>
+                              <div className="flex items-center">/</div>
+                              <div className="flex-row flex space-x-2">
+                                <div className="items-center flex font-bold">
+                                  Quorum{' '}
+                                </div>
+
+                                <div className="bg-[#FFFFFF0D] rounded-lg flex items-center gap-2 opacity-80 text-white text-center  px-2 py-2  w-[55px] h-[30px] text-sm">
+                                  {quorumRequired}%
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="bg-[#f0f0f3] h-[10px] w-[4px]"></div>
                           </div>
                           <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
+                            <div className="bg-[#f0f0f3] h-[10px] w-[4px] absolute  flex left-[223px]"></div>
                             <div
                               style={{ width: `${quorumPercent}%` }}
                               className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
@@ -448,9 +468,7 @@ const ProposalOverviewVote = ({
           <div className="flex w-[480px] flex-end flex-col space-y-10">
             <div className="space-y-4 w-full">
               <div className="flex space-y-[68px] flex-col">
-                <div className="w-[412px]">
-                  <TopNav />
-                </div>
+                <TopNav />
 
                 <div className="bg-[#0E0B26] rounded-2xl">
                   <DepositProposalInfo chainID={chainID} />
@@ -458,13 +476,13 @@ const ProposalOverviewVote = ({
               </div>
               <div className=" bg-[#0e0b26]">
                 <DepositProposalDetails
-                  submittedAt={getTimeDifferenceToFutureDate(
+                  submittedAt={`${getTimeDifferenceToFutureDate(
                     get(proposalInfo, 'submit_time', '-'),
                     true
-                  )}
-                  endsAt={getTimeDifferenceToFutureDate(
+                  )} ago`}
+                  endsAt={`in ${getTimeDifferenceToFutureDate(
                     get(proposalInfo, 'deposit_end_time', '-')
-                  )}
+                  )}`}
                   depositrequired={formatCoin(
                     depositRequired,
                     currency.coinDenom

@@ -106,25 +106,26 @@ const VotePopup = ({
                 <div className="proposal-text-big font-bold">Vote</div>
                 <div className="text-form">
                   <div className="space-y-1">
-                    <div className='space-y-4'>
-                    <div className='flex justify-between'>
-                    <div className="space-x-2 flex">
-                      <Image
-                        src={networkLogo}
-                        width={32}
-                        height={32}
-                        alt="logo"
-                      />
-                      <p className="proposal-text-small">
-                        #{proposalId} | Proposal
-                      </p>
-                      
-                    </div>
-                    <div className="proposal-text-small">
-                      {`Voting ends in ${votingEndsInDays}`}
-                    </div>
-                    </div>
-                    <div className="proposal-text-normal-base">{proposalname}</div>
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <div className="space-x-2 flex">
+                          <Image
+                            src={networkLogo}
+                            width={32}
+                            height={32}
+                            alt="logo"
+                          />
+                          <p className="proposal-text-small">
+                            #{proposalId} | Proposal
+                          </p>
+                        </div>
+                        <div className="proposal-text-small">
+                          {`Voting ends in ${votingEndsInDays}`}
+                        </div>
+                      </div>
+                      <div className="proposal-text-normal-base">
+                        {proposalname}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -144,6 +145,10 @@ const VotePopup = ({
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
+                  </div>
+                </div>
+                <div className="flex w-full justify-between relative top-1">
+                  <div className="radio-buttons">
                     <RadioButton
                       name="voteOption"
                       value={'abstain'}
@@ -162,9 +167,9 @@ const VotePopup = ({
                 </div>
                 <div className="placeholder-text w-full">
                   <input
-                   className="search-validator-input"
+                    className="search-validator-input"
                     type="text"
-                    placeholder="Enter Justification here"
+                    placeholder="Enter Justification here(Optional)"
                   ></input>
                 </div>
                 <div>

@@ -17,30 +17,33 @@
 .view-history {
   @apply flex flex-col justify-center cursor-pointer text-[rgba(255,255,255,0.50)] text-xs font-extralight leading-[normal] underline;
 }
-.v-line {
-  @apply h-[1px];
-  background: linear-gradient(
-    90deg,
-    rgba(74, 162, 156, 0.279) 7.46%,
-    rgba(139, 61, 167, 0.3) 94.28%
-  );
-}
+
 .proposal-id {
-  @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px];
+  @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px] text-[8px];
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 .proposal-id-static {
-  @apply flex w-8 h-8 justify-center items-center gap-2.5 rounded-[100px];
   background: rgba(255, 255, 255, 0.1);
 }
 .proposal {
-  @apply flex items-start gap-4;
+  @apply px-2 py-4 flex items-start gap-4;
 }
+
+.proposal:hover,
+.proposal-selected {
+  @apply rounded-2xl cursor-pointer bg-[#FFFFFF0D];
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.proposal:hover .proposal-id {
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
 .proposal-text-small {
   @apply flex items-center text-[rgba(255,255,255,0.75)] text-sm font-light leading-[14px];
 }
 .proposal-text-extralight {
-  @apply text-white text-xs font-extralight leading-[14px];
+  @apply text-white text-xs font-extralight text-[14px] leading-[14px];
 }
 .proposal-text-normal {
   @apply text-white text-sm font-normal leading-6;
@@ -59,7 +62,12 @@
 }
 .popup-grid {
   @apply flex w-[889px]  flex-col justify-center items-center gap-6 opacity-95 backdrop-blur-[2px] rounded-3xl;
-  background: linear-gradient(90deg, #704290 0.11%, #241b61 70.28%);
+  background: linear-gradient(
+    178deg,
+    #241b61 1.71%,
+    #69448d 98.35%,
+    #69448d 98.35%
+  );
 }
 .cross {
   @apply flex justify-end items-center gap-2.5 self-stretch pl-6 pr-10 py-10;
@@ -102,13 +110,13 @@
   @apply flex flex-col justify-center items-start gap-6;
 }
 .status-pass {
-  @apply flex justify-center items-center gap-2.5 px-2 py-0;
+  @apply flex justify-center items-center gap-2.5  py-0;
 }
 .voting-grid {
   @apply flex flex-col justify-center items-start gap-4 backdrop-blur-[2px] px-6 py-6 rounded-2xl;
 }
 .voting-view {
-  @apply flex flex-col justify-center items-center gap-6 px-6 py-0;
+  @apply flex flex-col justify-center items-center gap-6;
 }
 .horizontal-line {
   @apply h-2 rounded-[100px];
@@ -140,11 +148,11 @@
   @apply bg-white w-[6px] h-[6px] rounded-full;
 }
 .vote-grid {
-  @apply flex flex-col w-full items-start gap-4 backdrop-blur-[2px] py-4 rounded-2xl;
+  @apply flex flex-col w-full items-start gap-4 backdrop-blur-[2px] py-6 px-6 rounded-2xl;
   background: rgba(255, 255, 255, 0.05);
 }
 .view-full {
-  @apply flex h-8 flex-col justify-center text-white text-center text-sm font-normal leading-[normal] underline cursor-pointer;
+  @apply flex flex-col justify-center text-center leading-[normal] underline cursor-pointer text-[#FFFFFFBF] text-[12px] font-extralight underline-offset-2;
 }
 
 .scrollable-container {

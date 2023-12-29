@@ -105,7 +105,7 @@ const AllProposals = ({
         <div className="space-y-4 w-full">
           <div className="flex justify-between">
             <div className="flex space-x-2 flex-1">
-              <div className="flex flex-col flex-1 justify-center items-center mt-[100px]">
+              <div className="flex flex-col flex-1 justify-center items-center mt-[100px] space-y-4">
                 <Image
                   src="/gov-illustration.png"
                   width={610}
@@ -146,90 +146,84 @@ const AllProposals = ({
                       </p>
                     </div>
                   </div>
-                  <div className="v-line"></div>
+                  <div className="divider-line"></div>
 
-                  {get(
-                    chainProposal,
-                    `${status === 'deposit' ? 'deposit' : 'active'}.proposals`
-                  ).map((proposal, index) => (
-                    <div
-                      onClick={() => {
-                        handleOpenOverview();
-                        handleSetCurrentOverviewId(
-                          parseInt(get(proposal, 'proposal_id')),
-                          chainID
-                        );
-                        handleProposalSelected(true);
-                      }}
-                      className="proposal"
-                      key={index}
-                    >
-                      <div className="flex justify-between items-center w-full">
-                        <div className="space-x-2 flex items-center cursor-pointer">
-                          <div
-                            className={
-                              isSelected &&
-                              currentOverviewId.toString() ===
-                                get(proposal, 'proposal_id')
-                                ? 'proposal-id'
-                                : 'proposal-id-static'
-                            }
-                          >
-                            <p className="proposal-text-extralight">
-                              {get(proposal, 'proposal_id')}
-                            </p>
-                          </div>
-
-                          <p className="proposal-text-normal">
-                            {get(proposal, 'content.title') ||
-                              get(proposal, 'content.@type')}
-                          </p>
-                        </div>
-                        <div className="flex space-x-6"></div>
-                        {!isRightBarOpen && (
-                          <div className="flex space-x-6">
-                            <div className="flex space-x-1">
-                              <Image
-                                src="/timer-icon.svg"
-                                width={24}
-                                height={24}
-                                alt="Timer-Icon"
-                              />
-                              {status === 'deposit' ? (
-                                <p className="proposal-text-small w-[164px]">
-                                  Deposit ends in{' '}
-                                  {getTimeDifferenceToFutureDate(
-                                    get(proposal, 'deposit_end_time')
-                                  )}
-                                </p>
-                              ) : (
-                                <p className="proposal-text-small w-[144px]">
-                                  Expires in{' '}
-                                  {getTimeDifferenceToFutureDate(
-                                    get(proposal, 'voting_end_time')
-                                  )}
-                                </p>
-                              )}
+                  <div className="space-y-2">
+                    {get(
+                      chainProposal,
+                      `${status === 'deposit' ? 'deposit' : 'active'}.proposals`
+                    ).map((proposal, index) => (
+                      <div
+                        onClick={() => {
+                          handleOpenOverview();
+                          handleSetCurrentOverviewId(
+                            parseInt(get(proposal, 'proposal_id')),
+                            chainID
+                          );
+                          handleProposalSelected(true);
+                        }}
+                        className={
+                          isSelected &&
+                          currentOverviewId.toString() ===
+                            get(proposal, 'proposal_id')
+                            ? 'proposal proposal-selected'
+                            : 'proposal'
+                        }
+                        key={index}
+                      >
+                        <div className="flex justify-between items-center w-full">
+                          <div className="space-x-2 flex items-center cursor-pointer">
+                            <div
+                              className={
+                                isSelected &&
+                                currentOverviewId.toString() ===
+                                  get(proposal, 'proposal_id')
+                                  ? 'proposal-id'
+                                  : 'proposal-id proposal-id-static'
+                              }
+                            >
+                              <p className="text-white text-xs font-extralight leading-[14px] text-[10px]">
+                                {get(proposal, 'proposal_id')}
+                              </p>
                             </div>
-                            {/* <div className="flex space-x-1">
-                            <Image
-                              src="/vote-icon.svg"
-                              width={24}
-                              height={24}
-                              alt="Vote-Icon"
-                            />
-                            <p className="proposal-text-small">
-                              {get(proposal, 'status') ===
-                              'PROPOSAL_STATUS_VOTING_PERIOD'
-                                ? 'Active'
-                                : 'Deposit'}
+
+                            <p className="proposal-text-normal">
+                              {get(proposal, 'content.title') ||
+                                get(proposal, 'content.@type')}
                             </p>
-                          </div> */}
                           </div>
-                        )}
+                          <div className="flex space-x-6"></div>
+                          {!isRightBarOpen && (
+                            <div className="flex space-x-6">
+                              <div className="flex space-x-1">
+                                <Image
+                                  src="/timer-icon.svg"
+                                  width={24}
+                                  height={24}
+                                  alt="Timer-Icon"
+                                />
+                                {status === 'deposit' ? (
+                                  <p className="proposal-text-small w-[164px]">
+                                    Deposit ends in{' '}
+                                    {getTimeDifferenceToFutureDate(
+                                      get(proposal, 'deposit_end_time')
+                                    )}
+                                  </p>
+                                ) : (
+                                  <p className="proposal-text-small w-[130px]">
+                                    Expires in{' '}
+                                    {getTimeDifferenceToFutureDate(
+                                      get(proposal, 'voting_end_time')
+                                    )}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               ) : null}
             </>
