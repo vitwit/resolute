@@ -8,7 +8,10 @@ import {
   isConnected,
   removeAllAuthTokens,
 } from '../utils/localStorage';
-import { establishWalletConnection } from '../store/features/wallet/walletSlice';
+import {
+  establishWalletConnection,
+  unsetIsLoading,
+} from '../store/features/wallet/walletSlice';
 import { RootState } from '../store/store';
 import { getAllTokensPrice } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -48,6 +51,8 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     const walletName = getWalletName();
     if (isConnected()) {
       tryConnectWallet(walletName);
+    } else {
+      dispatch(unsetIsLoading());
     }
 
     const accountChangeListener = () => {
