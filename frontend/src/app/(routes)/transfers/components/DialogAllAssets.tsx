@@ -101,7 +101,8 @@ const DialogAllAssets = ({
                 </div>
                 <div className="flex gap-2">
                   <div className="text-[#9c95ac] text-xs not-italic font-normal leading-[normal] flex items-center">
-                    on {capitalizeFirstLetter(asset.chainName)}
+                    on {capitalizeFirstLetter(asset.chainName)}{' '}
+                    {asset.type === 'ibc' ? ' (IBC)' : ''}
                   </div>
                 </div>
               </div>
