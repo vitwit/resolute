@@ -36,7 +36,7 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		if err == sql.ErrNoRows {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Status:  "Unauthorized",
-				Message: err.Error(),
+				Message: "Unauthorized access",
 			})
 		} else if err != nil {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
@@ -85,7 +85,7 @@ func (h *Handler) IsMultisigMember(next echo.HandlerFunc) echo.HandlerFunc {
 		if err == sql.ErrNoRows {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Status:  "Unauthorized",
-				Message: "Your not member of the multisig",
+				Message: "You are not a member of the multisig",
 			})
 		} else if err != nil {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
