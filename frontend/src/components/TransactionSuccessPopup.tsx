@@ -90,7 +90,11 @@ const TransactionSuccessPopup = () => {
                   <span className="txn-failed-text">Transaction Failed !</span>
                 )}
               </div>
-              <TxnMessage msgs={tx?.msgs || []} currency={currency} />
+              <TxnMessage
+                msgs={tx?.msgs || []}
+                currency={currency}
+                failed={tx?.code !== 0}
+              />
             </div>
             <div className="flex justify-between items-center gap-2 w-full">
               <Image
