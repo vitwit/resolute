@@ -294,26 +294,43 @@ const RightOverview = ({
                           <div className="text-[20px]">Quorum</div>
 
                           {quorumPercent ? (
-                            <Tooltip title={`${quorumPercent}%`}>
-                              
-                              <div className="flex w-full flex-col">
-                              <div style={{ width: `${quorumPercent.toString()}%` }}></div>
-                                <div className="flex flex-col items-center font-bold">
-                                <div>Turnout / Quorum</div>
-                                  <div>
-                                    {quorumPercent}% / {quorumRequired}%
-                                  </div>
-                                  <div className="bg-[#f0f0f3] h-[10px] w-[4px]"></div>
-                                </div>
-                                <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
-                                  <div className="bg-[#f0f0f3] h-[10px] w-[4px] absolute  flex left-[224px]"></div>
-                                  <div
-                                    style={{ width: `${quorumPercent}%` }}
-                                    className={`bg-[#2DC5A4] h-[10px] rounded-l-full`}
-                                  ></div>
-                                </div>
-                              </div>
-                            </Tooltip>
+                             <Tooltip title={`${quorumPercent}%`}>
+                             <div className="flex w-full flex-col ">
+                             <div style={{ width: `${quorumPercent.toString()}%` }}></div>
+                               <div className="flex flex-col items-center space-y-4">
+                                 <div className="flex flex-row space-x-2">
+                                   <div className="flex-row flex space-x-2">
+                                     <div className="items-center flex font-bold">
+                                       Turnout{' '}
+                                     </div>
+     
+                                     <div className="bg-[#FFFFFF0D] rounded-lg flex items-center gap-2 opacity-80 text-white text-center px-2 py-2 w-[52px] h-[30px] text-sm">
+                                       {quorumPercent}%
+                                     </div>
+                                   </div>
+                                   <div className="flex items-center">/</div>
+                                   <div className="flex-row flex space-x-2">
+                                     <div className="items-center flex font-bold">
+                                       Quorum{' '}
+                                     </div>
+     
+                                     <div className="bg-[#FFFFFF0D] rounded-lg flex items-center gap-2 opacity-80 text-white text-center  px-2 py-2  w-[55px] h-[30px] text-sm">
+                                       {quorumRequired}%
+                                     </div>
+                                   </div>
+                                 </div>
+     
+                                 <div className="bg-[#f0f0f3] h-[10px] w-[4px]"></div>
+                               </div>
+                               <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
+                                 <div className="bg-[#f0f0f3] h-[10px] w-[4px] absolute  flex left-[224px]"></div>
+                                 <div
+                                   style={{ width: `${quorumPercent}%` }}
+                                   className={`bg-[#2DC5A4] h-[10px] rounded-l-full `}
+                                 ></div>
+                               </div>
+                             </div>
+                           </Tooltip>
                           ) : null}
                         </div>
 

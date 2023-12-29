@@ -325,7 +325,7 @@ const ProposalOverviewVote = ({
 
         {isStatusVoting ? (
           <div className="flex justify-between">
-            <div className="space-y-4">
+            <div className="space-y-10">
               <div className="flex space-y-[68px] flex-col">
                 <TopNav />
 
@@ -337,11 +337,11 @@ const ProposalOverviewVote = ({
                           <div className="flex space-x-2 w-full justify-center">
                             <Image
                               src="/vote-icon.svg"
-                              width={20}
-                              height={20}
+                              width={32}
+                              height={32}
                               alt="Vote-Icon"
                             />
-                            <p className="proposal-text-small">
+                            <p className="proposal-text-small items-center">
                               Proposal Projection
                             </p>
                           </div>
@@ -368,19 +368,38 @@ const ProposalOverviewVote = ({
                   </div>
                 </div>
               </div>
-              <div className="voting-grid bg-[#0E0B26]">
+              <div className="voting-grid bg-[#0E0B26] space-y-4">
                 <div className="voting-view w-full">
-                  <div className="w-full text-white flex flex-col justify-center items-center space-y-2">
+                  <div className="w-full text-white flex flex-col justify-center items-center space-y-4">
                     <div className="text-[20px]">Quorum</div>
 
                     {quorumPercent ? (
                       <Tooltip title={`${quorumPercent}%`}>
-                        <div className="flex w-full flex-col">
-                          <div className="flex flex-col items-center font-bold">
-                            <div>Turnout / Quorum</div>
-                            <div>
-                              {quorumPercent}% / {quorumRequired}%
+                        <div className="flex w-full flex-col ">
+                        <div style={{ width: `${quorumPercent.toString()}%` }}></div>
+                          <div className="flex flex-col items-center space-y-4">
+                            <div className="flex flex-row space-x-2">
+                              <div className="flex-row flex space-x-2">
+                                <div className="items-center flex font-bold">
+                                  Turnout{' '}
+                                </div>
+
+                                <div className="bg-[#FFFFFF0D] rounded-lg flex items-center gap-2 opacity-80 text-white text-center px-2 py-2 w-[52px] h-[30px] text-sm">
+                                  {quorumPercent}%
+                                </div>
+                              </div>
+                              <div className="flex items-center">/</div>
+                              <div className="flex-row flex space-x-2">
+                                <div className="items-center flex font-bold">
+                                  Quorum{' '}
+                                </div>
+
+                                <div className="bg-[#FFFFFF0D] rounded-lg flex items-center gap-2 opacity-80 text-white text-center  px-2 py-2  w-[55px] h-[30px] text-sm">
+                                  {quorumRequired}%
+                                </div>
+                              </div>
                             </div>
+
                             <div className="bg-[#f0f0f3] h-[10px] w-[4px]"></div>
                           </div>
                           <div className="bg-[#FFFFFF0D] w-full h-[10px] rounded-full">
