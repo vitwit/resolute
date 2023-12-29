@@ -9,7 +9,7 @@ import {
   VOTE_OPTIONS,
   VOTE_TYPE_URL,
 } from '@/utils/constants';
-import { parseAmount } from '@/utils/util';
+import { capitalizeFirstLetter, parseAmount } from '@/utils/util';
 import React from 'react';
 import Image from 'next/image';
 import { copyToClipboard } from '@/utils/copyToClipboard';
@@ -19,12 +19,17 @@ import { setError } from '@/store/features/common/commonSlice';
 const TxnMessage = ({
   msgs,
   currency,
+  failed,
 }: {
   msgs: Msg[];
   currency: Currency;
+  failed: boolean;
 }) => {
   const dispatch = useAppDispatch();
-
+  const status = failed ? 'failed' : 'successfully';
+  const txTypeText = failed
+    ? 'while ' + MAP_TXN_TYPES[msgs[0]?.typeUrl][1] + ' to'
+    : MAP_TXN_TYPES[msgs[0]?.typeUrl][0] + ' to';
   return (
     <>
       {msgs?.length ? (
@@ -33,9 +38,7 @@ const TxnMessage = ({
             <div className="flex items-center gap-2 font-bold">
               <div className="truncate max-w-[260px]">
                 <span>{parseAmount(msgs[0]?.value?.amount, currency)}</span>{' '}
-                <span>successfully</span>{' '}
-                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
-                &nbsp;to
+                <span>{status}</span> <span>{txTypeText}</span>
               </div>
               <span>
                 <div className="common-copy max-w-[176px] inline font-normal">
@@ -70,9 +73,7 @@ const TxnMessage = ({
             <div className="flex items-center gap-2 font-bold">
               <div className="truncate max-w-[260px]">
                 <span>{parseAmount([msgs[0]?.value?.amount], currency)}</span>{' '}
-                <span>successfully</span>{' '}
-                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
-                &nbsp;to
+                <span>{status}</span> <span>{txTypeText}</span>
               </div>
               <span>
                 <div className="common-copy max-w-[176px] inline font-normal">
@@ -104,9 +105,12 @@ const TxnMessage = ({
             <div className="flex items-center gap-2 font-bold">
               <div className="truncate max-w-[260px]">
                 <span>{parseAmount([msgs[0]?.value?.amount], currency)}</span>{' '}
-                <span>successfully</span>{' '}
-                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
-                &nbsp;from
+                <span>{status}</span>{' '}
+                <span>
+                  {failed
+                    ? 'while ' + MAP_TXN_TYPES[msgs[0]?.typeUrl][1] + ' from'
+                    : MAP_TXN_TYPES[msgs[0]?.typeUrl][0] + 'from'}
+                </span>
               </div>
               <span>
                 <div className="common-copy max-w-[176px] inline font-normal">
@@ -138,16 +142,24 @@ const TxnMessage = ({
             <div className="flex items-center gap-2 font-bold">
               <div className="truncate">
                 <span>{parseAmount([msgs[0]?.value?.amount], currency)}</span>{' '}
-                <span>successfully</span>{' '}
-                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
+                <span>{status}</span>{' '}
+                <span>
+                  {failed
+                    ? 'while ' + MAP_TXN_TYPES[msgs[0]?.typeUrl][1]
+                    : MAP_TXN_TYPES[msgs[0]?.typeUrl][1]}
+                </span>
               </div>
             </div>
           ) : null}
           {msgs[0]?.typeUrl === VOTE_TYPE_URL ? (
             <div className="flex items-center gap-2 font-bold">
               <div className="truncate">
-                <span>Successfully</span>{' '}
-                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
+                <span>{capitalizeFirstLetter(status)}</span>{' '}
+                <span>
+                  {failed
+                    ? 'while ' + MAP_TXN_TYPES[msgs[0]?.typeUrl][1]
+                    : MAP_TXN_TYPES[msgs[0]?.typeUrl][0]}
+                </span>
                 <span> {VOTE_OPTIONS[msgs[0]?.value?.option - 1]}</span>
                 <span> on </span>
                 <span>proposal #{parseInt(msgs[0]?.value.proposalId)}</span>
@@ -158,8 +170,12 @@ const TxnMessage = ({
             <div className="flex items-center gap-2 font-bold">
               <div className="truncate">
                 <span>{parseAmount(msgs[0]?.value?.amount, currency)}</span>{' '}
-                <span>successfully</span>{' '}
-                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
+                <span>{status}</span>{' '}
+                <span>
+                  {failed
+                    ? 'while ' + MAP_TXN_TYPES[msgs[0]?.typeUrl][1]
+                    : MAP_TXN_TYPES[msgs[0]?.typeUrl][0]}
+                </span>
                 <span> on proposal #{parseInt(msgs[0]?.value.proposalId)}</span>
               </div>
             </div>
@@ -168,9 +184,7 @@ const TxnMessage = ({
             <div className="flex items-center gap-2 font-bold">
               <div className="truncate max-w-[260px]">
                 <span>{parseAmount([msgs[0]?.value?.token], currency)}</span>{' '}
-                <span>successfully</span>{' '}
-                <span>{MAP_TXN_TYPES[msgs[0]?.typeUrl]}</span>
-                &nbsp;to
+                <span>{status}</span> <span>{txTypeText}</span>
               </div>
               <span>
                 <div className="common-copy max-w-[176px] inline font-normal">
