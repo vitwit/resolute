@@ -2,6 +2,7 @@ import React from 'react';
 import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import { customDialogPaper } from '../styles';
+import { capitalizeFirstLetter } from '@/utils/util';
 
 const DialogAllAssets = ({
   dialogOpen,
@@ -64,23 +65,43 @@ const DialogAllAssets = ({
                   handleDialogClose();
                 }}
               >
-                <div className="flex gap-2">
-                  <Image
-                    src={asset.chainLogoURL}
-                    width={32}
-                    height={32}
-                    alt={asset.chainName}
-                  />
-                  <div className="flex items-center text-[14] text-capitalize">
-                    {asset.chainName}
+                <div className="flex gap-2 items-center">
+                  <div
+                    style={{ position: 'relative', display: 'inline-block' }}
+                  >
+                    <Image
+                      className="rounded-full"
+                      src={asset.chainLogoURL}
+                      width={32}
+                      height={32}
+                      alt={asset.chainName}
+                    />
+
+                    {/* <Image
+                className="rounded-full hover:w-24"
+                src={
+                  '/' +
+                  (asset.type === 'ibc'
+                    ? asset.originDenomChainInfo.chainLogo
+                    : '')
+                }
+                width={20}
+                height={20}
+                alt={asset.chainName}
+                style={{ position: 'absolute', bottom: -5, left: -7 }}
+              /> */}
                   </div>
-                </div>
-                <div className="flex gap-2">
                   <div className="text-base not-italic font-bold leading-[normal]">
                     {asset.balance}
                   </div>
-                  <div className="text-[#9c95ac] text-xs not-italic font-normal leading-[normal] flex items-center">
+
+                  <div className="flex items-center text-sm not-italic font-normal leading-[normal] text-capitalize">
                     {asset.displayDenom}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <div className="text-[#9c95ac] text-xs not-italic font-normal leading-[normal] flex items-center">
+                    on {capitalizeFirstLetter(asset.chainName)}
                   </div>
                 </div>
               </div>

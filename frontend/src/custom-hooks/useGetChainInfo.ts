@@ -10,13 +10,6 @@ export interface DenomInfo {
   displayDenom: string;
 }
 
-export interface OriginDenomInfo {
-  originDenom: string;
-  decimals: number;
-  chainName: string;
-  chainID: string;
-}
-
 const useGetChainInfo = () => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
 
@@ -73,16 +66,19 @@ const useGetChainInfo = () => {
       chainID: '-',
       chainName: '-',
       decimals: 0,
+      chainLogo: '-',
       // when the given minimalDenom is missing or unknown
       originDenom: 'Unknown-Token',
     };
     chainIDs.forEach((chainID) => {
       const config = networks[chainID].network.config;
       const currency = config.stakeCurrency;
+      const chainLogo = networks[chainID].network.logos.menu;
       const { coinDecimals, coinDenom, coinMinimalDenom } = currency;
       if (coinMinimalDenom === minimalDenom) {
         originDenomInfo = {
           chainID,
+          chainLogo,
           chainName: config.chainName,
           originDenom: coinDenom,
           decimals: coinDecimals,

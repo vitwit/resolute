@@ -16,6 +16,7 @@ import { txTransfer } from '@/store/features/ibc/ibcSlice';
 import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
 import NoAssets from '@/components/illustrations/NoAssets';
+import { capitalizeFirstLetter } from '@/utils/util';
 
 const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const [selectedAsset, setSelectedAsset] = useState<ParsedAsset | undefined>();
@@ -387,24 +388,41 @@ const Cards = ({
           key={index + ' ' + asset.chainID + ' ' + asset.displayDenom}
           onClick={() => onSelectAsset(asset, index)}
         >
-          <div className="flex gap-2">
-            <Image
-              className="rounded-full"
-              src={asset.chainLogoURL}
-              width={32}
-              height={32}
-              alt={asset.chainName}
-            />
+          <div className="flex gap-2 items-center">
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              <Image
+                className="rounded-full"
+                src={asset.chainLogoURL}
+                width={32}
+                height={32}
+                alt={asset.chainName}
+              />
+
+              {/* <Image
+                className="rounded-full hover:w-24"
+                src={
+                  '/' +
+                  (asset.type === 'ibc'
+                    ? asset.originDenomChainInfo.chainLogo
+                    : '')
+                }
+                width={20}
+                height={20}
+                alt={asset.chainName}
+                style={{ position: 'absolute', bottom: -5, left: -7 }}
+              /> */}
+            </div>
+            <div className="text-base not-italic font-bold leading-[normal] break-all">
+              {asset.balance}
+            </div>
+
             <div className="flex items-center text-sm not-italic font-normal leading-[normal] text-capitalize">
-              {asset.chainName}
+              {asset.displayDenom}
             </div>
           </div>
           <div className="flex gap-2">
-            <div className="text-base not-italic font-bold leading-[normal]">
-              {asset.balance}
-            </div>
             <div className="text-[#9c95ac] text-xs not-italic font-normal leading-[normal] flex items-center">
-              {asset.displayDenom}
+              on {capitalizeFirstLetter(asset.chainName)}
             </div>
           </div>
         </div>
