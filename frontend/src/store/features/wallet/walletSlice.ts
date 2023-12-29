@@ -168,6 +168,9 @@ const walletSlice = createSlice({
     resetConnectWalletStatus: (state) => {
       state.status = TxStatus.INIT;
     },
+    unsetIsLoading: (state) => {
+      state.isLoading = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -192,7 +195,11 @@ const walletSlice = createSlice({
   },
 });
 
-export const { setWallet, resetWallet, resetConnectWalletStatus } =
-  walletSlice.actions;
+export const {
+  setWallet,
+  resetWallet,
+  resetConnectWalletStatus,
+  unsetIsLoading,
+} = walletSlice.actions;
 
 export default walletSlice.reducer;

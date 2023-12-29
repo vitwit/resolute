@@ -26,7 +26,7 @@ const StakingSidebar = ({
   chainID,
   onMenuAction,
   allValidatorsDialogOpen,
-  toggleValidatorsDialog
+  toggleValidatorsDialog,
 }: StakingSidebarProps) => {
   const stakedBalance = useAppSelector(
     (state: RootState) =>
@@ -57,6 +57,11 @@ const StakingSidebar = ({
   );
   const validatorsStatus = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.validators.status
+  );
+  const delegations = useAppSelector(
+    (state: RootState) =>
+      state.staking.chains[chainID]?.delegations?.delegations
+        ?.delegation_responses
   );
 
   const dispatch = useAppDispatch();
@@ -108,7 +113,7 @@ const StakingSidebar = ({
 
   return (
     <div className="staking-sidebar flex flex-col">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-10">
         <TopNav />
         <div className="flex gap-6">
           <StakingStatsCard
@@ -120,30 +125,32 @@ const StakingSidebar = ({
             value={formatStakedAmount(rewardTokens, currency)}
           />
         </div>
-        <div className="staking-sidebar-actions">
-          <button
-            className="staking-sidebar-actions-btn"
-            onClick={() => claim(chainID)}
-          >
-            {txClaimStatus === TxStatus.PENDING ? (
-              <CircularProgress size={16} sx={{ color: 'purple' }} />
-            ) : (
-              'Claim All'
-            )}
-          </button>
-          <button
-            className="staking-sidebar-actions-btn"
-            onClick={() => claimAndStake(chainID)}
-          >
-            {txRestakeStatus === TxStatus.PENDING ? (
-              <CircularProgress size={16} sx={{ color: 'purple' }} />
-            ) : (
-              'Claim & Stake All'
-            )}
-          </button>
-        </div>
+        {delegations?.length > 1 ? (
+          <div className="staking-sidebar-actions">
+            <button
+              className="staking-sidebar-actions-btn"
+              onClick={() => claim(chainID)}
+            >
+              {txClaimStatus === TxStatus.PENDING ? (
+                <CircularProgress size={16} sx={{ color: 'white' }} />
+              ) : (
+                'Claim All'
+              )}
+            </button>
+            <button
+              className="staking-sidebar-actions-btn"
+              onClick={() => claimAndStake(chainID)}
+            >
+              {txRestakeStatus === TxStatus.PENDING ? (
+                <CircularProgress size={16} sx={{ color: 'white' }} />
+              ) : (
+                'Restake All'
+              )}
+            </button>
+          </div>
+        ) : null}
       </div>
-      <div className="mt-10 overflow-y-scroll">
+      <div className="mt-20 overflow-y-scroll">
         <AllValidators
           validators={validators}
           currency={currency}

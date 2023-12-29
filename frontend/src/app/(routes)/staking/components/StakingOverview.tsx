@@ -15,6 +15,12 @@ import ChainUnbondings from './ChainUnbondings';
 import { getDelegatorTotalRewards } from '@/store/features/distribution/distributionSlice';
 import { getBalances } from '@/store/features/bank/bankSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import Image from 'next/image';
+import {
+  NO_DELEGATIONS_MSG,
+  NO_MESSAGES_ILLUSTRATION,
+} from '@/utils/constants';
+import { CircularProgress } from '@mui/material';
 
 const StakingOverview = () => {
   const dispatch = useAppDispatch();
@@ -37,6 +43,9 @@ const StakingOverview = () => {
   );
   const hasUnbonding = useAppSelector(
     (state: RootState) => state.staking.hasUnbonding
+  );
+  const delegationsLoading = useAppSelector(
+    (state: RootState) => state.staking.delegationsLoading
   );
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   useEffect(() => {
@@ -88,34 +97,51 @@ const StakingOverview = () => {
   return (
     <div className="staking-main">
       <h2 className="txt-lg font-medium mb-6">Staking</h2>
-      {hasDelegations ? (
-        <div className="overview-grid">
-          {chainIDs.map((chainID) => {
-            const delegations = stakingData[chainID]?.delegations.delegations;
-            const validators = stakingData[chainID]?.validators;
-            const currency = networks[chainID]?.network?.config?.currencies[0];
-            const chainName = networks[chainID]?.network?.config?.chainName;
-            const rewards = rewardsData[chainID]?.delegatorRewards?.list;
+      <div className="overview-grid">
+        {chainIDs.map((chainID) => {
+          const delegations = stakingData[chainID]?.delegations.delegations;
+          const validators = stakingData[chainID]?.validators;
+          const currency = networks[chainID]?.network?.config?.currencies[0];
+          const chainName = networks[chainID]?.network?.config?.chainName;
+          const rewards = rewardsData[chainID]?.delegatorRewards?.list;
 
-            return (
-              <ChainDelegations
-                key={chainID}
-                chainID={chainID}
-                chainName={chainName}
-                delegations={delegations}
-                rewards={rewards}
-                validators={validators}
-                currency={currency}
-                validatorAddress=""
-                action=""
-                chainSpecific={false}
-              />
-            );
-          })}
+          return (
+            <ChainDelegations
+              key={chainID}
+              chainID={chainID}
+              chainName={chainName}
+              delegations={delegations}
+              rewards={rewards}
+              validators={validators}
+              currency={currency}
+              validatorAddress=""
+              action=""
+              chainSpecific={false}
+            />
+          );
+        })}
+      </div>
+
+      {delegationsLoading === 0 && !hasDelegations ? (
+        <div className="no-data">
+          <Image
+            src={NO_MESSAGES_ILLUSTRATION}
+            width={200}
+            height={177}
+            alt={'No Transactions'}
+          />
+          <div className="text-[16px] opacity-50 mt-2 mb-6 leading-normal italic font-extralight text-center">
+            {NO_DELEGATIONS_MSG}
+          </div>
         </div>
-      ) : (
-        <div className="no-delegations">- No Delegations -</div>
-      )}
+      ) : null}
+
+      {delegationsLoading !== 0 ? (
+        <div className="no-data">
+          <CircularProgress size={32} sx={{ color: 'white' }} />
+        </div>
+      ) : null}
+
       {hasUnbonding ? (
         <div className="mt-12">
           <h2 className="txt-lg font-medium my-6">Unbonding</h2>

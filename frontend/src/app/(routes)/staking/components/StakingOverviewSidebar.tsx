@@ -6,6 +6,7 @@ import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import StakingSideBarAds from './StakingSideBarAds';
+import { Tooltip } from '@mui/material';
 
 const StakingOverviewSidebar = () => {
   const nameToChainIDs = useAppSelector(
@@ -16,23 +17,31 @@ const StakingOverviewSidebar = () => {
   const [totalStakedAmount, , rewards] = useGetAssetsAmount(chainIDs);
   return (
     <div className="staking-sidebar">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-10">
         <TopNav />
-        <div className="flex gap-6">
-          <StakingStatsCard
-            name={'Staked Balance'}
-            value={formatDollarAmount(totalStakedAmount)}
-          />
-          <StakingStatsCard
-            name={'Rewards'}
-            value={formatDollarAmount(rewards)}
-          />
-        </div>
-        <div className="staking-sidebar-actions">
-          <button className="staking-sidebar-actions-btn">Claim All</button>
-          <button className="staking-sidebar-actions-btn">
-            Claim & Stake All
-          </button>
+        <div className='flex flex-col gap-6'>
+          <div className="flex gap-6">
+            <StakingStatsCard
+              name={'Staked Balance'}
+              value={formatDollarAmount(totalStakedAmount)}
+            />
+            <StakingStatsCard
+              name={'Rewards'}
+              value={formatDollarAmount(rewards)}
+            />
+          </div>
+          <div className="staking-sidebar-actions">
+            <Tooltip title="Coming soon..">
+              <button className="staking-sidebar-actions-btn cursor-not-allowed">
+                Claim All
+              </button>
+            </Tooltip>
+            <Tooltip title="Coming soon..">
+              <button className="staking-sidebar-actions-btn cursor-not-allowed">
+                Restake All
+              </button>
+            </Tooltip>
+          </div>
         </div>
       </div>
       <StakingSideBarAds />
