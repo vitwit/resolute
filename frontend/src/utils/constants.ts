@@ -141,6 +141,7 @@ export const TELEGRAM_LINK = '';
 export const LOGOUT_ICON = '/logout-icon.svg';
 export const TRANSFERS_CARDS_COUNT = 5;
 export const NO_MESSAGES_ILLUSTRATION = '/no-messages-illustration.png';
+export const NO_DELEGATIONS_MSG = `Looks like you haven't staked anything yet, go ahead and explore !`;
 export const VOTE_OPTIONS = ['Yes', 'Abstain', 'No', 'No With Veto'];
 export const MAP_TXN_TYPES: Record<string, string[]> = {
   '/cosmos.staking.v1beta1.MsgDelegate': ['delegated', 'delegating'],
