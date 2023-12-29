@@ -210,7 +210,7 @@ const RightOverview = ({
                         </p>
                         {/* <p className="proposal-text-extralight items-center flex"></p> */}
                       </div>
-                      <div className="flex items-center proposal-text-extralight opacity-50">
+                      <div className="flex items-center proposal-text-extralight opacity-90">
                         {status === 'active' ? (
                           <>
                             {`Voting ends in ${getTimeDifferenceToFutureDate(
