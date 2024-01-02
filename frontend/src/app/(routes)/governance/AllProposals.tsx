@@ -108,11 +108,12 @@ const AllProposals = ({
               <div className="flex flex-col flex-1 justify-center items-center mt-[100px] space-y-4">
                 <Image
                   src="/gov-illustration.png"
-                  width={610}
-                  height={464}
+                  width={400}
+                  height={235.5}
                   alt="no action proposals"
+                  className='disable-draggable'
                 />
-                <p className="text-white text-center text-base italic font-extralight leading-[normal]">
+                <p className="text-white text-center text-base italic font-extralight leading-[normal] flex justify-center opacity-50 ">
                   {messages.noProposals}
                 </p>
               </div>

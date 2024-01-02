@@ -116,9 +116,7 @@ const VotePopup = ({
                             height={32}
                             alt="logo"
                           />
-                          <p className="proposal-text-small">
-                            #{proposalId} | Proposal
-                          </p>
+                          <p className="proposal-text-small">#{proposalId}</p>
                         </div>
                         <div className="proposal-text-small">
                           {`Voting ends in ${votingEndsInDays}`}
@@ -132,6 +130,7 @@ const VotePopup = ({
                 </div>
                 <div className="flex w-full justify-between relative top-1">
                   <div className="radio-buttons">
+                  <div className='back'>
                     <RadioButton
                       name="voteOption"
                       value={'yes'}
@@ -139,6 +138,8 @@ const VotePopup = ({
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
+                    </div>
+                    <div className='back'>
                     <RadioButton
                       name="voteOption"
                       value={'no'}
@@ -146,17 +147,21 @@ const VotePopup = ({
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
+                    </div>
                   </div>
                 </div>
                 <div className="flex w-full justify-between relative top-1">
                   <div className="radio-buttons">
-                    <RadioButton
-                      name="voteOption"
-                      value={'abstain'}
-                      displayOption={'Abstain'}
-                      voteOption={voteOption}
-                      handleVoteChange={handleVoteChange}
-                    />
+                    <div className="back">
+                      <RadioButton
+                        name="voteOption"
+                        value={'abstain'}
+                        displayOption={'Abstain'}
+                        voteOption={voteOption}
+                        handleVoteChange={handleVoteChange}
+                      />
+                    </div>
+                    <div className='back'>
                     <RadioButton
                       name="voteOption"
                       value={'veto'}
@@ -164,13 +169,14 @@ const VotePopup = ({
                       voteOption={voteOption}
                       handleVoteChange={handleVoteChange}
                     />
+                    </div>
                   </div>
                 </div>
                 <div className="placeholder-text w-full">
                   <input
                     className="search-validator-input"
                     type="text"
-                    placeholder="Enter Justification here(Optional)"
+                    placeholder="Enter Justification here (Optional)"
                   ></input>
                 </div>
                 <div>
