@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import ActiveValidators from './ActiveValidators';
 import InactiveValidators from './InactiveValidators';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { allValidatorDialogStyles } from '../styles';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 interface DialogAllValidatorsProps {
   toggleValidatorsDialog: () => void;
@@ -32,7 +32,9 @@ const DialogAllValidators = ({
         setActive(true);
       }}
       maxWidth="lg"
-      PaperProps={allValidatorDialogStyles}
+      PaperProps={{
+        sx: dialogBoxPaperPropStyles,
+      }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="min-h-[816px] relative">

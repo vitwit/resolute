@@ -14,6 +14,7 @@ import './style.css';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txDeposit } from '@/store/features/gov/govSlice';
 import { Controller, useForm } from 'react-hook-form';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 const DepositPopup = ({
   chainID,
@@ -86,7 +87,7 @@ const DepositPopup = ({
       onClose={handleClose}
       maxWidth="lg"
       className="blur-effect"
-      PaperProps={{ sx: { borderRadius: '16px', backgroundColor: '#20172F' } }}
+      PaperProps={{ sx: dialogBoxPaperPropStyles }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="popup-grid">

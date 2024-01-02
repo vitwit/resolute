@@ -2,6 +2,7 @@ import { DialogContent, Dialog } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { supportedWallets } from '@/utils/contants';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 const WalletPopup = ({
   isOpen,
@@ -25,7 +26,9 @@ const WalletPopup = ({
       onClose={onClose}
       maxWidth="lg"
       className="blur-effect"
-      PaperProps={{ sx: { borderRadius: '16px', backgroundColor: '#20172F' } }}
+      PaperProps={{
+        sx: dialogBoxPaperPropStyles,
+      }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="wallet-box">
