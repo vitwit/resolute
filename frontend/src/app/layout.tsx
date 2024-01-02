@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import { Landingpage } from '@/components/LandingPage';
 import { StoreProvider } from '@/store/StoreProvider';
 import SideBar from '@/components/SideBar';
+import SnackBar from '@/components/SnackBar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
         {
           <StoreProvider>
             <div className="layout">
+              <SnackBar />
               <Landingpage>
                 <SideBar> {children}</SideBar>
               </Landingpage>
