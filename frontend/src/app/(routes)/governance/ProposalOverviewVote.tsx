@@ -287,7 +287,7 @@ const ProposalOverviewVote = ({
               className=" view-full flex w-full justify-end items-end"
               onClick={() => setShowRawData(true)}
             >
-              Raw_Data
+              View_Raw
             </div>
             {showRawData && (
               <ProposalViewRaw
