@@ -9,7 +9,7 @@ import { RootState } from '@/store/store';
 import { tabLink } from '../utils/util';
 import { Tooltip } from '@mui/material';
 import TransactionSuccessPopup from './TransactionSuccessPopup';
-import SnackBar from './SnackBar';
+
 import {
   GITHUB_ISSUES_PAGE_LINK,
   HELP_ICON,
@@ -28,7 +28,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="main">
       <TransactionSuccessPopup />
-      <SnackBar />
+      
       <div className="sidebar overflow-y-scroll">
         <Link href="/">
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
