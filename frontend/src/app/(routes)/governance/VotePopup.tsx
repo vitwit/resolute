@@ -7,6 +7,7 @@ import { Dialog, DialogContent } from '@mui/material';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { txVote } from '@/store/features/gov/govSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 interface VoteOptionNumber {
   [key: string]: number;
@@ -79,7 +80,7 @@ const VotePopup = ({
       onClose={handleClose}
       maxWidth="lg"
       className="blur-effect"
-      PaperProps={{ sx: { borderRadius: '16px', backgroundColor: '#20172F' } }}
+      PaperProps={{ sx: dialogBoxPaperPropStyles }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="popup-grid">

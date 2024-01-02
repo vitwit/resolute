@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { getTxnURL } from '@/utils/util';
 import TxnMessage from './TxnMessage';
 import { parseBalance } from '@/utils/denom';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 const TransactionSuccessPopup = () => {
   const tx = useAppSelector((state) => state.common.txSuccess.tx);
@@ -56,10 +57,7 @@ const TransactionSuccessPopup = () => {
       maxWidth="lg"
       sx={{ backgroundColor: '#07051360' }}
       PaperProps={{
-        sx: {
-          borderRadius: '40px',
-          backgroundColor: '#15122D',
-        },
+        sx: dialogBoxPaperPropStyles,
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
