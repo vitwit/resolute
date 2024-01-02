@@ -252,7 +252,7 @@ const RightOverview = ({
                           {isStatusVoting ? 'Vote' : 'Deposit'}
                         </p>
                       </button>
-                      <div className="cursor-pointer text-[#FFFFFFBF] text-[14px] font-extralight underline underline-offset-2 view-full">
+                      <div className="underline underline-offset-[3px] font-medium justify-center  flex items-center">
                         <Link href={`/governance/${chainName}/${proposalId}`}>
                           View Full Proposal
                         </Link>
@@ -374,7 +374,7 @@ const RightOverview = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col space-y-20">
+                  <div className="flex flex-col space-y-10">
                     <div className="bg-[#FFFFFF0D] rounded-2xl">
                       <DepositProposalInfo chainID={chainID} />
                     </div>
