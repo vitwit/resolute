@@ -223,3 +223,8 @@
   list-style-position: inside;
   margin-left: 1em;
 }
+
+.vote-popup-btn,
+.deposit-popup-btn {
+  @apply button w-36 min-h-[44px];
+}
