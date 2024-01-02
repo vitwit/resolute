@@ -110,21 +110,19 @@ const DepositPopup = ({
               />
             </div>
             <div className="text-grid">
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="proposal-text-big font-bold">Deposit</div>
                 <div className="text-form">
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     <div className="flex justify-between">
                       <div className="space-x-2 flex">
                         <Image
                           src={networkLogo}
-                          width={32}
-                          height={32}
+                          width={26}
+                          height={26}
                           alt="logo"
                         />
-                        <p className="proposal-text-small">
-                          {proposalId} | Proposal
-                        </p>
+                        <p className="proposal-text-small">{proposalId}</p>
                       </div>
                       <div className="proposal-text-small">{`Deposit period ends in ${votingEndsInDays} `}</div>
                     </div>
@@ -180,8 +178,6 @@ const DepositPopup = ({
                         />
                       )}
                     />
-
-                   
                   </div>
                   <div className="mt-6">
                     <button className="button w-36">
