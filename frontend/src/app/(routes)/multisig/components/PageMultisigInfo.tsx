@@ -6,7 +6,6 @@ import {
   getMultisigAccounts,
   getMultisigBalance,
   multisigByAddress,
-  verifyAccount,
 } from '@/store/features/multisig/multisigSlice';
 import { setAuthToken } from '@/utils/localStorage';
 import {
@@ -22,7 +21,6 @@ import AccountInfo from './AccountInfo';
 import MultisigSidebar from './MultisigSidebar';
 import VerifyAccount from './VerifyAccount';
 import { isVerified } from '@/utils/util';
-import TopNav from '@/components/TopNav';
 
 interface PageMultisigInfoProps {
   chainName: string;

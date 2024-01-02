@@ -8,13 +8,11 @@ import {
   getMultisigAccounts,
   resetDeleteMultisigRes,
   resetVerifyAccountRes,
-  verifyAccount,
 } from '@/store/features/multisig/multisigSlice';
 import { setAuthToken } from '@/utils/localStorage';
 import { resetError, setError } from '@/store/features/common/commonSlice';
 import VerifyAccount from './VerifyAccount';
 import { isVerified } from '@/utils/util';
-import TopNav from '@/components/TopNav';
 
 const PageMultisig = ({ chainName }: { chainName: string }) => {
   const dispatch = useAppDispatch();
@@ -24,9 +22,6 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
   );
   const verifyAccountRes = useAppSelector(
     (state) => state.multisig.verifyAccountRes
-  );
-  const multisigAccounts = useAppSelector(
-    (state: RootState) => state.multisig.multisigAccounts
   );
   const chainID = nameToChainIDs[chainName];
 

@@ -3,12 +3,7 @@ import { deleteMultisig } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { MultisigAccount } from '@/types/multisig';
 import { parseBalance } from '@/utils/denom';
-import {
-  formatCoin,
-  formatStakedAmount,
-  isMultisigMember,
-  shortenAddress,
-} from '@/utils/util';
+import { formatCoin, formatStakedAmount, isMultisigMember } from '@/utils/util';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';

@@ -1,5 +1,6 @@
 'use client';
 import TopNav from '@/components/TopNav';
+import Image from 'next/image';
 import React from 'react';
 
 const Multisig = () => {
@@ -12,6 +13,12 @@ const Multisig = () => {
         <TopNav message={message} />
       </div>
       <div className="flex-1 flex flex-col justify-center items-center gap-4">
+        <Image
+          src="/no-multisigs.png"
+          width={400}
+          height={235}
+          alt={'No Transactions'}
+        />
         <p>{message}</p>
         <button
           className="primary-custom-btn"
