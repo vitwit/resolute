@@ -152,3 +152,5 @@ export const MAP_TXN_TYPES: Record<string, string[]> = {
   '/ibc.applications.transfer.v1.MsgTransfer': ['sent', 'sending'],
   '/cosmos.gov.v1beta1.MsgDeposit': ['deposited', 'depositing'],
 };
+export const TWITTER_ICON = '/twitter-icon.png';
+export const TWITTER_LINK = 'https://twitter.com/vitwit_';
