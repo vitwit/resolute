@@ -4,10 +4,10 @@ import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { dialogBoxStyles } from '../styles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import AmountInputField from './AmountInputField';
 import ValidatorLogo from './ValidatorLogo';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 const DialogDelegate = ({
   open,
@@ -51,7 +51,9 @@ const DialogDelegate = ({
       onClose={handleClose}
       open={open}
       maxWidth="lg"
-      PaperProps={dialogBoxStyles}
+      PaperProps={{
+        sx: dialogBoxPaperPropStyles,
+      }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
