@@ -136,8 +136,7 @@ export const HELP_ICON = '/help-icon.svg';
 export const REPORT_ICON = '/report-icon.svg';
 export const GITHUB_ISSUES_PAGE_LINK =
   'https://github.com/vitwit/resolute/issues';
-// TODO: Add telegram link
-export const TELEGRAM_LINK = '';
+export const TELEGRAM_LINK = 'https://web.telegram.org/k/#-1982236507';
 export const LOGOUT_ICON = '/logout-icon.svg';
 export const TRANSFERS_CARDS_COUNT = 5;
 export const NO_MESSAGES_ILLUSTRATION = '/no-messages-illustration.png';
