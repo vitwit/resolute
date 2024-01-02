@@ -16,6 +16,8 @@ import {
   REPORT_ICON,
   SIDENAV_MENU_ITEMS,
   TELEGRAM_LINK,
+  TWITTER_ICON,
+  TWITTER_LINK,
 } from '@/utils/constants';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
@@ -60,6 +62,18 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
             <Link href={TELEGRAM_LINK} target="_blank">
               <div className="sidebar-menu-item">
                 <Image src={HELP_ICON} height={40} width={40} alt="Resolute" />
+              </div>
+            </Link>
+          </Tooltip>
+          <Tooltip title="Twitter" placement="right">
+            <Link href={TWITTER_LINK} target="_blank">
+              <div className="sidebar-menu-item">
+                <Image
+                  src={TWITTER_ICON}
+                  height={19}
+                  width={19}
+                  alt="Resolute"
+                />
               </div>
             </Link>
           </Tooltip>
