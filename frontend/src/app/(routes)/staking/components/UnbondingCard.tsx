@@ -13,7 +13,6 @@ import {
   UnbondingCardStatsItemProps,
   UnbondingCardStatsProps,
 } from '@/types/staking';
-import { dialogBoxStyles } from '../styles';
 import Image from 'next/image';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -24,6 +23,7 @@ import {
 } from '@/store/features/staking/stakeSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { TxStatus } from '@/types/enums';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 const UnbondingCard = ({
   moniker,
@@ -148,7 +148,9 @@ const DialogCancelUnbonding: React.FC<DialogCancelUnbondingProps> = (props) => {
       open={open}
       onClose={onClose}
       maxWidth="lg"
-      PaperProps={dialogBoxStyles}
+      PaperProps={{
+        sx: dialogBoxPaperPropStyles,
+      }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
