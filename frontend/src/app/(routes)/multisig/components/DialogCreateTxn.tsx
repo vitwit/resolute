@@ -604,7 +604,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                             {...field}
                             sx={{
                               ...createTxnTextFieldStyles,
-                              ...{ mb: '0', mt: 2 },
+                              ...{ mb: '0', mt: 3 },
                             }}
                             placeholder="Memo"
                             fullWidth

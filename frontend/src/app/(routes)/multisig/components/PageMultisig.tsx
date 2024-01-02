@@ -5,6 +5,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import {
+  getMultisigAccounts,
   resetDeleteMultisigRes,
   resetVerifyAccountRes,
   verifyAccount,
@@ -13,6 +14,7 @@ import { setAuthToken } from '@/utils/localStorage';
 import { resetError, setError } from '@/store/features/common/commonSlice';
 import VerifyAccount from './VerifyAccount';
 import { isVerified } from '@/utils/util';
+import TopNav from '@/components/TopNav';
 
 const PageMultisig = ({ chainName }: { chainName: string }) => {
   const dispatch = useAppDispatch();
@@ -23,24 +25,13 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
   const verifyAccountRes = useAppSelector(
     (state) => state.multisig.verifyAccountRes
   );
+  const multisigAccounts = useAppSelector(
+    (state: RootState) => state.multisig.multisigAccounts
+  );
   const chainID = nameToChainIDs[chainName];
 
   const { getChainInfo } = useGetChainInfo();
   const { address } = getChainInfo(chainID);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (!isVerified({ chainID, address }) && chainID?.length) {
-        dispatch(
-          verifyAccount({
-            chainID: chainID,
-            address: address,
-          })
-        );
-      }
-    }, 1200);
-    return () => clearTimeout(timeoutId);
-  }, [address, chainID]);
 
   useEffect(() => {
     if (verifyAccountRes.status === 'idle') {
@@ -74,23 +65,29 @@ const PageMultisig = ({ chainName }: { chainName: string }) => {
     dispatch(resetDeleteMultisigRes());
   }, []);
 
+  useEffect(() => {
+    if (address) dispatch(getMultisigAccounts(address));
+  }, []);
+
   return (
     <div className="flex gap-10">
       {verified ? (
-        <AllMultisigs
-          address={address}
-          chainName={chainName}
-          chainID={chainID}
-        />
+        <>
+          <AllMultisigs
+            address={address}
+            chainName={chainName}
+            chainID={chainID}
+          />
+          <MultisigSidebar
+            chainID={chainID}
+            walletAddress={address}
+            accountSpecific={false}
+            verified={verified}
+          />
+        </>
       ) : (
         <VerifyAccount chainID={chainID} walletAddress={address} />
       )}
-      <MultisigSidebar
-        chainID={chainID}
-        walletAddress={address}
-        accountSpecific={false}
-        verified={verified}
-      />
     </div>
   );
 };

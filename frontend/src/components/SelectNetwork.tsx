@@ -16,7 +16,7 @@ import { allNetworksLink, changeNetworkRoute } from '@/utils/util';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { ALL_NETWORKS_ICON, CHANGE_NETWORK_ICON } from '@/utils/constants';
 
-const SelectNetwork = () => {
+const SelectNetwork = ({ message }: { message?: string }) => {
   const pathName = usePathname();
   const dispatch = useAppDispatch();
 
@@ -46,7 +46,7 @@ const SelectNetwork = () => {
 
   useEffect(() => {
     const pathParts = pathName.split('/') || [];
-    if (pathParts.length === 3) {
+    if (pathParts.length >= 3) {
       dispatch(setSelectedNetwork({ chainName: pathParts[2].toLowerCase() }));
     } else {
       dispatch(setSelectedNetwork({ chainName: '' }));
@@ -65,9 +65,16 @@ const SelectNetwork = () => {
     }
   }, [selectedNetwork]);
 
+  useEffect(() => {
+    if (message?.length) {
+      setOpen(true);
+    }
+  }, [message]);
+
   return (
     <div>
       <div
+        id="select-network"
         className="flex gap-2 items-center cursor-pointer"
         onClick={() => setOpen(true)}
       >
@@ -119,6 +126,7 @@ const SelectNetwork = () => {
         handleClose={handleClose}
         selectedNetworkName={selectedNetwork.chainName}
         openAddNetworkDialog={openAddNetworkDialog}
+        message={message}
       />
       <DialogAddNetwork
         open={addNetworkDialogOpen}
@@ -135,11 +143,13 @@ const DialogSelectNetwork = ({
   handleClose,
   selectedNetworkName,
   openAddNetworkDialog,
+  message,
 }: {
   open: boolean;
   handleClose: () => void;
   selectedNetworkName: string;
   openAddNetworkDialog: () => void;
+  message?: string;
 }) => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const chainIDs = Object.keys(networks);
@@ -175,7 +185,8 @@ const DialogSelectNetwork = ({
               />
             </div>
           </div>
-          <div className="py-6 px-10">
+          {message?.length ? <div className="message">{message}</div> : null}
+          <div className="pb-6 px-10">
             <div className="mb-6 flex justify-between">
               <h2 className="text-[20px] font-bold leading-normal">
                 All Networks

@@ -3,13 +3,19 @@ import { deleteMultisig } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { MultisigAccount } from '@/types/multisig';
 import { parseBalance } from '@/utils/denom';
-import { formatCoin, formatStakedAmount, shortenAddress } from '@/utils/util';
+import {
+  formatCoin,
+  formatStakedAmount,
+  isMultisigMember,
+  shortenAddress,
+} from '@/utils/util';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import DialogDeleteMultisig from './DialogDeleteMultisig';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import CommonCopy from '@/components/CommonCopy';
+import { getAuthToken } from '@/utils/localStorage';
 
 interface AccountInfoProps {
   chainID: string;
@@ -18,6 +24,7 @@ interface AccountInfoProps {
   coinMinimalDenom: string;
   coinDecimals: number;
   coinDenom: string;
+  walletAddress: string;
 }
 
 const AccountInfo: React.FC<AccountInfoProps> = (props) => {
@@ -28,6 +35,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
     coinMinimalDenom,
     coinDecimals,
     coinDenom,
+    walletAddress,
   } = props;
   const router = useRouter();
   const [availableBalance, setAvailableBalance] = useState<number>(0);
@@ -54,6 +62,10 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
       denom: coinMinimalDenom,
     },
   ];
+  const isMember = isMultisigMember(
+    multisigAccount.pubkeys || [],
+    walletAddress
+  );
 
   const { txnCounts = {} } = multisigAccounts;
   const actionsRequired = txnCounts?.[address] || 0;
@@ -69,7 +81,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
       <h2 className="text-[20px] leading-normal font-normal">Multisig</h2>
       <div className="flex-1 flex gap-2 items-center">
         <div className="cursor-pointer" onClick={() => handleGoBack()}>
-          <Image src="/go-back-icon.svg" width={36} height={36} alt="Go Back" />
+          <Image src="/go-back-icon.svg" width={24} height={24} alt="Go Back" />
         </div>
         <div className="text-[16px] leading-10 tracking-[0.64px]">
           {multisigAccount.account.name || '-'}
@@ -85,6 +97,8 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
           coinMinimalDenom,
           coinDecimals,
         })}
+        chainID={chainID}
+        isMember={isMember}
       />
     </div>
   );
@@ -98,12 +112,16 @@ const AccountDetails = ({
   balance,
   stakedBalance,
   chainName,
+  chainID,
+  isMember,
 }: {
   multisigAccount: MultisigAccount;
   actionsRequired: number;
   balance: string;
   stakedBalance: string;
   chainName: string;
+  chainID: string;
+  isMember: boolean;
 }) => {
   const { account: accountInfo, pubkeys } = multisigAccount;
   const { address, name, created_at, threshold } = accountInfo;
@@ -130,6 +148,8 @@ const AccountDetails = ({
     }
   }, [deleteMultisigRes?.status]);
 
+  const authToken = getAuthToken(chainID);
+
   const handleDelete = () => {
     dispatch(
       deleteMultisig({
@@ -137,18 +157,22 @@ const AccountDetails = ({
         queryParams: { address: '', signature: '' },
       })
     );
+    if (isMember) {
+      dispatch(
+        deleteMultisig({
+          data: { address: multisigAccount?.account?.address },
+          queryParams: {
+            address: authToken?.address || '',
+            signature: authToken?.signature || '',
+          },
+        })
+      );
+    }
   };
 
   return (
     <div className="flex flex-col rounded-2xl w-full bg-[#0E0B26] h-full">
       <div className="multisig-info-title">
-        <Image
-          src="/printed-color.png"
-          width={560}
-          height={78}
-          alt=""
-          className="absolute left-[25%] top-0"
-        />
         <div className="w-full flex justify-between">
           <h2 className="text-[16px] font-bold">{name}</h2>
           <h3 className="text-[14px] font-bold">
@@ -164,10 +188,7 @@ const AccountDetails = ({
             name={'Address'}
             value={
               <div className="multisig-account-address">
-                <div className="overflow-hidden">
-                  {shortenAddress(address, 28)}
-                </div>
-                <Image src="/copy.svg" width={24} height={24} alt="copy" />
+                <MemberAddress address={address} />
               </div>
             }
           />
@@ -208,7 +229,12 @@ const AccountDetails = ({
         <div>
           <button
             onClick={() => setDeleteDialogOpen(true)}
-            className="delete-multisig-btn"
+            className={
+              isMember
+                ? 'delete-multisig-btn'
+                : 'delete-multisig-btn btn-disabled'
+            }
+            disabled={!isMember}
           >
             Delete Multisig
           </button>

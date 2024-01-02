@@ -106,9 +106,7 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
             height={130}
             alt={'No Transactions'}
           />
-          <div className="text-[16px] my-6 leading-normal italic font-extralight text-center">
-            No Transactions
-          </div>
+          <div className="empty-screen-text">No Transactions</div>
         </div>
       ) : null}
       <DialogViewTxnMessages

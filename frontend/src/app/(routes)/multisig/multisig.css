@@ -49,7 +49,7 @@
 }
 
 .multisig-account-address {
-  @apply flex gap-2 px-2 text-[14px] leading-[20px];
+  @apply w-fit leading-[20px];
 }
 
 .custom-radio-button-label {
@@ -73,13 +73,8 @@
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 
-.divider {
-  @apply h-[1px] mt-4;
-  background: linear-gradient(
-    90deg,
-    rgba(74, 162, 156, 0.352) 7.46%,
-    rgba(139, 61, 167, 0.354) 94.28%
-  );
+.line {
+  @apply h-[1px] mt-4 bg-[#ffffff35] opacity-50;
 }
 
 .action-image {
@@ -155,4 +150,8 @@
 .create-multisig-btn-2 {
   @apply rounded-2xl px-10 py-[10px] font-medium text-[16px];
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.empty-screen-text {
+  @apply text-[16px] my-6 leading-normal italic font-extralight text-center opacity-50;
 }

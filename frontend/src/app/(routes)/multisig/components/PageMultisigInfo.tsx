@@ -22,6 +22,7 @@ import AccountInfo from './AccountInfo';
 import MultisigSidebar from './MultisigSidebar';
 import VerifyAccount from './VerifyAccount';
 import { isVerified } from '@/utils/util';
+import TopNav from '@/components/TopNav';
 
 interface PageMultisigInfoProps {
   chainName: string;
@@ -47,20 +48,6 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
     decimals: coinDecimals,
     displayDenom: coinDenom,
   } = getDenomInfo(chainID);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (!isVerified({ chainID, address: walletAddress }) && chainID?.length) {
-        dispatch(
-          verifyAccount({
-            chainID: chainID,
-            address: walletAddress,
-          })
-        );
-      }
-    }, 1200);
-    return () => clearTimeout(timeoutId);
-  }, [walletAddress, chainID]);
 
   useEffect(() => {
     if (verifyAccountRes.status === 'idle') {
@@ -111,24 +98,27 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
   return (
     <div className="flex gap-10 justify-between">
       {verified ? (
-        <AccountInfo
-          chainID={chainID}
-          chainName={chainName}
-          address={address}
-          coinMinimalDenom={coinMinimalDenom}
-          coinDecimals={coinDecimals}
-          coinDenom={coinDenom}
-        />
+        <>
+          <AccountInfo
+            chainID={chainID}
+            chainName={chainName}
+            address={address}
+            coinMinimalDenom={coinMinimalDenom}
+            coinDecimals={coinDecimals}
+            coinDenom={coinDenom}
+            walletAddress={walletAddress}
+          />
+          <MultisigSidebar
+            chainID={chainID}
+            accountSpecific={true}
+            address={address}
+            walletAddress={walletAddress}
+            verified={verified}
+          />
+        </>
       ) : (
         <VerifyAccount chainID={chainID} walletAddress={walletAddress} />
       )}
-      <MultisigSidebar
-        chainID={chainID}
-        accountSpecific={true}
-        address={address}
-        walletAddress={walletAddress}
-        verified={verified}
-      />
     </div>
   );
 };

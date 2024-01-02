@@ -1,3 +1,4 @@
+import TopNav from '@/components/TopNav';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { verifyAccount } from '@/store/features/multisig/multisigSlice';
 import React from 'react';
@@ -14,7 +15,10 @@ const VerifyAccount: React.FC<VerifyAccountProps> = (props) => {
     dispatch(verifyAccount({ chainID, address: walletAddress }));
   };
   return (
-    <div className="verify-account">
+    <div className="verify-account relative">
+      <div className="w-fit absolute top-6 right-6">
+        <TopNav />
+      </div>
       <div className="text-[20px]">
         Please verify your account ownership to proceed.
       </div>
