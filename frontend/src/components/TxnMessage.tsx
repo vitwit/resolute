@@ -27,9 +27,13 @@ const TxnMessage = ({
 }) => {
   const dispatch = useAppDispatch();
   const status = failed ? 'failed' : 'successfully';
-  const txTypeText = failed
-    ? 'while ' + MAP_TXN_TYPES[msgs[0]?.typeUrl][1] + ' to'
-    : MAP_TXN_TYPES[msgs[0]?.typeUrl][0] + ' to';
+
+  const msgType = msgs[0]?.typeUrl;
+  const txTypeText = msgs?.length
+    ? failed
+      ? 'while ' + MAP_TXN_TYPES[msgType]?.[1] + ' to'
+      : MAP_TXN_TYPES[msgType]?.[0] + ' to'
+    : '';
   return (
     <>
       {msgs?.length ? (
