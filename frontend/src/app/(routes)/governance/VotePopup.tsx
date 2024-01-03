@@ -106,6 +106,7 @@ const VotePopup = ({
                 width={335}
                 height={298}
                 alt="Vote-Image"
+                className='disable-draggable'
               />
             </div>
             <div className="text-grid">
@@ -182,7 +183,7 @@ const VotePopup = ({
                   <input
                     className="search-validator-input"
                     type="text"
-                    placeholder="Enter Justification here (Optional)"
+                    placeholder="Enter Justification Here (Optional)"
                   ></input>
                 </div>
                 <div>
