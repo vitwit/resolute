@@ -241,6 +241,7 @@ const ChainDelegations = ({
         loading={txStatus?.status}
         displayDenom={currency.coinDenom}
         onDelegate={onDelegateTx}
+        feeAmount={avgFeeAmount}
       />
       <DialogUndelegate
         onClose={handleDialogClose}

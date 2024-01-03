@@ -68,7 +68,7 @@ const DepositProposalInfo = ({ chainID }: { chainID: string }) => {
             <div style={{ width: `${depositPercent.toString()}%` }}></div>
             <div className="flex flex-col items-center">
               <div>{depositPercent}%</div>
-              <div className="bg-[#26233C] h-[10px] w-[1px]"></div>
+              <div className="bg-[#f0f0f3] h-[10px] w-[4px]"></div>
             </div>
           </div>
           <div className="bg-[#FFFFFF1A] w-full h-[10px] rounded-full">

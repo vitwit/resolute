@@ -18,7 +18,12 @@ import { Validator } from '@/types/staking';
 import { useRouter } from 'next/navigation';
 import { getBalances } from '@/store/features/bank/bankSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import msgs from '@/utils/messages.json';
+import {
+  NO_DELEGATIONS_MSG,
+  NO_MESSAGES_ILLUSTRATION,
+} from '@/utils/constants';
+import Image from 'next/image';
+import { CircularProgress } from '@mui/material';
 
 const StakingPage = ({
   chainName,
@@ -63,6 +68,9 @@ const StakingPage = ({
   const hasDelegations = useAppSelector(
     (state: RootState) =>
       state.staking.chains[chainID]?.delegations?.hasDelegations
+  );
+  const delegationsLoading = useAppSelector(
+    (state: RootState) => state.staking.delegationsLoading
   );
 
   const { getChainInfo } = useGetChainInfo();
@@ -131,15 +139,29 @@ const StakingPage = ({
             chainSpecific={true}
           />
         </div>
-        {!hasDelegations ? (
+        {delegationsLoading === 0 && !hasDelegations ? (
+          <div className="my-[5%] flex flex-col justify-center items-center">
+            <Image
+              src={NO_MESSAGES_ILLUSTRATION}
+              width={200}
+              height={177}
+              alt={'No Transactions'}
+            />
+            <div className="text-[16px] opacity-50 mt-2 mb-6 leading-normal italic font-extralight text-center">
+              {NO_DELEGATIONS_MSG}
+            </div>
+            <button
+              onClick={toggleValidatorsDialog}
+              className="primary-custom-btn mb-6"
+            >
+              Explore
+            </button>
+          </div>
+        ) : null}
+
+        {delegationsLoading !== 0 ? (
           <div className="no-data">
-            <div className="leading-8">{msgs.noData}</div>
-              <button
-                onClick={toggleValidatorsDialog}
-                className="primary-custom-btn"
-              >
-                Explore
-              </button>
+            <CircularProgress size={32} sx={{ color: 'white' }} />
           </div>
         ) : null}
 
