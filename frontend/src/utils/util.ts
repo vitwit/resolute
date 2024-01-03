@@ -2,7 +2,7 @@ import { DelegationResponse, Params, Validator } from '@/types/staking';
 import { parseBalance } from './denom';
 import { MultisigThresholdPubkey, SinglePubkey } from '@cosmjs/amino';
 import { Options } from '@/custom-hooks/useSortedAssets';
-import { getAuthToken } from './localStorage';
+import { getAuthToken, removeAllAuthTokens } from './localStorage';
 import { MultisigAddressPubkey } from '@/types/multisig';
 
 export const convertPaginationToParams = (
@@ -347,6 +347,9 @@ export const isVerified = ({
   if (token) {
     if (token.address === address && token.chainID === chainID) {
       return true;
+    } else {
+      removeAllAuthTokens();
+      return false;
     }
   }
   return false;
