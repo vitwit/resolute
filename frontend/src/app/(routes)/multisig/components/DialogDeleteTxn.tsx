@@ -7,7 +7,7 @@ import {
   CLOSE_ICON_PATH,
   DELETE_TXN_DIALOG_IMAGE_PATH,
 } from '@/utils/constants';
-import { Dialog, DialogContent } from '@mui/material';
+import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect } from 'react';
 
@@ -72,18 +72,21 @@ const DialogDeleteTxn: React.FC<DialogDeleteTxnProps> = (props) => {
                 <div className="mt-10 flex gap-10 items-center">
                   <button
                     type="submit"
-                    className="create-account-btn"
+                    className="create-account-btn min-w-[130px] min-h-[44px]"
                     onClick={deleteTx}
                     disabled={deleteTxnStatus === TxStatus.PENDING}
                   >
-                    {deleteTxnStatus === TxStatus.PENDING
-                      ? 'Loading'
-                      : 'Delete'}
+                    {deleteTxnStatus === TxStatus.PENDING ? (
+                      <CircularProgress size={20} sx={{ color: 'white' }} />
+                    ) : (
+                      'Delete'
+                    )}
                   </button>
                   <button
                     type="button"
                     className="cancel-button"
                     onClick={onClose}
+                    disabled={deleteTxnStatus === TxStatus.PENDING}
                   >
                     Cancel
                   </button>

@@ -42,7 +42,7 @@ const DialogDeleteMultisig: React.FC<DialogDeleteMultisigProps> = (props) => {
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
-          <div className="px-10 py-6 flex justify-end">
+          <div className="px-10 pb-6 pt-10 flex justify-end">
             <div onClick={onClose}>
               <Image
                 className="cursor-pointer"
