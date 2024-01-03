@@ -111,6 +111,7 @@ const DepositPopup = ({
                 width={335}
                 height={298}
                 alt="Deposit-Image"
+                className='disable-draggable'
               />
             </div>
             <div className="text-grid">

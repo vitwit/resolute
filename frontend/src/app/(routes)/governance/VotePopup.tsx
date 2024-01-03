@@ -106,6 +106,7 @@ const VotePopup = ({
                 width={335}
                 height={298}
                 alt="Vote-Image"
+                className='disable-draggable'
               />
             </div>
             <div className="text-grid">
