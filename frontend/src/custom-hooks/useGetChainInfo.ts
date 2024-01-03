@@ -12,6 +12,9 @@ export interface DenomInfo {
 
 const useGetChainInfo = () => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
+  const balanceChains = useAppSelector(
+    (state: RootState) => state.bank.balances
+  );
 
   const getDenomInfo = useCallback(
     (chainID: string): DenomInfo => {
@@ -28,6 +31,20 @@ const useGetChainInfo = () => {
     },
     [networks]
   );
+
+  const isFeeAvailable = (chainID: string) => {
+    const { minimalDenom, decimals } = getDenomInfo(chainID);
+    const { feeAmount } = getChainInfo(chainID);
+    let isEnoughFee = false;
+    balanceChains[chainID].list.forEach((token) => {
+      if (
+        token.denom === minimalDenom &&
+        +token.amount >= feeAmount * 10 ** decimals
+      )
+        isEnoughFee = true;
+    });
+    return isEnoughFee;
+  };
 
   const getChainInfo = (chainID: string): BasicChainInfo => {
     const network = networks[chainID].network;
@@ -117,6 +134,7 @@ const useGetChainInfo = () => {
     getOriginDenomInfo,
     isNativeTransaction,
     getChainIDFromAddress,
+    isFeeAvailable,
   };
 };
 
