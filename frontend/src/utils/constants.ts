@@ -153,3 +153,5 @@ export const MAP_TXN_TYPES: Record<string, string[]> = {
 };
 export const TWITTER_ICON = '/twitter-icon.png';
 export const TWITTER_LINK = 'https://twitter.com/vitwit_';
+export const MIN_SALT_VALUE = 99999;
+export const MAX_SALT_VALUE = 99999999;
