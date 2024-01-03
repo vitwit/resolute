@@ -3,12 +3,13 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
   getAccountAllMultisigTxns,
   getTxns,
+  resetCreateTxnState,
 } from '@/store/features/multisig/multisigSlice';
 import React, { useEffect, useState } from 'react';
 import TransactionsList from './TransactionsList';
 import { RootState } from '@/store/store';
 import DialogCreateTxn from './DialogCreateTxn';
-import { setError } from '@/store/features/common/commonSlice';
+import { resetError, setError } from '@/store/features/common/commonSlice';
 import { TxStatus } from '@/types/enums';
 import AllTransactionsList from './AllTransactionsList';
 
@@ -136,6 +137,11 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
       );
     }
   }, [deleteTxnRes]);
+
+  useEffect(() => {
+    dispatch(resetError());
+    dispatch(resetCreateTxnState());
+  }, []);
 
   return (
     <div className="multisig-sidebar">
