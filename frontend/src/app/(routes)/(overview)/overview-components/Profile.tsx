@@ -5,6 +5,10 @@ import { Tooltip } from '@mui/material';
 import { LOGOUT_ICON } from '@/utils/constants';
 import { resetWallet } from '@/store/features/wallet/walletSlice';
 import { logout } from '@/utils/localStorage';
+import {
+  resetError,
+  resetTxAndHash,
+} from '@/store/features/common/commonSlice';
 const Profile = () => {
   const profileName = useAppSelector((state) => state.wallet.name);
   const dispatch = useAppDispatch();
@@ -28,6 +32,8 @@ const Profile = () => {
         <Image
           onClick={() => {
             dispatch(resetWallet());
+            dispatch(resetError());
+            dispatch(resetTxAndHash());
             logout();
           }}
           className="cursor-pointer"

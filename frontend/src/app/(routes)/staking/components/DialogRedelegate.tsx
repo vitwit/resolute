@@ -14,10 +14,10 @@ import {
 import Image from 'next/image';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { dialogBoxStyles } from '../styles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import AmountInputField from './AmountInputField';
 import ValidatorLogo from './ValidatorLogo';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 interface ValidatorSet {
   [key: string]: Validator;
@@ -105,7 +105,9 @@ const DialogRedelegate = ({
       onClose={handleClose}
       open={open}
       maxWidth="lg"
-      PaperProps={dialogBoxStyles}
+      PaperProps={{
+        sx: dialogBoxPaperPropStyles,
+      }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">

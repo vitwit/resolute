@@ -1,3 +1,5 @@
+'use client'
+
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { ALERT_HIDE_DURATION } from '@/utils/constants';

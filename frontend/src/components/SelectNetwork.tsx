@@ -15,6 +15,7 @@ import { resetConnectWalletStatus } from '@/store/features/wallet/walletSlice';
 import { allNetworksLink, changeNetworkRoute } from '@/utils/util';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { ALL_NETWORKS_ICON, CHANGE_NETWORK_ICON } from '@/utils/constants';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 const SelectNetwork = ({ message }: { message?: string }) => {
   const pathName = usePathname();
@@ -162,10 +163,7 @@ const DialogSelectNetwork = ({
       onClose={() => handleClose()}
       maxWidth="lg"
       PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
-        },
+        sx: dialogBoxPaperPropStyles,
       }}
     >
       <DialogContent sx={{ padding: 0 }}>

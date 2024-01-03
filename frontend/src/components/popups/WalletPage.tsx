@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent } from '@mui/material';
 import { supportedWallets } from '@/utils/contants';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 const Walletpage = ({
   open,
@@ -18,7 +19,9 @@ const Walletpage = ({
       onClose={handleClose}
       maxWidth="lg"
       className="blur-effect"
-      PaperProps={{ sx: { borderRadius: '16px', backgroundColor: '#20172F' } }}
+      PaperProps={{
+        sx: dialogBoxPaperPropStyles,
+      }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="custom-box flex-col">

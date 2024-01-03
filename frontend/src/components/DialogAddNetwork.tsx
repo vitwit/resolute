@@ -16,6 +16,7 @@ import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
 import { CHAIN_ID_EXIST_ERROR, CHAIN_NAME_EXIST_ERROR } from '@/utils/errors';
 import { convertKeysToCamelCase } from '@/utils/util';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 const DialogAddNetwork = ({
   open,
@@ -137,11 +138,7 @@ const DialogAddNetwork = ({
       onClose={handleClose}
       maxWidth="lg"
       PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          opacity: '0.95',
-          background: 'linear-gradient(90deg, #1F184E 27.66%, #8B3DA7 99.91%)',
-        },
+        sx: dialogBoxPaperPropStyles,
       }}
     >
       <DialogContent sx={{ padding: 0 }}>

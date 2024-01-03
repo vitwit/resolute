@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import ReactMarkdown from 'react-markdown';
 import ProposalViewRaw from './ProposalViewRaw';
 import { RootState } from '@/store/store';
 import CustomPieChart from './CustomPiechart';
@@ -30,6 +29,7 @@ import DepositPopup from './DepositPopup';
 import { setSelectedNetwork } from '@/store/features/common/commonSlice';
 import ProposalProjection from './ProposalProjection';
 import TopNav from '@/components/TopNav';
+import { useRemark } from 'react-remark';
 
 const emptyTallyResult = {
   yes: '',
@@ -52,6 +52,7 @@ const ProposalOverviewVote = ({
   );
 
   const chainID = nameToChainIDs[chainName];
+  const [proposalMarkdown, setProposalMarkdown] = useRemark();
 
   const dispatch = useAppDispatch();
   const proposalInfo = useAppSelector(
@@ -217,6 +218,11 @@ const ProposalOverviewVote = ({
     }
   }, [chainName]);
 
+  useEffect(() => {
+    const proposalDescription = get(proposalInfo, 'content.description', '');
+    setProposalMarkdown(proposalDescription.replace(/\\n/g, '\n'));
+  }, [proposalInfo]);
+
   return (
     <div className=" px-10 py-6">
       <div className="flex gap-10 h-screen">
@@ -273,21 +279,25 @@ const ProposalOverviewVote = ({
             </div>
             <div className="space-y-6 mt-4">
               <div className="font-bold text-[20px] leading-6">
-                <ReactMarkdown>
-                  {get(proposalInfo, 'content.title') ||
-                    get(proposalInfo, 'content.@type')}
-                </ReactMarkdown>
+                {get(proposalInfo, 'content.title') ||
+                  get(proposalInfo, 'content.@type')}
               </div>
 
-              <ReactMarkdown className="text-[#FFFFFFCC] leading-6 text-[16px]">
-                {get(proposalInfo, 'content.description')}
-              </ReactMarkdown>
+              <div
+                style={{
+                  padding: 8,
+                  whiteSpace: 'pre-line',
+                }}
+                className="proposal-description-markdown"
+              >
+                {proposalMarkdown}
+              </div>
             </div>
             <div
               className=" view-full flex w-full justify-end items-end"
               onClick={() => setShowRawData(true)}
             >
-              Raw_Data
+              View Raw
             </div>
             {showRawData && (
               <ProposalViewRaw
@@ -376,7 +386,9 @@ const ProposalOverviewVote = ({
                     {quorumPercent ? (
                       <Tooltip title={`${quorumPercent}%`}>
                         <div className="flex w-full flex-col ">
-                        <div style={{ width: `${quorumPercent.toString()}%` }}></div>
+                          <div
+                            style={{ width: `${quorumPercent.toString()}%` }}
+                          ></div>
                           <div className="flex flex-col items-center space-y-4">
                             <div className="flex flex-row space-x-2">
                               <div className="flex-row flex space-x-2">
