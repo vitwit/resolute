@@ -52,6 +52,7 @@ func (h *Handler) CreateMultisigAccount(c echo.Context) error {
 				Log:     err.Error(),
 			})
 		}
+
 		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Status:  "error",
 			Message: "failed to create multisig account",
