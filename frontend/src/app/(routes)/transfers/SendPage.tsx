@@ -17,6 +17,7 @@ import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
 import NoAssets from '@/components/illustrations/NoAssets';
 import { capitalizeFirstLetter } from '@/utils/util';
+import useAssetsCardNumber from '@/custom-hooks/useAssetsCardNumber';
 
 const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const [selectedAsset, setSelectedAsset] = useState<ParsedAsset | undefined>();
@@ -364,17 +365,19 @@ const Cards = ({
   selectedAsset: ParsedAsset | undefined;
   onSelectAsset: (asset: ParsedAsset, index: number) => void;
 }) => {
+  const cardsCount = useAssetsCardNumber();
   const indexes = () => {
-    if (slicedAssetsIndex < 5 || !selectedAsset)
-      return { startIndex: 0, endIndex: 5 };
+    if (slicedAssetsIndex < cardsCount || !selectedAsset)
+      return { startIndex: 0, endIndex: cardsCount };
     return { startIndex: slicedAssetsIndex, endIndex: slicedAssetsIndex + 1 };
   };
 
   const { startIndex, endIndex } = indexes();
+  
 
   return assets.length ? (
     <div
-      className={` items-center justify-start gap-4 min-h-[100px] max-h-[100px] grid grid-cols-5`}
+      className={` items-center justify-start gap-4 min-h-[100px] max-h-[100px] grid grid-cols-${cardsCount}`}
     >
       {assets.slice(startIndex, endIndex).map((asset, index) => (
         <div
