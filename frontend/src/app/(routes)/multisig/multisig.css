@@ -52,7 +52,7 @@
 }
 
 .multisig-account-address {
-  @apply w-fit leading-[20px];
+  @apply max-w-fit leading-[20px];
 }
 
 .custom-radio-button-label {

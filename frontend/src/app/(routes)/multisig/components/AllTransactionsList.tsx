@@ -11,6 +11,7 @@ import Image from 'next/image';
 import { TxStatus } from '@/types/enums';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
+import { CircularProgress } from '@mui/material';
 
 interface AllTransactionsListProps {
   chainID: string;
@@ -31,15 +32,15 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
   const updateTxnState = useAppSelector(
     (state: RootState) => state.multisig.updateTxnRes
   );
-
   const toggleMsgDialogOpen = () => {
     setMsgDialogOpen((prevState) => !prevState);
   };
-
+  const txnsLoading = useAppSelector(
+    (state: RootState) => state.multisig?.txns?.status
+  );
   const toggleViewRawDialogOpen = () => {
     setViewRawDialogOpen((prevState) => !prevState);
   };
-
   const handleMsgDialogClose = () => {
     setMsgDialogOpen(false);
   };
@@ -120,18 +121,24 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
           />
         );
       })}
-      {!txnsState.list.length ? (
-        <div className="mt-[50%] flex flex-col justify-center items-center">
-          <Image
-            src="/no-transactions.png"
-            width={200}
-            height={130}
-            alt={'No Transactions'}
-            draggable={false}
-          />
-          <div className="empty-screen-text">No Transactions</div>
-        </div>
-      ) : null}
+      <div className="mt-[50%] flex flex-col justify-center items-center">
+        {txnsLoading !== TxStatus.PENDING && !txnsState.list.length ? (
+          <div>
+            <Image
+              src="/no-transactions.png"
+              width={200}
+              height={130}
+              alt={'No Transactions'}
+              draggable={false}
+            />
+            <div className="empty-screen-text">No Transactions</div>
+          </div>
+        ) : null}
+        {txnsLoading === TxStatus.PENDING ? (
+          <CircularProgress size={24} sx={{ color: 'white' }} />
+        ) : null}
+      </div>
+
       <DialogViewTxnMessages
         open={msgDialogOpen}
         txn={selectedTxn}

@@ -170,10 +170,12 @@ const AccountDetails = ({
       <div className="multisig-info-title">
         <div className="w-full flex justify-between">
           <h2 className="text-[16px] font-bold">{name}</h2>
-          <h3 className="text-[14px] font-bold">
-            Created&nbsp;{getTimeDifferenceToFutureDate(created_at, true)}
-            &nbsp;ago
-          </h3>
+          {created_at ? (
+            <h3 className="text-[14px] font-bold">
+              Created&nbsp;{getTimeDifferenceToFutureDate(created_at, true)}
+              &nbsp;ago
+            </h3>
+          ) : null}
         </div>
       </div>
       <div className="flex-1 p-6 space-y-6 flex flex-col h-full">
