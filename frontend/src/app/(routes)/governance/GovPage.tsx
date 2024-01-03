@@ -5,7 +5,6 @@ import AllProposals from './AllProposals';
 import RightOverview from './RightOverview';
 
 const GovPage = ({ chainIDs }: { chainIDs: string[] }) => {
-  console.log('2222', chainIDs);
   const [proposalState, setProposalState] = useState('active');
   const [isOverviewOpen, setIsOverviewOpen] = useState(false);
   const [currentOverviewId, setCurrentOverviewId] = useState(0);

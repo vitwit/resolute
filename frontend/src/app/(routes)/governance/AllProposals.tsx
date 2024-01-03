@@ -244,8 +244,8 @@ const AllProposals = ({
       )}
       {(
         status === 'active'
-          ? activeProposalsLoading < chainIDs.length
-          : depositProposalsLoading < chainIDs.length
+          ? activeProposalsLoading < chainIDs?.length
+          : depositProposalsLoading < chainIDs?.length
       ) ? null : (
         <div className="text-center w-full">
           <CircularProgress size={24} sx={{ color: 'white' }} />
