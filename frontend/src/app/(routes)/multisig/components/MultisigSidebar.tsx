@@ -157,7 +157,7 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
                 </div>
               ) : null}
             </div>
-            <div className="mt-4 py-2 flex flex-col">
+            <div className="mt-4 py-2 flex flex-col text-[14px]">
               <div className="flex gap-6 text-white">
                 <div
                   className="custom-radio-button-label"
