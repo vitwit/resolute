@@ -1,7 +1,10 @@
-.create-multisig-btn,
-.verify-btn {
+.create-multisig-btn {
   @apply rounded-lg px-3 py-[6px] text-[12px] font-medium leading-[20px] tracking-[0.48px];
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.verify-btn {
+  @apply min-w-[220px] min-h-[40px];
 }
 
 .multisig-account-card {

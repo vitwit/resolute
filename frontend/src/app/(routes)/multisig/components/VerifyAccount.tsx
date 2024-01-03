@@ -1,6 +1,9 @@
 import TopNav from '@/components/TopNav';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { verifyAccount } from '@/store/features/multisig/multisigSlice';
+import { RootState } from '@/store/store';
+import { TxStatus } from '@/types/enums';
+import { CircularProgress } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 
@@ -15,22 +18,35 @@ const VerifyAccount: React.FC<VerifyAccountProps> = (props) => {
   const handleVerifyAccountEvent = () => {
     dispatch(verifyAccount({ chainID, address: walletAddress }));
   };
+  const loading = useAppSelector(
+    (state: RootState) => state.multisig.verifyAccountRes.status
+  );
   return (
     <div className="verify-account relative">
       <div className="w-fit absolute top-6 right-6">
         <TopNav />
       </div>
-      <Image src='/verify-illustration.png' height={290} width={400} alt="Verify Ownership" />
+      <Image
+        src="/verify-illustration.png"
+        height={290}
+        width={400}
+        alt="Verify Ownership"
+      />
       <div className="text-[20px]">
         Please verify your account ownership to proceed.
       </div>
       <button
-        className="verify-btn"
+        className="primary-custom-btn verify-btn"
         onClick={() => {
           handleVerifyAccountEvent();
         }}
+        disabled={loading === TxStatus.PENDING}
       >
-        Verify Ownership
+        {loading === TxStatus.PENDING ? (
+          <CircularProgress size={20} sx={{ color: 'white' }} />
+        ) : (
+          'Verify Ownership'
+        )}
       </button>
     </div>
   );
