@@ -23,7 +23,7 @@ interface ReDelegateProps {
 }
 
 const ReDelegate: React.FC<ReDelegateProps> = (props) => {
-  const { chainID, address, onDelegate, currency, availableBalance, baseURL } = props;
+  const { chainID, address, onDelegate, currency, baseURL } = props;
   const dispatch = useAppDispatch();
 
   const {

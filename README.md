@@ -2,14 +2,15 @@
 Resolute is an advanced spacecraft designed to travel through the multiverse, connecting all Cosmos sovereign chains.
 Supported features:
 
+- [x] Overview
 - [x] Staking
 - [x] Bank
 - [x] Governance
-- [x] Authz
-- [x] Airdrops
 - [x] Multisig
-- [x] Feegrant
-- [x] Groups
+- [ ] Authz
+- [ ] Airdrops
+- [ ] Feegrant
+- [ ] Groups
 - [ ] IBC Transfer
 - [ ] Cross chain swaps
 - [ ] Interchain Accounts
@@ -22,6 +23,9 @@ To add a new network to Resolute, please follow these steps:
 1. Open the frontend/chains directory. 
 2. Create a new `<chainname>.json` file. You can refer to the existing examples in the `frontend/chains` folder.
 
+## Prerequisites
+
+1. Install node 18.0.0 or above
 
 ## Install deps 
 ```bash
@@ -30,18 +34,20 @@ $ git clone https://github.com/vitwit/resolute.git
 $ cd resolute
 $ git checkout master
 $ cd frontend
-$ yarn
+$ yarn dev
 ```
 
 ## Environment variables
 
-Create .env file and set multisig backend URI `REACT_APP_API_URI`
+Create .env file and set multisig backend URI `NEXT_PUBLIC_APP_API_URI`
+You can setup your own mulitisig server in [Set up multisig server](./MULTISIG_SERVER_README.md).
 
 ## Start in DEV Mode 
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 ```bash
 $ cd frontend
+$ yarn build
 $ yarn start
 ```
 
