@@ -28,6 +28,8 @@ import {
 } from '@/utils/errors';
 
 const StakingCard = ({
+  processingValAddr,
+  handleCardClick,
   validator,
   identity,
   chainName,
@@ -89,6 +91,8 @@ const StakingCard = ({
           coinDenom={coinDenom}
         />
         <StakingCardActions
+          processingValAddr={processingValAddr}
+          handleCardClick={handleCardClick}
           toggleMenu={toggleMenu}
           menuRef={menuRef2}
           chainID={chainID}
@@ -139,6 +143,8 @@ const StakingCardActions = ({
   chainID,
   validatorAddress,
   handleMenuAction,
+  processingValAddr,
+  handleCardClick,
 }: StakingCardActionsProps) => {
   const delegatorAddress = useAppSelector(
     (state: RootState) =>
@@ -170,6 +176,7 @@ const StakingCardActions = ({
       validatorAddress,
       delegatorAddress
     );
+    handleCardClick(validatorAddress);
     if (txInputs.msgs.length) dispatch(txWithdrawAllRewards(txInputs));
     else {
       dispatch(
@@ -191,6 +198,7 @@ const StakingCardActions = ({
       );
       return;
     }
+    handleCardClick(validatorAddress);
     const txInputs = txRestakeValidatorInputs(chainID, validatorAddress);
     if (txInputs.msgs.length) dispatch(txRestake(txInputs));
     else {
@@ -213,18 +221,24 @@ const StakingCardActions = ({
           <StakingCardActionButton
             name={'Delegate'}
             action={delegate}
-            txStatus={TxStatus.IDLE}
+            isPending={false}
           />
         </div>
         <StakingCardActionButton
           name={'Claim'}
           action={claim}
-          txStatus={txClaimStatus}
+          isPending={
+            txClaimStatus === TxStatus.PENDING &&
+            validatorAddress === processingValAddr
+          }
         />
         <StakingCardActionButton
           name={'Restake'}
           action={claimAndStake}
-          txStatus={txRestakeStatus}
+          isPending={
+            txRestakeStatus === TxStatus.PENDING &&
+            validatorAddress === processingValAddr
+          }
         />
       </div>
       <Tooltip ref={menuRef} title="More options" placement="top">
@@ -239,15 +253,15 @@ const StakingCardActions = ({
 const StakingCardActionButton = ({
   name,
   action,
-  txStatus,
+  isPending,
 }: StakingCardActionButtonProps) => {
   return (
     <button
       className="staking-card-action-button"
       onClick={() => action()}
-      disabled={txStatus === TxStatus.PENDING}
+      disabled={isPending}
     >
-      {txStatus === TxStatus.PENDING ? (
+      {isPending ? (
         <CircularProgress size={16} sx={{ color: 'white' }} />
       ) : (
         <span>{name}</span>

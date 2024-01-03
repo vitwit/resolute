@@ -208,6 +208,8 @@ interface RedelegateTxInputs {
 }
 
 interface StakingCardProps {
+  processingValAddr: string;
+  handleCardClick: (string) => void;
   validator: string;
   identity: string;
   chainName: string;
@@ -334,12 +336,14 @@ interface StakingCardActionsProps {
   chainID: string;
   validatorAddress: string;
   handleMenuAction: (type: string) => void;
+  processingValAddr: string;
+  handleCardClick: (string) => void;
 }
 
 interface StakingCardActionButtonProps {
   name: string;
   action: () => void;
-  txStatus: string;
+  isPending: boolean;
 }
 
 interface AllValidatorsProps {

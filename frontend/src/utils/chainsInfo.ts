@@ -173,8 +173,8 @@ export const networks: Network[] = [
     config: {
       chainId: 'cosmoshub-4',
       chainName: 'CosmosHub',
-      rest: 'https://api.resolute.vitwit.com/cosmos_api',
-      rpc: 'https://api.resolute.vitwit.com/cosmos_rpc',
+      rest: 'https://api-cosmoshub-ia.cosmosia.notional.ventures',
+      rpc: 'https://cosmos-rpc.polkachu.com',
       currencies: [
         {
           coinDenom: 'ATOM',
