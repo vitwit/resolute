@@ -486,7 +486,7 @@ const ProposalOverviewVote = ({
                   <DepositProposalInfo chainID={chainID} />
                 </div>
               </div>
-              <div className=" bg-[#0e0b26]">
+              <div className=" bg-[#0e0b26] rounded-2xl">
                 <DepositProposalDetails
                   submittedAt={`${getTimeDifferenceToFutureDate(
                     get(proposalInfo, 'submit_time', '-'),
