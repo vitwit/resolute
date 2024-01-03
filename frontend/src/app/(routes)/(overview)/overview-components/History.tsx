@@ -99,7 +99,7 @@ export const RecentTransactions = ({
         <div className="text-white w-full space-y-3 mt-6">
           {transactions.map((tx) => (
             <TransactionItem
-              key={tx.transactionHash}
+              key={tx.time}
               transaction={tx}
               msgFilters={msgFilters}
             />
