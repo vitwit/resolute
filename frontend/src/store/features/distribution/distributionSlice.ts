@@ -18,6 +18,7 @@ import { TxStatus } from '@/types/enums';
 import { GAS_FEE } from '@/utils/constants';
 import { NewTransaction } from '@/utils/transaction';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
+import { getBalances } from '../bank/bankSlice';
 
 const initialState: DistributionStoreInitialState = {
   chains: {},
@@ -69,6 +70,22 @@ export const txWithdrawAllRewards = createAsyncThunk(
       );
 
       if (result?.code === 0) {
+        dispatch(
+          getBalances({
+            baseURL: data.rest,
+            chainID: data.chainID,
+            address: data.address,
+          })
+        );
+
+        dispatch(
+          getDelegatorTotalRewards({
+            baseURL: data.rest,
+            address: data.address,
+            chainID: data.chainID,
+            denom: data.denom,
+          })
+        );
         dispatch(
           setTxAndHash({
             hash: result?.transactionHash,

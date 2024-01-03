@@ -1,16 +1,34 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Proposals from './Proposals';
 import AllProposals from './AllProposals';
 import RightOverview from './RightOverview';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { getBalances } from '@/store/features/bank/bankSlice';
 
 const GovPage = ({ chainIDs }: { chainIDs: string[] }) => {
-  console.log('2222', chainIDs);
   const [proposalState, setProposalState] = useState('active');
   const [isOverviewOpen, setIsOverviewOpen] = useState(false);
   const [currentOverviewId, setCurrentOverviewId] = useState(0);
   const [chainID, setChainID] = useState('');
   const [isSelected, setIsSelected] = React.useState<boolean>(false);
+  const networks = useAppSelector((state) => state.wallet.networks);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    chainIDs.forEach((chainID) => {
+      const allChainInfo = networks[chainID];
+      const chainInfo = allChainInfo.network;
+      const address = allChainInfo?.walletInfo?.bech32Address;
+      const basicChainInputs = {
+        baseURL: chainInfo.config.rest,
+        address,
+        chainID,
+      };
+
+      dispatch(getBalances(basicChainInputs));
+    });
+  }, []);
 
   const handleProposalSelected = (value: boolean) => {
     setIsSelected(value);

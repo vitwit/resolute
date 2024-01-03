@@ -12,6 +12,7 @@ import './style.css';
 import { get } from 'lodash';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import messages from '@/utils/messages.json';
+import { CircularProgress } from '@mui/material';
 
 type handleOpenOverview = () => void;
 type handleSetCurrentOverviewId = (id: number, chainID: string) => void;
@@ -42,6 +43,12 @@ const AllProposals = ({
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
+  );
+  const activeProposalsLoading = useAppSelector(
+    (state: RootState) => state.gov.activeProposalsLoading
+  );
+  const depositProposalsLoading = useAppSelector(
+    (state: RootState) => state.gov.depositProposalsLoading
   );
   const getChainName = (chainID: string) => {
     let chain: string = '';
@@ -101,7 +108,11 @@ const AllProposals = ({
 
   return (
     <div className="main-page">
-      {allProposalsLength === 0 ? (
+      {(
+        status === 'active'
+          ? activeProposalsLoading === 0 && allProposalsLength === 0
+          : depositProposalsLoading === 0 && allProposalsLength === 0
+      ) ? (
         <div className="space-y-4 w-full">
           <div className="flex justify-between">
             <div className="flex space-x-2 flex-1">
@@ -111,7 +122,7 @@ const AllProposals = ({
                   width={400}
                   height={235.5}
                   alt="no action proposals"
-                  className='disable-draggable'
+                  className="disable-draggable"
                 />
                 <p className="text-white text-center text-base italic font-extralight leading-[normal] flex justify-center opacity-50 ">
                   {messages.noProposals}
@@ -230,6 +241,15 @@ const AllProposals = ({
             </>
           );
         }
+      )}
+      {(
+        status === 'active'
+          ? activeProposalsLoading < chainIDs?.length
+          : depositProposalsLoading < chainIDs?.length
+      ) ? null : (
+        <div className="text-center w-full">
+          <CircularProgress size={24} sx={{ color: 'white' }} />
+        </div>
       )}
     </div>
   );

@@ -39,6 +39,7 @@ const DialogViewRaw: React.FC<DialogViewRawProps> = (props) => {
                 width={24}
                 height={24}
                 alt="Close"
+                draggable={false}
               />
             </div>
           </div>

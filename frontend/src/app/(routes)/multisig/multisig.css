@@ -1,7 +1,10 @@
-.create-multisig-btn,
-.verify-btn {
+.create-multisig-btn {
   @apply rounded-lg px-3 py-[6px] text-[12px] font-medium leading-[20px] tracking-[0.48px];
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.verify-btn {
+  @apply min-w-[220px] min-h-[40px];
 }
 
 .multisig-account-card {
@@ -49,7 +52,7 @@
 }
 
 .multisig-account-address {
-  @apply flex gap-2 px-2 text-[14px] leading-[20px];
+  @apply max-w-fit leading-[20px];
 }
 
 .custom-radio-button-label {
@@ -65,7 +68,7 @@
 }
 
 .verify-account {
-  @apply flex-1 h-screen flex flex-col gap-4 justify-center items-center;
+  @apply flex-1 h-screen flex flex-col justify-center items-center;
 }
 
 .create-txn-btn {
@@ -73,13 +76,8 @@
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 
-.divider {
-  @apply h-[1px] mt-4;
-  background: linear-gradient(
-    90deg,
-    rgba(74, 162, 156, 0.352) 7.46%,
-    rgba(139, 61, 167, 0.354) 94.28%
-  );
+.line {
+  @apply h-[1px] mt-4 bg-[#ffffff35] opacity-50;
 }
 
 .action-image {
@@ -155,4 +153,8 @@
 .create-multisig-btn-2 {
   @apply rounded-2xl px-10 py-[10px] font-medium text-[16px];
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.empty-screen-text {
+  @apply text-[16px] my-6 leading-normal italic font-extralight text-center opacity-50;
 }

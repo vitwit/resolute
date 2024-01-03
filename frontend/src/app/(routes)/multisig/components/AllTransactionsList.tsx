@@ -1,13 +1,17 @@
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { MultisigAddressPubkey, Txn, Txns } from '@/types/multisig';
 import { EMPTY_TXN } from '@/utils/constants';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import DialogViewRaw from './DialogViewRaw';
 import DialogTxnFailed from './DialogTxnFailed';
 import DialogViewTxnMessages from './DialogViewTxnMessages';
 import TransactionCard from './TransactionCard';
 import { isMultisigMember } from '@/utils/util';
 import Image from 'next/image';
+import { TxStatus } from '@/types/enums';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { RootState } from '@/store/store';
+import { CircularProgress } from '@mui/material';
 
 interface AllTransactionsListProps {
   chainID: string;
@@ -22,14 +26,21 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
   const [viewRawOpen, setViewRawDialogOpen] = useState<boolean>(false);
   const [viewErrorOpen, setViewErrorDialogOpen] = useState<boolean>(false);
 
+  const createSignRes = useAppSelector(
+    (state: RootState) => state.multisig.signTxRes
+  );
+  const updateTxnState = useAppSelector(
+    (state: RootState) => state.multisig.updateTxnRes
+  );
   const toggleMsgDialogOpen = () => {
     setMsgDialogOpen((prevState) => !prevState);
   };
-
+  const txnsLoading = useAppSelector(
+    (state: RootState) => state.multisig?.txns?.status
+  );
   const toggleViewRawDialogOpen = () => {
     setViewRawDialogOpen((prevState) => !prevState);
   };
-
   const handleMsgDialogClose = () => {
     setMsgDialogOpen(false);
   };
@@ -72,6 +83,18 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
     [minimalDenom, decimals, displayDenom]
   );
 
+  useEffect(() => {
+    if (createSignRes.status !== TxStatus.PENDING) {
+      setMsgDialogOpen(false);
+    }
+  }, [createSignRes.status]);
+
+  useEffect(() => {
+    if (updateTxnState.status === TxStatus.IDLE) {
+      setMsgDialogOpen(false);
+    }
+  }, [updateTxnState.status]);
+
   return (
     <div className="pb-6 space-y-6 text-[14px] flex flex-col justify-between">
       {txnsState.list.map((txn) => {
@@ -98,19 +121,24 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
           />
         );
       })}
-      {!txnsState.list.length ? (
-        <div className="mt-[50%] flex flex-col justify-center items-center">
-          <Image
-            src="/no-transactions.png"
-            width={200}
-            height={130}
-            alt={'No Transactions'}
-          />
-          <div className="text-[16px] my-6 leading-normal italic font-extralight text-center">
-            No Transactions
+      <div className="mt-[50%] flex flex-col justify-center items-center">
+        {txnsLoading !== TxStatus.PENDING && !txnsState.list.length ? (
+          <div>
+            <Image
+              src="/no-transactions.png"
+              width={200}
+              height={130}
+              alt={'No Transactions'}
+              draggable={false}
+            />
+            <div className="empty-screen-text">No Transactions</div>
           </div>
-        </div>
-      ) : null}
+        ) : null}
+        {txnsLoading === TxStatus.PENDING ? (
+          <CircularProgress size={24} sx={{ color: 'white' }} />
+        ) : null}
+      </div>
+
       <DialogViewTxnMessages
         open={msgDialogOpen}
         txn={selectedTxn}

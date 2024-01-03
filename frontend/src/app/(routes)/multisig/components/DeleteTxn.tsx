@@ -53,6 +53,7 @@ const DeleteTxn: React.FC<DeleteTxnProps> = (props) => {
           height={14}
           alt="Delete-Icon"
           className="cursor-pointer"
+          draggable={false}
         />
       </button>
       <DialogDeleteTxn

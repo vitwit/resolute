@@ -2,10 +2,10 @@ import Profile from '@/app/(routes)/(overview)/overview-components/Profile';
 import React from 'react';
 import SelectNetwork from './SelectNetwork';
 
-const TopNav = () => {
+const TopNav = ({ message }: { message?: string }) => {
   return (
     <div className="flex justify-between gap-6">
-      <SelectNetwork />
+      <SelectNetwork message={message} />
       <Profile />
     </div>
   );

@@ -15,6 +15,7 @@ const UndelegateMessage: React.FC<TxnMsgProps> = (props) => {
           height={24}
           width={24}
           alt="arrow-icon"
+          draggable={false}
         />
         <div className="truncate max-w-[280px]">
           <span>UnDelegate&nbsp;</span>
@@ -38,6 +39,7 @@ const UndelegateMessage: React.FC<TxnMsgProps> = (props) => {
             height={16}
             width={16}
             alt="Remove"
+            draggable={false}
           />
         </span>
       ) : null}

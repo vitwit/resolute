@@ -4,7 +4,11 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import multisigService from './multisigService';
 import { AxiosError } from 'axios';
 import { ERR_UNKNOWN, WALLET_REQUEST_ERROR } from '../../../utils/errors';
-import { OFFCHAIN_VERIFICATION_MESSAGE } from '@/utils/constants';
+import {
+  MAX_SALT_VALUE,
+  MIN_SALT_VALUE,
+  OFFCHAIN_VERIFICATION_MESSAGE,
+} from '@/utils/constants';
 import { TxStatus } from '@/types/enums';
 import bankService from '@/store/features/bank/bankService';
 import {
@@ -19,6 +23,7 @@ import {
   SignTxInputs,
   UpdateTxnInputs,
 } from '@/types/multisig';
+import { getRandomNumber } from '@/utils/util';
 
 const initialState: MultisigState = {
   createMultisigAccountRes: {
@@ -82,7 +87,7 @@ const initialState: MultisigState = {
   deleteMultisigRes: {
     status: TxStatus.INIT,
     error: '',
-  }
+  },
 };
 
 declare let window: WalletWindow;
@@ -132,7 +137,7 @@ export const verifyAccount = createAsyncThunk(
         data.address,
         OFFCHAIN_VERIFICATION_MESSAGE
       );
-      const salt = 10;
+      const salt = getRandomNumber(MIN_SALT_VALUE, MAX_SALT_VALUE);
       try {
         await multisigService.verifyUser({
           address: data.address,
@@ -161,7 +166,7 @@ export const deleteMultisig = createAsyncThunk(
     try {
       const response = await multisigService.deleteMultisig(
         data.queryParams,
-        data.data.address,
+        data.data.address
       );
       return response.data;
     } catch (error) {
@@ -258,7 +263,10 @@ export const getAccountAllMultisigTxns = createAsyncThunk(
   'multisig/getAccountAllMultisigTxns',
   async (data: GetTxnsInputs, { rejectWithValue }) => {
     try {
-      const response = await multisigService.getAccountAllMultisigTxns(data.address, data.status);
+      const response = await multisigService.getAccountAllMultisigTxns(
+        data.address,
+        data.status
+      );
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError)
@@ -333,7 +341,7 @@ export const multisigSlice = createSlice({
     },
     resetDeleteMultisigRes: (state) => {
       state.deleteMultisigRes = initialState.deleteMultisigRes;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -399,21 +407,21 @@ export const multisigSlice = createSlice({
       .addCase(deleteMultisig.pending, (state) => {
         state.deleteMultisigRes = {
           status: TxStatus.PENDING,
-          error: ''
-        }
+          error: '',
+        };
       })
       .addCase(deleteMultisig.fulfilled, (state) => {
         state.deleteMultisigRes = {
-          status:  TxStatus.IDLE,
-          error: ''
-        }
+          status: TxStatus.IDLE,
+          error: '',
+        };
       })
       .addCase(deleteMultisig.rejected, (state, action) => {
         const payload = action.payload as { message: string };
         state.deleteMultisigRes = {
           status: TxStatus.REJECTED,
           error: payload.message || '',
-        }
+        };
       });
     builder
       .addCase(multisigByAddress.pending, (state) => {
@@ -528,7 +536,7 @@ export const {
   resetUpdateTxnState,
   resetSignTxnState,
   resetVerifyAccountRes,
-  resetDeleteMultisigRes
+  resetDeleteMultisigRes,
 } = multisigSlice.actions;
 
 export default multisigSlice.reducer;

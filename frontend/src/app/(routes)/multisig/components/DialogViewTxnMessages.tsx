@@ -7,6 +7,7 @@ import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect } from 'react';
 import TransactionItem from './TransactionItem';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 interface DialogViewTxnMessagesProps {
   open: boolean;
@@ -56,15 +57,12 @@ const DialogViewTxnMessages: React.FC<DialogViewTxnMessagesProps> = (props) => {
       onClose={() => toggleMsgDialogOpen()}
       maxWidth="lg"
       PaperProps={{
-        sx: {
-          borderRadius: '24px',
-          background: 'linear-gradient(90deg, #704290 0.11%, #241b61 70.28%)',
-        },
+        sx: dialogBoxPaperPropStyles,
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white px-10">
-          <div className="py-6 flex justify-end">
+          <div className="py-6 pt-10 flex justify-end">
             <div
               onClick={() => {
                 toggleMsgDialogOpen();
@@ -76,6 +74,7 @@ const DialogViewTxnMessages: React.FC<DialogViewTxnMessagesProps> = (props) => {
                 width={24}
                 height={24}
                 alt="Close"
+                draggable={false}
               />
             </div>
           </div>
@@ -89,7 +88,7 @@ const DialogViewTxnMessages: React.FC<DialogViewTxnMessagesProps> = (props) => {
                   Actions
                 </div>
               </div>
-              <div className="divider"></div>
+              <div className="line"></div>
             </div>
             <TransactionItem
               txn={txn}

@@ -42,7 +42,7 @@ const DialogDeleteMultisig: React.FC<DialogDeleteMultisigProps> = (props) => {
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
-          <div className="px-10 py-6 flex justify-end">
+          <div className="px-10 pb-6 pt-10 flex justify-end">
             <div onClick={onClose}>
               <Image
                 className="cursor-pointer"
@@ -50,6 +50,7 @@ const DialogDeleteMultisig: React.FC<DialogDeleteMultisigProps> = (props) => {
                 width={24}
                 height={24}
                 alt="Close"
+                draggable={false}
               />
             </div>
           </div>
@@ -59,6 +60,7 @@ const DialogDeleteMultisig: React.FC<DialogDeleteMultisigProps> = (props) => {
               height={238}
               width={288}
               alt="Delete Txn"
+              draggable={false}
             />
             <div className="flex flex-col gap-10 w-full">
               <div className="space-y-6">

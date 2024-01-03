@@ -2,7 +2,7 @@ import { DelegationResponse, Params, Validator } from '@/types/staking';
 import { parseBalance } from './denom';
 import { MultisigThresholdPubkey, SinglePubkey } from '@cosmjs/amino';
 import { Options } from '@/custom-hooks/useSortedAssets';
-import { getAuthToken } from './localStorage';
+import { getAuthToken, removeAllAuthTokens } from './localStorage';
 import { MultisigAddressPubkey } from '@/types/multisig';
 
 export const convertPaginationToParams = (
@@ -347,6 +347,9 @@ export const isVerified = ({
   if (token) {
     if (token.address === address && token.chainID === chainID) {
       return true;
+    } else {
+      removeAllAuthTokens();
+      return false;
     }
   }
   return false;
@@ -375,3 +378,8 @@ export const parseAmount = (amount: Coin[], currency: Currency) => {
     currency.coinDenom
   );
 };
+
+export function getRandomNumber(min: number, max: number): number {
+  const randomNumber = Math.random() * (max - min) + min;
+  return Math.floor(randomNumber);
+}

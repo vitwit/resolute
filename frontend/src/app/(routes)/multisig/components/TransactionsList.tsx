@@ -3,12 +3,14 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { RootState } from '@/store/store';
 import { Txn, Txns } from '@/types/multisig';
 import { EMPTY_TXN } from '@/utils/constants';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import DialogViewRaw from './DialogViewRaw';
 import DialogTxnFailed from './DialogTxnFailed';
 import DialogViewTxnMessages from './DialogViewTxnMessages';
 import TransactionCard from './TransactionCard';
 import Image from 'next/image';
+import { TxStatus } from '@/types/enums';
+import { CircularProgress } from '@mui/material';
 
 interface TransactionsListProps {
   chainID: string;
@@ -60,6 +62,15 @@ const TransactionsList: React.FC<TransactionsListProps> = (props) => {
   const { getDenomInfo, getChainInfo } = useGetChainInfo();
   const { explorerTxHashEndpoint } = getChainInfo(chainID);
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
+  const createSignRes = useAppSelector(
+    (state: RootState) => state.multisig.signTxRes
+  );
+  const updateTxnState = useAppSelector(
+    (state: RootState) => state.multisig.updateTxnRes
+  );
+  const txnsLoading = useAppSelector(
+    (state: RootState) => state.multisig?.txns?.status
+  );
   const currency = useMemo(
     () => ({
       coinMinimalDenom: minimalDenom,
@@ -68,6 +79,18 @@ const TransactionsList: React.FC<TransactionsListProps> = (props) => {
     }),
     [minimalDenom, decimals, displayDenom]
   );
+
+  useEffect(() => {
+    if (createSignRes.status !== TxStatus.PENDING) {
+      setMsgDialogOpen(false);
+    }
+  }, [createSignRes.status]);
+
+  useEffect(() => {
+    if (updateTxnState.status === TxStatus.IDLE) {
+      setMsgDialogOpen(false);
+    }
+  }, [updateTxnState.status]);
 
   return (
     <div className="pb-6 space-y-6 text-[14px] flex flex-col justify-between">
@@ -88,19 +111,25 @@ const TransactionsList: React.FC<TransactionsListProps> = (props) => {
           explorerTxHashEndpoint={explorerTxHashEndpoint}
         />
       ))}
-      {!txnsState.list.length ? (
-        <div className="mt-[50%] flex flex-col justify-center items-center">
-          <Image
-            src="/no-transactions.png"
-            width={200}
-            height={130}
-            alt={'No Transactions'}
-          />
-          <div className="text-[16px] leading-normal italic font-extralight text-center">
-            No Transactions
+      <div className="mt-[50%] flex flex-col justify-center items-center">
+        {txnsLoading !== TxStatus.PENDING && !txnsState.list.length ? (
+          <div>
+            <Image
+              src="/no-transactions.png"
+              width={200}
+              height={130}
+              alt={'No Transactions'}
+              draggable={false}
+            />
+            <div className="empty-screen-text">
+              No Transactions
+            </div>
           </div>
-        </div>
-      ) : null}
+        ) : null}
+        {txnsLoading === TxStatus.PENDING ? (
+          <CircularProgress size={24} sx={{ color: 'white' }} />
+        ) : null}
+      </div>
       <DialogViewTxnMessages
         open={msgDialogOpen}
         txn={selectedTxn}
