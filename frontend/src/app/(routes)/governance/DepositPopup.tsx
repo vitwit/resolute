@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import {
+  CircularProgress,
   Dialog,
   DialogContent,
   InputAdornment,
@@ -15,6 +16,7 @@ import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txDeposit } from '@/store/features/gov/govSlice';
 import { Controller, useForm } from 'react-hook-form';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
+import { TxStatus } from '@/types/enums';
 
 const DepositPopup = ({
   chainID,
@@ -58,7 +60,10 @@ const DepositPopup = ({
   const handleClose = () => {
     onClose();
   };
-
+  
+  const loading = useAppSelector(
+    (state: RootState) => state.gov.chains[chainID].tx.status
+  )
   const handleDeposit = (data: { amount: number }) => {
     const { aminoConfig, prefix, rest, feeAmount, address, rpc, minimalDenom } =
       getVoteTxInputs(chainID);
@@ -180,8 +185,14 @@ const DepositPopup = ({
                     />
                   </div>
                   <div className="mt-6">
-                    <button className="button w-36">
-                      <p className="proposal-text-medium">Deposit</p>
+                    <button className="button w-36"
+                      disabled={loading === TxStatus.PENDING}
+                      >
+                        {loading === TxStatus.PENDING ? (
+                      <CircularProgress size={18} sx={{ color: 'white' }} />
+                    ) : (
+                      'Deposit'
+                    )}
                     </button>
                   </div>
                 </form>
