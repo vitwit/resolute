@@ -32,7 +32,7 @@ const VerifyAccount: React.FC<VerifyAccountProps> = (props) => {
         width={400}
         alt="Verify Ownership"
       />
-      <div className="text-[20px]">
+      <div className="empty-screen-text">
         Please verify your account ownership to proceed.
       </div>
       <button

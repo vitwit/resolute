@@ -68,7 +68,7 @@
 }
 
 .verify-account {
-  @apply flex-1 h-screen flex flex-col gap-4 justify-center items-center;
+  @apply flex-1 h-screen flex flex-col justify-center items-center;
 }
 
 .create-txn-btn {
