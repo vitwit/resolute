@@ -1,4 +1,4 @@
-The multisig server is writen Go programming language using postgreSQL database.
+ The multisig server is written in the Go programming language using a PostgreSQL database.
 
 # How to run
 
@@ -21,8 +21,8 @@ psql postgres
   Create the user role and database:
 
   ```
-  CREATE ROLE  <username> LOGIN PASSWORD '<password>';
-CREATE DATABASE <dbname> WITH OWNER = <username>;
+  CREATE ROLE  your_username LOGIN PASSWORD 'your_password';  
+  CREATE DATABASE your_dbname WITH OWNER = your_username;
 
   ```
 
@@ -34,7 +34,7 @@ If you need to provide a dump of the database schema, follow the steps below:
 
 ```bash
 # Replace 'your_database_name' with the actual name of your PostgreSQL database
-sudo -u postgres psql multisig_db < schema/schema.sql
+sudo -u postgres psql your_dbname < schema/schema.sql
 ```
 
 ## Quick Start
@@ -48,7 +48,7 @@ make sure you have done pre-requisites step
   mv .example.yaml config.yaml
   ```
 
-  replace your  details in the config.yaml file
+ replace the placeholders in the config.yaml file with your actual details, such as database connection strings and server ports.
   
 #### Run the server
 

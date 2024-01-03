@@ -42,7 +42,7 @@ $ yarn dev
 Create .env file and set multisig backend URI `NEXT_PUBLIC_APP_API_URI`
 You can setup your own mulitisig server in [Set up multisig server](./MULTISIG_SERVER_README.md).
 
-## Start in DEV Mode 
+## Start in DEV Mode and Production Build
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 ```bash
@@ -63,6 +63,7 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 ```bash
 $ cd frontend
 $ yarn build
+$ yarn start
 ```
 
 Builds the app for production to the `build` folder.<br />
