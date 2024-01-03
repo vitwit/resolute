@@ -39,6 +39,7 @@ export function isConnected(): boolean {
 }
 export function logout() {
   localStorage.removeItem('CONNECTED');
+  removeAllAuthTokens();
   removeWalletName();
 }
 

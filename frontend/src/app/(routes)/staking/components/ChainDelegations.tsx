@@ -60,6 +60,11 @@ const ChainDelegations = ({
   const [undelegateOpen, setUndelegateOpen] = useState(false);
   const [redelegateOpen, setRedelegateOpen] = useState(false);
   const [selectedValidator, setSelectedValidator] = useState<Validator>();
+  const [processingValAddr, setProcessingValAddr] = useState<string>('');
+
+  const handleCardClick = (valAddr: string) => {
+    setProcessingValAddr(valAddr);
+  };
 
   const handleDialogClose = () => {
     if (chainSpecific) {
@@ -202,6 +207,8 @@ const ChainDelegations = ({
     <>
       {delegations?.delegation_responses.map((row) => (
         <StakingCard
+          processingValAddr={processingValAddr}
+          handleCardClick={handleCardClick}
           key={row.delegation.validator_address}
           validator={
             validators?.active[row.delegation.validator_address]?.description
