@@ -50,6 +50,7 @@ const DialogDeleteTxn: React.FC<DialogDeleteTxnProps> = (props) => {
                 width={24}
                 height={24}
                 alt="Close"
+                draggable={false}
               />
             </div>
           </div>
@@ -59,6 +60,7 @@ const DialogDeleteTxn: React.FC<DialogDeleteTxnProps> = (props) => {
               height={238}
               width={288}
               alt="Delete Txn"
+              draggable={false}
             />
             <div className="flex flex-col gap-10 w-full">
               <div className="space-y-6">

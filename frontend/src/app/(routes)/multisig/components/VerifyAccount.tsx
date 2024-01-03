@@ -31,6 +31,7 @@ const VerifyAccount: React.FC<VerifyAccountProps> = (props) => {
         height={290}
         width={400}
         alt="Verify Ownership"
+        draggable={false}
       />
       <div className="empty-screen-text">
         Please verify your account ownership to proceed.

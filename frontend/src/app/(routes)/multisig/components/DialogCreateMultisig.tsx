@@ -90,7 +90,7 @@ const InputTextComponent: React.FC<InputTextComponentProps> = (props) => {
                 onClick={() =>
                   !field.disabled
                     ? handleRemoveValue(index)
-                    : alert('cannot self remove')
+                    : alert('Cannot self remove')
                 }
                 position="end"
                 sx={{
@@ -104,9 +104,14 @@ const InputTextComponent: React.FC<InputTextComponentProps> = (props) => {
                   height={24}
                   width={24}
                   alt="Delete"
+                  draggable={false}
                 />
               </InputAdornment>
-            ) : null,
+            ) : (
+              <InputAdornment position="end">
+                <div>(You)</div>
+              </InputAdornment>
+            ),
           sx: {
             input: {
               color: 'white',
@@ -231,7 +236,6 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
 
   const handleAddPubKey = () => {
     if (pubKeyFields?.length >= MAX_PUB_KEYS) {
-      alert(MAX_PUBKEYS_ERROR);
       dispatch(
         setError({
           type: 'error',
@@ -257,13 +261,11 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     setFormError('');
 
     if (Number(threshold) < 1) {
-      alert(MIN_THRESHOLD_ERROR);
       dispatch(setError({ type: 'error', message: MIN_THRESHOLD_ERROR }));
       return;
     }
 
     if (!pubKeyFields?.length) {
-      alert(MIN_PUBKEYS_ERROR);
       dispatch(setError({ type: 'error', message: MIN_PUBKEYS_ERROR }));
       return;
     }
@@ -305,7 +307,6 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
 
     const uniquePubKeys = Array.from(new Set(pubKeys));
     if (uniquePubKeys?.length !== pubKeys?.length) {
-      alert(DUPLICATE_PUBKEYS_ERROR);
       dispatch(
         setError({
           type: 'error',
@@ -348,7 +349,6 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       );
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      alert(error || FAILED_TO_GENERATE_MULTISIG);
       dispatch(
         setError({
           type: 'error',
@@ -362,7 +362,6 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     if (createMultiAccRes?.status === 'idle') {
       dispatch(setError({ type: 'success', message: 'Successfully created' }));
     } else if (createMultiAccRes?.status === 'rejected') {
-      alert(createMultiAccRes?.error);
       dispatch(setError({ type: 'error', message: createMultiAccRes?.error }));
     }
   }, [createMultiAccRes]);
@@ -390,6 +389,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                 width={24}
                 height={24}
                 alt="Close"
+                draggable={false}
               />
             </div>
           </div>
@@ -508,7 +508,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                   type="submit"
                 >
                   {createMultiAccRes?.status === 'pending' ? (
-                    <CircularProgress size={25} />
+                    <CircularProgress size={16} sx={{ color: 'white' }} />
                   ) : (
                     'Create'
                   )}

@@ -18,6 +18,7 @@ const Multisig = () => {
           width={400}
           height={235}
           alt={'No Transactions'}
+          draggable={false}
         />
         <p>{message}</p>
         <button

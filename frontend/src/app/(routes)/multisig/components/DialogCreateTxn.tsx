@@ -114,6 +114,7 @@ const FileUpload = (props: FileUploadProps) => {
                 width={32}
                 height={32}
                 alt="Upload file"
+                draggable={false}
               />
               <div className="mt-2">Upload file here</div>
             </>
@@ -192,6 +193,7 @@ const FileUpload = (props: FileUploadProps) => {
             height={24}
             width={24}
             alt="download"
+            draggable={false}
           />
         </a>
       </div>
@@ -220,6 +222,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
   const handleClose = () => {
     onClose();
     setMessages([]);
+    resetForm();
   };
 
   const onSelect = (value: boolean) => {
@@ -319,7 +322,11 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
     setMessages(arr);
   };
 
-  const { handleSubmit, control } = useForm({
+  const {
+    handleSubmit,
+    control,
+    reset: resetForm,
+  } = useForm({
     defaultValues: {
       msgs: [],
       gas: 900000,
@@ -453,6 +460,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                 width={24}
                 height={24}
                 alt="Close"
+                draggable={false}
               />
             </div>
           </div>
@@ -639,6 +647,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                     width={200}
                     height={177}
                     alt="No Messages"
+                    draggable={false}
                   />
                 </div>
               )}

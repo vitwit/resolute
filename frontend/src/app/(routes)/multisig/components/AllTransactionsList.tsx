@@ -127,6 +127,7 @@ const AllTransactionsList: React.FC<AllTransactionsListProps> = (props) => {
             width={200}
             height={130}
             alt={'No Transactions'}
+            draggable={false}
           />
           <div className="empty-screen-text">No Transactions</div>
         </div>

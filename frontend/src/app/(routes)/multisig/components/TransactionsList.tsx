@@ -114,6 +114,7 @@ const TransactionsList: React.FC<TransactionsListProps> = (props) => {
             width={200}
             height={130}
             alt={'No Transactions'}
+            draggable={false}
           />
           <div className="text-[16px] leading-normal italic font-extralight text-center">
             No Transactions
