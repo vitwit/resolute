@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import {
+  CircularProgress,
   Dialog,
   DialogContent,
   InputAdornment,
@@ -14,6 +15,8 @@ import './style.css';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import { txDeposit } from '@/store/features/gov/govSlice';
 import { Controller, useForm } from 'react-hook-form';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
+import { TxStatus } from '@/types/enums';
 
 const DepositPopup = ({
   chainID,
@@ -37,12 +40,14 @@ const DepositPopup = ({
   console.log(denom);
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const allChainInfo = networks[chainID];
-  console.log(chainID);
 
   const { getVoteTxInputs } = useGetTxInputs();
   const dispatch = useAppDispatch();
 
   const currency = allChainInfo.network.config.currencies[0];
+  const loading = useAppSelector(
+    (state: RootState) => state.gov.chains?.[chainID]?.tx?.status
+  );
 
   const {
     handleSubmit,
@@ -86,7 +91,7 @@ const DepositPopup = ({
       onClose={handleClose}
       maxWidth="lg"
       className="blur-effect"
-      PaperProps={{ sx: { borderRadius: '16px', backgroundColor: '#20172F' } }}
+      PaperProps={{ sx: dialogBoxPaperPropStyles }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="popup-grid">
@@ -106,24 +111,23 @@ const DepositPopup = ({
                 width={335}
                 height={298}
                 alt="Deposit-Image"
+                className='disable-draggable'
               />
             </div>
             <div className="text-grid">
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="proposal-text-big font-bold">Deposit</div>
                 <div className="text-form">
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     <div className="flex justify-between">
                       <div className="space-x-2 flex">
                         <Image
                           src={networkLogo}
-                          width={32}
-                          height={32}
+                          width={26}
+                          height={26}
                           alt="logo"
                         />
-                        <p className="proposal-text-small">
-                          {proposalId} | Proposal
-                        </p>
+                        <p className="proposal-text-small">{proposalId}</p>
                       </div>
                       <div className="proposal-text-small">{`Deposit period ends in ${votingEndsInDays} `}</div>
                     </div>
@@ -179,12 +183,17 @@ const DepositPopup = ({
                         />
                       )}
                     />
-
-                   
                   </div>
                   <div className="mt-6">
-                    <button className="button w-36">
-                      <p className="proposal-text-medium">Deposit</p>
+                    <button
+                      className="deposit-popup-btn proposal-text-medium"
+                      disabled={loading === TxStatus.PENDING}
+                    >
+                      {loading === TxStatus.PENDING ? (
+                        <CircularProgress size={20} sx={{ color: 'white' }} />
+                      ) : (
+                        'Deposit'
+                      )}{' '}
                     </button>
                   </div>
                 </form>

@@ -136,18 +136,20 @@ export const HELP_ICON = '/help-icon.svg';
 export const REPORT_ICON = '/report-icon.svg';
 export const GITHUB_ISSUES_PAGE_LINK =
   'https://github.com/vitwit/resolute/issues';
-// TODO: Add telegram link
-export const TELEGRAM_LINK = '';
+export const TELEGRAM_LINK = 'https://web.telegram.org/k/#-1982236507';
 export const LOGOUT_ICON = '/logout-icon.svg';
 export const TRANSFERS_CARDS_COUNT = 5;
 export const NO_MESSAGES_ILLUSTRATION = '/no-messages-illustration.png';
+export const NO_DELEGATIONS_MSG = `Looks like you haven't staked anything yet, go ahead and explore !`;
 export const VOTE_OPTIONS = ['Yes', 'Abstain', 'No', 'No With Veto'];
-export const MAP_TXN_TYPES = {
-  '/cosmos.staking.v1beta1.MsgDelegate': 'delegated',
-  '/cosmos.bank.v1beta1.MsgSend': 'sent',
-  '/cosmos.staking.v1beta1.MsgBeginRedelegate': 'redelegated',
-  '/cosmos.staking.v1beta1.MsgUndelegate': 'undelegated',
-  '/cosmos.gov.v1beta1.MsgVote': 'voted',
-  '/ibc.applications.transfer.v1.MsgTransfer': 'sent',
-  '/cosmos.gov.v1beta1.MsgDeposit': 'deposited',
+export const MAP_TXN_TYPES: Record<string, string[]> = {
+  '/cosmos.staking.v1beta1.MsgDelegate': ['delegated', 'delegating'],
+  '/cosmos.bank.v1beta1.MsgSend': ['sent', 'sending'],
+  '/cosmos.staking.v1beta1.MsgBeginRedelegate': ['redelegated', 'redelegating'],
+  '/cosmos.staking.v1beta1.MsgUndelegate': ['undelegated', 'undelegating'],
+  '/cosmos.gov.v1beta1.MsgVote': ['voted', 'voting'],
+  '/ibc.applications.transfer.v1.MsgTransfer': ['sent', 'sending'],
+  '/cosmos.gov.v1beta1.MsgDeposit': ['deposited', 'depositing'],
 };
+export const TWITTER_ICON = '/twitter-icon.png';
+export const TWITTER_LINK = 'https://twitter.com/vitwit_';

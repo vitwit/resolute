@@ -12,7 +12,7 @@ const ProposalDetailsVoteCard = ({
   startedAt,
   endsAt,
   proposalNetwork,
-  createdby,
+
   depositamount,
 }: {
   createdAt: string;
@@ -44,7 +44,7 @@ const ProposalDetailsVoteCard = ({
           </Tooltip>
         </div>
         <div className="proposal-details proposal-text-normal w-full">
-          <p>Voting ends </p>
+          <p>Voting ends in</p>
           <Tooltip
             title={` ${getLocalTime(get(proposalInfo, 'voting_end_time'))}`}
           >
@@ -55,10 +55,10 @@ const ProposalDetailsVoteCard = ({
           <p>Proposal Network</p>
           <p className="text-capitalize">{proposalNetwork}</p>
         </div>
-        <div className="proposal-details proposal-text-normal w-full">
+        {/* <div className="proposal-details proposal-text-normal w-full">
           <p>Proposal Created by</p>
           <p>{createdby}</p>
-        </div>
+        </div> */}
         <div className="proposal-details proposal-text-normal w-full">
           <p>Deposit Amount</p>
           <p>{depositamount} </p>

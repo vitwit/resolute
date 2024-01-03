@@ -4,9 +4,10 @@ import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { dialogBoxStyles } from '../styles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import AmountInputField from './AmountInputField';
+import ValidatorLogo from './ValidatorLogo';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 const DialogDelegate = ({
   open,
@@ -17,6 +18,7 @@ const DialogDelegate = ({
   loading,
   displayDenom,
   onDelegate,
+  feeAmount,
 }: DialogDelegateProps) => {
   const handleClose = () => {
     onClose();
@@ -49,7 +51,9 @@ const DialogDelegate = ({
       onClose={handleClose}
       open={open}
       maxWidth="lg"
-      PaperProps={dialogBoxStyles}
+      PaperProps={{
+        sx: dialogBoxPaperPropStyles,
+      }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
@@ -66,9 +70,16 @@ const DialogDelegate = ({
           </div>
           <div className="mb-10 flex gap-6 px-10 items-center">
             <div className="flex flex-col gap-10 w-full">
-              <h2 className="text-[20px] font-bold leading-normal">
-                {validator?.description?.moniker || '-'}
-              </h2>
+              <div className="flex items-center gap-2">
+                <ValidatorLogo
+                  identity={validator?.description?.identity || ''}
+                  height={32}
+                  width={32}
+                />
+                <h2 className="text-[20px] font-bold leading-normal">
+                  {validator?.description?.moniker || '-'}
+                </h2>
+              </div>
               <div className="space-y-6">
                 <div className="bg-[#FFFFFF0D] px-4 rounded-2xl opacity-80 py-2 w-full space-y-4">
                   <div className="flex gap-2">
@@ -121,6 +132,8 @@ const DialogDelegate = ({
                     availableAmount={availableBalance}
                     displayDenom={displayDenom}
                     errors={errors}
+                    setValue={setValue}
+                    feeAmount={feeAmount}
                   />
                   <div className="mt-6 flex gap-10 items-center">
                     <button

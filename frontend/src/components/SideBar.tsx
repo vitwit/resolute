@@ -9,13 +9,15 @@ import { RootState } from '@/store/store';
 import { tabLink } from '../utils/util';
 import { Tooltip } from '@mui/material';
 import TransactionSuccessPopup from './TransactionSuccessPopup';
-import SnackBar from './SnackBar';
+
 import {
   GITHUB_ISSUES_PAGE_LINK,
   HELP_ICON,
   REPORT_ICON,
   SIDENAV_MENU_ITEMS,
   TELEGRAM_LINK,
+  TWITTER_ICON,
+  TWITTER_LINK,
 } from '@/utils/constants';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
@@ -26,7 +28,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="main">
       <TransactionSuccessPopup />
-      <SnackBar />
+      
       <div className="sidebar overflow-y-scroll">
         <Link href="/">
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
@@ -60,6 +62,18 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
             <Link href={TELEGRAM_LINK} target="_blank">
               <div className="sidebar-menu-item">
                 <Image src={HELP_ICON} height={40} width={40} alt="Resolute" />
+              </div>
+            </Link>
+          </Tooltip>
+          <Tooltip title="Twitter" placement="right">
+            <Link href={TWITTER_LINK} target="_blank">
+              <div className="sidebar-menu-item">
+                <Image
+                  src={TWITTER_ICON}
+                  height={19}
+                  width={19}
+                  alt="Resolute"
+                />
               </div>
             </Link>
           </Tooltip>

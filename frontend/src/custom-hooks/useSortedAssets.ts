@@ -4,6 +4,7 @@ import { useAppSelector } from './StateHooks';
 import { RootState } from '@/store/store';
 import chainDenoms from '@/utils/chainDenoms.json';
 import { filterAsset } from '@/utils/util';
+import useGetChainInfo from './useGetChainInfo';
 const chainDenomsData = chainDenoms as AssetData;
 
 export interface Options {
@@ -31,6 +32,8 @@ const useSortedAssets = (
   const tokensPriceInfo = useAppSelector(
     (state) => state.common.allTokensInfoState.info
   );
+
+  const { getOriginDenomInfo } = useGetChainInfo();
 
   const sortedAssets = useMemo(() => {
     let sortedAssets: ParsedAsset[] = [];
@@ -107,6 +110,7 @@ const useSortedAssets = (
           );
           const usdDenomValue = usdDenomPrice * balanceAmount;
           asset = {
+            originDenomChainInfo: getOriginDenomInfo(denomInfo[0].origin_denom),
             type: 'ibc',
             usdValue: usdDenomValue,
             usdPrice: usdDenomPrice,

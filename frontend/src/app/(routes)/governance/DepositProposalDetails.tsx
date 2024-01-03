@@ -24,14 +24,14 @@ const DepositProposalDetails = ({
       <div className="proposal-details-grid">
         <div className="proposal-details proposal-text-normal w-full">
           <p>Submitted Time</p>
-          <Tooltip title={` ${getLocalTime(get(proposalInfo, 'submit_time'))}`}>
+          <Tooltip title={` ${getLocalTime(get(proposalInfo, 'submit_time'))} ago`}>
             <p>{submittedAt}</p>
           </Tooltip>
         </div>
         <div className="proposal-details proposal-text-normal w-full">
           <p>Deposit Period Ends</p>
           <Tooltip
-            title={` ${getLocalTime(get(proposalInfo, 'deposit_end_time'))}`}
+            title={` in ${getLocalTime(get(proposalInfo, 'deposit_end_time'))}`}
           >
             <p>{endsAt}</p>
           </Tooltip>

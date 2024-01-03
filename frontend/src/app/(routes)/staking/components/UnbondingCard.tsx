@@ -2,13 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { StakingCardHeader } from './StakingCard';
 import { formatCoin, getDaysLeftString } from '@/utils/util';
 import { getDaysLeft } from '@/utils/datetime';
-import { Dialog, DialogContent, Tooltip } from '@mui/material';
+import {
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  Tooltip,
+} from '@mui/material';
 import {
   UnbondingCardProps,
   UnbondingCardStatsItemProps,
   UnbondingCardStatsProps,
 } from '@/types/staking';
-import { dialogBoxStyles } from '../styles';
 import Image from 'next/image';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -19,6 +23,7 @@ import {
 } from '@/store/features/staking/stakeSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { TxStatus } from '@/types/enums';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 
 const UnbondingCard = ({
   moniker,
@@ -78,7 +83,7 @@ const UnbondingCard = ({
       <div>
         <Tooltip title="Cancel unbonding" placement="right">
           <button
-            className="primary-gradient cancel-unbonding-btn"
+            className="cancel-unbonding-btn"
             onClick={() => setUnbondingDialogOpen(true)}
           >
             Cancel
@@ -143,7 +148,9 @@ const DialogCancelUnbonding: React.FC<DialogCancelUnbondingProps> = (props) => {
       open={open}
       onClose={onClose}
       maxWidth="lg"
-      PaperProps={dialogBoxStyles}
+      PaperProps={{
+        sx: dialogBoxPaperPropStyles,
+      }}
     >
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
@@ -176,11 +183,15 @@ const DialogCancelUnbonding: React.FC<DialogCancelUnbondingProps> = (props) => {
                 <div className="mt-10 flex gap-10 items-center">
                   <button
                     type="submit"
-                    className="primary-gradient rounded-2xl px-10 py-[10px]"
+                    className="primary-gradient rounded-2xl px-10 py-[10px] w-[144px]"
                     onClick={() => onCancelUnbondingTx()}
                     disabled={loading === TxStatus.PENDING}
                   >
-                    {loading === TxStatus.PENDING ? 'Loading' : 'Continue'}
+                    {loading === TxStatus.PENDING ? (
+                      <CircularProgress size={18} sx={{ color: 'white' }} />
+                    ) : (
+                      'Continue'
+                    )}
                   </button>
                   <button
                     type="button"
