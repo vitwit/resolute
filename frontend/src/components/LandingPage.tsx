@@ -8,7 +8,10 @@ import {
   isConnected,
   removeAllAuthTokens,
 } from '../utils/localStorage';
-import { establishWalletConnection } from '../store/features/wallet/walletSlice';
+import {
+  establishWalletConnection,
+  unsetIsLoading,
+} from '../store/features/wallet/walletSlice';
 import { RootState } from '../store/store';
 import { getAllTokensPrice } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -48,6 +51,8 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     const walletName = getWalletName();
     if (isConnected()) {
       tryConnectWallet(walletName);
+    } else {
+      dispatch(unsetIsLoading());
     }
 
     const accountChangeListener = () => {
@@ -108,8 +113,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
                       Interchain Interface
                     </div>
                     <div className="text-white text-lg font-thin leading-normal">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididun.
+                    Resolute is an advanced spacecraft designed to travel through the multiverse, connecting  Cosmos sovereign chains.
                     </div>
                   </div>
                   <div
@@ -132,7 +136,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
 
             <Image
               className="ml-auto"
-              src="/laptop.svg"
+              src="/landing-laptop.svg"
               width={967}
               height={581}
               alt="landing page image"

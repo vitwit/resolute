@@ -230,6 +230,7 @@ interface DialogDelegateProps {
   loading: TxStatus;
   displayDenom: string;
   onDelegate: (data: { validator: string; amount: number }) => void;
+  feeAmount: number;
 }
 
 interface DialogUndelegateProps {
@@ -337,7 +338,6 @@ interface StakingCardActionsProps {
 
 interface StakingCardActionButtonProps {
   name: string;
-  icon: string;
   action: () => void;
   txStatus: string;
 }
