@@ -16,6 +16,7 @@ import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import React, { useEffect, useState } from 'react';
 import { MultisigTxStatus } from '@/types/enums';
 import { FAILED_TO_BROADCAST_ERROR } from '@/utils/errors';
+import { CircularProgress } from '@mui/material';
 
 interface BroadCastTxnProps {
   txn: Txn;
@@ -64,9 +65,7 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
     try {
       const client = await SigningStargateClient.connect(rpc);
 
-      const multisigAcc = await client.getAccount(
-        multisigAddress
-      );
+      const multisigAcc = await client.getAccount(multisigAddress);
       if (!multisigAcc) {
         dispatch(
           setError({
@@ -187,12 +186,19 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
   };
   return (
     <button
-      className={isMember ? 'sign-broadcast-btn' : 'sign-broadcast-btn btn-disabled'}
+      className={
+        isMember ? 'sign-broadcast-btn' : 'sign-broadcast-btn btn-disabled'
+      }
       onClick={() => {
         broadcastTxn();
       }}
+      disabled={load || !isMember}
     >
-      {load ? 'Loading...' : 'Broadcast'}
+      {load ? (
+        <CircularProgress size={20} sx={{ color: 'white' }} />
+      ) : (
+        'Broadcast'
+      )}
     </button>
   );
 };

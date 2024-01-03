@@ -12,6 +12,7 @@ import (
 	"github.com/vitwit/resolute/server/config"
 	"github.com/vitwit/resolute/server/cron"
 	"github.com/vitwit/resolute/server/handler"
+	middle "github.com/vitwit/resolute/server/middleware"
 	"github.com/vitwit/resolute/server/model"
 
 	"database/sql"
@@ -51,6 +52,7 @@ func main() {
 
 	// Initialize handler
 	h := &handler.Handler{DB: db}
+	m := &middle.Handler{DB: db}
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
@@ -59,17 +61,21 @@ func main() {
 	}))
 
 	// Routes
-	e.POST("/multisig", h.CreateMultisigAccount)
+	e.POST("/multisig", h.CreateMultisigAccount, m.AuthMiddleware)
 	e.GET("/multisig/accounts/:address", h.GetMultisigAccounts)
 	e.GET("/multisig/:address", h.GetMultisigAccount)
-	e.DELETE("/multisig/:address", h.DeleteMultisigAccount)
-	e.POST("/multisig/:address/tx", h.CreateTransaction)
+	e.DELETE("/multisig/:address", h.DeleteMultisigAccount, m.AuthMiddleware, m.IsMultisigAdmin)
+	e.POST("/multisig/:address/tx", h.CreateTransaction, m.AuthMiddleware, m.IsMultisigMember)
 	e.GET("/multisig/:address/tx/:id", h.GetTransaction)
-	e.POST("/multisig/:address/tx/:id", h.UpdateTransactionInfo)
-	e.DELETE("/multisig/:address/tx/:id", h.DeleteTransaction)
-	e.POST("/multisig/:address/sign-tx/:id", h.SignTransaction)
+	e.POST("/multisig/:address/tx/:id", h.UpdateTransactionInfo, m.AuthMiddleware, m.IsMultisigMember)
+	e.DELETE("/multisig/:address/tx/:id", h.DeleteTransaction, m.AuthMiddleware, m.IsMultisigAdmin)
+	e.POST("/multisig/:address/sign-tx/:id", h.SignTransaction, m.AuthMiddleware, m.IsMultisigMember)
 	e.GET("/multisig/:address/txs", h.GetTransactions)
 	e.GET("/accounts/:address/all-txns", h.GetAllMultisigTxns)
+
+	// users
+	e.POST("/users/:address/signature", h.CreateUserSignature)
+	e.GET("/users/:address", h.GetUser)
 
 	e.GET("/tokens-info", h.GetTokensInfo)
 	e.GET("/tokens-info/:denom", h.GetTokenInfo)

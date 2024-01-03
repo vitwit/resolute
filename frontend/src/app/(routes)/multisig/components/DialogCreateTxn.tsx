@@ -12,6 +12,7 @@ import {
   UNDELEGATE_TYPE_URL,
 } from '@/utils/constants';
 import {
+  CircularProgress,
   Dialog,
   DialogContent,
   FormControl,
@@ -604,7 +605,7 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                             {...field}
                             sx={{
                               ...createTxnTextFieldStyles,
-                              ...{ mb: '0', mt: 2 },
+                              ...{ mb: '0', mt: 3 },
                             }}
                             placeholder="Memo"
                             fullWidth
@@ -622,10 +623,12 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
                       />
                     </div>
 
-                    <button className="create-txn-form-btn mt-[42px]">
-                      {createRes.status === 'pending'
-                        ? 'Please wait...'
-                        : 'Create'}
+                    <button className="create-txn-form-btn mt-[42px] min-w-[130px] min-h-[44px]">
+                      {createRes.status === 'pending' ? (
+                        <CircularProgress size={18} sx={{ color: 'white' }} />
+                      ) : (
+                        'Create'
+                      )}
                     </button>
                   </form>
                 </div>

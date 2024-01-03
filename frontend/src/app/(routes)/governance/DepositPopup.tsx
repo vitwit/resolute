@@ -46,7 +46,7 @@ const DepositPopup = ({
 
   const currency = allChainInfo.network.config.currencies[0];
   const loading = useAppSelector(
-    (state: RootState) => state.gov.chains[chainID].tx.status
+    (state: RootState) => state.gov.chains?.[chainID]?.tx?.status
   );
 
   const {
@@ -111,6 +111,7 @@ const DepositPopup = ({
                 width={335}
                 height={298}
                 alt="Deposit-Image"
+                className='disable-draggable'
               />
             </div>
             <div className="text-grid">
