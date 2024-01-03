@@ -18,7 +18,7 @@ interface ReDelegateProps {
   address: string;
   onDelegate: (payload: Msg) => void;
   currency: Currency;
-  availableBalance: number;
+  availableBalance?: number;
   baseURL: string;
 }
 
