@@ -125,6 +125,7 @@ const DialogRedelegate = ({
                 width={24}
                 height={24}
                 alt="Close"
+                draggable={false}
               />
             </div>
           </div>
@@ -156,12 +157,7 @@ const DialogRedelegate = ({
                     <div className="w-[200px] text-[14px] font-light leading-10">
                       Available for Delegation
                     </div>
-                    <div
-                      className="font-medium leading-10 cursor-pointer hover:underline underline-offset-2"
-                      onClick={() => {
-                        setValue('amount', delegationShare.toString());
-                      }}
-                    >
+                    <div className="font-medium leading-10">
                       {formatCoin(delegationShare, currency.coinDenom)}
                     </div>
                   </div>

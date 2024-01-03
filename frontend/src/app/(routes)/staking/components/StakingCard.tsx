@@ -134,6 +134,7 @@ export const StakingCardHeader = ({
             height={20}
             width={20}
             alt={network}
+            draggable={false}
           />
           <div className="txt-sm font-normal">
             {capitalizeFirstLetter(network)}
@@ -254,11 +255,19 @@ const StakingCardActions = ({
       </div>
       <Tooltip ref={menuRef} title="More options" placement="top">
         <button
-          className={enable ? "cursor-pointer" : "cursor-not-allowed opacity-30"}
+          className={
+            enable ? 'cursor-pointer' : 'cursor-not-allowed opacity-30'
+          }
           onClick={() => toggleMenu()}
           disabled={!enable}
         >
-          <Image src="/menu-icon.svg" height={32} width={32} alt="Actions" />
+          <Image
+            src="/menu-icon.svg"
+            height={32}
+            width={32}
+            alt="Actions"
+            draggable={false}
+          />
         </button>
       </Tooltip>
     </div>

@@ -156,6 +156,7 @@ const StakingPage = ({
               width={200}
               height={177}
               alt={'No Transactions'}
+              draggable={false}
             />
             <div className="text-[16px] opacity-50 mt-2 mb-6 leading-normal italic font-extralight text-center">
               {NO_DELEGATIONS_MSG}
