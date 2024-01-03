@@ -98,6 +98,7 @@ const StakingCard = ({
           chainID={chainID}
           validatorAddress={validatorAddress}
           handleMenuAction={handleMenuAction}
+          enable={validator ? true : false}
         />
       </div>
       {isMenuOpen && (
@@ -127,7 +128,13 @@ export const StakingCardHeader = ({
       </Tooltip>
       <Link href={`/staking/${network.toLowerCase()}`}>
         <div className="flex-center-center gap-2">
-          <Image src={networkLogo} height={20} width={20} alt={network} />
+          <Image
+            className="rounded-full"
+            src={networkLogo}
+            height={20}
+            width={20}
+            alt={network}
+          />
           <div className="txt-sm font-normal">
             {capitalizeFirstLetter(network)}
           </div>
@@ -145,6 +152,7 @@ const StakingCardActions = ({
   handleMenuAction,
   processingValAddr,
   handleCardClick,
+  enable,
 }: StakingCardActionsProps) => {
   const delegatorAddress = useAppSelector(
     (state: RootState) =>
@@ -222,6 +230,7 @@ const StakingCardActions = ({
             name={'Delegate'}
             action={delegate}
             isPending={false}
+            enable={enable}
           />
         </div>
         <StakingCardActionButton
@@ -231,6 +240,7 @@ const StakingCardActions = ({
             txClaimStatus === TxStatus.PENDING &&
             validatorAddress === processingValAddr
           }
+          enable={enable}
         />
         <StakingCardActionButton
           name={'Restake'}
@@ -239,12 +249,17 @@ const StakingCardActions = ({
             txRestakeStatus === TxStatus.PENDING &&
             validatorAddress === processingValAddr
           }
+          enable={enable}
         />
       </div>
       <Tooltip ref={menuRef} title="More options" placement="top">
-        <div className="cursor-pointer" onClick={() => toggleMenu()}>
+        <button
+          className={enable ? "cursor-pointer" : "cursor-not-allowed opacity-30"}
+          onClick={() => toggleMenu()}
+          disabled={!enable}
+        >
           <Image src="/menu-icon.svg" height={32} width={32} alt="Actions" />
-        </div>
+        </button>
       </Tooltip>
     </div>
   );
@@ -254,12 +269,17 @@ const StakingCardActionButton = ({
   name,
   action,
   isPending,
+  enable,
 }: StakingCardActionButtonProps) => {
   return (
     <button
-      className="staking-card-action-button"
+      className={
+        enable
+          ? 'staking-card-action-button'
+          : 'staking-card-action-button delegate-button-disabled'
+      }
       onClick={() => action()}
-      disabled={isPending}
+      disabled={isPending || !enable}
     >
       {isPending ? (
         <CircularProgress size={16} sx={{ color: 'white' }} />

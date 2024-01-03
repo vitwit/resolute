@@ -6,7 +6,7 @@ import {
 } from '@/utils/util';
 import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import AmountInputField from './AmountInputField';
@@ -49,6 +49,12 @@ const DialogUndelegate = ({
       });
     }
   };
+
+  useEffect(() => {
+    if (!open) {
+      reset();
+    }
+  }, [open]);
 
   return (
     <Dialog

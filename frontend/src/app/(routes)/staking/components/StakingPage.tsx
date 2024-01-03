@@ -24,6 +24,7 @@ import {
 } from '@/utils/constants';
 import Image from 'next/image';
 import { CircularProgress } from '@mui/material';
+import { TxStatus } from '@/types/enums';
 
 const StakingPage = ({
   chainName,
@@ -71,6 +72,9 @@ const StakingPage = ({
   );
   const delegationsLoading = useAppSelector(
     (state: RootState) => state.staking.delegationsLoading
+  );
+  const txStatus = useAppSelector(
+    (state: RootState) => state.staking.chains[chainID]?.tx
   );
 
   const { getChainInfo } = useGetChainInfo();
@@ -121,6 +125,12 @@ const StakingPage = ({
       router.push(`?validator_address=${valAddress}&action=${type}`);
     }
   };
+
+  useEffect(() => {
+    if (txStatus?.status === TxStatus.IDLE) {
+      setAllValidatorsDialogOpen(false);
+    }
+  }, [txStatus?.status]);
 
   return (
     <div className="flex justify-between">
