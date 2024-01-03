@@ -183,7 +183,7 @@ const VotePopup = ({
                   <input
                     className="search-validator-input"
                     type="text"
-                    placeholder="Enter Justification here (Optional)"
+                    placeholder="Enter Justification Here (Optional)"
                   ></input>
                 </div>
                 <div>
