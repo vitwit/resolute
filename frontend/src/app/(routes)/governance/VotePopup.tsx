@@ -3,11 +3,13 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import './style.css';
 import RadioButton from './CustomRadioButton';
-import { Dialog, DialogContent } from '@mui/material';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { CircularProgress, Dialog, DialogContent } from '@mui/material';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { txVote } from '@/store/features/gov/govSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
+import { RootState } from '@/store/store';
+import { TxStatus } from '@/types/enums';
 
 interface VoteOptionNumber {
   [key: string]: number;
@@ -48,6 +50,10 @@ const VotePopup = ({
   const handleClose = () => {
     onClose();
   };
+
+  const loading = useAppSelector(
+    (state: RootState) => state.gov.chains[chainID].tx.status
+  );
 
   const dispatch = useAppDispatch();
 
@@ -130,23 +136,23 @@ const VotePopup = ({
                 </div>
                 <div className="flex w-full justify-between relative top-1">
                   <div className="radio-buttons">
-                  <div className='back'>
-                    <RadioButton
-                      name="voteOption"
-                      value={'yes'}
-                      displayOption={'Yes'}
-                      voteOption={voteOption}
-                      handleVoteChange={handleVoteChange}
-                    />
+                    <div className="back">
+                      <RadioButton
+                        name="voteOption"
+                        value={'yes'}
+                        displayOption={'Yes'}
+                        voteOption={voteOption}
+                        handleVoteChange={handleVoteChange}
+                      />
                     </div>
-                    <div className='back'>
-                    <RadioButton
-                      name="voteOption"
-                      value={'no'}
-                      displayOption={'No'}
-                      voteOption={voteOption}
-                      handleVoteChange={handleVoteChange}
-                    />
+                    <div className="back">
+                      <RadioButton
+                        name="voteOption"
+                        value={'no'}
+                        displayOption={'No'}
+                        voteOption={voteOption}
+                        handleVoteChange={handleVoteChange}
+                      />
                     </div>
                   </div>
                 </div>
@@ -161,14 +167,14 @@ const VotePopup = ({
                         handleVoteChange={handleVoteChange}
                       />
                     </div>
-                    <div className='back'>
-                    <RadioButton
-                      name="voteOption"
-                      value={'veto'}
-                      displayOption={'No With Veto'}
-                      voteOption={voteOption}
-                      handleVoteChange={handleVoteChange}
-                    />
+                    <div className="back">
+                      <RadioButton
+                        name="voteOption"
+                        value={'veto'}
+                        displayOption={'No With Veto'}
+                        voteOption={voteOption}
+                        handleVoteChange={handleVoteChange}
+                      />
                     </div>
                   </div>
                 </div>
@@ -180,8 +186,16 @@ const VotePopup = ({
                   ></input>
                 </div>
                 <div>
-                  <button onClick={handleVote} className="button w-36">
-                    <p className="proposal-text-medium">Vote</p>
+                  <button
+                    onClick={handleVote}
+                    className="vote-popup-btn proposal-text-medium"
+                    disabled={loading === TxStatus.PENDING}
+                  >
+                    {loading === TxStatus.PENDING ? (
+                      <CircularProgress size={20} sx={{ color: 'white' }} />
+                    ) : (
+                      'Vote'
+                    )}{' '}
                   </button>
                 </div>
               </div>
