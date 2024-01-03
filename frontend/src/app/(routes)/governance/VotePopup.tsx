@@ -52,7 +52,7 @@ const VotePopup = ({
   };
 
   const loading = useAppSelector(
-    (state: RootState) => state.gov.chains[chainID].tx.status
+    (state: RootState) => state.gov.chains?.[chainID]?.tx?.status
   );
 
   const dispatch = useAppDispatch();
