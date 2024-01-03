@@ -76,7 +76,13 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
       <h2 className="text-[20px] leading-normal font-normal">Multisig</h2>
       <div className="flex-1 flex gap-2 items-center">
         <div className="cursor-pointer" onClick={() => handleGoBack()}>
-          <Image src="/go-back-icon.svg" width={24} height={24} alt="Go Back" />
+          <Image
+            src="/go-back-icon.svg"
+            width={24}
+            height={24}
+            alt="Go Back"
+            draggable={false}
+          />
         </div>
         <div className="text-[16px] leading-10 tracking-[0.64px]">
           {multisigAccount.account.name || '-'}
@@ -164,10 +170,12 @@ const AccountDetails = ({
       <div className="multisig-info-title">
         <div className="w-full flex justify-between">
           <h2 className="text-[16px] font-bold">{name}</h2>
-          <h3 className="text-[14px] font-bold">
-            Created&nbsp;{getTimeDifferenceToFutureDate(created_at, true)}
-            &nbsp;ago
-          </h3>
+          {created_at ? (
+            <h3 className="text-[14px] font-bold">
+              Created&nbsp;{getTimeDifferenceToFutureDate(created_at, true)}
+              &nbsp;ago
+            </h3>
+          ) : null}
         </div>
       </div>
       <div className="flex-1 p-6 space-y-6 flex flex-col h-full">
@@ -206,7 +214,13 @@ const AccountDetails = ({
         </div>
         <div className="account-members">
           <div className="flex items-center">
-            <Image src={'/list-icon.svg'} width={40} height={40} alt={name} />
+            <Image
+              src={'/list-icon.svg'}
+              width={40}
+              height={40}
+              alt={name}
+              draggable={false}
+            />
             <div>Members</div>
           </div>
           <div className="members-list">
@@ -251,7 +265,7 @@ const AccountInfoItem = ({
   return (
     <div className="account-info-item">
       <div className="flex items-center">
-        <Image src={icon} width={40} height={40} alt={name} />
+        <Image src={icon} width={40} height={40} alt={name} draggable={false} />
         <div>{name}</div>
       </div>
       <div className="px-2 leading-10">{value}</div>

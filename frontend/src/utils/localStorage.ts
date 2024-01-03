@@ -110,16 +110,20 @@ export function setAuthToken(authToken: AuthToken) {
   const tokens = localStorage.getItem(AUTH_TOKEN_KEY_NAME);
   let authTokens = [];
 
-  if (tokens) {
-    authTokens = JSON.parse(tokens);
-  }
+  try {
+    if (tokens) {
+      authTokens = JSON.parse(tokens);
+    }
 
-  const token = authTokens.filter((item: AuthToken) => {
-    return item.chainID === authToken.chainID;
-  });
+    const token = authTokens.filter((item: AuthToken) => {
+      return item.chainID === authToken.chainID;
+    });
 
-  if (token.length) {
-    return;
+    if (token.length) {
+      return;
+    }
+  } catch (e) {
+    console.log(e);
   }
   if (authToken.chainID && authToken.address && authToken.signature) {
     authTokens.push({
@@ -132,15 +136,20 @@ export function setAuthToken(authToken: AuthToken) {
 }
 
 export function getAuthToken(chainID: string): AuthToken | null {
-  const tokens = localStorage.getItem(AUTH_TOKEN_KEY_NAME);
+  try {
+    const tokens = localStorage.getItem(AUTH_TOKEN_KEY_NAME);
 
-  if (tokens) {
-    const authTokens = JSON.parse(tokens);
+    if (tokens) {
+      const authTokens = JSON.parse(tokens);
 
-    const token = authTokens.filter((item: AuthToken) => {
-      return item.chainID === chainID;
-    });
-    return token[0];
+      const token = authTokens.filter((item: AuthToken) => {
+        return item.chainID === chainID;
+      });
+      return token[0];
+    }
+  } catch (e) {
+    console.log(e);
+    return null;
   }
 
   return null;

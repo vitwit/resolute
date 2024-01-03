@@ -66,6 +66,7 @@ const TransactionCard: React.FC<TransactionCardProps> = (props) => {
                 alt="View More"
                 className="cursor-pointer"
                 onClick={() => onViewMoreAction(txn)}
+                draggable={false}
               />
             </Tooltip>
           ) : null}
@@ -135,6 +136,7 @@ const TransactionCard: React.FC<TransactionCardProps> = (props) => {
                 width={14}
                 alt="Raw-Icon"
                 className="cursor-pointer"
+                draggable={false}
               />
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-[4px] font-medium">
                 RAW

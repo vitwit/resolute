@@ -15,6 +15,7 @@ const SendMessage: React.FC<TxnMsgProps> = (props) => {
           height={24}
           width={24}
           alt={index.toString()}
+          draggable={false}
         />
         <div className="truncate max-w-[280px]">
           <span>Send&nbsp;</span>
@@ -38,6 +39,7 @@ const SendMessage: React.FC<TxnMsgProps> = (props) => {
             height={16}
             width={16}
             alt="Remove"
+            draggable={false}
           />
         </span>
       ) : null}
