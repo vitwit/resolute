@@ -46,6 +46,7 @@ interface Chain {
     hasUnbonding: boolean;
     errMsg: string;
     pagination: Pagination | undefined;
+    totalUnbonded: number;
   };
 
   params: Params | undefined;
@@ -124,6 +125,7 @@ const initialState: StakingState = {
       hasUnbonding: false,
       errMsg: '',
       pagination: undefined,
+      totalUnbonded: 0.0,
     },
     pool: {
       not_bonded_tokens: '0',
@@ -931,7 +933,14 @@ export const stakeSlice = createSlice({
       .addCase(getUnbonding.fulfilled, (state, action) => {
         const { chainID } = action.meta.arg;
         const unbonding_responses = action.payload.data.unbonding_responses;
+        let totalUnbonded = 0.0;
         if (unbonding_responses?.length) {
+          unbonding_responses.forEach((unbondingEntries) => {
+            unbondingEntries.entries.forEach((unbondingEntry) => {
+              totalUnbonded += +unbondingEntry.balance;
+            });
+          });
+          state.chains[chainID].unbonding.totalUnbonded = totalUnbonded;
           if (unbonding_responses[0].entries.length) {
             state.chains[chainID].unbonding.hasUnbonding = true;
             state.hasUnbonding = true;
