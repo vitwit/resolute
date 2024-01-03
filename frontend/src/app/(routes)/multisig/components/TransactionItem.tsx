@@ -136,13 +136,19 @@ const TransactionItem: React.FC<TransactionItemProps> = (props) => {
               width={14}
               alt="Raw-Icon"
               className="cursor-pointer"
+              draggable={false}
             />
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-[4px] font-medium">
               RAW
             </div>
           </div>
         </Tooltip>
-        <DeleteTxn txId={txn.id} address={multisigAddress} chainID={chainID} isMember={isMember} />
+        <DeleteTxn
+          txId={txn.id}
+          address={multisigAddress}
+          chainID={chainID}
+          isMember={isMember}
+        />
       </div>
     </div>
   );

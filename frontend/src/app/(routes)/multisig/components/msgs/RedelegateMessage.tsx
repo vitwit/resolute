@@ -15,6 +15,7 @@ const RedelegateMessage: React.FC<TxnMsgProps> = (props) => {
           height={24}
           width={24}
           alt=""
+          draggable={false}
         />
         <div className="truncate max-w-[280px]">
           <span>ReDelegate&nbsp;</span>
@@ -40,6 +41,7 @@ const RedelegateMessage: React.FC<TxnMsgProps> = (props) => {
             height={16}
             width={16}
             alt="Remove"
+            draggable={false}
           />
         </span>
       ) : null}

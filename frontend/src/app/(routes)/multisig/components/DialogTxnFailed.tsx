@@ -34,6 +34,7 @@ const DialogTxnFailed: React.FC<DialogTxnFailedProps> = (props) => {
                 width={24}
                 height={24}
                 alt="Close"
+                draggable={false}
               />
             </div>
           </div>
@@ -43,6 +44,7 @@ const DialogTxnFailed: React.FC<DialogTxnFailedProps> = (props) => {
               height={238}
               width={288}
               alt="Delete Txn"
+              draggable={false}
             />
             <div className="flex flex-col gap-10 w-full">
               <div className="space-y-6">

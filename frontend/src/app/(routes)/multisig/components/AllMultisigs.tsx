@@ -92,6 +92,7 @@ const AllMultisigs: React.FC<AllMultisigsProps> = (props) => {
                   width={400}
                   height={235}
                   alt={'No Transactions'}
+                  draggable={false}
                 />
                 <div className="empty-screen-text">
                   This looks empty ! go ahead and create MultiSig account Now !
@@ -177,6 +178,7 @@ const MultisigAccountCard = ({
               width={24}
               height={24}
               alt="copy"
+              draggable={false}
             />
           </div>
         </div>
