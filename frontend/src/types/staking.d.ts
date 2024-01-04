@@ -156,6 +156,7 @@ interface TxReStakeInputs {
   feeAmount: number;
   denom: string;
   feegranter: string;
+  isTxAll?: boolean;
 }
 
 interface TxCancelUnbondingInputs {

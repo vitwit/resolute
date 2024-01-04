@@ -114,7 +114,10 @@ export const signAndBroadcast = async (
     ...createStakingAminoConverters(),
     ...cancelUnbondingAminoConverter(),
   };
-  registry.register("/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation", MsgCancelUnbondingDelegation);
+  registry.register(
+    '/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation',
+    MsgCancelUnbondingDelegation
+  );
   let aminoTypes = new AminoTypes(defaultConverters);
   aminoTypes = new AminoTypes({ ...defaultConverters });
 
@@ -268,7 +271,6 @@ async function broadcast(
       const result = parseTxResult(response.data.tx_response);
       return result;
     } catch (error) {
-      console.log('getting txn id error ', error);
       // if transaction index is disabled return txhash
       if (error instanceof AxiosError) {
         if (
@@ -289,7 +291,7 @@ async function broadcast(
     tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
     mode: 'BROADCAST_MODE_SYNC',
   });
-  console.log('response of the post txn error ', response);
+  console.log('response of the post txn ', response);
   const result = parseTxResult(response.data.tx_response);
   if (result.code !== 0) return result;
   // have ambiguous issues, todo...

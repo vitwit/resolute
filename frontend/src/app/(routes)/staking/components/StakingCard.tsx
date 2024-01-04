@@ -165,6 +165,12 @@ const StakingCardActions = ({
   const txRestakeStatus = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.reStakeTxStatus
   );
+  const isClaimAll = useAppSelector(
+    (state) => state?.distribution?.chains?.[chainID]?.isTxAll || false
+  );
+  const isReStakeAll = useAppSelector(
+    (state) => state?.staking?.chains?.[chainID]?.isTxAll || false
+  );
 
   const dispatch = useAppDispatch();
   const { txWithdrawValidatorRewardsInputs, txRestakeValidatorInputs } =
@@ -239,7 +245,8 @@ const StakingCardActions = ({
           action={claim}
           isPending={
             txClaimStatus === TxStatus.PENDING &&
-            validatorAddress === processingValAddr
+            validatorAddress === processingValAddr &&
+            !isClaimAll
           }
           enable={enable}
         />
@@ -248,7 +255,8 @@ const StakingCardActions = ({
           action={claimAndStake}
           isPending={
             txRestakeStatus === TxStatus.PENDING &&
-            validatorAddress === processingValAddr
+            validatorAddress === processingValAddr &&
+            !isReStakeAll
           }
           enable={enable}
         />
