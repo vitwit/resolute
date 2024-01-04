@@ -37,7 +37,7 @@ $ git clone https://github.com/vitwit/resolute.git
 $ cd resolute
 $ git checkout master
 $ cd frontend
-$ yarn dev
+$ yarn
 ```
 
 ## Environment variables
@@ -45,22 +45,13 @@ $ yarn dev
 Create .env file and set multisig backend URI `NEXT_PUBLIC_APP_API_URI`
 You can setup your own mulitisig server in [Set up multisig server](./MULTISIG_SERVER_README.md).
 
-## Start in DEV Mode and Production Build
+## Start in DEV Mode
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 ```bash
 $ cd frontend
-$ yarn build
-$ yarn start
+$ yarn dev
 ```
-
-## Testing 
-```bash 
-$ cd frontend
-$ yarn test
-```
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 ## Production Build 
 ```bash
@@ -76,12 +67,6 @@ The build is minified and the filenames include the hashes.<br />
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-## Start with Docker 
-```bash
-$ make docker-run
-# Open the browser with http://localhost:8081
-```
 
 ## License
 Released under the [Apache 2.0 License](https://github.com/vitwit/resolute/blob/master/LICENSE).
