@@ -249,7 +249,7 @@ const ProposalOverviewVote = ({
               <div className="flex justify-between w-full">
                 <div className="flex space-x-2 items-center">
                   <Image
-                    className="w-[32px] h-[32px]"
+                    className="w-[32px] h-[32px] rounded-full"
                     src={networkLogo}
                     width={32}
                     height={32}
