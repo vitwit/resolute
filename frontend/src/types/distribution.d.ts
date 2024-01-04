@@ -31,6 +31,7 @@ interface DefaultState {
     status: TxStatus;
     txHash: string;
   };
+  isTxAll: boolean;
 }
 
 interface DistributionStoreInitialState {
@@ -60,4 +61,5 @@ interface TxWithdrawAllRewardsInputs {
   feegranter: string;
   address: string;
   cosmosAddress: string;
+  isTxAll?: boolean;
 }

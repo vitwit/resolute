@@ -61,6 +61,8 @@ const useSortedAssets = (
           // minimalDenom
           const stakedAmountInMinDenoms: number =
             stakingChains?.[chainID]?.delegations?.totalStaked || 0;
+          const unbondedAmountInMinDenoms: number =
+            stakingChains?.[chainID]?.unbonding?.totalUnbonded || 0;
 
           const rewardsAmountInMinDenoms: number =
             rewardsChains?.[chainID]?.delegatorRewards?.totalRewards || 0;
@@ -85,7 +87,8 @@ const useSortedAssets = (
               usdDenomPrice *
               (balanceAmountInDenoms +
                 stakedAmountInDenoms +
-                rewardsAmountInDenoms),
+                rewardsAmountInDenoms +
+                unbondedAmountInMinDenoms),
             usdPrice: usdDenomPrice,
             inflation: inflation,
             chainID: chainID,

@@ -1,13 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 
-const StakingStatsCard = ({
-  name,
-  value,
-}: {
-  name: string;
-  value: string;
-}) => {
+const StakingStatsCard = ({ name, value }: { name: string; value: string }) => {
   return (
     <div className="staking-stats-card w-full flex flex-col gap-2">
       <div className="flex items-center">
@@ -17,6 +11,7 @@ const StakingStatsCard = ({
             height={24}
             width={24}
             alt="Staked Balance"
+            draggable={false}
           />
         </div>
         <div className="text-sm text-white font-extralight leading-normal">

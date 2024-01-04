@@ -162,6 +162,7 @@ const DialogCancelUnbonding: React.FC<DialogCancelUnbondingProps> = (props) => {
                 width={24}
                 height={24}
                 alt="Close"
+                draggable={false}
               />
             </div>
           </div>
@@ -170,7 +171,8 @@ const DialogCancelUnbonding: React.FC<DialogCancelUnbondingProps> = (props) => {
               src="/blocks-image-2.png"
               height={238}
               width={288}
-              alt="Delete Txn"
+              alt="Cancel Unbonding"
+              draggable={false}
             />
             <div className="flex flex-col gap-10 w-full">
               <div className="space-y-6">

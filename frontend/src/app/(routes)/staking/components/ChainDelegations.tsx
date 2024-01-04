@@ -22,6 +22,7 @@ import DialogUndelegate from './DialogUndelegate';
 import DialogRedelegate from './DialogRedelegate';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { parseDenomAmount } from '@/utils/util';
+import { TxStatus } from '@/types/enums';
 
 const ChainDelegations = ({
   chainID,
@@ -102,6 +103,9 @@ const ChainDelegations = ({
   const chainInfo = allChainInfo?.network;
   const { feeAmount: avgFeeAmount, address } = getChainInfo(chainID);
   const feeAmount = avgFeeAmount * 10 ** currency?.coinDecimals;
+  const [allValidators, setAllValidators] = useState<Record<string, Validator>>(
+    {}
+  );
 
   const onDelegateTx = (data: DelegateTxInputs) => {
     dispatch(
@@ -203,26 +207,35 @@ const ChainDelegations = ({
     }
   }, [validatorAddress, action, validators]);
 
+  useEffect(() => {
+    setAllValidators({ ...validators?.active, ...validators?.inactive });
+  }, [validators]);
+
+  useEffect(() => {
+    if (txStatus?.status === TxStatus.IDLE) {
+      handleDialogClose();
+    }
+  }, [txStatus?.status]);
+
   return (
     <>
-      {delegations?.delegation_responses.map((row) => (
+      {delegations?.delegation_responses.map((row, index) => (
         <StakingCard
           processingValAddr={processingValAddr}
           handleCardClick={handleCardClick}
           key={row.delegation.validator_address}
           validator={
-            validators?.active[row.delegation.validator_address]?.description
-              .moniker
+            allValidators[row.delegation.validator_address]?.description.moniker
           }
           identity={
-            validators?.active[row.delegation.validator_address]?.description
+            allValidators[row.delegation.validator_address]?.description
               .identity
           }
           chainName={chainName}
           commission={
             Number(
-              validators?.active[
-                delegations?.delegation_responses[0]?.delegation
+              allValidators[
+                delegations?.delegation_responses[index]?.delegation
                   ?.validator_address
               ]?.commission?.commission_rates.rate
             ) * 100
@@ -235,7 +248,7 @@ const ChainDelegations = ({
           networkLogo={networkLogo}
           coinDenom={currency.coinDenom}
           onMenuAction={onMenuAction}
-          validatorInfo={validators?.active[row.delegation.validator_address]}
+          validatorInfo={allValidators[row.delegation.validator_address]}
           chainID={chainID}
         />
       ))}

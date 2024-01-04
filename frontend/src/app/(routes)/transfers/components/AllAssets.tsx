@@ -19,11 +19,10 @@ const AllAssets = ({
   return (
     <div>
       {assets.length > 1 ? (
-        <div
-          className="cursor-pointer w-fill flex justify-center h-6 text-[#c3c2c9] text-xs not-italic font-normal leading-6 underline"
-          onClick={() => setDialogOpen(true)}
-        >
-          View All
+        <div className=" w-fill flex justify-center h-6 text-[#c3c2c9] text-xs not-italic font-normal leading-6 underline">
+          <div className="cursor-pointer" onClick={() => setDialogOpen(true)}>
+            View All
+          </div>
         </div>
       ) : null}
 

@@ -51,6 +51,7 @@ const DialogAllValidators = ({
                 width={24}
                 height={24}
                 alt="Close"
+                draggable={false}
               />
             </div>
           </div>
@@ -89,6 +90,7 @@ const DialogAllValidators = ({
                   width={24}
                   height={24}
                   alt="Search"
+                  draggable={false}
                 />
               </div>
               <div className="w-full">

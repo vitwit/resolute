@@ -140,7 +140,7 @@ const Asset = ({
       </td>
       <td>
         <div className="text-sm not-italic font-normal leading-[normal]">
-          {asset.type === 'native' ? formatDollarAmount(asset.usdValue) : '-'}
+          {formatDollarAmount(asset.usdValue)}
         </div>
       </td>
       <td>
