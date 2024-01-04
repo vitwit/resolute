@@ -289,7 +289,7 @@ async function broadcast(
     tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
     mode: 'BROADCAST_MODE_SYNC',
   });
-  console.log('response of the post txn error ', response);
+  console.log('response of the post txn ', response);
   const result = parseTxResult(response.data.tx_response);
   if (result.code !== 0) return result;
   // have ambiguous issues, todo...
