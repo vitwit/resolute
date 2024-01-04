@@ -36,6 +36,12 @@ const StakingSidebar = ({
     (state: RootState) =>
       state.distribution.chains?.[chainID]?.delegatorRewards.totalRewards || 0
   );
+  const isClaimAll = useAppSelector(
+    (state) => state?.distribution?.chains?.[chainID]?.isTxAll || false
+  );
+  const isReStakeAll = useAppSelector(
+    (state) => state?.staking?.chains?.[chainID]?.isTxAll || false
+  );
   const tokens = [
     {
       amount: stakedBalance.toString(),
@@ -78,6 +84,7 @@ const StakingSidebar = ({
       return;
     }
     const txInputs = txWithdrawAllRewardsInputs(chainID);
+    txInputs.isTxAll = true;
     if (txInputs.msgs.length) dispatch(txWithdrawAllRewards(txInputs));
     else {
       dispatch(
@@ -100,6 +107,7 @@ const StakingSidebar = ({
       return;
     }
     const txInputs = txRestakeInputs(chainID);
+    txInputs.isTxAll = true;
     if (txInputs.msgs.length) dispatch(txRestake(txInputs));
     else {
       dispatch(
@@ -131,7 +139,7 @@ const StakingSidebar = ({
               className="staking-sidebar-actions-btn"
               onClick={() => claim(chainID)}
             >
-              {txClaimStatus === TxStatus.PENDING ? (
+              {txClaimStatus === TxStatus.PENDING && isClaimAll? (
                 <CircularProgress size={16} sx={{ color: 'white' }} />
               ) : (
                 'Claim All'
@@ -141,7 +149,7 @@ const StakingSidebar = ({
               className="staking-sidebar-actions-btn"
               onClick={() => claimAndStake(chainID)}
             >
-              {txRestakeStatus === TxStatus.PENDING ? (
+              {txRestakeStatus === TxStatus.PENDING && isReStakeAll ? (
                 <CircularProgress size={16} sx={{ color: 'white' }} />
               ) : (
                 'Restake All'
