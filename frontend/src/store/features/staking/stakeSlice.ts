@@ -62,6 +62,7 @@ interface Chain {
   poolStatus: TxStatus;
   reStakeTxStatus: TxStatus;
   cancelUnbondingTxStatus: TxStatus;
+  isTxAll: boolean;
 }
 
 interface Chains {
@@ -139,6 +140,7 @@ const initialState: StakingState = {
     },
     reStakeTxStatus: TxStatus.INIT,
     cancelUnbondingTxStatus: TxStatus.INIT,
+    isTxAll: false,
   },
 };
 
@@ -1028,6 +1030,8 @@ export const stakeSlice = createSlice({
     builder
       .addCase(txRestake.pending, (state, action) => {
         const { chainID } = action.meta.arg.basicChainInfo;
+        const isTxAll = action.meta.arg.isTxAll;
+        state.chains[chainID].isTxAll = !!isTxAll;
         state.chains[chainID].reStakeTxStatus = TxStatus.PENDING;
       })
       .addCase(txRestake.fulfilled, (state, action) => {
