@@ -36,7 +36,7 @@ func main() {
 	apiCfg := config.API
 
 	// TODO: add ssl support
-	psqlconn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DatabaseName)
+	psqlconn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=require", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DatabaseName)
 
 	// open database
 	db, err := sql.Open("postgres", psqlconn)
