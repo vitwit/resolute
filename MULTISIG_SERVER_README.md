@@ -33,6 +33,7 @@ If you need to provide a dump of the database schema, follow the steps below:
 ### PostgreSQL
 
 ```bash
+cd server
 # Replace 'your_database_name' with the actual name of your PostgreSQL database
 sudo -u postgres psql your_dbname < schema/schema.sql
 ```
@@ -44,8 +45,7 @@ make sure you have done pre-requisites step
 ### To run the server
 
   ```
-  cd server
-  mv .example.yaml config.yaml
+  mv example.yaml config.yaml
   ```
 
  replace the placeholders in the config.yaml file with your actual details, such as database connection strings and server ports.
