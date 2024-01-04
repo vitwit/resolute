@@ -7,11 +7,11 @@ Supported features:
 - [x] Bank
 - [x] Governance
 - [x] Multisig
+- [x] IBC Transfer
 - [ ] Authz
 - [ ] Airdrops
 - [ ] Feegrant
 - [ ] Groups
-- [ ] IBC Transfer
 - [ ] Cross chain swaps
 - [ ] Interchain Accounts
 - [ ] Cosmwasm contracts
@@ -26,6 +26,9 @@ To add a new network to Resolute, please follow these steps:
 ## Prerequisites
 
 1. Install node 18.0.0 or above
+
+## For older version
+Use release/v1.x branch
 
 ## Install deps 
 ```bash
