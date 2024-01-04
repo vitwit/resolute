@@ -98,6 +98,7 @@ const StakingCard = ({
           chainID={chainID}
           validatorAddress={validatorAddress}
           handleMenuAction={handleMenuAction}
+          enable={validator ? true : false}
         />
       </div>
       {isMenuOpen && (
@@ -127,7 +128,14 @@ export const StakingCardHeader = ({
       </Tooltip>
       <Link href={`/staking/${network.toLowerCase()}`}>
         <div className="flex-center-center gap-2">
-          <Image src={networkLogo} height={20} width={20} alt={network} />
+          <Image
+            className="rounded-full"
+            src={networkLogo}
+            height={20}
+            width={20}
+            alt={network}
+            draggable={false}
+          />
           <div className="txt-sm font-normal">
             {capitalizeFirstLetter(network)}
           </div>
@@ -145,6 +153,7 @@ const StakingCardActions = ({
   handleMenuAction,
   processingValAddr,
   handleCardClick,
+  enable,
 }: StakingCardActionsProps) => {
   const delegatorAddress = useAppSelector(
     (state: RootState) =>
@@ -155,6 +164,12 @@ const StakingCardActions = ({
   );
   const txRestakeStatus = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.reStakeTxStatus
+  );
+  const isClaimAll = useAppSelector(
+    (state) => state?.distribution?.chains?.[chainID]?.isTxAll || false
+  );
+  const isReStakeAll = useAppSelector(
+    (state) => state?.staking?.chains?.[chainID]?.isTxAll || false
   );
 
   const dispatch = useAppDispatch();
@@ -222,6 +237,7 @@ const StakingCardActions = ({
             name={'Delegate'}
             action={delegate}
             isPending={false}
+            enable={enable}
           />
         </div>
         <StakingCardActionButton
@@ -229,22 +245,38 @@ const StakingCardActions = ({
           action={claim}
           isPending={
             txClaimStatus === TxStatus.PENDING &&
-            validatorAddress === processingValAddr
+            validatorAddress === processingValAddr &&
+            !isClaimAll
           }
+          enable={enable}
         />
         <StakingCardActionButton
           name={'Restake'}
           action={claimAndStake}
           isPending={
             txRestakeStatus === TxStatus.PENDING &&
-            validatorAddress === processingValAddr
+            validatorAddress === processingValAddr &&
+            !isReStakeAll
           }
+          enable={enable}
         />
       </div>
       <Tooltip ref={menuRef} title="More options" placement="top">
-        <div className="cursor-pointer" onClick={() => toggleMenu()}>
-          <Image src="/menu-icon.svg" height={32} width={32} alt="Actions" />
-        </div>
+        <button
+          className={
+            enable ? 'cursor-pointer' : 'cursor-not-allowed opacity-30'
+          }
+          onClick={() => toggleMenu()}
+          disabled={!enable}
+        >
+          <Image
+            src="/menu-icon.svg"
+            height={32}
+            width={32}
+            alt="Actions"
+            draggable={false}
+          />
+        </button>
       </Tooltip>
     </div>
   );
@@ -254,12 +286,17 @@ const StakingCardActionButton = ({
   name,
   action,
   isPending,
+  enable,
 }: StakingCardActionButtonProps) => {
   return (
     <button
-      className="staking-card-action-button"
+      className={
+        enable
+          ? 'staking-card-action-button'
+          : 'staking-card-action-button delegate-button-disabled'
+      }
       onClick={() => action()}
-      disabled={isPending}
+      disabled={isPending || !enable}
     >
       {isPending ? (
         <CircularProgress size={16} sx={{ color: 'white' }} />

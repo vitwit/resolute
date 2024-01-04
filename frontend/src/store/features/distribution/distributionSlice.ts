@@ -34,6 +34,7 @@ const initialState: DistributionStoreInitialState = {
       status: TxStatus.INIT,
       txHash: '',
     },
+    isTxAll: false,
   },
 };
 
@@ -197,6 +198,8 @@ export const distSlice = createSlice({
     builder
       .addCase(txWithdrawAllRewards.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
+        const isTxAll = action.meta.arg.isTxAll;
+        state.chains[chainID].isTxAll = !!isTxAll;
         state.chains[chainID].tx.status = TxStatus.PENDING;
         state.chains[chainID].tx.txHash = '';
       })

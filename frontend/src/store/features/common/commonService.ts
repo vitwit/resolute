@@ -2,16 +2,15 @@
 
 import Axios, { AxiosResponse } from 'axios';
 import { cleanURL } from '../../../utils/util';
-
-const BASE_URL = 'https://api.resolute.vitwit.com';
+import { API_URL } from '@/utils/constants';
 
 const fetchPriceInfo = (denom: string): Promise<AxiosResponse> => {
-  const uri = `${cleanURL(BASE_URL)}/tokens-info/${denom}`;
+  const uri = `${cleanURL(API_URL)}/tokens-info/${denom}`;
   return Axios.get(uri);
 };
 
 const fetchAllTokensPriceInfo = (): Promise<AxiosResponse> => {
-  const uri = `${cleanURL(BASE_URL)}/tokens-info`;
+  const uri = `${cleanURL(API_URL)}/tokens-info`;
   return Axios.get(uri);
 };
 

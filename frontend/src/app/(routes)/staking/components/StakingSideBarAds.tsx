@@ -17,6 +17,7 @@ const StakingSideBarAds = () => {
               width={30}
               height={30}
               alt="Close ad"
+              draggable={false}
             />
           </div>
           <Image
@@ -25,6 +26,7 @@ const StakingSideBarAds = () => {
             width={445}
             height={166}
             alt="Ad"
+            draggable={false}
           />
         </div>
       ) : null}
@@ -37,6 +39,7 @@ const StakingSideBarAds = () => {
               width={30}
               height={30}
               alt="Close ad"
+              draggable={false}
             />
           </div>
           <Image
@@ -45,6 +48,7 @@ const StakingSideBarAds = () => {
             width={445}
             height={312}
             alt="Ad"
+            draggable={false}
           />
         </div>
       ) : null}
