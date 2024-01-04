@@ -200,6 +200,7 @@ const RightOverview = ({
                     <div className="flex justify-between w-full">
                       <div className="flex space-x-2">
                         <Image
+                          className="rounded-full"
                           src={networkLogo}
                           width={32}
                           height={32}

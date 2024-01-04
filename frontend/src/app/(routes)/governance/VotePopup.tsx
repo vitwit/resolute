@@ -106,7 +106,7 @@ const VotePopup = ({
                 width={335}
                 height={298}
                 alt="Vote-Image"
-                className='disable-draggable'
+                className="disable-draggable"
               />
             </div>
             <div className="text-grid">
@@ -118,6 +118,7 @@ const VotePopup = ({
                       <div className="flex justify-between">
                         <div className="space-x-2 flex">
                           <Image
+                            className="rounded-full"
                             src={networkLogo}
                             width={32}
                             height={32}

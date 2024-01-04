@@ -663,7 +663,7 @@ export const networks: Network[] = [
     keplrExperimental: true,
     leapExperimental: true,
     isTestnet: false,
-    explorerTxHashEndpoint: 'https://passage.aneka.io/txs/',
+    explorerTxHashEndpoint: 'https://mintscan.io/passage/txs/',
     config: {
       chainId: 'passage-2',
       chainName: 'Passage',
