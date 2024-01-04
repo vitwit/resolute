@@ -111,7 +111,7 @@ const DepositPopup = ({
                 width={335}
                 height={298}
                 alt="Deposit-Image"
-                className='disable-draggable'
+                className="disable-draggable"
               />
             </div>
             <div className="text-grid">
@@ -122,6 +122,7 @@ const DepositPopup = ({
                     <div className="flex justify-between">
                       <div className="space-x-2 flex">
                         <Image
+                          className="rounded-full"
                           src={networkLogo}
                           width={26}
                           height={26}
