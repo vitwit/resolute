@@ -37,7 +37,7 @@ $ git clone https://github.com/vitwit/resolute.git
 $ cd resolute
 $ git checkout master
 $ cd frontend
-$ yarn dev
+$ yarn
 ```
 
 ## Environment variables
