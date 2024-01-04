@@ -6,7 +6,7 @@ import {
 } from '@/utils/util';
 import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import AmountInputField from './AmountInputField';
@@ -50,6 +50,12 @@ const DialogUndelegate = ({
     }
   };
 
+  useEffect(() => {
+    if (!open) {
+      reset();
+    }
+  }, [open]);
+
   return (
     <Dialog
       onClose={handleClose}
@@ -69,6 +75,7 @@ const DialogUndelegate = ({
                 width={24}
                 height={24}
                 alt="Close"
+                draggable={false}
               />
             </div>
           </div>
@@ -100,12 +107,7 @@ const DialogUndelegate = ({
                     <div className="w-[200px] text-[14px] font-light leading-10">
                       Available for Undelegation
                     </div>
-                    <div
-                      className="font-medium leading-10 cursor-pointer hover:underline underline-offset-2"
-                      onClick={() => {
-                        setValue('amount', delegationShare.toString());
-                      }}
-                    >
+                    <div className="font-medium leading-10">
                       {formatCoin(delegationShare, currency.coinDenom)}
                     </div>
                   </div>

@@ -49,7 +49,7 @@ const AmountInputField: React.FC<AmountInputField> = (props) => {
             type="number"
             size="small"
             autoFocus={true}
-            placeholder="Enter Amount here"
+            placeholder="Enter Amount Here"
             sx={textFieldStyles}
             InputProps={{
               endAdornment: (

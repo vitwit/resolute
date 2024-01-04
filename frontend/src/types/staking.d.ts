@@ -339,12 +339,14 @@ interface StakingCardActionsProps {
   handleMenuAction: (type: string) => void;
   processingValAddr: string;
   handleCardClick: (string) => void;
+  enable: boolean;
 }
 
 interface StakingCardActionButtonProps {
   name: string;
   action: () => void;
   isPending: boolean;
+  enable: boolean;
 }
 
 interface AllValidatorsProps {

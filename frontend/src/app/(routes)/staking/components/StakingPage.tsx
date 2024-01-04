@@ -24,6 +24,7 @@ import {
 } from '@/utils/constants';
 import Image from 'next/image';
 import { CircularProgress } from '@mui/material';
+import { TxStatus } from '@/types/enums';
 
 const StakingPage = ({
   chainName,
@@ -71,6 +72,9 @@ const StakingPage = ({
   );
   const delegationsLoading = useAppSelector(
     (state: RootState) => state.staking.delegationsLoading
+  );
+  const txStatus = useAppSelector(
+    (state: RootState) => state.staking.chains[chainID]?.tx
   );
 
   const { getChainInfo } = useGetChainInfo();
@@ -122,6 +126,12 @@ const StakingPage = ({
     }
   };
 
+  useEffect(() => {
+    if (txStatus?.status === TxStatus.IDLE) {
+      setAllValidatorsDialogOpen(false);
+    }
+  }, [txStatus?.status]);
+
   return (
     <div className="flex justify-between">
       <div className="staking-main">
@@ -146,6 +156,7 @@ const StakingPage = ({
               width={200}
               height={177}
               alt={'No Transactions'}
+              draggable={false}
             />
             <div className="text-[16px] opacity-50 mt-2 mb-6 leading-normal italic font-extralight text-center">
               {NO_DELEGATIONS_MSG}
