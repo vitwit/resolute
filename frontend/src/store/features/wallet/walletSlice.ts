@@ -126,9 +126,12 @@ export const establishWalletConnection = createAsyncThunk(
       } else {
         setConnected();
         setWalletName(data.walletName);
+
+        // todo: use Hex Address instead to avoid certain cases
         dispatch(
           loadTransactions({
-            address: chainInfos['cosmoshub-4'].walletInfo.bech32Address,
+            address:
+              chainInfos['cosmoshub-4']?.walletInfo?.bech32Address || 'Todo',
           })
         );
         return fulfillWithValue({
