@@ -71,14 +71,9 @@ export const establishWalletConnection = createAsyncThunk(
       try {
         await window.wallet.enable(chainIDs);
       } catch (error) {
-        dispatch(
-          setError({
-            type: 'error',
-            message: 'Request rejected',
-          })
-        );
-        return rejectWithValue('Wallet connection request rejected');
+        console.log('caught', error);
       }
+
       let walletName = '';
       let isNanoLedger = false;
       const chainInfos: Record<string, ChainInfo> = {};
