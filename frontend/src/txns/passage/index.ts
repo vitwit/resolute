@@ -1,1 +1,0 @@
-export { AirdropClaim } from "./claimAirdrop";

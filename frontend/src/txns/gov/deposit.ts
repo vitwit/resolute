@@ -1,7 +1,6 @@
-import { MsgDeposit } from "cosmjs-types/cosmos/gov/v1beta1/tx";
-import { Msg } from "../types";
+import { MsgDeposit } from 'cosmjs-types/cosmos/gov/v1beta1/tx';
 
-const msgDeposit = "/cosmos.gov.v1beta1.MsgDeposit";
+const msgDeposit = '/cosmos.gov.v1beta1.MsgDeposit';
 
 export function GovDepositMsg(
   proposalId: number,
@@ -13,7 +12,7 @@ export function GovDepositMsg(
     typeUrl: msgDeposit,
     value: MsgDeposit.fromPartial({
       depositor: depositer,
-      proposalId: proposalId,
+      proposalId: BigInt(proposalId),
       amount: [
         {
           denom: denom,

@@ -1,0 +1,155 @@
+{
+  "send": {
+    "address": {
+      "name": "address",
+      "rules": {
+        "required": "Address is required"
+      },
+      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
+      "textFieldSize": "small",
+      "placeHolder": "",
+      "textFieldCustomMuiSx": {
+        "& .MuiTypography-body1": {
+          "color": "white",
+          "fontSize": "12px",
+          "fontWeight": 200
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
+          "border": "none"
+        },
+        "& .MuiOutlinedInput-root": {
+          "border": "1px solid transparent",
+          "borderRadius": "16px"
+        },
+        "& .Mui-focused": {
+          "border": "1px solid #ffffff4a",
+          "borderRadius": "16px"
+        }
+      },
+      "inputProps": {
+        "sx": {
+          "input": {
+            "minHeight": "30px",
+            "color": "white",
+            "fontSize": "16px",
+            "paddingX": 2,
+            "paddingY": 1
+          }
+        }
+      }
+    },
+    "amount": {
+      "name": "amount",
+      "rules": {
+        "required": "Amount is required",
+        "pattern": {
+          "value": "^[0-9]+(\\.[0-9]+)?$",
+          "message": "Please enter a valid number"
+        }
+      },
+      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
+      "textFieldSize": "small",
+      "placeHolder": "",
+      "textFieldCustomMuiSx": {
+        "& .MuiTypography-body1": {
+          "color": "rgba(255, 255, 255, 0.75)",
+          "fontSize": "12px",
+          "fontWeight": 400
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
+          "border": "none"
+        },
+        "& .MuiOutlinedInput-root": {
+          "border": "1px solid transparent",
+          "borderRadius": "16px"
+        },
+        "& .Mui-focused": {
+          "border": "1px solid #ffffff4a",
+          "borderRadius": "16px"
+        }
+      },
+      "inputProps": {
+        "sx": {
+          "input": {
+            "minHeight": "30px",
+            "color": "white",
+            "fontSize": "16px",
+            "paddingX": 2,
+            "paddingY": 1
+          }
+        }
+      }
+    },
+    "memo": {
+      "name": "memo",
+      "textFieldClassName": " rounded-2xl flex flex-col flex-1",
+      "rules": {},
+      "textFieldSize": "small",
+      "placeHolder": "Enter memo here (optional)",
+      "textFieldCustomMuiSx": {
+        "& .MuiInputBase-input": {
+          "color": "white"
+        },
+        "& .MuiInputLabel-root": {
+          "color": "white"
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
+          "border": "none"
+        },
+        "& .MuiInputBase-root": {
+          "padding": "0"
+        }
+      },
+
+      "inputProps": {
+        "sx": {
+          "input": {
+            "minHeight": "30px",
+            "color": "white",
+            "fontSize": "16px",
+            "paddingX": 0,
+            "paddingY": 0
+          }
+        }
+      }
+    }
+  },
+
+  "multi-send": {
+    "memo": {
+      "name": "memo",
+      "rules": {},
+      "textFieldClassName": "bg-[#FFFFFF0D] rounded-2xl",
+      "textFieldSize": "lg",
+      "placeHolder": "Enter memo here (optional)",
+      "textFieldCustomMuiSx": {
+        "& .MuiInputBase-input": {
+          "color": "white"
+        },
+        "& .MuiInputLabel-root": {
+          "color": "white"
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
+          "border": "none"
+        },
+        "& .MuiOutlinedInput-root": {
+          "border": "1px solid transparent",
+          "borderRadius": "16px"
+        },
+        "& .Mui-focused": {
+          "border": "1px solid #ffffff4a",
+          "borderRadius": "16px"
+        }
+      },
+      "inputProps": {
+        "sx": {
+          "input": {
+            "color": "white",
+            "fontSize": "14px",
+            "padding": 2
+          }
+        }
+      }
+    }
+  }
+}

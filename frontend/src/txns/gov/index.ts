@@ -1,1 +1,2 @@
-export { GovVoteMsg } from "./vote";
+export { GovVoteMsg } from './vote';
+export { GovDepositMsg } from './deposit';

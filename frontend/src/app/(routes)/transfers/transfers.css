@@ -1,0 +1,50 @@
+.card {
+  @apply flex flex-col items-start gap-4 self-stretch p-4 rounded-2xl;
+  background: rgba(255, 255, 255, 0.05);
+
+  /* &:hover {
+    background: linear-gradient(180deg, rgba(74, 162, 156, 0.40) 0%, rgba(139, 61, 167, 0.40) 100%);
+  } */
+}
+
+.selected {
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #4AA29C 0%, #8B3DA7 100%);
+}
+
+.coloured-container {
+  @apply flex justify-between items-center self-stretch px-6 py-4;
+  background: linear-gradient(90deg, #704290 0.19%, #241b61 79.25%);
+}
+
+.errors-chip {
+  @apply opacity-80 rounded-lg text-[#E57575] text-center text-[12px] not-italic font-normal leading-[normal] max-w-fit py-1 px-2 truncate;
+  background: rgba(229, 117, 117, 0.2);
+}
+
+.memo-text-field {
+  @apply flex flex-1 overflow-hidden bg-[#FFFFFF0D] rounded-2xl px-4 pt-4;
+  border: 1px solid transparent;
+}
+
+.memo-text-field:focus-within {
+  border: 1px solid #ffffff4a;
+}
+
+.amount-options {
+  @apply text-white text-sm not-italic font-normal leading-[normal] rounded-[100px];
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(2px);
+}
+
+.amount-options-default {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.amount-options-fill {
+  background:
+    linear-gradient(180deg,
+      rgba(74, 162, 156, 0.9) 0%,
+      rgba(139, 61, 167, 0.9) 100%),
+    lightgray 50% / cover no-repeat;
+}

@@ -1,13 +1,13 @@
 import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
 
 export function formatVotingPower(token: number, coinDecimals: number): string {
-  let temp = token / 10.0 ** coinDecimals;
+  const temp = token / 10.0 ** coinDecimals;
   return `${parseFloat(temp.toFixed(2)).toLocaleString()}`;
 }
 
-export function parseSpendLimit(tokens: any[], coinDecimals: number): number {
+export function parseSpendLimit(tokens: Coin[], coinDecimals: number): number {
   if (tokens.length > 0) {
-    let temp = Number(tokens[0].amount) / 10.0 ** coinDecimals;
+    const temp = Number(tokens[0].amount) / 10.0 ** coinDecimals;
     return parseFloat(temp.toFixed(coinDecimals));
   }
 

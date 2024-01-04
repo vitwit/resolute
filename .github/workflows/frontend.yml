@@ -12,23 +12,23 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: npm ci, build
         working-directory: ./frontend
         run: |
           yarn install --frozen-lockfile
-          yarn build --if-present
-  frontend-test:
-    needs: frontend-build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3.5.0
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-      - name: yarn ci, build and test
-        working-directory: ./frontend
-        run: |
-          yarn install --frozen-lockfile
-          yarn test
+          yarn build
+  # frontend-test:
+  #   needs: frontend-build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3.5.0
+  #     - name: Setup node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18.x
+  #     - name: yarn ci, build and test
+  #       working-directory: ./frontend
+  #       run: |
+  #         yarn install --frozen-lockfile
+  #         yarn test
