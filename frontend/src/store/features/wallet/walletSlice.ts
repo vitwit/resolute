@@ -71,14 +71,9 @@ export const establishWalletConnection = createAsyncThunk(
       try {
         await window.wallet.enable(chainIDs);
       } catch (error) {
-        dispatch(
-          setError({
-            type: 'error',
-            message: 'Request rejected',
-          })
-        );
-        return rejectWithValue('Wallet connection request rejected');
+        console.log('caught', error);
       }
+
       let walletName = '';
       let isNanoLedger = false;
       const chainInfos: Record<string, ChainInfo> = {};
@@ -131,9 +126,12 @@ export const establishWalletConnection = createAsyncThunk(
       } else {
         setConnected();
         setWalletName(data.walletName);
+
+        // todo: use Hex Address instead to avoid certain cases
         dispatch(
           loadTransactions({
-            address: chainInfos['cosmoshub-4'].walletInfo.bech32Address,
+            address:
+              chainInfos['cosmoshub-4']?.walletInfo?.bech32Address || 'Todo',
           })
         );
         return fulfillWithValue({

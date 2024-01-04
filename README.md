@@ -7,11 +7,18 @@ Supported features:
 - [x] Bank
 - [x] Governance
 - [x] Multisig
+<<<<<<< HEAD
 - [x] IBC Transfer
+=======
+>>>>>>> bd4565202a559ad2014a2b65ae950051629cdd9e
 - [ ] Authz
 - [ ] Airdrops
 - [ ] Feegrant
 - [ ] Groups
+<<<<<<< HEAD
+=======
+- [ ] IBC Transfer
+>>>>>>> bd4565202a559ad2014a2b65ae950051629cdd9e
 - [ ] Cross chain swaps
 - [ ] Interchain Accounts
 - [ ] Cosmwasm contracts
@@ -37,7 +44,7 @@ $ git clone https://github.com/vitwit/resolute.git
 $ cd resolute
 $ git checkout master
 $ cd frontend
-$ yarn
+$ yarn dev
 ```
 
 ## Environment variables

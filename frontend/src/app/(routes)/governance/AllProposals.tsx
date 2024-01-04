@@ -148,6 +148,7 @@ const AllProposals = ({
                   <div className="flex justify-between">
                     <div className="flex space-x-2">
                       <Image
+                        className="rounded-full"
                         src={chainLogo}
                         width={32}
                         height={32}
