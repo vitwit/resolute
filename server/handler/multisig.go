@@ -52,6 +52,7 @@ func (h *Handler) CreateMultisigAccount(c echo.Context) error {
 				Log:     err.Error(),
 			})
 		}
+
 		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Status:  "error",
 			Message: "failed to create multisig account",
@@ -291,5 +292,103 @@ func (h *Handler) GetMultisigAccount(c echo.Context) error {
 			Account: account,
 			Pubkeys: pubkeys,
 		},
+	})
+}
+
+func (h *Handler) DeleteMultisigAccount(c echo.Context) error {
+	address := c.Param("address")
+
+	row := h.DB.QueryRow(`SELECT address,threshold,chain_id,pubkey_type,created_at,name,created_by FROM
+	 multisig_accounts WHERE address=$1`, address)
+	if row.Err() != nil {
+		if sql.ErrNoRows == row.Err() {
+			return c.JSON(http.StatusNotFound, model.ErrorResponse{
+				Status:  "error",
+				Message: fmt.Sprintf("no accounts with address %s", address),
+				Log:     row.Err().Error(),
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to query accounts",
+			Log:     row.Err().Error(),
+		})
+	}
+
+	var account schema.MultisigAccount
+
+	if err := row.Scan(
+		&account.Address,
+		&account.Threshold,
+		&account.ChainID,
+		&account.PubkeyType,
+		&account.CreatedAt,
+		&account.Name,
+		&account.CreatedBy,
+	); err != nil {
+		if sql.ErrNoRows.Error() == err.Error() {
+			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Status:  "error",
+				Message: fmt.Sprintf("no accounts with address %s", address),
+				Log:     fmt.Sprintf("address: %s, error: %s", address, err.Error()),
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to get accounts",
+			Log:     fmt.Sprintf("address: %s, error: %s", address, err.Error()),
+		})
+	}
+
+	ctx := context.Background()
+
+	tx, err := h.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to initialize transaction",
+			Log:     err.Error(),
+		})
+	}
+
+	_, err = tx.ExecContext(ctx, `DELETE from transactions WHERE multisig_address=$1`, address)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to delete transactions for multisig account",
+			Log:     fmt.Sprintf("address: %s, error: %s", address, err.Error()),
+		})
+	}
+
+	_, err = tx.ExecContext(ctx, `DELETE from pubkeys WHERE multisig_address=$1`, address)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to delete public keys for multisig account",
+			Log:     fmt.Sprintf("address: %s, error: %s", address, err.Error()),
+		})
+	}
+
+	_, err = tx.ExecContext(ctx, `DELETE from multisig_accounts WHERE address=$1`, address)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to delete multisig account",
+			Log:     fmt.Sprintf("address: %s, error: %s", address, err.Error()),
+		})
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "failed to commit database transactions",
+			Log:     err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, model.SuccessResponse{
+		Status: "multisig account deleted",
 	})
 }

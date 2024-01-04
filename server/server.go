@@ -37,6 +37,7 @@ func main() {
 
 	// TODO: add ssl support
 	psqlconn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DatabaseName)
+
 	// open database
 	db, err := sql.Open("postgres", psqlconn)
 	if err != nil {
@@ -67,12 +68,18 @@ func main() {
 	e.POST("/multisig", h.CreateMultisigAccount, m.AuthMiddleware)
 	e.GET("/multisig/accounts/:address", h.GetMultisigAccounts)
 	e.GET("/multisig/:address", h.GetMultisigAccount)
+	e.DELETE("/multisig/:address", h.DeleteMultisigAccount, m.AuthMiddleware, m.IsMultisigAdmin)
 	e.POST("/multisig/:address/tx", h.CreateTransaction, m.AuthMiddleware, m.IsMultisigMember)
 	e.GET("/multisig/:address/tx/:id", h.GetTransaction)
 	e.POST("/multisig/:address/tx/:id", h.UpdateTransactionInfo, m.AuthMiddleware, m.IsMultisigMember)
 	e.DELETE("/multisig/:address/tx/:id", h.DeleteTransaction, m.AuthMiddleware, m.IsMultisigAdmin)
 	e.POST("/multisig/:address/sign-tx/:id", h.SignTransaction, m.AuthMiddleware, m.IsMultisigMember)
 	e.GET("/multisig/:address/txs", h.GetTransactions)
+	e.GET("/accounts/:address/all-txns", h.GetAllMultisigTxns)
+
+	// users
+	e.POST("/users/:address/signature", h.CreateUserSignature)
+	e.GET("/users/:address", h.GetUser)
 
 	// users
 	e.POST("/users/:address/signature", h.CreateUserSignature)

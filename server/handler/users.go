@@ -22,7 +22,7 @@ func (h *Handler) GetUser(c echo.Context) error {
 		&userDetails.Address,
 		&userDetails.PubKey,
 	); err != nil {
-		return c.JSON(http.StatusOK, model.SuccessResponse{
+		return c.JSON(http.StatusNotFound, model.SuccessResponse{
 			Data: nil,
 		})
 	}

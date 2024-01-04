@@ -10,6 +10,7 @@ const (
 	Pending STATUS = "PENDING"
 	Success        = "SUCCESS"
 	Failed         = "FAILED"
+	History        = "history"
 )
 
 type Fees struct {
