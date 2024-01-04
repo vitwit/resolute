@@ -8,9 +8,7 @@ const CustomParticles = () => {
     await loadSlim(engine);
   }, []);
   const particlesLoaded = useCallback(
-    async (container: Container | undefined) => {
-      console.log(container);
-    },
+    async (container: Container | undefined) => {},
     []
   );
 
