@@ -6,6 +6,7 @@ import { Landingpage } from '@/components/LandingPage';
 import { StoreProvider } from '@/store/StoreProvider';
 import SideBar from '@/components/SideBar';
 import SnackBar from '@/components/SnackBar';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -32,6 +33,16 @@ export default function RootLayout({
             </div>
           </StoreProvider>
         }
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-RTXGXXDNNS" />
+        <Script id="google-analytics">
+          {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+ 
+          gtag('config', 'G-RTXGXXDNNS');
+        `}
+        </Script>
       </body>
     </html>
   );
