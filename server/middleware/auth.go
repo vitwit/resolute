@@ -53,10 +53,11 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 func (h *Handler) IsMultisigAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		address := c.QueryParams().Get("address")
+		multisigAddress := c.Param("address")
 
 		var userAddess string
 
-		err := h.DB.QueryRow(`SELECT address FROM multisig_accounts where created_by=$1`, address).Scan(&userAddess)
+		err := h.DB.QueryRow(`SELECT address FROM multisig_accounts where created_by=$1 and address=$2`, address, multisigAddress).Scan(&userAddess)
 		if err == sql.ErrNoRows {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Status:  "Unauthorized",
