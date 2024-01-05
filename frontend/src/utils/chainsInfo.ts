@@ -79,76 +79,76 @@ export const networks: Network[] = [
       },
     },
   },
-  // {
-  //   enableModules: {
-  //     authz: true,
-  //     feegrant: true,
-  //     group: false,
-  //   },
-  //   aminoConfig: {
-  //     authz: false,
-  //     feegrant: false,
-  //     group: false,
-  //   },
-  //   showAirdrop: false,
-  //   logos: {
-  //     menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/akash/akt.png',
-  //     toolbar:
-  //       'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/akash/images/akash-logo.png',
-  //   },
-  //   keplrExperimental: false,
-  //   leapExperimental: false,
-  //   isTestnet: false,
-  //   explorerTxHashEndpoint: 'https://www.mintscan.io/akash/txs/',
-  //   config: {
-  //     chainId: 'akashnet-2',
-  //     chainName: 'Akash',
-  //     rest: 'https://api.resolute.vitwit.com/akash_api',
-  //     rpc: 'https://api.resolute.vitwit.com/akash_rpc',
-  //     currencies: [
-  //       {
-  //         coinDenom: 'AKT',
-  //         coinMinimalDenom: 'uakt',
-  //         coinDecimals: 6,
-  //       },
-  //     ],
-  //     bech32Config: {
-  //       bech32PrefixAccAddr: 'akash',
-  //       bech32PrefixAccPub: 'akashpub',
-  //       bech32PrefixValAddr: 'akashvaloper',
-  //       bech32PrefixValPub: 'akashvaloperpub',
-  //       bech32PrefixConsAddr: 'akashgvalcons',
-  //       bech32PrefixConsPub: 'akashvalconspub',
-  //     },
-  //     bip44: {
-  //       coinType: 118,
-  //     },
-  //     feeCurrencies: [
-  //       {
-  //         coinDenom: 'AKT',
-  //         coinMinimalDenom: 'uakt',
-  //         coinDecimals: 6,
-  //         gasPriceStep: {
-  //           low: 0.01,
-  //           average: 0.025,
-  //           high: 0.03,
-  //         },
-  //       },
-  //     ],
-  //     stakeCurrency: {
-  //       coinDenom: 'AKT',
-  //       coinMinimalDenom: 'uakt',
-  //       coinDecimals: 6,
-  //     },
-  //     image:
-  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
-  //     theme: {
-  //       primaryColor: '#fff',
-  //       gradient:
-  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
-  //     },
-  //   },
-  // },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/akash/akt.png',
+      toolbar:
+        'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/akash/images/akash-logo.png',
+    },
+    keplrExperimental: false,
+    leapExperimental: false,
+    isTestnet: false,
+    explorerTxHashEndpoint: 'https://www.mintscan.io/akash/txs/',
+    config: {
+      chainId: 'akashnet-2',
+      chainName: 'Akash',
+      rest: 'https://api.resolute.vitwit.com/akash_api',
+      rpc: 'https://api.resolute.vitwit.com/akash_rpc',
+      currencies: [
+        {
+          coinDenom: 'AKT',
+          coinMinimalDenom: 'uakt',
+          coinDecimals: 6,
+        },
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: 'akash',
+        bech32PrefixAccPub: 'akashpub',
+        bech32PrefixValAddr: 'akashvaloper',
+        bech32PrefixValPub: 'akashvaloperpub',
+        bech32PrefixConsAddr: 'akashgvalcons',
+        bech32PrefixConsPub: 'akashvalconspub',
+      },
+      bip44: {
+        coinType: 118,
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'AKT',
+          coinMinimalDenom: 'uakt',
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.025,
+            high: 0.03,
+          },
+        },
+      ],
+      stakeCurrency: {
+        coinDenom: 'AKT',
+        coinMinimalDenom: 'uakt',
+        coinDecimals: 6,
+      },
+      image:
+        'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
   {
     enableModules: {
       authz: true,
@@ -499,76 +499,76 @@ export const networks: Network[] = [
   //     },
   //   },
   // },
-  // {
-  //   enableModules: {
-  //     authz: true,
-  //     feegrant: true,
-  //     group: false,
-  //   },
-  //   aminoConfig: {
-  //     authz: false,
-  //     feegrant: false,
-  //     group: false,
-  //   },
-  //   showAirdrop: false,
-  //   logos: {
-  //     menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/osmosis/osmo.png',
-  //     toolbar:
-  //       'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.png',
-  //   },
-  //   keplrExperimental: false,
-  //   leapExperimental: false,
-  //   isTestnet: false,
-  //   explorerTxHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
-  //   config: {
-  //     chainId: 'osmosis-1',
-  //     chainName: 'Osmosis',
-  //     rest: 'https://osmosis-api.polkachu.com',
-  //     rpc: 'https://rpc.osmosis.zone',
-  //     currencies: [
-  //       {
-  //         coinDenom: 'OSMO',
-  //         coinMinimalDenom: 'uosmo',
-  //         coinDecimals: 6,
-  //       },
-  //     ],
-  //     bech32Config: {
-  //       bech32PrefixAccAddr: 'osmosis',
-  //       bech32PrefixAccPub: 'osmosispub',
-  //       bech32PrefixValAddr: 'osmosisvaloper',
-  //       bech32PrefixValPub: 'osmosisvaloperpub',
-  //       bech32PrefixConsAddr: 'osmosisgvalcons',
-  //       bech32PrefixConsPub: 'osmosisvalconspub',
-  //     },
-  //     feeCurrencies: [
-  //       {
-  //         coinDenom: 'OSMO',
-  //         coinMinimalDenom: 'uosmo',
-  //         coinDecimals: 6,
-  //         gasPriceStep: {
-  //           low: 0.01,
-  //           average: 0.025,
-  //           high: 0.03,
-  //         },
-  //       },
-  //     ],
-  //     bip44: {
-  //       coinType: 118,
-  //     },
-  //     stakeCurrency: {
-  //       coinDenom: 'OSMO',
-  //       coinMinimalDenom: 'uosmo',
-  //       coinDecimals: 6,
-  //     },
-  //     image:
-  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
-  //     theme: {
-  //       primaryColor: '#fff',
-  //       gradient:
-  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
-  //     },
-  //   },
-  // },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/osmosis/osmo.png',
+      toolbar:
+        'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.png',
+    },
+    keplrExperimental: false,
+    leapExperimental: false,
+    isTestnet: false,
+    explorerTxHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
+    config: {
+      chainId: 'osmosis-1',
+      chainName: 'Osmosis',
+      rest: 'https://osmosis-api.polkachu.com',
+      rpc: 'https://rpc.osmosis.zone',
+      currencies: [
+        {
+          coinDenom: 'OSMO',
+          coinMinimalDenom: 'uosmo',
+          coinDecimals: 6,
+        },
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: 'osmosis',
+        bech32PrefixAccPub: 'osmosispub',
+        bech32PrefixValAddr: 'osmosisvaloper',
+        bech32PrefixValPub: 'osmosisvaloperpub',
+        bech32PrefixConsAddr: 'osmosisgvalcons',
+        bech32PrefixConsPub: 'osmosisvalconspub',
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'OSMO',
+          coinMinimalDenom: 'uosmo',
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.025,
+            high: 0.03,
+          },
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      stakeCurrency: {
+        coinDenom: 'OSMO',
+        coinMinimalDenom: 'uosmo',
+        coinDecimals: 6,
+      },
+      image:
+        'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
   // {
   //   enableModules: {
   //     authz: true,
