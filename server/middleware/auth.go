@@ -28,11 +28,11 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			})
 		}
 
-		var userAddess string
+		var userAddress string
 
 		saniSignature := strings.Replace(signature, " ", "+", -1)
 
-		err := h.DB.QueryRow(`SELECT address FROM users where address=$1 and signature=$2`, address, saniSignature).Scan(&userAddess)
+		err := h.DB.QueryRow(`SELECT address FROM users where address=$1 and signature=$2`, address, saniSignature).Scan(&userAddress)
 		if err == sql.ErrNoRows {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Status:  "Unauthorized",
@@ -53,10 +53,11 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 func (h *Handler) IsMultisigAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		address := c.QueryParams().Get("address")
+		multisigAddress := c.Param("address")
 
-		var userAddess string
+		var userAddress string
 
-		err := h.DB.QueryRow(`SELECT address FROM multisig_accounts where created_by=$1`, address).Scan(&userAddess)
+		err := h.DB.QueryRow(`SELECT address FROM multisig_accounts where created_by=$1 and address=$2`, address, multisigAddress).Scan(&userAddress)
 		if err == sql.ErrNoRows {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Status:  "Unauthorized",
@@ -79,9 +80,9 @@ func (h *Handler) IsMultisigMember(next echo.HandlerFunc) echo.HandlerFunc {
 		address := c.QueryParams().Get("address")
 		multisigAddress := c.Param("address")
 
-		var userAddess string
+		var userAddress string
 
-		err := h.DB.QueryRow(`SELECT address FROM pubkeys where address=$1 and multisig_address=$2`, address, multisigAddress).Scan(&userAddess)
+		err := h.DB.QueryRow(`SELECT address FROM pubkeys where address=$1 and multisig_address=$2`, address, multisigAddress).Scan(&userAddress)
 		if err == sql.ErrNoRows {
 			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Status:  "Unauthorized",
