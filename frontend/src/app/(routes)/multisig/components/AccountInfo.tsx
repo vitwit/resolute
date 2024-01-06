@@ -3,7 +3,7 @@ import { deleteMultisig } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { MultisigAccount } from '@/types/multisig';
 import { parseBalance } from '@/utils/denom';
-import { formatCoin, formatStakedAmount, isMultisigMember } from '@/utils/util';
+import { formatCoin, formatStakedAmount } from '@/utils/util';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -57,10 +57,9 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
       denom: coinMinimalDenom,
     },
   ];
-  const isMember = isMultisigMember(
-    multisigAccount.pubkeys || [],
-    walletAddress
-  );
+
+  const isAdmin =
+    multisigAccount?.account?.created_by === (walletAddress || '');
 
   const { txnCounts = {} } = multisigAccounts;
   const actionsRequired = txnCounts?.[address] || 0;
@@ -99,7 +98,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
           coinDecimals,
         })}
         chainID={chainID}
-        isMember={isMember}
+        isAdmin={isAdmin}
       />
     </div>
   );
@@ -114,7 +113,7 @@ const AccountDetails = ({
   stakedBalance,
   chainName,
   chainID,
-  isMember,
+  isAdmin,
 }: {
   multisigAccount: MultisigAccount;
   actionsRequired: number;
@@ -122,7 +121,7 @@ const AccountDetails = ({
   stakedBalance: string;
   chainName: string;
   chainID: string;
-  isMember: boolean;
+  isAdmin: boolean;
 }) => {
   const { account: accountInfo, pubkeys } = multisigAccount;
   const { address, name, created_at, threshold } = accountInfo;
@@ -152,7 +151,7 @@ const AccountDetails = ({
   const authToken = getAuthToken(chainID);
 
   const handleDelete = () => {
-    if (isMember) {
+    if (isAdmin) {
       dispatch(
         deleteMultisig({
           data: { address: multisigAccount?.account?.address },
@@ -233,11 +232,11 @@ const AccountDetails = ({
           <button
             onClick={() => setDeleteDialogOpen(true)}
             className={
-              isMember
+              isAdmin
                 ? 'delete-multisig-btn'
                 : 'delete-multisig-btn btn-disabled'
             }
-            disabled={!isMember}
+            disabled={!isAdmin}
           >
             Delete Multisig
           </button>
