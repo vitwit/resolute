@@ -5,8 +5,9 @@ import { RootState } from '@/store/store';
 import { useParams } from 'next/navigation';
 import React from 'react';
 import AuthzPage from '../AuthzPage';
+import '../authz.css'
 
-const page = () => {
+const Authz = () => {
   const params = useParams();
   const paramChains = params.chainNames;
   const chainNames =
@@ -34,4 +35,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Authz;
