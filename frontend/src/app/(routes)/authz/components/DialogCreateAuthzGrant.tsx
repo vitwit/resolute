@@ -109,8 +109,6 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   }, [viewAllSelectedChains]);
 
   const onNext = () => {
-    console.log('Ererererere');
-    console.log(selectedChains);
     setDisplayedSelectedChains(selectedChains?.slice(0, 5) || []);
   };
 
@@ -138,17 +136,16 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
             </div>
           </div>
           <div className="mb-[72px] px-10">
+            <div className="space-y-4">
+              <h2 className="text-[20px] font-bold">Create Grant</h2>
+              <div className="text-[14px]">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </div>
+            </div>
+            <div className="divider-line"></div>
             {step === STEP_ONE ? (
               <>
-                <div className="space-y-4">
-                  <h2 className="text-[20px] font-bold">Create Grant</h2>
-                  <div className="text-[14px]">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua.
-                  </div>
-                </div>
-                <div className="divider-line"></div>
                 <div>
                   <div className="space-y-4">
                     <div className="text-[16px]">
@@ -226,32 +223,34 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                 </div>
               </>
             ) : (
-              <div className="space-y-4">
-                <div className="text-[16px]">
-                  You are giving Authz access to
-                </div>
-                <div className="networks-list">
-                  {displayedSelectedChains.map((chainID, index) => (
-                    <NetworkItem
-                      key={index}
-                      chainName={networks[chainID].network.config.chainName}
-                      logo={networks[chainID].network.logos.menu}
-                      onSelect={handleSelectChain}
-                      selected={false}
-                      chainID={chainID}
-                      disable={true}
-                    />
-                  ))}
-                </div>
-                <div className="text-center">
-                  <button
-                    onClick={() => {
-                      setViewAllSelectedChains((prevState) => !prevState);
-                    }}
-                    className="text-[14px] leading-[20px] underline underline-offset-2 tracking-[0.56px]"
-                  >
-                    View all
-                  </button>
+              <div>
+                <div className="space-y-4">
+                  <div className="text-[16px]">
+                    You are giving Authz access to
+                  </div>
+                  <div className="networks-list">
+                    {displayedSelectedChains.map((chainID, index) => (
+                      <NetworkItem
+                        key={index}
+                        chainName={networks[chainID].network.config.chainName}
+                        logo={networks[chainID].network.logos.menu}
+                        onSelect={handleSelectChain}
+                        selected={false}
+                        chainID={chainID}
+                        disable={true}
+                      />
+                    ))}
+                  </div>
+                  <div className="text-center">
+                    <button
+                      onClick={() => {
+                        setViewAllSelectedChains((prevState) => !prevState);
+                      }}
+                      className="text-[14px] leading-[20px] underline underline-offset-2 tracking-[0.56px]"
+                    >
+                      View all
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
