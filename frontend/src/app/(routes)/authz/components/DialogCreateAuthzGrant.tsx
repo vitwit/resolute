@@ -1,16 +1,30 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
-import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
+import {
+  customMUITextFieldStyles,
+  dialogBoxPaperPropStyles,
+} from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { shortenName } from '@/utils/util';
-import { Avatar, Dialog, DialogContent, Tooltip } from '@mui/material';
+import {
+  Avatar,
+  Dialog,
+  DialogContent,
+  TextField,
+  Tooltip,
+} from '@mui/material';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import { fromBech32 } from '@cosmjs/encoding';
+import { authzMsgTypes } from '@/utils/authorizations';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
   onClose: () => void;
 }
+
+const STEP_ONE = 1;
+const STEP_TWO = 2;
 
 const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   props
@@ -23,11 +37,22 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   const chainIDs = Object.keys(nameToChainIDs).map(
     (chainName) => nameToChainIDs[chainName]
   );
+  const msgTypes = authzMsgTypes();
+  const [step, setStep] = useState(1);
   const [selectedChains, setSelectedChains] = useState<string[]>([]);
   const [displayedChains, setDisplayedChains] = useState<string[]>(
     chainIDs?.slice(0, 5) || []
   );
   const [viewAllChains, setViewAllChains] = useState<boolean>(false);
+  const [granteeAddress, setGranteeAddress] = useState('');
+  const [addressValidationError, setAddressValidationError] = useState('');
+
+  const [selectedMsgs, setSelectedMsgs] = useState<string[]>([]);
+  const [displayedSelectedChains, setDisplayedSelectedChains] = useState<
+    string[]
+  >(chainIDs?.slice(0, 5) || []);
+  const [viewAllSelectedChains, setViewAllSelectedChains] =
+    useState<boolean>(false);
 
   const handleSelectChain = (chainID: string) => {
     const updatedSelection = selectedChains.includes(chainID)
@@ -37,6 +62,36 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     setSelectedChains(updatedSelection);
   };
 
+  const handleSelectMsg = (msgType: string) => {
+    const updatedSelection = selectedMsgs.includes(msgType)
+      ? selectedMsgs.filter((id) => id !== msgType)
+      : [...selectedMsgs, msgType];
+
+    setSelectedMsgs(updatedSelection);
+  };
+
+  const handleAddressChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setGranteeAddress(e.target.value);
+    validateAddress(e.target.value);
+  };
+
+  const validateAddress = (address: string) => {
+    if (address.length) {
+      try {
+        fromBech32(address);
+        setAddressValidationError('');
+        return true;
+      } catch (error) {
+        setAddressValidationError('Invalid grantee address');
+        return false;
+      }
+    } else {
+      setAddressValidationError('Please enter address');
+    }
+  };
+
   useEffect(() => {
     if (viewAllChains) {
       setDisplayedChains(chainIDs);
@@ -44,6 +99,20 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
       setDisplayedChains(chainIDs?.slice(0, 5) || []);
     }
   }, [viewAllChains]);
+
+  useEffect(() => {
+    if (viewAllSelectedChains) {
+      setDisplayedSelectedChains(selectedChains);
+    } else {
+      setDisplayedSelectedChains(selectedChains?.slice(0, 5) || []);
+    }
+  }, [viewAllSelectedChains]);
+
+  const onNext = () => {
+    console.log('Ererererere');
+    console.log(selectedChains);
+    setDisplayedSelectedChains(selectedChains?.slice(0, 5) || []);
+  };
 
   return (
     <Dialog
@@ -69,35 +138,115 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
             </div>
           </div>
           <div className="mb-[72px] px-10">
-            <div className="space-y-4">
-              <h2 className="text-[20px] font-bold">Create Grant</h2>
-              <div className="text-[14px]">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </div>
-            </div>
-            <div className="divider-line"></div>
-            <div>
+            {step === STEP_ONE ? (
+              <>
+                <div className="space-y-4">
+                  <h2 className="text-[20px] font-bold">Create Grant</h2>
+                  <div className="text-[14px]">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua.
+                  </div>
+                </div>
+                <div className="divider-line"></div>
+                <div>
+                  <div className="space-y-4">
+                    <div className="text-[16px]">
+                      You are giving Authz access to
+                    </div>
+                    <div className="networks-list">
+                      {displayedChains.map((chainID, index) => (
+                        <NetworkItem
+                          key={index}
+                          chainName={networks[chainID].network.config.chainName}
+                          logo={networks[chainID].network.logos.menu}
+                          onSelect={handleSelectChain}
+                          selected={selectedChains.includes(chainID)}
+                          chainID={chainID}
+                          disable={false}
+                        />
+                      ))}
+                    </div>
+                    <div className="text-center">
+                      <button
+                        onClick={() => {
+                          setViewAllChains((prevState) => !prevState);
+                        }}
+                        className="text-[14px] leading-[20px] underline underline-offset-2 tracking-[0.56px]"
+                      >
+                        View all
+                      </button>
+                    </div>
+                  </div>
+                  <div className="mt-10 mb-3">
+                    <div className="py-[6px] mb-2">Grantee Address</div>
+                    <TextField
+                      className="bg-[#FFFFFF0D] rounded-2xl w-full"
+                      name="granteeAddress"
+                      value={granteeAddress}
+                      onChange={handleAddressChange}
+                      required
+                      placeholder="Enter Grantee Address Here"
+                      InputProps={{
+                        sx: {
+                          input: {
+                            color: 'white',
+                            fontSize: '14px',
+                            padding: 2,
+                          },
+                        },
+                      }}
+                      sx={customMUITextFieldStyles}
+                    />
+                    <div className="error-box">
+                      <span
+                        className={
+                          addressValidationError
+                            ? 'error-chip opacity-80'
+                            : 'error-chip opacity-0'
+                        }
+                      >
+                        {addressValidationError}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="py-[6px] mb-2">Grantee Address</div>
+                    <div className="flex flex-wrap gap-4">
+                      {msgTypes.map((msg, index) => (
+                        <MsgItem
+                          key={index}
+                          msg={msg.txn}
+                          onSelect={handleSelectMsg}
+                          selected={selectedMsgs.includes(msg.txn)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
               <div className="space-y-4">
                 <div className="text-[16px]">
                   You are giving Authz access to
                 </div>
                 <div className="networks-list">
-                  {displayedChains.map((chainID, index) => (
+                  {displayedSelectedChains.map((chainID, index) => (
                     <NetworkItem
                       key={index}
                       chainName={networks[chainID].network.config.chainName}
                       logo={networks[chainID].network.logos.menu}
                       onSelect={handleSelectChain}
-                      selected={selectedChains.includes(chainID)}
+                      selected={false}
                       chainID={chainID}
+                      disable={true}
                     />
                   ))}
                 </div>
                 <div className="text-center">
                   <button
                     onClick={() => {
-                      setViewAllChains((prevState) => !prevState);
+                      setViewAllSelectedChains((prevState) => !prevState);
                     }}
                     className="text-[14px] leading-[20px] underline underline-offset-2 tracking-[0.56px]"
                   >
@@ -105,8 +254,30 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                   </button>
                 </div>
               </div>
-              {/* Grantee address */}
-              {/* authz msgs list  */}
+            )}
+            <div className="mt-10 flex gap-10 items-center justify-end">
+              {step === STEP_TWO ? (
+                <button
+                  type="button"
+                  className="font-medium tracking-[0.64px] text-[16px] underline underline-offset-[3px]"
+                  onClick={() => setStep(STEP_ONE)}
+                >
+                  Go back
+                </button>
+              ) : (
+                <button
+                  className="primary-custom-btn"
+                  onClick={() => {
+                    onNext();
+                    setStep(STEP_TWO);
+                  }}
+                >
+                  Next
+                </button>
+              )}
+              {step === STEP_TWO ? (
+                <button className="primary-custom-btn">Grant</button>
+              ) : null}
             </div>
           </div>
         </div>
@@ -123,19 +294,25 @@ const NetworkItem = ({
   onSelect,
   selected,
   chainID,
+  disable,
 }: {
   chainName: string;
   logo: string;
   onSelect: (chainID: string) => void;
   selected: boolean;
   chainID: string;
+  disable: boolean;
 }) => {
   return (
     <div
       className={
         selected ? 'network-item network-item-selected' : 'network-item'
       }
-      onClick={() => onSelect(chainID)}
+      onClick={() => {
+        if (!disable) {
+          onSelect(chainID);
+        }
+      }}
     >
       <Avatar src={logo} sx={{ width: 32, height: 32 }} />
       <Tooltip title={chainName} placement="bottom">
@@ -143,6 +320,25 @@ const NetworkItem = ({
           <span>{shortenName(chainName, 6)}</span>
         </h3>
       </Tooltip>
+    </div>
+  );
+};
+
+const MsgItem = ({
+  msg,
+  onSelect,
+  selected,
+}: {
+  msg: string;
+  onSelect: (chainID: string) => void;
+  selected: boolean;
+}) => {
+  return (
+    <div
+      className={selected ? 'msg-item  primary-gradient' : 'msg-item'}
+      onClick={() => onSelect(msg)}
+    >
+      {msg}
     </div>
   );
 };
