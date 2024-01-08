@@ -11,3 +11,7 @@
 .grants-type-btn-selected {
   @apply primary-gradient;
 }
+
+.divider-line {
+  @apply h-[1px] w-full my-6 bg-[#ffffff35] opacity-50;
+}

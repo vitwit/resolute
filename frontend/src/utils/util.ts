@@ -383,3 +383,6 @@ export function getRandomNumber(min: number, max: number): number {
   const randomNumber = Math.random() * (max - min) + min;
   return Math.floor(randomNumber);
 }
+
+export const shortenName = (name: string, maxLength: number): string =>
+  name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
