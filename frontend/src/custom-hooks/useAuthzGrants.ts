@@ -1,7 +1,56 @@
 import { useAppSelector } from './StateHooks';
 
+export interface ChainAuthz {
+  chainID: string;
+  grant: Authorization;
+}
+export interface InterChainAuthzGrants {
+  cosmosAddress: string;
+  address: string;
+  grants: ChainAuthz[];
+}
+
 const useAuthzGrants = () => {
   const authzChains = useAppSelector((state) => state.authz.chains);
+  const addressToChainAuthz = useAppSelector(
+    (state) => state.authz.AddressToChainAuthz
+  );
+
+  const getInterChainGrants = () => {
+    const interChainGrants: InterChainAuthzGrants[] = [];
+
+    for (const address of Object.keys(addressToChainAuthz)) {
+      const cosmosAddress = address;
+      let keyAddress = address;
+      const chainAuthzs = [];
+
+      for (const chainID of Object.keys(addressToChainAuthz[address])) {
+        chainAuthzs.push(
+          ...addressToChainAuthz[address][chainID].map((grant) => ({
+            chainID,
+            grant,
+          }))
+        );
+      }
+
+      if (!addressToChainAuthz[address]['cosmoshub-4']) {
+        for (const chainID of Object.keys(addressToChainAuthz[address])) {
+          if (addressToChainAuthz[address][chainID].length) {
+            keyAddress = addressToChainAuthz[address][chainID][0].granter;
+            break;
+          }
+        }
+      }
+
+      interChainGrants.push({
+        cosmosAddress,
+        address: keyAddress,
+        grants: chainAuthzs,
+      });
+    }
+
+    return interChainGrants;
+  };
 
   const getGrantsToMe = (chainIDs: string[]) => {
     let grants: AddressGrants[] = [];
@@ -41,7 +90,7 @@ const useAuthzGrants = () => {
     return grants;
   };
 
-  return { getGrantsByMe, getGrantsToMe };
+  return { getGrantsByMe, getGrantsToMe, getInterChainGrants };
 };
 
 export default useAuthzGrants;
