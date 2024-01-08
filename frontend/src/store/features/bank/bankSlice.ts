@@ -212,8 +212,9 @@ export const bankSlice = createSlice({
       .addCase(txBankSend.pending, (state) => {
         state.tx.status = TxStatus.PENDING;
       })
-      .addCase(txBankSend.fulfilled, (state) => {
+      .addCase(txBankSend.fulfilled, (state, action) => {
         state.tx.status = TxStatus.IDLE;
+        action.meta.arg.onTxSuccessCallBank?.();
       })
       .addCase(txBankSend.rejected, (state) => {
         state.tx.status = TxStatus.REJECTED;
