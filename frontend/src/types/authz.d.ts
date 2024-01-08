@@ -46,6 +46,7 @@ interface GetGrantsResponse {
 }
 
 interface AddressGrants {
-  address: string,
-  grants: Authorization[]
+  address: string;
+  chainID: string;
+  grants: Authorization[];
 }

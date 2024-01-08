@@ -12,6 +12,7 @@ const useAuthzGrants = () => {
             ...grants,
             {
               address,
+              chainID,
               grants: authzChains[chainID].GrantsToMeAddressMapping[address],
             },
           ];
@@ -30,6 +31,7 @@ const useAuthzGrants = () => {
             ...grants,
             {
               address,
+              chainID,
               grants: authzChains[chainID].GrantsByMeAddressMapping[address],
             },
           ];
