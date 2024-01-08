@@ -130,27 +130,40 @@ export const authzSlice = createSlice({
         state.chains[chainID].grantsToMe = [];
         state.chains[chainID].GrantsToMeAddressMapping = {};
         const allAddressToAuthz = state.AddressToChainAuthz;
-        Object.keys(allAddressToAuthz).forEach((address) => {
-          state.AddressToChainAuthz[address][chainID] = [];
+        const addresses = Object.keys(allAddressToAuthz);
+        addresses.forEach((address) => {
+          allAddressToAuthz[address][chainID] = [];
         });
+
+        state.AddressToChainAuthz = allAddressToAuthz;
       })
       .addCase(getGrantsToMe.fulfilled, (state, action) => {
-        state.getGrantsToMeLoading--;
         const chainID = action.meta.arg.chainID;
+        const allAddressToAuthz = state.AddressToChainAuthz;
+        const addresses = Object.keys(allAddressToAuthz);
+        addresses.forEach((address) => {
+          allAddressToAuthz[address][chainID] = [];
+        });
+
+        state.AddressToChainAuthz = allAddressToAuthz;
+
+        state.getGrantsToMeLoading--;
+
         const grants = action.payload.data.grants;
         state.chains[chainID].grantsToMe = grants;
         const addressMapping: Record<string, Authorization[]> = {};
         const allChainsAddressToGrants = state.AddressToChainAuthz;
+
         grants.forEach((grant) => {
           const granter = grant.granter;
           const cosmosAddress = getAddressByPrefix(granter, 'cosmos');
           if (!addressMapping[granter]) addressMapping[granter] = [];
-          if (!allChainsAddressToGrants[chainID])
-            allChainsAddressToGrants[chainID] = {};
-          if (!allChainsAddressToGrants[chainID][cosmosAddress])
-            allChainsAddressToGrants[chainID][cosmosAddress] = [];
-          allChainsAddressToGrants[chainID][cosmosAddress] = [
-            ...allChainsAddressToGrants[chainID][cosmosAddress],
+          if (!allChainsAddressToGrants[cosmosAddress])
+            allChainsAddressToGrants[cosmosAddress] = {};
+          if (!allChainsAddressToGrants[cosmosAddress][chainID])
+            allChainsAddressToGrants[cosmosAddress][chainID] = [];
+          allChainsAddressToGrants[cosmosAddress][chainID] = [
+            ...allChainsAddressToGrants[cosmosAddress][chainID],
             grant,
           ];
           addressMapping[granter] = [...addressMapping[granter], grant];
@@ -206,7 +219,9 @@ export const authzSlice = createSlice({
 
         state.chains[chainID].getGrantsByMeLoading = {
           status: TxStatus.REJECTED,
-          errMsg: action.error.message || 'An error occurred while fetching authz grants by me',
+          errMsg:
+            action.error.message ||
+            'An error occurred while fetching authz grants by me',
         };
       });
   },
