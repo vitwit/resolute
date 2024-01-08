@@ -67,6 +67,7 @@ const useSortedAssets = (
           const rewardsAmountInMinDenoms: number =
             rewardsChains?.[chainID]?.delegatorRewards?.totalRewards || 0;
           const stakedAmountInDenoms = stakedAmountInMinDenoms / 10 ** decimals;
+          const unbondedAmountInDenoms = unbondedAmountInMinDenoms / 10 ** decimals;
           const rewardsAmountInDenoms =
             rewardsAmountInMinDenoms / 10 ** decimals;
 
@@ -88,7 +89,7 @@ const useSortedAssets = (
               (balanceAmountInDenoms +
                 stakedAmountInDenoms +
                 rewardsAmountInDenoms +
-                unbondedAmountInMinDenoms),
+                unbondedAmountInDenoms),
             usdPrice: usdDenomPrice,
             inflation: inflation,
             chainID: chainID,

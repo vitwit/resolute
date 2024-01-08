@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
   getDelegations,
   getAllValidators,
+  getUnbonding,
 } from '@/store/features/staking/stakeSlice';
 import WalletSummery from './WalletSummery';
 import TopNav from './TopNav';
@@ -49,6 +50,13 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
           address: address,
           chainID: chainID,
           denom: minimalDenom,
+        })
+      );
+      dispatch(
+        getUnbonding({
+          baseURL: chainInfo.config.rest,
+          address: address,
+          chainID,
         })
       );
     });

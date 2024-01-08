@@ -11,6 +11,7 @@ import transactionHistorySlice from './features/transactionHistory/transactionHi
 import authSlice from './features/auth/authSlice';
 import govSlice from './features/gov/govSlice';
 import ibcSlice from './features/ibc/ibcSlice';
+import authzSlice from './features/authz/authzSlice';
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     gov: govSlice,
     transactionHistory: transactionHistorySlice,
     ibc: ibcSlice,
+    authz: authzSlice,
   },
 });
 
