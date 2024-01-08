@@ -17,4 +17,5 @@ interface TxSendInputs {
   feegranter: string;
   memo: string;
   prefix: string;
+  onTxSuccessCallBank?: () => void;
 }
