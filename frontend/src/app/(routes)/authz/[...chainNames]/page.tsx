@@ -5,10 +5,12 @@ import { RootState } from '@/store/store';
 import { useParams } from 'next/navigation';
 import React from 'react';
 import AuthzPage from '../AuthzPage';
-import '../authz.css'
+import '../authz.css';
+import AuthzCard from '../components/AuthzCard';
 
 const Authz = () => {
   const params = useParams();
+
   const paramChains = params.chainNames;
   const chainNames =
     typeof paramChains === 'string' ? [paramChains] : paramChains;
@@ -31,6 +33,7 @@ const Authz = () => {
           - Chain Not found -
         </div>
       )}
+      <AuthzCard/>
     </>
   );
 };

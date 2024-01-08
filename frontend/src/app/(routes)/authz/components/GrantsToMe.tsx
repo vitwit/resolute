@@ -11,6 +11,7 @@ const GrantsToMe = ({ chainIDs }: { chainIDs: string[] }) => {
       {addressGrants.map((addressGrant) => (
         <>{JSON.stringify(addressGrant)}</>
       ))}
+     
     </>
   ) : !!loading ? (
     'Loading'
