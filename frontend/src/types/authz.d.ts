@@ -44,3 +44,8 @@ interface GetGrantsResponse {
   grants: Authorization[];
   pagination: Pagination;
 }
+
+interface AddressGrants {
+  address: string,
+  grants: Authorization[]
+}
