@@ -86,7 +86,7 @@ export const getGrantsToMe = createAsyncThunk(
       data.address,
       data.pagination
     );
-    console.log('here', data, response);
+
     return {
       data: response.data,
     };
@@ -138,7 +138,6 @@ export const authzSlice = createSlice({
         state.getGrantsToMeLoading--;
         const chainID = action.meta.arg.chainID;
         const grants = action.payload.data.grants;
-        console.log(grants);
         state.chains[chainID].grantsToMe = grants;
         const addressMapping: Record<string, Authorization[]> = {};
         const allChainsAddressToGrants = state.AddressToChainAuthz;
@@ -156,6 +155,7 @@ export const authzSlice = createSlice({
           ];
           addressMapping[granter] = [...addressMapping[granter], grant];
         });
+        state.AddressToChainAuthz = allChainsAddressToGrants;
         state.chains[chainID].GrantsToMeAddressMapping = addressMapping;
         state.chains[chainID].getGrantsToMeLoading = {
           status: TxStatus.IDLE,
