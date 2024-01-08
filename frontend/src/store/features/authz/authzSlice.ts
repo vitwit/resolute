@@ -168,7 +168,9 @@ export const authzSlice = createSlice({
 
         state.chains[chainID].getGrantsToMeLoading = {
           status: TxStatus.REJECTED,
-          errMsg: 'rejected',
+          errMsg:
+            action.error.message ||
+            'An error occurred while fetching authz grants to me',
         };
       });
     builder
@@ -204,7 +206,7 @@ export const authzSlice = createSlice({
 
         state.chains[chainID].getGrantsByMeLoading = {
           status: TxStatus.REJECTED,
-          errMsg: 'rejected',
+          errMsg: action.error.message || 'An error occurred while fetching authz grants by me',
         };
       });
   },
