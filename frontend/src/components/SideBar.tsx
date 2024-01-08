@@ -19,16 +19,18 @@ import {
   TWITTER_ICON,
   TWITTER_LINK,
 } from '@/utils/constants';
+import useInitAuthz from '@/custom-hooks/useInitAuthz';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
   const pathParts = pathName.split('/');
   const selectedPart = getSelectedPartFromURL(pathParts).toLowerCase();
+  useInitAuthz();
 
   return (
     <div className="main">
       <TransactionSuccessPopup />
-      
+
       <div className="sidebar overflow-y-scroll">
         <Link href="/">
           <Image src="/vitwit-logo.png" height={30} width={55} alt="Resolute" />
