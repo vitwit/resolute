@@ -6,18 +6,18 @@ interface Authorization {
 }
 
 interface GenericAuthorization {
-  '@type': string;
+  '@type': '/cosmos.authz.v1beta1.GenericAuthorization';
   msg: string;
 }
 
 interface SendAuthorization {
-  '@type': string;
+  '@type': '/cosmos.bank.v1beta1.SendAuthorization';
   spend_limit: Coin[];
   allow_list?: string[];
 }
 
 interface StakeAuthorization {
-  '@type': string;
+  '@type': '/cosmos.staking.v1beta1.StakeAuthorization';
 
   max_tokens: null | Coin;
   allow_list: undefined | AddressList;
