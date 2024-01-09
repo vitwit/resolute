@@ -31,7 +31,7 @@ export function NewTransaction(
   address: string,
   isIBC?: boolean,
   isIBCPending?: boolean
-): Transaction {
+): Transaction  {
   const transaction: Transaction = {
     code: txResponse.code,
     transactionHash: txResponse.transactionHash,

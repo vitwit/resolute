@@ -227,6 +227,21 @@ export const signAndBroadcast = async (
 
     return await broadcast(txBody, restUrl);
   }
+
+  return Promise.resolve(parseTxResult({
+    code: 0,
+    codespace: '',
+    data: '',
+    events: [],
+    gas_used: '',
+    gas_wanted: '',
+    height: '',
+    info: '',
+    logs: [],
+    timestamp: '',
+    raw_log: '',
+    txhash: ''
+  }))
 };
 
 function calculateFee(
