@@ -1,0 +1,1 @@
+export { AuthzGenericGrantMsg, AuthzSendGrantMsg } from "./grant";

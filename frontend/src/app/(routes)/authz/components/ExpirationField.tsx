@@ -19,7 +19,7 @@ const ExpirationField = ({
 
   return (
     <Controller
-      name={msg + '_expiration'}
+      name={msg + '.expiration'}
       control={control}
       rules={{ required: 'Expiration is required' }}
       defaultValue={expiration}

@@ -193,7 +193,7 @@ export const getValidatorRank = (
   return '#-';
 };
 
-function convertSnakeToCamelCase(key: string): string {
+export function convertSnakeToCamelCase(key: string): string {
   return key.replace(/_([a-z])/g, (match, group1) => group1.toUpperCase());
 }
 
@@ -386,3 +386,7 @@ export function getRandomNumber(min: number, max: number): number {
 
 export const shortenName = (name: string, maxLength: number): string =>
   name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
+
+export const convertToSnakeCase = (name: string) => {
+  return name.toLowerCase().replace(' ', '_') || '';
+};

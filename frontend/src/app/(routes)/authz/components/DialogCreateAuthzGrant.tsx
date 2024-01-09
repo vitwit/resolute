@@ -5,7 +5,7 @@ import {
   dialogBoxPaperPropStyles,
 } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { shortenName } from '@/utils/util';
+import { convertToSnakeCase, shortenName } from '@/utils/util';
 import {
   Avatar,
   Dialog,
@@ -16,11 +16,15 @@ import {
 import Image from 'next/image';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { fromBech32 } from '@cosmjs/encoding';
-import { authzMsgTypes } from '@/utils/authorizations';
+import {
+  authzMsgTypes,
+  grantAuthzFormDefaultValues,
+} from '@/utils/authorizations';
 import { FieldValues, useForm } from 'react-hook-form';
 import ExpirationField from './ExpirationField';
 import SendAuthzForm from './SendAuthzForm';
 import StakeAuthzForm from './StakeAuthzForm';
+import useGetGrantAuthzMsgs from '@/custom-hooks/useGetGrantAuthzMsgs';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
@@ -116,38 +120,34 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     setDisplayedSelectedChains(selectedChains?.slice(0, 5) || []);
   };
 
+  const { getGrantAuthzMsgs } = useGetGrantAuthzMsgs();
+
   const onSubmit = (e: FieldValues) => {
-    console.log('erer');
-    console.log(e);
+    const msgsList: string[] = selectedMsgs.reduce((list: string[], msg) => {
+      list.push(convertToSnakeCase(msg));
+      return list;
+    }, []);
+    const grantsList: SendGrant[] | GenericGrant = [];
+    msgsList.forEach((msg) => {
+      grantsList.push({ msg: msg, ...e[msg] });
+    });
+    const m = getGrantAuthzMsgs({
+      grantsList,
+      selectedChains,
+      granteeAddress,
+    });
+    console.log('-----');
+    console.log(m);
   };
 
   const [sendAdvanced, setSendAdvanced] = useState(false);
 
-  const date = new Date();
-  const expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
-
   const { handleSubmit, control } = useForm({
-    defaultValues: {
-      grant_authz_expiration: expiration,
-      revoke_authz_expiration: expiration,
-      grant_feegrant_expiration: expiration,
-      revoke_feegrant_expiration: expiration,
-      submit_proposal_expiration: expiration,
-      vote_expiration: expiration,
-      deposit_expiration: expiration,
-      withdraw_rewards: expiration,
-      withdraw_commision: expiration,
-      unjail: expiration,
-      send_expiration: expiration,
-      send_spend_limit: '',
-      delegate_expiration: expiration,
-      undelegate_expiration: expiration,
-      redelegate_expiration: expiration,
-    },
+    defaultValues: grantAuthzFormDefaultValues(),
   });
 
   const renderForm = (msg: string) => {
-    const msgType = msg.toLowerCase().replace(' ', '_');
+    const msgType = convertToSnakeCase(msg);
     const genericGrants = [
       'grant_authz',
       'revoke_authz',
@@ -157,7 +157,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
       'vote',
       'deposit',
       'withdraw_rewards',
-      'withdraw_commision',
+      'withdraw_commission',
       'unjail',
     ];
     const sendGrant = 'send';

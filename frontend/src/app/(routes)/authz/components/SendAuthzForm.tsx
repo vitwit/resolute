@@ -17,10 +17,10 @@ const SendAuthzForm = ({
   return (
     <div className="space-y-2">
       <div className="space-y-4">
-        <ExpirationField control={control} msg={'Send'} />
+        <ExpirationField control={control} msg={'send'} />
         {advanced && (
           <Controller
-            name={'send_spend_limit'}
+            name={'send.spend_limit'}
             control={control}
             rules={{
               validate: (value) => {

@@ -50,3 +50,14 @@ interface AddressGrants {
   chainID: string;
   grants: Authorization[];
 }
+
+interface GenericGrant {
+  msg: string;
+  expiration: Date;
+}
+
+interface SendGrant {
+  msg: string;
+  spend_limit: string;
+  expiration: Date;
+}
