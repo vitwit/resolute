@@ -17,6 +17,10 @@ import Image from 'next/image';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { fromBech32 } from '@cosmjs/encoding';
 import { authzMsgTypes } from '@/utils/authorizations';
+import { FieldValues, useForm } from 'react-hook-form';
+import ExpirationField from './ExpirationField';
+import SendAuthzForm from './SendAuthzForm';
+import StakeAuthzForm from './StakeAuthzForm';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
@@ -110,6 +114,67 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
 
   const onNext = () => {
     setDisplayedSelectedChains(selectedChains?.slice(0, 5) || []);
+  };
+
+  const onSubmit = (e: FieldValues) => {
+    console.log('erer');
+    console.log(e);
+  };
+
+  const [sendAdvanced, setSendAdvanced] = useState(false);
+
+  const date = new Date();
+  const expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
+
+  const { handleSubmit, control } = useForm({
+    defaultValues: {
+      grant_authz_expiration: expiration,
+      revoke_authz_expiration: expiration,
+      grant_feegrant_expiration: expiration,
+      revoke_feegrant_expiration: expiration,
+      submit_proposal_expiration: expiration,
+      vote_expiration: expiration,
+      deposit_expiration: expiration,
+      withdraw_rewards: expiration,
+      withdraw_commision: expiration,
+      unjail: expiration,
+      send_expiration: expiration,
+      send_spend_limit: '',
+      delegate_expiration: expiration,
+      undelegate_expiration: expiration,
+      redelegate_expiration: expiration,
+    },
+  });
+
+  const renderForm = (msg: string) => {
+    const msgType = msg.toLowerCase().replace(' ', '_');
+    const genericGrants = [
+      'grant_authz',
+      'revoke_authz',
+      'grant_feegrant',
+      'revoke_feegrant',
+      'submit_proposal',
+      'vote',
+      'deposit',
+      'withdraw_rewards',
+      'withdraw_commision',
+      'unjail',
+    ];
+    const sendGrant = 'send';
+    const stakeGrants = ['delegate', 'undelegate', 'redelegate'];
+    if (genericGrants.includes(msgType)) {
+      return <ExpirationField msg={msgType} control={control} />;
+    } else if (msgType === sendGrant) {
+      return (
+        <SendAuthzForm
+          control={control}
+          advanced={sendAdvanced}
+          toggle={() => setSendAdvanced((prevState) => !prevState)}
+        />
+      );
+    } else if (stakeGrants.includes(msgType)) {
+      return <StakeAuthzForm />;
+    }
   };
 
   return (
@@ -223,7 +288,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                 </div>
               </>
             ) : (
-              <div>
+              <div className="space-y-10">
                 <div className="space-y-4">
                   <div className="text-[16px]">
                     You are giving Authz access to
@@ -252,6 +317,19 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                     </button>
                   </div>
                 </div>
+                <form
+                  onSubmit={handleSubmit((e) => onSubmit(e))}
+                  id="msgs-form"
+                >
+                  <div className="space-y-6">
+                    {selectedMsgs.map((msg) => (
+                      <div className="grant-authz-form" key={msg}>
+                        <h3>{msg}</h3>
+                        <div className="my-2">{renderForm(msg)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </form>
               </div>
             )}
             <div className="mt-10 flex gap-10 items-center justify-end">
@@ -275,7 +353,13 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                 </button>
               )}
               {step === STEP_TWO ? (
-                <button className="primary-custom-btn">Grant</button>
+                <button
+                  type="submit"
+                  form="msgs-form"
+                  className="primary-custom-btn"
+                >
+                  Grant
+                </button>
               ) : null}
             </div>
           </div>
