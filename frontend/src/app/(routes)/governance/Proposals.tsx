@@ -18,7 +18,7 @@ const Proposals = ({
       <div className="flex justify-between items-center w-full">
         <div className="proposal-text-big">Governance</div>
 
-        <TopNav />
+        <TopNav showAuthzButton={true} />
       </div>
 
       <div className="proposals-head">
