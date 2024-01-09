@@ -61,6 +61,8 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   >(chainIDs?.slice(0, 5) || []);
   const [viewAllSelectedChains, setViewAllSelectedChains] =
     useState<boolean>(false);
+  const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
+  const [isDenyList, setIsDenyList] = useState<boolean>(false);
 
   const handleSelectChain = (chainID: string) => {
     const updatedSelection = selectedChains.includes(chainID)
@@ -123,14 +125,22 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   // const { getGrantAuthzMsgs } = useGetGrantAuthzMsgs();
 
   const onSubmit = (e: FieldValues) => {
+    const fieldValues = e;
+    fieldValues['delegate'] = {
+      expiration: fieldValues['delegate'].expiration,
+      max_tokens: fieldValues['delegate'].max_tokens,
+      isDenyList: isDenyList,
+      validators_list: selectedValidators,
+    };
     const msgsList: string[] = selectedMsgs.reduce((list: string[], msg) => {
       list.push(convertToSnakeCase(msg));
       return list;
     }, []);
     const grantsList: SendGrant[] | GenericGrant = [];
     msgsList.forEach((msg) => {
-      grantsList.push({ msg: msg, ...e[msg] });
+      grantsList.push({ msg: msg, ...fieldValues[msg] });
     });
+    console.log(fieldValues);
     // console.log(grantsList);
     // const m = getGrantAuthzMsgs({
     //   grantsList,
@@ -183,6 +193,10 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
               advanced={delegateAdvanced}
               msg={msgType}
               selectedChains={selectedChains}
+              selectedValidators={selectedValidators}
+              setSelectedValidators={setSelectedValidators}
+              isDenyList={isDenyList}
+              setIsDenyList={setIsDenyList}
               toggle={() => setDelegateAdvanced((prevState) => !prevState)}
             />
           );
@@ -193,6 +207,10 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
               advanced={undelegateAdvanced}
               msg={msgType}
               selectedChains={selectedChains}
+              selectedValidators={selectedValidators}
+              setSelectedValidators={setSelectedValidators}
+              isDenyList={isDenyList}
+              setIsDenyList={setIsDenyList}
               toggle={() => setUndelegateAdvanced((prevState) => !prevState)}
             />
           );
@@ -203,6 +221,10 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
               advanced={redelegateAdvanced}
               msg={msgType}
               selectedChains={selectedChains}
+              selectedValidators={selectedValidators}
+              setSelectedValidators={setSelectedValidators}
+              isDenyList={isDenyList}
+              setIsDenyList={setIsDenyList}
               toggle={() => setRedelegateAdvanced((prevState) => !prevState)}
             />
           );

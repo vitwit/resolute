@@ -22,6 +22,10 @@ const StakeAuthzForm = ({
   toggle,
   msg,
   selectedChains,
+  selectedValidators,
+  setSelectedValidators,
+  isDenyList,
+  setIsDenyList,
 }: {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   control: Control<any, any>;
@@ -29,17 +33,19 @@ const StakeAuthzForm = ({
   toggle: () => void;
   msg: string;
   selectedChains: string[];
+  selectedValidators: string[];
+  setSelectedValidators: React.Dispatch<React.SetStateAction<string[]>>;
+  isDenyList: boolean;
+  setIsDenyList: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const dispatch = useAppDispatch();
   const chainID = selectedChains[0];
-  const [isDenyList, setIsDenyList] = useState<boolean>(false);
   const { getChainInfo } = useGetChainInfo();
   const { baseURL } = getChainInfo(chainID);
   const validators = useAppSelector(
     (state: RootState) => state.staking.chains?.[chainID]?.validators
   );
   const [data, setData] = useState<{ label: string; value: string }[]>([]);
-  const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
 
   useEffect(() => {
     if (selectedChains.length === 1) {
