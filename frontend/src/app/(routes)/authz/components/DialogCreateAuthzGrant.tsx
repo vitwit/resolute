@@ -24,7 +24,7 @@ import { FieldValues, useForm } from 'react-hook-form';
 import ExpirationField from './ExpirationField';
 import SendAuthzForm from './SendAuthzForm';
 import StakeAuthzForm from './StakeAuthzForm';
-// import useGetGrantAuthzMsgs from '@/custom-hooks/useGetGrantAuthzMsgs';
+import useGetGrantAuthzMsgs from '@/custom-hooks/useGetGrantAuthzMsgs';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
@@ -122,7 +122,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     setDisplayedSelectedChains(selectedChains?.slice(0, 5) || []);
   };
 
-  // const { getGrantAuthzMsgs } = useGetGrantAuthzMsgs();
+  const { getGrantAuthzMsgs } = useGetGrantAuthzMsgs();
 
   const onSubmit = (e: FieldValues) => {
     const fieldValues = e;
@@ -136,17 +136,19 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
       list.push(convertToSnakeCase(msg));
       return list;
     }, []);
-    const grantsList: SendGrant[] | GenericGrant = [];
+    const grantsList: Grant[] = [];
     msgsList.forEach((msg) => {
       grantsList.push({ msg: msg, ...fieldValues[msg] });
     });
     console.log(fieldValues);
-    // console.log(grantsList);
-    // const m = getGrantAuthzMsgs({
-    //   grantsList,
-    //   selectedChains,
-    //   granteeAddress,
-    // });
+    console.log(grantsList);
+    const m = getGrantAuthzMsgs({
+      grantsList,
+      selectedChains,
+      granteeAddress,
+    });
+    console.log('---------');
+    console.log(m);
   };
 
   const [sendAdvanced, setSendAdvanced] = useState(false);

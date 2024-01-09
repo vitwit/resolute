@@ -51,13 +51,25 @@ interface AddressGrants {
   grants: Authorization[];
 }
 
-interface GenericGrant {
+interface Grant {
   msg: string;
   expiration: Date;
+  spend_limit?: string;
+  max_tokens?: string;
+  isDenyList?: boolean;
+  validators_list?: string[];
 }
 
-interface SendGrant {
-  msg: string;
-  spend_limit: string;
-  expiration: Date;
-}
+// interface SendGrant {
+//   msg: string;
+//   spend_limit: string;
+//   expiration: Date;
+// }
+
+// interface StakeGrant {
+//   msg: string;
+//   max_tokens?: string;
+//   isDenyList: boolean;
+//   validators_list: string[];
+//   expiration: Date;
+// }
