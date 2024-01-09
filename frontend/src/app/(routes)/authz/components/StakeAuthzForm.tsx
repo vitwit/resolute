@@ -61,7 +61,7 @@ const StakeAuthzForm = ({
 
       for (let i = 0; i < validators.inactiveSorted.length; i++) {
         const validator = validators.inactive[validators.inactiveSorted[i]];
-        if (!validator.jailed) {
+        if (!(msg.toLowerCase() === 'delegate' && validator.jailed)) {
           const temp = {
             label: validator.description.moniker,
             value: validators.inactiveSorted[i],
