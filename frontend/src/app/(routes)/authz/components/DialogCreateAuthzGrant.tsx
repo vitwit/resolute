@@ -24,7 +24,7 @@ import { FieldValues, useForm } from 'react-hook-form';
 import ExpirationField from './ExpirationField';
 import SendAuthzForm from './SendAuthzForm';
 import StakeAuthzForm from './StakeAuthzForm';
-import useGetGrantAuthzMsgs from '@/custom-hooks/useGetGrantAuthzMsgs';
+// import useGetGrantAuthzMsgs from '@/custom-hooks/useGetGrantAuthzMsgs';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
@@ -120,7 +120,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     setDisplayedSelectedChains(selectedChains?.slice(0, 5) || []);
   };
 
-  const { getGrantAuthzMsgs } = useGetGrantAuthzMsgs();
+  // const { getGrantAuthzMsgs } = useGetGrantAuthzMsgs();
 
   const onSubmit = (e: FieldValues) => {
     const msgsList: string[] = selectedMsgs.reduce((list: string[], msg) => {
@@ -131,16 +131,18 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     msgsList.forEach((msg) => {
       grantsList.push({ msg: msg, ...e[msg] });
     });
-    const m = getGrantAuthzMsgs({
-      grantsList,
-      selectedChains,
-      granteeAddress,
-    });
-    console.log('-----');
-    console.log(m);
+    // console.log(grantsList);
+    // const m = getGrantAuthzMsgs({
+    //   grantsList,
+    //   selectedChains,
+    //   granteeAddress,
+    // });
   };
 
   const [sendAdvanced, setSendAdvanced] = useState(false);
+  const [delegateAdvanced, setDelegateAdvanced] = useState(false);
+  const [undelegateAdvanced, setUndelegateAdvanced] = useState(false);
+  const [redelegateAdvanced, setRedelegateAdvanced] = useState(false);
 
   const { handleSubmit, control } = useForm({
     defaultValues: grantAuthzFormDefaultValues(),
@@ -173,7 +175,38 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
         />
       );
     } else if (stakeGrants.includes(msgType)) {
-      return <StakeAuthzForm />;
+      switch (msgType) {
+        case 'delegate':
+          return (
+            <StakeAuthzForm
+              control={control}
+              advanced={delegateAdvanced}
+              msg={msgType}
+              selectedChains={selectedChains}
+              toggle={() => setDelegateAdvanced((prevState) => !prevState)}
+            />
+          );
+        case 'undelegate':
+          return (
+            <StakeAuthzForm
+              control={control}
+              advanced={undelegateAdvanced}
+              msg={msgType}
+              selectedChains={selectedChains}
+              toggle={() => setUndelegateAdvanced((prevState) => !prevState)}
+            />
+          );
+        case 'redelegate':
+          return (
+            <StakeAuthzForm
+              control={control}
+              advanced={redelegateAdvanced}
+              msg={msgType}
+              selectedChains={selectedChains}
+              toggle={() => setRedelegateAdvanced((prevState) => !prevState)}
+            />
+          );
+      }
     }
   };
 
@@ -324,7 +357,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                   <div className="space-y-6">
                     {selectedMsgs.map((msg) => (
                       <div className="grant-authz-form" key={msg}>
-                        <h3>{msg}</h3>
+                        <h3 className="py-[6px]">{msg}</h3>
                         <div className="my-2">{renderForm(msg)}</div>
                       </div>
                     ))}

@@ -97,7 +97,7 @@ export const grantAuthzFormDefaultValues = () => {
     withdraw_commission: { expiration: expiration },
     unjail: { expiration: expiration },
     send: { expiration: expiration, spend_limit: '' },
-    delegate: { expiration: expiration },
+    delegate: { expiration: expiration, max_tokens: '' },
     undelegate: { expiration: expiration },
     redelegate: { expiration: expiration },
   };

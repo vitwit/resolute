@@ -59,7 +59,7 @@ const SendAuthzForm = ({
           onClick={toggle}
           className="text-[14px] leading-[20px] underline underline-offset-2 tracking-[0.56px]"
         >
-          Advanced
+          Customize
         </button>
       </div>
     </div>
