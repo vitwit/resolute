@@ -54,6 +54,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const {
     handleSubmit,
     control,
+    reset,
     formState: { errors },
     getValues,
     setValue,
@@ -64,6 +65,10 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
       memo: '',
     },
   });
+
+  const clearForm = () => {
+    reset();
+  };
 
   const [amountOption, setAmountOption] = useState('');
 
@@ -168,6 +173,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
         selectedAsset.denom,
         selectedAsset.decimals
       );
+      txInputs.onTxSuccessCallBank = clearForm;
       dispatch(txBankSend(txInputs));
     } else {
       const destChainID = getChainIDFromAddress(data.address);
@@ -373,7 +379,6 @@ const Cards = ({
   };
 
   const { startIndex, endIndex } = indexes();
-  
 
   return assets.length ? (
     <div

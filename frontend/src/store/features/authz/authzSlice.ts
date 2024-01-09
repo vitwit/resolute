@@ -111,12 +111,13 @@ export const authzSlice = createSlice({
   name: 'authz',
   initialState,
   reducers: {
-    EnableAuthzMode: (state, action: PayloadAction<{ address: string }>) => {
+    enableAuthzMode: (state, action: PayloadAction<{ address: string }>) => {
       state.authzModeEnabled = true;
       state.authzAddress = action.payload.address;
     },
     exitAuthzMode: (state) => {
       state.authzModeEnabled = false;
+      state.authzAddress = '';
     },
   },
   extraReducers: (builder) => {
@@ -227,6 +228,6 @@ export const authzSlice = createSlice({
   },
 });
 
-export const { EnableAuthzMode, exitAuthzMode } = authzSlice.actions;
+export const { enableAuthzMode, exitAuthzMode } = authzSlice.actions;
 
 export default authzSlice.reducer;

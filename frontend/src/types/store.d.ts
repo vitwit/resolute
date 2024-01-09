@@ -11,6 +11,7 @@ interface BasicChainInfo {
   feeCurrencies: Currency[];
   explorerTxHashEndpoint: string;
   chainName: string;
+  chainLogo: string;
 }
 
 interface Coin {
