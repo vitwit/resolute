@@ -17,10 +17,14 @@
   
 }
 .grant-address {
-  @apply flex items-center gap-2 self-stretch opacity-80 p-2 rounded-lg;
+  @apply flex items-center gap-2 opacity-80 p-2 rounded-lg;
   background: rgba(255, 255, 255, 0.1);
 }
 .authz-card-grid {
   @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+.authz-permission-card {
+  @apply flex flex-col items-start gap-6  backdrop-blur-[2px] p-6 rounded-2xl;
+  background: rgba(255, 255, 255, 0.05);
 }
 

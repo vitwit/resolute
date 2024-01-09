@@ -1,4 +1,5 @@
 interface Authorization {
+  grant(grant: any): string;
   granter: string;
   grantee: string;
   expiration: string | null;

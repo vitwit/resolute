@@ -33,7 +33,7 @@ const Authz = () => {
           - Chain Not found -
         </div>
       )}
-      <AuthzCard/>
+     
     </>
   );
 };

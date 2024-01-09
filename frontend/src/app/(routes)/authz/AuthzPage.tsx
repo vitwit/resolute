@@ -8,10 +8,7 @@ import DialogRevoke from './components/DialogRevoke';
 
 const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [isGrantsToMe, setIsGrantsToMe] = useState(true);
-  const [dialogRevokeOpen, setDialogRevokeOpen] = useState(false);
-  const handleDialogRevokeClose = () => {
-    setDialogRevokeOpen(false);
-  }
+
   const [dialogGrantOpen, setDialogGrantOpen] = useState(false);
   const hanldeDialogGrantClose = () => {
     setDialogGrantOpen(false);
@@ -66,11 +63,6 @@ const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
       <DialogCreateAuthzGrant
         open={dialogGrantOpen}
         onClose={hanldeDialogGrantClose}
-      />
-       <AuthzCard />
-       <DialogRevoke
-      open ={dialogRevokeOpen}
-      onClose={handleDialogRevokeClose}
       />
     </div>
   );

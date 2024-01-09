@@ -1,5 +1,6 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
+import AuthzCard from './AuthzCard';
 
 const GrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getGrantsByMe } = useAuthzGrants();
@@ -8,9 +9,17 @@ const GrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
 
   return addressGrants.length ? (
     <>
-      {addressGrants.map((addressGrant) => (
-        <>{JSON.stringify(addressGrant)}</>
-      ))}
+      <div className="authz-card-grid">
+        {addressGrants.map((addressGrant) => (
+          // <>{JSON.stringify(addressGrant)}</>
+
+          <AuthzCard
+            chainID={addressGrant.chainID}
+            address={addressGrant.address}
+            grants={addressGrant.grants}
+          />
+        ))}
+      </div>
     </>
   ) : !!loading ? (
     'Loading'
