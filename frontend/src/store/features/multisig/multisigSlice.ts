@@ -132,11 +132,13 @@ export const verifyAccount = createAsyncThunk(
   'multisig/verifyAccount',
   async (data: { chainID: string; address: string }, { rejectWithValue }) => {
     try {
+
       const token = await window.wallet.signArbitrary(
         data.chainID,
         data.address,
         OFFCHAIN_VERIFICATION_MESSAGE
       );
+
       const salt = getRandomNumber(MIN_SALT_VALUE, MAX_SALT_VALUE);
       try {
         await multisigService.verifyUser({

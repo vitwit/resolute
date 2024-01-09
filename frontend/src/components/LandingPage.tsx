@@ -19,6 +19,9 @@ import WalletPopup from './WalletPopup';
 import CustomParticles from './Particles';
 import Loading from './Loading';
 
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
+import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
+
 export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   const connected = useAppSelector(
@@ -38,7 +41,29 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     handleClose();
   };
 
-  const tryConnectWallet = (walletName: string) => {
+  const tryConnectWallet = async (walletName: string) => {
+    if (walletName === 'metamask') {
+      try {
+        for (let i = 0; i < networks.length; i++) {
+          console.log('network----', i)
+          const chainId: string = networks[i].config.chainId;
+          const offlineSigner = new CosmjsOfflineSigner(chainId);
+          const accounts = await offlineSigner.getAccounts();
+          console.log('accounts', accounts)
+          const rpcUrl = networks[i].config.rpc; // Populate with an RPC URL corresponding to the given chainId
+
+          const stargateClient = await SigningCosmWasmClient.connectWithSigner(
+            rpcUrl,
+            offlineSigner
+          );
+
+          console.log('stargate client', stargateClient)
+        }
+      } catch (error) {
+        console.log('trying to connect wallet ', error)
+      }
+    }
+
     dispatch(
       establishWalletConnection({
         walletName,

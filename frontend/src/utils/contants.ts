@@ -11,6 +11,10 @@ export const supportedWallets = [
     name: 'Cosmostation',
     logo: '/cosmostation-wallet-logo.png',
   },
+  {
+    name: 'MetaMask',
+    logo: '/metamask.png'
+  }
 ];
 
 export const USD_CURRENCY = 'usd';

@@ -346,6 +346,7 @@ export const txVote = createAsyncThunk(
   ) => {
     try {
       const msg = GovVoteMsg(data.proposalId, data.voter, data.option);
+
       const result = await signAndBroadcast(
         data.chainID,
         data.aminoConfig,
@@ -354,7 +355,9 @@ export const txVote = createAsyncThunk(
         GAS_FEE,
         data?.justification || '',
         `${data.feeAmount}${data.denom}`,
-        data.rest
+        data.rest,
+        '',
+        data.rpc
         // data.feegranter?.length > 0 ? data.feegranter : undefined
       );
 

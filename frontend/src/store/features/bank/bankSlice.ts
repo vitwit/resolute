@@ -114,8 +114,10 @@ export const txBankSend = createAsyncThunk(
   ) => {
     const { chainID, cosmosAddress } = data.basicChainInfo;
 
+
     try {
       const msg = SendMsg(data.from, data.to, data.amount, data.denom);
+
       const result = await signAndBroadcast(
         chainID,
         data.basicChainInfo.aminoConfig,
@@ -125,9 +127,12 @@ export const txBankSend = createAsyncThunk(
         data.memo,
         `${data.feeAmount}${data.denom}`,
         data.basicChainInfo.rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined
+        data.feegranter?.length > 0 ? data.feegranter : undefined,
+        data?.rpc,
       );
+
       const tx = NewTransaction(result, [msg], chainID, data.from);
+
       dispatch(
         addTransactions({
           chainID: data.basicChainInfo.chainID,

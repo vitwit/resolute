@@ -1,6 +1,7 @@
 import {
   AuthInfo,
   Fee,
+  // Tx,
   TxBody,
   TxRaw,
 } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
@@ -31,10 +32,15 @@ import {
   OfflineSigner,
   Registry,
 } from '@cosmjs/proto-signing';
-import { ERR_NO_OFFLINE_AMINO_SIGNER, ERR_UNKNOWN } from './errors';
+import {
+  // ERR_NO_OFFLINE_AMINO_SIGNER,
+  ERR_UNKNOWN
+} from './errors';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { GAS_FEE } from './constants';
 import { MsgCancelUnbondingDelegation } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
+import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 declare const window: WalletWindow;
 
@@ -65,23 +71,45 @@ const getClient = async (
 ): Promise<OfflineSigner> => {
   let signer;
 
-  if (!canUseAmino(aminoConfig, messages)) {
-    try {
-      await window.wallet.enable(chainId);
-      signer = window.wallet.getOfflineSigner(chainId);
-    } catch (error) {
-      console.log(error);
-      throw new Error('failed to get wallet');
+  if (localStorage.getItem('WALLET_NAME') === 'metamask') {
+    if (!canUseAmino(aminoConfig, messages)) {
+      try {
+        await window.wallet.enable(chainId);
+
+        signer = new CosmjsOfflineSigner(chainId);
+      } catch (error) {
+        console.log(error);
+        throw new Error('failed to get wallet');
+      }
+    } else {
+      try {
+        await window.wallet.enable(chainId);
+        signer = new CosmjsOfflineSigner(chainId);
+      } catch (error) {
+        console.log(error);
+        throw new Error('failed to get wallet');
+      }
     }
   } else {
-    try {
-      await window.wallet.enable(chainId);
-      signer = window.wallet.getOfflineSignerOnlyAmino(chainId);
-    } catch (error) {
-      console.log(error);
-      throw new Error('failed to get wallet');
+    if (!canUseAmino(aminoConfig, messages)) {
+      try {
+        await window.wallet.enable(chainId);
+        signer = window.wallet.getOfflineSigner(chainId);
+      } catch (error) {
+        console.log(error);
+        throw new Error('failed to get wallet');
+      }
+    } else {
+      try {
+        await window.wallet.enable(chainId);
+        signer = window.wallet.getOfflineSignerOnlyAmino(chainId);
+      } catch (error) {
+        console.log(error);
+        throw new Error('failed to get wallet');
+      }
     }
   }
+
   return signer;
 };
 
@@ -94,12 +122,20 @@ export const signAndBroadcast = async (
   memo: string,
   gasPrice: string,
   restUrl: string,
-  granter?: string
+  granter?: string,
+  rpc?: string,
 ): Promise<ParsedTxResponse> => {
   let signer: OfflineSigner;
+  let client: SigningCosmWasmClient;
 
   try {
-    signer = await getClient(aminoConfig, chainId, messages);
+    if (localStorage.getItem('WALLET_NAME') === 'metamask') {
+      signer = await getClient(aminoConfig, chainId, messages);
+    } else {
+      signer = await getClient(aminoConfig, chainId, messages);
+    }
+
+
   } catch (error) {
     console.log('error while getting client ', error);
     throw new Error('failed to get wallet');
@@ -136,20 +172,61 @@ export const signAndBroadcast = async (
   }
 
   const fee = getFee(gas, gasPrice, granter);
-  const txBody = await sign(
-    signer,
-    chainId,
-    aminoConfig,
-    aminoTypes,
-    accounts[0].address,
-    messages,
-    memo,
-    fee,
-    restUrl,
-    registry
-  );
 
-  return await broadcast(txBody, restUrl);
+  if (localStorage.getItem('WALLET_NAME') === 'metamask') {
+    try {
+      const offlineSigner = new CosmjsOfflineSigner(chainId);
+      const rpcEndpoint = rpc || ''
+      try {
+        client = await SigningCosmWasmClient.connectWithSigner(
+          rpcEndpoint,
+          offlineSigner
+        );
+
+        console.log('fee-------------------', fee)
+
+        const result = await client.signAndBroadcast(accounts[0].address, messages, fee, memo)
+        // const result = await client.signAndBroadcast(accounts[0].address, messages, fee);
+        console.log('done================')
+        console.log('transaction done============', result)
+        const parseResult = parseTxResult({
+          code: result?.code,
+          codespace: '',
+          data: '',
+          events: [],
+          gas_used: String(result?.gasUsed),
+          gas_wanted: String(result?.gasWanted),
+          height: String(result?.height),
+          info: '',
+          logs: [],
+          timestamp: '',
+          raw_log: '',
+          txhash: result?.transactionHash
+        })
+
+        return Promise.resolve(parseResult)
+      } catch (error) {
+        console.log('error connect with signer', error)
+      }
+    } catch (error) {
+      console.log('error in sign and broadcast', error)
+    }
+  } else {
+    const txBody = await sign(
+      signer,
+      chainId,
+      aminoConfig,
+      aminoTypes,
+      accounts[0].address,
+      messages,
+      memo,
+      fee,
+      restUrl,
+      registry
+    );
+
+    return await broadcast(txBody, restUrl);
+  }
 };
 
 function calculateFee(
@@ -162,7 +239,21 @@ function calculateFee(
     amount: decodedGasPrice.amount.toFloatApproximation(),
     denom: decodedGasPrice.denom,
   };
-  const num1 = multiply(processedGasPrice.amount, gasLimit);
+
+  console.log('gas process price ====== ', processedGasPrice, processedGasPrice.amount, gasLimit, gasPrice)
+  let num1;
+  if (localStorage.getItem('WALLET_NAME') === 'metamask') {
+    num1 = multiply(processedGasPrice.amount, 1.2)
+    console.log('before ciel', num1, ceil(num1))
+    if (ceil(num1) <= 1) {
+      num1 = multiply(processedGasPrice.amount, gasLimit)
+    }
+  } else {
+    num1 = multiply(processedGasPrice.amount, gasLimit);
+  }
+
+  console.log('after multisply', num1)
+
   const num2 = bignumber(num1.toString());
   const amount = ceil(num2);
   return {
@@ -258,8 +349,7 @@ async function broadcast(
   const pollForTx = async (txId: string): Promise<ParsedTxResponse> => {
     if (timedOut) {
       throw new Error(
-        `Transaction with ID ${txId} was submitted but was not yet found on the chain. You might want to check later. There was a wait of ${
-          timeoutMs / 1000
+        `Transaction with ID ${txId} was submitted but was not yet found on the chain. You might want to check later. There was a wait of ${timeoutMs / 1000
         } seconds.`
       );
     }
@@ -375,6 +465,7 @@ async function sign(
 
   // if messages are amino and signer is amino signer
   if (aminoMsgs && !isOfflineDirectSigner(signer)) {
+    console.log('401')
     // Sign as amino if possible for Ledger and wallet support
     const signDoc = makeAminoSignDoc(
       aminoMsgs,
@@ -384,10 +475,14 @@ async function sign(
       account_number,
       sequence
     );
+
+
+
     const { signature, signed } = await signer.signAmino(address, signDoc);
     const amount: Coin[] = signed.fee.amount.map((coin) => {
       return { amount: coin.amount, denom: coin.denom };
     });
+
     const authInfoBytes = await makeAuthInfoBytes(
       signer,
       account,
@@ -407,12 +502,14 @@ async function sign(
   }
 
   // if messages are amino and signer is not amino signer
-  if (aminoMsgs) {
-    throw new Error(ERR_NO_OFFLINE_AMINO_SIGNER);
-  }
+  // if (aminoMsgs) {
+  //   console.log('438')
+  //   throw new Error(ERR_NO_OFFLINE_AMINO_SIGNER);
+  // }
 
   // if the signer is direct signer
   if (isOfflineDirectSigner(signer)) {
+    console.log('443')
     // Sign using standard protobuf messages
     const authInfoBytes = await makeAuthInfoBytes(
       signer,
@@ -423,18 +520,32 @@ async function sign(
       },
       SignMode.SIGN_MODE_DIRECT
     );
+
     const signDoc = makeSignDoc(
       txBodyBytes,
       authInfoBytes,
       chainId,
       +account_number
     );
-    const { signature, signed } = await signer.signDirect(address, signDoc);
-    return {
-      bodyBytes: signed.bodyBytes,
-      authInfoBytes: signed.authInfoBytes,
-      signatures: [fromBase64(signature.signature)],
-    };
+
+    console.log('befoer sign direct========================', account_number)
+
+    try {
+      const { signature, signed } = await signer.signDirect(address, signDoc);
+
+      return {
+        bodyBytes: signed.bodyBytes,
+        authInfoBytes: signed.authInfoBytes,
+        signatures: [fromBase64(signature.signature)],
+      };
+
+    } catch (error) {
+      console.log('error while sign direct', error)
+    }
+
+
+
+
   }
 
   // any other case by default

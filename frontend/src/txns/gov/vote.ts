@@ -1,5 +1,5 @@
 import { VoteOption } from 'cosmjs-types/cosmos/gov/v1beta1/gov';
-import { MsgVote } from 'cosmjs-types/cosmos/gov/v1beta1/tx';
+// import { MsgVote } from 'cosmjs-types/cosmos/gov/v1beta1/tx';
 
 const msgVote = '/cosmos.gov.v1beta1.MsgVote';
 
@@ -10,10 +10,15 @@ export function GovVoteMsg(
 ): Msg {
   return {
     typeUrl: msgVote,
-    value: MsgVote.fromPartial({
+    value: {
       voter: voter,
       option: option,
-      proposalId: BigInt(proposalId),
-    }),
+      proposalId: proposalId,
+    }
+    // MsgVote.fromPartial({
+    //   voter: voter,
+    //   option: option,
+    //   proposalId: BigInt(proposalId),
+    // }),
   };
 }

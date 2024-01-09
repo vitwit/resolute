@@ -23,7 +23,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const [selectedAsset, setSelectedAsset] = useState<ParsedAsset | undefined>();
   const [slicedAssetsIndex, setSlicedAssetIndex] = useState(0);
   const dispatch = useAppDispatch();
-  const { txSendInputs, txTransferInputs } = useGetTxInputs();
+  const { txSendInputs, txTransferInputs, getVoteTxInputs } = useGetTxInputs();
   const { isNativeTransaction, getChainIDFromAddress, getChainInfo } =
     useGetChainInfo();
   const sendTxStatus = useAppSelector((state) => state.bank.tx.status);
@@ -164,6 +164,8 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
       return;
     }
 
+    const { rpc } = getVoteTxInputs(selectedAsset.chainID)
+
     if (isNativeTransaction(selectedAsset.chainID, data.address)) {
       const txInputs = txSendInputs(
         selectedAsset.chainID,
@@ -174,7 +176,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
         selectedAsset.decimals
       );
       txInputs.onTxSuccessCallBank = clearForm;
-      dispatch(txBankSend(txInputs));
+      dispatch(txBankSend({...txInputs, rpc}));
     } else {
       const destChainID = getChainIDFromAddress(data.address);
 
@@ -187,6 +189,8 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
         );
         return;
       }
+
+      
 
       const txInputs = txTransferInputs(
         selectedAsset.chainID,
@@ -389,7 +393,7 @@ const Cards = ({
           className={
             'card p-4 cursor-pointer' +
             (asset.denom === selectedAsset?.denom &&
-            asset.chainID === selectedAsset?.chainID
+              asset.chainID === selectedAsset?.chainID
               ? ' selected'
               : '')
           }
