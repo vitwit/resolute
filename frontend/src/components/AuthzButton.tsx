@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { Tooltip } from '@mui/material';
 import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
 import DialogAuthzGrants from './DialogAuthzGrants';
-import { exitAuthzMode } from '@/store/features/authz/authzSlice';
 
 const AuthzButton = () => {
   const isAuthzEnabled = useAppSelector(
@@ -13,8 +12,8 @@ const AuthzButton = () => {
   const grantsToMeLoading = useAppSelector(
     (state) => state.authz.getGrantsToMeLoading > 0
   );
-  const dispatch = useAppDispatch();
-  const { getInterChainGrants } = useAuthzGrants();
+
+  const { getInterChainGrants, disableAuthzMode } = useAuthzGrants();
   const grants = getInterChainGrants();
 
   const [grantsDialogOpen, setGrantsDialogOpen] = useState(false);
@@ -29,7 +28,7 @@ const AuthzButton = () => {
         onClose={handleGransDialogClose}
         grants={grants}
       />
-      <Image src="/authz-icon-2.svg" width={32} height={32} alt="authz" />
+      {/* <Image src="/authz-icon-2.svg" width={32} height={32} alt="authz" /> */}
       <Tooltip
         title={
           grantsToMeLoading
@@ -46,8 +45,12 @@ const AuthzButton = () => {
               : 'cursor-pointer'
           }
           onClick={() => {
-            if (!isAuthzEnabled) setGrantsDialogOpen(true);
-            else dispatch(exitAuthzMode());
+            if (!isAuthzEnabled) {
+              if (!grantsToMeLoading && grants.length)
+                setGrantsDialogOpen(true);
+            } else {
+              disableAuthzMode();
+            }
           }}
         >
           <div className="flex p-2 items-center gap-2 authz-button-background">

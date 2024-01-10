@@ -50,7 +50,7 @@ const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
             <h2 className="text-[20px] font-bold">Select Granter</h2>
             {grants.map((grant) => (
               <div className="grants-card" key={grant.address}>
-                <AddressChip address={grant.address} />
+                <AddressChip address={grant.cosmosAddress} />
                 <AuthzPermissions grants={grant.grants} />
                 <button
                   className="use-grant-btn"
@@ -72,7 +72,7 @@ const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
 
 export default DialogAuthzGrants;
 
-const AddressChip = ({ address }: { address: string }) => {
+export const AddressChip = ({ address }: { address: string }) => {
   const dispatch = useAppDispatch();
 
   return (

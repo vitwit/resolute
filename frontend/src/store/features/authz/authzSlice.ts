@@ -184,6 +184,10 @@ export const authzSlice = createSlice({
       state.authzModeEnabled = false;
       state.authzAddress = '';
     },
+    resetState: (state) => {
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      state = cloneDeep(initialState);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -308,6 +312,7 @@ export const authzSlice = createSlice({
   },
 });
 
-export const { enableAuthzMode, exitAuthzMode } = authzSlice.actions;
+export const { enableAuthzMode, exitAuthzMode, resetState } =
+  authzSlice.actions;
 
 export default authzSlice.reducer;
