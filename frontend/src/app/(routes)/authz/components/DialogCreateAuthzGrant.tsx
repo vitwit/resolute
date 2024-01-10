@@ -5,7 +5,7 @@ import {
   dialogBoxPaperPropStyles,
 } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { convertToSnakeCase, shortenName } from '@/utils/util';
+import { convertToSnakeCase, shortenAddress, shortenName } from '@/utils/util';
 import {
   Avatar,
   Dialog,
@@ -27,6 +27,7 @@ import StakeAuthzForm from './StakeAuthzForm';
 import useGetGrantAuthzMsgs from '@/custom-hooks/useGetGrantAuthzMsgs';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { txCreateAuthzGrant } from '@/store/features/authz/authzSlice';
+import CommonCopy from '@/components/CommonCopy';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
@@ -63,6 +64,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   const [displayedSelectedChains, setDisplayedSelectedChains] = useState<
     string[]
   >(chainIDs?.slice(0, 5) || []);
+  const [formValidationError, setFormValidationError] = useState('');
   const [viewAllSelectedChains, setViewAllSelectedChains] =
     useState<boolean>(false);
   const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
@@ -103,6 +105,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
       }
     } else {
       setAddressValidationError('Please enter address');
+      return false;
     }
   };
 
@@ -122,8 +125,25 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     }
   }, [viewAllSelectedChains]);
 
+  const validateForm = () => {
+    if (!selectedChains.length) {
+      setFormValidationError('Atleast one chain must be selected');
+      return false;
+    } else if (!validateAddress(granteeAddress)) {
+      return false;
+    } else if (!selectedMsgs.length) {
+      setFormValidationError('Atleast one message must be selected');
+      return false;
+    }
+    setFormValidationError('');
+    return true;
+  };
+
   const onNext = () => {
     setDisplayedSelectedChains(selectedChains?.slice(0, 5) || []);
+    if (validateForm()) {
+      setStep(STEP_TWO);
+    }
   };
 
   const { getGrantAuthzMsgs } = useGetGrantAuthzMsgs();
@@ -360,7 +380,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                     </div>
                   </div>
                   <div>
-                    <div className="py-[6px] mb-2">Grantee Address</div>
+                    <div className="py-[6px] mb-2">Add Permissions</div>
                     <div className="flex flex-wrap gap-4">
                       {msgTypes.map((msg, index) => (
                         <MsgItem
@@ -377,8 +397,13 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
             ) : (
               <div className="space-y-10">
                 <div className="space-y-4">
-                  <div className="text-[16px]">
-                    You are giving Authz access to
+                  <div className="text-[16px] flex gap-4 items-center">
+                    <span>You are giving Authz access to</span>
+                    <CommonCopy
+                      message={shortenAddress(granteeAddress, 30)}
+                      style="h-8"
+                      plainIcon={true}
+                    />
                   </div>
                   <div className="networks-list">
                     {displayedSelectedChains.map((chainID, index) => (
@@ -419,8 +444,33 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                 </form>
               </div>
             )}
-            <div className="mt-10 flex gap-10 items-center justify-end">
-              {step === STEP_TWO ? (
+            {step === STEP_ONE ? (
+              <div className="mt-10 relative h-10">
+                <div className="flex-1 flex items-center justify-center h-10">
+                  <div className="error-box">
+                    <span
+                      className={
+                        formValidationError
+                          ? 'error-chip opacity-80'
+                          : 'error-chip opacity-0'
+                      }
+                    >
+                      {formValidationError}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  className="primary-custom-btn absolute right-0 bottom-0"
+                  onClick={() => {
+                    onNext();
+                  }}
+                >
+                  Next
+                </button>
+              </div>
+            ) : null}
+            {step === STEP_TWO ? (
+              <div className="mt-10 flex gap-10 items-center justify-end">
                 <button
                   type="button"
                   className="font-medium tracking-[0.64px] text-[16px] underline underline-offset-[3px]"
@@ -428,18 +478,6 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                 >
                   Go back
                 </button>
-              ) : (
-                <button
-                  className="primary-custom-btn"
-                  onClick={() => {
-                    onNext();
-                    setStep(STEP_TWO);
-                  }}
-                >
-                  Next
-                </button>
-              )}
-              {step === STEP_TWO ? (
                 <button
                   type="submit"
                   form="msgs-form"
@@ -447,8 +485,8 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                 >
                   Grant
                 </button>
-              ) : null}
-            </div>
+              </div>
+            ) : null}
           </div>
         </div>
       </DialogContent>
