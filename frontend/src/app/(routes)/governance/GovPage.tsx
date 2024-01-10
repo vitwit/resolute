@@ -59,6 +59,7 @@ const GovPage = ({ chainIDs }: { chainIDs: string[] }) => {
         <Proposals
           handleChangeProposalState={handleChangeProposalState}
           proposalStatus={proposalState}
+          chainIDs={chainIDs}
         />
         <AllProposals
           handleOpenOverview={handleOpenOverview}

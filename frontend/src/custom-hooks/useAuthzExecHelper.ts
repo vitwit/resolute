@@ -6,7 +6,8 @@ import useGetChainInfo from './useGetChainInfo';
 import { AuthzExecVoteMsg } from '@/txns/authz';
 import { txAuthzExec } from '@/store/features/authz/authzSlice';
 import { capitalizeFirstLetter } from '@/utils/util';
-import { AuthzExecDepositMsg } from '@/txns/authz/exec';
+import { AuthzExecDepositMsg, AuthzExecSendMsg } from '@/txns/authz/exec';
+import { msgSendTypeUrl } from '@/txns/bank/send';
 
 export interface AuthzExecHelpVote {
   grantee: string;
@@ -24,6 +25,16 @@ export interface AuthzExecHelpDeposit {
   granter: string;
   chainID: string;
   metaData: string;
+}
+
+export interface AuthzExecHelpSend {
+  grantee: string;
+  recipient: string;
+  amount: number;
+  denom: string;
+  granter: string;
+  chainID: string;
+  memo: string;
 }
 
 export const AUTHZ_VOTE_MSG = '/cosmos.gov.v1beta1.MsgVote';
@@ -113,7 +124,75 @@ const useAuthzExecHelper = () => {
       );
     }
   };
-  return { txAuthzVote, txAuthzDeposit };
+
+  const txAuthzSend = (data: AuthzExecHelpSend) => {
+    const basicChainInfo = getChainInfo(data.chainID);
+    const address = convertAddress(data.chainID, data.granter);
+    const grants: Authorization[] =
+      authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
+    let errorMsg = `You don't have permission to Send on ${capitalizeFirstLetter(
+      basicChainInfo.chainName
+    )} from this account`;
+    const haveGrant = grants.some((grant) => {
+      if (
+        grant.authorization['@type'] ===
+          '/cosmos.authz.v1beta1.GenericAuthorization' &&
+        grant.authorization.msg === msgSendTypeUrl
+      )
+        return true;
+      let validSend = false;
+      if (
+        grant.authorization['@type'] ===
+        '/cosmos.bank.v1beta1.SendAuthorization'
+      ) {
+        if (grant.authorization?.allow_list?.length) {
+          const allowed = grant.authorization.allow_list.some(
+            (allowedAddress) => allowedAddress === data.recipient
+          );
+          if (!allowed) {
+            errorMsg = 'You are not allowed send tokens to this address';
+            return false;
+          }
+        }
+        grant.authorization.spend_limit.forEach((coin) => {
+          if (coin.denom === data.denom) {
+            if (+coin.amount < data.amount) {
+              errorMsg = 'Spend Limit Exceeded';
+            } else {
+              validSend = true;
+            }
+          }
+        });
+        return validSend;
+      }
+    });
+    if (!haveGrant) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: errorMsg,
+        })
+      );
+    } else {
+      const { minimalDenom } = getDenomInfo(data.chainID);
+      const msg = AuthzExecSendMsg(
+        data.grantee,
+        address,
+        data.recipient,
+        data.amount,
+        data.denom
+      );
+      dispatch(
+        txAuthzExec({
+          basicChainInfo,
+          msgs: [msg],
+          metaData: data.memo,
+          feeDenom: minimalDenom,
+        })
+      );
+    }
+  };
+  return { txAuthzVote, txAuthzDeposit, txAuthzSend };
 };
 
 export default useAuthzExecHelper;
