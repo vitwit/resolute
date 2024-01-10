@@ -11,15 +11,16 @@ import DialogRevoke from './DialogRevoke';
 import { Authorization } from '@/types/authz';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
-
 const AuthzCard = ({
   chainID,
   address,
   grants,
+  showCloseIcon = true,
 }: {
   chainID: string;
   address: string;
   grants: Authorization[];
+  showCloseIcon?: boolean;
 }) => {
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
@@ -48,11 +49,10 @@ const AuthzCard = ({
     return chain;
   };
   const dispatch = useAppDispatch();
-  const {getDenomInfo} = useGetChainInfo();
+  const { getDenomInfo } = useGetChainInfo();
 
-    const {decimals} = getDenomInfo(chainID);
-    const {displayDenom} = getDenomInfo(chainID);
-  
+  const { decimals } = getDenomInfo(chainID);
+  const { displayDenom } = getDenomInfo(chainID);
 
   return (
     <div className="authz-card">
@@ -66,9 +66,7 @@ const AuthzCard = ({
         />
         <p>{getChainName(chainID)}</p>
       </div>
-      <div className="text-[rgba(255,255,255,0.50)] text-sm not-italic font-normal leading-[normal]">
-        Granter
-      </div>
+      <div className="authz-small-text">Granter</div>
       <div className="grant-address truncate">
         <p>{address}</p>
         <Image
@@ -91,22 +89,26 @@ const AuthzCard = ({
           className="cursor-pointer"
         />
       </div>
-      <div className="">Permissions</div>
-      <div className="flex flex-wrap space-x-2">
+      <div className="authz-small-text">Permissions</div>
+      <div className="flex flex-wrap gap-6">
         {grants.map((permission, permissionIndex) => (
           <div key={permissionIndex}>
-            <p className="grant-address">
-              {getMsgNameFromAuthz(permission)}
-              <Image
-                src="/close-icon.svg"
-                width={12}
-                height={12}
-                alt="close-icon"
-                draggable={false}
-                className="cursor-pointer"
-                onClick={() => setDialogRevokeOpen(true)}
-              />
-            </p>
+            {permissionIndex > 2 ? null : (
+              <p className="grant-address">
+                {getMsgNameFromAuthz(permission)}
+                {showCloseIcon && (
+                  <Image
+                    src="/close-icon.svg"
+                    width={16}
+                    height={16}
+                    alt="close-icon"
+                    draggable={false}
+                    className="cursor-pointer"
+                    onClick={() => setDialogRevokeOpen(true)}
+                  />
+                )}
+              </p>
+            )}
             <DialogRevoke
               open={dialogRevokeOpen}
               onClose={handleDialogRevokeClose}
@@ -114,9 +116,9 @@ const AuthzCard = ({
           </div>
         ))}
       </div>
-      <div className=''>
+      <div className="">
         <button
-          className="create-grant-btn"
+          className="create-grant-btn mt-4"
           onClick={() => setDialogAllPermissionsOpen(true)}
         >
           View Details
@@ -124,7 +126,11 @@ const AuthzCard = ({
       </div>
       <AuthorizationInfo
         open={dialogAllPermissionsOpen}
-        onClose={handleDialogAllPermissionsClose} authorization={grants} displayDenom={displayDenom} decimal={decimals}      />
+        onClose={handleDialogAllPermissionsClose}
+        authorization={grants}
+        displayDenom={displayDenom}
+        decimal={decimals}
+      />
     </div>
   );
 };

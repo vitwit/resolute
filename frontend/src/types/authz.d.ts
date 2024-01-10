@@ -1,4 +1,4 @@
-import { Grant } from "cosmjs-types/cosmos/authz/v1beta1/authz";
+import { Grant } from 'cosmjs-types/cosmos/authz/v1beta1/authz';
 
 interface Authorization {
   grant(grant: Grant): string;
@@ -24,7 +24,7 @@ interface SendAuthorization {
 interface StakeAuthorization {
   msg: ReactNode;
   spend_limit: Coin[];
-  
+
   '@type': '/cosmos.staking.v1beta1.StakeAuthorization';
 
   max_tokens: null | Coin;

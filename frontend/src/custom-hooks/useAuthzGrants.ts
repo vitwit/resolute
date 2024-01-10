@@ -1,3 +1,4 @@
+import { AddressGrants, Authorization } from '@/types/authz';
 import { useAppSelector } from './StateHooks';
 
 export interface ChainAuthz {

@@ -19,6 +19,7 @@ const GrantsToMe = ({ chainIDs }: { chainIDs: string[] }) => {
             chainID={addressGrant.chainID}
             address={addressGrant.address}
             grants={addressGrant.grants}
+            showCloseIcon={false}
           />
         ))}
       </div>

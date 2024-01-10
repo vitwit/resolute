@@ -28,6 +28,6 @@
   background: rgba(255, 255, 255, 0.05);
 }
 .authz-small-text {
-  @apply text-[rgba(255,255,255,0.50)] text-sm not-italic font-normal leading-[normal]
+  @apply text-[rgba(255,255,255,0.50)] text-sm  font-normal leading-[normal]
 }
 
