@@ -27,4 +27,7 @@
   @apply flex flex-col items-start gap-6  backdrop-blur-[2px] p-6 rounded-2xl;
   background: rgba(255, 255, 255, 0.05);
 }
+.authz-small-text {
+  @apply text-[rgba(255,255,255,0.50)] text-sm not-italic font-normal leading-[normal]
+}
 

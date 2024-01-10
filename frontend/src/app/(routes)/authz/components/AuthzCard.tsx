@@ -114,7 +114,7 @@ const AuthzCard = ({
           </div>
         ))}
       </div>
-      <div>
+      <div className=''>
         <button
           className="create-grant-btn"
           onClick={() => setDialogAllPermissionsOpen(true)}

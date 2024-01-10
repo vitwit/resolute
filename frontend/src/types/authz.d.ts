@@ -22,6 +22,7 @@ interface SendAuthorization {
 }
 
 interface StakeAuthorization {
+  msg: ReactNode;
   spend_limit: Coin[];
   
   '@type': '/cosmos.staking.v1beta1.StakeAuthorization';

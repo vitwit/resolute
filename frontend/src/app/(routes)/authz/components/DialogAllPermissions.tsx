@@ -89,27 +89,35 @@ const renderAuthorization = (
   displayDenom: string,
   decimal: number
 ) => {
-  const { authorization, granter, grantee, expiration } = authz;
-  console.log('-----', authorization);
+  const { authorization, expiration } = authz;
+
   switch (authorization['@type']) {
     case '/cosmos.bank.v1beta1.SendAuthorization':
       return (
-        <div className="flex justify-between w-full">
-          <div className="flex items-center">{authorization.msg}</div>
-          <button className="create-grant-btn">Revoke</button>
-          <div className="flex space-y-4 flex-col">
-            <div className="flex items-center">Spend Limit</div>
-            <div className="">
-              {parseSpendLimit(authorization.spend_limit, decimal)}
-              &nbsp;
-              {displayDenom}{' '}
+        <div className="authz-permission-card">
+          <div className="flex justify-between w-full">
+            <div className="flex items-center">
+              {getTypeURLName(authorization.msg)}
             </div>
+            <button className="create-grant-btn">Revoke</button>
           </div>
+          <div className=" flex justify-between w-full">
+            <div className="flex space-y-4 flex-col">
+              <div className="flex items-center authz-small-text">
+                Spend Limit
+              </div>
+              <div className="">
+                {parseSpendLimit(authorization.spend_limit, decimal)}
+                &nbsp;
+                {displayDenom}{' '}
+              </div>
+            </div>
 
-          <div className="flex space-y-4 flex-col">
-            <div className="flex items-center">Expiry</div>
-            <div className="">
-              {expiration ? getLocalTime(expiration) : '-'}
+            <div className="flex space-y-4 flex-col">
+              <div className="flex items-center authz-small-text">Expiry</div>
+              <div className="">
+                {expiration ? getLocalTime(expiration) : '-'}
+              </div>
             </div>
           </div>
         </div>
@@ -118,37 +126,44 @@ const renderAuthorization = (
       return (
         <div className="authz-permission-card">
           <div className="flex justify-between w-full">
-            <div className="flex items-center">{authorization.msg}</div>
+            <div className="flex items-center">
+              {getTypeURLName(authorization.msg)}
+            </div>
             <button className="create-grant-btn">Revoke</button>
           </div>
-
-          <div className="flex items-center">Expiry</div>
-          <div className="">{expiration ? getLocalTime(expiration) : '-'}</div>
+          <div className="flex space-y-4 flex-col">
+            <div className="flex items-center authz-small-text">Expiry</div>
+            <div className="">
+              {expiration ? getLocalTime(expiration) : '-'}
+            </div>
+          </div>
         </div>
       );
     case '/cosmos.staking.v1beta1.StakeAuthorization':
       return (
         <div className="authz-permission-card">
           <div className="flex justify-between w-full">
-          
-            <div className="">{getTypeURLName(authorization['@type'])}</div>
+            <div className="flex items-center">{getTypeURLName(authorization.msg)}</div>
             <button className="create-grant-btn">Revoke</button>
           </div>
-          <div className="flex space-y-4 flex-col">
-            <div className="flex items-center">Spend Limit</div>
-            <div className="">
-              {parseSpendLimit(authorization.spend_limit, decimal)}
-              &nbsp;
-              {displayDenom}{' '}
+          <div className="flex justify-between w-full">
+            <div className="flex space-y-4 flex-col">
+              <div className="flex items-center authz-small-text">
+                Spend Limit
+              </div>
+              <div className=""></div>
+
+              <div className="flex space-y-4 flex-col">
+                <div className="flex items-center authz-small-text">Expiry</div>
+                <div className="">
+                  {expiration ? getLocalTime(expiration) : '-'}
+                </div>
+              </div>
             </div>
           </div>
-
-          <div className="flex space-y-4 flex-col">
-            <div className="flex items-center">Expiry</div>
-            <div className="">
-              {expiration ? getLocalTime(expiration) : '-'}
-            </div>
-</div>
+          <div className="flex items-center authz-small-text">
+            Denly/Aceept List
+          </div>
         </div>
       );
 
@@ -186,11 +201,24 @@ export function AuthorizationInfo(props: AuthorizationInfoProps) {
               />
             </div>
           </div>
-          {props.authorization.map((permission, permissionIndex) => (
-            <div key={permissionIndex}>
-              {renderAuthorization(permission, displayDenom, decimal)}
+
+          <div className="gap-16 px-10  space-y-6">
+            <div className="flex justify-between">
+              {' '}
+              <div className="flex items-center text-white text-xl not-italic font-bold leading-[normal]">
+                All Permissions
+              </div>
+              <button className="create-grant-btn">Revoke All</button>
             </div>
-          ))}
+            <div className="grid grid-cols-2 gap-4">
+              {props.authorization.map((permission, permissionIndex) => (
+                <div key={permissionIndex}>
+                  {renderAuthorization(permission, displayDenom, decimal)}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="justify-end items-center gap-2.5 self-stretch pt-6 pb-0 px-6"></div>
         </div>
       </DialogContent>
     </Dialog>
