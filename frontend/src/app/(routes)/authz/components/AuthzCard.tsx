@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import DialogAllPermissions from './DialogAllPermissions';
+import { AuthorizationInfo } from './DialogAllPermissions';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
-import { ChainAuthz } from '@/custom-hooks/useAuthzGrants';
 import { getMsgNameFromAuthz } from '@/utils/authorizations';
-import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { setError } from '@/store/features/common/commonSlice';
 import DialogRevoke from './DialogRevoke';
+import { Authorization } from '@/types/authz';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+
 
 const AuthzCard = ({
   chainID,
@@ -27,15 +29,16 @@ const AuthzCard = ({
     (state: RootState) => state.wallet.nameToChainIDs
   );
 
-  const [dialogAllPermissionsOpen, setDialogAllPermissionsOpen] = useState(false);
+  const [dialogAllPermissionsOpen, setDialogAllPermissionsOpen] =
+    useState(false);
   const handleDialogAllPermissionsClose = () => {
     setDialogAllPermissionsOpen(false);
-  }
+  };
 
   const [dialogRevokeOpen, setDialogRevokeOpen] = useState(false);
   const handleDialogRevokeClose = () => {
     setDialogRevokeOpen(false);
-  }
+  };
 
   const getChainName = (chainID: string) => {
     let chain: string = '';
@@ -44,7 +47,12 @@ const AuthzCard = ({
     });
     return chain;
   };
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
+  const {getDenomInfo} = useGetChainInfo();
+
+    const {decimals} = getDenomInfo(chainID);
+    const {displayDenom} = getDenomInfo(chainID);
+  
 
   return (
     <div className="authz-card">
@@ -64,17 +72,17 @@ const AuthzCard = ({
       <div className="grant-address truncate">
         <p>{address}</p>
         <Image
-        onClick={(e) => {
-          copyToClipboard(address);
-          dispatch(
-            setError({
-              type: 'success',
-              message: 'Copied',
-            })
-          );
-          e.preventDefault();
-          e.stopPropagation();
-        }}
+          onClick={(e) => {
+            copyToClipboard(address);
+            dispatch(
+              setError({
+                type: 'success',
+                message: 'Copied',
+              })
+            );
+            e.preventDefault();
+            e.stopPropagation();
+          }}
           src="/copy.svg"
           width={24}
           height={24}
@@ -95,27 +103,28 @@ const AuthzCard = ({
                 height={12}
                 alt="close-icon"
                 draggable={false}
-                className='cursor-pointer'
+                className="cursor-pointer"
                 onClick={() => setDialogRevokeOpen(true)}
               />
             </p>
-            <DialogRevoke 
-            open ={dialogRevokeOpen}
-            onClose={handleDialogRevokeClose}/>
+            <DialogRevoke
+              open={dialogRevokeOpen}
+              onClose={handleDialogRevokeClose}
+            />
           </div>
         ))}
       </div>
       <div>
-        <button className="create-grant-btn"
-        onClick={() => setDialogAllPermissionsOpen(true)}
+        <button
+          className="create-grant-btn"
+          onClick={() => setDialogAllPermissionsOpen(true)}
         >
           View Details
-          </button>
+        </button>
       </div>
-      <DialogAllPermissions 
-      open={dialogAllPermissionsOpen}
-      onClose={handleDialogAllPermissionsClose}
-      />
+      <AuthorizationInfo
+        open={dialogAllPermissionsOpen}
+        onClose={handleDialogAllPermissionsClose} authorization={grants} displayDenom={displayDenom} decimal={decimals}      />
     </div>
   );
 };

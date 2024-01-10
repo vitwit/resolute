@@ -14,6 +14,7 @@ const GrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
           // <>{JSON.stringify(addressGrant)}</>
 
           <AuthzCard
+          key={addressGrant.chainID}
             chainID={addressGrant.chainID}
             address={addressGrant.address}
             grants={addressGrant.grants}

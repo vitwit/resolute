@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import DialogCreateAuthzGrant from './components/DialogCreateAuthzGrant';
 import GrantsToMe from './components/GrantsToMe';
 import GrantsByMe from './components/GrantsByMe';
-import AuthzCard from './components/AuthzCard';
-import DialogRevoke from './components/DialogRevoke';
 
 const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [isGrantsToMe, setIsGrantsToMe] = useState(true);

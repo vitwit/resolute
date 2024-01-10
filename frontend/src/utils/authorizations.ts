@@ -1,3 +1,5 @@
+import { Authorization } from "@/types/authz";
+
 export function getTypeURLName(url: string) {
   if (!url) {
     return '-';

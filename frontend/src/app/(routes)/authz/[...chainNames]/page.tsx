@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 import React from 'react';
 import AuthzPage from '../AuthzPage';
 import '../authz.css';
-import AuthzCard from '../components/AuthzCard';
+
 
 const Authz = () => {
   const params = useParams();

@@ -1,5 +1,7 @@
+import { Grant } from "cosmjs-types/cosmos/authz/v1beta1/authz";
+
 interface Authorization {
-  grant(grant: any): string;
+  grant(grant: Grant): string;
   granter: string;
   grantee: string;
   expiration: string | null;
@@ -7,17 +9,21 @@ interface Authorization {
 }
 
 interface GenericAuthorization {
+  spend_limit: Coin[];
   '@type': '/cosmos.authz.v1beta1.GenericAuthorization';
   msg: string;
 }
 
 interface SendAuthorization {
+  msg: ReactNode;
   '@type': '/cosmos.bank.v1beta1.SendAuthorization';
   spend_limit: Coin[];
   allow_list?: string[];
 }
 
 interface StakeAuthorization {
+  spend_limit: Coin[];
+  
   '@type': '/cosmos.staking.v1beta1.StakeAuthorization';
 
   max_tokens: null | Coin;
