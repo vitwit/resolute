@@ -68,10 +68,12 @@ const useGetGrantAuthzMsgs = () => {
               allowList: grant.isDenyList ? undefined : grant.validators_list,
               denyList: grant.isDenyList ? grant.validators_list : undefined,
               denom: minimalDenom,
-              maxTokens: amountToMinimalValue(
-                Number(grant?.max_tokens),
-                decimals
-              ).toString(),
+              maxTokens: grant?.max_tokens
+                ? amountToMinimalValue(
+                    Number(grant?.max_tokens),
+                    decimals
+                  ).toString()
+                : undefined,
             });
             msgs.push(msg);
           } else {

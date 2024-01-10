@@ -146,8 +146,6 @@ export function AuthzStakeGrantMsg({
         : undefined,
     })
   ).finish();
-  console.log('here....');
-  console.log(StakeAuthorization.decode(stakeAuthValue));
   const grantValue = MsgGrant.fromPartial({
     grant: {
       authorization: {

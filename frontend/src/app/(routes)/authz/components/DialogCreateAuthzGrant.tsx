@@ -67,8 +67,18 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   const [formValidationError, setFormValidationError] = useState('');
   const [viewAllSelectedChains, setViewAllSelectedChains] =
     useState<boolean>(false);
-  const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
-  const [isDenyList, setIsDenyList] = useState<boolean>(false);
+  const [selectedDelegateValidators, setSelectedDelegateValidators] = useState<
+    string[]
+  >([]);
+  const [isDenyDelegateList, setIsDenyDelegateList] = useState<boolean>(false);
+  const [selectedUndelegateValidators, setSelectedUndelegateValidators] =
+    useState<string[]>([]);
+  const [isDenyUndelegateList, setIsDenyUndelegateList] =
+    useState<boolean>(false);
+  const [selectedRedelegateValidators, setSelectedRedelegateValidators] =
+    useState<string[]>([]);
+  const [isDenyRedelegateList, setIsDenyRedelegateList] =
+    useState<boolean>(false);
 
   const handleSelectChain = (chainID: string) => {
     const updatedSelection = selectedChains.includes(chainID)
@@ -153,20 +163,20 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     fieldValues['delegate'] = {
       expiration: fieldValues['delegate'].expiration,
       max_tokens: fieldValues['delegate'].max_tokens,
-      isDenyList: isDenyList,
-      validators_list: selectedValidators,
+      isDenyList: isDenyDelegateList,
+      validators_list: selectedDelegateValidators,
     };
     fieldValues['undelegate'] = {
       expiration: fieldValues['undelegate'].expiration,
       max_tokens: fieldValues['undelegate'].max_tokens,
-      isDenyList: isDenyList,
-      validators_list: selectedValidators,
+      isDenyList: isDenyUndelegateList,
+      validators_list: selectedUndelegateValidators,
     };
     fieldValues['redelegate'] = {
       expiration: fieldValues['redelegate'].expiration,
       max_tokens: fieldValues['redelegate'].max_tokens,
-      isDenyList: isDenyList,
-      validators_list: selectedValidators,
+      isDenyList: isDenyRedelegateList,
+      validators_list: selectedRedelegateValidators,
     };
     const msgsList: string[] = selectedMsgs.reduce((list: string[], msg) => {
       list.push(convertToSnakeCase(msg));
@@ -245,10 +255,10 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
               advanced={delegateAdvanced}
               msg={msgType}
               selectedChains={selectedChains}
-              selectedValidators={selectedValidators}
-              setSelectedValidators={setSelectedValidators}
-              isDenyList={isDenyList}
-              setIsDenyList={setIsDenyList}
+              selectedValidators={selectedDelegateValidators}
+              setSelectedValidators={setSelectedDelegateValidators}
+              isDenyList={isDenyDelegateList}
+              setIsDenyList={setIsDenyDelegateList}
               toggle={() => setDelegateAdvanced((prevState) => !prevState)}
             />
           );
@@ -259,10 +269,10 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
               advanced={undelegateAdvanced}
               msg={msgType}
               selectedChains={selectedChains}
-              selectedValidators={selectedValidators}
-              setSelectedValidators={setSelectedValidators}
-              isDenyList={isDenyList}
-              setIsDenyList={setIsDenyList}
+              selectedValidators={selectedUndelegateValidators}
+              setSelectedValidators={setSelectedUndelegateValidators}
+              isDenyList={isDenyUndelegateList}
+              setIsDenyList={setIsDenyUndelegateList}
               toggle={() => setUndelegateAdvanced((prevState) => !prevState)}
             />
           );
@@ -273,10 +283,10 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
               advanced={redelegateAdvanced}
               msg={msgType}
               selectedChains={selectedChains}
-              selectedValidators={selectedValidators}
-              setSelectedValidators={setSelectedValidators}
-              isDenyList={isDenyList}
-              setIsDenyList={setIsDenyList}
+              selectedValidators={selectedRedelegateValidators}
+              setSelectedValidators={setSelectedRedelegateValidators}
+              isDenyList={isDenyRedelegateList}
+              setIsDenyList={setIsDenyRedelegateList}
               toggle={() => setRedelegateAdvanced((prevState) => !prevState)}
             />
           );

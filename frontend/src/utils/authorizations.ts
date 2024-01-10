@@ -98,8 +98,8 @@ export const grantAuthzFormDefaultValues = () => {
     unjail: { expiration: expiration },
     send: { expiration: expiration, spend_limit: '' },
     delegate: { expiration: expiration, max_tokens: '' },
-    undelegate: { expiration: expiration },
-    redelegate: { expiration: expiration },
+    undelegate: { expiration: expiration, max_tokens: '' },
+    redelegate: { expiration: expiration, max_tokens: '' },
   };
 };
 export function getTypeURLName(url: string) {
