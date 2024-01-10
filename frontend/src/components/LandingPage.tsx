@@ -49,6 +49,13 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
           console.log('network----', i)
           const chainId: string = networks[i].config.chainId;
           await window.ethereum.enable(chainId);
+
+          const account = await window.ethereum.request({
+            method: 'eth_requestAccounts',
+          })
+
+          console.log('accounts====', account)
+
           const offlineSigner = new CosmjsOfflineSigner(chainId);
           const accounts = await offlineSigner.getAccounts();
           console.log('accounts', accounts)
