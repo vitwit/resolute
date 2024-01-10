@@ -38,7 +38,7 @@ const DepositPopup = ({
   onClose: () => void;
   networkLogo: string;
 }) => {
-  console.log(denom);
+  
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const allChainInfo = networks[chainID];
 

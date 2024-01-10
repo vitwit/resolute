@@ -255,7 +255,6 @@ const useSortedAssets = (
         }
 
         if (asset && filterAsset(asset, options)) {
-          console.log(asset);
           sortedAssets = [...sortedAssets, asset];
         }
       });
