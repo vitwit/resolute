@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { Tooltip } from '@mui/material';
 import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
 import DialogAuthzGrants from './DialogAuthzGrants';
