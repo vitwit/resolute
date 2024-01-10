@@ -102,7 +102,7 @@ const StakeAuthzForm = ({
               rules={{
                 validate: (value) => {
                   const amount = Number(value);
-                  if (value.length && (isNaN(amount) || amount <= 0))
+                  if (value?.length && (isNaN(amount) || amount <= 0))
                     return 'Invalid Amount';
                 },
               }}

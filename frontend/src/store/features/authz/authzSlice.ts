@@ -5,6 +5,12 @@ import authzService from './service';
 import { TxStatus } from '../../../types/enums';
 import { cloneDeep } from 'lodash';
 import { getAddressByPrefix } from '@/utils/address';
+import { signAndBroadcast } from '@/utils/signing';
+import { GAS_FEE } from '@/utils/constants';
+import { NewTransaction } from '@/utils/transaction';
+import { addTransactions } from '../transactionHistory/transactionHistorySlice';
+import { setTxAndHash } from '../common/commonSlice';
+import { AxiosError } from 'axios';
 
 interface ChainAuthz {
   grantsToMe: Authorization[];
@@ -104,6 +110,57 @@ export const getGrantsByMe = createAsyncThunk(
     return {
       data: response.data,
     };
+  }
+);
+
+export const txCreateAuthzGrant = createAsyncThunk(
+  'authz/create-grant',
+  async (
+    data: TxGrantAuthzInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        data.msgs,
+        GAS_FEE,
+        '',
+        `${data.feeAmount}${data.denom}`,
+        data.basicChainInfo.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      const tx = NewTransaction(
+        result,
+        data.msgs,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
+          transactions: [tx],
+        })
+      );
+
+      dispatch(
+        setTxAndHash({
+          tx,
+          hash: tx.transactionHash,
+        })
+      );
+
+      if (result?.code === 0) {
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.response);
+    }
   }
 );
 
@@ -224,6 +281,20 @@ export const authzSlice = createSlice({
             action.error.message ||
             'An error occurred while fetching authz grants by me',
         };
+      });
+
+    builder
+      .addCase(txCreateAuthzGrant.pending, (state, action) => {
+        const { chainID } = action.meta.arg.basicChainInfo;
+        state.chains[chainID].tx.status = TxStatus.PENDING;
+      })
+      .addCase(txCreateAuthzGrant.fulfilled, (state, action) => {
+        const { chainID } = action.meta.arg.basicChainInfo;
+        state.chains[chainID].tx.status = TxStatus.IDLE;
+      })
+      .addCase(txCreateAuthzGrant.rejected, (state, action) => {
+        const { chainID } = action.meta.arg.basicChainInfo;
+        state.chains[chainID].tx.status = TxStatus.REJECTED;
       });
   },
 });

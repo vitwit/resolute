@@ -3,6 +3,7 @@ import useGetChainInfo from './useGetChainInfo';
 import { MAP_TXN_MSG_TYPES } from '@/utils/authorizations';
 import { getAddressByPrefix } from '@/utils/address';
 import { AuthzStakeGrantMsg } from '@/txns/authz/grant';
+import { amountToMinimalValue } from '@/utils/util';
 
 interface ChainGrants {
   chainID: string;
@@ -31,7 +32,7 @@ const useGetGrantAuthzMsgs = () => {
 
     selectedChains.forEach((chainID) => {
       const { address: granterAddress, prefix } = getChainInfo(chainID);
-      const { minimalDenom } = getDenomInfo(chainID);
+      const { minimalDenom, decimals } = getDenomInfo(chainID);
       const msgs: Msg[] = [];
       const sendAuthz = 'send';
       const stakeAuthzs = ['delegate', 'undelegate', 'redelegate'];
@@ -48,7 +49,7 @@ const useGetGrantAuthzMsgs = () => {
             granterAddress,
             grantee,
             minimalDenom,
-            Number(grant.spend_limit),
+            amountToMinimalValue(Number(grant.spend_limit), decimals),
             expiration
           );
           msgs.push(msg);
@@ -64,10 +65,13 @@ const useGetGrantAuthzMsgs = () => {
               granter: granterAddress,
               grantee: grantee,
               stakeAuthzType: MAP_STAKE_AUTHZ_TYPE[grant.msg],
-              allowList: grant.isDenyList ? [] : grant.validators_list,
-              denyList: grant.isDenyList ? grant.validators_list : [],
+              allowList: grant.isDenyList ? undefined : grant.validators_list,
+              denyList: grant.isDenyList ? grant.validators_list : undefined,
               denom: minimalDenom,
-              maxTokens: grant?.max_tokens,
+              maxTokens: amountToMinimalValue(
+                Number(grant?.max_tokens),
+                decimals
+              ).toString(),
             });
             msgs.push(msg);
           } else {

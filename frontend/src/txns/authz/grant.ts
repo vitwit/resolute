@@ -7,6 +7,7 @@ import { GenericAuthorization } from 'cosmjs-types/cosmos/authz/v1beta1/authz';
 import {
   StakeAuthorization,
   AuthorizationType,
+  StakeAuthorization_Validators,
 } from 'cosmjs-types/cosmos/staking/v1beta1/authz';
 
 const msgAuthzGrantTypeUrl = '/cosmos.authz.v1beta1.MsgGrant';
@@ -118,21 +119,39 @@ export function AuthzStakeGrantMsg({
     seconds: BigInt(expSec),
   });
 
+  const allow_list = StakeAuthorization_Validators.encode(
+    StakeAuthorization_Validators.fromPartial({
+      address: allowList,
+    })
+  ).finish();
+  const deny_list = StakeAuthorization_Validators.encode(
+    StakeAuthorization_Validators.fromPartial({
+      address: denyList,
+    })
+  ).finish();
   const stakeAuthValue = StakeAuthorization.encode(
     StakeAuthorization.fromPartial({
       authorizationType: stakeAuthzType,
-      allowList: allowList,
-      denyList: denyList,
-      maxTokens: Coin.fromPartial({
-        amount: maxTokens,
-        denom: denom,
-      }),
+      allowList: allowList?.length
+        ? StakeAuthorization_Validators.decode(allow_list)
+        : undefined,
+      denyList: denyList?.length
+        ? StakeAuthorization_Validators.decode(deny_list)
+        : undefined,
+      maxTokens: maxTokens
+        ? Coin.fromPartial({
+            amount: maxTokens,
+            denom: denom,
+          })
+        : undefined,
     })
   ).finish();
+  console.log('here....');
+  console.log(StakeAuthorization.decode(stakeAuthValue));
   const grantValue = MsgGrant.fromPartial({
     grant: {
       authorization: {
-        typeUrl: '/cosmos.bank.v1beta1.StakeAuthorization',
+        typeUrl: '/cosmos.staking.v1beta1.StakeAuthorization',
         value: stakeAuthValue,
       },
       expiration: exp,

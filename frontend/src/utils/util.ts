@@ -390,3 +390,7 @@ export const shortenName = (name: string, maxLength: number): string =>
 export const convertToSnakeCase = (name: string) => {
   return name.toLowerCase().replace(' ', '_') || '';
 };
+
+export function amountToMinimalValue(amount: number, coinDecimals: number) {
+  return Number(amount) * 10 ** coinDecimals;
+}

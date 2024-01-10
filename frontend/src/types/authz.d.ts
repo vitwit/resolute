@@ -60,16 +60,10 @@ interface Grant {
   validators_list?: string[];
 }
 
-// interface SendGrant {
-//   msg: string;
-//   spend_limit: string;
-//   expiration: Date;
-// }
-
-// interface StakeGrant {
-//   msg: string;
-//   max_tokens?: string;
-//   isDenyList: boolean;
-//   validators_list: string[];
-//   expiration: Date;
-// }
+interface TxGrantAuthzInputs {
+  basicChainInfo: BasicChainInfo;
+  msgs: Msg[];
+  denom: string;
+  feeAmount: number;
+  feegranter: string;
+}

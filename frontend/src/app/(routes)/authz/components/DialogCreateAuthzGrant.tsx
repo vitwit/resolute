@@ -1,4 +1,4 @@
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import {
   customMUITextFieldStyles,
@@ -25,6 +25,8 @@ import ExpirationField from './ExpirationField';
 import SendAuthzForm from './SendAuthzForm';
 import StakeAuthzForm from './StakeAuthzForm';
 import useGetGrantAuthzMsgs from '@/custom-hooks/useGetGrantAuthzMsgs';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { txCreateAuthzGrant } from '@/store/features/authz/authzSlice';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
@@ -38,6 +40,8 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   props
 ) => {
   const { open, onClose } = props;
+  const dispatch = useAppDispatch();
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -132,6 +136,18 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
       isDenyList: isDenyList,
       validators_list: selectedValidators,
     };
+    fieldValues['undelegate'] = {
+      expiration: fieldValues['undelegate'].expiration,
+      max_tokens: fieldValues['undelegate'].max_tokens,
+      isDenyList: isDenyList,
+      validators_list: selectedValidators,
+    };
+    fieldValues['redelegate'] = {
+      expiration: fieldValues['redelegate'].expiration,
+      max_tokens: fieldValues['redelegate'].max_tokens,
+      isDenyList: isDenyList,
+      validators_list: selectedValidators,
+    };
     const msgsList: string[] = selectedMsgs.reduce((list: string[], msg) => {
       list.push(convertToSnakeCase(msg));
       return list;
@@ -140,15 +156,29 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     msgsList.forEach((msg) => {
       grantsList.push({ msg: msg, ...fieldValues[msg] });
     });
-    console.log(fieldValues);
-    console.log(grantsList);
-    const m = getGrantAuthzMsgs({
+    const { chainWiseGrants } = getGrantAuthzMsgs({
       grantsList,
       selectedChains,
       granteeAddress,
     });
-    console.log('---------');
-    console.log(m);
+    chainWiseGrants.forEach((chain) => {
+      const chainID = chain.chainID;
+      const msgs = chain.msgs;
+      const basicChainInfo = getChainInfo(chainID);
+      const { minimalDenom, decimals } = getDenomInfo(chainID);
+      const { feeAmount: avgFeeAmount } = basicChainInfo;
+      const feeAmount = avgFeeAmount * 10 ** decimals;
+
+      dispatch(
+        txCreateAuthzGrant({
+          basicChainInfo: basicChainInfo,
+          msgs: msgs,
+          denom: minimalDenom,
+          feeAmount: feeAmount,
+          feegranter: '',
+        })
+      );
+    });
   };
 
   const [sendAdvanced, setSendAdvanced] = useState(false);
@@ -293,7 +323,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                         }}
                         className="text-[14px] leading-[20px] underline underline-offset-2 tracking-[0.56px]"
                       >
-                        View all
+                        {viewAllChains ? 'View less' : 'View all'}
                       </button>
                     </div>
                   </div>
@@ -370,7 +400,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                       }}
                       className="text-[14px] leading-[20px] underline underline-offset-2 tracking-[0.56px]"
                     >
-                      View all
+                      {viewAllSelectedChains ? 'View less' : 'View all'}
                     </button>
                   </div>
                 </div>
