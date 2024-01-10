@@ -1,5 +1,6 @@
 import Axios, { AxiosResponse } from 'axios';
 import { convertPaginationToParams, cleanURL } from '@/utils/util';
+import { GetGrantsResponse } from '@/types/authz';
 
 const grantToMeURL = '/cosmos/authz/v1beta1/grants/grantee/';
 const grantByMeURL = '/cosmos/authz/v1beta1/grants/granter/';

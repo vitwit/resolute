@@ -5,6 +5,7 @@ import authzService from './service';
 import { TxStatus } from '../../../types/enums';
 import { cloneDeep } from 'lodash';
 import { getAddressByPrefix } from '@/utils/address';
+import { Authorization, GetGrantsInputs } from '@/types/authz';
 
 interface ChainAuthz {
   grantsToMe: Authorization[];
@@ -155,7 +156,7 @@ export const authzSlice = createSlice({
         const addressMapping: Record<string, Authorization[]> = {};
         const allChainsAddressToGrants = state.AddressToChainAuthz;
 
-        grants.forEach((grant) => {
+        grants.forEach((grant: Authorization) => {
           const granter = grant.granter;
           const cosmosAddress = getAddressByPrefix(granter, 'cosmos');
           if (!addressMapping[granter]) addressMapping[granter] = [];
@@ -203,7 +204,7 @@ export const authzSlice = createSlice({
         const grants = action.payload.data.grants;
         state.chains[chainID].grantsByMe = grants;
         const addressMapping: Record<string, Authorization[]> = {};
-        grants.forEach((grant) => {
+        grants.forEach((grant: Authorization) => {
           const granter = grant.granter;
           if (!addressMapping[granter]) addressMapping[granter] = [];
           addressMapping[granter] = [...addressMapping[granter], grant];
