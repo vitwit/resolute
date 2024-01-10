@@ -43,10 +43,11 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   };
 
   async function requestPermissions() {
-    window.ethereum
+   await window.ethereum
       .request({
         method: 'wallet_requestPermissions',
-        params: [{ eth_accounts: {} }],
+        params: [{ eth_accounts: {
+        } }],
       })
       /* eslint-disable @typescript-eslint/no-explicit-any */
       .then((permissions: any) => {
