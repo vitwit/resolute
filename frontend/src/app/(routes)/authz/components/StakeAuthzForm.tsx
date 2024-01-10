@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { getAllValidators } from '@/store/features/staking/stakeSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { Validator } from '@/types/staking';
 
 const StakeAuthzForm = ({
   control,
@@ -39,16 +40,18 @@ const StakeAuthzForm = ({
   setIsDenyList: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const dispatch = useAppDispatch();
-  const chainID = selectedChains[0];
+  const chainID = selectedChains.length ? selectedChains[0] : '';
   const { getChainInfo } = useGetChainInfo();
   const { baseURL } = getChainInfo(chainID);
   const validators = useAppSelector(
     (state: RootState) => state.staking.chains?.[chainID]?.validators
   );
   const [data, setData] = useState<{ label: string; value: string }[]>([]);
-
+  const [allValidators, setAllValidators] = useState<Record<string, Validator>>(
+    {}
+  );
   useEffect(() => {
-    if (selectedChains.length === 1) {
+    if (selectedChains.length === 1 && chainID) {
       dispatch(getAllValidators({ baseURL, chainID }));
     }
   }, [chainID]);
@@ -89,6 +92,10 @@ const StakeAuthzForm = ({
     } = e;
     setSelectedValidators(typeof value === 'string' ? value.split(',') : value);
   };
+
+  useEffect(() => {
+    setAllValidators({ ...validators?.active, ...validators?.inactive });
+  }, [validators]);
 
   return (
     <div className="space-y-2">
@@ -160,6 +167,13 @@ const StakeAuthzForm = ({
                   ))}
                 </Select>
               </FormControl>
+              <div className="mt-4 flex flex-wrap gap-4">
+                {selectedValidators.map((valAddress) => (
+                  <div key={valAddress} className="moniker-name-chip">
+                    {allValidators?.[valAddress]?.description?.moniker || '-'}
+                  </div>
+                ))}
+              </div>
             </div>
           </>
         )}

@@ -31,3 +31,7 @@
 .grant-authz-form {
   @apply rounded-2xl bg-[#FFFFFF0D] p-6;
 }
+
+.moniker-name-chip {
+  @apply rounded-2xl font-light text-[14px] bg-[#FFFFFF0D] px-3 py-2 max-w-[120px] truncate;
+}

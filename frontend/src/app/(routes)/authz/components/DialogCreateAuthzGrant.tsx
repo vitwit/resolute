@@ -140,6 +140,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
       setFormValidationError('Atleast one chain must be selected');
       return false;
     } else if (!validateAddress(granteeAddress)) {
+      setFormValidationError('');
       return false;
     } else if (!selectedMsgs.length) {
       setFormValidationError('Atleast one message must be selected');
@@ -149,8 +150,23 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     return true;
   };
 
+  const resetStakeForm = () => {
+    setSelectedDelegateValidators([]);
+    setSelectedUndelegateValidators([]);
+    setSelectedRedelegateValidators([]);
+    setIsDenyDelegateList(false);
+    setIsDenyUndelegateList(false);
+    setIsDenyRedelegateList(false);
+    setDelegateAdvanced(false);
+    setUndelegateAdvanced(false);
+    setRedelegateAdvanced(false);
+  };
+
   const onNext = () => {
     setDisplayedSelectedChains(selectedChains?.slice(0, 5) || []);
+    if (selectedChains.length > 1) {
+      resetStakeForm();
+    }
     if (validateForm()) {
       setStep(STEP_TWO);
     }
@@ -319,7 +335,9 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
           </div>
           <div className="mb-[72px] px-10">
             <div className="space-y-4">
-              <h2 className="text-[20px] font-bold">Create Grant</h2>
+              <h2 className="text-[20px] font-bold">
+                Create Grant : Step {step}
+              </h2>
               <div className="text-[14px]">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -407,13 +425,14 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
             ) : (
               <div className="space-y-10">
                 <div className="space-y-4">
-                  <div className="text-[16px] flex gap-4 items-center">
+                  <div className="text-[16px] flex gap-2 items-center">
                     <span>You are giving Authz access to</span>
                     <CommonCopy
-                      message={shortenAddress(granteeAddress, 30)}
-                      style="h-8"
+                      message={shortenAddress(granteeAddress, 40)}
+                      style="h-8 truncate"
                       plainIcon={true}
                     />
+                    <span>on below networks</span>
                   </div>
                   <div className="networks-list">
                     {displayedSelectedChains.map((chainID, index) => (
@@ -428,21 +447,24 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                       />
                     ))}
                   </div>
-                  <div className="text-center">
-                    <button
-                      onClick={() => {
-                        setViewAllSelectedChains((prevState) => !prevState);
-                      }}
-                      className="text-[14px] leading-[20px] underline underline-offset-2 tracking-[0.56px]"
-                    >
-                      {viewAllSelectedChains ? 'View less' : 'View all'}
-                    </button>
-                  </div>
+                  {selectedChains.length > 5 && (
+                    <div className="text-center">
+                      <button
+                        onClick={() => {
+                          setViewAllSelectedChains((prevState) => !prevState);
+                        }}
+                        className="text-[14px] leading-[20px] underline underline-offset-2 tracking-[0.56px]"
+                      >
+                        {viewAllSelectedChains ? 'View less' : 'View all'}
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <form
                   onSubmit={handleSubmit((e) => onSubmit(e))}
                   id="msgs-form"
                 >
+                  <div className="font-medium py-[6px] mb-4">Permissions</div>
                   <div className="space-y-6">
                     {selectedMsgs.map((msg) => (
                       <div className="grant-authz-form" key={msg}>
@@ -470,6 +492,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                   </div>
                 </div>
                 <button
+                  type="button"
                   className="primary-custom-btn absolute right-0 bottom-0"
                   onClick={() => {
                     onNext();

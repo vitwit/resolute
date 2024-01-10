@@ -13,4 +13,13 @@ export const customMUITextFieldStyles = {
   '& .MuiOutlinedInput-notchedOutline': {
     border: 'none',
   },
+  '& .MuiOutlinedInput-root': {
+    border: '1px solid transparent',
+    borderRadius: '16px',
+    color: 'white',
+  },
+  '& .Mui-focused': {
+    border: '1px solid #ffffff4a',
+    borderRadius: '16px',
+  },
 };
