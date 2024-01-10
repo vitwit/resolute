@@ -18,6 +18,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import WalletPopup from './WalletPopup';
 import CustomParticles from './Particles';
 import Loading from './Loading';
+declare let window: WalletWindow;
 
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
@@ -47,6 +48,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
         for (let i = 0; i < networks.length; i++) {
           console.log('network----', i)
           const chainId: string = networks[i].config.chainId;
+          await window.ethereum.enable(chainId);
           const offlineSigner = new CosmjsOfflineSigner(chainId);
           const accounts = await offlineSigner.getAccounts();
           console.log('accounts', accounts)
