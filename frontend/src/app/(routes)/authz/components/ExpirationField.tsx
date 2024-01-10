@@ -34,6 +34,8 @@ const ExpirationField = ({
                 {...props}
                 sx={expirationFieldStyles}
                 error={!!error}
+                onFocus={(event) => (event.target.readOnly = true)}
+                onBlur={(event) => (event.target.readOnly = false)}
               />
             )}
             value={value}
