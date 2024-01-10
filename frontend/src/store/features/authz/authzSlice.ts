@@ -9,6 +9,7 @@ import { signAndBroadcast } from '@/utils/signing';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { NewTransaction } from '@/utils/transaction';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
+import { GAS_FEE } from '@/utils/constants';
 
 interface ChainAuthz {
   grantsToMe: Authorization[];
@@ -123,7 +124,7 @@ export const txAuthzExec = createAsyncThunk(
         data.basicChainInfo.aminoConfig,
         data.basicChainInfo.prefix,
         data.msgs,
-        860000,
+        GAS_FEE,
         data.metaData,
         `${data.basicChainInfo.feeAmount}${data.feeDenom}`,
         data.basicChainInfo.rest,
