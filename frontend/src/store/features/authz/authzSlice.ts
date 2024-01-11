@@ -5,19 +5,11 @@ import authzService from './service';
 import { TxStatus } from '../../../types/enums';
 import { cloneDeep } from 'lodash';
 import { getAddressByPrefix } from '@/utils/address';
-import {
-  Authorization,
-  GetGrantsInputs,
-  txAuthzExecInputs,
-  TxGrantAuthzInputs,
-  TxGrantMultiChainAuthzInputs,
-} from '@/types/authz';
 import { signAndBroadcast } from '@/utils/signing';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { NewTransaction } from '@/utils/transaction';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { GAS_FEE } from '@/utils/constants';
-import { AuthzRevokeMsg } from '@/txns/authz';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { AxiosError } from 'axios';
 
@@ -52,9 +44,7 @@ interface GetAuthRevokeInputs {
   basicChainInfo: BasicChainInfo;
   feegranter: string;
   denom: string;
-  granter: string;
-  grantee: string;
-  typeURL: string;
+  msgs: Msg[];
   feeAmount: number;
 }
 const defaultState: ChainAuthz = {
@@ -272,12 +262,11 @@ export const txAuthzRevoke = createAsyncThunk(
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     try {
-      const msg = AuthzRevokeMsg(data.granter, data.grantee, data.typeURL);
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
         data.basicChainInfo.prefix,
-        [msg],
+        data.msgs,
         860000,
         '',
         `${data.feeAmount}${data.denom}`,

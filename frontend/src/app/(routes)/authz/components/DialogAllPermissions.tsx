@@ -1,33 +1,91 @@
-import { Authorization } from '@/types/authz';
-import { getTypeURLName } from '@/utils/authorizations';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import useGetAuthzRevokeMsgs from '@/custom-hooks/useGetAuthzRevokeMsgs';
+import { txAuthzRevoke } from '@/store/features/authz/authzSlice';
+import { RootState } from '@/store/store';
+import { TxStatus } from '@/types/enums';
+import {
+  getAllTypeURLsFromAuthorization,
+  getTypeURLFromAuthorization,
+  getTypeURLName,
+} from '@/utils/authorizations';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { getLocalTime } from '@/utils/dataTime';
 import { parseSpendLimit } from '@/utils/denom';
-import { Dialog, DialogContent } from '@mui/material';
+import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface AuthorizationInfoProps {
   open: boolean;
-
   onClose: () => void;
   authorization: Authorization[];
   displayDenom: string;
   decimal: number;
+  chainID: string;
+  granter: string;
+  grantee: string;
 }
 
-const renderAuthorization = (
-  authz: Authorization,
-  displayDenom: string,
-  decimal: number
-) => {
+interface RenderAuthorizationProps {
+  authz: Authorization;
+  displayDenom: string;
+  decimal: number;
+  chainID: string;
+  granter: string;
+  grantee: string;
+  permissionIndex: number;
+  changeMsgIndex: (index: number) => void;
+  selectedMsgIndex: number;
+  setRevokeAllMsgs: () => void;
+}
+
+const RenderAuthorization = ({
+  authz,
+  chainID,
+  changeMsgIndex,
+  decimal,
+  displayDenom,
+  grantee,
+  granter,
+  permissionIndex,
+  selectedMsgIndex,
+  setRevokeAllMsgs,
+}: RenderAuthorizationProps) => {
   const { authorization, expiration } = authz;
   const stakeAuthzs = {
     AUTHORIZATION_TYPE_REDELEGATE: 'Redelegate',
     AUTHORIZATION_TYPE_DELEGATE: 'Delegate',
     AUTHORIZATION_TYPE_UNDELEGATE: 'Undelegate',
   };
+
+  const dispatch = useAppDispatch();
+  const { txRevokeAuthzInputs } = useGetAuthzRevokeMsgs({
+    granter,
+    grantee,
+    chainID,
+    typeURLs: [getTypeURLFromAuthorization(authz)],
+  });
+  const txRevoke = (permissionIndex: number) => {
+    setRevokeAllMsgs();
+    changeMsgIndex(permissionIndex);
+    const { basicChainInfo, denom, feeAmount, feegranter, msgs } =
+      txRevokeAuthzInputs;
+    dispatch(
+      txAuthzRevoke({
+        basicChainInfo,
+        denom,
+        feeAmount,
+        feegranter,
+        msgs,
+      })
+    );
+  };
+  const loading = useAppSelector(
+    (state: RootState) => state.authz.chains?.[chainID].tx.status
+  );
+  const isSelected = selectedMsgIndex === permissionIndex;
+
   switch (authorization['@type']) {
     case '/cosmos.bank.v1beta1.SendAuthorization':
       return (
@@ -36,7 +94,16 @@ const renderAuthorization = (
             <div className="flex items-center text-white text-base not-italic font-normal leading-[normal]">
               Send
             </div>
-            <button className="create-grant-btn">Revoke</button>
+            <button
+              onClick={() => txRevoke(permissionIndex)}
+              className="create-grant-btn"
+            >
+              {isSelected && loading === TxStatus.PENDING ? (
+                <CircularProgress size={20} sx={{ color: 'white' }} />
+              ) : (
+                'Revoke'
+              )}
+            </button>
           </div>
           <div className=" flex justify-between w-full">
             <div className="flex space-y-4 flex-col">
@@ -66,7 +133,16 @@ const renderAuthorization = (
             <div className="flex items-center text-white text-base not-italic font-normal leading-[normal]">
               {getTypeURLName(authorization.msg)}
             </div>
-            <button className="create-grant-btn">Revoke</button>
+            <button
+              onClick={() => txRevoke(permissionIndex)}
+              className="create-grant-btn h-10 w-[140px]"
+            >
+              {isSelected && loading === TxStatus.PENDING ? (
+                <CircularProgress size={20} sx={{ color: 'white' }} />
+              ) : (
+                'Revoke'
+              )}
+            </button>
           </div>
           <div className="flex space-y-4 flex-col">
             <div className="flex items-center authz-small-text">Expiry</div>
@@ -83,11 +159,20 @@ const renderAuthorization = (
             <div className="flex items-center text-white text-base font-normal leading-[normal]">
               {stakeAuthzs[authorization.authorization_type]}
             </div>
-            <button className="create-grant-btn">Revoke</button>
+            <button
+              onClick={() => txRevoke(permissionIndex)}
+              className="create-grant-btn"
+            >
+              {isSelected && loading === TxStatus.PENDING ? (
+                <CircularProgress size={20} sx={{ color: 'white' }} />
+              ) : (
+                'Revoke'
+              )}
+            </button>
           </div>
           <div className="flex w-full justify-between">
-            <div className='space-y-4'>
-              <div className='authz-small-text'>Spend Limit</div>
+            <div className="space-y-4">
+              <div className="authz-small-text">Spend Limit</div>
 
               {authorization.max_tokens !== null && (
                 <div className="">
@@ -98,11 +183,11 @@ const renderAuthorization = (
               )}
             </div>
             <div>
-              <div className='space-y-4'>
-              <div className='authz-small-text'>Expiry</div>
-              <div className="">
-                {expiration ? getLocalTime(expiration) : '-'}
-              </div>
+              <div className="space-y-4">
+                <div className="authz-small-text">Expiry</div>
+                <div className="">
+                  {expiration ? getLocalTime(expiration) : '-'}
+                </div>
               </div>
             </div>
           </div>
@@ -141,11 +226,53 @@ const renderAuthorization = (
 };
 
 export function AuthorizationInfo(props: AuthorizationInfoProps) {
-  const { onClose, open, displayDenom, decimal } = props;
+  const {
+    onClose,
+    open,
+    displayDenom,
+    decimal,
+    chainID,
+    authorization,
+    grantee,
+    granter,
+  } = props;
 
+  const dispatch = useAppDispatch();
   const handleClose = () => {
     onClose();
   };
+  const [selectedMsgIndex, setSelectedMsgIndex] = useState(NaN);
+  const [revokeAllMsgs, setRevokeAllMsgs] = useState(false);
+
+  const changeMsgIndex = (index: number) => {
+    setSelectedMsgIndex(index);
+  };
+
+  const { txRevokeAuthzInputs } = useGetAuthzRevokeMsgs({
+    granter,
+    grantee,
+    chainID,
+    typeURLs: getAllTypeURLsFromAuthorization(authorization),
+  });
+  const { basicChainInfo, denom, feeAmount, feegranter, msgs } =
+    txRevokeAuthzInputs;
+  const txRevoke = () => {
+    setSelectedMsgIndex(NaN);
+    setRevokeAllMsgs(true);
+    dispatch(
+      txAuthzRevoke({
+        basicChainInfo,
+        denom,
+        feeAmount,
+        feegranter,
+        msgs,
+      })
+    );
+  };
+
+  const loading = useAppSelector(
+    (state: RootState) => state.authz.chains?.[chainID].tx.status
+  );
 
   return (
     <Dialog
@@ -172,16 +299,35 @@ export function AuthorizationInfo(props: AuthorizationInfoProps) {
 
           <div className="gap-16 px-10  space-y-6">
             <div className="flex justify-between">
-              {' '}
               <div className="flex items-center text-white text-xl not-italic font-bold leading-[normal]">
                 All Permissions
               </div>
-              <button className="create-grant-btn">Revoke All</button>
+              <button
+                onClick={() => txRevoke()}
+                className="create-grant-btn h-10 w-[166px]"
+              >
+                {revokeAllMsgs && loading === TxStatus.PENDING ? (
+                  <CircularProgress size={20} sx={{ color: 'white' }} />
+                ) : (
+                  'Revoke All'
+                )}
+              </button>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {props.authorization.map((permission, permissionIndex) => (
+              {authorization.map((permission, permissionIndex) => (
                 <div key={permissionIndex}>
-                  {renderAuthorization(permission, displayDenom, decimal)}
+                  <RenderAuthorization
+                    authz={permission}
+                    chainID={chainID}
+                    changeMsgIndex={changeMsgIndex}
+                    decimal={decimal}
+                    displayDenom={displayDenom}
+                    grantee={grantee}
+                    granter={granter}
+                    permissionIndex={permissionIndex}
+                    selectedMsgIndex={selectedMsgIndex}
+                    setRevokeAllMsgs={() => setRevokeAllMsgs(false)}
+                  />
                 </div>
               ))}
             </div>

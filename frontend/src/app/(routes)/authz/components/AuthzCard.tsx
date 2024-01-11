@@ -11,7 +11,6 @@ import {
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { setError } from '@/store/features/common/commonSlice';
 import DialogRevoke from './DialogRevoke';
-import { Authorization } from '@/types/authz';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { resetTxStatus } from '@/store/features/authz/authzSlice';
 
@@ -127,6 +126,9 @@ const AuthzCard = ({
         authorization={grants}
         displayDenom={displayDenom}
         decimal={decimals}
+        chainID={chainID}
+        granter={granter}
+        grantee={grantee}
       />
     </div>
   );

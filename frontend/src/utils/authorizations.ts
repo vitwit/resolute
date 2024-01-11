@@ -1,5 +1,3 @@
-import { Authorization } from '@/types/authz';
-
 interface AuthzMenuItem {
   txn: string;
   typeURL: string;
@@ -163,6 +161,16 @@ export function getTypeURLFromAuthorization(
   }
 }
 
+export const getAllTypeURLsFromAuthorization = (
+  authorizations: Authorization[]
+): string[] => {
+  const typeURLs: string[] = [];
+  authorizations.forEach((authorization) => {
+    typeURLs.push(getTypeURLFromAuthorization(authorization));
+  });
+  return typeURLs;
+};
+
 export const GENRIC_GRANTS = [
   'grant_authz',
   'revoke_authz',
@@ -175,4 +183,5 @@ export const GENRIC_GRANTS = [
   'withdraw_commission',
   'unjail',
 ];
+
 export const STAKE_GRANTS = ['delegate', 'undelegate', 'redelegate'];

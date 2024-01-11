@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import useGetAuthzRevokeMsgs from '@/custom-hooks/useGetAuthzRevokeMsgs';
 
 import { txAuthzRevoke } from '@/store/features/authz/authzSlice';
 import { RootState } from '@/store/store';
@@ -23,21 +23,22 @@ interface DialogRevokeProps {
 const DialogRevoke: React.FC<DialogRevokeProps> = (props) => {
   const { open, onClose, chainID, grantee, granter, typeURL } = props;
   const dispatch = useAppDispatch();
-  const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const basicChainInfo = getChainInfo(chainID);
-  const { decimals, minimalDenom } = getDenomInfo(chainID);
-  const { feeAmount: avgFeeAmount } = basicChainInfo;
-  const feeAmount = avgFeeAmount * 10 ** decimals;
+  const { txRevokeAuthzInputs } = useGetAuthzRevokeMsgs({
+    granter,
+    grantee,
+    chainID,
+    typeURLs: [typeURL],
+  });
+  const { basicChainInfo, denom, feeAmount, feegranter, msgs } =
+    txRevokeAuthzInputs;
   const txRevoke = () => {
     dispatch(
       txAuthzRevoke({
-        basicChainInfo: basicChainInfo,
-        denom: minimalDenom,
-        feeAmount: feeAmount,
-        feegranter: '',
-        grantee: grantee,
-        granter: granter,
-        typeURL: typeURL,
+        basicChainInfo,
+        denom,
+        feeAmount,
+        feegranter,
+        msgs,
       })
     );
   };

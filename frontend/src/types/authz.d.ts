@@ -1,7 +1,4 @@
-import { Grant } from 'cosmjs-types/cosmos/authz/v1beta1/authz';
-
 interface Authorization {
-  grant(grant: Grant): string;
   granter: string;
   grantee: string;
   expiration: string | null;

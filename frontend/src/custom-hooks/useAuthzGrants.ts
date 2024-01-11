@@ -1,4 +1,3 @@
-import { AddressGrants, Authorization } from '@/types/authz';
 import { useAppDispatch, useAppSelector } from './StateHooks';
 import { exitAuthzMode } from '@/store/features/authz/authzSlice';
 import { resetAuthz as resetBankAuthz } from '@/store/features/bank/bankSlice';
