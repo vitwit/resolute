@@ -1,5 +1,9 @@
 import { AddressGrants, Authorization } from '@/types/authz';
-import { useAppSelector } from './StateHooks';
+import { useAppDispatch, useAppSelector } from './StateHooks';
+import { exitAuthzMode } from '@/store/features/authz/authzSlice';
+import { resetAuthz as resetBankAuthz } from '@/store/features/bank/bankSlice';
+import { resetAuthz as resetRewardsAuthz } from '@/store/features/distribution/distributionSlice';
+import { resetAuthz as resetStakingAuthz } from '@/store/features/staking/stakeSlice';
 
 export interface ChainAuthz {
   chainID: string;
@@ -16,6 +20,7 @@ const useAuthzGrants = () => {
   const addressToChainAuthz = useAppSelector(
     (state) => state.authz.AddressToChainAuthz
   );
+  const dispatch = useAppDispatch();
 
   const getInterChainGrants = () => {
     const interChainGrants: InterChainAuthzGrants[] = [];
@@ -34,20 +39,20 @@ const useAuthzGrants = () => {
         );
       }
 
-      if (!addressToChainAuthz[address]['cosmoshub-4']) {
+      if (!addressToChainAuthz[address]['cosmoshub-4']?.length) {
         for (const chainID of Object.keys(addressToChainAuthz[address])) {
           if (addressToChainAuthz[address][chainID].length) {
             keyAddress = addressToChainAuthz[address][chainID][0].granter;
-            break;
           }
         }
       }
 
-      interChainGrants.push({
-        cosmosAddress,
-        address: keyAddress,
-        grants: chainAuthzs,
-      });
+      if (chainAuthzs.length)
+        interChainGrants.push({
+          cosmosAddress,
+          address: keyAddress,
+          grants: chainAuthzs,
+        });
     }
 
     return interChainGrants;
@@ -91,7 +96,19 @@ const useAuthzGrants = () => {
     return grants;
   };
 
-  return { getGrantsByMe, getGrantsToMe, getInterChainGrants };
+  const disableAuthzMode = () => {
+    dispatch(resetBankAuthz());
+    dispatch(resetRewardsAuthz());
+    dispatch(resetStakingAuthz());
+    dispatch(exitAuthzMode());
+  };
+
+  return {
+    getGrantsByMe,
+    getGrantsToMe,
+    getInterChainGrants,
+    disableAuthzMode,
+  };
 };
 
 export default useAuthzGrants;

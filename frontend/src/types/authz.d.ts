@@ -58,3 +58,11 @@ interface AddressGrants {
   chainID: string;
   grants: Authorization[];
 }
+
+interface txAuthzExecInputs {
+  basicChainInfo: BasicChainInfo;
+  feeDenom: string;
+  metaData: string;
+  msgs: Msg[];
+  feeGranter?: string;
+}

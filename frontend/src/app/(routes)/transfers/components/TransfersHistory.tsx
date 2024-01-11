@@ -4,6 +4,8 @@ import { RecentTransactions } from '../../(overview)/overview-components/History
 import { TRANSFERS_MSG_FILTERS } from '@/utils/constants';
 import { formatDollarAmount } from '@/utils/util';
 import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import useGetAuthzAssetsAmount from '@/custom-hooks/useGetAuthzAssetsAmount';
 
 const TransfersHistory = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
@@ -24,7 +26,9 @@ const TransfersHistory = ({ chainIDs }: { chainIDs: string[] }) => {
 };
 
 const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const [, available] = useGetAssetsAmount(chainIDs);
+  const [, authzAvailable] = useGetAuthzAssetsAmount(chainIDs);
   return (
     <div>
       <div className="text-white text-center mt-10">
@@ -32,14 +36,16 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
           Available Balance
         </div>
         <span className="text-center text-[32px] not-italic font-bold leading-[normal]">
-          {formatDollarAmount(available)}
+          {isAuthzMode
+            ? formatDollarAmount(authzAvailable)
+            : formatDollarAmount(available)}
         </span>
       </div>
       <div className="flex justify-center gap-6 opacity-0 mt-6">
-        <button className="primary-custom-btn-disabled">&nbsp;&nbsp;Send&nbsp;&nbsp;</button>
         <button className="primary-custom-btn-disabled">
-          Receive
+          &nbsp;&nbsp;Send&nbsp;&nbsp;
         </button>
+        <button className="primary-custom-btn-disabled">Receive</button>
       </div>
     </div>
   );

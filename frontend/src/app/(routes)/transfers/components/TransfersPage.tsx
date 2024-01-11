@@ -6,9 +6,10 @@ import { SINGLE_TAB_TEXT, TRANSFERS_TAB1 } from '@/utils/constants';
 import SingleTransfer from './SingleTransfer';
 import MultiTransfer from './MultiTransfer';
 import useInitBalances from '@/custom-hooks/useInitBalances';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
+import AuthzToast from '@/components/AuthzToast';
 
 export interface TransfersTab {
   current: string;
@@ -16,8 +17,13 @@ export interface TransfersTab {
 }
 const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
-  const [sortedAssets] = useSortedAssets(chainIDs, { showAvailable: true });
+  const [sortedAssets, authzSortedAssets] = useSortedAssets(chainIDs, {
+    showAvailable: true,
+    AuthzSkipIBC: true,
+  });
+
   const [tab, setTab] = useState<TransfersTab>(TRANSFERS_TAB1);
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const changeTab = (tab: TransfersTab) => {
     if (tab === TRANSFERS_TAB1) setTab(TRANSFERS_TAB2);
     else setTab(TRANSFERS_TAB1);
@@ -43,11 +49,11 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
     <div className="w-full flex justify-between max-h-screen text-white flex-1">
       <div className="w-full page-padding overflow-y-scroll flex flex-col flex-1">
         <MainTopNav title="Transfers" />
-
+        <AuthzToast chainIDs={chainIDs} margins='mt-10 mb-4'/> 
         <div className="flex flex-col rounded-2xl bg-[#0e0b26] space-y-6 mt-6 flex-1">
           {tab.current === SINGLE_TAB_TEXT ? (
             <SingleTransfer
-              sortedAssets={sortedAssets}
+              sortedAssets={isAuthzMode ? authzSortedAssets : sortedAssets}
               chainIDs={chainIDs}
               tab={tab}
               handleTabChange={handleTabChange}
