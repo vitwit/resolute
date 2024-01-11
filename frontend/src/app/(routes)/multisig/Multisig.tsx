@@ -24,9 +24,6 @@ const Multisig = () => {
         <button
           className="primary-custom-btn"
           onClick={() => {
-            if (localStorage.getItem('WALLET_NAME') === 'metamask')
-              alert('metamask not supported multisig')
-            else
               document.getElementById('select-network')!.click();
           }}
         >

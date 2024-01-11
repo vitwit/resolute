@@ -82,43 +82,8 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
           // const rpc: string = networks[i].config.rpc
           const snapInstalled = await getSnap();
           if (!snapInstalled) {
-            connectSnap(); // Initiates installation if not already present
+            await connectSnap(); // Initiates installation if not already present
           }
-
-          // await requestPermissions();
-
-          // try {
-          //   await window.ethereum.request({
-          //     method: 'wallet_switchEthereumChain',
-          //     params: [{ chainId: chainId}],
-          //   });
-          //    /* eslint-disable @typescript-eslint/no-explicit-any */
-          // } catch (switchError: any) {
-          //   // This error code indicates that the chain has not been added to MetaMask.
-          //   if (switchError?.code === 4902) {
-          //     try {
-          //       await window.ethereum.request({
-          //         method: 'wallet_addEthereumChain',
-          //         params: [
-          //           {
-          //             chainId: chainId,
-          //             chainName: chainName,
-          //             rpcUrls: [rpc] /* ... */,
-          //           },
-          //         ],
-          //       });
-          //     } catch (addError) {
-          //       // handle "add" error
-          //     }
-          //   }
-          //   // handle other "switch" errors
-          // }
-
-          // const account = await window.ethereum.request({
-          //   method: 'eth_requestAccounts',
-          // })
-
-          // console.log('accounts====', account)
 
           await experimentalSuggestChain(networks[i].config, {force: true})
 
