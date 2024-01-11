@@ -17,6 +17,7 @@ import { txDeposit } from '@/store/features/gov/govSlice';
 import { Controller, useForm } from 'react-hook-form';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { TxStatus } from '@/types/enums';
+import useAuthzExecHelper from '@/custom-hooks/useAuthzExecHelper';
 
 const DepositPopup = ({
   chainID,
@@ -41,12 +42,19 @@ const DepositPopup = ({
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const allChainInfo = networks[chainID];
 
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const authzGranter = useAppSelector((state) => state.authz.authzAddress);
+
   const { getVoteTxInputs } = useGetTxInputs();
+  const { txAuthzDeposit } = useAuthzExecHelper();
   const dispatch = useAppDispatch();
 
   const currency = allChainInfo.network.config.currencies[0];
   const loading = useAppSelector(
     (state: RootState) => state.gov.chains?.[chainID]?.tx?.status
+  );
+  const authzLoading = useAppSelector(
+    (state) => state.authz.chains?.[chainID]?.tx?.status || TxStatus.INIT
   );
 
   const {
@@ -67,6 +75,18 @@ const DepositPopup = ({
     const { aminoConfig, prefix, rest, feeAmount, address, rpc, minimalDenom } =
       getVoteTxInputs(chainID);
     console.log(data);
+
+    if (isAuthzMode) {
+      txAuthzDeposit({
+        grantee: address,
+        proposalId: proposalId,
+        amount: Number(data.amount) * 10 ** currency.coinDecimals,
+        granter: authzGranter,
+        chainID: chainID,
+        metaData: '',
+      });
+      return;
+    }
 
     dispatch(
       txDeposit({
@@ -188,9 +208,13 @@ const DepositPopup = ({
                   <div className="mt-6">
                     <button
                       className="deposit-popup-btn proposal-text-medium"
-                      disabled={loading === TxStatus.PENDING}
+                      disabled={
+                        (!isAuthzMode && loading === TxStatus.PENDING) ||
+                        (isAuthzMode && authzLoading === TxStatus.PENDING)
+                      }
                     >
-                      {loading === TxStatus.PENDING ? (
+                      {(!isAuthzMode && loading === TxStatus.PENDING) ||
+                      (isAuthzMode && authzLoading === TxStatus.PENDING) ? (
                         <CircularProgress size={20} sx={{ color: 'white' }} />
                       ) : (
                         'Deposit'

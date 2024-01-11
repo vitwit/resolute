@@ -90,3 +90,11 @@ interface ChainStatus {
   error: string;
   txHash: string;
 }
+
+interface txAuthzExecInputs {
+  basicChainInfo: BasicChainInfo;
+  feeDenom: string;
+  metaData: string;
+  msgs: Msg[];
+  feeGranter?: string;
+}

@@ -30,6 +30,8 @@ import { setSelectedNetwork } from '@/store/features/common/commonSlice';
 import ProposalProjection from './ProposalProjection';
 import TopNav from '@/components/TopNav';
 import { useRemark } from 'react-remark';
+import AuthzToast from '@/components/AuthzToast';
+import AuthzButton from '@/components/AuthzButton';
 
 const emptyTallyResult = {
   yes: '',
@@ -228,8 +230,11 @@ const ProposalOverviewVote = ({
       <div className="flex gap-10 h-screen">
         <div className="flex-1 flex flex-col space-y-4">
           <div className="flex space-y-10 flex-col">
-            <div className="proposal-text-big">Governance</div>
-
+            <div className="flex justify-between items-center">
+              <div className="proposal-text-big">Governance</div>
+              <AuthzButton />
+            </div>
+            <AuthzToast chainIDs={[chainID]} margins="" />
             <div className="flex space-x-1">
               <Link href="/governance">
                 <Image

@@ -10,6 +10,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { RootState } from '@/store/store';
 import { TxStatus } from '@/types/enums';
+import useAuthzExecHelper from '@/custom-hooks/useAuthzExecHelper';
 
 interface VoteOptionNumber {
   [key: string]: number;
@@ -40,6 +41,9 @@ const VotePopup = ({
   networkLogo: string;
 }) => {
   const [voteOption, setVoteOption] = useState<string>('');
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const authzGranter = useAppSelector((state) => state.authz.authzAddress);
+  const { txAuthzVote } = useAuthzExecHelper();
 
   const handleVoteChange = (option: string) => {
     setVoteOption(option);
@@ -55,12 +59,28 @@ const VotePopup = ({
     (state: RootState) => state.gov.chains?.[chainID]?.tx?.status
   );
 
+  const authzLoading = useAppSelector(
+    (state) => state.authz.chains?.[chainID]?.tx?.status || TxStatus.INIT
+  );
+
   const dispatch = useAppDispatch();
 
   const handleVote = () => {
     const { address, aminoConfig, feeAmount, prefix, rest, rpc } =
       getChainInfo(chainID);
     const { minimalDenom } = getDenomInfo(chainID);
+
+    if (isAuthzMode) {
+      txAuthzVote({
+        grantee: address,
+        proposalId,
+        option: voteOptionNumber[voteOption],
+        granter: authzGranter,
+        chainID,
+        metaData: '',
+      });
+      return;
+    }
 
     dispatch(
       txVote({
@@ -191,9 +211,13 @@ const VotePopup = ({
                   <button
                     onClick={handleVote}
                     className="vote-popup-btn proposal-text-medium"
-                    disabled={loading === TxStatus.PENDING}
+                    disabled={
+                      (!isAuthzMode && loading === TxStatus.PENDING) ||
+                      (isAuthzMode && authzLoading === TxStatus.PENDING)
+                    }
                   >
-                    {loading === TxStatus.PENDING ? (
+                    {(!isAuthzMode && loading === TxStatus.PENDING) ||
+                    (isAuthzMode && authzLoading === TxStatus.PENDING) ? (
                       <CircularProgress size={20} sx={{ color: 'white' }} />
                     ) : (
                       'Vote'
