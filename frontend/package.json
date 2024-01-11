@@ -24,7 +24,7 @@
     "@skip-router/core": "^1.1.1",
     "@types/node": "20.6.5",
     "@types/react": "18.2.37",
-    "@types/react-dom": "18.2.15",
+    "@types/react-dom": "18.2.18",
     "autoprefixer": "10.4.16",
     "axios": "^1.5.1",
     "chart.js": "^4.4.1",
