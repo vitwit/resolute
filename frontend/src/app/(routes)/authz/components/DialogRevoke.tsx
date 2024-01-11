@@ -1,11 +1,11 @@
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { AuthzRevokeMsg } from '@/store/features/auth/authRekove';
+
 import { txAuthzRevoke } from '@/store/features/authz/authzSlice';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { Dialog, DialogContent } from '@mui/material';
-import { Data } from 'cosmjs-types/tendermint/types/types';
+
 import Image from 'next/image';
 import React from 'react';
 
@@ -82,7 +82,12 @@ const DialogRevoke: React.FC<DialogRevokeProps> = (props) => {
                   cannot be undone
                 </div>
                 <div className="flex space-x-10 items-center">
-                  <button onClick={() => {txRevoke()}} className="create-grant-btn">
+                  <button
+                    onClick={() => {
+                      txRevoke();
+                    }}
+                    className="create-grant-btn"
+                  >
                     Revoke
                   </button>
                   <p className="text-white text-base not-italic font-medium leading-5 tracking-[0.64px] underline cursor-pointer">

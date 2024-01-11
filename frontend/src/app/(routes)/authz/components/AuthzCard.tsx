@@ -19,6 +19,7 @@ const AuthzCard = ({
   grantee,
   granter,
   isGrantsByMe = false,
+  showRevokeDialog = false,
 }: {
   chainID: string;
   address: string;
@@ -27,6 +28,7 @@ const AuthzCard = ({
   grantee: string;
   granter: string;
   isGrantsByMe?: boolean;
+  showRevokeDialog?: boolean;
 }) => {
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
@@ -54,16 +56,14 @@ const AuthzCard = ({
     });
     return chain;
   };
-  const revoke = useAppSelector((state) => state.authz.txAuthzRes);
+  // const revoke = useAppSelector((state) => state.authz.txAuthzRes);
   const dispatch = useAppDispatch();
   const { getDenomInfo } = useGetChainInfo();
 
   const { decimals } = getDenomInfo(chainID);
   const { displayDenom } = getDenomInfo(chainID);
 
-  function getTypeURLFromAuthorization(authorization: any): string {
-    throw new Error('Function not implemented.');
-  }
+  
 
   return (
     <div className="authz-card">
@@ -123,6 +123,7 @@ const AuthzCard = ({
                 )}
               </p>
             )}
+            {isGrantsByMe && showRevokeDialog && (
             <DialogRevoke
               open={dialogRevokeOpen}
               onClose={handleDialogRevokeClose}
@@ -131,6 +132,7 @@ const AuthzCard = ({
               granter={granter}
               typeURL={permission.authorization['@type']}
             />
+            )}
           </div>
         ))}
       </div>

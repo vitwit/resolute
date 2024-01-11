@@ -7,7 +7,7 @@ import { cloneDeep } from 'lodash';
 import { getAddressByPrefix } from '@/utils/address';
 import { Authorization, GetGrantsInputs } from '@/types/authz';
 import { signAndBroadcast } from '@/utils/signing';
-import { setError } from '../common/commonSlice';
+import { setError, setTxAndHash } from '../common/commonSlice';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { AuthzRevokeMsg } from '../auth/authRekove';
 
@@ -146,7 +146,7 @@ export const txAuthzRevoke = createAsyncThunk(
       );
       if (result?.code === 0) {
         dispatch(
-          setTxHash({
+          setTxAndHash({
             hash: result?.transactionHash,
           })
         );
@@ -313,16 +313,6 @@ export const authzSlice = createSlice({
 export const { enableAuthzMode, exitAuthzMode } = authzSlice.actions;
 
 export default authzSlice.reducer;
-function AuthzSendGrantMsg(
-  granter: string,
-  grantee: string,
-  denom: string,
-  spendLimit: number,
-  expiration: number
-) {
-  throw new Error('Function not implemented.');
-}
 
-function setTxHash(arg0: { hash: string }): any {
-  throw new Error('Function not implemented.');
-}
+
+

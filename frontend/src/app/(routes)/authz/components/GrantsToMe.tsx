@@ -15,12 +15,12 @@ const GrantsToMe = ({ chainIDs }: { chainIDs: string[] }) => {
           // }</>
 
           <AuthzCard
-          key={addressGrant.chainID}
+            key={addressGrant.chainID}
             chainID={addressGrant.chainID}
             address={addressGrant.address}
             grants={addressGrant.grants}
             showCloseIcon={false}
-          />
+            showRevokeDialog={true} grantee={''} granter={''}          />
         ))}
       </div>
     </>

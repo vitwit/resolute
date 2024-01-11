@@ -23,6 +23,7 @@ const GrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
                 grantee={addressGrant.grants[0].grantee}
                 granter={addressGrant.grants[0].granter}
                 isGrantsByMe={true}
+                showRevokeDialog={false}
               />
             )}
           </>
