@@ -54,9 +54,9 @@ const MultiChainTxnStatus = ({
                   ))}
                 </div>
               </div>
-              <div className="w-[20%] text-right">
+              <div className="w-[25%] text-right">
                 {chainsStatus?.[chainID]?.txStatus === 'pending' ? (
-                  <div className='mr-2'>
+                  <div className="mr-2">
                     <span className="italic">Loading</span>
                     <span className="dots-flashing"></span>
                   </div>
@@ -80,7 +80,9 @@ const MultiChainTxnStatus = ({
                         placement="top"
                       >
                         <span className="text-[#E57575] underline underline-offset-2 cursor-default">
-                          Transaction Failed
+                          {chainsStatus?.[chainID]?.error === 'Request rejected'
+                            ? 'Wallet request rejected'
+                            : 'Transaction Failed'}
                         </span>
                       </Tooltip>
                     )}

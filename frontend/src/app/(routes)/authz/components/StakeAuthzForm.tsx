@@ -27,6 +27,7 @@ const StakeAuthzForm = ({
   setSelectedValidators,
   isDenyList,
   setIsDenyList,
+  maxTokensError,
 }: {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   control: Control<any, any>;
@@ -38,6 +39,7 @@ const StakeAuthzForm = ({
   setSelectedValidators: React.Dispatch<React.SetStateAction<string[]>>;
   isDenyList: boolean;
   setIsDenyList: React.Dispatch<React.SetStateAction<boolean>>;
+  maxTokensError: string;
 }) => {
   const dispatch = useAppDispatch();
   const chainID = selectedChains.length ? selectedChains[0] : '';
@@ -103,38 +105,51 @@ const StakeAuthzForm = ({
         <ExpirationField control={control} msg={msg} />
         {selectedChains.length === 1 && advanced && (
           <>
-            <Controller
-              name={msg + '.max_tokens'}
-              control={control}
-              rules={{
-                validate: (value) => {
-                  const amount = Number(value);
-                  if (value?.length && (isNaN(amount) || amount <= 0))
-                    return 'Invalid Amount';
-                },
-              }}
-              render={({ field }) => (
-                <TextField
-                  className="rounded-2xl"
-                  {...field}
-                  fullWidth
-                  required={false}
-                  size="small"
-                  autoFocus={true}
-                  placeholder="Max Tokens (Optional)"
-                  sx={expirationFieldStyles}
-                  InputProps={{
-                    sx: {
-                      input: {
-                        color: 'white !important',
-                        fontSize: '14px',
-                        padding: 2,
+            <div>
+              <Controller
+                name={msg + '.max_tokens'}
+                control={control}
+                rules={{
+                  validate: (value) => {
+                    const amount = Number(value);
+                    if (value?.length && (isNaN(amount) || amount <= 0))
+                      return 'Invalid Amount';
+                  },
+                }}
+                render={({ field }) => (
+                  <TextField
+                    className="rounded-2xl"
+                    {...field}
+                    fullWidth
+                    required={false}
+                    size="small"
+                    autoFocus={true}
+                    placeholder="Max Tokens (Optional)"
+                    sx={expirationFieldStyles}
+                    InputProps={{
+                      sx: {
+                        input: {
+                          color: 'white !important',
+                          fontSize: '14px',
+                          padding: 2,
+                        },
                       },
-                    },
-                  }}
-                />
-              )}
-            />
+                    }}
+                  />
+                )}
+              />
+              <div className="error-box">
+                <span
+                  className={
+                    maxTokensError?.length
+                      ? 'error-chip opacity-80'
+                      : 'error-chip opacity-0'
+                  }
+                >
+                  {maxTokensError || ''}
+                </span>
+              </div>
+            </div>
             <div>
               <CustomRadioGroup onSelect={onSelect} isDenyList={isDenyList} />
               <FormControl fullWidth>

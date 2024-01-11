@@ -245,6 +245,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   const {
     handleSubmit,
     control,
+    formState: { errors: formErrors },
     reset: resetTxnMsgForms,
   } = useForm({
     defaultValues: grantAuthzFormDefaultValues(),
@@ -273,6 +274,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
         <SendAuthzForm
           control={control}
           advanced={sendAdvanced}
+          formError={formErrors.send?.spend_limit?.message || ''}
           toggle={() => setSendAdvanced((prevState) => !prevState)}
         />
       );
@@ -286,6 +288,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
               msg={msgType}
               selectedChains={selectedChains}
               selectedValidators={selectedDelegateValidators}
+              maxTokensError={formErrors.delegate?.max_tokens?.message || ''}
               setSelectedValidators={setSelectedDelegateValidators}
               isDenyList={isDenyDelegateList}
               setIsDenyList={setIsDenyDelegateList}
@@ -300,6 +303,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
               msg={msgType}
               selectedChains={selectedChains}
               selectedValidators={selectedUndelegateValidators}
+              maxTokensError={formErrors.undelegate?.max_tokens?.message || ''}
               setSelectedValidators={setSelectedUndelegateValidators}
               isDenyList={isDenyUndelegateList}
               setIsDenyList={setIsDenyUndelegateList}
@@ -314,6 +318,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
               msg={msgType}
               selectedChains={selectedChains}
               selectedValidators={selectedRedelegateValidators}
+              maxTokensError={formErrors.redelegate?.max_tokens?.message || ''}
               setSelectedValidators={setSelectedRedelegateValidators}
               isDenyList={isDenyRedelegateList}
               setIsDenyList={setIsDenyRedelegateList}
@@ -329,13 +334,13 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   }, [selectedChains]);
 
   const closeMainDialog = () => {
-    setTxnStarted(false);
     resetStakeForm();
     setTxnStarted(false);
     setSelectedChains([]);
     setViewAllChains(false);
     setViewAllSelectedChains(false);
     setSelectedMsgs([]);
+    setSendAdvanced(false);
     setAddressValidationError('');
     setFormValidationError('');
     setGranteeAddress('');
@@ -549,15 +554,17 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                 </button>
               </div>
             ) : null}
-            {step === STEP_TWO ? (
+            {step === STEP_TWO && !txnStarted ? (
               <div className="mt-10 flex gap-10 items-center justify-end">
-                <button
-                  type="button"
-                  className="font-medium tracking-[0.64px] text-[16px] underline underline-offset-[3px]"
-                  onClick={() => setStep(STEP_ONE)}
-                >
-                  Go back
-                </button>
+                {currentTxCount === 0 ? (
+                  <button
+                    type="button"
+                    className="font-medium tracking-[0.64px] text-[16px] underline underline-offset-[3px]"
+                    onClick={() => setStep(STEP_ONE)}
+                  >
+                    Go back
+                  </button>
+                ) : null}
                 <button
                   type="submit"
                   form="msgs-form"
