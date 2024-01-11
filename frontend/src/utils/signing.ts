@@ -64,7 +64,7 @@ const canUseAmino = (aminoConfig: AminoConfig, messages: Msg[]): boolean => {
   return true;
 };
 
-const getClient = async (
+export const getClient = async (
   aminoConfig: AminoConfig,
   chainId: string,
   messages: Msg[]

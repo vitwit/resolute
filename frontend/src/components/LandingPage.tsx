@@ -85,7 +85,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
             await connectSnap(); // Initiates installation if not already present
           }
 
-          await experimentalSuggestChain(networks[i].config, {force: true})
+          await experimentalSuggestChain(networks[i].config, {force: false})
 
           const offlineSigner = new CosmjsOfflineSigner(chainId);
           const accounts = await offlineSigner.getAccounts();
