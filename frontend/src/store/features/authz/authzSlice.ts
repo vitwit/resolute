@@ -9,14 +9,17 @@ import {
   Authorization,
   GetGrantsInputs,
   txAuthzExecInputs,
+  TxGrantAuthzInputs,
+  TxGrantMultiChainAuthzInputs,
 } from '@/types/authz';
-import { ERR_UNKNOWN } from '@/utils/errors';
 import { signAndBroadcast } from '@/utils/signing';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { NewTransaction } from '@/utils/transaction';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { GAS_FEE } from '@/utils/constants';
 import { AuthzRevokeMsg } from '@/txns/authz';
+import { ERR_UNKNOWN } from '@/utils/errors';
+import { AxiosError } from 'axios';
 
 interface ChainAuthz {
   grantsToMe: Authorization[];
@@ -88,6 +91,9 @@ interface AuthzState {
     }
   */
   AddressToChainAuthz: Record<string, Record<string, Authorization[]>>;
+  multiChainAuthzGrantTx: {
+    status: TxStatus;
+  };
 }
 
 const initialState: AuthzState = {
@@ -97,6 +103,9 @@ const initialState: AuthzState = {
   getGrantsByMeLoading: 0,
   getGrantsToMeLoading: 0,
   AddressToChainAuthz: {},
+  multiChainAuthzGrantTx: {
+    status: TxStatus.INIT,
+  },
 };
 
 export const getGrantsToMe = createAsyncThunk(
@@ -125,6 +134,73 @@ export const getGrantsByMe = createAsyncThunk(
     return {
       data: response.data,
     };
+  }
+);
+
+export const txCreateMultiChainAuthzGrant = createAsyncThunk(
+  'authz/create-multichain-grant',
+  async (data: TxGrantMultiChainAuthzInputs, { rejectWithValue, dispatch }) => {
+    try {
+      const promises = data.data.map((chainGrant) => {
+        return dispatch(txCreateAuthzGrant(chainGrant));
+      });
+      await Promise.all(promises);
+      data.data.forEach((chainGrant) => {
+        dispatch(txCreateAuthzGrant(chainGrant));
+      });
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.response);
+    }
+  }
+);
+
+export const txCreateAuthzGrant = createAsyncThunk(
+  'authz/create-grant',
+  async (data: TxGrantAuthzInputs, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        data.msgs,
+        GAS_FEE,
+        '',
+        `${data.feeAmount}${data.denom}`,
+        data.basicChainInfo.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+
+      // TODO: Store txn, (This is throwing error because of BigInt in message)
+      // const tx = NewTransaction(
+      //   result,
+      //   data.msgs,
+      //   data.basicChainInfo.chainID,
+      //   data.basicChainInfo.address
+      // );
+      // dispatch(
+      //   addTransactions({
+      //     chainID: data.basicChainInfo.chainID,
+      //     address: data.basicChainInfo.cosmosAddress,
+      //     transactions: [tx],
+      //   })
+      // );
+
+      // dispatch(
+      //   setTxAndHash({
+      //     tx: undefined,
+      //     hash: tx.transactionHash,
+      //   })
+      // );
+
+      if (result?.code === 0) {
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        return rejectWithValue(result?.rawLog);
+      }
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      return rejectWithValue(error?.message || ERR_UNKNOWN);
+    }
   }
 );
 
@@ -386,6 +462,44 @@ export const authzSlice = createSlice({
         const chainID = action.meta.arg.basicChainInfo.chainID;
         state.chains[chainID].tx.status = TxStatus.REJECTED;
         state.chains[chainID].tx.errMsg = action.error.message || 'rejected';
+      });
+    builder
+      .addCase(txCreateAuthzGrant.pending, (state, action) => {
+        const { chainID } = action.meta.arg.basicChainInfo;
+        state.chains[chainID].tx.status = TxStatus.PENDING;
+        state.chains[chainID].tx.errMsg = '';
+      })
+      .addCase(txCreateAuthzGrant.fulfilled, (state, action) => {
+        const { chainID } = action.meta.arg.basicChainInfo;
+        const { txHash } = action.payload;
+        state.chains[chainID].tx.status = TxStatus.IDLE;
+        state.chains[chainID].tx.errMsg = '';
+        action.meta.arg.onTxComplete?.({
+          isTxSuccess: true,
+          txHash: txHash,
+        });
+      })
+      .addCase(txCreateAuthzGrant.rejected, (state, action) => {
+        const { chainID } = action.meta.arg.basicChainInfo;
+        state.chains[chainID].tx.status = TxStatus.REJECTED;
+        state.chains[chainID].tx.errMsg =
+          typeof action.payload === 'string' ? action.payload : '';
+        action.meta.arg.onTxComplete?.({
+          isTxSuccess: false,
+          error:
+            typeof action.payload === 'string' ? action.payload : ERR_UNKNOWN,
+        });
+      });
+
+    builder
+      .addCase(txCreateMultiChainAuthzGrant.pending, (state) => {
+        state.multiChainAuthzGrantTx.status = TxStatus.PENDING;
+      })
+      .addCase(txCreateMultiChainAuthzGrant.fulfilled, (state) => {
+        state.multiChainAuthzGrantTx.status = TxStatus.IDLE;
+      })
+      .addCase(txCreateMultiChainAuthzGrant.rejected, (state) => {
+        state.multiChainAuthzGrantTx.status = TxStatus.REJECTED;
       });
 
     builder
