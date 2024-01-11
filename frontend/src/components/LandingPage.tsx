@@ -21,7 +21,7 @@ import Loading from './Loading';
 declare let window: WalletWindow;
 
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
-import { CosmjsOfflineSigner, connectSnap, getSnap } from '@leapwallet/cosmos-snap-provider';
+import { CosmjsOfflineSigner, experimentalSuggestChain,  connectSnap, getSnap } from '@leapwallet/cosmos-snap-provider';
 
 export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
@@ -42,35 +42,35 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     handleClose();
   };
 
-  async function requestPermissions() {
-    await window.ethereum
-      .request({
-        method: 'wallet_requestPermissions',
-        params: [{
-          eth_accounts: {
-          }
-        }],
-      })
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      .then((permissions: any) => {
-        const accountsPermission = permissions.find(
-          /* eslint-disable @typescript-eslint/no-explicit-any */
-          (permission: any) => permission.parentCapability === 'eth_accounts'
-        );
-        if (accountsPermission) {
-          console.log('eth_accounts permission successfully requested!');
-        }
-      })
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      .catch((error: any) => {
-        if (error.code === 4001) {
-          // EIP-1193 userRejectedRequest error
-          console.log('Permissions needed to continue.');
-        } else {
-          console.error(error);
-        }
-      });
-  }
+  // async function requestPermissions() {
+  //   await window.ethereum
+  //     .request({
+  //       method: 'wallet_requestPermissions',
+  //       params: [{
+  //         eth_accounts: {
+  //         }
+  //       }],
+  //     })
+  //     /* eslint-disable @typescript-eslint/no-explicit-any */
+  //     .then((permissions: any) => {
+  //       const accountsPermission = permissions.find(
+  //         /* eslint-disable @typescript-eslint/no-explicit-any */
+  //         (permission: any) => permission.parentCapability === 'eth_accounts'
+  //       );
+  //       if (accountsPermission) {
+  //         console.log('eth_accounts permission successfully requested!');
+  //       }
+  //     })
+  //     /* eslint-disable @typescript-eslint/no-explicit-any */
+  //     .catch((error: any) => {
+  //       if (error.code === 4001) {
+  //         // EIP-1193 userRejectedRequest error
+  //         console.log('Permissions needed to continue.');
+  //       } else {
+  //         console.error(error);
+  //       }
+  //     });
+  // }
 
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
@@ -78,47 +78,49 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
         for (let i = 0; i < networks.length; i++) {
           console.log('network----', i)
           const chainId: string = networks[i].config.chainId;
-          const chainName: string = networks[i].config.chainName;
-          const rpc: string = networks[i].config.rpc
+          // const chainName: string = networks[i].config.chainName;
+          // const rpc: string = networks[i].config.rpc
           const snapInstalled = await getSnap();
           if (!snapInstalled) {
             connectSnap(); // Initiates installation if not already present
           }
 
-          await requestPermissions();
+          // await requestPermissions();
 
-          try {
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: chainId}],
-            });
-             /* eslint-disable @typescript-eslint/no-explicit-any */
-          } catch (switchError: any) {
-            // This error code indicates that the chain has not been added to MetaMask.
-            if (switchError?.code === 4902) {
-              try {
-                await window.ethereum.request({
-                  method: 'wallet_addEthereumChain',
-                  params: [
-                    {
-                      chainId: chainId,
-                      chainName: chainName,
-                      rpcUrls: [rpc] /* ... */,
-                    },
-                  ],
-                });
-              } catch (addError) {
-                // handle "add" error
-              }
-            }
-            // handle other "switch" errors
-          }
+          // try {
+          //   await window.ethereum.request({
+          //     method: 'wallet_switchEthereumChain',
+          //     params: [{ chainId: chainId}],
+          //   });
+          //    /* eslint-disable @typescript-eslint/no-explicit-any */
+          // } catch (switchError: any) {
+          //   // This error code indicates that the chain has not been added to MetaMask.
+          //   if (switchError?.code === 4902) {
+          //     try {
+          //       await window.ethereum.request({
+          //         method: 'wallet_addEthereumChain',
+          //         params: [
+          //           {
+          //             chainId: chainId,
+          //             chainName: chainName,
+          //             rpcUrls: [rpc] /* ... */,
+          //           },
+          //         ],
+          //       });
+          //     } catch (addError) {
+          //       // handle "add" error
+          //     }
+          //   }
+          //   // handle other "switch" errors
+          // }
 
-          const account = await window.ethereum.request({
-            method: 'eth_requestAccounts',
-          })
+          // const account = await window.ethereum.request({
+          //   method: 'eth_requestAccounts',
+          // })
 
-          console.log('accounts====', account)
+          // console.log('accounts====', account)
+
+          await experimentalSuggestChain(networks[i].config, {force: true})
 
           const offlineSigner = new CosmjsOfflineSigner(chainId);
           const accounts = await offlineSigner.getAccounts();
