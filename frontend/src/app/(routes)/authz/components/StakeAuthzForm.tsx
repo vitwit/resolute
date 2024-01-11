@@ -17,18 +17,7 @@ import { getAllValidators } from '@/store/features/staking/stakeSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { Validator } from '@/types/staking';
 
-const StakeAuthzForm = ({
-  control,
-  advanced,
-  toggle,
-  msg,
-  selectedChains,
-  selectedValidators,
-  setSelectedValidators,
-  isDenyList,
-  setIsDenyList,
-  maxTokensError,
-}: {
+interface StakeAuthzFormProps {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   control: Control<any, any>;
   advanced: boolean;
@@ -40,7 +29,20 @@ const StakeAuthzForm = ({
   isDenyList: boolean;
   setIsDenyList: React.Dispatch<React.SetStateAction<boolean>>;
   maxTokensError: string;
-}) => {
+}
+
+const StakeAuthzForm = ({
+  control,
+  advanced,
+  toggle,
+  msg,
+  selectedChains,
+  selectedValidators,
+  setSelectedValidators,
+  isDenyList,
+  setIsDenyList,
+  maxTokensError,
+}: StakeAuthzFormProps) => {
   const dispatch = useAppDispatch();
   const chainID = selectedChains.length ? selectedChains[0] : '';
   const { getChainInfo } = useGetChainInfo();

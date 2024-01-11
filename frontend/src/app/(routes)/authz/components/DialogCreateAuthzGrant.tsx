@@ -5,19 +5,19 @@ import {
   dialogBoxPaperPropStyles,
 } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { convertToSnakeCase, shortenAddress, shortenName } from '@/utils/util';
+import { convertToSnakeCase, shortenAddress } from '@/utils/util';
 import {
-  Avatar,
   CircularProgress,
   Dialog,
   DialogContent,
   TextField,
-  Tooltip,
 } from '@mui/material';
 import Image from 'next/image';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { fromBech32 } from '@cosmjs/encoding';
 import {
+  GENRIC_GRANTS,
+  STAKE_GRANTS,
   authzMsgTypes,
   grantAuthzFormDefaultValues,
 } from '@/utils/authorizations';
@@ -31,6 +31,8 @@ import CommonCopy from '@/components/CommonCopy';
 import useMultiTxTracker from '@/custom-hooks/useGetMultiChainTxLoading';
 import MultiChainTxnStatus from './MultiChainTxnStatus';
 import ConfirmDialogClose from './ConfirmDialogClose';
+import MsgItem from './MsgItem';
+import NetworkItem from './NetworkItem';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
@@ -56,7 +58,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   const msgTypes = authzMsgTypes();
 
   const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(STEP_ONE);
   const [txnStarted, setTxnStarted] = useState(false);
   const [selectedChains, setSelectedChains] = useState<string[]>([]);
   const [displayedChains, setDisplayedChains] = useState<string[]>(
@@ -73,6 +75,10 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   const [formValidationError, setFormValidationError] = useState('');
   const [viewAllSelectedChains, setViewAllSelectedChains] =
     useState<boolean>(false);
+
+  /* 
+  List of allow/deny validators for StakeAuthorization
+  */
   const [selectedDelegateValidators, setSelectedDelegateValidators] = useState<
     string[]
   >([]);
@@ -208,6 +214,10 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     msgsList.forEach((msg) => {
       grantsList.push({ msg: msg, ...fieldValues[msg] });
     });
+
+    /* 
+     getGrantAuthzMsgs returns the all messages chainwise 
+    */
     const { chainWiseGrants } = getGrantAuthzMsgs({
       grantsList,
       selectedChains,
@@ -253,21 +263,8 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
 
   const renderForm = (msg: string) => {
     const msgType = convertToSnakeCase(msg);
-    const genericGrants = [
-      'grant_authz',
-      'revoke_authz',
-      'grant_feegrant',
-      'revoke_feegrant',
-      'submit_proposal',
-      'vote',
-      'deposit',
-      'withdraw_rewards',
-      'withdraw_commission',
-      'unjail',
-    ];
     const sendGrant = 'send';
-    const stakeGrants = ['delegate', 'undelegate', 'redelegate'];
-    if (genericGrants.includes(msgType)) {
+    if (GENRIC_GRANTS.includes(msgType)) {
       return <ExpirationField msg={msgType} control={control} />;
     } else if (msgType === sendGrant) {
       return (
@@ -278,7 +275,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
           toggle={() => setSendAdvanced((prevState) => !prevState)}
         />
       );
-    } else if (stakeGrants.includes(msgType)) {
+    } else if (STAKE_GRANTS.includes(msgType)) {
       switch (msgType) {
         case 'delegate':
           return (
@@ -333,6 +330,10 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     resetStakeForm();
   }, [selectedChains]);
 
+  /*
+    This function is to close the createAuthzGrant dialog box 
+    and to reset all the inputs
+  */
   const closeMainDialog = () => {
     resetStakeForm();
     setTxnStarted(false);
@@ -381,6 +382,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
               <h2 className="text-[20px] font-bold">
                 Create Grant : Step {step}
               </h2>
+              {/* TODO: Change the below text content  */}
               <div className="text-[14px]">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -481,8 +483,8 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                     {displayedSelectedChains.map((chainID, index) => (
                       <NetworkItem
                         key={index}
-                        chainName={networks[chainID].network.config.chainName}
-                        logo={networks[chainID].network.logos.menu}
+                        chainName={networks[chainID]?.network?.config.chainName}
+                        logo={networks[chainID]?.network?.logos.menu}
                         onSelect={handleSelectChain}
                         selected={false}
                         chainID={chainID}
@@ -591,58 +593,3 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
 };
 
 export default DialogCreateAuthzGrant;
-
-const NetworkItem = ({
-  chainName,
-  logo,
-  onSelect,
-  selected,
-  chainID,
-  disable,
-}: {
-  chainName: string;
-  logo: string;
-  onSelect: (chainID: string) => void;
-  selected: boolean;
-  chainID: string;
-  disable: boolean;
-}) => {
-  return (
-    <div
-      className={
-        selected ? 'network-item network-item-selected' : 'network-item'
-      }
-      onClick={() => {
-        if (!disable) {
-          onSelect(chainID);
-        }
-      }}
-    >
-      <Avatar src={logo} sx={{ width: 32, height: 32 }} />
-      <Tooltip title={chainName} placement="bottom">
-        <h3 className={`text-[14px] leading-normal opacity-100`}>
-          <span>{shortenName(chainName, 6)}</span>
-        </h3>
-      </Tooltip>
-    </div>
-  );
-};
-
-const MsgItem = ({
-  msg,
-  onSelect,
-  selected,
-}: {
-  msg: string;
-  onSelect: (chainID: string) => void;
-  selected: boolean;
-}) => {
-  return (
-    <div
-      className={selected ? 'msg-item  primary-gradient' : 'msg-item'}
-      onClick={() => onSelect(msg)}
-    >
-      {msg}
-    </div>
-  );
-};

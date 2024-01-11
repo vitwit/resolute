@@ -145,3 +145,17 @@ export function getMsgNameFromAuthz(authorization: Authorization): string {
       return 'Unknown';
   }
 }
+
+export const GENRIC_GRANTS = [
+  'grant_authz',
+  'revoke_authz',
+  'grant_feegrant',
+  'revoke_feegrant',
+  'submit_proposal',
+  'vote',
+  'deposit',
+  'withdraw_rewards',
+  'withdraw_commission',
+  'unjail',
+];
+export const STAKE_GRANTS = ['delegate', 'undelegate', 'redelegate'];
