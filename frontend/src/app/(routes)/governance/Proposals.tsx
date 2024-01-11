@@ -3,23 +3,27 @@
 import React from 'react';
 import './style.css';
 import TopNav from '@/components/TopNav';
+import AuthzToast from '@/components/AuthzToast';
 
 type ProposalStatusUpdate = (status: string) => void;
 
 const Proposals = ({
   handleChangeProposalState,
   proposalStatus,
+  chainIDs,
 }: {
   handleChangeProposalState: ProposalStatusUpdate;
   proposalStatus: string;
+  chainIDs: string[];
 }) => {
   return (
     <div className="main-page">
       <div className="flex justify-between items-center w-full">
         <div className="proposal-text-big">Governance</div>
 
-        <TopNav />
+        <TopNav showAuthzButton={true} />
       </div>
+      <AuthzToast chainIDs={chainIDs} margins='w-full'/>
 
       <div className="proposals-head">
         <div className="text-[20px]">Proposals</div>

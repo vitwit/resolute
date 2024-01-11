@@ -21,6 +21,7 @@ import {
   NO_MESSAGES_ILLUSTRATION,
 } from '@/utils/constants';
 import { CircularProgress } from '@mui/material';
+import MainTopNav from '@/components/MainTopNav';
 
 const StakingOverview = () => {
   const dispatch = useAppDispatch();
@@ -96,7 +97,9 @@ const StakingOverview = () => {
 
   return (
     <div className="staking-main">
-      <h2 className="txt-lg font-medium mb-6">Staking</h2>
+      <div className="mb-6">
+        <MainTopNav title="Staking" />
+      </div>
       <div className="overview-grid">
         {chainIDs.map((chainID) => {
           const delegations = stakingData[chainID]?.delegations.delegations;
