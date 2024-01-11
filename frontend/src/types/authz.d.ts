@@ -66,4 +66,14 @@ interface TxGrantAuthzInputs {
   denom: string;
   feeAmount: number;
   feegranter: string;
+  onTxComplete?: (isTxSuccess: boolean, error?: string) => void;
+}
+
+interface TxGrantMultiChainAuthzInputs {
+  data: TxGrantAuthzInputs[];
+}
+
+interface MultiChainTx {
+  ChainID: string;
+  txInputs: TxGrantAuthzInputs;
 }

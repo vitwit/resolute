@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import {
   customMUITextFieldStyles,
@@ -8,6 +8,7 @@ import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { convertToSnakeCase, shortenAddress, shortenName } from '@/utils/util';
 import {
   Avatar,
+  CircularProgress,
   Dialog,
   DialogContent,
   TextField,
@@ -26,8 +27,9 @@ import SendAuthzForm from './SendAuthzForm';
 import StakeAuthzForm from './StakeAuthzForm';
 import useGetGrantAuthzMsgs from '@/custom-hooks/useGetGrantAuthzMsgs';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { txCreateAuthzGrant } from '@/store/features/authz/authzSlice';
 import CommonCopy from '@/components/CommonCopy';
+import useMultiTxTracker from '@/custom-hooks/useGetMultiChainTxLoading';
+import MultiChainTxnStatus from './MultiChainTxnStatus';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
@@ -41,8 +43,8 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   props
 ) => {
   const { open, onClose } = props;
-  const dispatch = useAppDispatch();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { trackTxs, ChainsStatus, currentTxCount } = useMultiTxTracker();
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -52,6 +54,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   );
   const msgTypes = authzMsgTypes();
   const [step, setStep] = useState(1);
+  const [txnStarted, setTxnStarted] = useState(false);
   const [selectedChains, setSelectedChains] = useState<string[]>([]);
   const [displayedChains, setDisplayedChains] = useState<string[]>(
     chainIDs?.slice(0, 5) || []
@@ -207,6 +210,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
       selectedChains,
       granteeAddress,
     });
+    const txCreateAuthzInputs: MultiChainTx[] = [];
     chainWiseGrants.forEach((chain) => {
       const chainID = chain.chainID;
       const msgs = chain.msgs;
@@ -215,16 +219,19 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
       const { feeAmount: avgFeeAmount } = basicChainInfo;
       const feeAmount = avgFeeAmount * 10 ** decimals;
 
-      dispatch(
-        txCreateAuthzGrant({
+      txCreateAuthzInputs.push({
+        ChainID: chainID,
+        txInputs: {
           basicChainInfo: basicChainInfo,
           msgs: msgs,
           denom: minimalDenom,
           feeAmount: feeAmount,
           feegranter: '',
-        })
-      );
+        },
+      });
     });
+    setTxnStarted(true);
+    trackTxs(txCreateAuthzInputs);
   };
 
   const [sendAdvanced, setSendAdvanced] = useState(false);
@@ -310,10 +317,19 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     }
   };
 
+  useEffect(() => {
+    resetStakeForm();
+  }, [selectedChains]);
+
+  const handleDialogClose = () => {
+    onClose();
+    setTxnStarted(false);
+  };
+
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleDialogClose}
       maxWidth="lg"
       PaperProps={{
         sx: dialogBoxPaperPropStyles,
@@ -322,7 +338,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
           <div className="px-10 pb-6 pt-10 flex justify-end">
-            <div onClick={onClose}>
+            <div onClick={handleDialogClose}>
               <Image
                 className="cursor-pointer"
                 src={CLOSE_ICON_PATH}
@@ -460,22 +476,31 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                     </div>
                   )}
                 </div>
-                <form
-                  onSubmit={handleSubmit((e) => onSubmit(e))}
-                  id="msgs-form"
-                >
-                  <div className="font-medium py-[6px] mb-4">Permissions</div>
-                  <div className="space-y-6">
-                    {selectedMsgs.map((msg) => (
-                      <div className="grant-authz-form" key={msg}>
-                        <h3 className="py-[6px]">{msg}</h3>
-                        <div className="my-2">{renderForm(msg)}</div>
-                      </div>
-                    ))}
-                  </div>
-                </form>
+                {txnStarted ? (
+                  <MultiChainTxnStatus
+                    selectedMsgs={selectedMsgs}
+                    selectedChains={selectedChains}
+                    chainsStatus={ChainsStatus}
+                  />
+                ) : (
+                  <form
+                    onSubmit={handleSubmit((e) => onSubmit(e))}
+                    id="msgs-form"
+                  >
+                    <div className="font-medium py-[6px] mb-4">Permissions</div>
+                    <div className="space-y-6">
+                      {selectedMsgs.map((msg) => (
+                        <div className="grant-authz-form" key={msg}>
+                          <h3 className="py-[6px]">{msg}</h3>
+                          <div className="my-2">{renderForm(msg)}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </form>
+                )}
               </div>
             )}
+
             {step === STEP_ONE ? (
               <div className="mt-10 relative h-10">
                 <div className="flex-1 flex items-center justify-center h-10">
@@ -514,9 +539,13 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                 <button
                   type="submit"
                   form="msgs-form"
-                  className="primary-custom-btn"
+                  className="primary-custom-btn w-[124px]"
                 >
-                  Grant
+                  {currentTxCount !== 0 ? (
+                    <CircularProgress size={20} sx={{ color: 'white' }} />
+                  ) : (
+                    'Grant'
+                  )}
                 </button>
               </div>
             ) : null}
