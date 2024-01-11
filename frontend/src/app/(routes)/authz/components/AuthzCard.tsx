@@ -3,13 +3,17 @@ import Image from 'next/image';
 import { AuthorizationInfo } from './DialogAllPermissions';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
-import { getMsgNameFromAuthz } from '@/utils/authorizations';
+import {
+  getMsgNameFromAuthz,
+  getTypeURLFromAuthorization,
+} from '@/utils/authorizations';
 
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { setError } from '@/store/features/common/commonSlice';
 import DialogRevoke from './DialogRevoke';
 import { Authorization } from '@/types/authz';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { resetTxStatus } from '@/store/features/authz/authzSlice';
 
 const AuthzCard = ({
   chainID,
@@ -19,7 +23,6 @@ const AuthzCard = ({
   grantee,
   granter,
   isGrantsByMe = false,
-  showRevokeDialog = false,
 }: {
   chainID: string;
   address: string;
@@ -28,7 +31,6 @@ const AuthzCard = ({
   grantee: string;
   granter: string;
   isGrantsByMe?: boolean;
-  showRevokeDialog?: boolean;
 }) => {
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
@@ -44,11 +46,6 @@ const AuthzCard = ({
     setDialogAllPermissionsOpen(false);
   };
 
-  const [dialogRevokeOpen, setDialogRevokeOpen] = useState(false);
-  const handleDialogRevokeClose = () => {
-    setDialogRevokeOpen(false);
-  };
-
   const getChainName = (chainID: string) => {
     let chain: string = '';
     Object.keys(nameToChainIDs).forEach((chainName) => {
@@ -62,8 +59,6 @@ const AuthzCard = ({
 
   const { decimals } = getDenomInfo(chainID);
   const { displayDenom } = getDenomInfo(chainID);
-
-  
 
   return (
     <div className="authz-card">
@@ -103,35 +98,17 @@ const AuthzCard = ({
         />
       </div>
       <div className="authz-small-text">Permissions</div>
-      {/* {JSON.stringify(grants[2])} */}
       <div className="flex flex-wrap gap-6">
         {grants.map((permission, permissionIndex) => (
           <div key={permissionIndex}>
             {permissionIndex > 2 ? null : (
-              <p className="grant-address">
-                {getMsgNameFromAuthz(permission)}
-                {showCloseIcon && (
-                  <Image
-                    src="/close-icon.svg"
-                    width={16}
-                    height={16}
-                    alt="close-icon"
-                    draggable={false}
-                    className="cursor-pointer"
-                    onClick={() => setDialogRevokeOpen(true)}
-                  />
-                )}
-              </p>
-            )}
-            {isGrantsByMe && showRevokeDialog && (
-            <DialogRevoke
-              open={dialogRevokeOpen}
-              onClose={handleDialogRevokeClose}
-              chainID={chainID}
-              grantee={grantee}
-              granter={granter}
-              typeURL={permission.authorization['@type']}
-            />
+              <MessageChip
+                permission={permission}
+                granter={granter}
+                grantee={grantee}
+                chainID={chainID}
+                showCloseIcon={showCloseIcon}
+              />
             )}
           </div>
         ))}
@@ -157,43 +134,51 @@ const AuthzCard = ({
 
 export default AuthzCard;
 
-// const Permissions = ({
-//   grants,
-//   chainID,
-// }: {
-//   grants: Authorization[];
-//   chainID: string;
-// }) => {
-//   return (
-//     <div className="space-y-4">
-//       <h3 className="text-[#FFFFFF80] text-[14px]">Permissions</h3>
-//       <div className="flex flex-wrap gap-4">
-//         {grants.map((grant, index) => (
-//           <Message
-//             key={index}
-//             chainID={chainID}
-//             msg={getMsgNameFromAuthz(grant)}
-//           />
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
-
-// const Message = ({ msg, chainID }: { msg: string; chainID: string }) => {
-//   const { getChainInfo } = useGetChainInfo();
-//   const { chainLogo } = getChainInfo(chainID);
-
-//   return (
-//     <div className="rounded-xl p-2 bg-[#FFFFFF1A] flex gap-2 items-center max-h-8">
-//       <div>{msg}</div>
-//       <Image
-//         src="/close-icon.svg"
-//         width={12}
-//         height={12}
-//         alt="close-icon"
-//         draggable={false}
-//       />
-//     </div>
-//   );
-// };
+const MessageChip = ({
+  permission,
+  granter,
+  grantee,
+  chainID,
+  showCloseIcon,
+}: {
+  permission: Authorization;
+  granter: string;
+  grantee: string;
+  chainID: string;
+  showCloseIcon: boolean;
+}) => {
+  const [dialogRevokeOpen, setDialogRevokeOpen] = useState(false);
+  const dispatch = useAppDispatch();
+  const handleDialogRevokeClose = () => {
+    setDialogRevokeOpen(false);
+  };
+  return (
+    <div>
+      <p className="grant-address">
+        {getMsgNameFromAuthz(permission)}
+        {showCloseIcon && (
+          <Image
+            src="/close-icon.svg"
+            width={16}
+            height={16}
+            alt="close-icon"
+            draggable={false}
+            className="cursor-pointer"
+            onClick={() => {
+              setDialogRevokeOpen(true);
+              dispatch(resetTxStatus({ chainID: chainID }));
+            }}
+          />
+        )}
+      </p>
+      <DialogRevoke
+        open={dialogRevokeOpen}
+        onClose={handleDialogRevokeClose}
+        chainID={chainID}
+        grantee={grantee}
+        granter={granter}
+        typeURL={getTypeURLFromAuthorization(permission)}
+      />
+    </div>
+  );
+};

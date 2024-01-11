@@ -6,3 +6,4 @@ export {
   AuthzExecVoteMsg,
   AuthzExecWithdrawRewardsMsg,
 } from './exec';
+export { AuthzRevokeMsg } from './revoke';

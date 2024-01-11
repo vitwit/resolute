@@ -11,8 +11,6 @@ const GrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
     <>
       <div className="authz-card-grid">
         {addressGrants.map((addressGrant) => (
-          // <>{JSON.stringify(addressGrant)}</>
-
           <>
             {!!addressGrant.grants.length && (
               <AuthzCard
@@ -20,10 +18,9 @@ const GrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
                 chainID={addressGrant.chainID}
                 address={addressGrant.address}
                 grants={addressGrant.grants}
-                grantee={addressGrant.grants[0].grantee}
+                grantee={addressGrant.address}
                 granter={addressGrant.grants[0].granter}
                 isGrantsByMe={true}
-                showRevokeDialog={false}
               />
             )}
           </>

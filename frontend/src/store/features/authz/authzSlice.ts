@@ -5,14 +5,18 @@ import authzService from './service';
 import { TxStatus } from '../../../types/enums';
 import { cloneDeep } from 'lodash';
 import { getAddressByPrefix } from '@/utils/address';
-import { Authorization, GetGrantsInputs } from '@/types/authz';
+import {
+  Authorization,
+  GetGrantsInputs,
+  txAuthzExecInputs,
+} from '@/types/authz';
 import { ERR_UNKNOWN } from '@/utils/errors';
-import { AuthzRevokeMsg } from '../auth/authRekove';
 import { signAndBroadcast } from '@/utils/signing';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { NewTransaction } from '@/utils/transaction';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { GAS_FEE } from '@/utils/constants';
+import { AuthzRevokeMsg } from '@/txns/authz';
 
 interface ChainAuthz {
   grantsToMe: Authorization[];
@@ -25,7 +29,6 @@ interface ChainAuthz {
     status: TxStatus;
     errMsg: string;
   };
-  txAuthzRes: string;
 
   /*
     this is mapping of address to list of authorizations (chain level)
@@ -68,7 +71,6 @@ const defaultState: ChainAuthz = {
     status: TxStatus.INIT,
     errMsg: '',
   },
-  txAuthzRes: '',
 };
 
 interface AuthzState {
@@ -77,7 +79,6 @@ interface AuthzState {
   chains: Record<string, ChainAuthz>;
   getGrantsToMeLoading: number;
   getGrantsByMeLoading: number;
-  txAuthzRes: string;
   /*
     this is mapping of address to chain id to list of authorizations (inter chain level)
     example : {
@@ -96,7 +97,6 @@ const initialState: AuthzState = {
   getGrantsByMeLoading: 0,
   getGrantsToMeLoading: 0,
   AddressToChainAuthz: {},
-  txAuthzRes: '',
 };
 
 export const getGrantsToMe = createAsyncThunk(
@@ -259,6 +259,13 @@ export const authzSlice = createSlice({
       /* eslint-disable @typescript-eslint/no-unused-vars */
       state = cloneDeep(initialState);
     },
+    resetTxStatus: (state, action: PayloadAction<{ chainID: string }>) => {
+      const { chainID } = action.payload;
+      state.chains[chainID].tx = {
+        errMsg: '',
+        status: TxStatus.INIT,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -382,19 +389,24 @@ export const authzSlice = createSlice({
       });
 
     builder
-      .addCase(txAuthzRevoke.pending, (state) => {
-        state.txAuthzRes = TxStatus.PENDING;
+      .addCase(txAuthzRevoke.pending, (state, action) => {
+        const chainID = action.meta.arg.basicChainInfo.chainID;
+        state.chains[chainID].tx.status = TxStatus.PENDING;
+        state.chains[chainID].tx.errMsg = '';
       })
-      .addCase(txAuthzRevoke.fulfilled, (state) => {
-        state.txAuthzRes = TxStatus.IDLE;
+      .addCase(txAuthzRevoke.fulfilled, (state, action) => {
+        const chainID = action.meta.arg.basicChainInfo.chainID;
+        state.chains[chainID].tx.status = TxStatus.IDLE;
       })
-      .addCase(txAuthzRevoke.rejected, (state) => {
-        state.txAuthzRes = TxStatus.REJECTED;
+      .addCase(txAuthzRevoke.rejected, (state, action) => {
+        const chainID = action.meta.arg.basicChainInfo.chainID;
+        state.chains[chainID].tx.status = TxStatus.REJECTED;
+        state.chains[chainID].tx.errMsg = action.error.message || 'rejected';
       });
   },
 });
 
-export const { enableAuthzMode, exitAuthzMode, resetState } =
+export const { enableAuthzMode, exitAuthzMode, resetState, resetTxStatus } =
   authzSlice.actions;
 
 export default authzSlice.reducer;

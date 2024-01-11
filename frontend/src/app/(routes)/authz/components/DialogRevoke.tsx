@@ -1,13 +1,15 @@
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 import { txAuthzRevoke } from '@/store/features/authz/authzSlice';
+import { RootState } from '@/store/store';
+import { TxStatus } from '@/types/enums';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { Dialog, DialogContent } from '@mui/material';
+import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface DialogRevokeProps {
   open: boolean;
@@ -39,6 +41,15 @@ const DialogRevoke: React.FC<DialogRevokeProps> = (props) => {
       })
     );
   };
+  const loading = useAppSelector(
+    (state: RootState) => state.authz.chains?.[chainID].tx.status
+  );
+
+  useEffect(() => {
+    if (loading === TxStatus.IDLE) {
+      onClose();
+    }
+  }, [loading]);
   return (
     <Dialog
       open={open}
@@ -86,9 +97,13 @@ const DialogRevoke: React.FC<DialogRevokeProps> = (props) => {
                     onClick={() => {
                       txRevoke();
                     }}
-                    className="create-grant-btn"
+                    className="create-grant-btn h-10 w-[140px]"
                   >
-                    Revoke
+                    {loading === TxStatus.PENDING ? (
+                      <CircularProgress size={20} sx={{ color: 'white' }} />
+                    ) : (
+                      'Revoke'
+                    )}
                   </button>
                   <p className="text-white text-base not-italic font-medium leading-5 tracking-[0.64px] underline cursor-pointer">
                     Cancel
