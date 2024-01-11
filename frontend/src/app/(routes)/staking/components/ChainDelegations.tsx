@@ -23,6 +23,7 @@ import DialogRedelegate from './DialogRedelegate';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { parseDenomAmount } from '@/utils/util';
 import { TxStatus } from '@/types/enums';
+import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
 
 const ChainDelegations = ({
   chainID,
@@ -38,6 +39,8 @@ const ChainDelegations = ({
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
+  const { txAuthzDelegate, txAuthzReDelegate, txAuthzUnDelegate } =
+    useAuthzStakingExecHelper();
 
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const networkLogo = networks[chainID]?.network.logos.menu;
@@ -55,6 +58,8 @@ const ChainDelegations = ({
   const stakingParams = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.params
   );
+  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
 
   const [availableBalance, setAvailableBalance] = useState(0);
   const [delegateOpen, setDelegateOpen] = useState(false);
@@ -108,9 +113,21 @@ const ChainDelegations = ({
   );
 
   const onDelegateTx = (data: DelegateTxInputs) => {
+    const basicChainInfo = getChainInfo(chainID);
+    if (isAuthzMode) {
+      txAuthzDelegate({
+        grantee: address,
+        granter: authzAddress,
+        validator: data.validator,
+        amount: data.amount * 10 ** currency.coinDecimals,
+        denom: currency.coinMinimalDenom,
+        chainID: basicChainInfo.chainID,
+      });
+      return;
+    }
     dispatch(
       txDelegate({
-        basicChainInfo: getChainInfo(chainID),
+        basicChainInfo: basicChainInfo,
         delegator: address,
         validator: data.validator,
         amount: data.amount * 10 ** currency.coinDecimals,
@@ -122,6 +139,18 @@ const ChainDelegations = ({
   };
 
   const onUndelegateTx = (data: UndelegateTxInputs) => {
+    const basicChainInfo = getChainInfo(chainID);
+    if (isAuthzMode) {
+      txAuthzUnDelegate({
+        grantee: address,
+        granter: authzAddress,
+        validator: data.validator,
+        amount: data.amount * 10 ** currency.coinDecimals,
+        denom: currency.coinMinimalDenom,
+        chainID: basicChainInfo.chainID,
+      });
+      return;
+    }
     dispatch(
       txUnDelegate({
         basicChainInfo: getChainInfo(chainID),
@@ -136,6 +165,19 @@ const ChainDelegations = ({
   };
 
   const onRedelegateTx = (data: RedelegateTxInputs) => {
+    const basicChainInfo = getChainInfo(chainID);
+    if (isAuthzMode) {
+      txAuthzReDelegate({
+        grantee: address,
+        granter: authzAddress,
+        srcValidator: data.src,
+        validator: data.dest,
+        amount: data.amount * 10 ** currency.coinDecimals,
+        denom: currency.coinMinimalDenom,
+        chainID: basicChainInfo.chainID,
+      });
+      return;
+    }
     dispatch(
       txReDelegate({
         basicChainInfo: getChainInfo(chainID),

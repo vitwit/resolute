@@ -274,7 +274,7 @@ export const authzSlice = createSlice({
         state.chains[chainID].grantsByMe = grants;
         const addressMapping: Record<string, Authorization[]> = {};
         grants.forEach((grant) => {
-          const granter = grant.granter;
+          const granter = grant.grantee;
           if (!addressMapping[granter]) addressMapping[granter] = [];
           addressMapping[granter] = [...addressMapping[granter], grant];
         });
