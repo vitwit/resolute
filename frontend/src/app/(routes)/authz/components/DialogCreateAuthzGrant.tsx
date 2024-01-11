@@ -30,6 +30,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import CommonCopy from '@/components/CommonCopy';
 import useMultiTxTracker from '@/custom-hooks/useGetMultiChainTxLoading';
 import MultiChainTxnStatus from './MultiChainTxnStatus';
+import ConfirmDialogClose from './ConfirmDialogClose';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
@@ -53,6 +54,8 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     (chainName) => nameToChainIDs[chainName]
   );
   const msgTypes = authzMsgTypes();
+
+  const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [txnStarted, setTxnStarted] = useState(false);
   const [selectedChains, setSelectedChains] = useState<string[]>([]);
@@ -239,7 +242,11 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   const [undelegateAdvanced, setUndelegateAdvanced] = useState(false);
   const [redelegateAdvanced, setRedelegateAdvanced] = useState(false);
 
-  const { handleSubmit, control } = useForm({
+  const {
+    handleSubmit,
+    control,
+    reset: resetTxnMsgForms,
+  } = useForm({
     defaultValues: grantAuthzFormDefaultValues(),
   });
 
@@ -321,9 +328,24 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
     resetStakeForm();
   }, [selectedChains]);
 
-  const handleDialogClose = () => {
-    onClose();
+  const closeMainDialog = () => {
     setTxnStarted(false);
+    resetStakeForm();
+    setTxnStarted(false);
+    setSelectedChains([]);
+    setViewAllChains(false);
+    setViewAllSelectedChains(false);
+    setSelectedMsgs([]);
+    setAddressValidationError('');
+    setFormValidationError('');
+    setGranteeAddress('');
+    resetTxnMsgForms();
+    setStep(STEP_ONE);
+    onClose();
+  };
+
+  const handleDialogClose = () => {
+    setConfirmCloseOpen(true);
   };
 
   return (
@@ -551,6 +573,11 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
             ) : null}
           </div>
         </div>
+        <ConfirmDialogClose
+          open={confirmCloseOpen}
+          onClose={() => setConfirmCloseOpen(false)}
+          closeMainDialog={closeMainDialog}
+        />
       </DialogContent>
     </Dialog>
   );
