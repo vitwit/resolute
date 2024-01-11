@@ -13,12 +13,19 @@ const GrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
         {addressGrants.map((addressGrant) => (
           // <>{JSON.stringify(addressGrant)}</>
 
-          <AuthzCard
-          key={addressGrant.chainID}
-            chainID={addressGrant.chainID}
-            address={addressGrant.address}
-            grants={addressGrant.grants}
-          />
+          <>
+            {!!addressGrant.grants.length && (
+              <AuthzCard
+                key={addressGrant.chainID}
+                chainID={addressGrant.chainID}
+                address={addressGrant.address}
+                grants={addressGrant.grants}
+                grantee={addressGrant.grants[0].grantee}
+                granter={addressGrant.grants[0].granter}
+                isGrantsByMe={true}
+              />
+            )}
+          </>
         ))}
       </div>
     </>

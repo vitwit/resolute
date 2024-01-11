@@ -6,6 +6,10 @@ import { TxStatus } from '../../../types/enums';
 import { cloneDeep } from 'lodash';
 import { getAddressByPrefix } from '@/utils/address';
 import { Authorization, GetGrantsInputs } from '@/types/authz';
+import { signAndBroadcast } from '@/utils/signing';
+import { setError } from '../common/commonSlice';
+import { ERR_UNKNOWN } from '@/utils/errors';
+import { AuthzRevokeMsg } from '../auth/authRekove';
 
 interface ChainAuthz {
   grantsToMe: Authorization[];
@@ -18,6 +22,7 @@ interface ChainAuthz {
     status: TxStatus;
     errMsg: string;
   };
+  txAuthzRes: string;
 
   /*
     this is mapping of address to list of authorizations (chain level)
@@ -34,6 +39,15 @@ interface ChainAuthz {
   };
 }
 
+interface GetAuthRevokeInputs {
+  basicChainInfo: BasicChainInfo;
+  feegranter: string;
+  denom: string;
+  granter: string;
+  grantee: string;
+  typeURL: string;
+  feeAmount: number;
+}
 const defaultState: ChainAuthz = {
   grantsToMe: [],
   grantsByMe: [],
@@ -51,6 +65,7 @@ const defaultState: ChainAuthz = {
     status: TxStatus.INIT,
     errMsg: '',
   },
+  txAuthzRes: '',
 };
 
 interface AuthzState {
@@ -59,6 +74,7 @@ interface AuthzState {
   chains: Record<string, ChainAuthz>;
   getGrantsToMeLoading: number;
   getGrantsByMeLoading: number;
+  txAuthzRes: string;
   /*
     this is mapping of address to chain id to list of authorizations (inter chain level)
     example : {
@@ -77,6 +93,7 @@ const initialState: AuthzState = {
   getGrantsByMeLoading: 0,
   getGrantsToMeLoading: 0,
   AddressToChainAuthz: {},
+  txAuthzRes: '',
 };
 
 export const getGrantsToMe = createAsyncThunk(
@@ -105,6 +122,60 @@ export const getGrantsByMe = createAsyncThunk(
     return {
       data: response.data,
     };
+  }
+);
+
+export const txAuthzRevoke = createAsyncThunk(
+  'authz/tx-revoke',
+  async (
+    data: GetAuthRevokeInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const msg = AuthzRevokeMsg(data.granter, data.grantee, data.typeURL);
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        [msg],
+        860000,
+        '',
+        `${data.feeAmount}${data.denom}`,
+        data.basicChainInfo.rest
+        // data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      if (result?.code === 0) {
+        dispatch(
+          setTxHash({
+            hash: result?.transactionHash,
+          })
+        );
+        dispatch(
+          getGrantsByMe({
+            baseURL: data.basicChainInfo.baseURL,
+            address: data.basicChainInfo.address,
+            chainID: data.basicChainInfo.chainID,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: 'error',
+            message: result?.rawLog || '',
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(ERR_UNKNOWN);
+    }
   }
 );
 
@@ -205,7 +276,7 @@ export const authzSlice = createSlice({
         state.chains[chainID].grantsByMe = grants;
         const addressMapping: Record<string, Authorization[]> = {};
         grants.forEach((grant: Authorization) => {
-          const granter = grant.granter;
+          const granter = grant.grantee;
           if (!addressMapping[granter]) addressMapping[granter] = [];
           addressMapping[granter] = [...addressMapping[granter], grant];
         });
@@ -226,9 +297,32 @@ export const authzSlice = createSlice({
             'An error occurred while fetching authz grants by me',
         };
       });
+    builder
+      .addCase(txAuthzRevoke.pending, (state) => {
+        state.txAuthzRes = TxStatus.PENDING;
+      })
+      .addCase(txAuthzRevoke.fulfilled, (state) => {
+        state.txAuthzRes = TxStatus.IDLE;
+      })
+      .addCase(txAuthzRevoke.rejected, (state) => {
+        state.txAuthzRes = TxStatus.REJECTED;
+      });
   },
 });
 
 export const { enableAuthzMode, exitAuthzMode } = authzSlice.actions;
 
 export default authzSlice.reducer;
+function AuthzSendGrantMsg(
+  granter: string,
+  grantee: string,
+  denom: string,
+  spendLimit: number,
+  expiration: number
+) {
+  throw new Error('Function not implemented.');
+}
+
+function setTxHash(arg0: { hash: string }): any {
+  throw new Error('Function not implemented.');
+}

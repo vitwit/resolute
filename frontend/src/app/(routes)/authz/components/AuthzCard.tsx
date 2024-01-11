@@ -16,11 +16,17 @@ const AuthzCard = ({
   address,
   grants,
   showCloseIcon = true,
+  grantee,
+  granter,
+  isGrantsByMe = false,
 }: {
   chainID: string;
   address: string;
   grants: Authorization[];
   showCloseIcon?: boolean;
+  grantee: string;
+  granter: string;
+  isGrantsByMe?: boolean;
 }) => {
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
@@ -48,11 +54,16 @@ const AuthzCard = ({
     });
     return chain;
   };
+  const revoke = useAppSelector((state) => state.authz.txAuthzRes);
   const dispatch = useAppDispatch();
   const { getDenomInfo } = useGetChainInfo();
 
   const { decimals } = getDenomInfo(chainID);
   const { displayDenom } = getDenomInfo(chainID);
+
+  function getTypeURLFromAuthorization(authorization: any): string {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <div className="authz-card">
@@ -66,7 +77,9 @@ const AuthzCard = ({
         />
         <p>{getChainName(chainID)}</p>
       </div>
-      <div className="authz-small-text">Granter</div>
+      <div className="authz-small-text">
+        {isGrantsByMe ? 'Grantee' : 'Granter'}
+      </div>
       <div className="grant-address truncate">
         <p>{address}</p>
         <Image
@@ -90,6 +103,7 @@ const AuthzCard = ({
         />
       </div>
       <div className="authz-small-text">Permissions</div>
+      {/* {JSON.stringify(grants[2])} */}
       <div className="flex flex-wrap gap-6">
         {grants.map((permission, permissionIndex) => (
           <div key={permissionIndex}>
@@ -112,6 +126,10 @@ const AuthzCard = ({
             <DialogRevoke
               open={dialogRevokeOpen}
               onClose={handleDialogRevokeClose}
+              chainID={chainID}
+              grantee={grantee}
+              granter={granter}
+              typeURL={permission.authorization['@type']}
             />
           </div>
         ))}
