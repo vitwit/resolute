@@ -428,7 +428,6 @@ export const authzSlice = createSlice({
 
 export const { enableAuthzMode, exitAuthzMode, resetState } =
   authzSlice.actions;
-export const { enableAuthzMode, exitAuthzMode, resetState } =
-  authzSlice.actions;
+
 
 export default authzSlice.reducer;
