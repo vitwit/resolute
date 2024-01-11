@@ -6,22 +6,32 @@ const useMultiTxTracker = () => {
   const dispatch = useAppDispatch();
   // tracker : Map<ChainID, Status + anything> & count: pending txns count
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const [ChainsStatus, setChainsStatus] = useState<Record<string, string>>({});
+  const [ChainsStatus, setChainsStatus] = useState<Record<string, ChainStatus>>(
+    {}
+  );
   const [currentTxCount, setCurrentTxCount] = useState(0);
   const reset = () => {
     setChainsStatus({});
     setCurrentTxCount(0);
   };
-  const updateChainStatus = (
-    chainID: string,
-    isTxSuccess: boolean,
-    txInputs?: any,
-    error?: string
-  ) => {
+  const updateChainStatus = ({
+    chainID,
+    isTxSuccess,
+    error,
+    txHash,
+  }: {
+    chainID: string;
+    isTxSuccess: boolean;
+    error?: string;
+    txHash?: string;
+  }) => {
     setChainsStatus((chainsStatus) => {
-      chainsStatus[chainID] = isTxSuccess
-        ? 'Transaction Success'
-        : error || 'Failed';
+      chainsStatus[chainID] = {
+        isTxSuccess: isTxSuccess,
+        error: error || '',
+        txHash: txHash || '',
+        txStatus: 'idle',
+      };
       return chainsStatus;
     });
     setCurrentTxCount((count) => count - 1);
@@ -35,15 +45,27 @@ const useMultiTxTracker = () => {
     chains.forEach((chain) => {
       /* Track started */
       setChainsStatus((chainsStatus) => {
-        chainsStatus[chain.ChainID] =
-          'Transaction Pending or (any data to show)';
+        chainsStatus[chain.ChainID] = {
+          error: '',
+          txHash: '',
+          txStatus: 'pending',
+        };
         return chainsStatus;
       });
 
       /* the below curried callback can use txInputs(chain.txInputs) of this context in case needed
        this will be called inside the redux slice after tx is done (full-filled or rejected) */
-      const onTxComplete = (isTxSuccess: boolean, error?: string) => {
-        updateChainStatus(chain.ChainID, isTxSuccess, chain.txInputs, error);
+      const onTxComplete = ({
+        isTxSuccess,
+        error,
+        txHash,
+      }: OnTxnCompleteInputs) => {
+        updateChainStatus({
+          chainID: chain.ChainID,
+          isTxSuccess: isTxSuccess,
+          error: error,
+          txHash: txHash,
+        });
       };
       chain.txInputs.onTxComplete = onTxComplete;
       /* dispatch the tx along with the above callBack*/

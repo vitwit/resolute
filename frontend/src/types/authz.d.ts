@@ -66,7 +66,7 @@ interface TxGrantAuthzInputs {
   denom: string;
   feeAmount: number;
   feegranter: string;
-  onTxComplete?: (isTxSuccess: boolean, error?: string) => void;
+  onTxComplete?: ({ isTxSuccess, error, txHash }: OnTxnCompleteInputs) => void;
 }
 
 interface TxGrantMultiChainAuthzInputs {
@@ -76,4 +76,17 @@ interface TxGrantMultiChainAuthzInputs {
 interface MultiChainTx {
   ChainID: string;
   txInputs: TxGrantAuthzInputs;
+}
+
+interface OnTxnCompleteInputs {
+  isTxSuccess: boolean;
+  error?: string;
+  txHash?: string;
+}
+
+interface ChainStatus {
+  isTxSuccess?: boolean;
+  txStatus: string;
+  error: string;
+  txHash: string;
 }

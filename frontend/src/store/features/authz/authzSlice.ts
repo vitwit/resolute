@@ -311,19 +311,24 @@ export const authzSlice = createSlice({
       })
       .addCase(txCreateAuthzGrant.fulfilled, (state, action) => {
         const { chainID } = action.meta.arg.basicChainInfo;
+        const { txHash } = action.payload;
         state.chains[chainID].tx.status = TxStatus.IDLE;
         state.chains[chainID].tx.errMsg = '';
-        action.meta.arg.onTxComplete?.(true);
+        action.meta.arg.onTxComplete?.({
+          isTxSuccess: true,
+          txHash: txHash,
+        });
       })
       .addCase(txCreateAuthzGrant.rejected, (state, action) => {
         const { chainID } = action.meta.arg.basicChainInfo;
         state.chains[chainID].tx.status = TxStatus.REJECTED;
         state.chains[chainID].tx.errMsg =
           typeof action.payload === 'string' ? action.payload : '';
-        action.meta.arg.onTxComplete?.(
-          false,
-          typeof action.payload === 'string' ? action.payload : ''
-        );
+        action.meta.arg.onTxComplete?.({
+          isTxSuccess: false,
+          error:
+            typeof action.payload === 'string' ? action.payload : ERR_UNKNOWN,
+        });
       });
 
     builder
