@@ -82,6 +82,12 @@ interface StakingState {
     hasDelegations: boolean;
     hasUnbonding: boolean;
   };
+  authz: {
+    delegationsLoading: number;
+    chains: Chains;
+    hasDelegations: boolean;
+    hasUnbonding: boolean;
+  };
 }
 
 const initialState: StakingState = {

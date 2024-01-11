@@ -87,6 +87,18 @@ const DepositPopup = ({
       return;
     }
 
+    if (isAuthzMode) {
+      txAuthzDeposit({
+        grantee: address,
+        proposalId: proposalId,
+        amount: Number(data.amount) * 10 ** currency.coinDecimals,
+        granter: authzGranter,
+        chainID: chainID,
+        metaData: '',
+      });
+      return;
+    }
+
     dispatch(
       txDeposit({
         depositer: address,
