@@ -12,6 +12,7 @@ import { multiTxns } from '@/store/features/bank/bankSlice';
 import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
 import { TransfersTab } from './TransfersPage';
+import NotSupported from '@/components/illustrations/NotSupported';
 
 const MultiTransfer = ({
   chainID,
@@ -24,6 +25,7 @@ const MultiTransfer = ({
 }) => {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const txPendingStatus = useAppSelector((state) => state.bank.tx.status);
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
 
   useEffect(() => {
     if (txPendingStatus === TxStatus.IDLE) {
@@ -100,45 +102,54 @@ const MultiTransfer = ({
           handleTabChange={handleTabChange}
         />
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1">
-        <div className="w-full flex p-6 flex-1">
-          <div className="w-1/2 flex flex-col space-y-6 pr-5 flex-1">
-            <MultiTxUpload addMsgs={addMsgs} chainID={chainID} />
-            <div>
-              <div className="text-sm not-italic font-normal leading-[normal] mb-2">
-                Memo
+      {isAuthzMode ? (
+        <NotSupported feature="Multi-Transfer" />
+      ) : (
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col flex-1"
+        >
+          <div className="w-full flex p-6 flex-1">
+            <div className="w-1/2 flex flex-col space-y-6 pr-5 flex-1">
+              <MultiTxUpload addMsgs={addMsgs} chainID={chainID} />
+              <div>
+                <div className="text-sm not-italic font-normal leading-[normal] mb-2">
+                  Memo
+                </div>
+                <CustomMultiLineTextField
+                  rows={4}
+                  name={multiSendProps.memo.name}
+                  rules={multiSendProps.memo.rules}
+                  control={control}
+                  error={!!errors.memo}
+                  textFieldClassName={multiSendProps.memo.textFieldClassName}
+                  textFieldSize={multiSendProps.memo.textFieldSize}
+                  placeHolder={multiSendProps.memo.placeHolder}
+                  textFieldCustomMuiSx={
+                    multiSendProps.memo.textFieldCustomMuiSx
+                  }
+                  inputProps={multiSendProps.memo.inputProps}
+                  required={false}
+                />
               </div>
-              <CustomMultiLineTextField
-                rows={4}
-                name={multiSendProps.memo.name}
-                rules={multiSendProps.memo.rules}
-                control={control}
-                error={!!errors.memo}
-                textFieldClassName={multiSendProps.memo.textFieldClassName}
-                textFieldSize={multiSendProps.memo.textFieldSize}
-                placeHolder={multiSendProps.memo.placeHolder}
-                textFieldCustomMuiSx={multiSendProps.memo.textFieldCustomMuiSx}
-                inputProps={multiSendProps.memo.inputProps}
-                required={false}
+              <CustomSubmitButton
+                pendingStatus={txPendingStatus === TxStatus.PENDING}
+                circularProgressSize={12}
+                buttonStyle="primary-custom-btn w-[144px]"
+                buttonContent="Send"
               />
             </div>
-            <CustomSubmitButton
-              pendingStatus={txPendingStatus === TxStatus.PENDING}
-              circularProgressSize={12}
-              buttonStyle="primary-custom-btn w-[144px]"
-              buttonContent="Send"
-            />
+            <div className="w-[1px] bg-[#6e6d7d] opacity-10"></div>
+            <div className="w-1/2 h-full pl-[20px] flex flex-col">
+              <Messages
+                msgs={msgs}
+                onDelete={onDelete}
+                onDeleteAll={onDeleteAll}
+              />
+            </div>
           </div>
-          <div className="w-[1px] bg-[#6e6d7d] opacity-10"></div>
-          <div className="w-1/2 h-full pl-[20px] flex flex-col">
-            <Messages
-              msgs={msgs}
-              onDelete={onDelete}
-              onDeleteAll={onDeleteAll}
-            />
-          </div>
-        </div>
-      </form>
+        </form>
+      )}
     </div>
   );
 };

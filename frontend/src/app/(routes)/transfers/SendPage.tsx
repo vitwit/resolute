@@ -18,6 +18,7 @@ import { setError } from '@/store/features/common/commonSlice';
 import NoAssets from '@/components/illustrations/NoAssets';
 import { capitalizeFirstLetter } from '@/utils/util';
 import useAssetsCardNumber from '@/custom-hooks/useAssetsCardNumber';
+import useAuthzExecHelper from '@/custom-hooks/useAuthzExecHelper';
 
 const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const [selectedAsset, setSelectedAsset] = useState<ParsedAsset | undefined>();
@@ -37,6 +38,12 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const feeAmount = selectedAsset
     ? getChainInfo(selectedAsset.chainID).feeAmount
     : 0;
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
+  const { txAuthzSend } = useAuthzExecHelper();
+  const authzLoading = useAppSelector(
+    (state) => state.authz.chains?.[selectedAsset?.chainID || '']?.tx?.status || TxStatus.INIT
+  );
 
   const amountRules = {
     ...sendProps.amount,
@@ -168,6 +175,22 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
         selectedAsset.denom,
         selectedAsset.decimals
       );
+<<<<<<< HEAD
+=======
+      if (isAuthzMode) {
+        txAuthzSend({
+          granter: authzAddress,
+          grantee: txInputs.from,
+          recipient: txInputs.to,
+          denom: txInputs.assetDenom,
+          amount: txInputs.amount,
+          chainID: txInputs.basicChainInfo.chainID,
+          memo: txInputs.memo,
+        });
+        return;
+      }
+      txInputs.onTxSuccessCallBank = clearForm;
+>>>>>>> 71ed992 (feat: integrated authz in governance and transfers (#1085))
       dispatch(txBankSend(txInputs));
     } else {
       const destChainID = getChainIDFromAddress(data.address);
@@ -177,6 +200,16 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
           setError({
             type: 'error',
             message: 'Invalid Address',
+          })
+        );
+        return;
+      }
+
+      if (isAuthzMode) {
+        dispatch(
+          setError({
+            type: 'error',
+            message: 'The IBC Transactions are not yet supported on Authz mode',
           })
         );
         return;
@@ -314,7 +347,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
                 </div>
               </div>
             </div>
-            {isIBC && (
+            {!isAuthzMode && isIBC && (
               <div className="h-[46px] rounded-2xl bg-[#32226a] mb-4 px-6 py-4 flex">
                 <div className="flex flex-1 items-center gap-2">
                   <Image
@@ -332,8 +365,8 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
             )}
             <CustomSubmitButton
               pendingStatus={
-                sendTxStatus === TxStatus.PENDING ||
-                ibcTxStatus === TxStatus.PENDING
+                (!isAuthzMode && (sendTxStatus === TxStatus.PENDING ||
+                ibcTxStatus === TxStatus.PENDING) || (isAuthzMode && authzLoading === TxStatus.PENDING))
               }
               buttonStyle="primary-custom-btn w-[144px]"
               circularProgressSize={24}
