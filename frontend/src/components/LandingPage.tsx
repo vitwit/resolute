@@ -21,7 +21,7 @@ import Loading from './Loading';
 declare let window: WalletWindow;
 
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
-import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
+import { CosmjsOfflineSigner, connectSnap, getSnap } from '@leapwallet/cosmos-snap-provider';
 
 export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
@@ -43,11 +43,13 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   };
 
   async function requestPermissions() {
-   await window.ethereum
+    await window.ethereum
       .request({
         method: 'wallet_requestPermissions',
-        params: [{ eth_accounts: {
-        } }],
+        params: [{
+          eth_accounts: {
+          }
+        }],
       })
       /* eslint-disable @typescript-eslint/no-explicit-any */
       .then((permissions: any) => {
@@ -76,9 +78,41 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
         for (let i = 0; i < networks.length; i++) {
           console.log('network----', i)
           const chainId: string = networks[i].config.chainId;
+          const chainName: string = networks[i].config.chainName;
+          const rpc: string = networks[i].config.rpc
+          const snapInstalled = await getSnap();
+          if (!snapInstalled) {
+            connectSnap(); // Initiates installation if not already present
+          }
+
           await requestPermissions();
 
-          await window.ethereum.enable(chainId);
+          try {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: chainId}],
+            });
+             /* eslint-disable @typescript-eslint/no-explicit-any */
+          } catch (switchError: any) {
+            // This error code indicates that the chain has not been added to MetaMask.
+            if (switchError?.code === 4902) {
+              try {
+                await window.ethereum.request({
+                  method: 'wallet_addEthereumChain',
+                  params: [
+                    {
+                      chainId: chainId,
+                      chainName: chainName,
+                      rpcUrls: [rpc] /* ... */,
+                    },
+                  ],
+                });
+              } catch (addError) {
+                // handle "add" error
+              }
+            }
+            // handle other "switch" errors
+          }
 
           const account = await window.ethereum.request({
             method: 'eth_requestAccounts',
