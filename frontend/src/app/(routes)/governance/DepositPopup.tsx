@@ -22,7 +22,6 @@ import useAuthzExecHelper from '@/custom-hooks/useAuthzExecHelper';
 const DepositPopup = ({
   chainID,
   votingEndsInDays,
-  denom,
   proposalId,
   proposalname,
   open,
@@ -31,7 +30,6 @@ const DepositPopup = ({
 }: {
   chainID: string;
   votingEndsInDays: string;
-  denom?: string;
   proposalId: number;
   proposalname: string;
   open: boolean;
