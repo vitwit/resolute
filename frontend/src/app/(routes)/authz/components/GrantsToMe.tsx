@@ -3,6 +3,7 @@ import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
 import AuthzCard from './AuthzCard';
 import { CircularProgress } from '@mui/material';
 import Image from 'next/image';
+import { NO_GRANTS_TO_ME_TEXT } from '@/utils/constants';
 
 const GrantsToMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getGrantsToMe } = useAuthzGrants();
@@ -42,7 +43,7 @@ const GrantsToMe = ({ chainIDs }: { chainIDs: string[] }) => {
               className="disable-draggable"
             />
             <p className="text-white text-center text-base italic font-extralight leading-[normal] flex justify-center opacity-50">
-              You don't have any grants
+              {NO_GRANTS_TO_ME_TEXT}
             </p>
           </div>
         </div>

@@ -3,6 +3,7 @@ import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
 import AuthzCard from './AuthzCard';
 import { CircularProgress } from '@mui/material';
 import Image from 'next/image';
+import { NO_GRANTS_BY_ME_TEXT } from '@/utils/constants';
 
 const GrantsByMe = ({
   chainIDs,
@@ -49,7 +50,7 @@ const GrantsByMe = ({
         className="disable-draggable"
       />
       <div className="text-[16px] opacity-50 mt-4 mb-6 leading-normal italic font-extralight text-center">
-        You haven't granted any permission yet
+        {NO_GRANTS_BY_ME_TEXT}
       </div>
       <button
         onClick={handleGrantDialogOpen}
