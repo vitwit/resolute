@@ -12,23 +12,33 @@ export interface Options {
   showRewards?: boolean;
   showAvailable?: boolean;
   showValuedTokens?: boolean;
+  AuthzSkipIBC?: boolean;
 }
 
 const useSortedAssets = (
   chainIDs: string[],
   options: Options
-): [ParsedAsset[]] => {
+): [ParsedAsset[], ParsedAsset[]] => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const balanceChains = useAppSelector(
     (state: RootState) => state.bank.balances
   );
+  const authzBalanceChains = useAppSelector(
+    (state) => state.bank.authz.balances
+  );
   const stakingChains = useAppSelector(
     (state: RootState) => state.staking.chains
   );
+  const authzStakingChains = useAppSelector(
+    (state: RootState) => state.staking.authz.chains
+  );
+
   const rewardsChains = useAppSelector(
     (state: RootState) => state.distribution.chains
   );
-
+  const authzRewardsChains = useAppSelector(
+    (state: RootState) => state.distribution.authzChains
+  );
   const tokensPriceInfo = useAppSelector(
     (state) => state.common.allTokensInfoState.info
   );
@@ -67,7 +77,8 @@ const useSortedAssets = (
           const rewardsAmountInMinDenoms: number =
             rewardsChains?.[chainID]?.delegatorRewards?.totalRewards || 0;
           const stakedAmountInDenoms = stakedAmountInMinDenoms / 10 ** decimals;
-          const unbondedAmountInDenoms = unbondedAmountInMinDenoms / 10 ** decimals;
+          const unbondedAmountInDenoms =
+            unbondedAmountInMinDenoms / 10 ** decimals;
           const rewardsAmountInDenoms =
             rewardsAmountInMinDenoms / 10 ** decimals;
 
@@ -138,9 +149,130 @@ const useSortedAssets = (
     sortedAssets.sort((x, y) => y.usdValue - x.usdValue);
 
     return sortedAssets;
-  }, [chainIDs, balanceChains, networks, tokensPriceInfo, stakingChains]);
+  }, [
+    chainIDs,
+    balanceChains,
+    networks,
+    tokensPriceInfo,
+    stakingChains,
+    rewardsChains,
+  ]);
 
-  return [sortedAssets];
+  const authzSortedAssets = useMemo(() => {
+    let sortedAssets: ParsedAsset[] = [];
+
+    chainIDs.forEach((chainID) => {
+      const config = networks?.[chainID]?.network?.config;
+      const network = networks?.[chainID]?.network;
+      const currency = config?.currencies?.[0];
+      const chainName = config?.chainName.toLowerCase();
+      const nativeMinimalDenom = currency.coinMinimalDenom;
+      const chainBalances = authzBalanceChains?.[chainID]?.list || [];
+      const chainLogoURL = network?.logos?.menu;
+
+      chainBalances.forEach((balance) => {
+        const denomInfo = chainDenomsData[chainName]?.filter((denomInfo) => {
+          return denomInfo.denom === balance.denom;
+        });
+        let asset: ParsedAsset | undefined;
+        if (balance.denom === nativeMinimalDenom) {
+          const config = networks?.[chainID]?.network?.config;
+          const currency = config?.currencies?.[0];
+          const minimalDenom = currency?.coinMinimalDenom;
+          const coinDenom = currency?.coinDenom;
+          const decimals = currency?.coinDecimals || 0;
+          // minimalDenom
+          const stakedAmountInMinDenoms: number =
+            authzStakingChains?.[chainID]?.delegations?.totalStaked || 0;
+          const unbondedAmountInMinDenoms: number =
+            authzStakingChains?.[chainID]?.unbonding?.totalUnbonded || 0;
+
+          const rewardsAmountInMinDenoms: number =
+            authzRewardsChains?.[chainID]?.delegatorRewards?.totalRewards || 0;
+          const stakedAmountInDenoms = stakedAmountInMinDenoms / 10 ** decimals;
+          const unbondedAmountInDenoms =
+            unbondedAmountInMinDenoms / 10 ** decimals;
+          const rewardsAmountInDenoms =
+            rewardsAmountInMinDenoms / 10 ** decimals;
+
+          const usdPriceInfo: TokenInfo | undefined =
+            tokensPriceInfo?.[minimalDenom]?.info;
+          const usdDenomPrice = usdPriceInfo?.usd || 0;
+          const inflation = usdPriceInfo?.usd_24h_change || 0;
+
+          const balanceAmountInDenoms = parseBalance(
+            authzBalanceChains?.[chainID]?.list || [],
+            decimals,
+            minimalDenom
+          );
+          asset = {
+            type: 'native',
+            chainName: chainName,
+            usdValue:
+              usdDenomPrice *
+              (balanceAmountInDenoms +
+                stakedAmountInDenoms +
+                rewardsAmountInDenoms +
+                unbondedAmountInDenoms),
+            usdPrice: usdDenomPrice,
+            inflation: inflation,
+            chainID: chainID,
+            displayDenom: coinDenom,
+            balance: balanceAmountInDenoms,
+            staked: stakedAmountInDenoms,
+            rewards: rewardsAmountInDenoms,
+            denom: minimalDenom,
+            chainLogoURL,
+            decimals,
+          };
+        } else if (denomInfo?.length && !options.AuthzSkipIBC) {
+          const usdPriceInfo: TokenInfo | undefined =
+            tokensPriceInfo?.[denomInfo[0].origin_denom]?.info;
+          const usdDenomPrice = usdPriceInfo?.usd || 0;
+          const inflation = usdPriceInfo?.usd_24h_change || 0;
+
+          const balanceAmount = parseBalance(
+            [balance],
+            denomInfo[0].decimals,
+            balance.denom
+          );
+          const usdDenomValue = usdDenomPrice * balanceAmount;
+          asset = {
+            originDenomChainInfo: getOriginDenomInfo(denomInfo[0].origin_denom),
+            type: 'ibc',
+            usdValue: usdDenomValue,
+            usdPrice: usdDenomPrice,
+            balance: balanceAmount,
+            denom: balance.denom,
+            displayDenom: denomInfo[0].symbol,
+            chainName: chainName,
+            denomInfo: denomInfo,
+            inflation: inflation,
+            chainID: chainID,
+            chainLogoURL,
+            decimals: denomInfo[0].decimals,
+          };
+        }
+
+        if (asset && filterAsset(asset, options)) {
+          sortedAssets = [...sortedAssets, asset];
+        }
+      });
+    });
+
+    sortedAssets.sort((x, y) => y.usdValue - x.usdValue);
+
+    return sortedAssets;
+  }, [
+    chainIDs,
+    authzBalanceChains,
+    networks,
+    tokensPriceInfo,
+    authzStakingChains,
+    authzRewardsChains,
+  ]);
+
+  return [sortedAssets, authzSortedAssets];
 };
 
 export default useSortedAssets;

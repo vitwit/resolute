@@ -50,3 +50,51 @@ interface AddressGrants {
   chainID: string;
   grants: Authorization[];
 }
+
+interface Grant {
+  msg: string;
+  expiration: Date;
+  spend_limit?: string;
+  max_tokens?: string;
+  isDenyList?: boolean;
+  validators_list?: string[];
+}
+
+interface TxGrantAuthzInputs {
+  basicChainInfo: BasicChainInfo;
+  msgs: Msg[];
+  denom: string;
+  feeAmount: number;
+  feegranter: string;
+  onTxComplete?: ({ isTxSuccess, error, txHash }: OnTxnCompleteInputs) => void;
+}
+
+interface TxGrantMultiChainAuthzInputs {
+  data: TxGrantAuthzInputs[];
+}
+
+interface MultiChainTx {
+  ChainID: string;
+  txInputs: TxGrantAuthzInputs;
+}
+
+interface OnTxnCompleteInputs {
+  isTxSuccess: boolean;
+  error?: string;
+  txHash?: string;
+}
+
+interface ChainStatus {
+  isTxSuccess?: boolean;
+  txStatus: string;
+  error: string;
+  txHash: string;
+}
+
+interface txAuthzExecInputs {
+  basicChainInfo: BasicChainInfo;
+  feeDenom: string;
+  metaData: string;
+  msgs: Msg[];
+  feeGranter?: string;
+}

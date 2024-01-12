@@ -76,6 +76,12 @@ interface StakingState {
   hasDelegations: boolean;
   hasUnbonding: boolean;
   defaultState: Chain;
+  authz: {
+    delegationsLoading: number;
+    chains: Chains;
+    hasDelegations: boolean;
+    hasUnbonding: boolean;
+  };
 }
 
 const initialState: StakingState = {
@@ -84,6 +90,12 @@ const initialState: StakingState = {
   delegationsLoading: 0,
   hasUnbonding: false,
   hasDelegations: false,
+  authz: {
+    chains: {},
+    delegationsLoading: 0,
+    hasUnbonding: false,
+    hasDelegations: false,
+  },
   defaultState: {
     paramsStatus: TxStatus.INIT,
     validators: {
@@ -640,8 +652,73 @@ export const getDelegations = createAsyncThunk(
   }
 );
 
+export const getAuthzDelegations = createAsyncThunk(
+  'staking/authz-delegations',
+  async (
+    data: {
+      baseURL: string;
+      address: string;
+      chainID: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const delegations = [];
+      let nextKey = null;
+      const limit = 100;
+      while (true) {
+        const response = await stakingService.delegations(
+          data.baseURL,
+          data.address,
+          nextKey
+            ? {
+                key: nextKey,
+                limit: limit,
+              }
+            : {}
+        );
+        delegations.push(...(response.data?.delegation_responses || []));
+        if (!response.data.pagination?.next_key) {
+          break;
+        }
+        nextKey = response.data.pagination.next_key;
+      }
+
+      return {
+        delegations: delegations,
+        chainID: data.chainID,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
 export const getUnbonding = createAsyncThunk(
   'staking/unbonding',
+  async (
+    data: { baseURL: string; address: string; chainID: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await stakingService.unbonding(
+        data.baseURL,
+        data.address
+      );
+      return {
+        data: response.data,
+        chainID: data.chainID,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
+export const getAuthzUnbonding = createAsyncThunk(
+  'staking/authz-unbonding',
   async (
     data: { baseURL: string; address: string; chainID: string },
     { rejectWithValue }
@@ -679,6 +756,18 @@ export const stakeSlice = createSlice({
     resetState: (state, action: PayloadAction<{ chainID: string }>) => {
       const { chainID } = action.payload;
       state.chains[chainID] = cloneDeep(initialState.defaultState);
+    },
+    resetCompleteState: (state) => {
+      /* eslint-disable-next-line */
+      state = cloneDeep(initialState);
+    },
+    resetAuthz: (state) => {
+      state.authz = {
+        chains: {},
+        delegationsLoading: 0,
+        hasUnbonding: false,
+        hasDelegations: false,
+      };
     },
     resetCancelUnbondingTx: (
       state,
@@ -900,6 +989,51 @@ export const stakeSlice = createSlice({
       });
 
     builder
+      .addCase(getAuthzDelegations.pending, (state, action) => {
+        state.authz.delegationsLoading++;
+        const chainID = action.meta?.arg?.chainID;
+        if (!state.authz.chains[chainID])
+          state.authz.chains[chainID] = cloneDeep(initialState.defaultState);
+        state.authz.chains[chainID].delegations.status = TxStatus.PENDING;
+        state.authz.chains[chainID].delegations.errMsg = '';
+      })
+      .addCase(getAuthzDelegations.fulfilled, (state, action) => {
+        state.authz.delegationsLoading--;
+        const chainID = action.meta?.arg?.chainID;
+        if (state.authz.chains[chainID]) {
+          const delegation_responses = action.payload.delegations;
+          if (delegation_responses?.length) {
+            state.authz.chains[chainID].delegations.hasDelegations = true;
+            state.authz.hasDelegations = true;
+          }
+          state.authz.chains[chainID].delegations.status = TxStatus.IDLE;
+          state.authz.chains[
+            chainID
+          ].delegations.delegations.delegation_responses = delegation_responses;
+          state.authz.chains[chainID].delegations.errMsg = '';
+
+          let total = 0.0;
+          for (let i = 0; i < delegation_responses.length; i++) {
+            const delegation = delegation_responses[i];
+            state.authz.chains[chainID].delegations.delegatedTo[
+              delegation?.delegation?.validator_address
+            ] = true;
+            total += parseFloat(delegation?.delegation?.shares);
+          }
+          state.authz.chains[chainID].delegations.totalStaked = total;
+        }
+      })
+      .addCase(getAuthzDelegations.rejected, (state, action) => {
+        state.authz.delegationsLoading--;
+        const chainID = action.meta?.arg?.chainID;
+        if (state.authz.chains[chainID]) {
+          state.authz.chains[chainID].delegations.status = TxStatus.REJECTED;
+          state.authz.chains[chainID].delegations.errMsg =
+            action.error.message || '';
+        }
+      });
+
+    builder
       .addCase(getPoolInfo.pending, (state, action) => {
         const { chainID } = action.meta.arg;
         if (!state.chains[chainID])
@@ -964,6 +1098,42 @@ export const stakeSlice = createSlice({
         const { chainID } = action.meta.arg;
         state.chains[chainID].unbonding.status = TxStatus.REJECTED;
         state.chains[chainID].unbonding.errMsg = action.error.message || '';
+      });
+
+    builder
+      .addCase(getAuthzUnbonding.pending, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.authz.chains[chainID].unbonding.status = TxStatus.PENDING;
+        state.authz.chains[chainID].unbonding.errMsg = '';
+      })
+      .addCase(getAuthzUnbonding.fulfilled, (state, action) => {
+        const { chainID } = action.meta.arg;
+        const unbonding_responses = action.payload.data.unbonding_responses;
+        let totalUnbonded = 0.0;
+        if (unbonding_responses?.length) {
+          unbonding_responses.forEach((unbondingEntries) => {
+            unbondingEntries.entries.forEach((unbondingEntry) => {
+              totalUnbonded += +unbondingEntry.balance;
+            });
+          });
+          state.authz.chains[chainID].unbonding.totalUnbonded = totalUnbonded;
+          if (unbonding_responses[0].entries.length) {
+            state.authz.chains[chainID].unbonding.hasUnbonding = true;
+            state.authz.hasUnbonding = true;
+          }
+        }
+        state.authz.chains[chainID].unbonding.status = TxStatus.IDLE;
+        state.authz.chains[chainID].unbonding.unbonding.unbonding_responses =
+          unbonding_responses;
+        state.authz.chains[chainID].unbonding.pagination =
+          action.payload.data.pagination;
+        state.authz.chains[chainID].unbonding.errMsg = '';
+      })
+      .addCase(getAuthzUnbonding.rejected, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.authz.chains[chainID].unbonding.status = TxStatus.REJECTED;
+        state.authz.chains[chainID].unbonding.errMsg =
+          action.error.message || '';
       });
 
     builder
@@ -1058,6 +1228,8 @@ export const {
   resetDefaultState,
   resetRestakeTx,
   resetCancelUnbondingTx,
+  resetCompleteState,
+  resetAuthz,
 } = stakeSlice.actions;
 
 export default stakeSlice.reducer;
