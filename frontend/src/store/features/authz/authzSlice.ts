@@ -277,7 +277,7 @@ export const txAuthzRevoke = createAsyncThunk(
         data.basicChainInfo.aminoConfig,
         data.basicChainInfo.prefix,
         data.msgs,
-        860000,
+        GAS_FEE,
         '',
         `${data.feeAmount}${data.denom}`,
         data.basicChainInfo.rest
@@ -541,6 +541,5 @@ export const authzSlice = createSlice({
 
 export const { enableAuthzMode, exitAuthzMode, resetState, resetTxStatus } =
   authzSlice.actions;
-
 
 export default authzSlice.reducer;
