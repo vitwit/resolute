@@ -18,10 +18,9 @@ const ProposalPage = () => {
   const validChain = Object.keys(nameToChainIDs).some(
     (chain) => chainName.toLowerCase() === chain.toLowerCase()
   );
-  let chainID;
-  Object.keys(nameToChainIDs).forEach((chain) => {
-    if (chain === chainName.toLowerCase()) chainID = nameToChainIDs[chainName];
-  });
+  const chainID = Object.keys(nameToChainIDs).find(
+    (chain) => chain === chainName.toLowerCase()
+  );
   const validId = () => {
     const parsedValue = parseInt(proposalId, 10);
     return !isNaN(parsedValue) && Number.isInteger(parsedValue);
