@@ -60,7 +60,8 @@ export const txWithdrawAllRewards = createAsyncThunk(
         '',
         `${data.feeAmount}${data.denom}`,
         data.rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined
+        data.feegranter?.length > 0 ? data.feegranter : undefined,
+        data.rpc
       );
       const tx = NewTransaction(result, msgs, data.chainID, data.address);
       dispatch(

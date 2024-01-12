@@ -40,7 +40,7 @@ const useGetTxInputs = () => {
     });
     const { minimalDenom, decimals } = getDenomInfo(chainID);
     const basicChainInfo = getChainInfo(chainID);
-    const { aminoConfig, prefix, rest, feeAmount, address, cosmosAddress } =
+    const { aminoConfig, prefix, rest, feeAmount, address, cosmosAddress, rpc } =
       basicChainInfo;
 
     return {
@@ -54,6 +54,7 @@ const useGetTxInputs = () => {
       feegranter: '',
       address,
       cosmosAddress,
+      rpc
     };
   };
 
@@ -98,7 +99,7 @@ const useGetTxInputs = () => {
 
     const { minimalDenom, decimals } = getDenomInfo(chainID);
     const basicChainInfo = getChainInfo(chainID);
-    const { aminoConfig, prefix, rest, feeAmount, address, cosmosAddress } =
+    const { aminoConfig, prefix, rest, feeAmount, address, rpc, cosmosAddress } =
       basicChainInfo;
 
     return {
@@ -112,6 +113,7 @@ const useGetTxInputs = () => {
       feegranter: '',
       address,
       cosmosAddress,
+      rpc
     };
   };
 

@@ -65,4 +65,5 @@ interface TxWithdrawAllRewardsInputs {
   address: string;
   cosmosAddress: string;
   isTxAll?: boolean;
+  rpc?: string;
 }

@@ -73,6 +73,8 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
 
             const msgs = unSignedTxn?.messages || [];
 
+            console.log('msgs===================', msgs)
+
             const { signatures } = await client.sign(walletAddress, msgs,
               unSignedTxn?.fee || { amount: [], gas: '' }, unSignedTxn?.memo || '', signerData)
             // const result = await client.signAndBroadcast(accounts[0].address, messages, fee, memo)

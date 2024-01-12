@@ -6,7 +6,7 @@ import { formatCoin } from '@/utils/util';
 import { Decimal } from '@cosmjs/math';
 import { sendTxnTextFieldStyles } from '../../styles';
 import { INSUFFICIENT_BALANCE } from '@/utils/errors';
-import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx';
+// import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx';
 
 interface SendProps {
   address: string;
@@ -53,7 +53,7 @@ const Send: React.FC<SendProps> = (props) => {
 
     const msg = {
       typeUrl: '/cosmos.bank.v1beta1.MsgSend',
-      value: MsgSend.encode(msgSend) ,
+      value: msgSend,
     };
 
     onSend(msg);
