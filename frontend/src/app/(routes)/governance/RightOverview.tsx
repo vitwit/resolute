@@ -8,7 +8,11 @@ import VotePopup from './VotePopup';
 import { CircularProgress, Tooltip } from '@mui/material';
 import { RootState } from '@/store/store';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { getGovTallyParams, getProposal } from '@/store/features/gov/govSlice';
+import {
+  getGovTallyParams,
+  getProposal,
+  getProposalTally,
+} from '@/store/features/gov/govSlice';
 import { get } from 'lodash';
 import {
   getTimeDifference,
@@ -60,13 +64,25 @@ const RightOverview = ({
   useEffect(() => {
     const allChainInfo = networks[chainID];
     const chainInfo = allChainInfo.network;
+    const govV1 = chainInfo.govV1;
     dispatch(
       getProposal({
         chainID,
         baseURL: chainInfo.config.rest,
         proposalId: proposalId,
+        govV1: govV1,
       })
     );
+
+    dispatch(
+      getProposalTally({
+        baseURL: chainInfo?.config.rest,
+        proposalId,
+        chainID: chainID,
+        govV1,
+      })
+    );
+
     dispatch(
       getGovTallyParams({
         chainID,
@@ -94,10 +110,18 @@ const RightOverview = ({
   const quorumRequired = (parseFloat(tallyParams.quorum) * 100).toFixed(1);
 
   const totalVotes =
-    Number(get(tallyResult, 'yes')) +
-    Number(get(tallyResult, 'no')) +
-    Number(get(tallyResult, 'abstain')) +
-    Number(get(tallyResult, 'no_with_veto'));
+    Number(get(tallyResult, 'yes', get(tallyResult, 'yes_count')) || 0) +
+      Number(get(tallyResult, 'no', get(tallyResult, 'no_count')) || 0) +
+      Number(
+        get(tallyResult, 'abstain', get(tallyResult, 'abstain_count')) || 0
+      ) +
+      Number(
+        get(
+          tallyResult,
+          'no_with_veto',
+          get(tallyResult, 'no_with_veto_count')
+        ) || 0
+      ) || 0;
 
   const getVotesPercentage = (votesCount: number) => {
     return ((votesCount / totalVotes) * 100).toFixed(2);
@@ -106,30 +130,47 @@ const RightOverview = ({
   const truncatedDescription = get(
     proposalInfo,
     'content.description',
-    ''
+    get(proposalInfo, 'summary', '')
   ).slice(0, maxCharacters);
   const isDescriptionTruncated =
     truncatedDescription.length <
-    get(proposalInfo, 'content.description', '').length;
+    get(proposalInfo, 'content.description', get(proposalInfo, 'summary', ''))
+      .length;
 
   const data = [
     {
-      value: getVotesPercentage(Number(get(tallyResult, 'yes'))),
+      value: getVotesPercentage(
+        Number(get(tallyResult, 'yes', get(tallyResult, 'yes_count')) || 0)
+      ),
       color: '#4AA29C',
       label: 'Yes',
     },
     {
-      value: getVotesPercentage(Number(get(tallyResult, 'no'))),
+      value: getVotesPercentage(
+        Number(get(tallyResult, 'no', get(tallyResult, 'no_count')) || 0)
+      ),
       color: '#E57575',
       label: 'No',
     },
     {
-      value: getVotesPercentage(Number(get(tallyResult, 'abstain'))),
+      value: getVotesPercentage(
+        Number(
+          get(tallyResult, 'abstain', get(tallyResult, 'abstain_count')) || 0
+        )
+      ),
       color: '#EFFF34',
       label: 'Abstain',
     },
     {
-      value: getVotesPercentage(Number(get(tallyResult, 'no_with_veto'))),
+      value: getVotesPercentage(
+        Number(
+          get(
+            tallyResult,
+            'no_with_veto',
+            get(tallyResult, 'no_with_veto_count' || 0)
+          )
+        )
+      ),
       color: '#5885AF',
       label: 'Veto',
     },
@@ -208,7 +249,12 @@ const RightOverview = ({
                         />
 
                         <p className="items-center flex space-x-1 text-[14px] font-bold opacity-50">
-                          # {get(proposalInfo, 'proposal_id')}
+                          #{' '}
+                          {get(
+                            proposalInfo,
+                            'proposal_id',
+                            get(proposalInfo, 'id')
+                          )}
                         </p>
                         {/* <p className="proposal-text-extralight items-center flex"></p> */}
                       </div>
@@ -229,8 +275,16 @@ const RightOverview = ({
                       </div>
                     </div>
                     <div className="font-bold text-base text-white">
-                      {get(proposalInfo, 'content.title') ||
-                        get(proposalInfo, 'content.@type')}
+                      {get(
+                        proposalInfo,
+                        'content.title',
+                        get(proposalInfo, 'title')
+                      ) ||
+                        get(
+                          proposalInfo,
+                          'content.@type',
+                          get(proposalInfo, 'message[0].@type', '')
+                        )}
                     </div>
                   </div>
 
@@ -350,12 +404,12 @@ const RightOverview = ({
                               className="flex flex-col items-center gap-2"
                             >
                               <CustomPieChart
-                                value={parseInt(item.value)}
+                                value={parseInt(item.value) || 0}
                                 color={item.color}
                                 label={item.label}
                               />
                               <div className="proposal-text-extralight">{`${Math.floor(
-                                parseFloat(item.value)
+                                parseFloat(item.value) || 0
                               )}% ${item.label}`}</div>
                             </div>
                           ))}

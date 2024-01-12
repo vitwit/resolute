@@ -24,13 +24,11 @@ interface GovProposal {
   voting_end_time: string;
 }
 
-interface ProposalInfo{
+interface ProposalInfo {
   status: TxStatus;
   errMsg: string;
   proposal: GovProposal;
 }
-
-
 
 interface GetProposalsInVotingResponse {
   proposals: GovProposal[];
@@ -114,6 +112,7 @@ interface GetProposalsInVotingInputs {
   baseURL: string;
   chainID: string;
   voter: string;
+  govV1: boolean;
   key?: string;
   limit?: number;
 }
@@ -123,6 +122,7 @@ interface GetProposalsInDepositInputs {
   chainID: string;
   key?: string;
   limit?: number;
+  govV1: boolean;
 }
 
 interface GetVotesInputs {
@@ -132,12 +132,14 @@ interface GetVotesInputs {
   chainID: string;
   key?: string;
   limit?: number;
+  govV1: boolean;
 }
 
 interface GetProposalTallyInputs {
   baseURL: string;
   proposalId: number;
   chainID: string;
+  govV1: boolean;
 }
 
 interface GetDepositParamsInputs {
@@ -149,6 +151,7 @@ interface GetProposalInputs {
   baseURL: string;
   proposalId: number;
   chainID: string;
+  govV1: boolean;
 }
 
 interface TxVoteInputs {

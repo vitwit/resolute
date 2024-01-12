@@ -81,10 +81,12 @@ const AllProposals = ({
       const allChainInfo = networks[chainID];
       const chainInfo = allChainInfo.network;
       const address = allChainInfo?.walletInfo?.bech32Address;
+      const govV1 = allChainInfo?.network?.govV1;
       const basicChainInputs = {
         baseURL: chainInfo.config.rest,
         voter: address,
         chainID,
+        govV1,
       };
 
       dispatch(getProposalsInVoting(basicChainInputs));
@@ -92,6 +94,7 @@ const AllProposals = ({
         getProposalsInDeposit({
           baseURL: chainInfo.config.rest,
           chainID,
+          govV1,
         })
       );
     });
@@ -170,7 +173,13 @@ const AllProposals = ({
                         onClick={() => {
                           handleOpenOverview();
                           handleSetCurrentOverviewId(
-                            parseInt(get(proposal, 'proposal_id')),
+                            parseInt(
+                              get(
+                                proposal,
+                                'proposal_id',
+                                get(proposal, 'id', '')
+                              )
+                            ),
                             chainID
                           );
                           handleProposalSelected(true);
@@ -178,7 +187,11 @@ const AllProposals = ({
                         className={
                           isSelected &&
                           currentOverviewId.toString() ===
-                            get(proposal, 'proposal_id')
+                            get(
+                              proposal,
+                              'proposal_id',
+                              get(proposal, 'id', '')
+                            )
                             ? 'proposal proposal-selected'
                             : 'proposal'
                         }
@@ -190,19 +203,35 @@ const AllProposals = ({
                               className={
                                 isSelected &&
                                 currentOverviewId.toString() ===
-                                  get(proposal, 'proposal_id')
+                                  get(
+                                    proposal,
+                                    'proposal_id',
+                                    get(proposal, 'id', '')
+                                  )
                                   ? 'proposal-id'
                                   : 'proposal-id proposal-id-static'
                               }
                             >
                               <p className="text-white text-xs font-extralight leading-[14px] text-[10px]">
-                                {get(proposal, 'proposal_id')}
+                                {get(
+                                  proposal,
+                                  'proposal_id',
+                                  get(proposal, 'id', '')
+                                )}
                               </p>
                             </div>
 
                             <p className="proposal-text-normal">
-                              {get(proposal, 'content.title') ||
-                                get(proposal, 'content.@type')}
+                              {get(
+                                proposal,
+                                'content.title',
+                                get(proposal, 'title')
+                              ) ||
+                                get(
+                                  proposal,
+                                  'content.@type',
+                                  get(proposal, 'messages[0].@type')
+                                )}
                             </p>
                           </div>
                           <div className="flex space-x-6"></div>
