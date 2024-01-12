@@ -102,4 +102,5 @@ interface txAuthzExecInputs {
   metaData: string;
   msgs: Msg[];
   feeGranter?: string;
+  type?: string;
 }
