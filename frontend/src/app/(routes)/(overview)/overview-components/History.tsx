@@ -8,6 +8,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { useRouter } from 'next/navigation';
 import NoTransactions from '@/components/illustrations/NoTransactions';
+import useGetAuthzAssetsAmount from '../../../../custom-hooks/useGetAuthzAssetsAmount';
 
 const History = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
@@ -32,6 +33,7 @@ export default History;
 const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
   const router = useRouter();
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const getPath = (chainIDs: string[], module: string) => {
     if (chainIDs.length !== 1) {
       return '/' + module;
@@ -42,7 +44,14 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
     });
     return '/' + module + '/' + curChainName;
   };
-  const [staked, available, rewards] = useGetAssetsAmount(chainIDs);
+
+  const [myStaked, myAvailable, myRewards] = useGetAssetsAmount(chainIDs);
+  const [authzStaked, authzAvailable, authzRewards] =
+    useGetAuthzAssetsAmount(chainIDs);
+  const staked = isAuthzMode ? authzStaked : myStaked;
+  const available = isAuthzMode ? authzAvailable : myAvailable;
+  const rewards = isAuthzMode ? authzRewards : myRewards;
+
   return (
     <div>
       <div className="text-white text-center mt-10 mb-6">

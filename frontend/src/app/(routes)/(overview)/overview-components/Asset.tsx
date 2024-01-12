@@ -11,6 +11,9 @@ import { RootState } from '@/store/store';
 import { CircularProgress, Tooltip } from '@mui/material';
 import { setError } from '@/store/features/common/commonSlice';
 import { capitalize } from 'lodash';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { DelegationsPairs } from '@/types/distribution';
+import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
 
 const Asset = ({
   asset,
@@ -27,11 +30,38 @@ const Asset = ({
     (state: RootState) =>
       state.staking.chains[asset.chainID]?.reStakeTxStatus || TxStatus.IDLE
   );
+  const authzRewards = useAppSelector(
+    (state) => state.distribution.authzChains
+  );
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
+  const { getChainInfo } = useGetChainInfo();
 
   const dispatch = useAppDispatch();
-  const { txWithdrawAllRewardsInputs, txRestakeInputs } = useGetTxInputs();
+  const { txWithdrawAllRewardsInputs, txRestakeInputs, txAuthzRestakeMsgs } =
+    useGetTxInputs();
+  const { txAuthzClaim, txAuthzRestake } = useAuthzStakingExecHelper();
 
   const claim = (chainID: string) => {
+    if (isAuthzMode) {
+      const { address } = getChainInfo(chainID);
+      const pairs: DelegationsPairs[] = (
+        authzRewards[chainID]?.delegatorRewards?.list || []
+      ).map((reward) => {
+        const pair = {
+          delegator: authzAddress,
+          validator: reward.validator_address,
+        };
+        return pair;
+      });
+      txAuthzClaim({
+        grantee: address,
+        granter: authzAddress,
+        pairs: pairs,
+        chainID: chainID,
+      });
+      return;
+    }
     if (txClaimStatus === TxStatus.PENDING) {
       dispatch(
         setError({
@@ -58,6 +88,17 @@ const Asset = ({
   };
 
   const claimAndStake = (chainID: string) => {
+    if (isAuthzMode) {
+      const { address } = getChainInfo(chainID);
+      const msgs = txAuthzRestakeMsgs(chainID);
+      txAuthzRestake({
+        grantee: address,
+        granter: authzAddress,
+        msgs: msgs,
+        chainID: chainID,
+      });
+      return;
+    }
     if (txRestakeStatus === TxStatus.PENDING) {
       dispatch(
         setError({

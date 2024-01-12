@@ -1,3 +1,4 @@
+import { DelegationsPairs } from '@/types/distribution';
 import { MsgExec } from 'cosmjs-types/cosmos/authz/v1beta1/tx';
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
@@ -12,7 +13,7 @@ import {
 
 
 const msgSendTypeUrl = '/cosmos.bank.v1beta1.MsgSend';
-const msgAuthzExecypeUrl = '/cosmos.authz.v1beta1.MsgExec';
+export const msgAuthzExecypeUrl = '/cosmos.authz.v1beta1.MsgExec';
 const msgVote = '/cosmos.gov.v1beta1.MsgVote';
 const msgDeposit = '/cosmos.gov.v1beta1.MsgDeposit';
 const msgWithdrawRewards =
@@ -20,6 +21,10 @@ const msgWithdrawRewards =
 const msgDelegate = '/cosmos.staking.v1beta1.MsgDelegate';
 const msgUnDelegate = '/cosmos.staking.v1beta1.MsgUndelegate';
 const msgReDelegate = '/cosmos.staking.v1beta1.MsgBeginRedelegate';
+
+export const serialize = () => {
+  return 'Executed an authz permission';
+};
 
 export function AuthzExecSendMsg(
   grantee: string,
@@ -102,8 +107,8 @@ export function AuthzExecDepositMsg(
 
 export function AuthzExecWithdrawRewardsMsg(
   grantee: string,
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  payload: any[]
+
+  payload: DelegationsPairs[]
 ): Msg {
   const msgs = [];
   for (let i = 0; i < payload.length; i++) {
@@ -226,6 +231,28 @@ export function AuthzExecMsgFeegrant(feegrant: Msg, grantee: string): Msg {
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: [feegrant],
+    }),
+  };
+}
+
+export function AuthzExecMsgCancelUnbond(unbond: Msg, grantee: string): Msg {
+  return {
+    typeUrl: msgAuthzExecypeUrl,
+    value: MsgExec.fromPartial({
+      grantee: grantee,
+      msgs: [unbond],
+    }),
+  };
+}
+
+// delegate written again in a different way
+export function AuthzExecMsgRestake(delegations: Msg[], grantee: string): Msg {
+  
+  return {
+    typeUrl: msgAuthzExecypeUrl,
+    value: MsgExec.fromPartial({
+      grantee: grantee,
+      msgs: delegations,
     }),
   };
 }
