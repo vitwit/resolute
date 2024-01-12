@@ -4,12 +4,17 @@ import DialogCreateAuthzGrant from './components/DialogCreateAuthzGrant';
 
 const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [isGrantsToMe, setIsGrantsToMe] = useState(true);
+
   const [dialogGrantOpen, setDialogGrantOpen] = useState(false);
-  const hanldeDialogGrantClose = () => {
+  const handleDialogGrantClose = () => {
     setDialogGrantOpen(false);
   };
+<<<<<<< HEAD
   console.log(chainIDs);
   // TODO: dispatch and fetch the grants from authz state
+=======
+
+>>>>>>> cc4fb21 (feat: Implement authz overview and revoke (#1093))
   return (
     <div className="py-6 px-10">
       <div className="space-y-10">
@@ -47,14 +52,25 @@ const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
             </div>
           </div>
           <div>
+<<<<<<< HEAD
             {/* TODO: Create UI to display grants and render data */}
             {isGrantsToMe ? 'Grants to me' : 'Grants by me'}
+=======
+            {isGrantsToMe ? (
+              <GrantsToMe chainIDs={chainIDs} />
+            ) : (
+              <GrantsByMe
+                chainIDs={chainIDs}
+                handleGrantDialogOpen={() => setDialogGrantOpen(true)}
+              />
+            )}
+>>>>>>> cc4fb21 (feat: Implement authz overview and revoke (#1093))
           </div>
         </div>
       </div>
       <DialogCreateAuthzGrant
         open={dialogGrantOpen}
-        onClose={hanldeDialogGrantClose}
+        onClose={handleDialogGrantClose}
       />
     </div>
   );
