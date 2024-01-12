@@ -383,10 +383,10 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                 Create Grant : Step {step}
               </h2>
               {/* TODO: Change the below text content  */}
-              <div className="text-[14px]">
+              {/* <div className="text-[14px]">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </div>
+              </div> */}
             </div>
             <div className="divider-line"></div>
             {step === STEP_ONE ? (
