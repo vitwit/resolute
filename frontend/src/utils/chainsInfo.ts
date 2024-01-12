@@ -538,12 +538,12 @@ export const networks: Network[] = [
         },
       ],
       bech32Config: {
-        bech32PrefixAccAddr: 'osmosis',
-        bech32PrefixAccPub: 'osmosispub',
-        bech32PrefixValAddr: 'osmosisvaloper',
-        bech32PrefixValPub: 'osmosisvaloperpub',
-        bech32PrefixConsAddr: 'osmosisgvalcons',
-        bech32PrefixConsPub: 'osmosisvalconspub',
+        bech32PrefixAccAddr: 'osmo',
+        bech32PrefixAccPub: 'osmopub',
+        bech32PrefixValAddr: 'osmovaloper',
+        bech32PrefixValPub: 'osmovaloperpub',
+        bech32PrefixConsAddr: 'osmogvalcons',
+        bech32PrefixConsPub: 'osmovalconspub',
       },
       feeCurrencies: [
         {

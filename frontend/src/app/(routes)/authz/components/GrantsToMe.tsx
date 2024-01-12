@@ -22,6 +22,7 @@ const GrantsToMe = ({ chainIDs }: { chainIDs: string[] }) => {
             showCloseIcon={false}
             grantee={''}
             granter={''}
+            isGrantsByMe={false}
           />
         ))}
       </div>

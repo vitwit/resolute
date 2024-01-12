@@ -52,14 +52,20 @@ const ChainDelegations = ({
   const txStatus = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.tx
   );
-  const balance = useAppSelector(
+
+  const myBalance = useAppSelector(
     (state: RootState) => state.bank.balances[chainID]
   );
+  const authzBalance = useAppSelector(
+    (state) => state.bank.authz.balances[chainID]
+  );
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const balance = isAuthzMode ? authzBalance : myBalance;
+
   const stakingParams = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.params
   );
   const authzAddress = useAppSelector((state) => state.authz.authzAddress);
-  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
 
   const [availableBalance, setAvailableBalance] = useState(0);
   const [delegateOpen, setDelegateOpen] = useState(false);

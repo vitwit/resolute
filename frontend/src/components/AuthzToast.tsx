@@ -23,7 +23,7 @@ const AuthzToast = ({
       : convertAddress(chainIDs[0], authzAddress);
   return isAuthzMode ? (
     <div
-      className={'flex justify-between items-center px-6 py-4 ' + margins}
+      className={'flex justify-between items-center px-6 py-4 rounded-2xl ' + margins}
       style={{ background: 'rgba(217, 217, 217, 0.10)' }}
     >
       <div className="flex items-center gap-[10px]">

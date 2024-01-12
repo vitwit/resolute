@@ -37,6 +37,7 @@ interface ChainAuthz {
   tx: {
     status: TxStatus;
     errMsg: string;
+    type?: string;
   };
 }
 
@@ -470,17 +471,21 @@ export const authzSlice = createSlice({
     builder
       .addCase(txAuthzExec.pending, (state, action) => {
         const chainID = action.meta.arg.basicChainInfo.chainID;
+        const actionType = action.meta.arg.type;
         state.chains[chainID].tx.status = TxStatus.PENDING;
         state.chains[chainID].tx.errMsg = '';
+        state.chains[chainID].tx.type = actionType;
       })
       .addCase(txAuthzExec.fulfilled, (state, action) => {
         const chainID = action.meta.arg.basicChainInfo.chainID;
         state.chains[chainID].tx.status = TxStatus.IDLE;
+        state.chains[chainID].tx.type = '';
       })
       .addCase(txAuthzExec.rejected, (state, action) => {
         const chainID = action.meta.arg.basicChainInfo.chainID;
         state.chains[chainID].tx.status = TxStatus.REJECTED;
         state.chains[chainID].tx.errMsg = action.error.message || 'rejected';
+        state.chains[chainID].tx.type = '';
       });
     builder
       .addCase(txCreateAuthzGrant.pending, (state, action) => {

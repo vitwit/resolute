@@ -106,9 +106,12 @@ const DialogRevoke: React.FC<DialogRevokeProps> = (props) => {
                       'Revoke'
                     )}
                   </button>
-                  <p className="text-white text-base not-italic font-medium leading-5 tracking-[0.64px] underline cursor-pointer">
-                    Cancel
-                  </p>
+                  <button
+                onClick={onClose}
+                className="font-medium tracking-[0.64px] underline underline-offset-[3px]"
+              >
+                Cancel
+              </button>
                 </div>
               </div>
             </div>
