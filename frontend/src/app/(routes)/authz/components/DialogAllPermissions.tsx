@@ -25,6 +25,7 @@ interface AuthorizationInfoProps {
   chainID: string;
   granter: string;
   grantee: string;
+  isGrantsByMe: boolean;
 }
 
 interface RenderAuthorizationProps {
@@ -38,6 +39,7 @@ interface RenderAuthorizationProps {
   changeMsgIndex: (index: number) => void;
   selectedMsgIndex: number;
   setRevokeAllMsgs: () => void;
+  isGrantsByMe: boolean;
 }
 
 const RenderAuthorization = ({
@@ -51,6 +53,7 @@ const RenderAuthorization = ({
   permissionIndex,
   selectedMsgIndex,
   setRevokeAllMsgs,
+  isGrantsByMe,
 }: RenderAuthorizationProps) => {
   const { authorization, expiration } = authz;
   const stakeAuthzs = {
@@ -94,16 +97,18 @@ const RenderAuthorization = ({
             <div className="flex items-center text-white text-base not-italic font-normal leading-[normal]">
               Send
             </div>
-            <button
-              onClick={() => txRevoke(permissionIndex)}
-              className="create-grant-btn"
-            >
-              {isSelected && loading === TxStatus.PENDING ? (
-                <CircularProgress size={20} sx={{ color: 'white' }} />
-              ) : (
-                'Revoke'
-              )}
-            </button>
+            {isGrantsByMe ? (
+              <button
+                onClick={() => txRevoke(permissionIndex)}
+                className="create-grant-btn"
+              >
+                {isSelected && loading === TxStatus.PENDING ? (
+                  <CircularProgress size={20} sx={{ color: 'white' }} />
+                ) : (
+                  'Revoke'
+                )}
+              </button>
+            ) : null}
           </div>
           <div className=" flex justify-between w-full">
             <div className="flex space-y-4 flex-col">
@@ -133,16 +138,18 @@ const RenderAuthorization = ({
             <div className="flex items-center text-white text-base not-italic font-normal leading-[normal]">
               {getTypeURLName(authorization.msg)}
             </div>
-            <button
-              onClick={() => txRevoke(permissionIndex)}
-              className="create-grant-btn h-10 w-[140px]"
-            >
-              {isSelected && loading === TxStatus.PENDING ? (
-                <CircularProgress size={20} sx={{ color: 'white' }} />
-              ) : (
-                'Revoke'
-              )}
-            </button>
+            {isGrantsByMe ? (
+              <button
+                onClick={() => txRevoke(permissionIndex)}
+                className="create-grant-btn h-10 w-[140px]"
+              >
+                {isSelected && loading === TxStatus.PENDING ? (
+                  <CircularProgress size={20} sx={{ color: 'white' }} />
+                ) : (
+                  'Revoke'
+                )}
+              </button>
+            ) : null}
           </div>
           <div className="flex space-y-4 flex-col">
             <div className="flex items-center authz-small-text">Expiry</div>
@@ -159,16 +166,18 @@ const RenderAuthorization = ({
             <div className="flex items-center text-white text-base font-normal leading-[normal]">
               {stakeAuthzs[authorization.authorization_type]}
             </div>
-            <button
-              onClick={() => txRevoke(permissionIndex)}
-              className="create-grant-btn"
-            >
-              {isSelected && loading === TxStatus.PENDING ? (
-                <CircularProgress size={20} sx={{ color: 'white' }} />
-              ) : (
-                'Revoke'
-              )}
-            </button>
+            {isGrantsByMe ? (
+              <button
+                onClick={() => txRevoke(permissionIndex)}
+                className="create-grant-btn"
+              >
+                {isSelected && loading === TxStatus.PENDING ? (
+                  <CircularProgress size={20} sx={{ color: 'white' }} />
+                ) : (
+                  'Revoke'
+                )}
+              </button>
+            ) : null}
           </div>
           <div className="flex w-full justify-between">
             <div className="space-y-4">
@@ -235,6 +244,7 @@ export function AuthorizationInfo(props: AuthorizationInfoProps) {
     authorization,
     grantee,
     granter,
+    isGrantsByMe,
   } = props;
 
   const dispatch = useAppDispatch();
@@ -302,16 +312,18 @@ export function AuthorizationInfo(props: AuthorizationInfoProps) {
               <div className="flex items-center text-white text-xl not-italic font-bold leading-[normal]">
                 All Permissions
               </div>
-              <button
-                onClick={() => txRevoke()}
-                className="create-grant-btn h-10 w-[166px]"
-              >
-                {revokeAllMsgs && loading === TxStatus.PENDING ? (
-                  <CircularProgress size={20} sx={{ color: 'white' }} />
-                ) : (
-                  'Revoke All'
-                )}
-              </button>
+              {isGrantsByMe ? (
+                <button
+                  onClick={() => txRevoke()}
+                  className="create-grant-btn h-10 w-[166px]"
+                >
+                  {revokeAllMsgs && loading === TxStatus.PENDING ? (
+                    <CircularProgress size={20} sx={{ color: 'white' }} />
+                  ) : (
+                    'Revoke All'
+                  )}
+                </button>
+              ) : null}
             </div>
             <div className="grid grid-cols-2 gap-4">
               {authorization.map((permission, permissionIndex) => (
@@ -327,6 +339,7 @@ export function AuthorizationInfo(props: AuthorizationInfoProps) {
                     permissionIndex={permissionIndex}
                     selectedMsgIndex={selectedMsgIndex}
                     setRevokeAllMsgs={() => setRevokeAllMsgs(false)}
+                    isGrantsByMe={isGrantsByMe}
                   />
                 </div>
               ))}
