@@ -66,7 +66,18 @@ const DepositPopup = ({
   const handleDeposit = (data: { amount: number }) => {
     const { aminoConfig, prefix, rest, feeAmount, address, rpc, minimalDenom } =
       getVoteTxInputs(chainID);
-    console.log(data);
+
+    if (isAuthzMode) {
+      txAuthzDeposit({
+        grantee: address,
+        proposalId: proposalId,
+        amount: Number(data.amount) * 10 ** currency.coinDecimals,
+        granter: authzGranter,
+        chainID: chainID,
+        metaData: '',
+      });
+      return;
+    }
 
     dispatch(
       txDeposit({

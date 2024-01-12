@@ -21,6 +21,12 @@ import {
   NO_MESSAGES_ILLUSTRATION,
 } from '@/utils/constants';
 import { CircularProgress } from '@mui/material';
+<<<<<<< HEAD
+=======
+import MainTopNav from '@/components/MainTopNav';
+import useInitAuthzStaking from '@/custom-hooks/useInitAuthzStaking';
+import AuthzToast from '@/components/AuthzToast';
+>>>>>>> a885705 (feat: integrate authz with staking and overview (#1092))
 
 const StakingOverview = () => {
   const dispatch = useAppDispatch();
@@ -32,22 +38,42 @@ const StakingOverview = () => {
     (chainName) => nameToChainIDs[chainName]
   );
 
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+
   const stakingData = useAppSelector(
     (state: RootState) => state.staking.chains
+  );
+  const authzStakingData = useAppSelector(
+    (state: RootState) => state.staking.authz.chains
   );
   const rewardsData = useAppSelector(
     (state: RootState) => state.distribution.chains
   );
+  const authzRewardsData = useAppSelector(
+    (state: RootState) => state.distribution.authzChains
+  );
   const hasDelegations = useAppSelector(
     (state: RootState) => state.staking.hasDelegations
+  );
+  const hasAuthzDelegations = useAppSelector(
+    (state: RootState) => state.staking.authz.hasDelegations
   );
   const hasUnbonding = useAppSelector(
     (state: RootState) => state.staking.hasUnbonding
   );
+  const hasAuthzUnbonding = useAppSelector(
+    (state: RootState) => state.staking.authz.hasUnbonding
+  );
   const delegationsLoading = useAppSelector(
     (state: RootState) => state.staking.delegationsLoading
   );
+  const authzDelegationsLoading = useAppSelector(
+    (state: RootState) => state.staking.authz.delegationsLoading
+  );
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
+
+  useInitAuthzStaking(chainIDs);
+
   useEffect(() => {
     if (chainIDs) {
       chainIDs.forEach((chainID) => {
@@ -96,14 +122,25 @@ const StakingOverview = () => {
 
   return (
     <div className="staking-main">
+<<<<<<< HEAD
       <h2 className="txt-lg font-medium mb-6">Staking</h2>
+=======
+      <div className="mb-6">
+        <MainTopNav title="Staking" />
+        <AuthzToast chainIDs={chainIDs} margins="mt-10 mb-10" />
+      </div>
+>>>>>>> a885705 (feat: integrate authz with staking and overview (#1092))
       <div className="overview-grid">
         {chainIDs.map((chainID) => {
-          const delegations = stakingData[chainID]?.delegations.delegations;
+          const delegations = (
+            isAuthzMode ? authzStakingData[chainID] : stakingData[chainID]
+          )?.delegations.delegations;
           const validators = stakingData[chainID]?.validators;
           const currency = networks[chainID]?.network?.config?.currencies[0];
           const chainName = networks[chainID]?.network?.config?.chainName;
-          const rewards = rewardsData[chainID]?.delegatorRewards?.list;
+          const rewards = (
+            isAuthzMode ? authzRewardsData[chainID] : rewardsData[chainID]
+          )?.delegatorRewards?.list;
 
           return (
             <ChainDelegations
@@ -122,7 +159,8 @@ const StakingOverview = () => {
         })}
       </div>
 
-      {delegationsLoading === 0 && !hasDelegations ? (
+      {(!isAuthzMode && delegationsLoading === 0 && !hasDelegations) ||
+      (isAuthzMode && authzDelegationsLoading && !hasAuthzDelegations) ? (
         <div className="no-data">
           <Image
             src={NO_MESSAGES_ILLUSTRATION}
@@ -143,13 +181,14 @@ const StakingOverview = () => {
         </div>
       ) : null}
 
-      {hasUnbonding ? (
+      {(!isAuthzMode && hasUnbonding) || (isAuthzMode && hasAuthzUnbonding) ? (
         <div className="mt-12">
           <h2 className="txt-lg font-medium my-6">Unbonding</h2>
           <div className="unbondings-grid">
             {chainIDs.map((chainID) => {
-              const unbondingDelegations =
-                stakingData[chainID]?.unbonding.unbonding;
+              const unbondingDelegations = (
+                isAuthzMode ? authzStakingData[chainID] : stakingData[chainID]
+              )?.unbonding.unbonding;
               const validators = stakingData[chainID]?.validators;
               const { chainName, currencies } =
                 networks[chainID]?.network?.config;

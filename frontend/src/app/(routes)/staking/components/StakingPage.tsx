@@ -25,6 +25,12 @@ import {
 import Image from 'next/image';
 import { CircularProgress } from '@mui/material';
 import { TxStatus } from '@/types/enums';
+<<<<<<< HEAD
+=======
+import MainTopNav from '@/components/MainTopNav';
+import AuthzToast from '@/components/AuthzToast';
+import useInitAuthzStaking from '@/custom-hooks/useInitAuthzStaking';
+>>>>>>> a885705 (feat: integrate authz with staking and overview (#1092))
 
 const StakingPage = ({
   chainName,
@@ -46,12 +52,35 @@ const StakingPage = ({
     (state: RootState) => state.wallet.nameToChainIDs
   );
   const chainID = nameToChainIDs[chainName];
-  const delegations = useAppSelector(
-    (state: RootState) => state.staking.chains[chainID]?.delegations.delegations
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const stakingData = useAppSelector(
+    (state: RootState) => state.staking.chains
   );
-  const unbondingDelegations = useAppSelector(
-    (state: RootState) => state.staking.chains[chainID]?.unbonding.unbonding
+  const authzStakingData = useAppSelector(
+    (state: RootState) => state.staking.authz.chains
   );
+  const rewardsData = useAppSelector(
+    (state: RootState) => state.distribution.chains
+  );
+  const authzRewardsData = useAppSelector(
+    (state: RootState) => state.distribution.authzChains
+  );
+
+  const allDelegationsLoading = useAppSelector(
+    (state: RootState) => state.staking.delegationsLoading
+  );
+  const allAuthzDelegationsLoading = useAppSelector(
+    (state: RootState) => state.staking.authz.delegationsLoading
+  );
+
+  const delegations = isAuthzMode
+    ? authzStakingData[chainID]?.delegations.delegations
+    : stakingData[chainID]?.delegations.delegations;
+
+  const unbondingDelegations = isAuthzMode
+    ? authzStakingData[chainID]?.unbonding.unbonding
+    : stakingData[chainID]?.unbonding.unbonding;
+
   const validators = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.validators
   );
@@ -59,26 +88,31 @@ const StakingPage = ({
     (state: RootState) =>
       state.wallet.networks[chainID]?.network?.config?.currencies[0]
   );
-  const rewards = useAppSelector(
-    (state: RootState) =>
-      state.distribution.chains?.[chainID]?.delegatorRewards.list
-  );
-  const hasUnbondings = useAppSelector(
-    (state: RootState) => state.staking.chains[chainID]?.unbonding?.hasUnbonding
-  );
-  const hasDelegations = useAppSelector(
-    (state: RootState) =>
-      state.staking.chains[chainID]?.delegations?.hasDelegations
-  );
-  const delegationsLoading = useAppSelector(
-    (state: RootState) => state.staking.delegationsLoading
-  );
+
+  const rewards = isAuthzMode
+    ? authzRewardsData[chainID]?.delegatorRewards.list
+    : rewardsData[chainID]?.delegatorRewards.list;
+
+  const hasUnbondings = isAuthzMode
+    ? authzStakingData[chainID]?.unbonding?.hasUnbonding
+    : stakingData[chainID]?.unbonding.hasUnbonding;
+
+  const hasDelegations = isAuthzMode
+    ? authzStakingData[chainID]?.delegations?.hasDelegations
+    : stakingData[chainID]?.delegations?.hasDelegations;
+
+  const delegationsLoading = isAuthzMode
+    ? allAuthzDelegationsLoading
+    : allDelegationsLoading;
+
   const txStatus = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.tx
   );
 
   const { getChainInfo } = useGetChainInfo();
   const { address, baseURL } = getChainInfo(chainID);
+
+  useInitAuthzStaking([chainID]);
 
   useEffect(() => {
     dispatch(
@@ -135,7 +169,14 @@ const StakingPage = ({
   return (
     <div className="flex justify-between">
       <div className="staking-main">
+<<<<<<< HEAD
         <h2 className="txt-lg font-medium mb-6">Staking</h2>
+=======
+        <div className="mb-6">
+          <MainTopNav title="Staking" />
+          <AuthzToast chainIDs={[chainID]} margins="mt-10 mb-10" />
+        </div>
+>>>>>>> a885705 (feat: integrate authz with staking and overview (#1092))
         <div className="overview-grid">
           <ChainDelegations
             chainID={chainID}
