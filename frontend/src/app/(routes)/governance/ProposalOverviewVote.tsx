@@ -93,10 +93,18 @@ const ProposalOverviewVote = ({
   const quorumRequired = (parseFloat(tallyParams?.quorum) * 100).toFixed(1);
 
   const totalVotes =
-    Number(get(tallyResult, 'yes')) +
-    Number(get(tallyResult, 'no')) +
-    Number(get(tallyResult, 'abstain')) +
-    Number(get(tallyResult, 'no_with_veto'));
+    Number(get(tallyResult, 'yes', get(tallyResult, 'yes_count')) || 0) +
+      Number(get(tallyResult, 'no', get(tallyResult, 'no_count')) || 0) +
+      Number(
+        get(tallyResult, 'abstain', get(tallyResult, 'abstain_count')) || 0
+      ) +
+      Number(
+        get(
+          tallyResult,
+          'no_with_veto',
+          get(tallyResult, 'no_with_veto_count')
+        ) || 0
+      ) || 0;
 
   const getVotesPercentage = (votesCount: number) => {
     return (
@@ -109,23 +117,38 @@ const ProposalOverviewVote = ({
 
   const data = [
     {
-      value: getVotesPercentage(Number(get(tallyResult, 'yes', 0))) || 0,
+      value: getVotesPercentage(
+        Number(get(tallyResult, 'yes', get(tallyResult, 'yes_count')) || 0)
+      ),
       color: '#4AA29C',
       label: 'Yes',
     },
     {
-      value: getVotesPercentage(Number(get(tallyResult, 'no', 0))) || 0,
+      value: getVotesPercentage(
+        Number(get(tallyResult, 'no', get(tallyResult, 'no_count')) || 0)
+      ),
       color: '#E57575',
       label: 'No',
     },
     {
-      value: getVotesPercentage(Number(get(tallyResult, 'abstain', 0))) || 0,
+      value: getVotesPercentage(
+        Number(
+          get(tallyResult, 'abstain', get(tallyResult, 'abstain_count')) || 0
+        )
+      ),
       color: '#EFFF34',
       label: 'Abstain',
     },
     {
-      value:
-        getVotesPercentage(Number(get(tallyResult, 'no_with_veto', 0))) || 0,
+      value: getVotesPercentage(
+        Number(
+          get(
+            tallyResult,
+            'no_with_veto',
+            get(tallyResult, 'no_with_veto_count' || 0)
+          )
+        )
+      ),
       color: '#5885AF',
       label: 'Veto',
     },
@@ -152,11 +175,13 @@ const ProposalOverviewVote = ({
   useEffect(() => {
     const allChainInfo = networks[chainID];
     const chainInfo = allChainInfo?.network;
+    const govV1 = chainInfo.govV1;
     dispatch(
       getProposal({
         chainID,
         baseURL: chainInfo?.config.rest,
         proposalId: proposalId,
+        govV1: govV1,
       })
     );
 
@@ -165,6 +190,7 @@ const ProposalOverviewVote = ({
         baseURL: chainInfo?.config.rest,
         proposalId,
         chainID: chainID,
+        govV1,
       })
     );
 
@@ -191,7 +217,7 @@ const ProposalOverviewVote = ({
       const value = totalVotes / parseInt(poolInfo.bonded_tokens);
       setQuorumPercent((value * 100).toFixed(1));
     }
-  }, [poolInfo]);
+  }, [poolInfo, totalVotes]);
 
   useEffect(() => {
     if (
@@ -221,7 +247,11 @@ const ProposalOverviewVote = ({
   }, [chainName]);
 
   useEffect(() => {
-    const proposalDescription = get(proposalInfo, 'content.description', '');
+    const proposalDescription = get(
+      proposalInfo,
+      'content.description',
+      get(proposalInfo, 'summary', '')
+    );
     setProposalMarkdown(proposalDescription.replace(/\\n/g, '\n'));
   }, [proposalInfo]);
 
@@ -261,7 +291,8 @@ const ProposalOverviewVote = ({
                     alt="Network-Logo"
                   />
                   <p className="font-bold text-[16px] flex items-center">
-                    # {get(proposalInfo, 'proposal_id')}
+                    #{' '}
+                    {get(proposalInfo, 'proposal_id', get(proposalInfo, 'id'))}
                   </p>
                 </div>
                 <div>
@@ -284,8 +315,11 @@ const ProposalOverviewVote = ({
             </div>
             <div className="space-y-6 mt-4">
               <div className="font-bold text-[20px] leading-6">
-                {get(proposalInfo, 'content.title') ||
-                  get(proposalInfo, 'content.@type')}
+                {get(
+                  proposalInfo,
+                  'content.title',
+                  get(proposalInfo, 'title', '-')
+                ) || get(proposalInfo, 'content.@type', '')}
               </div>
 
               <div

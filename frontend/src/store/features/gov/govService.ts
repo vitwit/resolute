@@ -6,12 +6,17 @@ import {
   ProposalVote,
 } from '@/types/gov';
 
-const proposalsURL = '/cosmos/gov/v1beta1/proposals';
-const proposalTallyURL = (id: number): string =>
-  `/cosmos/gov/v1beta1/proposals/${id}/tally`;
+const proposalsURL = (govV1: boolean) =>
+  govV1 ? '/cosmos/gov/v1/proposals' : '/cosmos/gov/v1beta1/proposals';
+const proposalTallyURL = (id: number, govV1: boolean): string =>
+  govV1
+    ? `/cosmos/gov/v1/proposals/${id}/tally`
+    : `/cosmos/gov/v1beta1/proposals/${id}/tally`;
 
-const voterVoteURL = (id: number, voter: string): string =>
-  `/cosmos/gov/v1beta1/proposals/${id}/votes/${voter}`;
+const voterVoteURL = (id: number, voter: string, govV1: boolean): string =>
+  govV1
+    ? `/cosmos/gov/v1/proposals/${id}/votes/${voter}`
+    : `/cosmos/gov/v1beta1/proposals/${id}/votes/${voter}`;
 
 const depositParamsURL = `/cosmos/gov/v1beta1/params/deposit`;
 
@@ -21,9 +26,10 @@ const fetchProposals = (
   baseURL: string,
   key: string | undefined,
   limit: number | undefined,
-  status: number
+  status: number,
+  govV1: boolean
 ): Promise<AxiosResponse<GetProposalsInVotingResponse>> => {
-  let uri = `${cleanURL(baseURL)}${proposalsURL}`;
+  let uri = `${cleanURL(baseURL)}${proposalsURL(govV1)}`;
   uri += `?proposal_status=${status}`;
 
   const params = convertPaginationToParams({
@@ -37,9 +43,10 @@ const fetchProposals = (
 
 const fetchProposalTally = (
   baseURL: string,
-  proposalId: number
+  proposalId: number,
+  govV1: boolean
 ): Promise<AxiosResponse> => {
-  const uri = `${cleanURL(baseURL)}${proposalTallyURL(proposalId)}`;
+  const uri = `${cleanURL(baseURL)}${proposalTallyURL(proposalId, govV1)}`;
   return Axios.get(uri);
 };
 
@@ -48,9 +55,10 @@ const fetchVoterVote = (
   proposalId: number,
   voter: string,
   key: string | undefined,
-  limit: number | undefined
+  limit: number | undefined,
+  govV1: boolean
 ): Promise<AxiosResponse<ProposalVote>> => {
-  let uri = `${cleanURL(baseURL)}${voterVoteURL(proposalId, voter)}`;
+  let uri = `${cleanURL(baseURL)}${voterVoteURL(proposalId, voter, govV1)}`;
   const params = convertPaginationToParams({
     key: key,
     limit: limit,
@@ -61,9 +69,10 @@ const fetchVoterVote = (
 
 const fetchProposal = (
   baseURL: string,
-  proposalId: number
+  proposalId: number,
+  govV1: boolean
 ): Promise<AxiosResponse<{ proposal: GovProposal }>> =>
-  Axios.get(`${cleanURL(baseURL)}${proposalsURL}/${proposalId}`);
+  Axios.get(`${cleanURL(baseURL)}${proposalsURL(govV1)}/${proposalId}`);
 
 const fetchDepositParams = (baseURL: string): Promise<AxiosResponse> =>
   Axios.get(`${cleanURL(baseURL)}${depositParamsURL}`);

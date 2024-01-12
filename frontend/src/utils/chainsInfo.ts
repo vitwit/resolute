@@ -19,6 +19,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
+    govV1: false,
     explorerTxHashEndpoint: 'https://atomscan.com/agoric/transactions/',
     config: {
       chainId: 'agoric-3',
@@ -99,6 +100,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
+    govV1: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/akash/txs/',
     config: {
       chainId: 'akashnet-2',
@@ -169,6 +171,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
+    govV1: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
     config: {
       chainId: 'cosmoshub-4',
@@ -379,6 +382,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
+    govV1: true,
     explorerTxHashEndpoint: 'https://www.mintscan.io/juno/txs/',
     config: {
       chainId: 'juno-1',
@@ -519,6 +523,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
+    govV1: true,
     explorerTxHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
     config: {
       chainId: 'osmosis-1',
@@ -663,6 +668,7 @@ export const networks: Network[] = [
     keplrExperimental: true,
     leapExperimental: true,
     isTestnet: false,
+    govV1: false,
     explorerTxHashEndpoint: 'https://mintscan.io/passage/txs/',
     config: {
       chainId: 'passage-2',
@@ -737,6 +743,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: true,
     isTestnet: false,
+    govV1: true,
     explorerTxHashEndpoint: 'https://mintscan.io/dydx/txs/',
     config: {
       chainId: 'dydx-mainnet-1',
