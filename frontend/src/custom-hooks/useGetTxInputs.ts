@@ -272,7 +272,7 @@ const useGetTxInputs = () => {
       if (delegation?.validator_address === validatorAddress) {
         for (const reward of delegation.reward || []) {
           if (reward.denom === minimalDenom) {
-            const amount = parseInt(reward.amount);
+            const amount = parseInt(reward.amount, 10);
             if (amount < 1) continue;
             msgs.push(
               EncodeDelegate(delegator, validatorAddress, amount, minimalDenom)
