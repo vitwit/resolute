@@ -18,18 +18,18 @@ const AuthzCard = ({
   chainID,
   address,
   grants,
-  showCloseIcon = true,
+  showCloseIcon,
   grantee,
   granter,
-  isGrantsByMe = false,
+  isGrantsByMe,
 }: {
   chainID: string;
   address: string;
   grants: Authorization[];
-  showCloseIcon?: boolean;
+  showCloseIcon: boolean;
   grantee: string;
   granter: string;
-  isGrantsByMe?: boolean;
+  isGrantsByMe: boolean;
 }) => {
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
@@ -129,6 +129,7 @@ const AuthzCard = ({
         chainID={chainID}
         granter={granter}
         grantee={grantee}
+        isGrantsByMe={isGrantsByMe}
       />
     </div>
   );

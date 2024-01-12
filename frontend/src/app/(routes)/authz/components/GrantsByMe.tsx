@@ -30,6 +30,7 @@ const GrantsByMe = ({
                 grantee={addressGrant.address}
                 granter={addressGrant.grants[0].granter}
                 isGrantsByMe={true}
+                showCloseIcon={true}
               />
             )}
           </>
