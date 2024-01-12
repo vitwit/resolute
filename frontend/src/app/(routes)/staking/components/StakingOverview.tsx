@@ -24,6 +24,7 @@ import { CircularProgress } from '@mui/material';
 import MainTopNav from '@/components/MainTopNav';
 import useInitAuthzStaking from '@/custom-hooks/useInitAuthzStaking';
 import AuthzToast from '@/components/AuthzToast';
+import AuthzExecLoader from '@/components/AuthzExecLoader';
 
 const StakingOverview = () => {
   const dispatch = useAppDispatch();
@@ -120,6 +121,7 @@ const StakingOverview = () => {
   return (
     <div className="staking-main">
       <div className="mb-6">
+        <AuthzExecLoader chainIDs={chainIDs} />
         <MainTopNav title="Staking" />
         <AuthzToast chainIDs={chainIDs} margins="mt-10 mb-10" />
       </div>

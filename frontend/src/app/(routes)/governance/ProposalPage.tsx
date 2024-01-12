@@ -5,6 +5,7 @@ import React from 'react';
 import ProposalOverviewVote from './ProposalOverviewVote';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
+import AuthzExecLoader from '@/components/AuthzExecLoader';
 
 const ProposalPage = () => {
   const params = useParams();
@@ -17,12 +18,17 @@ const ProposalPage = () => {
   const validChain = Object.keys(nameToChainIDs).some(
     (chain) => chainName.toLowerCase() === chain.toLowerCase()
   );
+  let chainID;
+  Object.keys(nameToChainIDs).forEach((chain) => {
+    if (chain === chainName.toLowerCase()) chainID = nameToChainIDs[chainName];
+  });
   const validId = () => {
     const parsedValue = parseInt(proposalId, 10);
     return !isNaN(parsedValue) && Number.isInteger(parsedValue);
   };
   return (
     <div>
+      <AuthzExecLoader chainIDs={chainID ? [chainID] : []} />
       {validChain && validId() ? (
         <ProposalOverviewVote
           chainName={chainName}
