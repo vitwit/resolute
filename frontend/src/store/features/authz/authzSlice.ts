@@ -40,6 +40,13 @@ interface ChainAuthz {
   };
 }
 
+interface GetAuthRevokeInputs {
+  basicChainInfo: BasicChainInfo;
+  feegranter: string;
+  denom: string;
+  msgs: Msg[];
+  feeAmount: number;
+}
 const defaultState: ChainAuthz = {
   grantsToMe: [],
   grantsByMe: [],
@@ -139,7 +146,10 @@ export const txCreateMultiChainAuthzGrant = createAsyncThunk(
 
 export const txCreateAuthzGrant = createAsyncThunk(
   'authz/create-grant',
-  async (data: TxGrantAuthzInputs, { rejectWithValue, fulfillWithValue }) => {
+  async (
+    data: TxGrantAuthzInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
     try {
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
@@ -176,6 +186,13 @@ export const txCreateAuthzGrant = createAsyncThunk(
       // );
 
       if (result?.code === 0) {
+        dispatch(
+          getGrantsByMe({
+            baseURL: data.basicChainInfo.baseURL,
+            address: data.basicChainInfo.address,
+            chainID: data.basicChainInfo.chainID,
+          })
+        );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);
@@ -248,6 +265,79 @@ export const txAuthzExec = createAsyncThunk(
   }
 );
 
+export const txAuthzRevoke = createAsyncThunk(
+  'authz/tx-revoke',
+  async (
+    data: GetAuthRevokeInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        data.msgs,
+        GAS_FEE,
+        '',
+        `${data.feeAmount}${data.denom}`,
+        data.basicChainInfo.rest
+        // data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+      if (result?.code === 0) {
+        const tx = NewTransaction(
+          result,
+          data.msgs,
+          data.basicChainInfo.chainID,
+          data.basicChainInfo.cosmosAddress
+        );
+        dispatch(
+          addTransactions({
+            transactions: [tx],
+            chainID: data.basicChainInfo.chainID,
+            address: data.basicChainInfo.cosmosAddress,
+          })
+        );
+        dispatch(
+          setTxAndHash({
+            hash: result?.transactionHash,
+            tx,
+          })
+        );
+        dispatch(
+          setTxAndHash({
+            tx: tx,
+            hash: result?.transactionHash,
+          })
+        );
+        dispatch(
+          getGrantsByMe({
+            baseURL: data.basicChainInfo.baseURL,
+            address: data.basicChainInfo.address,
+            chainID: data.basicChainInfo.chainID,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: 'error',
+            message: result?.rawLog || '',
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: ERR_UNKNOWN,
+        })
+      );
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
 export const authzSlice = createSlice({
   name: 'authz',
   initialState,
@@ -263,6 +353,13 @@ export const authzSlice = createSlice({
     resetState: (state) => {
       /* eslint-disable @typescript-eslint/no-unused-vars */
       state = cloneDeep(initialState);
+    },
+    resetTxStatus: (state, action: PayloadAction<{ chainID: string }>) => {
+      const { chainID } = action.payload;
+      state.chains[chainID].tx = {
+        errMsg: '',
+        status: TxStatus.INIT,
+      };
     },
   },
   extraReducers: (builder) => {
@@ -300,7 +397,7 @@ export const authzSlice = createSlice({
         const addressMapping: Record<string, Authorization[]> = {};
         const allChainsAddressToGrants = state.AddressToChainAuthz;
 
-        grants.forEach((grant) => {
+        grants.forEach((grant: Authorization) => {
           const granter = grant.granter;
           const cosmosAddress = getAddressByPrefix(granter, 'cosmos');
           if (!addressMapping[granter]) addressMapping[granter] = [];
@@ -348,8 +445,8 @@ export const authzSlice = createSlice({
         const grants = action.payload.data.grants;
         state.chains[chainID].grantsByMe = grants;
         const addressMapping: Record<string, Authorization[]> = {};
-        grants.forEach((grant) => {
-          const granter = grant.granter;
+        grants.forEach((grant: Authorization) => {
+          const granter = grant.grantee;
           if (!addressMapping[granter]) addressMapping[granter] = [];
           addressMapping[granter] = [...addressMapping[granter], grant];
         });
@@ -423,10 +520,26 @@ export const authzSlice = createSlice({
       .addCase(txCreateMultiChainAuthzGrant.rejected, (state) => {
         state.multiChainAuthzGrantTx.status = TxStatus.REJECTED;
       });
+
+    builder
+      .addCase(txAuthzRevoke.pending, (state, action) => {
+        const chainID = action.meta.arg.basicChainInfo.chainID;
+        state.chains[chainID].tx.status = TxStatus.PENDING;
+        state.chains[chainID].tx.errMsg = '';
+      })
+      .addCase(txAuthzRevoke.fulfilled, (state, action) => {
+        const chainID = action.meta.arg.basicChainInfo.chainID;
+        state.chains[chainID].tx.status = TxStatus.IDLE;
+      })
+      .addCase(txAuthzRevoke.rejected, (state, action) => {
+        const chainID = action.meta.arg.basicChainInfo.chainID;
+        state.chains[chainID].tx.status = TxStatus.REJECTED;
+        state.chains[chainID].tx.errMsg = action.error.message || 'rejected';
+      });
   },
 });
 
-export const { enableAuthzMode, exitAuthzMode, resetState } =
+export const { enableAuthzMode, exitAuthzMode, resetState, resetTxStatus } =
   authzSlice.actions;
 
 export default authzSlice.reducer;

@@ -26,6 +26,8 @@ import {
   NO_REWARDS_ERROR,
   TXN_PENDING_ERROR,
 } from '@/utils/errors';
+import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 const StakingCard = ({
   processingValAddr,
@@ -171,10 +173,17 @@ const StakingCardActions = ({
   const isReStakeAll = useAppSelector(
     (state) => state?.staking?.chains?.[chainID]?.isTxAll || false
   );
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
 
   const dispatch = useAppDispatch();
-  const { txWithdrawValidatorRewardsInputs, txRestakeValidatorInputs } =
-    useGetTxInputs();
+  const {
+    txWithdrawValidatorRewardsInputs,
+    txRestakeValidatorInputs,
+    txAuthzRestakeValidatorMsgs,
+  } = useGetTxInputs();
+  const { txAuthzRestake, txAuthzClaim } = useAuthzStakingExecHelper();
+  const { getChainInfo } = useGetChainInfo();
 
   const claim = () => {
     if (txClaimStatus === TxStatus.PENDING) {
@@ -191,7 +200,17 @@ const StakingCardActions = ({
       validatorAddress,
       delegatorAddress
     );
+
     handleCardClick(validatorAddress);
+    if (isAuthzMode) {
+      txAuthzClaim({
+        grantee: txInputs.address,
+        granter: authzAddress,
+        pairs: [{ validator: validatorAddress, delegator: authzAddress }],
+        chainID: chainID,
+      });
+      return;
+    }
     if (txInputs.msgs.length) dispatch(txWithdrawAllRewards(txInputs));
     else {
       dispatch(
@@ -204,6 +223,17 @@ const StakingCardActions = ({
   };
 
   const claimAndStake = () => {
+    if (isAuthzMode) {
+      const { address } = getChainInfo(chainID);
+      const msgs = txAuthzRestakeValidatorMsgs(chainID, validatorAddress);
+      txAuthzRestake({
+        grantee: address,
+        granter: authzAddress,
+        msgs: msgs,
+        chainID: chainID,
+      });
+      return;
+    }
     if (txRestakeStatus === TxStatus.PENDING) {
       dispatch(
         setError({

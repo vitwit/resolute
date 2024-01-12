@@ -222,7 +222,7 @@ export const distSlice = createSlice({
     builder
       .addCase(getAuthzDelegatorTotalRewards.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
-        if (!state.chains[chainID])
+        if (!state.authzChains[chainID])
           state.authzChains[chainID] = cloneDeep(initialState.defaultState);
         state.authzChains[chainID].delegatorRewards.status = TxStatus.PENDING;
         state.authzChains[chainID].delegatorRewards.errMsg = '';

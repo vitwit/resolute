@@ -146,6 +146,31 @@ export function getMsgNameFromAuthz(authorization: Authorization): string {
   }
 }
 
+export function getTypeURLFromAuthorization(
+  authorization: Authorization
+): string {
+  switch (authorization.authorization['@type']) {
+    case '/cosmos.bank.v1beta1.SendAuthorization':
+      return '/cosmos.bank.v1beta1.MsgSend';
+    case '/cosmos.authz.v1beta1.GenericAuthorization':
+      return authorization.authorization.msg;
+    case '/cosmos.staking.v1beta1.StakeAuthorization':
+      return getStakeAuthzType(authorization?.authorization.authorization_type);
+    default:
+      throw new Error('unsupported authorization');
+  }
+}
+
+export const getAllTypeURLsFromAuthorization = (
+  authorizations: Authorization[]
+): string[] => {
+  const typeURLs: string[] = [];
+  authorizations.forEach((authorization) => {
+    typeURLs.push(getTypeURLFromAuthorization(authorization));
+  });
+  return typeURLs;
+};
+
 export const GENRIC_GRANTS = [
   'grant_authz',
   'revoke_authz',

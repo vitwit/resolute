@@ -7,19 +7,27 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import StakingSideBarAds from './StakingSideBarAds';
 import { Tooltip } from '@mui/material';
+import useGetAuthzAssetsAmount from '@/custom-hooks/useGetAuthzAssetsAmount';
 
 const StakingOverviewSidebar = () => {
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
   const chainIDs = Object.values(nameToChainIDs);
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
 
-  const [totalStakedAmount, , rewards] = useGetAssetsAmount(chainIDs);
+  const [stakedAmount, , rewardsAmount] = useGetAssetsAmount(chainIDs);
+  const [authzStakedAmount, , authzRewardsAmount] =
+    useGetAuthzAssetsAmount(chainIDs);
+
+  const totalStakedAmount = isAuthzMode ? authzStakedAmount : stakedAmount;
+  const rewards = isAuthzMode ? authzRewardsAmount : rewardsAmount;
+
   return (
     <div className="staking-sidebar">
       <div className="flex flex-col gap-10">
         <TopNav />
-        <div className='flex flex-col gap-6'>
+        <div className="flex flex-col gap-6">
           <div className="flex gap-6">
             <StakingStatsCard
               name={'Staked Balance'}

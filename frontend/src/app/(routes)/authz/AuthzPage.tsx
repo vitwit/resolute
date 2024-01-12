@@ -6,8 +6,9 @@ import GrantsByMe from './components/GrantsByMe';
 
 const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [isGrantsToMe, setIsGrantsToMe] = useState(true);
+
   const [dialogGrantOpen, setDialogGrantOpen] = useState(false);
-  const hanldeDialogGrantClose = () => {
+  const handleDialogGrantClose = () => {
     setDialogGrantOpen(false);
   };
   return (
@@ -47,18 +48,20 @@ const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
             </div>
           </div>
           <div>
-            {/* TODO: Create UI to display grants and render data */}
             {isGrantsToMe ? (
               <GrantsToMe chainIDs={chainIDs} />
             ) : (
-              <GrantsByMe chainIDs={chainIDs} />
+              <GrantsByMe
+                chainIDs={chainIDs}
+                handleGrantDialogOpen={() => setDialogGrantOpen(true)}
+              />
             )}
           </div>
         </div>
       </div>
       <DialogCreateAuthzGrant
         open={dialogGrantOpen}
-        onClose={hanldeDialogGrantClose}
+        onClose={handleDialogGrantClose}
       />
     </div>
   );

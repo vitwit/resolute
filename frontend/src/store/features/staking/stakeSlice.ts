@@ -1103,6 +1103,8 @@ export const stakeSlice = createSlice({
     builder
       .addCase(getAuthzUnbonding.pending, (state, action) => {
         const { chainID } = action.meta.arg;
+        if (!state.authz.chains[chainID])
+          state.authz.chains[chainID] = cloneDeep(state.defaultState);
         state.authz.chains[chainID].unbonding.status = TxStatus.PENDING;
         state.authz.chains[chainID].unbonding.errMsg = '';
       })

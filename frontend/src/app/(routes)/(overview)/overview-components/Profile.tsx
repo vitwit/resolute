@@ -13,10 +13,12 @@ import { resetState as bankReset } from '@/store/features/bank/bankSlice';
 import { resetState as rewardsReset } from '@/store/features/distribution/distributionSlice';
 import { resetCompleteState as stakingReset } from '@/store/features/staking/stakeSlice';
 import { resetState as authzReset } from '@/store/features/authz/authzSlice';
+import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
 
 const Profile = () => {
   const profileName = useAppSelector((state) => state.wallet.name);
   const dispatch = useAppDispatch();
+  const { disableAuthzMode } = useAuthzGrants();
 
   return (
     <div className="flex items-center gap-1">
@@ -43,6 +45,7 @@ const Profile = () => {
             dispatch(rewardsReset());
             dispatch(stakingReset());
             dispatch(authzReset());
+            disableAuthzMode();
             logout();
           }}
           className="cursor-pointer"
