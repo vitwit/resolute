@@ -1,6 +1,9 @@
 .create-grant-btn {
-  @apply py-[10px] rounded-2xl px-10 text-[16px] font-medium leading-[20px] tracking-[0.64px] primary-gradient;
+  @apply py-[10px] rounded-2xl px-10 text-[16px] font-medium leading-[20px] tracking-[0.64px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
+
+
 
 .grants-type-btn,
 .grants-type-btn-selected {
@@ -9,26 +12,31 @@
 }
 
 .grants-type-btn-selected {
-  @apply primary-gradient;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
+
 .authz-card {
-  @apply flex flex-col items-start gap-4 backdrop-blur-[2px] p-6  rounded-2xl;
+  @apply flex flex-col items-start gap-4 backdrop-blur-[2px] p-6 rounded-2xl;
   background: #0e0b26;
-  
+
 }
+
 .grant-address {
   @apply flex items-center gap-2 opacity-80 p-2 rounded-lg;
   background: rgba(255, 255, 255, 0.1);
 }
+
 .authz-card-grid {
   @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
 }
+
 .authz-permission-card {
-  @apply flex flex-col items-start gap-6  backdrop-blur-[2px] p-6 rounded-2xl;
+  @apply flex flex-col items-start gap-6 backdrop-blur-[2px] p-6 rounded-2xl;
   background: rgba(255, 255, 255, 0.05);
 }
+
 .authz-small-text {
-  @apply text-[rgba(255,255,255,0.50)] text-sm  font-normal leading-[normal]
+  @apply text-[#FFFFFF80] text-sm font-normal leading-[normal]
 }
 
 
