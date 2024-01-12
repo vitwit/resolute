@@ -1,6 +1,8 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
 import AuthzCard from './AuthzCard';
+import { CircularProgress } from '@mui/material';
+import Image from 'next/image';
 
 const GrantsToMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getGrantsToMe } = useAuthzGrants();
@@ -24,9 +26,28 @@ const GrantsToMe = ({ chainIDs }: { chainIDs: string[] }) => {
       </div>
     </>
   ) : !!loading ? (
-    'Loading'
+    <div className="flex justify-center mt-[20%] items-center">
+      <CircularProgress size={32} sx={{ color: 'white' }} />
+    </div>
   ) : (
-    'No grants'
+    <div className="space-y-4 w-full mt-[10%]">
+      <div className="flex justify-between">
+        <div className="flex flex-1">
+          <div className="flex flex-col flex-1 justify-center items-center space-y-4">
+            <Image
+              src="/no-authz-grants-illustration.png"
+              width={400}
+              height={289}
+              alt="no action proposals"
+              className="disable-draggable"
+            />
+            <p className="text-white text-center text-base italic font-extralight leading-[normal] flex justify-center opacity-50">
+              You don't have any grants
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

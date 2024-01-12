@@ -1,8 +1,16 @@
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
 import AuthzCard from './AuthzCard';
+import { CircularProgress } from '@mui/material';
+import Image from 'next/image';
 
-const GrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
+const GrantsByMe = ({
+  chainIDs,
+  handleGrantDialogOpen,
+}: {
+  chainIDs: string[];
+  handleGrantDialogOpen: () => void;
+}) => {
   const { getGrantsByMe } = useAuthzGrants();
   const addressGrants = getGrantsByMe(chainIDs);
   const loading = useAppSelector((state) => state.authz.getGrantsByMeLoading);
@@ -28,9 +36,28 @@ const GrantsByMe = ({ chainIDs }: { chainIDs: string[] }) => {
       </div>
     </>
   ) : !!loading ? (
-    'Loading'
+    <div className="flex justify-center mt-[20%] items-center">
+      <CircularProgress size={32} sx={{ color: 'white' }} />
+    </div>
   ) : (
-    'No grants'
+    <div className="my-[5%] flex flex-col justify-center items-center">
+      <Image
+        src="/no-authz-grants-illustration.png"
+        width={400}
+        height={289}
+        alt="no action proposals"
+        className="disable-draggable"
+      />
+      <div className="text-[16px] opacity-50 mt-4 mb-6 leading-normal italic font-extralight text-center">
+        You haven't granted any permission yet
+      </div>
+      <button
+        onClick={handleGrantDialogOpen}
+        className="primary-custom-btn mb-6"
+      >
+        Create Grant
+      </button>
+    </div>
   );
 };
 
