@@ -102,36 +102,42 @@ export const SIDENAV_MENU_ITEMS = [
     icon: '/overview-icon.svg',
     activeIcon: '/overview-icon-active.svg',
     link: '/',
+    authzSupported: true,
   },
   {
     name: 'Transfers',
     icon: '/transfers-icon.svg',
     activeIcon: '/transfers-icon-active.svg',
     link: '/transfers',
+    authzSupported: true,
   },
   {
     name: 'Governance',
     icon: '/gov-icon.svg',
     activeIcon: '/gov-icon-active.svg',
     link: '/governance',
+    authzSupported: true,
   },
   {
     name: 'Staking',
     icon: '/staking-icon.svg',
     activeIcon: '/staking-icon-active.svg',
     link: '/staking',
+    authzSupported: true,
   },
   {
     name: 'Authz',
     icon: '/authz-icon.svg',
     activeIcon: '/authz-icon-active.svg',
     link: '/authz',
+    authzSupported: false,
   },
   {
     name: 'Multisig',
     icon: '/multisig-icon.svg',
     activeIcon: '/multisig-icon-active.svg',
     link: '/multisig',
+    authzSupported: false,
   },
 ];
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
