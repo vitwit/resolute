@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import AuthzToast from '@/components/AuthzToast';
+import AuthzExecLoader from '@/components/AuthzExecLoader';
 
 export interface TransfersTab {
   current: string;
@@ -47,9 +48,10 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
 
   return (
     <div className="w-full flex justify-between max-h-screen text-white flex-1">
+      <AuthzExecLoader chainIDs={chainIDs} />
       <div className="w-full page-padding overflow-y-scroll flex flex-col flex-1">
         <MainTopNav title="Transfers" />
-        <AuthzToast chainIDs={chainIDs} margins='mt-10 mb-4'/> 
+        <AuthzToast chainIDs={chainIDs} margins="mt-10 mb-4" />
         <div className="flex flex-col rounded-2xl bg-[#0e0b26] space-y-6 mt-6 flex-1">
           {tab.current === SINGLE_TAB_TEXT ? (
             <SingleTransfer

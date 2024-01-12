@@ -19,6 +19,7 @@ import { getAccountInfo } from '@/store/features/auth/authSlice';
 import { getDelegatorTotalRewards } from '@/store/features/distribution/distributionSlice';
 import useInitAuthzForOverview from '@/custom-hooks/useInitAuthzForOverview';
 import AuthzToast from '@/components/AuthzToast';
+import AuthzExecLoader from '@/components/AuthzExecLoader';
 
 const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
@@ -68,6 +69,7 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
 
   return (
     <div className="w-full flex justify-between">
+      <AuthzExecLoader chainIDs={chainIDs} />
       <div className="flex flex-col w-full px-10 py-6 space-y-6 min-h-screen max-h-screen">
         <TopNav />
         {isAuthzMode && (

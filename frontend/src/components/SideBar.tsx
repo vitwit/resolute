@@ -26,6 +26,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathParts = pathName.split('/');
   const selectedPart = getSelectedPartFromURL(pathParts).toLowerCase();
   useInitAuthz();
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
 
   return (
     <div className="main">
@@ -44,6 +45,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
               icon={item.icon}
               activeIcon={item.activeIcon}
               link={item.link}
+              authzSupport={!isAuthzMode || item.authzSupported}
             />
           ))}
         </div>
@@ -94,12 +96,14 @@ const MenuItem = ({
   icon,
   activeIcon,
   link,
+  authzSupport,
 }: {
   pathName: string;
   itemName: string;
   icon: string;
   activeIcon: string;
   link: string;
+  authzSupport: boolean;
 }) => {
   const path = pathName === 'overview' ? '/' : `/${pathName}`;
   const selectedNetwork = useAppSelector(
@@ -107,8 +111,16 @@ const MenuItem = ({
   );
 
   return (
-    <Link href={tabLink(link, selectedNetwork)}>
-      <Tooltip title={itemName} placement="right">
+    <Link href={authzSupport ? tabLink(link, selectedNetwork) : ''}>
+      <Tooltip
+        className={authzSupport ? '' : 'cursor-not-allowed'}
+        title={
+          authzSupport
+            ? itemName
+            : 'authz mode is not supported for ' + itemName
+        }
+        placement="right"
+      >
         <div
           className={`sidebar-menu-item ${
             path === link ? 'sidebar-menu-item-selected' : ''

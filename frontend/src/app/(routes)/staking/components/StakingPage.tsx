@@ -28,6 +28,7 @@ import { TxStatus } from '@/types/enums';
 import MainTopNav from '@/components/MainTopNav';
 import AuthzToast from '@/components/AuthzToast';
 import useInitAuthzStaking from '@/custom-hooks/useInitAuthzStaking';
+import AuthzExecLoader from '@/components/AuthzExecLoader';
 
 const StakingPage = ({
   chainName,
@@ -165,6 +166,7 @@ const StakingPage = ({
 
   return (
     <div className="flex justify-between">
+      <AuthzExecLoader chainIDs={[chainID]} />
       <div className="staking-main">
         <div className="mb-6">
           <MainTopNav title="Staking" />
