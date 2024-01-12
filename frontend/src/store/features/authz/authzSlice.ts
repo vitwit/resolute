@@ -146,7 +146,10 @@ export const txCreateMultiChainAuthzGrant = createAsyncThunk(
 
 export const txCreateAuthzGrant = createAsyncThunk(
   'authz/create-grant',
-  async (data: TxGrantAuthzInputs, { rejectWithValue, fulfillWithValue }) => {
+  async (
+    data: TxGrantAuthzInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
     try {
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
@@ -183,6 +186,13 @@ export const txCreateAuthzGrant = createAsyncThunk(
       // );
 
       if (result?.code === 0) {
+        dispatch(
+          getGrantsByMe({
+            baseURL: data.basicChainInfo.baseURL,
+            address: data.basicChainInfo.address,
+            chainID: data.basicChainInfo.chainID,
+          })
+        );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);
@@ -274,8 +284,28 @@ export const txAuthzRevoke = createAsyncThunk(
         // data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {
+        const tx = NewTransaction(
+          result,
+          data.msgs,
+          data.basicChainInfo.chainID,
+          data.basicChainInfo.cosmosAddress
+        );
+        dispatch(
+          addTransactions({
+            transactions: [tx],
+            chainID: data.basicChainInfo.chainID,
+            address: data.basicChainInfo.cosmosAddress,
+          })
+        );
         dispatch(
           setTxAndHash({
+            hash: result?.transactionHash,
+            tx,
+          })
+        );
+        dispatch(
+          setTxAndHash({
+            tx: tx,
             hash: result?.transactionHash,
           })
         );
