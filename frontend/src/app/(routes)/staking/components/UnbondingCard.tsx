@@ -24,6 +24,9 @@ import {
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { TxStatus } from '@/types/enums';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
+import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
+import { UnbondingEncode } from '@/txns/staking/unbonding';
+import useAddressConverter from '@/custom-hooks/useAddressConverter';
 
 const UnbondingCard = ({
   moniker,
@@ -50,13 +53,36 @@ const UnbondingCard = ({
   const loading = useAppSelector(
     (state: RootState) => state.staking.chains[chainID].cancelUnbondingTxStatus
   );
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
+  const { txAuthzCancelUnbond } = useAuthzStakingExecHelper();
+  const { convertAddress } = useAddressConverter();
+
   useEffect(() => {
     dispatch(resetCancelUnbondingTx({ chainID: chainID }));
   }, []);
   const onCancelUnbondingTx = () => {
+    const basicChainInfo = getChainInfo(chainID);
+    const delegator = convertAddress(chainID, authzAddress);
+    const msg = UnbondingEncode(
+      delegator,
+      validatorAddress,
+      amount * 10 ** currency.coinDecimals,
+      currency.coinMinimalDenom,
+      creationHeight
+    );
+    if (isAuthzMode) {
+      txAuthzCancelUnbond({
+        grantee: address,
+        granter: authzAddress,
+        chainID: chainID,
+        msg: msg,
+      });
+      return;
+    }
     dispatch(
       txCancelUnbonding({
-        basicChainInfo: getChainInfo(chainID),
+        basicChainInfo: basicChainInfo,
         delegator: address,
         validator: validatorAddress,
         amount: amount * 10 ** currency.coinDecimals,

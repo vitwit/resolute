@@ -6,23 +6,37 @@ import { CircularProgress } from '@mui/material';
 import NoAssets from '@/components/illustrations/NoAssets';
 
 const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
-  const [sortedAssets] = useSortedAssets(chainIDs, {
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const [sortedAssets, authzSortedAssets] = useSortedAssets(chainIDs, {
     showAvailable: true,
     showRewards: true,
     showStaked: true,
   });
+
+  const assets = isAuthzMode ? authzSortedAssets : sortedAssets;
+
   const balancesLoading = useAppSelector(
     (state) => state.bank.balancesLoading > 0
   );
   const delegationsLoading = useAppSelector(
     (state) => state.staking.delegationsLoading > 0
   );
+  const authzBalanceLoading = useAppSelector(
+    (state) => state.bank.authz.balancesLoading > 0
+  );
+  const authzDelegationsLoading = useAppSelector(
+    (state) => state.staking.authz.delegationsLoading > 0
+  );
+
+  const loading = !isAuthzMode && (balancesLoading || delegationsLoading);
+  const authzLoading =
+    isAuthzMode && (authzBalanceLoading || authzDelegationsLoading);
 
   return (
     <div className="flex flex-col flex-1 overflow-y-scroll">
       <div className="assets-table bg-[#1a1a1b] px-8 py-8">
         <div className="flex flex-col flex-1">
-          {sortedAssets.length ? (
+          {assets.length ? (
             <div className="flex-1">
               <table className="w-full text-sm leading-normal">
                 <thead className="border-b-[0.5px] border-[#B0B0B033] relative">
@@ -60,7 +74,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
                   </tr>
                 </thead>
                 <tbody className="flex-1">
-                  {sortedAssets.map((asset) => (
+                  {assets.map((asset) => (
                     <Asset
                       asset={asset}
                       key={asset.chainID + asset.denom}
@@ -72,7 +86,7 @@ const AssetsTable = ({ chainIDs }: { chainIDs: string[] }) => {
             </div>
           ) : (
             <div className="w-full flex flex-col flex-1 items-center justify-center text-white">
-              {balancesLoading || delegationsLoading ? (
+              {loading || authzLoading ? (
                 <CircularProgress size={32} />
               ) : (
                 <NoAssets />

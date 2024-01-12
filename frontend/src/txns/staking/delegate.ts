@@ -23,6 +23,25 @@ export function Delegate(
   };
 }
 
+export function EncodeDelegate(
+  delegator: string,
+  validator: string,
+  amount: number,
+  denom: string
+): Msg {
+  return {
+    typeUrl: msgDelegate,
+    value: MsgDelegate.encode({
+      delegatorAddress: delegator,
+      validatorAddress: validator,
+      amount: Coin.fromPartial({
+        amount: String(amount),
+        denom: denom,
+      }),
+    }).finish(),
+  };
+}
+
 export function serialize(msg: Msg): string {
   const delegatorAddress = msg.value.delegatorAddress;
   const validatorAddress = msg.value.validatorAddress;
