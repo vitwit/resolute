@@ -6,17 +6,22 @@ interface Authorization {
 }
 
 interface GenericAuthorization {
+  spend_limit: Coin[];
   '@type': '/cosmos.authz.v1beta1.GenericAuthorization';
   msg: string;
 }
 
 interface SendAuthorization {
+  msg: ReactNode;
   '@type': '/cosmos.bank.v1beta1.SendAuthorization';
   spend_limit: Coin[];
   allow_list?: string[];
 }
 
 interface StakeAuthorization {
+  msg: ReactNode;
+  spend_limit: Coin[];
+
   '@type': '/cosmos.staking.v1beta1.StakeAuthorization';
 
   max_tokens: null | Coin;
@@ -97,4 +102,5 @@ interface txAuthzExecInputs {
   metaData: string;
   msgs: Msg[];
   feeGranter?: string;
+  type?: string;
 }
