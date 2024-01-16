@@ -95,6 +95,10 @@
   .flex-center-center {
     @apply flex justify-center items-center;
   }
+
+  .page-title {
+    @apply text-xl leading-normal font-normal;
+  }
 }
 
 /* Home page styles  */
