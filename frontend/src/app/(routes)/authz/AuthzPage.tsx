@@ -1,6 +1,8 @@
 import TopNav from '@/components/TopNav';
 import React, { useState } from 'react';
 import DialogCreateAuthzGrant from './components/DialogCreateAuthzGrant';
+import GrantsToMe from './components/GrantsToMe';
+import GrantsByMe from './components/GrantsByMe';
 
 const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [isGrantsToMe, setIsGrantsToMe] = useState(true);
@@ -8,8 +10,6 @@ const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const hanldeDialogGrantClose = () => {
     setDialogGrantOpen(false);
   };
-  console.log(chainIDs);
-  // TODO: dispatch and fetch the grants from authz state
   return (
     <div className="py-6 px-10">
       <div className="space-y-10">
@@ -48,7 +48,11 @@ const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
           </div>
           <div>
             {/* TODO: Create UI to display grants and render data */}
-            {isGrantsToMe ? 'Grants to me' : 'Grants by me'}
+            {isGrantsToMe ? (
+              <GrantsToMe chainIDs={chainIDs} />
+            ) : (
+              <GrantsByMe chainIDs={chainIDs} />
+            )}
           </div>
         </div>
       </div>

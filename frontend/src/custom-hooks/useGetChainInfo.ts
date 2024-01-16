@@ -60,6 +60,7 @@ const useGetChainInfo = () => {
     const address = networks[chainID]?.walletInfo.bech32Address;
     const feeCurrencies = config?.feeCurrencies;
     const explorerTxHashEndpoint = network?.explorerTxHashEndpoint;
+    const chainLogo = networks[chainID].network.logos.menu;
 
     return {
       baseURL: rest,
@@ -74,6 +75,7 @@ const useGetChainInfo = () => {
       feeCurrencies,
       explorerTxHashEndpoint,
       chainName,
+      chainLogo,
     };
   };
 
