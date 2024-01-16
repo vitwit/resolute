@@ -1,6 +1,8 @@
 export const KEY_WALLET_NAME: string = 'WALLET_NAME';
 export const KEY_DARK_MODE: string = 'DARK_MODE';
 const AUTH_TOKEN_KEY_NAME: string = 'AUTH_TOKEN';
+const AUTHZ_KEY = 'Authz_key';
+const AUTHZ_VALUE = 'Authz_value';
 const KEY_TRANSACTIONS = (address: string) => 'transactions' + ' ' + address;
 
 interface LocalNetworks {
@@ -157,4 +159,39 @@ export function getAuthToken(chainID: string): AuthToken | null {
 
 export function removeAllAuthTokens() {
   localStorage.removeItem(AUTH_TOKEN_KEY_NAME);
+}
+
+export function checkAuthzKeyAddress(address: string): boolean {
+  return localStorage.getItem(AUTHZ_KEY) === address;
+}
+
+export function getAuthzValueAddress(): string {
+  return localStorage.getItem(AUTHZ_VALUE) || '';
+}
+
+export function logoutAuthzMode() {
+  localStorage.removeItem(AUTHZ_KEY);
+  localStorage.removeItem(AUTHZ_VALUE);
+}
+
+export function getAuthzMode(address: string): {
+  isAuthzModeOn: boolean;
+  authzAddress: string;
+} {
+  if (!checkAuthzKeyAddress(address)) {
+    logoutAuthzMode();
+    return {
+      isAuthzModeOn: false,
+      authzAddress: '',
+    };
+  }
+  return {
+    isAuthzModeOn: true,
+    authzAddress: getAuthzValueAddress(),
+  };
+}
+
+export function setAuthzMode(address: string, authzAddress: string) {
+  localStorage.setItem(AUTHZ_KEY, address);
+  localStorage.setItem(AUTHZ_VALUE, authzAddress);
 }

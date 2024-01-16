@@ -3,6 +3,7 @@ import { exitAuthzMode } from '@/store/features/authz/authzSlice';
 import { resetAuthz as resetBankAuthz } from '@/store/features/bank/bankSlice';
 import { resetAuthz as resetRewardsAuthz } from '@/store/features/distribution/distributionSlice';
 import { resetAuthz as resetStakingAuthz } from '@/store/features/staking/stakeSlice';
+import { logoutAuthzMode } from '@/utils/localStorage';
 
 export interface ChainAuthz {
   chainID: string;
@@ -100,6 +101,7 @@ const useAuthzGrants = () => {
     dispatch(resetRewardsAuthz());
     dispatch(resetStakingAuthz());
     dispatch(exitAuthzMode());
+    logoutAuthzMode();
   };
 
   return {

@@ -13,6 +13,7 @@ import { setError } from '@/store/features/common/commonSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getMsgNameFromAuthz } from '@/utils/authorizations';
 import { enableAuthzMode } from '@/store/features/authz/authzSlice';
+import { setAuthzMode } from '@/utils/localStorage';
 
 interface DialogAuthzGrantsProps {
   open: boolean;
@@ -23,6 +24,9 @@ interface DialogAuthzGrantsProps {
 const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
   const { open, onClose, grants } = props;
   const dispatch = useAppDispatch();
+  const { getCosmosAddress } = useGetChainInfo();
+  const cosmosAddress = getCosmosAddress();
+
   return (
     <Dialog
       open={open}
@@ -56,6 +60,7 @@ const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
                   className="use-grant-btn"
                   onClick={() => {
                     dispatch(enableAuthzMode({ address: grant.cosmosAddress }));
+                    setAuthzMode(cosmosAddress, grant.address);
                     onClose();
                   }}
                 >

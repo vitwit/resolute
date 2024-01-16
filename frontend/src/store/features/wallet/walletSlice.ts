@@ -6,6 +6,9 @@ import { setConnected, setWalletName } from '../../../utils/localStorage';
 import { TxStatus } from '@/types/enums';
 import { loadTransactions } from '../transactionHistory/transactionHistorySlice';
 import { setError } from '../common/commonSlice';
+import { getAddressByPrefix } from '@/utils/address';
+import { getAuthzMode } from '@/utils/localStorage';
+import { enableAuthzMode } from '../authz/authzSlice';
 
 declare let window: WalletWindow;
 
@@ -78,6 +81,7 @@ export const establishWalletConnection = createAsyncThunk(
       let isNanoLedger = false;
       const chainInfos: Record<string, ChainInfo> = {};
       const nameToChainIDs: Record<string, string> = {};
+      let anyNetworkAddress = '';
       for (let i = 0; i < networks.length; i++) {
         try {
           if (
@@ -104,6 +108,9 @@ export const establishWalletConnection = createAsyncThunk(
             walletInfo: walletInfo,
             network: networks[i],
           };
+          if (anyNetworkAddress === '')
+            anyNetworkAddress = walletInfo?.bech32Address || '';
+
           nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
             chainId;
         } catch (error) {
@@ -127,11 +134,13 @@ export const establishWalletConnection = createAsyncThunk(
         setConnected();
         setWalletName(data.walletName);
 
-        // todo: use Hex Address instead to avoid certain cases
+        const cosmosAddress = getAddressByPrefix(anyNetworkAddress, 'cosmos');
+        const authzMode = getAuthzMode(cosmosAddress);
+        if (authzMode.isAuthzModeOn)
+          dispatch(enableAuthzMode({ address: authzMode.authzAddress }));
         dispatch(
           loadTransactions({
-            address:
-              chainInfos['cosmoshub-4']?.walletInfo?.bech32Address || 'Todo',
+            address: cosmosAddress,
           })
         );
         return fulfillWithValue({
