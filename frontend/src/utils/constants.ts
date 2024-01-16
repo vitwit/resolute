@@ -161,3 +161,5 @@ export const TWITTER_ICON = '/twitter-icon.png';
 export const TWITTER_LINK = 'https://twitter.com/vitwit_';
 export const MIN_SALT_VALUE = 99999;
 export const MAX_SALT_VALUE = 99999999;
+export const NO_GRANTS_BY_ME_TEXT = "You haven't granted any permission yet";
+export const NO_GRANTS_TO_ME_TEXT = "You don't have any grants";
