@@ -193,7 +193,7 @@ export const getValidatorRank = (
   return '#-';
 };
 
-function convertSnakeToCamelCase(key: string): string {
+export function convertSnakeToCamelCase(key: string): string {
   return key.replace(/_([a-z])/g, (match, group1) => group1.toUpperCase());
 }
 
@@ -382,4 +382,15 @@ export const parseAmount = (amount: Coin[], currency: Currency) => {
 export function getRandomNumber(min: number, max: number): number {
   const randomNumber = Math.random() * (max - min) + min;
   return Math.floor(randomNumber);
+}
+
+export const shortenName = (name: string, maxLength: number): string =>
+  name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
+
+export const convertToSnakeCase = (name: string) => {
+  return name.toLowerCase().replace(' ', '_') || '';
+};
+
+export function amountToMinimalValue(amount: number, coinDecimals: number) {
+  return Number(amount) * 10 ** coinDecimals;
 }
