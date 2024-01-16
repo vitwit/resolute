@@ -9,9 +9,19 @@ import {
   resetError,
   resetTxAndHash,
 } from '@/store/features/common/commonSlice';
+<<<<<<< HEAD
+=======
+import { resetState as bankReset } from '@/store/features/bank/bankSlice';
+import { resetState as rewardsReset } from '@/store/features/distribution/distributionSlice';
+import { resetCompleteState as stakingReset } from '@/store/features/staking/stakeSlice';
+import { resetState as authzReset } from '@/store/features/authz/authzSlice';
+import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
+
+>>>>>>> a885705 (feat: integrate authz with staking and overview (#1092))
 const Profile = () => {
   const profileName = useAppSelector((state) => state.wallet.name);
   const dispatch = useAppDispatch();
+  const { disableAuthzMode } = useAuthzGrants();
 
   return (
     <div className="flex items-center gap-1">
@@ -34,6 +44,14 @@ const Profile = () => {
             dispatch(resetWallet());
             dispatch(resetError());
             dispatch(resetTxAndHash());
+<<<<<<< HEAD
+=======
+            dispatch(bankReset());
+            dispatch(rewardsReset());
+            dispatch(stakingReset());
+            dispatch(authzReset());
+            disableAuthzMode();
+>>>>>>> a885705 (feat: integrate authz with staking and overview (#1092))
             logout();
           }}
           className="cursor-pointer"

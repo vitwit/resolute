@@ -962,6 +962,47 @@ export const stakeSlice = createSlice({
       });
 
     builder
+<<<<<<< HEAD
+=======
+      .addCase(getAuthzUnbonding.pending, (state, action) => {
+        const { chainID } = action.meta.arg;
+        if (!state.authz.chains[chainID])
+          state.authz.chains[chainID] = cloneDeep(state.defaultState);
+        state.authz.chains[chainID].unbonding.status = TxStatus.PENDING;
+        state.authz.chains[chainID].unbonding.errMsg = '';
+      })
+      .addCase(getAuthzUnbonding.fulfilled, (state, action) => {
+        const { chainID } = action.meta.arg;
+        const unbonding_responses = action.payload.data.unbonding_responses;
+        let totalUnbonded = 0.0;
+        if (unbonding_responses?.length) {
+          unbonding_responses.forEach((unbondingEntries) => {
+            unbondingEntries.entries.forEach((unbondingEntry) => {
+              totalUnbonded += +unbondingEntry.balance;
+            });
+          });
+          state.authz.chains[chainID].unbonding.totalUnbonded = totalUnbonded;
+          if (unbonding_responses[0].entries.length) {
+            state.authz.chains[chainID].unbonding.hasUnbonding = true;
+            state.authz.hasUnbonding = true;
+          }
+        }
+        state.authz.chains[chainID].unbonding.status = TxStatus.IDLE;
+        state.authz.chains[chainID].unbonding.unbonding.unbonding_responses =
+          unbonding_responses;
+        state.authz.chains[chainID].unbonding.pagination =
+          action.payload.data.pagination;
+        state.authz.chains[chainID].unbonding.errMsg = '';
+      })
+      .addCase(getAuthzUnbonding.rejected, (state, action) => {
+        const { chainID } = action.meta.arg;
+        state.authz.chains[chainID].unbonding.status = TxStatus.REJECTED;
+        state.authz.chains[chainID].unbonding.errMsg =
+          action.error.message || '';
+      });
+
+    builder
+>>>>>>> a885705 (feat: integrate authz with staking and overview (#1092))
       .addCase(txDelegate.pending, (state, action) => {
         const { chainID } = action.meta.arg.basicChainInfo;
         state.chains[chainID].tx.status = TxStatus.PENDING;

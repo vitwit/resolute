@@ -1,12 +1,20 @@
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetAssetsAmount from '@/custom-hooks/useGetAssetsAmount';
 import { formatDollarAmount } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
+import useGetAuthzAssetsAmount from '../../../../custom-hooks/useGetAuthzAssetsAmount';
 type AssetSummary = { icon: string; alt: string; type: string; amount: string };
 
 const WalletSummery = ({ chainIDs }: { chainIDs: string[] }) => {
-  const [stakedAmount, availableAmount, rewardsAmount] =
-    useGetAssetsAmount(chainIDs);
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const [myStaked, myAvailable, myRewards] = useGetAssetsAmount(chainIDs);
+  const [authzStaked, authzAvailable, authzRewards] =
+    useGetAuthzAssetsAmount(chainIDs);
+  const stakedAmount = isAuthzMode ? authzStaked : myStaked;
+  const availableAmount = isAuthzMode ? authzAvailable : myAvailable;
+  const rewardsAmount = isAuthzMode ? authzRewards : myRewards;
+
   const available = formatDollarAmount(availableAmount);
   const staked = formatDollarAmount(stakedAmount);
   const rewards = formatDollarAmount(rewardsAmount);

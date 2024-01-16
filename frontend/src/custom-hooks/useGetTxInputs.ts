@@ -7,6 +7,8 @@ import {
 import useGetChainInfo from './useGetChainInfo';
 import { TxReStakeInputs } from '@/types/staking';
 import { Delegate } from '@/txns/staking';
+import useAddressConverter from './useAddressConverter';
+import { EncodeDelegate } from '@/txns/staking/delegate';
 
 const useGetTxInputs = () => {
   const stakingChains = useAppSelector(
@@ -15,6 +17,12 @@ const useGetTxInputs = () => {
   const rewardsChains = useAppSelector(
     (state: RootState) => state.distribution.chains
   );
+  const authzRewardsChains = useAppSelector(
+    (state) => state.distribution.authzChains
+  );
+  const { convertAddress } = useAddressConverter();
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
   const { getDenomInfo, getChainInfo } = useGetChainInfo();
 
   const txWithdrawAllRewardsInputs = (
@@ -225,6 +233,58 @@ const useGetTxInputs = () => {
     return transfersRequestInputs;
   };
 
+  const txAuthzRestakeMsgs = (chainID: string): Msg[] => {
+    const { minimalDenom } = getDenomInfo(chainID);
+    const rewards = authzRewardsChains[chainID]?.delegatorRewards;
+    const msgs: Msg[] = [];
+    if (!isAuthzMode) return [];
+    const delegator = convertAddress(chainID, authzAddress);
+
+    for (const delegation of rewards?.list || []) {
+      for (const reward of delegation.reward || []) {
+        if (reward.denom === minimalDenom) {
+          const amount = parseInt(reward.amount);
+          if (amount < 1) continue;
+          const msg = EncodeDelegate(
+            delegator,
+            delegation.validator_address,
+            amount,
+            minimalDenom
+          );
+          msgs.push(msg);
+        }
+      }
+    }
+    return msgs;
+  };
+
+  const txAuthzRestakeValidatorMsgs = (
+    chainID: string,
+    validatorAddress: string
+  ): Msg[] => {
+    if (!isAuthzMode) return [];
+    const { minimalDenom } = getDenomInfo(chainID);
+    const rewards = authzRewardsChains[chainID]?.delegatorRewards;
+    const msgs: Msg[] = [];
+    const delegator = convertAddress(chainID, authzAddress);
+
+    for (const delegation of rewards.list) {
+      if (delegation?.validator_address === validatorAddress) {
+        for (const reward of delegation.reward || []) {
+          if (reward.denom === minimalDenom) {
+            const amount = +reward.amount;
+            if (amount < 1) continue;
+            msgs.push(
+              EncodeDelegate(delegator, validatorAddress, amount, minimalDenom)
+            );
+          }
+        }
+      }
+    }
+
+    return msgs;
+  };
+
   return {
     txWithdrawAllRewardsInputs,
     txRestakeInputs,
@@ -233,6 +293,8 @@ const useGetTxInputs = () => {
     txSendInputs,
     getVoteTxInputs,
     txTransferInputs,
+    txAuthzRestakeMsgs,
+    txAuthzRestakeValidatorMsgs,
   };
 };
 

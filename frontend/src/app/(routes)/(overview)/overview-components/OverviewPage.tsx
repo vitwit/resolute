@@ -17,11 +17,15 @@ import AssetsTable from './AssetsTable';
 import AccountSummery from './AccountSummary';
 import { getAccountInfo } from '@/store/features/auth/authSlice';
 import { getDelegatorTotalRewards } from '@/store/features/distribution/distributionSlice';
+import useInitAuthzForOverview from '@/custom-hooks/useInitAuthzForOverview';
+import AuthzToast from '@/components/AuthzToast';
 
 const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
 
+  useInitAuthzForOverview(chainIDs);
   useEffect(() => {
     chainIDs.forEach((chainID) => {
       const allChainInfo = networks[chainID];
@@ -66,8 +70,17 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
     <div className="w-full flex justify-between">
       <div className="flex flex-col w-full px-10 py-6 space-y-6 min-h-screen max-h-screen">
         <TopNav />
+        {isAuthzMode && (
+          <div>
+            <div className="h-4"></div>
+            <AuthzToast chainIDs={chainIDs} margins="" />
+            <div className="h-4"></div>
+          </div>
+        )}
         <WalletSummery chainIDs={chainIDs} />
-        {chainIDs.length === 1 && <AccountSummery chainID={chainIDs[0]} />}
+        {!isAuthzMode && chainIDs.length === 1 && (
+          <AccountSummery chainID={chainIDs[0]} />
+        )}
         <PageAd />
         <div className="flex items-center min-h-[36px] h-8">
           <h2 className="text-xl not-italic font-normal leading-[normal]">

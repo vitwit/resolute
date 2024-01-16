@@ -195,6 +195,45 @@ export const distSlice = createSlice({
             action.error.message || '';
         }
       });
+<<<<<<< HEAD
+=======
+
+    builder
+      .addCase(getAuthzDelegatorTotalRewards.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (!state.authzChains[chainID])
+          state.authzChains[chainID] = cloneDeep(initialState.defaultState);
+        state.authzChains[chainID].delegatorRewards.status = TxStatus.PENDING;
+        state.authzChains[chainID].delegatorRewards.errMsg = '';
+        state.authzChains[chainID].delegatorRewards.totalRewards = 0;
+        state.authzChains[chainID].delegatorRewards.list = [];
+        state.authzChains[chainID].delegatorRewards.pagination = {};
+      })
+      .addCase(getAuthzDelegatorTotalRewards.fulfilled, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const denom = action.meta.arg.denom;
+        if (state.authzChains[chainID]) {
+          state.authzChains[chainID].delegatorRewards.status = TxStatus.IDLE;
+          state.authzChains[chainID].delegatorRewards.list =
+            action.payload.data.rewards;
+          const totalRewardsList = action?.payload?.data?.total;
+          state.authzChains[chainID].delegatorRewards.totalRewards =
+            getDenomBalance(totalRewardsList, denom);
+          state.authzChains[chainID].delegatorRewards.pagination =
+            action.payload.data.pagination;
+          state.authzChains[chainID].delegatorRewards.errMsg = '';
+        }
+      })
+      .addCase(getAuthzDelegatorTotalRewards.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (state.authzChains[chainID]) {
+          state.authzChains[chainID].delegatorRewards.status =
+            TxStatus.REJECTED;
+          state.authzChains[chainID].delegatorRewards.errMsg =
+            action.error.message || '';
+        }
+      });
+>>>>>>> a885705 (feat: integrate authz with staking and overview (#1092))
     builder
       .addCase(txWithdrawAllRewards.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
