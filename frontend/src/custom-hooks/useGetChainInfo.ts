@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { RootState } from '@/store/store';
 import { useAppSelector } from './StateHooks';
 import { COSMOS_CHAIN_ID } from '@/utils/constants';
+import { getAddressByPrefix } from '@/utils/address';
 
 export interface DenomInfo {
   minimalDenom: string;
@@ -15,6 +16,12 @@ const useGetChainInfo = () => {
   const balanceChains = useAppSelector(
     (state: RootState) => state.bank.balances
   );
+
+  const getCosmosAddress = () => {
+    const chainID = Object.keys(networks)[0];
+    const address = networks[chainID].walletInfo.bech32Address;
+    return getAddressByPrefix(address, 'cosmos');
+  };
 
   const getDenomInfo = useCallback(
     (chainID: string): DenomInfo => {
@@ -137,6 +144,7 @@ const useGetChainInfo = () => {
     isNativeTransaction,
     getChainIDFromAddress,
     isFeeAvailable,
+    getCosmosAddress,
   };
 };
 
