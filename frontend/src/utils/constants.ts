@@ -122,6 +122,12 @@ export const SIDENAV_MENU_ITEMS = [
     link: '/staking',
   },
   {
+    name: 'Authz',
+    icon: '/authz-icon.svg',
+    activeIcon: '/authz-icon-active.svg',
+    link: '/authz',
+  },
+  {
     name: 'Multisig',
     icon: '/multisig-icon.svg',
     activeIcon: '/multisig-icon-active.svg',
