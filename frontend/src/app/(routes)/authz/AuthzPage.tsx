@@ -10,7 +10,6 @@ const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const hanldeDialogGrantClose = () => {
     setDialogGrantOpen(false);
   };
-
   return (
     <div className="py-6 px-10">
       <div className="space-y-10">
