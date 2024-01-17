@@ -1,23 +1,33 @@
 import { DialogContent, Dialog } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react';
-import { supportedWallets } from '@/utils/contants';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
+import { getWalletName, setWalletName } from '@/utils/localStorage';
+import { SUPPORTED_WALLETS } from '@/utils/constants';
 
 const WalletPopup = ({
   isOpen,
   onClose,
   selectWallet,
+  isSwitchWallet,
 }: {
   isOpen: boolean;
   onClose: () => void;
   selectWallet: (walletName: string) => void;
+  isSwitchWallet: boolean;
 }) => {
-  const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
+  const [selectedWallet, setSelectedWallet] = useState<string | null>(
+    getWalletName()
+  );
 
-  const handleWalletClick = (walletName: string) => {
+  const handleWalletClick = async (walletName: string) => {
     setSelectedWallet(walletName);
-    selectWallet(walletName); // Pass the walletName directly
+    if (isSwitchWallet) {
+      await Promise.all([setWalletName(walletName)]);
+      window.location.reload();
+    } else {
+      selectWallet(walletName);
+    }
   };
 
   return (
@@ -44,10 +54,10 @@ const WalletPopup = ({
           <div className="flex justify-end items-center gap-10 px-10 py-0 w-full">
             <div className="connect-wallet-box space-y-6 w-full">
               <div className="text-white text-xl font-bold ">
-                Connect Wallet
+                {isSwitchWallet ? 'Switch Wallet' : 'Connect Wallet'}
               </div>
               <div className="flex space-x-6 justify-center">
-                {supportedWallets.map((wallet) => (
+                {SUPPORTED_WALLETS.map((wallet) => (
                   <div
                     className={`wallet-grid ${
                       selectedWallet === wallet.name.toLocaleLowerCase()
