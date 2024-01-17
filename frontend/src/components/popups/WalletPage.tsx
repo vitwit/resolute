@@ -1,8 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent } from '@mui/material';
-import { supportedWallets } from '@/utils/contants';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
+import { SUPPORTED_WALLETS } from '@/utils/constants';
 
 const Walletpage = ({
   open,
@@ -32,7 +32,7 @@ const Walletpage = ({
             </div>
           </div>
           <div className="add-wallet-dialog-content">
-            {supportedWallets.map((wallet, index) => (
+            {SUPPORTED_WALLETS.map((wallet, index) => (
               <div
                 className="wallet"
                 onClick={() => {
