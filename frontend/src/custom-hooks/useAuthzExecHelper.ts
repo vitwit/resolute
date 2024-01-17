@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from './StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 import useGetChainInfo from './useGetChainInfo';
 import { AuthzExecVoteMsg } from '@/txns/authz';
-import { txAuthzExec } from '@/store/features/authz/authzSlice';
 import { capitalizeFirstLetter } from '@/utils/util';
 import { AuthzExecDepositMsg, AuthzExecSendMsg } from '@/txns/authz/exec';
 import { msgSendTypeUrl } from '@/txns/bank/send';
