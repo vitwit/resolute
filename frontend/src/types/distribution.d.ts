@@ -54,6 +54,8 @@ interface DelegationsPairs {
 }
 
 interface TxWithdrawAllRewardsInputs {
+  isAuthzMode: false;
+  basicChainInfo: BasicChainInfo;
   msgs: DelegationsPairs[];
   denom: string;
   chainID: string;

@@ -106,4 +106,5 @@ interface TxAuthzExecInputs {
   type?: string;
   feegranter?: string;
   authzChainGranter: string;
+  isTxAll?: boolean;
 }

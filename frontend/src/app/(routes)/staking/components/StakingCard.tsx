@@ -223,6 +223,17 @@ const StakingCardActions = ({
   };
 
   const claimAndStake = () => {
+   
+    if (txRestakeStatus === TxStatus.PENDING) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: TXN_PENDING_ERROR('Restake'),
+        })
+      );
+      return;
+    }
+    handleCardClick(validatorAddress);
     if (isAuthzMode) {
       const { address } = getChainInfo(chainID);
       const msgs = txAuthzRestakeValidatorMsgs(chainID, validatorAddress);
@@ -234,16 +245,6 @@ const StakingCardActions = ({
       });
       return;
     }
-    if (txRestakeStatus === TxStatus.PENDING) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: TXN_PENDING_ERROR('Restake'),
-        })
-      );
-      return;
-    }
-    handleCardClick(validatorAddress);
     const txInputs = txRestakeValidatorInputs(chainID, validatorAddress);
     if (txInputs.msgs.length) dispatch(txRestake(txInputs));
     else {

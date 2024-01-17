@@ -72,9 +72,7 @@ const StakingSidebar = ({
   const txClaimStatus = useAppSelector(
     (state: RootState) => state.distribution.chains[chainID]?.tx.status
   );
-  const txAuthzStatus = useAppSelector(
-    (state) => state.authz.chains[chainID]?.tx?.status || TxStatus.INIT
-  );
+
   const txRestakeStatus = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.reStakeTxStatus
   );
@@ -92,15 +90,6 @@ const StakingSidebar = ({
 
   const claim = (chainID: string) => {
     if (isAuthzMode) {
-      if (txAuthzStatus === TxStatus.PENDING) {
-        dispatch(
-          setError({
-            type: 'error',
-            message: TXN_PENDING_ERROR('Authz'),
-          })
-        );
-        return;
-      }
       const { address } = getChainInfo(chainID);
       const pairs: DelegationsPairs[] = (
         authzRewards[chainID]?.delegatorRewards?.list || []
@@ -116,6 +105,7 @@ const StakingSidebar = ({
         granter: authzAddress,
         pairs: pairs,
         chainID: chainID,
+        isTxAll: true,
       });
       return;
     }
@@ -162,6 +152,7 @@ const StakingSidebar = ({
         granter: authzAddress,
         msgs: msgs,
         chainID: chainID,
+        isTxAll: true,
       });
       return;
     }

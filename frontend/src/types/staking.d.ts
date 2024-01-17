@@ -119,6 +119,7 @@ interface Params {
 }
 
 interface TxRedelegateInputs {
+  isAuthzMode: false;
   basicChainInfo: BasicChainInfo;
   delegator: string;
   srcVal: string;
@@ -130,6 +131,7 @@ interface TxRedelegateInputs {
 }
 
 interface TxUndelegateInputs {
+  isAuthzMode: false;
   basicChainInfo: BasicChainInfo;
   delegator: string;
   validator: string;
@@ -140,6 +142,7 @@ interface TxUndelegateInputs {
 }
 
 interface TxDelegateInputs {
+  isAuthzMode: false;
   basicChainInfo: BasicChainInfo;
   delegator: string;
   validator: string;
@@ -150,6 +153,7 @@ interface TxDelegateInputs {
 }
 
 interface TxReStakeInputs {
+  isAuthzMode: false;
   basicChainInfo: BasicChainInfo;
   msgs: Msg[];
   memo: string;
@@ -160,6 +164,7 @@ interface TxReStakeInputs {
 }
 
 interface TxCancelUnbondingInputs {
+  isAuthzMode: false;
   basicChainInfo: BasicChainInfo;
   delegator: string;
   validator: string;
