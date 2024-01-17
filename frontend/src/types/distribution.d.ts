@@ -38,6 +38,9 @@ interface DistributionStoreInitialState {
   chains: {
     [key: string]: DefaultState;
   };
+  authzChains: {
+    [key: string]: DefaultState;
+  };
   defaultState: DefaultState;
 }
 

@@ -5,6 +5,11 @@ import authzService from './service';
 import { TxStatus } from '../../../types/enums';
 import { cloneDeep } from 'lodash';
 import { getAddressByPrefix } from '@/utils/address';
+import { signAndBroadcast } from '@/utils/signing';
+import { setError, setTxAndHash } from '../common/commonSlice';
+import { NewTransaction } from '@/utils/transaction';
+import { addTransactions } from '../transactionHistory/transactionHistorySlice';
+import { GAS_FEE } from '@/utils/constants';
 
 interface ChainAuthz {
   grantsToMe: Authorization[];
@@ -107,6 +112,67 @@ export const getGrantsByMe = createAsyncThunk(
   }
 );
 
+export const txAuthzExec = createAsyncThunk(
+  'authz/tx-exec',
+  async (
+    data: txAuthzExecInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        data.msgs,
+        GAS_FEE,
+        data.metaData,
+        `${data.basicChainInfo.feeAmount}${data.feeDenom}`,
+        data.basicChainInfo.rest,
+        data.feeGranter
+      );
+      if (result?.code === 0) {
+        const tx = NewTransaction(
+          result,
+          data.msgs,
+          data.basicChainInfo.chainID,
+          data.basicChainInfo.cosmosAddress
+        );
+        dispatch(
+          addTransactions({
+            transactions: [tx],
+            chainID: data.basicChainInfo.chainID,
+            address: data.basicChainInfo.cosmosAddress,
+          })
+        );
+        dispatch(
+          setTxAndHash({
+            hash: result?.transactionHash,
+            tx,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: 'error',
+            message: result?.rawLog || 'transaction Failed',
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: error.message,
+        })
+      );
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const authzSlice = createSlice({
   name: 'authz',
   initialState,
@@ -118,6 +184,10 @@ export const authzSlice = createSlice({
     exitAuthzMode: (state) => {
       state.authzModeEnabled = false;
       state.authzAddress = '';
+    },
+    resetState: (state) => {
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      state = cloneDeep(initialState);
     },
   },
   extraReducers: (builder) => {
@@ -225,9 +295,25 @@ export const authzSlice = createSlice({
             'An error occurred while fetching authz grants by me',
         };
       });
+    builder
+      .addCase(txAuthzExec.pending, (state, action) => {
+        const chainID = action.meta.arg.basicChainInfo.chainID;
+        state.chains[chainID].tx.status = TxStatus.PENDING;
+        state.chains[chainID].tx.errMsg = '';
+      })
+      .addCase(txAuthzExec.fulfilled, (state, action) => {
+        const chainID = action.meta.arg.basicChainInfo.chainID;
+        state.chains[chainID].tx.status = TxStatus.IDLE;
+      })
+      .addCase(txAuthzExec.rejected, (state, action) => {
+        const chainID = action.meta.arg.basicChainInfo.chainID;
+        state.chains[chainID].tx.status = TxStatus.REJECTED;
+        state.chains[chainID].tx.errMsg = action.error.message || 'rejected';
+      });
   },
 });
 
-export const { enableAuthzMode, exitAuthzMode } = authzSlice.actions;
+export const { enableAuthzMode, exitAuthzMode, resetState } =
+  authzSlice.actions;
 
 export default authzSlice.reducer;

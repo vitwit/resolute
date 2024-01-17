@@ -11,6 +11,7 @@ import { ERR_UNKNOWN } from '@/utils/errors';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { NewTransaction } from '@/utils/transaction';
 import { setTxAndHash } from '../common/commonSlice';
+import cloneDeep from 'lodash/cloneDeep';
 
 interface Balance {
   list: Coin[];
@@ -26,6 +27,16 @@ interface BankState {
   multiSendTx: {
     status: TxStatus;
   };
+  authz: {
+    balancesLoading: number;
+    balances: { [key: string]: Balance };
+    tx: {
+      status: TxStatus;
+    };
+    multiSendTx: {
+      status: TxStatus;
+    };
+  };
 }
 
 const initialState: BankState = {
@@ -35,10 +46,38 @@ const initialState: BankState = {
     status: TxStatus.INIT,
   },
   multiSendTx: { status: TxStatus.INIT },
+  authz: {
+    balancesLoading: 0,
+    balances: {},
+    tx: {
+      status: TxStatus.INIT,
+    },
+    multiSendTx: { status: TxStatus.INIT },
+  },
 };
 
 export const getBalances = createAsyncThunk(
   'bank/balances',
+  async (data: {
+    baseURL: string;
+    address: string;
+    chainID: string;
+    pagination?: KeyLimitPagination;
+  }) => {
+    const response = await bankService.balances(
+      data.baseURL,
+      data.address,
+      data.pagination
+    );
+    return {
+      chainID: data.chainID,
+      data: response.data,
+    };
+  }
+);
+
+export const getAuthzBalances = createAsyncThunk(
+  'bank/authz-balances',
   async (data: {
     baseURL: string;
     address: string;
@@ -171,6 +210,20 @@ export const bankSlice = createSlice({
     resetMultiSendTxRes: (state) => {
       state.multiSendTx = { status: TxStatus.INIT };
     },
+    resetState: (state) => {
+      /* eslint-disable-next-line */
+      state = cloneDeep(initialState);
+    },
+    resetAuthz: (state) => {
+      state.authz = {
+        balancesLoading: 0,
+        balances: {},
+        tx: {
+          status: TxStatus.INIT,
+        },
+        multiSendTx: { status: TxStatus.INIT },
+      };
+    },
   },
 
   extraReducers: (builder) => {
@@ -209,6 +262,40 @@ export const bankSlice = createSlice({
       });
 
     builder
+      .addCase(getAuthzBalances.pending, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        if (!state.authz.balances[chainID]) {
+          state.authz.balances[chainID] = {
+            list: [],
+            status: TxStatus.INIT,
+            errMsg: '',
+          };
+        }
+        state.authz.balances[chainID].status = TxStatus.PENDING;
+        state.authz.balancesLoading++;
+      })
+      .addCase(getAuthzBalances.fulfilled, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+
+        const result = {
+          list: action.payload.data?.balances,
+          status: TxStatus.IDLE,
+          errMsg: '',
+        };
+        state.authz.balances[chainID] = result;
+        state.authz.balancesLoading--;
+      })
+      .addCase(getAuthzBalances.rejected, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        state.authz.balances[chainID] = {
+          status: TxStatus.REJECTED,
+          errMsg: action?.error?.message || ERR_UNKNOWN,
+          list: [],
+        };
+        state.authz.balancesLoading--;
+      });
+
+    builder
       .addCase(txBankSend.pending, (state) => {
         state.tx.status = TxStatus.PENDING;
       })
@@ -235,5 +322,10 @@ export const bankSlice = createSlice({
   },
 });
 
-export const { claimRewardInBank, resetMultiSendTxRes } = bankSlice.actions;
+export const {
+  claimRewardInBank,
+  resetMultiSendTxRes,
+  resetState,
+  resetAuthz,
+} = bankSlice.actions;
 export default bankSlice.reducer;

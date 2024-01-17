@@ -22,6 +22,7 @@ import { getBalances } from '../bank/bankSlice';
 
 const initialState: DistributionStoreInitialState = {
   chains: {},
+  authzChains: {},
   defaultState: {
     delegatorRewards: {
       list: [],
@@ -133,6 +134,21 @@ export const getDelegatorTotalRewards = createAsyncThunk(
   }
 );
 
+export const getAuthzDelegatorTotalRewards = createAsyncThunk(
+  'distribution/authz-totalRewards',
+  async (data: DelegatorTotalRewardsRequest) => {
+    const response = await distService.delegatorRewards(
+      data.baseURL,
+      data.address,
+      data.pagination
+    );
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
+  }
+);
+
 export const distSlice = createSlice({
   name: 'distribution',
   initialState,
@@ -156,6 +172,13 @@ export const distSlice = createSlice({
       state.chains[chainID].delegatorRewards = cloneDeep(
         initialState.defaultState.delegatorRewards
       );
+    },
+    resetState: (state) => {
+      /* eslint-disable-next-line */
+      state = cloneDeep(initialState);
+    },
+    resetAuthz: (state) => {
+      state.authzChains = {};
     },
   },
   extraReducers: (builder) => {
@@ -195,6 +218,42 @@ export const distSlice = createSlice({
             action.error.message || '';
         }
       });
+
+    builder
+      .addCase(getAuthzDelegatorTotalRewards.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (!state.chains[chainID])
+          state.authzChains[chainID] = cloneDeep(initialState.defaultState);
+        state.authzChains[chainID].delegatorRewards.status = TxStatus.PENDING;
+        state.authzChains[chainID].delegatorRewards.errMsg = '';
+        state.authzChains[chainID].delegatorRewards.totalRewards = 0;
+        state.authzChains[chainID].delegatorRewards.list = [];
+        state.authzChains[chainID].delegatorRewards.pagination = {};
+      })
+      .addCase(getAuthzDelegatorTotalRewards.fulfilled, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        const denom = action.meta.arg.denom;
+        if (state.authzChains[chainID]) {
+          state.authzChains[chainID].delegatorRewards.status = TxStatus.IDLE;
+          state.authzChains[chainID].delegatorRewards.list =
+            action.payload.data.rewards;
+          const totalRewardsList = action?.payload?.data?.total;
+          state.authzChains[chainID].delegatorRewards.totalRewards =
+            getDenomBalance(totalRewardsList, denom);
+          state.authzChains[chainID].delegatorRewards.pagination =
+            action.payload.data.pagination;
+          state.authzChains[chainID].delegatorRewards.errMsg = '';
+        }
+      })
+      .addCase(getAuthzDelegatorTotalRewards.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (state.authzChains[chainID]) {
+          state.authzChains[chainID].delegatorRewards.status =
+            TxStatus.REJECTED;
+          state.authzChains[chainID].delegatorRewards.errMsg =
+            action.error.message || '';
+        }
+      });
     builder
       .addCase(txWithdrawAllRewards.pending, (state, action) => {
         const chainID = action.meta?.arg?.chainID;
@@ -216,6 +275,11 @@ export const distSlice = createSlice({
   },
 });
 
-export const { resetTx, resetDefaultState, resetChainRewards } =
-  distSlice.actions;
+export const {
+  resetTx,
+  resetDefaultState,
+  resetChainRewards,
+  resetState,
+  resetAuthz,
+} = distSlice.actions;
 export default distSlice.reducer;

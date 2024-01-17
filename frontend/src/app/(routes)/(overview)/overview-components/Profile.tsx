@@ -9,6 +9,11 @@ import {
   resetError,
   resetTxAndHash,
 } from '@/store/features/common/commonSlice';
+import { resetState as bankReset } from '@/store/features/bank/bankSlice';
+import { resetState as rewardsReset } from '@/store/features/distribution/distributionSlice';
+import { resetCompleteState as stakingReset } from '@/store/features/staking/stakeSlice';
+import { resetState as authzReset } from '@/store/features/authz/authzSlice';
+
 const Profile = () => {
   const profileName = useAppSelector((state) => state.wallet.name);
   const dispatch = useAppDispatch();
@@ -34,6 +39,10 @@ const Profile = () => {
             dispatch(resetWallet());
             dispatch(resetError());
             dispatch(resetTxAndHash());
+            dispatch(bankReset());
+            dispatch(rewardsReset());
+            dispatch(stakingReset());
+            dispatch(authzReset());
             logout();
           }}
           className="cursor-pointer"

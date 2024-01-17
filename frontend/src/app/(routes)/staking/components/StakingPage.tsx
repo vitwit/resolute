@@ -25,6 +25,7 @@ import {
 import Image from 'next/image';
 import { CircularProgress } from '@mui/material';
 import { TxStatus } from '@/types/enums';
+import MainTopNav from '@/components/MainTopNav';
 
 const StakingPage = ({
   chainName,
@@ -135,7 +136,9 @@ const StakingPage = ({
   return (
     <div className="flex justify-between">
       <div className="staking-main">
-        <h2 className="txt-lg font-medium mb-6">Staking</h2>
+        <div className="mb-6">
+          <MainTopNav title="Staking" />
+        </div>
         <div className="overview-grid">
           <ChainDelegations
             chainID={chainID}
