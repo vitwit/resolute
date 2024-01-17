@@ -103,7 +103,6 @@ interface TxAuthzExecInputs {
   denom: string;
   memo: string;
   msgs: Msg[];
-  feeGranter?: string;
   type?: string;
   feegranter?: string;
 }

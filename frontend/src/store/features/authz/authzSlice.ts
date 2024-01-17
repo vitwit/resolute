@@ -223,7 +223,7 @@ export const txAuthzExec = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data.feeGranter
+        data.feegranter
       );
       if (result?.code === 0) {
         const tx = NewTransaction(
