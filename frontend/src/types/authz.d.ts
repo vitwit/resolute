@@ -96,11 +96,14 @@ interface ChainStatus {
   txHash: string;
 }
 
-interface txAuthzExecInputs {
+interface TxAuthzExecInputs {
+  onTxSuccessCallBack?: () => void;
+  isAuthzMode: true;
   basicChainInfo: BasicChainInfo;
-  feeDenom: string;
-  metaData: string;
+  denom: string;
+  memo: string;
   msgs: Msg[];
   feeGranter?: string;
   type?: string;
+  feegranter?: string;
 }

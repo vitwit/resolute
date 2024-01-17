@@ -106,10 +106,11 @@ const useAuthzStakingExecHelper = () => {
       );
       dispatch(
         txAuthzExec({
+          isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
-          metaData: '',
-          feeDenom: minimalDenom,
+          memo: '',
+          denom: minimalDenom,
         })
       );
     }
@@ -152,10 +153,11 @@ const useAuthzStakingExecHelper = () => {
       );
       dispatch(
         txAuthzExec({
+          isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
-          metaData: '',
-          feeDenom: minimalDenom,
+          memo: '',
+          denom: minimalDenom,
         })
       );
     }
@@ -199,10 +201,11 @@ const useAuthzStakingExecHelper = () => {
       );
       dispatch(
         txAuthzExec({
+          isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
-          metaData: '',
-          feeDenom: minimalDenom,
+          memo: '',
+          denom: minimalDenom,
         })
       );
     }
@@ -239,10 +242,11 @@ const useAuthzStakingExecHelper = () => {
       const msg = AuthzExecWithdrawRewardsMsg(data.grantee, pairs);
       dispatch(
         txAuthzExec({
+          isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
-          metaData: '',
-          feeDenom: minimalDenom,
+          memo: '',
+          denom: minimalDenom,
         })
       );
     }
@@ -274,10 +278,11 @@ const useAuthzStakingExecHelper = () => {
       const msg = AuthzExecMsgCancelUnbond(data.msg, data.grantee);
       dispatch(
         txAuthzExec({
+          isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
-          metaData: '',
-          feeDenom: minimalDenom,
+          memo: '',
+          denom: minimalDenom,
         })
       );
     }
@@ -313,10 +318,11 @@ const useAuthzStakingExecHelper = () => {
       const msg = AuthzExecMsgRestake(data.msgs, data.grantee);
       dispatch(
         txAuthzExec({
+          isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
-          metaData: '',
-          feeDenom: minimalDenom,
+          memo: '',
+          denom: minimalDenom,
         })
       );
     }

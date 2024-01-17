@@ -7,6 +7,7 @@ interface MultiTxnsInputs {
 }
 
 interface TxSendInputs {
+  isAuthzMode: false
   basicChainInfo: BasicChainInfo;
   from: string;
   to: string;
@@ -17,5 +18,5 @@ interface TxSendInputs {
   feegranter: string;
   memo: string;
   prefix: string;
-  onTxSuccessCallBank?: () => void;
+  onTxSuccessCallBack?: () => void;
 }

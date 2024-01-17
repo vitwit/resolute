@@ -8,6 +8,7 @@ import { txAuthzExec } from '@/store/features/authz/authzSlice';
 import { capitalizeFirstLetter } from '@/utils/util';
 import { AuthzExecDepositMsg, AuthzExecSendMsg } from '@/txns/authz/exec';
 import { msgSendTypeUrl } from '@/txns/bank/send';
+import { txBankSend } from '@/store/features/bank/bankSlice';
 
 export interface AuthzExecHelpVote {
   grantee: string;
@@ -15,7 +16,7 @@ export interface AuthzExecHelpVote {
   option: VoteOption;
   granter: string;
   chainID: string;
-  metaData: string;
+  memo: string;
 }
 
 export interface AuthzExecHelpDeposit {
@@ -24,7 +25,7 @@ export interface AuthzExecHelpDeposit {
   amount: number;
   granter: string;
   chainID: string;
-  metaData: string;
+  memo: string;
 }
 
 export interface AuthzExecHelpSend {
@@ -76,10 +77,11 @@ const useAuthzExecHelper = () => {
       );
       dispatch(
         txAuthzExec({
+          isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
-          metaData: data.metaData,
-          feeDenom: minimalDenom,
+          memo: data.memo,
+          denom: minimalDenom,
         })
       );
     }
@@ -116,10 +118,11 @@ const useAuthzExecHelper = () => {
       );
       dispatch(
         txAuthzExec({
+          isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
-          metaData: data.metaData,
-          feeDenom: minimalDenom,
+          memo: data.memo,
+          denom: minimalDenom,
         })
       );
     }
@@ -183,11 +186,12 @@ const useAuthzExecHelper = () => {
         data.denom
       );
       dispatch(
-        txAuthzExec({
+        txBankSend({
+          isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
-          metaData: data.memo,
-          feeDenom: minimalDenom,
+          memo: data.memo,
+          denom: minimalDenom,
         })
       );
     }

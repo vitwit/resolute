@@ -73,6 +73,7 @@ const useGetTxInputs = () => {
     const { minimalDenom, decimals } = denomInfo;
 
     return {
+      basicChainInfo,
       aminoConfig,
       prefix,
       rest,
@@ -194,6 +195,7 @@ const useGetTxInputs = () => {
     const basicChainInfo = getChainInfo(chainID);
     const { minimalDenom } = getDenomInfo(chainID);
     return {
+      isAuthzMode: false,
       basicChainInfo,
       from: basicChainInfo.address,
       to: recipient,

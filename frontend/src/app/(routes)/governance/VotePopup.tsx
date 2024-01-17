@@ -66,8 +66,9 @@ const VotePopup = ({
   const dispatch = useAppDispatch();
 
   const handleVote = () => {
+    const basicChainInfo = getChainInfo(chainID);
     const { address, aminoConfig, feeAmount, prefix, rest, rpc } =
-      getChainInfo(chainID);
+      basicChainInfo;
     const { minimalDenom } = getDenomInfo(chainID);
 
     if (isAuthzMode) {
@@ -77,13 +78,15 @@ const VotePopup = ({
         option: voteOptionNumber[voteOption],
         granter: authzGranter,
         chainID,
-        metaData: '',
+        memo: '',
       });
       return;
     }
 
     dispatch(
       txVote({
+        basicChainInfo,
+        isAuthzMode: false,
         voter: address,
         proposalId: proposalId,
         option: voteOptionNumber[voteOption],

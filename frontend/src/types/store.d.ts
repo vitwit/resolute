@@ -12,6 +12,7 @@ interface BasicChainInfo {
   explorerTxHashEndpoint: string;
   chainName: string;
   chainLogo: string;
+  decimals: number;
 }
 
 interface Coin {
