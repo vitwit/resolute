@@ -41,11 +41,6 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const authzAddress = useAppSelector((state) => state.authz.authzAddress);
   const { txAuthzSend } = useAuthzExecHelper();
-  const authzLoading = useAppSelector(
-    (state) =>
-      state.authz.chains?.[selectedAsset?.chainID || '']?.tx?.status ||
-      TxStatus.INIT
-  );
 
   const amountRules = {
     ...sendProps.amount,
@@ -370,8 +365,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
             <CustomSubmitButton
               pendingStatus={
                 sendTxStatus === TxStatus.PENDING ||
-                ibcTxStatus === TxStatus.PENDING ||
-                (isAuthzMode && authzLoading === TxStatus.PENDING)
+                ibcTxStatus === TxStatus.PENDING
               }
               buttonStyle="primary-custom-btn w-[144px]"
               circularProgressSize={24}
