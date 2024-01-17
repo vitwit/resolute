@@ -191,13 +191,22 @@ export const txBankSend = createAsyncThunk(
       );
       dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
       if (result?.code === 0) {
-        dispatch(
-          getBalances({
+        if (data.isAuthzMode) {
+          dispatch(getAuthzBalances({
             baseURL: data.basicChainInfo.rest,
             chainID,
-            address: data.basicChainInfo.address,
-          })
-        );
+            address: data.authzChainGranter
+          }))
+        } else {
+          dispatch(
+            getBalances({
+              baseURL: data.basicChainInfo.rest,
+              chainID,
+              address: data.basicChainInfo.address,
+            })
+          );
+        }
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);

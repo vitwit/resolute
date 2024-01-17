@@ -111,6 +111,7 @@ const useAuthzStakingExecHelper = () => {
           msgs: [msg],
           memo: '',
           denom: minimalDenom,
+          authzChainGranter: address,
         })
       );
     }
@@ -158,6 +159,7 @@ const useAuthzStakingExecHelper = () => {
           msgs: [msg],
           memo: '',
           denom: minimalDenom,
+          authzChainGranter: address,
         })
       );
     }
@@ -206,6 +208,7 @@ const useAuthzStakingExecHelper = () => {
           msgs: [msg],
           memo: '',
           denom: minimalDenom,
+          authzChainGranter: address,
         })
       );
     }
@@ -247,6 +250,7 @@ const useAuthzStakingExecHelper = () => {
           msgs: [msg],
           memo: '',
           denom: minimalDenom,
+          authzChainGranter: address,
         })
       );
     }
@@ -283,6 +287,7 @@ const useAuthzStakingExecHelper = () => {
           msgs: [msg],
           memo: '',
           denom: minimalDenom,
+          authzChainGranter: address,
         })
       );
     }
@@ -323,6 +328,7 @@ const useAuthzStakingExecHelper = () => {
           msgs: [msg],
           memo: '',
           denom: minimalDenom,
+          authzChainGranter: address,
         })
       );
     }

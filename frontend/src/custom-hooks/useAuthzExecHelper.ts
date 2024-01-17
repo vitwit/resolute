@@ -82,6 +82,7 @@ const useAuthzExecHelper = () => {
           msgs: [msg],
           memo: data.memo,
           denom: minimalDenom,
+          authzChainGranter: address,
         })
       );
     }
@@ -123,6 +124,7 @@ const useAuthzExecHelper = () => {
           msgs: [msg],
           memo: data.memo,
           denom: minimalDenom,
+          authzChainGranter: address,
         })
       );
     }
@@ -192,6 +194,7 @@ const useAuthzExecHelper = () => {
           msgs: [msg],
           memo: data.memo,
           denom: minimalDenom,
+          authzChainGranter: address,
         })
       );
     }

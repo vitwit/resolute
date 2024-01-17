@@ -105,4 +105,5 @@ interface TxAuthzExecInputs {
   msgs: Msg[];
   type?: string;
   feegranter?: string;
+  authzChainGranter: string;
 }
