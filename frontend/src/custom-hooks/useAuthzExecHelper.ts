@@ -9,6 +9,7 @@ import { capitalizeFirstLetter } from '@/utils/util';
 import { AuthzExecDepositMsg, AuthzExecSendMsg } from '@/txns/authz/exec';
 import { msgSendTypeUrl } from '@/txns/bank/send';
 import { txBankSend } from '@/store/features/bank/bankSlice';
+import { txDeposit, txVote } from '@/store/features/gov/govSlice';
 
 export interface AuthzExecHelpVote {
   grantee: string;
@@ -76,7 +77,7 @@ const useAuthzExecHelper = () => {
         address
       );
       dispatch(
-        txAuthzExec({
+        txVote({
           isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
@@ -117,7 +118,7 @@ const useAuthzExecHelper = () => {
         minimalDenom
       );
       dispatch(
-        txAuthzExec({
+        txDeposit({
           isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],

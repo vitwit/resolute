@@ -92,18 +92,6 @@ const DepositPopup = ({
       return;
     }
 
-    if (isAuthzMode) {
-      txAuthzDeposit({
-        grantee: address,
-        proposalId: proposalId,
-        amount: Number(data.amount) * 10 ** currency.coinDecimals,
-        granter: authzGranter,
-        chainID: chainID,
-        memo: '',
-      });
-      return;
-    }
-
     dispatch(
       txDeposit({
         isAuthzMode: false,
@@ -227,11 +215,11 @@ const DepositPopup = ({
                     <button
                       className="deposit-popup-btn proposal-text-medium"
                       disabled={
-                        (!isAuthzMode && loading === TxStatus.PENDING) ||
+                        loading === TxStatus.PENDING ||
                         (isAuthzMode && authzLoading === TxStatus.PENDING)
                       }
                     >
-                      {(!isAuthzMode && loading === TxStatus.PENDING) ||
+                      {loading === TxStatus.PENDING ||
                       (isAuthzMode && authzLoading === TxStatus.PENDING) ? (
                         <CircularProgress size={20} sx={{ color: 'white' }} />
                       ) : (
