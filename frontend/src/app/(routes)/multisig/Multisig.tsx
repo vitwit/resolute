@@ -24,7 +24,7 @@ const Multisig = () => {
         <button
           className="primary-custom-btn"
           onClick={() => {
-              document.getElementById('select-network')!.click();
+            document.getElementById('select-network')!.click();
           }}
         >
           Select Network
