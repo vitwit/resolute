@@ -413,7 +413,6 @@ const DialogCreateTxn: React.FC<DialogCreateTxnProps> = (props) => {
     memo: string;
     fees: number;
   }) => {
-    console.log('submission messages ========== ', messages)
     const feeObj = fee(
       currency.coinMinimalDenom,
       data.fees.toString(),
