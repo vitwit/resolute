@@ -62,7 +62,6 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
       address: walletAddress,
       signature: authToken?.signature || '',
     };
-
     try {
       const client = await SigningStargateClient.connect(rpc);
 
@@ -102,8 +101,6 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
           memo: txn.memo,
         },
       };
-
-      console.log('txbody-----------', txBody, rpc, chainID, multisigThresholdPK, multisigAcc)
 
       const walletAmino = await getWalletAmino(chainID);
       const offlineClient = await SigningStargateClient.offline(walletAmino[0]);
