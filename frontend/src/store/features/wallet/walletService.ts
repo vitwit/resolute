@@ -1,7 +1,6 @@
 declare let window: WalletWindow;
 
 export const isWalletInstalled = (walletName: string): boolean => {
-  console.log('wallet name in installed', walletName, window.metamask, window.ethereum)
   switch (walletName) {
     case 'keplr':
       if (!window.keplr) return false;

@@ -84,27 +84,12 @@ export const establishWalletConnection = createAsyncThunk(
       let anyNetworkAddress = '';
       for (let i = 0; i < networks.length; i++) {
         if (data.walletName === 'metamask') {
-          // const chainId: string = networks[i].config.chainId;
-          // const chainName: string = networks[i].config.chainName;
-
           try {
-            // await window.wallet.experimentalSuggestChain(networks[i].config);
-
             const chainId: string = networks[i].config.chainId;
             const chainName: string = networks[i].config.chainName;
-            // await getWalletAmino(chainId);
             const walletInfo = await getKey(chainId);
-            // const walletInfo = await window.wallet.getKey(chainId);
-            // walletInfo.pubKey = Buffer.from(walletInfo?.pubkey).toString(
-            //   'base64'
-            // );
-            // delete walletInfo?.address;
             walletName = walletInfo?.address;
             isNanoLedger = false;
-            // let a = new Uint8Array(walletInfo?.pubkey);
-            // let b = new Uint32Array(a.buffer);
-            // console.log(b);
-            // let c = new Uint8Array(b.buffer);
 
             chainInfos[chainId] = {
               walletInfo: {
@@ -119,7 +104,7 @@ export const establishWalletConnection = createAsyncThunk(
               },
               network: networks[i],
             };
-            console.log('wallet infor============', chainInfos)
+            
             nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
               chainId;
 
