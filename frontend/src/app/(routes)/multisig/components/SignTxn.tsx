@@ -10,9 +10,6 @@ import { toBase64 } from '@cosmjs/encoding';
 import React, { useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { ERR_UNKNOWN } from '@/utils/errors';
-import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
-// import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 interface SignTxnProps {
   address: string;
@@ -43,7 +40,6 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
     try {
 
       const client = await SigningStargateClient.connect(rpc);
-
       const result = await getWalletAmino(chainID);
       const wallet = result[0];
       const signingClient = await SigningStargateClient.offline(wallet);
@@ -68,7 +64,6 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
 
       const msgs = unSignedTxn?.messages || [];
       try {
-
         const { signatures } = await signingClient.sign(
           walletAddress,
           msgs,
