@@ -20,8 +20,8 @@ import CustomParticles from './Particles';
 import Loading from './Loading';
 declare let window: WalletWindow;
 
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
-import { CosmjsOfflineSigner, experimentalSuggestChain,  connectSnap, getSnap } from '@leapwallet/cosmos-snap-provider';
+import { CosmjsOfflineSigner, experimentalSuggestChain, connectSnap, getSnap } from '@leapwallet/cosmos-snap-provider';
+import { CircularProgress } from '@mui/material';
 
 export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
@@ -37,12 +37,54 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     );
   };
 
+  const [load, setLoad] = useState<boolean>(false);
+
+  useEffect(()=>{
+    setLoad(false)
+  },[connected])
+
+  useEffect(() => {
+    async function listenMMAccount() {
+      window.ethereum.on("accountsChanged", async function () {
+        // Time to reload your interface with accounts[0]!
+        // let accounts = await web3.eth.getAccounts();
+        // accounts = await web3.eth.getAccounts();
+
+        for (let i = 0; i < networks.length; i++) {
+          const chainId: string = networks[i].config.chainId;
+          const offlineSigner = new CosmjsOfflineSigner(chainId);
+          const accounts = await offlineSigner.getAccounts();
+          console.log('accounts', accounts)
+        }
+
+      });
+    }
+    listenMMAccount();
+  });
+
+  // window.ethereum.on('networkChanged', function (networkId: any) {
+  //   // Time to reload your interface with the new networkId
+  //   console.log(networkId)
+  // })
+
+  // window.ethereum.on('accountsChanged', function (accounts: any) {
+  //   // Time to reload your interface with accounts[0]!
+  //   console.log('accounts==', accounts)
+  //   const walletName = getWalletName();
+  //   if (isConnected()) {
+  //     tryConnectWallet(walletName);
+  //   } else {
+  //     dispatch(unsetIsLoading());
+  //   }
+  // })
+
   const selectWallet = (walletName: string) => {
     tryConnectWallet(walletName);
     handleClose();
   };
 
   const tryConnectWallet = async (walletName: string) => {
+    setLoad(true)
     if (walletName === 'metamask') {
       try {
         for (let i = 0; i < networks.length; i++) {
@@ -52,19 +94,11 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
             await connectSnap(); // Initiates installation if not already present
           }
 
-          await experimentalSuggestChain(networks[i].config, {force: false})
-
-          const offlineSigner = new CosmjsOfflineSigner(chainId);
-          const accounts = await offlineSigner.getAccounts();
-          console.log('accounts', accounts)
-          const rpcUrl = networks[i].config.rpc; // Populate with an RPC URL corresponding to the given chainId
-
-          const stargateClient = await SigningCosmWasmClient.connectWithSigner(
-            rpcUrl,
-            offlineSigner
-          );
-
-          console.log('stargate client', stargateClient)
+          try {
+            await experimentalSuggestChain(networks[i].config, { force: false })
+          } catch (error) {
+            console.log('Error while connecting ', chainId)
+          }
         }
       } catch (error) {
         console.log('trying to connect wallet ', error)
@@ -150,14 +184,22 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
                       chains.
                     </div>
                   </div>
-                  <div
-                    className="landingpage-button"
-                    onClick={() => setConnectWalletDialogOpen(true)}
-                  >
-                    <p className="text-white text-lg font-bold">
-                      Connect Wallet
-                    </p>
-                  </div>
+                  {
+                    load ?
+                      <div
+                        className="landingpage-button"
+                      >
+                        <CircularProgress size={24} />
+                      </div> :
+                      <div
+                        className="landingpage-button"
+                        onClick={() => setConnectWalletDialogOpen(true)}
+                      >
+                        <p className="text-white text-lg font-bold">
+                          Connect Wallet
+                        </p>
+                      </div>
+                  }
                 </div>
               </div>
 

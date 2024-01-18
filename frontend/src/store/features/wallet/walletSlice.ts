@@ -81,7 +81,7 @@ export const establishWalletConnection = createAsyncThunk(
       let isNanoLedger = false;
       const chainInfos: Record<string, ChainInfo> = {};
       const nameToChainIDs: Record<string, string> = {};
-      let anyNetworkAddress = '';
+      const anyNetworkAddress = '';
       for (let i = 0; i < networks.length; i++) {
         if (data.walletName === 'metamask') {
           try {

@@ -46,6 +46,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
               activeIcon={item.activeIcon}
               link={item.link}
               authzSupport={!isAuthzMode || item.authzSupported}
+              metamaskSupport={item.isMetaMaskSupports}
             />
           ))}
         </div>
@@ -97,6 +98,7 @@ const MenuItem = ({
   activeIcon,
   link,
   authzSupport,
+  metamaskSupport
 }: {
   pathName: string;
   itemName: string;
@@ -104,27 +106,37 @@ const MenuItem = ({
   activeIcon: string;
   link: string;
   authzSupport: boolean;
+  metamaskSupport: boolean;
 }) => {
   const path = pathName === 'overview' ? '/' : `/${pathName}`;
   const selectedNetwork = useAppSelector(
     (state: RootState) => state.common.selectedNetwork.chainName
   );
 
+  const IsMetamaskSupport = () => {
+    if (metamaskSupport)
+      return true
+    if (localStorage.getItem('WALLET_NAME') !== 'metamask')
+      return true
+
+    return false
+  }
+
   return (
-    <Link href={authzSupport ? tabLink(link, selectedNetwork) : ''}>
+    <Link href={IsMetamaskSupport() === false? '' : authzSupport ? tabLink(link, selectedNetwork) : ''}>
       <Tooltip
-        className={authzSupport ? '' : 'cursor-not-allowed'}
+        className={IsMetamaskSupport() === false ? 'cursor-not-allowed' : authzSupport ? '' : 'cursor-not-allowed'}
         title={
-          authzSupport
-            ? itemName
-            : 'authz mode is not supported for ' + itemName
+          IsMetamaskSupport() === false ? 'MetaMask not support ' + itemName :
+            authzSupport
+              ? itemName
+              : 'authz mode is not supported for ' + itemName
         }
         placement="right"
       >
         <div
-          className={`sidebar-menu-item ${
-            path === link ? 'sidebar-menu-item-selected' : ''
-          }`}
+          className={`sidebar-menu-item ${path === link ? 'sidebar-menu-item-selected' : ''
+            }`}
         >
           <div>
             <Image
