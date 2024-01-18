@@ -1,7 +1,6 @@
 import {
   AuthInfo,
   Fee,
-  // Tx,
   TxBody,
   TxRaw,
 } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
@@ -33,7 +32,7 @@ import {
   Registry,
 } from '@cosmjs/proto-signing';
 import {
-  // ERR_NO_OFFLINE_AMINO_SIGNER,
+  ERR_NO_OFFLINE_AMINO_SIGNER,
   ERR_UNKNOWN
 } from './errors';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
@@ -183,12 +182,8 @@ export const signAndBroadcast = async (
           offlineSigner
         );
 
-        console.log('fee-------------------', fee)
-
-        const result = await client.signAndBroadcast(accounts[0].address, messages, fee, memo)
-        // const result = await client.signAndBroadcast(accounts[0].address, messages, fee);
-        console.log('done================')
-        console.log('transaction done============', result)
+        const result = await client.signAndBroadcast(accounts[0].address, messages, fee, memo);
+        
         const parseResult = parseTxResult({
           code: result?.code,
           codespace: '',
@@ -255,19 +250,15 @@ function calculateFee(
     denom: decodedGasPrice.denom,
   };
 
-  console.log('gas process price ====== ', processedGasPrice, processedGasPrice.amount, gasLimit, gasPrice)
   let num1;
   if (localStorage.getItem('WALLET_NAME') === 'metamask') {
     num1 = multiply(processedGasPrice.amount, 1.2)
-    console.log('before ciel', num1, ceil(num1))
     if (ceil(num1) <= 1) {
       num1 = multiply(processedGasPrice.amount, gasLimit)
     }
   } else {
     num1 = multiply(processedGasPrice.amount, gasLimit);
   }
-
-  console.log('after multisply', num1)
 
   const num2 = bignumber(num1.toString());
   const amount = ceil(num2);
@@ -367,6 +358,8 @@ async function broadcast(
         `Transaction with ID ${txId} was submitted but was not yet found on the chain. You might want to check later. There was a wait of ${timeoutMs / 1000
         } seconds.`
       );
+
+      clearTimeout(txPollTimeout);
     }
     await sleep(pollIntervalMs);
     try {
@@ -517,14 +510,12 @@ async function sign(
   }
 
   // if messages are amino and signer is not amino signer
-  // if (aminoMsgs) {
-  //   console.log('438')
-  //   throw new Error(ERR_NO_OFFLINE_AMINO_SIGNER);
-  // }
+  if (aminoMsgs) {
+    throw new Error(ERR_NO_OFFLINE_AMINO_SIGNER);
+  }
 
   // if the signer is direct signer
   if (isOfflineDirectSigner(signer)) {
-    console.log('443')
     // Sign using standard protobuf messages
     const authInfoBytes = await makeAuthInfoBytes(
       signer,
@@ -543,8 +534,6 @@ async function sign(
       +account_number
     );
 
-    console.log('befoer sign direct========================', account_number)
-
     try {
       const { signature, signed } = await signer.signDirect(address, signDoc);
 
@@ -557,9 +546,6 @@ async function sign(
     } catch (error) {
       console.log('error while sign direct', error)
     }
-
-
-
 
   }
 

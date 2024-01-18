@@ -47,8 +47,6 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
       try {
         for (let i = 0; i < networks.length; i++) {
           const chainId: string = networks[i].config.chainId;
-          // const chainName: string = networks[i].config.chainName;
-          // const rpc: string = networks[i].config.rpc
           const snapInstalled = await getSnap();
           if (!snapInstalled) {
             await connectSnap(); // Initiates installation if not already present

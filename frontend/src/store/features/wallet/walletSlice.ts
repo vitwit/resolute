@@ -104,7 +104,7 @@ export const establishWalletConnection = createAsyncThunk(
               },
               network: networks[i],
             };
-            
+
             nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
               chainId;
 
@@ -163,7 +163,6 @@ export const establishWalletConnection = createAsyncThunk(
 
         return rejectWithValue('Permission denied for all the networks');
       } else {
-        console.log('yes here connected---------', data.walletName)
         setConnected();
         setWalletName(data.walletName);
 
