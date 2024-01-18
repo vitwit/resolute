@@ -67,7 +67,6 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
       };
 
       const msgs = unSignedTxn?.messages || [];
-      let payload;
       try {
 
         const { signatures } = await signingClient.sign(
@@ -78,7 +77,7 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
           signerData
         );
 
-        payload = {
+        const payload = {
           signer: walletAddress,
           txId: txId || NaN,
           address: address,
@@ -99,10 +98,6 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
       } catch (error) {
         console.log('error in singing', error)
       }
-
-
-
-
 
       setLoad(false);
     } catch (error: unknown) {
