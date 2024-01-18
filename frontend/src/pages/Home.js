@@ -105,7 +105,7 @@ function getTabIndex(path) {
   else if (path.includes("authz")) return 5;
   else if (path.includes("feegrant")) return 6;
   else if (path.includes("groups")) return 7;
-  else if (path.includes("airdrop-check")) return 8;
+  // else if (path.includes("airdrop-check")) return 8;
   else return 0;
 }
 
@@ -192,11 +192,7 @@ export default function Home(props) {
   return (
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="menu bar"
-        >
+        <Tabs value={value} onChange={handleChange} aria-label="menu bar">
           {selectedNetwork?.length ? (
             <Tab
               label="Home"
@@ -280,17 +276,19 @@ export default function Home(props) {
             }}
             disabled={authzEnabled && !authzTabs?.groupsEnabled}
           />
-          {(!authzEnabled && selectedNetwork === "passage") ||
-          "passage-testnet" ? (
-            <Tab
-              label="Airdrop"
-              {...a11yProps(8)}
-              value={8}
-              sx={{
-                fontWeight: 600,
-              }}
-            />
-          ) : null}
+          {
+            // (!authzEnabled && selectedNetwork === "passage") ||
+            // "passage-testnet" ? (
+            //   <Tab
+            //     label="Airdrop"
+            //     {...a11yProps(8)}
+            //     value={8}
+            //     sx={{
+            //       fontWeight: 600,
+            //     }}
+            //   />
+            // ) : null
+          }
         </Tabs>
       </Box>
 
@@ -384,10 +382,10 @@ export default function Home(props) {
                 path="/:networkName/groups/groups/:groupID/proposals/:id"
                 element={<GroupProposal />}
               />
-              <Route
+              {/* <Route
                 path="/:networkName/airdrop-check"
                 element={<AirdropEligibility />}
-              />
+              /> */}
 
               <Route path="*" element={<Page404 />}></Route>
             </Routes>

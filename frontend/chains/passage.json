@@ -9,7 +9,7 @@
     "feegrant": false,
     "group": false
   },
-  "show_airdrop": true,
+  "show_airdrop": false,
   "logos": {
     "menu": "https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/passage/pasg.png",
     "toolbar": "https://raw.githubusercontent.com/vitwit/chain-registry/aleem/staking-assets/passage3d/images/passage3d-logo.png"
