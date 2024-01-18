@@ -42,41 +42,10 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     handleClose();
   };
 
-  // async function requestPermissions() {
-  //   await window.ethereum
-  //     .request({
-  //       method: 'wallet_requestPermissions',
-  //       params: [{
-  //         eth_accounts: {
-  //         }
-  //       }],
-  //     })
-  //     /* eslint-disable @typescript-eslint/no-explicit-any */
-  //     .then((permissions: any) => {
-  //       const accountsPermission = permissions.find(
-  //         /* eslint-disable @typescript-eslint/no-explicit-any */
-  //         (permission: any) => permission.parentCapability === 'eth_accounts'
-  //       );
-  //       if (accountsPermission) {
-  //         console.log('eth_accounts permission successfully requested!');
-  //       }
-  //     })
-  //     /* eslint-disable @typescript-eslint/no-explicit-any */
-  //     .catch((error: any) => {
-  //       if (error.code === 4001) {
-  //         // EIP-1193 userRejectedRequest error
-  //         console.log('Permissions needed to continue.');
-  //       } else {
-  //         console.error(error);
-  //       }
-  //     });
-  // }
-
   const tryConnectWallet = async (walletName: string) => {
     if (walletName === 'metamask') {
       try {
         for (let i = 0; i < networks.length; i++) {
-          console.log('network----', i)
           const chainId: string = networks[i].config.chainId;
           // const chainName: string = networks[i].config.chainName;
           // const rpc: string = networks[i].config.rpc

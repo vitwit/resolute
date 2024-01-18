@@ -24,7 +24,6 @@ import {
   UpdateTxnInputs,
 } from '@/types/multisig';
 import { getRandomNumber } from '@/utils/util';
-import { signArbitrary } from '@leapwallet/cosmos-snap-provider';
 
 const initialState: MultisigState = {
   createMultisigAccountRes: {
@@ -133,19 +132,12 @@ export const verifyAccount = createAsyncThunk(
   'multisig/verifyAccount',
   async (data: { chainID: string; address: string }, { rejectWithValue }) => {
     try {
-      let token;
-
-      if (localStorage.getItem('WALLET_NAME') === 'metamask') {
-        token = await signArbitrary(data.chainID, data.address, OFFCHAIN_VERIFICATION_MESSAGE)
-      } else {
-        token = await window.wallet.signArbitrary(
-          data.chainID,
-          data.address,
-          OFFCHAIN_VERIFICATION_MESSAGE
-        );
-      }
-
-
+      const token = await window.wallet.signArbitrary(
+        data.chainID,
+        data.address,
+        OFFCHAIN_VERIFICATION_MESSAGE
+      );
+      
       const salt = getRandomNumber(MIN_SALT_VALUE, MAX_SALT_VALUE);
       try {
         await multisigService.verifyUser({
