@@ -5,6 +5,7 @@ import AllProposals from './AllProposals';
 import RightOverview from './RightOverview';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getBalances } from '@/store/features/bank/bankSlice';
+import AuthzExecLoader from '@/components/AuthzExecLoader';
 
 const GovPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [proposalState, setProposalState] = useState('active');
@@ -55,6 +56,7 @@ const GovPage = ({ chainIDs }: { chainIDs: string[] }) => {
 
   return (
     <div className="w-full flex justify-end">
+      <AuthzExecLoader chainIDs={[chainID]} />
       <div className="flex-1 scrollable-container">
         <Proposals
           handleChangeProposalState={handleChangeProposalState}

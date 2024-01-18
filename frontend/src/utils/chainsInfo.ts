@@ -19,6 +19,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
+    govV1: false,
     explorerTxHashEndpoint: 'https://atomscan.com/agoric/transactions/',
     config: {
       chainId: 'agoric-3',
@@ -99,6 +100,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
+    govV1: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/akash/txs/',
     config: {
       chainId: 'akashnet-2',
@@ -169,6 +171,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
+    govV1: false,
     explorerTxHashEndpoint: 'https://www.mintscan.io/cosmos/txs/',
     config: {
       chainId: 'cosmoshub-4',
@@ -379,6 +382,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
+    govV1: true,
     explorerTxHashEndpoint: 'https://www.mintscan.io/juno/txs/',
     config: {
       chainId: 'juno-1',
@@ -519,6 +523,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
+    govV1: true,
     explorerTxHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
     config: {
       chainId: 'osmosis-1',
@@ -663,6 +668,7 @@ export const networks: Network[] = [
     keplrExperimental: true,
     leapExperimental: true,
     isTestnet: false,
+    govV1: false,
     explorerTxHashEndpoint: 'https://mintscan.io/passage/txs/',
     config: {
       chainId: 'passage-2',
@@ -717,79 +723,80 @@ export const networks: Network[] = [
       },
     },
   },
-  // {
-  //   enableModules: {
-  //     authz: true,
-  //     feegrant: true,
-  //     group: false,
-  //   },
-  //   aminoConfig: {
-  //     authz: false,
-  //     feegrant: false,
-  //     group: false,
-  //   },
-  //   showAirdrop: false,
-  //   logos: {
-  //     menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/dydx/images/dydx.svg',
-  //     toolbar:
-  //       'https://raw.githubusercontent.com/cosmos/chain-registry/master/dydx/images/dydx.svg',
-  //   },
-  //   keplrExperimental: false,
-  //   leapExperimental: true,
-  //   isTestnet: false,
-  //   explorerTxHashEndpoint: 'https://mintscan.io/dydx/txs/',
-  //   config: {
-  //     chainId: 'dydx-mainnet-1',
-  //     chainName: 'DYDX',
-  //     rest: 'https://dydx-rest.publicnode.com',
-  //     rpc: 'https://dydx-rpc.publicnode.com:443',
-  //     currencies: [
-  //       {
-  //         coinDenom: 'DYDX',
-  //         coinMinimalDenom: 'adydx',
-  //         coinDecimals: 18,
-  //       },
-  //     ],
-  //     bip44: {
-  //       coinType: 118,
-  //     },
-  //     bech32Config: {
-  //       bech32PrefixAccAddr: 'dydx',
-  //       bech32PrefixAccPub: 'dydxpub',
-  //       bech32PrefixValAddr: 'dydxvaloper',
-  //       bech32PrefixValPub: 'dydxvaloperpub',
-  //       bech32PrefixConsAddr: 'dydxvalcons',
-  //       bech32PrefixConsPub: 'dydxvalconspub',
-  //     },
-  //     walletUrlForStaking: 'https://resolute.vitwit.com/dydx/staking',
-  //     feeCurrencies: [
-  //       {
-  //         coinDenom: 'DYDX',
-  //         coinMinimalDenom: 'adydx',
-  //         coinDecimals: 18,
-  //         coinGeckoId: 'dydx',
-  //         gasPriceStep: {
-  //           low: 0.01,
-  //           average: 0.02,
-  //           high: 0.05,
-  //         },
-  //       },
-  //     ],
-  //     stakeCurrency: {
-  //       coinDenom: 'DYDX',
-  //       coinMinimalDenom: 'adydx',
-  //       coinDecimals: 18,
-  //       coinGeckoId: 'dydx',
-  //     },
-  //     image:
-  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
-  //     theme: {
-  //       primaryColor: '#fff',
-  //       gradient:
-  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
-  //     },
-  //   },
-  // },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/dydx/images/dydx.svg',
+      toolbar:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/dydx/images/dydx.svg',
+    },
+    keplrExperimental: false,
+    leapExperimental: true,
+    isTestnet: false,
+    govV1: true,
+    explorerTxHashEndpoint: 'https://mintscan.io/dydx/txs/',
+    config: {
+      chainId: 'dydx-mainnet-1',
+      chainName: 'DYDX',
+      rest: 'https://dydx-rest.publicnode.com',
+      rpc: 'https://dydx-rpc.publicnode.com:443',
+      currencies: [
+        {
+          coinDenom: 'DYDX',
+          coinMinimalDenom: 'adydx',
+          coinDecimals: 18,
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      bech32Config: {
+        bech32PrefixAccAddr: 'dydx',
+        bech32PrefixAccPub: 'dydxpub',
+        bech32PrefixValAddr: 'dydxvaloper',
+        bech32PrefixValPub: 'dydxvaloperpub',
+        bech32PrefixConsAddr: 'dydxvalcons',
+        bech32PrefixConsPub: 'dydxvalconspub',
+      },
+      walletUrlForStaking: 'https://resolute.vitwit.com/dydx/staking',
+      feeCurrencies: [
+        {
+          coinDenom: 'DYDX',
+          coinMinimalDenom: 'adydx',
+          coinDecimals: 18,
+          coinGeckoId: 'dydx',
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.02,
+            high: 0.05,
+          },
+        },
+      ],
+      stakeCurrency: {
+        coinDenom: 'DYDX',
+        coinMinimalDenom: 'adydx',
+        coinDecimals: 18,
+        coinGeckoId: 'dydx',
+      },
+      image:
+        'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
   // {
   //   enableModules: {
   //     authz: true,

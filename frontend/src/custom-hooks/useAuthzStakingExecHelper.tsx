@@ -16,6 +16,7 @@ import { msgDelegate } from '@/txns/staking/delegate';
 import { msgReDelegate } from '@/txns/staking/redelegate';
 import { DelegationsPairs } from '@/types/distribution';
 import { msgUnbonding } from '@/txns/staking/unbonding';
+import { msgUnDelegate } from '@/txns/staking/undelegate';
 
 export interface AuthzExecHelpDelegate {
   grantee: string;
@@ -78,7 +79,7 @@ const useAuthzStakingExecHelper = () => {
         // todo: stake Authorization
         (grant.authorization['@type'] ===
           '/cosmos.authz.v1beta1.GenericAuthorization' &&
-          grant.authorization.msg === msgReDelegate) ||
+          grant.authorization.msg === msgDelegate) ||
         (grant.authorization['@type'] ===
           '/cosmos.staking.v1beta1.StakeAuthorization' &&
           grant.authorization.authorization_type ===
@@ -124,7 +125,7 @@ const useAuthzStakingExecHelper = () => {
         // todo: stake Authorization
         (grant.authorization['@type'] ===
           '/cosmos.authz.v1beta1.GenericAuthorization' &&
-          grant.authorization.msg === msgReDelegate) ||
+          grant.authorization.msg === msgUnDelegate) ||
         (grant.authorization['@type'] ===
           '/cosmos.staking.v1beta1.StakeAuthorization' &&
           grant.authorization.authorization_type ===

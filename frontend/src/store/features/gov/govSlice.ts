@@ -168,7 +168,11 @@ export const getProposal = createAsyncThunk(
   'gov/proposal-info',
   async (data: GetProposalInputs, { rejectWithValue }) => {
     try {
-      const response = await govService.proposal(data.baseURL, data.proposalId);
+      const response = await govService.proposal(
+        data.baseURL,
+        data.proposalId,
+        data.govV1
+      );
       return {
         chainID: data.chainID,
         data: response.data,
@@ -206,7 +210,8 @@ export const getProposalsInDeposit = createAsyncThunk(
         data.baseURL,
         data?.key,
         data?.limit,
-        PROPSAL_STATUS_DEPOSIT
+        PROPSAL_STATUS_DEPOSIT,
+        data.govV1
       );
 
       if (response?.data?.proposals?.length && data?.chainID?.length) {
@@ -256,7 +261,8 @@ export const getProposalsInVoting = createAsyncThunk(
         data.baseURL,
         data.key,
         data.limit,
-        PROPOSAL_STATUS_ACTIVE
+        PROPOSAL_STATUS_ACTIVE,
+        data.govV1
       );
 
       const { data: responseData } = response || {};
@@ -268,6 +274,7 @@ export const getProposalsInVoting = createAsyncThunk(
             baseURL: data?.baseURL,
             proposalId,
             chainID: data?.chainID,
+            govV1: data.govV1,
           })
         );
         dispatch(
@@ -276,6 +283,7 @@ export const getProposalsInVoting = createAsyncThunk(
             proposalId,
             voter: data?.voter,
             chainID: data?.chainID,
+            govV1: data.govV1,
           })
         );
       });
@@ -301,7 +309,8 @@ export const getVotes = createAsyncThunk(
         data.proposalId,
         data.voter,
         data.key,
-        data.limit
+        data.limit,
+        data.govV1
       );
 
       response.data.vote.proposal_id = data.proposalId;
@@ -322,7 +331,11 @@ export const getProposalTally = createAsyncThunk(
   'gov/proposal-tally',
   async (data: GetProposalTallyInputs, { rejectWithValue }) => {
     try {
-      const response = await govService.tally(data.baseURL, data.proposalId);
+      const response = await govService.tally(
+        data.baseURL,
+        data.proposalId,
+        data.govV1
+      );
 
       response.data.tally.proposal_id = data.proposalId;
 

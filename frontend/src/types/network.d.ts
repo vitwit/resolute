@@ -73,6 +73,7 @@ interface Network {
   keplrExperimental: boolean;
   leapExperimental: boolean;
   isTestnet: boolean;
+  govV1: boolean;
   explorerTxHashEndpoint: string;
   config: NetworkConfig;
   airdropMessage?: string;

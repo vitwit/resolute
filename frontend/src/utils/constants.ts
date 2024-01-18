@@ -1,3 +1,19 @@
+export const SUPPORTED_WALLETS = [
+  {
+    name: 'Keplr',
+    logo: '/keplr-wallet-logo.png',
+  },
+  {
+    name: 'Leap',
+    logo: '/leap-wallet-logo.png',
+  },
+  {
+    name: 'Cosmostation',
+    logo: '/cosmostation-wallet-logo.png',
+  },
+];
+
+export const USD_CURRENCY = 'usd';
 export const GAS_FEE = 860000;
 export const ADD_NETWORK_TEMPLATE_URL =
   'https://raw.githubusercontent.com/vitwit/resolute/b5d184c8da894b2fea0ed40e56a599a1d813c422/frontend/public/add-network-template.json';
@@ -102,36 +118,42 @@ export const SIDENAV_MENU_ITEMS = [
     icon: '/overview-icon.svg',
     activeIcon: '/overview-icon-active.svg',
     link: '/',
+    authzSupported: true,
   },
   {
     name: 'Transfers',
     icon: '/transfers-icon.svg',
     activeIcon: '/transfers-icon-active.svg',
     link: '/transfers',
+    authzSupported: true,
   },
   {
     name: 'Governance',
     icon: '/gov-icon.svg',
     activeIcon: '/gov-icon-active.svg',
     link: '/governance',
+    authzSupported: true,
   },
   {
     name: 'Staking',
     icon: '/staking-icon.svg',
     activeIcon: '/staking-icon-active.svg',
     link: '/staking',
+    authzSupported: true,
   },
   {
     name: 'Authz',
     icon: '/authz-icon.svg',
     activeIcon: '/authz-icon-active.svg',
     link: '/authz',
+    authzSupported: false,
   },
   {
     name: 'Multisig',
     icon: '/multisig-icon.svg',
     activeIcon: '/multisig-icon-active.svg',
     link: '/multisig',
+    authzSupported: false,
   },
 ];
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
