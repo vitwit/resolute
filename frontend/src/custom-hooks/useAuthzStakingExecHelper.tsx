@@ -25,6 +25,10 @@ import {
   txUnDelegate,
 } from '@/store/features/staking/stakeSlice';
 import { isTimeExpired } from '@/utils/datetime';
+import {
+  GENERIC_AUTHORIZATION_TYPE,
+  STAKE_AUTHORIZATION_TYPE,
+} from '@/utils/constants';
 
 export interface AuthzExecHelpDelegate {
   grantee: string;
@@ -68,6 +72,48 @@ export interface AuthzExecHelpRestake {
   isTxAll?: boolean;
 }
 
+export interface authzFilterOptions {
+  generic: {
+    msg: string;
+  };
+  stake?: {
+    type: string;
+  };
+}
+
+export const haveGenericGrant = (grant: Authorization, msg: string) => {
+  return (
+    grant.authorization['@type'] === GENERIC_AUTHORIZATION_TYPE &&
+    grant.authorization.msg === msg
+  );
+};
+
+export const haveStakeGrant = (grant: Authorization, stakeType: string) => {
+  return (
+    grant.authorization['@type'] === STAKE_AUTHORIZATION_TYPE &&
+    grant.authorization.authorization_type === stakeType
+  );
+};
+
+export const haveAuthorization = (
+  grants: Authorization[],
+  options: authzFilterOptions
+) => {
+  let isExpired = false;
+
+  const haveGrant = grants.some((grant) => {
+    if (
+      haveGenericGrant(grant, options.generic.msg) ||
+      (options.stake && haveStakeGrant(grant, options.stake.type))
+    ) {
+      isExpired = isTimeExpired(grant.expiration);
+      return true;
+    } else return false;
+  });
+
+  return { isExpired: isExpired, haveGrant: haveGrant };
+};
+
 export const AUTHZ_VOTE_MSG = '/cosmos.gov.v1beta1.MsgVote';
 export const AUTHZ_DEPOSIT_MSG = '/cosmos.gov.v1beta1.MsgDeposit';
 const AUTHZ_WITHDRAW_MSG =
@@ -79,49 +125,74 @@ const useAuthzStakingExecHelper = () => {
   const authzChains = useAppSelector((state) => state.authz.chains);
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
 
+  const isInvalidAction = (
+    isExpired: boolean,
+    haveGrant: boolean,
+    chainName: string,
+    action: string
+  ) => {
+    if (isExpired) {
+      throwGrantExpiredError(chainName, action);
+      return true;
+    }
+
+    if (!haveGrant) {
+      throwGrantNotFoundError(chainName, action);
+      return true;
+    }
+
+    return false;
+  };
+
+  const throwGrantExpiredError = (chainName: string, action: string) => {
+    dispatch(
+      setError({
+        type: 'error',
+        message: `Your ${action} permission on ${capitalizeFirstLetter(
+          chainName
+        )} from this account is expired`,
+      })
+    );
+  };
+
+  const throwGrantNotFoundError = (chainName: string, action: string) => {
+    dispatch(
+      setError({
+        type: 'error',
+        message: `You don't have permission to ${action} on ${capitalizeFirstLetter(
+          chainName
+        )} from this account`,
+      })
+    );
+  };
+
   const txAuthzDelegate = (data: AuthzExecHelpDelegate) => {
     const basicChainInfo = getChainInfo(data.chainID);
     const address = convertAddress(data.chainID, data.granter);
     const grants: Authorization[] =
       authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
-    let isExpired = false;
-    const haveGrant = grants.some((grant) => {
-      if (
-        (grant.authorization['@type'] ===
-          '/cosmos.authz.v1beta1.GenericAuthorization' &&
-          grant.authorization.msg === msgDelegate) ||
-        (grant.authorization['@type'] ===
-          '/cosmos.staking.v1beta1.StakeAuthorization' &&
-          grant.authorization.authorization_type ===
-            'AUTHORIZATION_TYPE_DELEGATE')
-      ) {
-        isExpired = isTimeExpired(grant.expiration);
-        return true;
-      } else {
-        return false;
-      }
-    });
-    if (isExpired) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: `Your Delegate permission on ${capitalizeFirstLetter(
-            basicChainInfo.chainName
-          )} from this account is expired`,
-        })
-      );
+
+    const authzFilters: authzFilterOptions = {
+      generic: {
+        msg: msgDelegate,
+      },
+      stake: {
+        type: 'AUTHORIZATION_TYPE_DELEGATE',
+      },
+    };
+
+    const { haveGrant, isExpired } = haveAuthorization(grants, authzFilters);
+
+    if (
+      isInvalidAction(
+        isExpired,
+        haveGrant,
+        basicChainInfo.chainName,
+        'Delegate'
+      )
+    )
       return;
-    }
-    if (!haveGrant) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: `You don't have permission to Delegate on ${capitalizeFirstLetter(
-            basicChainInfo.chainName
-          )} from this account`,
-        })
-      );
-    } else {
+    else {
       const { minimalDenom } = getDenomInfo(data.chainID);
       const msg = AuthzExecDelegateMsg(
         data.grantee,
@@ -130,6 +201,7 @@ const useAuthzStakingExecHelper = () => {
         data.amount,
         data.denom
       );
+
       dispatch(
         txDelegate({
           isAuthzMode: true,
@@ -148,41 +220,28 @@ const useAuthzStakingExecHelper = () => {
     const address = convertAddress(data.chainID, data.granter);
     const grants: Authorization[] =
       authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
-    let isExpired = false;
-    const haveGrant = grants.some((grant) => {
-      if (
-        (grant.authorization['@type'] ===
-          '/cosmos.authz.v1beta1.GenericAuthorization' &&
-          grant.authorization.msg === msgUnDelegate) ||
-        (grant.authorization['@type'] ===
-          '/cosmos.staking.v1beta1.StakeAuthorization' &&
-          grant.authorization.authorization_type ===
-            'AUTHORIZATION_TYPE_UNDELEGATE')
-      ) {
-        isExpired = isTimeExpired(grant.expiration);
-        return true;
-      } else return false;
-    });
-    if (isExpired) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: `Your Un-delegate permission on ${capitalizeFirstLetter(
-            basicChainInfo.chainName
-          )} from this account is expired`,
-        })
-      );
-    }
-    if (!haveGrant) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: `You don't have permission to Un-Delegate on ${capitalizeFirstLetter(
-            basicChainInfo.chainName
-          )} from this account`,
-        })
-      );
-    } else {
+
+    const authzFilters: authzFilterOptions = {
+      generic: {
+        msg: msgUnDelegate,
+      },
+      stake: {
+        type: 'AUTHORIZATION_TYPE_UNDELEGATE',
+      },
+    };
+
+    const { haveGrant, isExpired } = haveAuthorization(grants, authzFilters);
+
+    if (
+      isInvalidAction(
+        isExpired,
+        haveGrant,
+        basicChainInfo.chainName,
+        'Un-Delegate'
+      )
+    )
+      return;
+    else {
       const { minimalDenom } = getDenomInfo(data.chainID);
       const msg = AuthzExecUnDelegateMsg(
         data.grantee,
@@ -191,6 +250,7 @@ const useAuthzStakingExecHelper = () => {
         data.amount,
         data.denom
       );
+
       dispatch(
         txUnDelegate({
           isAuthzMode: true,
@@ -209,42 +269,28 @@ const useAuthzStakingExecHelper = () => {
     const address = convertAddress(data.chainID, data.granter);
     const grants: Authorization[] =
       authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
-    let isExpired = false;
-    const haveGrant = grants.some((grant) => {
-      if (
-        (grant.authorization['@type'] ===
-          '/cosmos.authz.v1beta1.GenericAuthorization' &&
-          grant.authorization.msg === msgReDelegate) ||
-        (grant.authorization['@type'] ===
-          '/cosmos.staking.v1beta1.StakeAuthorization' &&
-          grant.authorization.authorization_type ===
-            'AUTHORIZATION_TYPE_REDELEGATE')
-      ) {
-        isExpired = isTimeExpired(grant.expiration);
-        return true;
-      } else return false;
-    });
-    if (isExpired) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: `Your Re-delegate permission on ${capitalizeFirstLetter(
-            basicChainInfo.chainName
-          )} from this account is expired`,
-        })
-      );
+
+    const authzFilters: authzFilterOptions = {
+      generic: {
+        msg: msgReDelegate,
+      },
+      stake: {
+        type: 'AUTHORIZATION_TYPE_REDELEGATE',
+      },
+    };
+
+    const { haveGrant, isExpired } = haveAuthorization(grants, authzFilters);
+
+    if (
+      isInvalidAction(
+        isExpired,
+        haveGrant,
+        basicChainInfo.chainName,
+        'Change Delegation'
+      )
+    )
       return;
-    }
-    if (!haveGrant) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: `You don't have permission to ReDelegate on ${capitalizeFirstLetter(
-            basicChainInfo.chainName
-          )} from this account`,
-        })
-      );
-    } else {
+    else {
       const { minimalDenom } = getDenomInfo(data.chainID);
       const msg = AuthzExecReDelegateMsg(
         data.grantee,
@@ -254,6 +300,7 @@ const useAuthzStakingExecHelper = () => {
         data.amount,
         data.denom
       );
+
       dispatch(
         txReDelegate({
           isAuthzMode: true,
@@ -272,44 +319,32 @@ const useAuthzStakingExecHelper = () => {
     const address = convertAddress(data.chainID, data.granter);
     const grants: Authorization[] =
       authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
-    let isExpired = false;
-    const haveGrant = grants.some((grant) => {
-      if (
-        grant.authorization['@type'] ===
-          '/cosmos.authz.v1beta1.GenericAuthorization' &&
-        grant.authorization.msg === AUTHZ_WITHDRAW_MSG
-      ) {
-        isExpired = isTimeExpired(grant.expiration);
-        return true;
-      } else return false;
-    });
-    if (isExpired) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: `Your Claim Rewards permission on ${capitalizeFirstLetter(
-            basicChainInfo.chainName
-          )} from this account is expired`,
-        })
-      );
+
+    const authzFilters: authzFilterOptions = {
+      generic: {
+        msg: AUTHZ_WITHDRAW_MSG,
+      },
+    };
+
+    const { haveGrant, isExpired } = haveAuthorization(grants, authzFilters);
+
+    if (
+      isInvalidAction(
+        isExpired,
+        haveGrant,
+        basicChainInfo.chainName,
+        'Claim Rewards'
+      )
+    )
       return;
-    }
-    if (!haveGrant) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: `You don't have required permissions to do this action on ${capitalizeFirstLetter(
-            basicChainInfo.chainName
-          )} from this account`,
-        })
-      );
-    } else {
+    else {
       const { minimalDenom } = getDenomInfo(data.chainID);
       const pairs = data.pairs.map((pair) => {
         pair.delegator = address;
         return pair;
       });
       const msg = AuthzExecWithdrawRewardsMsg(data.grantee, pairs);
+
       dispatch(
         txWithdrawAllRewards({
           isAuthzMode: true,
@@ -329,40 +364,28 @@ const useAuthzStakingExecHelper = () => {
     const address = convertAddress(data.chainID, data.granter);
     const grants: Authorization[] =
       authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
-    let isExpired = false;
-    const haveGrant = grants.some((grant) => {
-      if (
-        grant.authorization['@type'] ===
-          '/cosmos.authz.v1beta1.GenericAuthorization' &&
-        grant.authorization.msg === msgUnbonding
-      ) {
-        isExpired = isTimeExpired(grant.expiration);
-        return true;
-      } else return false;
-    });
-    if (isExpired) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: `Your Cancel Unbonding permission on ${capitalizeFirstLetter(
-            basicChainInfo.chainName
-          )} from this account is expired`,
-        })
-      );
+
+    const authzFilters: authzFilterOptions = {
+      generic: {
+        msg: msgUnbonding,
+      },
+    };
+
+    const { haveGrant, isExpired } = haveAuthorization(grants, authzFilters);
+
+    if (
+      isInvalidAction(
+        isExpired,
+        haveGrant,
+        basicChainInfo.chainName,
+        'Cancel Un-bonding'
+      )
+    )
       return;
-    }
-    if (!haveGrant) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: `You don't have required permissions to do this action on ${capitalizeFirstLetter(
-            basicChainInfo.chainName
-          )} from this account`,
-        })
-      );
-    } else {
+    else {
       const { minimalDenom } = getDenomInfo(data.chainID);
       const msg = AuthzExecMsgCancelUnbond(data.msg, data.grantee);
+
       dispatch(
         txCancelUnbonding({
           isAuthzMode: true,
@@ -381,44 +404,31 @@ const useAuthzStakingExecHelper = () => {
     const address = convertAddress(data.chainID, data.granter);
     const grants: Authorization[] =
       authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
-    let isExpired = false;
-    const haveGrant = grants.some((grant) => {
-      if (
-        (grant.authorization['@type'] ===
-          '/cosmos.authz.v1beta1.GenericAuthorization' &&
-          grant.authorization.msg === msgDelegate) ||
-        (grant.authorization['@type'] ===
-          '/cosmos.staking.v1beta1.StakeAuthorization' &&
-          grant.authorization.authorization_type ===
-            'AUTHORIZATION_TYPE_DELEGATE')
-      ) {
-        isExpired = isTimeExpired(grant.expiration);
-        return true;
-      } else return false;
-    });
-    if (isExpired) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: `Your Restake permission on ${capitalizeFirstLetter(
-            basicChainInfo.chainName
-          )} from this account is expired`,
-        })
-      );
+
+    const authzFilters: authzFilterOptions = {
+      generic: {
+        msg: msgDelegate,
+      },
+      stake: {
+        type: 'AUTHORIZATION_TYPE_DELEGATE',
+      },
+    };
+
+    const { haveGrant, isExpired } = haveAuthorization(grants, authzFilters);
+
+    if (
+      isInvalidAction(
+        isExpired,
+        haveGrant,
+        basicChainInfo.chainName,
+        'Re-stake'
+      )
+    )
       return;
-    }
-    if (!haveGrant) {
-      dispatch(
-        setError({
-          type: 'error',
-          message: `You don't have required permissions to do this action on ${capitalizeFirstLetter(
-            basicChainInfo.chainName
-          )} from this account`,
-        })
-      );
-    } else {
+    else {
       const { minimalDenom } = getDenomInfo(data.chainID);
       const msg = AuthzExecMsgRestake(data.msgs, data.grantee);
+
       dispatch(
         txRestake({
           isAuthzMode: true,
