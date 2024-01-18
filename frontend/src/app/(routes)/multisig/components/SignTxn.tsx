@@ -38,7 +38,6 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
       },
     };
     try {
-
       const client = await SigningStargateClient.connect(rpc);
       const result = await getWalletAmino(chainID);
       const wallet = result[0];
@@ -63,36 +62,33 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
       };
 
       const msgs = unSignedTxn?.messages || [];
-      try {
-        const { signatures } = await signingClient.sign(
-          walletAddress,
-          msgs,
-          unSignedTxn?.fee || { amount: [], gas: '' },
-          unSignedTxn?.memo || '',
-          signerData
-        );
 
-        const payload = {
-          signer: walletAddress,
-          txId: txId || NaN,
-          address: address,
-          signature: toBase64(signatures[0]),
-        };
+      const { signatures } = await signingClient.sign(
+        walletAddress,
+        msgs,
+        unSignedTxn?.fee || { amount: [], gas: '' },
+        unSignedTxn?.memo || '',
+        signerData
+      );
 
-        const authToken = getAuthToken(chainID);
-        dispatch(
-          signTx({
-            data: payload,
-            // below object's data in passed as query params to api request
-            queryParams: {
-              address: walletAddress,
-              signature: authToken?.signature || '',
-            },
-          })
-        );
-      } catch (error) {
-        console.log('error in singing', error)
-      }
+      const payload = {
+        signer: walletAddress,
+        txId: txId || NaN,
+        address: address,
+        signature: toBase64(signatures[0]),
+      };
+
+      const authToken = getAuthToken(chainID);
+      dispatch(
+        signTx({
+          data: payload,
+          // below object's data in passed as query params to api request
+          queryParams: {
+            address: walletAddress,
+            signature: authToken?.signature || '',
+          },
+        })
+      );
 
       setLoad(false);
     } catch (error: unknown) {

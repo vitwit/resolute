@@ -183,8 +183,6 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
         })
       );
     }
-
-
   };
   return (
     <button
