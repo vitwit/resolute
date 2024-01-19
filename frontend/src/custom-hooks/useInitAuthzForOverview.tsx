@@ -26,6 +26,7 @@ const useInitAuthzForOverview = (chainIDs: string[]) => {
           baseURL: chainInfo.config.rest,
           address,
           chainID,
+          baseURLs: chainInfo.config.restURIs,
         };
 
         dispatch(getAuthzBalances(basicChainInputs));

@@ -75,7 +75,7 @@ const StakingOverview = () => {
   useEffect(() => {
     if (chainIDs) {
       chainIDs.forEach((chainID) => {
-        const { address, baseURL } = getChainInfo(chainID);
+        const { address, baseURL, restURLs } = getChainInfo(chainID);
         const { minimalDenom } = getDenomInfo(chainID);
 
         dispatch(
@@ -108,6 +108,7 @@ const StakingOverview = () => {
         );
         dispatch(
           getBalances({
+            baseURLs: restURLs,
             baseURL,
             address,
             chainID,

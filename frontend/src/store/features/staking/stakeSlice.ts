@@ -304,6 +304,7 @@ export const txDelegate = createAsyncThunk(
           );
           dispatch(
             getAuthzBalances({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: data.basicChainInfo.baseURL,
               chainID: data.basicChainInfo.chainID,
               address: data.authzChainGranter,
@@ -320,6 +321,7 @@ export const txDelegate = createAsyncThunk(
           );
           dispatch(
             getBalances({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: data.basicChainInfo.baseURL,
               chainID: data.basicChainInfo.chainID,
               address: data.delegator,

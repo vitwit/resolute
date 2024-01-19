@@ -19,7 +19,7 @@ const useInitAuthzStaking = (chainIDs: string[]) => {
   useEffect(() => {
     if (authzAddress) {
       chainIDs.forEach((chainID) => {
-        const { baseURL } = getChainInfo(chainID);
+        const { baseURL, restURLs } = getChainInfo(chainID);
         const { minimalDenom } = getDenomInfo(chainID);
         const address = convertAddress(chainID, authzAddress);
         dispatch(
@@ -46,6 +46,7 @@ const useInitAuthzStaking = (chainIDs: string[]) => {
         );
         dispatch(
           getAuthzBalances({
+            baseURLs: restURLs,
             baseURL,
             address,
             chainID,

@@ -108,7 +108,7 @@ const StakingPage = ({
   );
 
   const { getChainInfo } = useGetChainInfo();
-  const { address, baseURL } = getChainInfo(chainID);
+  const { address, baseURL, restURLs } = getChainInfo(chainID);
 
   useInitAuthzStaking([chainID]);
 
@@ -143,6 +143,7 @@ const StakingPage = ({
     );
     dispatch(
       getBalances({
+        baseURLs: restURLs,
         baseURL,
         address,
         chainID,

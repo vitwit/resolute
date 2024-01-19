@@ -26,6 +26,8 @@ export const networks: Network[] = [
       chainName: 'Agoric',
       rest: 'https://agoric-api.polkachu.com',
       rpc: 'https://agoric-rpc.polkachu.com',
+      restURIs: ['https://agoric-api.polkachu.com'],
+      rpcURIs: ['https://agoric-rpc.polkachu.com'],
       currencies: [
         {
           coinDenom: 'BLD',
@@ -107,6 +109,8 @@ export const networks: Network[] = [
       chainName: 'Akash',
       rest: 'https://api.resolute.vitwit.com/akash_api',
       rpc: 'https://api.resolute.vitwit.com/akash_rpc',
+      restURIs: ['https://api.resolute.vitwit.com/akash_api'],
+      rpcURIs: ['https://api.resolute.vitwit.com/akash_rpc'],
       currencies: [
         {
           coinDenom: 'AKT',
@@ -178,6 +182,12 @@ export const networks: Network[] = [
       chainName: 'CosmosHub',
       rest: 'https://api-cosmoshub-ia.cosmosia.notional.ventures',
       rpc: 'https://cosmos-rpc.polkachu.com',
+      restURIs: [
+        'https://api-cosmoshub-ia.cosmosia.notional.ventures',
+        'https://cosmos-lcd.quickapi.com:443',
+        'https://cosmos-rest.staketab.org',
+      ],
+      rpcURIs: ['https://cosmos-rpc.polkachu.com'],
       currencies: [
         {
           coinDenom: 'ATOM',
@@ -389,6 +399,8 @@ export const networks: Network[] = [
       chainName: 'Juno',
       rest: 'https://api.resolute.vitwit.com/juno_api',
       rpc: 'https://api.resolute.vitwit.com/juno_rpc',
+      restURIs: ['https://api.resolute.vitwit.com/juno_api'],
+      rpcURIs: ['https://api.resolute.vitwit.com/juno_rpc'],
       currencies: [
         {
           coinDenom: 'JUNO',
@@ -530,6 +542,8 @@ export const networks: Network[] = [
       chainName: 'Osmosis',
       rest: 'https://osmosis-api.polkachu.com',
       rpc: 'https://rpc.osmosis.zone',
+      restURIs: ['https://osmosis-api.polkachu.com'],
+      rpcURIs: ['https://rpc.osmosis.zone'],
       currencies: [
         {
           coinDenom: 'OSMO',
@@ -675,6 +689,8 @@ export const networks: Network[] = [
       chainName: 'Passage',
       rest: 'https://api.passage.vitwit.com',
       rpc: 'https://rpc.passage.vitwit.com',
+      restURIs: ['https://api.passage.vitwit.com'],
+      rpcURIs: ['https://rpc.passage.vitwit.com'],
       bip44: {
         coinType: 118,
       },
@@ -750,6 +766,8 @@ export const networks: Network[] = [
       chainName: 'DYDX',
       rest: 'https://dydx-rest.publicnode.com',
       rpc: 'https://dydx-rpc.publicnode.com:443',
+      restURIs: ['https://dydx-rest.publicnode.com'],
+      rpcURIs: ['https://dydx-rpc.publicnode.com:443'],
       currencies: [
         {
           coinDenom: 'DYDX',

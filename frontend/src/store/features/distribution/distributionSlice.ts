@@ -87,6 +87,7 @@ export const txWithdrawAllRewards = createAsyncThunk(
         if (data.isAuthzMode) {
           dispatch(
             getAuthzBalances({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: data.basicChainInfo.rest,
               chainID: data.basicChainInfo.chainID,
               address: data.authzChainGranter,
@@ -104,6 +105,7 @@ export const txWithdrawAllRewards = createAsyncThunk(
         } else {
           dispatch(
             getBalances({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: data.basicChainInfo.rest,
               address: data.basicChainInfo.address,
               chainID: data.basicChainInfo.chainID,

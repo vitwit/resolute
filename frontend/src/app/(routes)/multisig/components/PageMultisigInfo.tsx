@@ -40,7 +40,7 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
   const chainID = nameToChainIDs[chainName];
 
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const { address: walletAddress, baseURL } = getChainInfo(chainID);
+  const { address: walletAddress, baseURL, restURLs } = getChainInfo(chainID);
   const {
     minimalDenom: coinMinimalDenom,
     decimals: coinDecimals,
@@ -76,7 +76,7 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
   useEffect(() => {
     if (chainID && isVerified({ chainID, address: walletAddress })) {
       dispatch(
-        getMultisigBalance({ baseURL, address, denom: coinMinimalDenom })
+        getMultisigBalance({ baseURL, address, denom: coinMinimalDenom, baseURLs: restURLs })
       );
       dispatch(getDelegations({ baseURL, address, chainID }));
       dispatch(getAllValidators({ baseURL, chainID }));
