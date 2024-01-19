@@ -68,6 +68,7 @@ const RightOverview = ({
     dispatch(
       getProposal({
         chainID,
+        baseURLs: chainInfo?.config.restURIs,
         baseURL: chainInfo.config.rest,
         proposalId: proposalId,
         govV1: govV1,
@@ -77,6 +78,7 @@ const RightOverview = ({
     dispatch(
       getProposalTally({
         baseURL: chainInfo?.config.rest,
+        baseURLs: chainInfo?.config.restURIs,
         proposalId,
         chainID: chainID,
         govV1,
@@ -87,6 +89,7 @@ const RightOverview = ({
       getGovTallyParams({
         chainID,
         baseURL: chainInfo.config.rest,
+        baseURLs: chainInfo?.config.restURIs,
       })
     );
     dispatch(

@@ -179,6 +179,7 @@ const ProposalOverviewVote = ({
     dispatch(
       getProposal({
         chainID,
+        baseURLs: chainInfo?.config.restURIs,
         baseURL: chainInfo?.config.rest,
         proposalId: proposalId,
         govV1: govV1,
@@ -187,6 +188,7 @@ const ProposalOverviewVote = ({
 
     dispatch(
       getProposalTally({
+        baseURLs: chainInfo?.config.restURIs,
         baseURL: chainInfo?.config.rest,
         proposalId,
         chainID: chainID,
@@ -203,12 +205,13 @@ const ProposalOverviewVote = ({
 
     dispatch(
       getDepositParams({
+        baseURLs: chainInfo?.config.restURIs,
         baseURL: chainInfo?.config.rest,
         chainID: chainID,
       })
     );
 
-    dispatch(getGovTallyParams({ chainID, baseURL: chainInfo?.config.rest }));
+    dispatch(getGovTallyParams({ chainID, baseURL: chainInfo?.config.rest , baseURLs: chainInfo?.config.restURIs}));
   }, []);
 
   const [quorumPercent, setQuorumPercent] = useState<string>('0');
