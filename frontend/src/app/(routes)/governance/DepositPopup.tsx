@@ -69,8 +69,16 @@ const DepositPopup = ({
   };
 
   const handleDeposit = (data: { amount: number }) => {
-    const { aminoConfig, prefix, rest, feeAmount, address, rpc, minimalDenom } =
-      getVoteTxInputs(chainID);
+    const {
+      aminoConfig,
+      prefix,
+      rest,
+      feeAmount,
+      address,
+      rpc,
+      minimalDenom,
+      basicChainInfo,
+    } = getVoteTxInputs(chainID);
 
     if (isAuthzMode) {
       txAuthzDeposit({
@@ -79,25 +87,15 @@ const DepositPopup = ({
         amount: Number(data.amount) * 10 ** currency.coinDecimals,
         granter: authzGranter,
         chainID: chainID,
-        metaData: '',
-      });
-      return;
-    }
-
-    if (isAuthzMode) {
-      txAuthzDeposit({
-        grantee: address,
-        proposalId: proposalId,
-        amount: Number(data.amount) * 10 ** currency.coinDecimals,
-        granter: authzGranter,
-        chainID: chainID,
-        metaData: '',
+        memo: '',
       });
       return;
     }
 
     dispatch(
       txDeposit({
+        isAuthzMode: false,
+        basicChainInfo,
         depositer: address,
         proposalId: proposalId,
         amount: Number(data.amount) * 10 ** currency.coinDecimals,
@@ -217,11 +215,11 @@ const DepositPopup = ({
                     <button
                       className="deposit-popup-btn proposal-text-medium"
                       disabled={
-                        (!isAuthzMode && loading === TxStatus.PENDING) ||
+                        loading === TxStatus.PENDING ||
                         (isAuthzMode && authzLoading === TxStatus.PENDING)
                       }
                     >
-                      {(!isAuthzMode && loading === TxStatus.PENDING) ||
+                      {loading === TxStatus.PENDING ||
                       (isAuthzMode && authzLoading === TxStatus.PENDING) ? (
                         <CircularProgress size={20} sx={{ color: 'white' }} />
                       ) : (

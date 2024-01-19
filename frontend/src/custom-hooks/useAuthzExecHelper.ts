@@ -4,10 +4,12 @@ import { useAppDispatch, useAppSelector } from './StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 import useGetChainInfo from './useGetChainInfo';
 import { AuthzExecVoteMsg } from '@/txns/authz';
-import { txAuthzExec } from '@/store/features/authz/authzSlice';
 import { capitalizeFirstLetter } from '@/utils/util';
 import { AuthzExecDepositMsg, AuthzExecSendMsg } from '@/txns/authz/exec';
 import { msgSendTypeUrl } from '@/txns/bank/send';
+import { txBankSend } from '@/store/features/bank/bankSlice';
+import { txDeposit, txVote } from '@/store/features/gov/govSlice';
+import { isTimeExpired } from '@/utils/datetime';
 
 export interface AuthzExecHelpVote {
   grantee: string;
@@ -15,7 +17,7 @@ export interface AuthzExecHelpVote {
   option: VoteOption;
   granter: string;
   chainID: string;
-  metaData: string;
+  memo: string;
 }
 
 export interface AuthzExecHelpDeposit {
@@ -24,7 +26,7 @@ export interface AuthzExecHelpDeposit {
   amount: number;
   granter: string;
   chainID: string;
-  metaData: string;
+  memo: string;
 }
 
 export interface AuthzExecHelpSend {
@@ -51,12 +53,28 @@ const useAuthzExecHelper = () => {
     const address = convertAddress(data.chainID, data.granter);
     const grants: Authorization[] =
       authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
-    const haveGrant = grants.some(
-      (grant) =>
+    let isExpired = false;
+    const haveGrant = grants.some((grant) => {
+      if (
         grant.authorization['@type'] ===
           '/cosmos.authz.v1beta1.GenericAuthorization' &&
         grant.authorization.msg === AUTHZ_VOTE_MSG
-    );
+      ) {
+        isExpired = isTimeExpired(grant.expiration);
+        return true;
+      } else return false;
+    });
+    if (isExpired) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: `Your Send permission on ${capitalizeFirstLetter(
+            basicChainInfo.chainName
+          )} from this account is expired`,
+        })
+      );
+      return;
+    }
     if (!haveGrant) {
       dispatch(
         setError({
@@ -75,11 +93,13 @@ const useAuthzExecHelper = () => {
         address
       );
       dispatch(
-        txAuthzExec({
+        txVote({
+          isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
-          metaData: data.metaData,
-          feeDenom: minimalDenom,
+          memo: data.memo,
+          denom: minimalDenom,
+          authzChainGranter: address,
         })
       );
     }
@@ -90,12 +110,27 @@ const useAuthzExecHelper = () => {
     const address = convertAddress(data.chainID, data.granter);
     const grants: Authorization[] =
       authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
-    const haveGrant = grants.some(
-      (grant) =>
+    let isExpired = false;
+    const haveGrant = grants.some((grant) => {
+      if (
         grant.authorization['@type'] ===
           '/cosmos.authz.v1beta1.GenericAuthorization' &&
         grant.authorization.msg === AUTHZ_DEPOSIT_MSG
-    );
+      ) {
+        isExpired = isTimeExpired(grant.expiration);
+      } else return false;
+    });
+    if (isExpired) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: `Your Deposit permission on ${capitalizeFirstLetter(
+            basicChainInfo.chainName
+          )} from this account is expired`,
+        })
+      );
+      return;
+    }
     if (!haveGrant) {
       dispatch(
         setError({
@@ -115,11 +150,13 @@ const useAuthzExecHelper = () => {
         minimalDenom
       );
       dispatch(
-        txAuthzExec({
+        txDeposit({
+          isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
-          metaData: data.metaData,
-          feeDenom: minimalDenom,
+          memo: data.memo,
+          denom: minimalDenom,
+          authzChainGranter: address,
         })
       );
     }
@@ -133,18 +170,22 @@ const useAuthzExecHelper = () => {
     let errorMsg = `You don't have permission to Send on ${capitalizeFirstLetter(
       basicChainInfo.chainName
     )} from this account`;
+    let isExpired = false;
     const haveGrant = grants.some((grant) => {
       if (
         grant.authorization['@type'] ===
           '/cosmos.authz.v1beta1.GenericAuthorization' &&
         grant.authorization.msg === msgSendTypeUrl
-      )
+      ) {
+        isExpired = isTimeExpired(grant.expiration);
         return true;
+      }
       let validSend = false;
       if (
         grant.authorization['@type'] ===
         '/cosmos.bank.v1beta1.SendAuthorization'
       ) {
+        isExpired = isTimeExpired(grant.expiration);
         if (grant.authorization?.allow_list?.length) {
           const allowed = grant.authorization.allow_list.some(
             (allowedAddress) => allowedAddress === data.recipient
@@ -166,6 +207,17 @@ const useAuthzExecHelper = () => {
         return validSend;
       }
     });
+    if (isExpired) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: `Your Send permission on ${capitalizeFirstLetter(
+            basicChainInfo.chainName
+          )} from this account is expired`,
+        })
+      );
+      return;
+    }
     if (!haveGrant) {
       dispatch(
         setError({
@@ -183,11 +235,13 @@ const useAuthzExecHelper = () => {
         data.denom
       );
       dispatch(
-        txAuthzExec({
+        txBankSend({
+          isAuthzMode: true,
           basicChainInfo,
           msgs: [msg],
-          metaData: data.memo,
-          feeDenom: minimalDenom,
+          memo: data.memo,
+          denom: minimalDenom,
+          authzChainGranter: address,
         })
       );
     }

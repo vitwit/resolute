@@ -82,6 +82,7 @@ const UnbondingCard = ({
     }
     dispatch(
       txCancelUnbonding({
+        isAuthzMode: false,
         basicChainInfo: basicChainInfo,
         delegator: address,
         validator: validatorAddress,
