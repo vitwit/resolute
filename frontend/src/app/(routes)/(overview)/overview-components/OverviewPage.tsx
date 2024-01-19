@@ -45,6 +45,7 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
       dispatch(getAccountInfo(basicChainInputs));
       dispatch(
         getDelegatorTotalRewards({
+          baseURLs: chainInfo.config.restURIs,
           baseURL: chainInfo.config.rest,
           address: address,
           chainID: chainID,

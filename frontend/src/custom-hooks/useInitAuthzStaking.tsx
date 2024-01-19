@@ -42,6 +42,7 @@ const useInitAuthzStaking = (chainIDs: string[]) => {
             address,
             chainID,
             denom: minimalDenom,
+            baseURLs: restURLs,
           })
         );
         dispatch(

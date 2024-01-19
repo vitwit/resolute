@@ -199,6 +199,7 @@ export const txRestake = createAsyncThunk(
         if (data.isAuthzMode) {
           dispatch(
             getAuthzDelegatorTotalRewards({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: rest,
               address: data.authzChainGranter,
               chainID: chainID,
@@ -215,6 +216,7 @@ export const txRestake = createAsyncThunk(
         } else {
           dispatch(
             getDelegatorTotalRewards({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: rest,
               address: address,
               chainID: chainID,

@@ -100,6 +100,7 @@ const StakingOverview = () => {
         );
         dispatch(
           getDelegatorTotalRewards({
+            baseURLs: restURLs,
             baseURL,
             address,
             chainID,

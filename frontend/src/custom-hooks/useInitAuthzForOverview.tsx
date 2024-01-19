@@ -37,6 +37,7 @@ const useInitAuthzForOverview = (chainIDs: string[]) => {
             address: address,
             chainID: chainID,
             denom: minimalDenom,
+            baseURLs: chainInfo.config.restURIs,
           })
         );
         dispatch(
