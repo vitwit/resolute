@@ -26,8 +26,11 @@ import { NewTransaction } from '@/utils/transaction';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { Unbonding } from '@/txns/staking/unbonding';
-import { getDelegatorTotalRewards } from '../distribution/distributionSlice';
-import { getBalances } from '../bank/bankSlice';
+import {
+  getAuthzDelegatorTotalRewards,
+  getDelegatorTotalRewards,
+} from '../distribution/distributionSlice';
+import { getAuthzBalances, getBalances } from '../bank/bankSlice';
 
 interface Chain {
   validators: Validators;
@@ -159,7 +162,7 @@ const initialState: StakingState = {
 export const txRestake = createAsyncThunk(
   'staking/restake',
   async (
-    data: TxReStakeInputs,
+    data: TxReStakeInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     const { chainID, address, rest, aminoConfig, prefix, cosmosAddress } =
@@ -172,10 +175,12 @@ export const txRestake = createAsyncThunk(
         data.msgs,
         399999 + Math.ceil(399999 * 0.1 * (data.msgs?.length || 1)),
         data.memo,
-        `${data.feeAmount}${data.denom}`,
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
         rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined,
-        data.basicChainInfo.rpc
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc
       );
       const tx = NewTransaction(result, data.msgs, chainID, address);
       dispatch(
@@ -192,21 +197,39 @@ export const txRestake = createAsyncThunk(
         })
       );
       if (result?.code === 0) {
-        dispatch(
-          getDelegatorTotalRewards({
-            baseURL: rest,
-            address: address,
-            chainID: chainID,
-            denom: data.denom,
-          })
-        );
-        dispatch(
-          getDelegations({
-            baseURL: rest,
-            address: address,
-            chainID: chainID,
-          })
-        );
+        if (data.isAuthzMode) {
+          dispatch(
+            getAuthzDelegatorTotalRewards({
+              baseURL: rest,
+              address: data.authzChainGranter,
+              chainID: chainID,
+              denom: data.denom,
+            })
+          );
+          dispatch(
+            getAuthzDelegations({
+              baseURL: rest,
+              address: data.authzChainGranter,
+              chainID: chainID,
+            })
+          );
+        } else {
+          dispatch(
+            getDelegatorTotalRewards({
+              baseURL: rest,
+              address: address,
+              chainID: chainID,
+              denom: data.denom,
+            })
+          );
+          dispatch(
+            getDelegations({
+              baseURL: rest,
+              address: address,
+              chainID: chainID,
+            })
+          );
+        }
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);
@@ -220,32 +243,36 @@ export const txRestake = createAsyncThunk(
 export const txDelegate = createAsyncThunk(
   'staking/delegate',
   async (
-    data: TxDelegateInputs,
+    data: TxDelegateInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     try {
-      const msg = Delegate(
-        data.delegator,
-        data.validator,
-        data.amount,
-        data.denom
-      );
+      let msgs: Msg[];
+      if (data.isAuthzMode) {
+        msgs = data.msgs;
+      } else {
+        msgs = [
+          Delegate(data.delegator, data.validator, data.amount, data.denom),
+        ];
+      }
 
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
         data.basicChainInfo.prefix,
-        [msg],
+        msgs,
         GAS_FEE,
         '',
-        `${data.feeAmount}${data.denom}`,
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
         data.basicChainInfo.rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined,
-        data.basicChainInfo.rpc
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc
       );
       const tx = NewTransaction(
         result,
-        [msg],
+        msgs,
         data.basicChainInfo.chainID,
         data.basicChainInfo.address
       );
@@ -266,21 +293,42 @@ export const txDelegate = createAsyncThunk(
       );
 
       if (result?.code === 0) {
-        dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
-        dispatch(
-          getDelegations({
-            baseURL: data.basicChainInfo.baseURL,
-            address: data.delegator,
-            chainID: data.basicChainInfo.chainID,
-          })
-        );
-        dispatch(
-          getBalances({
-            baseURL: data.basicChainInfo.baseURL,
-            chainID: data.basicChainInfo.chainID,
-            address: data.delegator,
-          })
-        );
+        if (data.isAuthzMode) {
+          dispatch(
+            resetAuthzDelegations({ chainID: data.basicChainInfo.chainID })
+          );
+          dispatch(
+            getAuthzDelegations({
+              baseURL: data.basicChainInfo.baseURL,
+              address: data.authzChainGranter,
+              chainID: data.basicChainInfo.chainID,
+            })
+          );
+          dispatch(
+            getAuthzBalances({
+              baseURL: data.basicChainInfo.baseURL,
+              chainID: data.basicChainInfo.chainID,
+              address: data.authzChainGranter,
+            })
+          );
+        } else {
+          dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
+          dispatch(
+            getDelegations({
+              baseURL: data.basicChainInfo.baseURL,
+              address: data.delegator,
+              chainID: data.basicChainInfo.chainID,
+            })
+          );
+          dispatch(
+            getBalances({
+              baseURL: data.basicChainInfo.baseURL,
+              chainID: data.basicChainInfo.chainID,
+              address: data.delegator,
+            })
+          );
+        }
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);
@@ -294,33 +342,43 @@ export const txDelegate = createAsyncThunk(
 export const txReDelegate = createAsyncThunk(
   'staking/redelegate',
   async (
-    data: TxRedelegateInputs,
+    data: TxRedelegateInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     try {
-      const msg = Redelegate(
-        data.delegator,
-        data.srcVal,
-        data.destVal,
-        data.amount,
-        data.denom
-      );
+      let msgs: Msg[];
+      if (data.isAuthzMode) {
+        msgs = data.msgs;
+      } else {
+        msgs = [
+          Redelegate(
+            data.delegator,
+            data.srcVal,
+            data.destVal,
+            data.amount,
+            data.denom
+          ),
+        ];
+      }
+
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
         data.basicChainInfo.prefix,
-        [msg],
+        msgs,
         GAS_FEE,
         '',
-        `${data.feeAmount}${data.denom}`,
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
         data.basicChainInfo.rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined,
-        data.basicChainInfo.rpc
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc
       );
 
       const tx = NewTransaction(
         result,
-        [msg],
+        msgs,
         data.basicChainInfo.chainID,
         data.basicChainInfo.address
       );
@@ -341,14 +399,28 @@ export const txReDelegate = createAsyncThunk(
       );
 
       if (result?.code === 0) {
-        dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
-        dispatch(
-          getDelegations({
-            baseURL: data.basicChainInfo.baseURL,
-            address: data.delegator,
-            chainID: data.basicChainInfo.chainID,
-          })
-        );
+        if (data.isAuthzMode) {
+          dispatch(
+            resetAuthzDelegations({ chainID: data.basicChainInfo.chainID })
+          );
+          dispatch(
+            getAuthzDelegations({
+              baseURL: data.basicChainInfo.baseURL,
+              address: data.authzChainGranter,
+              chainID: data.basicChainInfo.chainID,
+            })
+          );
+        } else {
+          dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
+          dispatch(
+            getDelegations({
+              baseURL: data.basicChainInfo.baseURL,
+              address: data.delegator,
+              chainID: data.basicChainInfo.chainID,
+            })
+          );
+        }
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);
@@ -362,32 +434,37 @@ export const txReDelegate = createAsyncThunk(
 export const txUnDelegate = createAsyncThunk(
   'staking/undelegate',
   async (
-    data: TxUndelegateInputs,
+    data: TxUndelegateInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     try {
-      const msg = UnDelegate(
-        data.delegator,
-        data.validator,
-        data.amount,
-        data.denom
-      );
+      let msgs: Msg[];
+      if (data.isAuthzMode) {
+        msgs = data.msgs;
+      } else {
+        msgs = [
+          UnDelegate(data.delegator, data.validator, data.amount, data.denom),
+        ];
+      }
+
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
         data.basicChainInfo.prefix,
-        [msg],
-        860000,
+        msgs,
+        GAS_FEE,
         '',
-        `${data.feeAmount}${data.denom}`,
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
         data.basicChainInfo.rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined,
-        data.basicChainInfo.rpc
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc
       );
 
       const tx = NewTransaction(
         result,
-        [msg],
+        msgs,
         data.basicChainInfo.chainID,
         data.basicChainInfo.address
       );
@@ -408,20 +485,37 @@ export const txUnDelegate = createAsyncThunk(
       );
 
       if (result?.code === 0) {
-        dispatch(
-          getDelegations({
-            baseURL: data.basicChainInfo.rest,
-            address: data.basicChainInfo.address,
-            chainID: data.basicChainInfo.chainID,
-          })
-        );
-        dispatch(
-          getUnbonding({
-            baseURL: data.basicChainInfo.rest,
-            address: data.basicChainInfo.address,
-            chainID: data.basicChainInfo.chainID,
-          })
-        );
+        if (data.isAuthzMode) {
+          dispatch(
+            getAuthzDelegations({
+              baseURL: data.basicChainInfo.rest,
+              address: data.authzChainGranter,
+              chainID: data.basicChainInfo.chainID,
+            })
+          );
+          dispatch(
+            getAuthzUnbonding({
+              baseURL: data.basicChainInfo.rest,
+              address: data.authzChainGranter,
+              chainID: data.basicChainInfo.chainID,
+            })
+          );
+        } else {
+          dispatch(
+            getDelegations({
+              baseURL: data.basicChainInfo.rest,
+              address: data.basicChainInfo.address,
+              chainID: data.basicChainInfo.chainID,
+            })
+          );
+          dispatch(
+            getUnbonding({
+              baseURL: data.basicChainInfo.rest,
+              address: data.basicChainInfo.address,
+              chainID: data.basicChainInfo.chainID,
+            })
+          );
+        }
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);
@@ -435,33 +529,42 @@ export const txUnDelegate = createAsyncThunk(
 export const txCancelUnbonding = createAsyncThunk(
   'staking/cancel-unbonding',
   async (
-    data: TxCancelUnbondingInputs,
+    data: TxCancelUnbondingInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     try {
-      const msg = Unbonding(
-        data.delegator,
-        data.validator,
-        data.amount,
-        data.denom,
-        data.creationHeight
-      );
-      msg.value.creationHeight = msg.value.creationHeight.toString();
+      let msgs: Msg[];
+      if (data.isAuthzMode) {
+        msgs = data.msgs;
+      } else {
+        const msg = Unbonding(
+          data.delegator,
+          data.validator,
+          data.amount,
+          data.denom,
+          data.creationHeight
+        );
+        msg.value.creationHeight = msg.value.creationHeight.toString();
+        msgs = [msg];
+      }
+
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
         data.basicChainInfo.prefix,
-        [msg],
+        msgs,
         GAS_FEE,
         '',
-        `${data.feeAmount}${data.denom}`,
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
         data.basicChainInfo.rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined,
-        data.basicChainInfo.rpc
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc
       );
       const tx = NewTransaction(
         result,
-        [msg],
+        msgs,
         data.basicChainInfo.chainID,
         data.basicChainInfo.address
       );
@@ -481,14 +584,28 @@ export const txCancelUnbonding = createAsyncThunk(
       );
 
       if (result?.code === 0) {
-        const inputData = {
-          baseURL: data.basicChainInfo.baseURL,
-          address: data.delegator,
-          chainID: data.basicChainInfo.chainID,
-        };
-        dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
-        dispatch(getDelegations(inputData));
-        dispatch(getUnbonding(inputData));
+        if (data.isAuthzMode) {
+          const inputData = {
+            baseURL: data.basicChainInfo.baseURL,
+            address: data.authzChainGranter,
+            chainID: data.basicChainInfo.chainID,
+          };
+          dispatch(
+            resetAuthzDelegations({ chainID: data.basicChainInfo.chainID })
+          );
+          dispatch(getAuthzDelegations(inputData));
+          dispatch(getAuthzUnbonding(inputData));
+        } else {
+          const inputData = {
+            baseURL: data.basicChainInfo.baseURL,
+            address: data.delegator,
+            chainID: data.basicChainInfo.chainID,
+          };
+          dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
+          dispatch(getDelegations(inputData));
+          dispatch(getUnbonding(inputData));
+        }
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);
@@ -789,6 +906,14 @@ export const stakeSlice = createSlice({
     resetDelegations: (state, action: PayloadAction<{ chainID: string }>) => {
       const { chainID } = action.payload;
       state.chains[chainID].delegations = initialState.defaultState.delegations;
+    },
+    resetAuthzDelegations: (
+      state,
+      action: PayloadAction<{ chainID: string }>
+    ) => {
+      const { chainID } = action.payload;
+      state.authz.chains[chainID].delegations =
+        initialState.defaultState.delegations;
     },
     sortValidatorsByVotingPower: (
       state,
@@ -1232,6 +1357,7 @@ export const {
   resetCancelUnbondingTx,
   resetCompleteState,
   resetAuthz,
+  resetAuthzDelegations,
 } = stakeSlice.actions;
 
 export default stakeSlice.reducer;

@@ -354,27 +354,35 @@ export const getProposalTally = createAsyncThunk(
 export const txVote = createAsyncThunk(
   'gov/tx-vote',
   async (
-    data: TxVoteInputs,
+    data: TxVoteInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     try {
-      const msg = GovVoteMsg(data.proposalId, data.voter, data.option);
+      let msgs: Msg[];
+      if (data.isAuthzMode) msgs = data.msgs;
+      else msgs = [GovVoteMsg(data.proposalId, data.voter, data.option)];
 
       const result = await signAndBroadcast(
-        data.chainID,
-        data.aminoConfig,
-        data.prefix,
-        [msg],
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        msgs,
         GAS_FEE,
-        data?.justification || '',
-        `${data.feeAmount}${data.denom}`,
-        data.rest,
-        '',
-        data.rpc
-        // data.feegranter?.length > 0 ? data.feegranter : undefined
+        data.isAuthzMode ? data.memo : data?.justification || '',
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
+        data.basicChainInfo.rest,
+        data.feegranter,
+        data?.basicChainInfo?.rpc
       );
 
-      const tx = NewTransaction(result, [msg], data.chainID, data.voter);
+      const tx = NewTransaction(
+        result,
+        msgs,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
 
       if (result?.code === 0) {
         dispatch(
@@ -418,30 +426,45 @@ export const txVote = createAsyncThunk(
 export const txDeposit = createAsyncThunk(
   'gov/tx-deposit',
   async (
-    data: TxDepositInputs,
+    data: TxDepositInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     try {
-      const msg = GovDepositMsg(
-        data.proposalId,
-        data.depositer,
-        data.amount,
-        data.denom
-      );
+      let msgs: Msg[];
+      if (data.isAuthzMode) {
+        msgs = data.msgs;
+      } else {
+        msgs = [
+          GovDepositMsg(
+            data.proposalId,
+            data.depositer,
+            data.amount,
+            data.denom
+          ),
+        ];
+      }
+
       const result = await signAndBroadcast(
-        data.chainID,
-        data.aminoConfig,
-        data.prefix,
-        [msg],
-        860000,
-        data?.justification || '',
-        `${data.feeAmount}${data.denom}`,
-        data.rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        msgs,
+        GAS_FEE,
+        data.isAuthzMode ? data.memo : data.justification || '',
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
+        data.basicChainInfo.rest,
+        data.feegranter
       );
       const { code, transactionHash, rawLog } = result || {};
 
-      const tx = NewTransaction(result, [msg], data.chainID, data.depositer);
+      const tx = NewTransaction(
+        result,
+        msgs,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
 
       if (code === 0) {
         dispatch(setTxAndHash({ tx: tx, hash: transactionHash }));
@@ -739,34 +762,34 @@ export const govSlice = createSlice({
     // tx-vote
     builder
       .addCase(txVote.pending, (state, action) => {
-        const chainID = action.meta?.arg?.chainID;
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
         state.chains[chainID].tx.status = TxStatus.PENDING;
         state.chains[chainID].tx.txHash = '';
       })
       .addCase(txVote.fulfilled, (state, action) => {
-        const chainID = action.meta?.arg?.chainID;
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
         state.chains[chainID].tx.status = TxStatus.IDLE;
         state.chains[chainID].tx.txHash = action.payload.txHash;
       })
       .addCase(txVote.rejected, (state, action) => {
-        const chainID = action.meta?.arg?.chainID;
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
         state.chains[chainID].tx.status = TxStatus.REJECTED;
         state.chains[chainID].tx.txHash = '';
       });
 
     builder
       .addCase(txDeposit.pending, (state, action) => {
-        const chainID = action.meta?.arg?.chainID;
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
         state.chains[chainID].tx.status = TxStatus.PENDING;
         state.chains[chainID].tx.txHash = '';
       })
       .addCase(txDeposit.fulfilled, (state, action) => {
-        const chainID = action.meta?.arg?.chainID;
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
         state.chains[chainID].tx.status = TxStatus.IDLE;
         state.chains[chainID].tx.txHash = action.payload.txHash;
       })
       .addCase(txDeposit.rejected, (state, action) => {
-        const chainID = action.meta?.arg?.chainID;
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
         state.chains[chainID].tx.status = TxStatus.REJECTED;
         state.chains[chainID].tx.txHash = '';
       });

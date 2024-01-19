@@ -40,6 +40,7 @@ import { GAS_FEE } from './constants';
 import { MsgCancelUnbondingDelegation } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
+import { isMetaMaskWallet } from './localStorage';
 
 declare const window: WalletWindow;
 
@@ -70,7 +71,7 @@ export const getClient = async (
 ): Promise<OfflineSigner> => {
   let signer;
 
-  if (localStorage.getItem('WALLET_NAME') === 'metamask') {
+  if (isMetaMaskWallet()) {
     if (!canUseAmino(aminoConfig, messages)) {
       try {
         await window.wallet.enable(chainId);
@@ -128,7 +129,7 @@ export const signAndBroadcast = async (
   let client: SigningCosmWasmClient;
 
   try {
-    if (localStorage.getItem('WALLET_NAME') === 'metamask') {
+    if (isMetaMaskWallet()) {
       signer = await getClient(aminoConfig, chainId, messages);
     } else {
       signer = await getClient(aminoConfig, chainId, messages);
@@ -172,7 +173,7 @@ export const signAndBroadcast = async (
 
   const fee = getFee(gas, gasPrice, granter);
 
-  if (localStorage.getItem('WALLET_NAME') === 'metamask') {
+  if (isMetaMaskWallet()) {
     try {
       const offlineSigner = new CosmjsOfflineSigner(chainId);
       const rpcEndpoint = rpc || ''
@@ -251,7 +252,7 @@ function calculateFee(
   };
 
   let num1;
-  if (localStorage.getItem('WALLET_NAME') === 'metamask') {
+  if (isMetaMaskWallet()) {
     num1 = multiply(processedGasPrice.amount, 1.2)
     if (ceil(num1) <= 1) {
       num1 = multiply(processedGasPrice.amount, gasLimit)

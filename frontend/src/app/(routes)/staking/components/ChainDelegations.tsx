@@ -133,6 +133,7 @@ const ChainDelegations = ({
     }
     dispatch(
       txDelegate({
+        isAuthzMode: false,
         basicChainInfo: basicChainInfo,
         delegator: address,
         validator: data.validator,
@@ -159,6 +160,7 @@ const ChainDelegations = ({
     }
     dispatch(
       txUnDelegate({
+        isAuthzMode: false,
         basicChainInfo: getChainInfo(chainID),
         delegator: address,
         validator: data.validator,
@@ -186,6 +188,7 @@ const ChainDelegations = ({
     }
     dispatch(
       txReDelegate({
+        isAuthzMode: false,
         basicChainInfo: getChainInfo(chainID),
         delegator: address,
         srcVal: data.src,

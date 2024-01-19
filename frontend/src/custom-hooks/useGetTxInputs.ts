@@ -44,6 +44,8 @@ const useGetTxInputs = () => {
       basicChainInfo;
 
     return {
+      isAuthzMode: false,
+      basicChainInfo,
       msgs: delegationPairs,
       denom: minimalDenom,
       chainID,
@@ -74,6 +76,7 @@ const useGetTxInputs = () => {
     const { minimalDenom, decimals } = denomInfo;
 
     return {
+      basicChainInfo,
       aminoConfig,
       prefix,
       rest,
@@ -103,6 +106,8 @@ const useGetTxInputs = () => {
       basicChainInfo;
 
     return {
+      isAuthzMode: false,
+      basicChainInfo,
       msgs: delegationPairs,
       denom: minimalDenom,
       chainID,
@@ -142,6 +147,7 @@ const useGetTxInputs = () => {
     }
 
     return {
+      isAuthzMode: false,
       msgs: msgs,
       basicChainInfo,
       memo: '',
@@ -176,6 +182,7 @@ const useGetTxInputs = () => {
     }
 
     return {
+      isAuthzMode: false,
       msgs: msgs,
       basicChainInfo,
       memo: '',
@@ -196,6 +203,7 @@ const useGetTxInputs = () => {
     const basicChainInfo = getChainInfo(chainID);
     const { minimalDenom } = getDenomInfo(chainID);
     return {
+      isAuthzMode: false,
       basicChainInfo,
       from: basicChainInfo.address,
       to: recipient,

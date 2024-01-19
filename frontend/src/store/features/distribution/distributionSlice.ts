@@ -18,7 +18,7 @@ import { TxStatus } from '@/types/enums';
 import { GAS_FEE } from '@/utils/constants';
 import { NewTransaction } from '@/utils/transaction';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
-import { getBalances } from '../bank/bankSlice';
+import { getAuthzBalances, getBalances } from '../bank/bankSlice';
 
 const initialState: DistributionStoreInitialState = {
   chains: {},
@@ -42,53 +42,85 @@ const initialState: DistributionStoreInitialState = {
 export const txWithdrawAllRewards = createAsyncThunk(
   'distribution/withdraw-all-rewards',
   async (
-    data: TxWithdrawAllRewardsInputs,
+    data: TxWithdrawAllRewardsInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     try {
-      const msgs = [];
-      for (let i = 0; i < data.msgs.length; i++) {
-        const msg = data.msgs[i];
-        msgs.push(WithdrawAllRewardsMsg(msg.delegator, msg.validator));
+      let msgs = [];
+      if (data.isAuthzMode) {
+        msgs = data.msgs;
+      } else {
+        for (let i = 0; i < data.msgs.length; i++) {
+          const msg = data.msgs[i];
+          msgs.push(WithdrawAllRewardsMsg(msg.delegator, msg.validator));
+        }
       }
+
       const result = await signAndBroadcast(
-        data.chainID,
-        data.aminoConfig,
-        data.prefix,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
         msgs,
         GAS_FEE,
         '',
-        `${data.feeAmount}${data.denom}`,
-        data.rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined,
-        data.rpc
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
+        data.basicChainInfo.rest,
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc,
       );
-      const tx = NewTransaction(result, msgs, data.chainID, data.address);
+      const tx = NewTransaction(
+        result,
+        msgs,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
       dispatch(
         addTransactions({
-          chainID: data.chainID,
-          address: data.cosmosAddress,
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
           transactions: [tx],
         })
       );
 
       if (result?.code === 0) {
-        dispatch(
-          getBalances({
-            baseURL: data.rest,
-            chainID: data.chainID,
-            address: data.address,
-          })
-        );
+        if (data.isAuthzMode) {
+          dispatch(
+            getAuthzBalances({
+              baseURL: data.basicChainInfo.rest,
+              chainID: data.basicChainInfo.chainID,
+              address: data.authzChainGranter,
+            })
+          );
 
-        dispatch(
-          getDelegatorTotalRewards({
-            baseURL: data.rest,
-            address: data.address,
-            chainID: data.chainID,
-            denom: data.denom,
-          })
-        );
+          dispatch(
+            getAuthzDelegatorTotalRewards({
+              baseURL: data.basicChainInfo.rest,
+              address: data.authzChainGranter,
+              chainID: data.basicChainInfo.chainID,
+              denom: data.denom,
+            })
+          );
+        } else {
+          dispatch(
+            getBalances({
+              baseURL: data.basicChainInfo.rest,
+              address: data.basicChainInfo.address,
+              chainID: data.basicChainInfo.chainID,
+            })
+          );
+
+          dispatch(
+            getDelegatorTotalRewards({
+              baseURL: data.basicChainInfo.rest,
+              address: data.basicChainInfo.address,
+              chainID: data.basicChainInfo.chainID,
+              denom: data.denom,
+            })
+          );
+        }
+
         dispatch(
           setTxAndHash({
             hash: result?.transactionHash,
@@ -257,19 +289,19 @@ export const distSlice = createSlice({
       });
     builder
       .addCase(txWithdrawAllRewards.pending, (state, action) => {
-        const chainID = action.meta?.arg?.chainID;
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
         const isTxAll = action.meta.arg.isTxAll;
         state.chains[chainID].isTxAll = !!isTxAll;
         state.chains[chainID].tx.status = TxStatus.PENDING;
         state.chains[chainID].tx.txHash = '';
       })
       .addCase(txWithdrawAllRewards.fulfilled, (state, action) => {
-        const chainID = action.meta?.arg?.chainID;
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
         state.chains[chainID].tx.status = TxStatus.IDLE;
         state.chains[chainID].tx.txHash = action.payload.txHash;
       })
       .addCase(txWithdrawAllRewards.rejected, (state, action) => {
-        const chainID = action.meta?.arg?.chainID;
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
         state.chains[chainID].tx.status = TxStatus.REJECTED;
         state.chains[chainID].tx.txHash = '';
       });

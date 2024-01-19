@@ -7,6 +7,7 @@ interface MultiTxnsInputs {
 }
 
 interface TxSendInputs {
+  isAuthzMode: false
   basicChainInfo: BasicChainInfo;
   from: string;
   to: string;

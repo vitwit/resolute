@@ -196,3 +196,9 @@ export const MIN_SALT_VALUE = 99999;
 export const MAX_SALT_VALUE = 99999999;
 export const NO_GRANTS_BY_ME_TEXT = "You haven't granted any permission yet";
 export const NO_GRANTS_TO_ME_TEXT = "You don't have any grants";
+
+export const GENERIC_AUTHORIZATION_TYPE =
+  '/cosmos.authz.v1beta1.GenericAuthorization';
+export const STAKE_AUTHORIZATION_TYPE =
+  '/cosmos.staking.v1beta1.StakeAuthorization';
+export const SEND_AUTHORIZATION_TYPE = '/cosmos.bank.v1beta1.SendAuthorization';

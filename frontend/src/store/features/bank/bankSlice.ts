@@ -148,30 +148,42 @@ export const multiTxns = createAsyncThunk(
 export const txBankSend = createAsyncThunk(
   'bank/tx-bank-send',
   async (
-    data: TxSendInputs,
+    data: TxSendInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     const { chainID, cosmosAddress } = data.basicChainInfo;
 
 
     try {
-      const msg = SendMsg(data.from, data.to, data.amount, data.denom);
+      let msgs: Msg[] = [];
+
+      if (data.isAuthzMode) {
+        msgs = data.msgs;
+      } else {
+        msgs = [SendMsg(data.from, data.to, data.amount, data.denom)];
+      }
 
       const result = await signAndBroadcast(
-        chainID,
+        data.basicChainInfo.chainID,
         data.basicChainInfo.aminoConfig,
-        data.prefix,
-        [msg],
+        data.basicChainInfo.prefix,
+        msgs,
         GAS_FEE,
         data.memo,
-        `${data.feeAmount}${data.denom}`,
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
         data.basicChainInfo.rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined,
-        data?.rpc,
+        data.feegranter,
+        data?.basicChainInfo?.rpc
       );
 
-      const tx = NewTransaction(result, [msg], chainID, data.from);
-
+      const tx = NewTransaction(
+        result,
+        msgs,
+        chainID,
+        data.basicChainInfo.address
+      );
       dispatch(
         addTransactions({
           chainID: data.basicChainInfo.chainID,
@@ -181,13 +193,22 @@ export const txBankSend = createAsyncThunk(
       );
       dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
       if (result?.code === 0) {
-        dispatch(
-          getBalances({
+        if (data.isAuthzMode) {
+          dispatch(getAuthzBalances({
             baseURL: data.basicChainInfo.rest,
             chainID,
-            address: data.basicChainInfo.address,
-          })
-        );
+            address: data.authzChainGranter
+          }))
+        } else {
+          dispatch(
+            getBalances({
+              baseURL: data.basicChainInfo.rest,
+              chainID,
+              address: data.basicChainInfo.address,
+            })
+          );
+        }
+
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);
@@ -306,7 +327,7 @@ export const bankSlice = createSlice({
       })
       .addCase(txBankSend.fulfilled, (state, action) => {
         state.tx.status = TxStatus.IDLE;
-        action.meta.arg.onTxSuccessCallBank?.();
+        action.meta.arg?.onTxSuccessCallBack?.();
       })
       .addCase(txBankSend.rejected, (state) => {
         state.tx.status = TxStatus.REJECTED;

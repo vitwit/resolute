@@ -10,6 +10,7 @@ import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { GeneratedType, Registry } from '@cosmjs/proto-signing';
 import { GAS_FEE } from '../utils/constants';
 import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
+import { isMetaMaskWallet } from '@/utils/localStorage';
 
 declare let window: WalletWindow;
 
@@ -86,7 +87,7 @@ export async function getWalletAmino(
 ): Promise<
   [OfflineAminoSigner, { address: string; algo: string; pubKey: Uint32Array }]
 > {
-  if (localStorage.getItem('WALLET_NAME') === 'metamask') {
+  if (isMetaMaskWallet()) {
     await window.ethereum.enable(chainID);
     const offlineSigner = new CosmjsOfflineSigner(chainID)
     const accounts = await offlineSigner.getAccounts();

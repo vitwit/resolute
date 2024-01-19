@@ -116,7 +116,7 @@ const MenuItem = ({
   const IsMetamaskSupport = () => {
     if (metamaskSupport)
       return true
-    if (localStorage.getItem('WALLET_NAME') !== 'metamask')
+    if (!IsMetamaskSupport())
       return true
 
     return false
