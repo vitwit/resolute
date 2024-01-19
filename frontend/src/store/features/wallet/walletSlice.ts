@@ -148,6 +148,11 @@ export const establishWalletConnection = createAsyncThunk(
               `unable to connect to network ${networks[i].config.chainName}: `,
               error
             );
+
+            dispatch(setError({
+              type: 'error',
+              message: `Unable to connect to network ${networks[i].config.chainName}`
+            }));
           }
         }
 

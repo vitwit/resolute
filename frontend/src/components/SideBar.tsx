@@ -113,21 +113,14 @@ const MenuItem = ({
     (state: RootState) => state.common.selectedNetwork.chainName
   );
 
-  const IsMetamaskSupport = () => {
-    if (metamaskSupport)
-      return true
-    if (!IsMetamaskSupport())
-      return true
-
-    return false
-  }
+  const isMetamaskSupported = () => metamaskSupport || localStorage.getItem('WALLET_NAME') !== 'metamask';
 
   return (
-    <Link href={IsMetamaskSupport() === false? '' : authzSupport ? tabLink(link, selectedNetwork) : ''}>
+    <Link href={isMetamaskSupported() === false? '' : authzSupport ? tabLink(link, selectedNetwork) : ''}>
       <Tooltip
-        className={IsMetamaskSupport() === false ? 'cursor-not-allowed' : authzSupport ? '' : 'cursor-not-allowed'}
+        className={isMetamaskSupported() === false ? 'cursor-not-allowed' : authzSupport ? '' : 'cursor-not-allowed'}
         title={
-          IsMetamaskSupport() === false ? 'MetaMask not support ' + itemName :
+          isMetamaskSupported() === false ? 'MetaMask not support ' + itemName :
             authzSupport
               ? itemName
               : 'authz mode is not supported for ' + itemName

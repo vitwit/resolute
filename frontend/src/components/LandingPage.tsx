@@ -43,25 +43,6 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     setLoad(false)
   },[connected])
 
-  useEffect(() => {
-    async function listenMMAccount() {
-      window.ethereum.on("accountsChanged", async function () {
-        // Time to reload your interface with accounts[0]!
-        // let accounts = await web3.eth.getAccounts();
-        // accounts = await web3.eth.getAccounts();
-
-        for (let i = 0; i < networks.length; i++) {
-          const chainId: string = networks[i].config.chainId;
-          const offlineSigner = new CosmjsOfflineSigner(chainId);
-          const accounts = await offlineSigner.getAccounts();
-          console.log('accounts', accounts)
-        }
-
-      });
-    }
-    listenMMAccount();
-  });
-
   // window.ethereum.on('networkChanged', function (networkId: any) {
   //   // Time to reload your interface with the new networkId
   //   console.log(networkId)
