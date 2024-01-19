@@ -99,7 +99,7 @@ const DepositPopup = ({
         amount: Number(data.amount) * 10 ** currency.coinDecimals,
         granter: authzGranter,
         chainID: chainID,
-        metaData: '',
+        memo: '',
       });
       return;
     }

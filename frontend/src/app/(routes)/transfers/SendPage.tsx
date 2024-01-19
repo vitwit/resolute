@@ -191,7 +191,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
         });
         return;
       }
-      txInputs.onTxSuccessCallBank = clearForm;
+      txInputs.onTxSuccessCallBack = clearForm;
       dispatch(txBankSend({...txInputs, rpc}));
     } else {
       const destChainID = getChainIDFromAddress(data.address);

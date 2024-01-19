@@ -19,5 +19,5 @@ interface TxSendInputs {
   memo: string;
   prefix: string;
   rpc?:string;
-  onTxSuccessCallBank?: () => void;
+  onTxSuccessCallBack?: () => void;
 }

@@ -20,7 +20,7 @@ import CustomParticles from './Particles';
 import Loading from './Loading';
 declare let window: WalletWindow;
 
-import { CosmjsOfflineSigner, experimentalSuggestChain, connectSnap, getSnap } from '@leapwallet/cosmos-snap-provider';
+import { experimentalSuggestChain, connectSnap, getSnap } from '@leapwallet/cosmos-snap-provider';
 import { CircularProgress } from '@mui/material';
 
 export const Landingpage = ({ children }: { children: React.ReactNode }) => {
