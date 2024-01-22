@@ -193,3 +193,15 @@ export const GENERIC_AUTHORIZATION_TYPE =
 export const STAKE_AUTHORIZATION_TYPE =
   '/cosmos.staking.v1beta1.StakeAuthorization';
 export const SEND_AUTHORIZATION_TYPE = '/cosmos.bank.v1beta1.SendAuthorization';
+export const MULTISIG_PUBKEY_OBJECT = {
+  name: 'pubKey',
+  value: '',
+  label: 'Public Key (Secp256k1)',
+  placeHolder: 'E. g. AtgCrYjD+21d1+og3inzVEOGbCf5uhXnVeltFIo7RcRp',
+  required: true,
+  disabled: false,
+  isPubKey: false,
+  address: '',
+  pubKey: '',
+  error: '',
+};

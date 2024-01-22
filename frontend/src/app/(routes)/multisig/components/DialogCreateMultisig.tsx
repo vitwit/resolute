@@ -2,7 +2,6 @@ import {
   CircularProgress,
   Dialog,
   DialogContent,
-  InputAdornment,
   TextField,
 } from '@mui/material';
 import Image from 'next/image';
@@ -42,99 +41,11 @@ import {
 } from '@/utils/commonStyles';
 import { TxStatus } from '@/types/enums';
 import { fromBech32 } from '@cosmjs/encoding';
-
-interface DialogCreateMultisigProps {
-  open: boolean;
-  onClose: () => void;
-  addressPrefix: string;
-  chainID: string;
-  address: string;
-  pubKey: string;
-  baseURL: string;
-}
-
-interface InputTextComponentProps {
-  index: number;
-  field: PubKeyFields;
-  handleRemoveValue: (index: number) => void;
-  handleChangeValue: (
-    index: number,
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-}
-
-interface PubKeyFields {
-  name: string;
-  value: string;
-  label: string;
-  placeHolder: string;
-  required: boolean;
-  disabled: boolean;
-  pubKey: string;
-  address: string;
-  isPubKey: boolean;
-  error: string;
-}
+import { DialogCreateMultisigProps, PubKeyFields } from '@/types/multisig';
+import MultisigMemberTextField from './MultisigMemberTextField';
+import { MULTISIG_PUBKEY_OBJECT } from '@/utils/constants';
 
 const MAX_PUB_KEYS = 7;
-
-const InputTextComponent: React.FC<InputTextComponentProps> = (props) => {
-  const { field, index, handleChangeValue, handleRemoveValue } = props;
-  return (
-    <>
-      <TextField
-        className="bg-[#FFFFFF0D] rounded-2xl"
-        onChange={(e) => handleChangeValue(index, e)}
-        name={field.isPubKey ? 'pubKey' : 'address'}
-        value={field.isPubKey ? field.pubKey : field.address}
-        required={field?.required}
-        placeholder={field.isPubKey ? 'Public Key (Secp256k1)' : 'Address'}
-        sx={createMultisigTextFieldStyles}
-        fullWidth
-        disabled={field.disabled}
-        InputProps={{
-          endAdornment: !field.disabled ? (
-            <InputAdornment
-              onClick={() =>
-                !field.disabled
-                  ? handleRemoveValue(index)
-                  : alert('Cannot self remove')
-              }
-              position="end"
-              sx={{
-                '&:hover': {
-                  cursor: 'pointer',
-                },
-              }}
-            >
-              <Image
-                src="/delete-icon-outlined.svg"
-                height={24}
-                width={24}
-                alt="Delete"
-                draggable={false}
-              />
-            </InputAdornment>
-          ) : index === 0 ? (
-            <InputAdornment position="end">
-              <div>(You)</div>
-            </InputAdornment>
-          ) : null,
-          sx: {
-            input: {
-              color: 'white',
-              fontSize: '14px',
-              padding: 2,
-            },
-          },
-        }}
-      />
-      <div className="address-pubkey-field-error">
-        {field.error.length ? field.error : ''}
-      </div>
-    </>
-  );
-};
 
 const getPubkey = async (address: string, baseURL: string) => {
   try {
@@ -173,18 +84,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     (state: RootState) => state.multisig.multisigAccountData
   );
 
-  const pubKeyObj = {
-    name: 'pubKey',
-    value: '',
-    label: 'Public Key (Secp256k1)',
-    placeHolder: 'E. g. AtgCrYjD+21d1+og3inzVEOGbCf5uhXnVeltFIo7RcRp',
-    required: true,
-    disabled: false,
-    isPubKey: false,
-    address: '',
-    pubKey: '',
-    error: '',
-  };
+  const pubKeyObj = MULTISIG_PUBKEY_OBJECT;
 
   useEffect(() => {
     setDefaultPubkeyFieldsValues();
@@ -427,7 +327,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
 
   const setMultisigAccountData = () => {
     const pubKeysList =
-      importMultisigAccountRes.account.account.pub_key.public_keys;
+      importMultisigAccountRes.account?.account?.pub_key?.public_keys || [];
     const data: PubKeyFields[] = [];
     pubKeysList.forEach((pubkey: PubKey) => {
       data.push({
@@ -445,7 +345,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     });
     setPubKeyFields(data);
     setThreshold(
-      Number(importMultisigAccountRes.account.account.pub_key.threshold) || 0
+      Number(importMultisigAccountRes.account?.account?.pub_key?.threshold || 0)
     );
   };
 
@@ -524,7 +424,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                   />
                   {pubKeyFields.map((field, index) => (
                     <>
-                      <InputTextComponent
+                      <MultisigMemberTextField
                         key={index}
                         handleRemoveValue={handleRemoveValue}
                         handleChangeValue={handleChangeValue}
@@ -624,7 +524,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                   </button>
                 </form>
                 {!importMultisig ? (
-                  <div className="mt-10 mb-6 flex flex-col justify-center items-center gap-6">
+                  <div className="create-multisig-dialog-footer">
                     <div className="text-[14px] font-extralight">Or</div>
                     <div className="flex gap-4 items-center">
                       <div className="text-[16px]">
@@ -636,14 +536,14 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                           setAddressValidationError('');
                           setPage(2);
                         }}
-                        className="text-[18px] font-bold underline underline-offset-2"
+                        className="text-only-btn"
                       >
                         Import here
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <div className="mt-10 mb-6 flex flex-col justify-center items-center gap-6">
+                  <div className="create-multisig-dialog-footer">
                     <div className="flex gap-4 items-center">
                       <button
                         onClick={() => {
@@ -654,7 +554,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                           setThreshold(0);
                           setImportMultisig(false);
                         }}
-                        className="text-[18px] font-bold underline underline-offset-2 opacity-50"
+                        className="text-only-btn opacity-50"
                       >
                         Cancel Import
                       </button>
@@ -704,7 +604,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                   </div>
                   <button
                     onClick={() => fetchMultisigAccount()}
-                    className="primary-gradient rounded-2xl font-medium tracking-[0.64px] px-10 py-[10px] min-w-[205px] flex-center-center"
+                    className="primary-gradient import-multisig-btn"
                   >
                     {importMultisigAccountRes.status === TxStatus.PENDING ? (
                       <CircularProgress size={20} sx={{ color: 'white' }} />
@@ -713,7 +613,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                     )}
                   </button>
                 </div>
-                <div className="mt-10 mb-6 flex flex-col justify-center items-center gap-6">
+                <div className="create-multisig-dialog-footer">
                   <div className="text-[14px] font-extralight">Or</div>
                   <div className="flex gap-4 items-center">
                     <div className="text-[16px]">
@@ -727,7 +627,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                         setName('');
                         setPage(1);
                       }}
-                      className="text-[18px] font-bold underline underline-offset-2"
+                      className="text-only-btn"
                     >
                       Create New here
                     </button>

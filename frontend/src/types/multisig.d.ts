@@ -226,3 +226,36 @@ interface ImportMultisigAccountRes {
     sequence: string;
   };
 }
+
+interface DialogCreateMultisigProps {
+  open: boolean;
+  onClose: () => void;
+  addressPrefix: string;
+  chainID: string;
+  address: string;
+  pubKey: string;
+  baseURL: string;
+}
+
+interface PubKeyFields {
+  name: string;
+  value: string;
+  label: string;
+  placeHolder: string;
+  required: boolean;
+  disabled: boolean;
+  pubKey: string;
+  address: string;
+  isPubKey: boolean;
+  error: string;
+}
+
+interface InputTextComponentProps {
+  index: number;
+  field: PubKeyFields;
+  handleRemoveValue: (index: number) => void;
+  handleChangeValue: (
+    index: number,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+}
