@@ -7,6 +7,7 @@ import { ERR_UNKNOWN, WALLET_REQUEST_ERROR } from '../../../utils/errors';
 import {
   MAX_SALT_VALUE,
   MIN_SALT_VALUE,
+  MULTISIG_LEGACY_AMINO_PUBKEY_TYPE,
   OFFCHAIN_VERIFICATION_MESSAGE,
 } from '@/utils/constants';
 import { TxStatus } from '@/types/enums';
@@ -18,12 +19,15 @@ import {
   DeleteTxnInputs,
   GetMultisigBalanceInputs,
   GetTxnsInputs,
+  ImportMultisigAccountRes,
   MultisigState,
   QueryParams,
   SignTxInputs,
   UpdateTxnInputs,
 } from '@/types/multisig';
-import { getRandomNumber } from '@/utils/util';
+import { getRandomNumber, isMultisigAccountMember } from '@/utils/util';
+import authService from './../auth/authService';
+import { get } from 'lodash';
 
 const initialState: MultisigState = {
   createMultisigAccountRes: {
@@ -85,6 +89,21 @@ const initialState: MultisigState = {
     error: '',
   },
   deleteMultisigRes: {
+    status: TxStatus.INIT,
+    error: '',
+  },
+  // multisigAccountData is used to store the multisigAccount details when user imports an
+  // on chain multisig account
+  multisigAccountData: {
+    account: {
+      account: {
+        '@type': '',
+        account_number: '',
+        address: '',
+        pub_key: {},
+        sequence: '',
+      },
+    },
     status: TxStatus.INIT,
     error: '',
   },
@@ -317,6 +336,52 @@ export const signTx = createAsyncThunk(
   }
 );
 
+export const importMultisigAccount = createAsyncThunk(
+  'multisig/importMultisigAccount',
+  async (
+    data: {
+      baseURL: string;
+      accountAddress: string;
+      multisigAddress: string;
+      addressPrefix: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await authService.accountInfo(
+        data.baseURL,
+        data.multisigAddress
+      );
+      if (response?.status === 200) {
+        if (
+          get(response, 'data.account.pub_key.@type') ===
+          MULTISIG_LEGACY_AMINO_PUBKEY_TYPE
+        ) {
+          if (
+            !isMultisigAccountMember(
+              data.accountAddress,
+              get(response, 'data.account.pub_key.public_keys', []),
+              data.addressPrefix
+            )
+          ) {
+            return rejectWithValue(
+              'Cannot import account: You are not a member of the multisig account'
+            );
+          }
+        } else {
+          return rejectWithValue('Not a multisig account');
+        }
+      }
+      return response.data;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      const errorMsg =
+        error?.response?.data?.message || error?.message || ERR_UNKNOWN;
+      return rejectWithValue(errorMsg);
+    }
+  }
+);
+
 export const multisigSlice = createSlice({
   name: 'multisig',
   initialState,
@@ -341,6 +406,9 @@ export const multisigSlice = createSlice({
     },
     resetDeleteMultisigRes: (state) => {
       state.deleteMultisigRes = initialState.deleteMultisigRes;
+    },
+    resetMultisigAccountData: (state) => {
+      state.multisigAccountData = initialState.multisigAccountData;
     },
   },
   extraReducers: (builder) => {
@@ -526,6 +594,22 @@ export const multisigSlice = createSlice({
         const payload = action.payload as { message: string };
         state.signTxRes.error = payload.message || '';
       });
+    builder
+      .addCase(importMultisigAccount.pending, (state) => {
+        state.multisigAccountData.status = TxStatus.PENDING;
+        state.multisigAccountData.error = '';
+      })
+      .addCase(importMultisigAccount.fulfilled, (state, action) => {
+        state.multisigAccountData.status = TxStatus.IDLE;
+        state.multisigAccountData.error = '';
+        state.multisigAccountData.account =
+          action.payload as ImportMultisigAccountRes;
+      })
+      .addCase(importMultisigAccount.rejected, (state, action) => {
+        state.multisigAccountData.status = TxStatus.REJECTED;
+        state.multisigAccountData.error =
+          typeof action.payload === 'string' ? action.payload : '';
+      });
   },
 });
 
@@ -537,6 +621,7 @@ export const {
   resetSignTxnState,
   resetVerifyAccountRes,
   resetDeleteMultisigRes,
+  resetMultisigAccountData,
 } = multisigSlice.actions;
 
 export default multisigSlice.reducer;

@@ -120,6 +120,11 @@ interface MultisigState {
   updateTxnRes: TxRes;
   txns: Txns;
   signTxRes: TxRes;
+  multisigAccountData: {
+    account: ImportMultisigAccountRes;
+    status: TxStatus;
+    error: string;
+  };
 }
 
 interface VerifyAccountRes {
@@ -208,5 +213,16 @@ interface DeleteMultisigInputs {
   queryParams: QueryParams;
   data: {
     address: string;
+  };
+}
+
+interface ImportMultisigAccountRes {
+  account: {
+    '@type': string;
+    address: string;
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    pub_key: any;
+    account_number: string;
+    sequence: string;
   };
 }

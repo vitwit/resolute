@@ -1,6 +1,10 @@
 import { DelegationResponse, Params, Validator } from '@/types/staking';
 import { parseBalance } from './denom';
-import { MultisigThresholdPubkey, SinglePubkey } from '@cosmjs/amino';
+import {
+  MultisigThresholdPubkey,
+  SinglePubkey,
+  pubkeyToAddress,
+} from '@cosmjs/amino';
 import { Options } from '@/custom-hooks/useSortedAssets';
 import { getAuthToken, removeAllAuthTokens } from './localStorage';
 import { MultisigAddressPubkey } from '@/types/multisig';
@@ -393,4 +397,23 @@ export const convertToSnakeCase = (name: string) => {
 
 export function amountToMinimalValue(amount: number, coinDecimals: number) {
   return Number(amount) * 10 ** coinDecimals;
+}
+
+export function isMultisigAccountMember(
+  walletAddress: string,
+  pubKeys: PubKey[],
+  prefix: string
+): boolean {
+  const result = pubKeys.filter((pubKey) => {
+    const address =
+      pubkeyToAddress(
+        {
+          type: 'tendermint/PubKeySecp256k1',
+          value: pubKey.key,
+        },
+        prefix
+      ) || '';
+    return walletAddress === address;
+  });
+  return result?.length !== 0;
 }

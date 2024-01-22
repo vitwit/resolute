@@ -185,3 +185,6 @@ export const MIN_SALT_VALUE = 99999;
 export const MAX_SALT_VALUE = 99999999;
 export const NO_GRANTS_BY_ME_TEXT = "You haven't granted any permission yet";
 export const NO_GRANTS_TO_ME_TEXT = "You don't have any grants";
+export const SECP256K1_PUBKEY_TYPE = '/cosmos.crypto.secp256k1.PubKey';
+export const MULTISIG_LEGACY_AMINO_PUBKEY_TYPE =
+  '/cosmos.crypto.multisig.LegacyAminoPubKey';
