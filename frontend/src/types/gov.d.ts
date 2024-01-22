@@ -155,6 +155,8 @@ interface GetProposalInputs {
 }
 
 interface TxVoteInputs {
+  isAuthzMode: false;
+  basicChainInfo: BasicChainInfo;
   voter: string;
   proposalId: number;
   option: number;
@@ -170,6 +172,8 @@ interface TxVoteInputs {
 }
 
 interface TxDepositInputs {
+  isAuthzMode: false;
+  basicChainInfo: BasicChainInfo;
   depositer: string;
   proposalId: number;
   amount: number;

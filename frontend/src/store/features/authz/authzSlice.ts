@@ -208,7 +208,7 @@ export const txCreateAuthzGrant = createAsyncThunk(
 export const txAuthzExec = createAsyncThunk(
   'authz/tx-exec',
   async (
-    data: txAuthzExecInputs,
+    data: TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     try {
@@ -218,10 +218,12 @@ export const txAuthzExec = createAsyncThunk(
         data.basicChainInfo.prefix,
         data.msgs,
         GAS_FEE,
-        data.metaData,
-        `${data.basicChainInfo.feeAmount}${data.feeDenom}`,
+        data.memo,
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
         data.basicChainInfo.rest,
-        data.feeGranter
+        data.feegranter
       );
       if (result?.code === 0) {
         const tx = NewTransaction(

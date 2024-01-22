@@ -188,3 +188,8 @@ export const NO_GRANTS_TO_ME_TEXT = "You don't have any grants";
 export const SECP256K1_PUBKEY_TYPE = '/cosmos.crypto.secp256k1.PubKey';
 export const MULTISIG_LEGACY_AMINO_PUBKEY_TYPE =
   '/cosmos.crypto.multisig.LegacyAminoPubKey';
+export const GENERIC_AUTHORIZATION_TYPE =
+  '/cosmos.authz.v1beta1.GenericAuthorization';
+export const STAKE_AUTHORIZATION_TYPE =
+  '/cosmos.staking.v1beta1.StakeAuthorization';
+export const SEND_AUTHORIZATION_TYPE = '/cosmos.bank.v1beta1.SendAuthorization';

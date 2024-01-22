@@ -66,8 +66,9 @@ const VotePopup = ({
   const dispatch = useAppDispatch();
 
   const handleVote = () => {
+    const basicChainInfo = getChainInfo(chainID);
     const { address, aminoConfig, feeAmount, prefix, rest, rpc } =
-      getChainInfo(chainID);
+      basicChainInfo;
     const { minimalDenom } = getDenomInfo(chainID);
 
     if (isAuthzMode) {
@@ -77,13 +78,15 @@ const VotePopup = ({
         option: voteOptionNumber[voteOption],
         granter: authzGranter,
         chainID,
-        metaData: '',
+        memo: '',
       });
       return;
     }
 
     dispatch(
       txVote({
+        basicChainInfo,
+        isAuthzMode: false,
         voter: address,
         proposalId: proposalId,
         option: voteOptionNumber[voteOption],
@@ -212,11 +215,11 @@ const VotePopup = ({
                     onClick={handleVote}
                     className="vote-popup-btn proposal-text-medium"
                     disabled={
-                      (!isAuthzMode && loading === TxStatus.PENDING) ||
+                      loading === TxStatus.PENDING ||
                       (isAuthzMode && authzLoading === TxStatus.PENDING)
                     }
                   >
-                    {(!isAuthzMode && loading === TxStatus.PENDING) ||
+                    {loading === TxStatus.PENDING ||
                     (isAuthzMode && authzLoading === TxStatus.PENDING) ? (
                       <CircularProgress size={20} sx={{ color: 'white' }} />
                     ) : (
