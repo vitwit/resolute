@@ -404,7 +404,7 @@ export function isMultisigAccountMember(
   pubKeys: PubKey[],
   prefix: string
 ): boolean {
-  const result = pubKeys.filter((pubKey) => {
+  const result = pubKeys?.filter((pubKey) => {
     const address =
       pubkeyToAddress(
         {

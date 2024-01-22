@@ -3,7 +3,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import multisigService from './multisigService';
 import { AxiosError } from 'axios';
-import { ERR_UNKNOWN, WALLET_REQUEST_ERROR } from '../../../utils/errors';
+import {
+  ERR_UNKNOWN,
+  NOT_MULTISIG_ACCOUNT_ERROR,
+  NOT_MULTISIG_MEMBER_ERROR,
+  WALLET_REQUEST_ERROR,
+} from '../../../utils/errors';
 import {
   MAX_SALT_VALUE,
   MIN_SALT_VALUE,
@@ -364,12 +369,10 @@ export const importMultisigAccount = createAsyncThunk(
               data.addressPrefix
             )
           ) {
-            return rejectWithValue(
-              'Cannot import account: You are not a member of the multisig account'
-            );
+            return rejectWithValue(NOT_MULTISIG_MEMBER_ERROR);
           }
         } else {
-          return rejectWithValue('Not a multisig account');
+          return rejectWithValue(NOT_MULTISIG_ACCOUNT_ERROR);
         }
       }
       return response.data;

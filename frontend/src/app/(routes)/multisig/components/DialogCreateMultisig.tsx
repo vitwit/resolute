@@ -87,10 +87,10 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
   const pubKeyObj = MULTISIG_PUBKEY_OBJECT;
 
   useEffect(() => {
-    setDefaultPubkeyFieldsValues();
+    setDefaultFormValues();
   }, [pubKey]);
 
-  const setDefaultPubkeyFieldsValues = () => {
+  const setDefaultFormValues = () => {
     setPubKeyFields([
       {
         name: 'current',
@@ -106,16 +106,21 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       },
       { ...pubKeyObj },
     ]);
+    setName('');
+    setThreshold(0);
+    setPage(1);
   };
 
   const handleClose = () => {
+    resetCreateMultisig();
+    onClose();
+  };
+
+  const resetCreateMultisig = () => {
     setMultisigAddress('');
     setAddressValidationError('');
-    setPage(1);
-    setDefaultPubkeyFieldsValues();
-    setThreshold(0);
+    setDefaultFormValues();
     setImportMultisig(false);
-    onClose();
   };
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -290,7 +295,11 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
 
   useEffect(() => {
     if (createMultiAccRes?.status === 'idle') {
-      dispatch(setError({ type: 'success', message: 'Successfully created' }));
+      const message = importMultisig
+        ? 'Successfully Imported'
+        : ' Successfully Create';
+      resetCreateMultisig();
+      dispatch(setError({ type: 'success', message: message }));
     } else if (createMultiAccRes?.status === 'rejected') {
       dispatch(setError({ type: 'error', message: createMultiAccRes?.error }));
     }
@@ -534,6 +543,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                         onClick={() => {
                           setMultisigAddress('');
                           setAddressValidationError('');
+                          setName('');
                           setPage(2);
                         }}
                         className="text-only-btn"
@@ -546,14 +556,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                   <div className="create-multisig-dialog-footer">
                     <div className="flex gap-4 items-center">
                       <button
-                        onClick={() => {
-                          setMultisigAddress('');
-                          setAddressValidationError('');
-                          setPage(1);
-                          setDefaultPubkeyFieldsValues();
-                          setThreshold(0);
-                          setImportMultisig(false);
-                        }}
+                        onClick={resetCreateMultisig}
                         className="text-only-btn opacity-50"
                       >
                         Cancel Import
@@ -622,10 +625,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                     <button
                       onClick={() => {
                         setImportMultisig(false);
-                        setThreshold(0);
-                        setDefaultPubkeyFieldsValues();
-                        setName('');
-                        setPage(1);
+                        setDefaultFormValues();
                       }}
                       className="text-only-btn"
                     >
