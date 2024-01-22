@@ -133,7 +133,6 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
                 isOpen={connectWalletDialogOpen}
                 onClose={handleClose}
                 selectWallet={selectWallet}
-                isSwitchWallet={false}
               />
             </div>
 
