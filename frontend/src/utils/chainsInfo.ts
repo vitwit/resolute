@@ -937,76 +937,77 @@ export const networks: Network[] = [
   //     },
   //   },
   // },
-  // {
-  //   enableModules: {
-  //     authz: true,
-  //     feegrant: true,
-  //     group: false,
-  //   },
-  //   aminoConfig: {
-  //     authz: false,
-  //     feegrant: false,
-  //     group: false,
-  //   },
-  //   showAirdrop: false,
-  //   logos: {
-  //     menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/stargaze/stars.png',
-  //     toolbar:
-  //       'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/stargaze/images/stargaze-logo.png',
-  //   },
-  //   keplrExperimental: false,
-  //   leapExperimental: false,
-  //   isTestnet: false,
-  //   explorerTxHashEndpoint: 'https://www.mintscan.io/stargaze/txs/',
-  //   config: {
-  //     chainId: 'stargaze-1',
-  //     chainName: 'Stargaze',
-  //     rest: 'https://api.resolute.vitwit.com/stargaze_api',
-  //     rpc: 'https://api.resolute.vitwit.com/stargaze_rpc',
-  //     currencies: [
-  //       {
-  //         coinDenom: 'STARS',
-  //         coinMinimalDenom: 'ustars',
-  //         coinDecimals: 6,
-  //       },
-  //     ],
-  //     bech32Config: {
-  //       bech32PrefixAccAddr: 'stars',
-  //       bech32PrefixAccPub: 'starspub',
-  //       bech32PrefixValAddr: 'starsvaloper',
-  //       bech32PrefixValPub: 'starsvaloperpub',
-  //       bech32PrefixConsAddr: 'starsgvalcons',
-  //       bech32PrefixConsPub: 'starsvalconspub',
-  //     },
-  //     feeCurrencies: [
-  //       {
-  //         coinDenom: 'STARS',
-  //         coinMinimalDenom: 'ustars',
-  //         coinDecimals: 6,
-  //         gasPriceStep: {
-  //           low: 0.01,
-  //           average: 0.025,
-  //           high: 0.03,
-  //         },
-  //       },
-  //     ],
-  //     bip44: {
-  //       coinType: 118,
-  //     },
-  //     stakeCurrency: {
-  //       coinDenom: 'STARS',
-  //       coinMinimalDenom: 'ustars',
-  //       coinDecimals: 6,
-  //     },
-  //     image:
-  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
-  //     theme: {
-  //       primaryColor: '#fff',
-  //       gradient:
-  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
-  //     },
-  //   },
-  // },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/stargaze/stars.png',
+      toolbar:
+        'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/stargaze/images/stargaze-logo.png',
+    },
+    keplrExperimental: false,
+    leapExperimental: false,
+    isTestnet: false,
+    govV1: false,
+    explorerTxHashEndpoint: 'https://www.mintscan.io/stargaze/txs/',
+    config: {
+      chainId: 'stargaze-1',
+      chainName: 'Stargaze',
+      rest: 'https://stargaze-api.polkachu.com',
+      rpc: 'https://stargaze-rpc.polkachu.com',
+      currencies: [
+        {
+          coinDenom: 'STARS',
+          coinMinimalDenom: 'ustars',
+          coinDecimals: 6,
+        },
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: 'stars',
+        bech32PrefixAccPub: 'starspub',
+        bech32PrefixValAddr: 'starsvaloper',
+        bech32PrefixValPub: 'starsvaloperpub',
+        bech32PrefixConsAddr: 'starsgvalcons',
+        bech32PrefixConsPub: 'starsvalconspub',
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'STARS',
+          coinMinimalDenom: 'ustars',
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.025,
+            high: 0.03,
+          },
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      stakeCurrency: {
+        coinDenom: 'STARS',
+        coinMinimalDenom: 'ustars',
+        coinDecimals: 6,
+      },
+      image:
+        'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
   // {
   //   enableModules: {
   //     authz: true,
