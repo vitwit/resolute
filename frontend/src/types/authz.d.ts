@@ -40,6 +40,7 @@ type AuthzReDelegateType = 'AUTHORIZATION_TYPE_REDELEGATE';
 
 interface GetGrantsInputs {
   baseURL: string;
+  baseURLs: string[];
   address: string;
   pagination?: KeyLimitPagination;
   chainID: string;

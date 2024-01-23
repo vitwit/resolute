@@ -13,8 +13,9 @@ const useInitAuthz = () => {
   const { getChainInfo } = useGetChainInfo();
   useEffect(() => {
     chainIDs.forEach((chainID) => {
-      const { address, baseURL } = getChainInfo(chainID);
+      const { address, baseURL, restURLs } = getChainInfo(chainID);
       const authzInputs = {
+        baseURLs: restURLs,
         address,
         baseURL,
         chainID,

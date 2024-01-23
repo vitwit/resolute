@@ -236,6 +236,7 @@ const useGetTxInputs = () => {
       from: sourceBasicChainInfo.address,
       to,
       rest: sourceBasicChainInfo.rest,
+      restURLs: sourceBasicChainInfo.restURLs,
     };
 
     return transfersRequestInputs;
