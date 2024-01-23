@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import TopNav from '@/components/TopNav';
 
-const FeegrantPage = ({ chainIDs }: { chainIDs: string[] }) => {
+const FeegrantPage = ({ }: { chainIDs: string[] }) => {
   const [isGrantedToMe, setIsGrantedToMe] = useState(true);
 
   return (
