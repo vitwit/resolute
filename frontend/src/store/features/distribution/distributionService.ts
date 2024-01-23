@@ -1,22 +1,25 @@
 'use client';
-import Axios, { AxiosResponse } from 'axios';
-import { convertPaginationToParams, cleanURL } from '../../../utils/util';
+import { AxiosResponse } from 'axios';
+import { convertPaginationToParams } from '../../../utils/util';
+import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
+import { MAX_TRY_END_POINTS } from '../../../utils/constants';
 
 const delegatorTotalRewardsURL = (address: string) =>
   `/cosmos/distribution/v1beta1/delegators/${address}/rewards`;
 
 export const fetchDelegatorTotalRewards = (
-  baseURL: string,
+  baseURLs: string[],
   address: string,
   pagination: KeyLimitPagination
 ): Promise<AxiosResponse> => {
-  let uri = `${cleanURL(baseURL)}${delegatorTotalRewardsURL(address)}`;
+  let endPoint = `${delegatorTotalRewardsURL(address)}`;
+
   const parsed = convertPaginationToParams(pagination);
   if (parsed !== '') {
-    uri += `?${parsed}`;
+    endPoint += `?${parsed}`;
   }
 
-  return Axios.get(uri);
+  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
 };
 
 const result = {

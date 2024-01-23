@@ -199,3 +199,5 @@ export const GENERIC_AUTHORIZATION_TYPE =
 export const STAKE_AUTHORIZATION_TYPE =
   '/cosmos.staking.v1beta1.StakeAuthorization';
 export const SEND_AUTHORIZATION_TYPE = '/cosmos.bank.v1beta1.SendAuthorization';
+export const AXIOS_RETRIES_COUNT = 2;
+export const MAX_TRY_END_POINTS = 20;
