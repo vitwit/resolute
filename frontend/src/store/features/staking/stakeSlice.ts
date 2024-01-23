@@ -199,6 +199,7 @@ export const txRestake = createAsyncThunk(
         if (data.isAuthzMode) {
           dispatch(
             getAuthzDelegatorTotalRewards({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: rest,
               address: data.authzChainGranter,
               chainID: chainID,
@@ -207,7 +208,7 @@ export const txRestake = createAsyncThunk(
           );
           dispatch(
             getAuthzDelegations({
-              baseURL: rest,
+              baseURLs: data.basicChainInfo.restURLs,
               address: data.authzChainGranter,
               chainID: chainID,
             })
@@ -215,6 +216,7 @@ export const txRestake = createAsyncThunk(
         } else {
           dispatch(
             getDelegatorTotalRewards({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: rest,
               address: address,
               chainID: chainID,
@@ -223,7 +225,7 @@ export const txRestake = createAsyncThunk(
           );
           dispatch(
             getDelegations({
-              baseURL: rest,
+              baseURLs: data.basicChainInfo.restURLs,
               address: address,
               chainID: chainID,
             })
@@ -297,13 +299,14 @@ export const txDelegate = createAsyncThunk(
           );
           dispatch(
             getAuthzDelegations({
-              baseURL: data.basicChainInfo.baseURL,
+              baseURLs: data.basicChainInfo.restURLs,
               address: data.authzChainGranter,
               chainID: data.basicChainInfo.chainID,
             })
           );
           dispatch(
             getAuthzBalances({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: data.basicChainInfo.baseURL,
               chainID: data.basicChainInfo.chainID,
               address: data.authzChainGranter,
@@ -313,13 +316,14 @@ export const txDelegate = createAsyncThunk(
           dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
           dispatch(
             getDelegations({
-              baseURL: data.basicChainInfo.baseURL,
+              baseURLs: data.basicChainInfo.restURLs,
               address: data.delegator,
               chainID: data.basicChainInfo.chainID,
             })
           );
           dispatch(
             getBalances({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: data.basicChainInfo.baseURL,
               chainID: data.basicChainInfo.chainID,
               address: data.delegator,
@@ -402,7 +406,7 @@ export const txReDelegate = createAsyncThunk(
           );
           dispatch(
             getAuthzDelegations({
-              baseURL: data.basicChainInfo.baseURL,
+              baseURLs: data.basicChainInfo.restURLs,
               address: data.authzChainGranter,
               chainID: data.basicChainInfo.chainID,
             })
@@ -411,7 +415,7 @@ export const txReDelegate = createAsyncThunk(
           dispatch(resetDelegations({ chainID: data.basicChainInfo.chainID }));
           dispatch(
             getDelegations({
-              baseURL: data.basicChainInfo.baseURL,
+              baseURLs: data.basicChainInfo.restURLs,
               address: data.delegator,
               chainID: data.basicChainInfo.chainID,
             })
@@ -484,14 +488,14 @@ export const txUnDelegate = createAsyncThunk(
         if (data.isAuthzMode) {
           dispatch(
             getAuthzDelegations({
-              baseURL: data.basicChainInfo.rest,
+              baseURLs: data.basicChainInfo.restURLs,
               address: data.authzChainGranter,
               chainID: data.basicChainInfo.chainID,
             })
           );
           dispatch(
             getAuthzUnbonding({
-              baseURL: data.basicChainInfo.rest,
+              baseURLs: data.basicChainInfo.restURLs,
               address: data.authzChainGranter,
               chainID: data.basicChainInfo.chainID,
             })
@@ -499,14 +503,14 @@ export const txUnDelegate = createAsyncThunk(
         } else {
           dispatch(
             getDelegations({
-              baseURL: data.basicChainInfo.rest,
+              baseURLs: data.basicChainInfo.restURLs,
               address: data.basicChainInfo.address,
               chainID: data.basicChainInfo.chainID,
             })
           );
           dispatch(
             getUnbonding({
-              baseURL: data.basicChainInfo.rest,
+              baseURLs: data.basicChainInfo.restURLs,
               address: data.basicChainInfo.address,
               chainID: data.basicChainInfo.chainID,
             })
@@ -581,7 +585,7 @@ export const txCancelUnbonding = createAsyncThunk(
       if (result?.code === 0) {
         if (data.isAuthzMode) {
           const inputData = {
-            baseURL: data.basicChainInfo.baseURL,
+            baseURLs: data.basicChainInfo.restURLs,
             address: data.authzChainGranter,
             chainID: data.basicChainInfo.chainID,
           };
@@ -592,7 +596,7 @@ export const txCancelUnbonding = createAsyncThunk(
           dispatch(getAuthzUnbonding(inputData));
         } else {
           const inputData = {
-            baseURL: data.basicChainInfo.baseURL,
+            baseURLs: data.basicChainInfo.restURLs,
             address: data.delegator,
             chainID: data.basicChainInfo.chainID,
           };
@@ -631,7 +635,7 @@ export const getValidators = createAsyncThunk(
   'staking/validators',
   async (
     data: {
-      baseURL: string;
+      baseURLs: string[];
       status?: string;
       pagination?: KeyLimitPagination;
       chainID: string;
@@ -640,7 +644,7 @@ export const getValidators = createAsyncThunk(
   ) => {
     try {
       const response = await stakingService.validators(
-        data.baseURL,
+        data.baseURLs,
         data?.status,
         data?.pagination
       );
@@ -660,7 +664,7 @@ export const getAllValidators = createAsyncThunk(
   'staking/all-validators',
   async (
     data: {
-      baseURL: string;
+      baseURLs: string[];
       status?: string;
       chainID: string;
     },
@@ -672,7 +676,7 @@ export const getAllValidators = createAsyncThunk(
       const limit = 100;
       while (true) {
         const response = await stakingService.validators(
-          data.baseURL,
+          data.baseURLs,
           data?.status,
           nextKey
             ? {
@@ -701,8 +705,8 @@ export const getAllValidators = createAsyncThunk(
 
 export const getPoolInfo = createAsyncThunk(
   'staking/poolInfo',
-  async (data: { baseURL: string; chainID: string }) => {
-    const response = await stakingService.poolInfo(data.baseURL);
+  async (data: { baseURLs: string[]; chainID: string }) => {
+    const response = await stakingService.poolInfo(data.baseURLs);
     return {
       chainID: data.chainID,
       data: response.data,
@@ -712,8 +716,8 @@ export const getPoolInfo = createAsyncThunk(
 
 export const getParams = createAsyncThunk(
   'staking/params',
-  async (data: { baseURL: string; chainID: string }) => {
-    const response = await stakingService.params(data.baseURL);
+  async (data: { baseURLs: string[]; chainID: string }) => {
+    const response = await stakingService.params(data.baseURLs);
     return {
       data: response.data,
       chainID: data.chainID,
@@ -725,7 +729,7 @@ export const getDelegations = createAsyncThunk(
   'staking/delegations',
   async (
     data: {
-      baseURL: string;
+      baseURLs: string[];
       address: string;
       chainID: string;
     },
@@ -737,7 +741,7 @@ export const getDelegations = createAsyncThunk(
       const limit = 100;
       while (true) {
         const response = await stakingService.delegations(
-          data.baseURL,
+          data.baseURLs,
           data.address,
           nextKey
             ? {
@@ -768,7 +772,7 @@ export const getAuthzDelegations = createAsyncThunk(
   'staking/authz-delegations',
   async (
     data: {
-      baseURL: string;
+      baseURLs: string[];
       address: string;
       chainID: string;
     },
@@ -780,7 +784,7 @@ export const getAuthzDelegations = createAsyncThunk(
       const limit = 100;
       while (true) {
         const response = await stakingService.delegations(
-          data.baseURL,
+          data.baseURLs,
           data.address,
           nextKey
             ? {
@@ -810,12 +814,12 @@ export const getAuthzDelegations = createAsyncThunk(
 export const getUnbonding = createAsyncThunk(
   'staking/unbonding',
   async (
-    data: { baseURL: string; address: string; chainID: string },
+    data: { baseURLs: string[]; address: string; chainID: string },
     { rejectWithValue }
   ) => {
     try {
       const response = await stakingService.unbonding(
-        data.baseURL,
+        data.baseURLs,
         data.address
       );
       return {
@@ -832,12 +836,12 @@ export const getUnbonding = createAsyncThunk(
 export const getAuthzUnbonding = createAsyncThunk(
   'staking/authz-unbonding',
   async (
-    data: { baseURL: string; address: string; chainID: string },
+    data: { baseURLs: string[]; address: string; chainID: string },
     { rejectWithValue }
   ) => {
     try {
       const response = await stakingService.unbonding(
-        data.baseURL,
+        data.baseURLs,
         data.address
       );
       return {

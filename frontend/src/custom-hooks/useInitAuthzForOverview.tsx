@@ -26,6 +26,7 @@ const useInitAuthzForOverview = (chainIDs: string[]) => {
           baseURL: chainInfo.config.rest,
           address,
           chainID,
+          baseURLs: chainInfo.config.restURIs,
         };
 
         dispatch(getAuthzBalances(basicChainInputs));
@@ -36,11 +37,12 @@ const useInitAuthzForOverview = (chainIDs: string[]) => {
             address: address,
             chainID: chainID,
             denom: minimalDenom,
+            baseURLs: chainInfo.config.restURIs,
           })
         );
         dispatch(
           getAuthzUnbonding({
-            baseURL: chainInfo.config.rest,
+            baseURLs: chainInfo.config.restURIs,
             address: address,
             chainID,
           })

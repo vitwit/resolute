@@ -26,6 +26,16 @@ export const networks: Network[] = [
       chainName: 'Agoric',
       rest: 'https://agoric-api.polkachu.com',
       rpc: 'https://agoric-rpc.polkachu.com',
+      restURIs: [
+        'https://agoric-api.polkachu.com',
+        'https://api-agoric-ia.cosmosia.notional.ventures',
+        'https://api.agoric.stakewith.us',
+      ],
+      rpcURIs: [
+        'https://agoric-rpc.polkachu.com',
+        'https://rpc-agoric-ia.cosmosia.notional.ventures',
+        'https://agoric-rpc.stakeandrelax.net',
+      ],
       currencies: [
         {
           coinDenom: 'BLD',
@@ -107,6 +117,16 @@ export const networks: Network[] = [
       chainName: 'Akash',
       rest: 'https://api.resolute.vitwit.com/akash_api',
       rpc: 'https://api.resolute.vitwit.com/akash_rpc',
+      restURIs: [
+        'https://api.resolute.vitwit.com/akash_api',
+        'https://akash-api.polkachu.com',
+        'https://rest-akash.ecostake.com',
+      ],
+      rpcURIs: [
+        'https://api.resolute.vitwit.com/akash_rpc',
+        'https://akash-rpc.polkachu.com',
+        'https://rpc-akash.cosmos-spaces.cloud',
+      ],
       currencies: [
         {
           coinDenom: 'AKT',
@@ -178,6 +198,17 @@ export const networks: Network[] = [
       chainName: 'CosmosHub',
       rest: 'https://api-cosmoshub-ia.cosmosia.notional.ventures',
       rpc: 'https://cosmos-rpc.polkachu.com',
+      restURIs: [
+        'https://api-cosmoshub-ia.cosmosia.notional.ventures',
+        'https://cosmos-lcd.quickapi.com:443',
+        'https://cosmos-rest.staketab.org',
+        'https://lcd-cosmoshub.blockapsis.com',
+      ],
+      rpcURIs: [
+        'https://cosmos-rpc.polkachu.com',
+        'https://rpc-cosmoshub.blockapsis.com',
+        'https://cosmos-rpc.quickapi.com:443',
+      ],
       currencies: [
         {
           coinDenom: 'ATOM',
@@ -389,6 +420,16 @@ export const networks: Network[] = [
       chainName: 'Juno',
       rest: 'https://api.resolute.vitwit.com/juno_api',
       rpc: 'https://api.resolute.vitwit.com/juno_rpc',
+      restURIs: [
+        'https://api.resolute.vitwit.com/juno_api',
+        'https://rest-juno.ecostake.com',
+        'https://juno-api.polkachu.com',
+      ],
+      rpcURIs: [
+        'https://api.resolute.vitwit.com/juno_rpc',
+        'https://juno-rpc.polkachu.com',
+        'https://rpc-juno.ecostake.com',
+      ],
       currencies: [
         {
           coinDenom: 'JUNO',
@@ -530,6 +571,16 @@ export const networks: Network[] = [
       chainName: 'Osmosis',
       rest: 'https://osmosis-api.polkachu.com',
       rpc: 'https://rpc.osmosis.zone',
+      restURIs: [
+        'https://osmosis-api.polkachu.com',
+        'https://osmosis-lcd.quickapi.com:443',
+        'https://osmosis-api.polkachu.com',
+      ],
+      rpcURIs: [
+        'https://rpc.osmosis.zone',
+        'https://rpc-osmosis.blockapsis.com',
+        'https://osmosis-rpc.quickapi.com:443',
+      ],
       currencies: [
         {
           coinDenom: 'OSMO',
@@ -675,6 +726,16 @@ export const networks: Network[] = [
       chainName: 'Passage',
       rest: 'https://api.passage.vitwit.com',
       rpc: 'https://rpc.passage.vitwit.com',
+      restURIs: [
+        'https://api.passage.vitwit.com',
+        'https://passage-api.polkachu.com',
+        'https://api-passage-ia.cosmosia.notional.ventures/',
+      ],
+      rpcURIs: [
+        'https://rpc.passage.vitwit.com',
+        'passage-grpc.polkachu.com:15690',
+        'services.staketab.com:9023',
+      ],
       bip44: {
         coinType: 118,
       },
@@ -750,6 +811,16 @@ export const networks: Network[] = [
       chainName: 'DYDX',
       rest: 'https://dydx-rest.publicnode.com',
       rpc: 'https://dydx-rpc.publicnode.com:443',
+      restURIs: [
+        'https://dydx-rest.publicnode.com',
+        'https://dydx-dao-api.polkachu.com',
+        'https://api.dydx.nodestake.top:443',
+      ],
+      rpcURIs: [
+        'https://dydx-rpc.publicnode.com:443',
+        'https://dydx-dao-rpc.polkachu.com',
+        'https://dydx-rpc.lavenderfive.com:443',
+      ],
       currencies: [
         {
           coinDenom: 'DYDX',
@@ -937,76 +1008,87 @@ export const networks: Network[] = [
   //     },
   //   },
   // },
-  // {
-  //   enableModules: {
-  //     authz: true,
-  //     feegrant: true,
-  //     group: false,
-  //   },
-  //   aminoConfig: {
-  //     authz: false,
-  //     feegrant: false,
-  //     group: false,
-  //   },
-  //   showAirdrop: false,
-  //   logos: {
-  //     menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/stargaze/stars.png',
-  //     toolbar:
-  //       'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/stargaze/images/stargaze-logo.png',
-  //   },
-  //   keplrExperimental: false,
-  //   leapExperimental: false,
-  //   isTestnet: false,
-  //   explorerTxHashEndpoint: 'https://www.mintscan.io/stargaze/txs/',
-  //   config: {
-  //     chainId: 'stargaze-1',
-  //     chainName: 'Stargaze',
-  //     rest: 'https://api.resolute.vitwit.com/stargaze_api',
-  //     rpc: 'https://api.resolute.vitwit.com/stargaze_rpc',
-  //     currencies: [
-  //       {
-  //         coinDenom: 'STARS',
-  //         coinMinimalDenom: 'ustars',
-  //         coinDecimals: 6,
-  //       },
-  //     ],
-  //     bech32Config: {
-  //       bech32PrefixAccAddr: 'stars',
-  //       bech32PrefixAccPub: 'starspub',
-  //       bech32PrefixValAddr: 'starsvaloper',
-  //       bech32PrefixValPub: 'starsvaloperpub',
-  //       bech32PrefixConsAddr: 'starsgvalcons',
-  //       bech32PrefixConsPub: 'starsvalconspub',
-  //     },
-  //     feeCurrencies: [
-  //       {
-  //         coinDenom: 'STARS',
-  //         coinMinimalDenom: 'ustars',
-  //         coinDecimals: 6,
-  //         gasPriceStep: {
-  //           low: 0.01,
-  //           average: 0.025,
-  //           high: 0.03,
-  //         },
-  //       },
-  //     ],
-  //     bip44: {
-  //       coinType: 118,
-  //     },
-  //     stakeCurrency: {
-  //       coinDenom: 'STARS',
-  //       coinMinimalDenom: 'ustars',
-  //       coinDecimals: 6,
-  //     },
-  //     image:
-  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
-  //     theme: {
-  //       primaryColor: '#fff',
-  //       gradient:
-  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
-  //     },
-  //   },
-  // },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/stargaze/stars.png',
+      toolbar:
+        'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/stargaze/images/stargaze-logo.png',
+    },
+    keplrExperimental: false,
+    leapExperimental: false,
+    isTestnet: false,
+    govV1: false,
+    explorerTxHashEndpoint: 'https://www.mintscan.io/stargaze/txs/',
+    config: {
+      chainId: 'stargaze-1',
+      chainName: 'Stargaze',
+      rest: 'https://stargaze-api.polkachu.com',
+      rpc: 'https://stargaze-rpc.polkachu.com',
+      restURIs: [
+        'https://stargaze-api.polkachu.com',
+        'https://stargaze-rest.publicnode.com',
+        'https://api-stargaze-ia.cosmosia.notional.ventures',
+      ],
+      rpcURIs: [
+        'https://stargaze-rpc.polkachu.com',
+        'https://stargaze-rpc.publicnode.com:443',
+        'https://rpc-stargaze-ia.cosmosia.notional.ventures',
+      ],
+      currencies: [
+        {
+          coinDenom: 'STARS',
+          coinMinimalDenom: 'ustars',
+          coinDecimals: 6,
+        },
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: 'stars',
+        bech32PrefixAccPub: 'starspub',
+        bech32PrefixValAddr: 'starsvaloper',
+        bech32PrefixValPub: 'starsvaloperpub',
+        bech32PrefixConsAddr: 'starsgvalcons',
+        bech32PrefixConsPub: 'starsvalconspub',
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'STARS',
+          coinMinimalDenom: 'ustars',
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 1,
+            average: 1.1,
+            high: 1.2,
+          },
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      stakeCurrency: {
+        coinDenom: 'STARS',
+        coinMinimalDenom: 'ustars',
+        coinDecimals: 6,
+      },
+      image:
+        'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
   // {
   //   enableModules: {
   //     authz: true,

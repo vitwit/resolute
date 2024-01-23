@@ -103,7 +103,7 @@ export const getGrantsToMe = createAsyncThunk(
   'authz/grantsToMe',
   async (data: GetGrantsInputs) => {
     const response = await authzService.grantsToMe(
-      data.baseURL,
+      data.baseURLs,
       data.address,
       data.pagination
     );
@@ -118,7 +118,7 @@ export const getGrantsByMe = createAsyncThunk(
   'authz/grantsByMe',
   async (data: GetGrantsInputs) => {
     const response = await authzService.grantsByMe(
-      data.baseURL,
+      data.baseURLs,
       data.address,
       data.pagination
     );
@@ -190,6 +190,7 @@ export const txCreateAuthzGrant = createAsyncThunk(
         dispatch(
           getGrantsByMe({
             baseURL: data.basicChainInfo.baseURL,
+            baseURLs: data.basicChainInfo.restURLs,
             address: data.basicChainInfo.address,
             chainID: data.basicChainInfo.chainID,
           })
@@ -315,6 +316,7 @@ export const txAuthzRevoke = createAsyncThunk(
         dispatch(
           getGrantsByMe({
             baseURL: data.basicChainInfo.baseURL,
+            baseURLs: data.basicChainInfo.restURLs,
             address: data.basicChainInfo.address,
             chainID: data.basicChainInfo.chainID,
           })
