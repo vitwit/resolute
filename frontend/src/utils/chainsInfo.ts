@@ -1035,6 +1035,16 @@ export const networks: Network[] = [
       chainName: 'Stargaze',
       rest: 'https://stargaze-api.polkachu.com',
       rpc: 'https://stargaze-rpc.polkachu.com',
+      restURIs: [
+        'https://stargaze-api.polkachu.com',
+        'https://stargaze-rest.publicnode.com',
+        'https://api-stargaze-ia.cosmosia.notional.ventures',
+      ],
+      rpcURIs: [
+        'https://stargaze-rpc.polkachu.com',
+        'https://stargaze-rpc.publicnode.com:443',
+        'https://rpc-stargaze-ia.cosmosia.notional.ventures',
+      ],
       currencies: [
         {
           coinDenom: 'STARS',
