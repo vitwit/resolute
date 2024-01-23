@@ -39,3 +39,9 @@ interface GetFeegrantsResponse {
   allowances: Allowance[];
   pagination: Pagination;
 }
+
+interface AddressFeegrants {
+  address: string;
+  chainID: string;
+  grants: Allowance[];
+}

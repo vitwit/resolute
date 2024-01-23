@@ -1,5 +1,5 @@
-import Axios, { AxiosResponse } from 'axios';
-import { convertPaginationToParams, cleanURL } from '@/utils/util';
+import { AxiosResponse } from 'axios';
+import { convertPaginationToParams } from '@/utils/util';
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
 import { MAX_TRY_END_POINTS } from '@/utils/constants';
 
