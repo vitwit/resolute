@@ -80,20 +80,20 @@ const StakingOverview = () => {
 
         dispatch(
           getDelegations({
-            baseURL,
+            baseURLs: restURLs,
             address,
             chainID,
           })
         );
         dispatch(
           getAllValidators({
-            baseURL,
+            baseURLs: restURLs,
             chainID,
           })
         );
         dispatch(
           getUnbonding({
-            baseURL,
+            baseURLs: restURLs,
             address,
             chainID,
           })
@@ -115,7 +115,7 @@ const StakingOverview = () => {
             chainID,
           })
         );
-        dispatch(getParams({ baseURL, chainID }));
+        dispatch(getParams({ baseURLs: restURLs, chainID }));
       });
     }
   }, []);

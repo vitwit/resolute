@@ -24,14 +24,14 @@ const useInitAuthzStaking = (chainIDs: string[]) => {
         const address = convertAddress(chainID, authzAddress);
         dispatch(
           getAuthzDelegations({
-            baseURL,
+            baseURLs: restURLs,
             address,
             chainID,
           })
         );
         dispatch(
           getAuthzUnbonding({
-            baseURL,
+            baseURLs: restURLs,
             address,
             chainID,
           })

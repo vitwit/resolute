@@ -115,20 +115,20 @@ const StakingPage = ({
   useEffect(() => {
     dispatch(
       getDelegations({
-        baseURL,
+        baseURLs: restURLs,
         address,
         chainID,
       })
     );
     dispatch(
       getAllValidators({
-        baseURL,
+        baseURLs: restURLs,
         chainID,
       })
     );
     dispatch(
       getUnbonding({
-        baseURL,
+        baseURLs: restURLs,
         address,
         chainID,
       })
@@ -150,7 +150,7 @@ const StakingPage = ({
         chainID,
       })
     );
-    dispatch(getParams({ baseURL, chainID }));
+    dispatch(getParams({ baseURLs: restURLs, chainID }));
   }, [chainID]);
 
   const onMenuAction = (type: string, validator: Validator) => {

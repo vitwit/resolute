@@ -12,6 +12,7 @@ import {
 } from '../../styles';
 import { getDelegations } from '@/store/features/staking/stakeSlice';
 import { INSUFFICIENT_BALANCE } from '@/utils/errors';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 interface UnDelegateProps {
   chainID: string;
@@ -23,9 +24,10 @@ interface UnDelegateProps {
 }
 
 const UnDelegate: React.FC<UnDelegateProps> = (props) => {
-  const { chainID, address, onDelegate, currency, baseURL } = props;
+  const { chainID, address, onDelegate, currency } = props;
   const dispatch = useAppDispatch();
-
+  const {getChainInfo} = useGetChainInfo();
+  const {restURLs} = getChainInfo(chainID)
   const {
     handleSubmit,
     control,
@@ -48,7 +50,7 @@ const UnDelegate: React.FC<UnDelegateProps> = (props) => {
   );
 
   useEffect(() => {
-    dispatch(getDelegations({ address, chainID, baseURL }));
+    dispatch(getDelegations({ address, chainID, baseURLs: restURLs }));
   }, []);
 
   interface stakeBal {

@@ -54,7 +54,7 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
       );
       dispatch(
         getUnbonding({
-          baseURL: chainInfo.config.rest,
+          baseURLs: chainInfo.config.restURIs,
           address: address,
           chainID,
         })

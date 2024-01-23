@@ -42,7 +42,7 @@ const useInitAuthzForOverview = (chainIDs: string[]) => {
         );
         dispatch(
           getAuthzUnbonding({
-            baseURL: chainInfo.config.rest,
+            baseURLs: chainInfo.config.restURIs,
             address: address,
             chainID,
           })

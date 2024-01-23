@@ -78,8 +78,8 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
       dispatch(
         getMultisigBalance({ baseURL, address, denom: coinMinimalDenom, baseURLs: restURLs })
       );
-      dispatch(getDelegations({ baseURL, address, chainID }));
-      dispatch(getAllValidators({ baseURL, chainID }));
+      dispatch(getDelegations({ baseURLs: restURLs, address, chainID }));
+      dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
       dispatch(multisigByAddress({ address }));
       dispatch(getMultisigAccounts(walletAddress));
     }

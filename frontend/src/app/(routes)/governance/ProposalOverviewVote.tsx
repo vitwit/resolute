@@ -198,7 +198,7 @@ const ProposalOverviewVote = ({
 
     dispatch(
       getPoolInfo({
-        baseURL: chainInfo?.config.rest,
+        baseURLs: chainInfo?.config.restURIs,
         chainID: chainID,
       })
     );
