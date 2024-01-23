@@ -235,7 +235,7 @@ interface DialogCreateMultisigProps {
   chainID: string;
   address: string;
   pubKey: string;
-  baseURL: string;
+  baseURLs: string[];
 }
 
 interface PubKeyFields {

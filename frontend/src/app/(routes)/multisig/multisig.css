@@ -160,7 +160,7 @@
 }
 
 .import-multisig-btn {
-  @apply rounded-2xl font-medium tracking-[0.64px] px-10 py-[10px] min-w-[205px] flex-center-center;
+  @apply rounded-2xl font-medium tracking-[0.64px] px-10 py-[10px] min-w-[205px] flex justify-center items-center;
 }
 
 .create-multisig-dialog-footer {

@@ -345,7 +345,7 @@ export const importMultisigAccount = createAsyncThunk(
   'multisig/importMultisigAccount',
   async (
     data: {
-      baseURL: string;
+      baseURLs: string[];
       accountAddress: string;
       multisigAddress: string;
       addressPrefix: string;
@@ -354,7 +354,7 @@ export const importMultisigAccount = createAsyncThunk(
   ) => {
     try {
       const response = await authService.accountInfo(
-        data.baseURL,
+        data.baseURLs,
         data.multisigAddress
       );
       if (response?.status === 200) {

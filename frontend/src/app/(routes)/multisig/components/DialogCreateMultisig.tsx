@@ -65,7 +65,7 @@ const getPubkey = async (address: string, baseURL: string) => {
 };
 
 const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
-  const { open, onClose, address, addressPrefix, chainID, pubKey, baseURL } =
+  const { open, onClose, address, addressPrefix, chainID, pubKey, baseURLs } =
     props;
   const dispatch = useAppDispatch();
   const [name, setName] = useState('');
@@ -84,7 +84,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     (state: RootState) => state.multisig.multisigAccountData
   );
 
-  const pubKeyObj = MULTISIG_PUBKEY_OBJECT;
+  const pubKeyObj = {...MULTISIG_PUBKEY_OBJECT};
 
   useEffect(() => {
     setDefaultFormValues();
@@ -208,7 +208,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     let isValid = true;
     const pubKeyValidationPromises = pubKeyFields.map(async (field, index) => {
       if (!field.isPubKey) {
-        const pubKey = await getPubkey(field.address, baseURL);
+        const pubKey = await getPubkey(field.address, baseURLs?.[0]);
         if (pubKey.length) {
           return { index, pubKey, error: '' };
         } else {
@@ -311,7 +311,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
         importMultisigAccount({
           accountAddress: address,
           multisigAddress: multisigAddress,
-          baseURL: baseURL,
+          baseURLs: baseURLs,
           addressPrefix: addressPrefix,
         })
       );
@@ -548,7 +548,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                         }}
                         className="text-only-btn"
                       >
-                        Import here
+                        Import Here
                       </button>
                     </div>
                   </div>
@@ -629,7 +629,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                       }}
                       className="text-only-btn"
                     >
-                      Create New here
+                      Create New Here
                     </button>
                   </div>
                 </div>
