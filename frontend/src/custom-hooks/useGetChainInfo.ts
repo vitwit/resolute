@@ -71,6 +71,7 @@ const useGetChainInfo = () => {
     const chainLogo = networks[chainID].network.logos.menu;
 
     return {
+      restURLs: config.restURIs,
       baseURL: rest,
       chainID,
       aminoConfig: aminoCfg,

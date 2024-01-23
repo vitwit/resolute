@@ -1,13 +1,15 @@
 'use client';
 
-import Axios, { AxiosResponse } from 'axios';
-import { convertPaginationToParams, cleanURL } from '../../../utils/util';
+import  { AxiosResponse } from 'axios';
+import { convertPaginationToParams } from '../../../utils/util';
 import {
   GetDelegationsResponse,
   GetParamsResponse,
   GetUnbondingResponse,
   GetValidatorsResponse,
 } from '../../../types/staking';
+import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
+import { MAX_TRY_END_POINTS } from '@/utils/constants';
 /* disable eslint*/
 const validatorsURL = '/cosmos/staking/v1beta1/validators';
 const delegationsURL = '/cosmos/staking/v1beta1/delegations/';
@@ -17,51 +19,51 @@ const paramsURL = '/cosmos/staking/v1beta1/params';
 const poolURL = '/cosmos/staking/v1beta1/pool';
 
 const fetchValidators = (
-  baseURL: string,
+  baseURLs: string[],
   status?: string,
   pagination?: KeyLimitPagination
 ): Promise<AxiosResponse<GetValidatorsResponse>> => {
-  let uri = `${cleanURL(baseURL)}${validatorsURL}`;
+  let endPoint = `${validatorsURL}`;
 
   const pageParams = convertPaginationToParams(pagination);
   if (status) {
-    uri += `?status=${status}`;
-    if (pageParams) uri += `&${pageParams}`;
+    endPoint += `?status=${status}`;
+    if (pageParams) endPoint += `&${pageParams}`;
   } else {
-    if (pageParams) uri += `?${pageParams}`;
+    if (pageParams) endPoint += `?${pageParams}`;
   }
 
-  return Axios.get(uri);
+  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
 };
 
 const fetchdelegations = (
-  baseURL: string,
+  baseURLs: string[],
   address: string,
   pagination: KeyLimitPagination
 ): Promise<AxiosResponse<GetDelegationsResponse>> => {
-  let uri = `${cleanURL(baseURL)}${delegationsURL}${address}`;
+  let endPoint = `${delegationsURL}${address}`;
   const pageParams = convertPaginationToParams(pagination);
-  if (pageParams !== '') uri += `?${pageParams}`;
+  if (pageParams !== '') endPoint += `?${pageParams}`;
 
-  return Axios.get(uri);
+  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
 };
 
 const fetchUnbonding = async (
-  baseURL: string,
+  baseURLs: string[],
   address: string
 ): Promise<AxiosResponse<GetUnbondingResponse>> => {
-  const uri = `${baseURL}${unbondingDelegationsURL(address)}`;
+  const endPoint = `${unbondingDelegationsURL(address)}`;
 
-  return Axios.get(uri);
+  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
 };
 
 const fetchParams = (
-  baseURL: string
+  baseURLs: string[]
 ): Promise<AxiosResponse<GetParamsResponse>> =>
-  Axios.get(`${cleanURL(baseURL)}${paramsURL}`);
+  axiosGetRequestWrapper(baseURLs, paramsURL, MAX_TRY_END_POINTS);
 
-const fetchPoolInfo = (baseURL: string): Promise<AxiosResponse> =>
-  Axios.get(`${cleanURL(baseURL)}${poolURL}`);
+const fetchPoolInfo = (baseURLs: string[]): Promise<AxiosResponse> =>
+  axiosGetRequestWrapper(baseURLs, poolURL, MAX_TRY_END_POINTS);
 
 const result = {
   validators: fetchValidators,
