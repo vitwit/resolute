@@ -985,9 +985,9 @@ export const networks: Network[] = [
           coinMinimalDenom: 'ustars',
           coinDecimals: 6,
           gasPriceStep: {
-            low: 0.01,
-            average: 0.025,
-            high: 0.03,
+            low: 1,
+            average: 1.1,
+            high: 1.2,
           },
         },
       ],
