@@ -23,6 +23,7 @@ const GovPage = ({ chainIDs }: { chainIDs: string[] }) => {
       const address = allChainInfo?.walletInfo?.bech32Address;
       const basicChainInputs = {
         baseURL: chainInfo.config.rest,
+        baseURLs: chainInfo.config.restURIs,
         address,
         chainID,
       };

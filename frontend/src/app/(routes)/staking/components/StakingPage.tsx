@@ -108,33 +108,34 @@ const StakingPage = ({
   );
 
   const { getChainInfo } = useGetChainInfo();
-  const { address, baseURL } = getChainInfo(chainID);
+  const { address, baseURL, restURLs } = getChainInfo(chainID);
 
   useInitAuthzStaking([chainID]);
 
   useEffect(() => {
     dispatch(
       getDelegations({
-        baseURL,
+        baseURLs: restURLs,
         address,
         chainID,
       })
     );
     dispatch(
       getAllValidators({
-        baseURL,
+        baseURLs: restURLs,
         chainID,
       })
     );
     dispatch(
       getUnbonding({
-        baseURL,
+        baseURLs: restURLs,
         address,
         chainID,
       })
     );
     dispatch(
       getDelegatorTotalRewards({
+        baseURLs: restURLs,
         baseURL,
         address,
         chainID,
@@ -143,12 +144,13 @@ const StakingPage = ({
     );
     dispatch(
       getBalances({
+        baseURLs: restURLs,
         baseURL,
         address,
         chainID,
       })
     );
-    dispatch(getParams({ baseURL, chainID }));
+    dispatch(getParams({ baseURLs: restURLs, chainID }));
   }, [chainID]);
 
   const onMenuAction = (type: string, validator: Validator) => {
