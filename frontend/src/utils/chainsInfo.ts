@@ -26,6 +26,16 @@ export const networks: Network[] = [
       chainName: 'Agoric',
       rest: 'https://agoric-api.polkachu.com',
       rpc: 'https://agoric-rpc.polkachu.com',
+      restURIs: [
+        'https://agoric-api.polkachu.com',
+        'https://api-agoric-ia.cosmosia.notional.ventures',
+        'https://api.agoric.stakewith.us',
+      ],
+      rpcURIs: [
+        'https://agoric-rpc.polkachu.com',
+        'https://rpc-agoric-ia.cosmosia.notional.ventures',
+        'https://agoric-rpc.stakeandrelax.net',
+      ],
       currencies: [
         {
           coinDenom: 'BLD',
@@ -107,6 +117,16 @@ export const networks: Network[] = [
       chainName: 'Akash',
       rest: 'https://api.resolute.vitwit.com/akash_api',
       rpc: 'https://api.resolute.vitwit.com/akash_rpc',
+      restURIs: [
+        'https://api.resolute.vitwit.com/akash_api',
+        'https://akash-api.polkachu.com',
+        'https://rest-akash.ecostake.com',
+      ],
+      rpcURIs: [
+        'https://api.resolute.vitwit.com/akash_rpc',
+        'https://akash-rpc.polkachu.com',
+        'https://rpc-akash.cosmos-spaces.cloud',
+      ],
       currencies: [
         {
           coinDenom: 'AKT',
@@ -178,6 +198,17 @@ export const networks: Network[] = [
       chainName: 'CosmosHub',
       rest: 'https://api-cosmoshub-ia.cosmosia.notional.ventures',
       rpc: 'https://cosmos-rpc.polkachu.com',
+      restURIs: [
+        'https://api-cosmoshub-ia.cosmosia.notional.ventures',
+        'https://cosmos-lcd.quickapi.com:443',
+        'https://cosmos-rest.staketab.org',
+        'https://lcd-cosmoshub.blockapsis.com',
+      ],
+      rpcURIs: [
+        'https://cosmos-rpc.polkachu.com',
+        'https://rpc-cosmoshub.blockapsis.com',
+        'https://cosmos-rpc.quickapi.com:443',
+      ],
       currencies: [
         {
           coinDenom: 'ATOM',
@@ -389,6 +420,16 @@ export const networks: Network[] = [
       chainName: 'Juno',
       rest: 'https://api.resolute.vitwit.com/juno_api',
       rpc: 'https://api.resolute.vitwit.com/juno_rpc',
+      restURIs: [
+        'https://api.resolute.vitwit.com/juno_api',
+        'https://rest-juno.ecostake.com',
+        'https://juno-api.polkachu.com',
+      ],
+      rpcURIs: [
+        'https://api.resolute.vitwit.com/juno_rpc',
+        'https://juno-rpc.polkachu.com',
+        'https://rpc-juno.ecostake.com',
+      ],
       currencies: [
         {
           coinDenom: 'JUNO',
@@ -530,6 +571,16 @@ export const networks: Network[] = [
       chainName: 'Osmosis',
       rest: 'https://osmosis-api.polkachu.com',
       rpc: 'https://rpc.osmosis.zone',
+      restURIs: [
+        'https://osmosis-api.polkachu.com',
+        'https://osmosis-lcd.quickapi.com:443',
+        'https://osmosis-api.polkachu.com',
+      ],
+      rpcURIs: [
+        'https://rpc.osmosis.zone',
+        'https://rpc-osmosis.blockapsis.com',
+        'https://osmosis-rpc.quickapi.com:443',
+      ],
       currencies: [
         {
           coinDenom: 'OSMO',
@@ -675,6 +726,16 @@ export const networks: Network[] = [
       chainName: 'Passage',
       rest: 'https://api.passage.vitwit.com',
       rpc: 'https://rpc.passage.vitwit.com',
+      restURIs: [
+        'https://api.passage.vitwit.com',
+        'https://passage-api.polkachu.com',
+        'https://api-passage-ia.cosmosia.notional.ventures/',
+      ],
+      rpcURIs: [
+        'https://rpc.passage.vitwit.com',
+        'passage-grpc.polkachu.com:15690',
+        'services.staketab.com:9023',
+      ],
       bip44: {
         coinType: 118,
       },
@@ -750,6 +811,16 @@ export const networks: Network[] = [
       chainName: 'DYDX',
       rest: 'https://dydx-rest.publicnode.com',
       rpc: 'https://dydx-rpc.publicnode.com:443',
+      restURIs: [
+        'https://dydx-rest.publicnode.com',
+        'https://dydx-dao-api.polkachu.com',
+        'https://api.dydx.nodestake.top:443',
+      ],
+      rpcURIs: [
+        'https://dydx-rpc.publicnode.com:443',
+        'https://dydx-dao-rpc.polkachu.com',
+        'https://dydx-rpc.lavenderfive.com:443',
+      ],
       currencies: [
         {
           coinDenom: 'DYDX',

@@ -110,6 +110,7 @@ interface GovParamsResponse {
 
 interface GetProposalsInVotingInputs {
   baseURL: string;
+  baseURLs: string[];
   chainID: string;
   voter: string;
   govV1: boolean;
@@ -119,6 +120,7 @@ interface GetProposalsInVotingInputs {
 
 interface GetProposalsInDepositInputs {
   baseURL: string;
+  baseURLs: string[];
   chainID: string;
   key?: string;
   limit?: number;
@@ -127,6 +129,7 @@ interface GetProposalsInDepositInputs {
 
 interface GetVotesInputs {
   baseURL: string;
+  baseURLs: string[];
   proposalId: number;
   voter: string;
   chainID: string;
@@ -137,6 +140,7 @@ interface GetVotesInputs {
 
 interface GetProposalTallyInputs {
   baseURL: string;
+  baseURLs: string[];
   proposalId: number;
   chainID: string;
   govV1: boolean;
@@ -144,11 +148,13 @@ interface GetProposalTallyInputs {
 
 interface GetDepositParamsInputs {
   baseURL: string;
+  baseURLs: string[];
   chainID: string;
 }
 
 interface GetProposalInputs {
   baseURL: string;
+  baseURLs: string[];
   proposalId: number;
   chainID: string;
   govV1: boolean;

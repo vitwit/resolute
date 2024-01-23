@@ -75,31 +75,32 @@ const StakingOverview = () => {
   useEffect(() => {
     if (chainIDs) {
       chainIDs.forEach((chainID) => {
-        const { address, baseURL } = getChainInfo(chainID);
+        const { address, baseURL, restURLs } = getChainInfo(chainID);
         const { minimalDenom } = getDenomInfo(chainID);
 
         dispatch(
           getDelegations({
-            baseURL,
+            baseURLs: restURLs,
             address,
             chainID,
           })
         );
         dispatch(
           getAllValidators({
-            baseURL,
+            baseURLs: restURLs,
             chainID,
           })
         );
         dispatch(
           getUnbonding({
-            baseURL,
+            baseURLs: restURLs,
             address,
             chainID,
           })
         );
         dispatch(
           getDelegatorTotalRewards({
+            baseURLs: restURLs,
             baseURL,
             address,
             chainID,
@@ -108,12 +109,13 @@ const StakingOverview = () => {
         );
         dispatch(
           getBalances({
+            baseURLs: restURLs,
             baseURL,
             address,
             chainID,
           })
         );
-        dispatch(getParams({ baseURL, chainID }));
+        dispatch(getParams({ baseURLs: restURLs, chainID }));
       });
     }
   }, []);

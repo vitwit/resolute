@@ -25,8 +25,13 @@ const initialState: AuthState = {};
 
 export const getAccountInfo = createAsyncThunk(
   'auth/accountInfo',
-  async (data: { chainID: string; baseURL: string; address: string }) => {
-    const response = await authService.accountInfo(data.baseURL, data.address);
+  async (data: {
+    chainID: string;
+    baseURL: string;
+    address: string;
+    baseURLs: string[];
+  }) => {
+    const response = await authService.accountInfo(data.baseURLs, data.address);
     return response.data;
   }
 );
