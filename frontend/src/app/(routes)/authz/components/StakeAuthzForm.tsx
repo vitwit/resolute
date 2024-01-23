@@ -46,7 +46,7 @@ const StakeAuthzForm = ({
   const dispatch = useAppDispatch();
   const chainID = selectedChains.length ? selectedChains[0] : '';
   const { getChainInfo } = useGetChainInfo();
-  const { baseURL } = getChainInfo(chainID);
+  const basicChainInfo = getChainInfo(chainID);
   const validators = useAppSelector(
     (state: RootState) => state.staking.chains?.[chainID]?.validators
   );
@@ -56,7 +56,9 @@ const StakeAuthzForm = ({
   );
   useEffect(() => {
     if (selectedChains.length === 1 && chainID) {
-      dispatch(getAllValidators({ baseURL, chainID }));
+      dispatch(
+        getAllValidators({ baseURLs: basicChainInfo.restURLs, chainID })
+      );
     }
   }, [chainID]);
 

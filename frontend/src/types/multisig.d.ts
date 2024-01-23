@@ -76,6 +76,7 @@ interface MultisigAddressPubkey {
 
 interface GetMultisigBalanceInputs {
   baseURL: string;
+  baseURLs: string[];
   address: string;
   denom: string;
 }

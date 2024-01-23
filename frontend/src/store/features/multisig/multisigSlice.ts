@@ -238,7 +238,7 @@ export const getMultisigBalance = createAsyncThunk(
   async (data: GetMultisigBalanceInputs, { rejectWithValue }) => {
     try {
       const response = await bankService.balance(
-        data.baseURL,
+        data.baseURLs,
         data.address,
         data.denom
       );
