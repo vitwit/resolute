@@ -120,7 +120,7 @@ const MenuItem = ({
       <Tooltip
         className={isMetamaskSupported() === false ? 'cursor-not-allowed' : authzSupport ? '' : 'cursor-not-allowed'}
         title={
-          isMetamaskSupported() === false ? 'MetaMask not support ' + itemName :
+          isMetamaskSupported() === false ? "MetaMask doesn't support " + itemName :
             authzSupport
               ? itemName
               : 'authz mode is not supported for ' + itemName

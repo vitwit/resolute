@@ -20,7 +20,11 @@ import CustomParticles from './Particles';
 import Loading from './Loading';
 declare let window: WalletWindow;
 
-import { experimentalSuggestChain, connectSnap, getSnap } from '@leapwallet/cosmos-snap-provider';
+import {
+  experimentalSuggestChain,
+  connectSnap,
+  getSnap,
+} from '@leapwallet/cosmos-snap-provider';
 import { CircularProgress } from '@mui/material';
 
 export const Landingpage = ({ children }: { children: React.ReactNode }) => {
@@ -39,9 +43,9 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
 
   const [load, setLoad] = useState<boolean>(false);
 
-  useEffect(()=>{
-    setLoad(false)
-  },[connected])
+  useEffect(() => {
+    setLoad(false);
+  }, [connected]);
 
   // window.ethereum.on('networkChanged', function (networkId: any) {
   //   // Time to reload your interface with the new networkId
@@ -65,7 +69,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   };
 
   const tryConnectWallet = async (walletName: string) => {
-    setLoad(true)
+    setLoad(true);
     if (walletName === 'metamask') {
       try {
         for (let i = 0; i < networks.length; i++) {
@@ -76,13 +80,15 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
           }
 
           try {
-            await experimentalSuggestChain(networks[i].config, { force: false })
+            await experimentalSuggestChain(networks[i].config, {
+              force: false,
+            });
           } catch (error) {
-            console.log('Error while connecting ', chainId)
+            console.log('Error while connecting ', chainId);
           }
         }
       } catch (error) {
-        console.log('trying to connect wallet ', error)
+        console.log('trying to connect wallet ', error);
       }
     }
 
@@ -165,22 +171,20 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
                       chains.
                     </div>
                   </div>
-                  {
-                    load ?
-                      <div
-                        className="landingpage-button"
-                      >
-                        <CircularProgress size={24} />
-                      </div> :
-                      <div
-                        className="landingpage-button"
-                        onClick={() => setConnectWalletDialogOpen(true)}
-                      >
-                        <p className="text-white text-lg font-bold">
-                          Connect Wallet
-                        </p>
-                      </div>
-                  }
+                  {load ? (
+                    <div className="landingpage-button">
+                      <CircularProgress size={24} sx={{ color: 'white' }} />
+                    </div>
+                  ) : (
+                    <div
+                      className="landingpage-button"
+                      onClick={() => setConnectWalletDialogOpen(true)}
+                    >
+                      <p className="text-white text-lg font-bold">
+                        Connect Wallet
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 

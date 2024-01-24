@@ -88,16 +88,16 @@ export const establishWalletConnection = createAsyncThunk(
             const chainId: string = networks[i].config.chainId;
             const chainName: string = networks[i].config.chainName;
             const walletInfo = await getKey(chainId);
-            walletName = walletInfo?.address;
+            if (walletInfo?.address.includes('cosmos')) {
+              walletName = walletInfo?.address;
+            }
             isNanoLedger = false;
 
             chainInfos[chainId] = {
               walletInfo: {
                 algo: walletInfo?.algo,
                 bech32Address: walletInfo?.address,
-                pubKey: Buffer.from(walletInfo?.pubkey).toString(
-                  'base64'
-                ),
+                pubKey: Buffer.from(walletInfo?.pubkey).toString('base64'),
                 isKeystone: '',
                 isNanoLedger: isNanoLedger,
                 name: walletName,
@@ -107,14 +107,12 @@ export const establishWalletConnection = createAsyncThunk(
 
             nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
               chainId;
-
           } catch (error) {
             console.log(
               `unable to connect to network ${networks[i].config.chainName}: `,
               error
             );
           }
-
         } else {
           try {
             if (
@@ -149,13 +147,14 @@ export const establishWalletConnection = createAsyncThunk(
               error
             );
 
-            dispatch(setError({
-              type: 'error',
-              message: `Unable to connect to network ${networks[i].config.chainName}`
-            }));
+            dispatch(
+              setError({
+                type: 'error',
+                message: `Unable to connect to network ${networks[i].config.chainName}`,
+              })
+            );
           }
         }
-
       }
 
       if (Object.keys(chainInfos).length === 0) {
