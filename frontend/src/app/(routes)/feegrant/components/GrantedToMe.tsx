@@ -4,6 +4,7 @@ import { NO_FEEGRANTS_TO_ME_TEXT } from '@/utils/constants';
 import { CircularProgress } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
+import FeegrantCard from './FeegrantCard';
 
 const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
   const { getGrantsToMe } = useFeeGrants();
@@ -15,8 +16,11 @@ const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
   return addressGrants.length ? (
     <>
       <div className="feegrant-card-grid">
-        {addressGrants.map((addressGrant) => JSON.stringify(addressGrant))}
-      </div>
+        {addressGrants.map((addressGrant) => (
+           <>{!!addressGrant.grants.length && 
+            <FeegrantCard chainID={addressGrant.chainID} expiration={''} address={addressGrant.address} spendLimit={''} isperiodic={true}/>}</>
+        ))}
+        </div>
     </>
   ) : !!loading ? (
     <div className="flex justify-center mt-[20%] items-center">
