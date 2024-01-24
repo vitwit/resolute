@@ -107,7 +107,7 @@ interface Tx {
 interface TxResponse {
   height: string;
   txhash: string;
-  tx: Tx;
+  tx?: Tx;
   codespace: string;
   code: number;
   data: string;
