@@ -12,7 +12,7 @@ const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
     setDialogGrantOpen(false);
   };
   return (
-    <div className="py-6 px-10">
+    <div className="py-6 px-10 h-screen overflow-y-scroll">
       <div className="space-y-10">
         <div className="flex justify-between items-center">
           <h2 className="page-title">Authz</h2>
