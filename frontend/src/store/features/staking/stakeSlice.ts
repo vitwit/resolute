@@ -179,7 +179,8 @@ export const txRestake = createAsyncThunk(
           data.denom
         }`,
         rest,
-        data?.feegranter?.length ? data.feegranter : undefined
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc
       );
       const tx = NewTransaction(result, data.msgs, chainID, address);
       dispatch(
@@ -268,7 +269,8 @@ export const txDelegate = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data?.feegranter?.length ? data.feegranter : undefined
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc
       );
       const tx = NewTransaction(
         result,
@@ -374,7 +376,8 @@ export const txReDelegate = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data?.feegranter?.length ? data.feegranter : undefined
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc
       );
 
       const tx = NewTransaction(
@@ -459,7 +462,8 @@ export const txUnDelegate = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data?.feegranter?.length ? data.feegranter : undefined
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc
       );
 
       const tx = NewTransaction(
@@ -559,7 +563,8 @@ export const txCancelUnbonding = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data?.feegranter?.length ? data.feegranter : undefined
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc
       );
       const tx = NewTransaction(
         result,

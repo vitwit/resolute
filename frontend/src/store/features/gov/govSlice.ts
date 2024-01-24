@@ -376,7 +376,8 @@ export const txVote = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data.feegranter
+        data.feegranter,
+        data?.basicChainInfo?.rpc
       );
 
       const tx = NewTransaction(

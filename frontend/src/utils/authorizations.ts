@@ -183,5 +183,4 @@ export const GENRIC_GRANTS = [
   'withdraw_commission',
   'unjail',
 ];
-
 export const STAKE_GRANTS = ['delegate', 'undelegate', 'redelegate'];

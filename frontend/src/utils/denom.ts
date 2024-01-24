@@ -19,12 +19,16 @@ export function parseTokens(
   displayName: string,
   coinDecimals: number
 ): string {
+  if (!tokens) {
+     return "0.0";
+  }
+
   if (tokens.length === 0) {
     return "0.0";
   }
 
   return `${parseFloat(
-    (Number(tokens[0].amount) / 10.0 ** coinDecimals).toFixed(coinDecimals)
+    (Number(tokens[0]?.amount) / 10.0 ** coinDecimals).toFixed(coinDecimals)
   )} ${displayName}`;
 }
 
@@ -33,8 +37,12 @@ export function parseBalance(
   coinDecimals: number,
   minimalDenom: string
 ): number {
+  if (!tokens) {
+    return 0.0
+  }
+
   const precision = coinDecimals > 6 ? 6 : coinDecimals;
-  if (tokens.length === 0) {
+  if (tokens?.length === 0) {
     return 0.0;
   }
 
