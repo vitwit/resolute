@@ -1,0 +1,14 @@
+.create-grant-btn {
+  @apply py-[10px] rounded-2xl px-10 text-[16px] font-medium leading-[20px] tracking-[0.64px];
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+
+.feegrants-type-btn,
+.feegrants-type-btn-selected {
+  @apply flex items-center rounded-full bg-[#FFFFFF1A] text-[14px] h-[33px] leading-normal px-6 py-2;
+  backdrop-filter: blur(2px);
+}
+
+.feegrants-type-btn-selected {
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}

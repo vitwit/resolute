@@ -1,6 +1,6 @@
 import {
   msgSendTypeUrl,
-  serialize as serializeMsgSend,
+  formattedSerialize as serializeMsgSend,
 } from '@/txns/bank/send';
 import {
   msgWithdrawRewards,
@@ -74,7 +74,11 @@ export const MsgType = (msg: string): string => {
   }
 };
 
-export const serializeMsg = (msg: Msg): string => {
+export const serializeMsg = (
+  msg: Msg,
+  decimals: number,
+  originDenom: string
+): string => {
   if (!msg) return 'No Message';
   switch (msg.typeUrl) {
     case msgDelegate:
@@ -84,7 +88,7 @@ export const serializeMsg = (msg: Msg): string => {
     case msgReDelegate:
       return serializeMsgRedelegte(msg);
     case msgSendTypeUrl:
-      return serializeMsgSend(msg);
+      return serializeMsgSend(msg, decimals, originDenom, true);
     case msgWithdrawRewards:
       return serializeMsgClaim(msg);
     case msgTransfer:
@@ -96,7 +100,12 @@ export const serializeMsg = (msg: Msg): string => {
   }
 };
 
-export const formatTransaction = (tx: Transaction, msgFilters: string[]) => {
+export const formatTransaction = (
+  tx: Transaction,
+  msgFilters: string[],
+  decimals: number,
+  originDenom: string
+) => {
   const msgs = tx.msgs;
   const showMsgs: [string, string, boolean] = ['', '', false];
   if (msgs[0]) {
@@ -121,7 +130,7 @@ export const formatTransaction = (tx: Transaction, msgFilters: string[]) => {
   const msgCount = msgs.length;
   const isTxSuccess = tx.code === 0;
   const time = getTimeDifference(tx.time);
-  const firstMessage = serializeMsg(tx.msgs[0]);
+  const firstMessage = serializeMsg(tx.msgs[0], decimals, originDenom);
   return {
     showMsgs,
     isTxSuccess,
