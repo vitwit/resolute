@@ -184,7 +184,7 @@ export const signAndBroadcast = async (
         );
 
         const result = await client.signAndBroadcast(accounts[0].address, messages, fee, memo);
-        
+
         const parseResult = parseTxResult({
           code: result?.code,
           codespace: '',
@@ -201,11 +201,17 @@ export const signAndBroadcast = async (
         })
 
         return Promise.resolve(parseResult)
-      } catch (error) {
-        console.log('error connect with signer', error)
       }
-    } catch (error) {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      catch (error: any) {
+        console.log('error connect with signer', error)
+        throw error?.message
+      }
+    }
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    catch (error: any) {
       console.log('error in sign and broadcast', error)
+      throw error?.message
     }
   } else {
     const txBody = await sign(
@@ -224,20 +230,20 @@ export const signAndBroadcast = async (
     return await broadcast(txBody, restUrl);
   }
 
-  return Promise.resolve(parseTxResult({
-    code: 0,
-    codespace: '',
-    data: '',
-    events: [],
-    gas_used: '',
-    gas_wanted: '',
-    height: '',
-    info: '',
-    logs: [],
-    timestamp: '',
-    raw_log: '',
-    txhash: ''
-  }))
+  // return Promise.resolve(parseTxResult({
+  //   code: 0,
+  //   codespace: '',
+  //   data: '',
+  //   events: [],
+  //   gas_used: '',
+  //   gas_wanted: '',
+  //   height: '',
+  //   info: '',
+  //   logs: [],
+  //   timestamp: '',
+  //   raw_log: '',
+  //   txhash: ''
+  // }))
 };
 
 function calculateFee(
