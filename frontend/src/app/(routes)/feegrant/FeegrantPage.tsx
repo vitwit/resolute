@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import TopNav from '@/components/TopNav';
-
-const FeegrantPage = ({ }: { chainIDs: string[] }) => {
+import GrantedByMe from './components/GrantedByMe';
+import GrantedToMe from './components/GrantedToMe';
+const FeegrantPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [isGrantedToMe, setIsGrantedToMe] = useState(true);
 
   return (
@@ -41,6 +42,13 @@ const FeegrantPage = ({ }: { chainIDs: string[] }) => {
             <div>
               <button className="create-grant-btn">Create Grant</button>
             </div>
+          </div>
+          <div>
+            {isGrantedToMe ? (
+              <GrantedToMe chainIDs={chainIDs} />
+            ) : (
+              <GrantedByMe chainIDs={chainIDs} />
+            )}
           </div>
         </div>
       </div>

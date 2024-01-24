@@ -161,8 +161,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/feegrant-icon-active.svg',
     link: '/feegrant',
     authzSupported: false,
-    
-  }
+  },
 ];
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
