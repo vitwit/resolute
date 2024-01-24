@@ -158,3 +158,15 @@
 .empty-screen-text {
   @apply text-[16px] my-6 leading-normal italic font-extralight text-center opacity-50;
 }
+
+.import-multisig-btn {
+  @apply rounded-2xl font-medium tracking-[0.64px] px-10 py-[10px] min-w-[205px] flex justify-center items-center;
+}
+
+.create-multisig-dialog-footer {
+  @apply mt-10 mb-6 flex flex-col justify-center items-center gap-6;
+}
+
+.text-only-btn {
+  @apply text-[18px] font-bold underline underline-offset-2;
+}

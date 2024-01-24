@@ -39,7 +39,7 @@ const AllMultisigs: React.FC<AllMultisigsProps> = (props) => {
   const [accountInfo] = useGetAccountInfo(chainID);
   const { pubkey } = accountInfo;
   const { getChainInfo } = useGetChainInfo();
-  const { prefix, baseURL } = getChainInfo(chainID);
+  const { prefix, restURLs } = getChainInfo(chainID);
 
   useEffect(() => {
     if (address) {
@@ -130,7 +130,7 @@ const AllMultisigs: React.FC<AllMultisigsProps> = (props) => {
         chainID={chainID}
         address={address}
         pubKey={pubkey}
-        baseURL={baseURL}
+        baseURLs={restURLs}
       />
     </div>
   );
