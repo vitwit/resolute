@@ -32,9 +32,12 @@ export function serialize(msg: Msg): string {
 export function formattedSerialize(
   msg: Msg,
   decimals: number,
-  originalDenom: string
+  originalDenom: string,
+  pastTense?: boolean
 ) {
   const { toAddress, amount } = msg.value;
   const parsedAmount = parseBalance(amount, decimals, amount[0].denom);
-  return `Send ${formatNumber(parsedAmount)} ${originalDenom} to ${toAddress}`;
+  return `${pastTense ? 'Sent' : 'Send'} ${formatNumber(
+    parsedAmount
+  )} ${originalDenom} to ${toAddress}`;
 }
