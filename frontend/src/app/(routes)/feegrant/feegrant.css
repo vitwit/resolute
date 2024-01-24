@@ -12,3 +12,7 @@
 .feegrants-type-btn-selected {
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
+
+.feegrant-card-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+}

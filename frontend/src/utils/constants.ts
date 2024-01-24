@@ -226,3 +226,5 @@ export const MULTISIG_PUBKEY_OBJECT = {
 };
 export const AXIOS_RETRIES_COUNT = 2;
 export const MAX_TRY_END_POINTS = 20;
+export const NO_FEEGRANTS_BY_ME_TEXT = "You haven't granted any allowance yet";
+export const NO_FEEGRANTS_TO_ME_TEXT = "You don't have any feegrants";

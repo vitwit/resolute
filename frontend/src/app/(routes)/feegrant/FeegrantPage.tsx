@@ -4,8 +4,14 @@ import React, { useState } from 'react';
 import TopNav from '@/components/TopNav';
 import GrantedByMe from './components/GrantedByMe';
 import GrantedToMe from './components/GrantedToMe';
+import DialogCreateFeegrant from './components/DialogCreateFeegrant';
 const FeegrantPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [isGrantedToMe, setIsGrantedToMe] = useState(true);
+
+  const [dialogGrantOpen, setDialogGrantOpen] = useState(false);
+  const handleDialogGrantClose = () => {
+    setDialogGrantOpen(false);
+  };
 
   return (
     <div className="py-6 px-10">
@@ -40,18 +46,30 @@ const FeegrantPage = ({ chainIDs }: { chainIDs: string[] }) => {
               </button>
             </div>
             <div>
-              <button className="create-grant-btn">Create Grant</button>
+              <button
+                className="create-grant-btn"
+                onClick={() => setDialogGrantOpen(true)}
+              >
+                Create Grant
+              </button>
             </div>
           </div>
           <div>
             {isGrantedToMe ? (
               <GrantedToMe chainIDs={chainIDs} />
             ) : (
-              <GrantedByMe chainIDs={chainIDs} />
+              <GrantedByMe
+                chainIDs={chainIDs}
+                handleGrantDialogOpen={() => setDialogGrantOpen(true)}
+              />
             )}
           </div>
         </div>
       </div>
+      <DialogCreateFeegrant
+        onClose={handleDialogGrantClose}
+        open={dialogGrantOpen}
+      />
     </div>
   );
 };
