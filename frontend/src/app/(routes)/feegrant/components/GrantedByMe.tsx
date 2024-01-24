@@ -4,6 +4,7 @@ import { NO_FEEGRANTS_BY_ME_TEXT } from '@/utils/constants';
 import { CircularProgress } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
+import FeegrantCard from './FeegrantCard';
 
 const GrantedByMe = ({
   chainIDs,
@@ -22,8 +23,10 @@ const GrantedByMe = ({
     <>
       <div className="feegrant-card-grid">
         {addressGrants.map((addressGrant) => (
-          <>{!!addressGrant.grants.length && JSON.stringify(addressGrant)}</>
+          <>{!!addressGrant.grants.length && 
+            <FeegrantCard chainID={addressGrant.chainID} expiration={''} address={addressGrant.address} spendLimit={''} isperiodic={true}/>}</>
         ))}
+        
       </div>
     </>
   ) : !!loading ? (

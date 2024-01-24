@@ -16,3 +16,30 @@
 .feegrant-card-grid {
   @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
 }
+
+.feegrant-small-text {
+  @apply text-[#FFFFFF80] text-sm font-normal leading-[normal];
+}
+.feegrant-card {
+  @apply flex flex-col items-start gap-4 backdrop-blur-[2px] p-6 rounded-2xl;
+  background: #0e0b26;
+}
+.feegrant-address {
+  @apply flex items-center gap-2 opacity-80 p-2 rounded-lg;
+  background: rgba(255, 255, 255, 0.1);
+}
+.revoke-btn {
+  @apply flex justify-center items-center gap-6 px-3 py-1.5 rounded-lg;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+.periodic {
+  @apply flex items-center gap-2 self-stretch opacity-80 p-2 rounded-lg text-[#DCA843];
+  background: rgba(220, 168, 67, 0.3);
+}
+.basic {
+  @apply flex items-center gap-2 flex-[1_0_0] self-stretch opacity-80 p-2 rounded-lg text-[#EFFF34];
+  background: rgba(239, 255, 52, 0.4);
+}
+.view-button {
+  @apply text-white text-xs not-italic font-medium leading-5 tracking-[0.48px] underline;
+}
