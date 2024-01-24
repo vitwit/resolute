@@ -50,6 +50,7 @@ const CreateFeegrantForm = ({
           control={control}
           error={errors?.spend_limit?.message || ''}
           name={'spend_limit'}
+          title={'Spend Limit'}
         />
         {isPeriodic && (
           <div className="flex gap-10">
@@ -57,11 +58,13 @@ const CreateFeegrantForm = ({
               error={errors?.period?.message || ''}
               control={control}
               name="period"
+              title={'Period'}
             />
             <CustomTextField
               control={control}
               error={errors?.period_spend_limit?.message || ''}
               name={'period_spend_limit'}
+              title={'Period Spend Limit'}
             />
           </div>
         )}

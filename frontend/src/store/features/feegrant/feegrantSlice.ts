@@ -1,8 +1,11 @@
 import { TxStatus } from '@/types/enums';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import feegrantService from './feegrantService';
 import { cloneDeep } from 'lodash';
 import { getAddressByPrefix } from '@/utils/address';
+import { signAndBroadcast } from '@/utils/signing';
+import { GAS_FEE } from '@/utils/constants';
+import { ERR_UNKNOWN } from '@/utils/errors';
 
 interface ChainAllowance {
   grantsToMe: Allowance[];
@@ -90,10 +93,82 @@ export const getGrantsByMe = createAsyncThunk(
   }
 );
 
+export const txCreateFeegrant = createAsyncThunk(
+  'feegrant/create-grant',
+  async (
+    data: TxCreateFeegrantInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        [data.msg],
+        GAS_FEE,
+        '',
+        `${data.feeAmount}${data.denom}`,
+        data.basicChainInfo.rest,
+        data.feegranter?.length > 0 ? data.feegranter : undefined
+      );
+
+      // TODO: Store txn, (This is throwing error because of BigInt in message)
+      // const tx = NewTransaction(
+      //   result,
+      //   data.msgs,
+      //   data.basicChainInfo.chainID,
+      //   data.basicChainInfo.address
+      // );
+      // dispatch(
+      //   addTransactions({
+      //     chainID: data.basicChainInfo.chainID,
+      //     address: data.basicChainInfo.cosmosAddress,
+      //     transactions: [tx],
+      //   })
+      // );
+
+      // dispatch(
+      //   setTxAndHash({
+      //     tx: undefined,
+      //     hash: tx.transactionHash,
+      //   })
+      // );
+
+      if (result?.code === 0) {
+        dispatch(
+          getGrantsByMe({
+            baseURLs: data.basicChainInfo.restURLs,
+            address: data.basicChainInfo.address,
+            chainID: data.basicChainInfo.chainID,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        return rejectWithValue(result?.rawLog);
+      }
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      return rejectWithValue(error?.message || ERR_UNKNOWN);
+    }
+  }
+);
+
 export const feegrantSlice = createSlice({
   name: 'feegrant',
   initialState,
-  reducers: {},
+  reducers: {
+    resetState: (state) => {
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      state = cloneDeep(initialState);
+    },
+    resetTxStatus: (state, action: PayloadAction<{ chainID: string }>) => {
+      const { chainID } = action.payload;
+      state.chains[chainID].tx = {
+        errMsg: '',
+        status: TxStatus.INIT,
+      };
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getGrantsToMe.pending, (state, action) => {
@@ -198,6 +273,33 @@ export const feegrantSlice = createSlice({
             action.error.message ||
             'An error occurred while fetching feegrants by me',
         };
+      });
+    builder
+      .addCase(txCreateFeegrant.pending, (state, action) => {
+        const { chainID } = action.meta.arg.basicChainInfo;
+        state.chains[chainID].tx.status = TxStatus.PENDING;
+        state.chains[chainID].tx.errMsg = '';
+      })
+      .addCase(txCreateFeegrant.fulfilled, (state, action) => {
+        const { chainID } = action.meta.arg.basicChainInfo;
+        const { txHash } = action.payload;
+        state.chains[chainID].tx.status = TxStatus.IDLE;
+        state.chains[chainID].tx.errMsg = '';
+        action.meta.arg.onTxComplete?.({
+          isTxSuccess: true,
+          txHash: txHash,
+        });
+      })
+      .addCase(txCreateFeegrant.rejected, (state, action) => {
+        const { chainID } = action.meta.arg.basicChainInfo;
+        state.chains[chainID].tx.status = TxStatus.REJECTED;
+        state.chains[chainID].tx.errMsg =
+          typeof action.payload === 'string' ? action.payload : '';
+        action.meta.arg.onTxComplete?.({
+          isTxSuccess: false,
+          error:
+            typeof action.payload === 'string' ? action.payload : ERR_UNKNOWN,
+        });
       });
   },
 });

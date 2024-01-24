@@ -7,15 +7,17 @@ const CustomTextField = ({
   error,
   control,
   name,
+  title,
 }: {
   error: string;
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   control: Control<any, any>;
   name: string;
+  title: string;
 }) => {
   return (
     <div className="w-full relative">
-      <div className="py-[6px] mb-2">Spend Limit</div>
+      <div className="py-[6px] mb-2">{title}</div>
       <Controller
         name={name}
         control={control}
@@ -23,7 +25,7 @@ const CustomTextField = ({
           validate: (value) => {
             const amount = Number(value);
             if (value?.length && (isNaN(amount) || amount <= 0))
-              return 'Invalid Amount';
+              return 'Invalid input';
           },
         }}
         render={({ field }) => (
@@ -34,7 +36,7 @@ const CustomTextField = ({
             required
             size="small"
             autoFocus={true}
-            placeholder="Spend Limit"
+            placeholder={title}
             sx={customMUITextFieldStyles}
             InputProps={{
               sx: {

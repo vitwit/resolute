@@ -2,13 +2,18 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { Dialog, DialogContent } from '@mui/material';
+import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import NetworkItem from '../../authz/components/NetworkItem';
 import { FieldValues, useForm } from 'react-hook-form';
 import CreateFeegrantForm from './CreateFeegrantForm';
 import { getFeegrantFormDefaultValues } from '@/utils/feegrant';
+import { convertToSnakeCase } from '@/utils/util';
+import useGetFeegrantMsgs from '@/custom-hooks/useGetFeegrantMsgs';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import useMultiTxTracker from '@/custom-hooks/useGetCreateFeegrantTxLoading';
+import MultiChainTxnStatus from '../../authz/components/MultiChainTxnStatus';
 
 interface DialogCreateFeegrantProps {
   open: boolean;
@@ -32,6 +37,10 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
   const [viewAllChains, setViewAllChains] = useState<boolean>(false);
   const [selectedMsgs, setSelectedMsgs] = useState<string[]>([]);
   const [allTxns, setAllTxns] = useState<boolean>(true);
+  const [txnStarted, setTxnStarted] = useState(false);
+  const { getFeegrantMsgs } = useGetFeegrantMsgs();
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { trackTxs, chainsStatus, currentTxCount } = useMultiTxTracker();
 
   const handleDialogClose = () => {
     onClose();
@@ -61,8 +70,39 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
     defaultValues: getFeegrantFormDefaultValues(),
   });
 
-  const onSubmit = (e: FieldValues) => {
-    console.log(e);
+  const onSubmit = (fieldValues: FieldValues) => {
+    const { chainWiseGrants } = getFeegrantMsgs({
+      isFiltered: !allTxns,
+      msgsList: selectedMsgs,
+      selectedChains,
+      isPeriodic,
+      fieldValues: fieldValues,
+    });
+    const txCreateFeegrantInputs: MultiChainFeegrantTx[] = [];
+
+    chainWiseGrants.forEach((chain) => {
+      const chainID = chain.chainID;
+      const msgs = chain.msg;
+      const basicChainInfo = getChainInfo(chainID);
+      const { minimalDenom, decimals } = getDenomInfo(chainID);
+      const { feeAmount: avgFeeAmount } = basicChainInfo;
+      const feeAmount = avgFeeAmount * 10 ** decimals;
+
+      txCreateFeegrantInputs.push({
+        ChainID: chainID,
+        txInputs: {
+          basicChainInfo: basicChainInfo,
+          msg: msgs,
+          denom: minimalDenom,
+          feeAmount: feeAmount,
+          feegranter: '',
+        },
+      });
+    });
+
+    console.log(chainWiseGrants);
+    setTxnStarted(true);
+    trackTxs(txCreateFeegrantInputs);
   };
 
   useEffect(() => {
@@ -130,31 +170,45 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
                   </div>
                 </div>
                 <div className="mt-10">
-                  <form
-                    onSubmit={handleSubmit((e) => onSubmit(e))}
-                    id="create-feegrant-form"
-                  >
-                    <CreateFeegrantForm
-                      control={control}
-                      errors={errors}
-                      isPeriodic={isPeriodic}
-                      setIsPeriodic={(value: boolean) => setIsPeriodic(value)}
-                      handleSelectMsg={handleSelectMsg}
+                  {txnStarted ? (
+                    <MultiChainTxnStatus
                       selectedMsgs={selectedMsgs}
-                      allTxns={allTxns}
-                      setAllTxns={(value: boolean) => setAllTxns(value)}
+                      selectedChains={selectedChains}
+                      chainsStatus={chainsStatus}
                     />
-                  </form>
+                  ) : (
+                    <form
+                      onSubmit={handleSubmit((e) => onSubmit(e))}
+                      id="create-feegrant-form"
+                    >
+                      <CreateFeegrantForm
+                        control={control}
+                        errors={errors}
+                        isPeriodic={isPeriodic}
+                        setIsPeriodic={(value: boolean) => setIsPeriodic(value)}
+                        handleSelectMsg={handleSelectMsg}
+                        selectedMsgs={selectedMsgs}
+                        allTxns={allTxns}
+                        setAllTxns={(value: boolean) => setAllTxns(value)}
+                      />
+                    </form>
+                  )}
                 </div>
-                <div className="mt-10 flex justify-end text-right">
-                  <button
-                    type="submit"
-                    form="create-feegrant-form"
-                    className="primary-custom-btn w-[186px]"
-                  >
-                    Create Grant
-                  </button>
-                </div>
+                {!txnStarted && (
+                  <div className="mt-10 flex justify-end text-right">
+                    <button
+                      type="submit"
+                      form="create-feegrant-form"
+                      className="primary-custom-btn w-[186px]"
+                    >
+                      {currentTxCount !== 0 ? (
+                        <CircularProgress size={20} sx={{ color: 'white' }} />
+                      ) : (
+                        'Create Grant'
+                      )}
+                    </button>
+                  </div>
+                )}
               </div>
             </>
           </div>
