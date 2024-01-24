@@ -1,8 +1,9 @@
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { Dialog, DialogContent } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
+
 const DialogTransactionMessages = ({
   open,
   onClose,
@@ -13,9 +14,7 @@ const DialogTransactionMessages = ({
   const handleDialogClose = () => {
     onClose();
   };
-  const [selectedTransaction, setSelectedTransaction] = useState<string | null>(
-    null
-  );
+
   const transactionMessages = [
     'Vote',
     'Send',
@@ -27,11 +26,13 @@ const DialogTransactionMessages = ({
     'Send',
     'Feegrant',
   ];
+
   const rows = [];
   for (let i = 0; i < transactionMessages.length; i += 5) {
     const rowMessages = transactionMessages.slice(i, i + 5);
     rows.push(rowMessages);
   }
+
   return (
     <div>
       <Dialog
@@ -45,7 +46,6 @@ const DialogTransactionMessages = ({
         <DialogContent sx={{ padding: 0 }}>
           <div className="max-w-[890px] text-white">
             <div className="px-10 pb-6 pt-10 flex justify-end">
-              {' '}
               <div onClick={onClose}>
                 <Image
                   className="cursor-pointer"
@@ -66,11 +66,11 @@ const DialogTransactionMessages = ({
               <div className="divider-line space-y-4"></div>
               {rows.map((row, rowIndex) => (
                 <div key={rowIndex} className="flex flex-wrap gap-6">
-                  {row.map((message, messageIndex) => (
+                  {row.map((message) => (
                     <div
                       key={message}
                       className="transaction-message-btn cursor-pointer"
-                      onClick={() => setSelectedTransaction(message)}
+                      onClick={() => console.log(`Clicked: ${message}`)}
                     >
                       <p className="feegrant-address">{message}</p>
                     </div>
@@ -85,4 +85,5 @@ const DialogTransactionMessages = ({
     </div>
   );
 };
+
 export default DialogTransactionMessages;

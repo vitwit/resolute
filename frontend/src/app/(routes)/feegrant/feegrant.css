@@ -43,3 +43,11 @@
 .view-button {
   @apply text-white text-xs not-italic font-medium leading-5 tracking-[0.48px] underline;
 }
+.main-btn {
+  @apply flex justify-center items-center gap-6 px-10 py-2.5 rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
+}
+.text-background {
+  @apply flex h-[54px] items-center gap-2  px-4 py-0 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}

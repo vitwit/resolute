@@ -21,9 +21,6 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
   address,
   spendLimit,
 }) => {
-  const [selectedTransaction, setSelectedTransaction] = useState<string | null>(
-    null
-  );
   const transactionMessages = ['Vote', 'Send', 'Feegrant'];
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
@@ -46,10 +43,6 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
   const [isDialogTransactionOpen, setIsDialogTransactionOpen] = useState(false);
   const toggleDialogTransaction = () => {
     setIsDialogTransactionOpen(!isDialogTransactionOpen);
-  };
-  const handleViewTransaction = (transaction: string) => {
-    setSelectedTransaction(transaction);
-    toggleDialogTransaction();
   };
   const cardType = 'periodic';
 
@@ -122,7 +115,7 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
             <div
               key={message}
               className="transaction-message-btn cursor-pointer"
-              onClick={() => setSelectedTransaction(message)}
+              onClick={() => console.log(`Clicked: ${message}`)}
             >
               <p className="feegrant-address">{message}</p>
             </div>
@@ -142,7 +135,7 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
         {cardType === 'periodic' && (
           <button
             className="view-button"
-            onClick={() => handleViewTransaction('View Transaction')}
+            onClick={() => toggleDialogTransaction()}
           >
             View Transaction
           </button>
@@ -150,11 +143,12 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
       </div>
       {isDialogTransactionOpen && (
         <DialogTransactionDetails
-          onClose={toggleDialogTransaction}
+          onClose={() => setIsDialogTransactionOpen(false)}
           open={isDialogTransactionOpen}
         />
       )}
     </div>
   );
 };
+
 export default FeegrantCard;
