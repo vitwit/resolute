@@ -83,6 +83,7 @@ const AllProposals = ({
       const address = allChainInfo?.walletInfo?.bech32Address;
       const govV1 = allChainInfo?.network?.govV1;
       const basicChainInputs = {
+        baseURLs: chainInfo.config.restURIs,
         baseURL: chainInfo.config.rest,
         voter: address,
         chainID,
@@ -92,6 +93,7 @@ const AllProposals = ({
       dispatch(getProposalsInVoting(basicChainInputs));
       dispatch(
         getProposalsInDeposit({
+          baseURLs: chainInfo.config.restURIs,
           baseURL: chainInfo.config.rest,
           chainID,
           govV1,

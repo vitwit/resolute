@@ -59,13 +59,14 @@ const initialState: BankState = {
 export const getBalances = createAsyncThunk(
   'bank/balances',
   async (data: {
+    baseURLs: string[];
     baseURL: string;
     address: string;
     chainID: string;
     pagination?: KeyLimitPagination;
   }) => {
     const response = await bankService.balances(
-      data.baseURL,
+      data.baseURLs,
       data.address,
       data.pagination
     );
@@ -79,13 +80,14 @@ export const getBalances = createAsyncThunk(
 export const getAuthzBalances = createAsyncThunk(
   'bank/authz-balances',
   async (data: {
+    baseURLs: string[];
     baseURL: string;
     address: string;
     chainID: string;
     pagination?: KeyLimitPagination;
   }) => {
     const response = await bankService.balances(
-      data.baseURL,
+      data.baseURLs,
       data.address,
       data.pagination
     );
@@ -110,6 +112,7 @@ export const multiTxns = createAsyncThunk(
       feeAmount,
       address,
       rest,
+      restURLs,
     } = data.basicChainInfo;
     try {
       const result = await signAndBroadcast(
@@ -133,7 +136,9 @@ export const multiTxns = createAsyncThunk(
       );
       dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
       if (result?.code === 0) {
-        dispatch(getBalances({ baseURL: rest, chainID, address }));
+        dispatch(
+          getBalances({ baseURL: rest, chainID, address, baseURLs: restURLs })
+        );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);
@@ -153,6 +158,7 @@ export const txBankSend = createAsyncThunk(
   ) => {
     const { chainID, cosmosAddress } = data.basicChainInfo;
 
+
     try {
       let msgs: Msg[] = [];
 
@@ -162,19 +168,27 @@ export const txBankSend = createAsyncThunk(
         msgs = [SendMsg(data.from, data.to, data.amount, data.denom)];
       }
 
-      const result = await signAndBroadcast(
-        data.basicChainInfo.chainID,
-        data.basicChainInfo.aminoConfig,
-        data.basicChainInfo.prefix,
-        msgs,
-        GAS_FEE,
-        data.memo,
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
-          data.denom
-        }`,
-        data.basicChainInfo.rest,
-        data.feegranter
-      );
+      let result;
+
+      try {
+        result = await signAndBroadcast(
+          data.basicChainInfo.chainID,
+          data.basicChainInfo.aminoConfig,
+          data.basicChainInfo.prefix,
+          msgs,
+          GAS_FEE,
+          data.memo,
+          `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
+          }`,
+          data.basicChainInfo.rest,
+          data.feegranter,
+          data?.basicChainInfo?.rpc
+        );
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+      } catch (error: any) {
+        return rejectWithValue(error?.message);
+      }
+
 
       const tx = NewTransaction(
         result,
@@ -182,6 +196,7 @@ export const txBankSend = createAsyncThunk(
         chainID,
         data.basicChainInfo.address
       );
+      
       dispatch(
         addTransactions({
           chainID: data.basicChainInfo.chainID,
@@ -192,14 +207,18 @@ export const txBankSend = createAsyncThunk(
       dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
       if (result?.code === 0) {
         if (data.isAuthzMode) {
-          dispatch(getAuthzBalances({
-            baseURL: data.basicChainInfo.rest,
-            chainID,
-            address: data.authzChainGranter
-          }))
+          dispatch(
+            getAuthzBalances({
+              baseURLs: data.basicChainInfo.restURLs,
+              baseURL: data.basicChainInfo.rest,
+              chainID,
+              address: data.authzChainGranter,
+            })
+          );
         } else {
           dispatch(
             getBalances({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: data.basicChainInfo.rest,
               chainID,
               address: data.basicChainInfo.address,

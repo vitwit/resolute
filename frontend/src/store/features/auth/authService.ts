@@ -1,14 +1,17 @@
-import Axios, { AxiosResponse } from 'axios';
-import { cleanURL } from '@/utils/util';
-import { QueryAccountResponse } from 'cosmjs-types/cosmos/auth/v1beta1/query';
+import { AxiosResponse } from 'axios';
+import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
+import { MAX_TRY_END_POINTS } from '@/utils/constants';
 
 const accountInfoURL = '/cosmos/auth/v1beta1/accounts/';
 
 const fetchAccountInfo = (
-  baseURL: string,
+  baseURLs: string[],
   address: string
-): Promise<AxiosResponse<BaseAccountInfoResponse | QueryAccountResponse>> =>
-  Axios.get(`${cleanURL(baseURL)}${accountInfoURL}${address}`);
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+): Promise<AxiosResponse<any>> => {
+  const endPoint = `${accountInfoURL}${address}`;
+  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+};
 
 const result = {
   accountInfo: fetchAccountInfo,

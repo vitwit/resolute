@@ -11,12 +11,16 @@ export const SUPPORTED_WALLETS = [
     name: 'Cosmostation',
     logo: '/cosmostation-wallet-logo.png',
   },
+  {
+    name: 'MetaMask',
+    logo: '/metamask.png',
+  },
 ];
 
 export const USD_CURRENCY = 'usd';
 export const GAS_FEE = 860000;
 export const ADD_NETWORK_TEMPLATE_URL =
-  'https://raw.githubusercontent.com/vitwit/resolute/b5d184c8da894b2fea0ed40e56a599a1d813c422/frontend/public/add-network-template.json';
+  'https://raw.githubusercontent.com/vitwit/resolute/88d2fe5f62b300e90b122d10a257f9acef89643b/frontend/public/add-network-template.json';
 export const PROPOSAL_STATUS_VOTING_PERIOD = 'PROPOSAL_STATUS_VOTING_PERIOD';
 export const COSMOS_CHAIN_ID = 'cosmoshub-4';
 export const OFFCHAIN_VERIFICATION_MESSAGE =
@@ -112,6 +116,7 @@ export const MULTISIG_REDELEGATE_TEMPLATE =
 export const txBroadcastTimeoutMs = 60_000;
 export const txBroadcastPollIntervalMs = 3_000;
 export const TRACK_IBC_TX_TIME_INTERVAL = 15000;
+
 export const SIDENAV_MENU_ITEMS = [
   {
     name: 'Overview',
@@ -119,6 +124,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/overview-icon-active.svg',
     link: '/',
     authzSupported: true,
+    isMetaMaskSupports: true,
   },
   {
     name: 'Transfers',
@@ -126,6 +132,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/transfers-icon-active.svg',
     link: '/transfers',
     authzSupported: true,
+    isMetaMaskSupports: true,
   },
   {
     name: 'Governance',
@@ -133,6 +140,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/gov-icon-active.svg',
     link: '/governance',
     authzSupported: true,
+    isMetaMaskSupports: true,
   },
   {
     name: 'Staking',
@@ -140,6 +148,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/staking-icon-active.svg',
     link: '/staking',
     authzSupported: true,
+    isMetaMaskSupports: true,
   },
   {
     name: 'Authz',
@@ -147,6 +156,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/authz-icon-active.svg',
     link: '/authz',
     authzSupported: false,
+    isMetaMaskSupports: false,
   },
   {
     name: 'Multisig',
@@ -154,6 +164,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/multisig-icon-active.svg',
     link: '/multisig',
     authzSupported: false,
+    isMetaMaskSupports: false,
   },
 ];
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
@@ -185,9 +196,25 @@ export const MIN_SALT_VALUE = 99999;
 export const MAX_SALT_VALUE = 99999999;
 export const NO_GRANTS_BY_ME_TEXT = "You haven't granted any permission yet";
 export const NO_GRANTS_TO_ME_TEXT = "You don't have any grants";
-
+export const SECP256K1_PUBKEY_TYPE = '/cosmos.crypto.secp256k1.PubKey';
+export const MULTISIG_LEGACY_AMINO_PUBKEY_TYPE =
+  '/cosmos.crypto.multisig.LegacyAminoPubKey';
 export const GENERIC_AUTHORIZATION_TYPE =
   '/cosmos.authz.v1beta1.GenericAuthorization';
 export const STAKE_AUTHORIZATION_TYPE =
   '/cosmos.staking.v1beta1.StakeAuthorization';
 export const SEND_AUTHORIZATION_TYPE = '/cosmos.bank.v1beta1.SendAuthorization';
+export const MULTISIG_PUBKEY_OBJECT = {
+  name: 'pubKey',
+  value: '',
+  label: 'Public Key (Secp256k1)',
+  placeHolder: 'E. g. AtgCrYjD+21d1+og3inzVEOGbCf5uhXnVeltFIo7RcRp',
+  required: true,
+  disabled: false,
+  isPubKey: false,
+  address: '',
+  pubKey: '',
+  error: '',
+};
+export const AXIOS_RETRIES_COUNT = 2;
+export const MAX_TRY_END_POINTS = 20;

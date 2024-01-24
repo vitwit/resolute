@@ -1,4 +1,5 @@
 interface BasicChainInfo {
+  restURLs: string[];
   baseURL: string;
   chainID: string;
   aminoConfig: AminoConfig;

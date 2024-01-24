@@ -36,6 +36,8 @@ type Theme = {
 interface NetworkConfig {
   rpc: string;
   rest: string;
+  restURIs: string[];
+  rpcURIs: string[];
   chainId: string;
   chainName: string;
   stakeCurrency: StakeCurrency;

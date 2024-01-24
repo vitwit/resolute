@@ -169,7 +169,7 @@ export const getProposal = createAsyncThunk(
   async (data: GetProposalInputs, { rejectWithValue }) => {
     try {
       const response = await govService.proposal(
-        data.baseURL,
+        data.baseURLs,
         data.proposalId,
         data.govV1
       );
@@ -189,7 +189,7 @@ export const getGovTallyParams = createAsyncThunk(
   'gov/tally-params',
   async (data: GetDepositParamsInputs, { rejectWithValue }) => {
     try {
-      const response = await govService.govTallyParams(data.baseURL);
+      const response = await govService.govTallyParams(data.baseURLs);
       return {
         chainID: data.chainID,
         data: response.data,
@@ -207,7 +207,7 @@ export const getProposalsInDeposit = createAsyncThunk(
   async (data: GetProposalsInDepositInputs, { rejectWithValue, dispatch }) => {
     try {
       const response = await govService.proposals(
-        data.baseURL,
+        data.baseURLs,
         data?.key,
         data?.limit,
         PROPSAL_STATUS_DEPOSIT,
@@ -218,6 +218,7 @@ export const getProposalsInDeposit = createAsyncThunk(
         dispatch(
           getDepositParams({
             baseURL: data.baseURL,
+            baseURLs: data.baseURLs,
             chainID: data.chainID,
           })
         );
@@ -239,7 +240,7 @@ export const getDepositParams = createAsyncThunk(
   'gov/deposit-params',
   async (data: GetDepositParamsInputs, { rejectWithValue }) => {
     try {
-      const response = await govService.depositParams(data.baseURL);
+      const response = await govService.depositParams(data.baseURLs);
 
       return {
         chainID: data.chainID,
@@ -258,7 +259,7 @@ export const getProposalsInVoting = createAsyncThunk(
   async (data: GetProposalsInVotingInputs, { rejectWithValue, dispatch }) => {
     try {
       const response = await govService.proposals(
-        data.baseURL,
+        data.baseURLs,
         data.key,
         data.limit,
         PROPOSAL_STATUS_ACTIVE,
@@ -272,6 +273,7 @@ export const getProposalsInVoting = createAsyncThunk(
         dispatch(
           getProposalTally({
             baseURL: data?.baseURL,
+            baseURLs: data?.baseURLs,
             proposalId,
             chainID: data?.chainID,
             govV1: data.govV1,
@@ -280,6 +282,7 @@ export const getProposalsInVoting = createAsyncThunk(
         dispatch(
           getVotes({
             baseURL: data?.baseURL,
+            baseURLs: data?.baseURLs,
             proposalId,
             voter: data?.voter,
             chainID: data?.chainID,
@@ -305,7 +308,7 @@ export const getVotes = createAsyncThunk(
   async (data: GetVotesInputs, { rejectWithValue }) => {
     try {
       const response = await govService.votes(
-        data.baseURL,
+        data.baseURLs,
         data.proposalId,
         data.voter,
         data.key,
@@ -332,7 +335,7 @@ export const getProposalTally = createAsyncThunk(
   async (data: GetProposalTallyInputs, { rejectWithValue }) => {
     try {
       const response = await govService.tally(
-        data.baseURL,
+        data.baseURLs,
         data.proposalId,
         data.govV1
       );
@@ -373,7 +376,8 @@ export const txVote = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data.feegranter
+        data.feegranter,
+        data?.basicChainInfo?.rpc
       );
 
       const tx = NewTransaction(
