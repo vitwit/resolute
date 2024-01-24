@@ -20,12 +20,14 @@ import {
   TWITTER_LINK,
 } from '@/utils/constants';
 import useInitAuthz from '@/custom-hooks/useInitAuthz';
+import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
   const pathParts = pathName.split('/');
   const selectedPart = getSelectedPartFromURL(pathParts).toLowerCase();
   useInitAuthz();
+  useInitFeegrant();
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
 
   return (
