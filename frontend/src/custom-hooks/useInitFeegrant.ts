@@ -14,14 +14,14 @@ const useInitFeegrant = () => {
   useEffect(() => {
     chainIDs.forEach((chainID) => {
       const { address, baseURL, restURLs } = getChainInfo(chainID);
-      const authzInputs = {
+      const feegrantInputs = {
         baseURLs: restURLs,
         address,
         baseURL,
         chainID,
       };
-      dispatch(getGrantsByMe(authzInputs));
-      dispatch(getGrantsToMe(authzInputs));
+      dispatch(getGrantsByMe(feegrantInputs));
+      dispatch(getGrantsToMe(feegrantInputs));
     });
   }, []);
 };

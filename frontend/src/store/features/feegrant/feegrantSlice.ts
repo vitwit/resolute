@@ -196,7 +196,7 @@ export const feegrantSlice = createSlice({
           status: TxStatus.REJECTED,
           errMsg:
             action.error.message ||
-            'An error occurred while fetching authz grants by me',
+            'An error occurred while fetching feegrants by me',
         };
       });
   },
