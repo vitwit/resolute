@@ -39,7 +39,7 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
     };
     try {
       const client = await SigningStargateClient.connect(rpc);
-      
+
       const result = await getWalletAmino(chainID);
       const wallet = result[0];
       const signingClient = await SigningStargateClient.offline(wallet);
