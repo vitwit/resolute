@@ -11,6 +11,10 @@ export const SUPPORTED_WALLETS = [
     name: 'Cosmostation',
     logo: '/cosmostation-wallet-logo.png',
   },
+  {
+    name: 'MetaMask',
+    logo: '/metamask.png',
+  },
 ];
 
 export const USD_CURRENCY = 'usd';
@@ -112,6 +116,7 @@ export const MULTISIG_REDELEGATE_TEMPLATE =
 export const txBroadcastTimeoutMs = 60_000;
 export const txBroadcastPollIntervalMs = 3_000;
 export const TRACK_IBC_TX_TIME_INTERVAL = 15000;
+
 export const SIDENAV_MENU_ITEMS = [
   {
     name: 'Overview',
@@ -119,6 +124,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/overview-icon-active.svg',
     link: '/',
     authzSupported: true,
+    isMetaMaskSupports: true,
   },
   {
     name: 'Transfers',
@@ -126,6 +132,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/transfers-icon-active.svg',
     link: '/transfers',
     authzSupported: true,
+    isMetaMaskSupports: true,
   },
   {
     name: 'Governance',
@@ -133,6 +140,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/gov-icon-active.svg',
     link: '/governance',
     authzSupported: true,
+    isMetaMaskSupports: true,
   },
   {
     name: 'Staking',
@@ -140,6 +148,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/staking-icon-active.svg',
     link: '/staking',
     authzSupported: true,
+    isMetaMaskSupports: true,
   },
   {
     name: 'Authz',
@@ -147,6 +156,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/authz-icon-active.svg',
     link: '/authz',
     authzSupported: false,
+    isMetaMaskSupports: false,
   },
   {
     name: 'Multisig',
@@ -154,6 +164,7 @@ export const SIDENAV_MENU_ITEMS = [
     activeIcon: '/multisig-icon-active.svg',
     link: '/multisig',
     authzSupported: false,
+    isMetaMaskSupports: false,
   },
   {
     name: 'Feegrant',

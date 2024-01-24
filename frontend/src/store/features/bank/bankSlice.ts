@@ -158,6 +158,7 @@ export const txBankSend = createAsyncThunk(
   ) => {
     const { chainID, cosmosAddress } = data.basicChainInfo;
 
+
     try {
       let msgs: Msg[] = [];
 
@@ -167,19 +168,27 @@ export const txBankSend = createAsyncThunk(
         msgs = [SendMsg(data.from, data.to, data.amount, data.denom)];
       }
 
-      const result = await signAndBroadcast(
-        data.basicChainInfo.chainID,
-        data.basicChainInfo.aminoConfig,
-        data.basicChainInfo.prefix,
-        msgs,
-        GAS_FEE,
-        data.memo,
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
-          data.denom
-        }`,
-        data.basicChainInfo.rest,
-        data.feegranter
-      );
+      let result;
+
+      try {
+        result = await signAndBroadcast(
+          data.basicChainInfo.chainID,
+          data.basicChainInfo.aminoConfig,
+          data.basicChainInfo.prefix,
+          msgs,
+          GAS_FEE,
+          data.memo,
+          `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
+          }`,
+          data.basicChainInfo.rest,
+          data.feegranter,
+          data?.basicChainInfo?.rpc
+        );
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+      } catch (error: any) {
+        return rejectWithValue(error?.message);
+      }
+
 
       const tx = NewTransaction(
         result,
@@ -187,6 +196,7 @@ export const txBankSend = createAsyncThunk(
         chainID,
         data.basicChainInfo.address
       );
+      
       dispatch(
         addTransactions({
           chainID: data.basicChainInfo.chainID,

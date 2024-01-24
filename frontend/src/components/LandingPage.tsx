@@ -18,6 +18,14 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import WalletPopup from './WalletPopup';
 import CustomParticles from './Particles';
 import Loading from './Loading';
+declare let window: WalletWindow;
+
+import {
+  experimentalSuggestChain,
+  connectSnap,
+  getSnap,
+} from '@leapwallet/cosmos-snap-provider';
+import { CircularProgress } from '@mui/material';
 
 export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
@@ -33,12 +41,57 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     );
   };
 
+  const [load, setLoad] = useState<boolean>(false);
+
+  useEffect(() => {
+    setLoad(false);
+  }, [connected]);
+
+  // window.ethereum.on('networkChanged', function (networkId: any) {
+  //   // Time to reload your interface with the new networkId
+  //   console.log(networkId)
+  // })
+
+  // window.ethereum.on('accountsChanged', function (accounts: any) {
+  //   // Time to reload your interface with accounts[0]!
+  //   console.log('accounts==', accounts)
+  //   const walletName = getWalletName();
+  //   if (isConnected()) {
+  //     tryConnectWallet(walletName);
+  //   } else {
+  //     dispatch(unsetIsLoading());
+  //   }
+  // })
+
   const selectWallet = (walletName: string) => {
     tryConnectWallet(walletName);
     handleClose();
   };
 
-  const tryConnectWallet = (walletName: string) => {
+  const tryConnectWallet = async (walletName: string) => {
+    setLoad(true);
+    if (walletName === 'metamask') {
+      try {
+        for (let i = 0; i < networks.length; i++) {
+          const chainId: string = networks[i].config.chainId;
+          const snapInstalled = await getSnap();
+          if (!snapInstalled) {
+            await connectSnap(); // Initiates installation if not already present
+          }
+
+          try {
+            await experimentalSuggestChain(networks[i].config, {
+              force: false,
+            });
+          } catch (error) {
+            console.log('Error while connecting ', chainId);
+          }
+        }
+      } catch (error) {
+        console.log('trying to connect wallet ', error);
+      }
+    }
+
     dispatch(
       establishWalletConnection({
         walletName,
@@ -118,14 +171,20 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
                       chains.
                     </div>
                   </div>
-                  <div
-                    className="landingpage-button"
-                    onClick={() => setConnectWalletDialogOpen(true)}
-                  >
-                    <p className="text-white text-lg font-bold">
-                      Connect Wallet
-                    </p>
-                  </div>
+                  {load ? (
+                    <div className="landingpage-button">
+                      <CircularProgress size={24} sx={{ color: 'white' }} />
+                    </div>
+                  ) : (
+                    <div
+                      className="landingpage-button"
+                      onClick={() => setConnectWalletDialogOpen(true)}
+                    >
+                      <p className="text-white text-lg font-bold">
+                        Connect Wallet
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
