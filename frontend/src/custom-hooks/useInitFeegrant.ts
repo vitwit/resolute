@@ -6,6 +6,10 @@ import {
   getGrantsToMe,
 } from '@/store/features/feegrant/feegrantSlice';
 
+/**
+ * This custom hook is used to dispatch the feegrantsByMe and feegrantsToMe
+ *
+ */
 const useInitFeegrant = () => {
   const networks = useAppSelector((state) => state.wallet.networks);
   const dispatch = useAppDispatch();
