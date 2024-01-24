@@ -160,7 +160,7 @@ export const verifyAccount = createAsyncThunk(
         data.chainID,
         data.address,
         OFFCHAIN_VERIFICATION_MESSAGE
-      ); 
+      );
       const salt = getRandomNumber(MIN_SALT_VALUE, MAX_SALT_VALUE);
       try {
         await multisigService.verifyUser({
