@@ -19,19 +19,19 @@ const useInitAuthzStaking = (chainIDs: string[]) => {
   useEffect(() => {
     if (authzAddress) {
       chainIDs.forEach((chainID) => {
-        const { baseURL } = getChainInfo(chainID);
+        const { baseURL, restURLs } = getChainInfo(chainID);
         const { minimalDenom } = getDenomInfo(chainID);
         const address = convertAddress(chainID, authzAddress);
         dispatch(
           getAuthzDelegations({
-            baseURL,
+            baseURLs: restURLs,
             address,
             chainID,
           })
         );
         dispatch(
           getAuthzUnbonding({
-            baseURL,
+            baseURLs: restURLs,
             address,
             chainID,
           })
@@ -42,10 +42,12 @@ const useInitAuthzStaking = (chainIDs: string[]) => {
             address,
             chainID,
             denom: minimalDenom,
+            baseURLs: restURLs,
           })
         );
         dispatch(
           getAuthzBalances({
+            baseURLs: restURLs,
             baseURL,
             address,
             chainID,

@@ -57,6 +57,9 @@
     "is_testnet": {
       "type": "boolean"
     },
+    "gov_v1": {
+      "type": "boolean"
+    },
     "explorer_tx_hash_endpoint": {
       "type": "string",
       "format": "uri"
@@ -273,11 +276,7 @@
                 "required": ["low", "average", "high"]
               }
             },
-            "required": [
-              "coin_denom",
-              "coin_minimal_denom",
-              "coin_decimals"
-            ]
+            "required": ["coin_denom", "coin_minimal_denom", "coin_decimals"]
           }
         },
         "stake_currency": {
@@ -316,11 +315,7 @@
               }
             }
           },
-          "required": [
-            "coin_denom",
-            "coin_minimal_denom",
-            "coin_decimals"
-          ]
+          "required": ["coin_denom", "coin_minimal_denom", "coin_decimals"]
         },
         "image": {
           "type": "string",
@@ -366,6 +361,7 @@
     "keplr_experimental",
     "leap_experimental",
     "is_testnet",
+    "gov_v1",
     "explorer_tx_hash_endpoint",
     "config"
   ]

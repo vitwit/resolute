@@ -10,4 +10,5 @@ interface TransferRequestInputs {
   amount: string;
   rest: string;
   rpc?: string;
+  restURLs: string[];
 }

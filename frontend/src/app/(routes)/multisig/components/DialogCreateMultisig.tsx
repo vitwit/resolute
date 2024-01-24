@@ -2,7 +2,6 @@ import {
   CircularProgress,
   Dialog,
   DialogContent,
-  InputAdornment,
   TextField,
 } from '@mui/material';
 import Image from 'next/image';
@@ -16,7 +15,11 @@ import {
   isValidPubKey,
 } from '@/txns/multisig/multisig';
 import { getAuthToken } from '@/utils/localStorage';
-import { createAccount } from '@/store/features/multisig/multisigSlice';
+import {
+  createAccount,
+  importMultisigAccount,
+  resetMultisigAccountData,
+} from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import {
   createMultisigTextFieldStyles,
@@ -32,101 +35,17 @@ import {
   MIN_PUBKEYS_ERROR,
   MIN_THRESHOLD_ERROR,
 } from '@/utils/errors';
-import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
-
-interface DialogCreateMultisigProps {
-  open: boolean;
-  onClose: () => void;
-  addressPrefix: string;
-  chainID: string;
-  address: string;
-  pubKey: string;
-  baseURL: string;
-}
-
-interface InputTextComponentProps {
-  index: number;
-  field: PubKeyFields;
-  handleRemoveValue: (index: number) => void;
-  handleChangeValue: (
-    index: number,
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-}
-
-interface PubKeyFields {
-  name: string;
-  value: string;
-  label: string;
-  placeHolder: string;
-  required: boolean;
-  disabled: boolean;
-  pubKey: string;
-  address: string;
-  isPubKey: boolean;
-  error: string;
-}
+import {
+  customMUITextFieldStyles,
+  dialogBoxPaperPropStyles,
+} from '@/utils/commonStyles';
+import { TxStatus } from '@/types/enums';
+import { fromBech32 } from '@cosmjs/encoding';
+import { DialogCreateMultisigProps, PubKeyFields } from '@/types/multisig';
+import MultisigMemberTextField from './MultisigMemberTextField';
+import { MULTISIG_PUBKEY_OBJECT } from '@/utils/constants';
 
 const MAX_PUB_KEYS = 7;
-
-const InputTextComponent: React.FC<InputTextComponentProps> = (props) => {
-  const { field, index, handleChangeValue, handleRemoveValue } = props;
-  return (
-    <>
-      <TextField
-        className="bg-[#FFFFFF0D] rounded-2xl"
-        onChange={(e) => handleChangeValue(index, e)}
-        name={field.isPubKey ? 'pubKey' : 'address'}
-        value={field.isPubKey ? field.pubKey : field.address}
-        required={field?.required}
-        placeholder={field.isPubKey ? 'Public Key (Secp256k1)' : 'Address'}
-        sx={createMultisigTextFieldStyles}
-        fullWidth
-        disabled={field.disabled}
-        InputProps={{
-          endAdornment:
-            index !== 0 ? (
-              <InputAdornment
-                onClick={() =>
-                  !field.disabled
-                    ? handleRemoveValue(index)
-                    : alert('Cannot self remove')
-                }
-                position="end"
-                sx={{
-                  '&:hover': {
-                    cursor: 'pointer',
-                  },
-                }}
-              >
-                <Image
-                  src="/delete-icon-outlined.svg"
-                  height={24}
-                  width={24}
-                  alt="Delete"
-                  draggable={false}
-                />
-              </InputAdornment>
-            ) : (
-              <InputAdornment position="end">
-                <div>(You)</div>
-              </InputAdornment>
-            ),
-          sx: {
-            input: {
-              color: 'white',
-              fontSize: '14px',
-              padding: 2,
-            },
-          },
-        }}
-      />
-      <div className="address-pubkey-field-error">
-        {field.error.length ? field.error : ''}
-      </div>
-    </>
-  );
-};
 
 const getPubkey = async (address: string, baseURL: string) => {
   try {
@@ -146,32 +65,32 @@ const getPubkey = async (address: string, baseURL: string) => {
 };
 
 const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
-  const { open, onClose, address, addressPrefix, chainID, pubKey, baseURL } =
+  const { open, onClose, address, addressPrefix, chainID, pubKey, baseURLs } =
     props;
   const dispatch = useAppDispatch();
   const [name, setName] = useState('');
   const [pubKeyFields, setPubKeyFields] = useState<PubKeyFields[]>([]);
   const [threshold, setThreshold] = useState(0);
   const [formError, setFormError] = useState('');
+  const [importMultisig, setImportMultisig] = useState(false);
+  const [page, setPage] = useState(1);
+  const [multisigAddress, setMultisigAddress] = useState('');
+  const [addressValidationError, setAddressValidationError] = useState('');
 
   const createMultiAccRes = useAppSelector(
     (state: RootState) => state.multisig.createMultisigAccountRes
   );
+  const importMultisigAccountRes = useAppSelector(
+    (state: RootState) => state.multisig.multisigAccountData
+  );
 
-  const pubKeyObj = {
-    name: 'pubKey',
-    value: '',
-    label: 'Public Key (Secp256k1)',
-    placeHolder: 'E. g. AtgCrYjD+21d1+og3inzVEOGbCf5uhXnVeltFIo7RcRp',
-    required: true,
-    disabled: false,
-    isPubKey: false,
-    address: '',
-    pubKey: '',
-    error: '',
-  };
+  const pubKeyObj = {...MULTISIG_PUBKEY_OBJECT};
 
   useEffect(() => {
+    setDefaultFormValues();
+  }, [pubKey]);
+
+  const setDefaultFormValues = () => {
     setPubKeyFields([
       {
         name: 'current',
@@ -187,14 +106,30 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
       },
       { ...pubKeyObj },
     ]);
-  }, [pubKey]);
+    setName('');
+    setThreshold(0);
+    setPage(1);
+  };
 
   const handleClose = () => {
+    resetCreateMultisig();
     onClose();
+  };
+
+  const resetCreateMultisig = () => {
+    setMultisigAddress('');
+    setAddressValidationError('');
+    setDefaultFormValues();
+    setImportMultisig(false);
   };
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+  };
+
+  const handleMultisigAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
+    validateMultisigAddress(e.target.value.trim());
+    setMultisigAddress(e.target.value.trim());
   };
 
   const togglePubKey = (index: number) => {
@@ -273,7 +208,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     let isValid = true;
     const pubKeyValidationPromises = pubKeyFields.map(async (field, index) => {
       if (!field.isPubKey) {
-        const pubKey = await getPubkey(field.address, baseURL);
+        const pubKey = await getPubkey(field.address, baseURLs?.[0]);
         if (pubKey.length) {
           return { index, pubKey, error: '' };
         } else {
@@ -360,11 +295,87 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
 
   useEffect(() => {
     if (createMultiAccRes?.status === 'idle') {
-      dispatch(setError({ type: 'success', message: 'Successfully created' }));
+      const message = importMultisig
+        ? 'Successfully Imported'
+        : ' Successfully Create';
+      resetCreateMultisig();
+      dispatch(setError({ type: 'success', message: message }));
     } else if (createMultiAccRes?.status === 'rejected') {
       dispatch(setError({ type: 'error', message: createMultiAccRes?.error }));
     }
   }, [createMultiAccRes]);
+
+  const fetchMultisigAccount = () => {
+    if (validateMultisigAddress(multisigAddress)) {
+      dispatch(
+        importMultisigAccount({
+          accountAddress: address,
+          multisigAddress: multisigAddress,
+          baseURLs: baseURLs,
+          addressPrefix: addressPrefix,
+        })
+      );
+    }
+  };
+
+  const validateMultisigAddress = (address: string): boolean => {
+    if (address.length) {
+      try {
+        fromBech32(address);
+        setAddressValidationError('');
+        return true;
+      } catch (error) {
+        setAddressValidationError('Invalid address');
+        return false;
+      }
+    } else {
+      setAddressValidationError('Please enter address');
+      return false;
+    }
+  };
+
+  const setMultisigAccountData = () => {
+    const pubKeysList =
+      importMultisigAccountRes.account?.account?.pub_key?.public_keys || [];
+    const data: PubKeyFields[] = [];
+    pubKeysList.forEach((pubkey: PubKey) => {
+      data.push({
+        name: 'pubKey',
+        value: pubkey.key,
+        label: 'Public Key (Secp256k1)',
+        placeHolder: 'E. g. AtgCrYjD+21d1+og3inzVEOGbCf5uhXnVeltFIo7RcRp',
+        required: true,
+        disabled: true,
+        isPubKey: true,
+        address: '',
+        pubKey: pubkey.key,
+        error: '',
+      });
+    });
+    setPubKeyFields(data);
+    setThreshold(
+      Number(importMultisigAccountRes.account?.account?.pub_key?.threshold || 0)
+    );
+  };
+
+  useEffect(() => {
+    if (importMultisigAccountRes.status === TxStatus.IDLE) {
+      setImportMultisig(true);
+      setPage(1);
+      setMultisigAccountData();
+    } else if (importMultisigAccountRes.status === TxStatus.REJECTED) {
+      dispatch(
+        setError({
+          type: 'error',
+          message: importMultisigAccountRes?.error,
+        })
+      );
+    }
+  }, [importMultisigAccountRes.status]);
+
+  useEffect(() => {
+    dispatch(resetMultisigAccountData());
+  }, []);
 
   return (
     <Dialog
@@ -393,129 +404,238 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
               />
             </div>
           </div>
-          <div className="flex gap-10 items-center">
-            <div className="flex-1 flex flex-col px-10">
-              <h2 className="text-[20px] font-bold leading-[21px]">
-                Create Multisig
-              </h2>
-              <form onSubmit={(e) => handleSubmit(e)}>
-                <TextField
-                  className="bg-[#FFFFFF0D] rounded-2xl"
-                  onChange={handleNameChange}
-                  name="name"
-                  value={name}
-                  required
-                  placeholder="Eg: Alice-Bob-Eve-Msig"
-                  fullWidth
-                  sx={createMultisigTextFieldStyles}
-                  InputProps={{
-                    sx: {
-                      input: {
-                        color: 'white',
-                        fontSize: '14px',
-                        padding: 2,
-                      },
-                    },
-                  }}
-                />
-                {pubKeyFields.map((field, index) => (
-                  <>
-                    <InputTextComponent
-                      key={index}
-                      handleRemoveValue={handleRemoveValue}
-                      handleChangeValue={handleChangeValue}
-                      index={index}
-                      field={field}
-                    />
-                    <div className="text-right font-light">
-                      {index !== 0 ? (
-                        <button
-                          onClick={() => {
-                            togglePubKey(index);
-                          }}
-                          type="button"
-                          className="text-[12px] underline underline-offset-2"
-                        >
-                          {field.isPubKey ? 'Use Address' : 'Use PubKey'}
-                        </button>
-                      ) : null}
-                    </div>
-                  </>
-                ))}
-                <div className="text-right mt-4 text-[12px] font-light">
-                  <button
-                    type="button"
-                    className="create-multisig-btn cursor-pointer"
-                    onClick={handleAddPubKey}
-                  >
-                    Add New Member
-                  </button>
-                </div>
-                <div className="mb-6 flex items-center gap-4">
+          {page === 1 ? (
+            <div className="flex gap-10 items-center">
+              <div className="flex-1 flex flex-col px-10">
+                <h2 className="text-[20px] font-bold leading-[21px]">
+                  {importMultisig ? 'Import Multisig' : 'Create Multisig'}
+                </h2>
+                <form onSubmit={(e) => handleSubmit(e)}>
                   <TextField
-                    className="bg-[#FFFFFF0D] rounded-[4px]"
-                    name={'threshold'}
-                    value={threshold}
+                    className="bg-[#FFFFFF0D] rounded-2xl"
+                    onChange={handleNameChange}
+                    name="name"
+                    value={name}
                     required
-                    inputProps={{ maxLength: 1 }}
-                    onChange={handleChange}
-                    label=""
-                    type="number"
-                    size="small"
-                    style={{ maxWidth: 75 }}
-                    sx={{
-                      ...createMultisigTextFieldStyles,
-                      ...createMultisigThresholdStyles,
-                    }}
-                    InputProps={{
-                      sx: {
-                        input: {
-                          color: 'white',
-                          fontSize: '14px',
-                        },
-                      },
-                    }}
-                  />
-                  <div className="font-extralight text-[14px] mt-6 text-[#FFFFFF80]">
-                    of
-                  </div>
-                  <TextField
-                    className="bg-[#FFFFFF0D] rounded-[4px]"
-                    name={'threshold'}
-                    value={pubKeyFields?.length}
-                    label=""
-                    disabled
-                    size="small"
-                    style={{ maxWidth: 75 }}
+                    autoFocus={true}
+                    placeholder="Name (Eg: Alice-Bob-Eve-Msig)"
+                    fullWidth
                     sx={createMultisigTextFieldStyles}
                     InputProps={{
                       sx: {
                         input: {
                           color: 'white',
                           fontSize: '14px',
+                          padding: 2,
                         },
                       },
                     }}
                   />
-                  <div className="font-extralight text-[14px] mt-6">
-                    Threshold
+                  {pubKeyFields.map((field, index) => (
+                    <>
+                      <MultisigMemberTextField
+                        key={index}
+                        handleRemoveValue={handleRemoveValue}
+                        handleChangeValue={handleChangeValue}
+                        index={index}
+                        field={field}
+                      />
+                      {!importMultisig && (
+                        <div className="text-right font-light">
+                          {index !== 0 ? (
+                            <button
+                              onClick={() => {
+                                togglePubKey(index);
+                              }}
+                              type="button"
+                              className="text-[12px] underline underline-offset-2"
+                            >
+                              {field.isPubKey ? 'Use Address' : 'Use PubKey'}
+                            </button>
+                          ) : null}
+                        </div>
+                      )}
+                    </>
+                  ))}
+                  {!importMultisig && (
+                    <div className="text-right mt-4 text-[12px] font-light">
+                      <button
+                        type="button"
+                        className="create-multisig-btn cursor-pointer"
+                        onClick={handleAddPubKey}
+                      >
+                        Add New Member
+                      </button>
+                    </div>
+                  )}
+                  <div className="mb-6 flex items-center gap-4">
+                    <TextField
+                      className="bg-[#FFFFFF0D] rounded-[4px]"
+                      name={'threshold'}
+                      value={threshold}
+                      required
+                      inputProps={{ maxLength: 1 }}
+                      onChange={handleChange}
+                      label=""
+                      type="number"
+                      size="small"
+                      disabled={importMultisig}
+                      style={{ maxWidth: 75 }}
+                      sx={{
+                        ...createMultisigTextFieldStyles,
+                        ...createMultisigThresholdStyles,
+                      }}
+                      InputProps={{
+                        sx: {
+                          input: {
+                            color: 'white',
+                            fontSize: '14px',
+                          },
+                        },
+                      }}
+                    />
+                    <div className="font-extralight text-[14px] mt-6 text-[#FFFFFF80]">
+                      of
+                    </div>
+                    <TextField
+                      className="bg-[#FFFFFF0D] rounded-[4px]"
+                      name={'threshold'}
+                      value={pubKeyFields?.length}
+                      label=""
+                      disabled
+                      size="small"
+                      style={{ maxWidth: 75 }}
+                      sx={createMultisigTextFieldStyles}
+                      InputProps={{
+                        sx: {
+                          input: {
+                            color: 'white',
+                            fontSize: '14px',
+                          },
+                        },
+                      }}
+                    />
+                    <div className="font-extralight text-[14px] mt-6">
+                      Threshold
+                    </div>
+                  </div>
+                  <div>{formError}</div>
+                  <button
+                    disabled={createMultiAccRes?.status === 'pending'}
+                    className="create-account-btn min-w-[144px]"
+                    type="submit"
+                  >
+                    {createMultiAccRes?.status === 'pending' ? (
+                      <CircularProgress size={16} sx={{ color: 'white' }} />
+                    ) : (
+                      <>{importMultisig ? 'Import' : 'Create'}</>
+                    )}
+                  </button>
+                </form>
+                {!importMultisig ? (
+                  <div className="create-multisig-dialog-footer">
+                    <div className="text-[14px] font-extralight">Or</div>
+                    <div className="flex gap-4 items-center">
+                      <div className="text-[16px]">
+                        Have an existing MultiSig account ?
+                      </div>{' '}
+                      <button
+                        onClick={() => {
+                          setMultisigAddress('');
+                          setAddressValidationError('');
+                          setName('');
+                          setPage(2);
+                        }}
+                        className="text-only-btn"
+                      >
+                        Import Here
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="create-multisig-dialog-footer">
+                    <div className="flex gap-4 items-center">
+                      <button
+                        onClick={resetCreateMultisig}
+                        className="text-only-btn opacity-50"
+                      >
+                        Cancel Import
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex gap-10 items-center">
+              <div className="flex-1 flex flex-col px-10">
+                <h2 className="text-[20px] font-bold leading-[21px]">
+                  Import Multisig
+                </h2>
+                <div className="flex gap-6 my-6">
+                  <div className="flex-1 relative">
+                    <TextField
+                      className="bg-[#FFFFFF0D] rounded-2xl w-full"
+                      name="granteeAddress"
+                      value={multisigAddress}
+                      onChange={handleMultisigAddressChange}
+                      required
+                      autoFocus={true}
+                      placeholder="Enter Multisig Address Here"
+                      InputProps={{
+                        sx: {
+                          input: {
+                            color: 'white',
+                            fontSize: '14px',
+                            padding: 2,
+                          },
+                        },
+                      }}
+                      sx={customMUITextFieldStyles}
+                    />
+                    <div className="error-box absolute right-0">
+                      <span
+                        className={
+                          addressValidationError
+                            ? 'error-chip opacity-80'
+                            : 'error-chip opacity-0'
+                        }
+                      >
+                        {addressValidationError}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => fetchMultisigAccount()}
+                    className="primary-gradient import-multisig-btn"
+                  >
+                    {importMultisigAccountRes.status === TxStatus.PENDING ? (
+                      <CircularProgress size={20} sx={{ color: 'white' }} />
+                    ) : (
+                      'Import Multisig'
+                    )}
+                  </button>
+                </div>
+                <div className="create-multisig-dialog-footer">
+                  <div className="text-[14px] font-extralight">Or</div>
+                  <div className="flex gap-4 items-center">
+                    <div className="text-[16px]">
+                      Do not have an existing MultiSig account ?
+                    </div>{' '}
+                    <button
+                      onClick={() => {
+                        setImportMultisig(false);
+                        setDefaultFormValues();
+                      }}
+                      className="text-only-btn"
+                    >
+                      Create New Here
+                    </button>
                   </div>
                 </div>
-                <div>{formError}</div>
-                <button
-                  disabled={createMultiAccRes?.status === 'pending'}
-                  className="create-account-btn min-w-[144px]"
-                  type="submit"
-                >
-                  {createMultiAccRes?.status === 'pending' ? (
-                    <CircularProgress size={16} sx={{ color: 'white' }} />
-                  ) : (
-                    'Create'
-                  )}
-                </button>
-              </form>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
