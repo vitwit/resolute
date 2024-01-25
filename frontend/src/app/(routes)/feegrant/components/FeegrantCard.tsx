@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
-import { copyToClipboard } from '@/utils/copyToClipboard';
-import { setError } from '@/store/features/common/commonSlice';
 import DialogTransactionMessages from './DialogTransactionMessages';
 import DialogTransactionDetails from './DialogTransactionDetails';
 import CommonCopy from '@/components/CommonCopy';
@@ -40,7 +38,7 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
     });
     return chain;
   };
-  const dispatch = useAppDispatch();
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const toggleDialog = () => {
     setIsDialogOpen(!isDialogOpen);
@@ -50,7 +48,6 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
     setIsDialogTransactionOpen(!isDialogTransactionOpen);
   };
   const messageCount = transactionMessages.length;
-  // const displayMessages = messageCount > 3 ? transactionMessages.slice(0, 3) : transactionMessages;
 
   return (
     <div className="feegrant-card">
