@@ -6,6 +6,8 @@ import { copyToClipboard } from '@/utils/copyToClipboard';
 import { setError } from '@/store/features/common/commonSlice';
 import DialogTransactionMessages from './DialogTransactionMessages';
 import DialogTransactionDetails from './DialogTransactionDetails';
+import CommonCopy from '@/components/CommonCopy';
+import { shortenAddress } from '@/utils/util';
 
 interface FeegrantCardprops {
   chainID: string;
@@ -24,7 +26,7 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
   isPeriodic,
   isGrantsByMe,
 }) => {
-  const transactionMessages = ['Vote', 'Send', 'Feegrant','claimRewards'];
+  const transactionMessages = ['Vote', 'Send', 'Feegrant', 'claimRewards'];
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
   );
@@ -78,33 +80,12 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
           {expiration}
         </div>
       </div>
-      <div className="justify-between flex">
+      <div className="justify-between flex w-full">
         <div className="space-y-4">
           <div className="feegrant-small-text">
-          {isGrantsByMe ? 'Grantee' : 'Granter'}
+            {isGrantsByMe ? 'Grantee' : 'Granter'}
           </div>
-          <div className="feegrant-address ">
-            <p className='truncate'>{address}</p>
-            <Image
-              onClick={(e) => {
-                copyToClipboard(address);
-                dispatch(
-                  setError({
-                    type: 'success',
-                    message: 'Copied',
-                  })
-                );
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              src="/copy.svg"
-              width={24}
-              height={24}
-              alt="copy"
-              draggable={false}
-              className="cursor-pointer"
-            />
-          </div>
+          <CommonCopy message={shortenAddress(address, 26)} style="max-w-fit" />
         </div>
         <div className="space-y-4">
           <div className="feegrant-small-text">
