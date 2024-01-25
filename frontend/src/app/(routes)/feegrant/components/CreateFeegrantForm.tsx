@@ -1,5 +1,5 @@
 import React from 'react';
-import { Control, FieldErrors } from 'react-hook-form';
+import { Control, FieldErrors, UseFormGetValues } from 'react-hook-form';
 import GranteeAddressField from './GranteeAddressField';
 import ExpirationField from './ExpirationField';
 import { feegrantMsgTypes } from '@/utils/feegrant';
@@ -24,6 +24,7 @@ const CreateFeegrantForm = ({
   selectedMsgs,
   allTxns,
   setAllTxns,
+  getValues,
 }: {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   control: Control<any, any>;
@@ -34,6 +35,7 @@ const CreateFeegrantForm = ({
   selectedMsgs: string[];
   allTxns: boolean;
   setAllTxns: (value: boolean) => void;
+  getValues: UseFormGetValues<any>;
 }) => {
   const msgTypes = feegrantMsgTypes();
   return (
@@ -43,6 +45,7 @@ const CreateFeegrantForm = ({
           <GranteeAddressField
             error={errors?.grantee_address?.message || ''}
             control={control}
+            getValues={getValues}
           />
           <ExpirationField control={control} />
         </div>

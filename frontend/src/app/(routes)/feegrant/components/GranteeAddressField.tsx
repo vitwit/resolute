@@ -1,15 +1,18 @@
 import { customMUITextFieldStyles } from '@/utils/commonStyles';
+import { validateAddress } from '@/utils/util';
 import { TextField } from '@mui/material';
 import React from 'react';
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, UseFormGetValues } from 'react-hook-form';
 
 const GranteeAddressField = ({
   error,
   control,
+  getValues,
 }: {
   error: string;
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   control: Control<any, any>;
+  getValues: UseFormGetValues<any>;
 }) => {
   return (
     <div className="w-full relative">
@@ -17,7 +20,13 @@ const GranteeAddressField = ({
       <Controller
         name="grantee_address"
         control={control}
-        rules={{}}
+        rules={{
+          validate: () => {
+            if (!validateAddress(getValues('grantee_address'))) {
+              return 'Invalid Address';
+            }
+          },
+        }}
         render={({ field }) => (
           <TextField
             className="bg-[#FFFFFF0D] rounded-2xl"

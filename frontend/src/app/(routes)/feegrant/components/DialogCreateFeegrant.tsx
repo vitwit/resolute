@@ -13,6 +13,7 @@ import useGetFeegrantMsgs from '@/custom-hooks/useGetFeegrantMsgs';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useMultiTxTracker from '@/custom-hooks/useGetCreateFeegrantTxLoading';
 import MultiChainTxnStatus from '../../authz/components/MultiChainTxnStatus';
+import ConfirmDialogClose from '../../authz/components/ConfirmDialogClose';
 
 interface DialogCreateFeegrantProps {
   open: boolean;
@@ -41,14 +42,11 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
     chains: '',
     msgs: '',
   });
+  const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
+
   const { getFeegrantMsgs } = useGetFeegrantMsgs();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { trackTxs, chainsStatus, currentTxCount } = useMultiTxTracker();
-
-  const handleDialogClose = () => {
-    onClose();
-    setTxnStarted(false);
-  };
 
   const handleSelectChain = (chainID: string) => {
     if (txnStarted) {
@@ -74,6 +72,8 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
     handleSubmit,
     control,
     formState: { errors },
+    reset: resetForm,
+    getValues,
   } = useForm({
     defaultValues: getFeegrantFormDefaultValues(),
   });
@@ -169,6 +169,23 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
     }
   }, [selectedChains]);
 
+  /*
+   * This function is to close the CreateFeegrant dialog box
+   * and to reset all the inputs
+   */
+  const closeMainDialog = () => {
+    setTxnStarted(false);
+    resetForm();
+    setSelectedChains([]);
+    setSelectedMsgs([]);
+    setFormValidationError({ chains: '', msgs: '' });
+    onClose();
+  };
+
+  const handleDialogClose = () => {
+    setConfirmCloseOpen(true);
+  };
+
   return (
     <Dialog
       open={open}
@@ -248,6 +265,7 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
                         selectedMsgs={selectedMsgs}
                         allTxns={allTxns}
                         setAllTxns={(value: boolean) => setAllTxns(value)}
+                        getValues={getValues}
                       />
                     </form>
                   )}
@@ -286,6 +304,11 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
             </>
           </div>
         </div>
+        <ConfirmDialogClose
+          open={confirmCloseOpen}
+          onClose={() => setConfirmCloseOpen(false)}
+          closeMainDialog={closeMainDialog}
+        />
       </DialogContent>
     </Dialog>
   );
