@@ -12,7 +12,7 @@ interface FeegrantCardprops {
   expiration: string;
   address: string;
   spendLimit: string;
-  isperiodic: boolean;
+  isPeriodic: boolean;
 }
 
 const FeegrantCard: React.FC<FeegrantCardprops> = ({
@@ -20,6 +20,7 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
   expiration,
   address,
   spendLimit,
+  isPeriodic,
 }) => {
   const transactionMessages = ['Vote', 'Send', 'Feegrant'];
   const networkLogo = useAppSelector(
@@ -58,10 +59,10 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
             alt="Network-Logo"
           />
           <p>{getChainName(chainID)}</p>
-          {cardType && (
-            <div className="basic">
-              {cardType === 'periodic' ? 'Basic' : 'Periodic'}
-            </div>
+          {isPeriodic ? (
+            <div className="periodic">Periodic</div>
+          ) : (
+            <div className="basic">Basic</div>
           )}
         </div>
         <div className="feegrant-small-text">
@@ -98,7 +99,6 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
         </div>
         <div className="space-y-4">
           <div className="feegrant-small-text">
-            {' '}
             {cardType === 'periodic' ? 'PeriodSpendLimit' : 'SpendLimit'}
           </div>
           <div className="">{spendLimit}</div>
@@ -132,7 +132,7 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
       )}
       <div className="flex space-x-6">
         <button className="revoke-btn">Revoke Grant</button>
-        {cardType === 'periodic' && (
+        {isPeriodic && (
           <button
             className="view-button"
             onClick={() => toggleDialogTransaction()}

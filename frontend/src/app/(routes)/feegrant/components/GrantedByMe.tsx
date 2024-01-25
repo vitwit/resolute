@@ -23,10 +23,31 @@ const GrantedByMe = ({
     <>
       <div className="feegrant-card-grid">
         {addressGrants.map((addressGrant) => (
-          <>{!!addressGrant.grants.length && 
-            <FeegrantCard chainID={addressGrant.chainID} expiration={''} address={addressGrant.address} spendLimit={''} isperiodic={true}/>}</>
+          <>
+            {!!addressGrant.grants.length && (
+              <FeegrantCard
+                chainID={addressGrant.chainID}
+                expiration={''}
+                address={addressGrant.address}
+                spendLimit={''}
+                isPeriodic={true}
+              />
+            )}
+          </>
         ))}
-        
+        {addressGrants.map((addressGrant) => (
+          <>
+            {!!addressGrant.grants.length && (
+              <FeegrantCard
+                chainID={addressGrant.chainID}
+                expiration={''}
+                address={addressGrant.address}
+                spendLimit={''}
+                isPeriodic={false}
+              />
+            )}
+          </>
+        ))}
       </div>
     </>
   ) : !!loading ? (
