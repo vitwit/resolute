@@ -33,11 +33,11 @@
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 .periodic {
-  @apply flex items-center gap-2 self-stretch opacity-80 p-2 rounded-lg text-[#DCA843];
+  @apply flex items-center h-[26px] opacity-80 p-2 rounded-lg text-[#DCA843];
   background: rgba(220, 168, 67, 0.3);
 }
 .basic {
-  @apply flex items-center gap-2 flex-[1_0_0] self-stretch opacity-80 p-2 rounded-lg text-[#EFFF34];
+  @apply flex items-center gap-2 h-[26px] opacity-80 p-2 rounded-lg text-[#EFFF34];
   background: rgba(239, 255, 52, 0.4);
 }
 .view-button {
@@ -49,5 +49,9 @@
 }
 .text-background {
   @apply flex h-[54px] items-center gap-2  px-4 py-0 rounded-2xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+.message-style {
+  @apply flex flex-col items-start gap-4 self-stretch px-6 py-4 rounded-2xl;
   background: rgba(255, 255, 255, 0.02);
 }

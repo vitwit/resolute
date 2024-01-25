@@ -44,7 +44,7 @@ const DialogTransactionMessages = ({
         }}
       >
         <DialogContent sx={{ padding: 0 }}>
-          <div className="max-w-[890px] text-white">
+          <div className="w-[890px] text-white">
             <div className="px-10 pb-6 pt-10 flex justify-end">
               <div onClick={onClose}>
                 <Image
@@ -69,14 +69,17 @@ const DialogTransactionMessages = ({
                   {row.map((message) => (
                     <div
                       key={message}
-                      className="transaction-message-btn cursor-pointer"
+                      className=""
                       onClick={() => console.log(`Clicked: ${message}`)}
                     >
-                      <p className="feegrant-address">{message}</p>
+                      <p className="message-style">{message}</p>
                     </div>
                   ))}
                 </div>
               ))}
+              <button className="main-btn w-[139px] cursor-pointer">
+              Revoke
+            </button>
               <div className="justify-end items-center gap-2.5 pt-10 pb-0 px-6"></div>
             </div>
           </div>

@@ -13,6 +13,7 @@ interface FeegrantCardprops {
   address: string;
   spendLimit: string;
   isPeriodic: boolean;
+  isGrantsByMe: boolean;
 }
 
 const FeegrantCard: React.FC<FeegrantCardprops> = ({
@@ -21,8 +22,9 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
   address,
   spendLimit,
   isPeriodic,
+  isGrantsByMe,
 }) => {
-  const transactionMessages = ['Vote', 'Send', 'Feegrant'];
+  const transactionMessages = ['Vote', 'Send', 'Feegrant','claimRewards'];
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
   );
@@ -45,7 +47,8 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
   const toggleDialogTransaction = () => {
     setIsDialogTransactionOpen(!isDialogTransactionOpen);
   };
-  const cardType = 'periodic';
+  const messageCount = transactionMessages.length;
+  // const displayMessages = messageCount > 3 ? transactionMessages.slice(0, 3) : transactionMessages;
 
   return (
     <div className="feegrant-card">
@@ -67,15 +70,21 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
         </div>
         <div className="feegrant-small-text">
           {' '}
-          {cardType === 'periodic' ? 'Period Expires in' : 'Expires in'}{' '}
+          {isPeriodic ? (
+            <div className="">Period Expires in</div>
+          ) : (
+            <div className="">Expires in </div>
+          )}
           {expiration}
         </div>
       </div>
-      <div className="w-full justify-between flex">
+      <div className="justify-between flex">
         <div className="space-y-4">
-          <div className="feegrant-small-text">Grantee</div>
-          <div className="feegrant-address truncate">
-            <p>{address}</p>
+          <div className="feegrant-small-text">
+          {isGrantsByMe ? 'Grantee' : 'Granter'}
+          </div>
+          <div className="feegrant-address ">
+            <p className='truncate'>{address}</p>
             <Image
               onClick={(e) => {
                 copyToClipboard(address);
@@ -99,18 +108,18 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
         </div>
         <div className="space-y-4">
           <div className="feegrant-small-text">
-            {cardType === 'periodic' ? 'PeriodSpendLimit' : 'SpendLimit'}
+            {isPeriodic ? (
+              <div className="">PeriodSpendLimit</div>
+            ) : (
+              <div className="">SpendLimit</div>
+            )}
           </div>
           <div className="">{spendLimit}</div>
         </div>
       </div>
       <div className="feegrant-small-text">Transaction Message</div>
       <div className="flex flex-wrap gap-6">
-        {cardType === 'periodic' ? (
-          <div className="transaction-message-btn cursor-pointer">
-            <p className="feegrant-address">All</p>
-          </div>
-        ) : (
+        {transactionMessages.length > 0 ? (
           transactionMessages.map((message) => (
             <div
               key={message}
@@ -120,10 +129,14 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
               <p className="feegrant-address">{message}</p>
             </div>
           ))
+        ) : (
+          <div className="">
+            <p className="feegrant-address">All</p>
+          </div>
         )}
-        {!isDialogOpen && cardType !== 'periodic' && (
+        {messageCount > 3 && (
           <div className="revoke-btn cursor-pointer" onClick={toggleDialog}>
-            +3
+            +{messageCount - 3}
           </div>
         )}
       </div>

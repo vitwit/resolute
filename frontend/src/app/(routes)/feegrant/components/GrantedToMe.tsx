@@ -18,7 +18,7 @@ const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
       <div className="feegrant-card-grid">
         {addressGrants.map((addressGrant) => (
            <>{!!addressGrant.grants.length && 
-            <FeegrantCard chainID={addressGrant.chainID} expiration={''} address={addressGrant.address} spendLimit={''} isperiodic={true}/>}</>
+            <FeegrantCard chainID={addressGrant.chainID} expiration={''} address={addressGrant.address} spendLimit={''} isPeriodic={false}  isGrantsByMe={false} />}</>
         ))}
         </div>
     </>

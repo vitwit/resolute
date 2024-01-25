@@ -20,7 +20,6 @@ const DialogTransactionDetails = ({
     'Feegrant',
     'Delegate',
     'Revoke Grant',
-    'Claim Rewards',
   ];
   return (
     <Dialog
@@ -32,7 +31,7 @@ const DialogTransactionDetails = ({
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
-        <div className="w-[890px] text-white px-10 pb-6 pt-10">
+        <div className="w-[890px] text-white">
           <div className="px-10 pb-6 pt-10 flex justify-end">
             {' '}
             <div onClick={onClose}>
@@ -46,31 +45,34 @@ const DialogTransactionDetails = ({
               />
             </div>
           </div>
-          <div className="">
-            <div>Details</div>
-          </div>
-          <div className="divider-line space-y-4"></div>
-          <div className="flex flex-wrap gap-6">
-            {transactionMessages.map((message, index) => (
-              <div key={index} className="transaction-message-btn">
-                <p className="feegrant-address">{message}</p>
-              </div>
-            ))}
-          </div>
-          <div className="flex w-full justify-between">
-            <div className="space-y-4">
-              <div className="authz-small-text">Spend Limit</div>
-              <div className="text-background">{}</div>
+          <div className="gap-16 px-10 space-y-6">
+            <div className='text-white text-xl not-italic font-bold leading-[normal]'>Details</div>
+
+            <div className="divider-line space-y-4"></div>
+            <div className="flex flex-wrap gap-6">
+              {transactionMessages.map((message, index) => (
+                <div key={index} className="transaction-message-btn">
+                  <p className="message-style">{message}</p>
+                </div>
+              ))}
             </div>
-            <div>
+            <div className="flex w-full justify-between">
               <div className="space-y-4">
-                <div className="authz-small-text">Expiry</div>
-                <div className="text-background">{}</div>
+                <div className="authz-small-text">Spend Limit</div>
+                <div className="text-background w-[384px]">{}</div>
+              </div>
+              <div>
+                <div className="space-y-4">
+                  <div className="authz-small-text">Expiry</div>
+                  <div className="text-background w-[384px]">{}</div>
+                </div>
               </div>
             </div>
+            <button className="main-btn w-[139px] cursor-pointer">
+              Revoke
+            </button>
+            <div className="justify-end items-center gap-2.5 pt-10 pb-0 px-6"></div>
           </div>
-          <button className="main-btn w-[139px] cursor-pointer">Revoke</button>
-          <div className="justify-end items-center gap-2.5 pt-10 pb-0 px-6"></div>
         </div>
       </DialogContent>
     </Dialog>

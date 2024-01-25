@@ -30,8 +30,7 @@ const GrantedByMe = ({
                 expiration={''}
                 address={addressGrant.address}
                 spendLimit={''}
-                isPeriodic={true}
-              />
+                isPeriodic={true} isGrantsByMe={false}              />
             )}
           </>
         ))}
@@ -43,8 +42,7 @@ const GrantedByMe = ({
                 expiration={''}
                 address={addressGrant.address}
                 spendLimit={''}
-                isPeriodic={false}
-              />
+                isPeriodic={false} isGrantsByMe={false}              />
             )}
           </>
         ))}
