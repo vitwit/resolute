@@ -37,6 +37,10 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
   const [selectedMsgs, setSelectedMsgs] = useState<string[]>([]);
   const [allTxns, setAllTxns] = useState<boolean>(true);
   const [txnStarted, setTxnStarted] = useState(false);
+  const [formValidationError, setFormValidationError] = useState({
+    chains: '',
+    msgs: '',
+  });
   const { getFeegrantMsgs } = useGetFeegrantMsgs();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { trackTxs, chainsStatus, currentTxCount } = useMultiTxTracker();
@@ -47,18 +51,22 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
   };
 
   const handleSelectChain = (chainID: string) => {
+    if (txnStarted) {
+      return;
+    }
     const updatedSelection = selectedChains.includes(chainID)
       ? selectedChains.filter((id) => id !== chainID)
       : [...selectedChains, chainID];
-
     setSelectedChains(updatedSelection);
   };
 
   const handleSelectMsg = (msgType: string) => {
+    if (txnStarted) {
+      return;
+    }
     const updatedSelection = selectedMsgs.includes(msgType)
       ? selectedMsgs.filter((id) => id !== msgType)
       : [...selectedMsgs, msgType];
-
     setSelectedMsgs(updatedSelection);
   };
 
@@ -71,6 +79,9 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
   });
 
   const onSubmit = (fieldValues: FieldValues) => {
+    if (!validateForm()) {
+      return;
+    }
     const { chainWiseGrants } = getFeegrantMsgs({
       isFiltered: !allTxns,
       msgsList: selectedMsgs,
@@ -100,7 +111,6 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
       });
     });
 
-    console.log(chainWiseGrants);
     setTxnStarted(true);
     trackTxs(txCreateFeegrantInputs);
   };
@@ -112,6 +122,52 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
       setDisplayedChains(chainIDs?.slice(0, 5) || []);
     }
   }, [viewAllChains]);
+
+  const validateForm = () => {
+    if (!selectedChains.length) {
+      setFormValidationError((prevState) => ({
+        ...prevState,
+        chains: 'Atleast one chain must be selected',
+      }));
+      return false;
+    } else if (!selectedMsgs.length && !allTxns) {
+      setFormValidationError((prevState) => ({
+        ...prevState,
+        msgs: 'Atleast one message must be selected',
+      }));
+      return false;
+    }
+    setFormValidationError({ chains: '', msgs: '' });
+    return true;
+  };
+
+  useEffect(() => {
+    if (allTxns) {
+      setFormValidationError((prevState) => ({
+        ...prevState,
+        msgs: '',
+      }));
+      setSelectedMsgs([]);
+    }
+  }, [allTxns]);
+
+  useEffect(() => {
+    if (selectedMsgs.length) {
+      setFormValidationError((prevState) => ({
+        ...prevState,
+        msgs: '',
+      }));
+    }
+  }, [selectedMsgs]);
+
+  useEffect(() => {
+    if (selectedChains.length) {
+      setFormValidationError((prevState) => ({
+        ...prevState,
+        chains: '',
+      }));
+    }
+  }, [selectedChains]);
 
   return (
     <Dialog
@@ -197,11 +253,26 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
                   )}
                 </div>
                 {!txnStarted && (
-                  <div className="mt-10 flex justify-end text-right">
+                  <div className="mt-10 relative h-10">
+                    <div className="flex-1 flex items-center justify-center h-10">
+                      <div className="error-box">
+                        <span
+                          className={
+                            formValidationError.chains ||
+                            formValidationError.msgs
+                              ? 'error-chip opacity-80'
+                              : 'error-chip opacity-0'
+                          }
+                        >
+                          {formValidationError.chains ||
+                            formValidationError.msgs}
+                        </span>
+                      </div>
+                    </div>
                     <button
                       type="submit"
                       form="create-feegrant-form"
-                      className="primary-custom-btn w-[186px]"
+                      className="primary-custom-btn w-[186px] absolute right-0 bottom-0"
                     >
                       {currentTxCount !== 0 ? (
                         <CircularProgress size={20} sx={{ color: 'white' }} />
