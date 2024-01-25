@@ -161,10 +161,6 @@
     ),
     lightgray 50% / cover no-repeat;
 }
-.text-background {
-  @apply flex h-[54px] items-center gap-2  px-4 py-0 rounded-2xl;
-  background: rgba(255, 255, 255, 0.02);
-}
 .update-staking-btn {
   @apply rounded-2xl font-medium tracking-[0.64px] px-10 py-[10px] flex justify-center items-center;
 }
