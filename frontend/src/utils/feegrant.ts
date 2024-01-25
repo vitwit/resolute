@@ -1,3 +1,5 @@
+import { convertToSnakeCase } from './util';
+
 interface FeegrantMenuItem {
   txn: string;
   typeURL: string;
@@ -64,6 +66,24 @@ export function feegrantMsgTypes(): FeegrantMenuItem[] {
   ];
 }
 
+export const MAP_TXN_MSG_TYPES: Record<string, string> = {
+  send: '/cosmos.bank.v1beta1.MsgSend',
+  grant_authz: '/cosmos.authz.v1beta1.MsgGrant',
+  revoke_authz: '/cosmos.authz.v1beta1.MsgRevoke',
+  grant_feegrant: '/cosmos.feegrant.v1beta1.MsgGrantAllowance',
+  revoke_feegrant: '/cosmos.feegrant.v1beta1.MsgRevokeAllowance',
+  submit_proposal: '/cosmos.gov.v1beta1.MsgSubmitProposal',
+  vote: '/cosmos.gov.v1beta1.MsgVote',
+  deposit: '/cosmos.gov.v1beta1.MsgDeposit',
+  withdraw_rewards: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
+  redelegate: '/cosmos.staking.v1beta1.MsgBeginRedelegate',
+  delegate: '/cosmos.staking.v1beta1.MsgDelegate',
+  undelegate: '/cosmos.staking.v1beta1.MsgUndelegate',
+  withdraw_commission:
+    '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission',
+  unjail: '/cosmos.slashing.v1beta1.MsgUnjail',
+};
+
 export const getFeegrantFormDefaultValues = () => {
   const date = new Date();
   const expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
@@ -75,4 +95,13 @@ export const getFeegrantFormDefaultValues = () => {
     period: '',
     period_spend_limit: '',
   };
+};
+
+export const getMsgListFromMsgNames = (msgNames: string[]) => {
+  const msgsList: string[] = [];
+  console.log(msgNames);
+  msgNames.forEach((msg) => {
+    msgsList.push(MAP_TXN_MSG_TYPES[convertToSnakeCase(msg)]);
+  });
+  return msgsList;
 };

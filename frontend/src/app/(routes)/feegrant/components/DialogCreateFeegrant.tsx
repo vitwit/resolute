@@ -9,7 +9,6 @@ import NetworkItem from '../../authz/components/NetworkItem';
 import { FieldValues, useForm } from 'react-hook-form';
 import CreateFeegrantForm from './CreateFeegrantForm';
 import { getFeegrantFormDefaultValues } from '@/utils/feegrant';
-import { convertToSnakeCase } from '@/utils/util';
 import useGetFeegrantMsgs from '@/custom-hooks/useGetFeegrantMsgs';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useMultiTxTracker from '@/custom-hooks/useGetCreateFeegrantTxLoading';
@@ -44,6 +43,7 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
 
   const handleDialogClose = () => {
     onClose();
+    setTxnStarted(false);
   };
 
   const handleSelectChain = (chainID: string) => {
@@ -172,7 +172,9 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
                 <div className="mt-10">
                   {txnStarted ? (
                     <MultiChainTxnStatus
-                      selectedMsgs={selectedMsgs}
+                      selectedMsgs={
+                        allTxns ? ['All Transactions'] : selectedMsgs
+                      }
                       selectedChains={selectedChains}
                       chainsStatus={chainsStatus}
                     />

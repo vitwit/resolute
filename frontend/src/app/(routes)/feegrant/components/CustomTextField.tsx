@@ -35,7 +35,6 @@ const CustomTextField = ({
             fullWidth
             required
             size="small"
-            autoFocus={true}
             placeholder={title}
             sx={customMUITextFieldStyles}
             InputProps={{

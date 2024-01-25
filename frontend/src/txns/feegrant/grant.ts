@@ -22,8 +22,8 @@ export function FeegrantBasicMsg(
   let exp: Timestamp | undefined;
   if (expiration) {
     const expWithNano = fromRfc3339WithNanoseconds(expiration);
-    let expSec = Math.floor(expWithNano.getTime() / 1000);
-    let expNano =
+    const expSec = Math.floor(expWithNano.getTime() / 1000);
+    const expNano =
       (expWithNano.getTime() % 1000) * 1000000 + (expWithNano.nanoseconds ?? 0);
     exp = Timestamp.fromPartial({
       nanos: expNano,
@@ -89,8 +89,8 @@ export function FeegrantPeriodicMsg(
     try {
       if (expiration) {
         const expWithNano = fromRfc3339WithNanoseconds(expiration);
-        let expSec = Math.floor(expWithNano.getTime() / 1000);
-        let expNano =
+        const expSec = Math.floor(expWithNano.getTime() / 1000);
+        const expNano =
           (expWithNano.getTime() % 1000) * 1000000 +
           (expWithNano.nanoseconds ?? 0);
         exp = Timestamp.fromPartial({
@@ -185,6 +185,15 @@ export function FeegrantFilterMsg(
   allowanceType?: string,
   isAuthzMode?: boolean
 ) {
+  console.log(granter);
+  console.log(grantee);
+  console.log(denom);
+  console.log(spendLimit);
+  console.log(period);
+  console.log(periodSpendLimit);
+  console.log(expiration);
+  console.log(txMsg);
+  console.log(allowanceType);
   try {
     const now = new Date();
 
@@ -192,8 +201,8 @@ export function FeegrantFilterMsg(
     try {
       if (expiration) {
         const expWithNano = fromRfc3339WithNanoseconds(expiration);
-        let expSec = Math.floor(expWithNano.getTime() / 1000);
-        let expNano =
+        const expSec = Math.floor(expWithNano.getTime() / 1000);
+        const expNano =
           (expWithNano.getTime() % 1000) * 1000000 +
           (expWithNano.nanoseconds ?? 0);
         exp = Timestamp.fromPartial({

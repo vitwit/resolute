@@ -1,8 +1,10 @@
 import { FieldValues } from 'react-hook-form';
 import useGetChainInfo from './useGetChainInfo';
-import { FeegrantBasicMsg } from '@/txns/feegrant';
+import { FeegrantBasicMsg, FeegrantPeriodicMsg } from '@/txns/feegrant';
 import { getAddressByPrefix } from '@/utils/address';
 import { amountToMinimalValue } from '@/utils/util';
+import { FeegrantFilterMsg } from '@/txns/feegrant/grant';
+import { getMsgListFromMsgNames } from '@/utils/feegrant';
 
 interface ChainGrant {
   chainID: string;
@@ -34,7 +36,43 @@ const useGetFeegrantMsgs = () => {
       const expiration = fieldValues.expiration.toISOString();
       let msg: Msg;
       if (isFiltered) {
+        const msgTypeURLs = getMsgListFromMsgNames(msgsList);
+        const allowanceType = isPeriodic ? 'Periodic' : 'Basic';
+        msg = FeegrantFilterMsg(
+          granterAddress,
+          grantee,
+          minimalDenom,
+          amountToMinimalValue(Number(fieldValues.spend_limit), decimals),
+          Number(fieldValues.period),
+          amountToMinimalValue(
+            Number(fieldValues.period_spend_limit),
+            decimals
+          ),
+          expiration,
+          msgTypeURLs,
+          allowanceType
+        );
+        chainWiseGrants.push({
+          chainID: chainID,
+          msg: msg,
+        });
       } else if (isPeriodic) {
+        msg = FeegrantPeriodicMsg(
+          granterAddress,
+          grantee,
+          minimalDenom,
+          amountToMinimalValue(Number(fieldValues.spend_limit), decimals),
+          Number(fieldValues.period),
+          amountToMinimalValue(
+            Number(fieldValues.period_spend_limit),
+            decimals
+          ),
+          expiration
+        );
+        chainWiseGrants.push({
+          chainID: chainID,
+          msg: msg,
+        });
       } else {
         msg = FeegrantBasicMsg(
           granterAddress,
