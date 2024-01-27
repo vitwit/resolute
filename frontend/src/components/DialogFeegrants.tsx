@@ -115,7 +115,10 @@ const FeegrantAllowances = ({ grants }: { grants: ChainAllowance[] }) => {
       <h3 className="text-[#FFFFFF80] text-[14px]">Permissions</h3>
       <div className="flex flex-wrap gap-4">
         {grants.map((chainGrants) => (
-          <ChainFeegrants chainAllowance={chainGrants} />
+          <ChainFeegrants
+            key={chainGrants.chainID}
+            chainAllowance={chainGrants}
+          />
         ))}
       </div>
     </div>
@@ -135,7 +138,10 @@ const ChainFeegrants = ({
   return (
     <>
       {mgsNames.map((msg) => (
-        <div className="rounded-xl p-2 bg-[#FFFFFF1A] flex gap-2 items-center max-h-8">
+        <div
+          key={msg}
+          className="rounded-xl p-2 bg-[#FFFFFF1A] flex gap-2 items-center max-h-8"
+        >
           <div>{msg}</div>
           <Tooltip title={capitalizeFirstLetter(chainName)} placement="top">
             <Image

@@ -103,6 +103,7 @@ export const feegrantSlice = createSlice({
       state.feegrantAddress = '';
     },
     resetState: (state) => {
+      /* eslint-disable @typescript-eslint/no-unused-vars */
       state = cloneDeep(initialState);
     },
     resetTxStatus: (state, action: PayloadAction<{ chainID: string }>) => {
