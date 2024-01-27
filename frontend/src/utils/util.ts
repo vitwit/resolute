@@ -417,3 +417,15 @@ export function isMultisigAccountMember(
   });
   return result?.length !== 0;
 }
+
+export function getTypeURLName(url: string) {
+  if (!url) {
+    return '-';
+  }
+  const temp = url.split('.');
+  if (temp?.length > 0) {
+    const msg = temp[temp?.length - 1];
+    return msg.slice(3, msg.length);
+  }
+  return '-';
+}

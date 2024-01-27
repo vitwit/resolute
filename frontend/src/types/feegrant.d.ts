@@ -1,7 +1,7 @@
 interface Allowance {
   granter: string;
   grantee: string;
-  allowance: BasicAllowance | AllowedMsgAllowance;
+  allowance: BasicAllowance | PeriodicAllowance | AllowedMsgAllowance;
 }
 
 interface BasicAllowance {

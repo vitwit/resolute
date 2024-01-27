@@ -1,5 +1,5 @@
 import { TxStatus } from '@/types/enums';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import feegrantService from './feegrantService';
 import { cloneDeep } from 'lodash';
 import { getAddressByPrefix } from '@/utils/address';
@@ -93,7 +93,26 @@ export const getGrantsByMe = createAsyncThunk(
 export const feegrantSlice = createSlice({
   name: 'feegrant',
   initialState,
-  reducers: {},
+  reducers: {
+    enableFeegrantMode: (state, action: PayloadAction<{ address: string }>) => {
+      state.feegrantModeEnabled = true;
+      state.feegrantAddress = action.payload.address;
+    },
+    exitFeegrantMode: (state) => {
+      state.feegrantModeEnabled = false;
+      state.feegrantAddress = '';
+    },
+    resetState: (state) => {
+      state = cloneDeep(initialState);
+    },
+    resetTxStatus: (state, action: PayloadAction<{ chainID: string }>) => {
+      const { chainID } = action.payload;
+      state.chains[chainID].tx = {
+        errMsg: '',
+        status: TxStatus.INIT,
+      };
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getGrantsToMe.pending, (state, action) => {
@@ -202,6 +221,11 @@ export const feegrantSlice = createSlice({
   },
 });
 
-export const {} = feegrantSlice.actions;
+export const {
+  enableFeegrantMode,
+  exitFeegrantMode,
+  resetState,
+  resetTxStatus,
+} = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;

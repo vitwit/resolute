@@ -1,5 +1,6 @@
 import { COSMOS_CHAIN_ID } from '@/utils/constants';
-import { useAppSelector } from './StateHooks';
+import { useAppDispatch, useAppSelector } from './StateHooks';
+import { exitFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
 
 export interface ChainAllowance {
   chainID: string;
@@ -12,6 +13,7 @@ export interface InterChainFeegrants {
 }
 
 const useFeeGrants = () => {
+  const dispatch = useAppDispatch();
   const feegrantChains = useAppSelector((state) => state.feegrant.chains);
   const addressToChainFeegrant = useAppSelector(
     (state) => state.feegrant.addressToChainFeegrant
@@ -91,10 +93,15 @@ const useFeeGrants = () => {
     return grants;
   };
 
+  const disableFeegrantMode = () => {
+    dispatch(exitFeegrantMode());
+  };
+
   return {
     getGrantsByMe,
     getGrantsToMe,
     getInterChainGrants,
+    disableFeegrantMode,
   };
 };
 
