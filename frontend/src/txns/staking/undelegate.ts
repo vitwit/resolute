@@ -41,7 +41,7 @@ export function formattedSerialize(
   pastTense?: boolean
 ) {
   const { validatorAddress, amount } = msg.value;
-  return `${pastTense ? 'un-delegated' : 'Un-delegated'} 
+  return `${pastTense ? 'Un-Delegated' : 'Un-delegated'} 
     ${formatNumber(parseDenomAmount(amount.amount, decimals))} ${originalDenom} to ${shortenMsg(validatorAddress, 10)}
   `;
 }

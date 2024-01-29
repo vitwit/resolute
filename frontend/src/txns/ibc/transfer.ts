@@ -14,7 +14,7 @@ export function formattedSerialize(
   pastTense?: boolean
 ) {
   const { receiver, token } = msg.value;
-  return `${pastTense ? 'Transfer' : 'Transfer'} ${formatNumber(
+  return `${pastTense ? 'transfer' : 'Transfer'} ${formatNumber(
     parseDenomAmount(token?.amount || '0', decimals)
   )} ${originalDenom} to ${receiver}`;
 }
