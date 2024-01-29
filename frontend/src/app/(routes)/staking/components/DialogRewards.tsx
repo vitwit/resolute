@@ -111,7 +111,7 @@ const DialogRewards = ({
               </div>
             </div>
             <div className="flex gap-6">
-              <div className="staking-rewards-actions-btn text-center cursor-pointer w-">
+              <div className="staking-rewards-actions-btn text-center cursor-pointer">
                 Claim Rewards
               </div>
               <div className="staking-rewards-actions-btn text-center cursor-pointer">
