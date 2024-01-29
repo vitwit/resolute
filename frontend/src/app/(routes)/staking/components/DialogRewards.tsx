@@ -57,10 +57,10 @@ const DialogRewards = ({
             <div className="text-white text-xl not-italic font-bold leading-[normal]">
               Withdraw Rewards
             </div>
-            <div className="divider-line"></div>
+
             <div className="staking-rewards-background">
-              <div className="flex justify-between w-full">
-                <div className="w-[70%]">
+              <div className="flex justify-between space-x-8 w-full">
+                <div className="w-[65%] space-y-4">
                   <TextField
                     className="bg-[#FFFFFF0D] rounded-2xl w-full"
                     name="Address"
@@ -74,26 +74,27 @@ const DialogRewards = ({
                         input: {
                           color: 'white',
                           fontSize: '14px',
-                          padding: 2,
+                          padding: 4,
                         },
                       },
                     }}
                     sx={customMUITextFieldStyles}
                   />
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2 justify-end">
                     <Image
                       src="/info.svg"
-                      width={24}
-                      height={24}
+                      width={16}
+                      height={16}
                       alt="Info-Icon"
                       draggable={false}
                     />
-                    <p>Your claim rewards will be updated to this address</p>
+                    <p className="txt-xs">
+                      Your claim rewards will be updated to this address
+                    </p>
                   </div>
                 </div>
-
                 <button
-                  className="update-staking-btn primary-gradient"
+                  className="update-staking-btn primary-gradient h-12"
                   onClick={handleUpdateAddress}
                   style={{ display: addressUpdated ? 'none' : 'block' }}
                 >
@@ -110,10 +111,10 @@ const DialogRewards = ({
               </div>
             </div>
             <div className="flex gap-6">
-              <div className="staking-sidebar-actions-btn text-center cursor-pointer">
+              <div className="staking-rewards-actions-btn text-center cursor-pointer w-">
                 Claim Rewards
               </div>
-              <div className="staking-sidebar-actions-btn text-center cursor-pointer">
+              <div className="staking-rewards-actions-btn text-center cursor-pointer">
                 Claim Rewards & Commission
               </div>
             </div>

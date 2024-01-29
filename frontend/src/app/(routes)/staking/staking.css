@@ -165,6 +165,10 @@
   @apply rounded-2xl font-medium tracking-[0.64px] px-10 py-[10px] flex justify-center items-center;
 }
 .staking-rewards-background {
-  @apply flex justify-center items-center gap-2.5 px-4 py-10 rounded-3xl;
+  @apply flex justify-center items-center gap-2.5 px-10 py-10 rounded-3xl;
   background: rgba(255, 255, 255, 0.1);
+}
+.staking-rewards-actions-btn {
+  @apply px-6 py-3 rounded-2xl;
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
