@@ -1,13 +1,10 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React from 'react';
 import { Tooltip } from '@mui/material';
-import { LOGOUT_ICON, SUPPORTED_WALLETS } from '@/utils/constants';
-import {
-  establishWalletConnection,
-  resetWallet,
-} from '@/store/features/wallet/walletSlice';
-import { getLocalNetworks, getWalletName, logout } from '@/utils/localStorage';
+import { LOGOUT_ICON } from '@/utils/constants';
+import { resetWallet } from '@/store/features/wallet/walletSlice';
+import { logout } from '@/utils/localStorage';
 import {
   resetError,
   resetTxAndHash,
@@ -17,54 +14,22 @@ import { resetState as rewardsReset } from '@/store/features/distribution/distri
 import { resetCompleteState as stakingReset } from '@/store/features/staking/stakeSlice';
 import { resetState as authzReset } from '@/store/features/authz/authzSlice';
 import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
-import WalletPopup from '@/components/WalletPopup';
-import { networks } from '@/utils/chainsInfo';
 
 const Profile = () => {
   const profileName = useAppSelector((state) => state.wallet.name);
   const dispatch = useAppDispatch();
   const { disableAuthzMode } = useAuthzGrants();
 
-  const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
-    useState<boolean>(false);
-  const handleClose = () => {
-    setConnectWalletDialogOpen(
-      (connectWalletDialogOpen) => !connectWalletDialogOpen
-    );
-  };
-
-  const selectWallet = (walletName: string) => {
-    tryConnectWallet(walletName);
-    handleClose();
-  };
-
-  const tryConnectWallet = (walletName: string) => {
-    dispatch(
-      establishWalletConnection({
-        walletName,
-        networks: [...networks, ...getLocalNetworks()],
-      })
-    );
-  };
-
-  const selectedWallet = getWalletName();
-  const walletLogo = SUPPORTED_WALLETS.filter((wallet) => {
-    return wallet.name.toLowerCase() === selectedWallet;
-  });
-
   return (
     <div className="flex items-center gap-1">
       <div className="flex items-center space-x-2 cursor-default">
-        <Tooltip title="Switch Wallet" placement="bottom">
-          <Image
-            className="rounded-full cursor-pointer"
-            src={walletLogo?.length ? walletLogo[0].logo : '/profile.svg'}
-            width={36}
-            height={36}
-            alt="profile"
-            onClick={() => setConnectWalletDialogOpen(true)}
-          ></Image>
-        </Tooltip>
+        <Image
+          className="rounded-full cursor-default"
+          src="/profile.svg"
+          width={36}
+          height={36}
+          alt="profile"
+        ></Image>
         <Tooltip title={profileName} arrow placement="bottom">
           <p className="text-white text-base not-italic font-normal max-w-[112px] leading-[normal truncate">
             {profileName}
@@ -91,12 +56,6 @@ const Profile = () => {
           alt="Logout"
         />
       </Tooltip>
-      <WalletPopup
-        isOpen={connectWalletDialogOpen}
-        onClose={handleClose}
-        selectWallet={selectWallet}
-        isSwitchWallet={true}
-      />
     </div>
   );
 };

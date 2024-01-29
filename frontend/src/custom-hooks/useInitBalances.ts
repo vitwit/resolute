@@ -9,7 +9,7 @@ const useInitBalances = ({ chainIDs }: { chainIDs: string[] }) => {
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const authzAddress = useAppSelector((state) => state.authz.authzAddress);
   const { convertAddress } = useAddressConverter();
-  
+
   useEffect(() => {
     chainIDs.forEach((chainID) => {
       if (networks.hasOwnProperty(chainID)) {
@@ -17,6 +17,7 @@ const useInitBalances = ({ chainIDs }: { chainIDs: string[] }) => {
         const chainInfo = allChainInfo.network;
         const address = allChainInfo?.walletInfo?.bech32Address;
         const basicChainInputs = {
+          baseURLs: chainInfo.config.restURIs,
           baseURL: chainInfo.config.rest,
           address,
           chainID,
@@ -35,6 +36,7 @@ const useInitBalances = ({ chainIDs }: { chainIDs: string[] }) => {
           const address = convertAddress(chainID, authzAddress);
           const basicChainInputs = {
             baseURL: chainInfo.config.rest,
+            baseURLs: chainInfo.config.restURIs,
             address,
             chainID,
           };

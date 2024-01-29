@@ -23,3 +23,6 @@ export const MAX_THRESHOLD_ERROR = 'Threshold can not be greater than pubkeys';
 export const MAX_PUBKEYS_ERROR = "You can't add more than 7 pub keys";
 export const FAILED_TO_GENERATE_MULTISIG = 'Failed to create multisig account';
 export const INSUFFICIENT_BALANCE = 'Insufficient balance';
+export const NOT_MULTISIG_MEMBER_ERROR =
+  'Cannot import account: You are not a member of the multisig account';
+export const NOT_MULTISIG_ACCOUNT_ERROR = 'Not a multisig account';

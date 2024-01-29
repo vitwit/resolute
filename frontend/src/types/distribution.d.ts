@@ -3,6 +3,7 @@ import { TxStatus } from './enums';
 
 interface DelegatorTotalRewardsRequest {
   baseURL: string;
+  baseURLs: string[];
   address: string;
   chainID: string;
   denom: string;
@@ -67,4 +68,5 @@ interface TxWithdrawAllRewardsInputs {
   address: string;
   cosmosAddress: string;
   isTxAll?: boolean;
+  rpc?: string;
 }

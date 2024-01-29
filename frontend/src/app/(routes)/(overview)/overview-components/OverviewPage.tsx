@@ -6,7 +6,6 @@ import { getBalances } from '@/store/features/bank/bankSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
   getDelegations,
-  getAllValidators,
   getUnbonding,
 } from '@/store/features/staking/stakeSlice';
 import WalletSummery from './WalletSummery';
@@ -36,21 +35,17 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
         allChainInfo.network.config.stakeCurrency.coinMinimalDenom;
       const basicChainInputs = {
         baseURL: chainInfo.config.rest,
+        baseURLs: chainInfo.config.restURIs,
         address,
         chainID,
       };
 
       dispatch(getBalances(basicChainInputs));
       dispatch(getDelegations(basicChainInputs));
-      dispatch(
-        getAllValidators({
-          baseURL: chainInfo.config.rest,
-          chainID: chainID,
-        })
-      );
       dispatch(getAccountInfo(basicChainInputs));
       dispatch(
         getDelegatorTotalRewards({
+          baseURLs: chainInfo.config.restURIs,
           baseURL: chainInfo.config.rest,
           address: address,
           chainID: chainID,
@@ -59,7 +54,7 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
       );
       dispatch(
         getUnbonding({
-          baseURL: chainInfo.config.rest,
+          baseURLs: chainInfo.config.restURIs,
           address: address,
           chainID,
         })
