@@ -187,7 +187,7 @@ const Asset = ({
       <td>
         <div className="flex gap-10 justify-center">
           <Tooltip
-            title={asset.type === 'ibc' ? '' : 'Claim'}
+            title={asset.type === 'ibc' ? 'IBC Deposit feature is coming soon..' : 'Claim'}
             placement="top-end"
           >
             <div
@@ -204,19 +204,17 @@ const Asset = ({
                 <Image
                   src={
                     '/' +
-                    (asset.type === 'ibc'
-                      ? 'disable-claim-icon.svg'
-                      : 'claim-icon.svg')
+                    (asset.type === 'ibc' ? 'disabled-deposit.svg' : 'claim-icon.svg')
                   }
-                  height={16}
-                  width={16}
+                  height={asset.type === 'ibc' ? 24 : 16}
+                  width={asset.type === 'ibc' ? 24 : 16}
                   alt="Claim"
                 />
               )}
             </div>
           </Tooltip>
           <Tooltip
-            title={asset.type === 'ibc' ? '' : 'Claim & Stake'}
+            title={asset.type === 'ibc' ? 'IBC Withdraw feature is coming soon..' : 'Claim & Stake'}
             placement="top-start"
           >
             <div
@@ -234,7 +232,7 @@ const Asset = ({
                   src={
                     '/' +
                     (asset.type === 'ibc'
-                      ? 'disable-restake.svg'
+                      ? 'disabled-withdraw.svg'
                       : 'claim-stake-icon.svg')
                   }
                   height={16}

@@ -31,6 +31,8 @@ export function removeWalletName() {
   localStorage.removeItem(KEY_WALLET_NAME);
 }
 
+export const isMetaMaskWallet = () => localStorage.getItem(KEY_WALLET_NAME) === 'metamask';
+
 export function isConnected(): boolean {
   const connected = localStorage.getItem('CONNECTED');
   if (connected && KEY_WALLET_NAME) {

@@ -76,6 +76,7 @@ interface MultisigAddressPubkey {
 
 interface GetMultisigBalanceInputs {
   baseURL: string;
+  baseURLs: string[];
   address: string;
   denom: string;
 }
@@ -120,6 +121,11 @@ interface MultisigState {
   updateTxnRes: TxRes;
   txns: Txns;
   signTxRes: TxRes;
+  multisigAccountData: {
+    account: ImportMultisigAccountRes;
+    status: TxStatus;
+    error: string;
+  };
 }
 
 interface VerifyAccountRes {
@@ -209,4 +215,48 @@ interface DeleteMultisigInputs {
   data: {
     address: string;
   };
+}
+
+interface ImportMultisigAccountRes {
+  account: {
+    '@type': string;
+    address: string;
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    pub_key: any;
+    account_number: string;
+    sequence: string;
+  };
+}
+
+interface DialogCreateMultisigProps {
+  open: boolean;
+  onClose: () => void;
+  addressPrefix: string;
+  chainID: string;
+  address: string;
+  pubKey: string;
+  baseURLs: string[];
+}
+
+interface PubKeyFields {
+  name: string;
+  value: string;
+  label: string;
+  placeHolder: string;
+  required: boolean;
+  disabled: boolean;
+  pubKey: string;
+  address: string;
+  isPubKey: boolean;
+  error: string;
+}
+
+interface InputTextComponentProps {
+  index: number;
+  field: PubKeyFields;
+  handleRemoveValue: (index: number) => void;
+  handleChangeValue: (
+    index: number,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 }

@@ -67,7 +67,8 @@ export const txWithdrawAllRewards = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data?.feegranter?.length ? data.feegranter : undefined
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc,
       );
       const tx = NewTransaction(
         result,
@@ -87,6 +88,7 @@ export const txWithdrawAllRewards = createAsyncThunk(
         if (data.isAuthzMode) {
           dispatch(
             getAuthzBalances({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: data.basicChainInfo.rest,
               chainID: data.basicChainInfo.chainID,
               address: data.authzChainGranter,
@@ -96,6 +98,7 @@ export const txWithdrawAllRewards = createAsyncThunk(
           dispatch(
             getAuthzDelegatorTotalRewards({
               baseURL: data.basicChainInfo.rest,
+              baseURLs: data.basicChainInfo.restURLs,
               address: data.authzChainGranter,
               chainID: data.basicChainInfo.chainID,
               denom: data.denom,
@@ -104,6 +107,7 @@ export const txWithdrawAllRewards = createAsyncThunk(
         } else {
           dispatch(
             getBalances({
+              baseURLs: data.basicChainInfo.restURLs,
               baseURL: data.basicChainInfo.rest,
               address: data.basicChainInfo.address,
               chainID: data.basicChainInfo.chainID,
@@ -113,6 +117,7 @@ export const txWithdrawAllRewards = createAsyncThunk(
           dispatch(
             getDelegatorTotalRewards({
               baseURL: data.basicChainInfo.rest,
+              baseURLs: data.basicChainInfo.restURLs,
               address: data.basicChainInfo.address,
               chainID: data.basicChainInfo.chainID,
               denom: data.denom,
@@ -155,7 +160,7 @@ export const getDelegatorTotalRewards = createAsyncThunk(
   'distribution/totalRewards',
   async (data: DelegatorTotalRewardsRequest) => {
     const response = await distService.delegatorRewards(
-      data.baseURL,
+      data.baseURLs,
       data.address,
       data.pagination
     );
@@ -170,7 +175,7 @@ export const getAuthzDelegatorTotalRewards = createAsyncThunk(
   'distribution/authz-totalRewards',
   async (data: DelegatorTotalRewardsRequest) => {
     const response = await distService.delegatorRewards(
-      data.baseURL,
+      data.baseURLs,
       data.address,
       data.pagination
     );

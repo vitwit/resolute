@@ -4,6 +4,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { Tooltip } from '@mui/material';
 import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
 import DialogAuthzGrants from './DialogAuthzGrants';
+import { isMetaMaskWallet } from '@/utils/localStorage';
 
 const AuthzButton = () => {
   const isAuthzEnabled = useAppSelector(
@@ -21,6 +22,8 @@ const AuthzButton = () => {
     setGrantsDialogOpen(false);
   };
 
+  const isMetaMask = isMetaMaskWallet();
+
   return (
     <div className="flex gap-2 items-center">
       <DialogAuthzGrants
@@ -31,11 +34,13 @@ const AuthzButton = () => {
       {/* <Image src="/authz-icon-2.svg" width={32} height={32} alt="authz" /> */}
       <Tooltip
         title={
-          grantsToMeLoading
-            ? 'fetching authz permissions...'
-            : !grants.length
-              ? 'No authz permissions'
-              : ''
+          isMetaMask
+            ? "MetaMask doesn't support Authz"
+            : grantsToMeLoading
+              ? 'fetching authz permissions...'
+              : !grants.length
+                ? 'No authz permissions'
+                : ''
         }
       >
         <div
@@ -46,7 +51,7 @@ const AuthzButton = () => {
           }
           onClick={() => {
             if (!isAuthzEnabled) {
-              if (!grantsToMeLoading && grants.length)
+              if (!grantsToMeLoading && grants.length && !isMetaMask)
                 setGrantsDialogOpen(true);
             } else {
               disableAuthzMode();

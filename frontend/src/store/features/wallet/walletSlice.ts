@@ -6,6 +6,7 @@ import { setConnected, setWalletName } from '../../../utils/localStorage';
 import { TxStatus } from '@/types/enums';
 import { loadTransactions } from '../transactionHistory/transactionHistorySlice';
 import { setError } from '../common/commonSlice';
+import { getKey } from '@leapwallet/cosmos-snap-provider';
 import { getAddressByPrefix } from '@/utils/address';
 import { getAuthzMode } from '@/utils/localStorage';
 import { enableAuthzMode } from '../authz/authzSlice';
@@ -56,7 +57,6 @@ export const establishWalletConnection = createAsyncThunk(
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     const networks = data.networks;
-
     if (!isWalletInstalled(data.walletName)) {
       dispatch(setError({ type: 'error', message: 'Wallet is not installed' }));
 
@@ -81,43 +81,79 @@ export const establishWalletConnection = createAsyncThunk(
       let isNanoLedger = false;
       const chainInfos: Record<string, ChainInfo> = {};
       const nameToChainIDs: Record<string, string> = {};
-      let anyNetworkAddress = '';
+      const anyNetworkAddress = '';
       for (let i = 0; i < networks.length; i++) {
-        try {
-          if (
-            (data.walletName === 'keplr' ||
-              data.walletName === 'cosmostation') &&
-            networks[i].keplrExperimental
-          ) {
-            await window.wallet.experimentalSuggestChain(networks[i].config);
-          }
-          if (data.walletName === 'leap' && networks[i].leapExperimental) {
-            await window.wallet.experimentalSuggestChain(networks[i].config);
-          }
-          const chainId: string = networks[i].config.chainId;
-          const chainName: string = networks[i].config.chainName;
-          await getWalletAmino(chainId);
-          const walletInfo = await window.wallet.getKey(chainId);
-          walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString(
-            'base64'
-          );
-          delete walletInfo?.address;
-          walletName = walletInfo?.name;
-          isNanoLedger = walletInfo?.isNanoLedger || false;
-          chainInfos[chainId] = {
-            walletInfo: walletInfo,
-            network: networks[i],
-          };
-          if (anyNetworkAddress === '')
-            anyNetworkAddress = walletInfo?.bech32Address || '';
+        if (data.walletName === 'metamask') {
+          try {
+            const chainId: string = networks[i].config.chainId;
+            const chainName: string = networks[i].config.chainName;
+            const walletInfo = await getKey(chainId);
+            if (walletInfo?.address.includes('cosmos')) {
+              walletName = walletInfo?.address;
+            }
+            isNanoLedger = false;
 
-          nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
-            chainId;
-        } catch (error) {
-          console.log(
-            `unable to connect to network ${networks[i].config.chainName}: `,
-            error
-          );
+            chainInfos[chainId] = {
+              walletInfo: {
+                algo: walletInfo?.algo,
+                bech32Address: walletInfo?.address,
+                pubKey: Buffer.from(walletInfo?.pubkey).toString('base64'),
+                isKeystone: '',
+                isNanoLedger: isNanoLedger,
+                name: walletName,
+              },
+              network: networks[i],
+            };
+
+            nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
+              chainId;
+          } catch (error) {
+            console.log(
+              `unable to connect to network ${networks[i].config.chainName}: `,
+              error
+            );
+          }
+        } else {
+          try {
+            if (
+              (data.walletName === 'keplr' ||
+                data.walletName === 'cosmostation') &&
+              networks[i].keplrExperimental
+            ) {
+              await window.wallet.experimentalSuggestChain(networks[i].config);
+            }
+            if (data.walletName === 'leap' && networks[i].leapExperimental) {
+              await window.wallet.experimentalSuggestChain(networks[i].config);
+            }
+            const chainId: string = networks[i].config.chainId;
+            const chainName: string = networks[i].config.chainName;
+            await getWalletAmino(chainId);
+            const walletInfo = await window.wallet.getKey(chainId);
+            walletInfo.pubKey = Buffer.from(walletInfo?.pubKey).toString(
+              'base64'
+            );
+            delete walletInfo?.address;
+            walletName = walletInfo?.name;
+            isNanoLedger = walletInfo?.isNanoLedger || false;
+            chainInfos[chainId] = {
+              walletInfo: walletInfo,
+              network: networks[i],
+            };
+            nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
+              chainId;
+          } catch (error) {
+            console.log(
+              `unable to connect to network ${networks[i].config.chainName}: `,
+              error
+            );
+
+            dispatch(
+              setError({
+                type: 'error',
+                message: `Unable to connect to network ${networks[i].config.chainName}`,
+              })
+            );
+          }
         }
       }
 

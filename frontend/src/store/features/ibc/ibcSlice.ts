@@ -92,7 +92,12 @@ export const txTransfer = createAsyncThunk(
 
       dispatch(addToPending({ chainID, txHash }));
       dispatch(
-        getBalances({ baseURL: data.rest, address: data.from, chainID })
+        getBalances({
+          baseURL: data.rest,
+          address: data.from,
+          chainID,
+          baseURLs: data.restURLs,
+        })
       );
       return result;
     };
