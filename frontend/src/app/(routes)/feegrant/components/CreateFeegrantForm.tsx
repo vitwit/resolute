@@ -15,17 +15,7 @@ interface CreateFeegrantFormFields {
   period_spend_limit: string;
 }
 
-const CreateFeegrantForm = ({
-  control,
-  errors,
-  isPeriodic,
-  setIsPeriodic,
-  handleSelectMsg,
-  selectedMsgs,
-  allTxns,
-  setAllTxns,
-  getValues,
-}: {
+interface ICreateFeegrantForm {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   control: Control<any, any>;
   errors: FieldErrors<CreateFeegrantFormFields>;
@@ -36,7 +26,20 @@ const CreateFeegrantForm = ({
   allTxns: boolean;
   setAllTxns: (value: boolean) => void;
   getValues: UseFormGetValues<any>;
-}) => {
+}
+
+const CreateFeegrantForm: React.FC<ICreateFeegrantForm> = (props) => {
+  const {
+    control,
+    errors,
+    isPeriodic,
+    setIsPeriodic,
+    handleSelectMsg,
+    selectedMsgs,
+    allTxns,
+    setAllTxns,
+    getValues,
+  } = props;
   const msgTypes = feegrantMsgTypes();
   return (
     <div>

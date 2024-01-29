@@ -14,6 +14,10 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useMultiTxTracker from '@/custom-hooks/useGetCreateFeegrantTxLoading';
 import MultiChainTxnStatus from '../../authz/components/MultiChainTxnStatus';
 import ConfirmDialogClose from '../../authz/components/ConfirmDialogClose';
+import {
+  CHAIN_NOT_SELECTED_ERROR,
+  MSG_NOT_SELECTED_ERROR,
+} from '@/utils/errors';
 
 interface DialogCreateFeegrantProps {
   open: boolean;
@@ -127,13 +131,13 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
     if (!selectedChains.length) {
       setFormValidationError((prevState) => ({
         ...prevState,
-        chains: 'Atleast one chain must be selected',
+        chains: CHAIN_NOT_SELECTED_ERROR,
       }));
       return false;
     } else if (!selectedMsgs.length && !allTxns) {
       setFormValidationError((prevState) => ({
         ...prevState,
-        msgs: 'Atleast one message must be selected',
+        msgs: MSG_NOT_SELECTED_ERROR,
       }));
       return false;
     }
@@ -157,6 +161,11 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
         ...prevState,
         msgs: '',
       }));
+    } else if (!allTxns) {
+      setFormValidationError((prevState) => ({
+        ...prevState,
+        msgs: MSG_NOT_SELECTED_ERROR,
+      }));
     }
   }, [selectedMsgs]);
 
@@ -177,6 +186,7 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
     setTxnStarted(false);
     resetForm();
     setSelectedChains([]);
+    setAllTxns(true);
     setSelectedMsgs([]);
     setFormValidationError({ chains: '', msgs: '' });
     onClose();
