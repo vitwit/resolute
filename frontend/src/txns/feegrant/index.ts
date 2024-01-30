@@ -1,0 +1,1 @@
+export { FeegrantRevokeMsg } from "./revoke";

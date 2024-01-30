@@ -45,3 +45,13 @@ interface AddressFeegrants {
   chainID: string;
   grants: Allowance[];
 }
+
+interface FeeGrantRevokeInputs {
+  granter: string;
+  grantee: string;
+  basicChainInfo: BasicChainInfo;
+  baseURLs: string[];
+  onTxSuccessCallBack?: () => void;
+  feegranter?:string;
+  denom:string,
+}

@@ -3,6 +3,9 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import feegrantService from './feegrantService';
 import { cloneDeep } from 'lodash';
 import { getAddressByPrefix } from '@/utils/address';
+import { FeegrantRevokeMsg } from '@/txns/feegrant';
+import { signAndBroadcast } from '@/utils/signing';
+import { GAS_FEE } from '@/utils/constants';
 
 interface ChainAllowance {
   grantsToMe: Allowance[];
@@ -89,6 +92,46 @@ export const getGrantsByMe = createAsyncThunk(
     };
   }
 );
+
+export const txRevoke = createAsyncThunk(
+  'feegrant/tx-revoke',
+  async (data: FeeGrantRevokeInputs, { rejectWithValue, fulfillWithValue, dispatch }) => {
+    try {
+      const msg = FeegrantRevokeMsg(data.granter, data.grantee);
+
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        [msg],
+        GAS_FEE,
+        '',
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
+        data.basicChainInfo.rest,
+        data?.feegranter
+      );
+      
+      if (result?.code === 0) {
+        dispatch(getGrantsByMe({
+          baseURLs: data.baseURLs,
+          address: data?.basicChainInfo.address,
+          chainID: data?.basicChainInfo?.chainID
+        }
+        ))
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        return rejectWithValue(result?.rawLog);
+      }
+       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      console.log('error while revoke fee grant txn ', error)
+      return rejectWithValue(error?.message)
+    }
+  }
+);
+
 
 export const feegrantSlice = createSlice({
   name: 'feegrant',
@@ -202,6 +245,6 @@ export const feegrantSlice = createSlice({
   },
 });
 
-export const {} = feegrantSlice.actions;
+export const { } = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;

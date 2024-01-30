@@ -1,36 +1,55 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import DialogTransactionMessages from './DialogTransactionMessages';
 import DialogTransactionDetails from './DialogTransactionDetails';
 import CommonCopy from '@/components/CommonCopy';
 import { shortenAddress } from '@/utils/util';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { parseTokens } from '@/utils/denom';
+import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+import { getTypeURLName } from '@/utils/authorizations';
+import { get } from 'lodash';
+import { txRevoke } from '@/store/features/feegrant/feegrantSlice';
+
+const ALLOWED_MESSAGE_ALLIANCE_TYPE = '/cosmos.feegrant.v1beta1.AllowedMsgAllowance';
+// const BASIC_ALLOWANCE_TYPE = '/cosmos.feegrant.v1beta1.BasicAllowance';
 
 interface FeegrantCardprops {
   chainID: string;
-  expiration: string;
   address: string;
-  spendLimit: string;
-  isPeriodic: boolean;
   isGrantsByMe: boolean;
+  grant: Allowance
 }
 
 const FeegrantCard: React.FC<FeegrantCardprops> = ({
   chainID,
-  expiration,
   address,
-  spendLimit,
-  isPeriodic,
+  grant,
   isGrantsByMe,
 }) => {
-  const transactionMessages = ['Vote', 'Send', 'Feegrant', 'claimRewards'];
+  let allowedMsgs: Array<string>;
+  let basicAllowance;
+  const { allowance } = grant;
+  const dispatch = useAppDispatch();
+
+  if (get(allowance, '@type') === ALLOWED_MESSAGE_ALLIANCE_TYPE) {
+    allowedMsgs = get(allowance, 'allowed_messages', []);
+    basicAllowance = get(allowance, 'allowance');
+  } else {
+    basicAllowance = allowance
+    allowedMsgs = []
+  }
+
   const networkLogo = useAppSelector(
     (state: RootState) => state.wallet.networks[chainID]?.network.logos.menu
   );
+
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
+
   const getChainName = (chainID: string) => {
     let chain: string = '';
     Object.keys(nameToChainIDs).forEach((chainName) => {
@@ -39,15 +58,36 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
     return chain;
   };
 
+  const { getDenomInfo } = useGetChainInfo()
+  const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID)
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const toggleDialog = () => {
     setIsDialogOpen(!isDialogOpen);
   };
+
   const [isDialogTransactionOpen, setIsDialogTransactionOpen] = useState(false);
+
   const toggleDialogTransaction = () => {
     setIsDialogTransactionOpen(!isDialogTransactionOpen);
   };
-  const messageCount = transactionMessages.length;
+
+  const isPeriodic = get(allowance, '@type') === ALLOWED_MESSAGE_ALLIANCE_TYPE;
+
+  const typeText = isPeriodic ? 'periodic' : 'basic';
+  const { getChainInfo } = useGetChainInfo();
+  const basicChainInfo = getChainInfo(chainID);
+
+  const handleRevoke = () => {
+    dispatch(txRevoke({
+      granter: grant.granter,
+      grantee: grant.grantee,
+      basicChainInfo: basicChainInfo,
+      baseURLs: basicChainInfo.restURLs,
+      feegranter: '',
+      denom: minimalDenom
+    }))
+  }
 
   return (
     <div className="feegrant-card">
@@ -61,21 +101,17 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
             alt="Network-Logo"
           />
           <p>{getChainName(chainID)}</p>
-          {isPeriodic ? (
-            <div className="periodic">Periodic</div>
-          ) : (
-            <div className="basic">Basic</div>
-          )}
+
+          {/* title of the card */}
+
+          <div className={typeText}>{typeText}</div>
         </div>
+
         <div className="feegrant-small-text">
-          {' '}
-          {isPeriodic ? (
-            <div className="">Period Expires in</div>
-          ) : (
-            <div className="">Expires in </div>
-          )}
-          {expiration}
+          <div className="">{isPeriodic ? 'Period' : null} Expires in</div>
+          {getTimeDifferenceToFutureDate(get(basicAllowance, 'expiration', ''))}
         </div>
+
       </div>
       <div className="justify-between flex w-full">
         <div className="space-y-4">
@@ -86,25 +122,21 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
         </div>
         <div className="space-y-4">
           <div className="feegrant-small-text">
-            {isPeriodic ? (
-              <div className="">PeriodSpendLimit</div>
-            ) : (
-              <div className="">SpendLimit</div>
-            )}
+            <div className="">{isPeriodic ? 'Period' : null} Spend Limit</div>
           </div>
-          <div className="">{spendLimit}</div>
+          <div className="">{parseTokens(get(basicAllowance, 'spend_limit', []), displayDenom, decimals)}</div>
         </div>
       </div>
       <div className="feegrant-small-text">Transaction Message</div>
       <div className="flex flex-wrap gap-6">
-        {transactionMessages.length > 0 ? (
-          transactionMessages.map((message) => (
+        {allowedMsgs.length > 0 ? (
+          allowedMsgs.map((message: string) => (
             <div
               key={message}
               className="transaction-message-btn cursor-pointer"
               onClick={() => console.log(`Clicked: ${message}`)}
             >
-              <p className="feegrant-address">{message}</p>
+              <p className="feegrant-address">{getTypeURLName(message)}</p>
             </div>
           ))
         ) : (
@@ -112,17 +144,28 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
             <p className="feegrant-address">All</p>
           </div>
         )}
-        {messageCount > 3 && (
+
+        {allowedMsgs?.length > 2 && (
           <div className="revoke-btn cursor-pointer" onClick={toggleDialog}>
-            +{messageCount - 3}
+            +{allowedMsgs?.length - 1}
           </div>
         )}
       </div>
+
       {isDialogOpen && (
-        <DialogTransactionMessages onClose={toggleDialog} open={isDialogOpen} />
+        <DialogTransactionMessages
+          msgs={allowedMsgs}
+          onClose={toggleDialog} open={isDialogOpen} />
       )}
+
       <div className="flex space-x-6">
-        <button className="revoke-btn">Revoke Grant</button>
+        {
+          isGrantsByMe && <button
+            onClick={handleRevoke}
+            className="revoke-btn">Revoke Grant</button>
+        }
+
+
         {isPeriodic && (
           <button
             className="view-button"
@@ -134,6 +177,8 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
       </div>
       {isDialogTransactionOpen && (
         <DialogTransactionDetails
+          grant={grant}
+          chainID={chainID}
           onClose={() => setIsDialogTransactionOpen(false)}
           open={isDialogTransactionOpen}
         />

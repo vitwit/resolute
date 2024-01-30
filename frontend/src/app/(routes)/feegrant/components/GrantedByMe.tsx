@@ -23,28 +23,13 @@ const GrantedByMe = ({
     <>
       <div className="feegrant-card-grid">
         {addressGrants.map((addressGrant) => (
-          <>
-            {!!addressGrant.grants.length && (
-              <FeegrantCard
-                chainID={addressGrant.chainID}
-                expiration={''}
-                address={addressGrant.address}
-                spendLimit={''}
-                isPeriodic={true} isGrantsByMe={false}              />
-            )}
-          </>
-        ))}
-        {addressGrants.map((addressGrant) => (
-          <>
-            {!!addressGrant.grants.length && (
-              <FeegrantCard
-                chainID={addressGrant.chainID}
-                expiration={''}
-                address={addressGrant.address}
-                spendLimit={''}
-                isPeriodic={false} isGrantsByMe={false}              />
-            )}
-          </>
+          <>{!!addressGrant.grants.length &&
+            <FeegrantCard
+              chainID={addressGrant.chainID}
+              grant={addressGrant?.grants[0]}
+              isGrantsByMe={true}
+              address={addressGrant.address}
+            />}</>
         ))}
       </div>
     </>
@@ -52,7 +37,7 @@ const GrantedByMe = ({
     <div className="flex justify-center mt-[20%] items-center">
       <CircularProgress size={32} sx={{ color: 'white' }} />
     </div>
-  ) : (
+  ): (
     <div className="my-[5%] flex flex-col justify-center items-center">
       <Image
         src="/no-authz-grants-illustration.png"

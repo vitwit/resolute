@@ -3,35 +3,21 @@ import { Dialog, DialogContent } from '@mui/material';
 import React from 'react';
 import Image from 'next/image';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
+import { getTypeURLName } from '@/utils/authorizations';
 
 const DialogTransactionMessages = ({
   open,
   onClose,
+  msgs = [],
 }: {
   open: boolean;
   onClose: () => void;
+  msgs: string[];
 }) => {
+
   const handleDialogClose = () => {
     onClose();
   };
-
-  const transactionMessages = [
-    'Vote',
-    'Send',
-    'Feegrant',
-    'Vote',
-    'Send',
-    'Feegrant',
-    'Vote',
-    'Send',
-    'Feegrant',
-  ];
-
-  const rows = [];
-  for (let i = 0; i < transactionMessages.length; i += 5) {
-    const rowMessages = transactionMessages.slice(i, i + 5);
-    rows.push(rowMessages);
-  }
 
   return (
     <div>
@@ -64,22 +50,21 @@ const DialogTransactionMessages = ({
                 </div>
               </div>
               <div className="divider-line space-y-4"></div>
-              {rows.map((row, rowIndex) => (
-                <div key={rowIndex} className="flex flex-wrap gap-6">
-                  {row.map((message) => (
-                    <div
-                      key={message}
-                      className=""
-                      onClick={() => console.log(`Clicked: ${message}`)}
-                    >
-                      <p className="message-style">{message}</p>
-                    </div>
-                  ))}
+              {msgs.map((row, rowIndex) => (
+                <div key={rowIndex}
+                  className="flex flex-wrap gap-6">
+                  <div
+                    key={row}
+                    className=""
+                    onClick={() => console.log(`Clicked: ${row}`)}
+                  >
+                    <p className="message-style">{getTypeURLName(row)}</p>
+                  </div>
                 </div>
               ))}
               <button className="main-btn w-[139px] cursor-pointer">
-              Revoke
-            </button>
+                Revoke
+              </button>
               <div className="justify-end items-center gap-2.5 pt-10 pb-0 px-6"></div>
             </div>
           </div>

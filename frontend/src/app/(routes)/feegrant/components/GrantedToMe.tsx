@@ -17,10 +17,15 @@ const GrantedToMe = ({ chainIDs }: { chainIDs: string[] }) => {
     <>
       <div className="feegrant-card-grid">
         {addressGrants.map((addressGrant) => (
-           <>{!!addressGrant.grants.length && 
-            <FeegrantCard chainID={addressGrant.chainID} expiration={''} address={addressGrant.address} spendLimit={''} isPeriodic={false}  isGrantsByMe={false} />}</>
+          <>{!!addressGrant.grants.length &&
+            <FeegrantCard
+              chainID={addressGrant.chainID}
+              grant={addressGrant?.grants[0]}
+              isGrantsByMe={false}
+              address={addressGrant.address}
+            />}</>
         ))}
-        </div>
+      </div>
     </>
   ) : !!loading ? (
     <div className="flex justify-center mt-[20%] items-center">

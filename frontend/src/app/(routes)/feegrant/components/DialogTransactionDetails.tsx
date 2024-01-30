@@ -3,24 +3,32 @@ import { Dialog, DialogContent } from '@mui/material';
 import React from 'react';
 import Image from 'next/image';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
+import { get } from 'lodash';
+import { parseTokens } from '@/utils/denom';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
+import { getTypeURLName } from '@/utils/authorizations';
 
 const DialogTransactionDetails = ({
   open,
   onClose,
+  grant,
+  chainID,
 }: {
   open: boolean;
   onClose: () => void;
+  grant: Allowance;
+  chainID: string;
 }) => {
   const handleDialogClose = () => {
     onClose();
   };
-  const transactionMessages = [
-    'Vote',
-    'Send',
-    'Feegrant',
-    'Delegate',
-    'Revoke Grant',
-  ];
+
+  const msgs = get(grant, 'allowance.allowed_messages', [])
+
+  const { getDenomInfo } = useGetChainInfo()
+  const { decimals, displayDenom } = getDenomInfo(chainID)
+
   return (
     <Dialog
       open={open}
@@ -50,21 +58,25 @@ const DialogTransactionDetails = ({
 
             <div className="divider-line space-y-4"></div>
             <div className="flex flex-wrap gap-6">
-              {transactionMessages.map((message, index) => (
+              {msgs.map((message, index) => (
                 <div key={index} className="transaction-message-btn">
-                  <p className="message-style">{message}</p>
+                  <p className="message-style">{getTypeURLName(message)}</p>
                 </div>
               ))}
             </div>
             <div className="flex w-full justify-between">
               <div className="space-y-4">
                 <div className="authz-small-text">Spend Limit</div>
-                <div className="text-background w-[384px]">{}</div>
+                <div className="text-background w-[384px]">
+                  {parseTokens(get(grant, 'allowance.allowance.spend_limit', []), displayDenom, decimals)}
+                </div>
               </div>
               <div>
                 <div className="space-y-4">
                   <div className="authz-small-text">Expiry</div>
-                  <div className="text-background w-[384px]">{}</div>
+                  <div className="text-background w-[384px]">
+                    {getTimeDifferenceToFutureDate(get(grant, 'allowance.allowance.expiration', ''))}
+                  </div>
                 </div>
               </div>
             </div>
