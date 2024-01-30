@@ -706,8 +706,8 @@ export const networks: Network[] = [
       group: false,
     },
     aminoConfig: {
-      authz: false,
-      feegrant: false,
+      authz: true,
+      feegrant: true,
       group: false,
     },
     showAirdrop: true,
@@ -1159,76 +1159,79 @@ export const networks: Network[] = [
   //     },
   //   },
   // },
-  // {
-  //   enableModules: {
-  //     authz: true,
-  //     feegrant: true,
-  //     group: true,
-  //   },
-  //   aminoConfig: {
-  //     authz: true,
-  //     feegrant: true,
-  //     group: false,
-  //   },
-  //   showAirdrop: false,
-  //   logos: {
-  //     menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/umee/umee.png',
-  //     toolbar:
-  //       'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/umee/images/umee-logo.png',
-  //   },
-  //   keplrExperimental: false,
-  //   leapExperimental: false,
-  //   isTestnet: false,
-  //   explorerTxHashEndpoint: 'https://www.mintscan.io/umee/txs/',
-  //   config: {
-  //     chainId: 'umee-1',
-  //     chainName: 'Umee',
-  //     rest: 'https://api.resolute.vitwit.com/umee_api',
-  //     rpc: 'https://api.resolute.vitwit.com/umee_rpc',
-  //     currencies: [
-  //       {
-  //         coinDenom: 'UMEE',
-  //         coinMinimalDenom: 'uumee',
-  //         coinDecimals: 6,
-  //       },
-  //     ],
-  //     bech32Config: {
-  //       bech32PrefixAccAddr: 'umee',
-  //       bech32PrefixAccPub: 'umeepub',
-  //       bech32PrefixValAddr: 'umeevaloper',
-  //       bech32PrefixValPub: 'umeevaloperpub',
-  //       bech32PrefixConsAddr: 'umeegvalcons',
-  //       bech32PrefixConsPub: 'umeevalconspub',
-  //     },
-  //     feeCurrencies: [
-  //       {
-  //         coinDenom: 'UMEE',
-  //         coinMinimalDenom: 'uumee',
-  //         coinDecimals: 6,
-  //         gasPriceStep: {
-  //           low: 0.01,
-  //           average: 0.025,
-  //           high: 0.03,
-  //         },
-  //       },
-  //     ],
-  //     bip44: {
-  //       coinType: 118,
-  //     },
-  //     stakeCurrency: {
-  //       coinDenom: 'UMEE',
-  //       coinMinimalDenom: 'uumee',
-  //       coinDecimals: 6,
-  //     },
-  //     image:
-  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
-  //     theme: {
-  //       primaryColor: '#fff',
-  //       gradient:
-  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
-  //     },
-  //   },
-  // },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: true,
+    },
+    aminoConfig: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/umee/umee.png',
+      toolbar:
+        'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/umee/images/umee-logo.png',
+    },
+    keplrExperimental: false,
+    leapExperimental: false,
+    isTestnet: false,
+    govV1: true,
+    explorerTxHashEndpoint: 'https://www.mintscan.io/umee/txs/',
+    config: {
+      chainId: 'umee-1',
+      chainName: 'Umee',
+      rest: 'https://api-umee-ia.cosmosia.notional.ventures',
+      rpc: 'https://umee-rpc.polkachu.com',
+      restURIs: ['https://umee-api.polkachu.com', 'https://umee-rest.staketab.org', 'https://api-umee-ia.cosmosia.notional.ventures', 'https://umee.api.m.stavr.tech', 'https://api-umee.cosmos-spaces.cloud'],
+      rpcURIs: ['https://umee-rpc.polkachu.com'],
+      currencies: [
+        {
+          coinDenom: 'UMEE',
+          coinMinimalDenom: 'uumee',
+          coinDecimals: 6,
+        },
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: 'umee',
+        bech32PrefixAccPub: 'umeepub',
+        bech32PrefixValAddr: 'umeevaloper',
+        bech32PrefixValPub: 'umeevaloperpub',
+        bech32PrefixConsAddr: 'umeegvalcons',
+        bech32PrefixConsPub: 'umeevalconspub',
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'UMEE',
+          coinMinimalDenom: 'uumee',
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.025,
+            high: 0.03,
+          },
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      stakeCurrency: {
+        coinDenom: 'UMEE',
+        coinMinimalDenom: 'uumee',
+        coinDecimals: 6,
+      },
+      image:
+        'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
   // {
   //   enableModules: {
   //     authz: true,
