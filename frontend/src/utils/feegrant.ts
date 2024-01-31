@@ -6,9 +6,9 @@ interface FeegrantMenuItem {
   typeURL: string;
 }
 
-const BASIC_ALLOWANCE = '/cosmos.feegrant.v1beta1.BasicAllowance';
-const PERIODIC_ALLOWANCE = '/cosmos.feegrant.v1beta1.PeriodicAllowance';
-const ALLOWED_MSG_ALLOWANCE = '/cosmos.feegrant.v1beta1.AllowedMsgAllowance';
+export const BASIC_ALLOWANCE = '/cosmos.feegrant.v1beta1.BasicAllowance';
+export const PERIODIC_ALLOWANCE = '/cosmos.feegrant.v1beta1.PeriodicAllowance';
+export const ALLOWED_MSG_ALLOWANCE = '/cosmos.feegrant.v1beta1.AllowedMsgAllowance';
 
 export function feegrantMsgTypes(): FeegrantMenuItem[] {
   return [
@@ -80,6 +80,7 @@ export function getMsgNamesFromAllowance(allowance: Allowance): string[] {
     case ALLOWED_MSG_ALLOWANCE:
       return parseMsgNames(allowance.allowance.allowed_messages);
     default:
+      console.error(`Unknown allowance type: ${allowance?.allowance['@type']}`);
       return ['Unknown'];
   }
 }
@@ -129,7 +130,8 @@ export const MAP_TXN_MSG_TYPES: Record<string, string> = {
 
 export const getFeegrantFormDefaultValues = () => {
   const date = new Date();
-  const expiration = new Date(date.setTime(date.getTime() + 365 * 86400000));
+  const MILLISECONDS_IN_A_YEAR = 365 * 86400000;
+  const expiration = new Date(date.setTime(date.getTime() + MILLISECONDS_IN_A_YEAR));
 
   return {
     grantee_address: '',
@@ -142,7 +144,6 @@ export const getFeegrantFormDefaultValues = () => {
 
 export const getMsgListFromMsgNames = (msgNames: string[]) => {
   const msgsList: string[] = [];
-  console.log(msgNames);
   msgNames.forEach((msg) => {
     msgsList.push(MAP_TXN_MSG_TYPES[convertToSnakeCase(msg)]);
   });

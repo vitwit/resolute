@@ -14,6 +14,12 @@ import { get } from 'lodash';
 import { txRevoke } from '@/store/features/feegrant/feegrantSlice';
 import { TxStatus } from '@/types/enums';
 import { CircularProgress } from '@mui/material';
+import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
+import {
+  BASIC_ALLOWANCE,
+  MAP_TXN_MSG_TYPES,
+  PERIODIC_ALLOWANCE,
+} from '@/utils/feegrant';
 
 const ALLOWED_MESSAGE_ALLOWANCE_TYPE =
   '/cosmos.feegrant.v1beta1.AllowedMsgAllowance';
@@ -32,15 +38,12 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
   isGrantsByMe,
 }) => {
   let allowedMsgs: Array<string>;
-  let basicAllowance;
   const { allowance } = grant;
   const dispatch = useAppDispatch();
 
   if (get(allowance, '@type') === ALLOWED_MESSAGE_ALLOWANCE_TYPE) {
     allowedMsgs = get(allowance, 'allowed_messages', []);
-    basicAllowance = get(allowance, 'allowance');
   } else {
-    basicAllowance = allowance;
     allowedMsgs = [];
   }
 
@@ -54,6 +57,7 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
 
   const { getDenomInfo } = useGetChainInfo();
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
+  const { getFeegranter } = useGetFeegranter();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const toggleDialog = () => {
@@ -66,7 +70,9 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
     setIsDialogTransactionOpen(!isDialogTransactionOpen);
   };
 
-  const isPeriodic = get(allowance, '@type') === ALLOWED_MESSAGE_ALLOWANCE_TYPE;
+  const isPeriodic =
+    get(allowance, '@type') === PERIODIC_ALLOWANCE ||
+    get(allowance, 'allowance.@type') === PERIODIC_ALLOWANCE;
 
   const typeText = isPeriodic ? 'periodic' : 'basic';
   const { getChainInfo } = useGetChainInfo();
@@ -80,7 +86,10 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
         grantee: grant.grantee,
         basicChainInfo: basicChainInfo,
         baseURLs: basicChainInfo.restURLs,
-        feegranter: '',
+        feegranter: getFeegranter(
+          chainID,
+          MAP_TXN_MSG_TYPES['revoke_feegrant']
+        ),
         denom: minimalDenom,
       })
     );
@@ -89,6 +98,34 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
   useEffect(() => {
     if (loading !== TxStatus.PENDING) setSelectedGrantee('');
   }, [loading]);
+
+  const getExpiryDate = () => {
+    if (get(allowance, '@type') === BASIC_ALLOWANCE) {
+      return get(allowance, 'expiration', '');
+    } else if (get(allowance, '@type') === PERIODIC_ALLOWANCE) {
+      return get(allowance, 'basic.expiration', '');
+    } else {
+      if (get(allowance, 'allowance.@type') === BASIC_ALLOWANCE) {
+        return get(allowance, 'allowance.expiration', '');
+      } else {
+        return get(allowance, 'allowance.basic.expiration', '');
+      }
+    }
+  };
+
+  const getSpendLimit = () => {
+    if (get(allowance, '@type') === BASIC_ALLOWANCE) {
+      return get(allowance, 'spend_limit', []);
+    } else if (get(allowance, '@type') === PERIODIC_ALLOWANCE) {
+      return get(allowance, 'basic.spend_limit', []);
+    } else {
+      if (get(allowance, 'allowance.@type') === BASIC_ALLOWANCE) {
+        return get(allowance, 'allowance.spend_limit', []);
+      } else {
+        return get(allowance, 'allowance.basic.spend_limit', []);
+      }
+    }
+  };
 
   return (
     <div className="feegrant-card">
@@ -106,12 +143,10 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
           <div className={typeText}>{capitalizeFirstLetter(typeText)}</div>
         </div>
         <div className="feegrant-small-text">
-          <span>{isPeriodic ? 'Period' : null} Expires in </span>
+          <span>Expires in </span>
           <span>
-            {(get(basicAllowance, 'expiration', '') &&
-              getTimeDifferenceToFutureDate(
-                get(basicAllowance, 'expiration', '')
-              )) ||
+            {(getExpiryDate() &&
+              getTimeDifferenceToFutureDate(getExpiryDate())) ||
               '-'}
           </span>
         </div>
@@ -125,14 +160,10 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
         </div>
         <div className="space-y-4">
           <div className="feegrant-small-text">
-            <div className="">{isPeriodic ? 'Period' : null} Spend Limit</div>
+            <div className="">Spend Limit</div>
           </div>
           <div className="">
-            {parseTokens(
-              get(basicAllowance, 'spend_limit', []),
-              displayDenom,
-              decimals
-            )}
+            {parseTokens(getSpendLimit(), displayDenom, decimals)}
           </div>
         </div>
       </div>

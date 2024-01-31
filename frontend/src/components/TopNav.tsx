@@ -17,8 +17,8 @@ const TopNav = ({
     <div className="flex justify-between gap-6">
       {(showFeegrantButton || showAuthzButton) && (
         <div className="flex gap-6">
-          <FeegrantButton />
-          <AuthzButton />
+          {showFeegrantButton && <FeegrantButton />}
+          {showAuthzButton && <AuthzButton />}
         </div>
       )}
       <SelectNetwork message={message} />

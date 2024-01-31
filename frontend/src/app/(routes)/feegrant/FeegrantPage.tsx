@@ -5,6 +5,8 @@ import TopNav from '@/components/TopNav';
 import GrantedByMe from './components/GrantedByMe';
 import GrantedToMe from './components/GrantedToMe';
 import DialogCreateFeegrant from './components/DialogCreateFeegrant';
+import FeegrantToast from '@/components/FeegrantToast';
+
 const FeegrantPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const [isGrantedToMe, setIsGrantedToMe] = useState(true);
 
@@ -18,8 +20,9 @@ const FeegrantPage = ({ chainIDs }: { chainIDs: string[] }) => {
       <div className="space-y-10">
         <div className="flex justify-between items-center">
           <h2 className="page-title">FeeGrant</h2>
-          <TopNav />
+          <TopNav showFeegrantButton={true} showAuthzButton={false} />
         </div>
+        <FeegrantToast chainIDs={chainIDs} margins="" />
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <div className="flex gap-4">
