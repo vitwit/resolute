@@ -21,7 +21,7 @@
   @apply text-[#FFFFFF80] text-sm font-normal leading-[normal];
 }
 .feegrant-card {
-  @apply flex flex-col items-start gap-4 backdrop-blur-[2px] p-6 rounded-2xl;
+  @apply flex flex-col items-start gap-6 backdrop-blur-[2px] p-6 rounded-2xl;
   background: #0e0b26;
 }
 .feegrant-address {
@@ -41,7 +41,7 @@
   background: rgba(239, 255, 52, 0.4);
 }
 .view-button {
-  @apply text-white text-xs not-italic font-medium leading-5 tracking-[0.48px] underline;
+  @apply text-[12px] leading-[20px] tracking-[0.48px] font-medium underline underline-offset-[3px];
 }
 .main-btn {
   @apply flex justify-center items-center gap-6 px-10 py-2.5 rounded-2xl;

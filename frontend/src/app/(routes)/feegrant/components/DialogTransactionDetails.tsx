@@ -80,9 +80,6 @@ const DialogTransactionDetails = ({
                 </div>
               </div>
             </div>
-            <button className="main-btn w-[139px] cursor-pointer">
-              Revoke
-            </button>
             <div className="justify-end items-center gap-2.5 pt-10 pb-0 px-6"></div>
           </div>
         </div>

@@ -7,6 +7,9 @@ import { FeegrantRevokeMsg } from '@/txns/feegrant';
 import { signAndBroadcast } from '@/utils/signing';
 import { GAS_FEE } from '@/utils/constants';
 import { ERR_UNKNOWN } from '@/utils/errors';
+import { NewTransaction } from '@/utils/transaction';
+import { addTransactions } from '../transactionHistory/transactionHistorySlice';
+import { setTxAndHash } from '../common/commonSlice';
 
 interface ChainAllowance {
   grantsToMe: Allowance[];
@@ -94,7 +97,6 @@ export const getGrantsByMe = createAsyncThunk(
   }
 );
 
-
 export const txCreateFeegrant = createAsyncThunk(
   'feegrant/create-grant',
   async (
@@ -155,10 +157,12 @@ export const txCreateFeegrant = createAsyncThunk(
   }
 );
 
-
 export const txRevoke = createAsyncThunk(
   'feegrant/tx-revoke',
-  async (data: FeeGrantRevokeInputs, { rejectWithValue, fulfillWithValue, dispatch }) => {
+  async (
+    data: FeeGrantRevokeInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
     try {
       const msg = FeegrantRevokeMsg(data.granter, data.grantee);
 
@@ -175,22 +179,42 @@ export const txRevoke = createAsyncThunk(
         data.basicChainInfo.rest,
         data?.feegranter
       );
-      
+
       if (result?.code === 0) {
-        dispatch(getGrantsByMe({
-          baseURLs: data.baseURLs,
-          address: data?.basicChainInfo.address,
-          chainID: data?.basicChainInfo?.chainID
-        }
-        ))
+        const tx = NewTransaction(
+          result,
+          [msg],
+          data.basicChainInfo.chainID,
+          data.basicChainInfo.cosmosAddress
+        );
+        dispatch(
+          addTransactions({
+            transactions: [tx],
+            chainID: data.basicChainInfo.chainID,
+            address: data.basicChainInfo.cosmosAddress,
+          })
+        );
+        dispatch(
+          setTxAndHash({
+            tx: tx,
+            hash: result?.transactionHash,
+          })
+        );
+        dispatch(
+          getGrantsByMe({
+            baseURLs: data.baseURLs,
+            address: data?.basicChainInfo.address,
+            chainID: data?.basicChainInfo?.chainID,
+          })
+        );
         return fulfillWithValue({ txHash: result?.transactionHash });
       } else {
         return rejectWithValue(result?.rawLog);
       }
-       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      console.log('error while revoke fee grant txn ', error)
-      return rejectWithValue(error?.message)
+      console.log('error while revoke fee grant txn ', error);
+      return rejectWithValue(error?.message);
     }
   }
 );
@@ -350,6 +374,21 @@ export const feegrantSlice = createSlice({
           error:
             typeof action.payload === 'string' ? action.payload : ERR_UNKNOWN,
         });
+      });
+    builder
+      .addCase(txRevoke.pending, (state, action) => {
+        const chainID = action.meta.arg.basicChainInfo.chainID;
+        state.chains[chainID].tx.status = TxStatus.PENDING;
+        state.chains[chainID].tx.errMsg = '';
+      })
+      .addCase(txRevoke.fulfilled, (state, action) => {
+        const chainID = action.meta.arg.basicChainInfo.chainID;
+        state.chains[chainID].tx.status = TxStatus.IDLE;
+      })
+      .addCase(txRevoke.rejected, (state, action) => {
+        const chainID = action.meta.arg.basicChainInfo.chainID;
+        state.chains[chainID].tx.status = TxStatus.REJECTED;
+        state.chains[chainID].tx.errMsg = action.error.message || 'rejected';
       });
   },
 });
