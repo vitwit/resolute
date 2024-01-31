@@ -18,6 +18,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { TxStatus } from '@/types/enums';
 import useAuthzExecHelper from '@/custom-hooks/useAuthzExecHelper';
+import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
+import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
 
 const DepositPopup = ({
   chainID,
@@ -53,6 +55,8 @@ const DepositPopup = ({
   const authzLoading = useAppSelector(
     (state) => state.authz.chains?.[chainID]?.tx?.status || TxStatus.INIT
   );
+
+  const { getFeegranter } = useGetFeegranter();
 
   const {
     handleSubmit,
@@ -118,7 +122,7 @@ const DepositPopup = ({
         aminoConfig: aminoConfig,
         prefix: prefix,
         feeAmount: feeAmount,
-        feegranter: '',
+        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['deposit']),
       })
     );
   };

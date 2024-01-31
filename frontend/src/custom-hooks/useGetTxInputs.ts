@@ -9,6 +9,8 @@ import { TxReStakeInputs } from '@/types/staking';
 import { Delegate } from '@/txns/staking';
 import useAddressConverter from './useAddressConverter';
 import { EncodeDelegate } from '@/txns/staking/delegate';
+import useGetFeegranter from './useGetFeegranter';
+import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
 
 const useGetTxInputs = () => {
   const stakingChains = useAppSelector(
@@ -24,6 +26,7 @@ const useGetTxInputs = () => {
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const authzAddress = useAppSelector((state) => state.authz.authzAddress);
   const { getDenomInfo, getChainInfo } = useGetChainInfo();
+  const { getFeegranter } = useGetFeegranter();
 
   const txWithdrawAllRewardsInputs = (
     chainID: string
@@ -40,8 +43,15 @@ const useGetTxInputs = () => {
     });
     const { minimalDenom, decimals } = getDenomInfo(chainID);
     const basicChainInfo = getChainInfo(chainID);
-    const { aminoConfig, prefix, rest, feeAmount, address, cosmosAddress, rpc } =
-      basicChainInfo;
+    const {
+      aminoConfig,
+      prefix,
+      rest,
+      feeAmount,
+      address,
+      cosmosAddress,
+      rpc,
+    } = basicChainInfo;
 
     return {
       isAuthzMode: false,
@@ -53,10 +63,10 @@ const useGetTxInputs = () => {
       prefix,
       rest,
       feeAmount: feeAmount * 10 ** decimals,
-      feegranter: '',
+      feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['withdraw_rewards']),
       address,
       cosmosAddress,
-      rpc
+      rpc,
     };
   };
 
@@ -102,8 +112,15 @@ const useGetTxInputs = () => {
 
     const { minimalDenom, decimals } = getDenomInfo(chainID);
     const basicChainInfo = getChainInfo(chainID);
-    const { aminoConfig, prefix, rest, feeAmount, address, rpc, cosmosAddress } =
-      basicChainInfo;
+    const {
+      aminoConfig,
+      prefix,
+      rest,
+      feeAmount,
+      address,
+      rpc,
+      cosmosAddress,
+    } = basicChainInfo;
 
     return {
       isAuthzMode: false,
@@ -115,10 +132,10 @@ const useGetTxInputs = () => {
       prefix,
       rest,
       feeAmount: feeAmount * 10 ** decimals,
-      feegranter: '',
+      feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['withdraw_rewards']),
       address,
       cosmosAddress,
-      rpc
+      rpc,
     };
   };
 
@@ -153,7 +170,7 @@ const useGetTxInputs = () => {
       memo: '',
       denom: minimalDenom,
       feeAmount: basicChainInfo.feeAmount * 10 ** decimals,
-      feegranter: '',
+      feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['delegate']),
     };
   };
 
@@ -188,7 +205,7 @@ const useGetTxInputs = () => {
       memo: '',
       denom: minimalDenom,
       feeAmount: basicChainInfo.feeAmount * 10 ** decimals,
-      feegranter: '',
+      feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['delegate']),
     };
   };
 
@@ -211,7 +228,7 @@ const useGetTxInputs = () => {
       amount: amount * 10 ** decimals,
       denom: minimalDenom,
       feeAmount: basicChainInfo.feeAmount * 10 ** decimals,
-      feegranter: '',
+      feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['send']),
       memo,
       prefix: basicChainInfo.prefix,
     };

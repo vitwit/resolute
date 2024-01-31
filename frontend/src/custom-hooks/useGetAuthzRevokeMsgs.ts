@@ -1,5 +1,7 @@
 import useGetChainInfo from './useGetChainInfo';
 import { AuthzRevokeMsg } from '@/txns/authz';
+import useGetFeegranter from './useGetFeegranter';
+import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
 
 const useGetAuthzRevokeMsgs = ({
   granter,
@@ -15,6 +17,7 @@ const useGetAuthzRevokeMsgs = ({
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const basicChainInfo = getChainInfo(chainID);
   const { decimals, minimalDenom } = getDenomInfo(chainID);
+  const { getFeegranter } = useGetFeegranter();
   const { feeAmount: avgFeeAmount } = basicChainInfo;
   const feeAmount = avgFeeAmount * 10 ** decimals;
 
@@ -27,7 +30,7 @@ const useGetAuthzRevokeMsgs = ({
     basicChainInfo: basicChainInfo,
     denom: minimalDenom,
     feeAmount: feeAmount,
-    feegranter: '',
+    feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['revoke_authz']),
     msgs: revokeAuthzMsgs,
   };
   return {
