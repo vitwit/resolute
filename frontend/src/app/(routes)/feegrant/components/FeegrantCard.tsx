@@ -130,7 +130,6 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
     }
   };
 
-  console.log(basicAllowance);
   return (
     <div className="feegrant-card">
       <div className="justify-between w-full flex">
