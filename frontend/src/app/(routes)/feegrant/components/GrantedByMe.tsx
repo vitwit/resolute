@@ -4,6 +4,7 @@ import { NO_FEEGRANTS_BY_ME_TEXT } from '@/utils/constants';
 import { CircularProgress } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
+import FeegrantCard from './FeegrantCard';
 
 const GrantedByMe = ({
   chainIDs,
@@ -22,7 +23,13 @@ const GrantedByMe = ({
     <>
       <div className="feegrant-card-grid">
         {addressGrants.map((addressGrant) => (
-          <>{!!addressGrant.grants.length && JSON.stringify(addressGrant)}</>
+          <>{!!addressGrant.grants.length &&
+            <FeegrantCard
+              chainID={addressGrant.chainID}
+              grant={addressGrant?.grants[0]}
+              isGrantsByMe={true}
+              address={addressGrant.address}
+            />}</>
         ))}
       </div>
     </>
@@ -30,7 +37,7 @@ const GrantedByMe = ({
     <div className="flex justify-center mt-[20%] items-center">
       <CircularProgress size={32} sx={{ color: 'white' }} />
     </div>
-  ) : (
+  ): (
     <div className="my-[5%] flex flex-col justify-center items-center">
       <Image
         src="/no-authz-grants-illustration.png"

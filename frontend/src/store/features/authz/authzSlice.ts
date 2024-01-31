@@ -303,12 +303,6 @@ export const txAuthzRevoke = createAsyncThunk(
         );
         dispatch(
           setTxAndHash({
-            hash: result?.transactionHash,
-            tx,
-          })
-        );
-        dispatch(
-          setTxAndHash({
             tx: tx,
             hash: result?.transactionHash,
           })

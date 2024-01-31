@@ -46,6 +46,15 @@ interface AddressFeegrants {
   grants: Allowance[];
 }
 
+interface FeeGrantRevokeInputs {
+  granter: string;
+  grantee: string;
+  basicChainInfo: BasicChainInfo;
+  baseURLs: string[];
+  onTxSuccessCallBack?: () => void;
+  feegranter?:string;
+  denom:string,
+}
 interface FeegrantMsgInputs {
   granter: string;
   grantee: string;
