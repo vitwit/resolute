@@ -43,10 +43,10 @@ const ChainDelegations = ({
   const { getChainInfo } = useGetChainInfo();
   const { txAuthzDelegate, txAuthzReDelegate, txAuthzUnDelegate } =
     useAuthzStakingExecHelper();
+  const { getFeegranter } = useGetFeegranter();
 
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const networkLogo = networks[chainID]?.network.logos.menu;
-  const { getFeegranter } = useGetFeegranter();
 
   const [validatorRewards, setValidatorRewards] = React.useState<{
     [key: string]: number;
