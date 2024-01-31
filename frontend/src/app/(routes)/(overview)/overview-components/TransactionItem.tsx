@@ -1,3 +1,4 @@
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { formatTransaction } from '@/utils/transaction';
 import Image from 'next/image';
 
@@ -8,7 +9,15 @@ const TransactionItem = ({
   transaction: Transaction;
   msgFilters: string[];
 }) => {
-  const uiTx = formatTransaction(transaction, msgFilters);
+  const chainID = transaction.chainID;
+  const { getDenomInfo } = useGetChainInfo();
+  const { decimals, displayDenom } = getDenomInfo(chainID);
+  const uiTx = formatTransaction(
+    transaction,
+    msgFilters,
+    decimals,
+    displayDenom
+  );
 
   return uiTx.showTx ? (
     <div className="w-full flex gap-4">

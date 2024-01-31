@@ -27,6 +27,8 @@ import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
 import { UnbondingEncode } from '@/txns/staking/unbonding';
 import useAddressConverter from '@/custom-hooks/useAddressConverter';
+import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
+import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
 
 const UnbondingCard = ({
   moniker,
@@ -46,6 +48,7 @@ const UnbondingCard = ({
   const handleDialogClose = () => {
     setUnbondingDialogOpen(false);
   };
+  const { getFeegranter } = useGetFeegranter();
   const { getChainInfo } = useGetChainInfo();
   const { feeAmount: avgFeeAmount, address } = getChainInfo(chainID);
   const feeAmount = avgFeeAmount * 10 ** currency?.coinDecimals;
@@ -89,7 +92,7 @@ const UnbondingCard = ({
         amount: amount * 10 ** currency.coinDecimals,
         denom: currency.coinMinimalDenom,
         feeAmount: feeAmount,
-        feegranter: '',
+        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['withdraw_rewards']),
         creationHeight: creationHeight,
       })
     );

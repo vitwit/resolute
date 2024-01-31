@@ -14,6 +14,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getMsgNameFromAuthz } from '@/utils/authorizations';
 import { enableAuthzMode } from '@/store/features/authz/authzSlice';
 import { setAuthzMode } from '@/utils/localStorage';
+import { exitFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
 
 interface DialogAuthzGrantsProps {
   open: boolean;
@@ -60,6 +61,7 @@ const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
                   className="use-grant-btn"
                   onClick={() => {
                     dispatch(enableAuthzMode({ address: grant.cosmosAddress }));
+                    dispatch(exitFeegrantMode());
                     setAuthzMode(cosmosAddress, grant.address);
                     onClose();
                   }}

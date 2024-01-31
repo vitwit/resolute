@@ -11,6 +11,7 @@ import { setError } from '@/store/features/common/commonSlice';
 import useSortedAssets from '@/custom-hooks/useSortedAssets';
 import AuthzToast from '@/components/AuthzToast';
 import AuthzExecLoader from '@/components/AuthzExecLoader';
+import FeegrantToast from '@/components/FeegrantToast';
 
 export interface TransfersTab {
   current: string;
@@ -52,6 +53,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
       <div className="w-full page-padding overflow-y-scroll flex flex-col flex-1">
         <MainTopNav title="Transfers" />
         <AuthzToast chainIDs={chainIDs} margins="mt-10 mb-4" />
+        <FeegrantToast chainIDs={chainIDs} margins="mt-10 mb-4" />
         <div className="flex flex-col rounded-2xl bg-[#0e0b26] space-y-6 mt-6 flex-1">
           {tab.current === SINGLE_TAB_TEXT ? (
             <SingleTransfer

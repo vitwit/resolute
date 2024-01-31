@@ -24,6 +24,8 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { parseDenomAmount } from '@/utils/util';
 import { TxStatus } from '@/types/enums';
 import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
+import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
+import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
 
 const ChainDelegations = ({
   chainID,
@@ -41,6 +43,7 @@ const ChainDelegations = ({
   const { getChainInfo } = useGetChainInfo();
   const { txAuthzDelegate, txAuthzReDelegate, txAuthzUnDelegate } =
     useAuthzStakingExecHelper();
+  const { getFeegranter } = useGetFeegranter();
 
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const networkLogo = networks[chainID]?.network.logos.menu;
@@ -140,7 +143,7 @@ const ChainDelegations = ({
         amount: data.amount * 10 ** currency.coinDecimals,
         denom: currency.coinMinimalDenom,
         feeAmount: feeAmount,
-        feegranter: '',
+        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['delegate']),
       })
     );
   };
@@ -167,7 +170,7 @@ const ChainDelegations = ({
         amount: data.amount * 10 ** currency.coinDecimals,
         denom: currency.coinMinimalDenom,
         feeAmount: feeAmount,
-        feegranter: '',
+        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['undelegate']),
       })
     );
   };
@@ -196,7 +199,7 @@ const ChainDelegations = ({
         amount: data.amount * 10 ** currency.coinDecimals,
         denom: currency.coinMinimalDenom,
         feeAmount: feeAmount,
-        feegranter: '',
+        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['redelegate']),
       })
     );
   };

@@ -552,6 +552,7 @@ async function sign(
 
     } catch (error) {
       console.log('error while sign direct', error)
+      throw new Error('Request rejected');
     }
 
   }

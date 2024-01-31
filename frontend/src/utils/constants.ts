@@ -166,6 +166,14 @@ export const SIDENAV_MENU_ITEMS = [
     authzSupported: false,
     isMetaMaskSupports: false,
   },
+  {
+    name: 'Feegrant',
+    icon: '/feegrant-icon.svg',
+    activeIcon: '/feegrant-icon-active.svg',
+    link: '/feegrant',
+    authzSupported: false,
+    isMetaMaskSupports: false,
+  },
 ];
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
@@ -218,3 +226,10 @@ export const MULTISIG_PUBKEY_OBJECT = {
 };
 export const AXIOS_RETRIES_COUNT = 2;
 export const MAX_TRY_END_POINTS = 20;
+export const NO_FEEGRANTS_BY_ME_TEXT = "You haven't granted any allowance yet";
+export const NO_FEEGRANTS_TO_ME_TEXT = "You don't have any feegrants";
+export const ALERT_TYPE_MAP: Record<string, string> = {
+  success: 'success',
+  error: 'error',
+  info: 'info',
+};

@@ -8,6 +8,7 @@ import {
 import { Options } from '@/custom-hooks/useSortedAssets';
 import { getAuthToken, removeAllAuthTokens } from './localStorage';
 import { MultisigAddressPubkey } from '@/types/multisig';
+import { fromBech32 } from '@cosmjs/encoding';
 
 export const convertPaginationToParams = (
   pagination?: KeyLimitPagination
@@ -416,4 +417,28 @@ export function isMultisigAccountMember(
     return walletAddress === address;
   });
   return result?.length !== 0;
+}
+
+export const validateAddress = (address: string) => {
+  if (address?.length) {
+    try {
+      fromBech32(address);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+  return false;
+};
+
+export function getTypeURLName(url: string) {
+  if (!url) {
+    return '-';
+  }
+  const temp = url.split('.');
+  if (temp?.length > 0) {
+    const msg = temp[temp?.length - 1];
+    return msg.slice(3, msg.length);
+  }
+  return '-';
 }
