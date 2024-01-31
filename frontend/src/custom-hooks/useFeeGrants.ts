@@ -1,6 +1,7 @@
 import { COSMOS_CHAIN_ID } from '@/utils/constants';
 import { useAppDispatch, useAppSelector } from './StateHooks';
 import { exitFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
+import { logoutFeegrantMode } from '@/utils/localStorage';
 
 export interface ChainAllowance {
   chainID: string;
@@ -95,6 +96,7 @@ const useFeeGrants = () => {
 
   const disableFeegrantMode = () => {
     dispatch(exitFeegrantMode());
+    logoutFeegrantMode();
   };
 
   return {
