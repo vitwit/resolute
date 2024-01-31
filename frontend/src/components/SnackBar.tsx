@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
-import { ALERT_HIDE_DURATION } from '@/utils/constants';
-import { Alert, Snackbar } from '@mui/material';
+import { ALERT_HIDE_DURATION, ALERT_TYPE_MAP } from '@/utils/constants';
+import { Alert, AlertColor, Snackbar } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
 const SnackBar = () => {
@@ -22,6 +22,7 @@ const SnackBar = () => {
       setSnackOpen(false);
     }
   }, [errState]);
+
   return (
     <>
       {errState?.message?.length > 0 && (
@@ -38,7 +39,7 @@ const SnackBar = () => {
           <Alert
             variant="filled"
             onClose={handleClose}
-            severity={errState.type === 'success' ? 'success' : 'error'}
+            severity={ALERT_TYPE_MAP[errState.type] as AlertColor}
           >
             {errState.message}
           </Alert>

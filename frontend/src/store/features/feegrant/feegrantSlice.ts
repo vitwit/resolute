@@ -157,6 +157,14 @@ export const feegrantSlice = createSlice({
   name: 'feegrant',
   initialState,
   reducers: {
+    enableFeegrantMode: (state, action: PayloadAction<{ address: string }>) => {
+      state.feegrantModeEnabled = true;
+      state.feegrantAddress = action.payload.address;
+    },
+    exitFeegrantMode: (state) => {
+      state.feegrantModeEnabled = false;
+      state.feegrantAddress = '';
+    },
     resetState: (state) => {
       /* eslint-disable @typescript-eslint/no-unused-vars */
       state = cloneDeep(initialState);
@@ -304,6 +312,11 @@ export const feegrantSlice = createSlice({
   },
 });
 
-export const {} = feegrantSlice.actions;
+export const {
+  enableFeegrantMode,
+  exitFeegrantMode,
+  resetState,
+  resetTxStatus,
+} = feegrantSlice.actions;
 
 export default feegrantSlice.reducer;

@@ -29,6 +29,7 @@ import MainTopNav from '@/components/MainTopNav';
 import AuthzToast from '@/components/AuthzToast';
 import useInitAuthzStaking from '@/custom-hooks/useInitAuthzStaking';
 import AuthzExecLoader from '@/components/AuthzExecLoader';
+import FeegrantToast from '@/components/FeegrantToast';
 
 const StakingPage = ({
   chainName,
@@ -173,6 +174,7 @@ const StakingPage = ({
         <div className="mb-6">
           <MainTopNav title="Staking" />
           <AuthzToast chainIDs={[chainID]} margins="mt-10 mb-10" />
+          <FeegrantToast chainIDs={[chainID]} margins="mt-10 mb-10" />
         </div>
         <div className="overview-grid">
           <ChainDelegations

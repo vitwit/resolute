@@ -3,6 +3,8 @@ export const KEY_DARK_MODE: string = 'DARK_MODE';
 const AUTH_TOKEN_KEY_NAME: string = 'AUTH_TOKEN';
 const AUTHZ_KEY = 'Authz_key';
 const AUTHZ_VALUE = 'Authz_value';
+const FEEGRANT_KEY = 'feegrant_key';
+const FEEGRANT_VALUE = 'feegrant_value';
 const KEY_TRANSACTIONS = (address: string) => 'transactions' + ' ' + address;
 
 interface LocalNetworks {
@@ -31,7 +33,8 @@ export function removeWalletName() {
   localStorage.removeItem(KEY_WALLET_NAME);
 }
 
-export const isMetaMaskWallet = () => localStorage.getItem(KEY_WALLET_NAME) === 'metamask';
+export const isMetaMaskWallet = () =>
+  localStorage.getItem(KEY_WALLET_NAME) === 'metamask';
 
 export function isConnected(): boolean {
   const connected = localStorage.getItem('CONNECTED');
@@ -167,13 +170,26 @@ export function checkAuthzKeyAddress(address: string): boolean {
   return localStorage.getItem(AUTHZ_KEY) === address;
 }
 
+export function checkFeegrantKeyAddress(address: string): boolean {
+  return localStorage.getItem(FEEGRANT_KEY) === address;
+}
+
 export function getAuthzValueAddress(): string {
   return localStorage.getItem(AUTHZ_VALUE) || '';
+}
+
+export function getFeegrantValueAddress(): string {
+  return localStorage.getItem(FEEGRANT_VALUE) || '';
 }
 
 export function logoutAuthzMode() {
   localStorage.removeItem(AUTHZ_KEY);
   localStorage.removeItem(AUTHZ_VALUE);
+}
+
+export function logoutFeegrantMode() {
+  localStorage.removeItem(FEEGRANT_KEY);
+  localStorage.removeItem(FEEGRANT_VALUE);
 }
 
 export function getAuthzMode(address: string): {
@@ -193,7 +209,29 @@ export function getAuthzMode(address: string): {
   };
 }
 
+export function getFeegrantMode(address: string): {
+  isFeegrantModeOn: boolean;
+  feegrantAddress: string;
+} {
+  if (!checkFeegrantKeyAddress(address)) {
+    logoutFeegrantMode();
+    return {
+      isFeegrantModeOn: false,
+      feegrantAddress: '',
+    };
+  }
+  return {
+    isFeegrantModeOn: true,
+    feegrantAddress: getFeegrantValueAddress(),
+  };
+}
+
 export function setAuthzMode(address: string, authzAddress: string) {
   localStorage.setItem(AUTHZ_KEY, address);
   localStorage.setItem(AUTHZ_VALUE, authzAddress);
+}
+
+export function setFeegrantMode(address: string, feegrantAddress: string) {
+  localStorage.setItem(FEEGRANT_KEY, address);
+  localStorage.setItem(FEEGRANT_VALUE, feegrantAddress);
 }

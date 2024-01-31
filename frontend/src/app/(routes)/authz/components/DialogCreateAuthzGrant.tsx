@@ -33,6 +33,8 @@ import MultiChainTxnStatus from './MultiChainTxnStatus';
 import ConfirmDialogClose from './ConfirmDialogClose';
 import MsgItem from './MsgItem';
 import NetworkItem from './NetworkItem';
+import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
+import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
@@ -48,6 +50,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   const { open, onClose } = props;
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { trackTxs, ChainsStatus, currentTxCount } = useMultiTxTracker();
+  const { getFeegranter } = useGetFeegranter();
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -239,7 +242,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
           msgs: msgs,
           denom: minimalDenom,
           feeAmount: feeAmount,
-          feegranter: '',
+          feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['grant_authz']),
         },
       });
     });

@@ -11,6 +11,8 @@ import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { RootState } from '@/store/store';
 import { TxStatus } from '@/types/enums';
 import useAuthzExecHelper from '@/custom-hooks/useAuthzExecHelper';
+import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
+import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
 
 interface VoteOptionNumber {
   [key: string]: number;
@@ -49,6 +51,7 @@ const VotePopup = ({
     setVoteOption(option);
   };
 
+  const { getFeegranter } = useGetFeegranter();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
 
   const handleClose = () => {
@@ -97,7 +100,7 @@ const VotePopup = ({
         aminoConfig: aminoConfig,
         prefix: prefix,
         feeAmount: feeAmount,
-        feegranter: '',
+        feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['vote']),
         justification: '',
       })
     );

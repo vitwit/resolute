@@ -13,12 +13,15 @@ import { resetState as bankReset } from '@/store/features/bank/bankSlice';
 import { resetState as rewardsReset } from '@/store/features/distribution/distributionSlice';
 import { resetCompleteState as stakingReset } from '@/store/features/staking/stakeSlice';
 import { resetState as authzReset } from '@/store/features/authz/authzSlice';
+import { resetState as feegrantReset } from '@/store/features/feegrant/feegrantSlice';
 import useAuthzGrants from '@/custom-hooks/useAuthzGrants';
+import useFeeGrants from '@/custom-hooks/useFeeGrants';
 
 const Profile = () => {
   const profileName = useAppSelector((state) => state.wallet.name);
   const dispatch = useAppDispatch();
   const { disableAuthzMode } = useAuthzGrants();
+  const { disableFeegrantMode } = useFeeGrants();
 
   return (
     <div className="flex items-center gap-1">
@@ -46,7 +49,9 @@ const Profile = () => {
             dispatch(rewardsReset());
             dispatch(stakingReset());
             dispatch(authzReset());
+            dispatch(feegrantReset());
             disableAuthzMode();
+            disableFeegrantMode();
             logout();
           }}
           className="cursor-pointer"

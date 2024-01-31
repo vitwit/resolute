@@ -19,11 +19,15 @@ import { getDelegatorTotalRewards } from '@/store/features/distribution/distribu
 import useInitAuthzForOverview from '@/custom-hooks/useInitAuthzForOverview';
 import AuthzToast from '@/components/AuthzToast';
 import AuthzExecLoader from '@/components/AuthzExecLoader';
+import FeegrantToast from '@/components/FeegrantToast';
 
 const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
   const networks = useAppSelector((state: RootState) => state.wallet.networks);
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const isFeegrantMode = useAppSelector(
+    (state) => state.feegrant.feegrantModeEnabled
+  );
 
   useInitAuthzForOverview(chainIDs);
   useEffect(() => {
@@ -67,10 +71,11 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
       <AuthzExecLoader chainIDs={chainIDs} />
       <div className="flex flex-col w-full px-10 py-6 space-y-6 min-h-screen max-h-screen">
         <TopNav />
-        {isAuthzMode && (
+        {(isAuthzMode || isFeegrantMode) && (
           <div>
             <div className="h-4"></div>
             <AuthzToast chainIDs={chainIDs} margins="" />
+            <FeegrantToast chainIDs={chainIDs} margins="" />
             <div className="h-4"></div>
           </div>
         )}

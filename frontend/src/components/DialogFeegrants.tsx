@@ -1,28 +1,29 @@
-import {
-  ChainAuthz,
-  InterChainAuthzGrants,
-} from '@/custom-hooks/useAuthzGrants';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { Dialog, DialogContent } from '@mui/material';
+import { Dialog, DialogContent, Tooltip } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { getMsgNameFromAuthz } from '@/utils/authorizations';
-import { enableAuthzMode } from '@/store/features/authz/authzSlice';
-import { setAuthzMode } from '@/utils/localStorage';
-import { exitFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
+import {
+  ChainAllowance,
+  InterChainFeegrants,
+} from '@/custom-hooks/useFeeGrants';
+import { enableFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
+import { setFeegrantMode } from '@/utils/localStorage';
+import { getMsgNamesFromAllowance } from '@/utils/feegrant';
+import { capitalizeFirstLetter } from '@/utils/util';
+import { exitAuthzMode } from '@/store/features/authz/authzSlice';
 
-interface DialogAuthzGrantsProps {
+interface DialogFeegrantsProps {
   open: boolean;
   onClose: () => void;
-  grants: InterChainAuthzGrants[];
+  grants: InterChainFeegrants[];
 }
 
-const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
+const DialogFeegrants: React.FC<DialogFeegrantsProps> = (props) => {
   const { open, onClose, grants } = props;
   const dispatch = useAppDispatch();
   const { getCosmosAddress } = useGetChainInfo();
@@ -56,13 +57,15 @@ const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
             {grants.map((grant) => (
               <div className="grants-card" key={grant.address}>
                 <AddressChip address={grant.cosmosAddress} />
-                <AuthzPermissions grants={grant.grants} />
+                <FeegrantAllowances grants={grant.grants} />
                 <button
                   className="use-grant-btn"
                   onClick={() => {
-                    dispatch(enableAuthzMode({ address: grant.cosmosAddress }));
-                    dispatch(exitFeegrantMode());
-                    setAuthzMode(cosmosAddress, grant.address);
+                    dispatch(
+                      enableFeegrantMode({ address: grant.cosmosAddress })
+                    );
+                    dispatch(exitAuthzMode());
+                    setFeegrantMode(cosmosAddress, grant.address);
                     onClose();
                   }}
                 >
@@ -77,7 +80,7 @@ const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
   );
 };
 
-export default DialogAuthzGrants;
+export default DialogFeegrants;
 
 export const AddressChip = ({ address }: { address: string }) => {
   const dispatch = useAppDispatch();
@@ -106,16 +109,15 @@ export const AddressChip = ({ address }: { address: string }) => {
   );
 };
 
-const AuthzPermissions = ({ grants }: { grants: ChainAuthz[] }) => {
+const FeegrantAllowances = ({ grants }: { grants: ChainAllowance[] }) => {
   return (
     <div className="space-y-4">
       <h3 className="text-[#FFFFFF80] text-[14px]">Permissions</h3>
       <div className="flex flex-wrap gap-4">
-        {grants.map((grant, index) => (
-          <Message
-            key={index}
-            chainID={grant.chainID}
-            msg={getMsgNameFromAuthz(grant.grant)}
+        {grants.map((chainGrants) => (
+          <ChainFeegrants
+            key={chainGrants.chainID}
+            chainAllowance={chainGrants}
           />
         ))}
       </div>
@@ -123,20 +125,35 @@ const AuthzPermissions = ({ grants }: { grants: ChainAuthz[] }) => {
   );
 };
 
-const Message = ({ msg, chainID }: { msg: string; chainID: string }) => {
+const ChainFeegrants = ({
+  chainAllowance,
+}: {
+  chainAllowance: ChainAllowance;
+}) => {
+  const { chainID, grant } = chainAllowance;
+  const mgsNames = getMsgNamesFromAllowance(grant);
   const { getChainInfo } = useGetChainInfo();
-  const { chainLogo } = getChainInfo(chainID);
+  const { chainLogo, chainName } = getChainInfo(chainID);
 
   return (
-    <div className="rounded-xl p-2 bg-[#FFFFFF1A] flex gap-2 items-center max-h-8">
-      <div>{msg}</div>
-      <Image
-        className="rounded-full"
-        src={chainLogo}
-        width={16}
-        height={16}
-        alt={chainID}
-      />
-    </div>
+    <>
+      {mgsNames.map((msg) => (
+        <div
+          key={msg}
+          className="rounded-xl p-2 bg-[#FFFFFF1A] flex gap-2 items-center max-h-8"
+        >
+          <div>{msg}</div>
+          <Tooltip title={capitalizeFirstLetter(chainName)} placement="top">
+            <Image
+              className="rounded-full"
+              src={chainLogo}
+              width={16}
+              height={16}
+              alt={chainID}
+            />
+          </Tooltip>
+        </div>
+      ))}
+    </>
   );
 };
