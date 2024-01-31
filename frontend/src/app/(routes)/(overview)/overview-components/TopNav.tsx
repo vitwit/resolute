@@ -1,4 +1,5 @@
 import AuthzButton from '@/components/AuthzButton';
+import FeegrantButton from '@/components/FeegrantButton';
 import React from 'react';
 
 const TopNav = () => {
@@ -7,7 +8,10 @@ const TopNav = () => {
       <h2 className="text-xl not-italic font-normal leading-[normal]">
         Overview
       </h2>
-      <AuthzButton />
+      <div className="flex gap-6">
+        <FeegrantButton />
+        <AuthzButton />
+      </div>
     </div>
   );
 };
