@@ -142,7 +142,6 @@ export const getFeegrantFormDefaultValues = () => {
 
 export const getMsgListFromMsgNames = (msgNames: string[]) => {
   const msgsList: string[] = [];
-  console.log(msgNames);
   msgNames.forEach((msg) => {
     msgsList.push(MAP_TXN_MSG_TYPES[convertToSnakeCase(msg)]);
   });

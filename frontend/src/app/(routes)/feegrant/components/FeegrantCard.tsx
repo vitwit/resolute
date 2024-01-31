@@ -14,6 +14,8 @@ import { get } from 'lodash';
 import { txRevoke } from '@/store/features/feegrant/feegrantSlice';
 import { TxStatus } from '@/types/enums';
 import { CircularProgress } from '@mui/material';
+import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
+import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
 
 const ALLOWED_MESSAGE_ALLOWANCE_TYPE =
   '/cosmos.feegrant.v1beta1.AllowedMsgAllowance';
@@ -54,6 +56,7 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
 
   const { getDenomInfo } = useGetChainInfo();
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
+  const { getFeegranter } = useGetFeegranter();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const toggleDialog = () => {
@@ -80,7 +83,10 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
         grantee: grant.grantee,
         basicChainInfo: basicChainInfo,
         baseURLs: basicChainInfo.restURLs,
-        feegranter: '',
+        feegranter: getFeegranter(
+          chainID,
+          MAP_TXN_MSG_TYPES['revoke_feegrant']
+        ),
         denom: minimalDenom,
       })
     );

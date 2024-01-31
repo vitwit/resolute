@@ -8,7 +8,10 @@ import React, { useEffect, useState } from 'react';
 import NetworkItem from '../../authz/components/NetworkItem';
 import { FieldValues, useForm } from 'react-hook-form';
 import CreateFeegrantForm from './CreateFeegrantForm';
-import { getFeegrantFormDefaultValues } from '@/utils/feegrant';
+import {
+  MAP_TXN_MSG_TYPES,
+  getFeegrantFormDefaultValues,
+} from '@/utils/feegrant';
 import useGetFeegrantMsgs from '@/custom-hooks/useGetFeegrantMsgs';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import useMultiTxTracker from '@/custom-hooks/useGetCreateFeegrantTxLoading';
@@ -18,6 +21,7 @@ import {
   CHAIN_NOT_SELECTED_ERROR,
   MSG_NOT_SELECTED_ERROR,
 } from '@/utils/errors';
+import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
 
 interface DialogCreateFeegrantProps {
   open: boolean;
@@ -50,6 +54,7 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
 
   const { getFeegrantMsgs } = useGetFeegrantMsgs();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { getFeegranter } = useGetFeegranter();
   const { trackTxs, chainsStatus, currentTxCount } = useMultiTxTracker();
 
   const handleSelectChain = (chainID: string) => {
@@ -110,7 +115,10 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
           msg: msgs,
           denom: minimalDenom,
           feeAmount: feeAmount,
-          feegranter: '',
+          feegranter: getFeegranter(
+            chainID,
+            MAP_TXN_MSG_TYPES['grant_feegrant']
+          ),
         },
       });
     });
