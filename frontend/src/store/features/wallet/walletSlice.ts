@@ -2,7 +2,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getWalletAmino } from '../../../txns/execute';
 import { isWalletInstalled } from './walletService';
-import { setConnected, setWalletName } from '../../../utils/localStorage';
+import {
+  getFeegrantMode,
+  setConnected,
+  setWalletName,
+} from '../../../utils/localStorage';
 import { TxStatus } from '@/types/enums';
 import { loadTransactions } from '../transactionHistory/transactionHistorySlice';
 import { setError } from '../common/commonSlice';
@@ -10,6 +14,7 @@ import { getKey } from '@leapwallet/cosmos-snap-provider';
 import { getAddressByPrefix } from '@/utils/address';
 import { getAuthzMode } from '@/utils/localStorage';
 import { enableAuthzMode } from '../authz/authzSlice';
+import { enableFeegrantMode } from '../feegrant/feegrantSlice';
 
 declare let window: WalletWindow;
 
@@ -81,7 +86,7 @@ export const establishWalletConnection = createAsyncThunk(
       let isNanoLedger = false;
       const chainInfos: Record<string, ChainInfo> = {};
       const nameToChainIDs: Record<string, string> = {};
-      const anyNetworkAddress = '';
+      let anyNetworkAddress = '';
       for (let i = 0; i < networks.length; i++) {
         if (data.walletName === 'metamask') {
           try {
@@ -139,6 +144,8 @@ export const establishWalletConnection = createAsyncThunk(
               walletInfo: walletInfo,
               network: networks[i],
             };
+            if (anyNetworkAddress === '')
+              anyNetworkAddress = walletInfo?.bech32Address || '';
             nameToChainIDs[chainName?.toLowerCase().split(' ').join('')] =
               chainId;
           } catch (error) {
@@ -179,6 +186,12 @@ export const establishWalletConnection = createAsyncThunk(
             address: cosmosAddress,
           })
         );
+        const feegrantMode = getFeegrantMode(cosmosAddress);
+        if (feegrantMode.isFeegrantModeOn)
+          dispatch(
+            enableFeegrantMode({ address: feegrantMode.feegrantAddress })
+          );
+
         return fulfillWithValue({
           chainInfos,
           nameToChainIDs,

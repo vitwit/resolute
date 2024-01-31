@@ -32,6 +32,8 @@ import TopNav from '@/components/TopNav';
 import { useRemark } from 'react-remark';
 import AuthzToast from '@/components/AuthzToast';
 import AuthzButton from '@/components/AuthzButton';
+import FeegrantButton from '@/components/FeegrantButton';
+import FeegrantToast from '@/components/FeegrantToast';
 
 const emptyTallyResult = {
   yes: '',
@@ -211,7 +213,13 @@ const ProposalOverviewVote = ({
       })
     );
 
-    dispatch(getGovTallyParams({ chainID, baseURL: chainInfo?.config.rest , baseURLs: chainInfo?.config.restURIs}));
+    dispatch(
+      getGovTallyParams({
+        chainID,
+        baseURL: chainInfo?.config.rest,
+        baseURLs: chainInfo?.config.restURIs,
+      })
+    );
   }, []);
 
   const [quorumPercent, setQuorumPercent] = useState<string>('0');
@@ -265,9 +273,13 @@ const ProposalOverviewVote = ({
           <div className="flex space-y-10 flex-col">
             <div className="flex justify-between items-center">
               <div className="proposal-text-big">Governance</div>
-              <AuthzButton />
+              <div className="flex gap-6">
+                <FeegrantButton />
+                <AuthzButton />
+              </div>
             </div>
             <AuthzToast chainIDs={[chainID]} margins="" />
+            <FeegrantToast chainIDs={[chainID]} margins="" />
             <div className="flex space-x-1">
               <Link href="/governance">
                 <Image
