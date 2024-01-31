@@ -6,9 +6,9 @@ interface FeegrantMenuItem {
   typeURL: string;
 }
 
-const BASIC_ALLOWANCE = '/cosmos.feegrant.v1beta1.BasicAllowance';
-const PERIODIC_ALLOWANCE = '/cosmos.feegrant.v1beta1.PeriodicAllowance';
-const ALLOWED_MSG_ALLOWANCE = '/cosmos.feegrant.v1beta1.AllowedMsgAllowance';
+export const BASIC_ALLOWANCE = '/cosmos.feegrant.v1beta1.BasicAllowance';
+export const PERIODIC_ALLOWANCE = '/cosmos.feegrant.v1beta1.PeriodicAllowance';
+export const ALLOWED_MSG_ALLOWANCE = '/cosmos.feegrant.v1beta1.AllowedMsgAllowance';
 
 export function feegrantMsgTypes(): FeegrantMenuItem[] {
   return [

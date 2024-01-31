@@ -814,7 +814,6 @@ export const networks: Network[] = [
       restURIs: [
         'https://dydx-rest.publicnode.com',
         'https://dydx-dao-api.polkachu.com',
-        'https://api.dydx.nodestake.top:443',
       ],
       rpcURIs: [
         'https://dydx-rpc.publicnode.com:443',

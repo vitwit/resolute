@@ -15,7 +15,11 @@ import { txRevoke } from '@/store/features/feegrant/feegrantSlice';
 import { TxStatus } from '@/types/enums';
 import { CircularProgress } from '@mui/material';
 import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
-import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
+import {
+  BASIC_ALLOWANCE,
+  MAP_TXN_MSG_TYPES,
+  PERIODIC_ALLOWANCE,
+} from '@/utils/feegrant';
 
 const ALLOWED_MESSAGE_ALLOWANCE_TYPE =
   '/cosmos.feegrant.v1beta1.AllowedMsgAllowance';
@@ -69,7 +73,9 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
     setIsDialogTransactionOpen(!isDialogTransactionOpen);
   };
 
-  const isPeriodic = get(allowance, '@type') === ALLOWED_MESSAGE_ALLOWANCE_TYPE;
+  const isPeriodic =
+    get(allowance, '@type') === PERIODIC_ALLOWANCE ||
+    get(allowance, 'allowance.@type') === PERIODIC_ALLOWANCE;
 
   const typeText = isPeriodic ? 'periodic' : 'basic';
   const { getChainInfo } = useGetChainInfo();
@@ -96,6 +102,35 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
     if (loading !== TxStatus.PENDING) setSelectedGrantee('');
   }, [loading]);
 
+  const getExpiryDate = () => {
+    if (get(allowance, '@type') === BASIC_ALLOWANCE) {
+      return get(allowance, 'expiration', '');
+    } else if (get(allowance, '@type') === PERIODIC_ALLOWANCE) {
+      return get(allowance, 'basic.expiration', '');
+    } else {
+      if (get(allowance, 'allowance.@type') === BASIC_ALLOWANCE) {
+        return get(allowance, 'allowance.expiration', '');
+      } else {
+        return get(allowance, 'allowance.basic.expiration', '');
+      }
+    }
+  };
+
+  const getSpendLimit = () => {
+    if (get(allowance, '@type') === BASIC_ALLOWANCE) {
+      return get(allowance, 'spend_limit', []);
+    } else if (get(allowance, '@type') === PERIODIC_ALLOWANCE) {
+      return get(allowance, 'basic.spend_limit', []);
+    } else {
+      if (get(allowance, 'allowance.@type') === BASIC_ALLOWANCE) {
+        return get(allowance, 'allowance.spend_limit', []);
+      } else {
+        return get(allowance, 'allowance.basic.spend_limit', []);
+      }
+    }
+  };
+
+  console.log(basicAllowance);
   return (
     <div className="feegrant-card">
       <div className="justify-between w-full flex">
@@ -112,12 +147,10 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
           <div className={typeText}>{capitalizeFirstLetter(typeText)}</div>
         </div>
         <div className="feegrant-small-text">
-          <span>{isPeriodic ? 'Period' : null} Expires in </span>
+          <span>Expires in </span>
           <span>
-            {(get(basicAllowance, 'expiration', '') &&
-              getTimeDifferenceToFutureDate(
-                get(basicAllowance, 'expiration', '')
-              )) ||
+            {(getExpiryDate() &&
+              getTimeDifferenceToFutureDate(getExpiryDate())) ||
               '-'}
           </span>
         </div>
@@ -131,14 +164,10 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
         </div>
         <div className="space-y-4">
           <div className="feegrant-small-text">
-            <div className="">{isPeriodic ? 'Period' : null} Spend Limit</div>
+            <div className="">Spend Limit</div>
           </div>
           <div className="">
-            {parseTokens(
-              get(basicAllowance, 'spend_limit', []),
-              displayDenom,
-              decimals
-            )}
+            {parseTokens(getSpendLimit(), displayDenom, decimals)}
           </div>
         </div>
       </div>
