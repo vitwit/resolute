@@ -55,3 +55,29 @@ interface FeeGrantRevokeInputs {
   feegranter?:string;
   denom:string,
 }
+interface FeegrantMsgInputs {
+  granter: string;
+  grantee: string;
+  denom: string;
+  spendLimit?: number;
+  period?: number;
+  periodSpendLimit?: number;
+  expiration?: Date;
+  txMsg?: Array<string>;
+  allowanceType?: string;
+  isAuthzMode?: boolean;
+}
+
+interface TxCreateFeegrantInputs {
+  basicChainInfo: BasicChainInfo;
+  msg: Msg;
+  denom: string;
+  feeAmount: number;
+  feegranter: string;
+  onTxComplete?: ({ isTxSuccess, error, txHash }: OnTxnCompleteInputs) => void;
+}
+
+interface MultiChainFeegrantTx {
+  ChainID: string;
+  txInputs: TxCreateFeegrantInputs;
+}

@@ -1,1 +1,2 @@
-export { FeegrantRevokeMsg } from "./revoke";
+export { FeegrantBasicMsg, FeegrantPeriodicMsg } from './grant';
+export { FeegrantRevokeMsg } from './revoke';
