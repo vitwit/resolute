@@ -38,15 +38,12 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
   isGrantsByMe,
 }) => {
   let allowedMsgs: Array<string>;
-  let basicAllowance;
   const { allowance } = grant;
   const dispatch = useAppDispatch();
 
   if (get(allowance, '@type') === ALLOWED_MESSAGE_ALLOWANCE_TYPE) {
     allowedMsgs = get(allowance, 'allowed_messages', []);
-    basicAllowance = get(allowance, 'allowance');
   } else {
-    basicAllowance = allowance;
     allowedMsgs = [];
   }
 
