@@ -525,11 +525,6 @@ async function sign(
     };
   }
 
-  // if messages are amino and signer is not amino signer
-  if (aminoMsgs) {
-    throw new Error(ERR_NO_OFFLINE_AMINO_SIGNER);
-  }
-
   // if the signer is direct signer
   if (isOfflineDirectSigner(signer)) {
     // Sign using standard protobuf messages
@@ -564,6 +559,12 @@ async function sign(
       throw new Error('Request rejected');
     }
 
+  }
+
+  // if messages are amino and signer is not amino signer
+  if (aminoMsgs) {
+    console.log('here===')
+    throw new Error(ERR_NO_OFFLINE_AMINO_SIGNER);
   }
 
   // any other case by default
