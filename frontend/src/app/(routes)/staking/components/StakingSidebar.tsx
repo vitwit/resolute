@@ -2,7 +2,7 @@
 
 import { StakingSidebarProps } from '@/types/staking';
 import { CircularProgress } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import StakingStatsCard from './StakingStatsCard';
@@ -22,6 +22,7 @@ import {
 import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { DelegationsPairs } from '@/types/distribution';
+import DialogWithdraw from './DialogWithdraw';
 
 const StakingSidebar = ({
   validators,
@@ -69,6 +70,10 @@ const StakingSidebar = ({
     },
   ];
 
+  const handleDialogWithdrawClose = () => {
+    setDialogWithdrawOpen(false);
+  };
+
   const txClaimStatus = useAppSelector(
     (state: RootState) => state.distribution.chains[chainID]?.tx.status
   );
@@ -79,14 +84,12 @@ const StakingSidebar = ({
   const validatorsStatus = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.validators.status
   );
-  const delegations = isAuthzMode
-    ? authzStaked[chainID]?.delegations?.delegations?.delegation_responses
-    : staked[chainID]?.delegations?.delegations?.delegation_responses;
 
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
   const { txWithdrawAllRewardsInputs, txRestakeInputs, txAuthzRestakeMsgs } =
     useGetTxInputs();
+  const [dialogWithdrawOpen, setDialogWithdrawOpen] = useState(false);
 
   const claim = (chainID: string) => {
     if (isAuthzMode) {
@@ -181,30 +184,33 @@ const StakingSidebar = ({
             value={formatStakedAmount(rewardTokens, currency)}
           />
         </div>
-        {delegations?.length > 1 ? (
-          <div className="staking-sidebar-actions">
-            <button
-              className="staking-sidebar-actions-btn"
-              onClick={() => claim(chainID)}
-            >
-              {txClaimStatus === TxStatus.PENDING && isClaimAll ? (
-                <CircularProgress size={16} sx={{ color: 'white' }} />
-              ) : (
-                'Claim All'
-              )}
-            </button>
-            <button
-              className="staking-sidebar-actions-btn"
-              onClick={() => claimAndStake(chainID)}
-            >
-              {txRestakeStatus === TxStatus.PENDING && isReStakeAll ? (
-                <CircularProgress size={16} sx={{ color: 'white' }} />
-              ) : (
-                'Restake All'
-              )}
-            </button>
-          </div>
-        ) : null}
+        {/* {delegations?.length > 1 ? ( */}
+        <div className="staking-sidebar-actions">
+          <button
+            className="staking-sidebar-actions-btn"
+            onClick={() => {
+              setDialogWithdrawOpen(true);
+              claim(chainID);
+            }}
+          >
+            {txClaimStatus === TxStatus.PENDING && isClaimAll ? (
+              <CircularProgress size={16} sx={{ color: 'white' }} />
+            ) : (
+              'Claim All'
+            )}
+          </button>
+          <button
+            className="staking-sidebar-actions-btn"
+            onClick={() => claimAndStake(chainID)}
+          >
+            {txRestakeStatus === TxStatus.PENDING && isReStakeAll ? (
+              <CircularProgress size={16} sx={{ color: 'white' }} />
+            ) : (
+              'Restake All'
+            )}
+          </button>
+        </div>
+        {/* ) : null} */}
       </div>
       <div className="mt-20 overflow-y-scroll">
         <AllValidators
@@ -216,6 +222,10 @@ const StakingSidebar = ({
           toggleValidatorsDialog={toggleValidatorsDialog}
         />
       </div>
+      <DialogWithdraw
+        open={dialogWithdrawOpen}
+        onClose={handleDialogWithdrawClose}
+      />
     </div>
   );
 };

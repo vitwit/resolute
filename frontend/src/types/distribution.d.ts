@@ -32,6 +32,7 @@ interface DefaultState {
     status: TxStatus;
     txHash: string;
   };
+  withdrawAddress: string;
   isTxAll: boolean;
 }
 
@@ -58,6 +59,57 @@ interface TxWithdrawAllRewardsInputs {
   isAuthzMode: false;
   basicChainInfo: BasicChainInfo;
   msgs: DelegationsPairs[];
+  denom: string;
+  chainID: string;
+  aminoConfig: AminoConfig;
+  prefix: string;
+  rest: string;
+  feeAmount: number;
+  feegranter: string;
+  address: string;
+  cosmosAddress: string;
+  isTxAll?: boolean;
+  rpc?: string;
+}
+
+interface TxWithDrawValidatorCommissionInputs {
+  isAuthzMode: false;
+  basicChainInfo: BasicChainInfo;
+  validatorAddress: string;
+  denom: string;
+  chainID: string;
+  aminoConfig: AminoConfig;
+  prefix: string;
+  rest: string;
+  feeAmount: number;
+  feegranter: string;
+  address: string;
+  cosmosAddress: string;
+  isTxAll?: boolean;
+  rpc?: string;
+}
+
+interface TxWithDrawValidatorCommissionAndRewardsInputs {
+  isAuthzMode: false;
+  basicChainInfo: BasicChainInfo;
+  msgs: Msg[];
+  denom: string;
+  chainID: string;
+  aminoConfig: AminoConfig;
+  prefix: string;
+  rest: string;
+  feeAmount: number;
+  feegranter: string;
+  address: string;
+  cosmosAddress: string;
+  isTxAll?: boolean;
+  rpc?: string;
+}
+
+interface TxSetWithdrawAddressInputs {
+  isAuthzMode: false;
+  basicChainInfo: BasicChainInfo;
+  msgs: Msg[];
   denom: string;
   chainID: string;
   aminoConfig: AminoConfig;
