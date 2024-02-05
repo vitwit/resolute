@@ -563,9 +563,9 @@ async function sign(
 
   // if messages are amino and signer is not amino signer
   if (aminoMsgs) {
-    console.log('here===')
     throw new Error(ERR_NO_OFFLINE_AMINO_SIGNER);
   }
+
 
   // any other case by default
   throw new Error(ERR_UNKNOWN);
