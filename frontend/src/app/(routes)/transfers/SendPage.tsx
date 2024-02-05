@@ -365,6 +365,7 @@ const SendPage = ({ sortedAssets }: { sortedAssets: ParsedAsset[] }) => {
               </div>
             )}
             <CustomSubmitButton
+              isIBC={isIBC}
               pendingStatus={
                 sendTxStatus === TxStatus.PENDING ||
                 ibcTxStatus === TxStatus.PENDING
