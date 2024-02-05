@@ -34,6 +34,7 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
         totalStakedAmount += (staked / 10 ** decimals) * usdDenomPrice;
       }
     });
+
     return totalStakedAmount;
   }, [chainIDs, stakingChains, getDenomInfo, tokensPriceInfo]);
 
@@ -55,12 +56,14 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
       const usdDenomPrice = usdPriceInfo?.usd || 0;
 
       for (let i = 0; i < ibcBalances?.length; i++) {
+        const ibcUsdDenomPrice = tokensPriceInfo?.[ibcBalances?.[i]?.balance.denom]?.info?.usd || 0
+
         totalIBCBalance +=
           parseBalance(
             [ibcBalances[i].balance],
             ibcBalances?.[i]?.decimals,
             ibcBalances?.[i]?.balance.denom
-          ) * usdDenomPrice;
+          ) * ibcUsdDenomPrice;
       }
 
       const balance = parseBalance(
@@ -91,6 +94,7 @@ const useGetAssetsAmount = (chainIDs: string[]) => {
         totalRewardsAmount += (rewards / 10 ** decimals) * usdDenomPrice;
       }
     });
+
     return totalRewardsAmount;
   }, [chainIDs, rewardsChains, getDenomInfo, tokensPriceInfo]);
 
