@@ -17,7 +17,7 @@ const CustomSubmitButton = ({
   return (
     <div>
       <Tooltip
-        title={isIBC ? 'Metamask does not support IBC' : null}
+        title={isIBC ? 'Metamask does not support IBC' : ''}
         placement="top-end"
       >
         <button disabled={pendingStatus || isIBC}
