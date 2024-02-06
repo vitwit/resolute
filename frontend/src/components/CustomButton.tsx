@@ -1,4 +1,4 @@
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Tooltip } from '@mui/material';
 import React from 'react';
 
 const CustomSubmitButton = ({
@@ -6,21 +6,30 @@ const CustomSubmitButton = ({
   circularProgressSize,
   buttonStyle,
   buttonContent,
+  isIBC
 }: {
   pendingStatus: boolean;
   circularProgressSize: number;
   buttonStyle: string;
   buttonContent: string;
+  isIBC?:boolean;
 }) => {
   return (
     <div>
-      <button type="submit" className={buttonStyle}>
-        {pendingStatus ? (
-          <CircularProgress size={circularProgressSize} />
-        ) : (
-          <>{buttonContent}</>
-        )}
-      </button>
+      <Tooltip
+        title={isIBC ? 'Metamask does not support IBC' : ''}
+        placement="top-end"
+      >
+        <button disabled={pendingStatus || isIBC}
+          type="submit" className={buttonStyle}>
+          {pendingStatus ? (
+            <CircularProgress size={circularProgressSize} />
+          ) : (
+            <>{buttonContent}</>
+          )}
+        </button>
+      </Tooltip>
+
     </div>
   );
 };

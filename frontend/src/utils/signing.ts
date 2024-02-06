@@ -67,7 +67,8 @@ const canUseAmino = (aminoConfig: AminoConfig, messages: Msg[]): boolean => {
 export const getClient = async (
   aminoConfig: AminoConfig,
   chainId: string,
-  messages: Msg[]
+  messages: Msg[],
+  granter?: string
 ): Promise<OfflineSigner> => {
   let signer;
 
@@ -91,7 +92,15 @@ export const getClient = async (
       }
     }
   } else {
-    if (!canUseAmino(aminoConfig, messages)) {
+    if (granter) {
+      try {
+        await window.wallet.enable(chainId);
+        signer = window.wallet.getOfflineSigner(chainId);
+      } catch (error) {
+        console.log(error);
+        throw new Error('failed to get wallet');
+      }
+    } else if (!canUseAmino(aminoConfig, messages)) {
       try {
         await window.wallet.enable(chainId);
         signer = window.wallet.getOfflineSigner(chainId);
@@ -132,7 +141,7 @@ export const signAndBroadcast = async (
     if (isMetaMaskWallet()) {
       signer = await getClient(aminoConfig, chainId, messages);
     } else {
-      signer = await getClient(aminoConfig, chainId, messages);
+      signer = await getClient(aminoConfig, chainId, messages, granter);
     }
 
 
@@ -516,11 +525,6 @@ async function sign(
     };
   }
 
-  // if messages are amino and signer is not amino signer
-  if (aminoMsgs) {
-    throw new Error(ERR_NO_OFFLINE_AMINO_SIGNER);
-  }
-
   // if the signer is direct signer
   if (isOfflineDirectSigner(signer)) {
     // Sign using standard protobuf messages
@@ -556,6 +560,12 @@ async function sign(
     }
 
   }
+
+  // if messages are amino and signer is not amino signer
+  if (aminoMsgs) {
+    throw new Error(ERR_NO_OFFLINE_AMINO_SIGNER);
+  }
+
 
   // any other case by default
   throw new Error(ERR_UNKNOWN);
