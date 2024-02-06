@@ -1088,6 +1088,90 @@ export const networks: Network[] = [
       },
     },
   },
+  {
+    enableModules: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/dymension/images/dymension-logo.svg',
+      toolbar:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/dymension/images/dymension-logo.svg',
+    },
+    keplrExperimental: false,
+    leapExperimental: true,
+    isTestnet: false,
+    govV1: true,
+    explorerTxHashEndpoint: 'https://explorer.nodestake.org/dymension/tx/',
+    config: {
+      chainId: 'dymension_1100-1',
+      chainName: 'Dymension',
+      rest: 'https://api.dymension.nodestake.org',
+      rpc: 'https://rpc.dymension.nodestake.org',
+      restURIs: [
+        'https://dymension-mainnet-lcd.autostake.com:443',
+        'https://api.dymension.nodestake.org',
+        'https://dymension-api.lavenderfive.com:443',
+      ],
+      rpcURIs: [
+        'https://rpc.dymension.nodestake.org',
+        'https://dymension-mainnet-rpc.autostake.com:443',
+        'https://dymension-rpc.lavenderfive.com:443',
+      ],
+      currencies: [
+        {
+          coinDenom: 'DYM',
+          coinMinimalDenom: 'adym',
+          coinDecimals: 18,
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      bech32Config: {
+        bech32PrefixAccAddr: 'dym',
+        bech32PrefixAccPub: 'dympub',
+        bech32PrefixValAddr: 'dymvaloper',
+        bech32PrefixValPub: 'dymvaloperpub',
+        bech32PrefixConsAddr: 'dymvalcons',
+        bech32PrefixConsPub: 'dymvalconspub',
+      },
+      walletUrlForStaking: 'https://resolute.vitwit.com/dymension/staking',
+      feeCurrencies: [
+        {
+          coinDenom: 'DYM',
+          coinMinimalDenom: 'adym',
+          coinDecimals: 18,
+          coinGeckoId: 'dym',
+          gasPriceStep: {
+            low: 0.02,
+            average: 0.02,
+            high: 0.02,
+          },
+        },
+      ],
+      stakeCurrency: {
+        coinDenom: 'DYM',
+        coinMinimalDenom: 'adym',
+        coinDecimals: 18,
+        coinGeckoId: 'dym',
+      },
+      image:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/dymension/images/dymension-logo.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
   // {
   //   enableModules: {
   //     authz: true,
