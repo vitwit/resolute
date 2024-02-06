@@ -4,14 +4,14 @@ export const msgSetWithdrawAddress =
   '/cosmos.distribution.v1beta1.MsgSetWithdrawAddress';
 
 export function SetWithdrawAddressMsg(
-  delegator: string,
-  validator: string
+  delegatorAddress: string,
+  withdrawAddress: string
 ): Msg {
   return {
     typeUrl: msgSetWithdrawAddress,
     value: MsgSetWithdrawAddress.fromPartial({
-      delegatorAddress: delegator,
-      withdrawAddress: validator,
+      delegatorAddress: delegatorAddress,
+      withdrawAddress: withdrawAddress,
     }),
   };
 }

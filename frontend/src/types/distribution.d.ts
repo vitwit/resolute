@@ -75,7 +75,7 @@ interface TxWithdrawAllRewardsInputs {
 interface TxWithDrawValidatorCommissionInputs {
   isAuthzMode: false;
   basicChainInfo: BasicChainInfo;
-  validatorAddress: string;
+  msgs: Msg[];
   denom: string;
   chainID: string;
   aminoConfig: AminoConfig;
@@ -119,6 +119,5 @@ interface TxSetWithdrawAddressInputs {
   feegranter: string;
   address: string;
   cosmosAddress: string;
-  isTxAll?: boolean;
   rpc?: string;
 }

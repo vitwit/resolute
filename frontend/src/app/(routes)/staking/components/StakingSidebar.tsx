@@ -184,13 +184,11 @@ const StakingSidebar = ({
             value={formatStakedAmount(rewardTokens, currency)}
           />
         </div>
-        {/* {delegations?.length > 1 ? ( */}
         <div className="staking-sidebar-actions">
           <button
             className="staking-sidebar-actions-btn"
             onClick={() => {
               setDialogWithdrawOpen(true);
-              claim(chainID);
             }}
           >
             {txClaimStatus === TxStatus.PENDING && isClaimAll ? (
@@ -210,7 +208,6 @@ const StakingSidebar = ({
             )}
           </button>
         </div>
-        {/* ) : null} */}
       </div>
       <div className="mt-20 overflow-y-scroll">
         <AllValidators
@@ -225,6 +222,8 @@ const StakingSidebar = ({
       <DialogWithdraw
         open={dialogWithdrawOpen}
         onClose={handleDialogWithdrawClose}
+        chainID={chainID}
+        claimRewards={() => claim(chainID)}
       />
     </div>
   );

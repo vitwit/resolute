@@ -10,7 +10,7 @@ const useGetDistributionMsgs = () => {
     (state: RootState) => state.staking.chains
   );
   const getWithdrawCommissionAndRewardsMsgs = ({
-    chainID,
+    chainID,  
   }: {
     chainID: string;
   }) => {
@@ -23,6 +23,7 @@ const useGetDistributionMsgs = () => {
     const delegationPairs = txWithdrawAllRewardsInputs(chainID);
     for (let i = 0; i < delegationPairs.msgs.length; i++) {
       const msg = delegationPairs.msgs[i];
+      console.log("here...", msg.delegator, msg.validator)
       msgs.push(WithdrawAllRewardsMsg(msg.delegator, msg.validator));
     }
 

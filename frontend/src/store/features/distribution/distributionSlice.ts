@@ -22,8 +22,6 @@ import { GAS_FEE } from '@/utils/constants';
 import { NewTransaction } from '@/utils/transaction';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { getAuthzBalances, getBalances } from '../bank/bankSlice';
-import { WithdrawValidatorCommissionMsg } from '@/txns/distribution/withDrawValidatorCommission';
-
 const initialState: DistributionStoreInitialState = {
   chains: {},
   authzChains: {},
@@ -236,12 +234,7 @@ export const txWithdrawValidatorCommission = createAsyncThunk(
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
     try {
-      let msgs = [];
-      if (data.isAuthzMode) {
-        msgs = data.msgs;
-      } else {
-        msgs.push(WithdrawValidatorCommissionMsg(data.validatorAddress));
-      }
+      const msgs = data.msgs;
 
       const result = await signAndBroadcast(
         data.basicChainInfo.chainID,

@@ -1,21 +1,67 @@
-import {
-  customMUITextFieldStyles,
-  dialogBoxPaperPropStyles,
-} from '@/utils/commonStyles';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { RootState } from '@/store/store';
+import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { Dialog, DialogContent, TextField } from '@mui/material';
 import Image from 'next/image';
-import React from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import { withdrawAddressFieldStyles } from '../styles';
+import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import {
+  txSetWithdrawAddress,
+  txWithdrawValidatorCommissionAndRewards,
+} from '@/store/features/distribution/distributionSlice';
+import useGetDistributionMsgs from '@/custom-hooks/useGetDistributionMsgs';
 
 const DialogWithdraw = ({
   open,
   onClose,
+  chainID,
+  claimRewards,
 }: {
   open: boolean;
   onClose: () => void;
+  chainID: string;
+  claimRewards: () => void;
 }) => {
   const handleDialogClose = () => {
     onClose();
+  };
+  const { txSetWithdrawAddressInputs, txWithdrawCommissionAndRewardsInputs } =
+    useGetTxInputs();
+  const { getWithdrawCommissionAndRewardsMsgs } = useGetDistributionMsgs();
+  const { getChainInfo } = useGetChainInfo();
+  const dispatch = useAppDispatch();
+  const withdraw_address = useAppSelector(
+    (state: RootState) => state.distribution.chains?.[chainID]?.withdrawAddress
+  );
+  const [withdrawAddress, setWithdrawAddress] = useState('');
+  const [updateAddress, setUpdateAddress] = useState(false);
+
+  const handleAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.trim();
+    setWithdrawAddress(value);
+  };
+
+  useEffect(() => {
+    if (withdraw_address?.length) setWithdrawAddress(withdraw_address);
+  }, [withdraw_address]);
+
+  const { address } = getChainInfo(chainID);
+  const onSubmit = () => {
+    const txInputs = txSetWithdrawAddressInputs(
+      chainID,
+      address,
+      withdrawAddress
+    );
+    dispatch(txSetWithdrawAddress(txInputs));
+  };
+
+  const claimRewardsAndCommission = () => {
+    const msgs = getWithdrawCommissionAndRewardsMsgs({ chainID });
+    const txInputs = txWithdrawCommissionAndRewardsInputs(chainID, msgs);
+    dispatch(txWithdrawValidatorCommissionAndRewards(txInputs));
   };
 
   return (
@@ -42,18 +88,19 @@ const DialogWithdraw = ({
             </div>
           </div>
           <div className="mb-10 flex gap-6 px-10 items-center">
-            <div className="flex flex-col gap-10 w-full">
+            <div className="flex flex-col gap-6 w-full">
               <h2 className="text-[20px] font-bold leading-normal">
                 Withdraw Rewards
               </h2>
-              <div className="bg-[#ffffff1a] rounded-3xl p-6 flex gap-6 my-6">
+              <div className="bg-[#ffffff1a] rounded-3xl p-6 flex gap-6">
                 <div className="flex-1 relative">
                   <TextField
                     className="bg-[#FFFFFF0D] rounded-2xl w-full"
                     name="granteeAddress"
-                    value={''}
-                    onChange={() => {}}
+                    value={withdrawAddress}
+                    onChange={handleAddressChange}
                     required
+                    disabled={!updateAddress}
                     autoFocus={true}
                     placeholder="Enter withdraw address"
                     InputProps={{
@@ -65,7 +112,7 @@ const DialogWithdraw = ({
                         },
                       },
                     }}
-                    sx={customMUITextFieldStyles}
+                    sx={withdrawAddressFieldStyles}
                   />
                   <div className="absolute right-0">
                     <div className="flex space-x-2 justify-end">
@@ -83,10 +130,27 @@ const DialogWithdraw = ({
                   </div>
                 </div>
                 <button
-                  onClick={() => {}}
+                  onClick={() => {
+                    if (updateAddress) {
+                      onSubmit();
+                    } else {
+                      setUpdateAddress(true);
+                    }
+                  }}
                   className="primary-gradient rounded-2xl flex justify-center items-center w-[212px]"
                 >
-                  Update Address
+                  {updateAddress ? 'Confirm' : 'Update Address'}
+                </button>
+              </div>
+              <div className="flex gap-6">
+                <button onClick={() => claimRewards()} className="claim-button">
+                  Claim Rewards
+                </button>
+                <button
+                  onClick={() => claimRewardsAndCommission()}
+                  className="claim-button"
+                >
+                  Claim Rewards & Commission
                 </button>
               </div>
             </div>
