@@ -198,7 +198,8 @@ const DialogWithdraw = ({
           <div className="mb-10 flex gap-6 px-10 items-center">
             <div className="flex flex-col gap-6 w-full">
               <h2 className="text-[20px] font-bold leading-normal">
-                Withdraw Rewards
+                Withdraw Rewards{' '}
+                {isSelfValidator || isAuthzValidator ? ' & Commission' : ''}
               </h2>
               <div className="bg-[#ffffff1a] rounded-3xl p-6 pb-10 flex gap-6">
                 <div className="flex-1 relative">

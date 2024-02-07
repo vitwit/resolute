@@ -80,7 +80,7 @@ interface TxWithdrawAllRewardsInputs {
   rpc?: string;
 }
 
-interface TxWithDrawValidatorCommissionInputs {
+interface BaseTxWithdraw {
   isAuthzMode: false;
   basicChainInfo: BasicChainInfo;
   msgs: Msg[];
@@ -97,35 +97,9 @@ interface TxWithDrawValidatorCommissionInputs {
   rpc?: string;
 }
 
-interface TxWithDrawValidatorCommissionAndRewardsInputs {
-  isAuthzMode: false;
-  basicChainInfo: BasicChainInfo;
-  msgs: Msg[];
-  denom: string;
-  chainID: string;
-  aminoConfig: AminoConfig;
-  prefix: string;
-  rest: string;
-  feeAmount: number;
-  feegranter: string;
-  address: string;
-  cosmosAddress: string;
-  isTxAll?: boolean;
-  rpc?: string;
-}
+interface TxWithDrawValidatorCommissionInputs extends BaseTxWithdraw {}
 
-interface TxSetWithdrawAddressInputs {
-  isAuthzMode: false;
-  basicChainInfo: BasicChainInfo;
-  msgs: Msg[];
-  denom: string;
-  chainID: string;
-  aminoConfig: AminoConfig;
-  prefix: string;
-  rest: string;
-  feeAmount: number;
-  feegranter: string;
-  address: string;
-  cosmosAddress: string;
-  rpc?: string;
-}
+interface TxWithDrawValidatorCommissionAndRewardsInputs
+  extends BaseTxWithdraw {}
+
+interface TxSetWithdrawAddressInputs extends BaseTxWithdraw {}
