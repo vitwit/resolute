@@ -15,6 +15,7 @@ import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import {
   txSetWithdrawAddress,
+  txWithdrawValidatorCommission,
   txWithdrawValidatorCommissionAndRewards,
 } from '@/store/features/distribution/distributionSlice';
 import { TxStatus } from '@/types/enums';
@@ -36,10 +37,14 @@ const DialogWithdraw = ({
 }) => {
   const { txSetWithdrawAddressInputs, txWithdrawCommissionAndRewardsInputs } =
     useGetTxInputs();
-  const { getWithdrawCommissionAndRewardsMsgs } = useGetDistributionMsgs();
+  const { getWithdrawCommissionAndRewardsMsgs, getWithdrawCommissionMsgs } =
+    useGetDistributionMsgs();
   const { getChainInfo } = useGetChainInfo();
-  const { txAuthzWithdrawRewardsAndCommission, txAuthzSetWithdrawAddress } =
-    useAuthzStakingExecHelper();
+  const {
+    txAuthzWithdrawRewardsAndCommission,
+    txAuthzSetWithdrawAddress,
+    txAuthzWithdrawCommission,
+  } = useAuthzStakingExecHelper();
   const { getWithdrawPermissions } = useGetWithdrawPermissions();
   const dispatch = useAppDispatch();
 
@@ -117,7 +122,19 @@ const DialogWithdraw = ({
     }
   };
 
-  const claimCommission = () => {};
+  const claimCommission = () => {
+    if (isAuthzMode) {
+      txAuthzWithdrawCommission({
+        chainID: chainID,
+        grantee: address,
+        granter: authzAddress,
+      });
+    } else {
+      const msgs = getWithdrawCommissionMsgs({ chainID });
+      const txInputs = txWithdrawCommissionAndRewardsInputs(chainID, msgs);
+      dispatch(txWithdrawValidatorCommission(txInputs));
+    }
+  };
 
   const withdrawCommissionLoading = useAppSelector(
     (state) => state.distribution.chains?.[chainID]?.txWithdrawCommission.status
@@ -151,6 +168,7 @@ const DialogWithdraw = ({
 
   const handleDialogClose = () => {
     onClose();
+    setWithdrawAddress(withdraw_address);
     setUpdateAddress(false);
   };
 

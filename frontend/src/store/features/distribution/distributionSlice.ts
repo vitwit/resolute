@@ -656,18 +656,19 @@ export const distSlice = createSlice({
     builder
       .addCase(txWithdrawValidatorCommission.pending, (state, action) => {
         const chainID = action.meta?.arg?.basicChainInfo.chainID;
-        state.chains[chainID].tx.status = TxStatus.PENDING;
-        state.chains[chainID].tx.txHash = '';
+        state.chains[chainID].txWithdrawCommission.status = TxStatus.PENDING;
+        state.chains[chainID].txWithdrawCommission.errMsg = '';
       })
       .addCase(txWithdrawValidatorCommission.fulfilled, (state, action) => {
         const chainID = action.meta?.arg?.basicChainInfo.chainID;
-        state.chains[chainID].tx.status = TxStatus.IDLE;
-        state.chains[chainID].tx.txHash = action.payload.txHash;
+        state.chains[chainID].txWithdrawCommission.status = TxStatus.IDLE;
+        state.chains[chainID].txWithdrawCommission.errMsg = '';
       })
       .addCase(txWithdrawValidatorCommission.rejected, (state, action) => {
         const chainID = action.meta?.arg?.basicChainInfo.chainID;
-        state.chains[chainID].tx.status = TxStatus.REJECTED;
-        state.chains[chainID].tx.txHash = '';
+        state.chains[chainID].txWithdrawCommission.status = TxStatus.REJECTED;
+        state.chains[chainID].txWithdrawCommission.errMsg =
+          action.error.message || '';
       });
 
     builder

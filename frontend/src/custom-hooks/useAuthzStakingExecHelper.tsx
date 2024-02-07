@@ -21,6 +21,7 @@ import { msgUnDelegate } from '@/txns/staking/undelegate';
 import {
   txSetWithdrawAddress,
   txWithdrawAllRewards,
+  txWithdrawValidatorCommission,
   txWithdrawValidatorCommissionAndRewards,
 } from '@/store/features/distribution/distributionSlice';
 import {
@@ -145,8 +146,11 @@ const useAuthzStakingExecHelper = () => {
   const dispatch = useAppDispatch();
   const authzChains = useAppSelector((state) => state.authz.chains);
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const { getWithdrawCommissionAndRewardsMsgs, getSetWithdrawAddressMsg } =
-    useGetDistributionMsgs();
+  const {
+    getWithdrawCommissionAndRewardsMsgs,
+    getSetWithdrawAddressMsg,
+    getWithdrawCommissionMsgs,
+  } = useGetDistributionMsgs();
 
   const isInvalidAction = (
     isExpired: boolean,
@@ -488,6 +492,28 @@ const useAuthzStakingExecHelper = () => {
     );
   };
 
+  const txAuthzWithdrawCommission = (
+    data: AuthzExecHelpWithdrawRewardsAndCommission
+  ) => {
+    const basicChainInfo = getChainInfo(data.chainID);
+    const address = convertAddress(data.chainID, data.granter);
+
+    const { minimalDenom } = getDenomInfo(data.chainID);
+    const msgs = getWithdrawCommissionMsgs({ chainID: data.chainID });
+    const msg = AuthzExecWithdrawRewardsAndCommissionMsg(data.grantee, msgs);
+
+    dispatch(
+      txWithdrawValidatorCommission({
+        isAuthzMode: true,
+        basicChainInfo,
+        msgs: [msg],
+        memo: '',
+        denom: minimalDenom,
+        authzChainGranter: address,
+      })
+    );
+  };
+
   const txAuthzSetWithdrawAddress = (data: AuthzExecHelpSetWithdrawAddress) => {
     const basicChainInfo = getChainInfo(data.chainID);
     const address = convertAddress(data.chainID, data.granter);
@@ -541,6 +567,7 @@ const useAuthzStakingExecHelper = () => {
     txAuthzRestake,
     txAuthzWithdrawRewardsAndCommission,
     txAuthzSetWithdrawAddress,
+    txAuthzWithdrawCommission,
   };
 };
 
