@@ -19,6 +19,7 @@ interface IClaimButton {
   label: string;
   action: () => void;
   loading: TxStatus;
+  styles: string;
 }
 
 const WithdrawActions: React.FC<IWithdrawActions> = (props) => {
@@ -47,12 +48,14 @@ const WithdrawActions: React.FC<IWithdrawActions> = (props) => {
         label="Withdraw Rewards"
         loading={withdrawRewardsLoading}
         action={claimRewards}
+        styles="min-w-[224px]"
       />
       {(isSelfValidator && !isAuthzMode) || canClaimRewardsCommission ? (
         <ClaimButton
           label="Withdraw Rewards & Commission"
           action={claimRewardsAndCommission}
           loading={withdrawCommissionLoading}
+          styles="min-w-[332px]"
         />
       ) : (
         <>
@@ -61,6 +64,7 @@ const WithdrawActions: React.FC<IWithdrawActions> = (props) => {
               label="Withdraw Commission"
               action={claimCommission}
               loading={withdrawCommissionLoading}
+              styles="min-w-[248px]"
             />
           ) : null}
         </>
@@ -70,12 +74,12 @@ const WithdrawActions: React.FC<IWithdrawActions> = (props) => {
 };
 
 const ClaimButton: React.FC<IClaimButton> = (props) => {
-  const { label, action, loading } = props;
+  const { label, action, loading, styles } = props;
   return (
     <button
       disabled={loading === TxStatus.PENDING}
       onClick={() => action()}
-      className="claim-button"
+      className={'claim-button ' + styles}
     >
       {loading === TxStatus.PENDING ? (
         <CircularProgress sx={{ color: 'white' }} size={20} />
