@@ -8,6 +8,10 @@ axiosRetry(Axios, {
   retries: AXIOS_RETRIES_COUNT,
 });
 
+axiosRetry(Axios, { retryDelay: (retryCount) => {
+  return retryCount * 2000;
+}});
+
 const timer = (ms: number) => new Promise(res => setTimeout(res, ms))
 
 /* to make axios requests one by one until any one of them returns a valid response */
