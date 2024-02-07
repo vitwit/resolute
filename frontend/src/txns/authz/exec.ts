@@ -267,3 +267,16 @@ export function AuthzExecWithdrawRewardsAndCommissionMsg(
     }),
   };
 }
+
+export function AuthzExecSetWithdrawAddressMsg(
+  grantee: string,
+  msgs: Msg[]
+): Msg {
+  return {
+    typeUrl: msgAuthzExecypeUrl,
+    value: MsgExec.fromPartial({
+      grantee: grantee,
+      msgs: msgs,
+    }),
+  };
+}

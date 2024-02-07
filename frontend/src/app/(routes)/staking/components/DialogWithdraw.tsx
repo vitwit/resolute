@@ -34,14 +34,12 @@ const DialogWithdraw = ({
   chainID: string;
   claimRewards: () => void;
 }) => {
-  const handleDialogClose = () => {
-    onClose();
-  };
   const { txSetWithdrawAddressInputs, txWithdrawCommissionAndRewardsInputs } =
     useGetTxInputs();
   const { getWithdrawCommissionAndRewardsMsgs } = useGetDistributionMsgs();
   const { getChainInfo } = useGetChainInfo();
-  const { txAuthzWithdrawRewardsAndCommission } = useAuthzStakingExecHelper();
+  const { txAuthzWithdrawRewardsAndCommission, txAuthzSetWithdrawAddress } =
+    useAuthzStakingExecHelper();
   const { getWithdrawPermissions } = useGetWithdrawPermissions();
   const dispatch = useAppDispatch();
 
@@ -88,12 +86,21 @@ const DialogWithdraw = ({
 
   const { address } = getChainInfo(chainID);
   const onSubmit = () => {
-    const txInputs = txSetWithdrawAddressInputs(
-      chainID,
-      address,
-      withdrawAddress
-    );
-    dispatch(txSetWithdrawAddress(txInputs));
+    if (isAuthzMode) {
+      txAuthzSetWithdrawAddress({
+        chainID,
+        grantee: address,
+        granter: authzAddress,
+        withdrawAddress: withdrawAddress,
+      });
+    } else {
+      const txInputs = txSetWithdrawAddressInputs(
+        chainID,
+        address,
+        withdrawAddress
+      );
+      dispatch(txSetWithdrawAddress(txInputs));
+    }
   };
 
   const claimRewardsAndCommission = () => {
@@ -126,21 +133,26 @@ const DialogWithdraw = ({
 
   useEffect(() => {
     if (withdrawCommissionLoading === TxStatus.IDLE) {
-      onClose();
+      handleDialogClose();
     }
   }, [withdrawCommissionLoading]);
 
   useEffect(() => {
     if (withdrawRewardsLoading === TxStatus.IDLE) {
-      onClose();
+      handleDialogClose();
     }
   }, [withdrawRewardsLoading]);
 
   useEffect(() => {
     if (updateWithdrawAddressLoading === TxStatus.IDLE) {
-      onClose();
+      handleDialogClose();
     }
   }, [updateWithdrawAddressLoading]);
+
+  const handleDialogClose = () => {
+    onClose();
+    setUpdateAddress(false);
+  };
 
   return (
     <Dialog
@@ -154,7 +166,7 @@ const DialogWithdraw = ({
       <DialogContent sx={{ padding: 0 }}>
         <div className="w-[890px] text-white">
           <div className="px-10 py-6 pt-10 flex justify-end">
-            <div onClick={onClose}>
+            <div onClick={handleDialogClose}>
               <Image
                 className="cursor-pointer"
                 src={CLOSE_ICON_PATH}
@@ -215,6 +227,7 @@ const DialogWithdraw = ({
                       setUpdateAddress(true);
                     }
                   }}
+                  disabled={updateWithdrawAddressLoading === TxStatus.PENDING}
                   className="primary-gradient rounded-2xl flex justify-center items-center w-[212px]"
                 >
                   {updateWithdrawAddressLoading === TxStatus.PENDING ? (

@@ -31,8 +31,6 @@ const useGetWithdrawPermissions = () => {
       },
     });
 
-    console.log(withdrawRewardsAllowed, withdrawCommissionAllowed);
-
     return { withdrawRewardsAllowed, withdrawCommissionAllowed };
   };
   return {

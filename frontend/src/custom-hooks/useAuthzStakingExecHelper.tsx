@@ -8,6 +8,7 @@ import {
   AuthzExecMsgCancelUnbond,
   AuthzExecMsgRestake,
   AuthzExecReDelegateMsg,
+  AuthzExecSetWithdrawAddressMsg,
   AuthzExecUnDelegateMsg,
   AuthzExecWithdrawRewardsAndCommissionMsg,
   AuthzExecWithdrawRewardsMsg,
@@ -18,6 +19,7 @@ import { DelegationsPairs } from '@/types/distribution';
 import { msgUnbonding } from '@/txns/staking/unbonding';
 import { msgUnDelegate } from '@/txns/staking/undelegate';
 import {
+  txSetWithdrawAddress,
   txWithdrawAllRewards,
   txWithdrawValidatorCommissionAndRewards,
 } from '@/store/features/distribution/distributionSlice';
@@ -34,6 +36,7 @@ import {
   STAKE_AUTHORIZATION_TYPE,
 } from '@/utils/constants';
 import useGetDistributionMsgs from './useGetDistributionMsgs';
+import { msgSetWithdrawAddress } from '@/txns/distribution/setWithdrawAddress';
 
 export interface AuthzExecHelpDelegate {
   grantee: string;
@@ -66,6 +69,13 @@ export interface AuthzExecHelpWithdrawRewardsAndCommission {
   grantee: string;
   granter: string;
   chainID: string;
+}
+
+export interface AuthzExecHelpSetWithdrawAddress {
+  grantee: string;
+  granter: string;
+  chainID: string;
+  withdrawAddress: string;
 }
 
 export interface AuthzExecHelpCancelUnbond {
@@ -129,13 +139,14 @@ export const AUTHZ_VOTE_MSG = '/cosmos.gov.v1beta1.MsgVote';
 export const AUTHZ_DEPOSIT_MSG = '/cosmos.gov.v1beta1.MsgDeposit';
 const AUTHZ_WITHDRAW_MSG =
   '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward';
-  
+
 const useAuthzStakingExecHelper = () => {
   const { convertAddress } = useAddressConverter();
   const dispatch = useAppDispatch();
   const authzChains = useAppSelector((state) => state.authz.chains);
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
-  const { getWithdrawCommissionAndRewardsMsgs } = useGetDistributionMsgs();
+  const { getWithdrawCommissionAndRewardsMsgs, getSetWithdrawAddressMsg } =
+    useGetDistributionMsgs();
 
   const isInvalidAction = (
     isExpired: boolean,
@@ -477,6 +488,50 @@ const useAuthzStakingExecHelper = () => {
     );
   };
 
+  const txAuthzSetWithdrawAddress = (data: AuthzExecHelpSetWithdrawAddress) => {
+    const basicChainInfo = getChainInfo(data.chainID);
+    const address = convertAddress(data.chainID, data.granter);
+    const grants: Authorization[] =
+      authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
+
+    const authzFilters: authzFilterOptions = {
+      generic: {
+        msg: msgSetWithdrawAddress,
+      },
+    };
+
+    const { haveGrant, isExpired } = haveAuthorization(grants, authzFilters);
+
+    if (
+      isInvalidAction(
+        isExpired,
+        haveGrant,
+        basicChainInfo.chainName,
+        'Set Withdraw Address'
+      )
+    )
+      return;
+    else {
+      const { minimalDenom } = getDenomInfo(data.chainID);
+      const msgs = getSetWithdrawAddressMsg({
+        chainID: data.chainID,
+        withdrawAddress: data.withdrawAddress,
+      });
+      const msg = AuthzExecSetWithdrawAddressMsg(data.grantee, [msgs]);
+
+      dispatch(
+        txSetWithdrawAddress({
+          isAuthzMode: true,
+          basicChainInfo,
+          msgs: [msg],
+          memo: '',
+          denom: minimalDenom,
+          authzChainGranter: address,
+        })
+      );
+    }
+  };
+
   return {
     txAuthzDelegate,
     txAuthzUnDelegate,
@@ -485,6 +540,7 @@ const useAuthzStakingExecHelper = () => {
     txAuthzCancelUnbond,
     txAuthzRestake,
     txAuthzWithdrawRewardsAndCommission,
+    txAuthzSetWithdrawAddress,
   };
 };
 

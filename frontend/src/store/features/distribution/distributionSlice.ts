@@ -544,9 +544,9 @@ export const distSlice = createSlice({
     },
     resetTxWithdrawRewards: (state, action) => {
       const chainID = action.payload.chainID;
-      if (state.chains?.[chainID]?.txSetWithdrawAddress) {
-        state.chains[chainID].txSetWithdrawAddress = {
-          errMsg: '',
+      if (state.chains?.[chainID]?.tx) {
+        state.chains[chainID].tx = {
+          txHash: '',
           status: TxStatus.INIT,
         };
       }

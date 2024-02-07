@@ -25,24 +25,20 @@ const WithdrawActions = ({
   isAuthzMode: boolean;
   withdrawCommissionAllowed: boolean;
 }) => {
-  const canClaimRewardsCommission =
-    isAuthzValidator &&
-    isAuthzMode &&
-    withdrawCommissionAllowed &&
-    withdrawRewardsAllowed;
+  const canClaimCommission =
+    isAuthzValidator && isAuthzMode && withdrawCommissionAllowed;
 
-  const canOnlyClaimCommission =
-    isAuthzValidator &&
-    isAuthzMode &&
-    withdrawCommissionAllowed &&
-    !withdrawRewardsAllowed;
+  const canClaimRewardsCommission =
+    canClaimCommission && withdrawRewardsAllowed;
+
+  const canOnlyClaimCommission = canClaimCommission && !withdrawRewardsAllowed;
 
   return (
     <div className="flex gap-6">
-        <ClaimRewardsButton
-          loading={withdrawRewardsLoading}
-          claimRewards={claimRewards}
-        />
+      <ClaimRewardsButton
+        loading={withdrawRewardsLoading}
+        claimRewards={claimRewards}
+      />
       {(isSelfValidator && !isAuthzMode) || canClaimRewardsCommission ? (
         <ClaimRewardsAndCommissionButton
           action={claimRewardsAndCommission}
@@ -70,7 +66,11 @@ const ClaimRewardsButton = ({
   claimRewards: () => void;
 }) => {
   return (
-    <button onClick={() => claimRewards()} className="claim-button">
+    <button
+      disabled={loading === TxStatus.PENDING}
+      onClick={() => claimRewards()}
+      className="claim-button"
+    >
       {loading === TxStatus.PENDING ? (
         <CircularProgress sx={{ color: 'white' }} size={20} />
       ) : (
@@ -88,7 +88,11 @@ const ClaimRewardsAndCommissionButton = ({
   action: () => void;
 }) => {
   return (
-    <button onClick={() => action()} className="claim-button">
+    <button
+      disabled={loading === TxStatus.PENDING}
+      onClick={() => action()}
+      className="claim-button"
+    >
       {loading === TxStatus.PENDING ? (
         <CircularProgress sx={{ color: 'white' }} size={20} />
       ) : (
@@ -106,7 +110,11 @@ const ClaimCommissionButton = ({
   action: () => void;
 }) => {
   return (
-    <button onClick={() => action()} className="claim-button">
+    <button
+      disabled={loading === TxStatus.PENDING}
+      onClick={() => action()}
+      className="claim-button"
+    >
       {loading === TxStatus.PENDING ? (
         <CircularProgress sx={{ color: 'white' }} size={20} />
       ) : (

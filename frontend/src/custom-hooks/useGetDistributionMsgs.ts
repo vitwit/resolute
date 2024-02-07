@@ -13,6 +13,11 @@ import {
   DelegationsPairs,
   TxWithdrawAllRewardsInputs,
 } from '@/types/distribution';
+import useGetChainInfo from './useGetChainInfo';
+import {
+  EncodedSetWithdrawAddressMsg,
+  SetWithdrawAddressMsg,
+} from '@/txns/distribution/setWithdrawAddress';
 
 const useGetDistributionMsgs = () => {
   const { txWithdrawAllRewardsInputs } = useGetTxInputs();
@@ -27,6 +32,7 @@ const useGetDistributionMsgs = () => {
   );
   const authzAddress = useAppSelector((state) => state.authz.authzAddress);
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+  const { getChainInfo } = useGetChainInfo();
 
   const getWithdrawCommissionAndRewardsMsgs = ({
     chainID,
@@ -117,9 +123,27 @@ const useGetDistributionMsgs = () => {
     return msgs;
   };
 
+  const getSetWithdrawAddressMsg = ({
+    chainID,
+    withdrawAddress,
+  }: {
+    chainID: string;
+    withdrawAddress: string;
+  }) => {
+    const { address } = getChainInfo(chainID);
+    let msg;
+    if (isAuthzMode) {
+      msg = EncodedSetWithdrawAddressMsg(authzAddress, withdrawAddress);
+    } else {
+      msg = SetWithdrawAddressMsg(address, withdrawAddress);
+    }
+    return msg;
+  };
+
   return {
     getWithdrawCommissionMsgs,
     getWithdrawRewardsMsgs,
+    getSetWithdrawAddressMsg,
     getWithdrawCommissionAndRewardsMsgs,
   };
 };
