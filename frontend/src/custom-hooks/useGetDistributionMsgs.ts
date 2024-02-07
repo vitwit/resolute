@@ -39,8 +39,7 @@ const useGetDistributionMsgs = () => {
   }: {
     chainID: string;
   }) => {
-    let msgs: Msg[];
-    msgs = [
+    const msgs = [
       ...getWithdrawCommissionMsgs({ chainID }),
       ...getWithdrawRewardsMsgs({ chainID }),
     ];

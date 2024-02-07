@@ -24,7 +24,7 @@ import {
   serialize as serializeMsgTransfer,
 } from '@/txns/ibc/transfer';
 import { serialize as serializeMsgExec } from '@/txns/authz/exec';
-import { msgAuthzExecypeUrl } from '@/txns/authz/exec';
+import { msgAuthzExecTypeUrl } from '@/txns/authz/exec';
 
 export function NewTransaction(
   txResponse: ParsedTxResponse,
@@ -67,7 +67,7 @@ export const MsgType = (msg: string): string => {
       return 'Claim';
     case msgTransfer:
       return 'IBC';
-    case msgAuthzExecypeUrl:
+    case msgAuthzExecTypeUrl:
       return 'Authz-permission';
     default:
       return 'Todo: add type';
@@ -93,7 +93,7 @@ export const serializeMsg = (
       return serializeMsgClaim(msg);
     case msgTransfer:
       return serializeMsgTransfer(msg);
-    case msgAuthzExecypeUrl:
+    case msgAuthzExecTypeUrl:
       return serializeMsgExec();
     default:
       return `Todo: serialize message ${msg.typeUrl}`;

@@ -473,11 +473,12 @@ const useAuthzStakingExecHelper = () => {
   const txAuthzWithdrawRewardsAndCommission = (
     data: AuthzExecHelpWithdrawRewardsAndCommission
   ) => {
-    const basicChainInfo = getChainInfo(data.chainID);
-    const address = convertAddress(data.chainID, data.granter);
+    const { chainID } = data;
+    const basicChainInfo = getChainInfo(chainID);
+    const address = convertAddress(chainID, data.granter);
 
-    const { minimalDenom } = getDenomInfo(data.chainID);
-    const msgs = getWithdrawCommissionAndRewardsMsgs({ chainID: data.chainID });
+    const { minimalDenom } = getDenomInfo(chainID);
+    const msgs = getWithdrawCommissionAndRewardsMsgs({ chainID });
     const msg = AuthzExecWithdrawRewardsAndCommissionMsg(data.grantee, msgs);
 
     dispatch(
@@ -495,11 +496,12 @@ const useAuthzStakingExecHelper = () => {
   const txAuthzWithdrawCommission = (
     data: AuthzExecHelpWithdrawRewardsAndCommission
   ) => {
-    const basicChainInfo = getChainInfo(data.chainID);
-    const address = convertAddress(data.chainID, data.granter);
+    const { chainID } = data;
+    const basicChainInfo = getChainInfo(chainID);
+    const address = convertAddress(chainID, data.granter);
 
-    const { minimalDenom } = getDenomInfo(data.chainID);
-    const msgs = getWithdrawCommissionMsgs({ chainID: data.chainID });
+    const { minimalDenom } = getDenomInfo(chainID);
+    const msgs = getWithdrawCommissionMsgs({ chainID });
     const msg = AuthzExecWithdrawRewardsAndCommissionMsg(data.grantee, msgs);
 
     dispatch(
@@ -515,10 +517,11 @@ const useAuthzStakingExecHelper = () => {
   };
 
   const txAuthzSetWithdrawAddress = (data: AuthzExecHelpSetWithdrawAddress) => {
-    const basicChainInfo = getChainInfo(data.chainID);
-    const address = convertAddress(data.chainID, data.granter);
+    const { chainID } = data;
+    const basicChainInfo = getChainInfo(chainID);
+    const address = convertAddress(chainID, data.granter);
     const grants: Authorization[] =
-      authzChains?.[data.chainID]?.GrantsToMeAddressMapping?.[address] || [];
+      authzChains?.[chainID]?.GrantsToMeAddressMapping?.[address] || [];
 
     const authzFilters: authzFilterOptions = {
       generic: {
@@ -538,9 +541,9 @@ const useAuthzStakingExecHelper = () => {
     )
       return;
     else {
-      const { minimalDenom } = getDenomInfo(data.chainID);
+      const { minimalDenom } = getDenomInfo(chainID);
       const msgs = getSetWithdrawAddressMsg({
-        chainID: data.chainID,
+        chainID: chainID,
         withdrawAddress: data.withdrawAddress,
       });
       const msg = AuthzExecSetWithdrawAddressMsg(data.grantee, [msgs]);

@@ -204,6 +204,23 @@ export const txSetWithdrawAddress = createAsyncThunk(
       );
 
       if (result?.code === 0) {
+        if (data.isAuthzMode) {
+          dispatch(
+            getAuthzWithdrawAddress({
+              baseURLs: data.basicChainInfo.restURLs,
+              chainID: data.basicChainInfo.chainID,
+              delegator: data.authzChainGranter,
+            })
+          );
+        } else {
+          dispatch(
+            getWithdrawAddress({
+              baseURLs: data.basicChainInfo.restURLs,
+              chainID: data.basicChainInfo.chainID,
+              delegator: data.basicChainInfo.address,
+            })
+          );
+        }
         dispatch(
           setTxAndHash({
             hash: result?.transactionHash,

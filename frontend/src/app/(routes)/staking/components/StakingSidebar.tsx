@@ -181,7 +181,7 @@ const StakingSidebar = ({
   useEffect(() => {
     dispatch(resetTxSetWithdrawAddress({ chainID }));
     dispatch(resetTxWithdrawRewards({ chainID }));
-  }, []);
+  }, [chainID]);
 
   return (
     <div className="staking-sidebar flex flex-col">

@@ -267,9 +267,6 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   const renderForm = (msg: string) => {
     const msgType = convertToSnakeCase(msg);
     const sendGrant = 'send';
-    console.log(msg)
-    console.log(GENRIC_GRANTS)
-    console.log(msgType)
     if (GENRIC_GRANTS.includes(msgType)) {
       return <ExpirationField msg={msgType} control={control} />;
     } else if (msgType === sendGrant) {
