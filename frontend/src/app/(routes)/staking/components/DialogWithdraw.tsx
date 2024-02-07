@@ -17,8 +17,11 @@ import {
   txSetWithdrawAddress,
   txWithdrawValidatorCommissionAndRewards,
 } from '@/store/features/distribution/distributionSlice';
-import useGetDistributionMsgs from '@/custom-hooks/useGetDistributionMsgs';
 import { TxStatus } from '@/types/enums';
+import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
+import useGetDistributionMsgs from '@/custom-hooks/useGetDistributionMsgs';
+import useGetWithdrawPermissions from '@/custom-hooks/useGetWithdrawPermissions';
+import WithdrawActions from './WithdrawAction';
 
 const DialogWithdraw = ({
   open,
@@ -38,10 +41,12 @@ const DialogWithdraw = ({
     useGetTxInputs();
   const { getWithdrawCommissionAndRewardsMsgs } = useGetDistributionMsgs();
   const { getChainInfo } = useGetChainInfo();
+  const { txAuthzWithdrawRewardsAndCommission } = useAuthzStakingExecHelper();
+  const { getWithdrawPermissions } = useGetWithdrawPermissions();
   const dispatch = useAppDispatch();
 
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
-
+  const authzAddress = useAppSelector((state) => state.authz.authzAddress);
   const authzDistributionData = useAppSelector(
     (state) => state.distribution.authzChains
   );
@@ -52,16 +57,22 @@ const DialogWithdraw = ({
   const authzStakingData = useAppSelector(
     (state: RootState) => state.staking.authz.chains
   );
+  const { withdrawCommissionAllowed, withdrawRewardsAllowed } =
+    getWithdrawPermissions({ chainID, granter: authzAddress });
 
   const withdraw_address = isAuthzMode
     ? authzDistributionData?.[chainID]?.withdrawAddress
     : distributionData?.[chainID]?.withdrawAddress;
 
-  const isValidator = isAuthzMode
-    ? authzStakingData?.[chainID]?.validator?.validatorInfo?.operator_address
-    : stakingData?.[chainID]?.validator?.validatorInfo?.operator_address
-      ? true
-      : false;
+  const isAuthzValidator = authzStakingData?.[chainID]?.validator?.validatorInfo
+    ?.operator_address
+    ? true
+    : false;
+
+  const isSelfValidator = stakingData?.[chainID]?.validator?.validatorInfo
+    ?.operator_address
+    ? true
+    : false;
 
   const [withdrawAddress, setWithdrawAddress] = useState('');
   const [updateAddress, setUpdateAddress] = useState(false);
@@ -86,10 +97,20 @@ const DialogWithdraw = ({
   };
 
   const claimRewardsAndCommission = () => {
-    const msgs = getWithdrawCommissionAndRewardsMsgs({ chainID });
-    const txInputs = txWithdrawCommissionAndRewardsInputs(chainID, msgs);
-    dispatch(txWithdrawValidatorCommissionAndRewards(txInputs));
+    if (isAuthzMode) {
+      txAuthzWithdrawRewardsAndCommission({
+        chainID: chainID,
+        grantee: address,
+        granter: authzAddress,
+      });
+    } else {
+      const msgs = getWithdrawCommissionAndRewardsMsgs({ chainID });
+      const txInputs = txWithdrawCommissionAndRewardsInputs(chainID, msgs);
+      dispatch(txWithdrawValidatorCommissionAndRewards(txInputs));
+    }
   };
+
+  const claimCommission = () => {};
 
   const withdrawCommissionLoading = useAppSelector(
     (state) => state.distribution.chains?.[chainID]?.txWithdrawCommission.status
@@ -203,27 +224,18 @@ const DialogWithdraw = ({
                   )}
                 </button>
               </div>
-              <div className="flex gap-6">
-                <button onClick={() => claimRewards()} className="claim-button">
-                  {withdrawRewardsLoading === TxStatus.PENDING ? (
-                    <CircularProgress sx={{ color: 'white' }} size={20} />
-                  ) : (
-                    'Claim Rewards'
-                  )}
-                </button>
-                {isValidator ? (
-                  <button
-                    onClick={() => claimRewardsAndCommission()}
-                    className="claim-button"
-                  >
-                    {withdrawCommissionLoading === TxStatus.PENDING ? (
-                      <CircularProgress sx={{ color: 'white' }} size={20} />
-                    ) : (
-                      'Claim Rewards & Commission'
-                    )}
-                  </button>
-                ) : null}
-              </div>
+              <WithdrawActions
+                claimRewards={claimRewards}
+                claimRewardsAndCommission={claimRewardsAndCommission}
+                claimCommission={claimCommission}
+                isAuthzMode={isAuthzMode}
+                isSelfValidator={isSelfValidator}
+                isAuthzValidator={isAuthzValidator}
+                withdrawCommissionLoading={withdrawCommissionLoading}
+                withdrawRewardsAllowed={withdrawRewardsAllowed}
+                withdrawRewardsLoading={withdrawRewardsLoading}
+                withdrawCommissionAllowed={withdrawCommissionAllowed}
+              />
             </div>
           </div>
         </div>

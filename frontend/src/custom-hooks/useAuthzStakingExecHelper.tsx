@@ -9,6 +9,7 @@ import {
   AuthzExecMsgRestake,
   AuthzExecReDelegateMsg,
   AuthzExecUnDelegateMsg,
+  AuthzExecWithdrawRewardsAndCommissionMsg,
   AuthzExecWithdrawRewardsMsg,
 } from '@/txns/authz/exec';
 import { msgDelegate } from '@/txns/staking/delegate';
@@ -16,7 +17,10 @@ import { msgReDelegate } from '@/txns/staking/redelegate';
 import { DelegationsPairs } from '@/types/distribution';
 import { msgUnbonding } from '@/txns/staking/unbonding';
 import { msgUnDelegate } from '@/txns/staking/undelegate';
-import { txWithdrawAllRewards } from '@/store/features/distribution/distributionSlice';
+import {
+  txWithdrawAllRewards,
+  txWithdrawValidatorCommissionAndRewards,
+} from '@/store/features/distribution/distributionSlice';
 import {
   txCancelUnbonding,
   txDelegate,
@@ -29,6 +33,7 @@ import {
   GENERIC_AUTHORIZATION_TYPE,
   STAKE_AUTHORIZATION_TYPE,
 } from '@/utils/constants';
+import useGetDistributionMsgs from './useGetDistributionMsgs';
 
 export interface AuthzExecHelpDelegate {
   grantee: string;
@@ -55,6 +60,12 @@ export interface AuthzExecHelpWithdrawRewards {
   pairs: DelegationsPairs[];
   chainID: string;
   isTxAll?: boolean;
+}
+
+export interface AuthzExecHelpWithdrawRewardsAndCommission {
+  grantee: string;
+  granter: string;
+  chainID: string;
 }
 
 export interface AuthzExecHelpCancelUnbond {
@@ -118,12 +129,13 @@ export const AUTHZ_VOTE_MSG = '/cosmos.gov.v1beta1.MsgVote';
 export const AUTHZ_DEPOSIT_MSG = '/cosmos.gov.v1beta1.MsgDeposit';
 const AUTHZ_WITHDRAW_MSG =
   '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward';
-
+  
 const useAuthzStakingExecHelper = () => {
   const { convertAddress } = useAddressConverter();
   const dispatch = useAppDispatch();
   const authzChains = useAppSelector((state) => state.authz.chains);
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { getWithdrawCommissionAndRewardsMsgs } = useGetDistributionMsgs();
 
   const isInvalidAction = (
     isExpired: boolean,
@@ -443,6 +455,28 @@ const useAuthzStakingExecHelper = () => {
     }
   };
 
+  const txAuthzWithdrawRewardsAndCommission = (
+    data: AuthzExecHelpWithdrawRewardsAndCommission
+  ) => {
+    const basicChainInfo = getChainInfo(data.chainID);
+    const address = convertAddress(data.chainID, data.granter);
+
+    const { minimalDenom } = getDenomInfo(data.chainID);
+    const msgs = getWithdrawCommissionAndRewardsMsgs({ chainID: data.chainID });
+    const msg = AuthzExecWithdrawRewardsAndCommissionMsg(data.grantee, msgs);
+
+    dispatch(
+      txWithdrawValidatorCommissionAndRewards({
+        isAuthzMode: true,
+        basicChainInfo,
+        msgs: [msg],
+        memo: '',
+        denom: minimalDenom,
+        authzChainGranter: address,
+      })
+    );
+  };
+
   return {
     txAuthzDelegate,
     txAuthzUnDelegate,
@@ -450,6 +484,7 @@ const useAuthzStakingExecHelper = () => {
     txAuthzClaim,
     txAuthzCancelUnbond,
     txAuthzRestake,
+    txAuthzWithdrawRewardsAndCommission,
   };
 };
 

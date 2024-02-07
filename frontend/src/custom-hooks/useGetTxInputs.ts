@@ -30,7 +30,6 @@ const useGetTxInputs = () => {
   const authzAddress = useAppSelector((state) => state.authz.authzAddress);
   const { getDenomInfo, getChainInfo } = useGetChainInfo();
   const { getFeegranter } = useGetFeegranter();
-  // const { getWithdrawCommissionAndRewardsMsgs } = useGetDistributionMsgs();
 
   const txWithdrawAllRewardsInputs = (
     chainID: string

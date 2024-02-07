@@ -11,7 +11,6 @@ import {
   MsgUndelegate,
 } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 
-
 const msgSendTypeUrl = '/cosmos.bank.v1beta1.MsgSend';
 export const msgAuthzExecypeUrl = '/cosmos.authz.v1beta1.MsgExec';
 const msgVote = '/cosmos.gov.v1beta1.MsgVote';
@@ -247,12 +246,24 @@ export function AuthzExecMsgCancelUnbond(unbond: Msg, grantee: string): Msg {
 
 // delegate written again in a different way
 export function AuthzExecMsgRestake(delegations: Msg[], grantee: string): Msg {
-  
   return {
     typeUrl: msgAuthzExecypeUrl,
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: delegations,
+    }),
+  };
+}
+
+export function AuthzExecWithdrawRewardsAndCommissionMsg(
+  grantee: string,
+  msgs: Msg[]
+): Msg {
+  return {
+    typeUrl: msgAuthzExecypeUrl,
+    value: MsgExec.fromPartial({
+      grantee: grantee,
+      msgs: msgs,
     }),
   };
 }

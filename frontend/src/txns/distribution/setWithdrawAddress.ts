@@ -15,3 +15,16 @@ export function SetWithdrawAddressMsg(
     }),
   };
 }
+
+export function EncodedSetWithdrawAddressMsg(
+  delegatorAddress: string,
+  withdrawAddress: string
+): Msg {
+  return {
+    typeUrl: msgSetWithdrawAddress,
+    value: MsgSetWithdrawAddress.encode({
+      delegatorAddress: delegatorAddress,
+      withdrawAddress: withdrawAddress,
+    }).finish(),
+  };
+}

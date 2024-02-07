@@ -11,3 +11,12 @@ export function WithdrawValidatorCommissionMsg(validator: string): Msg {
     }),
   };
 }
+
+export function EncodedWithdrawValidatorCommissionMsg(validator: string): Msg {
+  return {
+    typeUrl: msgWithdrawValidatorCommission,
+    value: MsgWithdrawValidatorCommission.encode({
+      validatorAddress: validator,
+    }).finish(),
+  };
+}
