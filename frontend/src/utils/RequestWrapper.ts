@@ -8,6 +8,8 @@ axiosRetry(Axios, {
   retries: AXIOS_RETRIES_COUNT,
 });
 
+const timer = (ms: number) => new Promise(res => setTimeout(res, ms))
+
 /* to make axios requests one by one until any one of them returns a valid response */
 
 export const axiosGetRequestWrapper = async (
@@ -26,6 +28,8 @@ export const axiosGetRequestWrapper = async (
     } catch (err: any) {
       errMsg = err.message;
     }
+
+    await timer(2000)
   }
 
   throw new Error('All requests failed: ' + errMsg);
