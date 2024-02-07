@@ -71,7 +71,7 @@ const fetchPoolInfo = (baseURLs: string[]): Promise<AxiosResponse> =>
 const fetchValidator = (
   baseURLs: string[],
   address: string
-): Promise<AxiosResponse<Validator>> => {
+): Promise<AxiosResponse<{ validator: Validator }>> => {
   return axiosGetRequestWrapper(
     baseURLs,
     validatorURL(address),

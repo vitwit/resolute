@@ -2,13 +2,17 @@
 
 import { StakingSidebarProps } from '@/types/staking';
 import { CircularProgress } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import StakingStatsCard from './StakingStatsCard';
 import TopNav from '@/components/TopNav';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
-import { txWithdrawAllRewards } from '@/store/features/distribution/distributionSlice';
+import {
+  resetTxSetWithdrawAddress,
+  resetTxWithdrawRewards,
+  txWithdrawAllRewards,
+} from '@/store/features/distribution/distributionSlice';
 import { TxStatus } from '@/types/enums';
 import { txRestake } from '@/store/features/staking/stakeSlice';
 import { setError } from '@/store/features/common/commonSlice';
@@ -169,6 +173,11 @@ const StakingSidebar = ({
       );
     }
   };
+
+  useEffect(() => {
+    dispatch(resetTxSetWithdrawAddress({ chainID }));
+    dispatch(resetTxWithdrawRewards({ chainID }));
+  }, []);
 
   return (
     <div className="staking-sidebar flex flex-col">

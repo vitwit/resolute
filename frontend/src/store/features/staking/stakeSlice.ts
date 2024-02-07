@@ -887,6 +887,24 @@ export const getValidator = createAsyncThunk(
   }
 );
 
+export const getAuthzValidator = createAsyncThunk(
+  'staking/get-authz-validator',
+  async (data: {
+    baseURLs: string[];
+    chainID: string;
+    valoperAddress: string;
+  }) => {
+    const response = await stakingService.validatorInfo(
+      data.baseURLs,
+      data.valoperAddress
+    );
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
+  }
+);
+
 export const stakeSlice = createSlice({
   name: 'staking',
   initialState,
@@ -1296,19 +1314,42 @@ export const stakeSlice = createSlice({
 
     builder
       .addCase(getValidator.pending, (state, action) => {
-        const { chainID } = action.meta.arg;
+        const chainID = action.meta?.arg?.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
         state.chains[chainID].validator.status = TxStatus.PENDING;
         state.chains[chainID].validator.errMsg = '';
       })
       .addCase(getValidator.fulfilled, (state, action) => {
-        const { chainID } = action.meta.arg;
+        const chainID = action.meta?.arg?.chainID;
         state.chains[chainID].validator.status = TxStatus.IDLE;
-        state.chains[chainID].validator.validatorInfo = action.payload.data;
+        state.chains[chainID].validator.validatorInfo =
+          action.payload.data.validator;
       })
       .addCase(getValidator.rejected, (state, action) => {
-        const { chainID } = action.meta.arg;
+        const chainID = action.meta?.arg?.chainID;
         state.chains[chainID].validator.status = TxStatus.REJECTED;
         state.chains[chainID].validator.errMsg = '';
+      });
+
+    builder
+      .addCase(getAuthzValidator.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (!state.authz.chains[chainID])
+          state.authz.chains[chainID] = cloneDeep(initialState.defaultState);
+        state.authz.chains[chainID].validator.status = TxStatus.PENDING;
+        state.authz.chains[chainID].validator.errMsg = '';
+      })
+      .addCase(getAuthzValidator.fulfilled, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.authz.chains[chainID].validator.status = TxStatus.IDLE;
+        state.authz.chains[chainID].validator.validatorInfo =
+          action.payload.data.validator;
+      })
+      .addCase(getAuthzValidator.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.authz.chains[chainID].validator.status = TxStatus.REJECTED;
+        state.authz.chains[chainID].validator.errMsg = '';
       });
 
     builder

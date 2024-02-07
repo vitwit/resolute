@@ -346,7 +346,10 @@ const useGetTxInputs = () => {
       prefix,
       rest,
       feeAmount: feeAmount * 10 ** decimals,
-      feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['withdraw_rewards']),
+      feegranter: getFeegranter(
+        chainID,
+        MAP_TXN_MSG_TYPES['set_withdraw_address']
+      ),
       address,
       cosmosAddress,
       rpc,
@@ -357,8 +360,6 @@ const useGetTxInputs = () => {
     chainID: string,
     msgs: Msg[]
   ): TxWithDrawValidatorCommissionAndRewardsInputs => {
-    // const msgs = getWithdrawCommissionAndRewardsMsgs({ chainID });
-
     const { minimalDenom, decimals } = getDenomInfo(chainID);
     const basicChainInfo = getChainInfo(chainID);
     const {
@@ -371,6 +372,15 @@ const useGetTxInputs = () => {
       cosmosAddress,
     } = basicChainInfo;
 
+    const withdraw_rewards_feegrant = getFeegranter(
+      chainID,
+      MAP_TXN_MSG_TYPES['withdraw_rewards']
+    );
+    const withdraw_commission_feegrant = getFeegranter(
+      chainID,
+      MAP_TXN_MSG_TYPES['withdraw_commission']
+    );
+
     return {
       isAuthzMode: false,
       basicChainInfo,
@@ -381,7 +391,10 @@ const useGetTxInputs = () => {
       prefix,
       rest,
       feeAmount: feeAmount * 10 ** decimals,
-      feegranter: getFeegranter(chainID, MAP_TXN_MSG_TYPES['withdraw_rewards']),
+      feegranter:
+        withdraw_rewards_feegrant && withdraw_commission_feegrant
+          ? withdraw_commission_feegrant
+          : '',
       address,
       cosmosAddress,
       rpc,

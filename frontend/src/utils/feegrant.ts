@@ -8,7 +8,8 @@ interface FeegrantMenuItem {
 
 export const BASIC_ALLOWANCE = '/cosmos.feegrant.v1beta1.BasicAllowance';
 export const PERIODIC_ALLOWANCE = '/cosmos.feegrant.v1beta1.PeriodicAllowance';
-export const ALLOWED_MSG_ALLOWANCE = '/cosmos.feegrant.v1beta1.AllowedMsgAllowance';
+export const ALLOWED_MSG_ALLOWANCE =
+  '/cosmos.feegrant.v1beta1.AllowedMsgAllowance';
 
 export function feegrantMsgTypes(): FeegrantMenuItem[] {
   return [
@@ -68,6 +69,10 @@ export function feegrantMsgTypes(): FeegrantMenuItem[] {
       txn: 'Unjail',
       typeURL: '/cosmos.slashing.v1beta1.MsgUnjail',
     },
+    {
+      txn: 'Set Withdraw Address',
+      typeURL: '/cosmos.distribution.v1beta1.MsgSetWithdrawAddress',
+    },
   ];
 }
 
@@ -126,12 +131,15 @@ export const MAP_TXN_MSG_TYPES: Record<string, string> = {
     '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission',
   unjail: '/cosmos.slashing.v1beta1.MsgUnjail',
   cancel_unbonding: '/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation',
+  set_withdraw_address: '/cosmos.distribution.v1beta1.MsgSetWithdrawAddress',
 };
 
 export const getFeegrantFormDefaultValues = () => {
   const date = new Date();
   const MILLISECONDS_IN_A_YEAR = 365 * 86400000;
-  const expiration = new Date(date.setTime(date.getTime() + MILLISECONDS_IN_A_YEAR));
+  const expiration = new Date(
+    date.setTime(date.getTime() + MILLISECONDS_IN_A_YEAR)
+  );
 
   return {
     grantee_address: '',

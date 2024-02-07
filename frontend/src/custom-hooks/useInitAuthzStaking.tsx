@@ -5,9 +5,14 @@ import useGetChainInfo from './useGetChainInfo';
 import {
   getAuthzDelegations,
   getAuthzUnbonding,
+  getAuthzValidator,
 } from '@/store/features/staking/stakeSlice';
-import { getAuthzDelegatorTotalRewards } from '@/store/features/distribution/distributionSlice';
+import {
+  getAuthzDelegatorTotalRewards,
+  getAuthzWithdrawAddress,
+} from '@/store/features/distribution/distributionSlice';
 import { getAuthzBalances } from '@/store/features/bank/bankSlice';
+import { getAddressByPrefix } from '@/utils/address';
 
 const useInitAuthzStaking = (chainIDs: string[]) => {
   const dispatch = useAppDispatch();
@@ -19,7 +24,7 @@ const useInitAuthzStaking = (chainIDs: string[]) => {
   useEffect(() => {
     if (authzAddress) {
       chainIDs.forEach((chainID) => {
-        const { baseURL, restURLs } = getChainInfo(chainID);
+        const { baseURL, restURLs, valPrefix } = getChainInfo(chainID);
         const { minimalDenom } = getDenomInfo(chainID);
         const address = convertAddress(chainID, authzAddress);
         dispatch(
@@ -51,6 +56,20 @@ const useInitAuthzStaking = (chainIDs: string[]) => {
             baseURL,
             address,
             chainID,
+          })
+        );
+        dispatch(
+          getAuthzValidator({
+            baseURLs: restURLs,
+            chainID,
+            valoperAddress: getAddressByPrefix(address, valPrefix),
+          })
+        );
+        dispatch(
+          getAuthzWithdrawAddress({
+            baseURLs: restURLs,
+            chainID,
+            delegator: address,
           })
         );
       });

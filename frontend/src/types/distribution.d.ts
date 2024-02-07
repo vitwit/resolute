@@ -32,6 +32,14 @@ interface DefaultState {
     status: TxStatus;
     txHash: string;
   };
+  txWithdrawCommission: {
+    status: TxStatus;
+    errMsg: string;
+  };
+  txSetWithdrawAddress: {
+    status: TxStatus;
+    errMsg: string;
+  };
   withdrawAddress: string;
   isTxAll: boolean;
 }

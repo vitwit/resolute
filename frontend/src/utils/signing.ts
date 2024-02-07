@@ -31,10 +31,7 @@ import {
   OfflineSigner,
   Registry,
 } from '@cosmjs/proto-signing';
-import {
-  ERR_NO_OFFLINE_AMINO_SIGNER,
-  ERR_UNKNOWN
-} from './errors';
+import { ERR_NO_OFFLINE_AMINO_SIGNER, ERR_UNKNOWN } from './errors';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { GAS_FEE } from './constants';
 import { MsgCancelUnbondingDelegation } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
@@ -57,6 +54,10 @@ const canUseAmino = (aminoConfig: AminoConfig, messages: Msg[]): boolean => {
     } else if (
       message.typeUrl.startsWith('/cosmos.group') &&
       !aminoConfig.group
+    ) {
+      return false;
+    } else if (
+      message.typeUrl.includes('/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission') 
     ) {
       return false;
     }
@@ -132,7 +133,7 @@ export const signAndBroadcast = async (
   gasPrice: string,
   restUrl: string,
   granter?: string,
-  rpc?: string,
+  rpc?: string
 ): Promise<ParsedTxResponse> => {
   let signer: OfflineSigner;
   let client: SigningCosmWasmClient;
@@ -143,8 +144,6 @@ export const signAndBroadcast = async (
     } else {
       signer = await getClient(aminoConfig, chainId, messages, granter);
     }
-
-
   } catch (error) {
     console.log('error while getting client ', error);
     throw new Error('failed to get wallet');
@@ -185,14 +184,19 @@ export const signAndBroadcast = async (
   if (isMetaMaskWallet()) {
     try {
       const offlineSigner = new CosmjsOfflineSigner(chainId);
-      const rpcEndpoint = rpc || ''
+      const rpcEndpoint = rpc || '';
       try {
         client = await SigningCosmWasmClient.connectWithSigner(
           rpcEndpoint,
           offlineSigner
         );
 
-        const result = await client.signAndBroadcast(accounts[0].address, messages, fee, memo);
+        const result = await client.signAndBroadcast(
+          accounts[0].address,
+          messages,
+          fee,
+          memo
+        );
 
         const parseResult = parseTxResult({
           code: result?.code,
@@ -206,21 +210,19 @@ export const signAndBroadcast = async (
           logs: [],
           timestamp: '',
           raw_log: '',
-          txhash: result?.transactionHash
-        })
+          txhash: result?.transactionHash,
+        });
 
-        return Promise.resolve(parseResult)
+        return Promise.resolve(parseResult);
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+      } catch (error: any) {
+        console.log('error connect with signer', error);
+        throw error?.message;
       }
+    } catch (error: any) {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      catch (error: any) {
-        console.log('error connect with signer', error)
-        throw error?.message
-      }
-    }
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    catch (error: any) {
-      console.log('error in sign and broadcast', error)
-      throw error?.message
+      console.log('error in sign and broadcast', error);
+      throw error?.message;
     }
   } else {
     const txBody = await sign(
@@ -268,9 +270,9 @@ function calculateFee(
 
   let num1;
   if (isMetaMaskWallet()) {
-    num1 = multiply(processedGasPrice.amount, 1.2)
+    num1 = multiply(processedGasPrice.amount, 1.2);
     if (ceil(num1) <= 1) {
-      num1 = multiply(processedGasPrice.amount, gasLimit)
+      num1 = multiply(processedGasPrice.amount, gasLimit);
     }
   } else {
     num1 = multiply(processedGasPrice.amount, gasLimit);
@@ -371,7 +373,8 @@ async function broadcast(
   const pollForTx = async (txId: string): Promise<ParsedTxResponse> => {
     if (timedOut) {
       throw new Error(
-        `Transaction with ID ${txId} was submitted but was not yet found on the chain. You might want to check later. There was a wait of ${timeoutMs / 1000
+        `Transaction with ID ${txId} was submitted but was not yet found on the chain. You might want to check later. There was a wait of ${
+          timeoutMs / 1000
         } seconds.`
       );
 
@@ -553,19 +556,16 @@ async function sign(
         authInfoBytes: signed.authInfoBytes,
         signatures: [fromBase64(signature.signature)],
       };
-
     } catch (error) {
-      console.log('error while sign direct', error)
+      console.log('error while sign direct', error);
       throw new Error('Request rejected');
     }
-
   }
 
   // if messages are amino and signer is not amino signer
   if (aminoMsgs) {
     throw new Error(ERR_NO_OFFLINE_AMINO_SIGNER);
   }
-
 
   // any other case by default
   throw new Error(ERR_UNKNOWN);

@@ -2,7 +2,12 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { Dialog, DialogContent, TextField } from '@mui/material';
+import {
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  TextField,
+} from '@mui/material';
 import Image from 'next/image';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { withdrawAddressFieldStyles } from '../styles';
@@ -13,6 +18,7 @@ import {
   txWithdrawValidatorCommissionAndRewards,
 } from '@/store/features/distribution/distributionSlice';
 import useGetDistributionMsgs from '@/custom-hooks/useGetDistributionMsgs';
+import { TxStatus } from '@/types/enums';
 
 const DialogWithdraw = ({
   open,
@@ -33,9 +39,30 @@ const DialogWithdraw = ({
   const { getWithdrawCommissionAndRewardsMsgs } = useGetDistributionMsgs();
   const { getChainInfo } = useGetChainInfo();
   const dispatch = useAppDispatch();
-  const withdraw_address = useAppSelector(
-    (state: RootState) => state.distribution.chains?.[chainID]?.withdrawAddress
+
+  const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
+
+  const authzDistributionData = useAppSelector(
+    (state) => state.distribution.authzChains
   );
+  const distributionData = useAppSelector((state) => state.distribution.chains);
+  const stakingData = useAppSelector(
+    (state: RootState) => state.staking.chains
+  );
+  const authzStakingData = useAppSelector(
+    (state: RootState) => state.staking.authz.chains
+  );
+
+  const withdraw_address = isAuthzMode
+    ? authzDistributionData?.[chainID]?.withdrawAddress
+    : distributionData?.[chainID]?.withdrawAddress;
+
+  const isValidator = isAuthzMode
+    ? authzStakingData?.[chainID]?.validator?.validatorInfo?.operator_address
+    : stakingData?.[chainID]?.validator?.validatorInfo?.operator_address
+      ? true
+      : false;
+
   const [withdrawAddress, setWithdrawAddress] = useState('');
   const [updateAddress, setUpdateAddress] = useState(false);
 
@@ -63,6 +90,36 @@ const DialogWithdraw = ({
     const txInputs = txWithdrawCommissionAndRewardsInputs(chainID, msgs);
     dispatch(txWithdrawValidatorCommissionAndRewards(txInputs));
   };
+
+  const withdrawCommissionLoading = useAppSelector(
+    (state) => state.distribution.chains?.[chainID]?.txWithdrawCommission.status
+  );
+
+  const withdrawRewardsLoading = useAppSelector(
+    (state) => state.distribution.chains?.[chainID]?.tx.status
+  );
+
+  const updateWithdrawAddressLoading = useAppSelector(
+    (state) => state.distribution.chains?.[chainID]?.txSetWithdrawAddress.status
+  );
+
+  useEffect(() => {
+    if (withdrawCommissionLoading === TxStatus.IDLE) {
+      onClose();
+    }
+  }, [withdrawCommissionLoading]);
+
+  useEffect(() => {
+    if (withdrawRewardsLoading === TxStatus.IDLE) {
+      onClose();
+    }
+  }, [withdrawRewardsLoading]);
+
+  useEffect(() => {
+    if (updateWithdrawAddressLoading === TxStatus.IDLE) {
+      onClose();
+    }
+  }, [updateWithdrawAddressLoading]);
 
   return (
     <Dialog
@@ -92,7 +149,7 @@ const DialogWithdraw = ({
               <h2 className="text-[20px] font-bold leading-normal">
                 Withdraw Rewards
               </h2>
-              <div className="bg-[#ffffff1a] rounded-3xl p-6 flex gap-6">
+              <div className="bg-[#ffffff1a] rounded-3xl p-6 pb-10 flex gap-6">
                 <div className="flex-1 relative">
                   <TextField
                     className="bg-[#FFFFFF0D] rounded-2xl w-full"
@@ -114,8 +171,8 @@ const DialogWithdraw = ({
                     }}
                     sx={withdrawAddressFieldStyles}
                   />
-                  <div className="absolute right-0">
-                    <div className="flex space-x-2 justify-end">
+                  <div className="absolute right-0 pt-2">
+                    <div className="flex space-x-2 justify-end items-center">
                       <Image
                         src="/info.svg"
                         width={16}
@@ -124,7 +181,7 @@ const DialogWithdraw = ({
                         draggable={false}
                       />
                       <p className="txt-xs">
-                        Your claim rewards will be updated to this address
+                        Your claimed rewards will be updated to this address
                       </p>
                     </div>
                   </div>
@@ -139,19 +196,33 @@ const DialogWithdraw = ({
                   }}
                   className="primary-gradient rounded-2xl flex justify-center items-center w-[212px]"
                 >
-                  {updateAddress ? 'Confirm' : 'Update Address'}
+                  {updateWithdrawAddressLoading === TxStatus.PENDING ? (
+                    <CircularProgress sx={{ color: 'white' }} size={20} />
+                  ) : (
+                    <>{updateAddress ? 'Confirm' : 'Update Address'}</>
+                  )}
                 </button>
               </div>
               <div className="flex gap-6">
                 <button onClick={() => claimRewards()} className="claim-button">
-                  Claim Rewards
+                  {withdrawRewardsLoading === TxStatus.PENDING ? (
+                    <CircularProgress sx={{ color: 'white' }} size={20} />
+                  ) : (
+                    'Claim Rewards'
+                  )}
                 </button>
-                <button
-                  onClick={() => claimRewardsAndCommission()}
-                  className="claim-button"
-                >
-                  Claim Rewards & Commission
-                </button>
+                {isValidator ? (
+                  <button
+                    onClick={() => claimRewardsAndCommission()}
+                    className="claim-button"
+                  >
+                    {withdrawCommissionLoading === TxStatus.PENDING ? (
+                      <CircularProgress sx={{ color: 'white' }} size={20} />
+                    ) : (
+                      'Claim Rewards & Commission'
+                    )}
+                  </button>
+                ) : null}
               </div>
             </div>
           </div>
