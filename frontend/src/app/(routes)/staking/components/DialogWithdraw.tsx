@@ -90,7 +90,8 @@ const DialogWithdraw = ({
   }, [withdraw_address]);
 
   const { address } = getChainInfo(chainID);
-  const onSubmit = () => {
+
+  const onUpdateWithdrawAddress = () => {
     if (isAuthzMode) {
       txAuthzSetWithdrawAddress({
         chainID,
@@ -241,7 +242,7 @@ const DialogWithdraw = ({
                 <button
                   onClick={() => {
                     if (updateAddress) {
-                      onSubmit();
+                      onUpdateWithdrawAddress();
                     } else {
                       setUpdateAddress(true);
                     }

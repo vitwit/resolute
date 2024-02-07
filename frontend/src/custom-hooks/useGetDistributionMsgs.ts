@@ -39,42 +39,11 @@ const useGetDistributionMsgs = () => {
   }: {
     chainID: string;
   }) => {
-    const validator = isAuthzMode
-      ? authzStakingData?.[chainID].validator
-      : stakingData?.[chainID].validator;
-    const msgs = [];
-    const withdrawCommissionMsg = isAuthzMode
-      ? EncodedWithdrawValidatorCommissionMsg(
-          validator.validatorInfo?.operator_address || ''
-        )
-      : WithdrawValidatorCommissionMsg(
-          validator.validatorInfo?.operator_address || ''
-        );
-    msgs.push(withdrawCommissionMsg);
-
-    let delegationPairs: DelegationsPairs[] | TxWithdrawAllRewardsInputs;
-    if (isAuthzMode) {
-      delegationPairs = (
-        authzRewards[chainID]?.delegatorRewards?.list || []
-      ).map((reward) => {
-        const pair = {
-          delegator: authzAddress,
-          validator: reward.validator_address,
-        };
-        return pair;
-      });
-      for (let i = 0; i < delegationPairs.length; i++) {
-        const msg = delegationPairs[i];
-        msgs.push(EncodedWithdrawAllRewardsMsg(msg.delegator, msg.validator));
-      }
-    } else {
-      delegationPairs = txWithdrawAllRewardsInputs(chainID);
-      for (let i = 0; i < delegationPairs.msgs.length; i++) {
-        const msg = delegationPairs.msgs[i];
-        msgs.push(WithdrawAllRewardsMsg(msg.delegator, msg.validator));
-      }
-    }
-
+    let msgs: Msg[];
+    msgs = [
+      ...getWithdrawCommissionMsgs({ chainID }),
+      ...getWithdrawRewardsMsgs({ chainID }),
+    ];
     return msgs;
   };
 
