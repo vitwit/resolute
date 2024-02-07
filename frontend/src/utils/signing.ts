@@ -6,7 +6,7 @@ import {
 } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
 import { Buffer } from 'buffer';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { PubKey, PubKey as comsjsPubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys.js';
+import {  PubKey as comsjsPubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys.js';
 import { toBase64, fromBase64 } from '@cosmjs/encoding';
 import Long from 'long';
 import {
@@ -22,7 +22,7 @@ import {
 } from '@cosmjs/stargate';
 import { cancelUnbondingAminoConverter } from '@/store/features/staking/amino';
 import { sleep } from '@cosmjs/utils';
-import { multiply, format, ceil, bignumber, floor, string } from 'mathjs';
+import { multiply, format, ceil, bignumber, floor } from 'mathjs';
 import { AminoMsg, makeSignDoc as makeAminoSignDoc } from '@cosmjs/amino';
 import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing.js';
 import {
