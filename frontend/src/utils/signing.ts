@@ -6,7 +6,7 @@ import {
 } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
 import { Buffer } from 'buffer';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { PubKey as comsjsPubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys.js';
+import { PubKey, PubKey as comsjsPubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys.js';
 import { toBase64, fromBase64 } from '@cosmjs/encoding';
 import Long from 'long';
 import {
@@ -22,7 +22,7 @@ import {
 } from '@cosmjs/stargate';
 import { cancelUnbondingAminoConverter } from '@/store/features/staking/amino';
 import { sleep } from '@cosmjs/utils';
-import { multiply, format, ceil, bignumber, floor } from 'mathjs';
+import { multiply, format, ceil, bignumber, floor, string } from 'mathjs';
 import { AminoMsg, makeSignDoc as makeAminoSignDoc } from '@cosmjs/amino';
 import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing.js';
 import {
@@ -36,11 +36,16 @@ import {
   ERR_UNKNOWN
 } from './errors';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
-import { GAS_FEE } from './constants';
+import { GAS_FEE, MAX_TRY_END_POINTS } from './constants';
 import { MsgCancelUnbondingDelegation } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { isMetaMaskWallet } from './localStorage';
+import { get } from 'lodash';
+import { axiosGetRequestWrapper } from './RequestWrapper';
+
+const ETH_BASE_ACCOUNT_TYPE = '/ethermint.types.v1.EthAccount';
+const ETH_CHAIN_ACCOUNT_PREFIXES = 'dym'
 
 declare const window: WalletWindow;
 
@@ -133,6 +138,7 @@ export const signAndBroadcast = async (
   restUrl: string,
   granter?: string,
   rpc?: string,
+  restURLs?: Array<string>
 ): Promise<ParsedTxResponse> => {
   let signer: OfflineSigner;
   let client: SigningCosmWasmClient;
@@ -236,7 +242,7 @@ export const signAndBroadcast = async (
       registry
     );
 
-    return await broadcast(txBody, restUrl);
+    return await broadcast(txBody, restUrl, restURLs);
   }
 
   // return Promise.resolve(parseTxResult({
@@ -359,7 +365,8 @@ async function simulate(
 
 async function broadcast(
   txBody: TxRaw,
-  restUrl: string
+  restUrl: string,
+  restURLs?: Array<string>
 ): Promise<ParsedTxResponse> {
   const timeoutMs = 60_000;
   const pollIntervalMs = 3_000;
@@ -379,11 +386,17 @@ async function broadcast(
     }
     await sleep(pollIntervalMs);
     try {
-      const response = await axios.get(
-        restUrl + '/cosmos/tx/v1beta1/txs/' + txId
-      );
-      const result = parseTxResult(response.data.tx_response);
-      return result;
+      if (restURLs?.length) {
+        const response = await axiosGetRequestWrapper(restURLs, `/cosmos/tx/v1beta1/txs/${txId}`, MAX_TRY_END_POINTS)
+        const result = parseTxResult(response.data.tx_response);
+        return result;
+      } else {
+        const response = await axios.get(
+          restUrl + '/cosmos/tx/v1beta1/txs/' + txId
+        );
+        const result = parseTxResult(response.data.tx_response);
+        return result;
+      }
     } catch (error) {
       // if transaction index is disabled return txhash
       if (error instanceof AxiosError) {
@@ -477,7 +490,17 @@ async function sign(
   authInfoBytes: Uint8Array;
   signatures: [Uint8Array] | [Buffer];
 }> {
-  const account = await getAccount(restUrl, address);
+  let account = await getAccount(restUrl, address);
+
+  if (get(account, '@type') === ETH_BASE_ACCOUNT_TYPE)
+    account = {
+      '@type': get(account, '@type') || '',
+      'address': get(account, 'base_account.address') || '',
+      'account_number': get(account, 'base_account.account_number') || '',
+      pub_key: get(account, 'base_account.pub_key'),
+      sequence: get(account, 'base_account.sequence') || ''
+    }
+
   const { account_number, sequence } = account;
   const txBodyBytes = makeBodyBytes(registry, messages, memo);
   let aminoMsgs;
@@ -489,40 +512,44 @@ async function sign(
 
   // if messages are amino and signer is amino signer
   if (aminoMsgs && !isOfflineDirectSigner(signer)) {
-    console.log('401')
     // Sign as amino if possible for Ledger and wallet support
-    const signDoc = makeAminoSignDoc(
-      aminoMsgs,
-      fee,
-      chainId,
-      memo,
-      account_number,
-      sequence
-    );
 
+    try {
+      const signDoc = makeAminoSignDoc(
+        aminoMsgs,
+        fee,
+        chainId,
+        memo,
+        account_number,
+        sequence
+      );
 
+      const { signature, signed } = await signer.signAmino(address, signDoc);
+      const amount: Coin[] = signed.fee.amount.map((coin) => {
+        return { amount: coin.amount, denom: coin.denom };
+      });
 
-    const { signature, signed } = await signer.signAmino(address, signDoc);
-    const amount: Coin[] = signed.fee.amount.map((coin) => {
-      return { amount: coin.amount, denom: coin.denom };
-    });
+      const authInfoBytes = await makeAuthInfoBytes(
+        signer,
+        account,
+        {
+          amount: amount,
+          gasLimit: BigInt(signed.fee.gas),
+          granter: signed.fee.granter,
+        },
+        SignMode.SIGN_MODE_LEGACY_AMINO_JSON
+      );
 
-    const authInfoBytes = await makeAuthInfoBytes(
-      signer,
-      account,
-      {
-        amount: amount,
-        gasLimit: BigInt(signed.fee.gas),
-        granter: signed.fee.granter,
-      },
-      SignMode.SIGN_MODE_LEGACY_AMINO_JSON
-    );
+      return {
+        bodyBytes: makeBodyBytes(registry, messages, signed.memo),
+        authInfoBytes: authInfoBytes,
+        signatures: [Buffer.from(signature.signature, 'base64')],
+      };
+    } catch (error) {
+      console.log('error while make auth info bytes', error)
+      throw new Error('Request rejected');
+    }
 
-    return {
-      bodyBytes: makeBodyBytes(registry, messages, signed.memo),
-      authInfoBytes: authInfoBytes,
-      signatures: [Buffer.from(signature.signature, 'base64')],
-    };
   }
 
   // if the signer is direct signer
@@ -601,7 +628,8 @@ async function makeAuthInfoBytes(
     signerInfos: [
       {
         publicKey: {
-          typeUrl: pubkeyTypeUrl(account.pub_key),
+          typeUrl: pubkeyTypeUrl(account?.pub_key,
+            account.address.includes(ETH_CHAIN_ACCOUNT_PREFIXES) ? 60 : undefined),
           value: comsjsPubKey
             .encode({
               key: signerPubkey,
@@ -616,7 +644,7 @@ async function makeAuthInfoBytes(
   }).finish();
 }
 
-const pubkeyTypeUrl = (pub_key: PubKey, coinType?: number): string => {
+const pubkeyTypeUrl = (pub_key?: globalThis.PubKey, coinType?: number): string => {
   if (pub_key && pub_key['@type']) return pub_key['@type'];
 
   if (coinType === 60) {

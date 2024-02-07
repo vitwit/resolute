@@ -113,7 +113,9 @@ export const txCreateFeegrant = createAsyncThunk(
         '',
         `${data.feeAmount}${data.denom}`,
         data.basicChainInfo.rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined
+        data.feegranter?.length > 0 ? data.feegranter : undefined,
+        '',
+        data?.basicChainInfo?.restURLs
       );
 
       // TODO: Store txn, (This is throwing error because of BigInt in message)
@@ -177,7 +179,9 @@ export const txRevoke = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data?.feegranter
+        data?.feegranter,
+        '',
+        data?.basicChainInfo?.restURLs
       );
 
       if (result?.code === 0) {
