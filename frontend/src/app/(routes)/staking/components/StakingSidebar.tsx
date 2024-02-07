@@ -95,6 +95,10 @@ const StakingSidebar = ({
     useGetTxInputs();
   const [dialogWithdrawOpen, setDialogWithdrawOpen] = useState(false);
 
+  const delegations = isAuthzMode
+    ? authzStaked[chainID]?.delegations?.delegations?.delegation_responses
+    : staked[chainID]?.delegations?.delegations?.delegation_responses;
+
   const claim = (chainID: string) => {
     if (isAuthzMode) {
       const { address } = getChainInfo(chainID);
@@ -193,30 +197,32 @@ const StakingSidebar = ({
             value={formatStakedAmount(rewardTokens, currency)}
           />
         </div>
-        <div className="staking-sidebar-actions">
-          <button
-            className="staking-sidebar-actions-btn"
-            onClick={() => {
-              setDialogWithdrawOpen(true);
-            }}
-          >
-            {txClaimStatus === TxStatus.PENDING && isClaimAll ? (
-              <CircularProgress size={16} sx={{ color: 'white' }} />
-            ) : (
-              'Claim All'
-            )}
-          </button>
-          <button
-            className="staking-sidebar-actions-btn"
-            onClick={() => claimAndStake(chainID)}
-          >
-            {txRestakeStatus === TxStatus.PENDING && isReStakeAll ? (
-              <CircularProgress size={16} sx={{ color: 'white' }} />
-            ) : (
-              'Restake All'
-            )}
-          </button>
-        </div>
+        {delegations?.length ? (
+          <div className="staking-sidebar-actions">
+            <button
+              className="staking-sidebar-actions-btn"
+              onClick={() => {
+                setDialogWithdrawOpen(true);
+              }}
+            >
+              {txClaimStatus === TxStatus.PENDING && isClaimAll ? (
+                <CircularProgress size={16} sx={{ color: 'white' }} />
+              ) : (
+                'Claim All'
+              )}
+            </button>
+            <button
+              className="staking-sidebar-actions-btn"
+              onClick={() => claimAndStake(chainID)}
+            >
+              {txRestakeStatus === TxStatus.PENDING && isReStakeAll ? (
+                <CircularProgress size={16} sx={{ color: 'white' }} />
+              ) : (
+                'Restake All'
+              )}
+            </button>
+          </div>
+        ) : null}
       </div>
       <div className="mt-20 overflow-y-scroll">
         <AllValidators

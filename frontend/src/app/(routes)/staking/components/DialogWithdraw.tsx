@@ -22,7 +22,7 @@ import { TxStatus } from '@/types/enums';
 import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
 import useGetDistributionMsgs from '@/custom-hooks/useGetDistributionMsgs';
 import useGetWithdrawPermissions from '@/custom-hooks/useGetWithdrawPermissions';
-import WithdrawActions from './WithdrawAction';
+import WithdrawActions from './WithdrawActions';
 
 const DialogWithdraw = ({
   open,

@@ -175,6 +175,6 @@
 }
 
 .claim-button {
-  @apply py-[10px] px-10 rounded-2xl min-w-[168px];
+  @apply py-[10px] px-10 rounded-2xl flex justify-center items-center;
   background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
