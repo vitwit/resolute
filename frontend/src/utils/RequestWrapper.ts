@@ -29,7 +29,7 @@ export const axiosGetRequestWrapper = async (
       errMsg = err.message;
     }
 
-    await timer(2000)
+    await timer(10000)
   }
 
   throw new Error('All requests failed: ' + errMsg);
