@@ -1117,6 +1117,7 @@ export const networks: Network[] = [
       rpc: 'https://rpc.dymension.nodestake.org',
       restURIs: [
         'https://dymension-mainnet-lcd.autostake.com:443',
+        'https://dymension.api.kjnodes.com',
         'https://api.dymension.nodestake.org',
         'https://dymension-api.lavenderfive.com:443',
       ],

@@ -79,7 +79,8 @@ export const txWithdrawAllRewards = createAsyncThunk(
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
-        data?.basicChainInfo?.rpc
+        data?.basicChainInfo?.rpc,
+        data?.basicChainInfo?.restURLs
       );
       const tx = NewTransaction(
         result,
@@ -187,7 +188,8 @@ export const txSetWithdrawAddress = createAsyncThunk(
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
-        data?.basicChainInfo?.rpc
+        data?.basicChainInfo?.rpc,
+        data?.basicChainInfo?.restURLs
       );
       const tx = NewTransaction(
         result,
@@ -273,7 +275,8 @@ export const txWithdrawValidatorCommission = createAsyncThunk(
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
-        data?.basicChainInfo?.rpc
+        data?.basicChainInfo?.rpc,
+        data?.basicChainInfo?.restURLs
       );
       const tx = NewTransaction(
         result,
@@ -382,7 +385,8 @@ export const txWithdrawValidatorCommissionAndRewards = createAsyncThunk(
         }`,
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
-        data?.basicChainInfo?.rpc
+        data?.basicChainInfo?.rpc,
+        data?.basicChainInfo?.restURLs
       );
       const tx = NewTransaction(
         result,
