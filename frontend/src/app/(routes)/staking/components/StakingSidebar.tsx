@@ -55,9 +55,6 @@ const StakingSidebar = ({
     ? authzRewards[chainID]?.delegatorRewards.totalRewards || 0
     : rewards[chainID]?.delegatorRewards.totalRewards || 0;
 
-  const isClaimAll = useAppSelector(
-    (state) => state?.distribution?.chains?.[chainID]?.isTxAll || false
-  );
   const isReStakeAll = useAppSelector(
     (state) => state?.staking?.chains?.[chainID]?.isTxAll || false
   );
@@ -205,11 +202,7 @@ const StakingSidebar = ({
                 setDialogWithdrawOpen(true);
               }}
             >
-              {txClaimStatus === TxStatus.PENDING && isClaimAll ? (
-                <CircularProgress size={16} sx={{ color: 'white' }} />
-              ) : (
-                'Claim All'
-              )}
+              Claim All
             </button>
             <button
               className="staking-sidebar-actions-btn"
