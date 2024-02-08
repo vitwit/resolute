@@ -6,7 +6,7 @@ interface PubKey {
 type Account = {
   '@type': string;
   address: string;
-  pub_key: PubKey;
+  pub_key?: PubKey;
   account_number: string;
   sequence: string;
 };

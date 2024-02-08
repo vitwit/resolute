@@ -161,7 +161,9 @@ export const txCreateAuthzGrant = createAsyncThunk(
         '',
         `${data.feeAmount}${data.denom}`,
         data.basicChainInfo.rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined
+        data.feegranter?.length > 0 ? data.feegranter : undefined,
+        '',
+        data?.basicChainInfo?.restURLs
       );
 
       // TODO: Store txn, (This is throwing error because of BigInt in message)
@@ -220,11 +222,12 @@ export const txAuthzExec = createAsyncThunk(
         data.msgs,
         GAS_FEE,
         data.memo,
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
-          data.denom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
         }`,
         data.basicChainInfo.rest,
-        data.feegranter
+        data.feegranter,
+        '',
+        data?.basicChainInfo?.restURLs
       );
       if (result?.code === 0) {
         const tx = NewTransaction(
@@ -284,7 +287,10 @@ export const txAuthzRevoke = createAsyncThunk(
         GAS_FEE,
         '',
         `${data.feeAmount}${data.denom}`,
-        data.basicChainInfo.rest
+        data.basicChainInfo.rest,
+        undefined,
+        '',
+        data?.basicChainInfo?.restURLs
         // data.feegranter?.length > 0 ? data.feegranter : undefined
       );
       if (result?.code === 0) {

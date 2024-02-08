@@ -124,7 +124,9 @@ export const multiTxns = createAsyncThunk(
         data.memo,
         `${feeAmount}${data.denom}`,
         rest,
-        data.feegranter?.length > 0 ? data.feegranter : undefined
+        data.feegranter?.length > 0 ? data.feegranter : undefined,
+        '',
+        restURLs,
       );
       const tx = NewTransaction(result, data.msgs, chainID, address);
       dispatch(
@@ -182,7 +184,8 @@ export const txBankSend = createAsyncThunk(
           }`,
           data.basicChainInfo.rest,
           data.feegranter,
-          data?.basicChainInfo?.rpc
+          data?.basicChainInfo?.rpc,
+          data?.basicChainInfo?.restURLs,
         );
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       } catch (error: any) {
