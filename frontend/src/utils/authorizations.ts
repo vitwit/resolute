@@ -61,6 +61,10 @@ export function authzMsgTypes(): AuthzMenuItem[] {
       txn: 'Unjail',
       typeURL: '/cosmos.slashing.v1beta1.MsgUnjail',
     },
+    {
+      txn: 'Set Withdraw Address',
+      typeURL: '/cosmos.distribution.v1beta1.MsgSetWithdrawAddress',
+    },
   ];
 }
 
@@ -80,6 +84,7 @@ export const MAP_TXN_MSG_TYPES: Record<string, string> = {
   withdraw_commission:
     '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission',
   unjail: '/cosmos.slashing.v1beta1.MsgUnjail',
+  set_withdraw_address: '/cosmos.distribution.v1beta1.MsgSetWithdrawAddress',
 };
 
 export const grantAuthzFormDefaultValues = () => {
@@ -100,6 +105,7 @@ export const grantAuthzFormDefaultValues = () => {
     delegate: { expiration: expiration, max_tokens: '' },
     undelegate: { expiration: expiration, max_tokens: '' },
     redelegate: { expiration: expiration, max_tokens: '' },
+    set_withdraw_address: { expiration: expiration },
   };
 };
 export function getTypeURLName(url: string) {
@@ -182,5 +188,6 @@ export const GENRIC_GRANTS = [
   'withdraw_rewards',
   'withdraw_commission',
   'unjail',
+  'set_withdraw_address',
 ];
 export const STAKE_GRANTS = ['delegate', 'undelegate', 'redelegate'];

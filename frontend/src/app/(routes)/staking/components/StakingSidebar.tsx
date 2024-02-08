@@ -2,13 +2,17 @@
 
 import { StakingSidebarProps } from '@/types/staking';
 import { CircularProgress } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import StakingStatsCard from './StakingStatsCard';
 import TopNav from '@/components/TopNav';
 import useGetTxInputs from '@/custom-hooks/useGetTxInputs';
-import { txWithdrawAllRewards } from '@/store/features/distribution/distributionSlice';
+import {
+  resetTxSetWithdrawAddress,
+  resetTxWithdrawRewards,
+  txWithdrawAllRewards,
+} from '@/store/features/distribution/distributionSlice';
 import { TxStatus } from '@/types/enums';
 import { txRestake } from '@/store/features/staking/stakeSlice';
 import { setError } from '@/store/features/common/commonSlice';
@@ -22,6 +26,7 @@ import {
 import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { DelegationsPairs } from '@/types/distribution';
+import DialogWithdraw from './DialogWithdraw';
 
 const StakingSidebar = ({
   validators,
@@ -50,9 +55,6 @@ const StakingSidebar = ({
     ? authzRewards[chainID]?.delegatorRewards.totalRewards || 0
     : rewards[chainID]?.delegatorRewards.totalRewards || 0;
 
-  const isClaimAll = useAppSelector(
-    (state) => state?.distribution?.chains?.[chainID]?.isTxAll || false
-  );
   const isReStakeAll = useAppSelector(
     (state) => state?.staking?.chains?.[chainID]?.isTxAll || false
   );
@@ -69,6 +71,10 @@ const StakingSidebar = ({
     },
   ];
 
+  const handleDialogWithdrawClose = () => {
+    setDialogWithdrawOpen(false);
+  };
+
   const txClaimStatus = useAppSelector(
     (state: RootState) => state.distribution.chains[chainID]?.tx.status
   );
@@ -79,14 +85,16 @@ const StakingSidebar = ({
   const validatorsStatus = useAppSelector(
     (state: RootState) => state.staking.chains[chainID]?.validators.status
   );
-  const delegations = isAuthzMode
-    ? authzStaked[chainID]?.delegations?.delegations?.delegation_responses
-    : staked[chainID]?.delegations?.delegations?.delegation_responses;
 
   const dispatch = useAppDispatch();
   const { getChainInfo } = useGetChainInfo();
   const { txWithdrawAllRewardsInputs, txRestakeInputs, txAuthzRestakeMsgs } =
     useGetTxInputs();
+  const [dialogWithdrawOpen, setDialogWithdrawOpen] = useState(false);
+
+  const delegations = isAuthzMode
+    ? authzStaked[chainID]?.delegations?.delegations?.delegation_responses
+    : staked[chainID]?.delegations?.delegations?.delegation_responses;
 
   const claim = (chainID: string) => {
     if (isAuthzMode) {
@@ -167,6 +175,11 @@ const StakingSidebar = ({
     }
   };
 
+  useEffect(() => {
+    dispatch(resetTxSetWithdrawAddress({ chainID }));
+    dispatch(resetTxWithdrawRewards({ chainID }));
+  }, [chainID]);
+
   return (
     <div className="staking-sidebar flex flex-col">
       <div className="flex flex-col gap-10">
@@ -181,17 +194,15 @@ const StakingSidebar = ({
             value={formatStakedAmount(rewardTokens, currency)}
           />
         </div>
-        {delegations?.length > 1 ? (
+        {delegations?.length ? (
           <div className="staking-sidebar-actions">
             <button
               className="staking-sidebar-actions-btn"
-              onClick={() => claim(chainID)}
+              onClick={() => {
+                setDialogWithdrawOpen(true);
+              }}
             >
-              {txClaimStatus === TxStatus.PENDING && isClaimAll ? (
-                <CircularProgress size={16} sx={{ color: 'white' }} />
-              ) : (
-                'Claim All'
-              )}
+              Claim All
             </button>
             <button
               className="staking-sidebar-actions-btn"
@@ -216,6 +227,12 @@ const StakingSidebar = ({
           toggleValidatorsDialog={toggleValidatorsDialog}
         />
       </div>
+      <DialogWithdraw
+        open={dialogWithdrawOpen}
+        onClose={handleDialogWithdrawClose}
+        chainID={chainID}
+        claimRewards={() => claim(chainID)}
+      />
     </div>
   );
 };

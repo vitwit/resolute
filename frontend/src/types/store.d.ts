@@ -14,6 +14,7 @@ interface BasicChainInfo {
   chainName: string;
   chainLogo: string;
   decimals: number;
+  valPrefix: string;
 }
 
 interface Coin {
