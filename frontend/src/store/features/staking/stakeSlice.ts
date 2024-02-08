@@ -876,37 +876,53 @@ export const getAuthzUnbonding = createAsyncThunk(
 
 export const getValidator = createAsyncThunk(
   'staking/get-validator',
-  async (data: {
-    baseURLs: string[];
-    chainID: string;
-    valoperAddress: string;
-  }) => {
-    const response = await stakingService.validatorInfo(
-      data.baseURLs,
-      data.valoperAddress
-    );
-    return {
-      data: response.data,
-      chainID: data.chainID,
-    };
+  async (
+    data: {
+      baseURLs: string[];
+      chainID: string;
+      valoperAddress: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await stakingService.validatorInfo(
+        data.baseURLs,
+        data.valoperAddress
+      );
+      return {
+        data: response.data,
+        chainID: data.chainID,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
   }
 );
 
 export const getAuthzValidator = createAsyncThunk(
   'staking/get-authz-validator',
-  async (data: {
-    baseURLs: string[];
-    chainID: string;
-    valoperAddress: string;
-  }) => {
-    const response = await stakingService.validatorInfo(
-      data.baseURLs,
-      data.valoperAddress
-    );
-    return {
-      data: response.data,
-      chainID: data.chainID,
-    };
+  async (
+    data: {
+      baseURLs: string[];
+      chainID: string;
+      valoperAddress: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await stakingService.validatorInfo(
+        data.baseURLs,
+        data.valoperAddress
+      );
+      return {
+        data: response.data,
+        chainID: data.chainID,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
   }
 );
 
