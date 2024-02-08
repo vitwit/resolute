@@ -8,20 +8,20 @@ import {
 } from '@/txns/distribution/withDrawRewards';
 import {
   msgDelegate,
-  serialize as serializeMsgDelegate,
+  formattedSerialize as serializeMsgDelegate,
 } from '@/txns/staking/delegate';
 import {
   msgReDelegate,
-  serialize as serializeMsgRedelegte,
+  formattedSerialize as serializeMsgRedelegte,
 } from '@/txns/staking/redelegate';
 import {
   msgUnDelegate,
-  serialize as serializeMsgUndelegte,
+  formattedSerialize as serializeMsgUndelegte,
 } from '@/txns/staking/undelegate';
 import { getTimeDifference } from './dataTime';
 import {
   msgTransfer,
-  serialize as serializeMsgTransfer,
+  formattedSerialize as serializeMsgTransfer,
 } from '@/txns/ibc/transfer';
 import { serialize as serializeMsgExec } from '@/txns/authz/exec';
 import { msgAuthzExecypeUrl } from '@/txns/authz/exec';
@@ -82,17 +82,17 @@ export const serializeMsg = (
   if (!msg) return 'No Message';
   switch (msg.typeUrl) {
     case msgDelegate:
-      return serializeMsgDelegate(msg);
+      return serializeMsgDelegate(msg, decimals, originDenom);
     case msgUnDelegate:
-      return serializeMsgUndelegte(msg);
+      return serializeMsgUndelegte(msg, decimals, originDenom);
     case msgReDelegate:
-      return serializeMsgRedelegte(msg);
+      return serializeMsgRedelegte(msg, decimals, originDenom);
     case msgSendTypeUrl:
       return serializeMsgSend(msg, decimals, originDenom, true);
     case msgWithdrawRewards:
       return serializeMsgClaim(msg);
     case msgTransfer:
-      return serializeMsgTransfer(msg);
+      return serializeMsgTransfer(msg, decimals, originDenom);
     case msgAuthzExecypeUrl:
       return serializeMsgExec();
     default:

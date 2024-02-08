@@ -18,9 +18,6 @@ export function WithdrawAllRewardsMsg(
 }
 
 export function serialize(msg: Msg): string {
-  const { delegatorAddress, validatorAddress } = msg.value;
-  return `${shortenMsg(
-    delegatorAddress,
-    10
-  )} withdrew rewards from ${shortenMsg(validatorAddress, 10)}`;
+  const { validatorAddress } = msg.value;
+  return `Withdrew rewards from ${shortenMsg(validatorAddress, 10)}`;
 }
