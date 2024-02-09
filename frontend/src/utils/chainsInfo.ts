@@ -1313,77 +1313,88 @@ export const networks: Network[] = [
   //     },
   //   },
   // },
-  // {
-  //   enableModules: {
-  //     authz: true,
-  //     feegrant: true,
-  //     group: false,
-  //   },
-  //   aminoConfig: {
-  //     authz: false,
-  //     feegrant: false,
-  //     group: false,
-  //   },
-  //   showAirdrop: false,
-  //   logos: {
-  //     menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/celestia/images/celestia.svg',
-  //     toolbar:
-  //       'https://raw.githubusercontent.com/cosmos/chain-registry/master/celestia/images/celestia.svg',
-  //   },
-  //   keplrExperimental: false,
-  //   leapExperimental: false,
-  //   isTestnet: false,
-  //   explorerTxHashEndpoint: 'https://mintscan.io/celestia/txs/',
-  //   config: {
-  //     chainId: 'celestia',
-  //     chainName: 'Celestia',
-  //     rest: 'https://public-celestia-lcd.numia.xyz',
-  //     rpc: 'https://public-celestia-rpc.numia.xyz',
-  //     currencies: [
-  //       {
-  //         coinDenom: 'TIA',
-  //         coinMinimalDenom: 'utia',
-  //         coinDecimals: 6,
-  //       },
-  //     ],
-  //     bip44: {
-  //       coinType: 118,
-  //     },
-  //     bech32Config: {
-  //       bech32PrefixAccAddr: 'celestia',
-  //       bech32PrefixAccPub: 'celestiapub',
-  //       bech32PrefixValAddr: 'celestiavaloper',
-  //       bech32PrefixValPub: 'celestiavaloperpub',
-  //       bech32PrefixConsAddr: 'celestiavalcons',
-  //       bech32PrefixConsPub: 'celestiavalconspub',
-  //     },
-  //     walletUrlForStaking: 'https://resolute.vitwit.com/celestia/staking',
-  //     feeCurrencies: [
-  //       {
-  //         coinDenom: 'TIA',
-  //         coinMinimalDenom: 'utia',
-  //         coinDecimals: 6,
-  //         coinGeckoId: 'celestia',
-  //         gasPriceStep: {
-  //           low: 0.01,
-  //           average: 0.015,
-  //           high: 0.05,
-  //         },
-  //       },
-  //     ],
-  //     stakeCurrency: {
-  //       coinDenom: 'TIA',
-  //       coinMinimalDenom: 'utia',
-  //       coinDecimals: 6,
-  //       coinGeckoId: 'celestia',
-  //     },
-  //     image:
-  //       'https://raw.githubusercontent.com/cosmos/chain-registry/master/celestia/images/celestia.svg',
-  //     theme: {
-  //       primaryColor: '#fff',
-  //       gradient:
-  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
-  //     },
-  //   },
-  // },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/celestia/images/celestia.svg',
+      toolbar:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/celestia/images/celestia.svg',
+    },
+    keplrExperimental: false,
+    leapExperimental: false,
+    isTestnet: false,
+    govV1: true,
+    explorerTxHashEndpoint: 'https://mintscan.io/celestia/txs/',
+    config: {
+      chainId: 'celestia',
+      chainName: 'Celestia',
+      rest: 'https://public-celestia-lcd.numia.xyz',
+      rpc: 'https://public-celestia-rpc.numia.xyz',
+      restURIs: [
+        'https://public-celestia-lcd.numia.xyz',
+        'https://api.celestia.nodestake.top',
+        'https://celestia-api.lavenderfive.com:443',
+      ],
+      rpcURIs: [
+        'https://public-celestia-rpc.numia.xyz',
+        'https://rpc.celestia.nodestake.top',
+        'https://celestia-rpc.lavenderfive.com:443',
+      ],
+      currencies: [
+        {
+          coinDenom: 'TIA',
+          coinMinimalDenom: 'utia',
+          coinDecimals: 6,
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      bech32Config: {
+        bech32PrefixAccAddr: 'celestia',
+        bech32PrefixAccPub: 'celestiapub',
+        bech32PrefixValAddr: 'celestiavaloper',
+        bech32PrefixValPub: 'celestiavaloperpub',
+        bech32PrefixConsAddr: 'celestiavalcons',
+        bech32PrefixConsPub: 'celestiavalconspub',
+      },
+      walletUrlForStaking: 'https://resolute.vitwit.com/celestia/staking',
+      feeCurrencies: [
+        {
+          coinDenom: 'TIA',
+          coinMinimalDenom: 'utia',
+          coinDecimals: 6,
+          coinGeckoId: 'celestia',
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.015,
+            high: 0.05,
+          },
+        },
+      ],
+      stakeCurrency: {
+        coinDenom: 'TIA',
+        coinMinimalDenom: 'utia',
+        coinDecimals: 6,
+        coinGeckoId: 'celestia',
+      },
+      image:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/celestia/images/celestia.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
 ];
