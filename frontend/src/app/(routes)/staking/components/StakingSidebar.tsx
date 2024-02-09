@@ -2,7 +2,7 @@
 
 import { StakingSidebarProps } from '@/types/staking';
 import { CircularProgress } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import StakingStatsCard from './StakingStatsCard';
@@ -26,7 +26,7 @@ import {
 import useAuthzStakingExecHelper from '@/custom-hooks/useAuthzStakingExecHelper';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { DelegationsPairs } from '@/types/distribution';
-import DialogWithdraw from './DialogWithdraw';
+import ClaimButton from './ClaimButton';
 
 const StakingSidebar = ({
   validators,
@@ -71,9 +71,9 @@ const StakingSidebar = ({
     },
   ];
 
-  const handleDialogWithdrawClose = () => {
-    setDialogWithdrawOpen(false);
-  };
+  // const handleDialogWithdrawClose = () => {
+  //   setDialogWithdrawOpen(false);
+  // };
 
   const txClaimStatus = useAppSelector(
     (state: RootState) => state.distribution.chains[chainID]?.tx.status
@@ -90,7 +90,7 @@ const StakingSidebar = ({
   const { getChainInfo } = useGetChainInfo();
   const { txWithdrawAllRewardsInputs, txRestakeInputs, txAuthzRestakeMsgs } =
     useGetTxInputs();
-  const [dialogWithdrawOpen, setDialogWithdrawOpen] = useState(false);
+  // const [dialogWithdrawOpen, setDialogWithdrawOpen] = useState(false);
 
   const delegations = isAuthzMode
     ? authzStaked[chainID]?.delegations?.delegations?.delegation_responses
@@ -196,14 +196,10 @@ const StakingSidebar = ({
         </div>
         {delegations?.length ? (
           <div className="staking-sidebar-actions">
-            <button
-              className="staking-sidebar-actions-btn"
-              onClick={() => {
-                setDialogWithdrawOpen(true);
-              }}
-            >
-              Claim All
-            </button>
+            <ClaimButton
+              chainID={chainID}
+              claimRewards={() => claim(chainID)}
+            />
             <button
               className="staking-sidebar-actions-btn"
               onClick={() => claimAndStake(chainID)}
@@ -227,12 +223,12 @@ const StakingSidebar = ({
           toggleValidatorsDialog={toggleValidatorsDialog}
         />
       </div>
-      <DialogWithdraw
+      {/* <DialogWithdraw
         open={dialogWithdrawOpen}
         onClose={handleDialogWithdrawClose}
         chainID={chainID}
         claimRewards={() => claim(chainID)}
-      />
+      /> */}
     </div>
   );
 };
