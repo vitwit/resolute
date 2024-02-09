@@ -1377,8 +1377,8 @@ export const networks: Network[] = [
           coinGeckoId: 'celestia',
           gasPriceStep: {
             low: 0.01,
-            average: 0.015,
-            high: 0.05,
+            average: 0.02,
+            high: 0.1,
           },
         },
       ],
