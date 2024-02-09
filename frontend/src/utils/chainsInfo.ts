@@ -544,87 +544,87 @@ export const networks: Network[] = [
   //     },
   //   },
   // },
-  // {
-  //   enableModules: {
-  //     authz: true,
-  //     feegrant: true,
-  //     group: false,
-  //   },
-  //   aminoConfig: {
-  //     authz: false,
-  //     feegrant: false,
-  //     group: false,
-  //   },
-  //   showAirdrop: false,
-  //   logos: {
-  //     menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/osmosis/osmo.png',
-  //     toolbar:
-  //       'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.png',
-  //   },
-  //   keplrExperimental: false,
-  //   leapExperimental: false,
-  //   isTestnet: false,
-  //   govV1: true,
-  //   explorerTxHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
-  //   config: {
-  //     chainId: 'osmosis-1',
-  //     chainName: 'Osmosis',
-  //     rest: 'https://osmosis-api.polkachu.com',
-  //     rpc: 'https://rpc.osmosis.zone',
-  //     restURIs: [
-  //       'https://osmosis-api.polkachu.com',
-  //       'https://osmosis-lcd.quickapi.com:443',
-  //       'https://osmosis-api.polkachu.com',
-  //     ],
-  //     rpcURIs: [
-  //       'https://rpc.osmosis.zone',
-  //       'https://rpc-osmosis.blockapsis.com',
-  //       'https://osmosis-rpc.quickapi.com:443',
-  //     ],
-  //     currencies: [
-  //       {
-  //         coinDenom: 'OSMO',
-  //         coinMinimalDenom: 'uosmo',
-  //         coinDecimals: 6,
-  //       },
-  //     ],
-  //     bech32Config: {
-  //       bech32PrefixAccAddr: 'osmo',
-  //       bech32PrefixAccPub: 'osmopub',
-  //       bech32PrefixValAddr: 'osmovaloper',
-  //       bech32PrefixValPub: 'osmovaloperpub',
-  //       bech32PrefixConsAddr: 'osmogvalcons',
-  //       bech32PrefixConsPub: 'osmovalconspub',
-  //     },
-  //     feeCurrencies: [
-  //       {
-  //         coinDenom: 'OSMO',
-  //         coinMinimalDenom: 'uosmo',
-  //         coinDecimals: 6,
-  //         gasPriceStep: {
-  //           low: 0.01,
-  //           average: 0.025,
-  //           high: 0.03,
-  //         },
-  //       },
-  //     ],
-  //     bip44: {
-  //       coinType: 118,
-  //     },
-  //     stakeCurrency: {
-  //       coinDenom: 'OSMO',
-  //       coinMinimalDenom: 'uosmo',
-  //       coinDecimals: 6,
-  //     },
-  //     image:
-  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
-  //     theme: {
-  //       primaryColor: '#fff',
-  //       gradient:
-  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
-  //     },
-  //   },
-  // },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/vitwit/aneka-resources/d234799b2da3dc0b148829259866d07618b9773b/assets/osmosis/osmo.png',
+      toolbar:
+        'https://raw.githubusercontent.com/vitwit/chain-registry/08711dbf4cbc12d37618cecd290ad756c07d538b/osmosis/images/osmosis-logo.png',
+    },
+    keplrExperimental: false,
+    leapExperimental: false,
+    isTestnet: false,
+    govV1: true,
+    explorerTxHashEndpoint: 'https://www.mintscan.io/osmosis/txs/',
+    config: {
+      chainId: 'osmosis-1',
+      chainName: 'Osmosis',
+      rest: 'https://osmosis-api.polkachu.com',
+      rpc: 'https://rpc.osmosis.zone',
+      restURIs: [
+        'https://osmosis-api.polkachu.com',
+        'https://osmosis-lcd.quickapi.com:443',
+        'https://osmosis-api.polkachu.com',
+      ],
+      rpcURIs: [
+        'https://rpc.osmosis.zone',
+        'https://rpc-osmosis.blockapsis.com',
+        'https://osmosis-rpc.quickapi.com:443',
+      ],
+      currencies: [
+        {
+          coinDenom: 'OSMO',
+          coinMinimalDenom: 'uosmo',
+          coinDecimals: 6,
+        },
+      ],
+      bech32Config: {
+        bech32PrefixAccAddr: 'osmo',
+        bech32PrefixAccPub: 'osmopub',
+        bech32PrefixValAddr: 'osmovaloper',
+        bech32PrefixValPub: 'osmovaloperpub',
+        bech32PrefixConsAddr: 'osmogvalcons',
+        bech32PrefixConsPub: 'osmovalconspub',
+      },
+      feeCurrencies: [
+        {
+          coinDenom: 'OSMO',
+          coinMinimalDenom: 'uosmo',
+          coinDecimals: 6,
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.025,
+            high: 0.03,
+          },
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      stakeCurrency: {
+        coinDenom: 'OSMO',
+        coinMinimalDenom: 'uosmo',
+        coinDecimals: 6,
+      },
+      image:
+        'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
   // {
   //   enableModules: {
   //     authz: true,
@@ -784,89 +784,89 @@ export const networks: Network[] = [
       },
     },
   },
-  // {
-  //   enableModules: {
-  //     authz: true,
-  //     feegrant: true,
-  //     group: false,
-  //   },
-  //   aminoConfig: {
-  //     authz: false,
-  //     feegrant: false,
-  //     group: false,
-  //   },
-  //   showAirdrop: false,
-  //   logos: {
-  //     menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/dydx/images/dydx.svg',
-  //     toolbar:
-  //       'https://raw.githubusercontent.com/cosmos/chain-registry/master/dydx/images/dydx.svg',
-  //   },
-  //   keplrExperimental: false,
-  //   leapExperimental: true,
-  //   isTestnet: false,
-  //   govV1: true,
-  //   explorerTxHashEndpoint: 'https://mintscan.io/dydx/txs/',
-  //   config: {
-  //     chainId: 'dydx-mainnet-1',
-  //     chainName: 'DYDX',
-  //     rest: 'https://dydx-rest.publicnode.com',
-  //     rpc: 'https://dydx-rpc.publicnode.com:443',
-  //     restURIs: [
-  //       'https://dydx-rest.publicnode.com',
-  //       'https://dydx-dao-api.polkachu.com',
-  //     ],
-  //     rpcURIs: [
-  //       'https://dydx-rpc.publicnode.com:443',
-  //       'https://dydx-dao-rpc.polkachu.com',
-  //       'https://dydx-rpc.lavenderfive.com:443',
-  //     ],
-  //     currencies: [
-  //       {
-  //         coinDenom: 'DYDX',
-  //         coinMinimalDenom: 'adydx',
-  //         coinDecimals: 18,
-  //       },
-  //     ],
-  //     bip44: {
-  //       coinType: 118,
-  //     },
-  //     bech32Config: {
-  //       bech32PrefixAccAddr: 'dydx',
-  //       bech32PrefixAccPub: 'dydxpub',
-  //       bech32PrefixValAddr: 'dydxvaloper',
-  //       bech32PrefixValPub: 'dydxvaloperpub',
-  //       bech32PrefixConsAddr: 'dydxvalcons',
-  //       bech32PrefixConsPub: 'dydxvalconspub',
-  //     },
-  //     walletUrlForStaking: 'https://resolute.vitwit.com/dydx/staking',
-  //     feeCurrencies: [
-  //       {
-  //         coinDenom: 'DYDX',
-  //         coinMinimalDenom: 'adydx',
-  //         coinDecimals: 18,
-  //         coinGeckoId: 'dydx',
-  //         gasPriceStep: {
-  //           low: 0.01,
-  //           average: 0.02,
-  //           high: 0.05,
-  //         },
-  //       },
-  //     ],
-  //     stakeCurrency: {
-  //       coinDenom: 'DYDX',
-  //       coinMinimalDenom: 'adydx',
-  //       coinDecimals: 18,
-  //       coinGeckoId: 'dydx',
-  //     },
-  //     image:
-  //       'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
-  //     theme: {
-  //       primaryColor: '#fff',
-  //       gradient:
-  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
-  //     },
-  //   },
-  // },
+  {
+    enableModules: {
+      authz: true,
+      feegrant: true,
+      group: false,
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/dydx/images/dydx.svg',
+      toolbar:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/dydx/images/dydx.svg',
+    },
+    keplrExperimental: false,
+    leapExperimental: true,
+    isTestnet: false,
+    govV1: true,
+    explorerTxHashEndpoint: 'https://mintscan.io/dydx/txs/',
+    config: {
+      chainId: 'dydx-mainnet-1',
+      chainName: 'DYDX',
+      rest: 'https://dydx-rest.publicnode.com',
+      rpc: 'https://dydx-rpc.publicnode.com:443',
+      restURIs: [
+        'https://dydx-rest.publicnode.com',
+        'https://dydx-dao-api.polkachu.com',
+      ],
+      rpcURIs: [
+        'https://dydx-rpc.publicnode.com:443',
+        'https://dydx-dao-rpc.polkachu.com',
+        'https://dydx-rpc.lavenderfive.com:443',
+      ],
+      currencies: [
+        {
+          coinDenom: 'DYDX',
+          coinMinimalDenom: 'adydx',
+          coinDecimals: 18,
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      bech32Config: {
+        bech32PrefixAccAddr: 'dydx',
+        bech32PrefixAccPub: 'dydxpub',
+        bech32PrefixValAddr: 'dydxvaloper',
+        bech32PrefixValPub: 'dydxvaloperpub',
+        bech32PrefixConsAddr: 'dydxvalcons',
+        bech32PrefixConsPub: 'dydxvalconspub',
+      },
+      walletUrlForStaking: 'https://resolute.vitwit.com/dydx/staking',
+      feeCurrencies: [
+        {
+          coinDenom: 'DYDX',
+          coinMinimalDenom: 'adydx',
+          coinDecimals: 18,
+          coinGeckoId: 'dydx',
+          gasPriceStep: {
+            low: 0.01,
+            average: 0.02,
+            high: 0.05,
+          },
+        },
+      ],
+      stakeCurrency: {
+        coinDenom: 'DYDX',
+        coinMinimalDenom: 'adydx',
+        coinDecimals: 18,
+        coinGeckoId: 'dydx',
+      },
+      image:
+        'https://raw.githubusercontent.com/leapwallet/assets/2289486990e1eaf9395270fffd1c41ba344ef602/images/logo.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
   // {
   //   enableModules: {
   //     authz: true,
@@ -1088,91 +1088,91 @@ export const networks: Network[] = [
       },
     },
   },
-  // {
-  //   enableModules: {
-  //     authz: false,
-  //     feegrant: false,
-  //     group: false,
-  //   },
-  //   aminoConfig: {
-  //     authz: false,
-  //     feegrant: false,
-  //     group: false,
-  //   },
-  //   showAirdrop: false,
-  //   logos: {
-  //     menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/dymension/images/dymension-logo.svg',
-  //     toolbar:
-  //       'https://raw.githubusercontent.com/cosmos/chain-registry/master/dymension/images/dymension-logo.svg',
-  //   },
-  //   keplrExperimental: false,
-  //   leapExperimental: true,
-  //   isTestnet: false,
-  //   govV1: true,
-  //   explorerTxHashEndpoint: 'https://explorer.nodestake.org/dymension/tx/',
-  //   config: {
-  //     chainId: 'dymension_1100-1',
-  //     chainName: 'Dymension',
-  //     rest: 'https://api.dymension.nodestake.org',
-  //     rpc: 'https://rpc.dymension.nodestake.org',
-  //     restURIs: [
-  //       'https://dymension-mainnet-lcd.autostake.com:443',
-  //       'https://dymension.api.kjnodes.com',
-  //       'https://api.dymension.nodestake.org',
-  //       'https://dymension-api.lavenderfive.com:443',
-  //     ],
-  //     rpcURIs: [
-  //       'https://rpc.dymension.nodestake.org',
-  //       'https://dymension-mainnet-rpc.autostake.com:443',
-  //       'https://dymension-rpc.lavenderfive.com:443',
-  //     ],
-  //     currencies: [
-  //       {
-  //         coinDenom: 'DYM',
-  //         coinMinimalDenom: 'adym',
-  //         coinDecimals: 18,
-  //       },
-  //     ],
-  //     bip44: {
-  //       coinType: 118,
-  //     },
-  //     bech32Config: {
-  //       bech32PrefixAccAddr: 'dym',
-  //       bech32PrefixAccPub: 'dympub',
-  //       bech32PrefixValAddr: 'dymvaloper',
-  //       bech32PrefixValPub: 'dymvaloperpub',
-  //       bech32PrefixConsAddr: 'dymvalcons',
-  //       bech32PrefixConsPub: 'dymvalconspub',
-  //     },
-  //     walletUrlForStaking: 'https://resolute.vitwit.com/dymension/staking',
-  //     feeCurrencies: [
-  //       {
-  //         coinDenom: 'DYM',
-  //         coinMinimalDenom: 'adym',
-  //         coinDecimals: 18,
-  //         coinGeckoId: 'dym',
-  //         gasPriceStep: {
-  //           low: 0.02,
-  //           average: 0.02,
-  //           high: 0.02,
-  //         },
-  //       },
-  //     ],
-  //     stakeCurrency: {
-  //       coinDenom: 'DYM',
-  //       coinMinimalDenom: 'adym',
-  //       coinDecimals: 18,
-  //       coinGeckoId: 'dym',
-  //     },
-  //     image:
-  //       'https://raw.githubusercontent.com/cosmos/chain-registry/master/dymension/images/dymension-logo.svg',
-  //     theme: {
-  //       primaryColor: '#fff',
-  //       gradient:
-  //         'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
-  //     },
-  //   },
-  // },
+  {
+    enableModules: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    aminoConfig: {
+      authz: false,
+      feegrant: false,
+      group: false,
+    },
+    showAirdrop: false,
+    logos: {
+      menu: 'https://raw.githubusercontent.com/cosmos/chain-registry/master/dymension/images/dymension-logo.svg',
+      toolbar:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/dymension/images/dymension-logo.svg',
+    },
+    keplrExperimental: false,
+    leapExperimental: true,
+    isTestnet: false,
+    govV1: true,
+    explorerTxHashEndpoint: 'https://explorer.nodestake.org/dymension/tx/',
+    config: {
+      chainId: 'dymension_1100-1',
+      chainName: 'Dymension',
+      rest: 'https://api.dymension.nodestake.org',
+      rpc: 'https://rpc.dymension.nodestake.org',
+      restURIs: [
+        'https://dymension-mainnet-lcd.autostake.com:443',
+        'https://dymension.api.kjnodes.com',
+        'https://api.dymension.nodestake.org',
+        'https://dymension-api.lavenderfive.com:443',
+      ],
+      rpcURIs: [
+        'https://rpc.dymension.nodestake.org',
+        'https://dymension-mainnet-rpc.autostake.com:443',
+        'https://dymension-rpc.lavenderfive.com:443',
+      ],
+      currencies: [
+        {
+          coinDenom: 'DYM',
+          coinMinimalDenom: 'adym',
+          coinDecimals: 18,
+        },
+      ],
+      bip44: {
+        coinType: 118,
+      },
+      bech32Config: {
+        bech32PrefixAccAddr: 'dym',
+        bech32PrefixAccPub: 'dympub',
+        bech32PrefixValAddr: 'dymvaloper',
+        bech32PrefixValPub: 'dymvaloperpub',
+        bech32PrefixConsAddr: 'dymvalcons',
+        bech32PrefixConsPub: 'dymvalconspub',
+      },
+      walletUrlForStaking: 'https://resolute.vitwit.com/dymension/staking',
+      feeCurrencies: [
+        {
+          coinDenom: 'DYM',
+          coinMinimalDenom: 'adym',
+          coinDecimals: 18,
+          coinGeckoId: 'dym',
+          gasPriceStep: {
+            low: 0.02,
+            average: 0.02,
+            high: 0.02,
+          },
+        },
+      ],
+      stakeCurrency: {
+        coinDenom: 'DYM',
+        coinMinimalDenom: 'adym',
+        coinDecimals: 18,
+        coinGeckoId: 'dym',
+      },
+      image:
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/dymension/images/dymension-logo.svg',
+      theme: {
+        primaryColor: '#fff',
+        gradient:
+          'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 100%)',
+      },
+    },
+  },
   // {
   //   enableModules: {
   //     authz: true,
