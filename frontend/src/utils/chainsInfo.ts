@@ -1333,7 +1333,7 @@ export const networks: Network[] = [
     keplrExperimental: false,
     leapExperimental: false,
     isTestnet: false,
-    govV1: true,
+    govV1: false,
     explorerTxHashEndpoint: 'https://mintscan.io/celestia/txs/',
     config: {
       chainId: 'celestia',
