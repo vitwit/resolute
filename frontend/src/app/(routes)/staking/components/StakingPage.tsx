@@ -8,12 +8,16 @@ import {
   getDelegations,
   getParams,
   getUnbonding,
+  getValidator,
 } from '@/store/features/staking/stakeSlice';
 
 import ChainDelegations from './ChainDelegations';
 import StakingSidebar from './StakingSidebar';
 import ChainUnbondings from './ChainUnbondings';
-import { getDelegatorTotalRewards } from '@/store/features/distribution/distributionSlice';
+import {
+  getDelegatorTotalRewards,
+  getWithdrawAddress,
+} from '@/store/features/distribution/distributionSlice';
 import { Validator } from '@/types/staking';
 import { useRouter } from 'next/navigation';
 import { getBalances } from '@/store/features/bank/bankSlice';
@@ -30,6 +34,7 @@ import AuthzToast from '@/components/AuthzToast';
 import useInitAuthzStaking from '@/custom-hooks/useInitAuthzStaking';
 import AuthzExecLoader from '@/components/AuthzExecLoader';
 import FeegrantToast from '@/components/FeegrantToast';
+import { getAddressByPrefix } from '@/utils/address';
 
 const StakingPage = ({
   chainName,
@@ -109,7 +114,7 @@ const StakingPage = ({
   );
 
   const { getChainInfo } = useGetChainInfo();
-  const { address, baseURL, restURLs } = getChainInfo(chainID);
+  const { address, baseURL, restURLs, valPrefix } = getChainInfo(chainID);
 
   useInitAuthzStaking([chainID]);
 
@@ -152,6 +157,20 @@ const StakingPage = ({
       })
     );
     dispatch(getParams({ baseURLs: restURLs, chainID }));
+    dispatch(
+      getValidator({
+        baseURLs: restURLs,
+        chainID,
+        valoperAddress: getAddressByPrefix(address, valPrefix),
+      })
+    );
+    dispatch(
+      getWithdrawAddress({
+        baseURLs: restURLs,
+        chainID,
+        delegator: address,
+      })
+    );
   }, [chainID]);
 
   const onMenuAction = (type: string, validator: Validator) => {

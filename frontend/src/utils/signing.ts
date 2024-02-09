@@ -6,7 +6,7 @@ import {
 } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
 import { Buffer } from 'buffer';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { PubKey as comsjsPubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys.js';
+import {  PubKey as comsjsPubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys.js';
 import { toBase64, fromBase64 } from '@cosmjs/encoding';
 import Long from 'long';
 import {
@@ -31,16 +31,18 @@ import {
   OfflineSigner,
   Registry,
 } from '@cosmjs/proto-signing';
-import {
-  ERR_NO_OFFLINE_AMINO_SIGNER,
-  ERR_UNKNOWN
-} from './errors';
+import { ERR_NO_OFFLINE_AMINO_SIGNER, ERR_UNKNOWN } from './errors';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
-import { GAS_FEE } from './constants';
+import { GAS_FEE, MAX_TRY_END_POINTS } from './constants';
 import { MsgCancelUnbondingDelegation } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { isMetaMaskWallet } from './localStorage';
+import { get } from 'lodash';
+import { axiosGetRequestWrapper } from './RequestWrapper';
+
+const ETH_BASE_ACCOUNT_TYPE = '/ethermint.types.v1.EthAccount';
+const ETH_CHAIN_ACCOUNT_PREFIXES = 'dym'
 
 declare const window: WalletWindow;
 
@@ -57,6 +59,10 @@ const canUseAmino = (aminoConfig: AminoConfig, messages: Msg[]): boolean => {
     } else if (
       message.typeUrl.startsWith('/cosmos.group') &&
       !aminoConfig.group
+    ) {
+      return false;
+    } else if (
+      message.typeUrl.includes('/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission') 
     ) {
       return false;
     }
@@ -133,6 +139,7 @@ export const signAndBroadcast = async (
   restUrl: string,
   granter?: string,
   rpc?: string,
+  restURLs?: Array<string>
 ): Promise<ParsedTxResponse> => {
   let signer: OfflineSigner;
   let client: SigningCosmWasmClient;
@@ -143,8 +150,6 @@ export const signAndBroadcast = async (
     } else {
       signer = await getClient(aminoConfig, chainId, messages, granter);
     }
-
-
   } catch (error) {
     console.log('error while getting client ', error);
     throw new Error('failed to get wallet');
@@ -185,14 +190,19 @@ export const signAndBroadcast = async (
   if (isMetaMaskWallet()) {
     try {
       const offlineSigner = new CosmjsOfflineSigner(chainId);
-      const rpcEndpoint = rpc || ''
+      const rpcEndpoint = rpc || '';
       try {
         client = await SigningCosmWasmClient.connectWithSigner(
           rpcEndpoint,
           offlineSigner
         );
 
-        const result = await client.signAndBroadcast(accounts[0].address, messages, fee, memo);
+        const result = await client.signAndBroadcast(
+          accounts[0].address,
+          messages,
+          fee,
+          memo
+        );
 
         const parseResult = parseTxResult({
           code: result?.code,
@@ -206,21 +216,19 @@ export const signAndBroadcast = async (
           logs: [],
           timestamp: '',
           raw_log: '',
-          txhash: result?.transactionHash
-        })
+          txhash: result?.transactionHash,
+        });
 
-        return Promise.resolve(parseResult)
+        return Promise.resolve(parseResult);
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+      } catch (error: any) {
+        console.log('error connect with signer', error);
+        throw error?.message;
       }
+    } catch (error: any) {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      catch (error: any) {
-        console.log('error connect with signer', error)
-        throw error?.message
-      }
-    }
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    catch (error: any) {
-      console.log('error in sign and broadcast', error)
-      throw error?.message
+      console.log('error in sign and broadcast', error);
+      throw error?.message;
     }
   } else {
     const txBody = await sign(
@@ -236,7 +244,7 @@ export const signAndBroadcast = async (
       registry
     );
 
-    return await broadcast(txBody, restUrl);
+    return await broadcast(txBody, restUrl, restURLs);
   }
 
   // return Promise.resolve(parseTxResult({
@@ -268,9 +276,9 @@ function calculateFee(
 
   let num1;
   if (isMetaMaskWallet()) {
-    num1 = multiply(processedGasPrice.amount, 1.2)
+    num1 = multiply(processedGasPrice.amount, 1.2);
     if (ceil(num1) <= 1) {
-      num1 = multiply(processedGasPrice.amount, gasLimit)
+      num1 = multiply(processedGasPrice.amount, gasLimit);
     }
   } else {
     num1 = multiply(processedGasPrice.amount, gasLimit);
@@ -359,7 +367,8 @@ async function simulate(
 
 async function broadcast(
   txBody: TxRaw,
-  restUrl: string
+  restUrl: string,
+  restURLs?: Array<string>
 ): Promise<ParsedTxResponse> {
   const timeoutMs = 60_000;
   const pollIntervalMs = 3_000;
@@ -371,7 +380,8 @@ async function broadcast(
   const pollForTx = async (txId: string): Promise<ParsedTxResponse> => {
     if (timedOut) {
       throw new Error(
-        `Transaction with ID ${txId} was submitted but was not yet found on the chain. You might want to check later. There was a wait of ${timeoutMs / 1000
+        `Transaction with ID ${txId} was submitted but was not yet found on the chain. You might want to check later. There was a wait of ${
+          timeoutMs / 1000
         } seconds.`
       );
 
@@ -379,11 +389,17 @@ async function broadcast(
     }
     await sleep(pollIntervalMs);
     try {
-      const response = await axios.get(
-        restUrl + '/cosmos/tx/v1beta1/txs/' + txId
-      );
-      const result = parseTxResult(response.data.tx_response);
-      return result;
+      if (restURLs?.length) {
+        const response = await axiosGetRequestWrapper(restURLs, `/cosmos/tx/v1beta1/txs/${txId}`, MAX_TRY_END_POINTS)
+        const result = parseTxResult(response.data.tx_response);
+        return result;
+      } else {
+        const response = await axios.get(
+          restUrl + '/cosmos/tx/v1beta1/txs/' + txId
+        );
+        const result = parseTxResult(response.data.tx_response);
+        return result;
+      }
     } catch (error) {
       // if transaction index is disabled return txhash
       if (error instanceof AxiosError) {
@@ -477,7 +493,17 @@ async function sign(
   authInfoBytes: Uint8Array;
   signatures: [Uint8Array] | [Buffer];
 }> {
-  const account = await getAccount(restUrl, address);
+  let account = await getAccount(restUrl, address);
+
+  if (get(account, '@type') === ETH_BASE_ACCOUNT_TYPE)
+    account = {
+      '@type': get(account, '@type') || '',
+      'address': get(account, 'base_account.address') || '',
+      'account_number': get(account, 'base_account.account_number') || '',
+      pub_key: get(account, 'base_account.pub_key'),
+      sequence: get(account, 'base_account.sequence') || ''
+    }
+
   const { account_number, sequence } = account;
   const txBodyBytes = makeBodyBytes(registry, messages, memo);
   let aminoMsgs;
@@ -489,40 +515,44 @@ async function sign(
 
   // if messages are amino and signer is amino signer
   if (aminoMsgs && !isOfflineDirectSigner(signer)) {
-    console.log('401')
     // Sign as amino if possible for Ledger and wallet support
-    const signDoc = makeAminoSignDoc(
-      aminoMsgs,
-      fee,
-      chainId,
-      memo,
-      account_number,
-      sequence
-    );
 
+    try {
+      const signDoc = makeAminoSignDoc(
+        aminoMsgs,
+        fee,
+        chainId,
+        memo,
+        account_number,
+        sequence
+      );
 
+      const { signature, signed } = await signer.signAmino(address, signDoc);
+      const amount: Coin[] = signed.fee.amount.map((coin) => {
+        return { amount: coin.amount, denom: coin.denom };
+      });
 
-    const { signature, signed } = await signer.signAmino(address, signDoc);
-    const amount: Coin[] = signed.fee.amount.map((coin) => {
-      return { amount: coin.amount, denom: coin.denom };
-    });
+      const authInfoBytes = await makeAuthInfoBytes(
+        signer,
+        account,
+        {
+          amount: amount,
+          gasLimit: BigInt(signed.fee.gas),
+          granter: signed.fee.granter,
+        },
+        SignMode.SIGN_MODE_LEGACY_AMINO_JSON
+      );
 
-    const authInfoBytes = await makeAuthInfoBytes(
-      signer,
-      account,
-      {
-        amount: amount,
-        gasLimit: BigInt(signed.fee.gas),
-        granter: signed.fee.granter,
-      },
-      SignMode.SIGN_MODE_LEGACY_AMINO_JSON
-    );
+      return {
+        bodyBytes: makeBodyBytes(registry, messages, signed.memo),
+        authInfoBytes: authInfoBytes,
+        signatures: [Buffer.from(signature.signature, 'base64')],
+      };
+    } catch (error) {
+      console.log('error while make auth info bytes', error)
+      throw new Error('Request rejected');
+    }
 
-    return {
-      bodyBytes: makeBodyBytes(registry, messages, signed.memo),
-      authInfoBytes: authInfoBytes,
-      signatures: [Buffer.from(signature.signature, 'base64')],
-    };
   }
 
   // if the signer is direct signer
@@ -553,19 +583,16 @@ async function sign(
         authInfoBytes: signed.authInfoBytes,
         signatures: [fromBase64(signature.signature)],
       };
-
     } catch (error) {
-      console.log('error while sign direct', error)
+      console.log('error while sign direct', error);
       throw new Error('Request rejected');
     }
-
   }
 
   // if messages are amino and signer is not amino signer
   if (aminoMsgs) {
     throw new Error(ERR_NO_OFFLINE_AMINO_SIGNER);
   }
-
 
   // any other case by default
   throw new Error(ERR_UNKNOWN);
@@ -601,7 +628,8 @@ async function makeAuthInfoBytes(
     signerInfos: [
       {
         publicKey: {
-          typeUrl: pubkeyTypeUrl(account.pub_key),
+          typeUrl: pubkeyTypeUrl(account?.pub_key,
+            account.address.includes(ETH_CHAIN_ACCOUNT_PREFIXES) ? 60 : undefined),
           value: comsjsPubKey
             .encode({
               key: signerPubkey,
@@ -616,7 +644,7 @@ async function makeAuthInfoBytes(
   }).finish();
 }
 
-const pubkeyTypeUrl = (pub_key: PubKey, coinType?: number): string => {
+const pubkeyTypeUrl = (pub_key?: globalThis.PubKey, coinType?: number): string => {
   if (pub_key && pub_key['@type']) return pub_key['@type'];
 
   if (coinType === 60) {

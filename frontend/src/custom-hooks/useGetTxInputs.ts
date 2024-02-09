@@ -2,6 +2,8 @@ import { RootState } from '@/store/store';
 import { useAppSelector } from './StateHooks';
 import {
   DelegationsPairs,
+  TxSetWithdrawAddressInputs,
+  TxWithDrawValidatorCommissionAndRewardsInputs,
   TxWithdrawAllRewardsInputs,
 } from '@/types/distribution';
 import useGetChainInfo from './useGetChainInfo';
@@ -11,6 +13,7 @@ import useAddressConverter from './useAddressConverter';
 import { EncodeDelegate } from '@/txns/staking/delegate';
 import useGetFeegranter from './useGetFeegranter';
 import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
+import { SetWithdrawAddressMsg } from '@/txns/distribution/setWithdrawAddress';
 
 const useGetTxInputs = () => {
   const stakingChains = useAppSelector(
@@ -313,6 +316,90 @@ const useGetTxInputs = () => {
     return msgs;
   };
 
+  const txSetWithdrawAddressInputs = (
+    chainID: string,
+    delegatorAddress: string,
+    withdrawAddress: string
+  ): TxSetWithdrawAddressInputs => {
+    const msg = SetWithdrawAddressMsg(delegatorAddress, withdrawAddress);
+
+    const { minimalDenom, decimals } = getDenomInfo(chainID);
+    const basicChainInfo = getChainInfo(chainID);
+    const {
+      aminoConfig,
+      prefix,
+      rest,
+      feeAmount,
+      address,
+      rpc,
+      cosmosAddress,
+    } = basicChainInfo;
+
+    return {
+      isAuthzMode: false,
+      basicChainInfo,
+      msgs: [msg],
+      denom: minimalDenom,
+      chainID,
+      aminoConfig,
+      prefix,
+      rest,
+      feeAmount: feeAmount * 10 ** decimals,
+      feegranter: getFeegranter(
+        chainID,
+        MAP_TXN_MSG_TYPES['set_withdraw_address']
+      ),
+      address,
+      cosmosAddress,
+      rpc,
+    };
+  };
+
+  const txWithdrawCommissionAndRewardsInputs = (
+    chainID: string,
+    msgs: Msg[]
+  ): TxWithDrawValidatorCommissionAndRewardsInputs => {
+    const { minimalDenom, decimals } = getDenomInfo(chainID);
+    const basicChainInfo = getChainInfo(chainID);
+    const {
+      aminoConfig,
+      prefix,
+      rest,
+      feeAmount,
+      address,
+      rpc,
+      cosmosAddress,
+    } = basicChainInfo;
+
+    const withdraw_rewards_feegrant = getFeegranter(
+      chainID,
+      MAP_TXN_MSG_TYPES['withdraw_rewards']
+    );
+    const withdraw_commission_feegrant = getFeegranter(
+      chainID,
+      MAP_TXN_MSG_TYPES['withdraw_commission']
+    );
+
+    return {
+      isAuthzMode: false,
+      basicChainInfo,
+      msgs: msgs,
+      denom: minimalDenom,
+      chainID,
+      aminoConfig,
+      prefix,
+      rest,
+      feeAmount: feeAmount * 10 ** decimals,
+      feegranter:
+        withdraw_rewards_feegrant && withdraw_commission_feegrant
+          ? withdraw_commission_feegrant
+          : '',
+      address,
+      cosmosAddress,
+      rpc,
+    };
+  };
+
   return {
     txWithdrawAllRewardsInputs,
     txRestakeInputs,
@@ -323,6 +410,8 @@ const useGetTxInputs = () => {
     txTransferInputs,
     txAuthzRestakeMsgs,
     txAuthzRestakeValidatorMsgs,
+    txSetWithdrawAddressInputs,
+    txWithdrawCommissionAndRewardsInputs,
   };
 };
 

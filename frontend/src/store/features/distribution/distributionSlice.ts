@@ -6,6 +6,9 @@ import {
   ChainsMap,
   DelegatorTotalRewardsRequest,
   DistributionStoreInitialState,
+  TxSetWithdrawAddressInputs,
+  TxWithDrawValidatorCommissionAndRewardsInputs,
+  TxWithDrawValidatorCommissionInputs,
   TxWithdrawAllRewardsInputs,
 } from '@/types/distribution';
 import { getDenomBalance } from '@/utils/denom';
@@ -19,7 +22,6 @@ import { GAS_FEE } from '@/utils/constants';
 import { NewTransaction } from '@/utils/transaction';
 import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { getAuthzBalances, getBalances } from '../bank/bankSlice';
-
 const initialState: DistributionStoreInitialState = {
   chains: {},
   authzChains: {},
@@ -35,6 +37,15 @@ const initialState: DistributionStoreInitialState = {
       status: TxStatus.INIT,
       txHash: '',
     },
+    txWithdrawCommission: {
+      status: TxStatus.INIT,
+      errMsg: '',
+    },
+    txSetWithdrawAddress: {
+      status: TxStatus.INIT,
+      errMsg: '',
+    },
+    withdrawAddress: '',
     isTxAll: false,
   },
 };
@@ -69,6 +80,313 @@ export const txWithdrawAllRewards = createAsyncThunk(
         data.basicChainInfo.rest,
         data?.feegranter?.length ? data.feegranter : undefined,
         data?.basicChainInfo?.rpc,
+        data?.basicChainInfo?.restURLs
+      );
+      const tx = NewTransaction(
+        result,
+        msgs,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
+          transactions: [tx],
+        })
+      );
+
+      if (result?.code === 0) {
+        if (data.isAuthzMode) {
+          dispatch(
+            getAuthzBalances({
+              baseURLs: data.basicChainInfo.restURLs,
+              baseURL: data.basicChainInfo.rest,
+              chainID: data.basicChainInfo.chainID,
+              address: data.authzChainGranter,
+            })
+          );
+
+          dispatch(
+            getAuthzDelegatorTotalRewards({
+              baseURL: data.basicChainInfo.rest,
+              baseURLs: data.basicChainInfo.restURLs,
+              address: data.authzChainGranter,
+              chainID: data.basicChainInfo.chainID,
+              denom: data.denom,
+            })
+          );
+        } else {
+          dispatch(
+            getBalances({
+              baseURLs: data.basicChainInfo.restURLs,
+              baseURL: data.basicChainInfo.rest,
+              address: data.basicChainInfo.address,
+              chainID: data.basicChainInfo.chainID,
+            })
+          );
+
+          dispatch(
+            getDelegatorTotalRewards({
+              baseURL: data.basicChainInfo.rest,
+              baseURLs: data.basicChainInfo.restURLs,
+              address: data.basicChainInfo.address,
+              chainID: data.basicChainInfo.chainID,
+              denom: data.denom,
+            })
+          );
+        }
+
+        dispatch(
+          setTxAndHash({
+            hash: result?.transactionHash,
+            tx: tx,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: 'error',
+            message: result?.rawLog || '',
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        dispatch(
+          setError({
+            type: 'error',
+            message: error.message,
+          })
+        );
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
+export const txSetWithdrawAddress = createAsyncThunk(
+  'distribution/set-withdraw-address',
+  async (
+    data: TxSetWithdrawAddressInputs | TxAuthzExecInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const msgs = data.msgs;
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        msgs,
+        GAS_FEE,
+        '',
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
+        data.basicChainInfo.rest,
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc,
+        data?.basicChainInfo?.restURLs
+      );
+      const tx = NewTransaction(
+        result,
+        msgs,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
+          transactions: [tx],
+        })
+      );
+
+      if (result?.code === 0) {
+        if (data.isAuthzMode) {
+          dispatch(
+            getAuthzWithdrawAddress({
+              baseURLs: data.basicChainInfo.restURLs,
+              chainID: data.basicChainInfo.chainID,
+              delegator: data.authzChainGranter,
+            })
+          );
+        } else {
+          dispatch(
+            getWithdrawAddress({
+              baseURLs: data.basicChainInfo.restURLs,
+              chainID: data.basicChainInfo.chainID,
+              delegator: data.basicChainInfo.address,
+            })
+          );
+        }
+        dispatch(
+          setTxAndHash({
+            hash: result?.transactionHash,
+            tx: tx,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: 'error',
+            message: result?.rawLog || '',
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        dispatch(
+          setError({
+            type: 'error',
+            message: error.message,
+          })
+        );
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
+export const txWithdrawValidatorCommission = createAsyncThunk(
+  'distribution/withdraw-validator-commission',
+  async (
+    data: TxWithDrawValidatorCommissionInputs | TxAuthzExecInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const msgs = data.msgs;
+
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        msgs,
+        GAS_FEE,
+        '',
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
+        data.basicChainInfo.rest,
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc,
+        data?.basicChainInfo?.restURLs
+      );
+      const tx = NewTransaction(
+        result,
+        msgs,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+      dispatch(
+        addTransactions({
+          chainID: data.basicChainInfo.chainID,
+          address: data.basicChainInfo.cosmosAddress,
+          transactions: [tx],
+        })
+      );
+
+      if (result?.code === 0) {
+        if (data.isAuthzMode) {
+          dispatch(
+            getAuthzBalances({
+              baseURLs: data.basicChainInfo.restURLs,
+              baseURL: data.basicChainInfo.rest,
+              chainID: data.basicChainInfo.chainID,
+              address: data.authzChainGranter,
+            })
+          );
+
+          dispatch(
+            getAuthzDelegatorTotalRewards({
+              baseURL: data.basicChainInfo.rest,
+              baseURLs: data.basicChainInfo.restURLs,
+              address: data.authzChainGranter,
+              chainID: data.basicChainInfo.chainID,
+              denom: data.denom,
+            })
+          );
+        } else {
+          dispatch(
+            getBalances({
+              baseURLs: data.basicChainInfo.restURLs,
+              baseURL: data.basicChainInfo.rest,
+              address: data.basicChainInfo.address,
+              chainID: data.basicChainInfo.chainID,
+            })
+          );
+
+          dispatch(
+            getDelegatorTotalRewards({
+              baseURL: data.basicChainInfo.rest,
+              baseURLs: data.basicChainInfo.restURLs,
+              address: data.basicChainInfo.address,
+              chainID: data.basicChainInfo.chainID,
+              denom: data.denom,
+            })
+          );
+        }
+
+        dispatch(
+          setTxAndHash({
+            hash: result?.transactionHash,
+            tx: tx,
+          })
+        );
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        dispatch(
+          setError({
+            type: 'error',
+            message: result?.rawLog || '',
+          })
+        );
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        dispatch(
+          setError({
+            type: 'error',
+            message: error.message,
+          })
+        );
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
+export const txWithdrawValidatorCommissionAndRewards = createAsyncThunk(
+  'distribution/withdraw-validator-commission-rewards',
+  async (
+    data: TxWithDrawValidatorCommissionAndRewardsInputs | TxAuthzExecInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const msgs = data.msgs;
+
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        msgs,
+        GAS_FEE,
+        '',
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
+        }`,
+        data.basicChainInfo.rest,
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc,
+        data?.basicChainInfo?.restURLs
       );
       const tx = NewTransaction(
         result,
@@ -186,6 +504,34 @@ export const getAuthzDelegatorTotalRewards = createAsyncThunk(
   }
 );
 
+export const getWithdrawAddress = createAsyncThunk(
+  'distribution/withdraw-address',
+  async (data: { baseURLs: string[]; chainID: string; delegator: string }) => {
+    const response = await distService.withdrawAddress(
+      data.baseURLs,
+      data.delegator
+    );
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
+  }
+);
+
+export const getAuthzWithdrawAddress = createAsyncThunk(
+  'distribution/authz-withdraw-address',
+  async (data: { baseURLs: string[]; chainID: string; delegator: string }) => {
+    const response = await distService.withdrawAddress(
+      data.baseURLs,
+      data.delegator
+    );
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
+  }
+);
+
 export const distSlice = createSlice({
   name: 'distribution',
   initialState,
@@ -216,6 +562,24 @@ export const distSlice = createSlice({
     },
     resetAuthz: (state) => {
       state.authzChains = {};
+    },
+    resetTxWithdrawRewards: (state, action) => {
+      const chainID = action.payload.chainID;
+      if (state.chains?.[chainID]?.tx) {
+        state.chains[chainID].tx = {
+          txHash: '',
+          status: TxStatus.INIT,
+        };
+      }
+    },
+    resetTxSetWithdrawAddress: (state, action) => {
+      const chainID = action.payload.chainID;
+      if (state.chains?.[chainID]?.txSetWithdrawAddress) {
+        state.chains[chainID].txSetWithdrawAddress = {
+          errMsg: '',
+          status: TxStatus.INIT,
+        };
+      }
     },
   },
   extraReducers: (builder) => {
@@ -309,6 +673,103 @@ export const distSlice = createSlice({
         state.chains[chainID].tx.status = TxStatus.REJECTED;
         state.chains[chainID].tx.txHash = '';
       });
+
+    builder
+      .addCase(txWithdrawValidatorCommission.pending, (state, action) => {
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
+        state.chains[chainID].txWithdrawCommission.status = TxStatus.PENDING;
+        state.chains[chainID].txWithdrawCommission.errMsg = '';
+      })
+      .addCase(txWithdrawValidatorCommission.fulfilled, (state, action) => {
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
+        state.chains[chainID].txWithdrawCommission.status = TxStatus.IDLE;
+        state.chains[chainID].txWithdrawCommission.errMsg = '';
+      })
+      .addCase(txWithdrawValidatorCommission.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
+        state.chains[chainID].txWithdrawCommission.status = TxStatus.REJECTED;
+        state.chains[chainID].txWithdrawCommission.errMsg =
+          action.error.message || '';
+      });
+
+    builder
+      .addCase(
+        txWithdrawValidatorCommissionAndRewards.pending,
+        (state, action) => {
+          const chainID = action.meta?.arg?.basicChainInfo.chainID;
+          state.chains[chainID].txWithdrawCommission.status = TxStatus.PENDING;
+          state.chains[chainID].txWithdrawCommission.errMsg = '';
+        }
+      )
+      .addCase(
+        txWithdrawValidatorCommissionAndRewards.fulfilled,
+        (state, action) => {
+          const chainID = action.meta?.arg?.basicChainInfo.chainID;
+          state.chains[chainID].txWithdrawCommission.status = TxStatus.IDLE;
+          state.chains[chainID].txWithdrawCommission.errMsg = '';
+        }
+      )
+      .addCase(
+        txWithdrawValidatorCommissionAndRewards.rejected,
+        (state, action) => {
+          const chainID = action.meta?.arg?.basicChainInfo.chainID;
+          state.chains[chainID].txWithdrawCommission.status = TxStatus.REJECTED;
+          state.chains[chainID].txWithdrawCommission.errMsg =
+            action.error.message || '';
+        }
+      );
+
+    builder
+      .addCase(txSetWithdrawAddress.pending, (state, action) => {
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
+        state.chains[chainID].txSetWithdrawAddress.status = TxStatus.PENDING;
+        state.chains[chainID].txSetWithdrawAddress.errMsg = '';
+      })
+      .addCase(txSetWithdrawAddress.fulfilled, (state, action) => {
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
+        state.chains[chainID].txSetWithdrawAddress.status = TxStatus.IDLE;
+        state.chains[chainID].txSetWithdrawAddress.errMsg = '';
+      })
+      .addCase(txSetWithdrawAddress.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.basicChainInfo.chainID;
+        state.chains[chainID].txSetWithdrawAddress.status = TxStatus.REJECTED;
+        state.chains[chainID].txSetWithdrawAddress.errMsg =
+          action.error.message || '';
+      });
+
+    builder
+      .addCase(getWithdrawAddress.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
+        state.chains[chainID].withdrawAddress = '';
+      })
+      .addCase(getWithdrawAddress.fulfilled, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].withdrawAddress =
+          action.payload.data.withdraw_address;
+      })
+      .addCase(getWithdrawAddress.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.chains[chainID].withdrawAddress = '';
+      });
+
+    builder
+      .addCase(getAuthzWithdrawAddress.pending, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        if (!state.authzChains[chainID])
+          state.authzChains[chainID] = cloneDeep(initialState.defaultState);
+        state.authzChains[chainID].withdrawAddress = '';
+      })
+      .addCase(getAuthzWithdrawAddress.fulfilled, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.authzChains[chainID].withdrawAddress =
+          action.payload.data.withdraw_address;
+      })
+      .addCase(getAuthzWithdrawAddress.rejected, (state, action) => {
+        const chainID = action.meta?.arg?.chainID;
+        state.authzChains[chainID].withdrawAddress = '';
+      });
   },
 });
 
@@ -318,5 +779,7 @@ export const {
   resetChainRewards,
   resetState,
   resetAuthz,
+  resetTxSetWithdrawAddress,
+  resetTxWithdrawRewards,
 } = distSlice.actions;
 export default distSlice.reducer;

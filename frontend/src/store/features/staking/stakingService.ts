@@ -1,12 +1,13 @@
 'use client';
 
-import  { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import { convertPaginationToParams } from '../../../utils/util';
 import {
   GetDelegationsResponse,
   GetParamsResponse,
   GetUnbondingResponse,
   GetValidatorsResponse,
+  Validator,
 } from '../../../types/staking';
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
 import { MAX_TRY_END_POINTS } from '@/utils/constants';
@@ -15,6 +16,8 @@ const validatorsURL = '/cosmos/staking/v1beta1/validators';
 const delegationsURL = '/cosmos/staking/v1beta1/delegations/';
 const unbondingDelegationsURL = (address: string) =>
   `/cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`;
+const validatorURL = (address: string) =>
+  `/cosmos/staking/v1beta1/validators/${address}`;
 const paramsURL = '/cosmos/staking/v1beta1/params';
 const poolURL = '/cosmos/staking/v1beta1/pool';
 
@@ -65,12 +68,24 @@ const fetchParams = (
 const fetchPoolInfo = (baseURLs: string[]): Promise<AxiosResponse> =>
   axiosGetRequestWrapper(baseURLs, poolURL, MAX_TRY_END_POINTS);
 
+const fetchValidator = (
+  baseURLs: string[],
+  address: string
+): Promise<AxiosResponse<{ validator: Validator }>> => {
+  return axiosGetRequestWrapper(
+    baseURLs,
+    validatorURL(address),
+    MAX_TRY_END_POINTS
+  );
+};
+
 const result = {
   validators: fetchValidators,
   delegations: fetchdelegations,
   unbonding: fetchUnbonding,
   params: fetchParams,
   poolInfo: fetchPoolInfo,
+  validatorInfo: fetchValidator,
 };
 
 export default result;

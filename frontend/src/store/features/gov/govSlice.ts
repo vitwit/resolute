@@ -377,7 +377,8 @@ export const txVote = createAsyncThunk(
         }`,
         data.basicChainInfo.rest,
         data.feegranter,
-        data?.basicChainInfo?.rpc
+        data?.basicChainInfo?.rpc,
+        data?.basicChainInfo?.restURLs
       );
 
       const tx = NewTransaction(
@@ -458,7 +459,9 @@ export const txDeposit = createAsyncThunk(
           data.denom
         }`,
         data.basicChainInfo.rest,
-        data.feegranter
+        data.feegranter,
+        '',
+        data?.basicChainInfo?.restURLs
       );
       const { code, transactionHash, rawLog } = result || {};
 

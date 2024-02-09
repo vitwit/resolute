@@ -17,6 +17,19 @@ export function WithdrawAllRewardsMsg(
   };
 }
 
+export function EncodedWithdrawAllRewardsMsg(
+  delegator: string,
+  validator: string
+): Msg {
+  return {
+    typeUrl: msgWithdrawRewards,
+    value: MsgWithdrawDelegatorReward.encode({
+      delegatorAddress: delegator,
+      validatorAddress: validator,
+    }).finish(),
+  };
+}
+
 export function serialize(msg: Msg): string {
   const { delegatorAddress, validatorAddress } = msg.value;
   return `${shortenMsg(

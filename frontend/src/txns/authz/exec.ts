@@ -11,9 +11,8 @@ import {
   MsgUndelegate,
 } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 
-
 const msgSendTypeUrl = '/cosmos.bank.v1beta1.MsgSend';
-export const msgAuthzExecypeUrl = '/cosmos.authz.v1beta1.MsgExec';
+export const msgAuthzExecTypeUrl = '/cosmos.authz.v1beta1.MsgExec';
 const msgVote = '/cosmos.gov.v1beta1.MsgVote';
 const msgDeposit = '/cosmos.gov.v1beta1.MsgDeposit';
 const msgWithdrawRewards =
@@ -34,7 +33,7 @@ export function AuthzExecSendMsg(
   denom: string
 ): Msg {
   return {
-    typeUrl: msgAuthzExecypeUrl,
+    typeUrl: msgAuthzExecTypeUrl,
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: [
@@ -63,7 +62,7 @@ export function AuthzExecVoteMsg(
   granter: string
 ): Msg {
   return {
-    typeUrl: msgAuthzExecypeUrl,
+    typeUrl: msgAuthzExecTypeUrl,
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: [
@@ -88,7 +87,7 @@ export function AuthzExecDepositMsg(
   denom: string
 ): Msg {
   return {
-    typeUrl: msgAuthzExecypeUrl,
+    typeUrl: msgAuthzExecTypeUrl,
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: [
@@ -121,7 +120,7 @@ export function AuthzExecWithdrawRewardsMsg(
     });
   }
   return {
-    typeUrl: msgAuthzExecypeUrl,
+    typeUrl: msgAuthzExecTypeUrl,
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: msgs,
@@ -137,7 +136,7 @@ export function AuthzExecDelegateMsg(
   denom: string
 ): Msg {
   return {
-    typeUrl: msgAuthzExecypeUrl,
+    typeUrl: msgAuthzExecTypeUrl,
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: [
@@ -166,7 +165,7 @@ export function AuthzExecReDelegateMsg(
   denom: string
 ): Msg {
   return {
-    typeUrl: msgAuthzExecypeUrl,
+    typeUrl: msgAuthzExecTypeUrl,
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: [
@@ -195,7 +194,7 @@ export function AuthzExecUnDelegateMsg(
   denom: string
 ): Msg {
   return {
-    typeUrl: msgAuthzExecypeUrl,
+    typeUrl: msgAuthzExecTypeUrl,
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: [
@@ -217,7 +216,7 @@ export function AuthzExecUnDelegateMsg(
 
 export function AuthzExecMsgRevoke(feegrant: Msg, grantee: string): Msg {
   return {
-    typeUrl: msgAuthzExecypeUrl,
+    typeUrl: msgAuthzExecTypeUrl,
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: [feegrant],
@@ -227,7 +226,7 @@ export function AuthzExecMsgRevoke(feegrant: Msg, grantee: string): Msg {
 
 export function AuthzExecMsgFeegrant(feegrant: Msg, grantee: string): Msg {
   return {
-    typeUrl: msgAuthzExecypeUrl,
+    typeUrl: msgAuthzExecTypeUrl,
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: [feegrant],
@@ -237,7 +236,7 @@ export function AuthzExecMsgFeegrant(feegrant: Msg, grantee: string): Msg {
 
 export function AuthzExecMsgCancelUnbond(unbond: Msg, grantee: string): Msg {
   return {
-    typeUrl: msgAuthzExecypeUrl,
+    typeUrl: msgAuthzExecTypeUrl,
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: [unbond],
@@ -247,12 +246,37 @@ export function AuthzExecMsgCancelUnbond(unbond: Msg, grantee: string): Msg {
 
 // delegate written again in a different way
 export function AuthzExecMsgRestake(delegations: Msg[], grantee: string): Msg {
-  
   return {
-    typeUrl: msgAuthzExecypeUrl,
+    typeUrl: msgAuthzExecTypeUrl,
     value: MsgExec.fromPartial({
       grantee: grantee,
       msgs: delegations,
+    }),
+  };
+}
+
+export function AuthzExecWithdrawRewardsAndCommissionMsg(
+  grantee: string,
+  msgs: Msg[]
+): Msg {
+  return {
+    typeUrl: msgAuthzExecTypeUrl,
+    value: MsgExec.fromPartial({
+      grantee: grantee,
+      msgs: msgs,
+    }),
+  };
+}
+
+export function AuthzExecSetWithdrawAddressMsg(
+  grantee: string,
+  msgs: Msg[]
+): Msg {
+  return {
+    typeUrl: msgAuthzExecTypeUrl,
+    value: MsgExec.fromPartial({
+      grantee: grantee,
+      msgs: msgs,
     }),
   };
 }
