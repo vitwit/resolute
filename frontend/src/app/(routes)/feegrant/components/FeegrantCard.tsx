@@ -5,7 +5,7 @@ import { RootState } from '@/store/store';
 import DialogTransactionMessages from './DialogTransactionMessages';
 import DialogTransactionDetails from './DialogTransactionDetails';
 import CommonCopy from '@/components/CommonCopy';
-import { capitalizeFirstLetter } from '@/utils/util';
+import { capitalizeFirstLetter, convertToSpacedName } from '@/utils/util';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { parseTokens } from '@/utils/denom';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
@@ -173,7 +173,9 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
           {allowedMsgs.length > 0 ? (
             allowedMsgs.slice(0, 2).map((message: string) => (
               <div key={message} className="transaction-message-btn">
-                <p className="feegrant-address">{getTypeURLName(message)}</p>
+                <p className="feegrant-address">
+                  {convertToSpacedName(getTypeURLName(message))}
+                </p>
               </div>
             ))
           ) : (

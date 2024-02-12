@@ -486,8 +486,8 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                   <div className="text-[16px] flex gap-2 items-center">
                     <span>You are giving Authz access to</span>
                     <CommonCopy
-                      message={shortenAddress(granteeAddress, 40)}
-                      style="h-8 truncate"
+                      message={granteeAddress}
+                      style="h-8 flex-1"
                       plainIcon={true}
                     />
                     <span>on below networks</span>

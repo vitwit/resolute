@@ -98,19 +98,27 @@ const AuthzCard = ({
       </div>
       <div className="authz-small-text">Permissions</div>
       <div className="flex flex-wrap gap-6">
-        {grants.map((permission, permissionIndex) => (
+        {grants?.slice(0, 2)?.map((permission, permissionIndex) => (
           <div key={permissionIndex}>
-            {permissionIndex > 2 ? null : (
-              <MessageChip
-                permission={permission}
-                granter={granter}
-                grantee={grantee}
-                chainID={chainID}
-                showCloseIcon={showCloseIcon}
-              />
-            )}
+            <MessageChip
+              permission={permission}
+              granter={granter}
+              grantee={grantee}
+              chainID={chainID}
+              showCloseIcon={showCloseIcon}
+            />
           </div>
         ))}
+        {grants?.length > 2 ? (
+          <>
+            <div
+              className="view-more-btn cursor-pointer text-[14px]"
+              onClick={() => setDialogAllPermissionsOpen(true)}
+            >
+              +{grants?.length - 2}
+            </div>
+          </>
+        ) : null}
       </div>
       <div className="">
         <button
