@@ -35,6 +35,7 @@ import MsgItem from './MsgItem';
 import NetworkItem from './NetworkItem';
 import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
 import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
+import { PERMISSION_NOT_SELECTED_ERROR } from '@/utils/errors';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
@@ -158,7 +159,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
       setFormValidationError('');
       return false;
     } else if (!selectedMsgs.length) {
-      setFormValidationError('Atleast one message must be selected');
+      setFormValidationError(PERMISSION_NOT_SELECTED_ERROR);
       return false;
     }
     setFormValidationError('');

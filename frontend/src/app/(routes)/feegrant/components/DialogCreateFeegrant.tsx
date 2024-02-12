@@ -229,7 +229,7 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
           </div>
           <div className="mb-[72px] px-10">
             <div className="space-y-4">
-              <h2 className="text-[20px] font-bold">Create Grant</h2>
+              <h2 className="text-[20px] font-bold">Create Feegrant</h2>
             </div>
             <div className="divider-line"></div>
             <>
