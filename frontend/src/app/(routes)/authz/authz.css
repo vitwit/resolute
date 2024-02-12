@@ -54,7 +54,7 @@
 }
 
 .msg-item {
-  @apply flex-center-center cursor-pointer rounded-2xl px-6 py-4 text-[14px] bg-[#FFFFFF0D];
+  @apply flex justify-center items-center cursor-pointer rounded-2xl px-6 py-4 text-[14px] bg-[#FFFFFF0D];
 }
 
 .grant-authz-form {
