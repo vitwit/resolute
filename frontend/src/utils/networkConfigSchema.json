@@ -93,6 +93,20 @@
           "type": "string",
           "format": "uri"
         },
+        "restURIs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "rpcURIs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
         "currencies": {
           "type": "array",
           "items": {
@@ -343,6 +357,8 @@
         "chain_name",
         "rest",
         "rpc",
+        "restURIs",
+        "rpcURIs",
         "currencies",
         "bip44",
         "bech32_config",
