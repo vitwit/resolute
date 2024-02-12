@@ -123,6 +123,7 @@ const DialogWithdraw = ({
     }
   };
 
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const claimCommission = () => {
     if (isAuthzMode) {
       txAuthzWithdrawCommission({
@@ -260,7 +261,7 @@ const DialogWithdraw = ({
               <WithdrawActions
                 claimRewards={claimRewards}
                 claimRewardsAndCommission={claimRewardsAndCommission}
-                claimCommission={claimCommission}
+                // claimCommission={claimCommission}
                 isAuthzMode={isAuthzMode}
                 isSelfValidator={isSelfValidator}
                 isAuthzValidator={isAuthzValidator}
