@@ -5,7 +5,7 @@ import {
   dialogBoxPaperPropStyles,
 } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { convertToSnakeCase, shortenAddress } from '@/utils/util';
+import { convertToSnakeCase } from '@/utils/util';
 import {
   CircularProgress,
   Dialog,
