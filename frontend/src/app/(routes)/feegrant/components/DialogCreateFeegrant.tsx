@@ -195,13 +195,22 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
     resetForm();
     setSelectedChains([]);
     setAllTxns(true);
+    setViewAllChains(false);
     setSelectedMsgs([]);
     setFormValidationError({ chains: '', msgs: '' });
     onClose();
   };
 
   const handleDialogClose = () => {
-    setConfirmCloseOpen(true);
+    if (
+      selectedChains?.length ||
+      selectedMsgs?.length ||
+      getValues('grantee_address')?.length
+    ) {
+      setConfirmCloseOpen(true);
+    } else {
+      closeMainDialog();
+    }
   };
 
   return (

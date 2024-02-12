@@ -355,7 +355,16 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   };
 
   const handleDialogClose = () => {
-    setConfirmCloseOpen(true);
+    if (
+      selectedChains?.length ||
+      selectedMsgs?.length ||
+      step === STEP_TWO ||
+      granteeAddress?.length
+    ) {
+      setConfirmCloseOpen(true);
+    } else {
+      closeMainDialog();
+    }
   };
 
   return (
