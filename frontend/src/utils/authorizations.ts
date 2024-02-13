@@ -1,3 +1,5 @@
+import { convertToSpacedName } from './util';
+
 interface AuthzMenuItem {
   txn: string;
   typeURL: string;
@@ -138,7 +140,9 @@ export function getMsgNameFromAuthz(authorization: Authorization): string {
     case '/cosmos.bank.v1beta1.SendAuthorization':
       return 'Send';
     case '/cosmos.authz.v1beta1.GenericAuthorization':
-      return getTypeURLName(authorization.authorization.msg);
+      return convertToSpacedName(
+        getTypeURLName(authorization.authorization.msg)
+      );
     case '/cosmos.staking.v1beta1.StakeAuthorization':
       const temp = getStakeAuthzType(
         authorization?.authorization.authorization_type
@@ -146,7 +150,7 @@ export function getMsgNameFromAuthz(authorization: Authorization): string {
       if (temp.length === 0) {
         return 'Unknown';
       }
-      return temp[temp.length - 1];
+      return convertToSpacedName(temp[temp.length - 1]);
     default:
       return 'Unknown';
   }

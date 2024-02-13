@@ -195,13 +195,22 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
     resetForm();
     setSelectedChains([]);
     setAllTxns(true);
+    setViewAllChains(false);
     setSelectedMsgs([]);
     setFormValidationError({ chains: '', msgs: '' });
     onClose();
   };
 
   const handleDialogClose = () => {
-    setConfirmCloseOpen(true);
+    if (
+      selectedChains?.length ||
+      selectedMsgs?.length ||
+      getValues('grantee_address')?.length
+    ) {
+      setConfirmCloseOpen(true);
+    } else {
+      closeMainDialog();
+    }
   };
 
   return (
@@ -229,7 +238,7 @@ const DialogCreateFeegrant: React.FC<DialogCreateFeegrantProps> = (props) => {
           </div>
           <div className="mb-[72px] px-10">
             <div className="space-y-4">
-              <h2 className="text-[20px] font-bold">Create Grant</h2>
+              <h2 className="text-[20px] font-bold">Create Feegrant</h2>
             </div>
             <div className="divider-line"></div>
             <>
