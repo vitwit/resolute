@@ -5,7 +5,7 @@ import {
   dialogBoxPaperPropStyles,
 } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { convertToSnakeCase, shortenAddress } from '@/utils/util';
+import { convertToSnakeCase } from '@/utils/util';
 import {
   CircularProgress,
   Dialog,
@@ -35,6 +35,7 @@ import MsgItem from './MsgItem';
 import NetworkItem from './NetworkItem';
 import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
 import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
+import { PERMISSION_NOT_SELECTED_ERROR } from '@/utils/errors';
 
 interface DialogCreateAuthzGrantProps {
   open: boolean;
@@ -158,7 +159,7 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
       setFormValidationError('');
       return false;
     } else if (!selectedMsgs.length) {
-      setFormValidationError('Atleast one message must be selected');
+      setFormValidationError(PERMISSION_NOT_SELECTED_ERROR);
       return false;
     }
     setFormValidationError('');
@@ -354,7 +355,16 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
   };
 
   const handleDialogClose = () => {
-    setConfirmCloseOpen(true);
+    if (
+      selectedChains?.length ||
+      selectedMsgs?.length ||
+      step === STEP_TWO ||
+      granteeAddress?.length
+    ) {
+      setConfirmCloseOpen(true);
+    } else {
+      closeMainDialog();
+    }
   };
 
   return (
@@ -476,8 +486,8 @@ const DialogCreateAuthzGrant: React.FC<DialogCreateAuthzGrantProps> = (
                   <div className="text-[16px] flex gap-2 items-center">
                     <span>You are giving Authz access to</span>
                     <CommonCopy
-                      message={shortenAddress(granteeAddress, 40)}
-                      style="h-8 truncate"
+                      message={granteeAddress}
+                      style="h-8 flex-1"
                       plainIcon={true}
                     />
                     <span>on below networks</span>

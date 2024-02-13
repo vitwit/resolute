@@ -12,6 +12,7 @@ import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { getLocalTime } from '@/utils/dataTime';
 import { parseSpendLimit } from '@/utils/denom';
+import { convertToSpacedName } from '@/utils/util';
 import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react';
@@ -136,7 +137,7 @@ const RenderAuthorization = ({
         <div className="authz-permission-card">
           <div className="flex justify-between w-full">
             <div className="flex items-center text-white text-base not-italic font-normal leading-[normal]">
-              {getTypeURLName(authorization.msg)}
+              {convertToSpacedName(getTypeURLName(authorization.msg))}
             </div>
             {isGrantsByMe ? (
               <button
