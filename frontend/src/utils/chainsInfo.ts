@@ -569,10 +569,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'osmosis-1',
       chainName: 'Osmosis',
-      rest: 'https://osmosis-api.polkachu.com',
+      rest: 'https://osmosis-lcd.numia.xyz',
       rpc: 'https://rpc.osmosis.zone',
       restURIs: [
-        'https://osmosis-api.polkachu.com',
+        'https://osmosis-lcd.numia.xyz',
         'https://osmosis-lcd.quickapi.com:443',
         'https://osmosis-api.polkachu.com',
       ],

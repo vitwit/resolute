@@ -233,3 +233,4 @@ export const ALERT_TYPE_MAP: Record<string, string> = {
   error: 'error',
   info: 'info',
 };
+export const NUMIA_BEARER_TOKEN = process.env.NEXT_PUBLIC_NUMIA_BEARER_TOKEN || '';

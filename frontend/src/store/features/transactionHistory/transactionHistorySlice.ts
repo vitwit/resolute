@@ -7,15 +7,19 @@ import {
   updateIBCStatus,
 } from '@/utils/localStorage';
 import { trackTx } from '../ibc/ibcSlice';
+import txnService from './transactionHistoryService';
+import { NewTransaction } from '@/utils/transaction';
 
 type TransactionHistoryState = {
   chains: { [chainID: string]: Transaction[] };
   allTransactions: Transaction[];
+  txns: any;
 };
 
 const initialState: TransactionHistoryState = {
   chains: {},
   allTransactions: [],
+  txns: [],
 };
 
 export const loadTransactions = createAsyncThunk(
@@ -37,6 +41,152 @@ export const loadTransactions = createAsyncThunk(
   }
 );
 
+export const getBankSendTxns = createAsyncThunk(
+  'transactions/bank-send-txns',
+  async (
+    data: {
+      senderAddress: string;
+      baseURL: string;
+      chainID: string;
+      cosmosAddress: string;
+    },
+    { dispatch }
+  ) => {
+    const result = await txnService.fetchBankSendTxns({
+      baseURL: data.baseURL,
+      senderAddress: data.senderAddress,
+    });
+    const { tx_responses, txs } = result.data;
+    if (data.chainID === 'osmosis-1') {
+      console.log(tx_responses, txs);
+    }
+    for (let i = 0; i < txs.length; i++) {
+      const {
+        code,
+        height,
+        raw_log: rawLog,
+        gas_wanted: gasWanted,
+        gaw_user: gasUsed,
+        timestamp: time,
+        txhash: transactionHash,
+      } = tx_responses[i];
+      console.log('=================');
+      console.log(tx_responses[i]);
+      const { memo, messages } = txs[i].body;
+      const { fee } = txs[i].auth_info;
+
+      const newTx = {
+        code,
+        height,
+        rawLog,
+        gasWanted,
+        time,
+        memo,
+        fee,
+        transactionHash,
+        gasUsed,
+      };
+
+      console.log(newTx);
+
+      const tx = NewTransaction(
+        newTx,
+        messages,
+        data.chainID,
+        data.senderAddress
+      );
+      console.log('--------');
+      console.log(tx);
+      console.log({
+        address: data.cosmosAddress,
+        chainID: data.chainID,
+        transactions: [tx],
+      });
+      dispatch(
+        addTransactions({
+          address: data.cosmosAddress,
+          chainID: data.chainID,
+          transactions: [tx],
+        })
+      );
+    }
+    return result.data;
+  }
+);
+
+export const getStakingTxns = createAsyncThunk(
+  'transactions/staking-txns',
+  async (
+    data: {
+      senderAddress: string;
+      baseURL: string;
+      chainID: string;
+      cosmosAddress: string;
+    },
+    { dispatch }
+  ) => {
+    const result = await txnService.fetchStakingTxns({
+      baseURL: data.baseURL,
+      senderAddress: data.senderAddress,
+    });
+    const { tx_responses, txs } = result.data;
+    if (data.chainID === 'osmosis-1') {
+      console.log(tx_responses, txs);
+    }
+    for (let i = 0; i < txs.length; i++) {
+      const {
+        code,
+        height,
+        raw_log: rawLog,
+        gas_wanted: gasWanted,
+        gaw_user: gasUsed,
+        timestamp: time,
+        txhash: transactionHash,
+      } = tx_responses[i];
+      console.log('=================');
+      console.log(tx_responses[i]);
+      const { memo, messages } = txs[i].body;
+      const { fee } = txs[i].auth_info;
+
+      const newTx = {
+        code,
+        height,
+        rawLog,
+        gasWanted,
+        time,
+        memo,
+        fee,
+        transactionHash,
+        gasUsed,
+      };
+
+      console.log(newTx);
+
+      const tx = NewTransaction(
+        newTx,
+        messages,
+        data.chainID,
+        data.senderAddress
+      );
+      console.log('--------');
+      console.log(tx);
+      console.log({
+        address: data.cosmosAddress,
+        chainID: data.chainID,
+        transactions: [tx],
+      });
+      dispatch(
+        addTransactions({
+          address: data.cosmosAddress,
+          chainID: data.chainID,
+          transactions: [tx],
+        })
+      );
+    }
+    return result.data;
+  }
+);
+
 export const transactionHistorySlice = createSlice({
   name: 'transactionHistory',
   initialState,
@@ -51,7 +201,7 @@ export const transactionHistorySlice = createSlice({
         ...transactions,
         ...(state.chains[chainID] || []),
       ];
-      addTxsInLocalStorage(transactions, address);
+      // addTxsInLocalStorage(transactions, address);
     },
 
     updateIBCTransaction: (
@@ -96,6 +246,18 @@ export const transactionHistorySlice = createSlice({
         state.chains = chains;
       })
       .addCase(loadTransactions.rejected, () => {});
+
+    builder
+      .addCase(getBankSendTxns.pending, () => {})
+      .addCase(getBankSendTxns.fulfilled, (state, action) => {})
+      .addCase(getBankSendTxns.rejected, () => {});
+
+    builder
+      .addCase(getStakingTxns.pending, () => {})
+      .addCase(getStakingTxns.fulfilled, (state, action) => {
+        // state.txns = [state.txns, ...action.payload];
+      })
+      .addCase(getStakingTxns.rejected, () => {});
   },
 });
 

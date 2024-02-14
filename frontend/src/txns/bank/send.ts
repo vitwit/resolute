@@ -30,14 +30,14 @@ export function serialize(msg: Msg): string {
 }
 
 export function formattedSerialize(
-  msg: Msg,
+  msg: any,
   decimals: number,
   originalDenom: string,
   pastTense?: boolean
 ) {
-  const { toAddress, amount } = msg.value;
+  const { to_address, amount } = msg;
   const parsedAmount = parseBalance(amount, decimals, amount[0].denom);
   return `${pastTense ? 'Sent' : 'Send'} ${formatNumber(
     parsedAmount
-  )} ${originalDenom} to ${toAddress}`;
+  )} ${originalDenom} to ${to_address}`;
 }

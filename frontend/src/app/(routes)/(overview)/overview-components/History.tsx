@@ -102,6 +102,7 @@ export const RecentTransactions = ({
         ? state.transactionHistory.chains[chainIDs[0]]
         : state.transactionHistory.allTransactions) || []
   );
+  console.log(transactions)
   return (
     <div className="flex-1 overflow-y-scroll">
       {transactions.length ? (

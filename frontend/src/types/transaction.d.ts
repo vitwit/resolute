@@ -7,7 +7,7 @@ interface Transaction {
   gasWanted: string;
   fee: Coin[];
   time: string;
-  msgs: Msg[];
+  msgs: any;
   chainID: string;
   address: string;
   memo: string;

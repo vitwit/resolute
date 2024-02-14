@@ -20,6 +20,10 @@ import useInitAuthzForOverview from '@/custom-hooks/useInitAuthzForOverview';
 import AuthzToast from '@/components/AuthzToast';
 import AuthzExecLoader from '@/components/AuthzExecLoader';
 import FeegrantToast from '@/components/FeegrantToast';
+import {
+  getBankSendTxns,
+  getStakingTxns,
+} from '@/store/features/transactionHistory/transactionHistorySlice';
 
 const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
@@ -29,7 +33,7 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
     (state) => state.feegrant.feegrantModeEnabled
   );
 
-  useInitAuthzForOverview(chainIDs);
+  // useInitAuthzForOverview(chainIDs);
   useEffect(() => {
     chainIDs.forEach((chainID) => {
       const allChainInfo = networks[chainID];
@@ -44,23 +48,41 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
         chainID,
       };
 
-      dispatch(getBalances(basicChainInputs));
-      dispatch(getDelegations(basicChainInputs));
-      dispatch(getAccountInfo(basicChainInputs));
+      // dispatch(getBalances(basicChainInputs));
+      // dispatch(getDelegations(basicChainInputs));
+      // dispatch(getAccountInfo(basicChainInputs));
+      // dispatch(
+      //   getDelegatorTotalRewards({
+      //     baseURLs: chainInfo.config.restURIs,
+      //     baseURL: chainInfo.config.rest,
+      //     address: address,
+      //     chainID: chainID,
+      //     denom: minimalDenom,
+      //   })
+      // );
+      // dispatch(
+      //   getUnbonding({
+      //     baseURLs: chainInfo.config.restURIs,
+      //     address: address,
+      //     chainID,
+      //   })
+      // );
+      console.log('herer.....');
       dispatch(
-        getDelegatorTotalRewards({
-          baseURLs: chainInfo.config.restURIs,
-          baseURL: chainInfo.config.rest,
-          address: address,
+        getBankSendTxns({
+          senderAddress: address,
+          baseURL: chainInfo.config.restURIs[0],
           chainID: chainID,
-          denom: minimalDenom,
+          cosmosAddress: 'cosmos1y0hvu8ts6m8hzwp57t9rhdgvnpc7yltglu9nrk',
         })
       );
+
       dispatch(
-        getUnbonding({
-          baseURLs: chainInfo.config.restURIs,
-          address: address,
+        getStakingTxns({
+          senderAddress: address,
+          baseURL: chainInfo.config.restURIs[0],
           chainID,
+          cosmosAddress: 'cosmos1y0hvu8ts6m8hzwp57t9rhdgvnpc7yltglu9nrk',
         })
       );
     });
