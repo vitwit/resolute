@@ -9,6 +9,7 @@
     "lint": "next lint --no-cache"
   },
   "dependencies": {
+    "@0xsquid/widget": "^1.5.7",
     "@cosmjs/amino": "^0.31.3",
     "@cosmjs/proto-signing": "^0.32.1",
     "@cosmjs/stargate": "^0.32.1",
