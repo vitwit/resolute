@@ -20,7 +20,7 @@ export const SUPPORTED_WALLETS = [
 export const USD_CURRENCY = 'usd';
 export const GAS_FEE = 860000;
 export const ADD_NETWORK_TEMPLATE_URL =
-  'https://raw.githubusercontent.com/vitwit/resolute/88d2fe5f62b300e90b122d10a257f9acef89643b/frontend/public/add-network-template.json';
+  'https://raw.githubusercontent.com/vitwit/resolute/52aa50f4ba52cb65a2a483bedfbbca76fd39a47b/frontend/public/add-network-template.json';
 export const PROPOSAL_STATUS_VOTING_PERIOD = 'PROPOSAL_STATUS_VOTING_PERIOD';
 export const COSMOS_CHAIN_ID = 'cosmoshub-4';
 export const OFFCHAIN_VERIFICATION_MESSAGE =
@@ -182,7 +182,7 @@ export const TXN_FAILED_ICON = '/transaction-failed-icon.svg';
 export const HELP_ICON = '/help-icon.svg';
 export const REPORT_ICON = '/report-icon.svg';
 export const GITHUB_ISSUES_PAGE_LINK =
-  'https://github.com/vitwit/resolute/issues';
+  'https://github.com/vitwit/resolute/issues/new';
 export const TELEGRAM_LINK = 'https://web.telegram.org/k/#-1982236507';
 export const LOGOUT_ICON = '/logout-icon.svg';
 export const TRANSFERS_CARDS_COUNT = 5;

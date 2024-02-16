@@ -28,3 +28,5 @@ export const NOT_MULTISIG_MEMBER_ERROR =
 export const NOT_MULTISIG_ACCOUNT_ERROR = 'Not a multisig account';
 export const CHAIN_NOT_SELECTED_ERROR = 'Atleast one chain must be selected';
 export const MSG_NOT_SELECTED_ERROR = 'Atleast one message must be selected';
+export const PERMISSION_NOT_SELECTED_ERROR =
+  'Atleast one permission must be selected';

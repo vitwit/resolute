@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
 import { getTypeURLName } from '@/utils/authorizations';
+import { convertToSpacedName } from '@/utils/util';
 
 const DialogTransactionMessages = ({
   open,
@@ -51,7 +52,9 @@ const DialogTransactionMessages = ({
             <div className="flex flex-wrap gap-4">
               {msgs.map((row) => (
                 <div key={row}>
-                  <p className="message-style">{getTypeURLName(row)}</p>
+                  <p className="message-style">
+                    {convertToSpacedName(getTypeURLName(row))}
+                  </p>
                 </div>
               ))}
             </div>

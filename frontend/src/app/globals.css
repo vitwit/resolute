@@ -634,7 +634,7 @@
 }
 
 .use-grant-btn {
-  @apply w-full primary-gradient rounded-lg py-[6px] px-3 flex-center-center text-[12px] h-8 font-medium tracking-[0.48px];
+  @apply w-full primary-gradient rounded-lg py-[6px] px-3 flex justify-center items-center text-[12px] h-8 font-medium tracking-[0.48px];
 }
 
 .feegrant-button-background {

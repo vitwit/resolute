@@ -442,3 +442,14 @@ export function getTypeURLName(url: string) {
   }
   return '-';
 }
+
+/**
+ * @example
+ * Input: WithdrawDelegatorRewards
+ * Output: Withdraw Delegator Rewards
+ */
+export function convertToSpacedName(camelCaseName: string): string {
+  const spacedName = camelCaseName.replace(/([a-z])([A-Z])/g, '$1 $2');
+
+  return spacedName.charAt(0).toUpperCase() + spacedName.slice(1);
+}
