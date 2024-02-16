@@ -1,8 +1,9 @@
 import React from 'react';
-import Validator from './Validator';
+import ValidatorProfile from './ValidatorProfile';
+import '../../validator-profile.css';
 
 const page = ({ params }: { params: { validator: string } }) => {
-  return <Validator moniker={decodeURIComponent(params.validator)} />;
+  return <ValidatorProfile moniker={decodeURIComponent(params.validator)} />;
 };
 
 export default page;

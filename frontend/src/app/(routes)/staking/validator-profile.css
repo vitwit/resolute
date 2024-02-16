@@ -1,0 +1,21 @@
+.stats-sub-card {
+  @apply bg-[#FFFFFF0D] rounded-2xl p-2;
+  backdrop-filter: blur(2px);
+}
+
+.validators-table {
+  @apply rounded-3xl text-white bg-[#0e0b26] flex flex-col flex-1;
+  backdrop-filter: blur(2px);
+}
+
+.validators-table th {
+  @apply pb-4;
+}
+
+.validators-table td {
+  @apply font-light leading-normal pt-4 pb-4 px-2;
+}
+
+.validators-table tbody tr {
+  @apply hover:bg-[#1a1731];
+}
