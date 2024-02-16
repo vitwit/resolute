@@ -134,7 +134,40 @@ const useGetValidatorInfo = () => {
     };
   };
 
-  return { getChainwiseValidatorInfo };
+  const getValidatorStats = ({
+    data,
+  }: {
+    data: Record<string, ValidatorProfileInfo>;
+  }) => {
+    let totalStaked = 0;
+    let totalDelegators = 0;
+    let totalCommission = 0;
+
+    const stakingData = useAppSelector((state) => state.staking.chains);
+
+    Object.keys(data).forEach((chainID) => {
+      const totalStakedInUSD = Number(data[chainID]?.totalStakedInUSD || 0);
+
+      if (!isNaN(totalStakedInUSD)) {
+        totalStaked += totalStakedInUSD;
+      }
+      const delegatorsCount =
+        stakingData[data[chainID].chainID].validatorProfiles?.[
+          data[chainID].operatorAddress
+        ];
+      totalDelegators += Number(delegatorsCount?.totalDelegators || 0);
+      totalCommission += Number(data[chainID]?.commission) || 0;
+    });
+    const avgCommission = totalCommission / Object.keys(data).length;
+
+    return {
+      totalStaked,
+      totalDelegators,
+      avgCommission,
+    };
+  };
+
+  return { getChainwiseValidatorInfo, getValidatorStats };
 };
 
 export default useGetValidatorInfo;

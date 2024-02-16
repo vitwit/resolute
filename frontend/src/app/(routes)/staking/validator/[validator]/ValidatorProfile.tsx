@@ -14,13 +14,17 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
   const tabs = ['Profile', 'Announcements', 'Inbox', 'Notices'];
   const selectedTab = 'profile';
   useInitAllValidator();
-  const { getChainwiseValidatorInfo } = useGetValidatorInfo();
+  const { getChainwiseValidatorInfo, getValidatorStats } =
+    useGetValidatorInfo();
   const {
     chainWiseValidatorData,
     validatorDescription,
     validatorIdentity,
     validatorWebsite,
   } = getChainwiseValidatorInfo({ moniker });
+  const { totalDelegators, totalStaked, avgCommission } = getValidatorStats({
+    data: chainWiseValidatorData,
+  });
   return (
     <div className="py-6 px-10 space-y-10 h-screen overflow-y-scroll">
       <div className="flex justify-between">
@@ -60,7 +64,11 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
           moniker={moniker}
           website={validatorWebsite}
         />
-        <ValidatorStatsCard />
+        <ValidatorStatsCard
+          totalDelegators={totalDelegators}
+          totalStaked={totalStaked}
+          avgCommission={avgCommission}
+        />
       </div>
       <ValidatorsTable data={chainWiseValidatorData} />
     </div>
@@ -113,17 +121,34 @@ const ValidatorMetadataCard = ({
   );
 };
 
-const ValidatorStatsCard = () => {
+const ValidatorStatsCard = ({
+  totalDelegators,
+  totalStaked,
+  avgCommission,
+}: {
+  totalStaked: number;
+  totalDelegators: number;
+  avgCommission: number;
+}) => {
   return (
     <div className="bg-[#0E0B26] p-6 space-y-6 rounded-2xl">
       <div className="text-[18px] leading-[21.7px]">Statistics</div>
       <div className="space-y-6">
         <div className="grid grid-cols-2 gap-6">
-          <StatsCard name="Total Staked Assets" value="$ 432,233,123" />
-          <StatsCard name="Total Delegators" value="7,342" />
+          <StatsCard
+            name="Total Staked Assets"
+            value={totalStaked.toString()}
+          />
+          <StatsCard
+            name="Total Delegators"
+            value={totalDelegators.toString()}
+          />
         </div>
         <div className="grid grid-cols-3 gap-6">
-          <StatsCard name="Avg. Commission" value="5.00%" />
+          <StatsCard
+            name="Avg. Commission"
+            value={avgCommission.toFixed(2).toString() + "%"}
+          />
           <StatsCard name="Total Networks" value="19" />
           <StatsCard name="Active Networks" value="19" />
         </div>
