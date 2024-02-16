@@ -64,6 +64,10 @@ const useGetValidatorInfo = () => {
 
   const getChainwiseValidatorInfo = ({ moniker }: { moniker: string }) => {
     const chainWiseValidatorData: Record<string, ValidatorProfileInfo> = {};
+    let validatorDescription: string = '';
+    let validatorWebsite: string = '';
+    let validatorIdentity: string = '';
+
     chainIDs.forEach((chainID) => {
       const validatorInfo = getValidatorInfo({ chainID, moniker });
 
@@ -93,26 +97,40 @@ const useGetValidatorInfo = () => {
           decimals,
           minimalDenom
         );
+        const tokens = totalStaked;
         const usdPriceInfo: TokenInfo | undefined =
           tokensPriceInfo?.[minimalDenom]?.info;
         const totalStakedInUSD = usdPriceInfo
           ? totalStaked * usdPriceInfo.usd
           : '-';
 
+        if (!validatorDescription && description) {
+          validatorDescription = description;
+        }
+
+        if (!validatorWebsite && website) {
+          validatorWebsite = website;
+        }
+
+        if (!validatorIdentity && identity) {
+          validatorIdentity = identity;
+        }
+
         chainWiseValidatorData[chainID] = {
           commission,
-          description,
-          identity,
-          moniker,
           rank,
           totalStakedInUSD,
-          website,
           chainID,
+          tokens,
+          operatorAddress,
         };
       }
     });
     return {
       chainWiseValidatorData,
+      validatorDescription,
+      validatorIdentity,
+      validatorWebsite,
     };
   };
 

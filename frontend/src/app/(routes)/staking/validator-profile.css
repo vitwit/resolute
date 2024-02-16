@@ -19,3 +19,7 @@
 .validators-table tbody tr {
   @apply hover:bg-[#1a1731];
 }
+
+.validator-profile-menu-item {
+  @apply cursor-pointer px-2 text-[18px] h-9 flex items-center pb-[14px] leading-[21.7px];
+}

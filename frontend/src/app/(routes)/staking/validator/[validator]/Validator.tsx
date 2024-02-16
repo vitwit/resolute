@@ -7,9 +7,17 @@ import React from 'react';
 const Validator = ({ moniker }: { moniker: string }) => {
   useInitAllValidator();
   const { getChainwiseValidatorInfo } = useGetValidatorInfo();
-  const { chainWiseValidatorData } = getChainwiseValidatorInfo({ moniker });
+  const {
+    chainWiseValidatorData,
+    validatorDescription,
+    validatorIdentity,
+    validatorWebsite,
+  } = getChainwiseValidatorInfo({ moniker });
   return (
     <div>
+      <div>{validatorDescription}</div>
+      <div>{validatorIdentity}</div>
+      <div>{validatorWebsite}</div>
       {Object.keys(chainWiseValidatorData).map((chainData) => {
         return (
           <div>

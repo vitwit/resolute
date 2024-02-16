@@ -16,6 +16,8 @@ const validatorsURL = '/cosmos/staking/v1beta1/validators';
 const delegationsURL = '/cosmos/staking/v1beta1/delegations/';
 const unbondingDelegationsURL = (address: string) =>
   `/cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`;
+const validatorDelegationsURL = (operatorAddress: string) =>
+  `/cosmos/staking/v1beta1/validators/${operatorAddress}/delegations`;
 const validatorURL = (address: string) =>
   `/cosmos/staking/v1beta1/validators/${address}`;
 const paramsURL = '/cosmos/staking/v1beta1/params';
@@ -79,6 +81,15 @@ const fetchValidator = (
   );
 };
 
+const fetchValidatorDelegations = async (
+  baseURLs: string[],
+  operatorAddress: string
+): Promise<AxiosResponse<any>> => {
+  const endPoint = `${validatorDelegationsURL(operatorAddress)}`;
+
+  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+};
+
 const result = {
   validators: fetchValidators,
   delegations: fetchdelegations,
@@ -86,6 +97,7 @@ const result = {
   params: fetchParams,
   poolInfo: fetchPoolInfo,
   validatorInfo: fetchValidator,
+  validatorDelegations: fetchValidatorDelegations,
 };
 
 export default result;

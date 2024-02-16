@@ -364,12 +364,10 @@ interface AllValidatorsProps {
 }
 
 interface ValidatorProfileInfo {
-  moniker: string;
   rank: string;
-  description: string;
   commission: number;
   totalStakedInUSD: number | string;
-  website: string;
-  identity: string;
   chainID: string;
+  tokens: number;
+  operatorAddress: string;
 }

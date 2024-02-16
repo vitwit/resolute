@@ -70,6 +70,7 @@ interface Chain {
   reStakeTxStatus: TxStatus;
   cancelUnbondingTxStatus: TxStatus;
   isTxAll: boolean;
+  validatorProfiles: Record<string, { totalDelegators: number }>;
 }
 
 interface Chains {
@@ -118,6 +119,7 @@ const initialState: StakingState = {
       totalActive: 0,
       totalInactive: 0,
     },
+    validatorProfiles: {},
     delegations: {
       status: TxStatus.INIT,
       delegations: {
@@ -737,6 +739,24 @@ export const getParams = createAsyncThunk(
   'staking/params',
   async (data: { baseURLs: string[]; chainID: string }) => {
     const response = await stakingService.params(data.baseURLs);
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
+  }
+);
+
+export const getTotalDelegationsCount = createAsyncThunk(
+  'staking/total-delegations-count',
+  async (data: {
+    baseURLs: string[];
+    chainID: string;
+    operatorAddress: string;
+  }) => {
+    const response = await stakingService.validatorDelegations(
+      data.baseURLs,
+      data.operatorAddress
+    );
     return {
       data: response.data,
       chainID: data.chainID,
@@ -1372,6 +1392,25 @@ export const stakeSlice = createSlice({
         state.authz.chains[chainID].validator.status = TxStatus.REJECTED;
         state.authz.chains[chainID].validator.errMsg = '';
       });
+
+    builder
+      .addCase(getTotalDelegationsCount.pending, (state, action) => {
+        const { chainID, operatorAddress } = action.meta.arg;
+        state.chains[chainID].validatorProfiles = {
+          ...state.chains[chainID].validatorProfiles,
+          [operatorAddress]: { totalDelegators: 0 },
+        };
+      })
+      .addCase(getTotalDelegationsCount.fulfilled, (state, action) => {
+        const { chainID, operatorAddress } = action.meta.arg;
+        state.chains[chainID].validatorProfiles = {
+          ...state.chains[chainID].validatorProfiles,
+          [operatorAddress]: {
+            totalDelegators: action.payload?.data?.pagination?.total || 0,
+          },
+        };
+      })
+      .addCase(getTotalDelegationsCount.rejected, () => {});
 
     builder
       .addCase(txDelegate.pending, (state, action) => {
