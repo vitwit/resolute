@@ -2,23 +2,21 @@ import { useAppSelector } from './StateHooks';
 import { RootState } from '@/store/store';
 import { ValidatorProfileInfo } from '@/types/staking';
 import { getValidatorRank } from '@/utils/util';
-import useGetChainInfo from './useGetChainInfo';
 import { parseBalance } from '@/utils/denom';
+import useGetAllChainsInfo from './useGetAllChainsInfo';
 
 const useGetValidatorInfo = () => {
   const stakingData = useAppSelector(
     (state: RootState) => state.staking.chains
   );
-  const nameToChainIDs = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
+  const allNetworksInfo = useAppSelector(
+    (state: RootState) => state.common.allNetworksInfo
   );
-  const chainIDs = Object.keys(nameToChainIDs).map(
-    (chainName) => nameToChainIDs[chainName]
-  );
+  const chainIDs = Object.keys(allNetworksInfo);
   const tokensPriceInfo = useAppSelector(
     (state) => state.common.allTokensInfoState.info
   );
-  const { getDenomInfo } = useGetChainInfo();
+  const { getAllDenomInfo } = useGetAllChainsInfo();
 
   const getValidatorInfo = ({
     chainID,
@@ -71,7 +69,7 @@ const useGetValidatorInfo = () => {
       const validatorInfo = getValidatorInfo({ chainID, moniker });
 
       if (validatorInfo) {
-        const { decimals, minimalDenom } = getDenomInfo(chainID);
+        const { decimals, minimalDenom } = getAllDenomInfo(chainID);
         const activeSorted = stakingData?.[chainID]?.validators.activeSorted;
         const inactiveSorted =
           stakingData?.[chainID]?.validators.inactiveSorted;

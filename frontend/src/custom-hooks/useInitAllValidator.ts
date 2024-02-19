@@ -1,33 +1,25 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './StateHooks';
-import useGetChainInfo from './useGetChainInfo';
 import { getAllValidators } from '@/store/features/staking/stakeSlice';
-import { getBalances } from '@/store/features/bank/bankSlice';
+import useGetAllChainsInfo from './useGetAllChainsInfo';
 
 const useInitAllValidator = () => {
-  const networks = useAppSelector((state) => state.wallet.networks);
+  const networks = useAppSelector((state) => state.common.allNetworksInfo);
   const dispatch = useAppDispatch();
   const chainIDs = Object.keys(networks);
-  const { getChainInfo } = useGetChainInfo();
+  const { getAllChainInfo } = useGetAllChainsInfo();
+
   useEffect(() => {
     chainIDs.forEach((chainID) => {
-      const { restURLs, baseURL, address } = getChainInfo(chainID);
+      const { restURLs } = getAllChainInfo(chainID);
       dispatch(
         getAllValidators({
           baseURLs: restURLs,
           chainID: chainID,
         })
       );
-      dispatch(
-        getBalances({
-          baseURLs: restURLs,
-          baseURL,
-          address,
-          chainID,
-        })
-      );
     });
-  }, []);
+  }, []);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 };
 
 export default useInitAllValidator;

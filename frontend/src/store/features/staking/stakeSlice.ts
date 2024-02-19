@@ -691,6 +691,7 @@ export const getAllValidators = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
+    console.log("cal......eee")
     try {
       const validators = [];
       let nextKey = null;

@@ -4,6 +4,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import commonService from './commonService';
 import { AxiosError } from 'axios';
 import { ERR_UNKNOWN } from '../../../utils/errors';
+import { networks } from '../../../utils/chainsInfo';
 
 const initialState: CommonState = {
   errState: {
@@ -34,6 +35,7 @@ const initialState: CommonState = {
   selectedNetwork: {
     chainName: '',
   },
+  allNetworksInfo: {},
 };
 
 export const getTokenPrice = createAsyncThunk(
@@ -99,6 +101,12 @@ export const commonSlice = createSlice({
     setSelectedNetwork: (state, action: PayloadAction<SelectedNetwork>) => {
       state.selectedNetwork.chainName = action.payload.chainName;
     },
+    setAllNetworksInfo: (state) => {
+      state.allNetworksInfo = {};
+      for (let i = 0; i < networks.length; i++) {
+        state.allNetworksInfo[networks[i].config.chainId] = networks[i];
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -152,6 +160,7 @@ export const {
   setTxAndHash,
   resetTxAndHash,
   setSelectedNetwork,
+  setAllNetworksInfo,
 } = commonSlice.actions;
 
 export default commonSlice.reducer;
