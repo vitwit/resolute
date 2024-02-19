@@ -1,4 +1,5 @@
 'use client';
+
 import TopNav from '@/components/TopNav';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -109,21 +110,23 @@ const ValidatorMetadataCard = ({
           <div className="text-[#FFFFFF80] text-[14px]">Description</div>
           <div className="text-[16px] leading-[30px]">{description || '-'}</div>
         </div>
-        <div>
-          <div className="space-y-4">
-            <div className="text-[#FFFFFF80] text-[14px]">Website</div>
-            <div className="w-fit text-[16px] h-8 leading-[30px] bg-[#FFFFFF1A] opacity-80 flex items-center gap-2 p-2 rounded-lg">
-              <Link
-                href={website || '#'}
-                target="_blank"
-                className=" flex gap-2 text-[16px] leading-[19.36px] underline underline-offset-[3px]"
-              >
-                {website || '-'}
-                <Image src="/link-icon.svg" height={24} width={24} alt="" />
-              </Link>
+        {website ? (
+          <div>
+            <div className="space-y-4">
+              <div className="text-[#FFFFFF80] text-[14px]">Website</div>
+              <div className="w-fit text-[16px] h-8 leading-[30px] bg-[#FFFFFF1A] opacity-80 flex items-center gap-2 p-2 rounded-lg">
+                <Link
+                  href={website || '#'}
+                  target="_blank"
+                  className=" flex gap-2 text-[16px] leading-[19.36px] underline underline-offset-[3px]"
+                >
+                  {website || '-'}
+                  <Image src="/link-icon.svg" height={24} width={24} alt="" />
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </div>
   );
