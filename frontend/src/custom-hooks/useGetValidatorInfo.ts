@@ -124,6 +124,7 @@ const useGetValidatorInfo = () => {
           tokens,
           operatorAddress,
           validatorStatus,
+          validatorInfo,
         };
       }
     });
