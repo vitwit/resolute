@@ -146,7 +146,7 @@ const ValidatorItem = ({
       <td>{votingPower}</td>
       <td>{totalDelegatorsCount}</td>
       <td>{formatCommission(commission)}</td>
-      <td>{totalStaked}</td>
+      <td>{'$ ' + totalStaked}</td>
       <td>
         <button className="primary-gradient px-3 py-[6px] w-full rounded-lg">
           <Link href={stakingURL}>Stake</Link>

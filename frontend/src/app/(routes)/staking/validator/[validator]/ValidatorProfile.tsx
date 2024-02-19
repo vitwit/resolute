@@ -159,7 +159,10 @@ const ValidatorStatsCard = ({
       <div className="text-[18px] leading-[21.7px]">Statistics</div>
       <div className="space-y-6">
         <div className="grid grid-cols-2 gap-6">
-          <StatsCard name="Total Staked Assets" value={totalStakedAmount} />
+          <StatsCard
+            name="Total Staked Assets"
+            value={'$ ' + totalStakedAmount}
+          />
           <StatsCard name="Total Delegators" value={totalDelegatorsCount} />
         </div>
         <div className="grid grid-cols-3 gap-6">
