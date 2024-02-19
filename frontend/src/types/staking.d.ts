@@ -371,4 +371,5 @@ interface ValidatorProfileInfo {
   tokens: number;
   operatorAddress: string;
   validatorStatus: string;
+  validatorInfo: Validator;
 }
