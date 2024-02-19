@@ -11,7 +11,6 @@ import {
 } from '../../../types/staking';
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
 import { MAX_TRY_END_POINTS } from '@/utils/constants';
-/* disable eslint*/
 const validatorsURL = '/cosmos/staking/v1beta1/validators';
 const delegationsURL = '/cosmos/staking/v1beta1/delegations/';
 const unbondingDelegationsURL = (address: string) =>
@@ -84,6 +83,7 @@ const fetchValidator = (
 const fetchValidatorDelegations = async (
   baseURLs: string[],
   operatorAddress: string
+  /* eslint-disable @typescript-eslint/no-explicit-any */
 ): Promise<AxiosResponse<any>> => {
   const endPoint = `${validatorDelegationsURL(operatorAddress)}`;
 

@@ -1,7 +1,6 @@
-import React from 'react';
 import { useAppSelector } from './StateHooks';
 import { RootState } from '@/store/store';
-import { Validator, ValidatorProfileInfo } from '@/types/staking';
+import { ValidatorProfileInfo } from '@/types/staking';
 import { getValidatorRank } from '@/utils/util';
 import useGetChainInfo from './useGetChainInfo';
 import { parseBalance } from '@/utils/denom';
@@ -142,8 +141,6 @@ const useGetValidatorInfo = () => {
     let totalStaked = 0;
     let totalDelegators = 0;
     let totalCommission = 0;
-
-    const stakingData = useAppSelector((state) => state.staking.chains);
 
     Object.keys(data).forEach((chainID) => {
       const totalStakedInUSD = Number(data[chainID]?.totalStakedInUSD || 0);

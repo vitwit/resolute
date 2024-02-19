@@ -61,7 +61,12 @@ const ValidatorsTable = ({
               </thead>
               <tbody className="flex-1">
                 {Object.keys(data).map((chainID) => {
-                  return <ValidatorItem validatorInfo={data[chainID]} />;
+                  return (
+                    <ValidatorItem
+                      validatorInfo={data[chainID]}
+                      key={chainID}
+                    />
+                  );
                 })}
               </tbody>
             </table>

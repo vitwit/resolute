@@ -2,7 +2,7 @@
 import TopNav from '@/components/TopNav';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React from 'react';
 import ValidatorsTable from './components/ValidatorsTable';
 import useInitAllValidator from '@/custom-hooks/useInitAllValidator';
 import useGetValidatorInfo from '@/custom-hooks/useGetValidatorInfo';

@@ -20,7 +20,7 @@ const Validator = ({ moniker }: { moniker: string }) => {
       <div>{validatorWebsite}</div>
       {Object.keys(chainWiseValidatorData).map((chainData) => {
         return (
-          <div>
+          <div key={chainData}>
             <div>{chainData}</div>
             <div>
               {JSON.stringify(chainWiseValidatorData[chainData], undefined, 4)}
