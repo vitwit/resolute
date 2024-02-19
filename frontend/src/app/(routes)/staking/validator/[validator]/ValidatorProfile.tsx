@@ -7,7 +7,7 @@ import React from 'react';
 import ValidatorsTable from './components/ValidatorsTable';
 import useInitAllValidator from '@/custom-hooks/useInitAllValidator';
 import useGetValidatorInfo from '@/custom-hooks/useGetValidatorInfo';
-import { capitalizeFirstLetter } from '@/utils/util';
+import { capitalizeFirstLetter, formatValidatorStatsValue } from '@/utils/util';
 import ValidatorLogo from '../../components/ValidatorLogo';
 import { Tooltip } from '@mui/material';
 
@@ -145,18 +145,10 @@ const ValidatorStatsCard = ({
   totalNetworks: number;
   activeNetworks: number;
 }) => {
-  const staked = Number(totalStaked);
-  const totalStakedAmount = isNaN(staked)
-    ? '-'
-    : Number(staked.toFixed(0)).toLocaleString();
-  const delegators = Number(totalDelegators);
-  const totalDelegatorsCount = isNaN(delegators)
-    ? '-'
-    : Number(delegators.toFixed(0)).toLocaleString();
-  const averageCommission = Number(avgCommission);
-  const parsedAvgCommission = isNaN(averageCommission)
-    ? '-'
-    : Number(averageCommission.toFixed(2)).toLocaleString();
+  const totalStakedAmount = formatValidatorStatsValue(totalStaked, 0);
+  const totalDelegatorsCount = formatValidatorStatsValue(totalDelegators, 0);
+  const parsedAvgCommission = formatValidatorStatsValue(avgCommission, 2);
+
   return (
     <div className="bg-[#0E0B26] p-6 space-y-6 rounded-2xl">
       <div className="text-[18px] leading-[21.7px]">Statistics</div>

@@ -16,6 +16,16 @@ const NetworkItem = ({
   operatorAddress: string;
 }) => {
   const dispatch = useAppDispatch();
+  const handleCopy = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+    copyToClipboard(operatorAddress);
+    dispatch(
+      setError({
+        type: 'success',
+        message: 'Copied',
+      })
+    );
+    e.stopPropagation();
+  };
   return (
     <div className="flex items-center gap-2">
       <Image
@@ -32,16 +42,7 @@ const NetworkItem = ({
       </Tooltip>
       <Image
         className="cursor-pointer"
-        onClick={(e) => {
-          copyToClipboard(operatorAddress);
-          dispatch(
-            setError({
-              type: 'success',
-              message: 'Copied',
-            })
-          );
-          e.stopPropagation();
-        }}
+        onClick={handleCopy}
         src="/copy.svg"
         width={24}
         height={24}

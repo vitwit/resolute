@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getTotalDelegationsCount } from '@/store/features/staking/stakeSlice';
 import { ValidatorProfileInfo } from '@/types/staking';
-import { formatCommission } from '@/utils/util';
+import { formatCommission, formatValidatorStatsValue } from '@/utils/util';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 import NetworkItem from './NetworkItem';
@@ -31,18 +31,9 @@ const ValidatorItem = ({
 
   const stakingURL = `/staking/${chainName.toLowerCase()}?validator_address=${operatorAddress}&action=delegate`;
 
-  const totalTokens = Number(tokens);
-  const votingPower = isNaN(totalTokens)
-    ? '-'
-    : Number(totalTokens.toFixed(0)).toLocaleString();
-  const totalAssets = Number(totalStakedInUSD);
-  const totalStaked = isNaN(totalAssets)
-    ? '-'
-    : Number(totalAssets.toFixed(0)).toLocaleString();
-  const delegatorsCount = Number(totalDelegators);
-  const totalDelegatorsCount = isNaN(delegatorsCount)
-    ? '-'
-    : Number(delegatorsCount.toFixed(0)).toLocaleString();
+  const votingPower = formatValidatorStatsValue(tokens, 0);
+  const totalStaked = formatValidatorStatsValue(totalStakedInUSD, 0);
+  const totalDelegatorsCount = formatValidatorStatsValue(totalDelegators, 0);
 
   useEffect(() => {
     if (operatorAddress?.length) {
