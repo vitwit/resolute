@@ -33,53 +33,57 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
     data: chainWiseValidatorData,
   });
   return (
-    <div className="py-6 px-10 space-y-10 h-screen overflow-y-scroll">
-      <div className="flex justify-between">
-        <h2 className="text-[20px] leading-normal font-normal">
-          Validator Profile
-        </h2>
-        <TopNav />
-      </div>
-      <div className="flex gap-10 items-center border-b-[1px] border-[#ffffff1e]">
-        {tabs.map((tab) => (
-          <div key={tab} className="flex flex-col justify-center">
-            <div
-              className={
-                selectedTab === tab.toLowerCase()
-                  ? 'validator-profile-menu-item font-semibold'
-                  : 'validator-profile-menu-item font-normal'
-              }
-            >
-              {tab === 'Profile' ? (
-                <span>{tab}</span>
-              ) : (
-                <Tooltip title={'Coming Soon...'} placement="bottom">
+    <div className="py-6 px-10 space-y-10 h-screen flex flex-col">
+      <div className="space-y-10">
+        <div className="flex justify-between">
+          <h2 className="text-[20px] leading-normal font-normal">
+            Validator Profile
+          </h2>
+          <TopNav />
+        </div>
+        <div className="flex gap-10 items-center border-b-[1px] border-[#ffffff1e]">
+          {tabs.map((tab) => (
+            <div key={tab} className="flex flex-col justify-center">
+              <div
+                className={
+                  selectedTab === tab.toLowerCase()
+                    ? 'validator-profile-menu-item font-semibold'
+                    : 'validator-profile-menu-item font-normal'
+                }
+              >
+                {tab === 'Profile' ? (
                   <span>{tab}</span>
-                </Tooltip>
-              )}
+                ) : (
+                  <Tooltip title={'Coming Soon...'} placement="bottom">
+                    <span>{tab}</span>
+                  </Tooltip>
+                )}
+              </div>
+              {selectedTab === tab.toLowerCase() ? (
+                <div className="rounded-full h-[3px] primary-gradient"></div>
+              ) : null}
             </div>
-            {selectedTab === tab.toLowerCase() ? (
-              <div className="rounded-full h-[3px] primary-gradient"></div>
-            ) : null}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-      <div className="grid grid-cols-2 gap-10">
-        <ValidatorMetadataCard
-          description={validatorDescription}
-          identity={validatorIdentity}
-          moniker={moniker}
-          website={validatorWebsite}
-        />
-        <ValidatorStatsCard
-          totalDelegators={totalDelegators}
-          totalStaked={totalStaked}
-          avgCommission={avgCommission}
-          totalNetworks={totalNetworks}
-          activeNetworks={activeNetworks}
-        />
+      <div className="flex-1 space-y-10 overflow-y-scroll">
+        <div className="grid grid-cols-2 gap-10">
+          <ValidatorMetadataCard
+            description={validatorDescription}
+            identity={validatorIdentity}
+            moniker={moniker}
+            website={validatorWebsite}
+          />
+          <ValidatorStatsCard
+            totalDelegators={totalDelegators}
+            totalStaked={totalStaked}
+            avgCommission={avgCommission}
+            totalNetworks={totalNetworks}
+            activeNetworks={activeNetworks}
+          />
+        </div>
+        <ValidatorsTable data={chainWiseValidatorData} />
       </div>
-      <ValidatorsTable data={chainWiseValidatorData} />
     </div>
   );
 };

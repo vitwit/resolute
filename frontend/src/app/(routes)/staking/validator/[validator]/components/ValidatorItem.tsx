@@ -111,7 +111,7 @@ const ValidatorItem = ({
       </td>
       <td>{rank}</td>
       <td>{votingPower}</td>
-      <td>{totalDelegatorsCount}</td>
+      <td>{totalDelegatorsCount !== '0' ? totalDelegatorsCount : '-'}</td>
       <td>{formatCommission(commission)}</td>
       <td>{'$ ' + totalStaked}</td>
       <td>
