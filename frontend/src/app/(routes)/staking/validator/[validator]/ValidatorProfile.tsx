@@ -22,7 +22,13 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
     validatorIdentity,
     validatorWebsite,
   } = getChainwiseValidatorInfo({ moniker });
-  const { totalDelegators, totalStaked, avgCommission } = getValidatorStats({
+  const {
+    totalDelegators,
+    totalStaked,
+    avgCommission,
+    activeNetworks,
+    totalNetworks,
+  } = getValidatorStats({
     data: chainWiseValidatorData,
   });
   return (
@@ -68,6 +74,8 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
           totalDelegators={totalDelegators}
           totalStaked={totalStaked}
           avgCommission={avgCommission}
+          totalNetworks={totalNetworks}
+          activeNetworks={activeNetworks}
         />
       </div>
       <ValidatorsTable data={chainWiseValidatorData} />
@@ -125,32 +133,45 @@ const ValidatorStatsCard = ({
   totalDelegators,
   totalStaked,
   avgCommission,
+  activeNetworks,
+  totalNetworks,
 }: {
   totalStaked: number;
   totalDelegators: number;
   avgCommission: number;
+  totalNetworks: number;
+  activeNetworks: number;
 }) => {
+  const staked = Number(totalStaked);
+  const totalStakedAmount = isNaN(staked)
+    ? '-'
+    : Number(staked.toFixed(0)).toLocaleString();
+  const delegators = Number(totalDelegators);
+  const totalDelegatorsCount = isNaN(delegators)
+    ? '-'
+    : Number(delegators.toFixed(0)).toLocaleString();
+  const averageCommission = Number(avgCommission);
+  const parsedAvgCommission = isNaN(averageCommission)
+    ? '-'
+    : Number(averageCommission.toFixed(2)).toLocaleString();
   return (
     <div className="bg-[#0E0B26] p-6 space-y-6 rounded-2xl">
       <div className="text-[18px] leading-[21.7px]">Statistics</div>
       <div className="space-y-6">
         <div className="grid grid-cols-2 gap-6">
-          <StatsCard
-            name="Total Staked Assets"
-            value={totalStaked.toString()}
-          />
-          <StatsCard
-            name="Total Delegators"
-            value={totalDelegators.toString()}
-          />
+          <StatsCard name="Total Staked Assets" value={totalStakedAmount} />
+          <StatsCard name="Total Delegators" value={totalDelegatorsCount} />
         </div>
         <div className="grid grid-cols-3 gap-6">
+          <StatsCard name="Avg. Commission" value={parsedAvgCommission + '%'} />
           <StatsCard
-            name="Avg. Commission"
-            value={avgCommission.toFixed(2).toString() + "%"}
+            name="Total Networks"
+            value={isNaN(totalNetworks) ? '-' : totalNetworks.toString()}
           />
-          <StatsCard name="Total Networks" value="19" />
-          <StatsCard name="Active Networks" value="19" />
+          <StatsCard
+            name="Active Networks"
+            value={isNaN(activeNetworks) ? '-' : activeNetworks.toString()}
+          />
         </div>
       </div>
     </div>

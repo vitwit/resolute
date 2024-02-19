@@ -86,6 +86,7 @@ const useGetValidatorInfo = () => {
         const commission =
           Number(validatorInfo?.commission?.commission_rates?.rate) * 100;
         const delegatorShares = validatorInfo?.delegator_shares;
+        const validatorStatus = validatorInfo?.status;
         const totalStaked = parseBalance(
           [
             {
@@ -122,6 +123,7 @@ const useGetValidatorInfo = () => {
           chainID,
           tokens,
           operatorAddress,
+          validatorStatus,
         };
       }
     });
@@ -141,19 +143,26 @@ const useGetValidatorInfo = () => {
     let totalStaked = 0;
     let totalDelegators = 0;
     let totalCommission = 0;
+    let activeNetworks = 0;
+    let totalNetworks = 0;
 
     Object.keys(data).forEach((chainID) => {
-      const totalStakedInUSD = Number(data[chainID]?.totalStakedInUSD || 0);
+      const validator = data?.[chainID];
+      const totalStakedInUSD = Number(validator?.totalStakedInUSD || 0);
 
       if (!isNaN(totalStakedInUSD)) {
         totalStaked += totalStakedInUSD;
       }
       const delegatorsCount =
-        stakingData[data[chainID].chainID].validatorProfiles?.[
-          data[chainID].operatorAddress
+        stakingData[validator.chainID].validatorProfiles?.[
+          validator.operatorAddress
         ];
       totalDelegators += Number(delegatorsCount?.totalDelegators || 0);
-      totalCommission += Number(data[chainID]?.commission) || 0;
+      totalCommission += Number(validator?.commission) || 0;
+      if (validator.validatorStatus === 'BOND_STATUS_BONDED') {
+        activeNetworks += 1;
+      }
+      totalNetworks += 1;
     });
     const avgCommission = totalCommission / Object.keys(data).length;
 
@@ -161,6 +170,8 @@ const useGetValidatorInfo = () => {
       totalStaked,
       totalDelegators,
       avgCommission,
+      totalNetworks,
+      activeNetworks,
     };
   };
 

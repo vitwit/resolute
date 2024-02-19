@@ -370,4 +370,5 @@ interface ValidatorProfileInfo {
   chainID: string;
   tokens: number;
   operatorAddress: string;
+  validatorStatus: string;
 }

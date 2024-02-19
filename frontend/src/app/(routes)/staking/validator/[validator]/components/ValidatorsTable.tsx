@@ -4,7 +4,12 @@ import { setError } from '@/store/features/common/commonSlice';
 import { getTotalDelegationsCount } from '@/store/features/staking/stakeSlice';
 import { ValidatorProfileInfo } from '@/types/staking';
 import { copyToClipboard } from '@/utils/copyToClipboard';
-import { capitalizeFirstLetter, formatCommission } from '@/utils/util';
+import {
+  capitalizeFirstLetter,
+  formatCommission,
+  shortenName,
+} from '@/utils/util';
+import { Tooltip } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
@@ -103,6 +108,19 @@ const ValidatorItem = ({
 
   const stakingURL = `/staking/${chainName.toLowerCase()}?validator_address=${operatorAddress}&action=delegate`;
 
+  const totalTokens = Number(tokens);
+  const votingPower = isNaN(totalTokens)
+    ? '-'
+    : Number(totalTokens.toFixed(0)).toLocaleString();
+  const totalAssets = Number(totalStakedInUSD);
+  const totalStaked = isNaN(totalAssets)
+    ? '-'
+    : Number(totalAssets.toFixed(0)).toLocaleString();
+  const delegatorsCount = Number(totalDelegators);
+  const totalDelegatorsCount = isNaN(delegatorsCount)
+    ? '-'
+    : Number(delegatorsCount.toFixed(0)).toLocaleString();
+
   useEffect(() => {
     if (operatorAddress?.length) {
       dispatch(
@@ -125,10 +143,10 @@ const ValidatorItem = ({
         />
       </td>
       <td>{rank}</td>
-      <td>{Number(tokens).toLocaleString()}</td>
-      <td>{totalDelegators ? totalDelegators.toLocaleString() : '-'}</td>
+      <td>{votingPower}</td>
+      <td>{totalDelegatorsCount}</td>
       <td>{formatCommission(commission)}</td>
-      <td>{totalStakedInUSD.toLocaleString()}</td>
+      <td>{totalStaked}</td>
       <td>
         <button className="primary-gradient px-3 py-[6px] w-full rounded-lg">
           <Link href={stakingURL}>Stake</Link>
@@ -157,7 +175,12 @@ const NetworkItem = ({
         height={24}
         alt={networkName}
       />
-      <div className="text-[14px]">{capitalizeFirstLetter(networkName)}</div>
+      {/* <div className="text-[14px]">{capitalizeFirstLetter(networkName)}</div> */}
+      <Tooltip title={capitalizeFirstLetter(networkName)} placement="bottom">
+        <h3 className="text-[14px] leading-normal opacity-100 w-[80px] max-w-[80px] cursor-default">
+          <span>{shortenName(capitalizeFirstLetter(networkName), 10)}</span>
+        </h3>
+      </Tooltip>
       <Image
         className="cursor-pointer"
         onClick={(e) => {
