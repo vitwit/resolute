@@ -366,7 +366,7 @@ interface AllValidatorsProps {
 interface ValidatorProfileInfo {
   rank: string;
   commission: number;
-  totalStakedInUSD: number | string;
+  totalStakedInUSD: string;
   chainID: string;
   tokens: number;
   operatorAddress: string;

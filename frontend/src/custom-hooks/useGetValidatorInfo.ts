@@ -101,7 +101,7 @@ const useGetValidatorInfo = () => {
         const usdPriceInfo: TokenInfo | undefined =
           tokensPriceInfo?.[minimalDenom]?.info;
         const totalStakedInUSD = usdPriceInfo
-          ? totalStaked * usdPriceInfo.usd
+          ? (totalStaked * usdPriceInfo.usd).toString()
           : '-';
 
         if (!validatorDescription && description) {
