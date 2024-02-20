@@ -24,6 +24,8 @@ const poolURL = '/cosmos/staking/v1beta1/pool';
 
 const polygonValidatorURL = (id: number) => `/validators/${id}`;
 const polygonDelegatorsURL = (id: number) => `/validators/${id}/delegators`;
+const oasisDelegationsURL = (operatorAddress: string) =>
+  `/consensus/accounts/${operatorAddress}/delegations_to`;
 
 const fetchValidators = (
   baseURLs: string[],
@@ -113,6 +115,16 @@ const fetchPolygonDelegators = async (
   return axiosGetRequestWrapper([baseURL], endPoint, MAX_TRY_END_POINTS);
 };
 
+const fetchOasisDelegations = async (
+  baseURL: string,
+  operatorAddress: string
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+): Promise<AxiosResponse<any>> => {
+  const endPoint = `${oasisDelegationsURL(operatorAddress)}`;
+
+  return axiosGetRequestWrapper([baseURL], endPoint, MAX_TRY_END_POINTS);
+};
+
 const result = {
   validators: fetchValidators,
   delegations: fetchdelegations,
@@ -123,6 +135,7 @@ const result = {
   validatorDelegations: fetchValidatorDelegations,
   polygonValidator: fetchPolygonValidator,
   polygonDelegators: fetchPolygonDelegators,
+  oasisDelegations: fetchOasisDelegations,
 };
 
 export default result;

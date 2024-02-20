@@ -241,5 +241,19 @@ export const POLYGON_CONFIG = {
   decimals: 18,
   coinGeckoId: 'matic-network',
   logo: '/polygon-logo.svg',
-  witvalProfile: 'https://staking.polygon.technology/validators/50',
+  witval: {
+    profile: 'https://staking.polygon.technology/validators/50',
+  },
+};
+
+export const OASIS_CONFIG = {
+  baseURL: 'https://nexus.oasis.io/v1/',
+  decimals: 9,
+  coinGeckoId: '',
+  logo: '/oasis-network-logo.png',
+  witval: {
+    profile:
+      'https://www.oasisscan.com/validators/detail/oasis1qzc687uuywnel4eqtdn6x3t9hkdvf6sf2gtv4ye9',
+    commission: 19,
+  },
 };

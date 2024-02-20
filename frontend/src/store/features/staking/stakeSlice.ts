@@ -1003,6 +1003,30 @@ export const getWitvalPolygonDelegatorsCount = createAsyncThunk(
   }
 );
 
+export const getWitvalOasisDelegations = createAsyncThunk(
+  'staking/get-oasis-witval-delegations',
+  async (
+    data: {
+      baseURL: string;
+      operatorAddress: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await stakingService.oasisDelegations(
+        data.baseURL,
+        data.operatorAddress
+      );
+      return {
+        data: response.data,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
 export const stakeSlice = createSlice({
   name: 'staking',
   initialState,
@@ -1488,6 +1512,16 @@ export const stakeSlice = createSlice({
         };
       })
       .addCase(getWitvalPolygonDelegatorsCount.rejected, () => {});
+
+    builder
+      .addCase(getWitvalOasisDelegations.pending, () => {})
+      .addCase(getWitvalOasisDelegations.fulfilled, (state, action) => {
+        state.witvalNonCosmosValidators.delegators = {
+          ...state.witvalNonCosmosValidators.delegators,
+          oasis: action.payload?.data,
+        };
+      })
+      .addCase(getWitvalOasisDelegations.rejected, () => {});
 
     builder
       .addCase(txDelegate.pending, (state, action) => {

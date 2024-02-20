@@ -4,7 +4,7 @@ import ValidatorItem from './ValidatorItem';
 import TableHeader from './TableHeader';
 import NetworkItem from './NetworkItem';
 import useGetValidatorInfo from '@/custom-hooks/useGetValidatorInfo';
-import { POLYGON_CONFIG } from '@/utils/constants';
+import { OASIS_CONFIG, POLYGON_CONFIG } from '@/utils/constants';
 import { formatCommission, formatValidatorStatsValue } from '@/utils/util';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import Link from 'next/link';
@@ -49,7 +49,12 @@ const ValidatorsTable = ({
                     />
                   );
                 })}
-                {isWitval ? <NonCosmosValidators /> : null}
+                {isWitval ? (
+                  <>
+                    <NonCosmosValidators />
+                    <NonCosmosValidators2 />
+                  </>
+                ) : null}
               </tbody>
             </table>
           </div>
@@ -75,7 +80,7 @@ const NonCosmosValidators = () => {
     totalStakedTokens.toString(),
     0
   );
-  const { logo, witvalProfile } = POLYGON_CONFIG;
+  const { logo, witval } = POLYGON_CONFIG;
   const connected = useAppSelector((state) => state.wallet.connected);
 
   return (
@@ -94,7 +99,53 @@ const NonCosmosValidators = () => {
       <td>{totalStaked !== '0' ? '$ ' + totalStaked : '$ -'}</td>
       <td>
         {connected ? (
-          <Link href={witvalProfile} target="_blank">
+          <Link href={witval.profile} target="_blank">
+            <button className="stake-btn primary-gradient">Stake</button>
+          </Link>
+        ) : (
+          <Tooltip title="Connect wallet to stake">
+            <button className="stake-btn button-disabled">Stake</button>
+          </Tooltip>
+        )}
+      </td>
+    </tr>
+  );
+};
+
+const NonCosmosValidators2 = () => {
+  const { getOasisValidatorInfo } = useGetValidatorInfo();
+  const {
+    commission,
+    totalDelegators,
+    totalStakedInUSD,
+    totalStakedTokens,
+    operatorAddress,
+  } = getOasisValidatorInfo();
+  const totalStaked = formatValidatorStatsValue(totalStakedInUSD.toString(), 0);
+  const votingPower = formatValidatorStatsValue(
+    totalStakedTokens.toString(),
+    0
+  );
+  const { logo, witval } = OASIS_CONFIG;
+  const connected = useAppSelector((state) => state.wallet.connected);
+
+  return (
+    <tr>
+      <td>
+        <NetworkItem
+          logo={logo}
+          networkName={'Oasis'}
+          operatorAddress={operatorAddress}
+        />
+      </td>
+      <td>{'-'}</td>
+      <td>{votingPower || '-'}</td>
+      <td>{totalDelegators !== 0 ? totalDelegators.toLocaleString() : '-'}</td>
+      <td>{formatCommission(Number(commission))}</td>
+      <td>{totalStaked !== '0' ? '$ ' + totalStaked : '$ -'}</td>
+      <td>
+        {connected ? (
+          <Link href={witval?.profile} target="_blank">
             <button className="stake-btn primary-gradient">Stake</button>
           </Link>
         ) : (

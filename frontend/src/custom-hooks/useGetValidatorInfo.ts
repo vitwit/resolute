@@ -4,7 +4,7 @@ import { ValidatorProfileInfo } from '@/types/staking';
 import { getValidatorRank } from '@/utils/util';
 import { parseBalance } from '@/utils/denom';
 import useGetAllChainsInfo from './useGetAllChainsInfo';
-import { POLYGON_CONFIG, WITVAL } from '@/utils/constants';
+import { OASIS_CONFIG, POLYGON_CONFIG, WITVAL } from '@/utils/constants';
 
 const useGetValidatorInfo = () => {
   const stakingData = useAppSelector(
@@ -170,18 +170,33 @@ const useGetValidatorInfo = () => {
       totalNetworks += 1;
     });
     if (moniker.toLowerCase() === WITVAL) {
-      const {
-        commission,
-        totalDelegators: delegators,
-        totalStakedInUSD: totalStaked,
-      } = getPolygonValidatorInfo();
-      totalCommission += Number(commission || 0);
-      totalDelegators += totalStaked;
-      totalDelegators += delegators;
-      activeNetworks += 1;
-      totalNetworks += 1;
+      {
+        const {
+          commission,
+          totalDelegators: delegators,
+          totalStakedInUSD: totalStaked,
+        } = getPolygonValidatorInfo();
+        totalCommission += Number(commission || 0);
+        totalDelegators += totalStaked;
+        totalDelegators += delegators;
+        activeNetworks += 1;
+        totalNetworks += 1;
+      }
+
+      {
+        const {
+          commission,
+          totalDelegators: delegators,
+          totalStakedInUSD: totalStaked,
+        } = getOasisValidatorInfo();
+        totalCommission += Number(commission || 0);
+        totalDelegators += totalStaked;
+        totalDelegators += delegators;
+        activeNetworks += 1;
+        totalNetworks += 1;
+      }
     }
-    const avgCommission = totalCommission / Object.keys(data).length;
+    const avgCommission = totalCommission / totalNetworks;
 
     return {
       totalStaked,
@@ -224,10 +239,53 @@ const useGetValidatorInfo = () => {
     };
   };
 
+  const getOasisValidatorInfo = () => {
+    const usdPriceInfo: TokenInfo | undefined =
+      tokensPriceInfo?.[OASIS_CONFIG.coinGeckoId]?.info;
+    const oasisDelegations = nonCosmosData.delegators['oasis'];
+    let totalStakedInUSD = 0;
+    let commission = '';
+    let totalDelegators = 0;
+    let totalStakedTokens = 0;
+    let operatorAddress = '';
+
+    if (oasisDelegations) {
+      const { delegations } = oasisDelegations;
+      let totalDelegationAmount = 0;
+      delegations?.forEach(
+        (delegation: {
+          amount: string;
+          delegator: string;
+          shares: string;
+          validator: string;
+        }) => {
+          totalDelegationAmount += Number(delegation?.amount || 0);
+        }
+      );
+
+      totalStakedTokens = totalDelegationAmount / 10 ** OASIS_CONFIG.decimals;
+      totalStakedInUSD = usdPriceInfo
+        ? totalStakedTokens * usdPriceInfo.usd
+        : 0;
+      commission = OASIS_CONFIG.witval.commission.toString();
+      totalDelegators = delegations?.length || 0;
+      operatorAddress = 'oasis1qzc687uuywnel4eqtdn6x3t9hkdvf6sf2gtv4ye9';
+    }
+
+    return {
+      totalStakedInUSD,
+      commission,
+      totalDelegators,
+      totalStakedTokens,
+      operatorAddress,
+    };
+  };
+
   return {
     getChainwiseValidatorInfo,
     getValidatorStats,
     getPolygonValidatorInfo,
+    getOasisValidatorInfo,
   };
 };
 
