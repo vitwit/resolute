@@ -4,6 +4,7 @@ import { ValidatorProfileInfo } from '@/types/staking';
 import { getValidatorRank } from '@/utils/util';
 import { parseBalance } from '@/utils/denom';
 import useGetAllChainsInfo from './useGetAllChainsInfo';
+import { POLYGON_CONFIG, WITVAL } from '@/utils/constants';
 
 const useGetValidatorInfo = () => {
   const stakingData = useAppSelector(
@@ -15,6 +16,9 @@ const useGetValidatorInfo = () => {
   const chainIDs = Object.keys(allNetworksInfo);
   const tokensPriceInfo = useAppSelector(
     (state) => state.common.allTokensInfoState.info
+  );
+  const nonCosmosData = useAppSelector(
+    (state) => state.staking.witvalNonCosmosValidators
   );
   const { getAllDenomInfo } = useGetAllChainsInfo();
 
@@ -136,8 +140,10 @@ const useGetValidatorInfo = () => {
 
   const getValidatorStats = ({
     data,
+    moniker,
   }: {
     data: Record<string, ValidatorProfileInfo>;
+    moniker: string;
   }) => {
     let totalStaked = 0;
     let totalDelegators = 0;
@@ -163,6 +169,18 @@ const useGetValidatorInfo = () => {
       }
       totalNetworks += 1;
     });
+    if (moniker.toLowerCase() === WITVAL) {
+      const {
+        commission,
+        totalDelegators: delegators,
+        totalStakedInUSD: totalStaked,
+      } = getPolygonValidatorInfo();
+      totalCommission += Number(commission || 0);
+      totalDelegators += totalStaked;
+      totalDelegators += delegators;
+      activeNetworks += 1;
+      totalNetworks += 1;
+    }
     const avgCommission = totalCommission / Object.keys(data).length;
 
     return {
@@ -174,7 +192,43 @@ const useGetValidatorInfo = () => {
     };
   };
 
-  return { getChainwiseValidatorInfo, getValidatorStats };
+  const getPolygonValidatorInfo = () => {
+    const usdPriceInfo: TokenInfo | undefined =
+      tokensPriceInfo?.[POLYGON_CONFIG.coinGeckoId]?.info;
+    const polygonData = nonCosmosData.chains?.['polygon'];
+    const polygonDelegators = Number(nonCosmosData.delegators['polygon']);
+    let totalStakedInUSD = 0;
+    let commission = '';
+    let totalDelegators = 0;
+    let totalStakedTokens = 0;
+    let operatorAddress = '';
+
+    if (polygonData) {
+      totalStakedTokens =
+        Number(polygonData?.result?.totalStaked) /
+        10 ** POLYGON_CONFIG.decimals;
+      totalStakedInUSD = usdPriceInfo
+        ? totalStakedTokens * usdPriceInfo.usd
+        : 0;
+      commission = polygonData?.result?.commissionPercent;
+      totalDelegators = polygonDelegators || 0;
+      operatorAddress = polygonData?.result?.owner;
+    }
+
+    return {
+      totalStakedInUSD,
+      commission,
+      totalDelegators,
+      totalStakedTokens,
+      operatorAddress,
+    };
+  };
+
+  return {
+    getChainwiseValidatorInfo,
+    getValidatorStats,
+    getPolygonValidatorInfo,
+  };
 };
 
 export default useGetValidatorInfo;

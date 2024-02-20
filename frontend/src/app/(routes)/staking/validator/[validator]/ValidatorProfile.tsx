@@ -10,6 +10,7 @@ import useGetValidatorInfo from '@/custom-hooks/useGetValidatorInfo';
 import { capitalizeFirstLetter, formatValidatorStatsValue } from '@/utils/util';
 import ValidatorLogo from '../../components/ValidatorLogo';
 import { Tooltip } from '@mui/material';
+import { WITVAL } from '@/utils/constants';
 
 const ValidatorProfile = ({ moniker }: { moniker: string }) => {
   const tabs = ['Profile', 'Announcements', 'Inbox', 'Notices'];
@@ -31,6 +32,7 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
     totalNetworks,
   } = getValidatorStats({
     data: chainWiseValidatorData,
+    moniker: moniker,
   });
 
   return (
@@ -83,7 +85,10 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
             activeNetworks={activeNetworks}
           />
         </div>
-        <ValidatorsTable data={chainWiseValidatorData} />
+        <ValidatorsTable
+          data={chainWiseValidatorData}
+          isWitval={moniker.toLowerCase() === WITVAL}
+        />
       </div>
     </div>
   );

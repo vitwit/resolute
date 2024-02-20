@@ -90,6 +90,11 @@ interface StakingState {
     hasDelegations: boolean;
     hasUnbonding: boolean;
   };
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  witvalNonCosmosValidators: {
+    chains: Record<string, any>;
+    delegators: Record<string, any>;
+  };
 }
 
 const initialState: StakingState = {
@@ -103,6 +108,10 @@ const initialState: StakingState = {
     delegationsLoading: 0,
     hasUnbonding: false,
     hasDelegations: false,
+  },
+  witvalNonCosmosValidators: {
+    chains: {},
+    delegators: {},
   },
   defaultState: {
     paramsStatus: TxStatus.INIT,
@@ -691,7 +700,6 @@ export const getAllValidators = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
-    console.log("cal......eee")
     try {
       const validators = [];
       let nextKey = null;
@@ -939,6 +947,54 @@ export const getAuthzValidator = createAsyncThunk(
       return {
         data: response.data,
         chainID: data.chainID,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
+export const getWitvalPolygonValidator = createAsyncThunk(
+  'staking/get-polygon-witval',
+  async (
+    data: {
+      baseURL: string;
+      id: number;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await stakingService.polygonValidator(
+        data.baseURL,
+        data.id
+      );
+      return {
+        data: response.data,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
+export const getWitvalPolygonDelegatorsCount = createAsyncThunk(
+  'staking/get-polygon-witval-delegators',
+  async (
+    data: {
+      baseURL: string;
+      id: number;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await stakingService.polygonDelegators(
+        data.baseURL,
+        data.id
+      );
+      return {
+        data: response.data,
       };
     } catch (error) {
       if (error instanceof AxiosError) return rejectWithValue(error.message);
@@ -1412,6 +1468,26 @@ export const stakeSlice = createSlice({
         };
       })
       .addCase(getTotalDelegationsCount.rejected, () => {});
+
+    builder
+      .addCase(getWitvalPolygonValidator.pending, () => {})
+      .addCase(getWitvalPolygonValidator.fulfilled, (state, action) => {
+        state.witvalNonCosmosValidators.chains = {
+          ...state.witvalNonCosmosValidators.chains,
+          polygon: action.payload.data,
+        };
+      })
+      .addCase(getWitvalPolygonValidator.rejected, () => {});
+
+    builder
+      .addCase(getWitvalPolygonDelegatorsCount.pending, () => {})
+      .addCase(getWitvalPolygonDelegatorsCount.fulfilled, (state, action) => {
+        state.witvalNonCosmosValidators.delegators = {
+          ...state.witvalNonCosmosValidators.delegators,
+          polygon: action.payload?.data?.summary?.total,
+        };
+      })
+      .addCase(getWitvalPolygonDelegatorsCount.rejected, () => {});
 
     builder
       .addCase(txDelegate.pending, (state, action) => {

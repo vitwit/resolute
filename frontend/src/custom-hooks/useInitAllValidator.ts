@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './StateHooks';
-import { getAllValidators } from '@/store/features/staking/stakeSlice';
+import {
+  getAllValidators,
+  getWitvalPolygonDelegatorsCount,
+  getWitvalPolygonValidator,
+} from '@/store/features/staking/stakeSlice';
 import useGetAllChainsInfo from './useGetAllChainsInfo';
+import { POLYGON_API, POLYGON_CONFIG } from '@/utils/constants';
 
 const useInitAllValidator = () => {
   const networks = useAppSelector((state) => state.common.allNetworksInfo);
@@ -19,7 +24,22 @@ const useInitAllValidator = () => {
         })
       );
     });
-  }, []);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+  }, []);
+
+  useEffect(() => {
+    dispatch(
+      getWitvalPolygonValidator({
+        baseURL: POLYGON_API,
+        id: 50,
+      })
+    );
+    dispatch(
+      getWitvalPolygonDelegatorsCount({
+        baseURL: POLYGON_CONFIG.baseURL,
+        id: 50,
+      })
+    );
+  }, []);
 };
 
 export default useInitAllValidator;

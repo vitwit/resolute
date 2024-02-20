@@ -22,6 +22,9 @@ const validatorURL = (address: string) =>
 const paramsURL = '/cosmos/staking/v1beta1/params';
 const poolURL = '/cosmos/staking/v1beta1/pool';
 
+const polygonValidatorURL = (id: number) => `/validators/${id}`;
+const polygonDelegatorsURL = (id: number) => `/validators/${id}/delegators`;
+
 const fetchValidators = (
   baseURLs: string[],
   status?: string,
@@ -90,6 +93,26 @@ const fetchValidatorDelegations = async (
   return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
 };
 
+const fetchPolygonValidator = async (
+  baseURL: string,
+  id: number
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+): Promise<AxiosResponse<any>> => {
+  const endPoint = `${polygonValidatorURL(id)}`;
+
+  return axiosGetRequestWrapper([baseURL], endPoint, MAX_TRY_END_POINTS);
+};
+
+const fetchPolygonDelegators = async (
+  baseURL: string,
+  id: number
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+): Promise<AxiosResponse<any>> => {
+  const endPoint = `${polygonDelegatorsURL(id)}`;
+
+  return axiosGetRequestWrapper([baseURL], endPoint, MAX_TRY_END_POINTS);
+};
+
 const result = {
   validators: fetchValidators,
   delegations: fetchdelegations,
@@ -98,6 +121,8 @@ const result = {
   poolInfo: fetchPoolInfo,
   validatorInfo: fetchValidator,
   validatorDelegations: fetchValidatorDelegations,
+  polygonValidator: fetchPolygonValidator,
+  polygonDelegators: fetchPolygonDelegators,
 };
 
 export default result;
