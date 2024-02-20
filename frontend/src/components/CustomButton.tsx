@@ -1,3 +1,4 @@
+import { isMetaMaskWallet } from '@/utils/localStorage';
 import { CircularProgress, Tooltip } from '@mui/material';
 import React from 'react';
 
@@ -14,13 +15,15 @@ const CustomSubmitButton = ({
   buttonContent: string;
   isIBC?:boolean;
 }) => {
+  const isMetaMask = isMetaMaskWallet();
+
   return (
     <div>
       <Tooltip
-        title={isIBC ? 'Metamask does not support IBC' : ''}
+        title={(isIBC && isMetaMask) ? 'Metamask does not support IBC' : ''}
         placement="top-end"
       >
-        <button disabled={pendingStatus || isIBC}
+        <button disabled={pendingStatus || (isIBC && isMetaMask)}
           type="submit" className={buttonStyle}>
           {pendingStatus ? (
             <CircularProgress size={circularProgressSize} />
