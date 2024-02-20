@@ -10,7 +10,6 @@ import useGetValidatorInfo from '@/custom-hooks/useGetValidatorInfo';
 import { capitalizeFirstLetter, formatValidatorStatsValue } from '@/utils/util';
 import ValidatorLogo from '../../components/ValidatorLogo';
 import { Tooltip } from '@mui/material';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
 
 const ValidatorProfile = ({ moniker }: { moniker: string }) => {
   const tabs = ['Profile', 'Announcements', 'Inbox', 'Notices'];

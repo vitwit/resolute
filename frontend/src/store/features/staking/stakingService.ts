@@ -16,7 +16,7 @@ const delegationsURL = '/cosmos/staking/v1beta1/delegations/';
 const unbondingDelegationsURL = (address: string) =>
   `/cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`;
 const validatorDelegationsURL = (operatorAddress: string) =>
-  `/cosmos/staking/v1beta1/validators/${operatorAddress}/delegations`;
+  `/cosmos/staking/v1beta1/validators/${operatorAddress}/delegations?pagination.count_total=1`;
 const validatorURL = (address: string) =>
   `/cosmos/staking/v1beta1/validators/${address}`;
 const paramsURL = '/cosmos/staking/v1beta1/params';

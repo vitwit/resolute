@@ -23,3 +23,12 @@
 .validator-profile-menu-item {
   @apply cursor-pointer px-2 text-[18px] h-9 flex items-center pb-[14px] leading-[21.7px];
 }
+
+.button-disabled {
+  @apply bg-[#FFFFFF1A] text-[#FFFFFF1A] cursor-not-allowed;
+  background: #ffffff1a;
+}
+
+.stake-btn {
+  @apply px-3 py-[6px] w-full rounded-lg;
+}

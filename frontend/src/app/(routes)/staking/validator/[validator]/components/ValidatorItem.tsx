@@ -12,15 +12,8 @@ import DialogDelegate from '../../../components/DialogDelegate';
 import { parseBalance } from '@/utils/denom';
 import { TxStatus } from '@/types/enums';
 import useGetAllChainsInfo from '@/custom-hooks/useGetAllChainsInfo';
-import { networks } from '../../../../../../utils/chainsInfo';
-import {
-  connectSnap,
-  experimentalSuggestChain,
-  getSnap,
-} from '@leapwallet/cosmos-snap-provider';
-import { establishWalletConnection } from '@/store/features/wallet/walletSlice';
-import { getLocalNetworks } from '@/utils/localStorage';
-import WalletPopup from '@/components/WalletPopup';
+import { Tooltip } from '@mui/material';
+import { getBalances } from '@/store/features/bank/bankSlice';
 
 const ValidatorItem = ({
   validatorInfo,
@@ -112,57 +105,17 @@ const ValidatorItem = ({
     }
   }, [txStatus?.status]);
 
-  const [load, setLoad] = useState<boolean>(false);
-  const [connectWalletDialogOpen, setConnectWalletDialogOpen] =
-    useState<boolean>(false);
-  const handleClose = () => {
-    setConnectWalletDialogOpen(
-      (connectWalletDialogOpen) => !connectWalletDialogOpen
-    );
-  };
-  const selectWallet = (walletName: string) => {
-    tryConnectWallet(walletName);
-    handleClose();
-  };
-
-  const tryConnectWallet = async (walletName: string) => {
-    setLoad(true);
-    if (walletName === 'metamask') {
-      try {
-        for (let i = 0; i < networks.length; i++) {
-          const chainId: string = networks[i].config.chainId;
-          const snapInstalled = await getSnap();
-          if (!snapInstalled) {
-            await connectSnap(); // Initiates installation if not already present
-          }
-
-          try {
-            await experimentalSuggestChain(networks[i].config, {
-              force: false,
-            });
-          } catch (error) {
-            console.log('Error while connecting ', chainId);
-          }
-        }
-      } catch (error) {
-        console.log('trying to connect wallet ', error);
-      }
-    }
-
+  const handleDelegate = () => {
+    const { address, baseURL } = getChainInfo(chainID);
     dispatch(
-      establishWalletConnection({
-        walletName,
-        networks: [...networks, ...getLocalNetworks()],
+      getBalances({
+        baseURLs: restURLs,
+        chainID,
+        address,
+        baseURL,
       })
     );
-  };
-
-  const handleDelegate = () => {
-    if (connected) {
-      setDialogOpen(true);
-    } else {
-      setConnectWalletDialogOpen(true);
-    }
+    setDialogOpen(true);
   };
 
   return (
@@ -180,12 +133,18 @@ const ValidatorItem = ({
       <td>{formatCommission(commission)}</td>
       <td>{'$ ' + totalStaked}</td>
       <td>
-        <button
-          onClick={handleDelegate}
-          className="primary-gradient px-3 py-[6px] w-full rounded-lg"
-        >
-          {connected ? 'Stake' : 'Connect Wallet to Stake'}
-        </button>
+        {connected ? (
+          <button
+            onClick={handleDelegate}
+            className="stake-btn primary-gradient"
+          >
+            Stake
+          </button>
+        ) : (
+          <Tooltip title="Connect wallet to stake">
+            <button className="stake-btn button-disabled">Stake</button>
+          </Tooltip>
+        )}
       </td>
       <DialogDelegate
         onClose={handleDialogClose}
@@ -197,12 +156,6 @@ const ValidatorItem = ({
         displayDenom={displayDenom}
         onDelegate={onDelegateTx}
         feeAmount={avgFeeAmount}
-      />
-
-      <WalletPopup
-        isOpen={connectWalletDialogOpen}
-        onClose={handleClose}
-        selectWallet={selectWallet}
       />
     </tr>
   );
