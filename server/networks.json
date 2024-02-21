@@ -1,0 +1,14 @@
+[
+  {
+    "chainId": "passage-2",
+    "rest": ["https://api.passage.vitwit.com"]
+  },
+  {
+    "chainId": "osmosis-2",
+    "rest": ["https://osmosis-lcd.numia.xyz"]
+  },
+  {
+    "chainId": "testnet",
+    "rest": ["http://localhost:1317"]
+  }
+]
