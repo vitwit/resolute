@@ -48,4 +48,5 @@ interface CommonState {
   tokensInfoState: TokensInfoState;
   selectedNetwork: SelectedNetwork;
   allTokensInfoState: AllTokensInfoState;
+  allNetworksInfo: Record<string, Network>
 }

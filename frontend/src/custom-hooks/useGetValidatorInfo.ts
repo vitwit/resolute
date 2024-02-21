@@ -2,23 +2,25 @@ import { useAppSelector } from './StateHooks';
 import { RootState } from '@/store/store';
 import { ValidatorProfileInfo } from '@/types/staking';
 import { getValidatorRank } from '@/utils/util';
-import useGetChainInfo from './useGetChainInfo';
 import { parseBalance } from '@/utils/denom';
+import useGetAllChainsInfo from './useGetAllChainsInfo';
+import { OASIS_CONFIG, POLYGON_CONFIG, WITVAL } from '@/utils/constants';
 
 const useGetValidatorInfo = () => {
   const stakingData = useAppSelector(
     (state: RootState) => state.staking.chains
   );
-  const nameToChainIDs = useAppSelector(
-    (state: RootState) => state.wallet.nameToChainIDs
+  const allNetworksInfo = useAppSelector(
+    (state: RootState) => state.common.allNetworksInfo
   );
-  const chainIDs = Object.keys(nameToChainIDs).map(
-    (chainName) => nameToChainIDs[chainName]
-  );
+  const chainIDs = Object.keys(allNetworksInfo);
   const tokensPriceInfo = useAppSelector(
     (state) => state.common.allTokensInfoState.info
   );
-  const { getDenomInfo } = useGetChainInfo();
+  const nonCosmosData = useAppSelector(
+    (state) => state.staking.witvalNonCosmosValidators
+  );
+  const { getAllDenomInfo } = useGetAllChainsInfo();
 
   const getValidatorInfo = ({
     chainID,
@@ -51,7 +53,12 @@ const useGetValidatorInfo = () => {
     ) {
       const validator = Object.values(
         stakingData?.[chainID]?.validators.inactive
-      ).find((v) => v.description.moniker === moniker);
+      ).find((v) => {
+        return (
+          v.description.moniker.trim().toLowerCase() ===
+          moniker.trim().toLowerCase()
+        );
+      });
 
       if (validator) {
         return validator;
@@ -71,7 +78,7 @@ const useGetValidatorInfo = () => {
       const validatorInfo = getValidatorInfo({ chainID, moniker });
 
       if (validatorInfo) {
-        const { decimals, minimalDenom } = getDenomInfo(chainID);
+        const { decimals, minimalDenom } = getAllDenomInfo(chainID);
         const activeSorted = stakingData?.[chainID]?.validators.activeSorted;
         const inactiveSorted =
           stakingData?.[chainID]?.validators.inactiveSorted;
@@ -138,8 +145,10 @@ const useGetValidatorInfo = () => {
 
   const getValidatorStats = ({
     data,
+    moniker,
   }: {
     data: Record<string, ValidatorProfileInfo>;
+    moniker: string;
   }) => {
     let totalStaked = 0;
     let totalDelegators = 0;
@@ -165,7 +174,34 @@ const useGetValidatorInfo = () => {
       }
       totalNetworks += 1;
     });
-    const avgCommission = totalCommission / Object.keys(data).length;
+    if (moniker.toLowerCase() === WITVAL) {
+      {
+        const {
+          commission,
+          totalDelegators: delegators,
+          totalStakedInUSD: totalStaked,
+        } = getPolygonValidatorInfo();
+        totalCommission += Number(commission || 0);
+        totalDelegators += totalStaked;
+        totalDelegators += delegators;
+        activeNetworks += 1;
+        totalNetworks += 1;
+      }
+
+      {
+        const {
+          commission,
+          totalDelegators: delegators,
+          totalStakedInUSD: totalStaked,
+        } = getOasisValidatorInfo();
+        totalCommission += Number(commission || 0);
+        totalDelegators += totalStaked;
+        totalDelegators += delegators;
+        activeNetworks += 1;
+        totalNetworks += 1;
+      }
+    }
+    const avgCommission = totalCommission / totalNetworks;
 
     return {
       totalStaked,
@@ -176,7 +212,85 @@ const useGetValidatorInfo = () => {
     };
   };
 
-  return { getChainwiseValidatorInfo, getValidatorStats };
+  const getPolygonValidatorInfo = () => {
+    const usdPriceInfo: TokenInfo | undefined =
+      tokensPriceInfo?.[POLYGON_CONFIG.coinGeckoId]?.info;
+    const polygonData = nonCosmosData.chains?.['polygon'];
+    const polygonDelegators = Number(nonCosmosData.delegators['polygon']);
+    let totalStakedInUSD = 0;
+    let commission = '';
+    let totalDelegators = 0;
+    let totalStakedTokens = 0;
+    let operatorAddress = '';
+
+    if (polygonData) {
+      totalStakedTokens =
+        Number(polygonData?.result?.totalStaked) /
+        10 ** POLYGON_CONFIG.decimals;
+      totalStakedInUSD = usdPriceInfo
+        ? totalStakedTokens * usdPriceInfo.usd
+        : 0;
+      commission = polygonData?.result?.commissionPercent;
+      totalDelegators = polygonDelegators || 0;
+      operatorAddress = polygonData?.result?.owner;
+    }
+
+    return {
+      totalStakedInUSD,
+      commission,
+      totalDelegators,
+      totalStakedTokens,
+      operatorAddress,
+    };
+  };
+
+  const getOasisValidatorInfo = () => {
+    const usdPriceInfo: TokenInfo | undefined =
+      tokensPriceInfo?.[OASIS_CONFIG.coinGeckoId]?.info;
+    const oasisDelegations = nonCosmosData.delegators['oasis'];
+    let totalStakedInUSD = 0;
+    let commission = '';
+    let totalDelegators = 0;
+    let totalStakedTokens = 0;
+    let operatorAddress = '';
+    if (oasisDelegations) {
+      const { delegations } = oasisDelegations;
+      let totalDelegationAmount = 0;
+      delegations?.forEach(
+        (delegation: {
+          amount: string;
+          delegator: string;
+          shares: string;
+          validator: string;
+        }) => {
+          totalDelegationAmount += Number(delegation?.amount || 0);
+        }
+      );
+
+      totalStakedTokens = totalDelegationAmount / 10 ** OASIS_CONFIG.decimals;
+      totalStakedInUSD = usdPriceInfo
+        ? totalStakedTokens * usdPriceInfo.usd
+        : 0;
+      commission = OASIS_CONFIG.witval.commission.toString();
+      totalDelegators = delegations?.length || 0;
+      operatorAddress = OASIS_CONFIG.witval.operatorAddress;
+    }
+
+    return {
+      totalStakedInUSD,
+      commission,
+      totalDelegators,
+      totalStakedTokens,
+      operatorAddress,
+    };
+  };
+
+  return {
+    getChainwiseValidatorInfo,
+    getValidatorStats,
+    getPolygonValidatorInfo,
+    getOasisValidatorInfo,
+  };
 };
 
 export default useGetValidatorInfo;

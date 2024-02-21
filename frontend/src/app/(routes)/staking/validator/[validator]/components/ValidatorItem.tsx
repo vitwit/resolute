@@ -11,6 +11,9 @@ import NetworkItem from './NetworkItem';
 import DialogDelegate from '../../../components/DialogDelegate';
 import { parseBalance } from '@/utils/denom';
 import { TxStatus } from '@/types/enums';
+import useGetAllChainsInfo from '@/custom-hooks/useGetAllChainsInfo';
+import { Tooltip } from '@mui/material';
+import { getBalances } from '@/store/features/bank/bankSlice';
 
 const ValidatorItem = ({
   validatorInfo,
@@ -26,12 +29,13 @@ const ValidatorItem = ({
     operatorAddress,
   } = validatorInfo;
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const { getAllChainInfo } = useGetAllChainsInfo();
   const {
     chainName,
     chainLogo,
     restURLs,
     feeAmount: avgFeeAmount,
-  } = getChainInfo(chainID);
+  } = getAllChainInfo(chainID);
   const dispatch = useAppDispatch();
 
   const totalDelegators = useAppSelector(
@@ -55,6 +59,7 @@ const ValidatorItem = ({
   const balance = useAppSelector((state) => state.bank.balances[chainID]);
   const txStatus = useAppSelector((state) => state.staking.chains[chainID]?.tx);
   const feeAmount = avgFeeAmount * 10 ** decimals;
+  const connected = useAppSelector((state) => state.wallet.connected);
 
   const onDelegateTx = (data: DelegateTxInputs) => {
     const basicChainInfo = getChainInfo(chainID);
@@ -100,6 +105,19 @@ const ValidatorItem = ({
     }
   }, [txStatus?.status]);
 
+  const handleDelegate = () => {
+    const { address, baseURL } = getChainInfo(chainID);
+    dispatch(
+      getBalances({
+        baseURLs: restURLs,
+        chainID,
+        address,
+        baseURL,
+      })
+    );
+    setDialogOpen(true);
+  };
+
   return (
     <tr>
       <td>
@@ -115,12 +133,18 @@ const ValidatorItem = ({
       <td>{formatCommission(commission)}</td>
       <td>{'$ ' + totalStaked}</td>
       <td>
-        <button
-          onClick={() => setDialogOpen(true)}
-          className="primary-gradient px-3 py-[6px] w-full rounded-lg"
-        >
-          Stake
-        </button>
+        {connected ? (
+          <button
+            onClick={handleDelegate}
+            className="stake-btn primary-gradient"
+          >
+            Stake
+          </button>
+        ) : (
+          <Tooltip title="Connect wallet to stake">
+            <button className="stake-btn button-disabled">Stake</button>
+          </Tooltip>
+        )}
       </td>
       <DialogDelegate
         onClose={handleDialogClose}
