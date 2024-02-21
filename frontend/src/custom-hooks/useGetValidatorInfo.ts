@@ -53,7 +53,12 @@ const useGetValidatorInfo = () => {
     ) {
       const validator = Object.values(
         stakingData?.[chainID]?.validators.inactive
-      ).find((v) => v.description.moniker === moniker);
+      ).find((v) => {
+        return (
+          v.description.moniker.trim().toLowerCase() ===
+          moniker.trim().toLowerCase()
+        );
+      });
 
       if (validator) {
         return validator;
@@ -248,7 +253,6 @@ const useGetValidatorInfo = () => {
     let totalDelegators = 0;
     let totalStakedTokens = 0;
     let operatorAddress = '';
-
     if (oasisDelegations) {
       const { delegations } = oasisDelegations;
       let totalDelegationAmount = 0;
@@ -269,7 +273,7 @@ const useGetValidatorInfo = () => {
         : 0;
       commission = OASIS_CONFIG.witval.commission.toString();
       totalDelegators = delegations?.length || 0;
-      operatorAddress = 'oasis1qzc687uuywnel4eqtdn6x3t9hkdvf6sf2gtv4ye9';
+      operatorAddress = OASIS_CONFIG.witval.operatorAddress;
     }
 
     return {

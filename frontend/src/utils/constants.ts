@@ -255,5 +255,6 @@ export const OASIS_CONFIG = {
     profile:
       'https://www.oasisscan.com/validators/detail/oasis1qzc687uuywnel4eqtdn6x3t9hkdvf6sf2gtv4ye9',
     commission: 19,
+    operatorAddress: 'oasis1qzc687uuywnel4eqtdn6x3t9hkdvf6sf2gtv4ye9',
   },
 };

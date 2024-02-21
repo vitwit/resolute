@@ -51,8 +51,8 @@ const ValidatorsTable = ({
                 })}
                 {isWitval ? (
                   <>
-                    <NonCosmosValidators />
-                    <NonCosmosValidators2 />
+                    <NonCosmosValidators networkName={'polygon'} />
+                    <NonCosmosValidators networkName={'oasis'} />
                   </>
                 ) : null}
               </tbody>
@@ -66,21 +66,26 @@ const ValidatorsTable = ({
 
 export default ValidatorsTable;
 
-const NonCosmosValidators = () => {
-  const { getPolygonValidatorInfo } = useGetValidatorInfo();
+const NonCosmosValidators = ({ networkName }: { networkName: string }) => {
+  const { getPolygonValidatorInfo, getOasisValidatorInfo } =
+    useGetValidatorInfo();
   const {
     commission,
     totalDelegators,
     totalStakedInUSD,
     totalStakedTokens,
     operatorAddress,
-  } = getPolygonValidatorInfo();
+  } =
+    networkName === 'polygon'
+      ? getPolygonValidatorInfo()
+      : getOasisValidatorInfo();
   const totalStaked = formatValidatorStatsValue(totalStakedInUSD.toString(), 0);
   const votingPower = formatValidatorStatsValue(
     totalStakedTokens.toString(),
     0
   );
-  const { logo, witval } = POLYGON_CONFIG;
+  const { logo, witval } =
+    networkName === 'polygon' ? POLYGON_CONFIG : OASIS_CONFIG;
   const connected = useAppSelector((state) => state.wallet.connected);
 
   return (
@@ -88,7 +93,7 @@ const NonCosmosValidators = () => {
       <td>
         <NetworkItem
           logo={logo}
-          networkName={'Polygon'}
+          networkName={networkName}
           operatorAddress={operatorAddress}
         />
       </td>
@@ -100,52 +105,6 @@ const NonCosmosValidators = () => {
       <td>
         {connected ? (
           <Link href={witval.profile} target="_blank">
-            <button className="stake-btn primary-gradient">Stake</button>
-          </Link>
-        ) : (
-          <Tooltip title="Connect wallet to stake">
-            <button className="stake-btn button-disabled">Stake</button>
-          </Tooltip>
-        )}
-      </td>
-    </tr>
-  );
-};
-
-const NonCosmosValidators2 = () => {
-  const { getOasisValidatorInfo } = useGetValidatorInfo();
-  const {
-    commission,
-    totalDelegators,
-    totalStakedInUSD,
-    totalStakedTokens,
-    operatorAddress,
-  } = getOasisValidatorInfo();
-  const totalStaked = formatValidatorStatsValue(totalStakedInUSD.toString(), 0);
-  const votingPower = formatValidatorStatsValue(
-    totalStakedTokens.toString(),
-    0
-  );
-  const { logo, witval } = OASIS_CONFIG;
-  const connected = useAppSelector((state) => state.wallet.connected);
-
-  return (
-    <tr>
-      <td>
-        <NetworkItem
-          logo={logo}
-          networkName={'Oasis'}
-          operatorAddress={operatorAddress}
-        />
-      </td>
-      <td>{'-'}</td>
-      <td>{votingPower || '-'}</td>
-      <td>{totalDelegators !== 0 ? totalDelegators.toLocaleString() : '-'}</td>
-      <td>{formatCommission(Number(commission))}</td>
-      <td>{totalStaked !== '0' ? '$ ' + totalStaked : '$ -'}</td>
-      <td>
-        {connected ? (
-          <Link href={witval?.profile} target="_blank">
             <button className="stake-btn primary-gradient">Stake</button>
           </Link>
         ) : (
