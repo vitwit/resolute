@@ -1,5 +1,7 @@
 package txn_types
 
+import "time"
+
 type TxResponse struct {
 	Code      int           `json:"code"`
 	Codespace string        `json:"codespace"`
@@ -68,7 +70,7 @@ type ParsedTxn struct {
 	GasWanted string        `json:"gas_wanted"`
 	Height    string        `json:"height"`
 	RawLog    string        `json:"raw_log"`
-	Timestamp string        `json:"timestamp"`
+	Timestamp time.Time     `json:"timestamp"`
 	Txhash    string        `json:"txhash"`
 	Memo      string        `json:"memo"`
 	Messages  []interface{} `json:"messages"`

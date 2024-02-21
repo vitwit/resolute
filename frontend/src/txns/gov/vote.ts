@@ -1,5 +1,5 @@
 import { VoteOption } from 'cosmjs-types/cosmos/gov/v1beta1/gov';
-import {  } from 'cosmjs-types/cosmos/gov/v1beta1/tx';
+import { MsgVote } from 'cosmjs-types/cosmos/gov/v1beta1/tx';
 
 const msgVote = '/cosmos.gov.v1beta1.MsgVote';
 

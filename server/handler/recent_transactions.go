@@ -33,19 +33,20 @@ func (h *Handler) GetRecentTransactions(c echo.Context) error {
 			Message: err.Error(),
 		})
 	}
-	fmt.Println(module)
-	result := make(map[string]txn_types.TransactionResponses)
+	result := []txn_types.ParsedTxn{}
 	for i := 0; i < len(req.Addresses); i++ {
-		fmt.Println(req.Addresses[i])
 		res, _ := getNetworkRecentTransactions(req.Addresses[i].ChainId, module, req.Addresses[i].Address)
-		fmt.Println("=====")
-		fmt.Println(res)
-		result[req.Addresses[i].ChainId] = *res
+		parsedTxns, _ := GetParsedTransactions(*res, req.Addresses[i].ChainId)
+		result = append(result, parsedTxns...)
 	}
+
+	sort.Sort(ByTimestamp(result))
+
+	recentTxns := result[:min(5, len(result))]
 
 	return c.JSON(http.StatusOK, model.SuccessResponse{
 		Status: "done",
-		Data:   result,
+		Data:   recentTxns,
 	})
 }
 
@@ -53,8 +54,6 @@ func getNetworkRecentTransactions(chainId string, module string, address string)
 	var bearer = "Bearer " + "sk_28d9ca62e0a2415fa93d0ad09f27cc78"
 	networkURIs := utils.GetChainAPIs(chainId)
 	requestURI := utils.CreateRequestURI(networkURIs[0], module, address)
-	fmt.Println("=============")
-	fmt.Println(requestURI)
 	req, _ := http.NewRequest("GET", requestURI, nil)
 	req.Header.Add("Authorization", bearer)
 	client := &http.Client{}
@@ -73,8 +72,14 @@ func getNetworkRecentTransactions(chainId string, module string, address string)
 	return &result, nil
 }
 
-func GetSortedTransactions(txns txn_types.TransactionResponses, chainId string) ([]txn_types.ParsedTxn, error) {
+type ByTimestamp []txn_types.ParsedTxn
 
+func (a ByTimestamp) Len() int           { return len(a) }
+func (a ByTimestamp) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByTimestamp) Less(i, j int) bool { return a[i].Timestamp.After(a[j].Timestamp) }
+
+func GetParsedTransactions(txns txn_types.TransactionResponses, chainId string) ([]txn_types.ParsedTxn, error) {
+	layout := "2006-01-02T15:04:05Z"
 	parsedTxns := []txn_types.ParsedTxn{}
 	for i := 0; i < len(txns.TxResponses); i++ {
 		txn_response := txns.TxResponses[i]
@@ -85,7 +90,7 @@ func GetSortedTransactions(txns txn_types.TransactionResponses, chainId string) 
 			GasWanted: txn_response.GasWanted,
 			Height:    txn_response.Height,
 			RawLog:    txn_response.RawLog,
-			Timestamp: txn_response.Timestamp,
+			Timestamp: parseTimestamp(txn_response.Timestamp, layout),
 			Txhash:    txn_response.Txhash,
 			Memo:      txn.Body.Memo,
 			Messages:  txn.Body.Messages,
@@ -94,17 +99,23 @@ func GetSortedTransactions(txns txn_types.TransactionResponses, chainId string) 
 		parsedTxns = append(parsedTxns, parsedTxn)
 	}
 
-	sort.Slice(parsedTxns, func(i, j int) bool {
-		timeI, errI := time.Parse(time.RFC3339, parsedTxns[i].Timestamp)
-		timeJ, errJ := time.Parse(time.RFC3339, parsedTxns[j].Timestamp)
-
-		if errI != nil || errJ != nil {
-			return false
-		}
-
-		return timeI.Before(timeJ)
-	})
+	sort.Sort(ByTimestamp(parsedTxns))
 
 	return parsedTxns, nil
 
+}
+
+func parseTimestamp(timestamp, layout string) time.Time {
+	t, err := time.Parse(layout, timestamp)
+	if err != nil {
+		fmt.Println("Error parsing timestamp:", err)
+	}
+	return t
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
