@@ -7,12 +7,12 @@ import (
 )
 
 type ChainConfig struct {
-	ChainId string   `json:"chainId"`
-	Rest    []string `json:"rest"`
+	ChainId  string   `json:"chainId"`
+	RestURIs []string `json:"restURIs"`
 }
 
 func GetChainAPIs(chainId string) []string {
-	jsonData, err := os.ReadFile("/home/vitwit/hemanthghs/work/resolute/server/networks.json")
+	jsonData, err := os.ReadFile("/home/vitwit/Documents/resolute/server/networks.json")
 	if err != nil {
 		fmt.Println("Error reading JSON file:", err)
 		return nil
@@ -34,7 +34,7 @@ func GetChainAPIs(chainId string) []string {
 		}
 	}
 
-	return result.Rest
+	return result.RestURIs
 }
 
 func CreateRequestURI(api string, module string, address string) string {

@@ -1,14 +1,79 @@
 [
   {
     "chainId": "passage-2",
-    "rest": ["https://api.passage.vitwit.com"]
+    "restURIs": ["https://api.passage.vitwit.com"]
   },
   {
-    "chainId": "osmosis-2",
-    "rest": ["https://osmosis-lcd.numia.xyz"]
+    "chainId": "osmosis-1",
+    "restURIs": [
+      "https://osmosis-lcd.numia.xyz",
+      "https://osmosis-api.polkachu.com",
+      "https://osmosis-lcd.quickapi.com:443"
+    ]
   },
   {
-    "chainId": "testnet",
-    "rest": ["http://localhost:1317"]
+    "chainId": "agoric-3",
+    "restURIs": [
+      "https://agoric-api.polkachu.com",
+      "https://api-agoric-ia.cosmosia.notional.ventures",
+      "https://api.agoric.stakewith.us"
+    ]
+  },
+  {
+    "chainId": "akashnet-2",
+    "restURIs": [
+      "https://api.resolute.vitwit.com/akash_api",
+      "https://akash-api.polkachu.com",
+      "https://rest-akash.ecostake.com"
+    ]
+  },
+  {
+    "chainId": "cosmoshub-4",
+    "restURIs": [
+      "https://api-cosmoshub-ia.cosmosia.notional.ventures",
+      "https://cosmos-lcd.quickapi.com:443",
+      "https://cosmos-rest.staketab.org",
+      "https://lcd-cosmoshub.blockapsis.com"
+    ]
+  },
+  {
+    "chainId": "juno-1",
+    "restURIs": [
+      "https://api.resolute.vitwit.com/juno_api",
+      "https://rest-juno.ecostake.com",
+      "https://juno-api.polkachu.com"
+    ]
+  },
+  {
+    "chainId": "dydx-mainnet-1",
+    "restURIs": [
+      "https://dydx-rest.publicnode.com",
+      "https://dydx-dao-api.polkachu.com"
+    ]
+  },
+  {
+    "chainId": "stargaze-1",
+    "restURIs": [
+      "https://stargaze-api.polkachu.com",
+      "https://stargaze-rest.publicnode.com",
+      "https://api-stargaze-ia.cosmosia.notional.ventures"
+    ]
+  },
+  {
+    "chainId": "dymension_1100-1",
+    "restURIs": [
+      "https://dymension-mainnet-lcd.autostake.com:443",
+      "https://dymension.api.kjnodes.com",
+      "https://api.dymension.nodestake.org",
+      "https://dymension-api.lavenderfive.com:443"
+    ]
+  },
+  {
+    "chainId": "celestia",
+    "restURIs": [
+      "https://public-celestia-lcd.numia.xyz",
+      "https://api.celestia.nodestake.top",
+      "https://celestia-api.lavenderfive.com:443"
+    ]
   }
 ]
