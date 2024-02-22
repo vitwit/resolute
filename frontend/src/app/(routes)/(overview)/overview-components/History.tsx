@@ -8,6 +8,8 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import { useRouter } from 'next/navigation';
 import NoTransactions from '@/components/illustrations/NoTransactions';
 import useGetAuthzAssetsAmount from '../../../../custom-hooks/useGetAuthzAssetsAmount';
+import { TxStatus } from '@/types/enums';
+import { CircularProgress } from '@mui/material';
 
 const History = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
@@ -97,22 +99,34 @@ export const RecentTransactions = ({
   const transactions = useAppSelector(
     (state) => state.recentTransactions.txns.data
   );
+  const txnsLoading = useAppSelector(
+    (state) => state.recentTransactions.txns.status
+  );
+
   return (
     <div className="flex-1 overflow-y-scroll">
-      {transactions.length ? (
-        <div className="text-white w-full space-y-3 mt-6">
-          {transactions.map((tx) => (
-            <TransactionItem
-              key={tx.timestamp}
-              transaction={tx}
-              msgFilters={msgFilters}
-            />
-          ))}
+      {txnsLoading === TxStatus.PENDING ? (
+        <div className="flex justify-center mt-[40%]">
+          <CircularProgress size={32} sx={{ color: 'white' }} />
         </div>
       ) : (
-        <div className="h-full flex items-center">
-          <NoTransactions />
-        </div>
+        <>
+          {transactions.length ? (
+            <div className="text-white w-full space-y-3 mt-6">
+              {transactions.map((tx) => (
+                <TransactionItem
+                  key={tx.timestamp}
+                  transaction={tx}
+                  msgFilters={msgFilters}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="h-full flex items-center">
+              <NoTransactions />
+            </div>
+          )}
+        </>
       )}
     </div>
   );

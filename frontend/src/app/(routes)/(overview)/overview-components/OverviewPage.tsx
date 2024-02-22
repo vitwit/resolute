@@ -32,41 +32,41 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   );
   const { getAllChainAddresses } = useGetChainInfo();
 
-  // useInitAuthzForOverview(chainIDs);
-  // useEffect(() => {
-  //   chainIDs.forEach((chainID) => {
-  //     const allChainInfo = networks[chainID];
-  //     const chainInfo = allChainInfo.network;
-  //     const address = allChainInfo?.walletInfo?.bech32Address;
-  //     const minimalDenom =
-  //       allChainInfo.network.config.stakeCurrency.coinMinimalDenom;
-  //     const basicChainInputs = {
-  //       baseURL: chainInfo.config.rest,
-  //       baseURLs: chainInfo.config.restURIs,
-  //       address,
-  //       chainID,
-  //     };
-  //     dispatch(getBalances(basicChainInputs));
-  //     dispatch(getDelegations(basicChainInputs));
-  //     dispatch(getAccountInfo(basicChainInputs));
-  //     dispatch(
-  //       getDelegatorTotalRewards({
-  //         baseURLs: chainInfo.config.restURIs,
-  //         baseURL: chainInfo.config.rest,
-  //         address: address,
-  //         chainID: chainID,
-  //         denom: minimalDenom,
-  //       })
-  //     );
-  //     dispatch(
-  //       getUnbonding({
-  //         baseURLs: chainInfo.config.restURIs,
-  //         address: address,
-  //         chainID,
-  //       })
-  //     );
-  //   });
-  // }, []);
+  useInitAuthzForOverview(chainIDs);
+  useEffect(() => {
+    chainIDs.forEach((chainID) => {
+      const allChainInfo = networks[chainID];
+      const chainInfo = allChainInfo.network;
+      const address = allChainInfo?.walletInfo?.bech32Address;
+      const minimalDenom =
+        allChainInfo.network.config.stakeCurrency.coinMinimalDenom;
+      const basicChainInputs = {
+        baseURL: chainInfo.config.rest,
+        baseURLs: chainInfo.config.restURIs,
+        address,
+        chainID,
+      };
+      dispatch(getBalances(basicChainInputs));
+      dispatch(getDelegations(basicChainInputs));
+      dispatch(getAccountInfo(basicChainInputs));
+      dispatch(
+        getDelegatorTotalRewards({
+          baseURLs: chainInfo.config.restURIs,
+          baseURL: chainInfo.config.rest,
+          address: address,
+          chainID: chainID,
+          denom: minimalDenom,
+        })
+      );
+      dispatch(
+        getUnbonding({
+          baseURLs: chainInfo.config.restURIs,
+          address: address,
+          chainID,
+        })
+      );
+    });
+  }, []);
 
   useEffect(() => {
     if (chainIDs) {

@@ -1,4 +1,4 @@
-import { formatAmount, shortenMsg } from '@/utils/util';
+import { formatNumber, parseDenomAmount, shortenMsg } from '@/utils/util';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { MsgDelegate } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 
@@ -42,10 +42,14 @@ export function EncodeDelegate(
   };
 }
 
-export function serialize(msg: any): string {
+export function serialize(
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  msg: any,
+  decimals: number,
+  originalDenom: string
+): string {
   const amount = msg?.amount;
   const validatorAddress = msg?.validator_address;
-  return `Delegated ${formatAmount(
-    +amount?.amount || 0
-  )} ${amount.denom} to ${shortenMsg(validatorAddress, 10)}`;
+  return `Delegated ${formatNumber(parseDenomAmount(amount?.amount || '0', decimals))} 
+  ${originalDenom} to ${shortenMsg(validatorAddress, 10)}`;
 }

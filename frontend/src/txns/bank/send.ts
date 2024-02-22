@@ -29,6 +29,7 @@ export function serialize(msg: Msg): string {
   return `Sent ${amount[0].amount} ${amount[0].denom} to ${toAddress}`;
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function formattedSerialize(
   msg: any,
   decimals: number,

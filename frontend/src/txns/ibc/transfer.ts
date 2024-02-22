@@ -1,8 +1,8 @@
-import { parseBalance } from '@/utils/denom';
-import { formatNumber } from '@/utils/util';
+import { formatNumber, parseDenomAmount } from '@/utils/util';
 
 export const msgTransfer = '/ibc.applications.transfer.v1.MsgTransfer';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function serialize(
   msg: any,
   decimals: number,
@@ -10,6 +10,7 @@ export function serialize(
 ): string {
   const receiver = msg?.receiver;
   const token = msg?.token;
-  const parsedAmount = parseBalance([token], decimals, token?.denom);
-  return `Transfer ${formatNumber(parsedAmount)} ${originalDenom} to ${receiver}`;
+  return `Transfer ${formatNumber(
+    parseDenomAmount(token?.amount || '0', decimals)
+  )} ${originalDenom} to ${receiver}`;
 }

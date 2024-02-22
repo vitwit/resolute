@@ -33,7 +33,7 @@ export function NewTransaction(
   address: string,
   isIBC?: boolean,
   isIBCPending?: boolean
-): Transaction  {
+): Transaction {
   const transaction: Transaction = {
     code: txResponse.code,
     transactionHash: txResponse.transactionHash,
@@ -74,27 +74,28 @@ export const MsgType = (msg: string): string => {
   }
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const serializeMsg = (
   msg: any,
   decimals: number,
   originDenom: string
 ): string => {
   if (!msg) return 'No Message';
-  switch (msg["@type"]) {
+  switch (msg['@type']) {
     case msgDelegate:
-      return serializeMsgDelegate(msg);
+      return serializeMsgDelegate(msg, decimals, originDenom);
     case msgUnDelegate:
-      return serializeMsgUndelegte(msg);
-    // case msgReDelegate:
-    //   return serializeMsgRedelegte(msg);
+      return serializeMsgUndelegte(msg, decimals, originDenom);
+    case msgReDelegate:
+      return serializeMsgRedelegte(msg, decimals, originDenom);
     case msgSendTypeUrl:
       return serializeMsgSend(msg, decimals, originDenom, true);
-    // case msgWithdrawRewards:
-    //   return serializeMsgClaim(msg);
+    case msgWithdrawRewards:
+      return serializeMsgClaim(msg);
     case msgTransfer:
       return serializeMsgTransfer(msg, decimals, originDenom);
-    // case msgAuthzExecTypeUrl:
-    //   return serializeMsgExec();
+    case msgAuthzExecTypeUrl:
+      return serializeMsgExec();
     default:
       return `Todo: serialize message ${msg.typeUrl}`;
   }
@@ -109,10 +110,10 @@ export const formatTransaction = (
   const msgs = tx.messages;
   const showMsgs: [string, string, boolean] = ['', '', false];
   if (msgs[0]) {
-    showMsgs[0] = MsgType(msgs[0]['@type']);
+    showMsgs[0] = MsgType(msgs[0]?.['@type']);
   }
   if (msgs[1]) {
-    showMsgs[1] = MsgType(msgs[1]['@type']);
+    showMsgs[1] = MsgType(msgs[1]?.['@type']);
   }
   if (msgs.length > 2) {
     showMsgs[2] = true;

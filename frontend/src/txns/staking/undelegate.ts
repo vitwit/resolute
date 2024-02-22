@@ -1,4 +1,4 @@
-import { shortenMsg } from '@/utils/util';
+import { formatNumber, parseDenomAmount, shortenMsg } from '@/utils/util';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { MsgUndelegate } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 
@@ -23,15 +23,18 @@ export function UnDelegate(
   };
 }
 
-export function serialize(msg: any): string {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export function serialize(
+  msg: any,
+  decimals: number,
+  originalDenom: string
+): string {
   const amount = msg?.amount;
   const delegatorAddress = msg?.delegator_address;
   const validatorAddress = msg?.validator_address;
   return `${shortenMsg(
     delegatorAddress,
     10
-  )} un-delegated ${amount?.amount} ${amount?.denom} from ${shortenMsg(
-    validatorAddress,
-    10
-  )}`;
+  )} Un-delegated ${formatNumber(parseDenomAmount(amount?.amount || '0', decimals))} 
+  ${originalDenom} to ${shortenMsg(validatorAddress, 10)}`;
 }
