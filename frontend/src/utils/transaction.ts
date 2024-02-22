@@ -75,44 +75,44 @@ export const MsgType = (msg: string): string => {
 };
 
 export const serializeMsg = (
-  msg: Msg,
+  msg: any,
   decimals: number,
   originDenom: string
 ): string => {
   if (!msg) return 'No Message';
-  switch (msg.typeUrl) {
+  switch (msg["@type"]) {
     case msgDelegate:
       return serializeMsgDelegate(msg);
     case msgUnDelegate:
       return serializeMsgUndelegte(msg);
-    case msgReDelegate:
-      return serializeMsgRedelegte(msg);
+    // case msgReDelegate:
+    //   return serializeMsgRedelegte(msg);
     case msgSendTypeUrl:
       return serializeMsgSend(msg, decimals, originDenom, true);
-    case msgWithdrawRewards:
-      return serializeMsgClaim(msg);
+    // case msgWithdrawRewards:
+    //   return serializeMsgClaim(msg);
     case msgTransfer:
-      return serializeMsgTransfer(msg);
-    case msgAuthzExecTypeUrl:
-      return serializeMsgExec();
+      return serializeMsgTransfer(msg, decimals, originDenom);
+    // case msgAuthzExecTypeUrl:
+    //   return serializeMsgExec();
     default:
       return `Todo: serialize message ${msg.typeUrl}`;
   }
 };
 
 export const formatTransaction = (
-  tx: Transaction,
+  tx: ParsedTransaction,
   msgFilters: string[],
   decimals: number,
   originDenom: string
 ) => {
-  const msgs = tx.msgs;
+  const msgs = tx.messages;
   const showMsgs: [string, string, boolean] = ['', '', false];
   if (msgs[0]) {
-    showMsgs[0] = MsgType(msgs[0].typeUrl);
+    showMsgs[0] = MsgType(msgs[0]['@type']);
   }
   if (msgs[1]) {
-    showMsgs[1] = MsgType(msgs[1].typeUrl);
+    showMsgs[1] = MsgType(msgs[1]['@type']);
   }
   if (msgs.length > 2) {
     showMsgs[2] = true;
@@ -123,14 +123,14 @@ export const formatTransaction = (
     const filterSet = new Set(msgFilters);
     if (!msgs.length) showTx = true;
     msgs.forEach((msg) => {
-      if (filterSet.has(MsgType(msg.typeUrl))) showTx = true;
+      if (filterSet.has(MsgType(msg['@type']))) showTx = true;
     });
   }
 
   const msgCount = msgs.length;
   const isTxSuccess = tx.code === 0;
-  const time = getTimeDifference(tx.time);
-  const firstMessage = serializeMsg(tx.msgs[0], decimals, originDenom);
+  const time = getTimeDifference(tx.timestamp);
+  const firstMessage = serializeMsg(tx.messages[0], decimals, originDenom);
   return {
     showMsgs,
     isTxSuccess,
@@ -138,7 +138,7 @@ export const formatTransaction = (
     firstMessage,
     msgCount,
     showTx,
-    isIBC: tx.isIBC,
-    isIBCPending: tx.isIBCPending,
+    isIBC: false,
+    isIBCPending: false,
   };
 };

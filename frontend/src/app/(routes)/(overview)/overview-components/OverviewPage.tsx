@@ -20,6 +20,8 @@ import useInitAuthzForOverview from '@/custom-hooks/useInitAuthzForOverview';
 import AuthzToast from '@/components/AuthzToast';
 import AuthzExecLoader from '@/components/AuthzExecLoader';
 import FeegrantToast from '@/components/FeegrantToast';
+import { getRecentTransactions } from '@/store/features/recent-transactions/recentTransactionsSlice';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
@@ -28,43 +30,54 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const isFeegrantMode = useAppSelector(
     (state) => state.feegrant.feegrantModeEnabled
   );
+  const { getAllChainAddresses } = useGetChainInfo();
 
-  useInitAuthzForOverview(chainIDs);
+  // useInitAuthzForOverview(chainIDs);
+  // useEffect(() => {
+  //   chainIDs.forEach((chainID) => {
+  //     const allChainInfo = networks[chainID];
+  //     const chainInfo = allChainInfo.network;
+  //     const address = allChainInfo?.walletInfo?.bech32Address;
+  //     const minimalDenom =
+  //       allChainInfo.network.config.stakeCurrency.coinMinimalDenom;
+  //     const basicChainInputs = {
+  //       baseURL: chainInfo.config.rest,
+  //       baseURLs: chainInfo.config.restURIs,
+  //       address,
+  //       chainID,
+  //     };
+  //     dispatch(getBalances(basicChainInputs));
+  //     dispatch(getDelegations(basicChainInputs));
+  //     dispatch(getAccountInfo(basicChainInputs));
+  //     dispatch(
+  //       getDelegatorTotalRewards({
+  //         baseURLs: chainInfo.config.restURIs,
+  //         baseURL: chainInfo.config.rest,
+  //         address: address,
+  //         chainID: chainID,
+  //         denom: minimalDenom,
+  //       })
+  //     );
+  //     dispatch(
+  //       getUnbonding({
+  //         baseURLs: chainInfo.config.restURIs,
+  //         address: address,
+  //         chainID,
+  //       })
+  //     );
+  //   });
+  // }, []);
+
   useEffect(() => {
-    chainIDs.forEach((chainID) => {
-      const allChainInfo = networks[chainID];
-      const chainInfo = allChainInfo.network;
-      const address = allChainInfo?.walletInfo?.bech32Address;
-      const minimalDenom =
-        allChainInfo.network.config.stakeCurrency.coinMinimalDenom;
-      const basicChainInputs = {
-        baseURL: chainInfo.config.rest,
-        baseURLs: chainInfo.config.restURIs,
-        address,
-        chainID,
-      };
-
-      dispatch(getBalances(basicChainInputs));
-      dispatch(getDelegations(basicChainInputs));
-      dispatch(getAccountInfo(basicChainInputs));
+    if (chainIDs) {
       dispatch(
-        getDelegatorTotalRewards({
-          baseURLs: chainInfo.config.restURIs,
-          baseURL: chainInfo.config.rest,
-          address: address,
-          chainID: chainID,
-          denom: minimalDenom,
+        getRecentTransactions({
+          addresses: getAllChainAddresses(chainIDs),
+          module: 'all',
         })
       );
-      dispatch(
-        getUnbonding({
-          baseURLs: chainInfo.config.restURIs,
-          address: address,
-          chainID,
-        })
-      );
-    });
-  }, []);
+    }
+  }, [chainIDs]);
 
   return (
     <div className="w-full flex justify-between">

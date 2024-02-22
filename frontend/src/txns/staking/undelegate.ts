@@ -23,8 +23,10 @@ export function UnDelegate(
   };
 }
 
-export function serialize(msg: Msg): string {
-  const { delegatorAddress, validatorAddress, amount } = msg.value;
+export function serialize(msg: any): string {
+  const amount = msg?.amount;
+  const delegatorAddress = msg?.delegator_address;
+  const validatorAddress = msg?.validator_address;
   return `${shortenMsg(
     delegatorAddress,
     10

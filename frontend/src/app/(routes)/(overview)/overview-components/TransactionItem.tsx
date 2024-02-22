@@ -6,10 +6,10 @@ const TransactionItem = ({
   transaction,
   msgFilters,
 }: {
-  transaction: Transaction;
+  transaction: ParsedTransaction;
   msgFilters: string[];
 }) => {
-  const chainID = transaction.chainID;
+  const chainID = transaction.chain_id;
   const { getDenomInfo } = useGetChainInfo();
   const { decimals, displayDenom } = getDenomInfo(chainID);
   const uiTx = formatTransaction(

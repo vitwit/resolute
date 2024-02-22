@@ -42,11 +42,10 @@ export function EncodeDelegate(
   };
 }
 
-export function serialize(msg: Msg): string {
-  const delegatorAddress = msg.value.delegatorAddress;
-  const validatorAddress = msg.value.validatorAddress;
-  const amount = msg.value.amount;
-  return `${shortenMsg(delegatorAddress, 10)} delegated ${formatAmount(
+export function serialize(msg: any): string {
+  const amount = msg?.amount;
+  const validatorAddress = msg?.validator_address;
+  return `Delegated ${formatAmount(
     +amount?.amount || 0
   )} ${amount.denom} to ${shortenMsg(validatorAddress, 10)}`;
 }
