@@ -3,6 +3,7 @@ package cron
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"time"
 
@@ -87,4 +88,57 @@ func (c *Cron) CoinsPriceInfoList() {
 			}
 		}
 	}
+}
+
+/**
+* if price info not found on the db, fetch price info based on denom and store it.
+ */
+
+type CoinSearchResult struct {
+	Id            string
+	Name          string
+	ApiSymbol     string
+	Symbol        string
+	MarketCapRank int
+	Thumb         string
+	Large         string
+}
+
+func GetNSavePriceInfoFromCoin(uri string, denom string) (map[string]interface{}, error) {
+
+	client1 := coingecko.NewClient(uri, []string{"usd"})
+
+	Ids, err := client1.SearchCoingeckoId(denom)
+	if err != nil {
+		utils.ErrorLogger.Printf("failed to fetch price information %s\n", err.Error())
+		return nil, err
+	}
+
+	if Ids["coins"] != nil {
+		return nil, errors.New("invalid denom")
+	}
+
+	var idsArr []CoinSearchResult
+	bytes, mErr := json.Marshal(Ids["coins"])
+	if mErr != nil {
+		return nil, errors.New("unable to marshal coin gecko ids")
+	}
+
+	uMerr := json.Unmarshal(bytes, &idsArr)
+	if uMerr != nil {
+		return nil, errors.New("unable to un marshal coin gecko ids")
+	}
+
+	if len(idsArr) <= 0 {
+		return nil, errors.New("no coingecko ids found")
+	}
+
+	client2 := coingecko.NewClient(uri, []string{"usd"})
+
+	priceInfo, err := client2.GetPrice([]string{idsArr[0].Id})
+	if err != nil {
+		utils.ErrorLogger.Printf("failed to fetch price information %s\n", err.Error())
+	}
+
+	return priceInfo, nil
 }
