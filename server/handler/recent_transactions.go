@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"sort"
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/vitwit/resolute/server/config"
 	"github.com/vitwit/resolute/server/model"
 	"github.com/vitwit/resolute/server/txn_types"
 	"github.com/vitwit/resolute/server/utils"
@@ -56,11 +58,16 @@ func (h *Handler) GetRecentTransactions(c echo.Context) error {
 }
 
 func getNetworkRecentTransactions(chainId string, module string, address string) (*txn_types.TransactionResponses, error) {
-	var bearer = "Bearer " + "sk_28d9ca62e0a2415fa93d0ad09f27cc78"
+	config, err := config.ParseConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+	bearerToken := config.NUMIA_BEARER_TOKEN.Token
+	var authorization = "Bearer " + bearerToken
 	networkURIs := utils.GetChainAPIs(chainId)
 	requestURI := utils.CreateRequestURI(networkURIs[0], module, address)
 	req, _ := http.NewRequest("GET", requestURI, nil)
-	req.Header.Add("Authorization", bearer)
+	req.Header.Add("Authorization", authorization)
 	client := &http.Client{}
 	resp, _ := client.Do(req)
 	defer resp.Body.Close()
