@@ -19,7 +19,7 @@ const TransfersHistory = ({ chainIDs }: { chainIDs: string[] }) => {
       </div>
       <RecentTransactions
         chainIDs={chainIDs}
-        msgFilters={TRANSFERS_MSG_FILTERS}
+        msgFilters={[]}
       />
     </div>
   );
