@@ -254,8 +254,7 @@ const useGetValidatorInfo = () => {
     let totalStakedTokens = 0;
     let operatorAddress = '';
     if (oasisDelegations) {
-      const { delegations } = oasisDelegations;
-      let totalDelegationAmount = 0;
+      const delegations = oasisDelegations?.data?.list;
       delegations?.forEach(
         (delegation: {
           amount: string;
@@ -263,16 +262,15 @@ const useGetValidatorInfo = () => {
           shares: string;
           validator: string;
         }) => {
-          totalDelegationAmount += Number(delegation?.amount || 0);
+          totalStakedTokens += Number(delegation?.amount || 0);
         }
       );
 
-      totalStakedTokens = totalDelegationAmount / 10 ** OASIS_CONFIG.decimals;
       totalStakedInUSD = usdPriceInfo
         ? totalStakedTokens * usdPriceInfo.usd
         : 0;
       commission = OASIS_CONFIG.witval.commission.toString();
-      totalDelegators = delegations?.length || 0;
+      totalDelegators = oasisDelegations?.data?.totalSize || 0;
       operatorAddress = OASIS_CONFIG.witval.operatorAddress;
     }
 

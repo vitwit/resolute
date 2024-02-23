@@ -247,7 +247,7 @@ export const POLYGON_CONFIG = {
 };
 
 export const OASIS_CONFIG = {
-  baseURL: 'https://nexus.oasis.io/v1/',
+  baseURL: 'https://oasisscan.com',
   decimals: 9,
   coinGeckoId: '',
   logo: '/oasis-network-logo.png',
