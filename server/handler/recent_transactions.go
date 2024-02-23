@@ -35,9 +35,14 @@ func (h *Handler) GetRecentTransactions(c echo.Context) error {
 	}
 	result := []txn_types.ParsedTxn{}
 	for i := 0; i < len(req.Addresses); i++ {
-		res, _ := getNetworkRecentTransactions(req.Addresses[i].ChainId, module, req.Addresses[i].Address)
-		parsedTxns, _ := GetParsedTransactions(*res, req.Addresses[i].ChainId)
-		result = append(result, parsedTxns...)
+		res, err := getNetworkRecentTransactions(req.Addresses[i].ChainId, module, req.Addresses[i].Address)
+		if err == nil {
+			parsedTxns, err := GetParsedTransactions(*res, req.Addresses[i].ChainId)
+			if err == nil {
+				result = append(result, parsedTxns...)
+			}
+		}
+
 	}
 
 	sort.Sort(ByTimestamp(result))
