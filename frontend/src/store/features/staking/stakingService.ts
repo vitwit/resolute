@@ -25,7 +25,7 @@ const poolURL = '/cosmos/staking/v1beta1/pool';
 const polygonValidatorURL = (id: number) => `/validators/${id}`;
 const polygonDelegatorsURL = (id: number) => `/validators/${id}/delegators`;
 const oasisDelegationsURL = (operatorAddress: string) =>
-  `/consensus/accounts/${operatorAddress}/delegations_to`;
+  `/mainnet/validator/delegators?address=${operatorAddress}&page=1&size=20`;
 
 const fetchValidators = (
   baseURLs: string[],
