@@ -64,7 +64,7 @@ const TransactionSuccessPopup = () => {
     if (tx?.msgs) {
       const chainIDs = selectedNetwork?.length
         ? [nameToChainIDs[selectedNetwork]]
-        : Object.keys(nameToChainIDs);
+        : Object.values(nameToChainIDs);
       if (tx?.msgs[0]?.typeUrl === SEND_TYPE_URL) {
         dispatch(
           getRecentTransactions({

@@ -11,4 +11,7 @@ interface ParsedTransaction {
   chain_id: string;
   fee: Coin[];
   address: string;
+  txhash: string;
+  isIBCTxn?: boolean;
+  isIBCPending?: boolean;
 }

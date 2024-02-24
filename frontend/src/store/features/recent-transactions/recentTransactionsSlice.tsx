@@ -2,9 +2,10 @@
 
 import { TxStatus } from '@/types/enums';
 import { ERR_UNKNOWN } from '@/utils/errors';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 import recentTransactionsService from './recentTransactionsService';
+import { updateIBCStatus } from '@/utils/localStorage';
 
 interface RecentTransactionsState {
   txns: {
@@ -59,6 +60,22 @@ export const recentTransactionsSlice = createSlice({
       state.txns.error = '';
       state.txns.status = TxStatus.INIT;
     },
+    updateIBCTransaction: (
+      state,
+      action: PayloadAction<UpdateIBCTransactionInputs>
+    ) => {
+      const { txHash, address } = action.payload;
+      const allTransactions = state.txns.data;
+      const updatedAllTransactions = allTransactions.map((tx) => {
+        if (tx.txhash === txHash) {
+          return { ...tx, isIBCPending: false };
+        }
+        return tx;
+      });
+      state.txns.data = updatedAllTransactions;
+
+      updateIBCStatus(address, txHash);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -68,6 +85,10 @@ export const recentTransactionsSlice = createSlice({
       })
       .addCase(getRecentTransactions.fulfilled, (state, action) => {
         state.txns.status = TxStatus.IDLE;
+        const txnsData = action.payload.data;
+        txnsData.map(() => {
+           
+        })
         state.txns.data = action.payload.data;
         state.txns.error = '';
       })
