@@ -40,6 +40,6 @@ interface ParsedTransaction {
   fee: Coin[];
   address: string;
   txhash: string;
-  isIBCTxn?: boolean;
-  isIBCPending?: boolean;
+  isIBCTxn: boolean;
+  isIBCPending: boolean;
 }

@@ -63,10 +63,16 @@ export const getRecentTransactions = createAsyncThunk(
               );
             }
           } else {
-            txns = [...txns, txn];
+            let formattedTxn = txn;
+            formattedTxn = { ...formattedTxn, isIBCPending: false };
+            formattedTxn = { ...formattedTxn, isIBCTxn: true };
+            txns = [...txns, formattedTxn];
           }
         } else {
-          txns = [...txns, txn];
+          let formattedTxn = txn;
+          formattedTxn = { ...formattedTxn, isIBCPending: false };
+          formattedTxn = { ...formattedTxn, isIBCTxn: false };
+          txns = [...txns, formattedTxn];
         }
       });
       return {
