@@ -8,7 +8,6 @@ import {
   setWalletName,
 } from '../../../utils/localStorage';
 import { TxStatus } from '@/types/enums';
-import { loadTransactions } from '../transactionHistory/transactionHistorySlice';
 import { setError } from '../common/commonSlice';
 import { getKey } from '@leapwallet/cosmos-snap-provider';
 import { getAddressByPrefix } from '@/utils/address';
@@ -181,11 +180,6 @@ export const establishWalletConnection = createAsyncThunk(
         const authzMode = getAuthzMode(cosmosAddress);
         if (authzMode.isAuthzModeOn)
           dispatch(enableAuthzMode({ address: authzMode.authzAddress }));
-        dispatch(
-          loadTransactions({
-            address: cosmosAddress,
-          })
-        );
         const feegrantMode = getFeegrantMode(cosmosAddress);
         if (feegrantMode.isFeegrantModeOn)
           dispatch(

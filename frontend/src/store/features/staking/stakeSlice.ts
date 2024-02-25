@@ -23,7 +23,6 @@ import {
 import { AxiosError } from 'axios';
 import { TxStatus } from '../../../types/enums';
 import { NewTransaction } from '@/utils/transaction';
-import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { Unbonding } from '@/txns/staking/unbonding';
 import {
@@ -174,7 +173,7 @@ export const txRestake = createAsyncThunk(
     data: TxReStakeInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
-    const { chainID, address, rest, aminoConfig, prefix, cosmosAddress } =
+    const { chainID, address, rest, aminoConfig, prefix } =
       data.basicChainInfo;
     try {
       const result = await signAndBroadcast(
@@ -193,13 +192,6 @@ export const txRestake = createAsyncThunk(
         data?.basicChainInfo?.restURLs
       );
       const tx = NewTransaction(result, data.msgs, chainID, address);
-      dispatch(
-        addTransactions({
-          chainID,
-          address: cosmosAddress,
-          transactions: [tx],
-        })
-      );
       dispatch(
         setTxAndHash({
           tx,
@@ -288,14 +280,6 @@ export const txDelegate = createAsyncThunk(
         msgs,
         data.basicChainInfo.chainID,
         data.basicChainInfo.address
-      );
-
-      dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: data.basicChainInfo.cosmosAddress,
-          transactions: [tx],
-        })
       );
 
       dispatch(
@@ -400,14 +384,6 @@ export const txReDelegate = createAsyncThunk(
       );
 
       dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: data.basicChainInfo.cosmosAddress,
-          transactions: [tx],
-        })
-      );
-
-      dispatch(
         setTxAndHash({
           tx,
           hash: tx.transactionHash,
@@ -484,14 +460,6 @@ export const txUnDelegate = createAsyncThunk(
         msgs,
         data.basicChainInfo.chainID,
         data.basicChainInfo.address
-      );
-
-      dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: data.basicChainInfo.cosmosAddress,
-          transactions: [tx],
-        })
       );
 
       dispatch(
@@ -587,13 +555,6 @@ export const txCancelUnbonding = createAsyncThunk(
         data.basicChainInfo.address
       );
 
-      dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: data.basicChainInfo.cosmosAddress,
-          transactions: [tx],
-        })
-      );
       dispatch(
         setTxAndHash({
           tx,

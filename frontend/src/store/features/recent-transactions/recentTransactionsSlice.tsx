@@ -8,7 +8,6 @@ import recentTransactionsService from './recentTransactionsService';
 import {
   addIBCTxn,
   getIBCTxn,
-  updateIBCStatus,
   updateIBCTransactionStatusInLocal,
 } from '@/utils/localStorage';
 import { IBC_SEND_TYPE_URL } from '@/utils/constants';
@@ -51,19 +50,11 @@ export const getRecentTransactions = createAsyncThunk(
       const txnsData = response?.data?.data;
       txnsData.forEach((txn: ParsedTransaction) => {
         const { txhash, messages } = txn;
-        console.log('=-=-=----122222222');
-        console.log(txn);
-        console.log(messages[0]?.['@type']);
-        console.log(IBC_SEND_TYPE_URL);
-        console.log(messages[0]?.['@type'] === IBC_SEND_TYPE_URL);
         if (messages[0]?.['@type'] === IBC_SEND_TYPE_URL) {
           const ibcTx = getIBCTxn(txhash);
           if (ibcTx) {
             txns = [...txns, ibcTx];
-            console.log('==-=-=-=-= ');
-            console.log(ibcTx);
             if (ibcTx?.isIBCPending) {
-              console.log('===========111==============');
               dispatch(
                 trackTx({
                   chainID: ibcTx.chain_id,
@@ -72,11 +63,9 @@ export const getRecentTransactions = createAsyncThunk(
               );
             }
           } else {
-            console.log('123123123', txn);
             txns = [...txns, txn];
           }
         } else {
-          console.log('234234');
           txns = [...txns, txn];
         }
       });
@@ -131,30 +120,6 @@ export const recentTransactionsSlice = createSlice({
       })
       .addCase(getRecentTransactions.fulfilled, (state, action) => {
         state.txns.status = TxStatus.IDLE;
-        // const txnsData = action.payload.data;
-        // let txns: ParsedTransaction[] = [];
-        // txnsData.forEach((txn: ParsedTransaction) => {
-        //   const { txhash, messages } = txn;
-        //   if (messages[0]?.['@type'] === IBC_SEND_TYPE_URL) {
-        //     const ibcTx = getIBCTxn(txhash);
-        //     if (ibcTx) {
-        //       txns = [...txns, ibcTx];
-        //       if (ibcTx?.isIBCPending) {
-        //         dispatch(
-        //           trackTx({
-        //             chainID: tx.chainID,
-        //             txHash: tx.transactionHash,
-        //             cosmosAddress: data.address,
-        //           })
-        //         );
-        //       }
-        //     } else {
-        //       txns = [...txns, txn];
-        //     }
-        //   } else {
-        //     txns = [...txns, txn];
-        //   }
-        // });
         state.txns.data = action.payload.data;
         state.txns.error = '';
       })

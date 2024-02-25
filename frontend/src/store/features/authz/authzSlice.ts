@@ -8,7 +8,6 @@ import { getAddressByPrefix } from '@/utils/address';
 import { signAndBroadcast } from '@/utils/signing';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { NewTransaction } from '@/utils/transaction';
-import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { GAS_FEE } from '@/utils/constants';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { AxiosError } from 'axios';
@@ -222,7 +221,8 @@ export const txAuthzExec = createAsyncThunk(
         data.msgs,
         GAS_FEE,
         data.memo,
-        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.denom
         }`,
         data.basicChainInfo.rest,
         data.feegranter,
@@ -235,13 +235,6 @@ export const txAuthzExec = createAsyncThunk(
           data.msgs,
           data.basicChainInfo.chainID,
           data.basicChainInfo.cosmosAddress
-        );
-        dispatch(
-          addTransactions({
-            transactions: [tx],
-            chainID: data.basicChainInfo.chainID,
-            address: data.basicChainInfo.cosmosAddress,
-          })
         );
         dispatch(
           setTxAndHash({
@@ -299,13 +292,6 @@ export const txAuthzRevoke = createAsyncThunk(
           data.msgs,
           data.basicChainInfo.chainID,
           data.basicChainInfo.cosmosAddress
-        );
-        dispatch(
-          addTransactions({
-            transactions: [tx],
-            chainID: data.basicChainInfo.chainID,
-            address: data.basicChainInfo.cosmosAddress,
-          })
         );
         dispatch(
           setTxAndHash({

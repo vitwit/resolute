@@ -6,10 +6,6 @@ import { trackIBCTx, txIBCTransfer } from './ibcService';
 import { TxStatus } from '@/types/enums';
 import axios from 'axios';
 import { parseTxResult } from '@/utils/signing';
-import {
-  addTransactions,
-  updateIBCTransaction,
-} from '../transactionHistory/transactionHistorySlice';
 import { NewIBCTransaction, NewTransaction } from '@/utils/transaction';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { capitalize } from 'lodash';
@@ -89,13 +85,6 @@ export const txTransfer = createAsyncThunk(
         setTxAndHash({
           hash: txHash,
           tx,
-        })
-      );
-      dispatch(
-        addTransactions({
-          chainID: chainID,
-          address: data.cosmosAddress,
-          transactions: [tx],
         })
       );
       dispatch(addIBCTransaction(ibcTx));

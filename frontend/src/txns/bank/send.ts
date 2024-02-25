@@ -42,3 +42,16 @@ export function formattedSerialize(
     parsedAmount
   )} ${originalDenom} to ${to_address}`;
 }
+
+export function formatSendMessage(
+  msg: Msg,
+  decimals: number,
+  originalDenom: string,
+  pastTense?: boolean
+) {
+  const { toAddress, amount } = msg.value;
+  const parsedAmount = parseBalance(amount, decimals, amount[0].denom);
+  return `${pastTense ? 'Sent' : 'Send'} ${formatNumber(
+    parsedAmount
+  )} ${originalDenom} to ${toAddress}`;
+}
