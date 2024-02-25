@@ -37,11 +37,25 @@ func (h *Handler) GetRecentTransactions(c echo.Context) error {
 	}
 	result := []txn_types.ParsedTxn{}
 	for i := 0; i < len(req.Addresses); i++ {
-		res, err := getNetworkRecentTransactions(req.Addresses[i].ChainId, module, req.Addresses[i].Address)
-		if err == nil {
-			parsedTxns, err := GetParsedTransactions(*res, req.Addresses[i].ChainId)
+		if module == "bank" {
+			moduleNames := []string{"bank", "transfer"}
+			for _, moduleName := range moduleNames {
+				res, err := getNetworkRecentTransactions(req.Addresses[i].ChainId, moduleName, req.Addresses[i].Address)
+				if err == nil {
+					parsedTxns, err := GetParsedTransactions(*res, req.Addresses[i].ChainId)
+					if err == nil {
+						result = append(result, parsedTxns...)
+					}
+				}
+			}
+
+		} else {
+			res, err := getNetworkRecentTransactions(req.Addresses[i].ChainId, module, req.Addresses[i].Address)
 			if err == nil {
-				result = append(result, parsedTxns...)
+				parsedTxns, err := GetParsedTransactions(*res, req.Addresses[i].ChainId)
+				if err == nil {
+					result = append(result, parsedTxns...)
+				}
 			}
 		}
 
@@ -64,24 +78,27 @@ func getNetworkRecentTransactions(chainId string, module string, address string)
 	}
 	bearerToken := config.NUMIA_BEARER_TOKEN.Token
 	var authorization = "Bearer " + bearerToken
-	networkURIs := utils.GetChainAPIs(chainId)
-	requestURI := utils.CreateRequestURI(networkURIs[0], module, address)
-	req, _ := http.NewRequest("GET", requestURI, nil)
-	req.Header.Add("Authorization", authorization)
-	client := &http.Client{}
-	resp, _ := client.Do(req)
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
+	networkURIs, err := utils.GetChainAPIs(chainId)
+	if err == nil {
+		requestURI := utils.CreateRequestURI(networkURIs[0], module, address)
+		req, _ := http.NewRequest("GET", requestURI, nil)
+		req.Header.Add("Authorization", authorization)
+		client := &http.Client{}
+		resp, _ := client.Do(req)
+		defer resp.Body.Close()
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
 
-	var result txn_types.TransactionResponses
-	if err := json.Unmarshal(body, &result); err != nil {
-		return nil, err
-	}
+		var result txn_types.TransactionResponses
+		if err := json.Unmarshal(body, &result); err != nil {
+			return nil, err
+		}
 
-	return &result, nil
+		return &result, nil
+	}
+	return nil, err
 }
 
 type ByTimestamp []txn_types.ParsedTxn
@@ -118,11 +135,11 @@ func GetParsedTransactions(txns txn_types.TransactionResponses, chainId string) 
 }
 
 func parseTimestamp(timestamp, layout string) time.Time {
-	t, err := time.Parse(layout, timestamp)
+	parsedTime, err := time.Parse(layout, timestamp)
 	if err != nil {
 		fmt.Println("Error parsing timestamp:", err)
 	}
-	return t
+	return parsedTime
 }
 
 func min(a, b int) int {

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 )
@@ -11,11 +12,11 @@ type ChainConfig struct {
 	RestURIs []string `json:"restURIs"`
 }
 
-func GetChainAPIs(chainId string) []string {
+func GetChainAPIs(chainId string) ([]string, error) {
 	jsonData, err := os.ReadFile("/home/vitwit/Documents/resolute/server/networks.json")
 	if err != nil {
 		fmt.Println("Error reading JSON file:", err)
-		return nil
+		return nil, err
 	}
 
 	var data []ChainConfig
@@ -23,7 +24,7 @@ func GetChainAPIs(chainId string) []string {
 	err = json.Unmarshal([]byte(jsonData), &data)
 	if err != nil {
 		fmt.Println("Error unmarshaling JSON data:", err)
-		return nil
+		return nil, err
 	}
 
 	var result *ChainConfig
@@ -34,7 +35,11 @@ func GetChainAPIs(chainId string) []string {
 		}
 	}
 
-	return result.RestURIs
+	if result == nil {
+		return nil, errors.New("Chain ID not found")
+	}
+
+	return result.RestURIs, nil
 }
 
 func CreateRequestURI(api string, module string, address string) string {
