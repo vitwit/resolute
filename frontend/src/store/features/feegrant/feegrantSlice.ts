@@ -8,7 +8,6 @@ import { signAndBroadcast } from '@/utils/signing';
 import { GAS_FEE } from '@/utils/constants';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { NewTransaction } from '@/utils/transaction';
-import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { setTxAndHash } from '../common/commonSlice';
 
 interface ChainAllowance {
@@ -190,13 +189,6 @@ export const txRevoke = createAsyncThunk(
           [msg],
           data.basicChainInfo.chainID,
           data.basicChainInfo.cosmosAddress
-        );
-        dispatch(
-          addTransactions({
-            transactions: [tx],
-            chainID: data.basicChainInfo.chainID,
-            address: data.basicChainInfo.cosmosAddress,
-          })
         );
         dispatch(
           setTxAndHash({

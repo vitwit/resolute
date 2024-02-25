@@ -6,6 +6,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import {
+  IBC_SEND_TYPE_URL,
   SEND_TYPE_URL,
   TXN_FAILED_ICON,
   TXN_SUCCESS_ICON,
@@ -64,7 +65,7 @@ const TransactionSuccessPopup = () => {
     if (tx?.msgs) {
       const chainIDs = selectedNetwork?.length
         ? [nameToChainIDs[selectedNetwork]]
-        : Object.keys(nameToChainIDs);
+        : Object.values(nameToChainIDs);
       if (tx?.msgs[0]?.typeUrl === SEND_TYPE_URL) {
         dispatch(
           getRecentTransactions({
@@ -72,7 +73,7 @@ const TransactionSuccessPopup = () => {
             module: 'bank',
           })
         );
-      } else {
+      } else if (!(tx?.msgs[0]?.typeUrl === IBC_SEND_TYPE_URL)) {
         dispatch(
           getRecentTransactions({
             addresses: getAllChainAddresses(chainIDs),

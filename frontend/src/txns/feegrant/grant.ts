@@ -9,7 +9,8 @@ import {
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { MsgGrantAllowance } from 'cosmjs-types/cosmos/feegrant/v1beta1/tx';
 
-const msgFeegrantGrantTypeUrl = '/cosmos.feegrant.v1beta1.MsgGrantAllowance';
+export const msgFeegrantGrantTypeUrl =
+  '/cosmos.feegrant.v1beta1.MsgGrantAllowance';
 
 export function FeegrantBasicMsg(
   granter: string,
@@ -308,4 +309,10 @@ export function FeegrantFilterMsg(
     console.log('error while creating periodic allowance', error);
     throw error;
   }
+}
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export function serializeMsgGrantAllowance(msg: any) {
+  const { grantee } = msg;
+  return `Granted allowance to ${grantee}`;
 }

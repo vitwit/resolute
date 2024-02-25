@@ -25,6 +25,16 @@ import {
 } from '@/txns/ibc/transfer';
 import { serialize as serializeMsgExec } from '@/txns/authz/exec';
 import { msgAuthzExecTypeUrl } from '@/txns/authz/exec';
+import {
+  msgAuthzGrantTypeUrl,
+  serializeMsgGrantAuthz,
+} from '@/txns/authz/grant';
+import {
+  msgFeegrantGrantTypeUrl,
+  serializeMsgGrantAllowance,
+} from '@/txns/feegrant/grant';
+import { msgVoteTypeUrl, serializeMsgVote } from '@/txns/gov/vote';
+import { msgDepositTypeUrl, serializeMsgDeposit } from '@/txns/gov/deposit';
 
 export function NewTransaction(
   txResponse: ParsedTxResponse,
@@ -69,6 +79,14 @@ export const MsgType = (msg: string): string => {
       return 'IBC';
     case msgAuthzExecTypeUrl:
       return 'Authz-permission';
+    case msgAuthzGrantTypeUrl:
+      return 'Grant-Authz';
+    case msgFeegrantGrantTypeUrl:
+      return 'Grant-Allowance';
+    case msgVoteTypeUrl:
+      return 'Vote';
+    case msgDepositTypeUrl:
+      return 'Deposit';
     default:
       return 'Todo: add type';
   }
@@ -96,6 +114,14 @@ export const serializeMsg = (
       return serializeMsgTransfer(msg, decimals, originDenom);
     case msgAuthzExecTypeUrl:
       return serializeMsgExec();
+    case msgAuthzGrantTypeUrl:
+      return serializeMsgGrantAuthz(msg);
+    case msgFeegrantGrantTypeUrl:
+      return serializeMsgGrantAllowance(msg);
+    case msgVoteTypeUrl:
+      return serializeMsgVote(msg);
+    case msgDepositTypeUrl:
+      return serializeMsgDeposit(msg, decimals, originDenom);
     default:
       return `Todo: serialize message ${msg.typeUrl}`;
   }
@@ -139,7 +165,34 @@ export const formatTransaction = (
     firstMessage,
     msgCount,
     showTx,
-    isIBC: false,
-    isIBCPending: false,
+    isIBC: tx.isIBCTxn,
+    isIBCPending: tx.isIBCPending,
   };
+};
+
+export const NewIBCTransaction = (
+  txResponse: ParsedTxResponse,
+  msgs: Msg[],
+  chainID: string,
+  address: string,
+  isIBC?: boolean,
+  isIBCPending?: boolean
+): ParsedTransaction => {
+  const transaction: ParsedTransaction = {
+    code: txResponse.code,
+    txhash: txResponse.transactionHash,
+    height: txResponse.height || '-',
+    raw_log: txResponse.rawLog || '-',
+    gas_used: txResponse.gasUsed || '-',
+    gas_wanted: txResponse.gasWanted || '-',
+    fee: txResponse.fee || [],
+    timestamp: txResponse.time || new Date().toISOString(),
+    messages: [msgs[0]?.value],
+    chain_id: chainID,
+    address,
+    memo: txResponse.memo || '',
+    isIBCTxn: !!isIBC,
+    isIBCPending: !!isIBCPending,
+  };
+  return transaction;
 };

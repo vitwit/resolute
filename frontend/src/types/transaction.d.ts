@@ -15,22 +15,6 @@ interface Transaction {
   isIBCPending: boolean;
 }
 
-interface AddTransactionInputs {
-  transactions: Transaction[];
-  address: string;
-  chainID: string;
-}
-
-interface LoadTransactionsInputs {
-  address: string;
-}
-
-interface UpdateIBCTransactionInputs {
-  txHash: string;
-  address: string;
-  chainID: string;
-}
-
 interface UiTx {
   showMsgs: [string, string, boolean];
   isTxSuccess: boolean;
@@ -39,5 +23,23 @@ interface UiTx {
   msgCount: number;
   showTx: boolean;
   isIBC: boolean;
+  isIBCPending: boolean;
+}
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+interface ParsedTransaction {
+  code: number;
+  gas_used: string;
+  gas_wanted: string;
+  height: string;
+  raw_log: string;
+  timestamp: string;
+  memo: string;
+  messages: any[];
+  chain_id: string;
+  fee: Coin[];
+  address: string;
+  txhash: string;
+  isIBCTxn: boolean;
   isIBCPending: boolean;
 }
