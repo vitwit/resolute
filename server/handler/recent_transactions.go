@@ -120,6 +120,7 @@ func GetParsedTransactions(txns txn_types.TransactionResponses, chainId string) 
 			Height:    txn_response.Height,
 			RawLog:    txn_response.RawLog,
 			Timestamp: parseTimestamp(txn_response.Timestamp, layout),
+			Fee:       txn.AuthInfo.Fee.Amount,
 			Txhash:    txn_response.Txhash,
 			Memo:      txn.Body.Memo,
 			Messages:  txn.Body.Messages,

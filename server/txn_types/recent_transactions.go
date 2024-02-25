@@ -18,12 +18,14 @@ type TxResponse struct {
 	Txhash    string        `json:"txhash"`
 }
 
+type Amount []struct {
+	Amount string `json:"amount"`
+	Denom  string `json:"denom"`
+}
+
 type AuthInfo struct {
 	Fee struct {
-		Amount []struct {
-			Amount string `json:"amount"`
-			Denom  string `json:"denom"`
-		} `json:"amount"`
+		Amount   Amount `json:"amount"`
 		GasLimit string `json:"gas_limit"`
 		Granter  string `json:"granter"`
 		Payer    string `json:"payer"`
@@ -68,6 +70,7 @@ type ParsedTxn struct {
 	Code      int           `json:"code"`
 	GasUsed   string        `json:"gas_used"`
 	GasWanted string        `json:"gas_wanted"`
+	Fee       Amount        `json:"fee"`
 	Height    string        `json:"height"`
 	RawLog    string        `json:"raw_log"`
 	Timestamp time.Time     `json:"timestamp"`
