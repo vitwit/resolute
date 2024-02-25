@@ -6,6 +6,7 @@ const AUTHZ_VALUE = 'Authz_value';
 const FEEGRANT_KEY = 'feegrant_key';
 const FEEGRANT_VALUE = 'feegrant_value';
 const KEY_TRANSACTIONS = (address: string) => 'transactions' + ' ' + address;
+const IBC_TXNS_KEY = 'IBC_Txns';
 
 interface LocalNetworks {
   [key: string]: Network;
@@ -234,4 +235,38 @@ export function setAuthzMode(address: string, authzAddress: string) {
 export function setFeegrantMode(address: string, feegrantAddress: string) {
   localStorage.setItem(FEEGRANT_KEY, address);
   localStorage.setItem(FEEGRANT_VALUE, feegrantAddress);
+}
+
+export function addIBCTxn(transaction: ParsedTransaction) {
+  let storedTransactions = localStorage.getItem(IBC_TXNS_KEY);
+  let parsedTransactions: Record<string, ParsedTransaction> = {};
+  if (storedTransactions) {
+    parsedTransactions = JSON.parse(storedTransactions);
+  }
+  parsedTransactions[transaction.txhash] = transaction;
+  localStorage.setItem(IBC_TXNS_KEY, JSON.stringify(parsedTransactions));
+}
+
+export function getIBCTxn(txhash: string): ParsedTransaction | null {
+  let storedTransactions = localStorage.getItem(IBC_TXNS_KEY);
+  if (storedTransactions) {
+    let parsedTransactions = JSON.parse(storedTransactions);
+    return parsedTransactions[txhash];
+  }
+  return null;
+}
+
+export function updateIBCTransactionStatusInLocal(txHash: string) {
+  const txn = getIBCTxn(txHash);
+  if (txn) {
+    const storedTransactions = localStorage.getItem(IBC_TXNS_KEY);
+    if (storedTransactions) {
+      let parsedTransactions = JSON.parse(storedTransactions);
+      parsedTransactions[txHash] = {
+        ...parsedTransactions[txHash],
+        isIBCPending: false,
+      };
+      localStorage.setItem(IBC_TXNS_KEY, JSON.stringify(parsedTransactions));
+    }
+  }
 }

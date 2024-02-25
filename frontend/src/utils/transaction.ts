@@ -139,7 +139,34 @@ export const formatTransaction = (
     firstMessage,
     msgCount,
     showTx,
-    isIBC: false,
-    isIBCPending: false,
+    isIBC: tx.isIBCTxn,
+    isIBCPending: tx.isIBCPending,
   };
+};
+
+export const NewIBCTransaction = (
+  txResponse: ParsedTxResponse,
+  msgs: Msg[],
+  chainID: string,
+  address: string,
+  isIBC?: boolean,
+  isIBCPending?: boolean
+): ParsedTransaction => {
+  const transaction: ParsedTransaction = {
+    code: txResponse.code,
+    txhash: txResponse.transactionHash,
+    height: txResponse.height || '-',
+    raw_log: txResponse.rawLog || '-',
+    gas_used: txResponse.gasUsed || '-',
+    gas_wanted: txResponse.gasWanted || '-',
+    fee: txResponse.fee || [],
+    timestamp: txResponse.time || new Date().toISOString(),
+    messages: [msgs[0]?.value],
+    chain_id: chainID,
+    address,
+    memo: txResponse.memo || '',
+    isIBCTxn: !!isIBC,
+    isIBCPending: !!isIBCPending,
+  };
+  return transaction;
 };

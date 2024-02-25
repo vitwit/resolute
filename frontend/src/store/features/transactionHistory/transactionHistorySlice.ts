@@ -28,7 +28,6 @@ export const loadTransactions = createAsyncThunk(
           trackTx({
             chainID: tx.chainID,
             txHash: tx.transactionHash,
-            cosmosAddress: data.address,
           })
         );
       }
