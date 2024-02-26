@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 type ChainConfig struct {
@@ -13,7 +14,9 @@ type ChainConfig struct {
 }
 
 func GetChainAPIs(chainId string) ([]string, error) {
-	jsonData, err := os.ReadFile("/home/vitwit/Documents/resolute/server/networks.json")
+	wd, _ := os.Getwd()
+	filePath := filepath.Join(wd, "/", "networks.json")
+	jsonData, err := os.ReadFile(filePath)
 	if err != nil {
 		fmt.Println("Error reading JSON file:", err)
 		return nil, err
@@ -36,7 +39,7 @@ func GetChainAPIs(chainId string) ([]string, error) {
 	}
 
 	if result == nil {
-		return nil, errors.New("Chain ID not found")
+		return nil, errors.New("chain id not found")
 	}
 
 	return result.RestURIs, nil
