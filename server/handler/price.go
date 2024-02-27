@@ -2,12 +2,19 @@ package handler
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/vitwit/resolute/server/cron"
 	"github.com/vitwit/resolute/server/model"
 	"github.com/vitwit/resolute/server/schema"
+	"github.com/vitwit/resolute/server/utils"
+
+	"github.com/vitwit/resolute/server/config"
 )
 
 func (h *Handler) GetTokensInfo(c echo.Context) error {
@@ -69,11 +76,33 @@ func (h *Handler) GetTokenInfo(c echo.Context) error {
 		&priceInfo.LastUpdated,
 		&priceInfo.Info,
 	); err != nil {
+		fmt.Printf("Error - %v ", err.Error())
 		if sql.ErrNoRows.Error() == row.Scan().Error() {
-			return c.JSON(http.StatusBadRequest, model.ErrorResponse{
-				Status:  "error",
-				Message: fmt.Sprintf("no token info: %s", denom),
-				Log:     row.Scan().Error(),
+			config, err := config.ParseConfig()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			priceInfo, err1 := cron.GetNSavePriceInfoFromCoin(config.COINGECKO.URI, denom)
+			if err1 != nil {
+				return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+					Status:  "error",
+					Message: fmt.Sprintf("no token info: %s", denom),
+					Log:     err1.Error(),
+				})
+			} else {
+				for k, v := range priceInfo {
+					val, _ := json.Marshal(v)
+					_, err = h.DB.Exec("INSERT INTO price_info(denom,coingecko_name,enabled,last_updated,info) values($1, $2, $3, $4, $5)", denom, k, true, time.Now(), val)
+					if err != nil {
+						utils.ErrorLogger.Printf("failed to update price information for denom = %s : %s\n", k, err.Error())
+					}
+				}
+			}
+
+			return c.JSON(http.StatusOK, model.SuccessResponse{
+				Status: "success",
+				Data:   priceInfo,
 			})
 		}
 
