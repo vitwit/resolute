@@ -66,7 +66,7 @@ func (h *Handler) GetRecentTransactions(c echo.Context) error {
 	recentTxns := result[:min(5, len(result))]
 
 	return c.JSON(http.StatusOK, model.SuccessResponse{
-		Status: "done",
+		Status: "success",
 		Data:   recentTxns,
 	})
 }
