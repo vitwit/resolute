@@ -1,10 +1,10 @@
 'use client';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getSelectedPartFromURL } from '../utils/util';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
 import { tabLink } from '../utils/util';
 import { Tooltip } from '@mui/material';
@@ -21,6 +21,7 @@ import {
 } from '@/utils/constants';
 import useInitAuthz from '@/custom-hooks/useInitAuthz';
 import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
+import { setAllNetworksInfo } from '@/store/features/common/commonSlice';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
@@ -29,7 +30,10 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
   useInitAuthz();
   useInitFeegrant();
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
-
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setAllNetworksInfo());
+  }, []);
   return (
     <div className="main">
       <TransactionSuccessPopup />
@@ -100,7 +104,7 @@ const MenuItem = ({
   activeIcon,
   link,
   authzSupport,
-  metamaskSupport
+  metamaskSupport,
 }: {
   pathName: string;
   itemName: string;
@@ -115,23 +119,40 @@ const MenuItem = ({
     (state: RootState) => state.common.selectedNetwork.chainName
   );
 
-  const isMetamaskSupported = () => metamaskSupport || localStorage.getItem('WALLET_NAME') !== 'metamask';
+  const isMetamaskSupported = () =>
+    metamaskSupport || localStorage.getItem('WALLET_NAME') !== 'metamask';
 
   return (
-    <Link href={isMetamaskSupported() === false? '' : authzSupport ? tabLink(link, selectedNetwork) : ''}>
+    <Link
+      href={
+        isMetamaskSupported() === false
+          ? ''
+          : authzSupport
+            ? tabLink(link, selectedNetwork)
+            : ''
+      }
+    >
       <Tooltip
-        className={isMetamaskSupported() === false ? 'cursor-not-allowed' : authzSupport ? '' : 'cursor-not-allowed'}
+        className={
+          isMetamaskSupported() === false
+            ? 'cursor-not-allowed'
+            : authzSupport
+              ? ''
+              : 'cursor-not-allowed'
+        }
         title={
-          isMetamaskSupported() === false ? "MetaMask doesn't support " + itemName :
-            authzSupport
+          isMetamaskSupported() === false
+            ? "MetaMask doesn't support " + itemName
+            : authzSupport
               ? itemName
               : 'authz mode is not supported for ' + itemName
         }
         placement="right"
       >
         <div
-          className={`sidebar-menu-item ${path === link ? 'sidebar-menu-item-selected' : ''
-            }`}
+          className={`sidebar-menu-item ${
+            path === link ? 'sidebar-menu-item-selected' : ''
+          }`}
         >
           <div>
             <Image

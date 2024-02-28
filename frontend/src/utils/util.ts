@@ -453,3 +453,13 @@ export function convertToSpacedName(camelCaseName: string): string {
 
   return spacedName.charAt(0).toUpperCase() + spacedName.slice(1);
 }
+
+export function formatValidatorStatsValue(
+  value: number | string,
+  precision: number
+) {
+  const numValue = Number(value);
+  return isNaN(numValue)
+    ? '-'
+    : Number(numValue.toFixed(precision)).toLocaleString();
+}
