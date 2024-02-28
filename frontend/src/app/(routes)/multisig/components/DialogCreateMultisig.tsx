@@ -46,6 +46,7 @@ import MultisigMemberTextField from './MultisigMemberTextField';
 import { MULTISIG_PUBKEY_OBJECT } from '@/utils/constants';
 
 const MAX_PUB_KEYS = 7;
+const MULTISIG_NAME_MAX_LENGTH = 100;
 
 const getPubkey = async (address: string, baseURL: string) => {
   try {
@@ -124,6 +125,9 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
   };
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length > MULTISIG_NAME_MAX_LENGTH) {
+      return;
+    }
     setName(e.target.value);
   };
 
