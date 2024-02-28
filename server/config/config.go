@@ -8,9 +8,10 @@ import (
 )
 
 type Config struct {
-	DB        DBConfig        `mapstructure:"database"`
-	API       APIConfig       `mapstructure:"api"`
-	COINGECKO CoingeckoConfig `mapstructure:"coingecko"`
+	DB                 DBConfig         `mapstructure:"database"`
+	API                APIConfig        `mapstructure:"api"`
+	COINGECKO          CoingeckoConfig  `mapstructure:"coingecko"`
+	NUMIA_BEARER_TOKEN NumiaBearerToken `mapstructure:"numiaBearerToken"`
 }
 
 type DBConfig struct {
@@ -27,6 +28,10 @@ type APIConfig struct {
 
 type CoingeckoConfig struct {
 	URI string `yaml:"uri"`
+}
+
+type NumiaBearerToken struct {
+	Token string `yaml:"token"`
 }
 
 func ParseConfig() (Config, error) {
@@ -61,6 +66,9 @@ func ParseConfig() (Config, error) {
 			cfg.COINGECKO = CoingeckoConfig{
 				URI: viper.GetString("production.coingecko.uri"),
 			}
+			cfg.NUMIA_BEARER_TOKEN = NumiaBearerToken{
+				Token: viper.GetString("production.numiaBearerToken"),
+			}
 		}
 
 	case "dev":
@@ -77,6 +85,9 @@ func ParseConfig() (Config, error) {
 			}
 			cfg.COINGECKO = CoingeckoConfig{
 				URI: viper.GetString("production.coingecko.uri"),
+			}
+			cfg.NUMIA_BEARER_TOKEN = NumiaBearerToken{
+				Token: viper.GetString("dev.numiaBearerToken"),
 			}
 		}
 
