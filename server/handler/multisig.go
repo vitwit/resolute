@@ -53,6 +53,14 @@ func (h *Handler) CreateMultisigAccount(c echo.Context) error {
 			})
 		}
 
+		if strings.Contains(err.Error(), "value too long") {
+			return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+				Status:  "error",
+				Message: "Multisig name cannot contain more than 100 characters",
+				Log:     err.Error(),
+			})
+		}
+
 		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 			Status:  "error",
 			Message: "failed to create multisig account",
