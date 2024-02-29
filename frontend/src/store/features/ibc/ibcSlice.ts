@@ -6,14 +6,11 @@ import { trackIBCTx, txIBCTransfer } from './ibcService';
 import { TxStatus } from '@/types/enums';
 import axios from 'axios';
 import { parseTxResult } from '@/utils/signing';
-import {
-  addTransactions,
-  updateIBCTransaction,
-} from '../transactionHistory/transactionHistorySlice';
-import { NewTransaction } from '@/utils/transaction';
+import { NewIBCTransaction, NewTransaction } from '@/utils/transaction';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { capitalize } from 'lodash';
 import { getBalances } from '../bank/bankSlice';
+import { addIBCTransaction, updateIBCTransactionStatus } from '../recent-transactions/recentTransactionsSlice';
 
 export interface IBCState {
   txStatus: TxStatus;
@@ -25,13 +22,13 @@ const initialState: IBCState = { txStatus: TxStatus.INIT, chains: {} };
 export const trackTx = createAsyncThunk(
   'ibc/trackTx',
   async (
-    data: { chainID: string; txHash: string; cosmosAddress: string },
+    data: { chainID: string; txHash: string },
     { rejectWithValue, dispatch }
   ) => {
     const onDestChainTxSuccess = (chainID: string, txHash: string) => {
       dispatch(removeFromPending({ chainID, txHash }));
       dispatch(
-        updateIBCTransaction({ chainID, address: data.cosmosAddress, txHash })
+      updateIBCTransactionStatus({ txHash })
       );
     };
     try {
@@ -76,19 +73,21 @@ export const txTransfer = createAsyncThunk(
         true,
         result.code === 0
       );
+      const ibcTx = NewIBCTransaction(
+        result,
+        formattedMsgs,
+        chainID,
+        data.from,
+        true,
+        result.code === 0
+      );
       dispatch(
         setTxAndHash({
           hash: txHash,
           tx,
         })
       );
-      dispatch(
-        addTransactions({
-          chainID: chainID,
-          address: data.cosmosAddress,
-          transactions: [tx],
-        })
-      );
+      dispatch(addIBCTransaction(ibcTx));
 
       dispatch(addToPending({ chainID, txHash }));
       dispatch(
@@ -109,8 +108,8 @@ export const txTransfer = createAsyncThunk(
     ) => {
       dispatch(removeFromPending({ chainID, txHash }));
       dispatch(
-        updateIBCTransaction({ chainID, address: data.cosmosAddress, txHash })
-      );
+        updateIBCTransactionStatus({ txHash })
+        );
       dispatch(
         setError({
           type: 'success',

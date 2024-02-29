@@ -10,7 +10,7 @@ import {
   StakeAuthorization_Validators,
 } from 'cosmjs-types/cosmos/staking/v1beta1/authz';
 
-const msgAuthzGrantTypeUrl = '/cosmos.authz.v1beta1.MsgGrant';
+export const msgAuthzGrantTypeUrl = '/cosmos.authz.v1beta1.MsgGrant';
 
 export function AuthzSendGrantMsg(
   granter: string,
@@ -162,4 +162,10 @@ export function AuthzStakeGrantMsg({
     typeUrl: msgAuthzGrantTypeUrl,
     value: grantValue,
   };
+}
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export function serializeMsgGrantAuthz(msg: any) {
+  const { grantee } = msg;
+  return `Granted authz permission to ${grantee}`;
 }

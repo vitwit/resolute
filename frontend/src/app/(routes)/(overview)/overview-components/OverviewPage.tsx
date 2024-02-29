@@ -20,6 +20,8 @@ import useInitAuthzForOverview from '@/custom-hooks/useInitAuthzForOverview';
 import AuthzToast from '@/components/AuthzToast';
 import AuthzExecLoader from '@/components/AuthzExecLoader';
 import FeegrantToast from '@/components/FeegrantToast';
+import { getRecentTransactions } from '@/store/features/recent-transactions/recentTransactionsSlice';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
@@ -28,6 +30,7 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
   const isFeegrantMode = useAppSelector(
     (state) => state.feegrant.feegrantModeEnabled
   );
+  const { getAllChainAddresses } = useGetChainInfo();
 
   useInitAuthzForOverview(chainIDs);
   useEffect(() => {
@@ -43,7 +46,6 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
         address,
         chainID,
       };
-
       dispatch(getBalances(basicChainInputs));
       dispatch(getDelegations(basicChainInputs));
       dispatch(getAccountInfo(basicChainInputs));
@@ -65,6 +67,17 @@ const OverviewPage = ({ chainIDs }: { chainIDs: string[] }) => {
       );
     });
   }, []);
+
+  useEffect(() => {
+    if (chainIDs) {
+      dispatch(
+        getRecentTransactions({
+          addresses: getAllChainAddresses(chainIDs),
+          module: 'all',
+        })
+      );
+    }
+  }, [chainIDs]);
 
   return (
     <div className="w-full flex justify-between">

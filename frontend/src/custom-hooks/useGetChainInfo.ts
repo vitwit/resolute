@@ -142,6 +142,19 @@ const useGetChainInfo = () => {
     return '';
   };
 
+  const getAllChainAddresses = (chainIDs: string[]) => {
+    let addresses: {
+      chain_id: string;
+      address: string;
+    }[] = [];
+    chainIDs.forEach((chainID) => {
+      const { address } = getChainInfo(chainID);
+      addresses = [...addresses, { chain_id: chainID, address: address }];
+    });
+
+    return addresses;
+  };
+
   return {
     getDenomInfo,
     getChainInfo,
@@ -150,6 +163,7 @@ const useGetChainInfo = () => {
     getChainIDFromAddress,
     isFeeAvailable,
     getCosmosAddress,
+    getAllChainAddresses,
   };
 };
 

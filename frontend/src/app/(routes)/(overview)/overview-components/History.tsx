@@ -5,10 +5,11 @@ import { formatDollarAmount } from '@/utils/util';
 import TopNav from '@/components/TopNav';
 import TransactionItem from './TransactionItem';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
-import { RootState } from '@/store/store';
 import { useRouter } from 'next/navigation';
 import NoTransactions from '@/components/illustrations/NoTransactions';
 import useGetAuthzAssetsAmount from '../../../../custom-hooks/useGetAuthzAssetsAmount';
+import { TxStatus } from '@/types/enums';
+import { CircularProgress } from '@mui/material';
 
 const History = ({ chainIDs }: { chainIDs: string[] }) => {
   return (
@@ -85,7 +86,6 @@ const Balance = ({ chainIDs }: { chainIDs: string[] }) => {
 };
 
 export const RecentTransactions = ({
-  chainIDs,
   msgFilters,
 }: {
   chainIDs: string[];
@@ -97,27 +97,36 @@ export const RecentTransactions = ({
    *        modifications to this logic will be necessary.
    */
   const transactions = useAppSelector(
-    (state: RootState) =>
-      (chainIDs.length == 1
-        ? state.transactionHistory.chains[chainIDs[0]]
-        : state.transactionHistory.allTransactions) || []
+    (state) => state.recentTransactions.txns.data
   );
+  const txnsLoading = useAppSelector(
+    (state) => state.recentTransactions.txns.status
+  );
+
   return (
     <div className="flex-1 overflow-y-scroll">
-      {transactions.length ? (
-        <div className="text-white w-full space-y-3 mt-6">
-          {transactions.map((tx) => (
-            <TransactionItem
-              key={tx.time}
-              transaction={tx}
-              msgFilters={msgFilters}
-            />
-          ))}
+      {txnsLoading === TxStatus.PENDING ? (
+        <div className="flex justify-center mt-[40%]">
+          <CircularProgress size={32} sx={{ color: 'white' }} />
         </div>
       ) : (
-        <div className="h-full flex items-center">
-          <NoTransactions />
-        </div>
+        <>
+          {transactions.length ? (
+            <div className="text-white w-full space-y-3 mt-6">
+              {transactions.map((tx) => (
+                <TransactionItem
+                  key={tx.timestamp}
+                  transaction={tx}
+                  msgFilters={msgFilters}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="h-full flex items-center">
+              <NoTransactions />
+            </div>
+          )}
+        </>
       )}
     </div>
   );
