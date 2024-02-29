@@ -114,7 +114,7 @@ func GetNSavePriceInfoFromCoin(uri string, denom string) (map[string]interface{}
 		return nil, err
 	}
 
-	if Ids["coins"] != nil {
+	if Ids["coins"] == nil {
 		return nil, errors.New("invalid denom")
 	}
 

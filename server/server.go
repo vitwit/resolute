@@ -76,6 +76,7 @@ func main() {
 	e.POST("/multisig/:address/sign-tx/:id", h.SignTransaction, m.AuthMiddleware, m.IsMultisigMember)
 	e.GET("/multisig/:address/txs", h.GetTransactions)
 	e.GET("/accounts/:address/all-txns", h.GetAllMultisigTxns)
+	e.POST("/transactions", h.GetRecentTransactions)
 
 	// users
 	e.POST("/users/:address/signature", h.CreateUserSignature)

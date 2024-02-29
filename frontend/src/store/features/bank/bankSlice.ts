@@ -8,7 +8,6 @@ import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { GAS_FEE } from '../../../utils/constants';
 import { TxStatus } from '../../../types/enums';
 import { ERR_UNKNOWN } from '@/utils/errors';
-import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { NewTransaction } from '@/utils/transaction';
 import { setTxAndHash } from '../common/commonSlice';
 import cloneDeep from 'lodash/cloneDeep';
@@ -104,16 +103,8 @@ export const multiTxns = createAsyncThunk(
     data: MultiTxnsInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
-    const {
-      chainID,
-      cosmosAddress,
-      prefix,
-      aminoConfig,
-      feeAmount,
-      address,
-      rest,
-      restURLs,
-    } = data.basicChainInfo;
+    const { chainID, prefix, aminoConfig, feeAmount, address, rest, restURLs } =
+      data.basicChainInfo;
     try {
       const result = await signAndBroadcast(
         chainID,
@@ -126,16 +117,9 @@ export const multiTxns = createAsyncThunk(
         rest,
         data.feegranter?.length > 0 ? data.feegranter : undefined,
         '',
-        restURLs,
+        restURLs
       );
       const tx = NewTransaction(result, data.msgs, chainID, address);
-      dispatch(
-        addTransactions({
-          chainID: chainID,
-          address: cosmosAddress,
-          transactions: [tx],
-        })
-      );
       dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
       if (result?.code === 0) {
         dispatch(
@@ -158,8 +142,7 @@ export const txBankSend = createAsyncThunk(
     data: TxSendInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
-    const { chainID, cosmosAddress } = data.basicChainInfo;
-
+    const { chainID } = data.basicChainInfo;
 
     try {
       let msgs: Msg[] = [];
@@ -180,32 +163,24 @@ export const txBankSend = createAsyncThunk(
           msgs,
           GAS_FEE,
           data.memo,
-          `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${data.denom
+          `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+            data.denom
           }`,
           data.basicChainInfo.rest,
           data.feegranter,
           data?.basicChainInfo?.rpc,
-          data?.basicChainInfo?.restURLs,
+          data?.basicChainInfo?.restURLs
         );
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       } catch (error: any) {
         return rejectWithValue(error?.message);
       }
 
-
       const tx = NewTransaction(
         result,
         msgs,
         chainID,
         data.basicChainInfo.address
-      );
-      
-      dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: cosmosAddress,
-          transactions: [tx],
-        })
       );
       dispatch(setTxAndHash({ tx, hash: tx.transactionHash }));
       if (result?.code === 0) {

@@ -93,7 +93,7 @@ func (h *Handler) GetTokenInfo(c echo.Context) error {
 			} else {
 				for k, v := range priceInfo {
 					val, _ := json.Marshal(v)
-					_, err = h.DB.Exec("UPDATE price_info SET info=$1,last_updated=$2 WHERE denom=$3", val, time.Now(), priceInfo[k])
+					_, err = h.DB.Exec("INSERT INTO price_info(denom,coingecko_name,enabled,last_updated,info) values($1, $2, $3, $4, $5)", denom, k, true, time.Now(), val)
 					if err != nil {
 						utils.ErrorLogger.Printf("failed to update price information for denom = %s : %s\n", k, err.Error())
 					}

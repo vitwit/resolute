@@ -54,7 +54,7 @@ CREATE TABLE public.multisig_accounts (
     threshold integer NOT NULL,
     chain_id character varying(20) NOT NULL,
     pubkey_type character varying(50) NOT NULL,
-    name character varying(20) NOT NULL,
+    name character varying(100) NOT NULL,
     created_by character varying(50) NOT NULL,
     created_at timestamp with time zone DEFAULT '2022-09-23 22:26:53.911454+05:30'::timestamp with time zone NOT NULL
 );

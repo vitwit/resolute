@@ -25,6 +25,16 @@ import {
 } from '@/txns/ibc/transfer';
 import { serialize as serializeMsgExec } from '@/txns/authz/exec';
 import { msgAuthzExecTypeUrl } from '@/txns/authz/exec';
+import {
+  msgAuthzGrantTypeUrl,
+  serializeMsgGrantAuthz,
+} from '@/txns/authz/grant';
+import {
+  msgFeegrantGrantTypeUrl,
+  serializeMsgGrantAllowance,
+} from '@/txns/feegrant/grant';
+import { msgVoteTypeUrl, serializeMsgVote } from '@/txns/gov/vote';
+import { msgDepositTypeUrl, serializeMsgDeposit } from '@/txns/gov/deposit';
 
 export function NewTransaction(
   txResponse: ParsedTxResponse,
@@ -33,7 +43,7 @@ export function NewTransaction(
   address: string,
   isIBC?: boolean,
   isIBCPending?: boolean
-): Transaction  {
+): Transaction {
   const transaction: Transaction = {
     code: txResponse.code,
     transactionHash: txResponse.transactionHash,
@@ -69,50 +79,67 @@ export const MsgType = (msg: string): string => {
       return 'IBC';
     case msgAuthzExecTypeUrl:
       return 'Authz-permission';
+    case msgAuthzGrantTypeUrl:
+      return 'Grant-Authz';
+    case msgFeegrantGrantTypeUrl:
+      return 'Grant-Allowance';
+    case msgVoteTypeUrl:
+      return 'Vote';
+    case msgDepositTypeUrl:
+      return 'Deposit';
     default:
       return 'Todo: add type';
   }
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const serializeMsg = (
-  msg: Msg,
+  msg: any,
   decimals: number,
   originDenom: string
 ): string => {
   if (!msg) return 'No Message';
-  switch (msg.typeUrl) {
+  switch (msg['@type']) {
     case msgDelegate:
-      return serializeMsgDelegate(msg);
+      return serializeMsgDelegate(msg, decimals, originDenom);
     case msgUnDelegate:
-      return serializeMsgUndelegte(msg);
+      return serializeMsgUndelegte(msg, decimals, originDenom);
     case msgReDelegate:
-      return serializeMsgRedelegte(msg);
+      return serializeMsgRedelegte(msg, decimals, originDenom);
     case msgSendTypeUrl:
       return serializeMsgSend(msg, decimals, originDenom, true);
     case msgWithdrawRewards:
       return serializeMsgClaim(msg);
     case msgTransfer:
-      return serializeMsgTransfer(msg);
+      return serializeMsgTransfer(msg, decimals, originDenom);
     case msgAuthzExecTypeUrl:
       return serializeMsgExec();
+    case msgAuthzGrantTypeUrl:
+      return serializeMsgGrantAuthz(msg);
+    case msgFeegrantGrantTypeUrl:
+      return serializeMsgGrantAllowance(msg);
+    case msgVoteTypeUrl:
+      return serializeMsgVote(msg);
+    case msgDepositTypeUrl:
+      return serializeMsgDeposit(msg, decimals, originDenom);
     default:
       return `Todo: serialize message ${msg.typeUrl}`;
   }
 };
 
 export const formatTransaction = (
-  tx: Transaction,
+  tx: ParsedTransaction,
   msgFilters: string[],
   decimals: number,
   originDenom: string
 ) => {
-  const msgs = tx.msgs;
+  const msgs = tx.messages;
   const showMsgs: [string, string, boolean] = ['', '', false];
   if (msgs[0]) {
-    showMsgs[0] = MsgType(msgs[0].typeUrl);
+    showMsgs[0] = MsgType(msgs[0]?.['@type']);
   }
   if (msgs[1]) {
-    showMsgs[1] = MsgType(msgs[1].typeUrl);
+    showMsgs[1] = MsgType(msgs[1]?.['@type']);
   }
   if (msgs.length > 2) {
     showMsgs[2] = true;
@@ -123,14 +150,14 @@ export const formatTransaction = (
     const filterSet = new Set(msgFilters);
     if (!msgs.length) showTx = true;
     msgs.forEach((msg) => {
-      if (filterSet.has(MsgType(msg.typeUrl))) showTx = true;
+      if (filterSet.has(MsgType(msg['@type']))) showTx = true;
     });
   }
 
   const msgCount = msgs.length;
   const isTxSuccess = tx.code === 0;
-  const time = getTimeDifference(tx.time);
-  const firstMessage = serializeMsg(tx.msgs[0], decimals, originDenom);
+  const time = getTimeDifference(tx.timestamp);
+  const firstMessage = serializeMsg(tx.messages[0], decimals, originDenom);
   return {
     showMsgs,
     isTxSuccess,
@@ -138,7 +165,34 @@ export const formatTransaction = (
     firstMessage,
     msgCount,
     showTx,
-    isIBC: tx.isIBC,
+    isIBC: tx.isIBCTxn,
     isIBCPending: tx.isIBCPending,
   };
+};
+
+export const NewIBCTransaction = (
+  txResponse: ParsedTxResponse,
+  msgs: Msg[],
+  chainID: string,
+  address: string,
+  isIBC?: boolean,
+  isIBCPending?: boolean
+): ParsedTransaction => {
+  const transaction: ParsedTransaction = {
+    code: txResponse.code,
+    txhash: txResponse.transactionHash,
+    height: txResponse.height || '-',
+    raw_log: txResponse.rawLog || '-',
+    gas_used: txResponse.gasUsed || '-',
+    gas_wanted: txResponse.gasWanted || '-',
+    fee: txResponse.fee || [],
+    timestamp: txResponse.time || new Date().toISOString(),
+    messages: [msgs[0]?.value],
+    chain_id: chainID,
+    address,
+    memo: txResponse.memo || '',
+    isIBCTxn: !!isIBC,
+    isIBCPending: !!isIBCPending,
+  };
+  return transaction;
 };

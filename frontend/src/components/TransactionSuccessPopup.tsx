@@ -5,7 +5,12 @@ import { Box, Dialog, DialogContent } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { TXN_FAILED_ICON, TXN_SUCCESS_ICON } from '@/utils/constants';
+import {
+  IBC_SEND_TYPE_URL,
+  SEND_TYPE_URL,
+  TXN_FAILED_ICON,
+  TXN_SUCCESS_ICON,
+} from '@/utils/constants';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { setError } from '@/store/features/common/commonSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
@@ -14,9 +19,15 @@ import { getTxnURL } from '@/utils/util';
 import TxnMessage from './TxnMessage';
 import { parseBalance } from '@/utils/denom';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
+import { getRecentTransactions } from '@/store/features/recent-transactions/recentTransactionsSlice';
 
 const TransactionSuccessPopup = () => {
   const tx = useAppSelector((state) => state.common.txSuccess.tx);
+  const selectedNetwork = useAppSelector(
+    (state) => state.common.selectedNetwork.chainName
+  );
+  const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
+  const { getAllChainAddresses } = useGetChainInfo();
 
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
@@ -47,6 +58,29 @@ const TransactionSuccessPopup = () => {
       setIsOpen(true);
     } else {
       setIsOpen(false);
+    }
+  }, [tx]);
+
+  useEffect(() => {
+    if (tx?.msgs) {
+      const chainIDs = selectedNetwork?.length
+        ? [nameToChainIDs[selectedNetwork]]
+        : Object.values(nameToChainIDs);
+      if (tx?.msgs[0]?.typeUrl === SEND_TYPE_URL) {
+        dispatch(
+          getRecentTransactions({
+            addresses: getAllChainAddresses(chainIDs),
+            module: 'bank',
+          })
+        );
+      } else if (!(tx?.msgs[0]?.typeUrl === IBC_SEND_TYPE_URL)) {
+        dispatch(
+          getRecentTransactions({
+            addresses: getAllChainAddresses(chainIDs),
+            module: 'all',
+          })
+        );
+      }
     }
   }, [tx]);
 
