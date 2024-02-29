@@ -120,13 +120,20 @@ export const StakingCardHeader = ({
   network,
   networkLogo,
 }: StakingCardHeaderProps) => {
+  const validatorProfileURL = validator
+    ? `/staking/validator/${encodeURIComponent(validator?.toLowerCase())}`
+    : '';
   return (
     <div className="flex justify-between items-center">
       <Tooltip title={validator} placement="top-start">
-        <div className="flex-center-center gap-2 h-10 cursor-default">
-          <ValidatorLogo identity={identity} width={24} height={24} />
-          <div className="txt-md font-medium truncate">{validator || '-'}</div>
-        </div>
+        <Link href={validatorProfileURL}>
+          <div className="flex-center-center gap-2 h-10 cursor-pointer">
+            <ValidatorLogo identity={identity} width={24} height={24} />
+            <div className="txt-md font-medium truncate">
+              {validator || '-'}
+            </div>
+          </div>
+        </Link>
       </Tooltip>
       <Link href={`/staking/${network.toLowerCase()}`}>
         <div className="flex-center-center gap-2">
@@ -195,7 +202,7 @@ const StakingCardActions = ({
       );
       return;
     }
-    
+
     const txInputs = txWithdrawValidatorRewardsInputs(
       chainID,
       validatorAddress,
@@ -226,7 +233,6 @@ const StakingCardActions = ({
   };
 
   const claimAndStake = () => {
-   
     if (txRestakeStatus === TxStatus.PENDING) {
       dispatch(
         setError({

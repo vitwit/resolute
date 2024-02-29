@@ -30,10 +30,8 @@ export function EncodedWithdrawAllRewardsMsg(
   };
 }
 
-export function serialize(msg: Msg): string {
-  const { delegatorAddress, validatorAddress } = msg.value;
-  return `${shortenMsg(
-    delegatorAddress,
-    10
-  )} withdrew rewards from ${shortenMsg(validatorAddress, 10)}`;
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export function serialize(msg: any): string {
+  const validatorAddress = msg?.validator_address;
+  return `Withdrew rewards from ${shortenMsg(validatorAddress, 10)}`;
 }

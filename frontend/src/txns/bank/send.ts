@@ -29,7 +29,21 @@ export function serialize(msg: Msg): string {
   return `Sent ${amount[0].amount} ${amount[0].denom} to ${toAddress}`;
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function formattedSerialize(
+  msg: any,
+  decimals: number,
+  originalDenom: string,
+  pastTense?: boolean
+) {
+  const { to_address, amount } = msg;
+  const parsedAmount = parseBalance(amount, decimals, amount[0].denom);
+  return `${pastTense ? 'Sent' : 'Send'} ${formatNumber(
+    parsedAmount
+  )} ${originalDenom} to ${to_address}`;
+}
+
+export function formatSendMessage(
   msg: Msg,
   decimals: number,
   originalDenom: string,

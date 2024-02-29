@@ -20,7 +20,6 @@ import { WithdrawAllRewardsMsg } from '@/txns/distribution/withDrawRewards';
 import { TxStatus } from '@/types/enums';
 import { GAS_FEE } from '@/utils/constants';
 import { NewTransaction } from '@/utils/transaction';
-import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { getAuthzBalances, getBalances } from '../bank/bankSlice';
 const initialState: DistributionStoreInitialState = {
   chains: {},
@@ -87,13 +86,6 @@ export const txWithdrawAllRewards = createAsyncThunk(
         msgs,
         data.basicChainInfo.chainID,
         data.basicChainInfo.address
-      );
-      dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: data.basicChainInfo.cosmosAddress,
-          transactions: [tx],
-        })
       );
 
       if (result?.code === 0) {
@@ -197,13 +189,6 @@ export const txSetWithdrawAddress = createAsyncThunk(
         data.basicChainInfo.chainID,
         data.basicChainInfo.address
       );
-      dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: data.basicChainInfo.cosmosAddress,
-          transactions: [tx],
-        })
-      );
 
       if (result?.code === 0) {
         if (data.isAuthzMode) {
@@ -283,13 +268,6 @@ export const txWithdrawValidatorCommission = createAsyncThunk(
         msgs,
         data.basicChainInfo.chainID,
         data.basicChainInfo.address
-      );
-      dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: data.basicChainInfo.cosmosAddress,
-          transactions: [tx],
-        })
       );
 
       if (result?.code === 0) {
@@ -393,13 +371,6 @@ export const txWithdrawValidatorCommissionAndRewards = createAsyncThunk(
         msgs,
         data.basicChainInfo.chainID,
         data.basicChainInfo.address
-      );
-      dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: data.basicChainInfo.cosmosAddress,
-          transactions: [tx],
-        })
       );
 
       if (result?.code === 0) {

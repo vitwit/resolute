@@ -7,12 +7,12 @@ import commonSlice from './features/common/commonSlice';
 import stakeSlice from './features/staking/stakeSlice';
 import bankSlice from './features/bank/bankSlice';
 import distributionSlice from './features/distribution/distributionSlice';
-import transactionHistorySlice from './features/transactionHistory/transactionHistorySlice';
 import authSlice from './features/auth/authSlice';
 import govSlice from './features/gov/govSlice';
 import ibcSlice from './features/ibc/ibcSlice';
 import authzSlice from './features/authz/authzSlice';
 import feegrantSlice from './features/feegrant/feegrantSlice';
+import recentTransactionsSlice from './features/recent-transactions/recentTransactionsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -24,10 +24,10 @@ export const store = configureStore({
     auth: authSlice,
     distribution: distributionSlice,
     gov: govSlice,
-    transactionHistory: transactionHistorySlice,
     ibc: ibcSlice,
     authz: authzSlice,
     feegrant: feegrantSlice,
+    recentTransactions: recentTransactionsSlice,
   },
 });
 

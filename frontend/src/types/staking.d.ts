@@ -362,3 +362,14 @@ interface AllValidatorsProps {
   allValidatorsDialogOpen: boolean;
   toggleValidatorsDialog: () => void;
 }
+
+interface ValidatorProfileInfo {
+  rank: string;
+  commission: number;
+  totalStakedInUSD: string;
+  chainID: string;
+  tokens: number;
+  operatorAddress: string;
+  validatorStatus: string;
+  validatorInfo: Validator;
+}

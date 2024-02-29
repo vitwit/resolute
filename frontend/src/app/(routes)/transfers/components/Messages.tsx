@@ -2,7 +2,7 @@ import { Pagination } from '@mui/material';
 import Image from 'next/image';
 import React, { useMemo, useState } from 'react';
 import { paginationComponentStyles } from '../../staking/styles';
-import { formattedSerialize } from '@/txns/bank/send';
+import { formatSendMessage } from '@/txns/bank/send';
 import { MULTI_TRANSFER_MSG_COUNT } from '../../../../utils/constants';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
@@ -113,7 +113,7 @@ const Message = ({
           alt="msg"
         />
         <div className="overflowed-text max-w-[275px] text-sm not-italic font-normal leading-[normal]">
-          {formattedSerialize(
+          {formatSendMessage(
             msg,
             originDenomInfo.decimals,
             originDenomInfo.originDenom

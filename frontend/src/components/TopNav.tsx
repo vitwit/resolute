@@ -3,6 +3,8 @@ import React from 'react';
 import SelectNetwork from './SelectNetwork';
 import AuthzButton from './AuthzButton';
 import FeegrantButton from './FeegrantButton';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import ConnectWalletButton from './ConnectWalletButton';
 
 const TopNav = ({
   message,
@@ -13,6 +15,7 @@ const TopNav = ({
   showAuthzButton?: boolean;
   showFeegrantButton?: boolean;
 }) => {
+  const connected = useAppSelector((state) => state.wallet.connected);
   return (
     <div className="flex justify-between gap-6">
       {(showFeegrantButton || showAuthzButton) && (
@@ -21,8 +24,8 @@ const TopNav = ({
           {showAuthzButton && <AuthzButton />}
         </div>
       )}
-      <SelectNetwork message={message} />
-      <Profile />
+      {connected ? <SelectNetwork message={message} /> : null}
+      {connected ? <Profile /> : <ConnectWalletButton />}
     </div>
   );
 };

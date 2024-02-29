@@ -23,7 +23,6 @@ import {
 import { AxiosError } from 'axios';
 import { TxStatus } from '../../../types/enums';
 import { NewTransaction } from '@/utils/transaction';
-import { addTransactions } from '../transactionHistory/transactionHistorySlice';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { Unbonding } from '@/txns/staking/unbonding';
 import {
@@ -70,6 +69,7 @@ interface Chain {
   reStakeTxStatus: TxStatus;
   cancelUnbondingTxStatus: TxStatus;
   isTxAll: boolean;
+  validatorProfiles: Record<string, { totalDelegators: number }>;
 }
 
 interface Chains {
@@ -89,6 +89,11 @@ interface StakingState {
     hasDelegations: boolean;
     hasUnbonding: boolean;
   };
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  witvalNonCosmosValidators: {
+    chains: Record<string, any>;
+    delegators: Record<string, any>;
+  };
 }
 
 const initialState: StakingState = {
@@ -102,6 +107,10 @@ const initialState: StakingState = {
     delegationsLoading: 0,
     hasUnbonding: false,
     hasDelegations: false,
+  },
+  witvalNonCosmosValidators: {
+    chains: {},
+    delegators: {},
   },
   defaultState: {
     paramsStatus: TxStatus.INIT,
@@ -118,6 +127,7 @@ const initialState: StakingState = {
       totalActive: 0,
       totalInactive: 0,
     },
+    validatorProfiles: {},
     delegations: {
       status: TxStatus.INIT,
       delegations: {
@@ -174,7 +184,7 @@ export const txRestake = createAsyncThunk(
     data: TxReStakeInputs | TxAuthzExecInputs,
     { rejectWithValue, fulfillWithValue, dispatch }
   ) => {
-    const { chainID, address, rest, aminoConfig, prefix, cosmosAddress } =
+    const { chainID, address, rest, aminoConfig, prefix } =
       data.basicChainInfo;
     try {
       const result = await signAndBroadcast(
@@ -193,13 +203,6 @@ export const txRestake = createAsyncThunk(
         data?.basicChainInfo?.restURLs
       );
       const tx = NewTransaction(result, data.msgs, chainID, address);
-      dispatch(
-        addTransactions({
-          chainID,
-          address: cosmosAddress,
-          transactions: [tx],
-        })
-      );
       dispatch(
         setTxAndHash({
           tx,
@@ -288,14 +291,6 @@ export const txDelegate = createAsyncThunk(
         msgs,
         data.basicChainInfo.chainID,
         data.basicChainInfo.address
-      );
-
-      dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: data.basicChainInfo.cosmosAddress,
-          transactions: [tx],
-        })
       );
 
       dispatch(
@@ -400,14 +395,6 @@ export const txReDelegate = createAsyncThunk(
       );
 
       dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: data.basicChainInfo.cosmosAddress,
-          transactions: [tx],
-        })
-      );
-
-      dispatch(
         setTxAndHash({
           tx,
           hash: tx.transactionHash,
@@ -484,14 +471,6 @@ export const txUnDelegate = createAsyncThunk(
         msgs,
         data.basicChainInfo.chainID,
         data.basicChainInfo.address
-      );
-
-      dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: data.basicChainInfo.cosmosAddress,
-          transactions: [tx],
-        })
       );
 
       dispatch(
@@ -587,13 +566,6 @@ export const txCancelUnbonding = createAsyncThunk(
         data.basicChainInfo.address
       );
 
-      dispatch(
-        addTransactions({
-          chainID: data.basicChainInfo.chainID,
-          address: data.basicChainInfo.cosmosAddress,
-          transactions: [tx],
-        })
-      );
       dispatch(
         setTxAndHash({
           tx,
@@ -737,6 +709,24 @@ export const getParams = createAsyncThunk(
   'staking/params',
   async (data: { baseURLs: string[]; chainID: string }) => {
     const response = await stakingService.params(data.baseURLs);
+    return {
+      data: response.data,
+      chainID: data.chainID,
+    };
+  }
+);
+
+export const getTotalDelegationsCount = createAsyncThunk(
+  'staking/total-delegations-count',
+  async (data: {
+    baseURLs: string[];
+    chainID: string;
+    operatorAddress: string;
+  }) => {
+    const response = await stakingService.validatorDelegations(
+      data.baseURLs,
+      data.operatorAddress
+    );
     return {
       data: response.data,
       chainID: data.chainID,
@@ -918,6 +908,78 @@ export const getAuthzValidator = createAsyncThunk(
       return {
         data: response.data,
         chainID: data.chainID,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
+export const getWitvalPolygonValidator = createAsyncThunk(
+  'staking/get-polygon-witval',
+  async (
+    data: {
+      baseURL: string;
+      id: number;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await stakingService.polygonValidator(
+        data.baseURL,
+        data.id
+      );
+      return {
+        data: response.data,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
+export const getWitvalPolygonDelegatorsCount = createAsyncThunk(
+  'staking/get-polygon-witval-delegators',
+  async (
+    data: {
+      baseURL: string;
+      id: number;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await stakingService.polygonDelegators(
+        data.baseURL,
+        data.id
+      );
+      return {
+        data: response.data,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.message);
+      return rejectWithValue(ERR_UNKNOWN);
+    }
+  }
+);
+
+export const getWitvalOasisDelegations = createAsyncThunk(
+  'staking/get-oasis-witval-delegations',
+  async (
+    data: {
+      baseURL: string;
+      operatorAddress: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await stakingService.oasisDelegations(
+        data.baseURL,
+        data.operatorAddress
+      );
+      return {
+        data: response.data,
       };
     } catch (error) {
       if (error instanceof AxiosError) return rejectWithValue(error.message);
@@ -1372,6 +1434,55 @@ export const stakeSlice = createSlice({
         state.authz.chains[chainID].validator.status = TxStatus.REJECTED;
         state.authz.chains[chainID].validator.errMsg = '';
       });
+
+    builder
+      .addCase(getTotalDelegationsCount.pending, (state, action) => {
+        const { chainID, operatorAddress } = action.meta.arg;
+        state.chains[chainID].validatorProfiles = {
+          ...state.chains[chainID].validatorProfiles,
+          [operatorAddress]: { totalDelegators: 0 },
+        };
+      })
+      .addCase(getTotalDelegationsCount.fulfilled, (state, action) => {
+        const { chainID, operatorAddress } = action.meta.arg;
+        state.chains[chainID].validatorProfiles = {
+          ...state.chains[chainID].validatorProfiles,
+          [operatorAddress]: {
+            totalDelegators: action.payload?.data?.pagination?.total || 0,
+          },
+        };
+      })
+      .addCase(getTotalDelegationsCount.rejected, () => {});
+
+    builder
+      .addCase(getWitvalPolygonValidator.pending, () => {})
+      .addCase(getWitvalPolygonValidator.fulfilled, (state, action) => {
+        state.witvalNonCosmosValidators.chains = {
+          ...state.witvalNonCosmosValidators.chains,
+          polygon: action.payload.data,
+        };
+      })
+      .addCase(getWitvalPolygonValidator.rejected, () => {});
+
+    builder
+      .addCase(getWitvalPolygonDelegatorsCount.pending, () => {})
+      .addCase(getWitvalPolygonDelegatorsCount.fulfilled, (state, action) => {
+        state.witvalNonCosmosValidators.delegators = {
+          ...state.witvalNonCosmosValidators.delegators,
+          polygon: action.payload?.data?.summary?.total,
+        };
+      })
+      .addCase(getWitvalPolygonDelegatorsCount.rejected, () => {});
+
+    builder
+      .addCase(getWitvalOasisDelegations.pending, () => {})
+      .addCase(getWitvalOasisDelegations.fulfilled, (state, action) => {
+        state.witvalNonCosmosValidators.delegators = {
+          ...state.witvalNonCosmosValidators.delegators,
+          oasis: action.payload?.data,
+        };
+      })
+      .addCase(getWitvalOasisDelegations.rejected, () => {});
 
     builder
       .addCase(txDelegate.pending, (state, action) => {
