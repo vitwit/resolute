@@ -47,7 +47,9 @@ const SelectNetwork = ({ message }: { message?: string }) => {
 
   useEffect(() => {
     const pathParts = pathName.split('/') || [];
-    if (pathParts.length >= 3) {
+    if (pathParts.includes('validator') && pathParts.includes('staking')) {
+      dispatch(setSelectedNetwork({ chainName: '' }));
+    } else if (pathParts.length >= 3) {
       dispatch(setSelectedNetwork({ chainName: pathParts[2].toLowerCase() }));
     } else {
       dispatch(setSelectedNetwork({ chainName: '' }));

@@ -11,15 +11,21 @@ import {
 } from '../../../types/staking';
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
 import { MAX_TRY_END_POINTS } from '@/utils/constants';
-/* disable eslint*/
 const validatorsURL = '/cosmos/staking/v1beta1/validators';
 const delegationsURL = '/cosmos/staking/v1beta1/delegations/';
 const unbondingDelegationsURL = (address: string) =>
   `/cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`;
+const validatorDelegationsURL = (operatorAddress: string) =>
+  `/cosmos/staking/v1beta1/validators/${operatorAddress}/delegations?pagination.count_total=1`;
 const validatorURL = (address: string) =>
   `/cosmos/staking/v1beta1/validators/${address}`;
 const paramsURL = '/cosmos/staking/v1beta1/params';
 const poolURL = '/cosmos/staking/v1beta1/pool';
+
+const polygonValidatorURL = (id: number) => `/validators/${id}`;
+const polygonDelegatorsURL = (id: number) => `/validators/${id}/delegators`;
+const oasisDelegationsURL = (operatorAddress: string) =>
+  `/mainnet/validator/delegators?address=${operatorAddress}&page=1&size=20`;
 
 const fetchValidators = (
   baseURLs: string[],
@@ -79,6 +85,46 @@ const fetchValidator = (
   );
 };
 
+const fetchValidatorDelegations = async (
+  baseURLs: string[],
+  operatorAddress: string
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+): Promise<AxiosResponse<any>> => {
+  const endPoint = `${validatorDelegationsURL(operatorAddress)}`;
+
+  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+};
+
+const fetchPolygonValidator = async (
+  baseURL: string,
+  id: number
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+): Promise<AxiosResponse<any>> => {
+  const endPoint = `${polygonValidatorURL(id)}`;
+
+  return axiosGetRequestWrapper([baseURL], endPoint, MAX_TRY_END_POINTS);
+};
+
+const fetchPolygonDelegators = async (
+  baseURL: string,
+  id: number
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+): Promise<AxiosResponse<any>> => {
+  const endPoint = `${polygonDelegatorsURL(id)}`;
+
+  return axiosGetRequestWrapper([baseURL], endPoint, MAX_TRY_END_POINTS);
+};
+
+const fetchOasisDelegations = async (
+  baseURL: string,
+  operatorAddress: string
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+): Promise<AxiosResponse<any>> => {
+  const endPoint = `${oasisDelegationsURL(operatorAddress)}`;
+
+  return axiosGetRequestWrapper([baseURL], endPoint, MAX_TRY_END_POINTS);
+};
+
 const result = {
   validators: fetchValidators,
   delegations: fetchdelegations,
@@ -86,6 +132,10 @@ const result = {
   params: fetchParams,
   poolInfo: fetchPoolInfo,
   validatorInfo: fetchValidator,
+  validatorDelegations: fetchValidatorDelegations,
+  polygonValidator: fetchPolygonValidator,
+  polygonDelegators: fetchPolygonDelegators,
+  oasisDelegations: fetchOasisDelegations,
 };
 
 export default result;

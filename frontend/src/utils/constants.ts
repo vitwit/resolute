@@ -233,3 +233,28 @@ export const ALERT_TYPE_MAP: Record<string, string> = {
   error: 'error',
   info: 'info',
 };
+export const WITVAL = 'witval';
+export const POLYGON_API = 'https://staking-api.polygon.technology/api/v2';
+
+export const POLYGON_CONFIG = {
+  baseURL: 'https://staking-api.polygon.technology/api/v2',
+  decimals: 18,
+  coinGeckoId: 'matic-network',
+  logo: '/polygon-logo.svg',
+  witval: {
+    profile: 'https://staking.polygon.technology/validators/50',
+  },
+};
+
+export const OASIS_CONFIG = {
+  baseURL: 'https://oasisscan.com',
+  decimals: 9,
+  coinGeckoId: '',
+  logo: '/oasis-network-logo.png',
+  witval: {
+    profile:
+      'https://www.oasisscan.com/validators/detail/oasis1qzc687uuywnel4eqtdn6x3t9hkdvf6sf2gtv4ye9',
+    commission: 19,
+    operatorAddress: 'oasis1qzc687uuywnel4eqtdn6x3t9hkdvf6sf2gtv4ye9',
+  },
+};

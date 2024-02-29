@@ -13,7 +13,7 @@ import {
   unsetIsLoading,
 } from '../store/features/wallet/walletSlice';
 import { RootState } from '../store/store';
-import { getAllTokensPrice } from '@/store/features/common/commonSlice';
+import { getAllTokensPrice, setAllNetworksInfo } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import WalletPopup from './WalletPopup';
 import CustomParticles from './Particles';
@@ -26,9 +26,11 @@ import {
   getSnap,
 } from '@leapwallet/cosmos-snap-provider';
 import { CircularProgress } from '@mui/material';
+import { usePathname } from 'next/navigation';
 
 export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
+  const pathName = usePathname();
   const connected = useAppSelector(
     (state: RootState) => state.wallet.connected
   );
@@ -101,6 +103,8 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    dispatch(setAllNetworksInfo());
+
     const walletName = getWalletName();
     if (isConnected()) {
       tryConnectWallet(walletName);
@@ -133,7 +137,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     return <Loading />;
   }
 
-  return connected ? (
+  return connected || pathName.includes('/staking/validator') ? (
     <>{children}</>
   ) : (
     <div>
