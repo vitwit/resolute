@@ -88,7 +88,7 @@ export const MsgType = (msg: string): string => {
     case msgDepositTypeUrl:
       return 'Deposit';
     default:
-      return 'Todo: add type';
+      return msg;
   }
 };
 
@@ -96,7 +96,8 @@ export const MsgType = (msg: string): string => {
 export const serializeMsg = (
   msg: any,
   decimals: number,
-  originDenom: string
+  originDenom: string,
+  txHash: string
 ): string => {
   if (!msg) return 'No Message';
   switch (msg['@type']) {
@@ -123,7 +124,7 @@ export const serializeMsg = (
     case msgDepositTypeUrl:
       return serializeMsgDeposit(msg, decimals, originDenom);
     default:
-      return `Todo: serialize message ${msg.typeUrl}`;
+      return txHash;
   }
 };
 
@@ -157,7 +158,12 @@ export const formatTransaction = (
   const msgCount = msgs.length;
   const isTxSuccess = tx.code === 0;
   const time = getTimeDifference(tx.timestamp);
-  const firstMessage = serializeMsg(tx.messages[0], decimals, originDenom);
+  const firstMessage = serializeMsg(
+    tx.messages[0],
+    decimals,
+    originDenom,
+    tx.txhash
+  );
   return {
     showMsgs,
     isTxSuccess,
