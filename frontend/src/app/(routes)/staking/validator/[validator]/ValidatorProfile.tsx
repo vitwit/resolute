@@ -112,13 +112,17 @@ const ValidatorMetadataCard = ({
       <div className="flex gap-2 items-center h-8">
         <ValidatorLogo identity={identity} height={24} width={24} />
         <div className="text-[18px] leading-[21.7px]">
-          {capitalizeFirstLetter(moniker)}
+          {
+            moniker.toLowerCase() === WITVAL ? 'VITWIT' : capitalizeFirstLetter(moniker)
+          }
         </div>
       </div>
       <div className="space-y-10">
         <div className="space-y-2">
           <div className="text-[#FFFFFF80] text-[14px]">Description</div>
-          <div className="text-[16px] leading-[30px]">{description || '-'}</div>
+          <div className="text-[16px] leading-[30px]">{
+           moniker.toLowerCase() === WITVAL?
+           'Vitwit excels in providing top-notch infrastructure services for the Cosmos blockchain ecosystem. We specialize in setting up and managing validators, relayers, and offering expert advisory services.':description || '-'}</div>
         </div>
         {website ? (
           <div>
