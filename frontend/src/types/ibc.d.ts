@@ -11,4 +11,5 @@ interface TransferRequestInputs {
   rest: string;
   rpc?: string;
   restURLs: string[];
+  getFee: (chainID: string) => Promise<GasPrice | undefined>;
 }

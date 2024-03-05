@@ -27,8 +27,8 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
   const pathParts = pathName.split('/');
   const selectedPart = getSelectedPartFromURL(pathParts).toLowerCase();
-  useInitAuthz();
-  useInitFeegrant();
+  // useInitAuthz();
+  // useInitFeegrant();
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const dispatch = useAppDispatch();
   useEffect(() => {

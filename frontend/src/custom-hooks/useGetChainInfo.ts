@@ -3,6 +3,7 @@ import { RootState } from '@/store/store';
 import { useAppSelector } from './StateHooks';
 import { COSMOS_CHAIN_ID } from '@/utils/constants';
 import { getAddressByPrefix } from '@/utils/address';
+import { GasPrice } from '@cosmjs/cosmwasm-stargate/node_modules/@cosmjs/stargate';
 
 export interface DenomInfo {
   minimalDenom: string;
@@ -155,6 +156,16 @@ const useGetChainInfo = () => {
     return addresses;
   };
 
+  const getFee = async (chainID: string): Promise<GasPrice | undefined> => {
+    const network = networks[chainID].network;
+    const config = network.config;
+    const feeAmount = config?.feeCurrencies[0].gasPriceStep?.average || 0;
+    const currency = config?.currencies?.[0];
+    return await GasPrice.fromString(
+      feeAmount.toString() + currency.coinDenom.toLowerCase()
+    );
+  };
+
   return {
     getDenomInfo,
     getChainInfo,
@@ -164,6 +175,7 @@ const useGetChainInfo = () => {
     isFeeAvailable,
     getCosmosAddress,
     getAllChainAddresses,
+    getFee,
   };
 };
 

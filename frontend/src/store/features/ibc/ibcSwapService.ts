@@ -12,7 +12,7 @@ import { capitalize } from 'lodash';
 
 declare let window: WalletWindow;
 
-export function createSkipRouterClient() {
+function createSkipRouterClient() {
   return new SkipRouter({
     apiURL: SKIP_API_URL,
     getCosmosSigner: async (chainID) => {

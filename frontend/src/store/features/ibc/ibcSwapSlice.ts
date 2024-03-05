@@ -159,8 +159,8 @@ export const txTransfer = createAsyncThunk(
   }
 );
 
-export const ibcSlice = createSlice({
-  name: 'ibc',
+export const ibcSwapSlice = createSlice({
+  name: 'ibcSwap',
   initialState,
   reducers: {
     addToPending: (
@@ -233,6 +233,6 @@ export const {
   addToPending,
   removeFromPending,
   resetTxStatus,
-} = ibcSlice.actions;
+} = ibcSwapSlice.actions;
 
-export default ibcSlice.reducer;
+export default ibcSwapSlice.reducer;

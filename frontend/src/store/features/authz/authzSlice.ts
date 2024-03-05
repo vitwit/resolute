@@ -388,7 +388,7 @@ export const authzSlice = createSlice({
         const addressMapping: Record<string, Authorization[]> = {};
         const allChainsAddressToGrants = state.AddressToChainAuthz;
 
-        grants.forEach((grant: Authorization) => {
+        grants?.forEach((grant: Authorization) => {
           const granter = grant.granter;
           const cosmosAddress = getAddressByPrefix(granter, 'cosmos');
           if (!addressMapping[granter]) addressMapping[granter] = [];
@@ -436,7 +436,7 @@ export const authzSlice = createSlice({
         const grants = action.payload.data.grants;
         state.chains[chainID].grantsByMe = grants;
         const addressMapping: Record<string, Authorization[]> = {};
-        grants.forEach((grant: Authorization) => {
+        grants?.forEach((grant: Authorization) => {
           const granter = grant.grantee;
           if (!addressMapping[granter]) addressMapping[granter] = [];
           addressMapping[granter] = [...addressMapping[granter], grant];

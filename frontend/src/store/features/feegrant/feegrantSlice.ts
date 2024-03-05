@@ -274,7 +274,7 @@ export const feegrantSlice = createSlice({
         const addressMapping: Record<string, Allowance[]> = {};
         const allChainsAddressToGrants = state.addressToChainFeegrant;
 
-        grants.forEach((grant: Allowance) => {
+        grants?.forEach((grant: Allowance) => {
           const granter = grant.granter;
           const cosmosAddress = getAddressByPrefix(granter, 'cosmos');
           if (!addressMapping[granter]) addressMapping[granter] = [];
@@ -322,7 +322,7 @@ export const feegrantSlice = createSlice({
         const grants = action.payload.data.allowances;
         state.chains[chainID].grantsByMe = grants;
         const addressMapping: Record<string, Allowance[]> = {};
-        grants.forEach((grant: Allowance) => {
+        grants?.forEach((grant: Allowance) => {
           const granter = grant.grantee;
           if (!addressMapping[granter]) addressMapping[granter] = [];
           addressMapping[granter] = [...addressMapping[granter], grant];

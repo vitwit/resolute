@@ -28,7 +28,7 @@ const useGetTxInputs = () => {
   const { convertAddress } = useAddressConverter();
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const authzAddress = useAppSelector((state) => state.authz.authzAddress);
-  const { getDenomInfo, getChainInfo } = useGetChainInfo();
+  const { getDenomInfo, getChainInfo, getFee } = useGetChainInfo();
   const { getFeegranter } = useGetFeegranter();
 
   const txWithdrawAllRewardsInputs = (
@@ -259,6 +259,7 @@ const useGetTxInputs = () => {
       to,
       rest: sourceBasicChainInfo.rest,
       restURLs: sourceBasicChainInfo.restURLs,
+      getFee: getFee,
     };
 
     return transfersRequestInputs;
