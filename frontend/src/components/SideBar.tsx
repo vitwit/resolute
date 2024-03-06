@@ -19,16 +19,16 @@ import {
   TWITTER_ICON,
   TWITTER_LINK,
 } from '@/utils/constants';
-import useInitAuthz from '@/custom-hooks/useInitAuthz';
-import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
+// import useInitAuthz from '@/custom-hooks/useInitAuthz';
+// import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
 import { setAllNetworksInfo } from '@/store/features/common/commonSlice';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
   const pathParts = pathName.split('/');
   const selectedPart = getSelectedPartFromURL(pathParts).toLowerCase();
-  useInitAuthz();
-  useInitFeegrant();
+  // useInitAuthz();
+  // useInitFeegrant();
   const isAuthzMode = useAppSelector((state) => state.authz.authzModeEnabled);
   const dispatch = useAppDispatch();
   useEffect(() => {

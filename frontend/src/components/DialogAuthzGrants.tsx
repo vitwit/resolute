@@ -1,4 +1,4 @@
-import {
+import useAuthzGrants, {
   ChainAuthz,
   InterChainAuthzGrants,
 } from '@/custom-hooks/useAuthzGrants';
@@ -8,13 +8,14 @@ import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 import { copyToClipboard } from '@/utils/copyToClipboard';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getMsgNameFromAuthz } from '@/utils/authorizations';
 import { enableAuthzMode } from '@/store/features/authz/authzSlice';
-import { setAuthzMode } from '@/utils/localStorage';
+import {  setAuthzMode } from '@/utils/localStorage';
 import { exitFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
+import useInitAuthz from '@/custom-hooks/useInitAuthz';
 
 interface DialogAuthzGrantsProps {
   open: boolean;
@@ -23,10 +24,22 @@ interface DialogAuthzGrantsProps {
 }
 
 const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
-  const { open, onClose, grants } = props;
+
+  const { open, onClose,
+    // grants
+  } = props;
   const dispatch = useAppDispatch();
   const { getCosmosAddress } = useGetChainInfo();
   const cosmosAddress = getCosmosAddress();
+
+  const grantsToMeLoading = useAppSelector(
+    (state) => state.authz.getGrantsToMeLoading > 0
+  );
+
+  const { getInterChainGrants } = useAuthzGrants();
+  const grants = getInterChainGrants();
+
+  useInitAuthz();
 
   return (
     <Dialog
@@ -53,6 +66,17 @@ const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
           </div>
           <div className="mb-[72px] px-10">
             <h2 className="text-[20px] font-bold">Select Granter</h2>
+
+            {
+              grantsToMeLoading ? <p>Please wait trying to fetch your grants......</p> : null
+            }
+
+
+            {
+              !grantsToMeLoading && !grants.length
+                ? 'No authz permissions found' : null
+            }
+
             {grants.map((grant) => (
               <div className="grants-card" key={grant.address}>
                 <AddressChip address={grant.cosmosAddress} />

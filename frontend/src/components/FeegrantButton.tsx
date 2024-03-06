@@ -10,9 +10,9 @@ const FeegrantButton = () => {
   const isFeegrantEnabled = useAppSelector(
     (state) => state.feegrant.feegrantModeEnabled
   );
-  const grantsToMeLoading = useAppSelector(
-    (state) => state.feegrant.getGrantsToMeLoading > 0
-  );
+  // const grantsToMeLoading = useAppSelector(
+  //   (state) => state.feegrant.getGrantsToMeLoading > 0
+  // );
 
   const { getInterChainGrants, disableFeegrantMode } = useFeeGrants();
   const grants = getInterChainGrants();
@@ -26,31 +26,35 @@ const FeegrantButton = () => {
 
   return (
     <div className="flex gap-2 items-center">
-      <DialogFeegrants
+      {
+        grantsDialogOpen &&   <DialogFeegrants
         open={grantsDialogOpen}
         onClose={handleGransDialogClose}
         grants={grants}
       />
+      }
+    
       <Tooltip
         title={
           isMetaMask
             ? "MetaMask doesn't support Feegrant"
-            : grantsToMeLoading
-              ? 'fetching feegrant allowances...'
-              : !grants.length
-                ? 'No feegrant allowances'
+            // : grantsToMeLoading
+            //   ? 'fetching feegrant allowances...'
+            //   : !grants.length
+            //     ? 'No feegrant allowances'
                 : ''
         }
       >
         <div
           className={
-            grantsToMeLoading || !grants.length
-              ? 'cursor-not-allowed'
-              : 'cursor-pointer'
+            // grantsToMeLoading || !grants.length
+            //   ? 'cursor-not-allowed'
+            //   :
+               'cursor-pointer'
           }
           onClick={() => {
             if (!isFeegrantEnabled) {
-              if (!grantsToMeLoading && grants.length && !isMetaMask)
+              // if (!grantsToMeLoading && grants.length && !isMetaMask)
                 setGrantsDialogOpen(true);
             } else {
               disableFeegrantMode();
