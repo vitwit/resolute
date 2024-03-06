@@ -9,7 +9,7 @@
 
 .selected {
   box-sizing: border-box;
-  background: linear-gradient(180deg, #4AA29C 0%, #8B3DA7 100%);
+  background: linear-gradient(180deg, #4aa29c 0%, #8b3da7 100%);
 }
 
 .coloured-container {
@@ -33,18 +33,34 @@
 
 .amount-options {
   @apply text-white text-sm not-italic font-normal leading-[normal] rounded-[100px];
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(2px);
 }
 
 .amount-options-default {
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .amount-options-fill {
   background:
-    linear-gradient(180deg,
+    linear-gradient(
+      180deg,
       rgba(74, 162, 156, 0.9) 0%,
-      rgba(139, 61, 167, 0.9) 100%),
+      rgba(139, 61, 167, 0.9) 100%
+    ),
     lightgray 50% / cover no-repeat;
+}
+
+.send-menu-item {
+  @apply cursor-pointer px-2 text-[18px] h-9 flex items-center pb-[14px] leading-[21.7px];
+}
+
+/* IBC Swap Styles  */
+
+.swap-btn {
+  @apply primary-gradient rounded-lg text-[12px] font-medium tracking-[0.48px] py-[10px] px-4 w-full;
+}
+
+.drop-down {
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
