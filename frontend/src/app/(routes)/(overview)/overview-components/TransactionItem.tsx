@@ -58,7 +58,7 @@ const TransactionItem = ({
 
 export const Chip = ({ msg }: { msg: string }) => {
   return (
-    <div className="chip bg-[#26233b] text-center text-[10px] not-italic font-normal leading-3">
+    <div className="chip bg-[#26233b] max-h-5 text-center text-[10px] not-italic font-normal leading-3">
       {msg}
     </div>
   );
