@@ -10,9 +10,10 @@ const AuthzButton = () => {
   const isAuthzEnabled = useAppSelector(
     (state) => state.authz.authzModeEnabled
   );
-  const grantsToMeLoading = useAppSelector(
-    (state) => state.authz.getGrantsToMeLoading > 0
-  );
+
+  // const grantsToMeLoading = useAppSelector(
+  //   (state) => state.authz.getGrantsToMeLoading > 0
+  // );
 
   const { getInterChainGrants, disableAuthzMode } = useAuthzGrants();
   const grants = getInterChainGrants();
@@ -26,32 +27,40 @@ const AuthzButton = () => {
 
   return (
     <div className="flex gap-2 items-center">
-      <DialogAuthzGrants
-        open={grantsDialogOpen}
-        onClose={handleGransDialogClose}
-        grants={grants}
-      />
+      {
+        grantsDialogOpen && <DialogAuthzGrants
+          open={grantsDialogOpen}
+          onClose={handleGransDialogClose}
+          grants={grants}
+        />
+      }
+
       {/* <Image src="/authz-icon-2.svg" width={32} height={32} alt="authz" /> */}
       <Tooltip
         title={
           isMetaMask
-            ? "MetaMask doesn't support Authz"
-            : grantsToMeLoading
-              ? 'fetching authz permissions...'
-              : !grants.length
-                ? 'No authz permissions'
-                : ''
+            ? "MetaMask doesn't support Authz" : null
         }
+      // title={
+      //   isMetaMask
+      //     ? "MetaMask doesn't support Authz"
+      //     : grantsToMeLoading
+      //       ? 'fetching authz permissions...'
+      //       : !grants.length
+      //         ? 'No authz permissions'
+      //         : ''
+      // }
       >
         <div
           className={
-            grantsToMeLoading || !grants.length
-              ? 'cursor-not-allowed'
-              : 'cursor-pointer'
+            // grantsToMeLoading || !grants.length
+            //   ? 'cursor-not-allowed'
+            //   : 
+            'cursor-pointer'
           }
           onClick={() => {
             if (!isAuthzEnabled) {
-              if (!grantsToMeLoading && grants.length && !isMetaMask)
+              // if (!grantsToMeLoading && grants.length && !isMetaMask)
                 setGrantsDialogOpen(true);
             } else {
               disableAuthzMode();

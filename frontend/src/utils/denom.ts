@@ -20,7 +20,7 @@ export function parseTokens(
   coinDecimals: number
 ): string {
   if (!tokens) {
-     return "0.0";
+    return "0.0";
   }
 
   if (tokens.length === 0) {
@@ -58,12 +58,16 @@ export function parseBalance(
 }
 
 export function getDenomBalance(tokens: Coin[], denom: string): number {
-  if (tokens.length === 0) {
+  if (tokens && tokens.length === 0) {
     return 0.0;
   }
-  for (let i = 0; i < tokens.length; i++) {
-    if (tokens[i].denom === denom) return parseFloat(tokens[i].amount);
+
+  if (tokens) {
+    for (let i = 0; i < tokens.length; i++) {
+      if (tokens[i].denom === denom) return parseFloat(tokens[i].amount);
+    }
   }
+
   return 0.0;
 }
 

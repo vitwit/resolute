@@ -383,12 +383,12 @@ export const authzSlice = createSlice({
 
         state.getGrantsToMeLoading--;
 
-        const grants = action.payload.data.grants;
+        const grants = action.payload.data.grants || [];
         state.chains[chainID].grantsToMe = grants;
         const addressMapping: Record<string, Authorization[]> = {};
         const allChainsAddressToGrants = state.AddressToChainAuthz;
 
-        grants.forEach((grant: Authorization) => {
+        grants && grants.forEach((grant: Authorization) => {
           const granter = grant.granter;
           const cosmosAddress = getAddressByPrefix(granter, 'cosmos');
           if (!addressMapping[granter]) addressMapping[granter] = [];
@@ -433,7 +433,7 @@ export const authzSlice = createSlice({
       .addCase(getGrantsByMe.fulfilled, (state, action) => {
         state.getGrantsByMeLoading--;
         const chainID = action.meta.arg.chainID;
-        const grants = action.payload.data.grants;
+        const grants = action.payload.data.grants || [];
         state.chains[chainID].grantsByMe = grants;
         const addressMapping: Record<string, Authorization[]> = {};
         grants.forEach((grant: Authorization) => {
