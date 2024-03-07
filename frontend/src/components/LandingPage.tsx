@@ -13,7 +13,7 @@ import {
   unsetIsLoading,
 } from '../store/features/wallet/walletSlice';
 import { RootState } from '../store/store';
-import { getAllTokensPrice, setAllNetworksInfo } from '@/store/features/common/commonSlice';
+import { setAllNetworksInfo } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import WalletPopup from './WalletPopup';
 import CustomParticles from './Particles';
