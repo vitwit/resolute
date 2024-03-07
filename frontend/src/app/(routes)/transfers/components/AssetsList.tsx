@@ -5,22 +5,22 @@ import Avatar from '@mui/material/Avatar';
 import { Paper } from '@mui/material';
 import { shortenName } from '@/utils/util';
 
-interface ChainOption {
+interface AssetOption {
   label: string;
-  chainID: string;
+  denom: string;
   logoURI: string;
 }
 
-export default function ChainAutocomplete({
+export default function AssetsAutocomplete({
   options,
   handleChange,
-  selectedChain,
+  selectedAsset,
 }: {
-  options: ChainConfig[];
-  handleChange: (option: ChainOption | null) => void;
-  selectedChain: ChainConfig | null;
+  options: AssetOption[];
+  handleChange: (option: AssetOption | null) => void;
+  selectedAsset: AssetOption | null;
 }) {
-  const renderOption = (props: any, option: ChainOption) => (
+  const renderOption = (props: any, option: AssetOption) => (
     <li {...props}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Avatar
@@ -29,11 +29,8 @@ export default function ChainAutocomplete({
           sx={{ width: '24px', height: '24px' }}
         />
         <div className="flex flex-col">
-          <span className="font-semibold truncate text-capitalize">
+          <span className="font-semibold truncate">
             {shortenName(option.label, 15)}
-          </span>
-          <span className="font-extralight truncate text-[12px]">
-            {shortenName(option.chainID, 15)}
           </span>
         </div>
       </div>
@@ -49,10 +46,10 @@ export default function ChainAutocomplete({
         ...params.InputProps,
         startAdornment: (
           <React.Fragment>
-            {selectedChain && (
+            {selectedAsset && (
               <Avatar
-                src={selectedChain.logoURI}
-                alt={selectedChain.label}
+                src={selectedAsset.logoURI}
+                alt={selectedAsset.label}
                 style={{ marginRight: 1 }}
                 sx={{ width: '24px', height: '24px' }}
               />
@@ -67,7 +64,6 @@ export default function ChainAutocomplete({
           fontSize: '16px',
           fontWeight: 300,
           fontFamily: 'inter',
-          textTransform: 'capitalize',
         },
         '& .MuiOutlinedInput-notchedOutline': {
           border: 'none',
@@ -85,11 +81,11 @@ export default function ChainAutocomplete({
       fullWidth
       id="chain-autocomplete"
       options={options}
-      getOptionLabel={(option: ChainOption) => option.label}
+      getOptionLabel={(option: AssetOption) => option.label}
       renderOption={renderOption}
       renderInput={renderInput}
       onChange={(_, newValue) => handleChange(newValue)}
-      value={selectedChain}
+      value={selectedAsset}
       PaperComponent={({ children }) => (
         <Paper
           style={{

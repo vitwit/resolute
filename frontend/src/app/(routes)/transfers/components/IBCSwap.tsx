@@ -3,16 +3,68 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import { swapTextFieldStyles } from '../styles';
 import SourceChains from './SourceChains';
+import AssetsList from './AssetsList';
 import useGetChains from '@/custom-hooks/useGetChain';
 import useGetAssets from '@/custom-hooks/useGetAssets';
 
 const IBCSwap = () => {
   const { chainsInfo } = useGetChains();
-  const { assetsInfo } = useGetAssets();
+  const { assetsInfo, chainWiseAssetOptions } = useGetAssets();
   const [otherAddress, setOtherAddress] = useState(false);
   const handleSendToAnotherAddress = () => {
     setOtherAddress((prev) => !prev);
   };
+  const [selectedSourceChain, setSelectedSourceChain] =
+    useState<ChainConfig | null>(null);
+  const [selectedSourceAsset, setSelectedSourceAsset] =
+    useState<AssetConfig | null>(null);
+  const [selectedDestChain, setSelectedDestChain] =
+    useState<ChainConfig | null>(null);
+  const [selectedDestAsset, setSelectedDestAsset] =
+    useState<AssetConfig | null>(null);
+  const [selectSourceChainAssets, setSelectedSourceChainAssets] = useState<
+    AssetConfig[]
+  >([]);
+  const [selectDestChainAssets, setSelectedDestChainAssets] = useState<
+    AssetConfig[]
+  >([]);
+
+  const handleSelectSourceChain = (option: ChainConfig | null) => {
+    setSelectedSourceChain(option);
+    const assets = option ? chainWiseAssetOptions[option?.chainID] : [];
+    setSelectedSourceChainAssets(assets || []);
+    setSelectedSourceAsset(null);
+  };
+  const handleSelectSourceAsset = (option: AssetConfig | null) => {
+    setSelectedSourceAsset(option);
+  };
+  const handleSelectDestChain = (option: ChainConfig | null) => {
+    setSelectedDestChain(option);
+    const assets = option ? chainWiseAssetOptions[option?.chainID] : [];
+    setSelectedDestChainAssets(assets || []);
+    setSelectedDestAsset(null);
+  };
+  const handleSelectDestAsset = (option: AssetConfig | null) => {
+    setSelectedDestAsset(option);
+  };
+
+  const flipChains = () => {
+    const tempSelectedSourceChain = selectedSourceChain;
+    setSelectedSourceChain(selectedDestChain);
+    setSelectedDestChain(tempSelectedSourceChain);
+
+    const tempSelectedSourceAsset = selectedSourceAsset;
+    setSelectedSourceAsset(selectedDestAsset);
+    setSelectedDestAsset(tempSelectedSourceAsset);
+    handleRotate();
+  };
+
+  const [isRotated, setIsRotated] = useState(false);
+
+  const handleRotate = () => {
+    setIsRotated((prev) => !prev);
+  };
+
   return (
     <div className="flex justify-center">
       <div className="bg-[#FFFFFF0D] rounded-2xl p-6 flex flex-col justify-between items-center gap-6 min-w-[550px]">
@@ -22,9 +74,19 @@ const IBCSwap = () => {
             <div className="text-[14px] font-extralight">Select Asset</div>
             <div className="flex justify-between gap-4">
               <div className="flex-1">
-                <SourceChains options={chainsInfo} />
+                <SourceChains
+                  options={chainsInfo}
+                  handleChange={handleSelectSourceChain}
+                  selectedChain={selectedSourceChain}
+                />
               </div>
-              <div className="flex-1">{/* <SourceChains /> */}</div>
+              <div className="flex-1">
+                <AssetsList
+                  options={selectSourceChainAssets}
+                  handleChange={handleSelectSourceAsset}
+                  selectedAsset={selectedSourceAsset}
+                />
+              </div>
             </div>
           </div>
           <div className="space-y-2">
@@ -62,7 +124,10 @@ const IBCSwap = () => {
             />
           </div>
         </div>
-        <div className="cursor-pointer">
+        <div
+          onClick={flipChains}
+          className={`transition-transform transform cursor-pointer delay-400 ${isRotated ? 'rotate-180' : ''}`}
+        >
           <Image src="/ibc-swap-icon.svg" width={40} height={40} alt="Swap" />
         </div>
         <div className="bg-[#FFFFFF0D] rounded-2xl p-4 flex flex-col gap-4 w-full">
@@ -70,8 +135,20 @@ const IBCSwap = () => {
           <div className="space-y-2">
             <div className="text-[14px] font-extralight">Select Asset</div>
             <div className="flex justify-between gap-4">
-              <div className="flex-1">{/* <SourceChains /> */}</div>
-              <div className="flex-1">{/* <SourceChains /> */}</div>
+              <div className="flex-1">
+                <SourceChains
+                  options={chainsInfo}
+                  handleChange={handleSelectDestChain}
+                  selectedChain={selectedDestChain}
+                />
+              </div>
+              <div className="flex-1">
+                <AssetsList
+                  options={selectDestChainAssets}
+                  handleChange={handleSelectDestAsset}
+                  selectedAsset={selectedDestAsset}
+                />
+              </div>
             </div>
           </div>
           <div className="space-y-2">

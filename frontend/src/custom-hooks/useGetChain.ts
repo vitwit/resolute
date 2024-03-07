@@ -7,7 +7,7 @@ const useGetChains = () => {
 
   useEffect(() => {
     (async () => {
-      const chains = await skipClient.chains({ includeEVM: true });
+      const chains = await skipClient.chains();
       const chainsData = chains
         .map((chain): ChainConfig => {
           return {

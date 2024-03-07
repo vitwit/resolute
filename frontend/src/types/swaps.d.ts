@@ -3,3 +3,9 @@ interface ChainConfig {
   logoURI: string;
   chainID: string;
 }
+
+interface AssetConfig {
+  label: string;
+  denom: string;
+  logoURI: string;
+}
