@@ -123,8 +123,6 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
       accountChangeListener
     );
 
-    dispatch(getAllTokensPrice());
-
     return () => {
       window.removeEventListener(
         `${walletName}_keystorechange`,
