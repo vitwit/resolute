@@ -12,7 +12,7 @@ import useFeeGrants, {
   InterChainFeegrants,
 } from '@/custom-hooks/useFeeGrants';
 import { enableFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
-import {  setFeegrantMode } from '@/utils/localStorage';
+import { setFeegrantMode } from '@/utils/localStorage';
 import { getMsgNamesFromAllowance } from '@/utils/feegrant';
 import { capitalizeFirstLetter } from '@/utils/util';
 import { exitAuthzMode } from '@/store/features/authz/authzSlice';
@@ -25,8 +25,10 @@ interface DialogFeegrantsProps {
 }
 
 const DialogFeegrants: React.FC<DialogFeegrantsProps> = (props) => {
-  const { open, onClose,
-    // grants 
+  const {
+    open,
+    onClose,
+    // grants
   } = props;
   const dispatch = useAppDispatch();
   const { getCosmosAddress } = useGetChainInfo();
@@ -66,14 +68,12 @@ const DialogFeegrants: React.FC<DialogFeegrantsProps> = (props) => {
           </div>
           <div className="mb-[72px] px-10">
             <h2 className="text-[20px] font-bold">Select Granter</h2>
-            {
-              grantsToMeLoading ? <p>Please wait trying to fetch your grants......</p> : null
-            }
 
-            {
-              !grantsToMeLoading && !grants.length
-                ? 'No Feegrants found' : null
-            }
+            {!grantsToMeLoading && !grants.length ? (
+              <div className="flex gap-1 items-center justify-center my-6">
+                <p>- No allowances found -</p>
+              </div>
+            ) : null}
 
             {grants.map((grant) => (
               <div className="grants-card" key={grant.address}>
@@ -94,6 +94,15 @@ const DialogFeegrants: React.FC<DialogFeegrantsProps> = (props) => {
                 </button>
               </div>
             ))}
+
+            {grantsToMeLoading ? (
+              <div className="flex gap-1 items-center justify-center my-6">
+                <p>
+                  Please wait, trying to fetch your allowances
+                  <span className="dots-loader"></span>
+                </p>
+              </div>
+            ) : null}
           </div>
         </div>
       </DialogContent>

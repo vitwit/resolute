@@ -4,7 +4,7 @@ import useAuthzGrants, {
 } from '@/custom-hooks/useAuthzGrants';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { Dialog, DialogContent } from '@mui/material';
+import { CircularProgress, Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 import { copyToClipboard } from '@/utils/copyToClipboard';
@@ -13,7 +13,7 @@ import { setError } from '@/store/features/common/commonSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getMsgNameFromAuthz } from '@/utils/authorizations';
 import { enableAuthzMode } from '@/store/features/authz/authzSlice';
-import {  setAuthzMode } from '@/utils/localStorage';
+import { setAuthzMode } from '@/utils/localStorage';
 import { exitFeegrantMode } from '@/store/features/feegrant/feegrantSlice';
 import useInitAuthz from '@/custom-hooks/useInitAuthz';
 
@@ -24,8 +24,9 @@ interface DialogAuthzGrantsProps {
 }
 
 const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
-
-  const { open, onClose,
+  const {
+    open,
+    onClose,
     // grants
   } = props;
   const dispatch = useAppDispatch();
@@ -67,15 +68,11 @@ const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
           <div className="mb-[72px] px-10">
             <h2 className="text-[20px] font-bold">Select Granter</h2>
 
-            {
-              grantsToMeLoading ? <p>Please wait trying to fetch your grants......</p> : null
-            }
-
-
-            {
-              !grantsToMeLoading && !grants.length
-                ? 'No authz permissions found' : null
-            }
+            {!grantsToMeLoading && !grants.length ? (
+              <div className="flex gap-1 items-center justify-center my-6">
+                <p>- No authz permissions found -</p>
+              </div>
+            ) : null}
 
             {grants.map((grant) => (
               <div className="grants-card" key={grant.address}>
@@ -94,6 +91,15 @@ const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
                 </button>
               </div>
             ))}
+
+            {grantsToMeLoading ? (
+              <div className="flex gap-1 items-center justify-center my-6">
+                <p>
+                  Please wait, trying to fetch your grants
+                  <span className="dots-loader"></span>
+                </p>
+              </div>
+            ) : null}
           </div>
         </div>
       </DialogContent>
