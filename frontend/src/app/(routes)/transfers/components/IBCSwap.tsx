@@ -3,8 +3,12 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import { swapTextFieldStyles } from '../styles';
 import SourceChains from './SourceChains';
+import useGetChains from '@/custom-hooks/useGetChain';
+import useGetAssets from '@/custom-hooks/useGetAssets';
 
 const IBCSwap = () => {
+  const { chainsInfo } = useGetChains();
+  const { assetsInfo } = useGetAssets();
   const [otherAddress, setOtherAddress] = useState(false);
   const handleSendToAnotherAddress = () => {
     setOtherAddress((prev) => !prev);
@@ -18,11 +22,9 @@ const IBCSwap = () => {
             <div className="text-[14px] font-extralight">Select Asset</div>
             <div className="flex justify-between gap-4">
               <div className="flex-1">
-                <SourceChains />
+                <SourceChains options={chainsInfo} />
               </div>
-              <div className="flex-1">
-                <SourceChains />
-              </div>
+              <div className="flex-1">{/* <SourceChains /> */}</div>
             </div>
           </div>
           <div className="space-y-2">
@@ -68,12 +70,8 @@ const IBCSwap = () => {
           <div className="space-y-2">
             <div className="text-[14px] font-extralight">Select Asset</div>
             <div className="flex justify-between gap-4">
-              <div className="flex-1">
-                <SourceChains />
-              </div>
-              <div className="flex-1">
-                <SourceChains />
-              </div>
+              <div className="flex-1">{/* <SourceChains /> */}</div>
+              <div className="flex-1">{/* <SourceChains /> */}</div>
             </div>
           </div>
           <div className="space-y-2">
@@ -131,7 +129,7 @@ const IBCSwap = () => {
           </div>
         </div>
         <div className="w-full">
-          <button className="swap-btn">Swap</button>
+          <button className="swap-btn primary-gradient">Swap</button>
         </div>
       </div>
     </div>

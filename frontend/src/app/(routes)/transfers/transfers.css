@@ -58,7 +58,7 @@
 /* IBC Swap Styles  */
 
 .swap-btn {
-  @apply primary-gradient rounded-lg text-[12px] font-medium tracking-[0.48px] py-[10px] px-4 w-full;
+  @apply rounded-lg text-[12px] font-medium tracking-[0.48px] py-[10px] px-4 w-full;
 }
 
 .drop-down {

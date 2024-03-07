@@ -7,41 +7,30 @@ import { Paper } from '@mui/material';
 interface ChainOption {
   label: string;
   chainID: string;
-  logo: string;
+  logoURI: string;
 }
 
-const options: ChainOption[] = [
-  {
-    label: 'Cosmoshub',
-    chainID: 'cosmoshub-4',
-    logo: 'https://github.com/cosmos/chain-registry/blob/master/cosmoshub/images/atom.png?raw=true',
-  },
-  {
-    label: 'Akash',
-    chainID: 'akashnet-1',
-    logo: 'https://github.com/cosmos/chain-registry/blob/master/cosmoshub/images/atom.png?raw=true',
-  },
-  {
-    label: 'Passage',
-    chainID: 'passage-2',
-    logo: 'https://github.com/cosmos/chain-registry/blob/master/cosmoshub/images/atom.png?raw=true',
-  },
-];
-
-export default function ChainAutocomplete() {
+export default function ChainAutocomplete({
+  options,
+}: {
+  options: ChainConfig[];
+}) {
   const [selectedOption, setSelectedOption] = useState<ChainOption | null>(
     null
   );
 
   const renderOption = (props: any, option: ChainOption) => (
     <li {...props}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Avatar
-          src={option.logo}
+          src={option.logoURI}
           alt={option.label}
           sx={{ width: '24px', height: '24px' }}
         />
-        <span style={{ marginLeft: 10 }}>{option.label}</span>
+        <div className="flex flex-col">
+          <span className="font-semibold">{option.label}</span>
+          <span className="font-extralight">{option.chainID}</span>
+        </div>
       </div>
     </li>
   );
@@ -57,7 +46,7 @@ export default function ChainAutocomplete() {
           <React.Fragment>
             {selectedOption && (
               <Avatar
-                src={selectedOption.logo}
+                src={selectedOption.logoURI}
                 alt={selectedOption.label}
                 style={{ marginRight: 1 }}
                 sx={{ width: '24px', height: '24px' }}
