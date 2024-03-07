@@ -13,7 +13,7 @@ import {
   unsetIsLoading,
 } from '../store/features/wallet/walletSlice';
 import { RootState } from '../store/store';
-import { getAllTokensPrice, setAllNetworksInfo } from '@/store/features/common/commonSlice';
+import { setAllNetworksInfo } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import WalletPopup from './WalletPopup';
 import CustomParticles from './Particles';
@@ -123,8 +123,6 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
       accountChangeListener
     );
 
-    dispatch(getAllTokensPrice());
-
     return () => {
       window.removeEventListener(
         `${walletName}_keystorechange`,
@@ -201,7 +199,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
 
             <Image
               className="ml-auto  sm:w-[600] md:w-[800] lg:w-[967]"
-              src="/landing-laptop.svg"
+              src="https://resolute.sgp1.cdn.digitaloceanspaces.com/landing-laptop.svg"
               width={967}
               height={481}
               alt="landing page image"

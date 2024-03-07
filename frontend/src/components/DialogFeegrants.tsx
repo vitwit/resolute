@@ -4,10 +4,10 @@ import { Dialog, DialogContent, Tooltip } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 import { copyToClipboard } from '@/utils/copyToClipboard';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import {
+import useFeeGrants, {
   ChainAllowance,
   InterChainFeegrants,
 } from '@/custom-hooks/useFeeGrants';
@@ -16,6 +16,7 @@ import { setFeegrantMode } from '@/utils/localStorage';
 import { getMsgNamesFromAllowance } from '@/utils/feegrant';
 import { capitalizeFirstLetter } from '@/utils/util';
 import { exitAuthzMode } from '@/store/features/authz/authzSlice';
+import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
 
 interface DialogFeegrantsProps {
   open: boolean;
@@ -24,10 +25,23 @@ interface DialogFeegrantsProps {
 }
 
 const DialogFeegrants: React.FC<DialogFeegrantsProps> = (props) => {
-  const { open, onClose, grants } = props;
+  const {
+    open,
+    onClose,
+    // grants
+  } = props;
   const dispatch = useAppDispatch();
   const { getCosmosAddress } = useGetChainInfo();
   const cosmosAddress = getCosmosAddress();
+
+  const grantsToMeLoading = useAppSelector(
+    (state) => state.feegrant.getGrantsToMeLoading > 0
+  );
+
+  const { getInterChainGrants } = useFeeGrants();
+  const grants = getInterChainGrants();
+
+  useInitFeegrant();
 
   return (
     <Dialog
@@ -54,6 +68,13 @@ const DialogFeegrants: React.FC<DialogFeegrantsProps> = (props) => {
           </div>
           <div className="mb-[72px] px-10">
             <h2 className="text-[20px] font-bold">Select Granter</h2>
+
+            {!grantsToMeLoading && !grants.length ? (
+              <div className="flex gap-1 items-center justify-center my-6">
+                <p>- No allowances found -</p>
+              </div>
+            ) : null}
+
             {grants.map((grant) => (
               <div className="grants-card" key={grant.address}>
                 <AddressChip address={grant.cosmosAddress} />
@@ -73,6 +94,15 @@ const DialogFeegrants: React.FC<DialogFeegrantsProps> = (props) => {
                 </button>
               </div>
             ))}
+
+            {grantsToMeLoading ? (
+              <div className="flex gap-1 items-center justify-center my-6">
+                <p>
+                  Please wait, trying to fetch your allowances
+                  <span className="dots-loader"></span>
+                </p>
+              </div>
+            ) : null}
           </div>
         </div>
       </DialogContent>

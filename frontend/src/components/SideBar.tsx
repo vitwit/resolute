@@ -19,9 +19,9 @@ import {
   TWITTER_ICON,
   TWITTER_LINK,
 } from '@/utils/constants';
-import useInitAuthz from '@/custom-hooks/useInitAuthz';
-import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
-import { setAllNetworksInfo } from '@/store/features/common/commonSlice';
+// import useInitAuthz from '@/custom-hooks/useInitAuthz';
+// import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
+import { getAllTokensPrice, setAllNetworksInfo } from '@/store/features/common/commonSlice';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
@@ -33,6 +33,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setAllNetworksInfo());
+    dispatch(getAllTokensPrice());
   }, []);
   return (
     <div className="main">
