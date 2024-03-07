@@ -201,7 +201,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
 
             <Image
               className="ml-auto  sm:w-[600] md:w-[800] lg:w-[967]"
-              src="/landing-laptop.svg"
+              src="https://resolute.sgp1.cdn.digitaloceanspaces.com/landing-laptop.svg"
               width={967}
               height={481}
               alt="landing page image"

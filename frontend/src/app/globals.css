@@ -107,7 +107,7 @@
     @apply px-[120px] flex flex-col justify-center h-screen;
     font-family: 'Space Grotesk' !important;
     background:
-      url('/cosmos-background.png'),
+      url('https://resolute.sgp1.cdn.digitaloceanspaces.com/cosmos-background.png'),
       lightgray 50% / cover;
   }
 

@@ -20,6 +20,12 @@ const nextConfig = {
         port: '',
         pathname: '/cosmos/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'resolute.sgp1.cdn.digitaloceanspaces.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
