@@ -4,7 +4,7 @@ import useAuthzGrants, {
 } from '@/custom-hooks/useAuthzGrants';
 import { dialogBoxPaperPropStyles } from '@/utils/commonStyles';
 import { CLOSE_ICON_PATH } from '@/utils/constants';
-import { CircularProgress, Dialog, DialogContent } from '@mui/material';
+import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 import { copyToClipboard } from '@/utils/copyToClipboard';
