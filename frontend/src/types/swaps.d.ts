@@ -6,6 +6,6 @@ interface ChainConfig {
 
 interface AssetConfig {
   label: string;
-  denom: string;
+  symbol: string;
   logoURI: string;
 }

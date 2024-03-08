@@ -32,8 +32,8 @@ const getFormattedAssetsList = (data: Asset[]): AssetConfig[] => {
   const assetsList = data
     .map((asset): AssetConfig => {
       return {
-        denom: asset.originDenom,
-        label: asset.symbol || '',
+        symbol: asset.recommendedSymbol || '',
+        label: asset.originDenom || '',
         logoURI: asset.logoURI || '',
       };
     })

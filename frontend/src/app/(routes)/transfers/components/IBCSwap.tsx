@@ -22,7 +22,7 @@ const IBCSwap = () => {
     useState<ChainConfig | null>(null);
   const [selectedDestAsset, setSelectedDestAsset] =
     useState<AssetConfig | null>(null);
-  const [selectSourceChainAssets, setSelectedSourceChainAssets] = useState<
+  const [selectedSourceChainAssets, setSelectedSourceChainAssets] = useState<
     AssetConfig[]
   >([]);
   const [selectDestChainAssets, setSelectedDestChainAssets] = useState<
@@ -82,7 +82,7 @@ const IBCSwap = () => {
               </div>
               <div className="flex-1">
                 <AssetsList
-                  options={selectSourceChainAssets}
+                  options={selectedSourceChainAssets}
                   handleChange={handleSelectSourceAsset}
                   selectedAsset={selectedSourceAsset}
                 />

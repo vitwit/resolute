@@ -21,7 +21,7 @@ export default function ChainAutocomplete({
   selectedChain: ChainConfig | null;
 }) {
   const renderOption = (props: any, option: ChainOption) => (
-    <li {...props}>
+    <li {...props} key={option.chainID}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Avatar
           src={option.logoURI}

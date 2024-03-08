@@ -7,7 +7,7 @@ import { shortenName } from '@/utils/util';
 
 interface AssetOption {
   label: string;
-  denom: string;
+  symbol: string;
   logoURI: string;
 }
 
@@ -21,7 +21,7 @@ export default function AssetsAutocomplete({
   selectedAsset: AssetOption | null;
 }) {
   const renderOption = (props: any, option: AssetOption) => (
-    <li {...props}>
+    <li {...props} key={option.symbol}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Avatar
           src={option.logoURI}
@@ -30,7 +30,7 @@ export default function AssetsAutocomplete({
         />
         <div className="flex flex-col">
           <span className="font-semibold truncate">
-            {shortenName(option.label, 15)}
+            {shortenName(option.symbol, 15)}
           </span>
         </div>
       </div>
@@ -81,7 +81,7 @@ export default function AssetsAutocomplete({
       fullWidth
       id="chain-autocomplete"
       options={options}
-      getOptionLabel={(option: AssetOption) => option.label}
+      getOptionLabel={(option: AssetOption) => option.symbol}
       renderOption={renderOption}
       renderInput={renderInput}
       onChange={(_, newValue) => handleChange(newValue)}
