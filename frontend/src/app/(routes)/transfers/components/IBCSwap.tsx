@@ -25,7 +25,6 @@ const IBCSwap = () => {
   const [otherAddress, setOtherAddress] = useState(false);
   const [amountIn, setAmountIn] = useState('');
   const [amountOut, setAmountOut] = useState('');
-  // const [routeLoading, setRouteLoading] = useState(false);
   const dispatch = useAppDispatch();
   const handleSendToAnotherAddress = () => {
     setOtherAddress((prev) => !prev);
@@ -74,7 +73,6 @@ const IBCSwap = () => {
     const { balanceInfo } = getAvailableBalance({
       chainID: selectedSourceChain?.chainID || '',
       denom: option?.label || '',
-      chainName: selectedSourceChain?.label.toLowerCase() || '',
     });
     setAvailableBalance(balanceInfo);
   };
@@ -159,7 +157,6 @@ const IBCSwap = () => {
       <div className="bg-[#FFFFFF0D] rounded-2xl p-6 flex flex-col justify-between items-center gap-6 min-w-[550px]">
         <div className="bg-[#FFFFFF0D] rounded-2xl p-4 flex flex-col gap-4 w-full">
           <div className="text-[16px]">From</div>
-          <div>{JSON.stringify(routeLoading)}</div>
           <div className="space-y-2">
             <div className="text-[14px] font-extralight">Select Asset</div>
             <div className="flex justify-between gap-4">

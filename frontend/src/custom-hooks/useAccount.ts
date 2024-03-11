@@ -1,13 +1,13 @@
 import React from 'react';
 import { useAppSelector } from './StateHooks';
-import chainDenoms from '@/utils/chainDenoms.json';
-
-const chainDenomsData = chainDenoms as AssetData;
+import { Asset } from '@skip-router/core';
+import useGetAssets from './useGetAssets';
 
 declare let window: WalletWindow;
 
 const useAccount = () => {
   const balances = useAppSelector((state) => state.bank.balances);
+  const { assetsInfo } = useGetAssets();
   const getAccountAddress = async (
     chainID: string
   ): Promise<{ address: string }> => {
@@ -23,11 +23,9 @@ const useAccount = () => {
   const getAvailableBalance = ({
     chainID,
     denom,
-    chainName,
   }: {
     chainID: string;
     denom: string;
-    chainName: string;
   }) => {
     const chainBalances = balances?.[chainID].list || [];
 
@@ -38,44 +36,26 @@ const useAccount = () => {
       decimals: 0,
       parsedAmount: 0,
     };
+
+    const chainAssets = assetsInfo?.[chainID];
+
     chainBalances.forEach((balance) => {
-      const filteredDenomInfo = chainDenomsData[chainName]?.filter(
-        (denomInfo) => {
-          return denomInfo.denom === balance.denom;
-        }
-      );
+      const filteredDenomInfo = chainAssets?.filter((denomInfo) => {
+        return denomInfo.denom === balance.denom;
+      });
+      const denomInfo = filteredDenomInfo[0];
+      if (denomInfo && denomInfo.originDenom === denom) {
+        balanceInfo.amount = parseFloat(balance.amount);
+        const precision = denomInfo.decimals || 0 > 6 ? 6 : denomInfo.decimals;
+        balanceInfo.decimals = denomInfo.decimals || 0;
+        balanceInfo.displayDenom = denomInfo.symbol || '';
+        balanceInfo.minimalDenom = denomInfo.denom;
 
-      let denomInfo;
-      if (isIBCAsset(filteredDenomInfo[0])) {
-        denomInfo = filteredDenomInfo[0] as IBCAsset;
-        if (denomInfo.counter_party.denom === denom) {
-          balanceInfo.amount = parseFloat(balance.amount);
-          const precision = denomInfo.decimals > 6 ? 6 : denomInfo.decimals;
-          balanceInfo.decimals = denomInfo.decimals;
-          balanceInfo.displayDenom = denomInfo.symbol;
-          balanceInfo.minimalDenom = denomInfo.counter_party.denom;
-
-          balanceInfo.parsedAmount = parseFloat(
-            (Number(balance.amount) / 10.0 ** denomInfo.decimals).toFixed(
-              precision
-            )
-          );
-        }
-      } else {
-        denomInfo = filteredDenomInfo[0] as NativeAsset;
-        if (denomInfo.origin_denom === denom) {
-          balanceInfo.amount = parseFloat(balance.amount);
-          const precision = denomInfo.decimals > 6 ? 6 : denomInfo.decimals;
-          balanceInfo.decimals = denomInfo.decimals;
-          balanceInfo.displayDenom = denomInfo.symbol;
-          balanceInfo.minimalDenom = denomInfo.origin_denom;
-
-          balanceInfo.parsedAmount = parseFloat(
-            (Number(balance.amount) / 10.0 ** denomInfo.decimals).toFixed(
-              precision
-            )
-          );
-        }
+        balanceInfo.parsedAmount = parseFloat(
+          (Number(balance.amount) / 10.0 ** (denomInfo.decimals || 0)).toFixed(
+            precision
+          )
+        );
       }
     });
 
@@ -86,9 +66,5 @@ const useAccount = () => {
 
   return { getAccountAddress, getAvailableBalance };
 };
-
-function isIBCAsset(asset: NativeAsset | IBCAsset): asset is IBCAsset {
-  return 'counter_party' in asset;
-}
 
 export default useAccount;
