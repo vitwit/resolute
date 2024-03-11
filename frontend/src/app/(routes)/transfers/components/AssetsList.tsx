@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Avatar from '@mui/material/Avatar';
-import { Paper } from '@mui/material';
+import { CircularProgress, Paper } from '@mui/material';
 import { shortenName } from '@/utils/util';
 
 interface AssetOption {
@@ -15,13 +15,15 @@ export default function AssetsAutocomplete({
   options,
   handleChange,
   selectedAsset,
+  assetsLoading,
 }: {
   options: AssetOption[];
   handleChange: (option: AssetOption | null) => void;
   selectedAsset: AssetOption | null;
+  assetsLoading: boolean;
 }) {
   const renderOption = (props: any, option: AssetOption) => (
-    <li {...props} key={option.symbol}>
+    <li {...props} key={option.symbol + option.logoURI}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Avatar
           src={option.logoURI}
@@ -96,7 +98,13 @@ export default function AssetsAutocomplete({
             padding: 1,
           }}
         >
-          {children}
+          {assetsLoading ? (
+            <div className="flex justify-center items-center p-4">
+              <CircularProgress color="inherit" size={20} />
+            </div>
+          ) : (
+            children
+          )}
         </Paper>
       )}
     />

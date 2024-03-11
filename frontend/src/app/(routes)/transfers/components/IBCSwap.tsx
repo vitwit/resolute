@@ -1,6 +1,6 @@
 import { InputAdornment, TextField } from '@mui/material';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { swapTextFieldStyles } from '../styles';
 import SourceChains from './SourceChains';
 import AssetsList from './AssetsList';
@@ -10,13 +10,22 @@ import useChain from '@/custom-hooks/useChain';
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { getBalances } from '@/store/features/bank/bankSlice';
 import useAccount from '@/custom-hooks/useAccount';
+import useSwaps from '@/custom-hooks/useSwaps';
 
 const IBCSwap = () => {
-  const { chainsInfo } = useGetChains();
+  const { chainsInfo, loading: chainsLoading } = useGetChains();
   const { getChainAPIs } = useChain();
+  const { getSwapRoute, routeLoading } = useSwaps();
   const { getAccountAddress, getAvailableBalance } = useAccount();
-  const { assetsInfo, chainWiseAssetOptions } = useGetAssets();
+  const {
+    assetsInfo,
+    chainWiseAssetOptions,
+    loading: assetsLoading,
+  } = useGetAssets();
   const [otherAddress, setOtherAddress] = useState(false);
+  const [amountIn, setAmountIn] = useState('');
+  const [amountOut, setAmountOut] = useState('');
+  // const [routeLoading, setRouteLoading] = useState(false);
   const dispatch = useAppDispatch();
   const handleSendToAnotherAddress = () => {
     setOtherAddress((prev) => !prev);
@@ -59,6 +68,7 @@ const IBCSwap = () => {
       })
     );
   };
+
   const handleSelectSourceAsset = (option: AssetConfig | null) => {
     setSelectedSourceAsset(option);
     const { balanceInfo } = getAvailableBalance({
@@ -68,12 +78,14 @@ const IBCSwap = () => {
     });
     setAvailableBalance(balanceInfo);
   };
+
   const handleSelectDestChain = (option: ChainConfig | null) => {
     setSelectedDestChain(option);
     const assets = option ? chainWiseAssetOptions[option?.chainID] : [];
     setSelectedDestChainAssets(assets || []);
     setSelectedDestAsset(null);
   };
+
   const handleSelectDestAsset = (option: AssetConfig | null) => {
     setSelectedDestAsset(option);
   };
@@ -95,11 +107,59 @@ const IBCSwap = () => {
     setIsRotated((prev) => !prev);
   };
 
+  useEffect(() => {
+    if (
+      !chainsLoading &&
+      !assetsLoading &&
+      !selectedSourceAsset &&
+      selectedSourceChain
+    ) {
+      const assets = chainWiseAssetOptions[selectedSourceChain?.chainID] || [];
+      setSelectedSourceChainAssets(assets);
+    }
+    if (
+      !chainsLoading &&
+      !assetsLoading &&
+      !selectedDestAsset &&
+      selectedDestChain
+    ) {
+      const assets = chainWiseAssetOptions[selectedDestChain?.chainID] || [];
+      setSelectedDestChainAssets(assets);
+    }
+  }, [assetsLoading, chainsLoading]);
+
+  const fetchSwapRoute = async (amount: string, isAmountIn: boolean) => {
+    const { amountOut: destAmount } = await getSwapRoute({
+      amountIn: Number(amount) * 10 ** availableBalance.decimals,
+      destChainID: selectedDestChain?.chainID || '',
+      destDenom: selectedDestAsset?.label || '',
+      sourceChainID: selectedSourceChain?.chainID || '',
+      sourceDenom: selectedSourceAsset?.label || '',
+    });
+    const parsedDestAmount = parseFloat(
+      (Number(destAmount) / 10.0 ** 6).toFixed(6)
+    );
+    setAmountOut(parsedDestAmount.toString());
+  };
+
+  const handleAmountInChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const input = e.target.value;
+    if (/^-?\d*\.?\d*$/.test(input)) {
+      if ((input.match(/\./g) || []).length <= 1) {
+        setAmountIn(input);
+        fetchSwapRoute(input, true);
+      }
+    }
+  };
+
   return (
     <div className="flex justify-center">
       <div className="bg-[#FFFFFF0D] rounded-2xl p-6 flex flex-col justify-between items-center gap-6 min-w-[550px]">
         <div className="bg-[#FFFFFF0D] rounded-2xl p-4 flex flex-col gap-4 w-full">
           <div className="text-[16px]">From</div>
+          <div>{JSON.stringify(routeLoading)}</div>
           <div className="space-y-2">
             <div className="text-[14px] font-extralight">Select Asset</div>
             <div className="flex justify-between gap-4">
@@ -108,6 +168,7 @@ const IBCSwap = () => {
                   options={chainsInfo}
                   handleChange={handleSelectSourceChain}
                   selectedChain={selectedSourceChain}
+                  dataLoading={chainsLoading}
                 />
               </div>
               <div className="flex-1">
@@ -115,6 +176,7 @@ const IBCSwap = () => {
                   options={selectedSourceChainAssets}
                   handleChange={handleSelectSourceAsset}
                   selectedAsset={selectedSourceAsset}
+                  assetsLoading={assetsLoading}
                 />
               </div>
             </div>
@@ -130,6 +192,7 @@ const IBCSwap = () => {
               autoFocus={true}
               placeholder="Enter Amount"
               sx={swapTextFieldStyles}
+              value={amountIn}
               InputProps={{
                 sx: {
                   input: {
@@ -151,6 +214,7 @@ const IBCSwap = () => {
                   </InputAdornment>
                 ),
               }}
+              onChange={handleAmountInChange}
             />
           </div>
         </div>
@@ -170,6 +234,7 @@ const IBCSwap = () => {
                   options={chainsInfo}
                   handleChange={handleSelectDestChain}
                   selectedChain={selectedDestChain}
+                  dataLoading={chainsLoading}
                 />
               </div>
               <div className="flex-1">
@@ -177,6 +242,7 @@ const IBCSwap = () => {
                   options={selectDestChainAssets}
                   handleChange={handleSelectDestAsset}
                   selectedAsset={selectedDestAsset}
+                  assetsLoading={assetsLoading}
                 />
               </div>
             </div>
@@ -191,6 +257,7 @@ const IBCSwap = () => {
               size="small"
               autoFocus={true}
               placeholder="0"
+              value={amountOut}
               sx={swapTextFieldStyles}
               InputProps={{
                 sx: {

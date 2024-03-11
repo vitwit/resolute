@@ -8,9 +8,10 @@ const useGetAssets = () => {
   const [chainWiseAssetOptions, setChainWiseAssetsOptions] = useState<
     Record<string, AssetConfig[]>
   >({});
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    (async () => {
+  const fetchAssetsInfo = async () => {
+    try {
       const assets = await skipClient.assets();
       setAssetsInfo(assets);
       const chainWiseAssets: Record<string, AssetConfig[]> = {};
@@ -23,11 +24,20 @@ const useGetAssets = () => {
         chainWiseAssets[chainID] = formattedAssets;
       });
       setChainWiseAssetsOptions(chainWiseAssets);
-    })();
+    } catch (error) {
+      console.log('error while fetching data', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAssetsInfo();
   }, []);
   return {
     assetsInfo,
     chainWiseAssetOptions,
+    loading,
   };
 };
 

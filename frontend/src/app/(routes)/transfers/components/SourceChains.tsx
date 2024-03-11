@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Avatar from '@mui/material/Avatar';
-import { Paper } from '@mui/material';
+import { CircularProgress, Paper } from '@mui/material';
 import { shortenName } from '@/utils/util';
 
 interface ChainOption {
@@ -15,10 +15,12 @@ export default function ChainAutocomplete({
   options,
   handleChange,
   selectedChain,
+  dataLoading,
 }: {
   options: ChainConfig[];
   handleChange: (option: ChainOption | null) => void;
   selectedChain: ChainConfig | null;
+  dataLoading: boolean;
 }) {
   const renderOption = (props: any, option: ChainOption) => (
     <li {...props} key={option.chainID}>
@@ -80,29 +82,37 @@ export default function ChainAutocomplete({
   );
 
   return (
-    <Autocomplete
-      disablePortal
-      fullWidth
-      id="chain-autocomplete"
-      options={options}
-      getOptionLabel={(option: ChainOption) => option.label}
-      renderOption={renderOption}
-      renderInput={renderInput}
-      onChange={(_, newValue) => handleChange(newValue)}
-      value={selectedChain}
-      PaperComponent={({ children }) => (
-        <Paper
-          style={{
-            background:
-              'linear-gradient(178deg, #241B61 1.71%, #69448D 98.35%, #69448D 98.35%)',
-            color: 'white',
-            borderRadius: '12px',
-            padding: 1,
-          }}
-        >
-          {children}
-        </Paper>
-      )}
-    />
+    <div>
+      <Autocomplete
+        disablePortal
+        fullWidth
+        id="chain-autocomplete"
+        options={options}
+        getOptionLabel={(option: ChainOption) => option.label}
+        renderOption={renderOption}
+        renderInput={renderInput}
+        onChange={(_, newValue) => handleChange(newValue)}
+        value={selectedChain}
+        PaperComponent={({ children }) => (
+          <Paper
+            style={{
+              background:
+                'linear-gradient(178deg, #241B61 1.71%, #69448D 98.35%, #69448D 98.35%)',
+              color: 'white',
+              borderRadius: '12px',
+              padding: 1,
+            }}
+          >
+            {dataLoading ? (
+              <div className="flex justify-center items-center p-4">
+                <CircularProgress color="inherit" size={20} />
+              </div>
+            ) : (
+              children
+            )}
+          </Paper>
+        )}
+      />
+    </div>
   );
 }

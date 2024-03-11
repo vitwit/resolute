@@ -77,27 +77,6 @@ const useAccount = () => {
           );
         }
       }
-
-      // if (denomInfo.origin_denom === denom) {
-      //   balanceInfo.amount = parseFloat(balance.amount);
-      //   const precision = denomInfo.decimals > 6 ? 6 : denomInfo.decimals;
-      //   balanceInfo.decimals = denomInfo.decimals;
-      //   balanceInfo.displayDenom = denomInfo.symbol;
-      //   // if (isIBCAsset(denomInfo[0])) {
-      //   //   balanceInfo.minimalDenom = denomInfo[0].counter_party.denom;
-      //   // } else {
-      //   //   balanceInfo.minimalDenom = denomInfo[0].origin_denom;
-      //   // }
-      //   balanceInfo.minimalDenom = denomInfo.origin_denom
-
-      //   balanceInfo.parsedAmount = parseFloat(
-      //     (Number(balance.amount) / 10.0 ** denomInfo.decimals).toFixed(
-      //       precision
-      //     )
-      //   );
-      //   console.log('====---====');
-      //   console.log(denomInfo[0]);
-      // }
     });
 
     return {
