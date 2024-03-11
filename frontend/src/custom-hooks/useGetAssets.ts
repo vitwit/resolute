@@ -16,7 +16,10 @@ const useGetAssets = () => {
       const chainWiseAssets: Record<string, AssetConfig[]> = {};
 
       Object.keys(assets).forEach((chainID) => {
-        const formattedAssets = getFormattedAssetsList(assets[chainID]);
+        const formattedAssets = getFormattedAssetsList(
+          assets[chainID],
+          chainID
+        );
         chainWiseAssets[chainID] = formattedAssets;
       });
       setChainWiseAssetsOptions(chainWiseAssets);
@@ -28,7 +31,10 @@ const useGetAssets = () => {
   };
 };
 
-const getFormattedAssetsList = (data: Asset[]): AssetConfig[] => {
+const getFormattedAssetsList = (
+  data: Asset[],
+  chainID: string
+): AssetConfig[] => {
   const assetsList = data
     .map((asset): AssetConfig => {
       return {

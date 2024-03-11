@@ -4,13 +4,20 @@ import React, { useState } from 'react';
 import { swapTextFieldStyles } from '../styles';
 import SourceChains from './SourceChains';
 import AssetsList from './AssetsList';
-import useGetChains from '@/custom-hooks/useGetChain';
+import useGetChains from '@/custom-hooks/useGetChains';
 import useGetAssets from '@/custom-hooks/useGetAssets';
+import useChain from '@/custom-hooks/useChain';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { getBalances } from '@/store/features/bank/bankSlice';
+import useAccount from '@/custom-hooks/useAccount';
 
 const IBCSwap = () => {
   const { chainsInfo } = useGetChains();
+  const { getChainAPIs } = useChain();
+  const { getAccountAddress, getAvailableBalance } = useAccount();
   const { assetsInfo, chainWiseAssetOptions } = useGetAssets();
   const [otherAddress, setOtherAddress] = useState(false);
+  const dispatch = useAppDispatch();
   const handleSendToAnotherAddress = () => {
     setOtherAddress((prev) => !prev);
   };
@@ -28,15 +35,38 @@ const IBCSwap = () => {
   const [selectDestChainAssets, setSelectedDestChainAssets] = useState<
     AssetConfig[]
   >([]);
+  const [availableBalance, setAvailableBalance] = useState({
+    amount: 0,
+    minimalDenom: '',
+    displayDenom: '',
+    decimals: 0,
+    parsedAmount: 0,
+  });
 
-  const handleSelectSourceChain = (option: ChainConfig | null) => {
+  const handleSelectSourceChain = async (option: ChainConfig | null) => {
     setSelectedSourceChain(option);
     const assets = option ? chainWiseAssetOptions[option?.chainID] : [];
     setSelectedSourceChainAssets(assets || []);
     setSelectedSourceAsset(null);
+    const { apis } = getChainAPIs(option?.chainID || '');
+    const { address } = await getAccountAddress(option?.chainID || '');
+    dispatch(
+      getBalances({
+        address: address,
+        baseURL: apis[0],
+        baseURLs: apis,
+        chainID: option?.chainID || '',
+      })
+    );
   };
   const handleSelectSourceAsset = (option: AssetConfig | null) => {
     setSelectedSourceAsset(option);
+    const { balanceInfo } = getAvailableBalance({
+      chainID: selectedSourceChain?.chainID || '',
+      denom: option?.label || '',
+      chainName: selectedSourceChain?.label.toLowerCase() || '',
+    });
+    setAvailableBalance(balanceInfo);
   };
   const handleSelectDestChain = (option: ChainConfig | null) => {
     setSelectedDestChain(option);
@@ -112,10 +142,10 @@ const IBCSwap = () => {
                   <InputAdornment position="start">
                     <div className="flex gap-1 font-int custom-font">
                       <div className="text-[14px] font-extralight text-white">
-                        {'12.323'}
+                        {availableBalance.parsedAmount || 0}
                       </div>
                       <div className="text-[14px] font-extralight text-[#FFFFFF80]">
-                        {'ATOM'}
+                        {availableBalance.displayDenom || '-'}
                       </div>
                     </div>
                   </InputAdornment>
