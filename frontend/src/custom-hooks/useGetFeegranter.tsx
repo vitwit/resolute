@@ -7,11 +7,17 @@ import { setError } from '@/store/features/common/commonSlice';
 const useGetFeegranter = () => {
   const feegranter = useAppSelector((state) => state.feegrant.feegrantAddress);
   const chainFeegrants = useAppSelector((state) => state.feegrant.chains);
+  const isFeegrantMode = useAppSelector(
+    (state) => state.feegrant.feegrantModeEnabled
+  );
   const { getChainInfo } = useGetChainInfo();
   const dispatch = useAppDispatch();
 
   const getFeegranter = (chainID: string, txnMsg: string) => {
-    const feegrants = chainFeegrants?.[chainID].grantsToMeAddressMapping;
+    if (!isFeegrantMode) {
+      return '';
+    }
+    const feegrants = chainFeegrants?.[chainID]?.grantsToMeAddressMapping;
     if (!feegranter?.length) {
       return '';
     }
