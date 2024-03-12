@@ -59,6 +59,15 @@ const useAccount = () => {
       }
     });
 
+    if (!balanceInfo.minimalDenom || !balanceInfo.displayDenom) {
+      const filteredDenomInfo = chainAssets?.filter((denomInfo) => {
+        return denomInfo.originDenom === denom;
+      });
+      balanceInfo.minimalDenom = filteredDenomInfo[0].denom;
+      balanceInfo.displayDenom = filteredDenomInfo[0].symbol || '';
+      balanceInfo.decimals = filteredDenomInfo[0].decimals || 0;
+    }
+
     return {
       balanceInfo,
     };

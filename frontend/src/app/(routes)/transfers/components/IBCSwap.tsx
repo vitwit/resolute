@@ -7,10 +7,18 @@ import AssetsList from './AssetsList';
 import useGetChains from '@/custom-hooks/useGetChains';
 import useGetAssets from '@/custom-hooks/useGetAssets';
 import useChain from '@/custom-hooks/useChain';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { getBalances } from '@/store/features/bank/bankSlice';
 import useAccount from '@/custom-hooks/useAccount';
 import useSwaps from '@/custom-hooks/useSwaps';
+import {
+  setAmountIn,
+  setAmountOut,
+  setDestAsset,
+  setDestChain,
+  setSourceAsset,
+  setSourceChain,
+} from '@/store/features/swaps/swapsSlice';
 
 const IBCSwap = () => {
   const { chainsInfo, loading: chainsLoading } = useGetChains();
@@ -23,20 +31,22 @@ const IBCSwap = () => {
     loading: assetsLoading,
   } = useGetAssets();
   const [otherAddress, setOtherAddress] = useState(false);
-  const [amountIn, setAmountIn] = useState('');
-  const [amountOut, setAmountOut] = useState('');
   const dispatch = useAppDispatch();
   const handleSendToAnotherAddress = () => {
     setOtherAddress((prev) => !prev);
   };
-  const [selectedSourceChain, setSelectedSourceChain] =
-    useState<ChainConfig | null>(null);
-  const [selectedSourceAsset, setSelectedSourceAsset] =
-    useState<AssetConfig | null>(null);
-  const [selectedDestChain, setSelectedDestChain] =
-    useState<ChainConfig | null>(null);
-  const [selectedDestAsset, setSelectedDestAsset] =
-    useState<AssetConfig | null>(null);
+
+  const selectedSourceChain = useAppSelector(
+    (state) => state.swaps.sourceChain
+  );
+  const selectedSourceAsset = useAppSelector(
+    (state) => state.swaps.sourceAsset
+  );
+  const selectedDestChain = useAppSelector((state) => state.swaps.destChain);
+  const selectedDestAsset = useAppSelector((state) => state.swaps.destAsset);
+  const amountIn = useAppSelector((state) => state.swaps.amountIn);
+  const amountOut = useAppSelector((state) => state.swaps.amountOut);
+
   const [selectedSourceChainAssets, setSelectedSourceChainAssets] = useState<
     AssetConfig[]
   >([]);
@@ -52,10 +62,19 @@ const IBCSwap = () => {
   });
 
   const handleSelectSourceChain = async (option: ChainConfig | null) => {
-    setSelectedSourceChain(option);
+    dispatch(setSourceChain(option));
     const assets = option ? chainWiseAssetOptions[option?.chainID] : [];
     setSelectedSourceChainAssets(assets || []);
-    setSelectedSourceAsset(null);
+    dispatch(setSourceAsset(null));
+    dispatch(setAmountIn(''));
+    dispatch(setAmountOut(''));
+    setAvailableBalance({
+      amount: 0,
+      minimalDenom: '',
+      displayDenom: '',
+      decimals: 0,
+      parsedAmount: 0,
+    });
     const { apis } = getChainAPIs(option?.chainID || '');
     const { address } = await getAccountAddress(option?.chainID || '');
     dispatch(
@@ -69,33 +88,37 @@ const IBCSwap = () => {
   };
 
   const handleSelectSourceAsset = (option: AssetConfig | null) => {
-    setSelectedSourceAsset(option);
+    dispatch(setSourceAsset(option));
     const { balanceInfo } = getAvailableBalance({
       chainID: selectedSourceChain?.chainID || '',
       denom: option?.label || '',
     });
     setAvailableBalance(balanceInfo);
+    dispatch(setAmountIn(''));
+    dispatch(setAmountOut(''));
   };
 
   const handleSelectDestChain = (option: ChainConfig | null) => {
-    setSelectedDestChain(option);
+    dispatch(setDestChain(option));
     const assets = option ? chainWiseAssetOptions[option?.chainID] : [];
     setSelectedDestChainAssets(assets || []);
-    setSelectedDestAsset(null);
+    dispatch(setDestAsset(null));
+    dispatch(setAmountOut(''));
   };
 
   const handleSelectDestAsset = (option: AssetConfig | null) => {
-    setSelectedDestAsset(option);
+    dispatch(setDestAsset(option));
+    dispatch(setAmountOut(''));
   };
 
   const flipChains = () => {
     const tempSelectedSourceChain = selectedSourceChain;
-    setSelectedSourceChain(selectedDestChain);
-    setSelectedDestChain(tempSelectedSourceChain);
+    dispatch(setSourceChain(selectedDestChain));
+    dispatch(setDestChain(tempSelectedSourceChain));
 
     const tempSelectedSourceAsset = selectedSourceAsset;
-    setSelectedSourceAsset(selectedDestAsset);
-    setSelectedDestAsset(tempSelectedSourceAsset);
+    dispatch(setSourceAsset(selectedDestAsset));
+    dispatch(setDestAsset(tempSelectedSourceAsset));
     handleRotate();
   };
 
@@ -126,18 +149,18 @@ const IBCSwap = () => {
     }
   }, [assetsLoading, chainsLoading]);
 
-  const fetchSwapRoute = async (amount: string, isAmountIn: boolean) => {
+  const fetchSwapRoute = async () => {
     const { amountOut: destAmount } = await getSwapRoute({
-      amountIn: Number(amount) * 10 ** availableBalance.decimals,
+      amountIn: Number(amountIn) * 10 ** availableBalance.decimals,
       destChainID: selectedDestChain?.chainID || '',
-      destDenom: selectedDestAsset?.label || '',
+      destDenom: selectedDestAsset?.denom || '',
       sourceChainID: selectedSourceChain?.chainID || '',
       sourceDenom: selectedSourceAsset?.label || '',
     });
     const parsedDestAmount = parseFloat(
       (Number(destAmount) / 10.0 ** 6).toFixed(6)
     );
-    setAmountOut(parsedDestAmount.toString());
+    dispatch(setAmountOut(parsedDestAmount.toString()));
   };
 
   const handleAmountInChange = (
@@ -146,11 +169,22 @@ const IBCSwap = () => {
     const input = e.target.value;
     if (/^-?\d*\.?\d*$/.test(input)) {
       if ((input.match(/\./g) || []).length <= 1) {
-        setAmountIn(input);
-        fetchSwapRoute(input, true);
+        dispatch(setAmountIn(input));
       }
     }
   };
+
+  useEffect(() => {
+    fetchSwapRoute();
+  }, [amountIn]);
+
+  useEffect(() => {
+    if (selectedDestAsset) {
+      fetchSwapRoute();
+    } else {
+      dispatch(setAmountOut(''));
+    }
+  }, [selectedDestAsset]);
 
   return (
     <div className="flex justify-center">

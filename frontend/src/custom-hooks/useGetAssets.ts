@@ -51,6 +51,7 @@ const getFormattedAssetsList = (
         symbol: asset.recommendedSymbol || '',
         label: asset.originDenom || '',
         logoURI: asset.logoURI || '',
+        denom: asset.denom || '',
       };
     })
     .sort((assetA, assetB) => {

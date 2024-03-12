@@ -8,4 +8,14 @@ interface AssetConfig {
   label: string;
   symbol: string;
   logoURI: string;
+  denom: string;
+}
+
+interface SwapState {
+  sourceChain: ChainConfig | null;
+  sourceAsset: AssetConfig | null;
+  destChain: ChainConfig | null;
+  destAsset: AssetConfig | null;
+  amountIn: string;
+  amountOut: string;
 }

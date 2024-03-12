@@ -9,6 +9,7 @@ interface AssetOption {
   label: string;
   symbol: string;
   logoURI: string;
+  denom: string;
 }
 
 export default function AssetsAutocomplete({
