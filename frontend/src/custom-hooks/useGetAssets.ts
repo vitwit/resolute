@@ -52,6 +52,7 @@ const getFormattedAssetsList = (
         label: asset.originDenom || '',
         logoURI: asset.logoURI || '',
         denom: asset.denom || '',
+        decimals: asset.decimals || 0,
       };
     })
     .sort((assetA, assetB) => {

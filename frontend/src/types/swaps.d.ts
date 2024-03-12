@@ -9,6 +9,7 @@ interface AssetConfig {
   symbol: string;
   logoURI: string;
   denom: string;
+  decimals: number;
 }
 
 interface SwapState {

@@ -6,37 +6,52 @@ interface GetRouteInputs {
   sourceDenom: string;
   destChainID: string;
   destDenom: string;
-  amountIn: number;
+  amount: number;
+  isAmountIn: boolean;
 }
 
 const useSwaps = () => {
   const [routeLoading, setRouteLoading] = useState(false);
-  const [amountOut, setAmountOut] = useState(0);
   const skipClient = createSkipRouterClient();
   const getSwapRoute = async ({
-    amountIn,
+    amount,
     destChainID,
     destDenom,
     sourceChainID,
     sourceDenom,
+    isAmountIn,
   }: GetRouteInputs) => {
     try {
       setRouteLoading(true);
-      const res = await skipClient.route({
-        amountIn: amountIn.toString(),
-        sourceAssetChainID: sourceChainID,
-        sourceAssetDenom: sourceDenom,
-        destAssetChainID: destChainID,
-        destAssetDenom: destDenom,
-        cumulativeAffiliateFeeBPS: '0',
-        allowMultiTx: true,
-        allowUnsafe: true,
-        experimentalFeatures: ['cctp'],
-      });
-      setAmountOut(Number(res.amountOut));
+      const res = await skipClient.route(
+        isAmountIn
+          ? {
+              amountIn: amount.toString(),
+              sourceAssetChainID: sourceChainID,
+              sourceAssetDenom: sourceDenom,
+              destAssetChainID: destChainID,
+              destAssetDenom: destDenom,
+              cumulativeAffiliateFeeBPS: '0',
+              allowMultiTx: true,
+              allowUnsafe: true,
+              experimentalFeatures: ['cctp'],
+            }
+          : {
+              amountOut: amount.toString(),
+              sourceAssetChainID: sourceChainID,
+              sourceAssetDenom: sourceDenom,
+              destAssetChainID: destChainID,
+              destAssetDenom: destDenom,
+              cumulativeAffiliateFeeBPS: '0',
+              allowMultiTx: true,
+              allowUnsafe: true,
+              experimentalFeatures: ['cctp'],
+            }
+      );
       setRouteLoading(false);
       return {
-        amountOut: Number(res.amountOut),
+        resAmount: isAmountIn ? Number(res.amountOut) : Number(res.amountIn),
+        isAmountIn,
       };
     } catch (error) {
       console.log('error occured while fetch route', error);
@@ -44,7 +59,8 @@ const useSwaps = () => {
       setRouteLoading(false);
     }
     return {
-      amountOut: 0,
+      resAmount: 0,
+      isAmountIn,
     };
   };
   return {

@@ -10,6 +10,7 @@ interface AssetOption {
   symbol: string;
   logoURI: string;
   denom: string;
+  decimals: number;
 }
 
 export default function AssetsAutocomplete({

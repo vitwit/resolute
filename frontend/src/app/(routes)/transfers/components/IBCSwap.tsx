@@ -60,6 +60,7 @@ const IBCSwap = () => {
     decimals: 0,
     parsedAmount: 0,
   });
+  const [userInputChange, setUserInputChange] = useState(true);
 
   const handleSelectSourceChain = async (option: ChainConfig | null) => {
     dispatch(setSourceChain(option));
@@ -149,18 +150,30 @@ const IBCSwap = () => {
     }
   }, [assetsLoading, chainsLoading]);
 
-  const fetchSwapRoute = async () => {
-    const { amountOut: destAmount } = await getSwapRoute({
-      amountIn: Number(amountIn) * 10 ** availableBalance.decimals,
+  const fetchSwapRoute = async (isAmountInput: boolean) => {
+    const amount = isAmountInput ? amountIn : amountOut;
+    const decimals = isAmountInput
+      ? selectedSourceAsset?.decimals
+      : selectedDestAsset?.decimals;
+    const { isAmountIn, resAmount } = await getSwapRoute({
+      amount: Number(amount) * 10 ** (decimals || 1),
       destChainID: selectedDestChain?.chainID || '',
       destDenom: selectedDestAsset?.denom || '',
       sourceChainID: selectedSourceChain?.chainID || '',
       sourceDenom: selectedSourceAsset?.label || '',
+      isAmountIn: isAmountInput,
     });
+    const resultDecimals = isAmountInput
+      ? selectedDestAsset?.decimals
+      : selectedSourceAsset?.decimals;
     const parsedDestAmount = parseFloat(
-      (Number(destAmount) / 10.0 ** 6).toFixed(6)
+      (Number(resAmount) / 10.0 ** (resultDecimals || 1)).toFixed(6)
     );
-    dispatch(setAmountOut(parsedDestAmount.toString()));
+    if (isAmountIn) {
+      dispatch(setAmountOut(parsedDestAmount.toString()));
+    } else {
+      dispatch(setAmountIn(parsedDestAmount.toString()));
+    }
   };
 
   const handleAmountInChange = (
@@ -170,17 +183,40 @@ const IBCSwap = () => {
     if (/^-?\d*\.?\d*$/.test(input)) {
       if ((input.match(/\./g) || []).length <= 1) {
         dispatch(setAmountIn(input));
+        setUserInputChange(true);
+      }
+    }
+  };
+
+  const handleAmountOutChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const input = e.target.value;
+    if (/^-?\d*\.?\d*$/.test(input)) {
+      if ((input.match(/\./g) || []).length <= 1) {
+        dispatch(setAmountOut(input));
+        setUserInputChange(true);
       }
     }
   };
 
   useEffect(() => {
-    fetchSwapRoute();
+    if (userInputChange) {
+      fetchSwapRoute(true);
+      setUserInputChange(false);
+    }
   }, [amountIn]);
 
   useEffect(() => {
+    if (userInputChange) {
+      fetchSwapRoute(false);
+      setUserInputChange(false);
+    }
+  }, [amountOut]);
+
+  useEffect(() => {
     if (selectedDestAsset) {
-      fetchSwapRoute();
+      fetchSwapRoute(true);
     } else {
       dispatch(setAmountOut(''));
     }
@@ -299,6 +335,7 @@ const IBCSwap = () => {
                   },
                 },
               }}
+              onChange={handleAmountOutChange}
             />
           </div>
           <div className="flex justify-end">

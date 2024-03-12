@@ -6,7 +6,7 @@ const useChain = () => {
     const filteredChain = chains.filter((chain) => chain.chain_id === chainID);
     const chainData = filteredChain[0];
     let apis: string[] = [];
-    chainData.apis?.rest?.slice(0, 3).forEach((api) => {
+    chainData?.apis?.rest?.slice(0, 3).forEach((api) => {
       apis.push(api.address);
     });
     return {
