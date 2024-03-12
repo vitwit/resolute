@@ -4,6 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Avatar from '@mui/material/Avatar';
 import { CircularProgress, Paper } from '@mui/material';
 import { shortenName } from '@/utils/util';
+import { ChainConfig } from '@/types/swaps';
 
 interface ChainOption {
   label: string;
@@ -11,7 +12,7 @@ interface ChainOption {
   logoURI: string;
 }
 
-export default function ChainAutocomplete({
+export default function ChainsList({
   options,
   handleChange,
   selectedChain,

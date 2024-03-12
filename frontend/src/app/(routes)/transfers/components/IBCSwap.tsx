@@ -2,7 +2,6 @@ import { InputAdornment, TextField } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { swapTextFieldStyles } from '../styles';
-import SourceChains from './SourceChains';
 import AssetsList from './AssetsList';
 import useGetChains from '@/custom-hooks/useGetChains';
 import useGetAssets from '@/custom-hooks/useGetAssets';
@@ -18,7 +17,21 @@ import {
   setDestChain,
   setSourceAsset,
   setSourceChain,
+  txIBCSwap,
 } from '@/store/features/swaps/swapsSlice';
+import ChainsList from './ChainsList';
+import { RouteResponse } from '@skip-router/core';
+import { AssetConfig, ChainConfig } from '@/types/swaps';
+
+declare let window: WalletWindow;
+
+const emptyBalance = {
+  amount: 0,
+  minimalDenom: '',
+  displayDenom: '',
+  decimals: 0,
+  parsedAmount: 0,
+};
 
 const IBCSwap = () => {
   const { chainsInfo, loading: chainsLoading } = useGetChains();
@@ -53,14 +66,10 @@ const IBCSwap = () => {
   const [selectDestChainAssets, setSelectedDestChainAssets] = useState<
     AssetConfig[]
   >([]);
-  const [availableBalance, setAvailableBalance] = useState({
-    amount: 0,
-    minimalDenom: '',
-    displayDenom: '',
-    decimals: 0,
-    parsedAmount: 0,
-  });
+  const [availableBalance, setAvailableBalance] = useState(emptyBalance);
   const [userInputChange, setUserInputChange] = useState(true);
+  const [receivedAddress, setReceiverAddress] = useState('');
+  const [swapRoute, setSwapRoute] = useState<RouteResponse | null>();
 
   const handleSelectSourceChain = async (option: ChainConfig | null) => {
     dispatch(setSourceChain(option));
@@ -112,7 +121,29 @@ const IBCSwap = () => {
     dispatch(setAmountOut(''));
   };
 
-  const flipChains = () => {
+  const flipChains = async () => {
+    if (selectedDestChain && selectedDestAsset) {
+      const { apis } = getChainAPIs(selectedDestChain?.chainID || '');
+      const { address } = await getAccountAddress(
+        selectedDestChain?.chainID || ''
+      );
+      dispatch(
+        getBalances({
+          address: address,
+          baseURL: apis[0],
+          baseURLs: apis,
+          chainID: selectedDestChain?.chainID || '',
+        })
+      );
+
+      const { balanceInfo } = getAvailableBalance({
+        chainID: selectedDestChain?.chainID || '',
+        denom: selectedDestAsset?.label || '',
+      });
+      setAvailableBalance(balanceInfo);
+    } else {
+      setAvailableBalance(emptyBalance);
+    }
     const tempSelectedSourceChain = selectedSourceChain;
     dispatch(setSourceChain(selectedDestChain));
     dispatch(setDestChain(tempSelectedSourceChain));
@@ -155,14 +186,15 @@ const IBCSwap = () => {
     const decimals = isAmountInput
       ? selectedSourceAsset?.decimals
       : selectedDestAsset?.decimals;
-    const { isAmountIn, resAmount } = await getSwapRoute({
+    const { isAmountIn, resAmount, route } = await getSwapRoute({
       amount: Number(amount) * 10 ** (decimals || 1),
       destChainID: selectedDestChain?.chainID || '',
       destDenom: selectedDestAsset?.denom || '',
       sourceChainID: selectedSourceChain?.chainID || '',
-      sourceDenom: selectedSourceAsset?.label || '',
+      sourceDenom: selectedSourceAsset?.denom || '',
       isAmountIn: isAmountInput,
     });
+    setSwapRoute(route);
     const resultDecimals = isAmountInput
       ? selectedDestAsset?.decimals
       : selectedSourceAsset?.decimals;
@@ -200,6 +232,12 @@ const IBCSwap = () => {
     }
   };
 
+  const handleAddressChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setReceiverAddress(e.target.value);
+  };
+
   useEffect(() => {
     if (userInputChange) {
       fetchSwapRoute(true);
@@ -222,6 +260,27 @@ const IBCSwap = () => {
     }
   }, [selectedDestAsset]);
 
+  const onTxSwap = async () => {
+    const addresses: Record<string, string> = {};
+    if (swapRoute && selectedDestChain) {
+      // for all intermediary stops
+      for (const chainID of swapRoute.chainIDs) {
+        const account = await window.wallet.getKey(chainID);
+        addresses[chainID] = account.bech32Address;
+      }
+
+      // for destination
+      addresses[selectedDestChain?.chainID] = receivedAddress;
+
+      dispatch(
+        txIBCSwap({
+          route: swapRoute,
+          userAddresses: addresses,
+        })
+      );
+    }
+  };
+
   return (
     <div className="flex justify-center">
       <div className="bg-[#FFFFFF0D] rounded-2xl p-6 flex flex-col justify-between items-center gap-6 min-w-[550px]">
@@ -231,7 +290,7 @@ const IBCSwap = () => {
             <div className="text-[14px] font-extralight">Select Asset</div>
             <div className="flex justify-between gap-4">
               <div className="flex-1">
-                <SourceChains
+                <ChainsList
                   options={chainsInfo}
                   handleChange={handleSelectSourceChain}
                   selectedChain={selectedSourceChain}
@@ -297,7 +356,7 @@ const IBCSwap = () => {
             <div className="text-[14px] font-extralight">Select Asset</div>
             <div className="flex justify-between gap-4">
               <div className="flex-1">
-                <SourceChains
+                <ChainsList
                   options={chainsInfo}
                   handleChange={handleSelectDestChain}
                   selectedChain={selectedDestChain}
@@ -358,6 +417,7 @@ const IBCSwap = () => {
               autoFocus={true}
               placeholder="Enter Address"
               sx={swapTextFieldStyles}
+              value={receivedAddress}
               InputProps={{
                 sx: {
                   input: {
@@ -367,10 +427,11 @@ const IBCSwap = () => {
                   },
                 },
               }}
+              onChange={handleAddressChange}
             />
           </div>
         </div>
-        <div className="w-full">
+        <div className="w-full" onClick={onTxSwap}>
           <button className="swap-btn primary-gradient">Swap</button>
         </div>
       </div>

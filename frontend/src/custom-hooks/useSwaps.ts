@@ -52,6 +52,7 @@ const useSwaps = () => {
       return {
         resAmount: isAmountIn ? Number(res.amountOut) : Number(res.amountIn),
         isAmountIn,
+        route: res,
       };
     } catch (error) {
       console.log('error occured while fetch route', error);
@@ -61,6 +62,7 @@ const useSwaps = () => {
     return {
       resAmount: 0,
       isAmountIn,
+      route: null,
     };
   };
   return {

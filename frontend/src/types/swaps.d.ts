@@ -1,3 +1,7 @@
+import { RouteResponse } from '@skip-router/core';
+import { TxStatus } from './enums';
+import { GasPrice } from '@cosmjs/stargate';
+
 interface ChainConfig {
   label: string;
   logoURI: string;
@@ -19,4 +23,15 @@ interface SwapState {
   destAsset: AssetConfig | null;
   amountIn: string;
   amountOut: string;
+  txStatus: TxStatus;
+}
+
+interface TxSwapInputs {
+  route: RouteResponse;
+  userAddresses: Record<string, string>;
+}
+
+interface TxSwapServiceInputs extends TxSwapInputs {
+  onSourceChainTxSuccess: (chainID: string, txHash: string) => void;
+  onDestChainTxSuccess: (chainID: string, txHash: string) => void;
 }
