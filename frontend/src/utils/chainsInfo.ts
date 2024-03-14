@@ -115,9 +115,10 @@ export const networks: Network[] = [
     config: {
       chainId: 'akashnet-2',
       chainName: 'Akash',
-      rest: 'https://akash-api.lavenderfive.com:443',
+      rest: 'https://rest-akash.ecostake.com',
       rpc: 'https://akash-rpc.lavenderfive.com:443',
       restURIs: [
+        'https://rest-akash.ecostake.com',
         'https://akash-api.lavenderfive.com:443',
         'https://akash-api.polkachu.com',
         'https://rest-akash.ecostake.com',

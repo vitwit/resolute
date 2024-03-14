@@ -239,7 +239,7 @@ export const POLYGON_API = 'https://staking-api.polygon.technology/api/v2';
 export const POLYGON_CONFIG = {
   baseURL: 'https://staking-api.polygon.technology/api/v2',
   decimals: 18,
-  coinGeckoId: 'matic-network',
+  coinGeckoId: 'matic',
   logo: '/polygon-logo.svg',
   witval: {
     profile: 'https://staking.polygon.technology/validators/50',
@@ -249,7 +249,7 @@ export const POLYGON_CONFIG = {
 export const OASIS_CONFIG = {
   baseURL: 'https://oasisscan.com',
   decimals: 9,
-  coinGeckoId: '',
+  coinGeckoId: 'rose',
   logo: '/oasis-network-logo.png',
   witval: {
     profile:

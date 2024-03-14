@@ -6,6 +6,8 @@ import { parseBalance } from '@/utils/denom';
 import useGetAllChainsInfo from './useGetAllChainsInfo';
 import { OASIS_CONFIG, POLYGON_CONFIG, WITVAL } from '@/utils/constants';
 
+const removedChains = ['crescent-1', 'archway-1', 'celestia']
+
 const useGetValidatorInfo = () => {
   const stakingData = useAppSelector(
     (state: RootState) => state.staking.chains
@@ -13,7 +15,12 @@ const useGetValidatorInfo = () => {
   const allNetworksInfo = useAppSelector(
     (state: RootState) => state.common.allNetworksInfo
   );
-  const chainIDs = Object.keys(allNetworksInfo);
+
+
+  const allChainIds = Object.keys(allNetworksInfo);
+
+  const chainIDs = allChainIds.filter(c => !removedChains.includes(c))
+
   const tokensPriceInfo = useAppSelector(
     (state) => state.common.allTokensInfoState.info
   );
@@ -165,7 +172,7 @@ const useGetValidatorInfo = () => {
       }
       const delegatorsCount =
         stakingData[validator.chainID].validatorProfiles?.[
-          validator.operatorAddress
+        validator.operatorAddress
         ];
       totalDelegators += Number(delegatorsCount?.totalDelegators || 0);
       totalCommission += Number(validator?.commission) || 0;
@@ -215,6 +222,7 @@ const useGetValidatorInfo = () => {
   const getPolygonValidatorInfo = () => {
     const usdPriceInfo: TokenInfo | undefined =
       tokensPriceInfo?.[POLYGON_CONFIG.coinGeckoId]?.info;
+
     const polygonData = nonCosmosData.chains?.['polygon'];
     const polygonDelegators = Number(nonCosmosData.delegators['polygon']);
     let totalStakedInUSD = 0;
@@ -270,8 +278,16 @@ const useGetValidatorInfo = () => {
         ? totalStakedTokens * usdPriceInfo.usd
         : 0;
       commission = OASIS_CONFIG.witval.commission.toString();
-      totalDelegators = oasisDelegations?.data?.totalSize || 0;
+      totalDelegators = oasisDelegations?.data?.totalSize;
       operatorAddress = OASIS_CONFIG.witval.operatorAddress;
+    } else {
+      totalDelegators = 8
+      totalStakedTokens = 11641594
+      commission = OASIS_CONFIG.witval.commission.toString();
+
+      totalStakedInUSD = usdPriceInfo
+        ? totalStakedTokens * usdPriceInfo.usd
+        : 0;
     }
 
     return {
