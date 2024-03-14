@@ -9,7 +9,7 @@ import {
 } from '@/types/swaps';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { txSwap } from './swapsService';
-import axios, { AxiosError } from 'axios';
+import  { AxiosError } from 'axios';
 import { setError } from '../common/commonSlice';
 
 const initialState: SwapState = {
@@ -25,7 +25,7 @@ const initialState: SwapState = {
 export const txIBCSwap = createAsyncThunk(
   'ibc-swap/txSwap',
   async (data: TxSwapInputs, { rejectWithValue, dispatch }) => {
-    const onSourceChainTxSuccess = (chainID: string, txHash: string) => {
+    const onSourceChainTxSuccess = () => {
       dispatch(
         setError({
           type: 'success',
@@ -33,7 +33,7 @@ export const txIBCSwap = createAsyncThunk(
         })
       );
     };
-    const onDestChainTxSuccess = (chainID: string, txHash: string) => {
+    const onDestChainTxSuccess = () => {
       dispatch(
         setError({
           type: 'success',

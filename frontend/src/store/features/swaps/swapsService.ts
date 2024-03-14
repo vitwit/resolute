@@ -1,4 +1,4 @@
-import { TxSwapInputs, TxSwapServiceInputs } from '@/types/swaps';
+import {  TxSwapServiceInputs } from '@/types/swaps';
 import { SkipRouter, SKIP_API_URL } from '@skip-router/core';
 
 declare let window: WalletWindow;

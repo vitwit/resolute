@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Avatar from '@mui/material/Avatar';
@@ -23,6 +23,8 @@ export default function ChainsList({
   selectedChain: ChainConfig | null;
   dataLoading: boolean;
 }) {
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderOption = (props: any, option: ChainOption) => (
     <li {...props} key={option.chainID}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -43,6 +45,7 @@ export default function ChainsList({
     </li>
   );
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderInput = (params: any) => (
     <TextField
       className="bg-[#171328] rounded-2xl drop-down"

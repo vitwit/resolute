@@ -1,5 +1,5 @@
 import { createSkipRouterClient } from '@/store/features/swaps/swapsService';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 interface GetRouteInputs {
   sourceChainID: string;

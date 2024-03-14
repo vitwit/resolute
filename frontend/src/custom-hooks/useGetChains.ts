@@ -1,5 +1,5 @@
 import { createSkipRouterClient } from '@/store/features/swaps/swapsService';
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 
 const useGetChains = () => {
   const skipClient = createSkipRouterClient();

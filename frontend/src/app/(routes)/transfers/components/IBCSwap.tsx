@@ -36,10 +36,9 @@ const emptyBalance = {
 const IBCSwap = () => {
   const { chainsInfo, loading: chainsLoading } = useGetChains();
   const { getChainAPIs } = useChain();
-  const { getSwapRoute, routeLoading } = useSwaps();
+  const { getSwapRoute } = useSwaps();
   const { getAccountAddress, getAvailableBalance } = useAccount();
   const {
-    assetsInfo,
     chainWiseAssetOptions,
     loading: assetsLoading,
   } = useGetAssets();

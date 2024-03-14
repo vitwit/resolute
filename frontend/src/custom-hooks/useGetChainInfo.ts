@@ -61,7 +61,7 @@ const useGetChainInfo = () => {
     const chainName = config.chainName.toLowerCase();
 
     const aminoCfg = network?.aminoConfig;
-    const cosmosAddress = networks[COSMOS_CHAIN_ID].walletInfo.bech32Address;
+    const cosmosAddress = networks[COSMOS_CHAIN_ID] && networks[COSMOS_CHAIN_ID].walletInfo.bech32Address;
     const prefix = config?.bech32Config.bech32PrefixAccAddr;
     const valPrefix = config?.bech32Config.bech32PrefixValAddr;
     const feeAmount = config?.feeCurrencies[0].gasPriceStep?.average || 0;

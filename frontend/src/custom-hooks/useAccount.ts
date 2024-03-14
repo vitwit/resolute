@@ -1,6 +1,4 @@
-import React from 'react';
 import { useAppSelector } from './StateHooks';
-import { Asset } from '@skip-router/core';
 import useGetAssets from './useGetAssets';
 
 declare let window: WalletWindow;

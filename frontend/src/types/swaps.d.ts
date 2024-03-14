@@ -1,6 +1,5 @@
 import { RouteResponse } from '@skip-router/core';
 import { TxStatus } from './enums';
-import { GasPrice } from '@cosmjs/stargate';
 
 interface ChainConfig {
   label: string;
