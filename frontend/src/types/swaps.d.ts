@@ -23,7 +23,16 @@ interface SwapState {
   destAsset: AssetConfig | null;
   amountIn: string;
   amountOut: string;
-  txStatus: TxStatus;
+  txStatus: {
+    status: TxStatus;
+    error: string;
+  };
+  txSuccess: {
+    txHash: string;
+  };
+  txDestSuccess: {
+    status: string;
+  };
 }
 
 interface TxSwapInputs {

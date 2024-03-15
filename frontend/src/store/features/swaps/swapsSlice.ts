@@ -10,7 +10,8 @@ import {
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { txSwap } from './swapsService';
 import axios, { AxiosError } from 'axios';
-import { setError } from '../common/commonSlice';
+import { setError, setTxAndHash } from '../common/commonSlice';
+import { ERR_UNKNOWN } from '@/utils/errors';
 
 const initialState: SwapState = {
   destAsset: null,
@@ -19,28 +20,28 @@ const initialState: SwapState = {
   sourceChain: null,
   amountIn: '',
   amountOut: '',
-  txStatus: TxStatus.INIT,
+  txStatus: {
+    status: TxStatus.INIT,
+    error: '',
+  },
+  txSuccess: {
+    txHash: '',
+  },
+  txDestSuccess: {
+    status: '',
+  },
 };
 
 export const txIBCSwap = createAsyncThunk(
   'ibc-swap/txSwap',
   async (data: TxSwapInputs, { rejectWithValue, dispatch }) => {
     const onSourceChainTxSuccess = (chainID: string, txHash: string) => {
-      dispatch(
-        setError({
-          type: 'success',
-          message: `Transaction Broadcasted`,
-        })
-      );
+      dispatch(setTx(txHash));
     };
     const onDestChainTxSuccess = (chainID: string, txHash: string) => {
-      dispatch(
-        setError({
-          type: 'success',
-          message: `Transaction Successful`,
-        })
-      );
+      dispatch(setTxDestSuccess());
     };
+    dispatch(resetTxDestSuccess());
     try {
       const response = await txSwap({
         route: data.route,
@@ -49,8 +50,15 @@ export const txIBCSwap = createAsyncThunk(
         onDestChainTxSuccess,
       });
       return response;
-    } catch (error) {
-      if (error instanceof AxiosError) return rejectWithValue(error.response);
+    } catch (error: any) {
+      const errMsg = error?.message || ERR_UNKNOWN;
+      dispatch(
+        setError({
+          message: errMsg,
+          type: 'error',
+        })
+      );
+      return rejectWithValue(error?.message || ERR_UNKNOWN);
     }
   }
 );
@@ -78,19 +86,41 @@ export const swapsSlice = createSlice({
       state.amountOut = action.payload;
     },
     resetTxStatus: (state) => {
-      state.txStatus = TxStatus.IDLE;
+      state.txStatus = {
+        status: TxStatus.INIT,
+        error: '',
+      };
+    },
+    setTx: (state, action: PayloadAction<string>) => {
+      state.txSuccess.txHash = action.payload;
+    },
+    resetTx: (state) => {
+      state.txSuccess.txHash = '';
+      state.txStatus = {
+        status: TxStatus.INIT,
+        error: '',
+      };
+    },
+    setTxDestSuccess: (state) => {
+      state.txDestSuccess.status = 'success';
+    },
+    resetTxDestSuccess: (state) => {
+      state.txDestSuccess.status = '';
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(txIBCSwap.pending, (state) => {
-        state.txStatus = TxStatus.PENDING;
+        state.txStatus.status = TxStatus.PENDING;
+        state.txStatus.error = '';
       })
       .addCase(txIBCSwap.fulfilled, (state) => {
-        state.txStatus = TxStatus.IDLE;
+        state.txStatus.status = TxStatus.IDLE;
+        state.txStatus.error = '';
       })
-      .addCase(txIBCSwap.rejected, (state) => {
-        state.txStatus = TxStatus.REJECTED;
+      .addCase(txIBCSwap.rejected, (state, action) => {
+        state.txStatus.status = TxStatus.REJECTED;
+        state.txStatus.error = action.error.message || ERR_UNKNOWN;
       });
   },
 });
@@ -103,6 +133,10 @@ export const {
   setAmountIn,
   setAmountOut,
   resetTxStatus,
+  resetTx,
+  setTx,
+  setTxDestSuccess,
+  resetTxDestSuccess,
 } = swapsSlice.actions;
 
 export default swapsSlice.reducer;

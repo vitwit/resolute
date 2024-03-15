@@ -1,4 +1,12 @@
-import { InputAdornment, TextField } from '@mui/material';
+import {
+  Alert,
+  AlertTitle,
+  CircularProgress,
+  InputAdornment,
+  Snackbar,
+  TextField,
+  Typography,
+} from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { swapTextFieldStyles } from '../styles';
@@ -11,6 +19,7 @@ import { getBalances } from '@/store/features/bank/bankSlice';
 import useAccount from '@/custom-hooks/useAccount';
 import useSwaps from '@/custom-hooks/useSwaps';
 import {
+  resetTx,
   setAmountIn,
   setAmountOut,
   setDestAsset,
@@ -22,6 +31,7 @@ import {
 import ChainsList from './ChainsList';
 import { RouteResponse } from '@skip-router/core';
 import { AssetConfig, ChainConfig } from '@/types/swaps';
+import { TxStatus } from '@/types/enums';
 
 declare let window: WalletWindow;
 
@@ -59,6 +69,7 @@ const IBCSwap = () => {
   const selectedDestAsset = useAppSelector((state) => state.swaps.destAsset);
   const amountIn = useAppSelector((state) => state.swaps.amountIn);
   const amountOut = useAppSelector((state) => state.swaps.amountOut);
+  const txStatus = useAppSelector((state) => state.swaps.txStatus.status);
 
   const [selectedSourceChainAssets, setSelectedSourceChainAssets] = useState<
     AssetConfig[]
@@ -281,6 +292,10 @@ const IBCSwap = () => {
     }
   };
 
+  useEffect(() => {
+    dispatch(resetTx());
+  }, []);
+
   return (
     <div className="flex justify-center">
       <div className="bg-[#FFFFFF0D] rounded-2xl p-6 flex flex-col justify-between items-center gap-6 min-w-[550px]">
@@ -431,8 +446,18 @@ const IBCSwap = () => {
             />
           </div>
         </div>
-        <div className="w-full" onClick={onTxSwap}>
-          <button className="swap-btn primary-gradient">Swap</button>
+        <div className="w-full">
+          <button
+            className="swap-btn primary-gradient flex justify-center items-center"
+            onClick={onTxSwap}
+            disabled={txStatus === TxStatus.PENDING}
+          >
+            {txStatus === TxStatus.PENDING ? (
+              <CircularProgress sx={{ color: 'white' }} size={16} />
+            ) : (
+              'Swap'
+            )}
+          </button>
         </div>
       </div>
     </div>
