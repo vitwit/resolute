@@ -27,16 +27,17 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
     validatorWebsite,
   } = getChainwiseValidatorInfo({ moniker });
 
-  let {
-    totalDelegators,
-    totalStaked,
-    avgCommission,
-    activeNetworks,
-    totalNetworks,
-  } = getValidatorStats({
+  const validatorStatsResult = getValidatorStats({
     data: chainWiseValidatorData,
     moniker: moniker,
   });
+
+  const { avgCommission,
+    activeNetworks,
+    totalNetworks } = validatorStatsResult;
+
+  let { totalDelegators,
+    totalStaked, } = validatorStatsResult
 
   const { totalStakedInUSD: totalPolygonStaked, totalDelegators: totalPolygonDelegators } = getPolygonValidatorInfo()
   const { totalStakedInUSD: totalOasisStaked, totalDelegators: totalOasisDelegator } = getOasisValidatorInfo()
