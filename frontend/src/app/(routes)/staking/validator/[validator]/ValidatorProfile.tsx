@@ -16,7 +16,9 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
   const tabs = ['Profile', 'Announcements', 'Inbox', 'Notices'];
   const selectedTab = 'profile';
   useInitAllValidator();
-  const { getChainwiseValidatorInfo, getValidatorStats } =
+  const { getChainwiseValidatorInfo,
+    getOasisValidatorInfo,
+    getPolygonValidatorInfo, getValidatorStats } =
     useGetValidatorInfo();
   const {
     chainWiseValidatorData,
@@ -24,16 +26,26 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
     validatorIdentity,
     validatorWebsite,
   } = getChainwiseValidatorInfo({ moniker });
-  const {
-    totalDelegators,
-    totalStaked,
-    avgCommission,
-    activeNetworks,
-    totalNetworks,
-  } = getValidatorStats({
+
+  const validatorStatsResult = getValidatorStats({
     data: chainWiseValidatorData,
     moniker: moniker,
   });
+
+  const { avgCommission,
+    activeNetworks,
+    totalNetworks } = validatorStatsResult;
+
+  let { totalDelegators,
+    totalStaked, } = validatorStatsResult
+
+  const { totalStakedInUSD: totalPolygonStaked, totalDelegators: totalPolygonDelegators } = getPolygonValidatorInfo()
+  const { totalStakedInUSD: totalOasisStaked, totalDelegators: totalOasisDelegator } = getOasisValidatorInfo()
+
+  totalStaked += totalPolygonStaked || 0
+  totalStaked += totalOasisStaked || 0
+  totalDelegators += totalPolygonDelegators
+  totalDelegators += totalOasisDelegator
 
   return (
     <div className="py-6 px-10 space-y-10 h-screen flex flex-col">
@@ -121,8 +133,8 @@ const ValidatorMetadataCard = ({
         <div className="space-y-2">
           <div className="text-[#FFFFFF80] text-[14px]">Description</div>
           <div className="text-[16px] leading-[30px]">{
-           moniker.toLowerCase() === WITVAL?
-           'Vitwit excels in providing top-notch infrastructure services for the Cosmos blockchain ecosystem. We specialize in setting up and managing validators, relayers, and offering expert advisory services.':description || '-'}</div>
+            moniker.toLowerCase() === WITVAL ?
+              'Vitwit excels in providing top-notch infrastructure services for the Cosmos blockchain ecosystem. We specialize in setting up and managing validators, relayers, and offering expert advisory services.' : description || '-'}</div>
         </div>
         {website ? (
           <div>
