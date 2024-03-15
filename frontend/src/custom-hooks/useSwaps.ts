@@ -1,5 +1,5 @@
 import { createSkipRouterClient } from '@/store/features/swaps/swapsService';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 interface GetRouteInputs {
   sourceChainID: string;
@@ -54,7 +54,8 @@ const useSwaps = () => {
         isAmountIn,
         route: res,
       };
-    } catch (error) {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
       console.log('error occured while fetch route', error);
     } finally {
       setRouteLoading(false);

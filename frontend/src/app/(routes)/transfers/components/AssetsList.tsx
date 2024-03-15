@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Avatar from '@mui/material/Avatar';
@@ -24,6 +24,7 @@ export default function AssetsAutocomplete({
   selectedAsset: AssetOption | null;
   assetsLoading: boolean;
 }) {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderOption = (props: any, option: AssetOption) => (
     <li {...props} key={option.symbol + option.logoURI}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -41,6 +42,7 @@ export default function AssetsAutocomplete({
     </li>
   );
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const renderInput = (params: any) => (
     <TextField
       className="bg-[#171328] rounded-2xl drop-down"

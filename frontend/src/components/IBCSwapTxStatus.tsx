@@ -1,11 +1,14 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { resetTx, resetTxDestSuccess, resetTxStatus } from '@/store/features/swaps/swapsSlice';
+import {
+  resetTx,
+  resetTxDestSuccess,
+  resetTxStatus,
+} from '@/store/features/swaps/swapsSlice';
 import { TxStatus } from '@/types/enums';
 import {
   Alert,
   AlertTitle,
   CircularProgress,
-  Icon,
   IconButton,
   Snackbar,
 } from '@mui/material';

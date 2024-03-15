@@ -9,8 +9,7 @@ import {
 } from '@/types/swaps';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { txSwap } from './swapsService';
-import axios, { AxiosError } from 'axios';
-import { setError, setTxAndHash } from '../common/commonSlice';
+import { setError } from '../common/commonSlice';
 import { ERR_UNKNOWN } from '@/utils/errors';
 
 const initialState: SwapState = {
@@ -35,10 +34,10 @@ const initialState: SwapState = {
 export const txIBCSwap = createAsyncThunk(
   'ibc-swap/txSwap',
   async (data: TxSwapInputs, { rejectWithValue, dispatch }) => {
-    const onSourceChainTxSuccess = (chainID: string, txHash: string) => {
+    const onSourceChainTxSuccess = (txHash: string) => {
       dispatch(setTx(txHash));
     };
-    const onDestChainTxSuccess = (chainID: string, txHash: string) => {
+    const onDestChainTxSuccess = () => {
       dispatch(setTxDestSuccess());
     };
     dispatch(resetTxDestSuccess());
@@ -50,6 +49,7 @@ export const txIBCSwap = createAsyncThunk(
         onDestChainTxSuccess,
       });
       return response;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       const errMsg = error?.message || ERR_UNKNOWN;
       dispatch(

@@ -1,12 +1,4 @@
-import {
-  Alert,
-  AlertTitle,
-  CircularProgress,
-  InputAdornment,
-  Snackbar,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { CircularProgress, InputAdornment, TextField } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { swapTextFieldStyles } from '../styles';
@@ -46,13 +38,9 @@ const emptyBalance = {
 const IBCSwap = () => {
   const { chainsInfo, loading: chainsLoading } = useGetChains();
   const { getChainAPIs } = useChain();
-  const { getSwapRoute, routeLoading } = useSwaps();
+  const { getSwapRoute } = useSwaps();
   const { getAccountAddress, getAvailableBalance } = useAccount();
-  const {
-    assetsInfo,
-    chainWiseAssetOptions,
-    loading: assetsLoading,
-  } = useGetAssets();
+  const { chainWiseAssetOptions, loading: assetsLoading } = useGetAssets();
   const [otherAddress, setOtherAddress] = useState(false);
   const dispatch = useAppDispatch();
   const handleSendToAnotherAddress = () => {

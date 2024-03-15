@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import MainTopNav from '@/components/MainTopNav';
 import TransfersHistory from './TransfersHistory';
 import { TRANSFERS_TAB2 } from '../../../../utils/constants';
-import { SINGLE_TAB_TEXT, TRANSFERS_TAB1 } from '@/utils/constants';
+import { TRANSFERS_TAB1 } from '@/utils/constants';
 import SingleTransfer from './SingleTransfer';
 import MultiTransfer from './MultiTransfer';
 import useInitBalances from '@/custom-hooks/useInitBalances';

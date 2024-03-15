@@ -1,6 +1,7 @@
 import { createSkipRouterClient } from '@/store/features/swaps/swapsService';
+import { AssetConfig } from '@/types/swaps';
 import { Asset } from '@skip-router/core';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const useGetAssets = () => {
   const skipClient = createSkipRouterClient();
@@ -17,10 +18,7 @@ const useGetAssets = () => {
       const chainWiseAssets: Record<string, AssetConfig[]> = {};
 
       Object.keys(assets).forEach((chainID) => {
-        const formattedAssets = getFormattedAssetsList(
-          assets[chainID],
-          chainID
-        );
+        const formattedAssets = getFormattedAssetsList(assets[chainID]);
         chainWiseAssets[chainID] = formattedAssets;
       });
       setChainWiseAssetsOptions(chainWiseAssets);
@@ -41,10 +39,7 @@ const useGetAssets = () => {
   };
 };
 
-const getFormattedAssetsList = (
-  data: Asset[],
-  chainID: string
-): AssetConfig[] => {
+const getFormattedAssetsList = (data: Asset[]): AssetConfig[] => {
   const assetsList = data
     .map((asset): AssetConfig => {
       return {
