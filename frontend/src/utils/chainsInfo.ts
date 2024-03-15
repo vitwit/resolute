@@ -115,17 +115,20 @@ export const networks: Network[] = [
     config: {
       chainId: 'akashnet-2',
       chainName: 'Akash',
-      rest: 'https://api.resolute.vitwit.com/akash_api',
-      rpc: 'https://api.resolute.vitwit.com/akash_rpc',
+      rest: 'https://rest-akash.ecostake.com',
+      rpc: 'https://akash-rpc.lavenderfive.com:443',
       restURIs: [
-        'https://api.resolute.vitwit.com/akash_api',
+        'https://rest-akash.ecostake.com',
+        'https://akash-api.lavenderfive.com:443',
         'https://akash-api.polkachu.com',
         'https://rest-akash.ecostake.com',
+        'https://api.resolute.vitwit.com/akash_api',
       ],
       rpcURIs: [
-        'https://api.resolute.vitwit.com/akash_rpc',
+        'https://akash-rpc.lavenderfive.com:443',
         'https://akash-rpc.polkachu.com',
         'https://rpc-akash.cosmos-spaces.cloud',
+        'https://api.resolute.vitwit.com/akash_rpc',
       ],
       currencies: [
         {
@@ -278,17 +281,19 @@ export const networks: Network[] = [
     config: {
       chainId: 'desmos-mainnet',
       chainName: 'Desmos',
-      rest: 'https://api.resolute.vitwit.com/desmos_api',
-      rpc: 'https://api.resolute.vitwit.com/desmos_rpc',
+      rest: 'https://api.mainnet.desmos.network',
+      rpc: 'https://rpc.mainnet.desmos.network',
       restURIs: [
-        'https://api.resolute.vitwit.com/desmos_api',
+        'https://api.mainnet.desmos.network',
         'https://rpc.mainnet.desmos.network',
         'https://desmos-rpc.lavenderfive.com',
+        'https://api.resolute.vitwit.com/desmos_api',
       ],
       rpcURIs: [
-        'https://api.resolute.vitwit.com/desmos_rpc',
+        'https://rpc.mainnet.desmos.network',
         'https://api.mainnet.desmos.network',
         'https://desmos-api.lavenderfive.com',
+        'https://api.resolute.vitwit.com/desmos_rpc',
       ],
       currencies: [
         {
@@ -440,17 +445,19 @@ export const networks: Network[] = [
     config: {
       chainId: 'juno-1',
       chainName: 'Juno',
-      rest: 'https://api.resolute.vitwit.com/juno_api',
-      rpc: 'https://api.resolute.vitwit.com/juno_rpc',
+      rest: 'https://juno-api.lavenderfive.com:443',
+      rpc: 'https://juno-rpc.lavenderfive.com:443',
       restURIs: [
-        'https://api.resolute.vitwit.com/juno_api',
+        'https://juno-api.lavenderfive.com:443',
         'https://rest-juno.ecostake.com',
         'https://juno-api.polkachu.com',
+        'https://api.resolute.vitwit.com/juno_api',
       ],
       rpcURIs: [
-        'https://api.resolute.vitwit.com/juno_rpc',
+        'https://juno-rpc.lavenderfive.com:443',
         'https://juno-rpc.polkachu.com',
         'https://rpc-juno.ecostake.com',
+        'https://api.resolute.vitwit.com/juno_rpc',
       ],
       currencies: [
         {
@@ -521,17 +528,19 @@ export const networks: Network[] = [
     config: {
       chainId: 'omniflixhub-1',
       chainName: 'OmniflixHub',
-      rest: 'https://api.resolute.vitwit.com/omniflix_api',
-      rpc: 'https://api.resolute.vitwit.com/omniflix_rpc',
+      rest: 'https://omniflixhub-api.lavenderfive.com',
+      rpc: 'https://omniflixhub-rpc.lavenderfive.com',
       restURIs: [
-        'https://api.resolute.vitwit.com/omniflix_api',
+        'https://omniflixhub-api.lavenderfive.com',
         'https://omniflix-rest.publicnode.com',
         'https://api-omniflixhub-ia.cosmosia.notional.ventures',
+        'https://api.resolute.vitwit.com/omniflix_api',
       ],
       rpcURIs: [
-        'https://api.resolute.vitwit.com/omniflix_rpc',
+        'https://omniflixhub-rpc.lavenderfive.com',
         'https://omniflix-rpc.publicnode.com:443',
         'https://rpc-omniflixhub-ia.cosmosia.notional.ventures',
+        'https://api.resolute.vitwit.com/omniflix_rpc',
       ],
       currencies: [
         {
@@ -683,17 +692,19 @@ export const networks: Network[] = [
     config: {
       chainId: 'passage-2',
       chainName: 'Passage',
-      rest: 'https://api.passage.vitwit.com',
-      rpc: 'https://rpc.passage.vitwit.com',
+      rest: 'https://rest-passage.ecostake.com',
+      rpc: 'https://rpc-passage.ecostake.com',
       restURIs: [
+        'https://rest-passage.ecostake.com',
         'https://api.passage.vitwit.com',
         'https://passage-api.polkachu.com',
         'https://api-passage-ia.cosmosia.notional.ventures',
       ],
       rpcURIs: [
+        'https://rpc-passage.ecostake.com',
         'https://rpc.passage.vitwit.com',
-        'passage-grpc.polkachu.com:15690',
-        'services.staketab.com:9023',
+        'https://passage-rpc.polkachu.com',
+        'https://rpc-passage-ia.cosmosia.notional.ventures',
       ],
       bip44: {
         coinType: 118,
@@ -851,17 +862,19 @@ export const networks: Network[] = [
     config: {
       chainId: 'quicksilver-2',
       chainName: 'Quicksilver',
-      rest: 'https://api.resolute.vitwit.com/quicksilver_api',
-      rpc: 'https://api.resolute.vitwit.com/quicksilver_rpc',
+      rest: 'https://quicksilver-rest.staketab.org',
+      rpc: 'https://quicksilver-rpc.staketab.org:443',
       restURIs: [
-        'https://api.resolute.vitwit.com/quicksilver_api',
+        'https://quicksilver-rest.staketab.org',
         'https://quicksilver-api.lavenderfive.com:443',
         'https://quicksilver-rest.publicnode.com',
+        'https://api.resolute.vitwit.com/quicksilver_api',
       ],
       rpcURIs: [
-        'https://api.resolute.vitwit.com/quicksilver_rpc',
+        'https://quicksilver-rpc.staketab.org:443',
         'https://rpc.quicksilver.zone:443',
         'https://quicksilver-rpc.lavenderfive.com:443',
+        'https://api.resolute.vitwit.com/quicksilver_rpc',
       ],
       currencies: [
         {
@@ -932,17 +945,19 @@ export const networks: Network[] = [
     config: {
       chainId: 'regen-1',
       chainName: 'Regen',
-      rest: 'https://api.resolute.vitwit.com/regen_api',
-      rpc: 'https://api.resolute.vitwit.com/regen_rpc',
+      rest: 'https://regen-mainnet-lcd.autostake.com:443',
+      rpc: 'https://regen-mainnet-rpc.autostake.com:443',
       restURIs: [
-        'https://api.resolute.vitwit.com/regen_api',
+        'https://regen-mainnet-lcd.autostake.com:443',
         'https://api-regen-ia.cosmosia.notional.ventures',
         'https://regen-rest.publicnode.com',
+        'https://api.resolute.vitwit.com/regen_api',
       ],
       rpcURIs: [
-        'https://api.resolute.vitwit.com/regen_rpc',
+        'https://regen-mainnet-rpc.autostake.com:443',
         'https://rpc-regen-ia.cosmosia.notional.ventures',
         'https://regen-rpc.publicnode.com:443',
+        'https://api.resolute.vitwit.com/regen_rpc',
       ],
       currencies: [
         {
@@ -1179,17 +1194,19 @@ export const networks: Network[] = [
     config: {
       chainId: 'umee-1',
       chainName: 'Umee',
-      rest: 'https://api.resolute.vitwit.com/umee_api',
-      rpc: 'https://api.resolute.vitwit.com/umee_rpc',
+      rest: 'https://umee-lcd.quantnode.tech',
+      rpc: 'https://umee-rpc.quantnode.tech',
       restURIs: [
-        'https://api.resolute.vitwit.com/umee_api',
+        'https://umee-lcd.quantnode.tech',
         'https://api-umee-ia.cosmosia.notional.ventures',
         'https://umee-api.polkachu.com',
+        'https://api.resolute.vitwit.com/umee_api'
       ],
       rpcURIs: [
-        'https://api.resolute.vitwit.com/umee_rpc',
+        'https://umee-rpc.quantnode.tech',
         'https://rpc-umee-ia.cosmosia.notional.ventures',
         'https://umee-rpc.polkachu.com',
+        'https://api.resolute.vitwit.com/umee_rpc'
       ],
       currencies: [
         {
