@@ -24,6 +24,7 @@ import ChainsList from './ChainsList';
 import { RouteResponse } from '@skip-router/core';
 import { AssetConfig, ChainConfig } from '@/types/swaps';
 import { TxStatus } from '@/types/enums';
+import { RouteData, Squid } from '@0xsquid/sdk';
 
 declare let window: WalletWindow;
 
@@ -36,11 +37,17 @@ const emptyBalance = {
 };
 
 const IBCSwap = () => {
+  // To fetch all skip supported chains
   const { chainsInfo, loading: chainsLoading } = useGetChains();
+
+  // To fetch all skip supported assets (chain - assets)
+  const { getTokensByChainID, loading: assetsLoading } = useGetAssets();
+
+  // To fetch 4 rest endpoints from chain-registry
   const { getChainAPIs } = useChain();
+
   const { getSwapRoute } = useSwaps();
   const { getAccountAddress, getAvailableBalance } = useAccount();
-  const { chainWiseAssetOptions, loading: assetsLoading } = useGetAssets();
   const [otherAddress, setOtherAddress] = useState(false);
   const dispatch = useAppDispatch();
   const handleSendToAnotherAddress = () => {
@@ -68,12 +75,15 @@ const IBCSwap = () => {
   const [availableBalance, setAvailableBalance] = useState(emptyBalance);
   const [userInputChange, setUserInputChange] = useState(true);
   const [receivedAddress, setReceiverAddress] = useState('');
-  const [swapRoute, setSwapRoute] = useState<RouteResponse | null>();
+  const [swapRoute, setSwapRoute] = useState<RouteData | null>(null);
 
   const handleSelectSourceChain = async (option: ChainConfig | null) => {
     dispatch(setSourceChain(option));
-    const assets = option ? chainWiseAssetOptions[option?.chainID] : [];
+
+    // Select assets based on chainID
+    const assets = await getTokensByChainID(option?.chainID || '');
     setSelectedSourceChainAssets(assets || []);
+
     dispatch(setSourceAsset(null));
     dispatch(setAmountIn(''));
     dispatch(setAmountOut(''));
@@ -86,6 +96,8 @@ const IBCSwap = () => {
     });
     const { apis } = getChainAPIs(option?.chainID || '');
     const { address } = await getAccountAddress(option?.chainID || '');
+
+    // To get all asset balances of address using selected chain
     dispatch(
       getBalances({
         address: address,
@@ -96,9 +108,9 @@ const IBCSwap = () => {
     );
   };
 
-  const handleSelectSourceAsset = (option: AssetConfig | null) => {
+  const handleSelectSourceAsset = async (option: AssetConfig | null) => {
     dispatch(setSourceAsset(option));
-    const { balanceInfo } = getAvailableBalance({
+    const { balanceInfo } = await getAvailableBalance({
       chainID: selectedSourceChain?.chainID || '',
       denom: option?.label || '',
     });
@@ -107,9 +119,9 @@ const IBCSwap = () => {
     dispatch(setAmountOut(''));
   };
 
-  const handleSelectDestChain = (option: ChainConfig | null) => {
+  const handleSelectDestChain = async (option: ChainConfig | null) => {
     dispatch(setDestChain(option));
-    const assets = option ? chainWiseAssetOptions[option?.chainID] : [];
+    const assets = await getTokensByChainID(option?.chainID || '');
     setSelectedDestChainAssets(assets || []);
     dispatch(setDestAsset(null));
     dispatch(setAmountOut(''));
@@ -135,7 +147,7 @@ const IBCSwap = () => {
         })
       );
 
-      const { balanceInfo } = getAvailableBalance({
+      const { balanceInfo } = await getAvailableBalance({
         chainID: selectedDestChain?.chainID || '',
         denom: selectedDestAsset?.label || '',
       });
@@ -159,26 +171,26 @@ const IBCSwap = () => {
     setIsRotated((prev) => !prev);
   };
 
-  useEffect(() => {
-    if (
-      !chainsLoading &&
-      !assetsLoading &&
-      !selectedSourceAsset &&
-      selectedSourceChain
-    ) {
-      const assets = chainWiseAssetOptions[selectedSourceChain?.chainID] || [];
-      setSelectedSourceChainAssets(assets);
-    }
-    if (
-      !chainsLoading &&
-      !assetsLoading &&
-      !selectedDestAsset &&
-      selectedDestChain
-    ) {
-      const assets = chainWiseAssetOptions[selectedDestChain?.chainID] || [];
-      setSelectedDestChainAssets(assets);
-    }
-  }, [assetsLoading, chainsLoading]);
+  // useEffect(() => {
+  //   if (
+  //     !chainsLoading &&
+  //     !assetsLoading &&
+  //     !selectedSourceAsset &&
+  //     selectedSourceChain
+  //   ) {
+  //     const assets = chainWiseAssetOptions[selectedSourceChain?.chainID] || [];
+  //     setSelectedSourceChainAssets(assets);
+  //   }
+  //   if (
+  //     !chainsLoading &&
+  //     !assetsLoading &&
+  //     !selectedDestAsset &&
+  //     selectedDestChain
+  //   ) {
+  //     const assets = chainWiseAssetOptions[selectedDestChain?.chainID] || [];
+  //     setSelectedDestChainAssets(assets);
+  //   }
+  // }, [assetsLoading, chainsLoading]);
 
   const fetchSwapRoute = async (isAmountInput: boolean) => {
     const amount = isAmountInput ? amountIn : amountOut;
@@ -260,24 +272,40 @@ const IBCSwap = () => {
   }, [selectedDestAsset]);
 
   const onTxSwap = async () => {
-    const addresses: Record<string, string> = {};
-    if (swapRoute && selectedDestChain) {
-      // for all intermediary stops
-      for (const chainID of swapRoute.chainIDs) {
-        const account = await window.wallet.getKey(chainID);
-        addresses[chainID] = account.bech32Address;
-      }
+    // const addresses: Record<string, string> = {};
+    // if (swapRoute && selectedDestChain) {
+    //   // for all intermediary stops
+    //   for (const chainID of swapRoute.chainIDs) {
+    //     const account = await window.wallet.getKey(chainID);
+    //     addresses[chainID] = account.bech32Address;
+    //   }
 
-      // for destination
-      addresses[selectedDestChain?.chainID] = receivedAddress;
+    //   // for destination
+    //   addresses[selectedDestChain?.chainID] = receivedAddress;
 
-      dispatch(
-        txIBCSwap({
-          route: swapRoute,
-          userAddresses: addresses,
-        })
-      );
-    }
+    //   dispatch(
+    //     txIBCSwap({
+    //       route: swapRoute,
+    //       userAddresses: addresses,
+    //     })
+    //   );
+    // }
+    const squidClient = new Squid();
+    squidClient.setConfig({
+      baseUrl: 'https://api.0xsquid.com', // for mainnet use "https://api.0xsquid.com"
+      integratorId: 'resolute-api',
+    });
+    await squidClient.init();
+    console.log("here.....1")
+    const tx = await squidClient.executeRoute({
+      signer: window.wallet,
+      route: swapRoute,
+    });
+    console.log("here.....22222")
+    // const txReceipt = await tx.wait();
+    console.log("here.....33333")
+    // console.log(txReceipt);
+    console.log("here....44444")
   };
 
   useEffect(() => {

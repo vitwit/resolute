@@ -5,7 +5,7 @@ declare let window: WalletWindow;
 
 const useAccount = () => {
   const balances = useAppSelector((state) => state.bank.balances);
-  const { assetsInfo } = useGetAssets();
+  const { getTokensByChainID } = useGetAssets();
   const getAccountAddress = async (
     chainID: string
   ): Promise<{ address: string }> => {
@@ -18,7 +18,7 @@ const useAccount = () => {
     }
   };
 
-  const getAvailableBalance = ({
+  const getAvailableBalance = async ({
     chainID,
     denom,
   }: {
@@ -35,14 +35,17 @@ const useAccount = () => {
       parsedAmount: 0,
     };
 
-    const chainAssets = assetsInfo?.[chainID];
+    const chainAssets = await getTokensByChainID(chainID);
 
+    console.log("=======")
+    console.log(chainBalances)
+    console.log(chainAssets)
     chainBalances.forEach((balance) => {
       const filteredDenomInfo = chainAssets?.filter((denomInfo) => {
         return denomInfo.denom === balance.denom;
       });
       const denomInfo = filteredDenomInfo[0];
-      if (denomInfo && denomInfo.originDenom === denom) {
+      if (denomInfo && denomInfo.denom === denom) {
         balanceInfo.amount = parseFloat(balance.amount);
         const precision = denomInfo.decimals || 0 > 6 ? 6 : denomInfo.decimals;
         balanceInfo.decimals = denomInfo.decimals || 0;
@@ -59,9 +62,9 @@ const useAccount = () => {
 
     if (!balanceInfo.minimalDenom || !balanceInfo.displayDenom) {
       const filteredDenomInfo = chainAssets?.filter((denomInfo) => {
-        return denomInfo.originDenom === denom;
+        return denomInfo.denom === denom;
       });
-      balanceInfo.minimalDenom = filteredDenomInfo[0].denom;
+      balanceInfo.minimalDenom = filteredDenomInfo[0].denom || '';
       balanceInfo.displayDenom = filteredDenomInfo[0].symbol || '';
       balanceInfo.decimals = filteredDenomInfo[0].decimals || 0;
     }

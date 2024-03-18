@@ -1,5 +1,7 @@
 import { createSkipRouterClient } from '@/store/features/swaps/swapsService';
 import { ChainConfig } from '@/types/swaps';
+import { SQUID_ID } from '@/utils/constants';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 const useGetChains = () => {
@@ -9,13 +11,22 @@ const useGetChains = () => {
 
   const fetchChainsInfo = async () => {
     try {
-      const chains = await skipClient.chains();
+      // const chains = await skipClient.chains();
+      const result = await axios.get(
+        'https://v2.api.squidrouter.com/v2/chains',
+        {
+          headers: {
+            'x-integrator-id': SQUID_ID,
+          },
+        }
+      );
+      const chains: ChainData[] = result.data.chains;
       const chainsData = chains
         .map((chain): ChainConfig => {
           return {
-            label: chain.chainName,
-            logoURI: chain.logoURI || '',
-            chainID: chain.chainID,
+            label: chain.axelarChainName,
+            logoURI: chain.chainIconURI || '',
+            chainID: chain.chainId,
           };
         })
         .sort((chainA, chainB) => {

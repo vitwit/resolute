@@ -1,5 +1,7 @@
 import { createSkipRouterClient } from '@/store/features/swaps/swapsService';
 import { useState } from 'react';
+import { Squid } from '@0xsquid/sdk';
+import { GetRoute, RouteResponse } from '@0xsquid/sdk/dist/types';
 
 interface GetRouteInputs {
   sourceChainID: string;
@@ -12,7 +14,9 @@ interface GetRouteInputs {
 
 const useSwaps = () => {
   const [routeLoading, setRouteLoading] = useState(false);
-  const skipClient = createSkipRouterClient();
+  // const skipClient = createSkipRouterClient();
+  const squidClient = new Squid();
+
   const getSwapRoute = async ({
     amount,
     destChainID,
@@ -21,38 +25,57 @@ const useSwaps = () => {
     sourceDenom,
     isAmountIn,
   }: GetRouteInputs) => {
+    const params: GetRoute = {
+      fromAddress: 'cosmos1y0hvu8ts6m8hzwp57t9rhdgvnpc7yltglu9nrk',
+      fromAmount: amount.toString(),
+      fromChain: sourceChainID,
+      fromToken: sourceDenom,
+      toAddress: 'osmo1y0hvu8ts6m8hzwp57t9rhdgvnpc7yltgh8kr4y',
+      toChain: destChainID,
+      toToken: destDenom,
+      slippage: 1,
+      quoteOnly: false,
+    };
     try {
       setRouteLoading(true);
-      const res = await skipClient.route(
-        isAmountIn
-          ? {
-              amountIn: amount.toString(),
-              sourceAssetChainID: sourceChainID,
-              sourceAssetDenom: sourceDenom,
-              destAssetChainID: destChainID,
-              destAssetDenom: destDenom,
-              cumulativeAffiliateFeeBPS: '0',
-              allowMultiTx: true,
-              allowUnsafe: true,
-              experimentalFeatures: ['cctp'],
-            }
-          : {
-              amountOut: amount.toString(),
-              sourceAssetChainID: sourceChainID,
-              sourceAssetDenom: sourceDenom,
-              destAssetChainID: destChainID,
-              destAssetDenom: destDenom,
-              cumulativeAffiliateFeeBPS: '0',
-              allowMultiTx: true,
-              allowUnsafe: true,
-              experimentalFeatures: ['cctp'],
-            }
-      );
+      squidClient.setConfig({
+        baseUrl: 'https://api.0xsquid.com', // for mainnet use "https://api.0xsquid.com"
+        integratorId: 'resolute-api',
+      });
+      await squidClient.init();
+
+      const res = await squidClient.getRoute(params);
+
+      // const res = await skipClient.route(
+      //   isAmountIn
+      //     ? {
+      //         amountIn: amount.toString(),
+      //         sourceAssetChainID: sourceChainID,
+      //         sourceAssetDenom: sourceDenom,
+      //         destAssetChainID: destChainID,
+      //         destAssetDenom: destDenom,
+      //         cumulativeAffiliateFeeBPS: '0',
+      //         allowMultiTx: true,
+      //         allowUnsafe: true,
+      //         experimentalFeatures: ['cctp'],
+      //       }
+      //     : {
+      //         amountOut: amount.toString(),
+      //         sourceAssetChainID: sourceChainID,
+      //         sourceAssetDenom: sourceDenom,
+      //         destAssetChainID: destChainID,
+      //         destAssetDenom: destDenom,
+      //         cumulativeAffiliateFeeBPS: '0',
+      //         allowMultiTx: true,
+      //         allowUnsafe: true,
+      //         experimentalFeatures: ['cctp'],
+      //       }
+      // );
       setRouteLoading(false);
       return {
-        resAmount: isAmountIn ? Number(res.amountOut) : Number(res.amountIn),
+        resAmount: res.route.estimate.toAmount,
         isAmountIn,
-        route: res,
+        route: res.route,
       };
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
