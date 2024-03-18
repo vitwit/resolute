@@ -18,7 +18,8 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
   useInitAllValidator();
   const { getChainwiseValidatorInfo,
     getOasisValidatorInfo,
-    getPolygonValidatorInfo, getValidatorStats } =
+    getPolygonValidatorInfo,
+     getValidatorStats } =
     useGetValidatorInfo();
   const {
     chainWiseValidatorData,
@@ -48,7 +49,7 @@ const ValidatorProfile = ({ moniker }: { moniker: string }) => {
   totalDelegators += totalOasisDelegator
 
   return (
-    <div className="py-6 px-10 space-y-10 h-screen flex flex-col">
+    <div className="py-6 px-10 space-y-10 h-screen flex flex-col text-[#E1E1E1]">
       <div className="space-y-10">
         <div className="flex justify-between">
           <h2 className="text-[20px] leading-normal font-normal">
@@ -215,11 +216,11 @@ const StatsCard = ({ name, value }: { name: string; value: string }) => {
             draggable={false}
           />
         </div>
-        <div className="text-sm text-white font-extralight leading-normal">
+        <div className="text-sm text-[#E1E1E1] font-extralight leading-normal">
           {name}
         </div>
       </div>
-      <div className="px-2 pl-[10px] text-lg font-bold leading-normal text-white">
+      <div className="px-2 pl-[10px] text-lg font-bold leading-normal text-[#E1E1E1]">
         {value}
       </div>
     </div>
