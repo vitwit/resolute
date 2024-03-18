@@ -258,3 +258,9 @@ export const OASIS_CONFIG = {
     operatorAddress: 'oasis1qzc687uuywnel4eqtdn6x3t9hkdvf6sf2gtv4ye9',
   },
 };
+
+export const COIN_GECKO_IDS: Record<string, string> = {
+  ubld: 'BLD',
+  umars: 'Mars Protocol',
+  ucmdx: 'cmdx',
+};
