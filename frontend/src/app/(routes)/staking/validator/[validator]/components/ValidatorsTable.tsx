@@ -27,8 +27,17 @@ const ValidatorsTable = ({
     'Actions',
   ];
 
+  const sortedKeys = Object.keys(data).sort((a, b) => {
+    return parseInt(data[b].totalStakedInUSD) - parseInt(data[a].totalStakedInUSD);
+  });
+  
+  const sortedObject: Record<string, ValidatorProfileInfo> = {};
+  sortedKeys.forEach(key => {
+    sortedObject[key] = data[key];
+  });
+
   return (
-    <div className="flex flex-col flex-1 overflow-y-scroll">
+    <div className="flex flex-col flex-1 overflow-y-scroll text-[#E1E1E1]">
       <div className="validators-table bg-[#1a1a1b] px-8 py-8">
         <div className="flex flex-col flex-1">
           <div className="flex-1">
@@ -41,7 +50,13 @@ const ValidatorsTable = ({
                 </tr>
               </thead>
               <tbody className="flex-1">
-                {Object.keys(data).map((chainID) => {
+                {isWitval ? (
+                  <>
+                    <NonCosmosValidators networkName={'polygon'} />
+                    <NonCosmosValidators networkName={'oasis'} />
+                  </>
+                ) : null}
+                {Object.keys(sortedObject).map((chainID) => {
                   return (
                     <ValidatorItem
                       validatorInfo={data[chainID]}
@@ -49,12 +64,7 @@ const ValidatorsTable = ({
                     />
                   );
                 })}
-                {isWitval ? (
-                  <>
-                    <NonCosmosValidators networkName={'polygon'} />
-                    <NonCosmosValidators networkName={'oasis'} />
-                  </>
-                ) : null}
+
               </tbody>
             </table>
           </div>
@@ -89,7 +99,7 @@ const NonCosmosValidators = ({ networkName }: { networkName: string }) => {
   const connected = useAppSelector((state) => state.wallet.connected);
 
   return (
-    <tr>
+    <tr className='text-[#E1E1E1]'>
       <td>
         <NetworkItem
           logo={logo}

@@ -119,7 +119,7 @@ const ValidatorItem = ({
   };
 
   return (
-    <tr>
+    <tr className='text-[#E1E1E1]'>
       <td>
         <NetworkItem
           logo={chainLogo}
