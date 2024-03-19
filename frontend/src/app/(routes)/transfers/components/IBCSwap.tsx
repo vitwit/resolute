@@ -25,6 +25,8 @@ import { RouteResponse } from '@skip-router/core';
 import { AssetConfig, ChainConfig } from '@/types/swaps';
 import { TxStatus } from '@/types/enums';
 import { RouteData, Squid } from '@0xsquid/sdk';
+import { SigningStargateClient } from '@cosmjs/stargate';
+import { getWalletAmino } from '@/txns/execute';
 
 declare let window: WalletWindow;
 
@@ -297,8 +299,12 @@ const IBCSwap = () => {
     });
     await squidClient.init();
     console.log("here.....1")
+
+    const result = await getWalletAmino(selectedSourceChain?.chainID || '');
+    const wallet = result[0];
+    const signingClient = await SigningStargateClient.offline(wallet);
     const tx = await squidClient.executeRoute({
-      signer: window.wallet,
+      signer: signingClient,
       route: swapRoute,
     });
     console.log("here.....22222")
