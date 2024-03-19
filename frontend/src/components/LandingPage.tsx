@@ -135,7 +135,7 @@ export const Landingpage = ({ children }: { children: React.ReactNode }) => {
     return <Loading />;
   }
 
-  return connected || pathName.includes('/staking/validator') ? (
+  return connected || pathName.includes('/validator') ? (
     <>{children}</>
   ) : (
     <div>

@@ -234,6 +234,7 @@ export const ALERT_TYPE_MAP: Record<string, string> = {
   info: 'info',
 };
 export const WITVAL = 'witval';
+export const VITWIT = 'vitwit';
 export const POLYGON_API = 'https://staking-api.polygon.technology/api/v2';
 
 export const POLYGON_CONFIG = {
