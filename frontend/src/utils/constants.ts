@@ -265,3 +265,5 @@ export const COIN_GECKO_IDS: Record<string, string> = {
   umars: 'Mars Protocol',
   ucmdx: 'cmdx',
 };
+
+export const MULTISEND_PLACEHOLDER = `Enter here\n\nExample:\ncosmos1hzq8fmhmd52fdhjprj2uj8ht3q0wxxc29th0l6, 35uatom\ncosmos1h0t3funxenm54ke2z9tfdtgrctex575ufpz3kw, 2506uatom`;
