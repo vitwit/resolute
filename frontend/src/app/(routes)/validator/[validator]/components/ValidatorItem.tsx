@@ -8,7 +8,7 @@ import { DelegateTxInputs, ValidatorProfileInfo } from '@/types/staking';
 import { formatCommission, formatValidatorStatsValue } from '@/utils/util';
 import React, { useEffect, useState } from 'react';
 import NetworkItem from './NetworkItem';
-import DialogDelegate from '../../../components/DialogDelegate';
+import DialogDelegate from '@/app/(routes)/staking/components/DialogDelegate';
 import { parseBalance } from '@/utils/denom';
 import { TxStatus } from '@/types/enums';
 import useGetAllChainsInfo from '@/custom-hooks/useGetAllChainsInfo';
@@ -119,7 +119,7 @@ const ValidatorItem = ({
   };
 
   return (
-    <tr>
+    <tr className='text-[#E1E1E1]'>
       <td>
         <NetworkItem
           logo={chainLogo}

@@ -75,6 +75,8 @@ export const getSelectedPartFromURL = (urlParts: string[]): string => {
       return 'Transfers';
     case 'history':
       return 'History';
+    case 'validator':
+      return 'Staking';
     default:
       return 'Overview';
   }
@@ -236,7 +238,9 @@ export const tabLink = (link: string, chainName: string): string => {
 export const allNetworksLink = (pathParts: string[]): string => {
   return pathParts[1] === 'overview' || pathParts[1] === ''
     ? '/'
-    : '/' + pathParts[1];
+    : pathParts[1] === 'validator'
+      ? '/staking'
+      : '/' + pathParts[1];
 };
 
 export const changeNetworkRoute = (

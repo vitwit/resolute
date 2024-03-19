@@ -117,7 +117,14 @@ const MenuItem = ({
   authzSupport: boolean;
   metamaskSupport: boolean;
 }) => {
-  const path = pathName === 'overview' ? '/' : `/${pathName}`;
+  // Here when the url(pathName) includes validator, 
+  // we are setting the module to staking (to highlight the staking module)
+  const path =
+    pathName === 'overview'
+      ? '/'
+      : pathName === 'validator'
+        ? '/staking'
+        : `/${pathName}`;
   const selectedNetwork = useAppSelector(
     (state: RootState) => state.common.selectedNetwork.chainName
   );

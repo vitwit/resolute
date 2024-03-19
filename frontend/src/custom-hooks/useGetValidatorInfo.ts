@@ -4,7 +4,7 @@ import { ValidatorProfileInfo } from '@/types/staking';
 import { getValidatorRank } from '@/utils/util';
 import { parseBalance } from '@/utils/denom';
 import useGetAllChainsInfo from './useGetAllChainsInfo';
-import { OASIS_CONFIG, POLYGON_CONFIG, WITVAL } from '@/utils/constants';
+import { COIN_GECKO_IDS, OASIS_CONFIG, POLYGON_CONFIG, WITVAL } from '@/utils/constants';
 
 const removedChains = ['crescent-1', 'archway-1', 'celestia']
 
@@ -113,7 +113,8 @@ const useGetValidatorInfo = () => {
         );
         const tokens = totalStaked;
         const usdPriceInfo: TokenInfo | undefined =
-          tokensPriceInfo?.[minimalDenom]?.info;
+          tokensPriceInfo?.[minimalDenom]?.info ||
+          tokensPriceInfo?.[COIN_GECKO_IDS?.[minimalDenom]]?.info;
         const totalStakedInUSD = usdPriceInfo
           ? (totalStaked * usdPriceInfo.usd).toString()
           : '-';
@@ -174,6 +175,7 @@ const useGetValidatorInfo = () => {
         stakingData[validator.chainID].validatorProfiles?.[
         validator.operatorAddress
         ];
+
       totalDelegators += Number(delegatorsCount?.totalDelegators || 0);
       totalCommission += Number(validator?.commission) || 0;
       if (validator.validatorStatus === 'BOND_STATUS_BONDED') {
@@ -186,10 +188,11 @@ const useGetValidatorInfo = () => {
         const {
           commission,
           totalDelegators: delegators,
-          totalStakedInUSD: totalStaked,
+          // totalStakedInUSD: totalStaked,
         } = getPolygonValidatorInfo();
         totalCommission += Number(commission || 0);
-        totalDelegators += totalStaked;
+        // totalDelegators += totalStaked;
+        // totalStaked+=totalS
         totalDelegators += delegators;
         activeNetworks += 1;
         totalNetworks += 1;
@@ -199,10 +202,10 @@ const useGetValidatorInfo = () => {
         const {
           commission,
           totalDelegators: delegators,
-          totalStakedInUSD: totalStaked,
+          // totalStakedInUSD: totalStaked,
         } = getOasisValidatorInfo();
         totalCommission += Number(commission || 0);
-        totalDelegators += totalStaked;
+        // totalDelegators += totalStaked;
         totalDelegators += delegators;
         activeNetworks += 1;
         totalNetworks += 1;
