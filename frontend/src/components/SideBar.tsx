@@ -21,7 +21,10 @@ import {
 } from '@/utils/constants';
 // import useInitAuthz from '@/custom-hooks/useInitAuthz';
 // import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
-import { getAllTokensPrice, setAllNetworksInfo } from '@/store/features/common/commonSlice';
+import {
+  getAllTokensPrice,
+  setAllNetworksInfo,
+} from '@/store/features/common/commonSlice';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
@@ -115,7 +118,14 @@ const MenuItem = ({
   authzSupport: boolean;
   metamaskSupport: boolean;
 }) => {
-  const path = pathName === 'overview' ? '/' : `/${pathName}`;
+  // Here when the url(pathName) includes validator, 
+  // we are setting the module to staking (to highlight the staking module)
+  const path =
+    pathName === 'overview'
+      ? '/'
+      : pathName === 'validator'
+        ? '/staking'
+        : `/${pathName}`;
   const selectedNetwork = useAppSelector(
     (state: RootState) => state.common.selectedNetwork.chainName
   );

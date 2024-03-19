@@ -8,7 +8,7 @@ import ValidatorsTable from './components/ValidatorsTable';
 import useInitAllValidator from '@/custom-hooks/useInitAllValidator';
 import useGetValidatorInfo from '@/custom-hooks/useGetValidatorInfo';
 import { capitalizeFirstLetter, formatValidatorStatsValue } from '@/utils/util';
-import ValidatorLogo from '../../components/ValidatorLogo';
+import ValidatorLogo from '../../staking/components/ValidatorLogo';
 import { Tooltip } from '@mui/material';
 import { WITVAL } from '@/utils/constants';
 
