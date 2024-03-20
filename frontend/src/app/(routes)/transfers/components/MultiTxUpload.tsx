@@ -96,6 +96,12 @@ const MultiTxUpload = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (!isFileUpload) {
+      resetInputsRowsCount();
+    }
+  }, [isFileUpload]);
+
   return (
     <div className="space-y-6 flex flex-col flex-1">
       <div className="w-full flex justify-between items-center">
@@ -177,7 +183,7 @@ const MultiTxUpload = ({
         </div>
       ) : (
         <div
-          className="multisend-input-box flex flex-col flex-1"
+          className="multisend-input-box flex flex-col flex-1 gap-2"
           style={{
             backgroundColor: '#1a1731',
             height: '228px',
