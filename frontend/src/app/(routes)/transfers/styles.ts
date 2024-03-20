@@ -26,4 +26,7 @@ export const swapTextFieldStyles = {
       color: 'white',
     },
   },
+  '& .Mui-disabled': {
+    WebkitTextFillColor: '#ffffff !important',
+  },
 };

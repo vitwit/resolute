@@ -39,38 +39,12 @@ const useSwaps = () => {
     try {
       setRouteLoading(true);
       squidClient.setConfig({
-        baseUrl: 'https://api.0xsquid.com', // for mainnet use "https://api.0xsquid.com"
+        baseUrl: 'https://api.0xsquid.com',
         integratorId: 'resolute-api',
       });
       await squidClient.init();
 
       const res = await squidClient.getRoute(params);
-
-      // const res = await skipClient.route(
-      //   isAmountIn
-      //     ? {
-      //         amountIn: amount.toString(),
-      //         sourceAssetChainID: sourceChainID,
-      //         sourceAssetDenom: sourceDenom,
-      //         destAssetChainID: destChainID,
-      //         destAssetDenom: destDenom,
-      //         cumulativeAffiliateFeeBPS: '0',
-      //         allowMultiTx: true,
-      //         allowUnsafe: true,
-      //         experimentalFeatures: ['cctp'],
-      //       }
-      //     : {
-      //         amountOut: amount.toString(),
-      //         sourceAssetChainID: sourceChainID,
-      //         sourceAssetDenom: sourceDenom,
-      //         destAssetChainID: destChainID,
-      //         destAssetDenom: destDenom,
-      //         cumulativeAffiliateFeeBPS: '0',
-      //         allowMultiTx: true,
-      //         allowUnsafe: true,
-      //         experimentalFeatures: ['cctp'],
-      //       }
-      // );
       setRouteLoading(false);
       return {
         resAmount: res.route.estimate.toAmount,

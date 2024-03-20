@@ -27,6 +27,8 @@ import { TxStatus } from '@/types/enums';
 import { RouteData, Squid } from '@0xsquid/sdk';
 import { SigningStargateClient } from '@cosmjs/stargate';
 import { getWalletAmino } from '@/txns/execute';
+import { OfflineDirectSigner } from '@cosmjs/proto-signing';
+import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 
 declare let window: WalletWindow;
 
@@ -48,7 +50,7 @@ const IBCSwap = () => {
   // To fetch 4 rest endpoints from chain-registry
   const { getChainAPIs } = useChain();
 
-  const { getSwapRoute } = useSwaps();
+  const { getSwapRoute, routeLoading } = useSwaps();
   const { getAccountAddress, getAvailableBalance } = useAccount();
   const [otherAddress, setOtherAddress] = useState(false);
   const dispatch = useAppDispatch();
@@ -195,29 +197,37 @@ const IBCSwap = () => {
   // }, [assetsLoading, chainsLoading]);
 
   const fetchSwapRoute = async (isAmountInput: boolean) => {
-    const amount = isAmountInput ? amountIn : amountOut;
-    const decimals = isAmountInput
-      ? selectedSourceAsset?.decimals
-      : selectedDestAsset?.decimals;
-    const { isAmountIn, resAmount, route } = await getSwapRoute({
-      amount: Number(amount) * 10 ** (decimals || 1),
-      destChainID: selectedDestChain?.chainID || '',
-      destDenom: selectedDestAsset?.denom || '',
-      sourceChainID: selectedSourceChain?.chainID || '',
-      sourceDenom: selectedSourceAsset?.denom || '',
-      isAmountIn: isAmountInput,
-    });
-    setSwapRoute(route);
-    const resultDecimals = isAmountInput
-      ? selectedDestAsset?.decimals
-      : selectedSourceAsset?.decimals;
-    const parsedDestAmount = parseFloat(
-      (Number(resAmount) / 10.0 ** (resultDecimals || 1)).toFixed(6)
-    );
-    if (isAmountIn) {
-      dispatch(setAmountOut(parsedDestAmount.toString()));
-    } else {
-      dispatch(setAmountIn(parsedDestAmount.toString()));
+    if (
+      selectedDestAsset &&
+      selectedDestChain &&
+      selectedSourceAsset &&
+      selectedSourceChain &&
+      amountIn
+    ) {
+      const amount = isAmountInput ? amountIn : amountOut;
+      const decimals = isAmountInput
+        ? selectedSourceAsset?.decimals
+        : selectedDestAsset?.decimals;
+      const { isAmountIn, resAmount, route } = await getSwapRoute({
+        amount: Number(amount) * 10 ** (decimals || 1),
+        destChainID: selectedDestChain?.chainID || '',
+        destDenom: selectedDestAsset?.denom || '',
+        sourceChainID: selectedSourceChain?.chainID || '',
+        sourceDenom: selectedSourceAsset?.denom || '',
+        isAmountIn: isAmountInput,
+      });
+      setSwapRoute(route);
+      const resultDecimals = isAmountInput
+        ? selectedDestAsset?.decimals
+        : selectedSourceAsset?.decimals;
+      const parsedDestAmount = parseFloat(
+        (Number(resAmount) / 10.0 ** (resultDecimals || 1)).toFixed(6)
+      );
+      if (isAmountIn) {
+        dispatch(setAmountOut(parsedDestAmount.toString()));
+      } else {
+        dispatch(setAmountIn(parsedDestAmount.toString()));
+      }
     }
   };
 
@@ -228,18 +238,6 @@ const IBCSwap = () => {
     if (/^-?\d*\.?\d*$/.test(input)) {
       if ((input.match(/\./g) || []).length <= 1) {
         dispatch(setAmountIn(input));
-        setUserInputChange(true);
-      }
-    }
-  };
-
-  const handleAmountOutChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const input = e.target.value;
-    if (/^-?\d*\.?\d*$/.test(input)) {
-      if ((input.match(/\./g) || []).length <= 1) {
-        dispatch(setAmountOut(input));
         setUserInputChange(true);
       }
     }
@@ -259,13 +257,6 @@ const IBCSwap = () => {
   }, [amountIn]);
 
   useEffect(() => {
-    if (userInputChange) {
-      fetchSwapRoute(false);
-      setUserInputChange(false);
-    }
-  }, [amountOut]);
-
-  useEffect(() => {
     if (selectedDestAsset) {
       fetchSwapRoute(true);
     } else {
@@ -274,44 +265,48 @@ const IBCSwap = () => {
   }, [selectedDestAsset]);
 
   const onTxSwap = async () => {
-    // const addresses: Record<string, string> = {};
-    // if (swapRoute && selectedDestChain) {
-    //   // for all intermediary stops
-    //   for (const chainID of swapRoute.chainIDs) {
-    //     const account = await window.wallet.getKey(chainID);
-    //     addresses[chainID] = account.bech32Address;
-    //   }
+    if (swapRoute) {
+      const squidClient = new Squid();
+      squidClient.setConfig({
+        baseUrl: 'https://api.0xsquid.com',
+        integratorId: 'resolute-api',
+      });
+      await squidClient.init();
 
-    //   // for destination
-    //   addresses[selectedDestChain?.chainID] = receivedAddress;
+      const result = await getWalletAmino(selectedSourceChain?.chainID || '');
+      const wallet = result[0];
+      // const signingClient = await SigningStargateClient(wallet);
+      // const signer = window.wallet.getOfflineSigner(
+      //   selectedSourceChain?.chainID
+      // );
 
-    //   dispatch(
-    //     txIBCSwap({
-    //       route: swapRoute,
-    //       userAddresses: addresses,
-    //     })
-    //   );
-    // }
-    const squidClient = new Squid();
-    squidClient.setConfig({
-      baseUrl: 'https://api.0xsquid.com', // for mainnet use "https://api.0xsquid.com"
-      integratorId: 'resolute-api',
-    });
-    await squidClient.init();
-    console.log("here.....1")
+      const offlineSigner: OfflineDirectSigner =
+        await window.wallet.getOfflineSigner(selectedSourceChain?.chainID);
 
-    const result = await getWalletAmino(selectedSourceChain?.chainID || '');
-    const wallet = result[0];
-    const signingClient = await SigningStargateClient.offline(wallet);
-    const tx = await squidClient.executeRoute({
-      signer: signingClient,
-      route: swapRoute,
-    });
-    console.log("here.....22222")
-    // const txReceipt = await tx.wait();
-    console.log("here.....33333")
-    // console.log(txReceipt);
-    console.log("here....44444")
+      const signerAddress = (await offlineSigner.getAccounts())[0].address;
+
+      const signer = await SigningStargateClient.connectWithSigner(
+        'https://cosmos-rpc.polkachu.com',
+        offlineSigner
+      );
+      const client = await SigningStargateClient.connect(
+        'https://cosmos-rpc.polkachu.com'
+      );
+
+      const tx = (await squidClient.executeRoute({
+        signer: signer,
+        route: swapRoute,
+        signerAddress: signerAddress,
+      })) as TxRaw;
+      console.log('tx........11111');
+      console.log('tx.....');
+      console.log(tx);
+      const result2 = await client.broadcastTx(
+        Uint8Array.from(TxRaw.encode(tx).finish())
+      );
+      console.log('result--==-=-=-=');
+      console.log(result2);
+    }
   };
 
   useEffect(() => {
@@ -411,14 +406,19 @@ const IBCSwap = () => {
             </div>
           </div>
           <div className="space-y-2">
-            <div className="font-extralight text-[14px]">You will receive</div>
+            <div className="font-extralight text-[14px] flex gap-2 items-center">
+              <span>You will receive</span>
+              {routeLoading ? (
+                <CircularProgress sx={{ color: 'white' }} size={12} />
+              ) : null}
+            </div>
             <TextField
               name="destAmount"
               className="rounded-lg bg-[#ffffff0D]"
               fullWidth
               required={false}
               size="small"
-              autoFocus={true}
+              disabled={true}
               placeholder="0"
               value={amountOut}
               sx={swapTextFieldStyles}
@@ -431,7 +431,6 @@ const IBCSwap = () => {
                   },
                 },
               }}
-              onChange={handleAmountOutChange}
             />
           </div>
           <div className="flex justify-end">
