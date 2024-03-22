@@ -1,5 +1,7 @@
 import { RouteResponse } from '@skip-router/core';
 import { TxStatus } from './enums';
+import { RouteData } from '@0xsquid/sdk';
+import { SigningStargateClient } from '@cosmjs/stargate';
 
 interface ChainConfig {
   label: string;
@@ -22,6 +24,8 @@ interface SwapState {
   destAsset: AssetConfig | null;
   amountIn: string;
   amountOut: string;
+  toAddress: string;
+  fromAddress: string;
   txStatus: {
     status: TxStatus;
     error: string;
@@ -35,11 +39,15 @@ interface SwapState {
 }
 
 interface TxSwapInputs {
-  route: RouteResponse;
-  userAddresses: Record<string, string>;
+  rpcURLs: string[];
+  swapRoute: RouteData;
+  signerAddress: string;
+  sourceChainID: string;
+  destChainID: string;
 }
 
-interface TxSwapServiceInputs extends TxSwapInputs {
-  onSourceChainTxSuccess: (chainID: string, txHash: string) => void;
-  onDestChainTxSuccess: (chainID: string, txHash: string) => void;
+interface TxSwapServiceInputs {
+  signer: SigningStargateClient;
+  route: RouteData;
+  signerAddress: string;
 }

@@ -1,7 +1,7 @@
-import { createSkipRouterClient } from '@/store/features/swaps/swapsService';
 import { useState } from 'react';
 import { Squid } from '@0xsquid/sdk';
 import { GetRoute, RouteResponse } from '@0xsquid/sdk/dist/types';
+import { SQUID_ID } from '@/utils/constants';
 
 interface GetRouteInputs {
   sourceChainID: string;
@@ -9,13 +9,19 @@ interface GetRouteInputs {
   destChainID: string;
   destDenom: string;
   amount: number;
-  isAmountIn: boolean;
+  fromAddress: string;
+  toAddress: string;
 }
+
+const squidClient = new Squid();
+squidClient.setConfig({
+  baseUrl: 'https://api.0xsquid.com',
+  integratorId: SQUID_ID,
+});
+squidClient.init();
 
 const useSwaps = () => {
   const [routeLoading, setRouteLoading] = useState(false);
-  // const skipClient = createSkipRouterClient();
-  const squidClient = new Squid();
 
   const getSwapRoute = async ({
     amount,
@@ -23,14 +29,15 @@ const useSwaps = () => {
     destDenom,
     sourceChainID,
     sourceDenom,
-    isAmountIn,
+    fromAddress,
+    toAddress,
   }: GetRouteInputs) => {
     const params: GetRoute = {
-      fromAddress: 'cosmos1y0hvu8ts6m8hzwp57t9rhdgvnpc7yltglu9nrk',
+      fromAddress: fromAddress,
       fromAmount: amount.toString(),
       fromChain: sourceChainID,
       fromToken: sourceDenom,
-      toAddress: 'osmo1y0hvu8ts6m8hzwp57t9rhdgvnpc7yltgh8kr4y',
+      toAddress: toAddress,
       toChain: destChainID,
       toToken: destDenom,
       slippage: 1,
@@ -38,17 +45,11 @@ const useSwaps = () => {
     };
     try {
       setRouteLoading(true);
-      squidClient.setConfig({
-        baseUrl: 'https://api.0xsquid.com',
-        integratorId: 'resolute-api',
-      });
-      await squidClient.init();
 
       const res = await squidClient.getRoute(params);
       setRouteLoading(false);
       return {
         resAmount: res.route.estimate.toAmount,
-        isAmountIn,
         route: res.route,
       };
       /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -59,7 +60,6 @@ const useSwaps = () => {
     }
     return {
       resAmount: 0,
-      isAmountIn,
       route: null,
     };
   };

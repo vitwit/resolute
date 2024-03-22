@@ -1,4 +1,3 @@
-import { createSkipRouterClient } from '@/store/features/swaps/swapsService';
 import { AssetConfig } from '@/types/swaps';
 import { Asset } from '@skip-router/core';
 import { useEffect, useState } from 'react';
@@ -7,7 +6,6 @@ import axios from 'axios';
 import { SQUID_ID } from '@/utils/constants';
 
 const useGetAssets = () => {
-  const skipClient = createSkipRouterClient();
   const [assetsInfo, setAssetsInfo] = useState<TokenData[]>([]);
   const [chainWiseAssetOptions, setChainWiseAssetsOptions] = useState<
     Record<string, AssetConfig[]>

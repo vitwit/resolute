@@ -1,11 +1,9 @@
-import { createSkipRouterClient } from '@/store/features/swaps/swapsService';
 import { ChainConfig } from '@/types/swaps';
 import { SQUID_ID } from '@/utils/constants';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 const useGetChains = () => {
-  const skipClient = createSkipRouterClient();
   const [chainsInfo, setChainInfo] = useState<ChainConfig[]>([]);
   const [loading, setLoading] = useState(true);
 

@@ -16,8 +16,10 @@ import {
   setAmountOut,
   setDestAsset,
   setDestChain,
+  setFromAddress,
   setSourceAsset,
   setSourceChain,
+  setToAddress,
   txIBCSwap,
 } from '@/store/features/swaps/swapsSlice';
 import ChainsList from './ChainsList';
@@ -29,6 +31,7 @@ import { SigningStargateClient } from '@cosmjs/stargate';
 import { getWalletAmino } from '@/txns/execute';
 import { OfflineDirectSigner } from '@cosmjs/proto-signing';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
+import { fromBech32 } from '@cosmjs/encoding';
 
 declare let window: WalletWindow;
 
@@ -48,7 +51,7 @@ const IBCSwap = () => {
   const { getTokensByChainID, loading: assetsLoading } = useGetAssets();
 
   // To fetch 4 rest endpoints from chain-registry
-  const { getChainAPIs } = useChain();
+  const { getChainEndpoints } = useChain();
 
   const { getSwapRoute, routeLoading } = useSwaps();
   const { getAccountAddress, getAvailableBalance } = useAccount();
@@ -68,6 +71,8 @@ const IBCSwap = () => {
   const selectedDestAsset = useAppSelector((state) => state.swaps.destAsset);
   const amountIn = useAppSelector((state) => state.swaps.amountIn);
   const amountOut = useAppSelector((state) => state.swaps.amountOut);
+  const toAddress = useAppSelector((state) => state.swaps.toAddress);
+  const fromAddress = useAppSelector((state) => state.swaps.fromAddress);
   const txStatus = useAppSelector((state) => state.swaps.txStatus.status);
 
   const [selectedSourceChainAssets, setSelectedSourceChainAssets] = useState<
@@ -80,6 +85,7 @@ const IBCSwap = () => {
   const [userInputChange, setUserInputChange] = useState(true);
   const [receivedAddress, setReceiverAddress] = useState('');
   const [swapRoute, setSwapRoute] = useState<RouteData | null>(null);
+  const [addressValidationError, setAddressValidationError] = useState('');
 
   const handleSelectSourceChain = async (option: ChainConfig | null) => {
     dispatch(setSourceChain(option));
@@ -98,8 +104,9 @@ const IBCSwap = () => {
       decimals: 0,
       parsedAmount: 0,
     });
-    const { apis } = getChainAPIs(option?.chainID || '');
+    const { apis, rpcs } = getChainEndpoints(option?.chainID || '');
     const { address } = await getAccountAddress(option?.chainID || '');
+    dispatch(setFromAddress(address));
 
     // To get all asset balances of address using selected chain
     dispatch(
@@ -125,6 +132,8 @@ const IBCSwap = () => {
 
   const handleSelectDestChain = async (option: ChainConfig | null) => {
     dispatch(setDestChain(option));
+    const { address } = await getAccountAddress(option?.chainID || '');
+    dispatch(setToAddress(address));
     const assets = await getTokensByChainID(option?.chainID || '');
     setSelectedDestChainAssets(assets || []);
     dispatch(setDestAsset(null));
@@ -137,8 +146,23 @@ const IBCSwap = () => {
   };
 
   const flipChains = async () => {
+    const tempSelectedSourceChain = selectedSourceChain;
+    dispatch(setSourceChain(selectedDestChain));
+    dispatch(setDestChain(tempSelectedSourceChain));
+
+    const tempSelectedSourceAsset = selectedSourceAsset;
+    dispatch(setSourceAsset(selectedDestAsset));
+    dispatch(setDestAsset(tempSelectedSourceAsset));
+
+    const tempFromAddress = fromAddress;
+    dispatch(setFromAddress(toAddress));
+    dispatch(setToAddress(tempFromAddress));
+
+    handleRotate();
     if (selectedDestChain && selectedDestAsset) {
-      const { apis } = getChainAPIs(selectedDestChain?.chainID || '');
+      const { apis, rpcs } = getChainEndpoints(
+        selectedDestChain?.chainID || ''
+      );
       const { address } = await getAccountAddress(
         selectedDestChain?.chainID || ''
       );
@@ -159,14 +183,6 @@ const IBCSwap = () => {
     } else {
       setAvailableBalance(emptyBalance);
     }
-    const tempSelectedSourceChain = selectedSourceChain;
-    dispatch(setSourceChain(selectedDestChain));
-    dispatch(setDestChain(tempSelectedSourceChain));
-
-    const tempSelectedSourceAsset = selectedSourceAsset;
-    dispatch(setSourceAsset(selectedDestAsset));
-    dispatch(setDestAsset(tempSelectedSourceAsset));
-    handleRotate();
   };
 
   const [isRotated, setIsRotated] = useState(false);
@@ -196,7 +212,7 @@ const IBCSwap = () => {
   //   }
   // }, [assetsLoading, chainsLoading]);
 
-  const fetchSwapRoute = async (isAmountInput: boolean) => {
+  const fetchSwapRoute = async () => {
     if (
       selectedDestAsset &&
       selectedDestChain &&
@@ -204,30 +220,23 @@ const IBCSwap = () => {
       selectedSourceChain &&
       amountIn
     ) {
-      const amount = isAmountInput ? amountIn : amountOut;
-      const decimals = isAmountInput
-        ? selectedSourceAsset?.decimals
-        : selectedDestAsset?.decimals;
-      const { isAmountIn, resAmount, route } = await getSwapRoute({
+      const amount = amountIn;
+      const decimals = selectedSourceAsset?.decimals;
+      const { resAmount, route } = await getSwapRoute({
         amount: Number(amount) * 10 ** (decimals || 1),
         destChainID: selectedDestChain?.chainID || '',
         destDenom: selectedDestAsset?.denom || '',
         sourceChainID: selectedSourceChain?.chainID || '',
         sourceDenom: selectedSourceAsset?.denom || '',
-        isAmountIn: isAmountInput,
+        fromAddress: fromAddress,
+        toAddress: toAddress,
       });
       setSwapRoute(route);
-      const resultDecimals = isAmountInput
-        ? selectedDestAsset?.decimals
-        : selectedSourceAsset?.decimals;
+      const resultDecimals = selectedDestAsset?.decimals;
       const parsedDestAmount = parseFloat(
         (Number(resAmount) / 10.0 ** (resultDecimals || 1)).toFixed(6)
       );
-      if (isAmountIn) {
-        dispatch(setAmountOut(parsedDestAmount.toString()));
-      } else {
-        dispatch(setAmountIn(parsedDestAmount.toString()));
-      }
+      dispatch(setAmountOut(parsedDestAmount.toString()));
     }
   };
 
@@ -246,66 +255,64 @@ const IBCSwap = () => {
   const handleAddressChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setReceiverAddress(e.target.value);
+    const value = e.target.value;
+    const isValid = validateAddress(value);
+    if (isValid) {
+      dispatch(setToAddress(value));
+      console.log(toAddress);
+    }
+    setReceiverAddress(value);
+  };
+
+  const validateAddress = (address: string) => {
+    if (address.length) {
+      try {
+        fromBech32(address);
+        setAddressValidationError('');
+        return true;
+      } catch (error) {
+        setAddressValidationError('Invalid recipient address');
+        return false;
+      }
+    } else {
+      setAddressValidationError('Please enter address');
+      return false;
+    }
   };
 
   useEffect(() => {
     if (userInputChange) {
-      fetchSwapRoute(true);
+      fetchSwapRoute();
       setUserInputChange(false);
     }
   }, [amountIn]);
 
   useEffect(() => {
     if (selectedDestAsset) {
-      fetchSwapRoute(true);
+      fetchSwapRoute();
     } else {
       dispatch(setAmountOut(''));
     }
   }, [selectedDestAsset]);
 
+  useEffect(() => {
+    if (receivedAddress && !addressValidationError) {
+      fetchSwapRoute();
+    }
+  }, [toAddress]);
+
   const onTxSwap = async () => {
     if (swapRoute) {
-      const squidClient = new Squid();
-      squidClient.setConfig({
-        baseUrl: 'https://api.0xsquid.com',
-        integratorId: 'resolute-api',
-      });
-      await squidClient.init();
-
-      const result = await getWalletAmino(selectedSourceChain?.chainID || '');
-      const wallet = result[0];
-      // const signingClient = await SigningStargateClient(wallet);
-      // const signer = window.wallet.getOfflineSigner(
-      //   selectedSourceChain?.chainID
-      // );
-
-      const offlineSigner: OfflineDirectSigner =
-        await window.wallet.getOfflineSigner(selectedSourceChain?.chainID);
-
-      const signerAddress = (await offlineSigner.getAccounts())[0].address;
-
-      const signer = await SigningStargateClient.connectWithSigner(
-        'https://cosmos-rpc.polkachu.com',
-        offlineSigner
+      const { rpcs } = getChainEndpoints(selectedSourceChain?.chainID || '');
+      dispatch(
+        txIBCSwap({
+          rpcURLs: rpcs,
+          signerAddress: fromAddress,
+          sourceChainID: selectedSourceChain?.chainID || '',
+          destChainID: selectedDestChain?.chainID || '',
+          swapRoute: swapRoute,
+        })
       );
-      const client = await SigningStargateClient.connect(
-        'https://cosmos-rpc.polkachu.com'
-      );
-
-      const tx = (await squidClient.executeRoute({
-        signer: signer,
-        route: swapRoute,
-        signerAddress: signerAddress,
-      })) as TxRaw;
-      console.log('tx........11111');
-      console.log('tx.....');
-      console.log(tx);
-      const result2 = await client.broadcastTx(
-        Uint8Array.from(TxRaw.encode(tx).finish())
-      );
-      console.log('result--==-=-=-=');
-      console.log(result2);
     }
   };
 
