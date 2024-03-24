@@ -39,13 +39,18 @@ const initialState: SwapState = {
   },
   txDestSuccess: {
     status: '',
+    msg: '',
   },
+  explorerEndpoint: '',
 };
 
 export const txIBCSwap = createAsyncThunk(
   'ibc-swap/txSwap',
   async (data: TxSwapInputs, { rejectWithValue, dispatch }) => {
     try {
+      dispatch(setExplorerEndpoint(data.explorerEndpoint));
+      dispatch(resetTx());
+      dispatch(resetTxDestSuccess());
       const offlineSigner: OfflineDirectSigner =
         await window.wallet.getOfflineSigner(data.sourceChainID);
 
@@ -75,9 +80,9 @@ export const txIBCSwap = createAsyncThunk(
 
       if (txStatus === 'success') {
         dispatch(
-          setError({
-            message: 'Transaction successful',
-            type: 'success',
+          setTxDestSuccess({
+            msg: 'Transaction Successful',
+            status: 'success',
           })
         );
       } else if (txStatus === 'needs_gas') {
@@ -89,9 +94,9 @@ export const txIBCSwap = createAsyncThunk(
         );
       } else if (txStatus === 'partial_success') {
         dispatch(
-          setError({
-            message: 'Transaction partial successful',
-            type: 'success',
+          setTxDestSuccess({
+            msg: 'Transaction Partially Successful',
+            status: 'partial_success',
           })
         );
       } else if (txStatus === 'not_found') {
@@ -146,6 +151,9 @@ export const swapsSlice = createSlice({
     setFromAddress: (state, action: PayloadAction<string>) => {
       state.fromAddress = action.payload;
     },
+    setExplorerEndpoint: (state, action: PayloadAction<string>) => {
+      state.explorerEndpoint = action.payload;
+    },
     resetTxStatus: (state) => {
       state.txStatus = {
         status: TxStatus.INIT,
@@ -157,16 +165,17 @@ export const swapsSlice = createSlice({
     },
     resetTx: (state) => {
       state.txSuccess.txHash = '';
-      state.txStatus = {
-        status: TxStatus.INIT,
-        error: '',
-      };
     },
-    setTxDestSuccess: (state) => {
-      state.txDestSuccess.status = 'success';
+    setTxDestSuccess: (
+      state,
+      action: PayloadAction<{ status: string; msg: string }>
+    ) => {
+      state.txDestSuccess.status = action.payload.status;
+      state.txDestSuccess.msg = action.payload.msg;
     },
     resetTxDestSuccess: (state) => {
       state.txDestSuccess.status = '';
+      state.txDestSuccess.msg = '';
     },
   },
   extraReducers: (builder) => {
@@ -200,6 +209,7 @@ export const {
   resetTxDestSuccess,
   setFromAddress,
   setToAddress,
+  setExplorerEndpoint,
 } = swapsSlice.actions;
 
 export default swapsSlice.reducer;

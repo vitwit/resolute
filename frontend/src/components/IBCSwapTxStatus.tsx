@@ -1,9 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import {
-  resetTx,
-  resetTxDestSuccess,
-  resetTxStatus,
-} from '@/store/features/swaps/swapsSlice';
+import { resetTx, resetTxDestSuccess } from '@/store/features/swaps/swapsSlice';
 import { TxStatus } from '@/types/enums';
 import {
   Alert,
@@ -17,6 +13,7 @@ import React, { useEffect, useState } from 'react';
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import { cleanURL } from '@/utils/util';
 
 const IBCSwapTxStatus = () => {
   const dispatch = useAppDispatch();
@@ -24,9 +21,8 @@ const IBCSwapTxStatus = () => {
   const [showTxDestSuccess, setTxDestSuccess] = useState(false);
   const txLoadRes = useAppSelector((state) => state.swaps.txStatus.status);
   const txHash = useAppSelector((state) => state.swaps.txSuccess.txHash);
-  const txDestStatus = useAppSelector(
-    (state) => state.swaps.txDestSuccess.status
-  );
+  const explorerUrl = useAppSelector((state) => state.swaps.explorerEndpoint);
+  const txDestStatus = useAppSelector((state) => state.swaps.txDestSuccess);
 
   useEffect(() => {
     if (txHash?.length) {
@@ -37,7 +33,7 @@ const IBCSwapTxStatus = () => {
   }, [txHash]);
 
   useEffect(() => {
-    if (txDestStatus.length) {
+    if (txDestStatus.status.length) {
       setTxDestSuccess(true);
     } else {
       setTxDestSuccess(false);
@@ -45,7 +41,7 @@ const IBCSwapTxStatus = () => {
   }, [txDestStatus]);
 
   useEffect(() => {
-    dispatch(resetTxStatus());
+    dispatch(resetTx());
     dispatch(resetTxDestSuccess());
   }, []);
 
@@ -54,7 +50,7 @@ const IBCSwapTxStatus = () => {
       <Snackbar
         open={txLoadRes === TxStatus.PENDING}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        style={{ top: '200px' }}
+        style={{ top: '100px' }}
       >
         <Alert
           iconMapping={{
@@ -78,7 +74,7 @@ const IBCSwapTxStatus = () => {
               onClick={() => {
                 dispatch(resetTx());
               }}
-              sx={{ color: '#fff' }} // Set your desired close icon color here
+              sx={{ color: '#fff' }}
             >
               <CloseIcon fontSize="inherit" />
             </IconButton>
@@ -105,7 +101,7 @@ const IBCSwapTxStatus = () => {
               <Link
                 className="text-[#ffffffa2] underline underline-offset-1"
                 target="_blank"
-                href={``}
+                href={`${cleanURL(explorerUrl)}/${txHash}`}
                 color="inherit"
               >
                 View on explorer
@@ -118,7 +114,7 @@ const IBCSwapTxStatus = () => {
       <Snackbar
         open={showTxDestSuccess}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        style={{ top: '200px' }}
+        style={{ top: '100px' }}
         autoHideDuration={3000}
       >
         <Alert
@@ -128,7 +124,7 @@ const IBCSwapTxStatus = () => {
             ),
           }}
           onClose={() => {
-            setTxDestSuccess(false);
+            dispatch(resetTxDestSuccess());
           }}
           severity="info"
           sx={{
@@ -143,21 +139,21 @@ const IBCSwapTxStatus = () => {
               color="inherit"
               size="small"
               onClick={() => {
-                dispatch(resetTx());
+                dispatch(resetTxDestSuccess());
               }}
-              sx={{ color: '#fff' }} // Set your desired close icon color here
+              sx={{ color: '#fff' }}
             >
               <CloseIcon fontSize="inherit" />
             </IconButton>
           }
         >
           <AlertTitle sx={{ fontWeight: '600', color: '#fff' }}>
-            Transaction Successful
+            {txDestStatus.msg || ''}
           </AlertTitle>
           <Link
             className="text-[#ffffffa2] underline underline-offset-1"
             target="_blank"
-            href={``}
+            href={`${cleanURL(explorerUrl)}/${txHash}`}
             color="inherit"
           >
             View on explorer

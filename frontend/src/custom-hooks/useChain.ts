@@ -17,8 +17,30 @@ const useChain = () => {
       rpcs,
     };
   };
+
+  const getExplorerEndpoints = (chainID: string) => {
+    if (!chainID.length) {
+      return {
+        explorerEndpoint: '',
+      };
+    }
+    const filteredChain = chains.filter((chain) => chain.chain_id === chainID);
+    const chainData = filteredChain[0];
+    console.log('here...', chainData);
+    let explorerEndpoint = chainData.explorers?.[0].tx_page || '';
+    chainData.explorers?.forEach((explorer) => {
+      if (explorer.kind?.includes('mintscan'))
+        explorerEndpoint = explorer.tx_page || '';
+    });
+    explorerEndpoint = explorerEndpoint ? explorerEndpoint.split('$')[0] : '';
+    return {
+      explorerEndpoint,
+    };
+  };
+
   return {
     getChainEndpoints,
+    getExplorerEndpoints,
   };
 };
 

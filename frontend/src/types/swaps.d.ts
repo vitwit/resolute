@@ -35,7 +35,9 @@ interface SwapState {
   };
   txDestSuccess: {
     status: string;
+    msg: string;
   };
+  explorerEndpoint: string;
 }
 
 interface TxSwapInputs {
@@ -44,6 +46,7 @@ interface TxSwapInputs {
   signerAddress: string;
   sourceChainID: string;
   destChainID: string;
+  explorerEndpoint: string;
 }
 
 interface TxSwapServiceInputs {

@@ -45,7 +45,7 @@ const IBCSwap = () => {
     useGetAssets();
 
   // To fetch 4 rest endpoints from chain-registry
-  const { getChainEndpoints } = useChain();
+  const { getChainEndpoints, getExplorerEndpoints } = useChain();
 
   const { getSwapRoute, routeLoading, routeError } = useSwaps();
   const { getAccountAddress, getAvailableBalance } = useAccount();
@@ -293,6 +293,9 @@ const IBCSwap = () => {
   const onTxSwap = async () => {
     if (swapRoute && allInputsProvided) {
       const { rpcs } = getChainEndpoints(selectedSourceChain?.chainID || '');
+      const { explorerEndpoint } = getExplorerEndpoints(
+        selectedSourceChain?.chainID || ''
+      );
       dispatch(
         txIBCSwap({
           rpcURLs: rpcs,
@@ -300,6 +303,7 @@ const IBCSwap = () => {
           sourceChainID: selectedSourceChain?.chainID || '',
           destChainID: selectedDestChain?.chainID || '',
           swapRoute: swapRoute,
+          explorerEndpoint,
         })
       );
     }
