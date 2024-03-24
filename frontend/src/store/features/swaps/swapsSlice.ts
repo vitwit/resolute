@@ -15,10 +15,8 @@ import {
 } from './swapsService';
 import { setError } from '../common/commonSlice';
 import { ERR_UNKNOWN } from '@/utils/errors';
-import { Squid } from '@0xsquid/sdk';
 import { SigningStargateClient } from '@cosmjs/stargate';
 import { OfflineDirectSigner } from '@cosmjs/proto-signing';
-import { SQUID_ID } from '@/utils/constants';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 
 declare let window: WalletWindow;

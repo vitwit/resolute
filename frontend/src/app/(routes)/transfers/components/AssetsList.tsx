@@ -4,14 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Avatar from '@mui/material/Avatar';
 import { CircularProgress, Paper } from '@mui/material';
 import { shortenName } from '@/utils/util';
-
-interface AssetOption {
-  label: string;
-  symbol: string;
-  logoURI: string;
-  denom: string;
-  decimals: number;
-}
+import { AssetConfig } from '@/types/swaps';
 
 export default function AssetsAutocomplete({
   options,
@@ -19,14 +12,14 @@ export default function AssetsAutocomplete({
   selectedAsset,
   assetsLoading,
 }: {
-  options: AssetOption[];
-  handleChange: (option: AssetOption | null) => void;
-  selectedAsset: AssetOption | null;
+  options: AssetConfig[];
+  handleChange: (option: AssetConfig | null) => void;
+  selectedAsset: AssetConfig | null;
   assetsLoading: boolean;
 }) {
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const renderOption = (props: any, option: AssetOption) => (
-    <li {...props} key={option.symbol + option.logoURI}>
+  const renderOption = (props: any, option: AssetConfig) => (
+    <li {...props} key={option.symbol + option.logoURI + option.denom}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Avatar
           src={option.logoURI}
@@ -36,6 +29,9 @@ export default function AssetsAutocomplete({
         <div className="flex flex-col">
           <span className="font-semibold truncate">
             {shortenName(option.symbol, 15)}
+          </span>
+          <span className="font-extralight truncate text-[12px]">
+            {shortenName(option.name, 20)}
           </span>
         </div>
       </div>
@@ -87,7 +83,7 @@ export default function AssetsAutocomplete({
       fullWidth
       id="chain-autocomplete"
       options={options}
-      getOptionLabel={(option: AssetOption) => option.symbol}
+      getOptionLabel={(option: AssetConfig) => option.symbol}
       renderOption={renderOption}
       renderInput={renderInput}
       onChange={(_, newValue) => handleChange(newValue)}

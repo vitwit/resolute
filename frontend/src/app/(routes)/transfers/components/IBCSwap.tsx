@@ -23,17 +23,10 @@ import {
   txIBCSwap,
 } from '@/store/features/swaps/swapsSlice';
 import ChainsList from './ChainsList';
-import { RouteResponse } from '@skip-router/core';
 import { AssetConfig, ChainConfig } from '@/types/swaps';
 import { TxStatus } from '@/types/enums';
-import { RouteData, Squid } from '@0xsquid/sdk';
-import { SigningStargateClient } from '@cosmjs/stargate';
-import { getWalletAmino } from '@/txns/execute';
-import { OfflineDirectSigner } from '@cosmjs/proto-signing';
-import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
+import { RouteData } from '@0xsquid/sdk';
 import { fromBech32 } from '@cosmjs/encoding';
-
-declare let window: WalletWindow;
 
 const emptyBalance = {
   amount: 0,
@@ -48,12 +41,13 @@ const IBCSwap = () => {
   const { chainsInfo, loading: chainsLoading } = useGetChains();
 
   // To fetch all skip supported assets (chain - assets)
-  const { getTokensByChainID, loading: assetsLoading } = useGetAssets();
+  const { getTokensByChainID, srcAssetsLoading, destAssetLoading } =
+    useGetAssets();
 
   // To fetch 4 rest endpoints from chain-registry
   const { getChainEndpoints } = useChain();
 
-  const { getSwapRoute, routeLoading } = useSwaps();
+  const { getSwapRoute, routeLoading, routeError } = useSwaps();
   const { getAccountAddress, getAvailableBalance } = useAccount();
   const [otherAddress, setOtherAddress] = useState(false);
   const dispatch = useAppDispatch();
@@ -75,6 +69,10 @@ const IBCSwap = () => {
   const fromAddress = useAppSelector((state) => state.swaps.fromAddress);
   const txStatus = useAppSelector((state) => state.swaps.txStatus.status);
 
+  const balanceStatus = useAppSelector(
+    (state) => state.bank.balances?.[selectedSourceChain?.chainID || '']?.status
+  );
+
   const [selectedSourceChainAssets, setSelectedSourceChainAssets] = useState<
     AssetConfig[]
   >([]);
@@ -83,61 +81,71 @@ const IBCSwap = () => {
   >([]);
   const [availableBalance, setAvailableBalance] = useState(emptyBalance);
   const [userInputChange, setUserInputChange] = useState(true);
-  const [receivedAddress, setReceiverAddress] = useState('');
+  const [receiverAddress, setReceiverAddress] = useState('');
+  const [selfReceiverAddress, setSelfReceiverAddress] = useState('');
   const [swapRoute, setSwapRoute] = useState<RouteData | null>(null);
   const [addressValidationError, setAddressValidationError] = useState('');
+  const [allInputsProvided, setAllInputsProvided] = useState(false);
 
   const handleSelectSourceChain = async (option: ChainConfig | null) => {
     dispatch(setSourceChain(option));
 
-    // Select assets based on chainID
-    const assets = await getTokensByChainID(option?.chainID || '');
-    setSelectedSourceChainAssets(assets || []);
-
+    setSelectedSourceChainAssets([]);
     dispatch(setSourceAsset(null));
+
     dispatch(setAmountIn(''));
     dispatch(setAmountOut(''));
-    setAvailableBalance({
-      amount: 0,
-      minimalDenom: '',
-      displayDenom: '',
-      decimals: 0,
-      parsedAmount: 0,
-    });
-    const { apis, rpcs } = getChainEndpoints(option?.chainID || '');
-    const { address } = await getAccountAddress(option?.chainID || '');
-    dispatch(setFromAddress(address));
 
-    // To get all asset balances of address using selected chain
-    dispatch(
-      getBalances({
-        address: address,
-        baseURL: apis[0],
-        baseURLs: apis,
-        chainID: option?.chainID || '',
-      })
-    );
+    if (option?.chainID) {
+      // Select assets based on chainID
+      const assets = await getTokensByChainID(option?.chainID || '', true);
+      setSelectedSourceChainAssets(assets || []);
+
+      setAvailableBalance(emptyBalance);
+      const { apis } = getChainEndpoints(option?.chainID || '');
+      const { address } = await getAccountAddress(option?.chainID || '');
+      dispatch(setFromAddress(address));
+
+      // To get all asset balances of address using selected chain
+      dispatch(
+        getBalances({
+          address: address,
+          baseURL: apis[0],
+          baseURLs: apis,
+          chainID: option?.chainID,
+        })
+      );
+    }
   };
 
   const handleSelectSourceAsset = async (option: AssetConfig | null) => {
     dispatch(setSourceAsset(option));
-    const { balanceInfo } = await getAvailableBalance({
-      chainID: selectedSourceChain?.chainID || '',
-      denom: option?.label || '',
-    });
-    setAvailableBalance(balanceInfo);
     dispatch(setAmountIn(''));
     dispatch(setAmountOut(''));
+    if (option) {
+      const { balanceInfo } = await getAvailableBalance({
+        chainID: selectedSourceChain?.chainID || '',
+        denom: option?.label || '',
+      });
+      setAvailableBalance(balanceInfo);
+    } else {
+      setAvailableBalance(emptyBalance);
+    }
   };
 
   const handleSelectDestChain = async (option: ChainConfig | null) => {
-    dispatch(setDestChain(option));
-    const { address } = await getAccountAddress(option?.chainID || '');
-    dispatch(setToAddress(address));
-    const assets = await getTokensByChainID(option?.chainID || '');
-    setSelectedDestChainAssets(assets || []);
     dispatch(setDestAsset(null));
     dispatch(setAmountOut(''));
+    dispatch(setDestChain(option));
+    if (option?.chainID) {
+      const { address } = await getAccountAddress(option.chainID);
+      setSelfReceiverAddress(address);
+      dispatch(setToAddress(address));
+      const assets = await getTokensByChainID(option.chainID, false);
+      setSelectedDestChainAssets(assets || []);
+    } else {
+      setSelectedDestChainAssets([]);
+    }
   };
 
   const handleSelectDestAsset = (option: AssetConfig | null) => {
@@ -160,9 +168,7 @@ const IBCSwap = () => {
 
     handleRotate();
     if (selectedDestChain && selectedDestAsset) {
-      const { apis, rpcs } = getChainEndpoints(
-        selectedDestChain?.chainID || ''
-      );
+      const { apis } = getChainEndpoints(selectedDestChain?.chainID || '');
       const { address } = await getAccountAddress(
         selectedDestChain?.chainID || ''
       );
@@ -186,31 +192,15 @@ const IBCSwap = () => {
   };
 
   const [isRotated, setIsRotated] = useState(false);
+  const disableSwapBtn =
+    txStatus === TxStatus.PENDING ||
+    !allInputsProvided ||
+    routeLoading ||
+    !!routeError;
 
   const handleRotate = () => {
     setIsRotated((prev) => !prev);
   };
-
-  // useEffect(() => {
-  //   if (
-  //     !chainsLoading &&
-  //     !assetsLoading &&
-  //     !selectedSourceAsset &&
-  //     selectedSourceChain
-  //   ) {
-  //     const assets = chainWiseAssetOptions[selectedSourceChain?.chainID] || [];
-  //     setSelectedSourceChainAssets(assets);
-  //   }
-  //   if (
-  //     !chainsLoading &&
-  //     !assetsLoading &&
-  //     !selectedDestAsset &&
-  //     selectedDestChain
-  //   ) {
-  //     const assets = chainWiseAssetOptions[selectedDestChain?.chainID] || [];
-  //     setSelectedDestChainAssets(assets);
-  //   }
-  // }, [assetsLoading, chainsLoading]);
 
   const fetchSwapRoute = async () => {
     if (
@@ -218,7 +208,7 @@ const IBCSwap = () => {
       selectedDestChain &&
       selectedSourceAsset &&
       selectedSourceChain &&
-      amountIn
+      Number(amountIn)
     ) {
       const amount = amountIn;
       const decimals = selectedSourceAsset?.decimals;
@@ -259,7 +249,6 @@ const IBCSwap = () => {
     const isValid = validateAddress(value);
     if (isValid) {
       dispatch(setToAddress(value));
-      console.log(toAddress);
     }
     setReceiverAddress(value);
   };
@@ -296,13 +285,13 @@ const IBCSwap = () => {
   }, [selectedDestAsset]);
 
   useEffect(() => {
-    if (receivedAddress && !addressValidationError) {
+    if (receiverAddress && !addressValidationError) {
       fetchSwapRoute();
     }
   }, [toAddress]);
 
   const onTxSwap = async () => {
-    if (swapRoute) {
+    if (swapRoute && allInputsProvided) {
       const { rpcs } = getChainEndpoints(selectedSourceChain?.chainID || '');
       dispatch(
         txIBCSwap({
@@ -320,13 +309,53 @@ const IBCSwap = () => {
     dispatch(resetTx());
   }, []);
 
+  const validateAllInputs = () => {
+    const chainsSelected = selectedSourceChain && selectedDestChain;
+    const assetsSelected = selectedSourceAsset && selectedDestAsset;
+    const srcAmount = Number(amountIn) ? true : false;
+    const validReceiverAddress = !otherAddress
+      ? true
+      : receiverAddress && !addressValidationError
+        ? true
+        : false;
+
+    if (chainsSelected && assetsSelected && srcAmount && validReceiverAddress) {
+      return setAllInputsProvided(true);
+    }
+    return setAllInputsProvided(false);
+  };
+
+  useEffect(() => {
+    validateAllInputs();
+  }, [
+    selectedDestAsset,
+    selectedDestChain,
+    selectedSourceAsset,
+    selectedSourceChain,
+    amountIn,
+  ]);
+
+  useEffect(() => {
+    if (!otherAddress) {
+      dispatch(setToAddress(selfReceiverAddress));
+      setReceiverAddress('');
+      setAddressValidationError('');
+    }
+  }, [otherAddress]);
+
+  useEffect(() => {
+    if (!otherAddress) {
+      fetchSwapRoute();
+    }
+  }, [otherAddress, toAddress]);
+
   return (
     <div className="flex justify-center">
       <div className="bg-[#FFFFFF0D] rounded-2xl p-6 flex flex-col justify-between items-center gap-6 min-w-[550px]">
         <div className="bg-[#FFFFFF0D] rounded-2xl p-4 flex flex-col gap-4 w-full">
           <div className="text-[16px]">From</div>
           <div className="space-y-2">
-            <div className="text-[14px] font-extralight">Select Asset</div>
+            <div className="text-[14px] font-extralight">Select Asset *</div>
             <div className="flex justify-between gap-4">
               <div className="flex-1">
                 <ChainsList
@@ -341,13 +370,13 @@ const IBCSwap = () => {
                   options={selectedSourceChainAssets}
                   handleChange={handleSelectSourceAsset}
                   selectedAsset={selectedSourceAsset}
-                  assetsLoading={assetsLoading}
+                  assetsLoading={srcAssetsLoading}
                 />
               </div>
             </div>
           </div>
           <div className="space-y-2">
-            <div className="font-extralight text-[14px]">Enter Amount</div>
+            <div className="font-extralight text-[14px]">Enter Amount *</div>
             <TextField
               name="sourceAmount"
               className="rounded-lg bg-[#ffffff0D]"
@@ -369,12 +398,20 @@ const IBCSwap = () => {
                 endAdornment: (
                   <InputAdornment position="start">
                     <div className="flex gap-1 font-int custom-font">
-                      <div className="text-[14px] font-extralight text-white">
-                        {availableBalance.parsedAmount || 0}
-                      </div>
-                      <div className="text-[14px] font-extralight text-[#FFFFFF80]">
-                        {availableBalance.displayDenom || '-'}
-                      </div>
+                      {balanceStatus === TxStatus.PENDING &&
+                      !availableBalance.parsedAmount &&
+                      !availableBalance.displayDenom ? (
+                        <CircularProgress size={14} sx={{ color: 'white' }} />
+                      ) : (
+                        <>
+                          <div className="text-[14px] font-extralight text-white">
+                            {availableBalance.parsedAmount || 0}
+                          </div>
+                          <div className="text-[14px] font-extralight text-[#FFFFFF80]">
+                            {availableBalance.displayDenom || '-'}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </InputAdornment>
                 ),
@@ -392,7 +429,7 @@ const IBCSwap = () => {
         <div className="bg-[#FFFFFF0D] rounded-2xl p-4 flex flex-col gap-4 w-full">
           <div className="text-[16px]">To</div>
           <div className="space-y-2">
-            <div className="text-[14px] font-extralight">Select Asset</div>
+            <div className="text-[14px] font-extralight">Select Asset *</div>
             <div className="flex justify-between gap-4">
               <div className="flex-1">
                 <ChainsList
@@ -407,7 +444,7 @@ const IBCSwap = () => {
                   options={selectDestChainAssets}
                   handleChange={handleSelectDestAsset}
                   selectedAsset={selectedDestAsset}
-                  assetsLoading={assetsLoading}
+                  assetsLoading={destAssetLoading}
                 />
               </div>
             </div>
@@ -460,7 +497,7 @@ const IBCSwap = () => {
               autoFocus={true}
               placeholder="Enter Address"
               sx={swapTextFieldStyles}
-              value={receivedAddress}
+              value={receiverAddress}
               InputProps={{
                 sx: {
                   input: {
@@ -474,11 +511,24 @@ const IBCSwap = () => {
             />
           </div>
         </div>
+        <div className="bg-[#FFFFFF0D] rounded-lg w-full py-2 px-4">
+          {!allInputsProvided ? (
+            'Please provide the required fields'
+          ) : routeLoading ? (
+            <div>
+              Fetching route <span className="dots-flashing"></span>{' '}
+            </div>
+          ) : routeError ? (
+            <div>{routeError}</div>
+          ) : (
+            <div>{!routeLoading && swapRoute ? 'Route found' : ''}</div>
+          )}
+        </div>
         <div className="w-full">
           <button
-            className="swap-btn primary-gradient flex justify-center items-center"
+            className={`swap-btn primary-gradient ${disableSwapBtn ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             onClick={onTxSwap}
-            disabled={txStatus === TxStatus.PENDING}
+            disabled={disableSwapBtn}
           >
             {txStatus === TxStatus.PENDING ? (
               <CircularProgress sx={{ color: 'white' }} size={16} />

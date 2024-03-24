@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Squid } from '@0xsquid/sdk';
-import { GetRoute, RouteResponse } from '@0xsquid/sdk/dist/types';
-import { SQUID_ID } from '@/utils/constants';
+import { GetRoute } from '@0xsquid/sdk/dist/types';
+import { SQUID_ID, SWAP_ROUTE_ERROR } from '@/utils/constants';
 
 interface GetRouteInputs {
   sourceChainID: string;
@@ -22,6 +22,7 @@ squidClient.init();
 
 const useSwaps = () => {
   const [routeLoading, setRouteLoading] = useState(false);
+  const [routeError, setRouteError] = useState('');
 
   const getSwapRoute = async ({
     amount,
@@ -45,7 +46,7 @@ const useSwaps = () => {
     };
     try {
       setRouteLoading(true);
-
+      setRouteError('');
       const res = await squidClient.getRoute(params);
       setRouteLoading(false);
       return {
@@ -54,7 +55,15 @@ const useSwaps = () => {
       };
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      console.log('error occured while fetch route', error);
+      if (error?.code === 'ERR_NETWORK') {
+        console.log(error.message);
+        setRouteError(error?.message || SWAP_ROUTE_ERROR);
+      } else {
+        const errMsg =
+          error?.response?.data?.errors?.[0]?.message || SWAP_ROUTE_ERROR;
+        console.log('error occured while fetch route', errMsg);
+        setRouteError(errMsg || SWAP_ROUTE_ERROR);
+      }
     } finally {
       setRouteLoading(false);
     }
@@ -66,6 +75,7 @@ const useSwaps = () => {
   return {
     getSwapRoute,
     routeLoading,
+    routeError,
   };
 };
 

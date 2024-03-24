@@ -1,19 +1,20 @@
 import { AssetConfig } from '@/types/swaps';
-import { Asset } from '@skip-router/core';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { TokenData } from '@0xsquid/sdk/dist/types';
 import axios from 'axios';
 import { SQUID_ID } from '@/utils/constants';
 
 const useGetAssets = () => {
-  const [assetsInfo, setAssetsInfo] = useState<TokenData[]>([]);
-  const [chainWiseAssetOptions, setChainWiseAssetsOptions] = useState<
-    Record<string, AssetConfig[]>
-  >({});
-  const [loading, setLoading] = useState(true);
+  const [srcAssetsLoading, setSrcAssetsLoading] = useState(false);
+  const [destAssetLoading, setDestAssetsLoading] = useState(false);
 
-  const fetchAssetsInfo = async (chainID: string) => {
+  const fetchAssetsInfo = async (chainID: string, isSource: boolean) => {
     try {
+      if (isSource) {
+        setSrcAssetsLoading(true);
+      } else {
+        setDestAssetsLoading(true);
+      }
       const result = await axios.get(
         `https://api.0xsquid.com/v1/tokens?chainId=${chainID}`,
         {
@@ -23,23 +24,28 @@ const useGetAssets = () => {
         }
       );
       const assets: TokenData[] = result.data.tokens;
-      setAssetsInfo(assets);
       return assets;
     } catch (error) {
       console.log('error while fetching data', error);
     } finally {
-      setLoading(false);
+      if (isSource) {
+        setSrcAssetsLoading(false);
+      } else {
+        setDestAssetsLoading(false);
+      }
     }
   };
 
-  const getTokensByChainID = async (chainID: string) => {
-    const assets = await fetchAssetsInfo(chainID);
+  const getTokensByChainID = async (chainID: string, isSource: boolean) => {
+    if (!chainID?.length) return [];
+    const assets = await fetchAssetsInfo(chainID, isSource);
     const formattedAssets = assets ? getFormattedAssetsList(assets) : [];
     return formattedAssets;
   };
   return {
     getTokensByChainID,
-    loading,
+    srcAssetsLoading,
+    destAssetLoading,
   };
 };
 
@@ -52,6 +58,7 @@ const getFormattedAssetsList = (data: TokenData[]): AssetConfig[] => {
         logoURI: asset.logoURI || '',
         denom: asset.ibcDenom || '',
         decimals: asset.decimals || 0,
+        name: asset.name || '',
       };
     })
     .sort((assetA, assetB) => {

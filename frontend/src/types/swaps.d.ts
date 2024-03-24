@@ -1,4 +1,3 @@
-import { RouteResponse } from '@skip-router/core';
 import { TxStatus } from './enums';
 import { RouteData } from '@0xsquid/sdk';
 import { SigningStargateClient } from '@cosmjs/stargate';
@@ -15,6 +14,7 @@ interface AssetConfig {
   logoURI: string;
   denom: string;
   decimals: number;
+  name: string;
 }
 
 interface SwapState {

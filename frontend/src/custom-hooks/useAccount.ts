@@ -35,11 +35,8 @@ const useAccount = () => {
       parsedAmount: 0,
     };
 
-    const chainAssets = await getTokensByChainID(chainID);
+    const chainAssets = await getTokensByChainID(chainID, true);
 
-    console.log("=======")
-    console.log(chainBalances)
-    console.log(chainAssets)
     chainBalances.forEach((balance) => {
       const filteredDenomInfo = chainAssets?.filter((denomInfo) => {
         return denomInfo.denom === balance.denom;

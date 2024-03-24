@@ -266,3 +266,5 @@ export const COIN_GECKO_IDS: Record<string, string> = {
   umars: 'Mars Protocol',
   ucmdx: 'cmdx',
 };
+
+export const SWAP_ROUTE_ERROR = 'Failed to fetch routes.';

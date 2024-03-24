@@ -1,6 +1,6 @@
 import { TxSwapServiceInputs } from '@/types/swaps';
 import { SQUID_ID } from '@/utils/constants';
-import { Squid, StatusResponse } from '@0xsquid/sdk';
+import { Squid } from '@0xsquid/sdk';
 import { OfflineDirectSigner } from '@cosmjs/proto-signing';
 import { SigningStargateClient } from '@cosmjs/stargate';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
@@ -40,6 +40,7 @@ export const connectWithSigner = async (
         offlineSigner
       );
       return signer;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       console.error(`Error connecting to ${url}: ${error.message}`);
     }
