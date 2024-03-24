@@ -80,3 +80,16 @@ export const trackTransactionStatus = async ({
 
   return status;
 };
+
+export const connectStargateClient = async (urls: string[]) => {
+  for (const url of urls) {
+    try {
+      const client = await SigningStargateClient.connect(url);
+      return client;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      console.error(`Error connecting to ${url}: ${error.message}`);
+    }
+  }
+  throw new Error('Unable to connect to any RPC URLs');
+};

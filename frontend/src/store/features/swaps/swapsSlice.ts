@@ -9,13 +9,13 @@ import {
 } from '@/types/swaps';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
+  connectStargateClient,
   connectWithSigner,
   trackTransactionStatus,
   txExecuteSwap,
 } from './swapsService';
 import { setError } from '../common/commonSlice';
 import { ERR_UNKNOWN } from '@/utils/errors';
-import { SigningStargateClient } from '@cosmjs/stargate';
 import { OfflineDirectSigner } from '@cosmjs/proto-signing';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 
@@ -64,7 +64,7 @@ export const txIBCSwap = createAsyncThunk(
         signerAddress,
       });
 
-      const client = await SigningStargateClient.connect(data.rpcURLs[0]);
+      const client = await connectStargateClient(data.rpcURLs);
 
       const txResponse = await client.broadcastTx(
         Uint8Array.from(TxRaw.encode(executionResponse).finish())
