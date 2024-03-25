@@ -5,7 +5,12 @@ import { useEffect, useState } from 'react';
 
 const useGetChains = () => {
   const [chainsInfo, setChainInfo] = useState<ChainConfig[]>([]);
+  const [chainsData, setChainsData] = useState<ChainData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchChainsInfo();
+  }, []);
 
   const fetchChainsInfo = async () => {
     try {
@@ -19,6 +24,7 @@ const useGetChains = () => {
         }
       );
       const chains: ChainData[] = result.data.chains;
+      setChainsData(chains);
       const chainsData = chains
         .map((chain): ChainConfig => {
           return {
@@ -38,12 +44,15 @@ const useGetChains = () => {
     }
   };
 
-  useEffect(() => {
-    fetchChainsInfo();
-  }, []);
+  const getChainConfig = (chainID: string) => {
+    const chainConfig = chainsData.filter((chain) => chain.chainId === chainID);
+    return chainConfig[0];
+  };
+
   return {
     loading,
     chainsInfo,
+    getChainConfig,
   };
 };
 

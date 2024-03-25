@@ -1,11 +1,17 @@
 import { useAppSelector } from './StateHooks';
 import useGetAssets from './useGetAssets';
+import useGetChains from './useGetChains';
 
 declare let window: WalletWindow;
+
+interface CustomChainData extends ChainData {
+  chainName: string;
+}
 
 const useAccount = () => {
   const balances = useAppSelector((state) => state.bank.balances);
   const { getTokensByChainID } = useGetAssets();
+  const { getChainConfig } = useGetChains();
   const getAccountAddress = async (
     chainID: string
   ): Promise<{ address: string }> => {
@@ -13,8 +19,18 @@ const useAccount = () => {
       const account = await window.wallet.getKey(chainID);
       return { address: account.bech32Address };
     } catch (error) {
-      const account = await window.wallet.experimentalSuggestChain(chainID);
-      return { address: account.bech32Address };
+      const chainConfig = getChainConfig(chainID);
+      const chainData: CustomChainData = {
+        ...chainConfig,
+        chainName: chainConfig.networkName,
+      };
+      try {
+        const account = await window.wallet.experimentalSuggestChain(chainData);
+        return { address: account.bech32Address };
+      } catch (error) {
+        console.log(error);
+        return { address: '' };
+      }
     }
   };
 
