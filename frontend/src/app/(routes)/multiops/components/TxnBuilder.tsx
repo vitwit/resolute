@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SelectTransactionType from './SelectTransactionType';
 import {
   FormControl,
@@ -7,20 +7,103 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  TextField,
 } from '@mui/material';
-import { MULTISIG_TX_TYPES } from '@/utils/constants';
-import { selectTxnStyles } from '../styles';
+import {
+  MULTIOPS_MSG_TYPES,
+  MULTISIG_TX_TYPES,
+  NO_MESSAGES_ILLUSTRATION,
+  SEND_TYPE_URL,
+} from '@/utils/constants';
+import { selectTxnStyles, sendTxnTextFieldStyles } from '../styles';
+import Send from './Messages/Send';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { parseBalance } from '@/utils/denom';
+import { getBalances } from '@/store/features/bank/bankSlice';
+import MessagesList from './MessagesList';
+import SendMessage from './Messages/SendMessage';
+import Image from 'next/image';
+import { Controller, useForm } from 'react-hook-form';
 
-const TxnBuilder = () => {
+const TxnBuilder = ({ chainID }: { chainID: string }) => {
+  const dispatch = useAppDispatch();
   const [isFileUpload, setIsFileUpload] = useState<boolean>(false);
   const [msgType, setMsgType] = useState('Send');
-  const [message, setMessges] = useState<Msg[]>([]);
+  const [messages, setMessages] = useState<Msg[]>([
+    { typeUrl: '/cosmos.bank.v1beta1.MsgSend', value: {} },
+  ]);
+  const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const {
+    address,
+    baseURL,
+    restURLs: baseURLs,
+    feeAmount,
+    feeCurrencies,
+  } = getChainInfo(chainID);
   const onSelect = (value: boolean) => {
     setIsFileUpload(value);
   };
   const handleMsgTypeChange = (event: SelectChangeEvent<string>) => {
     setMsgType(event.target.value);
   };
+  const balance = useAppSelector(
+    (state) => state.bank.balances?.[chainID]?.list
+  );
+  const [availableBalance, setAvailableBalance] = useState(0);
+
+  const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
+  const currency = {
+    coinDenom: displayDenom,
+    coinDecimals: decimals,
+    coinMinimalDenom: minimalDenom,
+  };
+
+  const onDeleteMsg = (index: number) => {
+    const arr = messages.filter((_, i) => i !== index);
+    setMessages(arr);
+  };
+
+  const {
+    handleSubmit,
+    control,
+    reset: resetForm,
+    setValue,
+  } = useForm({
+    defaultValues: {
+      msgs: [],
+      gas: 900000,
+      memo: '',
+      fees: feeAmount * 10 ** currency.coinDecimals,
+    },
+  });
+
+  const [selectedFeeStep, setSelectedFeeStep] = useState('average');
+  const handleFeeChange = (feeStep: string, amount: number) => {
+    setSelectedFeeStep(feeStep);
+    setValue('fees', amount * 100 ** currency.coinDecimals);
+  };
+
+  useEffect(() => {
+    if (balance) {
+      setAvailableBalance(
+        parseBalance(balance, currency.coinDecimals, currency.coinMinimalDenom)
+      );
+    }
+  }, [balance]);
+
+  useEffect(() => {
+    if (address && chainID) {
+      dispatch(
+        getBalances({
+          address,
+          baseURL,
+          baseURLs,
+          chainID,
+        })
+      );
+    }
+  }, [address]);
 
   return (
     <div className="h-full flex flex-col gap-6">
@@ -52,16 +135,147 @@ const TxnBuilder = () => {
                 <div className="flex-1 bg-[#ffffff0D] rounded-lg"></div>
               </div>
             ) : (
-              <div>
+              <div className="h-full flex flex-col">
                 <SelectMsgType
                   handleMsgTypeChange={handleMsgTypeChange}
                   msgType={msgType}
                 />
+                <div className="flex-1">
+                  {msgType === MULTIOPS_MSG_TYPES.send ? (
+                    <>
+                      <Send
+                        address={address}
+                        onSend={(payload) => {
+                          setMessages([...messages, payload]);
+                        }}
+                        availableBalance={availableBalance}
+                        currency={currency}
+                      />
+                    </>
+                  ) : null}
+                </div>
               </div>
             )}
           </div>
           <div className="h-full w-[1px] bg-[#ffffff33]"></div>
-          <div className="flex-1"></div>
+          <div className="flex-1 pl-4">
+            <div className="h-full">
+              <div className="font-extralight text-[14px]">Messages</div>
+              <div className="h-full">
+                {messages.length ? (
+                  <div className="space-y-4">
+                    <MessagesList
+                      messages={messages}
+                      currency={currency}
+                      onDeleteMsg={onDeleteMsg}
+                    />
+                    <div>
+                      <form action="" className="space-y-4">
+                        <div className="flex gap-6">
+                          <div className="flex-1 space-y-2">
+                            <div className="text-[14px] font-extralight">
+                              Enter Gas
+                            </div>
+                            <Controller
+                              name="gas"
+                              control={control}
+                              render={({ field }) => (
+                                <TextField
+                                  className="bg-[#FFFFFF0D]"
+                                  {...field}
+                                  sx={{
+                                    ...sendTxnTextFieldStyles,
+                                  }}
+                                  placeholder="Enter gas"
+                                  fullWidth
+                                  InputProps={{
+                                    sx: {
+                                      input: {
+                                        color: 'white',
+                                        fontSize: '14px',
+                                        padding: 2,
+                                      },
+                                    },
+                                  }}
+                                />
+                              )}
+                            />
+                          </div>
+                          <div className="flex-1 space-y-2">
+                            <div className="text-[14px] font-extralight">
+                              Enter Memo
+                            </div>
+                            <Controller
+                              name="memo"
+                              control={control}
+                              render={({ field }) => (
+                                <TextField
+                                  className="bg-[#FFFFFF0D]"
+                                  {...field}
+                                  sx={{
+                                    ...sendTxnTextFieldStyles,
+                                  }}
+                                  placeholder="Enter memo"
+                                  fullWidth
+                                  InputProps={{
+                                    sx: {
+                                      input: {
+                                        color: 'white',
+                                        fontSize: '14px',
+                                        padding: 2,
+                                      },
+                                    },
+                                  }}
+                                />
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="text-[14px] font-extralight">
+                            Fees
+                          </div>
+                          <div className="grid grid-cols-3 gap-6">
+                            <FeeCard
+                              name="low"
+                              denom={feeCurrencies[0].coinDenom}
+                              fee={feeCurrencies[0].gasPriceStep?.low || 0}
+                              handleFeeChange={handleFeeChange}
+                              selectedFeeStep={selectedFeeStep}
+                            />
+                            <FeeCard
+                              name="average"
+                              denom={feeCurrencies[0].coinDenom}
+                              fee={feeCurrencies[0].gasPriceStep?.average || 0}
+                              handleFeeChange={handleFeeChange}
+                              selectedFeeStep={selectedFeeStep}
+                            />
+                            <FeeCard
+                              name="high"
+                              denom={feeCurrencies[0].coinDenom}
+                              fee={feeCurrencies[0].gasPriceStep?.high || 0}
+                              handleFeeChange={handleFeeChange}
+                              selectedFeeStep={selectedFeeStep}
+                            />
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex justify-center items-center h-full">
+                    <Image
+                      src={NO_MESSAGES_ILLUSTRATION}
+                      width={200}
+                      height={177}
+                      alt="No Messages"
+                      draggable={false}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
         <div>
           <button
@@ -114,6 +328,36 @@ export const SelectMsgType = ({
           <MenuItem value={MULTISIG_TX_TYPES.undelegate}>Undelegate</MenuItem>
         </Select>
       </FormControl>
+    </div>
+  );
+};
+
+const FeeCard = ({
+  denom,
+  fee,
+  name,
+  handleFeeChange,
+  selectedFeeStep,
+}: {
+  name: string;
+  fee: number;
+  denom: string;
+  handleFeeChange: (feeStep: string, amount: number) => void;
+  selectedFeeStep: string;
+}) => {
+  return (
+    <div
+      onClick={() => handleFeeChange(name, fee)}
+      className={`space-y-4 rounded-lg p-4 bg-[#ffffff0d] cursor-pointer hover:bg-[#ffffff1b] ${selectedFeeStep === name ? 'primary-gradient' : ''}`}
+    >
+      <div className="flex gap-2">
+        <Image src="/low-fee-icon.svg" width={24} height={24} alt="Low" />
+        <div className="">{name}</div>
+      </div>
+      <div className="flex gap-2">
+        <div className="font-bold">{fee || 0}</div>
+        <div className="font-light text-[#ffffff80]">{denom}</div>
+      </div>
     </div>
   );
 };

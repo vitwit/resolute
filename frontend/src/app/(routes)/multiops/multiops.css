@@ -1,0 +1,7 @@
+.msg-amount {
+  @apply text-[14px] font-bold;
+  background-image: linear-gradient(to bottom, #4aa29c, #8b3da7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

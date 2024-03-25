@@ -265,3 +265,10 @@ export const COIN_GECKO_IDS: Record<string, string> = {
   umars: 'Mars Protocol',
   ucmdx: 'cmdx',
 };
+
+export const MULTIOPS_MSG_TYPES = {
+  send: 'Send',
+  delegate: 'Delegate',
+  undelegate: 'Undelegate',
+  redelegate: 'Redelegate',
+};

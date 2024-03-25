@@ -18,7 +18,7 @@ export const selectTxnStyles = {
     fontWeight: 200,
   },
   borderRadius: '8px',
-  mb: '24px',
+  mb: '40px',
 };
 
 export const sendTxnTextFieldStyles = {
@@ -33,14 +33,13 @@ export const sendTxnTextFieldStyles = {
   '& .Mui-disabled': {
     '-webkit-text-fill-color': '#ffffff6b !important',
   },
-  mb: '24px',
-  borderRadius: '16px',
+  borderRadius: '8px',
   '& .MuiOutlinedInput-root': {
     border: '1px solid transparent',
-    borderRadius: '16px',
+    borderRadius: '8px',
   },
   '& .Mui-focused': {
     border: '1px solid #ffffff4a',
-    borderRadius: '16px',
+    borderRadius: '8px',
   },
 };
