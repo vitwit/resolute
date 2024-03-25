@@ -41,7 +41,7 @@ const useAccount = () => {
     chainID: string;
     denom: string;
   }) => {
-    const chainBalances = balances?.[chainID].list || [];
+    const chainBalances = balances?.[chainID]?.list || [];
 
     const balanceInfo = {
       amount: 0,

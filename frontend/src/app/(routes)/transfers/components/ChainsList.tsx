@@ -48,7 +48,7 @@ export default function ChainsList({
   const renderInput = (params: any) => (
     <TextField
       className="bg-[#171328] rounded-2xl drop-down"
-      placeholder="Select"
+      placeholder="Select Network"
       {...params}
       InputProps={{
         ...params.InputProps,

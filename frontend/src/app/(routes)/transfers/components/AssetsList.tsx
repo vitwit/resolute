@@ -42,7 +42,7 @@ export default function AssetsAutocomplete({
   const renderInput = (params: any) => (
     <TextField
       className="bg-[#171328] rounded-2xl drop-down"
-      placeholder="Select"
+      placeholder="Select Asset"
       {...params}
       InputProps={{
         ...params.InputProps,

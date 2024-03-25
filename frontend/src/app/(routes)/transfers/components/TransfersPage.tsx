@@ -49,7 +49,7 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
   };
 
   const tabs = ['Send', 'Multi Send', 'Swap'];
-  const [selectedTab, setSelectedTab] = useState('Swap');
+  const [selectedTab, setSelectedTab] = useState('Send');
 
   return (
     <div className="w-full flex justify-between max-h-screen text-white flex-1">
@@ -58,22 +58,6 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
         <MainTopNav title="Transfers" />
         <AuthzToast chainIDs={chainIDs} margins="mt-10 mb-4" />
         <FeegrantToast chainIDs={chainIDs} margins="mt-10 mb-4" />
-        {/* <div className="flex flex-col rounded-2xl bg-[#0e0b26] space-y-6 mt-6 flex-1">
-          {tab.current === SINGLE_TAB_TEXT ? (
-            <SingleTransfer
-              sortedAssets={isAuthzMode ? authzSortedAssets : sortedAssets}
-              chainIDs={chainIDs}
-              tab={tab}
-              handleTabChange={handleTabChange}
-            />
-          ) : (
-            <MultiTransfer
-              chainID={chainIDs[0]}
-              tab={tab}
-              handleTabChange={handleTabChange}
-            />
-          )}
-        </div> */}
         <div className="flex gap-10 items-center border-b-[1px] border-[#ffffff1e] mt-6">
           {tabs.map((tab) => (
             <div key={tab} className="flex flex-col justify-center">
@@ -83,7 +67,22 @@ const TransfersPage = ({ chainIDs }: { chainIDs: string[] }) => {
                     ? 'send-menu-item font-semibold'
                     : 'send-menu-item font-normal'
                 }
-                onClick={() => setSelectedTab(tab)}
+                onClick={() => {
+                  if (
+                    tab.toLowerCase() === 'multi send' &&
+                    chainIDs.length > 1
+                  ) {
+                    dispatch(
+                      setError({
+                        type: 'error',
+                        message:
+                          'Multi transfer is not available for All networks!',
+                      })
+                    );
+                  } else {
+                    setSelectedTab(tab);
+                  }
+                }}
               >
                 {tab}
               </div>

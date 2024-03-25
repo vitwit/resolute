@@ -26,7 +26,6 @@ const useChain = () => {
     }
     const filteredChain = chains.filter((chain) => chain.chain_id === chainID);
     const chainData = filteredChain[0];
-    console.log('here...', chainData);
     let explorerEndpoint = chainData.explorers?.[0].tx_page || '';
     chainData.explorers?.forEach((explorer) => {
       if (explorer.kind?.includes('mintscan'))

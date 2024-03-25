@@ -27,6 +27,8 @@ import { AssetConfig, ChainConfig } from '@/types/swaps';
 import { TxStatus } from '@/types/enums';
 import { RouteData } from '@0xsquid/sdk';
 import { fromBech32 } from '@cosmjs/encoding';
+import { shortenAddress } from '@/utils/util';
+import { setError } from '@/store/features/common/commonSlice';
 
 const emptyBalance = {
   amount: 0,
@@ -88,6 +90,7 @@ const IBCSwap = () => {
   const [allInputsProvided, setAllInputsProvided] = useState(false);
 
   const handleSelectSourceChain = async (option: ChainConfig | null) => {
+    dispatch(setFromAddress(''));
     dispatch(setSourceChain(option));
 
     setSelectedSourceChainAssets([]);
@@ -97,24 +100,27 @@ const IBCSwap = () => {
     dispatch(setAmountOut(''));
 
     if (option?.chainID) {
+      const { address } = await getAccountAddress(option?.chainID || '');
+      dispatch(setFromAddress(address));
+
       // Select assets based on chainID
       const assets = await getTokensByChainID(option?.chainID || '', true);
       setSelectedSourceChainAssets(assets || []);
 
       setAvailableBalance(emptyBalance);
       const { apis } = getChainEndpoints(option?.chainID || '');
-      const { address } = await getAccountAddress(option?.chainID || '');
-      dispatch(setFromAddress(address));
 
       // To get all asset balances of address using selected chain
-      dispatch(
-        getBalances({
-          address: address,
-          baseURL: apis[0],
-          baseURLs: apis,
-          chainID: option?.chainID,
-        })
-      );
+      if (address?.length) {
+        dispatch(
+          getBalances({
+            address: address,
+            baseURL: apis[0],
+            baseURLs: apis,
+            chainID: option?.chainID,
+          })
+        );
+      }
     }
   };
 
@@ -134,6 +140,7 @@ const IBCSwap = () => {
   };
 
   const handleSelectDestChain = async (option: ChainConfig | null) => {
+    dispatch(setToAddress(''));
     dispatch(setDestAsset(null));
     dispatch(setAmountOut(''));
     dispatch(setDestChain(option));
@@ -227,6 +234,8 @@ const IBCSwap = () => {
         (Number(resAmount) / 10.0 ** (resultDecimals || 1)).toFixed(6)
       );
       dispatch(setAmountOut(parsedDestAmount.toString()));
+    } else if (!Number(amountIn)) {
+      dispatch(setAmountOut('0'));
     }
   };
 
@@ -246,10 +255,8 @@ const IBCSwap = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const value = e.target.value;
-    const isValid = validateAddress(value);
-    if (isValid) {
-      dispatch(setToAddress(value));
-    }
+    validateAddress(value);
+    dispatch(setToAddress(value));
     setReceiverAddress(value);
   };
 
@@ -291,6 +298,15 @@ const IBCSwap = () => {
   }, [toAddress]);
 
   const onTxSwap = async () => {
+    if (otherAddress && addressValidationError) {
+      dispatch(
+        setError({
+          message: addressValidationError,
+          type: 'error',
+        })
+      );
+      return;
+    }
     if (swapRoute && allInputsProvided) {
       const { rpcs } = getChainEndpoints(selectedSourceChain?.chainID || '');
       const { explorerEndpoint } = getExplorerEndpoints(
@@ -329,6 +345,37 @@ const IBCSwap = () => {
     return setAllInputsProvided(false);
   };
 
+  const selectNetworkAlert = () => {
+    dispatch(
+      setError({
+        message: 'Please select a network',
+        type: 'error',
+      })
+    );
+  };
+
+  const connectSourceWallet = async () => {
+    if (selectedSourceChain) {
+      const { address } = await getAccountAddress(
+        selectedSourceChain?.chainID || ''
+      );
+      dispatch(setFromAddress(address));
+    } else {
+      selectNetworkAlert();
+    }
+  };
+
+  const connectDestWallet = async () => {
+    if (selectedDestChain) {
+      const { address } = await getAccountAddress(
+        selectedDestChain?.chainID || ''
+      );
+      dispatch(setToAddress(address));
+    } else {
+      selectNetworkAlert();
+    }
+  };
+
   useEffect(() => {
     validateAllInputs();
   }, [
@@ -348,7 +395,7 @@ const IBCSwap = () => {
   }, [otherAddress]);
 
   useEffect(() => {
-    if (!otherAddress) {
+    if (!otherAddress && !addressValidationError) {
       fetchSwapRoute();
     }
   }, [otherAddress, toAddress]);
@@ -357,7 +404,23 @@ const IBCSwap = () => {
     <div className="flex justify-center">
       <div className="bg-[#FFFFFF0D] rounded-2xl p-6 flex flex-col justify-between items-center gap-6 min-w-[550px]">
         <div className="bg-[#FFFFFF0D] rounded-2xl p-4 flex flex-col gap-4 w-full">
-          <div className="text-[16px]">From</div>
+          <div className="flex justify-between items-center">
+            <div className="text-[16px]">From</div>
+            <div>
+              {fromAddress ? (
+                <div className="bg-[#2E2B3E] text-[14px] px-3 py-1 rounded-full font-light">
+                  {shortenAddress(fromAddress, 20)}
+                </div>
+              ) : (
+                <button
+                  className="primary-gradient text-[14px] rounded-full px-3 py-1"
+                  onClick={connectSourceWallet}
+                >
+                  Connect Wallet
+                </button>
+              )}
+            </div>
+          </div>
           <div className="space-y-2">
             <div className="text-[14px] font-extralight">Select Asset *</div>
             <div className="flex justify-between gap-4">
@@ -431,7 +494,23 @@ const IBCSwap = () => {
           <Image src="/ibc-swap-icon.svg" width={40} height={40} alt="Swap" />
         </div>
         <div className="bg-[#FFFFFF0D] rounded-2xl p-4 flex flex-col gap-4 w-full">
-          <div className="text-[16px]">To</div>
+          <div className="flex justify-between items-center">
+            <div className="text-[16px]">To</div>
+            <div className={`${otherAddress ? 'invisible' : 'visible'}`}>
+              {toAddress ? (
+                <div className="bg-[#2E2B3E] text-[14px] px-3 py-1 rounded-full font-light">
+                  {shortenAddress(toAddress, 20)}
+                </div>
+              ) : (
+                <button
+                  className="primary-gradient text-[14px] rounded-full px-3 py-1"
+                  onClick={connectDestWallet}
+                >
+                  Connect Wallet
+                </button>
+              )}
+            </div>
+          </div>
           <div className="space-y-2">
             <div className="text-[14px] font-extralight">Select Asset *</div>
             <div className="flex justify-between gap-4">
