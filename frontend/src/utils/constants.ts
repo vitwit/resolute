@@ -234,6 +234,7 @@ export const ALERT_TYPE_MAP: Record<string, string> = {
   info: 'info',
 };
 export const WITVAL = 'witval';
+export const VITWIT = 'vitwit';
 export const POLYGON_API = 'https://staking-api.polygon.technology/api/v2';
 
 export const POLYGON_CONFIG = {
@@ -257,4 +258,10 @@ export const OASIS_CONFIG = {
     commission: 19,
     operatorAddress: 'oasis1qzc687uuywnel4eqtdn6x3t9hkdvf6sf2gtv4ye9',
   },
+};
+
+export const COIN_GECKO_IDS: Record<string, string> = {
+  ubld: 'BLD',
+  umars: 'Mars Protocol',
+  ucmdx: 'cmdx',
 };

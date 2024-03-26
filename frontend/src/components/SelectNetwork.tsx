@@ -47,7 +47,7 @@ const SelectNetwork = ({ message }: { message?: string }) => {
 
   useEffect(() => {
     const pathParts = pathName.split('/') || [];
-    if (pathParts.includes('validator') && pathParts.includes('staking')) {
+    if (pathParts.includes('validator')) {
       dispatch(setSelectedNetwork({ chainName: '' }));
     } else if (pathParts.length >= 3) {
       dispatch(setSelectedNetwork({ chainName: pathParts[2].toLowerCase() }));
@@ -274,9 +274,12 @@ const NetworkItem = ({
   const isSelected = (): boolean => {
     return selectedNetworkName.toLowerCase() === chainName.toLowerCase();
   };
+  const routePath = pathName.toLowerCase().includes('/validator')
+    ? '/staking'
+    : pathName;
   return (
     <Link
-      href={changeNetworkRoute(pathName, chainName)}
+      href={changeNetworkRoute(routePath, chainName)}
       onClick={() => {
         dispatch(setSelectedNetwork({ chainName: chainName.toLowerCase() }));
         handleClose();
