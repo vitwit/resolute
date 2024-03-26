@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import SelectTransactionType from './SelectTransactionType';
 import {
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -25,6 +26,12 @@ import MessagesList from './MessagesList';
 import SendMessage from './Messages/SendMessage';
 import Image from 'next/image';
 import { Controller, useForm } from 'react-hook-form';
+import { fee } from '@/txns/execute';
+import {
+  resetTx,
+  txExecuteMultiMsg,
+} from '@/store/features/multiops/multiopsSlice';
+import { TxStatus } from '@/types/enums';
 
 const TxnBuilder = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
@@ -34,13 +41,20 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
     { typeUrl: '/cosmos.bank.v1beta1.MsgSend', value: {} },
   ]);
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
+  const basicChainInfo = getChainInfo(chainID);
   const {
     address,
     baseURL,
     restURLs: baseURLs,
     feeAmount,
     feeCurrencies,
-  } = getChainInfo(chainID);
+    prefix,
+    rest,
+    rpc,
+  } = basicChainInfo;
+
+  const txStatus = useAppSelector((state) => state.multiops.tx.status);
+
   const onSelect = (value: boolean) => {
     setIsFileUpload(value);
   };
@@ -64,14 +78,8 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
     setMessages(arr);
   };
 
-  const {
-    handleSubmit,
-    control,
-    reset: resetForm,
-    setValue,
-  } = useForm({
+  const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
-      msgs: [],
       gas: 900000,
       memo: '',
       fees: feeAmount * 10 ** currency.coinDecimals,
@@ -82,6 +90,26 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
   const handleFeeChange = (feeStep: string, amount: number) => {
     setSelectedFeeStep(feeStep);
     setValue('fees', amount * 100 ** currency.coinDecimals);
+  };
+
+  const onSubmit = (data: { gas: number; memo: string; fees: number }) => {
+    console.log(data.fees)
+    dispatch(
+      txExecuteMultiMsg({
+        basicChainInfo,
+        aminoConfig: basicChainInfo.aminoConfig,
+        chainID,
+        denom: currency.coinMinimalDenom,
+        feeAmount: data.fees,
+        feegranter: '',
+        memo: data.memo,
+        msgs: messages,
+        prefix,
+        rest,
+        rpc,
+        gas: data.gas,
+      })
+    );
   };
 
   useEffect(() => {
@@ -104,6 +132,10 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
       );
     }
   }, [address]);
+
+  useEffect(() => {
+    dispatch(resetTx());
+  }, []);
 
   return (
     <div className="h-full flex flex-col gap-6">
@@ -170,7 +202,11 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                       onDeleteMsg={onDeleteMsg}
                     />
                     <div>
-                      <form action="" className="space-y-4">
+                      <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="space-y-4"
+                        id="multiops-form"
+                      >
                         <div className="flex gap-6">
                           <div className="flex-1 space-y-2">
                             <div className="text-[14px] font-extralight">
@@ -242,6 +278,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                               fee={feeCurrencies[0].gasPriceStep?.low || 0}
                               handleFeeChange={handleFeeChange}
                               selectedFeeStep={selectedFeeStep}
+                              icon="/low-fee-icon.svg"
                             />
                             <FeeCard
                               name="average"
@@ -249,6 +286,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                               fee={feeCurrencies[0].gasPriceStep?.average || 0}
                               handleFeeChange={handleFeeChange}
                               selectedFeeStep={selectedFeeStep}
+                              icon="/average-fee-icon.svg"
                             />
                             <FeeCard
                               name="high"
@@ -256,6 +294,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                               fee={feeCurrencies[0].gasPriceStep?.high || 0}
                               handleFeeChange={handleFeeChange}
                               selectedFeeStep={selectedFeeStep}
+                              icon="/high-fee-icon.svg"
                             />
                           </div>
                         </div>
@@ -279,10 +318,16 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
         </div>
         <div>
           <button
-            type="button"
+            type="submit"
+            form="multiops-form"
             className="w-full text-[12px] font-medium primary-gradient rounded-lg h-10 flex justify-center items-center"
+            disabled={txStatus === TxStatus.PENDING}
           >
-            Execute Transaction
+            {txStatus === TxStatus.PENDING ? (
+              <CircularProgress size={12} sx={{ color: 'white' }} />
+            ) : (
+              'Execute Transaction'
+            )}
           </button>
         </div>
       </div>
@@ -338,12 +383,14 @@ const FeeCard = ({
   name,
   handleFeeChange,
   selectedFeeStep,
+  icon,
 }: {
   name: string;
   fee: number;
   denom: string;
   handleFeeChange: (feeStep: string, amount: number) => void;
   selectedFeeStep: string;
+  icon: string;
 }) => {
   return (
     <div
@@ -351,8 +398,14 @@ const FeeCard = ({
       className={`space-y-4 rounded-lg p-4 bg-[#ffffff0d] cursor-pointer hover:bg-[#ffffff1b] ${selectedFeeStep === name ? 'primary-gradient' : ''}`}
     >
       <div className="flex gap-2">
-        <Image src="/low-fee-icon.svg" width={24} height={24} alt="Low" />
-        <div className="">{name}</div>
+        <Image
+          className="bg-[#ffffff0d] rounded-md"
+          src={icon}
+          width={24}
+          height={24}
+          alt="Low"
+        />
+        <div className="capitalize">{name}</div>
       </div>
       <div className="flex gap-2">
         <div className="font-bold">{fee || 0}</div>
