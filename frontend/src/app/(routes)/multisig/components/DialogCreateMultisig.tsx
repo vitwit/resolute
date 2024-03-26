@@ -8,8 +8,6 @@ import Image from 'next/image';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { setError } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import Axios from 'axios';
-import { cleanURL } from '@/utils/util';
 import {
   generateMultisigAccount,
   isValidPubKey,

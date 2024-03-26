@@ -1,7 +1,5 @@
 import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
-import { cleanURL } from '@/utils/util';
-import Axios from 'axios';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const useGetPubkey = () => {
   const [pubkeyLoading, setPubkeyLoading] = useState(false);
