@@ -306,6 +306,14 @@ const IBCSwap = () => {
         })
       );
       return;
+    } else if (otherAddress && !receiverAddress.length) {
+      dispatch(
+        setError({
+          message: 'Please enter the recipient address',
+          type: 'error',
+        })
+      );
+      return;
     }
     if (swapRoute && allInputsProvided) {
       const { rpcs } = getChainEndpoints(selectedSourceChain?.chainID || '');
