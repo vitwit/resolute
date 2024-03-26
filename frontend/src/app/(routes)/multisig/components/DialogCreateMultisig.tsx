@@ -8,8 +8,6 @@ import Image from 'next/image';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { setError } from '@/store/features/common/commonSlice';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import Axios from 'axios';
-import { cleanURL } from '@/utils/util';
 import {
   generateMultisigAccount,
   isValidPubKey,
@@ -44,26 +42,10 @@ import { fromBech32 } from '@cosmjs/encoding';
 import { DialogCreateMultisigProps, PubKeyFields } from '@/types/multisig';
 import MultisigMemberTextField from './MultisigMemberTextField';
 import { MULTISIG_PUBKEY_OBJECT } from '@/utils/constants';
+import useGetPubkey from '@/custom-hooks/useGetPubkey';
 
 const MAX_PUB_KEYS = 7;
 const MULTISIG_NAME_MAX_LENGTH = 100;
-
-const getPubkey = async (address: string, baseURL: string) => {
-  try {
-    const { status, data } = await Axios.get(
-      `${cleanURL(baseURL)}/cosmos/auth/v1beta1/accounts/${address}`
-    );
-
-    if (status === 200) {
-      return data.account.pub_key.key || '';
-    } else {
-      return '';
-    }
-  } catch (error) {
-    console.log(error);
-    return '';
-  }
-};
 
 const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
   const { open, onClose, address, addressPrefix, chainID, pubKey, baseURLs } =
@@ -78,6 +60,8 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
   const [multisigAddress, setMultisigAddress] = useState('');
   const [addressValidationError, setAddressValidationError] = useState('');
 
+  const { getPubkey, pubkeyLoading } = useGetPubkey();
+
   const createMultiAccRes = useAppSelector(
     (state: RootState) => state.multisig.createMultisigAccountRes
   );
@@ -85,13 +69,14 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     (state: RootState) => state.multisig.multisigAccountData
   );
 
-  const pubKeyObj = {...MULTISIG_PUBKEY_OBJECT};
+  const pubKeyObj = { ...MULTISIG_PUBKEY_OBJECT };
 
   useEffect(() => {
     setDefaultFormValues();
   }, [pubKey]);
 
   const setDefaultFormValues = () => {
+    //By default current account is added
     setPubKeyFields([
       {
         name: 'current',
@@ -101,7 +86,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
         required: true,
         disabled: true,
         pubKey: pubKey,
-        address: '',
+        address: address,
         isPubKey: true,
         error: '',
       },
@@ -212,7 +197,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     let isValid = true;
     const pubKeyValidationPromises = pubKeyFields.map(async (field, index) => {
       if (!field.isPubKey) {
-        const pubKey = await getPubkey(field.address, baseURLs?.[0]);
+        const pubKey = await getPubkey(field.address, baseURLs);
         if (pubKey.length) {
           return { index, pubKey, error: '' };
         } else {
@@ -301,7 +286,7 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
     if (createMultiAccRes?.status === 'idle') {
       const message = importMultisig
         ? 'Successfully Imported'
-        : ' Successfully Create';
+        : ' Successfully Created';
       resetCreateMultisig();
       dispatch(setError({ type: 'success', message: message }));
     } else if (createMultiAccRes?.status === 'rejected') {
@@ -524,17 +509,33 @@ const DialogCreateMultisig: React.FC<DialogCreateMultisigProps> = (props) => {
                     </div>
                   </div>
                   <div>{formError}</div>
-                  <button
-                    disabled={createMultiAccRes?.status === 'pending'}
-                    className="create-account-btn min-w-[144px]"
-                    type="submit"
-                  >
-                    {createMultiAccRes?.status === 'pending' ? (
-                      <CircularProgress size={16} sx={{ color: 'white' }} />
-                    ) : (
-                      <>{importMultisig ? 'Import' : 'Create'}</>
-                    )}
-                  </button>
+                  <div className="flex gap-4 items-center">
+                    <button
+                      disabled={createMultiAccRes?.status === 'pending'}
+                      className="create-account-btn min-w-[144px]"
+                      type="submit"
+                    >
+                      {createMultiAccRes?.status === 'pending' ||
+                      pubkeyLoading ? (
+                        <CircularProgress size={16} sx={{ color: 'white' }} />
+                      ) : (
+                        <>{importMultisig ? 'Import' : 'Create'}</>
+                      )}
+                    </button>
+                    <div className="italic font-light">
+                      {pubkeyLoading ? (
+                        <div>
+                          <span>Validating inputs</span>
+                          <span className="dots-flashing"></span>
+                        </div>
+                      ) : createMultiAccRes?.status === 'pending' ? (
+                        <div>
+                          <span>Creating multisig account</span>
+                          <span className="dots-flashing"></span>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
                 </form>
                 {!importMultisig ? (
                   <div className="create-multisig-dialog-footer">
