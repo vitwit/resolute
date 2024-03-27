@@ -6,7 +6,7 @@ import React from 'react';
 const UndelegateMessage: React.FC<TxnMsgProps> = (props) => {
   const { msg, index, currency, onDelete } = props;
   return (
-    <div className="flex justify-between items-center text-[14px] font-extralight">
+    <div className="flex justify-between items-center text-[14px]">
       <div className="flex gap-2">
         <Image
           className="bg-[#FFFFFF1A] rounded-lg"
