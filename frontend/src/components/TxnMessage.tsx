@@ -150,7 +150,7 @@ const TxnMessage = ({
                 <span>
                   {failed
                     ? 'while ' + MAP_TXN_TYPES[msgs[0]?.typeUrl][1]
-                    : MAP_TXN_TYPES[msgs[0]?.typeUrl][1]}
+                    : MAP_TXN_TYPES[msgs[0]?.typeUrl][0]}
                 </span>
               </div>
             </div>

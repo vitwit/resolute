@@ -27,13 +27,13 @@ interface UnDelegateProps {
   feeAmount: number;
 }
 
-const getParsedAmount = (amount: string) => {
+export const getParsedAmount = (amount: string) => {
   const parsedAmount = parseFloat(amount);
   if (isNaN(parsedAmount)) return 0;
   return parsedAmount;
 };
 
-const getFormattedAmount = (amount: string): string => {
+export const getFormattedAmount = (amount: string): string => {
   const parsedAmount = getParsedAmount(amount);
   if (parsedAmount < 0.01) return '< 0.01';
   return parsedAmount.toString();

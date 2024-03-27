@@ -1,5 +1,6 @@
 import {
   DELEGATE_TYPE_URL,
+  REDELEGATE_TYPE_URL,
   SEND_TYPE_URL,
   UNDELEGATE_TYPE_URL,
 } from '@/utils/constants';
@@ -9,6 +10,7 @@ import { paginationComponentStyles } from '../../staking/styles';
 import SendMessage from './Messages/SendMessage';
 import DelegateMessage from './Messages/DelegateMessage';
 import UndelegateMessage from './Messages/UndelegateMessage';
+import RedelegateMessage from './Messages/RedelegateMessage';
 
 const PER_PAGE = 4;
 
@@ -25,6 +27,8 @@ const renderMessage = (
       return DelegateMessage({ msg, index, currency, onDelete });
     case UNDELEGATE_TYPE_URL:
       return UndelegateMessage({ msg, index, currency, onDelete });
+    case REDELEGATE_TYPE_URL:
+      return RedelegateMessage({ msg, index, currency, onDelete });
     default:
       return '';
   }

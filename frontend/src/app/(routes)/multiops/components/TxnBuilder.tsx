@@ -31,6 +31,7 @@ import {
 import { TxStatus } from '@/types/enums';
 import Delegate from './Messages/Delegate';
 import Undelegate from './Messages/Undelegate';
+import Redelegate from './Messages/Redelegate';
 
 const TxnBuilder = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
@@ -199,6 +200,18 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                       chainID={chainID}
                       currency={currency}
                       onUndelegate={(payload) => {
+                        setMessages([...messages, payload]);
+                      }}
+                      baseURLs={baseURLs}
+                      feeAmount={feeAmount}
+                    />
+                  ) : null}
+                  {msgType === MULTIOPS_MSG_TYPES.redelegate ? (
+                    <Redelegate
+                      address={address}
+                      chainID={chainID}
+                      currency={currency}
+                      onRedelegate={(payload) => {
                         setMessages([...messages, payload]);
                       }}
                       baseURLs={baseURLs}
