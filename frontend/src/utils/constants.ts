@@ -228,6 +228,7 @@ export const AXIOS_RETRIES_COUNT = 2;
 export const MAX_TRY_END_POINTS = 20;
 export const NO_FEEGRANTS_BY_ME_TEXT = "You haven't granted any allowance yet";
 export const NO_FEEGRANTS_TO_ME_TEXT = "You don't have any feegrants";
+export const SQUID_ID = process.env.NEXT_PUBLIC_SQUID_ID || '';
 export const ALERT_TYPE_MAP: Record<string, string> = {
   success: 'success',
   error: 'error',
@@ -265,3 +266,5 @@ export const COIN_GECKO_IDS: Record<string, string> = {
   umars: 'Mars Protocol',
   ucmdx: 'cmdx',
 };
+
+export const SWAP_ROUTE_ERROR = 'Failed to fetch routes.';
