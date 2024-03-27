@@ -114,6 +114,7 @@ const Send: React.FC<SendProps> = (props) => {
               <TextField
                 className="bg-[#FFFFFF0D]"
                 {...field}
+                required
                 sx={sendTxnTextFieldStyles}
                 placeholder="Recipient"
                 fullWidth

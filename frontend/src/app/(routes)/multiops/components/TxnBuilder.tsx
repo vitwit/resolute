@@ -34,9 +34,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
   const [isFileUpload, setIsFileUpload] = useState<boolean>(false);
   const [msgType, setMsgType] = useState('Send');
-  const [messages, setMessages] = useState<Msg[]>([
-    { typeUrl: '/cosmos.bank.v1beta1.MsgSend', value: {} },
-  ]);
+  const [messages, setMessages] = useState<Msg[]>([]);
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const basicChainInfo = getChainInfo(chainID);
   const {
