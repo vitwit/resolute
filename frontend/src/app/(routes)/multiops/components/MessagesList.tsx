@@ -1,5 +1,6 @@
 import {
   DELEGATE_TYPE_URL,
+  DEPOSIT_TYPE_URL,
   REDELEGATE_TYPE_URL,
   SEND_TYPE_URL,
   UNDELEGATE_TYPE_URL,
@@ -13,6 +14,7 @@ import DelegateMessage from './Messages/DelegateMessage';
 import UndelegateMessage from './Messages/UndelegateMessage';
 import RedelegateMessage from './Messages/RedelegateMessage';
 import VoteMessage from './Messages/VoteMessage';
+import DepositMessage from './Messages/DepositMessage';
 
 const PER_PAGE = 4;
 
@@ -33,6 +35,8 @@ const renderMessage = (
       return RedelegateMessage({ msg, index, currency, onDelete });
     case VOTE_TYPE_URL:
       return VoteMessage({ msg, index, onDelete });
+    case DEPOSIT_TYPE_URL:
+      return DepositMessage({ msg, index, currency, onDelete });
     default:
       return '';
   }

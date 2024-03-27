@@ -28,7 +28,7 @@ const VoteMessage: React.FC<VoteMessageProps> = (props) => {
           draggable={false}
         />
         <div className="truncate max-w-[280px]">
-          <span>Send&nbsp;</span>
+          <span>Vote&nbsp;</span>
           <span className="msg-amount">
             {voteOptions?.[msg.value.option.toString()]}
           </span>

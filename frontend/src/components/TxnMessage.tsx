@@ -68,9 +68,7 @@ const TxnMessage = ({
                   />
                 </div>
               </span>
-              {msgs.length > 1 ? (
-                <span className="more-msgs">+{msgs.length - 1}</span>
-              ) : null}
+              <MoreMessages msgs={msgs} />
             </div>
           ) : null}
           {msgs[0]?.typeUrl === DELEGATE_TYPE_URL ? (
@@ -103,6 +101,7 @@ const TxnMessage = ({
                   />
                 </div>
               </span>
+              <MoreMessages msgs={msgs} />
             </div>
           ) : null}
           {msgs[0]?.typeUrl === UNDELEGATE_TYPE_URL ? (
@@ -140,6 +139,7 @@ const TxnMessage = ({
                   />
                 </div>
               </span>
+              <MoreMessages msgs={msgs} />
             </div>
           ) : null}
           {msgs[0]?.typeUrl === REDELEGATE_TYPE_URL ? (
@@ -153,6 +153,7 @@ const TxnMessage = ({
                     : MAP_TXN_TYPES[msgs[0]?.typeUrl][0]}
                 </span>
               </div>
+              <MoreMessages msgs={msgs} />
             </div>
           ) : null}
           {msgs[0]?.typeUrl === VOTE_TYPE_URL ? (
@@ -168,6 +169,7 @@ const TxnMessage = ({
                 <span> on </span>
                 <span>proposal #{parseInt(msgs[0]?.value.proposalId)}</span>
               </div>
+              <MoreMessages msgs={msgs} />
             </div>
           ) : null}
           {msgs[0]?.typeUrl === DEPOSIT_TYPE_URL ? (
@@ -182,6 +184,7 @@ const TxnMessage = ({
                 </span>
                 <span> on proposal #{parseInt(msgs[0]?.value.proposalId)}</span>
               </div>
+              <MoreMessages msgs={msgs} />
             </div>
           ) : null}
           {msgs[0]?.typeUrl === IBC_SEND_TYPE_URL ? (
@@ -214,6 +217,7 @@ const TxnMessage = ({
                   />
                 </div>
               </span>
+              <MoreMessages msgs={msgs} />
             </div>
           ) : null}
         </div>
@@ -223,3 +227,13 @@ const TxnMessage = ({
 };
 
 export default TxnMessage;
+
+const MoreMessages = ({ msgs }: { msgs: Msg[] }) => {
+  return (
+    <>
+      {msgs.length > 1 ? (
+        <span className="more-msgs">+{msgs.length - 1}</span>
+      ) : null}
+    </>
+  );
+};
