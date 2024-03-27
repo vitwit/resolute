@@ -8,7 +8,7 @@ const Multiops = () => {
     'All Networks page is not supported for Multiops, Please select a network.';
   return (
     <div className="h-screen flex flex-col p-6 pl-10">
-      <div className="w-full flex justify-between">
+      <div className="w-full flex justify-between items-center">
         <h2 className="text-[20px] leading-normal font-normal">Multiops</h2>
         <TopNav message={message} />
       </div>

@@ -43,3 +43,34 @@ export const sendTxnTextFieldStyles = {
     borderRadius: '8px',
   },
 };
+
+export const textFieldStyles = {
+  '& .MuiTypography-body1': {
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: 200,
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
+  '& .MuiOutlinedInput-root': {
+    border: '1px solid transparent',
+    borderRadius: '16px',
+  },
+  '& .Mui-focused': {
+    border: '1px solid #ffffff4a',
+    borderRadius: '16px',
+  },
+};
+
+export const textFieldInputPropStyles = {
+  input: {
+    color: 'white',
+    fontSize: '14px',
+    padding: 2,
+  },
+  'input[type=number]::-webkit-inner-spin-button ': {
+    WebkitAppearance: 'none',
+    appearance: 'none',
+  },
+};

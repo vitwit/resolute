@@ -1,8 +1,6 @@
-import { NO_MESSAGES_ILLUSTRATION, SEND_TYPE_URL } from '@/utils/constants';
+import { SEND_TYPE_URL } from '@/utils/constants';
 import { Pagination } from '@mui/material';
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import { Controller } from 'react-hook-form';
 import { paginationComponentStyles } from '../../staking/styles';
 import SendMessage from './Messages/SendMessage';
 

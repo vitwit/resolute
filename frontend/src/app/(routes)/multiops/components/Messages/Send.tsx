@@ -2,20 +2,25 @@ import { InputAdornment, TextField } from '@mui/material';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { fromBech32 } from '@cosmjs/encoding';
-import { formatCoin } from '@/utils/util';
 import { Decimal } from '@cosmjs/math';
 import { INSUFFICIENT_BALANCE } from '@/utils/errors';
-import { sendTxnTextFieldStyles } from '../../styles';
+import {
+  sendTxnTextFieldStyles,
+  textFieldInputPropStyles,
+  textFieldStyles,
+} from '../../styles';
 
 interface SendProps {
   address: string;
   onSend: (payload: Msg) => void;
   currency: Currency;
   availableBalance: number;
+  feeAmount: number;
 }
 
 const Send: React.FC<SendProps> = (props) => {
-  const { address, onSend, currency, availableBalance } = props;
+  const { address, onSend, currency, availableBalance, feeAmount } = props;
+
   const {
     handleSubmit,
     control,
@@ -23,14 +28,14 @@ const Send: React.FC<SendProps> = (props) => {
     setValue,
   } = useForm({
     defaultValues: {
-      amount: 0,
+      amount: '',
       recipient: '',
       from: address,
     },
   });
 
   const onSubmit = (data: {
-    amount: number;
+    amount: string;
     recipient: string;
     from: string;
   }) => {
@@ -60,7 +65,7 @@ const Send: React.FC<SendProps> = (props) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col justify-between gap-10"
+      className="flex flex-col justify-between"
     >
       <div className="space-y-2">
         <div className="text-[14px] font-extralight">Address</div>
@@ -88,7 +93,7 @@ const Send: React.FC<SendProps> = (props) => {
           )}
         />
       </div>
-      <div className="space-y-2">
+      <div className="space-y-2 mt-12">
         <div className="text-[14px] font-extralight">Recepient Address</div>
         <div>
           <Controller
@@ -140,14 +145,14 @@ const Send: React.FC<SendProps> = (props) => {
           </div>
         </div>
       </div>
-      {/* <div
-        className="mb-1 text-[12px] text-[#FFFFFF80] text-right cursor-pointer hover:underline underline-offset-2"
-        onClick={() => setValue('amount', availableBalance)}
-      >
-        {formatCoin(availableBalance, currency.coinDenom)}
-      </div> */}
-      <div className="space-y-2">
-        <div className="text-[14px] font-extralight">Enter Amount</div>
+      <div className="space-y-2 mt-[14px]">
+        <div className="flex justify-between text-[14px] font-extralight">
+          <div>Enter Amount</div>
+          <div>
+            Available Balance: <span>{availableBalance}</span>{' '}
+            {currency.coinDenom}
+          </div>
+        </div>
         <div>
           <Controller
             name="amount"
@@ -160,27 +165,56 @@ const Send: React.FC<SendProps> = (props) => {
                 if (amount > availableBalance) return INSUFFICIENT_BALANCE;
               },
             }}
-            render={({ field, fieldState: { error } }) => (
+            render={({ field }) => (
               <TextField
-                className="bg-[#FFFFFF0D]"
+                className="bg-[#FFFFFF0D] rounded-2xl"
                 {...field}
-                sx={sendTxnTextFieldStyles}
-                error={!!error}
-                placeholder="Amount"
+                required
                 fullWidth
+                type="number"
+                size="small"
+                autoFocus={true}
+                placeholder="Enter Amount Here"
+                sx={textFieldStyles}
                 InputProps={{
                   endAdornment: (
-                    <InputAdornment position="start">
-                      {currency.coinDenom}
-                    </InputAdornment>
+                    <div className="flex p-2 items-center gap-6">
+                      <div className="flex gap-6">
+                        <button
+                          type="button"
+                          className="amount-options px-4 py-2 amount-options-default"
+                          onClick={() => {
+                            const amount = availableBalance;
+                            let halfAmount =
+                              Math.max(0, (amount || 0) - feeAmount) / 2;
+                            halfAmount = +halfAmount.toFixed(6);
+                            setValue('amount', halfAmount.toString());
+                          }}
+                        >
+                          Half
+                        </button>
+                        <button
+                          type="button"
+                          className="amount-options px-4 py-2 amount-options-default"
+                          onClick={() => {
+                            const amount = availableBalance;
+                            let maxAmount = Math.max(
+                              0,
+                              (amount || 0) - feeAmount
+                            );
+                            maxAmount = +maxAmount.toFixed(6);
+                            setValue('amount', maxAmount.toString());
+                          }}
+                        >
+                          Max
+                        </button>
+                      </div>
+                      <InputAdornment position="start" className="w-[30px]">
+                        {currency.coinDenom}
+                      </InputAdornment>
+                    </div>
                   ),
-                  sx: {
-                    input: {
-                      color: 'white',
-                      fontSize: '14px',
-                      padding: 2,
-                    },
-                  },
+                  sx: textFieldInputPropStyles,
                 }}
               />
             )}
@@ -200,7 +234,7 @@ const Send: React.FC<SendProps> = (props) => {
       </div>
       <button
         type="submit"
-        className="w-full text-[12px] font-medium primary-gradient rounded-lg h-8 flex justify-center items-center"
+        className="mt-[14px] w-full text-[12px] font-medium primary-gradient rounded-lg h-8 flex justify-center items-center"
       >
         Add
       </button>

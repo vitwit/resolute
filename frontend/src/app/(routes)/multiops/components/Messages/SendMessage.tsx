@@ -1,5 +1,4 @@
 import { parseBalance } from '@/utils/denom';
-import { shortenAddress } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 

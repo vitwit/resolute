@@ -14,7 +14,6 @@ import {
   MULTIOPS_MSG_TYPES,
   MULTISIG_TX_TYPES,
   NO_MESSAGES_ILLUSTRATION,
-  SEND_TYPE_URL,
 } from '@/utils/constants';
 import { selectTxnStyles, sendTxnTextFieldStyles } from '../styles';
 import Send from './Messages/Send';
@@ -23,10 +22,8 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { parseBalance } from '@/utils/denom';
 import { getBalances } from '@/store/features/bank/bankSlice';
 import MessagesList from './MessagesList';
-import SendMessage from './Messages/SendMessage';
 import Image from 'next/image';
 import { Controller, useForm } from 'react-hook-form';
-import { fee } from '@/txns/execute';
 import {
   resetTx,
   txExecuteMultiMsg,
@@ -93,7 +90,6 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
   };
 
   const onSubmit = (data: { gas: number; memo: string; fees: number }) => {
-    console.log(data.fees)
     dispatch(
       txExecuteMultiMsg({
         basicChainInfo,
@@ -182,6 +178,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                         }}
                         availableBalance={availableBalance}
                         currency={currency}
+                        feeAmount={feeAmount}
                       />
                     </>
                   ) : null}
