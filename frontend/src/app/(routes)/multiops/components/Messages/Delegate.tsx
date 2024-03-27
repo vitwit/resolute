@@ -6,17 +6,13 @@ import { Decimal } from '@cosmjs/math';
 import {
   Autocomplete,
   CircularProgress,
-  InputAdornment,
   Paper,
   TextField,
 } from '@mui/material';
-import { formatCoin } from '@/utils/util';
 import {
   autoCompleteStyles,
   autoCompleteTextFieldStyles,
-  textFieldStyles,
 } from '../../styles';
-import { INSUFFICIENT_BALANCE } from '@/utils/errors';
 import { getAllValidators } from '@/store/features/staking/stakeSlice';
 import AddressField from '../AddressField';
 import AmountInputField from '../AmountInputField';

@@ -1,7 +1,7 @@
 import { INSUFFICIENT_BALANCE } from '@/utils/errors';
 import { InputAdornment, TextField } from '@mui/material';
 import React from 'react';
-import { Control, Controller, FieldErrors } from 'react-hook-form';
+import { Control, Controller } from 'react-hook-form';
 import { textFieldInputPropStyles, textFieldStyles } from '../styles';
 
 interface AmountInputFieldProps {

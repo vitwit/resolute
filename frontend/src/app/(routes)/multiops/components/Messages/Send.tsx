@@ -1,14 +1,9 @@
-import { InputAdornment, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { fromBech32 } from '@cosmjs/encoding';
 import { Decimal } from '@cosmjs/math';
-import { INSUFFICIENT_BALANCE } from '@/utils/errors';
-import {
-  sendTxnTextFieldStyles,
-  textFieldInputPropStyles,
-  textFieldStyles,
-} from '../../styles';
+import { sendTxnTextFieldStyles } from '../../styles';
 import AddressField from '../AddressField';
 import AmountInputField from '../AmountInputField';
 
