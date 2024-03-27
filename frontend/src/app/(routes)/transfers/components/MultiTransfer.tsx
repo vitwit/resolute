@@ -134,7 +134,7 @@ const MultiTransfer = ({
               </div>
               <CustomSubmitButton
                 pendingStatus={txPendingStatus === TxStatus.PENDING}
-                circularProgressSize={12}
+                circularProgressSize={20}
                 buttonStyle="primary-custom-btn w-[144px]"
                 buttonContent="Send"
               />
