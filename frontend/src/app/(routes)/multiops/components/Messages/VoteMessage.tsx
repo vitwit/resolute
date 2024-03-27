@@ -1,33 +1,40 @@
-import { parseBalance } from '@/utils/denom';
 import Image from 'next/image';
 import React from 'react';
 
-const DelegateMessage = (props: TxnMsgProps) => {
-  const { msg, index, currency, onDelete } = props;
+interface VoteMessageProps {
+  msg: Msg;
+  onDelete: (index: number) => void;
+  index: number;
+}
+
+const voteOptions: Record<string, string> = {
+  '1': 'Yes',
+  '2': 'Abstain',
+  '3': 'No',
+  '4': 'No With Veto',
+};
+
+const VoteMessage: React.FC<VoteMessageProps> = (props) => {
+  const { msg, index, onDelete } = props;
   return (
     <div className="flex justify-between items-center text-[14px]">
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2">
         <Image
           className="bg-[#FFFFFF1A] rounded-lg"
           src="/solid-arrow-icon.svg"
           height={24}
           width={24}
-          alt=""
+          alt={index.toString()}
           draggable={false}
         />
-        <div className="truncate">
-          <span>Delegate&nbsp;</span>
+        <div className="truncate max-w-[280px]">
+          <span>Send&nbsp;</span>
           <span className="msg-amount">
-            {parseBalance(
-              [msg.value.amount],
-              currency.coinDecimals,
-              currency.coinMinimalDenom
-            )}
-            &nbsp;
-            {currency.coinDenom}&nbsp;
+            {voteOptions?.[msg.value.option.toString()]}
           </span>
-          <span>to&nbsp;</span>
-          <span className="font-extralight">{msg.value.validatorAddress}</span>
+          <span>&nbsp;on&nbsp;</span>
+          <span className="font-extralight">proposal&nbsp;</span>
+          <span>#{msg.value.proposalId}</span>
         </div>
       </div>
       {onDelete ? (
@@ -45,4 +52,4 @@ const DelegateMessage = (props: TxnMsgProps) => {
   );
 };
 
-export default DelegateMessage;
+export default VoteMessage;

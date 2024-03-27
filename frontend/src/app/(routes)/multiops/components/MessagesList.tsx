@@ -3,6 +3,7 @@ import {
   REDELEGATE_TYPE_URL,
   SEND_TYPE_URL,
   UNDELEGATE_TYPE_URL,
+  VOTE_TYPE_URL,
 } from '@/utils/constants';
 import { Pagination } from '@mui/material';
 import React, { useEffect, useState } from 'react';
@@ -11,6 +12,7 @@ import SendMessage from './Messages/SendMessage';
 import DelegateMessage from './Messages/DelegateMessage';
 import UndelegateMessage from './Messages/UndelegateMessage';
 import RedelegateMessage from './Messages/RedelegateMessage';
+import VoteMessage from './Messages/VoteMessage';
 
 const PER_PAGE = 4;
 
@@ -29,6 +31,8 @@ const renderMessage = (
       return UndelegateMessage({ msg, index, currency, onDelete });
     case REDELEGATE_TYPE_URL:
       return RedelegateMessage({ msg, index, currency, onDelete });
+    case VOTE_TYPE_URL:
+      return VoteMessage({ msg, index, onDelete });
     default:
       return '';
   }

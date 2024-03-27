@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 import {
   MULTIOPS_MSG_TYPES,
-  MULTISIG_TX_TYPES,
   NO_MESSAGES_ILLUSTRATION,
 } from '@/utils/constants';
 import { selectTxnStyles, sendTxnTextFieldStyles } from '../styles';
@@ -32,6 +31,7 @@ import { TxStatus } from '@/types/enums';
 import Delegate from './Messages/Delegate';
 import Undelegate from './Messages/Undelegate';
 import Redelegate from './Messages/Redelegate';
+import Vote from './Messages/Vote';
 
 const TxnBuilder = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
@@ -216,6 +216,16 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                       }}
                       baseURLs={baseURLs}
                       feeAmount={feeAmount}
+                    />
+                  ) : null}
+                  {msgType === MULTIOPS_MSG_TYPES.vote ? (
+                    <Vote
+                      address={address}
+                      chainID={chainID}
+                      currency={currency}
+                      onVote={(payload) => {
+                        setMessages([...messages, payload]);
+                      }}
                     />
                   ) : null}
                 </div>
@@ -412,10 +422,11 @@ export const SelectMsgType = ({
           onChange={handleMsgTypeChange}
           sx={selectTxnStyles}
         >
-          <MenuItem value={MULTISIG_TX_TYPES.send}>Send</MenuItem>
-          <MenuItem value={MULTISIG_TX_TYPES.delegate}>Delegate</MenuItem>
-          <MenuItem value={MULTISIG_TX_TYPES.redelegate}>Redelegate</MenuItem>
-          <MenuItem value={MULTISIG_TX_TYPES.undelegate}>Undelegate</MenuItem>
+          <MenuItem value={MULTIOPS_MSG_TYPES.send}>Send</MenuItem>
+          <MenuItem value={MULTIOPS_MSG_TYPES.delegate}>Delegate</MenuItem>
+          <MenuItem value={MULTIOPS_MSG_TYPES.redelegate}>Redelegate</MenuItem>
+          <MenuItem value={MULTIOPS_MSG_TYPES.undelegate}>Undelegate</MenuItem>
+          <MenuItem value={MULTIOPS_MSG_TYPES.vote}>Vote</MenuItem>
         </Select>
       </FormControl>
     </div>

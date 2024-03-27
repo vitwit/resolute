@@ -95,7 +95,7 @@ export const autoCompleteStyles = {
 export const autoCompleteTextFieldStyles = {
   '& .MuiTypography-body1': {
     color: 'white',
-    fontSize: '12px',
+    fontSize: '14px',
     fontWeight: 200,
   },
   '& .MuiOutlinedInput-notchedOutline': {
