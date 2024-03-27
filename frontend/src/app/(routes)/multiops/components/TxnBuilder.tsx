@@ -30,6 +30,7 @@ import {
 } from '@/store/features/multiops/multiopsSlice';
 import { TxStatus } from '@/types/enums';
 import Delegate from './Messages/Delegate';
+import Undelegate from './Messages/Undelegate';
 
 const TxnBuilder = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
@@ -186,6 +187,18 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                       chainID={chainID}
                       currency={currency}
                       onDelegate={(payload) => {
+                        setMessages([...messages, payload]);
+                      }}
+                      baseURLs={baseURLs}
+                      feeAmount={feeAmount}
+                    />
+                  ) : null}
+                  {msgType === MULTIOPS_MSG_TYPES.undelegate ? (
+                    <Undelegate
+                      address={address}
+                      chainID={chainID}
+                      currency={currency}
+                      onUndelegate={(payload) => {
                         setMessages([...messages, payload]);
                       }}
                       baseURLs={baseURLs}

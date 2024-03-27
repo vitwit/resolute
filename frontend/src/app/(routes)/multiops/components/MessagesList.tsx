@@ -1,9 +1,14 @@
-import { DELEGATE_TYPE_URL, SEND_TYPE_URL } from '@/utils/constants';
+import {
+  DELEGATE_TYPE_URL,
+  SEND_TYPE_URL,
+  UNDELEGATE_TYPE_URL,
+} from '@/utils/constants';
 import { Pagination } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { paginationComponentStyles } from '../../staking/styles';
 import SendMessage from './Messages/SendMessage';
 import DelegateMessage from './Messages/DelegateMessage';
+import UndelegateMessage from './Messages/UndelegateMessage';
 
 const PER_PAGE = 4;
 
@@ -18,6 +23,8 @@ const renderMessage = (
       return SendMessage({ msg, index, currency, onDelete });
     case DELEGATE_TYPE_URL:
       return DelegateMessage({ msg, index, currency, onDelete });
+    case UNDELEGATE_TYPE_URL:
+      return UndelegateMessage({ msg, index, currency, onDelete });
     default:
       return '';
   }

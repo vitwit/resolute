@@ -9,10 +9,7 @@ import {
   Paper,
   TextField,
 } from '@mui/material';
-import {
-  autoCompleteStyles,
-  autoCompleteTextFieldStyles,
-} from '../../styles';
+import { autoCompleteStyles, autoCompleteTextFieldStyles } from '../../styles';
 import { getAllValidators } from '@/store/features/staking/stakeSlice';
 import AddressField from '../AddressField';
 import AmountInputField from '../AmountInputField';
@@ -144,7 +141,7 @@ const Delegate: React.FC<DelegateProps> = (props) => {
               <Autocomplete
                 disablePortal
                 value={value}
-                sx={{ ...autoCompleteStyles }}
+                sx={autoCompleteStyles}
                 isOptionEqualToValue={(option, value) =>
                   option.value === value.value
                 }
