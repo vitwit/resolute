@@ -6,21 +6,14 @@ import { Decimal } from '@cosmjs/math';
 import {
   Autocomplete,
   CircularProgress,
-  InputAdornment,
   Paper,
   TextField,
 } from '@mui/material';
-import { formatCoin } from '@/utils/util';
-import {
-  autoCompleteStyles,
-  autoCompleteTextFieldStyles,
-  textFieldStyles,
-} from '../../styles';
+import { autoCompleteStyles, autoCompleteTextFieldStyles } from '../../styles';
 import {
   getAllValidators,
   getDelegations,
 } from '@/store/features/staking/stakeSlice';
-import { INSUFFICIENT_BALANCE } from '@/utils/errors';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import AddressField from '../AddressField';
 import { TxStatus } from '@/types/enums';
@@ -185,12 +178,6 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
         value: msgRedelegate,
       });
     }
-  };
-
-  const setAmountValue = () => {
-    // if (selectedValBal?.amount) {
-    //   setValue('amount', Number(selectedValBal?.amount));
-    // }
   };
 
   useEffect(() => {
@@ -377,7 +364,7 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
                 </div>
               ) : (
                 <div>
-                  Available to Undelegate:{' '}
+                  Available to Redelegate:{' '}
                   <span>{getFormattedAmount(selectedValBal?.amount)}</span>{' '}
                   {currency.coinDenom}
                 </div>
