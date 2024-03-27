@@ -9,6 +9,8 @@ import {
   textFieldInputPropStyles,
   textFieldStyles,
 } from '../../styles';
+import AddressField from '../AddressField';
+import AmountInputField from '../AmountInputField';
 
 interface SendProps {
   address: string;
@@ -69,29 +71,7 @@ const Send: React.FC<SendProps> = (props) => {
     >
       <div className="space-y-2">
         <div className="text-[14px] font-extralight">Address</div>
-        <Controller
-          name="from"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              className="bg-[#FFFFFF0D]"
-              {...field}
-              sx={sendTxnTextFieldStyles}
-              placeholder="From"
-              disabled
-              fullWidth
-              InputProps={{
-                sx: {
-                  input: {
-                    color: 'white !important',
-                    fontSize: '14px',
-                    padding: 2,
-                  },
-                },
-              }}
-            />
-          )}
-        />
+        <AddressField control={control} name={'from'} />
       </div>
       <div className="space-y-2 mt-12">
         <div className="text-[14px] font-extralight">Recepient Address</div>
@@ -115,6 +95,7 @@ const Send: React.FC<SendProps> = (props) => {
                 className="bg-[#FFFFFF0D]"
                 {...field}
                 required
+                autoFocus={true}
                 sx={sendTxnTextFieldStyles}
                 placeholder="Recipient"
                 fullWidth
@@ -155,70 +136,12 @@ const Send: React.FC<SendProps> = (props) => {
           </div>
         </div>
         <div>
-          <Controller
-            name="amount"
+          <AmountInputField
+            availableBalance={availableBalance}
             control={control}
-            rules={{
-              required: 'Amount is required',
-              validate: (value) => {
-                const amount = Number(value);
-                if (isNaN(amount) || amount <= 0) return 'Invalid Amount';
-                if (amount > availableBalance) return INSUFFICIENT_BALANCE;
-              },
-            }}
-            render={({ field }) => (
-              <TextField
-                className="bg-[#FFFFFF0D] rounded-2xl"
-                {...field}
-                required
-                fullWidth
-                type="number"
-                size="small"
-                autoFocus={true}
-                placeholder="Enter Amount Here"
-                sx={textFieldStyles}
-                InputProps={{
-                  endAdornment: (
-                    <div className="flex p-2 items-center gap-6">
-                      <div className="flex gap-6">
-                        <button
-                          type="button"
-                          className="amount-options px-4 py-2 amount-options-default"
-                          onClick={() => {
-                            const amount = availableBalance;
-                            let halfAmount =
-                              Math.max(0, (amount || 0) - feeAmount) / 2;
-                            halfAmount = +halfAmount.toFixed(6);
-                            setValue('amount', halfAmount.toString());
-                          }}
-                        >
-                          Half
-                        </button>
-                        <button
-                          type="button"
-                          className="amount-options px-4 py-2 amount-options-default"
-                          onClick={() => {
-                            const amount = availableBalance;
-                            let maxAmount = Math.max(
-                              0,
-                              (amount || 0) - feeAmount
-                            );
-                            maxAmount = +maxAmount.toFixed(6);
-                            setValue('amount', maxAmount.toString());
-                          }}
-                        >
-                          Max
-                        </button>
-                      </div>
-                      <InputAdornment position="start" className="w-[30px]">
-                        {currency.coinDenom}
-                      </InputAdornment>
-                    </div>
-                  ),
-                  sx: textFieldInputPropStyles,
-                }}
-              />
-            )}
+            displayDenom={currency.coinDenom}
+            feeAmount={feeAmount}
+            setValue={setValue}
           />
           <div className="error-box">
             <span

@@ -1,12 +1,12 @@
 'use client';
 
 import { TxStatus } from '@/types/enums';
-import { GAS_FEE } from '@/utils/constants';
 import { signAndBroadcast } from '@/utils/signing';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { setError, setTxAndHash } from '../common/commonSlice';
 import { NewTransaction } from '@/utils/transaction';
 import { ERR_UNKNOWN } from '@/utils/errors';
+import { getBalances } from '../bank/bankSlice';
 
 interface MultiopsState {
   tx: {
@@ -34,7 +34,7 @@ export const txExecuteMultiMsg = createAsyncThunk(
         data.basicChainInfo.aminoConfig,
         data.basicChainInfo.prefix,
         data.msgs,
-        GAS_FEE,
+        data.gas,
         data.memo,
         `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
           data.denom
@@ -57,6 +57,15 @@ export const txExecuteMultiMsg = createAsyncThunk(
           setTxAndHash({
             tx: tx,
             hash: result?.transactionHash,
+          })
+        );
+
+        dispatch(
+          getBalances({
+            address: data.address,
+            baseURL: data.basicChainInfo.rest,
+            baseURLs: data.basicChainInfo.restURLs,
+            chainID: data.basicChainInfo.chainID,
           })
         );
 

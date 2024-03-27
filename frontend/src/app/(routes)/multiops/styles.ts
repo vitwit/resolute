@@ -55,11 +55,11 @@ export const textFieldStyles = {
   },
   '& .MuiOutlinedInput-root': {
     border: '1px solid transparent',
-    borderRadius: '16px',
+    borderRadius: '8px',
   },
   '& .Mui-focused': {
     border: '1px solid #ffffff4a',
-    borderRadius: '16px',
+    borderRadius: '8px',
   },
 };
 
@@ -73,4 +73,33 @@ export const textFieldInputPropStyles = {
     WebkitAppearance: 'none',
     appearance: 'none',
   },
+};
+
+export const autoCompleteStyles = {
+  '& .MuiAutocomplete-inputRoot': {
+    padding: '7px !important',
+    '& input': {
+      color: 'white',
+    },
+    '& button': {
+      color: 'white',
+    },
+  },
+  '& .MuiAutocomplete-popper': {
+    display: 'none !important',
+  },
+  borderRadius: '8px',
+  width: '100%',
+};
+
+export const autoCompleteTextFieldStyles = {
+  '& .MuiTypography-body1': {
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: 200,
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
+  borderRadius: '8px',
 };

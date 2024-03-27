@@ -29,6 +29,7 @@ import {
   txExecuteMultiMsg,
 } from '@/store/features/multiops/multiopsSlice';
 import { TxStatus } from '@/types/enums';
+import Delegate from './Messages/Delegate';
 
 const TxnBuilder = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
@@ -92,7 +93,6 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
       txExecuteMultiMsg({
         basicChainInfo,
         aminoConfig: basicChainInfo.aminoConfig,
-        chainID,
         denom: currency.coinMinimalDenom,
         feeAmount: data.fees,
         feegranter: '',
@@ -102,6 +102,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
         rest,
         rpc,
         gas: data.gas,
+        address,
       })
     );
   };
@@ -168,17 +169,28 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                 />
                 <div className="flex-1">
                   {msgType === MULTIOPS_MSG_TYPES.send ? (
-                    <>
-                      <Send
-                        address={address}
-                        onSend={(payload) => {
-                          setMessages([...messages, payload]);
-                        }}
-                        availableBalance={availableBalance}
-                        currency={currency}
-                        feeAmount={feeAmount}
-                      />
-                    </>
+                    <Send
+                      address={address}
+                      onSend={(payload) => {
+                        setMessages([...messages, payload]);
+                      }}
+                      availableBalance={availableBalance}
+                      currency={currency}
+                      feeAmount={feeAmount}
+                    />
+                  ) : null}
+                  {msgType === MULTIOPS_MSG_TYPES.delegate ? (
+                    <Delegate
+                      address={address}
+                      availableBalance={availableBalance}
+                      chainID={chainID}
+                      currency={currency}
+                      onDelegate={(payload) => {
+                        setMessages([...messages, payload]);
+                      }}
+                      baseURLs={baseURLs}
+                      feeAmount={feeAmount}
+                    />
                   ) : null}
                 </div>
               </div>
@@ -187,7 +199,19 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
           <div className="h-full w-[1px] bg-[#ffffff33]"></div>
           <div className="flex-1 pl-4">
             <div className="h-full">
-              <div className="font-extralight text-[14px]">Messages</div>
+              <div className="flex justify-between">
+                <div className="font-extralight text-[14px]">Messages</div>
+                {messages.length ? (
+                  <div
+                    className="clear-all"
+                    onClick={() => {
+                      setMessages([]);
+                    }}
+                  >
+                    Clear All
+                  </div>
+                ) : null}
+              </div>
               <div className="h-full">
                 {messages.length ? (
                   <div className="space-y-4">

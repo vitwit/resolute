@@ -3,7 +3,6 @@ interface TxExecuteMultiMsgInputs {
   memo: string;
   basicChainInfo: BasicChainInfo;
   denom: string;
-  chainID: string;
   rpc: string;
   rest: string;
   aminoConfig: AminoConfig;
@@ -11,4 +10,12 @@ interface TxExecuteMultiMsgInputs {
   feeAmount: number;
   feegranter: string;
   gas: number;
+  address: string;
+}
+
+interface TxnMsgProps {
+  msg: Msg;
+  onDelete: (index: number) => void;
+  currency: Currency;
+  index: number;
 }

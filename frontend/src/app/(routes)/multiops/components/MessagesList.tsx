@@ -1,8 +1,9 @@
-import { SEND_TYPE_URL } from '@/utils/constants';
+import { DELEGATE_TYPE_URL, SEND_TYPE_URL } from '@/utils/constants';
 import { Pagination } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { paginationComponentStyles } from '../../staking/styles';
 import SendMessage from './Messages/SendMessage';
+import DelegateMessage from './Messages/DelegateMessage';
 
 const PER_PAGE = 4;
 
@@ -15,6 +16,8 @@ const renderMessage = (
   switch (msg.typeUrl) {
     case SEND_TYPE_URL:
       return SendMessage({ msg, index, currency, onDelete });
+    case DELEGATE_TYPE_URL:
+      return DelegateMessage({ msg, index, currency, onDelete });
     default:
       return '';
   }
@@ -43,7 +46,7 @@ const MessagesList = ({
   return (
     <div className="flex flex-col justify-between gap-6">
       <div>
-        <div className="space-y-4 py-4 border-b-[0.5px] border-[#ffffff2e] min-h-[172px]">
+        <div className="space-y-4 py-4 border-b-[0.5px] border-[#ffffff2e] min-h-[174px]">
           {slicedMsgs.map((msg, index) => {
             return (
               <div key={index + PER_PAGE * (currentPage - 1)}>
