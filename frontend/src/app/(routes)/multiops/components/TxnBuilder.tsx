@@ -32,6 +32,7 @@ import Delegate from './Messages/Delegate';
 import Undelegate from './Messages/Undelegate';
 import Redelegate from './Messages/Redelegate';
 import Vote from './Messages/Vote';
+import Deposit from './Messages/Deposit';
 
 const TxnBuilder = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
@@ -226,6 +227,18 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                       onVote={(payload) => {
                         setMessages([...messages, payload]);
                       }}
+                    />
+                  ) : null}
+                  {msgType === MULTIOPS_MSG_TYPES.deposit ? (
+                    <Deposit
+                      address={address}
+                      availableBalance={availableBalance}
+                      chainID={chainID}
+                      currency={currency}
+                      onDeposit={(payload) => {
+                        setMessages([...messages, payload]);
+                      }}
+                      feeAmount={feeAmount}
                     />
                   ) : null}
                 </div>
@@ -427,6 +440,7 @@ export const SelectMsgType = ({
           <MenuItem value={MULTIOPS_MSG_TYPES.redelegate}>Redelegate</MenuItem>
           <MenuItem value={MULTIOPS_MSG_TYPES.undelegate}>Undelegate</MenuItem>
           <MenuItem value={MULTIOPS_MSG_TYPES.vote}>Vote</MenuItem>
+          <MenuItem value={MULTIOPS_MSG_TYPES.deposit}>Deposit</MenuItem>
         </Select>
       </FormControl>
     </div>

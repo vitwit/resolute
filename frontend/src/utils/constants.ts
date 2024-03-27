@@ -272,4 +272,5 @@ export const MULTIOPS_MSG_TYPES = {
   undelegate: 'Undelegate',
   redelegate: 'Redelegate',
   vote: 'Vote',
+  deposit: 'Deposit',
 };
