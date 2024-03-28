@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import {
   MULTIOPS_MSG_TYPES,
+  MULTIOPS_NOTE,
   NO_MESSAGES_ILLUSTRATION,
 } from '@/utils/constants';
 import { selectTxnStyles, sendTxnTextFieldStyles } from '../styles';
@@ -56,7 +57,6 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
     baseURL,
     restURLs: baseURLs,
     feeAmount,
-    feeCurrencies,
     prefix,
     rest,
     rpc,
@@ -87,19 +87,13 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
     setMessages(arr);
   };
 
-  const { handleSubmit, control, setValue } = useForm({
+  const { handleSubmit, control } = useForm({
     defaultValues: {
       gas: 900000,
       memo: '',
       fees: feeAmount * 10 ** currency.coinDecimals,
     },
   });
-
-  const [selectedFeeStep, setSelectedFeeStep] = useState('average');
-  const handleFeeChange = (feeStep: string, amount: number) => {
-    setSelectedFeeStep(feeStep);
-    setValue('fees', amount * 100 ** currency.coinDecimals);
-  };
 
   const onSubmit = (data: { gas: number; memo: string; fees: number }) => {
     dispatch(
@@ -208,7 +202,10 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
         break;
       }
       case MULTIOPS_MSG_TYPES.deposit: {
-        const [parsedTxns, error] = parseDepositMsgsFromContent(address, content);
+        const [parsedTxns, error] = parseDepositMsgsFromContent(
+          address,
+          content
+        );
         if (error) {
           dispatch(
             setError({
@@ -432,7 +429,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                           </div>
                           <div className="flex-1 space-y-2">
                             <div className="text-[14px] font-extralight">
-                              Enter Memo
+                              Enter Memo (optional)
                             </div>
                             <Controller
                               name="memo"
@@ -460,36 +457,8 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                             />
                           </div>
                         </div>
-                        <div className="space-y-2">
-                          <div className="text-[14px] font-extralight">
-                            Fees
-                          </div>
-                          <div className="grid grid-cols-3 gap-6">
-                            <FeeCard
-                              name="low"
-                              denom={feeCurrencies[0].coinDenom}
-                              fee={feeCurrencies[0].gasPriceStep?.low || 0}
-                              handleFeeChange={handleFeeChange}
-                              selectedFeeStep={selectedFeeStep}
-                              icon="/low-fee-icon.svg"
-                            />
-                            <FeeCard
-                              name="average"
-                              denom={feeCurrencies[0].coinDenom}
-                              fee={feeCurrencies[0].gasPriceStep?.average || 0}
-                              handleFeeChange={handleFeeChange}
-                              selectedFeeStep={selectedFeeStep}
-                              icon="/average-fee-icon.svg"
-                            />
-                            <FeeCard
-                              name="high"
-                              denom={feeCurrencies[0].coinDenom}
-                              fee={feeCurrencies[0].gasPriceStep?.high || 0}
-                              handleFeeChange={handleFeeChange}
-                              selectedFeeStep={selectedFeeStep}
-                              icon="/high-fee-icon.svg"
-                            />
-                          </div>
+                        <div className="font-extralight text-[14px] italic w-[50%]">
+                          {MULTIOPS_NOTE}
                         </div>
                       </form>
                     </div>
@@ -517,7 +486,12 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
             disabled={txStatus === TxStatus.PENDING}
           >
             {txStatus === TxStatus.PENDING ? (
-              <CircularProgress size={12} sx={{ color: 'white' }} />
+              <div className="flex-center-center gap-2">
+                <CircularProgress size={12} sx={{ color: 'white' }} />
+                <span>
+                  Loading<span className="dots-flashing"></span>{' '}
+                </span>
+              </div>
             ) : (
               'Execute Transaction'
             )}
@@ -568,44 +542,6 @@ export const SelectMsgType = ({
           <MenuItem value={MULTIOPS_MSG_TYPES.deposit}>Deposit</MenuItem>
         </Select>
       </FormControl>
-    </div>
-  );
-};
-
-const FeeCard = ({
-  denom,
-  fee,
-  name,
-  handleFeeChange,
-  selectedFeeStep,
-  icon,
-}: {
-  name: string;
-  fee: number;
-  denom: string;
-  handleFeeChange: (feeStep: string, amount: number) => void;
-  selectedFeeStep: string;
-  icon: string;
-}) => {
-  return (
-    <div
-      onClick={() => handleFeeChange(name, fee)}
-      className={`space-y-4 rounded-lg p-4 bg-[#ffffff0d] cursor-pointer hover:bg-[#ffffff1b] ${selectedFeeStep === name ? 'primary-gradient' : ''}`}
-    >
-      <div className="flex gap-2">
-        <Image
-          className="bg-[#ffffff0d] rounded-md"
-          src={icon}
-          width={24}
-          height={24}
-          alt="Low"
-        />
-        <div className="capitalize">{name}</div>
-      </div>
-      <div className="flex gap-2">
-        <div className="font-bold">{fee || 0}</div>
-        <div className="font-light text-[#ffffff80]">{denom}</div>
-      </div>
     </div>
   );
 };

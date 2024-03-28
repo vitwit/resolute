@@ -29,6 +29,24 @@ interface RedelegateProps {
   feeAmount: number;
 }
 
+interface StakeBal {
+  amount: string;
+  denom: string;
+}
+
+interface ValidatorOption {
+  label: string;
+  value: string;
+  amount: StakeBal;
+}
+
+const isValueExists = (
+  valueToCheck: string,
+  valsData: ValidatorOption[]
+): boolean => {
+  return valsData.some((destVal) => destVal.value === valueToCheck);
+};
+
 const Redelegate: React.FC<RedelegateProps> = (props) => {
   const { chainID, address, onRedelegate, currency, baseURLs } = props;
   const { getChainInfo } = useGetChainInfo();
@@ -70,26 +88,17 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
     dispatch(getDelegations({ address, chainID, baseURLs: restURLs }));
   }, []);
 
-  interface stakeBal {
-    amount: string;
-    denom: string;
-  }
-
-  const [selectedValBal, setSelectedValBal] = useState<stakeBal>({
+  const [selectedValBal, setSelectedValBal] = useState<StakeBal>({
     amount: '',
     denom: '',
   });
 
-  const [data, setData] = useState<
-    { label: string; value: string; amount: stakeBal }[]
-  >([]);
-  const [destVals, setDestVals] = useState<
-    { label: string; value: string; amount: stakeBal }[]
-  >([]);
+  const [data, setData] = useState<ValidatorOption[]>([]);
+  const [destVals, setDestVals] = useState<ValidatorOption[]>([]);
 
   useEffect(() => {
-    const data = [];
-    const destVals = [];
+    const srcValsData = [];
+    const destValsData: ValidatorOption[] = [];
 
     const totalDelegations =
       delegations?.delegations?.delegation_responses || [];
@@ -106,7 +115,7 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
             amount: del.balance,
           };
 
-          data.push(temp);
+          srcValsData.push(temp);
         }
 
         const temp = {
@@ -114,8 +123,7 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
           value: validators.activeSorted[i],
           amount: del.balance,
         };
-
-        destVals.push(temp);
+        if (!isValueExists(temp.value, destValsData)) destValsData.push(temp);
       }
 
       for (let i = 0; i < validators.inactiveSorted.length; i++) {
@@ -130,7 +138,7 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
               amount: del.balance,
             };
 
-            data.push(temp);
+            srcValsData.push(temp);
           }
 
           const temp = {
@@ -138,14 +146,13 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
             value: validators.activeSorted[i],
             amount: del.balance,
           };
-
-          destVals.push(temp);
+          if (!isValueExists(temp.value, destValsData)) destValsData.push(temp);
         }
       }
     }
 
-    setData(data);
-    setDestVals(destVals);
+    setData(srcValsData);
+    setDestVals(destValsData);
   }, [validators]);
 
   const onSubmit = (data: {

@@ -1,6 +1,6 @@
 import { TxnMsgProps } from '@/types/multisig';
 import { parseBalance } from '@/utils/denom';
-import { shortenAddress } from '@/utils/util';
+import { shortenName } from '@/utils/util';
 import Image from 'next/image';
 import React from 'react';
 
@@ -22,7 +22,7 @@ const RedelegateMessage: React.FC<TxnMsgProps> = (props) => {
           <span className="msg-amount">
             {parseBalance(
               [msg.value.amount],
-              currency.coinDecimals,  
+              currency.coinDecimals,
               currency.coinMinimalDenom
             )}
             &nbsp;
@@ -30,11 +30,11 @@ const RedelegateMessage: React.FC<TxnMsgProps> = (props) => {
           </span>
           <span>from&nbsp;</span>
           <span className="font-extralight">
-            {shortenAddress(msg.value.validatorSrcAddress, 21)}&nbsp;
+            {shortenName(msg.value.validatorSrcAddress, 21)}&nbsp;
           </span>
           <span>to&nbsp;</span>
           <span className="font-extralight">
-            {shortenAddress(msg.value.validatorDstAddress, 21)}
+            {shortenName(msg.value.validatorDstAddress, 21)}
           </span>
         </div>
       </div>

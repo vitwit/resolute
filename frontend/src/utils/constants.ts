@@ -274,3 +274,8 @@ export const MULTIOPS_MSG_TYPES = {
   vote: 'Vote',
   deposit: 'Deposit',
 };
+
+export const MULTIOPS_NOTE = `Note: Please ensure to allocate additional gas if the
+transaction involves multiple messages, and be sure to
+select the appropriate fee option in the signing
+wallet.`;

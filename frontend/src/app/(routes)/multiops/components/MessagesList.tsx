@@ -16,7 +16,7 @@ import RedelegateMessage from './Messages/RedelegateMessage';
 import VoteMessage from './Messages/VoteMessage';
 import DepositMessage from './Messages/DepositMessage';
 
-const PER_PAGE = 4;
+const PER_PAGE = 5;
 
 const renderMessage = (
   msg: Msg,
@@ -72,7 +72,7 @@ const MessagesList = ({
   return (
     <div className="flex flex-col justify-between gap-6">
       <div>
-        <div className="space-y-4 py-4 border-b-[0.5px] border-[#ffffff2e] min-h-[174px]">
+        <div className="space-y-4 py-4 border-b-[0.5px] border-[#ffffff2e] min-h-[212px]">
           {slicedMsgs.map((msg, index) => {
             return (
               <div key={index + PER_PAGE * (currentPage - 1)}>

@@ -50,7 +50,7 @@ const parseSendTx = (from: string, msg: string): Msg | null => {
     );
   }
 
-  const to = values[0];
+  const to = values[0].trim();
   const amount = parseCoins(values[1]);
 
   if (amount.length === 0) {
@@ -101,7 +101,7 @@ const parseDelegateMsg = (delegator: string, msg: string): Msg | null => {
     throw new Error('invalid message');
   }
 
-  const validator = values[0];
+  const validator = values[0].trim();
   const amount = parseCoins(values[1]);
 
   if (amount.length === 0) {
@@ -151,7 +151,7 @@ const parseUnDelegateMsg = (delegator: string, msg: string): Msg | null => {
     throw new Error('invalid message');
   }
 
-  const validator = values[0];
+  const validator = values[0].trim();
   const amount = parseCoins(values[1]);
 
   if (amount.length === 0) {
@@ -202,8 +202,8 @@ const parseReDelegateMsg = (delegator: string, msg: string): Msg | null => {
     throw new Error('invalid message');
   }
 
-  const src = values[0];
-  const dest = values[1];
+  const src = values[0].trim();
+  const dest = values[1].trim();
   const amount = parseCoins(values[2]);
 
   if (amount.length === 0) {
