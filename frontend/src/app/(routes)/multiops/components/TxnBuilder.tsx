@@ -44,6 +44,7 @@ import {
   parseUnDelegateMsgsFromContent,
   parseVoteMsgsFromContent,
 } from '@/utils/parseMsgs';
+import SelectMsgType from './SelectMsgType';
 
 const TxnBuilder = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
@@ -504,45 +505,3 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
 };
 
 export default TxnBuilder;
-
-export const SelectMsgType = ({
-  handleMsgTypeChange,
-  msgType,
-}: {
-  handleMsgTypeChange: (event: SelectChangeEvent<string>) => void;
-  msgType: string;
-}) => {
-  return (
-    <div className="space-y-2">
-      <div className="text-[14px] font-extralight">Select transaction type</div>
-      <FormControl
-        fullWidth
-        sx={{
-          '& .MuiFormLabel-root': {
-            display: 'none',
-          },
-        }}
-      >
-        <InputLabel className="text-white" id="tx-type">
-          Select Transaction
-        </InputLabel>
-        <Select
-          labelId="tx-type"
-          className="bg-[#FFFFFF0D]"
-          id="tx-type"
-          value={msgType}
-          label="Select Transaction"
-          onChange={handleMsgTypeChange}
-          sx={selectTxnStyles}
-        >
-          <MenuItem value={MULTIOPS_MSG_TYPES.send}>Send</MenuItem>
-          <MenuItem value={MULTIOPS_MSG_TYPES.delegate}>Delegate</MenuItem>
-          <MenuItem value={MULTIOPS_MSG_TYPES.redelegate}>Redelegate</MenuItem>
-          <MenuItem value={MULTIOPS_MSG_TYPES.undelegate}>Undelegate</MenuItem>
-          <MenuItem value={MULTIOPS_MSG_TYPES.vote}>Vote</MenuItem>
-          <MenuItem value={MULTIOPS_MSG_TYPES.deposit}>Deposit</MenuItem>
-        </Select>
-      </FormControl>
-    </div>
-  );
-};
