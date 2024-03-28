@@ -1,21 +1,13 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import SelectTransactionType from './SelectTransactionType';
-import {
-  CircularProgress,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-} from '@mui/material';
+import { CircularProgress, SelectChangeEvent, TextField } from '@mui/material';
 import {
   MULTIOPS_MSG_TYPES,
   MULTIOPS_NOTE,
   NO_MESSAGES_ILLUSTRATION,
 } from '@/utils/constants';
-import { selectTxnStyles, sendTxnTextFieldStyles } from '../styles';
+import { sendTxnTextFieldStyles } from '../styles';
 import Send from './Messages/Send';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
