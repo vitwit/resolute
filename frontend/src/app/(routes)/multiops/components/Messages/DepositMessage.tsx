@@ -11,7 +11,6 @@ interface DepositMessageProps {
 
 const DepositMessage: React.FC<DepositMessageProps> = (props) => {
   const { msg, index, onDelete, currency } = props;
-  console.log(msg)
   return (
     <div className="flex justify-between items-center text-[14px]">
       <div className="flex gap-2">
@@ -23,7 +22,7 @@ const DepositMessage: React.FC<DepositMessageProps> = (props) => {
           alt={index.toString()}
           draggable={false}
         />
-        <div className="truncate max-w-[280px]">
+        <div className="truncate">
           <span>Deposit&nbsp;</span>
           <span className="msg-amount">
             {parseBalance(

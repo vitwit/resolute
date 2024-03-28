@@ -37,9 +37,11 @@ import FileUpload from './FileUpload';
 import { setError } from '@/store/features/common/commonSlice';
 import {
   parseDelegateMsgsFromContent,
+  parseDepositMsgsFromContent,
   parseReDelegateMsgsFromContent,
   parseSendMsgsFromContent,
   parseUnDelegateMsgsFromContent,
+  parseVoteMsgsFromContent,
 } from '@/utils/parseMsgs';
 
 const TxnBuilder = ({ chainID }: { chainID: string }) => {
@@ -177,6 +179,36 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
           address,
           content
         );
+        if (error) {
+          dispatch(
+            setError({
+              type: 'error',
+              message: error,
+            })
+          );
+        } else {
+          setMessages((prev) => [...prev, ...parsedTxns]);
+          isValid = true;
+        }
+        break;
+      }
+      case MULTIOPS_MSG_TYPES.vote: {
+        const [parsedTxns, error] = parseVoteMsgsFromContent(address, content);
+        if (error) {
+          dispatch(
+            setError({
+              type: 'error',
+              message: error,
+            })
+          );
+        } else {
+          setMessages((prev) => [...prev, ...parsedTxns]);
+          isValid = true;
+        }
+        break;
+      }
+      case MULTIOPS_MSG_TYPES.deposit: {
+        const [parsedTxns, error] = parseDepositMsgsFromContent(address, content);
         if (error) {
           dispatch(
             setError({
