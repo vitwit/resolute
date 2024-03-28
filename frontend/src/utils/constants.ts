@@ -279,3 +279,16 @@ export const MULTIOPS_NOTE = `Note: Please ensure to allocate additional gas if 
 transaction involves multiple messages, and be sure to
 select the appropriate fee option in the signing
 wallet.`;
+
+export const MULTIOPS_SAMPLE_FILES = {
+  delegate:
+    'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/delegate.csv',
+  deposit:
+    'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/deposit.csv',
+  redelegate:
+    'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/redelegate.csv',
+  send: 'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/send.csv',
+  undelegate:
+    'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/undelegate.csv',
+  vote: 'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/vote.csv',
+};

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import {
   MULTIOPS_MSG_TYPES,
+  MULTIOPS_SAMPLE_FILES,
   MULTISIG_DELEGATE_TEMPLATE,
   MULTISIG_REDELEGATE_TEMPLATE,
   MULTISIG_SEND_TEMPLATE,
@@ -39,37 +40,45 @@ const FileUpload = (props: FileUploadProps) => {
               switch (msgType) {
                 case MULTIOPS_MSG_TYPES.send:
                   window.open(
-                    MULTISIG_SEND_TEMPLATE,
+                    MULTIOPS_SAMPLE_FILES.send,
                     '_blank',
                     'noopener,noreferrer'
                   );
                   break;
                 case MULTIOPS_MSG_TYPES.delegate:
                   window.open(
-                    MULTISIG_DELEGATE_TEMPLATE,
+                    MULTIOPS_SAMPLE_FILES.delegate,
                     '_blank',
                     'noopener,noreferrer'
                   );
                   break;
                 case MULTIOPS_MSG_TYPES.undelegate:
                   window.open(
-                    MULTISIG_UNDELEGATE_TEMPLATE,
+                    MULTIOPS_SAMPLE_FILES.undelegate,
                     '_blank',
                     'noopener,noreferrer'
                   );
                   break;
                 case MULTIOPS_MSG_TYPES.redelegate:
                   window.open(
-                    MULTISIG_REDELEGATE_TEMPLATE,
+                    MULTIOPS_SAMPLE_FILES.redelegate,
                     '_blank',
                     'noopener,noreferrer'
                   );
                   break;
                 case MULTIOPS_MSG_TYPES.vote:
-                  window.open('', '_blank', 'noopener,noreferrer');
+                  window.open(
+                    MULTIOPS_SAMPLE_FILES.vote,
+                    '_blank',
+                    'noopener,noreferrer'
+                  );
                   break;
                 case MULTIOPS_MSG_TYPES.deposit:
-                  window.open('', '_blank', 'noopener,noreferrer');
+                  window.open(
+                    MULTIOPS_SAMPLE_FILES.deposit,
+                    '_blank',
+                    'noopener,noreferrer'
+                  );
                   break;
                 default:
                   alert('unknown message type');
