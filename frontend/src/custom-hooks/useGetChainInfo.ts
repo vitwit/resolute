@@ -70,6 +70,7 @@ const useGetChainInfo = () => {
     const feeCurrencies = config?.feeCurrencies;
     const explorerTxHashEndpoint = network?.explorerTxHashEndpoint;
     const chainLogo = networks[chainID].network.logos.menu;
+    const govV1 = network.govV1;
 
     return {
       restURLs: config.restURIs,
@@ -88,6 +89,7 @@ const useGetChainInfo = () => {
       chainLogo,
       decimals,
       valPrefix,
+      govV1,
     };
   };
 
