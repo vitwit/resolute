@@ -11,7 +11,7 @@ import {
 } from '@/utils/constants';
 
 interface FileUploadProps {
-  onFileContents: (content: string, type: string) => void;
+  onFileContents: (content: string, type: string) => boolean;
   msgType: string;
   resetMessages: () => void;
   messagesCount: number;
@@ -148,8 +148,10 @@ const FileUpload = (props: FileUploadProps) => {
             const reader = new FileReader();
             reader.onload = (e) => {
               const contents = (e?.target?.result as string) || '';
-              setUploadedFiles((prev) => [...prev, file?.name]);
-              onFileContents(contents, msgType);
+              const isValid = onFileContents(contents, msgType);
+              if (isValid) {
+                setUploadedFiles((prev) => [...prev, file?.name]);
+              }
             };
             reader.onerror = (e) => {
               alert(e);

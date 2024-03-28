@@ -119,6 +119,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
   };
 
   const onFileContents = (content: string, type: string) => {
+    let isValid = false;
     switch (type) {
       case MULTIOPS_MSG_TYPES.send: {
         const [parsedTxns, error] = parseSendMsgsFromContent(address, content);
@@ -131,6 +132,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
           );
         } else {
           setMessages((prev) => [...prev, ...parsedTxns]);
+          isValid = true;
         }
         break;
       }
@@ -148,6 +150,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
           );
         } else {
           setMessages((prev) => [...prev, ...parsedTxns]);
+          isValid = true;
         }
         break;
       }
@@ -165,6 +168,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
           );
         } else {
           setMessages((prev) => [...prev, ...parsedTxns]);
+          isValid = true;
         }
         break;
       }
@@ -182,12 +186,14 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
           );
         } else {
           setMessages((prev) => [...prev, ...parsedTxns]);
+          isValid = true;
         }
         break;
       }
       default:
         setMessages([]);
     }
+    return isValid;
   };
 
   useEffect(() => {
