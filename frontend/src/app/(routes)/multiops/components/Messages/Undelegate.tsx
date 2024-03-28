@@ -185,7 +185,7 @@ const Undelegate = (props: UnDelegateProps) => {
       className="flex flex-col justify-between"
     >
       <div className="space-y-2">
-        <div className="text-[14px] font-extralight">Address</div>
+        <div className="text-[14px] font-extralight">Delegator</div>
         <AddressField control={control} name={'delegator'} />
       </div>
       <div className="space-y-2 mt-12">

@@ -65,7 +65,7 @@ const Send: React.FC<SendProps> = (props) => {
       className="flex flex-col justify-between"
     >
       <div className="space-y-2">
-        <div className="text-[14px] font-extralight">Address</div>
+        <div className="text-[14px] font-extralight">From</div>
         <AddressField control={control} name={'from'} />
       </div>
       <div className="space-y-2 mt-12">

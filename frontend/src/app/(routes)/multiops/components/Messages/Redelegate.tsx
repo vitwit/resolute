@@ -203,7 +203,7 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
       className="flex flex-col justify-between"
     >
       <div className="space-y-2">
-        <div className="text-[14px] font-extralight">Address</div>
+        <div className="text-[14px] font-extralight">Delegator</div>
         <AddressField control={control} name={'delegator'} />
       </div>
 
@@ -344,18 +344,18 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
                 />
               )}
             />
+            <div className="error-box">
+              <span
+                className={
+                  !!errors.validatorDstAddress
+                    ? 'error-chip opacity-80'
+                    : 'error-chip opacity-0'
+                }
+              >
+                {errors.validatorDstAddress?.message}
+              </span>
+            </div>
           </div>
-        </div>
-        <div className="error-box">
-          <span
-            className={
-              !!errors.validatorSrcAddress
-                ? 'error-chip opacity-80'
-                : 'error-chip opacity-0'
-            }
-          >
-            {errors.validatorSrcAddress?.message}
-          </span>
         </div>
       </div>
 

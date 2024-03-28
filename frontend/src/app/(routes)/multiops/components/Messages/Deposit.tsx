@@ -36,8 +36,8 @@ interface ProposalOption {
 const renderOption = (props: any, option: ProposalOption) => (
   <li {...props} key={option.value}>
     <div className="flex gap-2 items-center">
-      <span className="font-semibold truncate">#{option.value}</span>
-      <span>{shortenName(option.label, 40)}</span>
+      <span className="font-semibold">#{option.value}</span>
+      <span className="truncate">{shortenName(option.label, 36)}</span>
     </div>
   </li>
 );
@@ -123,7 +123,7 @@ const Deposit: React.FC<DepositProps> = (props) => {
       className="flex flex-col justify-between"
     >
       <div className="space-y-2">
-        <div className="text-[14px] font-extralight">Address</div>
+        <div className="text-[14px] font-extralight">Depositer</div>
         <AddressField control={control} name={'from'} />
       </div>
       <div className="space-y-2 mt-12">
@@ -174,8 +174,12 @@ const Deposit: React.FC<DepositProps> = (props) => {
                         <span className="dots-flashing"></span>{' '}
                       </div>
                     </div>
-                  ) : (
+                  ) : proposals.length ? (
                     children
+                  ) : (
+                    <div className="flex justify-center items-center gap-2 p-4">
+                      - No Proposals -
+                    </div>
                   )}
                 </Paper>
               )}
