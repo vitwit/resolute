@@ -65,6 +65,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
   const txStatus = useAppSelector((state) => state.multiops.tx.status);
 
   const onSelect = (value: boolean) => {
+    setMessages([]);
     setIsFileUpload(value);
   };
   const handleMsgTypeChange = (event: SelectChangeEvent<string>) => {
