@@ -12,7 +12,13 @@ const MultisigMemberTextField: React.FC<InputTextComponentProps> = (props) => {
         className="bg-[#FFFFFF0D] rounded-2xl"
         onChange={(e) => handleChangeValue(index, e)}
         name={field.isPubKey ? 'pubKey' : 'address'}
-        value={field.isPubKey ? field.pubKey : field.address}
+        value={
+          index === 0
+            ? field.address
+            : field.isPubKey
+              ? field.pubKey
+              : field.address
+        }
         required={field?.required}
         placeholder={field.isPubKey ? 'Public Key (Secp256k1)' : 'Address'}
         sx={createMultisigTextFieldStyles}
