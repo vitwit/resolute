@@ -2,14 +2,7 @@ import { IconButton } from '@mui/material';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
-import {
-  MULTIOPS_MSG_TYPES,
-  MULTIOPS_SAMPLE_FILES,
-  MULTISIG_DELEGATE_TEMPLATE,
-  MULTISIG_REDELEGATE_TEMPLATE,
-  MULTISIG_SEND_TEMPLATE,
-  MULTISIG_UNDELEGATE_TEMPLATE,
-} from '@/utils/constants';
+import { MULTIOPS_MSG_TYPES, MULTIOPS_SAMPLE_FILES } from '@/utils/constants';
 
 interface FileUploadProps {
   onFileContents: (content: string, type: string) => boolean;
@@ -17,8 +10,6 @@ interface FileUploadProps {
   resetMessages: () => void;
   messagesCount: number;
 }
-
-// TODO: Upload sample csv files on github and link them
 
 const FileUpload = (props: FileUploadProps) => {
   const { onFileContents, resetMessages, msgType, messagesCount } = props;
