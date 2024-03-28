@@ -47,6 +47,7 @@ interface TxSwapInputs {
   sourceChainID: string;
   destChainID: string;
   explorerEndpoint: string;
+  baseURLs: string[];
 }
 
 interface TxSwapServiceInputs {

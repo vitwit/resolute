@@ -18,6 +18,7 @@ import { setError } from '../common/commonSlice';
 import { ERR_UNKNOWN } from '@/utils/errors';
 import { OfflineDirectSigner } from '@cosmjs/proto-signing';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
+import { getBalances } from '../bank/bankSlice';
 
 declare let window: WalletWindow;
 
@@ -71,6 +72,17 @@ export const txIBCSwap = createAsyncThunk(
       );
 
       dispatch(setTx(txResponse.transactionHash));
+
+      if (txResponse?.code === 0) {
+        dispatch(
+          getBalances({
+            address: data.signerAddress,
+            baseURL: data.baseURLs[0],
+            baseURLs: data.baseURLs,
+            chainID: data.sourceChainID,
+          })
+        );
+      }
 
       const txStatus = await trackTransactionStatus({
         transactionId: txResponse.transactionHash,

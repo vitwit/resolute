@@ -70,6 +70,7 @@ const IBCSwap = () => {
   const toAddress = useAppSelector((state) => state.swaps.toAddress);
   const fromAddress = useAppSelector((state) => state.swaps.fromAddress);
   const txStatus = useAppSelector((state) => state.swaps.txStatus.status);
+  const sourceTxHash = useAppSelector((state) => state.swaps.txSuccess.txHash);
 
   const balanceStatus = useAppSelector(
     (state) => state.bank.balances?.[selectedSourceChain?.chainID || '']?.status
@@ -98,6 +99,10 @@ const IBCSwap = () => {
 
     dispatch(setAmountIn(''));
     dispatch(setAmountOut(''));
+
+    if (!option) {
+      setAvailableBalance(emptyBalance);
+    }
 
     if (option?.chainID) {
       const { address } = await getAccountAddress(option?.chainID || '');
@@ -316,7 +321,9 @@ const IBCSwap = () => {
       return;
     }
     if (swapRoute && allInputsProvided) {
-      const { rpcs } = getChainEndpoints(selectedSourceChain?.chainID || '');
+      const { rpcs, apis } = getChainEndpoints(
+        selectedSourceChain?.chainID || ''
+      );
       const { explorerEndpoint } = getExplorerEndpoints(
         selectedSourceChain?.chainID || ''
       );
@@ -328,6 +335,7 @@ const IBCSwap = () => {
           destChainID: selectedDestChain?.chainID || '',
           swapRoute: swapRoute,
           explorerEndpoint,
+          baseURLs: apis,
         })
       );
     }
@@ -407,6 +415,19 @@ const IBCSwap = () => {
       fetchSwapRoute();
     }
   }, [otherAddress, toAddress]);
+
+  useEffect(() => {
+    if (sourceTxHash?.length && balanceStatus === TxStatus.IDLE) {
+      const updateBalance = async () => {
+        const { balanceInfo } = await getAvailableBalance({
+          chainID: selectedSourceChain?.chainID || '',
+          denom: selectedSourceAsset?.label || '',
+        });
+        setAvailableBalance(balanceInfo);
+      };
+      updateBalance();
+    }
+  }, [balanceStatus, sourceTxHash]);
 
   return (
     <div className="flex justify-center">
