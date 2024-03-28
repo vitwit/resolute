@@ -58,10 +58,17 @@ const MessagesList = ({
     if (messages.length < PER_PAGE) {
       setSlicedMsgs(messages);
     } else {
-      setCurrentPage(1);
-      setSlicedMsgs(messages?.slice(0, 1 * PER_PAGE));
+      const page = Math.ceil(messages.length / PER_PAGE);
+      setCurrentPage(page);
+      setSlicedMsgs(
+        messages?.slice(
+          (page - 1) * PER_PAGE,
+          (page - 1) * PER_PAGE + 1 * PER_PAGE
+        )
+      );
     }
   }, [messages]);
+
   return (
     <div className="flex flex-col justify-between gap-6">
       <div>
@@ -91,6 +98,7 @@ const MessagesList = ({
             sx={paginationComponentStyles}
             count={Math.ceil(messages.length / PER_PAGE)}
             shape="circular"
+            page={currentPage}
             onChange={(_, v) => {
               setCurrentPage(v);
               setSlicedMsgs(messages?.slice((v - 1) * PER_PAGE, v * PER_PAGE));

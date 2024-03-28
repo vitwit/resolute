@@ -33,6 +33,14 @@ import Undelegate from './Messages/Undelegate';
 import Redelegate from './Messages/Redelegate';
 import Vote from './Messages/Vote';
 import Deposit from './Messages/Deposit';
+import FileUpload from './FileUpload';
+import { setError } from '@/store/features/common/commonSlice';
+import {
+  parseDelegateMsgsFromContent,
+  parseReDelegateMsgsFromContent,
+  parseSendMsgsFromContent,
+  parseUnDelegateMsgsFromContent,
+} from '@/utils/parseMsgs';
 
 const TxnBuilder = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
@@ -110,6 +118,78 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
     );
   };
 
+  const onFileContents = (content: string, type: string) => {
+    switch (type) {
+      case MULTIOPS_MSG_TYPES.send: {
+        const [parsedTxns, error] = parseSendMsgsFromContent(address, content);
+        if (error) {
+          dispatch(
+            setError({
+              type: 'error',
+              message: error,
+            })
+          );
+        } else {
+          setMessages((prev) => [...prev, ...parsedTxns]);
+        }
+        break;
+      }
+      case MULTIOPS_MSG_TYPES.delegate: {
+        const [parsedTxns, error] = parseDelegateMsgsFromContent(
+          address,
+          content
+        );
+        if (error) {
+          dispatch(
+            setError({
+              type: 'error',
+              message: error,
+            })
+          );
+        } else {
+          setMessages((prev) => [...prev, ...parsedTxns]);
+        }
+        break;
+      }
+      case MULTIOPS_MSG_TYPES.redelegate: {
+        const [parsedTxns, error] = parseReDelegateMsgsFromContent(
+          address,
+          content
+        );
+        if (error) {
+          dispatch(
+            setError({
+              type: 'error',
+              message: error,
+            })
+          );
+        } else {
+          setMessages((prev) => [...prev, ...parsedTxns]);
+        }
+        break;
+      }
+      case MULTIOPS_MSG_TYPES.undelegate: {
+        const [parsedTxns, error] = parseUnDelegateMsgsFromContent(
+          address,
+          content
+        );
+        if (error) {
+          dispatch(
+            setError({
+              type: 'error',
+              message: error,
+            })
+          );
+        } else {
+          setMessages((prev) => [...prev, ...parsedTxns]);
+        }
+        break;
+      }
+      default:
+        setMessages([]);
+    }
+  };
+
   useEffect(() => {
     if (balance) {
       setAvailableBalance(
@@ -162,7 +242,11 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                   handleMsgTypeChange={handleMsgTypeChange}
                   msgType={msgType}
                 />
-                <div className="flex-1 bg-[#ffffff0D] rounded-lg"></div>
+                <FileUpload
+                  onFileContents={onFileContents}
+                  resetMessages={() => setMessages([])}
+                  msgType={msgType}
+                />
               </div>
             ) : (
               <div className="h-full flex flex-col">
@@ -249,7 +333,9 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
           <div className="flex-1 pl-4">
             <div className="h-full">
               <div className="flex justify-between">
-                <div className="font-extralight text-[14px]">Messages</div>
+                <div className="font-extralight text-[14px]">
+                  Messages {messages.length ? <>({messages.length})</> : null}
+                </div>
                 {messages.length ? (
                   <div
                     className="clear-all"
