@@ -246,6 +246,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
                   onFileContents={onFileContents}
                   resetMessages={() => setMessages([])}
                   msgType={msgType}
+                  messagesCount={messages.length}
                 />
               </div>
             ) : (

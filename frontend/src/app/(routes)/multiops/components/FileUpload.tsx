@@ -1,6 +1,6 @@
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton } from '@mui/material';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import {
   MULTIOPS_MSG_TYPES,
@@ -14,14 +14,20 @@ interface FileUploadProps {
   onFileContents: (content: string, type: string) => void;
   msgType: string;
   resetMessages: () => void;
+  messagesCount: number;
 }
 
 // TODO: Upload sample csv files on github and link them
 
 const FileUpload = (props: FileUploadProps) => {
-  const { onFileContents, resetMessages, msgType } = props;
-  const [uploadedFileName, setUploadedFileName] = useState<string>('');
+  const { onFileContents, resetMessages, msgType, messagesCount } = props;
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!messagesCount) {
+      setUploadedFiles([]);
+    }
+  }, [messagesCount]);
 
   return (
     <div className="flex-1 flex flex-col gap-2">
@@ -87,23 +93,26 @@ const FileUpload = (props: FileUploadProps) => {
           document.getElementById('multiops_file')!.click();
         }}
       >
-        {uploadedFileName ? (
+        {uploadedFiles.length ? (
           <div className="space-y-4">
             <div className="flex flex-col gap-2">
               {uploadedFiles?.map((file) => (
-                <div className="italic">{file} </div>
+                <div key={file} className="italic">
+                  {file}{' '}
+                </div>
               ))}
             </div>
             <div
               onClick={(e) => {
-                setUploadedFileName('');
                 setUploadedFiles([]);
                 resetMessages();
                 e.stopPropagation();
               }}
               className="flex gap-2 items-center"
             >
-              <div className="underline opacity-50 font-light">Clear uploads</div>
+              <div className="underline opacity-50 font-light">
+                Clear uploads
+              </div>
               <IconButton aria-label="delete txn" color="error">
                 <ClearIcon />
               </IconButton>
@@ -139,7 +148,6 @@ const FileUpload = (props: FileUploadProps) => {
             const reader = new FileReader();
             reader.onload = (e) => {
               const contents = (e?.target?.result as string) || '';
-              setUploadedFileName(file?.name);
               setUploadedFiles((prev) => [...prev, file?.name]);
               onFileContents(contents, msgType);
             };
