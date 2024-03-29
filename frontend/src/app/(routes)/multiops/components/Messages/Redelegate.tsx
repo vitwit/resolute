@@ -84,10 +84,6 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
     (state) => state.staking.chains?.[chainID]?.validators.status
   );
 
-  useEffect(() => {
-    dispatch(getDelegations({ address, chainID, baseURLs: restURLs }));
-  }, []);
-
   const [selectedValBal, setSelectedValBal] = useState<StakeBal>({
     amount: '',
     denom: '',
@@ -402,7 +398,7 @@ const Redelegate: React.FC<RedelegateProps> = (props) => {
       </div>
       <button
         type="submit"
-        className="mt-[14px] w-full text-[12px] font-medium primary-gradient rounded-lg h-8 flex justify-center items-center"
+        className="add-txn-btn primary-gradient"
       >
         Add
       </button>

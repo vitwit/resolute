@@ -229,7 +229,7 @@ const Deposit: React.FC<DepositProps> = (props) => {
       </div>
       <button
         type="submit"
-        className="mt-[14px] w-full text-[12px] font-medium primary-gradient rounded-lg h-8 flex justify-center items-center"
+        className="add-txn-btn primary-gradient"
       >
         Add
       </button>

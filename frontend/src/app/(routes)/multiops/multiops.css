@@ -37,3 +37,11 @@
 .clear-all {
   @apply text-right not-italic font-extralight text-[14px] leading-[normal] underline cursor-pointer underline-offset-[2px];
 }
+
+.add-txn-btn {
+  @apply mt-[14px] w-full text-[12px] font-medium rounded-lg h-8 flex justify-center items-center;
+}
+
+.execute-txn-btn {
+  @apply w-full text-[12px] font-medium rounded-lg h-10 flex justify-center items-center;
+}

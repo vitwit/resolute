@@ -249,9 +249,8 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
       <div className="space-y-6">
         <div className="space-y-4">
           <div className="text-[18px]">Create Transaction</div>
-          {/* TODO: Add description */}
           <div className="text-[14px] font-extralight">
-            Multiops allows you to create single transaction with multiple
+            Multiops allows to create single transaction with multiple
             messages of same or different type.
           </div>
         </div>
@@ -476,7 +475,7 @@ const TxnBuilder = ({ chainID }: { chainID: string }) => {
           <button
             type="submit"
             form="multiops-form"
-            className="w-full text-[12px] font-medium primary-gradient rounded-lg h-10 flex justify-center items-center"
+            className="execute-txn-btn primary-gradient"
             disabled={txStatus === TxStatus.PENDING}
           >
             {txStatus === TxStatus.PENDING ? (

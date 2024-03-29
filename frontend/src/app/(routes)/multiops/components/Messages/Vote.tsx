@@ -53,7 +53,7 @@ const voteOptions: VoteOption[] = [
 ];
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const renderOption = (props: any, option: ProposalOption) => (
+const renderProposalOption = (props: any, option: ProposalOption) => (
   <li {...props} key={option.value}>
     <div className="flex gap-2 items-center">
       <span className="font-semibold">#{option.value}</span>
@@ -174,7 +174,7 @@ const Vote: React.FC<VoteProps> = (props) => {
               onChange={(event, item) => {
                 onChange(item);
               }}
-              renderOption={renderOption}
+              renderOption={renderProposalOption}
               renderInput={(params) => (
                 <TextField
                   className="bg-[#FFFFFF0D]"
@@ -295,10 +295,7 @@ const Vote: React.FC<VoteProps> = (props) => {
           </span>
         </div>
       </div>
-      <button
-        type="submit"
-        className="mt-[14px] w-full text-[12px] font-medium primary-gradient rounded-lg h-8 flex justify-center items-center"
-      >
+      <button type="submit" className="add-txn-btn primary-gradient">
         Add
       </button>
     </form>

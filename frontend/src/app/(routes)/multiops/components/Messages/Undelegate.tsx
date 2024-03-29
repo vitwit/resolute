@@ -27,6 +27,11 @@ interface UnDelegateProps {
   feeAmount: number;
 }
 
+interface StakeBal {
+  amount: string;
+  denom: string;
+}
+
 export const getParsedAmount = (amount: string) => {
   const parsedAmount = parseFloat(amount);
   if (isNaN(parsedAmount)) return 0;
@@ -70,18 +75,13 @@ const Undelegate = (props: UnDelegateProps) => {
     );
   }, [chainID]);
 
-  interface stakeBal {
-    amount: string;
-    denom: string;
-  }
-
-  const [selectedValBal, setSelectedValBal] = useState<stakeBal>({
+  const [selectedValBal, setSelectedValBal] = useState<StakeBal>({
     amount: '',
     denom: '',
   });
 
   const [data, setData] = useState<
-    { label: string; value: string; amount: stakeBal }[]
+    { label: string; value: string; amount: StakeBal }[]
   >([]);
 
   const {
@@ -304,10 +304,7 @@ const Undelegate = (props: UnDelegateProps) => {
           </div>
         </div>
       </div>
-      <button
-        type="submit"
-        className="mt-[14px] w-full text-[12px] font-medium primary-gradient rounded-lg h-8 flex justify-center items-center"
-      >
+      <button type="submit" className="add-txn-btn primary-gradient">
         Add
       </button>
     </form>
