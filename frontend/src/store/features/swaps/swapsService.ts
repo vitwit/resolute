@@ -1,5 +1,5 @@
 import { TxSwapServiceInputs } from '@/types/swaps';
-import { SQUID_ID } from '@/utils/constants';
+import { SQUID_CLIENT_API, SQUID_ID } from '@/utils/constants';
 import { Squid } from '@0xsquid/sdk';
 import { OfflineDirectSigner } from '@cosmjs/proto-signing';
 import { SigningStargateClient } from '@cosmjs/stargate';
@@ -13,7 +13,7 @@ export const txExecuteSwap = async ({
   try {
     const squidClient = new Squid();
     squidClient.setConfig({
-      baseUrl: 'https://api.0xsquid.com',
+      baseUrl: SQUID_CLIENT_API,
       integratorId: SQUID_ID,
     });
     await squidClient.init();
@@ -59,7 +59,7 @@ export const trackTransactionStatus = async ({
 }): Promise<string> => {
   const squid = new Squid();
   squid.setConfig({
-    baseUrl: 'https://api.0xsquid.com',
+    baseUrl: SQUID_CLIENT_API,
     integratorId: SQUID_ID,
   });
   await squid.init();

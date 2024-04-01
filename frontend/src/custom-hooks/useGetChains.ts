@@ -1,5 +1,5 @@
 import { ChainConfig } from '@/types/swaps';
-import { SQUID_ID } from '@/utils/constants';
+import { SQUID_CHAINS_API, SQUID_ID } from '@/utils/constants';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -14,18 +14,15 @@ const useGetChains = () => {
 
   const fetchChainsInfo = async () => {
     try {
-      // const chains = await skipClient.chains();
-      const result = await axios.get(
-        'https://v2.api.squidrouter.com/v2/chains',
-        {
-          headers: {
-            'x-integrator-id': SQUID_ID,
-          },
-        }
-      );
+      const result = await axios.get(SQUID_CHAINS_API, {
+        headers: {
+          'x-integrator-id': SQUID_ID,
+        },
+      });
       const chains: ChainData[] = result.data.chains;
       setChainsData(chains);
       const chainsData = chains
+        .filter((chain) => chain.chainType === 'cosmos') // To filter cosmos chains
         .map((chain): ChainConfig => {
           return {
             label: chain.axelarChainName,

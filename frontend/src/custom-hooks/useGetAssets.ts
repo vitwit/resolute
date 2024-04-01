@@ -2,7 +2,8 @@ import { AssetConfig } from '@/types/swaps';
 import { useState } from 'react';
 import { TokenData } from '@0xsquid/sdk/dist/types';
 import axios from 'axios';
-import { SQUID_ID } from '@/utils/constants';
+import { SQUID_CLIENT_API, SQUID_ID } from '@/utils/constants';
+import { cleanURL } from '@/utils/util';
 
 const useGetAssets = () => {
   const [srcAssetsLoading, setSrcAssetsLoading] = useState(false);
@@ -16,7 +17,7 @@ const useGetAssets = () => {
         setDestAssetsLoading(true);
       }
       const result = await axios.get(
-        `https://api.0xsquid.com/v1/tokens?chainId=${chainID}`,
+        `${cleanURL(SQUID_CLIENT_API)}/v1/tokens?chainId=${chainID}`,
         {
           headers: {
             'x-integrator-id': SQUID_ID,

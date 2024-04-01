@@ -6,7 +6,11 @@ import {
   RouteData,
   Swap,
 } from '@0xsquid/sdk/dist/types';
-import { SQUID_ID, SWAP_ROUTE_ERROR } from '@/utils/constants';
+import {
+  SQUID_CLIENT_API,
+  SQUID_ID,
+  SWAP_ROUTE_ERROR,
+} from '@/utils/constants';
 import useChain from './useChain';
 import { useAppSelector } from './StateHooks';
 import { SwapPathObject } from '@/types/swaps';
@@ -24,7 +28,7 @@ interface GetRouteInputs {
 
 const squidClient = new Squid();
 squidClient.setConfig({
-  baseUrl: 'https://api.0xsquid.com',
+  baseUrl: SQUID_CLIENT_API,
   integratorId: SQUID_ID,
 });
 squidClient.init();

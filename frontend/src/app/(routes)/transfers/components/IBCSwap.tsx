@@ -574,7 +574,7 @@ const IBCSwap = () => {
               </div>
               <TextField
                 name="destAmount"
-                className="rounded-lg bg-[#ffffff0D]"
+                className={`rounded-lg bg-[#ffffff0D] ${routeLoading ? 'animate-pulse' : ''}`}
                 fullWidth
                 required={false}
                 size="small"
