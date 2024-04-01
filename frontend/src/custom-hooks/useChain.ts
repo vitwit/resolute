@@ -37,9 +37,42 @@ const useChain = () => {
     };
   };
 
+  const getChainNameFromID = (chainID: string) => {
+    if (!chainID.length) {
+      return {
+        chainName: '',
+      };
+    }
+    const filteredChain = chains.filter((chain) => chain.chain_id === chainID);
+    const chainData = filteredChain[0];
+    return {
+      chainName: chainData.chain_name,
+    };
+  };
+
+  const getChainLogoURI = (chainID: string) => {
+    if (!chainID.length) {
+      return {
+        chainLogo: '',
+      };
+    }
+    const filteredChain = chains.filter((chain) => chain.chain_id === chainID);
+    const chainData = filteredChain[0];
+    return {
+      chainLogo:
+        chainData.logo_URIs?.svg ||
+        chainData.logo_URIs?.jpeg ||
+        chainData.logo_URIs?.jpeg ||
+        chainData.logo_URIs?.png ||
+        '',
+    };
+  };
+
   return {
     getChainEndpoints,
     getExplorerEndpoints,
+    getChainNameFromID,
+    getChainLogoURI,
   };
 };
 

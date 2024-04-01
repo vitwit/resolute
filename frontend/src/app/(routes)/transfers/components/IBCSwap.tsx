@@ -29,6 +29,7 @@ import { RouteData } from '@0xsquid/sdk';
 import { fromBech32 } from '@cosmjs/encoding';
 import { shortenAddress } from '@/utils/util';
 import { setError } from '@/store/features/common/commonSlice';
+import RoutePreview from './RoutePreview';
 
 const emptyBalance = {
   amount: 0,
@@ -429,199 +430,209 @@ const IBCSwap = () => {
     }
   }, [balanceStatus, sourceTxHash]);
 
+  const [showRoute, setShowRoute] = useState(false);
+
   return (
     <div className="flex justify-center">
       <div className="bg-[#FFFFFF0D] rounded-2xl p-6 flex flex-col justify-between items-center gap-6 min-w-[550px]">
-        <div className="bg-[#FFFFFF0D] rounded-2xl p-4 flex flex-col gap-4 w-full">
-          <div className="flex justify-between items-center">
-            <div className="text-[16px]">From</div>
-            <div>
-              {fromAddress ? (
-                <div className="bg-[#2E2B3E] text-[14px] px-3 py-1 rounded-full font-light">
-                  {shortenAddress(fromAddress, 20)}
+        <div className="flex flex-col justify-between items-center gap-6 w-full relative">
+          <div className="bg-[#FFFFFF0D] rounded-2xl p-4 flex flex-col gap-4 w-full">
+            <div className="flex justify-between items-center">
+              <div className="text-[16px]">From</div>
+              <div>
+                {fromAddress ? (
+                  <div className="bg-[#2E2B3E] text-[14px] px-3 py-1 rounded-full font-light">
+                    {shortenAddress(fromAddress, 20)}
+                  </div>
+                ) : (
+                  <button
+                    className="primary-gradient text-[14px] rounded-full px-3 py-1"
+                    onClick={connectSourceWallet}
+                  >
+                    Connect Wallet
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-[14px] font-extralight">Select Asset *</div>
+              <div className="flex justify-between gap-4">
+                <div className="flex-1">
+                  <ChainsList
+                    options={chainsInfo}
+                    handleChange={handleSelectSourceChain}
+                    selectedChain={selectedSourceChain}
+                    dataLoading={chainsLoading}
+                  />
                 </div>
-              ) : (
-                <button
-                  className="primary-gradient text-[14px] rounded-full px-3 py-1"
-                  onClick={connectSourceWallet}
-                >
-                  Connect Wallet
-                </button>
-              )}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="text-[14px] font-extralight">Select Asset *</div>
-            <div className="flex justify-between gap-4">
-              <div className="flex-1">
-                <ChainsList
-                  options={chainsInfo}
-                  handleChange={handleSelectSourceChain}
-                  selectedChain={selectedSourceChain}
-                  dataLoading={chainsLoading}
-                />
-              </div>
-              <div className="flex-1">
-                <AssetsList
-                  options={selectedSourceChainAssets}
-                  handleChange={handleSelectSourceAsset}
-                  selectedAsset={selectedSourceAsset}
-                  assetsLoading={srcAssetsLoading}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="font-extralight text-[14px]">Enter Amount *</div>
-            <TextField
-              name="sourceAmount"
-              className="rounded-lg bg-[#ffffff0D]"
-              fullWidth
-              required={false}
-              size="small"
-              autoFocus={true}
-              placeholder="Enter Amount"
-              sx={swapTextFieldStyles}
-              value={amountIn}
-              InputProps={{
-                sx: {
-                  input: {
-                    color: 'white !important',
-                    fontSize: '14px',
-                    padding: 2,
-                  },
-                },
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <div className="flex gap-1 font-int custom-font">
-                      {balanceStatus === TxStatus.PENDING &&
-                      !availableBalance.parsedAmount &&
-                      !availableBalance.displayDenom ? (
-                        <CircularProgress size={14} sx={{ color: 'white' }} />
-                      ) : (
-                        <>
-                          <div className="text-[14px] font-extralight text-white">
-                            {availableBalance.parsedAmount || 0}
-                          </div>
-                          <div className="text-[14px] font-extralight text-[#FFFFFF80]">
-                            {availableBalance.displayDenom || '-'}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </InputAdornment>
-                ),
-              }}
-              onChange={handleAmountInChange}
-            />
-          </div>
-        </div>
-        <div
-          onClick={flipChains}
-          className={`transition-transform transform cursor-pointer delay-400 ${isRotated ? 'rotate-180' : ''}`}
-        >
-          <Image src="/ibc-swap-icon.svg" width={40} height={40} alt="Swap" />
-        </div>
-        <div className="bg-[#FFFFFF0D] rounded-2xl p-4 flex flex-col gap-4 w-full">
-          <div className="flex justify-between items-center">
-            <div className="text-[16px]">To</div>
-            <div className={`${otherAddress ? 'invisible' : 'visible'}`}>
-              {toAddress ? (
-                <div className="bg-[#2E2B3E] text-[14px] px-3 py-1 rounded-full font-light">
-                  {shortenAddress(toAddress, 20)}
+                <div className="flex-1">
+                  <AssetsList
+                    options={selectedSourceChainAssets}
+                    handleChange={handleSelectSourceAsset}
+                    selectedAsset={selectedSourceAsset}
+                    assetsLoading={srcAssetsLoading}
+                  />
                 </div>
-              ) : (
-                <button
-                  className="primary-gradient text-[14px] rounded-full px-3 py-1"
-                  onClick={connectDestWallet}
-                >
-                  Connect Wallet
-                </button>
-              )}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="text-[14px] font-extralight">Select Asset *</div>
-            <div className="flex justify-between gap-4">
-              <div className="flex-1">
-                <ChainsList
-                  options={chainsInfo}
-                  handleChange={handleSelectDestChain}
-                  selectedChain={selectedDestChain}
-                  dataLoading={chainsLoading}
-                />
-              </div>
-              <div className="flex-1">
-                <AssetsList
-                  options={selectDestChainAssets}
-                  handleChange={handleSelectDestAsset}
-                  selectedAsset={selectedDestAsset}
-                  assetsLoading={destAssetLoading}
-                />
               </div>
             </div>
-          </div>
-          <div className="space-y-2">
-            <div className="font-extralight text-[14px] flex gap-2 items-center">
-              <span>You will receive</span>
-              {routeLoading ? (
-                <CircularProgress sx={{ color: 'white' }} size={12} />
-              ) : null}
-            </div>
-            <TextField
-              name="destAmount"
-              className="rounded-lg bg-[#ffffff0D]"
-              fullWidth
-              required={false}
-              size="small"
-              disabled={true}
-              placeholder="0"
-              value={amountOut}
-              sx={swapTextFieldStyles}
-              InputProps={{
-                sx: {
-                  input: {
-                    color: 'white !important',
-                    fontSize: '14px',
-                    padding: 2,
+            <div className="space-y-2">
+              <div className="font-extralight text-[14px]">Enter Amount *</div>
+              <TextField
+                name="sourceAmount"
+                className="rounded-lg bg-[#ffffff0D]"
+                fullWidth
+                required={false}
+                size="small"
+                autoFocus={true}
+                placeholder="Enter Amount"
+                sx={swapTextFieldStyles}
+                value={amountIn}
+                InputProps={{
+                  sx: {
+                    input: {
+                      color: 'white !important',
+                      fontSize: '14px',
+                      padding: 2,
+                    },
                   },
-                },
-              }}
-            />
-          </div>
-          <div className="flex justify-end">
-            <div
-              onClick={handleSendToAnotherAddress}
-              className="text-[14px] font-extralight underline underline-offset-[3px] cursor-pointer"
-            >
-              {otherAddress
-                ? 'Receive on same wallet'
-                : 'Receive on another wallet'}
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <div className="flex gap-1 font-int custom-font">
+                        {balanceStatus === TxStatus.PENDING &&
+                        !availableBalance.parsedAmount &&
+                        !availableBalance.displayDenom ? (
+                          <CircularProgress size={14} sx={{ color: 'white' }} />
+                        ) : (
+                          <>
+                            <div className="text-[14px] font-extralight text-white">
+                              {availableBalance.parsedAmount || 0}
+                            </div>
+                            <div className="text-[14px] font-extralight text-[#FFFFFF80]">
+                              {availableBalance.displayDenom || '-'}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={handleAmountInChange}
+              />
             </div>
           </div>
-          <div className={otherAddress ? `visible` : `invisible`}>
-            <TextField
-              name="toAddress"
-              className="rounded-lg bg-[#ffffff0D]"
-              fullWidth
-              required={false}
-              size="small"
-              autoFocus={true}
-              placeholder="Enter Address"
-              sx={swapTextFieldStyles}
-              value={receiverAddress}
-              InputProps={{
-                sx: {
-                  input: {
-                    color: 'white !important',
-                    fontSize: '14px',
-                    padding: 2,
-                  },
-                },
-              }}
-              onChange={handleAddressChange}
-            />
+          <div
+            onClick={flipChains}
+            className={`transition-transform transform cursor-pointer delay-400 ${isRotated ? 'rotate-180' : ''}`}
+          >
+            <Image src="/ibc-swap-icon.svg" width={40} height={40} alt="Swap" />
           </div>
+          <div className="bg-[#FFFFFF0D] rounded-2xl p-4 flex flex-col gap-4 w-full">
+            <div className="flex justify-between items-center">
+              <div className="text-[16px]">To</div>
+              <div className={`${otherAddress ? 'invisible' : 'visible'}`}>
+                {toAddress ? (
+                  <div className="bg-[#2E2B3E] text-[14px] px-3 py-1 rounded-full font-light">
+                    {shortenAddress(toAddress, 20)}
+                  </div>
+                ) : (
+                  <button
+                    className="primary-gradient text-[14px] rounded-full px-3 py-1"
+                    onClick={connectDestWallet}
+                  >
+                    Connect Wallet
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-[14px] font-extralight">Select Asset *</div>
+              <div className="flex justify-between gap-4">
+                <div className="flex-1">
+                  <ChainsList
+                    options={chainsInfo}
+                    handleChange={handleSelectDestChain}
+                    selectedChain={selectedDestChain}
+                    dataLoading={chainsLoading}
+                  />
+                </div>
+                <div className="flex-1">
+                  <AssetsList
+                    options={selectDestChainAssets}
+                    handleChange={handleSelectDestAsset}
+                    selectedAsset={selectedDestAsset}
+                    assetsLoading={destAssetLoading}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="font-extralight text-[14px] flex gap-2 items-center">
+                <span>You will receive</span>
+                {routeLoading ? (
+                  <CircularProgress sx={{ color: 'white' }} size={12} />
+                ) : null}
+              </div>
+              <TextField
+                name="destAmount"
+                className="rounded-lg bg-[#ffffff0D]"
+                fullWidth
+                required={false}
+                size="small"
+                disabled={true}
+                placeholder="0"
+                value={amountOut}
+                sx={swapTextFieldStyles}
+                InputProps={{
+                  sx: {
+                    input: {
+                      color: 'white !important',
+                      fontSize: '14px',
+                      padding: 2,
+                    },
+                  },
+                }}
+              />
+            </div>
+            <div className="flex justify-end">
+              <div
+                onClick={handleSendToAnotherAddress}
+                className="text-[14px] font-extralight underline underline-offset-[3px] cursor-pointer"
+              >
+                {otherAddress
+                  ? 'Receive on same wallet'
+                  : 'Receive on another wallet'}
+              </div>
+            </div>
+            <div className={otherAddress ? `visible` : `invisible`}>
+              <TextField
+                name="toAddress"
+                className="rounded-lg bg-[#ffffff0D]"
+                fullWidth
+                required={false}
+                size="small"
+                autoFocus={true}
+                placeholder="Enter Address"
+                sx={swapTextFieldStyles}
+                value={receiverAddress}
+                InputProps={{
+                  sx: {
+                    input: {
+                      color: 'white !important',
+                      fontSize: '14px',
+                      padding: 2,
+                    },
+                  },
+                }}
+                onChange={handleAddressChange}
+              />
+            </div>
+          </div>
+          {showRoute && swapRoute ? (
+            <RoutePreview
+              swapRoute={swapRoute}
+              onClose={() => setShowRoute(false)}
+            />
+          ) : null}
         </div>
         <div className="bg-[#FFFFFF0D] rounded-lg w-full py-2 px-4">
           {!allInputsProvided ? (
@@ -633,7 +644,21 @@ const IBCSwap = () => {
           ) : routeError ? (
             <div>{routeError}</div>
           ) : (
-            <div>{!routeLoading && swapRoute ? 'Route found' : ''}</div>
+            <div>
+              {!routeLoading && swapRoute ? (
+                <div className="flex justify-between">
+                  <div>Route found</div>
+                  <div
+                    className="underline font-light underline-offset-[3px] cursor-pointer"
+                    onClick={() => setShowRoute((prev) => !prev)}
+                  >
+                    {showRoute ? 'Close' : 'View route'}
+                  </div>
+                </div>
+              ) : (
+                ''
+              )}
+            </div>
           )}
         </div>
         <div className="w-full">
