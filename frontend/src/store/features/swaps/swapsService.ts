@@ -1,9 +1,16 @@
 import { TxSwapServiceInputs } from '@/types/swaps';
 import { SQUID_CLIENT_API, SQUID_ID } from '@/utils/constants';
-import { Squid } from '@0xsquid/sdk';
+import { GetRoute, Squid } from '@0xsquid/sdk';
 import { OfflineDirectSigner } from '@cosmjs/proto-signing';
 import { SigningStargateClient } from '@cosmjs/stargate';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
+
+const squidClient = new Squid();
+squidClient.setConfig({
+  baseUrl: SQUID_CLIENT_API,
+  integratorId: SQUID_ID,
+});
+squidClient.init();
 
 export const txExecuteSwap = async ({
   route,
@@ -11,13 +18,6 @@ export const txExecuteSwap = async ({
   signerAddress,
 }: TxSwapServiceInputs): Promise<TxRaw> => {
   try {
-    const squidClient = new Squid();
-    squidClient.setConfig({
-      baseUrl: SQUID_CLIENT_API,
-      integratorId: SQUID_ID,
-    });
-    await squidClient.init();
-
     const tx = (await squidClient.executeRoute({
       signer: signer,
       route: route,
@@ -92,4 +92,15 @@ export const connectStargateClient = async (urls: string[]) => {
     }
   }
   throw new Error('Unable to connect to any RPC URLs');
+};
+
+export const fetchSwapRoute = async (params: GetRoute) => {
+  try {
+    const res = await squidClient.getRoute(params);
+    return res;
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+  } catch (err: any) {
+    console.error(err.message);
+    throw new Error(err.message);
+  }
 };

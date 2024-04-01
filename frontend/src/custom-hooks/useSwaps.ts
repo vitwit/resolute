@@ -1,20 +1,16 @@
 import { useState } from 'react';
-import { Squid } from '@0xsquid/sdk';
 import {
   CosmosTransferAction,
   GetRoute,
   RouteData,
   Swap,
 } from '@0xsquid/sdk/dist/types';
-import {
-  SQUID_CLIENT_API,
-  SQUID_ID,
-  SWAP_ROUTE_ERROR,
-} from '@/utils/constants';
+import { SWAP_ROUTE_ERROR } from '@/utils/constants';
 import useChain from './useChain';
 import { useAppSelector } from './StateHooks';
 import { SwapPathObject } from '@/types/swaps';
 import useGetChains from './useGetChains';
+import { fetchSwapRoute } from '@/store/features/swaps/swapsService';
 
 interface GetRouteInputs {
   sourceChainID: string;
@@ -25,13 +21,6 @@ interface GetRouteInputs {
   fromAddress: string;
   toAddress: string;
 }
-
-const squidClient = new Squid();
-squidClient.setConfig({
-  baseUrl: SQUID_CLIENT_API,
-  integratorId: SQUID_ID,
-});
-squidClient.init();
 
 const useSwaps = () => {
   const [routeLoading, setRouteLoading] = useState(false);
@@ -63,7 +52,7 @@ const useSwaps = () => {
     try {
       setRouteLoading(true);
       setRouteError('');
-      const res = await squidClient.getRoute(params);
+      const res = await fetchSwapRoute(params);
       setRouteLoading(false);
       return {
         resAmount: res.route.estimate.toAmount,
