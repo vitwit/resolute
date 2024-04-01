@@ -1,5 +1,8 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
-import { deleteMultisig } from '@/store/features/multisig/multisigSlice';
+import {
+  deleteMultisig,
+  setVerifyDialogOpen,
+} from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { MultisigAccount } from '@/types/multisig';
 import { parseBalance } from '@/utils/denom';
@@ -11,6 +14,7 @@ import DialogDeleteMultisig from './DialogDeleteMultisig';
 import { getTimeDifferenceToFutureDate } from '@/utils/dataTime';
 import CommonCopy from '@/components/CommonCopy';
 import { getAuthToken } from '@/utils/localStorage';
+import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 
 interface AccountInfoProps {
   chainID: string;
@@ -99,6 +103,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
         })}
         chainID={chainID}
         isAdmin={isAdmin}
+        walletAddress={walletAddress}
       />
     </div>
   );
@@ -114,6 +119,7 @@ const AccountDetails = ({
   chainName,
   chainID,
   isAdmin,
+  walletAddress,
 }: {
   multisigAccount: MultisigAccount;
   actionsRequired: number;
@@ -122,6 +128,7 @@ const AccountDetails = ({
   chainName: string;
   chainID: string;
   isAdmin: boolean;
+  walletAddress: string;
 }) => {
   const { account: accountInfo, pubkeys } = multisigAccount;
   const { address, name, created_at, threshold } = accountInfo;
@@ -130,6 +137,10 @@ const AccountDetails = ({
   const deleteMultisigRes = useAppSelector(
     (state: RootState) => state.multisig.deleteMultisigRes
   );
+  const { isAccountVerified } = useVerifyAccount({
+    chainID,
+    address: walletAddress,
+  });
 
   const router = useRouter();
 
@@ -162,6 +173,14 @@ const AccountDetails = ({
         })
       );
     }
+  };
+
+  const handleDeleteMultisig = () => {
+    if (!isAccountVerified()) {
+      dispatch(setVerifyDialogOpen(true));
+      return;
+    }
+    setDeleteDialogOpen(true);
   };
 
   return (
@@ -230,7 +249,7 @@ const AccountDetails = ({
         </div>
         <div>
           <button
-            onClick={() => setDeleteDialogOpen(true)}
+            onClick={() => handleDeleteMultisig()}
             className={
               isAdmin
                 ? 'delete-multisig-btn'

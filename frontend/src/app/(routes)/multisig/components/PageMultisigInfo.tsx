@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { RootState } from '@/store/store';
@@ -19,8 +19,7 @@ import {
 } from '@/store/features/staking/stakeSlice';
 import AccountInfo from './AccountInfo';
 import MultisigSidebar from './MultisigSidebar';
-import VerifyAccount from './VerifyAccount';
-import { isVerified } from '@/utils/util';
+import DialogVerifyAccount from './DialogVerifyAccount';
 
 interface PageMultisigInfoProps {
   chainName: string;
@@ -30,7 +29,6 @@ interface PageMultisigInfoProps {
 const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
   const { chainName, address } = props;
   const dispatch = useAppDispatch();
-  const [verified, setVerified] = useState(false);
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
@@ -54,7 +52,6 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
         address: walletAddress,
         signature: verifyAccountRes.token,
       });
-      setVerified(true);
     } else if (verifyAccountRes.status === 'rejected') {
       dispatch(
         setError({
@@ -66,17 +63,14 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
   }, [verifyAccountRes]);
 
   useEffect(() => {
-    if (isVerified({ chainID, address: walletAddress })) {
-      setVerified(true);
-    } else {
-      setVerified(false);
-    }
-  }, [address, chainID]);
-
-  useEffect(() => {
-    if (chainID && isVerified({ chainID, address: walletAddress })) {
+    if (chainID) {
       dispatch(
-        getMultisigBalance({ baseURL, address, denom: coinMinimalDenom, baseURLs: restURLs })
+        getMultisigBalance({
+          baseURL,
+          address,
+          denom: coinMinimalDenom,
+          baseURLs: restURLs,
+        })
       );
       dispatch(getDelegations({ baseURLs: restURLs, address, chainID }));
       dispatch(getAllValidators({ baseURLs: restURLs, chainID }));
@@ -95,28 +89,22 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
 
   return (
     <div className="flex gap-10 justify-between">
-      {verified ? (
-        <>
-          <AccountInfo
-            chainID={chainID}
-            chainName={chainName}
-            address={address}
-            coinMinimalDenom={coinMinimalDenom}
-            coinDecimals={coinDecimals}
-            coinDenom={coinDenom}
-            walletAddress={walletAddress}
-          />
-          <MultisigSidebar
-            chainID={chainID}
-            accountSpecific={true}
-            address={address}
-            walletAddress={walletAddress}
-            verified={verified}
-          />
-        </>
-      ) : (
-        <VerifyAccount chainID={chainID} walletAddress={walletAddress} />
-      )}
+      <AccountInfo
+        chainID={chainID}
+        chainName={chainName}
+        address={address}
+        coinMinimalDenom={coinMinimalDenom}
+        coinDecimals={coinDecimals}
+        coinDenom={coinDenom}
+        walletAddress={walletAddress}
+      />
+      <MultisigSidebar
+        chainID={chainID}
+        accountSpecific={true}
+        address={address}
+        walletAddress={walletAddress}
+      />
+      <DialogVerifyAccount address={walletAddress} chainID={chainID} />
     </div>
   );
 };

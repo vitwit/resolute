@@ -4,6 +4,7 @@ import {
   getAccountAllMultisigTxns,
   getTxns,
   resetCreateTxnState,
+  setVerifyDialogOpen,
 } from '@/store/features/multisig/multisigSlice';
 import React, { useEffect, useState } from 'react';
 import TransactionsList from './TransactionsList';
@@ -12,17 +13,17 @@ import DialogCreateTxn from './DialogCreateTxn';
 import { resetError, setError } from '@/store/features/common/commonSlice';
 import { TxStatus } from '@/types/enums';
 import AllTransactionsList from './AllTransactionsList';
+import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 
 interface MultisigSidebarProps {
   chainID: string;
   accountSpecific: boolean;
   address?: string;
   walletAddress: string;
-  verified: boolean;
 }
 
 const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
-  const { chainID, accountSpecific, address, walletAddress, verified } = props;
+  const { chainID, accountSpecific, address, walletAddress } = props;
   const dispatch = useAppDispatch();
   const [isHistory, setIsHistory] = useState<boolean>(false);
   const [isMember, setIsMember] = useState(false);
@@ -44,6 +45,10 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
   const deleteTxnRes = useAppSelector(
     (state: RootState) => state.multisig.deleteTxnRes
   );
+  const { isAccountVerified } = useVerifyAccount({
+    chainID,
+    address: walletAddress,
+  });
 
   const { pubkeys } = multisigAccount;
 
@@ -143,81 +148,85 @@ const MultisigSidebar: React.FC<MultisigSidebarProps> = (props) => {
     dispatch(resetCreateTxnState());
   }, []);
 
+  const handleCreateTransaction = () => {
+    if (isAccountVerified()) {
+      setCreateDialogOpen(true);
+    } else {
+      dispatch(setVerifyDialogOpen(true));
+    }
+  };
+
   return (
     <div className="multisig-sidebar">
       <TopNav />
-      {verified ? (
-        <>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center h-9">
-              <div className="text-[16px] leading-normal">Transactions</div>
-              {accountSpecific ? (
-                <div>
-                  <button
-                    className="create-multisig-btn"
-                    disabled={!isMember}
-                    onClick={() => setCreateDialogOpen(true)}
-                  >
-                    Create Transaction
-                  </button>
-                </div>
-              ) : null}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center h-9">
+          <div className="text-[16px] leading-normal">Transactions</div>
+          {accountSpecific ? (
+            <div>
+              <button
+                className="create-multisig-btn"
+                disabled={!isMember}
+                onClick={() => handleCreateTransaction()}
+              >
+                Create Transaction
+              </button>
             </div>
-            <div className="mt-4 py-2 flex flex-col text-[14px]">
-              <div className="flex gap-6 text-white">
-                <div
-                  className="custom-radio-button-label"
-                  onClick={() => setIsHistory(false)}
-                >
-                  <div className="custom-radio-button">
-                    {!isHistory ? (
-                      <div className="custom-radio-button-checked"></div>
-                    ) : null}
-                  </div>
-                  <div>Active Transactions</div>
-                </div>
-                <div
-                  className="custom-radio-button-label"
-                  onClick={() => setIsHistory(true)}
-                >
-                  <div className="custom-radio-button">
-                    {isHistory ? (
-                      <div className="custom-radio-button-checked"></div>
-                    ) : null}
-                  </div>
-                  <div>Completed Transactions</div>
-                </div>
+          ) : null}
+        </div>
+        <div className="mt-4 py-2 flex flex-col text-[14px]">
+          <div className="flex gap-6 text-white">
+            <div
+              className="custom-radio-button-label"
+              onClick={() => setIsHistory(false)}
+            >
+              <div className="custom-radio-button">
+                {!isHistory ? (
+                  <div className="custom-radio-button-checked"></div>
+                ) : null}
               </div>
+              <div>Active Transactions</div>
+            </div>
+            <div
+              className="custom-radio-button-label"
+              onClick={() => setIsHistory(true)}
+            >
+              <div className="custom-radio-button">
+                {isHistory ? (
+                  <div className="custom-radio-button-checked"></div>
+                ) : null}
+              </div>
+              <div>Completed Transactions</div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {accountSpecific ? (
-            <>
-              <TransactionsList
-                chainID={chainID}
-                isMember={isMember}
-                txnsState={txnsState}
-                isHistory={isHistory}
-              />
-              <DialogCreateTxn
-                open={createDialogOpen}
-                onClose={handleCreateDialogClose}
-                chainID={chainID}
-                address={address || ''}
-                walletAddress={walletAddress}
-              />
-            </>
-          ) : (
-            <>
-              <AllTransactionsList
-                chainID={chainID}
-                txnsState={txnsState}
-                isHistory={isHistory}
-              />
-            </>
-          )}
+      {accountSpecific ? (
+        <>
+          <TransactionsList
+            chainID={chainID}
+            isMember={isMember}
+            txnsState={txnsState}
+            isHistory={isHistory}
+          />
+          <DialogCreateTxn
+            open={createDialogOpen}
+            onClose={handleCreateDialogClose}
+            chainID={chainID}
+            address={address || ''}
+            walletAddress={walletAddress}
+          />
         </>
-      ) : null}
+      ) : (
+        <>
+          <AllTransactionsList
+            chainID={chainID}
+            txnsState={txnsState}
+            isHistory={isHistory}
+          />
+        </>
+      )}
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import TopNav from '@/components/TopNav';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { verifyAccount } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
@@ -23,17 +22,14 @@ const VerifyAccount: React.FC<VerifyAccountProps> = (props) => {
   );
   return (
     <div className="verify-account relative">
-      <div className="w-fit absolute top-6 right-6">
-        <TopNav />
-      </div>
       <Image
         src="/verify-illustration.png"
-        height={290}
-        width={400}
+        height={200}
+        width={275}
         alt="Verify Ownership"
         draggable={false}
       />
-      <div className="empty-screen-text">
+      <div className="italic my-6">
         Please verify your account ownership to proceed.
       </div>
       <button
