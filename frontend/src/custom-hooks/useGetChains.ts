@@ -49,10 +49,17 @@ const useGetChains = () => {
     return chainConfig[0];
   };
 
+  const getChainLogoURI = (chainID: string) => {
+    const chainConfig = getChainConfig(chainID);
+    const logoURI = chainConfig?.chainIconURI || '';
+    return logoURI;
+  };
+
   return {
     loading,
     chainsInfo,
     getChainConfig,
+    getChainLogoURI,
   };
 };
 

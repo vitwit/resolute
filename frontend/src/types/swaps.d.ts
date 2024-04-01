@@ -55,3 +55,9 @@ interface TxSwapServiceInputs {
   route: RouteData;
   signerAddress: string;
 }
+
+interface SwapPathObject {
+  type: string;
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  value: any;
+}
