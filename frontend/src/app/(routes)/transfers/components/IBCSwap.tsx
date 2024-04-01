@@ -357,9 +357,9 @@ const IBCSwap = () => {
         : false;
 
     if (chainsSelected && assetsSelected && srcAmount && validReceiverAddress) {
-      return setAllInputsProvided(true);
+      setAllInputsProvided(true);
     }
-    return setAllInputsProvided(false);
+    setAllInputsProvided(false);
   };
 
   const selectNetworkAlert = () => {

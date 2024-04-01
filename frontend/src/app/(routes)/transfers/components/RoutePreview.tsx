@@ -49,9 +49,9 @@ const RoutePreview = ({
                 />
               </div>
               <div className="w-[85%] min-h-12 flex flex-col gap-4">
-                {pathData.map((path) => {
+                {pathData.map((path, index) => {
                   return (
-                    <>
+                    <React.Fragment key={index}>
                       {path.type === 'swap' ? (
                         <SwapPath
                           dex={path.value.dex}
@@ -70,7 +70,7 @@ const RoutePreview = ({
                           tokenSymbol={path.value.tokenSymbol}
                         />
                       )}
-                    </>
+                    </React.Fragment>
                   );
                 })}
               </div>

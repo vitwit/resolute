@@ -28,7 +28,7 @@ const ChainToken = ({
           {amount}&nbsp;{symbol}
         </div>
         <div className="font-bold opacity-50">
-          On&nbsp;<span className="capitalize">{chainName}</span>
+          On&nbsp;<span className="capitalize text-[14px]">{chainName}</span>
         </div>
       </div>
     </div>
