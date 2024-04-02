@@ -7,10 +7,8 @@ import {
   getMultisigBalance,
   multisigByAddress,
 } from '@/store/features/multisig/multisigSlice';
-import { setAuthToken } from '@/utils/localStorage';
 import {
   resetError,
-  setError,
   setSelectedNetwork,
 } from '@/store/features/common/commonSlice';
 import {

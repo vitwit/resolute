@@ -1,6 +1,5 @@
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
-import { verifyAccount } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { TxStatus } from '@/types/enums';
 import { CircularProgress } from '@mui/material';
