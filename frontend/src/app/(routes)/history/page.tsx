@@ -1,9 +1,8 @@
-import React from 'react'
+import React from 'react';
+import TxnHistory from './TxnHistory';
 
 const page = () => {
-  return (
-    <div>page</div>
-  )
-}
+  return <TxnHistory />;
+};
 
-export default page
+export default page;
