@@ -28,6 +28,12 @@ const useVerifyAccount = ({
         signature: verifyAccountRes.token,
       });
       dispatch(setVerifyDialogOpen(false));
+      dispatch(
+        setError({
+          type: 'success',
+          message: 'Verified, You can now perform actions',
+        })
+      );
       dispatch(resetVerifyAccountRes());
     } else if (verifyAccountRes.status === 'rejected') {
       dispatch(
@@ -39,7 +45,7 @@ const useVerifyAccount = ({
     }
   }, [verifyAccountRes]);
 
-  const useVerifyAccount = (chainID: string, address: string) => {
+  const verifyOwnership = () => {
     dispatch(verifyAccount({ chainID, address }));
   };
 
@@ -47,7 +53,7 @@ const useVerifyAccount = ({
     const verified = isVerified({ chainID, address });
     return verified;
   };
-  return { useVerifyAccount, isAccountVerified };
+  return { verifyOwnership, isAccountVerified };
 };
 
 export default useVerifyAccount;

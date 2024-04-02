@@ -1,4 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 import { verifyAccount } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
 import { TxStatus } from '@/types/enums';
@@ -13,10 +14,14 @@ interface VerifyAccountProps {
 
 const VerifyAccount: React.FC<VerifyAccountProps> = (props) => {
   const { chainID, walletAddress } = props;
-  const dispatch = useAppDispatch();
+  const { verifyOwnership } = useVerifyAccount({
+    chainID,
+    address: walletAddress,
+  });
   const handleVerifyAccountEvent = () => {
-    dispatch(verifyAccount({ chainID, address: walletAddress }));
+    verifyOwnership();
   };
+
   const loading = useAppSelector(
     (state: RootState) => state.multisig.verifyAccountRes.status
   );

@@ -32,9 +32,7 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
   const nameToChainIDs = useAppSelector(
     (state: RootState) => state.wallet.nameToChainIDs
   );
-  const verifyAccountRes = useAppSelector(
-    (state) => state.multisig.verifyAccountRes
-  );
+
   const chainID = nameToChainIDs[chainName];
 
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
@@ -44,23 +42,6 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
     decimals: coinDecimals,
     displayDenom: coinDenom,
   } = getDenomInfo(chainID);
-
-  useEffect(() => {
-    if (verifyAccountRes.status === 'idle') {
-      setAuthToken({
-        chainID: chainID,
-        address: walletAddress,
-        signature: verifyAccountRes.token,
-      });
-    } else if (verifyAccountRes.status === 'rejected') {
-      dispatch(
-        setError({
-          type: 'error',
-          message: verifyAccountRes.error,
-        })
-      );
-    }
-  }, [verifyAccountRes]);
 
   useEffect(() => {
     if (chainID) {
@@ -77,7 +58,7 @@ const PageMultisigInfo: React.FC<PageMultisigInfoProps> = (props) => {
       dispatch(multisigByAddress({ address }));
       dispatch(getMultisigAccounts(walletAddress));
     }
-  }, [chainID, verifyAccountRes]);
+  }, [chainID]);
 
   useEffect(() => {
     dispatch(setSelectedNetwork({ chainName: chainName }));

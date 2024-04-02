@@ -111,7 +111,7 @@ const AllMultisigs: React.FC<AllMultisigsProps> = (props) => {
                 <div>
                   <button
                     className="create-multisig-btn-2"
-                    onClick={() => setDialogOpen(true)}
+                    onClick={() => handleCreateMultisig()}
                   >
                     Create Multisig
                   </button>
