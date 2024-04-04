@@ -61,9 +61,9 @@ const RenderFormattedMessage = ({
     case msgAuthzExecTypeUrl:
       return 'Exec Authz';
     case msgAuthzGrantTypeUrl:
-      return 'Grant Authz';
+      return <GrantMsg msg={message} isAuthz={true} />;
     case msgFeegrantGrantTypeUrl:
-      return 'Grant Allowance';
+      return <GrantMsg msg={message} isAuthz={false} />;
     case msgVoteTypeUrl:
       return 'Vote';
     case msgDepositTypeUrl:
@@ -168,11 +168,11 @@ const ClaimRewards = ({ msg }: { msg: any }) => {
   );
 };
 
-const GrantAuthzMsg = ({ msg }: { msg: any }) => {
+const GrantMsg = ({ msg, isAuthz }: { msg: any; isAuthz: boolean }) => {
   const { grantee } = msg;
   return (
     <div className="text-[16px] flex gap-2 items-center">
-      <div>Granted authz</div>
+      <div>{isAuthz ? 'Granted authz' : 'Granted allowance'}</div>
       <div className="text-[#ffffff80]">to</div>
       <TextCopyField displayLen={20} isAddress={true} content={grantee} />
     </div>
