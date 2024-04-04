@@ -202,3 +202,33 @@ export const NewIBCTransaction = (
   };
   return transaction;
 };
+
+export const formattedMsgType = (msgType: string) => {
+  if (!msgType) return 'No Message';
+  switch (msgType) {
+    case msgDelegate:
+      return 'Delegate';
+    case msgUnDelegate:
+      return 'UnDelegate';
+    case msgReDelegate:
+      return 'ReDelegate';
+    case msgSendTypeUrl:
+      return 'Send';
+    case msgWithdrawRewards:
+      return 'Claim Rewards';
+    case msgTransfer:
+      return 'IBC Send';
+    case msgAuthzExecTypeUrl:
+      return 'Exec Authz';
+    case msgAuthzGrantTypeUrl:
+      return 'Grant Authz';
+    case msgFeegrantGrantTypeUrl:
+      return 'Grant Allowance';
+    case msgVoteTypeUrl:
+      return 'Vote';
+    case msgDepositTypeUrl:
+      return 'Deposit';
+    default:
+      return msgType.split('.').slice(-1)?.[0] || msgType;
+  }
+};
