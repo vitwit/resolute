@@ -76,11 +76,17 @@ const DialogTransactionDetails = ({
 
             <div className="divider-line space-y-4"></div>
             <div className="flex flex-wrap gap-6">
-              {msgs.map((message, index) => (
-                <div key={index} className="transaction-message-btn">
-                  <p className="message-style">{getTypeURLName(message)}</p>
+              {msgs?.length ? (
+                msgs.map((message) => (
+                  <div key={message} className="transaction-message-btn">
+                    <p className="message-style">{getTypeURLName(message)}</p>
+                  </div>
+                ))
+              ) : (
+                <div className="transaction-message-btn">
+                  <p className="message-style">All</p>
                 </div>
-              ))}
+              )}
             </div>
             <div className="flex w-full justify-between">
               <div className="space-y-4">
