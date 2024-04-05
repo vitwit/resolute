@@ -2,7 +2,7 @@ import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { getLocalTime, getTimeDifference } from '@/utils/dataTime';
-import { formattedMsgType } from '@/utils/transaction';
+import { buildMessages, formattedMsgType } from '@/utils/transaction';
 import { shortenAddress, shortenName } from '@/utils/util';
 import { Tooltip } from '@mui/material';
 import Image from 'next/image';
@@ -10,6 +10,7 @@ import React from 'react';
 import TextCopyField from './TextCopyField';
 import RenderFormattedMessage from './RenderFormattedMessage';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { txRepeatTransaction } from '@/store/features/recent-transactions/recentTransactionsSlice';
 
 const parseTxnData = (txn: ParsedTransaction) => {
   const success = txn.code === 0 ? true : false;
@@ -27,11 +28,24 @@ const parseTxnData = (txn: ParsedTransaction) => {
 const Transaction = ({
   txn,
   currency,
+  basicChainInfo,
 }: {
   txn: ParsedTransaction;
   currency: Currency;
+  basicChainInfo: BasicChainInfo;
 }) => {
+  const dispatch = useAppDispatch();
   const { success, messages, txHash, timeStamp } = parseTxnData(txn);
+  const formattedMessages = buildMessages(messages);
+  const onRepeatTxn = () => {
+    dispatch(
+      txRepeatTransaction({
+        basicChainInfo,
+        feegranter: '',
+        messages: formattedMessages,
+      })
+    );
+  };
   return (
     <div>
       <div className="flex gap-4">
@@ -42,6 +56,7 @@ const Transaction = ({
           messages={messages}
           timeStamp={timeStamp}
           currency={currency}
+          onRepeatTxn={onRepeatTxn}
         />
       </div>
     </div>
@@ -71,12 +86,14 @@ const TxnData = ({
   messages,
   timeStamp,
   currency,
+  onRepeatTxn,
 }: {
   txHash: string;
   success: boolean;
   messages: any[];
   timeStamp: string;
   currency: Currency;
+  onRepeatTxn: () => void;
 }) => {
   return (
     <div className="flex justify-between w-full gap-4 flex-wrap">
@@ -113,7 +130,7 @@ const TxnData = ({
           Actions
         </div>
         <div className="txn-btn-wrapper">
-          <button className="txn-btn w-[144px]">
+          <button className="txn-btn w-[144px]" onClick={onRepeatTxn}>
             {success ? 'Repeat Transaction' : 'Retry Transaction'}
           </button>
         </div>

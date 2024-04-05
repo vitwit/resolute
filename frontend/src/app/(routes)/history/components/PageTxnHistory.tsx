@@ -10,6 +10,7 @@ const PageTxnHistory = ({ chainName }: { chainName: string }) => {
   const chainID = nameToChainIDs[chainName];
 
   const { getDenomInfo, getChainInfo } = useGetChainInfo();
+  const basicChainInfo = getChainInfo(chainID);
   const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
   const currency = {
     coinDenom: displayDenom,
@@ -28,7 +29,12 @@ const PageTxnHistory = ({ chainName }: { chainName: string }) => {
       </div>
       <div className="space-y-2">
         {txns?.map((txn) => (
-          <Transaction txn={txn} key={txn.txhash} currency={currency} />
+          <Transaction
+            txn={txn}
+            key={txn.txhash}
+            currency={currency}
+            basicChainInfo={basicChainInfo}
+          />
         ))}
       </div>
     </div>

@@ -7,6 +7,7 @@ import {
   serialize as serializeMsgClaim,
 } from '@/txns/distribution/withDrawRewards';
 import {
+  Delegate,
   msgDelegate,
   serialize as serializeMsgDelegate,
 } from '@/txns/staking/delegate';
@@ -208,6 +209,53 @@ export const formattedMsgType = (msgType: string) => {
   switch (msgType) {
     case msgDelegate:
       return 'Delegate';
+    case msgUnDelegate:
+      return 'UnDelegate';
+    case msgReDelegate:
+      return 'ReDelegate';
+    case msgSendTypeUrl:
+      return 'Send';
+    case msgWithdrawRewards:
+      return 'Claim Rewards';
+    case msgTransfer:
+      return 'IBC Send';
+    case msgAuthzExecTypeUrl:
+      return 'Exec Authz';
+    case msgAuthzGrantTypeUrl:
+      return 'Grant Authz';
+    case msgFeegrantGrantTypeUrl:
+      return 'Grant Allowance';
+    case msgVoteTypeUrl:
+      return 'Vote';
+    case msgDepositTypeUrl:
+      return 'Deposit';
+    default:
+      return msgType.split('.').slice(-1)?.[0] || msgType;
+  }
+};
+
+export const buildMessages = (messages: any[]): Msg[] => {
+  const result: Msg[] = [];
+  messages.forEach((msg) => {
+    const formattedMsg = getMessage(msg);
+    result.push(formattedMsg);
+  });
+  return result;
+};
+
+export const getMessage = (message: any) => {
+  const msgType = message?.['@type'];
+  switch (msgType) {
+    case msgDelegate:
+      const { amount, validator_address, delegator_address } = message;
+      const { amount: delegationAmount, denom } = amount;
+      const msg = Delegate(
+        delegator_address,
+        validator_address,
+        delegationAmount,
+        denom
+      );
+      return msg;
     case msgUnDelegate:
       return 'UnDelegate';
     case msgReDelegate:
