@@ -1,15 +1,13 @@
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from './StateHooks';
+import { useAppDispatch } from './StateHooks';
 import {
   getGrantsByMe,
   getGrantsToMe,
 } from '@/store/features/authz/authzSlice';
 import useGetChainInfo from './useGetChainInfo';
 
-const useInitAuthz = () => {
-  const networks = useAppSelector((state) => state.wallet.networks);
+const useInitAuthz = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
-  const chainIDs = Object.keys(networks);
   const { getChainInfo } = useGetChainInfo();
   useEffect(() => {
     chainIDs.forEach((chainID) => {
