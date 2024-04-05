@@ -40,7 +40,9 @@ const DialogAuthzGrants: React.FC<DialogAuthzGrantsProps> = (props) => {
   const { getInterChainGrants } = useAuthzGrants();
   const grants = getInterChainGrants();
 
-  useInitAuthz();
+  const networks = useAppSelector((state) => state.wallet.networks);
+  const chainIDs = Object.keys(networks);
+  useInitAuthz({ chainIDs });
 
   return (
     <Dialog

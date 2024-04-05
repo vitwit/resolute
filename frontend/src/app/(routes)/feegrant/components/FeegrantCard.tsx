@@ -214,7 +214,7 @@ const FeegrantCard: React.FC<FeegrantCardprops> = ({
             className="view-button"
             onClick={() => toggleDialogTransaction()}
           >
-            View Transactions
+            View Details
           </button>
         )}
       </div>
