@@ -31,8 +31,6 @@ const Transaction = ({
   txn: ParsedTransaction;
   currency: Currency;
 }) => {
-  console.log(txn);
-  const {} = useGetChainInfo();
   const { success, messages, txHash, timeStamp } = parseTxnData(txn);
   return (
     <div>
@@ -120,21 +118,6 @@ const TxnData = ({
           </button>
         </div>
       </div>
-    </div>
-  );
-};
-
-const FormattedMessage = (message: any) => {
-  return (
-    <div className="text-[16px] flex gap-2 items-center">
-      <div>Sent</div>
-      <div className="message-text-gradient font-bold">1 Atom</div>
-      <div className="text-[#ffffff80]">to</div>
-      <TextCopyField
-        displayLen={20}
-        isAddress={true}
-        content={'cosmos1le7vetsh56aj5nhf27vetsh56aj5nhf2'}
-      />
     </div>
   );
 };

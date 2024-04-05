@@ -10,8 +10,11 @@ import {
   getIBCTxn,
   updateIBCTransactionStatusInLocal,
 } from '@/utils/localStorage';
-import { IBC_SEND_TYPE_URL } from '@/utils/constants';
+import { GAS_FEE, IBC_SEND_TYPE_URL } from '@/utils/constants';
 import { trackTx } from '../ibc/ibcSlice';
+import { NewTransaction } from '@/utils/transaction';
+import { setTxAndHash } from '../common/commonSlice';
+import { signAndBroadcast } from '@/utils/signing';
 
 interface RecentTransactionsState {
   txns: {
@@ -84,6 +87,53 @@ export const getRecentTransactions = createAsyncThunk(
           message: error?.response?.data?.message || ERR_UNKNOWN,
         });
       return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const txRepeatTransaction = createAsyncThunk(
+  'recent-txns/repeat-txn',
+  async (
+    data: RepeatTransactionInputs,
+    { rejectWithValue, fulfillWithValue, dispatch }
+  ) => {
+    try {
+      const result = await signAndBroadcast(
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.aminoConfig,
+        data.basicChainInfo.prefix,
+        data.messages,
+        GAS_FEE,
+        '',
+        `${data.basicChainInfo.feeAmount * 10 ** data.basicChainInfo.decimals}${
+          data.basicChainInfo.feeCurrencies[0].coinDenom
+        }`,
+        data.basicChainInfo.rest,
+        data?.feegranter?.length ? data.feegranter : undefined,
+        data?.basicChainInfo?.rpc,
+        data?.basicChainInfo?.restURLs
+      );
+      const tx = NewTransaction(
+        result,
+        data.messages,
+        data.basicChainInfo.chainID,
+        data.basicChainInfo.address
+      );
+
+      dispatch(
+        setTxAndHash({
+          tx,
+          hash: tx.transactionHash,
+        })
+      );
+
+      if (result?.code === 0) {
+        return fulfillWithValue({ txHash: result?.transactionHash });
+      } else {
+        return rejectWithValue(result?.rawLog);
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) return rejectWithValue(error.response);
     }
   }
 );

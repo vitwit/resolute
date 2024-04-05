@@ -178,3 +178,15 @@ const GrantMsg = ({ msg, isAuthz }: { msg: any; isAuthz: boolean }) => {
     </div>
   );
 };
+
+const AuthzExecMsg = ({ msg, isAuthz }: { msg: any; isAuthz: boolean }) => {
+  const { grantee } = msg;
+  return (
+    <div className="text-[16px] flex gap-2 items-center">
+      <div>{isAuthz ? 'Granted authz' : 'Granted allowance'}</div>
+      <div className="text-[#ffffff80]">to</div>
+      <TextCopyField displayLen={20} isAddress={true} content={grantee} />
+    </div>
+  );
+};
+
