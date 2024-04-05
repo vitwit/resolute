@@ -43,7 +43,7 @@ $ yarn
 ## Environment variables
 
 Create .env file and set multisig backend URI `NEXT_PUBLIC_APP_API_URI`
-You can setup your own mulitisig server in [Set up multisig server](./MULTISIG_SERVER_README.md).
+You can setup your own multisig server in [Set up multisig server](./MULTISIG_SERVER_README.md).
 
 ## Start in DEV Mode
 Runs the app in the development mode.<br />
