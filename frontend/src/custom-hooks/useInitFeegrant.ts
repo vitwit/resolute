@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from './StateHooks';
+import { useAppDispatch} from './StateHooks';
 import useGetChainInfo from './useGetChainInfo';
 import {
   getGrantsByMe,
@@ -10,10 +10,8 @@ import {
  * This custom hook is used to dispatch the feegrantsByMe and feegrantsToMe
  *
  */
-const useInitFeegrant = () => {
-  const networks = useAppSelector((state) => state.wallet.networks);
+const useInitFeegrant = ({ chainIDs }: { chainIDs: string[] }) => {
   const dispatch = useAppDispatch();
-  const chainIDs = Object.keys(networks);
   const { getChainInfo } = useGetChainInfo();
   useEffect(() => {
     chainIDs.forEach((chainID) => {

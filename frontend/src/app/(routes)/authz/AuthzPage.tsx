@@ -3,14 +3,18 @@ import React, { useState } from 'react';
 import DialogCreateAuthzGrant from './components/DialogCreateAuthzGrant';
 import GrantsToMe from './components/GrantsToMe';
 import GrantsByMe from './components/GrantsByMe';
+import useInitAuthz from '@/custom-hooks/useInitAuthz';
 
 const AuthzPage = ({ chainIDs }: { chainIDs: string[] }) => {
+  useInitAuthz({ chainIDs });
+
   const [isGrantsToMe, setIsGrantsToMe] = useState(true);
 
   const [dialogGrantOpen, setDialogGrantOpen] = useState(false);
   const handleDialogGrantClose = () => {
     setDialogGrantOpen(false);
   };
+
   return (
     <div className="py-6 px-10 h-screen overflow-y-scroll">
       <div className="space-y-10">
