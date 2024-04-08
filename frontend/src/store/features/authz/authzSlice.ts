@@ -388,20 +388,21 @@ export const authzSlice = createSlice({
         const addressMapping: Record<string, Authorization[]> = {};
         const allChainsAddressToGrants = state.AddressToChainAuthz;
 
-        grants && grants.forEach((grant: Authorization) => {
-          const granter = grant.granter;
-          const cosmosAddress = getAddressByPrefix(granter, 'cosmos');
-          if (!addressMapping[granter]) addressMapping[granter] = [];
-          if (!allChainsAddressToGrants[cosmosAddress])
-            allChainsAddressToGrants[cosmosAddress] = {};
-          if (!allChainsAddressToGrants[cosmosAddress][chainID])
-            allChainsAddressToGrants[cosmosAddress][chainID] = [];
-          allChainsAddressToGrants[cosmosAddress][chainID] = [
-            ...allChainsAddressToGrants[cosmosAddress][chainID],
-            grant,
-          ];
-          addressMapping[granter] = [...addressMapping[granter], grant];
-        });
+        grants &&
+          grants.forEach((grant: Authorization) => {
+            const granter = grant.granter;
+            const cosmosAddress = getAddressByPrefix(granter, 'cosmos');
+            if (!addressMapping[granter]) addressMapping[granter] = [];
+            if (!allChainsAddressToGrants[cosmosAddress])
+              allChainsAddressToGrants[cosmosAddress] = {};
+            if (!allChainsAddressToGrants[cosmosAddress][chainID])
+              allChainsAddressToGrants[cosmosAddress][chainID] = [];
+            allChainsAddressToGrants[cosmosAddress][chainID] = [
+              ...allChainsAddressToGrants[cosmosAddress][chainID],
+              grant,
+            ];
+            addressMapping[granter] = [...addressMapping[granter], grant];
+          });
         state.AddressToChainAuthz = allChainsAddressToGrants;
         state.chains[chainID].GrantsToMeAddressMapping = addressMapping;
         state.chains[chainID].getGrantsToMeLoading = {
@@ -461,6 +462,8 @@ export const authzSlice = createSlice({
     builder
       .addCase(txAuthzExec.pending, (state, action) => {
         const chainID = action.meta.arg.basicChainInfo.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(defaultState);
         const actionType = action.meta.arg.type;
         state.chains[chainID].tx.status = TxStatus.PENDING;
         state.chains[chainID].tx.errMsg = '';
@@ -480,6 +483,8 @@ export const authzSlice = createSlice({
     builder
       .addCase(txCreateAuthzGrant.pending, (state, action) => {
         const { chainID } = action.meta.arg.basicChainInfo;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(defaultState);
         state.chains[chainID].tx.status = TxStatus.PENDING;
         state.chains[chainID].tx.errMsg = '';
       })
@@ -519,6 +524,8 @@ export const authzSlice = createSlice({
     builder
       .addCase(txAuthzRevoke.pending, (state, action) => {
         const chainID = action.meta.arg.basicChainInfo.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(defaultState);
         state.chains[chainID].tx.status = TxStatus.PENDING;
         state.chains[chainID].tx.errMsg = '';
       })
