@@ -41,7 +41,9 @@ const DialogFeegrants: React.FC<DialogFeegrantsProps> = (props) => {
   const { getInterChainGrants } = useFeeGrants();
   const grants = getInterChainGrants();
 
-  useInitFeegrant();
+  const networks = useAppSelector((state) => state.wallet.networks);
+  const chainIDs = Object.keys(networks);
+  useInitFeegrant({ chainIDs });
 
   return (
     <Dialog

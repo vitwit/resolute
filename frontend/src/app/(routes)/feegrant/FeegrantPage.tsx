@@ -6,8 +6,11 @@ import GrantedByMe from './components/GrantedByMe';
 import GrantedToMe from './components/GrantedToMe';
 import DialogCreateFeegrant from './components/DialogCreateFeegrant';
 import FeegrantToast from '@/components/FeegrantToast';
+import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
 
 const FeegrantPage = ({ chainIDs }: { chainIDs: string[] }) => {
+  useInitFeegrant({ chainIDs });
+
   const [isGrantedToMe, setIsGrantedToMe] = useState(true);
 
   const [dialogGrantOpen, setDialogGrantOpen] = useState(false);
