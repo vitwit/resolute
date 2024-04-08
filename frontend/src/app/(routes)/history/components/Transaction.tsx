@@ -1,15 +1,12 @@
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
-import { setError } from '@/store/features/common/commonSlice';
-import { copyToClipboard } from '@/utils/copyToClipboard';
 import { getLocalTime, getTimeDifference } from '@/utils/dataTime';
 import { buildMessages, formattedMsgType } from '@/utils/transaction';
-import { shortenAddress, shortenName } from '@/utils/util';
+import { shortenName } from '@/utils/util';
 import { Tooltip } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 import TextCopyField from './TextCopyField';
 import RenderFormattedMessage from './RenderFormattedMessage';
-import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { txRepeatTransaction } from '@/store/features/recent-transactions/recentTransactionsSlice';
 
 const parseTxnData = (txn: ParsedTransaction) => {
@@ -57,6 +54,7 @@ const Transaction = ({
           timeStamp={timeStamp}
           currency={currency}
           onRepeatTxn={onRepeatTxn}
+          enableAction={formattedMessages?.length ? true : false}
         />
       </div>
     </div>
@@ -87,6 +85,7 @@ const TxnData = ({
   timeStamp,
   currency,
   onRepeatTxn,
+  enableAction,
 }: {
   txHash: string;
   success: boolean;
@@ -94,6 +93,7 @@ const TxnData = ({
   timeStamp: string;
   currency: Currency;
   onRepeatTxn: () => void;
+  enableAction: boolean;
 }) => {
   return (
     <div className="flex justify-between w-full gap-4 flex-wrap">
@@ -125,7 +125,7 @@ const TxnData = ({
           <TextCopyField content={txHash} displayLen={18} isAddress={false} />
         </div>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className={`flex flex-col gap-4 ${enableAction ? '' : 'invisible'}`}>
         <div className="font-extralight text-[14px] text-[#ffffff80] h-[29px] flex items-center">
           Actions
         </div>

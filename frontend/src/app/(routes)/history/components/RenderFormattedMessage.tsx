@@ -12,13 +12,17 @@ import { msgUnDelegate } from '@/txns/staking/undelegate';
 import TextCopyField from './TextCopyField';
 import { parseBalance } from '@/utils/denom';
 import { formatNumber, parseDenomAmount } from '@/utils/util';
+import { voteOptions } from '@/utils/constants';
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+type Message = any;
 
 const RenderFormattedMessage = ({
   message,
   coinDenom,
   decimals,
 }: {
-  message: any;
+  message: Message;
   decimals: number;
   coinDenom: string;
 }) => {
@@ -65,7 +69,7 @@ const RenderFormattedMessage = ({
     case msgFeegrantGrantTypeUrl:
       return <GrantMsg msg={message} isAuthz={false} />;
     case msgVoteTypeUrl:
-      return 'Vote';
+      return <VoteMsg msg={message} />;
     case msgDepositTypeUrl:
       return 'Deposit';
     default:
@@ -80,7 +84,7 @@ const SendMsg = ({
   msg,
   coinDenom,
 }: {
-  msg: any;
+  msg: Message;
   decimals: number;
   coinDenom: string;
 }) => {
@@ -105,7 +109,7 @@ const DelegateMsg = ({
   coinDenom,
   isDelegate,
 }: {
-  msg: any;
+  msg: Message;
   decimals: number;
   coinDenom: string;
   isDelegate: boolean;
@@ -135,7 +139,7 @@ const RedelegateMsg = ({
   msg,
   coinDenom,
 }: {
-  msg: any;
+  msg: Message;
   decimals: number;
   coinDenom: string;
 }) => {
@@ -153,7 +157,7 @@ const RedelegateMsg = ({
   );
 };
 
-const ClaimRewards = ({ msg }: { msg: any }) => {
+const ClaimRewards = ({ msg }: { msg: Message }) => {
   const { validator_address } = msg;
   return (
     <div className="text-[16px] flex gap-2 items-center">
@@ -168,7 +172,7 @@ const ClaimRewards = ({ msg }: { msg: any }) => {
   );
 };
 
-const GrantMsg = ({ msg, isAuthz }: { msg: any; isAuthz: boolean }) => {
+const GrantMsg = ({ msg, isAuthz }: { msg: Message; isAuthz: boolean }) => {
   const { grantee } = msg;
   return (
     <div className="text-[16px] flex gap-2 items-center">
@@ -179,14 +183,18 @@ const GrantMsg = ({ msg, isAuthz }: { msg: any; isAuthz: boolean }) => {
   );
 };
 
-const AuthzExecMsg = ({ msg, isAuthz }: { msg: any; isAuthz: boolean }) => {
-  const { grantee } = msg;
+const VoteMsg = ({ msg }: { msg: Message }) => {
+  const { option, proposal_id } = msg;
   return (
     <div className="text-[16px] flex gap-2 items-center">
-      <div>{isAuthz ? 'Granted authz' : 'Granted allowance'}</div>
-      <div className="text-[#ffffff80]">to</div>
-      <TextCopyField displayLen={20} isAddress={true} content={grantee} />
+      <div>Voted</div>
+      <div className="message-text-gradient font-bold uppercase">
+        {voteOptions?.[option] || 'Unknown'}
+      </div>
+      <div className="text-[#ffffff80]">on</div>
+      <div>
+        proposal <span className="font-bold">#{proposal_id}</span>{' '}
+      </div>
     </div>
   );
 };
-
