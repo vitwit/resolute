@@ -6,13 +6,10 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { Pagination } from '@mui/material';
 import { paginationComponentStyles } from '../../staking/styles';
-import { getAllTransactions } from '@/store/features/recent-transactions/recentTransactionsSlice';
 
 const PageTxnHistory = ({ chainName }: { chainName: string }) => {
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   const chainID = nameToChainIDs[chainName];
-
-  const dispatch = useAppDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;

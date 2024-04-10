@@ -1,9 +1,6 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './StateHooks';
-import {
-  getAllTransactions,
-  getRecentTransactions,
-} from '@/store/features/recent-transactions/recentTransactionsSlice';
+import { getAllTransactions } from '@/store/features/recent-transactions/recentTransactionsSlice';
 import useGetChainInfo from './useGetChainInfo';
 
 const useGetTransactions = ({ chainID }: { chainID: string }) => {
