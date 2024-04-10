@@ -14,6 +14,7 @@ import authzSlice from './features/authz/authzSlice';
 import feegrantSlice from './features/feegrant/feegrantSlice';
 import recentTransactionsSlice from './features/recent-transactions/recentTransactionsSlice';
 import multiopsSlice from './features/multiops/multiopsSlice';
+import swapsSlice from './features/swaps/swapsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -30,6 +31,7 @@ export const store = configureStore({
     feegrant: feegrantSlice,
     recentTransactions: recentTransactionsSlice,
     multiops: multiopsSlice,
+    swaps: swapsSlice,
   },
 });
 

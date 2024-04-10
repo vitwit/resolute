@@ -236,6 +236,9 @@ export const AXIOS_RETRIES_COUNT = 2;
 export const MAX_TRY_END_POINTS = 20;
 export const NO_FEEGRANTS_BY_ME_TEXT = "You haven't granted any allowance yet";
 export const NO_FEEGRANTS_TO_ME_TEXT = "You don't have any feegrants";
+export const SQUID_ID = process.env.NEXT_PUBLIC_SQUID_ID || '';
+export const SQUID_CLIENT_API = 'https://api.0xsquid.com';
+export const SQUID_CHAINS_API = 'https://v2.api.squidrouter.com/v2/chains';
 export const ALERT_TYPE_MAP: Record<string, string> = {
   success: 'success',
   error: 'error',
@@ -300,3 +303,4 @@ export const MULTIOPS_SAMPLE_FILES = {
     'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/undelegate.csv',
   vote: 'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/vote.csv',
 };
+export const SWAP_ROUTE_ERROR = 'Failed to fetch routes.';
