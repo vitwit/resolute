@@ -15,13 +15,13 @@ interface BasicChainInfo {
   chainLogo: string;
   decimals: number;
   valPrefix: string;
+  govV1: boolean;
 }
 
 interface Coin {
   amount: string;
   denom: string;
 }
-
 
 interface AllChainInfo {
   restURLs: string[];

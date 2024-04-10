@@ -51,6 +51,20 @@
     lightgray 50% / cover no-repeat;
 }
 
+.send-menu-item {
+  @apply cursor-pointer px-2 text-[18px] h-9 flex items-center pb-[14px] leading-[21.7px];
+}
+
+/* IBC Swap Styles  */
+
+.swap-btn {
+  @apply rounded-lg text-[12px] font-medium tracking-[0.48px] py-[10px] px-4 w-full flex justify-center items-center;
+}
+
+.drop-down {
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
 .multisend-input-box {
   @apply flex justify-center items-center px-4 py-4 bg-[#FFFFFF1A] min-h-[152px] rounded-3xl w-full cursor-pointer;
 }

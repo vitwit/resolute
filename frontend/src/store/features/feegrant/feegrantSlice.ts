@@ -274,20 +274,21 @@ export const feegrantSlice = createSlice({
         const addressMapping: Record<string, Allowance[]> = {};
         const allChainsAddressToGrants = state.addressToChainFeegrant;
 
-        grants && grants.forEach((grant: Allowance) => {
-          const granter = grant.granter;
-          const cosmosAddress = getAddressByPrefix(granter, 'cosmos');
-          if (!addressMapping[granter]) addressMapping[granter] = [];
-          if (!allChainsAddressToGrants[cosmosAddress])
-            allChainsAddressToGrants[cosmosAddress] = {};
-          if (!allChainsAddressToGrants[cosmosAddress][chainID])
-            allChainsAddressToGrants[cosmosAddress][chainID] = [];
-          allChainsAddressToGrants[cosmosAddress][chainID] = [
-            ...allChainsAddressToGrants[cosmosAddress][chainID],
-            grant,
-          ];
-          addressMapping[granter] = [...addressMapping[granter], grant];
-        });
+        grants &&
+          grants.forEach((grant: Allowance) => {
+            const granter = grant.granter;
+            const cosmosAddress = getAddressByPrefix(granter, 'cosmos');
+            if (!addressMapping[granter]) addressMapping[granter] = [];
+            if (!allChainsAddressToGrants[cosmosAddress])
+              allChainsAddressToGrants[cosmosAddress] = {};
+            if (!allChainsAddressToGrants[cosmosAddress][chainID])
+              allChainsAddressToGrants[cosmosAddress][chainID] = [];
+            allChainsAddressToGrants[cosmosAddress][chainID] = [
+              ...allChainsAddressToGrants[cosmosAddress][chainID],
+              grant,
+            ];
+            addressMapping[granter] = [...addressMapping[granter], grant];
+          });
         state.addressToChainFeegrant = allChainsAddressToGrants;
         state.chains[chainID].grantsToMeAddressMapping = addressMapping;
         state.chains[chainID].getGrantsToMeLoading = {
@@ -322,11 +323,12 @@ export const feegrantSlice = createSlice({
         const grants = action.payload.data.allowances;
         state.chains[chainID].grantsByMe = grants;
         const addressMapping: Record<string, Allowance[]> = {};
-        grants && grants.forEach((grant: Allowance) => {
-          const granter = grant.grantee;
-          if (!addressMapping[granter]) addressMapping[granter] = [];
-          addressMapping[granter] = [...addressMapping[granter], grant];
-        });
+        grants &&
+          grants.forEach((grant: Allowance) => {
+            const granter = grant.grantee;
+            if (!addressMapping[granter]) addressMapping[granter] = [];
+            addressMapping[granter] = [...addressMapping[granter], grant];
+          });
         state.chains[chainID].grantsByMeAddressMapping = addressMapping;
         state.chains[chainID].getGrantsByMeLoading = {
           status: TxStatus.IDLE,
@@ -347,6 +349,8 @@ export const feegrantSlice = createSlice({
     builder
       .addCase(txCreateFeegrant.pending, (state, action) => {
         const { chainID } = action.meta.arg.basicChainInfo;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(defaultState);
         state.chains[chainID].tx.status = TxStatus.PENDING;
         state.chains[chainID].tx.errMsg = '';
       })
@@ -374,6 +378,8 @@ export const feegrantSlice = createSlice({
     builder
       .addCase(txRevoke.pending, (state, action) => {
         const chainID = action.meta.arg.basicChainInfo.chainID;
+        if (!state.chains[chainID])
+          state.chains[chainID] = cloneDeep(defaultState);
         state.chains[chainID].tx.status = TxStatus.PENDING;
         state.chains[chainID].tx.errMsg = '';
       })

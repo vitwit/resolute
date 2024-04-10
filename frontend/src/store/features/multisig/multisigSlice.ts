@@ -1,6 +1,6 @@
 'use client';
 
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import multisigService from './multisigService';
 import { AxiosError } from 'axios';
 import {
@@ -112,6 +112,7 @@ const initialState: MultisigState = {
     status: TxStatus.INIT,
     error: '',
   },
+  verifyDialogOpen: false,
 };
 
 declare let window: WalletWindow;
@@ -413,6 +414,9 @@ export const multisigSlice = createSlice({
     resetMultisigAccountData: (state) => {
       state.multisigAccountData = initialState.multisigAccountData;
     },
+    setVerifyDialogOpen: (state, action: PayloadAction<boolean>) => {
+      state.verifyDialogOpen = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -625,6 +629,7 @@ export const {
   resetVerifyAccountRes,
   resetDeleteMultisigRes,
   resetMultisigAccountData,
+  setVerifyDialogOpen,
 } = multisigSlice.actions;
 
 export default multisigSlice.reducer;
