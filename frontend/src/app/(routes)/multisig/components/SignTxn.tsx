@@ -1,7 +1,10 @@
 import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { setError } from '@/store/features/common/commonSlice';
-import { signTx } from '@/store/features/multisig/multisigSlice';
+import {
+  setVerifyDialogOpen,
+  signTx,
+} from '@/store/features/multisig/multisigSlice';
 import { getWalletAmino } from '@/txns/execute';
 import { Txn } from '@/types/multisig';
 import { getAuthToken } from '@/utils/localStorage';
@@ -10,6 +13,7 @@ import { toBase64 } from '@cosmjs/encoding';
 import React, { useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { ERR_UNKNOWN } from '@/utils/errors';
+import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 
 interface SignTxnProps {
   address: string;
@@ -27,8 +31,16 @@ const SignTxn: React.FC<SignTxnProps> = (props) => {
   const [load, setLoad] = useState(false);
   const { getChainInfo } = useGetChainInfo();
   const { rpc, address: walletAddress } = getChainInfo(chainID);
+  const { isAccountVerified } = useVerifyAccount({
+    chainID,
+    address: walletAddress,
+  });
 
   const signTheTx = async () => {
+    if (!isAccountVerified()) {
+      dispatch(setVerifyDialogOpen(true));
+      return;
+    }
     setLoad(true);
     window.wallet.defaultOptions = {
       sign: {
