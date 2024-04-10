@@ -126,6 +126,7 @@ interface MultisigState {
     status: TxStatus;
     error: string;
   };
+  verifyDialogOpen: boolean;
 }
 
 interface VerifyAccountRes {

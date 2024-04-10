@@ -358,6 +358,7 @@ const IBCSwap = () => {
 
     if (chainsSelected && assetsSelected && srcAmount && validReceiverAddress) {
       setAllInputsProvided(true);
+      return;
     }
     setAllInputsProvided(false);
   };
