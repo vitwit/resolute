@@ -21,12 +21,14 @@ interface RecentTransactionsState {
     data: ParsedTransaction[];
     status: TxStatus;
     error: string;
+    total: number;
   };
 }
 
 const initialState: RecentTransactionsState = {
   txns: {
     data: [],
+    total: 0,
     error: '',
     status: TxStatus.INIT,
   },
@@ -80,6 +82,64 @@ export const getRecentTransactions = createAsyncThunk(
       });
       return {
         data: txns,
+      };
+    } catch (error) {
+      if (error instanceof AxiosError)
+        return rejectWithValue({
+          message: error?.response?.data?.message || ERR_UNKNOWN,
+        });
+      return rejectWithValue({ message: ERR_UNKNOWN });
+    }
+  }
+);
+
+export const getAllTransactions = createAsyncThunk(
+  'recent-txns/get-all-txns',
+  async (
+    data: {
+      address: string;
+      chainID: string;
+      limit: number;
+      offset: number;
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    try {
+      const response = await recentTransactionsService.allTransactions(data);
+      let txns: ParsedTransaction[] = [];
+      const txnsData = response?.data?.data?.data;
+      txnsData.forEach((txn: ParsedTransaction) => {
+        const { txhash, messages } = txn;
+        if (messages[0]?.['@type'] === IBC_SEND_TYPE_URL) {
+          const ibcTx = getIBCTxn(txhash);
+          if (ibcTx) {
+            txns = [...txns, ibcTx];
+            if (ibcTx?.isIBCPending) {
+              dispatch(
+                trackTx({
+                  chainID: ibcTx.chain_id,
+                  txHash: ibcTx.txhash,
+                })
+              );
+            }
+          } else {
+            let formattedTxn = txn;
+            formattedTxn = { ...formattedTxn, isIBCPending: false };
+            formattedTxn = { ...formattedTxn, isIBCTxn: true };
+            txns = [...txns, formattedTxn];
+          }
+        } else {
+          let formattedTxn = txn;
+          formattedTxn = { ...formattedTxn, isIBCPending: false };
+          formattedTxn = { ...formattedTxn, isIBCTxn: false };
+          txns = [...txns, formattedTxn];
+        }
+      });
+      return {
+        data: {
+          data: txns,
+          total: response?.data?.data?.total,
+        },
       };
     } catch (error) {
       if (error instanceof AxiosError)
@@ -180,6 +240,23 @@ export const recentTransactionsSlice = createSlice({
         state.txns.error = '';
       })
       .addCase(getRecentTransactions.rejected, (state, action) => {
+        state.txns.status = TxStatus.REJECTED;
+        state.txns.data = [];
+        const payload = action.payload as { message: string };
+        state.txns.error = payload.message || '';
+      });
+    builder
+      .addCase(getAllTransactions.pending, (state) => {
+        state.txns.status = TxStatus.PENDING;
+        state.txns.error = '';
+      })
+      .addCase(getAllTransactions.fulfilled, (state, action) => {
+        state.txns.status = TxStatus.IDLE;
+        state.txns.data = action.payload.data.data;
+        state.txns.total = action.payload.data.total;
+        state.txns.error = '';
+      })
+      .addCase(getAllTransactions.rejected, (state, action) => {
         state.txns.status = TxStatus.REJECTED;
         state.txns.data = [];
         const payload = action.payload as { message: string };

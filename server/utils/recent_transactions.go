@@ -61,3 +61,7 @@ func CreateRequestURI(api string, module string, address string) string {
 		return api + "/cosmos/tx/v1beta1/txs" + "?events=message.sender=%27" + address + "%27&events=message.module=%27" + module + "%27" + "&order_by=2&pagination.limit=5"
 	}
 }
+
+func CreateAllTxnsRequestURI(api string, address string, limit string, offset string) string {
+	return api + "/cosmos/tx/v1beta1/txs" + "?events=message.sender=%27" + address + "%27" + "&order_by=2&pagination.limit=" + limit + "&pagination.offset=" + offset
+}

@@ -1,13 +1,21 @@
 import TopNav from '@/components/TopNav';
-import React from 'react';
+import React, { useState } from 'react';
 import Transaction from './Transaction';
 import useGetTransactions from '@/custom-hooks/useGetTransactions';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { Pagination } from '@mui/material';
+import { paginationComponentStyles } from '../../staking/styles';
+import { getAllTransactions } from '@/store/features/recent-transactions/recentTransactionsSlice';
 
 const PageTxnHistory = ({ chainName }: { chainName: string }) => {
   const nameToChainIDs = useAppSelector((state) => state.wallet.nameToChainIDs);
   const chainID = nameToChainIDs[chainName];
+
+  const dispatch = useAppDispatch();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const { getDenomInfo, getChainInfo } = useGetChainInfo();
   const basicChainInfo = getChainInfo(chainID);
@@ -17,8 +25,21 @@ const PageTxnHistory = ({ chainName }: { chainName: string }) => {
     coinDecimals: decimals,
     coinMinimalDenom: minimalDenom,
   };
-  const { getTransactions } = useGetTransactions({ chainID });
+  const { getTransactions, fetchTransactions } = useGetTransactions({
+    chainID,
+  });
   const { txns } = getTransactions();
+
+  const handlePageChange = (value: number) => {
+    const offset = (value - 1) * itemsPerPage;
+    fetchTransactions(itemsPerPage, offset);
+    setCurrentPage(value);
+  };
+
+  const totalCount = useAppSelector(
+    (state) => state.recentTransactions?.txns?.total
+  );
+
   return (
     <div className="py-6 px-10 h-screen space-y-10">
       <div className="flex justify-between">
@@ -36,6 +57,17 @@ const PageTxnHistory = ({ chainName }: { chainName: string }) => {
             basicChainInfo={basicChainInfo}
           />
         ))}
+      </div>
+      <div>
+        <Pagination
+          sx={paginationComponentStyles}
+          count={Math.ceil(totalCount / itemsPerPage)}
+          page={currentPage}
+          shape="circular"
+          onChange={(_, value) => {
+            handlePageChange(value);
+          }}
+        />
       </div>
     </div>
   );
