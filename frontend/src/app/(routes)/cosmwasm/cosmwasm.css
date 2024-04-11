@@ -1,0 +1,8 @@
+.menu-item {
+  @apply cursor-pointer px-2 text-[18px] h-9 flex items-center pb-[14px] leading-[21.7px];
+}
+
+.change-btn,
+.deploy-btn {
+  @apply text-[12px] px-3 py-[6px] rounded-lg leading-[20px] font-medium tracking-[0.48px] h-10 flex justify-center items-center;
+}

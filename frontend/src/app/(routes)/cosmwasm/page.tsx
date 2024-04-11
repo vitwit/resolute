@@ -1,9 +1,9 @@
-import React from 'react'
+import React from 'react';
+import './cosmwasm.css';
+import Cosmwasm from './Cosmwasm';
 
 const page = () => {
-  return (
-    <div>page</div>
-  )
-}
+  return <Cosmwasm />;
+};
 
-export default page
+export default page;
