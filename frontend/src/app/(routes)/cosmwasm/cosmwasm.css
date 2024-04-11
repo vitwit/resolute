@@ -6,3 +6,16 @@
 .deploy-btn {
   @apply text-[12px] px-3 py-[6px] rounded-lg leading-[20px] font-medium tracking-[0.48px] h-10 flex justify-center items-center;
 }
+
+.search-contract-field {
+  @apply my-6 h-12 flex bg-[#FFFFFF1A] items-center px-6 py-2 rounded-lg hover:bg-[#ffffff0d] w-full;
+  border: 1px solid transparent;
+}
+
+.search-contract-field:focus-within {
+  border: 1px solid #ffffff4a;
+}
+
+.search-contract-input {
+  @apply w-full pl-2 border-none cursor-pointer focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFFBF];
+}

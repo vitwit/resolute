@@ -4,7 +4,7 @@ import SearchContracts from './SearchContracts';
 const Contracts = () => {
   return (
     <div className="space-y-10">
-      <div className="border-b-[1px] border-[#ffffff1e] pb-4 space-y-2">
+      <div className="border-b-[1px] border-[#ffffff60] pb-4 space-y-2">
         <div className="text-[18px] font-bold">Smart Contracts</div>
         {/* TODO: Update the dummy description */}
         <div className="leading-[18px] text-[12px] font-extralight">
