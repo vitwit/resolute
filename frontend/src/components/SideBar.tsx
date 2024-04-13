@@ -21,10 +21,8 @@ import {
 } from '@/utils/constants';
 // import useInitAuthz from '@/custom-hooks/useInitAuthz';
 // import useInitFeegrant from '@/custom-hooks/useInitFeegrant';
-import {
-  getAllTokensPrice,
-  setAllNetworksInfo,
-} from '@/store/features/common/commonSlice';
+import { getAllTokensPrice, setAllNetworksInfo } from '@/store/features/common/commonSlice';
+import IBCSwapTxStatus from './IBCSwapTxStatus';
 
 const SideBar = ({ children }: { children: React.ReactNode }) => {
   const pathName = usePathname();
@@ -41,6 +39,7 @@ const SideBar = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="main">
       <TransactionSuccessPopup />
+      <IBCSwapTxStatus />
 
       <div className="sidebar overflow-y-scroll">
         <Link href="/">

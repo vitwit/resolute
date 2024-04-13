@@ -3,6 +3,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { setError } from '@/store/features/common/commonSlice';
 import {
   resetUpdateTxnState,
+  setVerifyDialogOpen,
   updateTxn,
 } from '@/store/features/multisig/multisigSlice';
 import { RootState } from '@/store/store';
@@ -17,6 +18,7 @@ import React, { useEffect, useState } from 'react';
 import { MultisigTxStatus } from '@/types/enums';
 import { FAILED_TO_BROADCAST_ERROR } from '@/utils/errors';
 import { CircularProgress } from '@mui/material';
+import useVerifyAccount from '@/custom-hooks/useVerifyAccount';
 
 interface BroadCastTxnProps {
   txn: Txn;
@@ -33,6 +35,10 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
   const [load, setLoad] = useState(false);
   const { getChainInfo } = useGetChainInfo();
   const { rpc, address: walletAddress } = getChainInfo(chainID);
+  const { isAccountVerified } = useVerifyAccount({
+    chainID,
+    address: walletAddress,
+  });
 
   const updateTxnRes = useAppSelector(
     (state: RootState) => state.multisig.updateTxnRes
@@ -56,6 +62,10 @@ const BroadCastTxn: React.FC<BroadCastTxnProps> = (props) => {
   }, []);
 
   const broadcastTxn = async () => {
+    if (!isAccountVerified()) {
+      dispatch(setVerifyDialogOpen(true));
+      return;
+    }
     setLoad(true);
     const authToken = getAuthToken(chainID);
     const queryParams = {

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap');
 @tailwind base;
 @tailwind components;
@@ -23,6 +23,10 @@
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+}
+
+.custom-font {
+  font-family: 'Inter', sans-serif;
 }
 
 .main {
@@ -645,4 +649,13 @@
 .feegrant-button-background {
   @apply opacity-80 rounded-lg;
   background: rgba(255, 255, 255, 0.1);
+}
+
+.dialog-box-bg {
+  background: linear-gradient(
+    178deg,
+    #241b61 1.71%,
+    #69448d 98.35%,
+    #69448d 98.35%
+  );
 }
