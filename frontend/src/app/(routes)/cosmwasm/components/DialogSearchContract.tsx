@@ -4,6 +4,32 @@ import { Dialog, DialogContent } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import SelectSearchType from './SelectSearchType';
+import CommonCopy from '@/components/CommonCopy';
+import { shortenName } from '@/utils/util';
+
+// Sample data
+const contracts = [
+  {
+    name: 'contract1',
+    address: 'osmo1e7wpfwm66l3sfnvnsckr4dvxapdqnfyjph3pdrnuv66xjsmau3js945z8s',
+  },
+  {
+    name: 'contract2',
+    address: 'osmo1e7wpfwm66l3sfnvnsckr4dvxapdqnfyjph3pdrnuv66xjsmau3js945z8s',
+  },
+  {
+    name: 'contract3',
+    address: 'osmo1e7wpfwm66l3sfnvnsckr4dvxapdqnfyjph3pdrnuv66xjsmau3js945z8s',
+  },
+  {
+    name: 'contract4',
+    address: 'osmo1e7wpfwm66l3sfnvnsckr4dvxapdqnfyjph3pdrnuv66xjsmau3js945z8s',
+  },
+  {
+    name: 'contract5',
+    address: 'osmo1e7wpfwm66l3sfnvnsckr4dvxapdqnfyjph3pdrnuv66xjsmau3js945z8s',
+  },
+];
 
 const DialogSearchContract = ({
   onClose,
@@ -30,7 +56,7 @@ const DialogSearchContract = ({
       }}
     >
       <DialogContent sx={{ padding: 0 }}>
-        <div className="w-[890px] text-white">
+        <div className="w-[890px] text-white pb-10">
           <div className="px-10 py-6 pt-10 flex justify-end">
             <div onClick={handleClose}>
               <Image
@@ -63,11 +89,20 @@ const DialogSearchContract = ({
                 />
               </div>
             </div>
-            <div className='w-full'>
+            <div className="w-full">
               <SeachInputField
                 searchTerm={searchTerm}
                 setSearchTerm={(value: string) => setSearchTerm(value)}
               />
+            </div>
+            <div className="w-full space-y-6">
+              {contracts.map((contract) => (
+                <ContractItem
+                  key={contract.address}
+                  name={contract.name}
+                  address={contract.address}
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -77,6 +112,15 @@ const DialogSearchContract = ({
 };
 
 export default DialogSearchContract;
+
+const ContractItem = ({ name, address }: { name: string; address: string }) => {
+  return (
+    <div className="flex gap-4 justify-between items-center">
+      <div className="w-[20%] truncate">{shortenName(name, 20)}</div>
+      <CommonCopy message={address} style="!bg-[#FFFFFF0D]" plainIcon={true} />
+    </div>
+  );
+};
 
 const SeachInputField = ({
   searchTerm,
