@@ -1,19 +1,55 @@
 'use client';
 
-import { MAX_TRY_END_POINTS } from '@/utils/constants';
-import { axiosGetRequestWrapper } from '@/utils/RequestWrapper';
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
-const getContractURL = (address: string) =>
-  `/cosmwasm/wasm/v1/contract/${address}`;
+const getContractURL = (baseURL: string, address: string) =>
+  `${baseURL}/cosmwasm/wasm/v1/contract/${address}`;
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-const getContract = (
+const getContractQueryURL = (
+  baseURL: string,
+  address: string,
+  queryData: string
+) => `${baseURL}/cosmwasm/wasm/v1/contract/${address}/smart/${queryData}`;
+
+export const getContract = async (
   baseURLs: string[],
   address: string
-): Promise<AxiosResponse<any>> => {
-  const endPoint = getContractURL(address);
-  return axiosGetRequestWrapper(baseURLs, endPoint, MAX_TRY_END_POINTS);
+): Promise<Response> => {
+  for (const url of baseURLs) {
+    const uri = getContractURL(url, address);
+    try {
+      const response = await fetch(uri);
+      if (!response.ok) {
+        const res = await response.json();
+        throw new Error(res.message || 'Failed to fetch contract');
+      }
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+  throw new Error('Failed to fetch contract');
+};
+
+export const queryContract = async (
+  baseURLs: string[],
+  address: string,
+  queryData: string
+): Promise<Response> => {
+  for (const url of baseURLs) {
+    const uri = getContractQueryURL(url, address, queryData);
+    try {
+      const response = await fetch(uri);
+      if (!response.ok) {
+        const res = await response.json();
+        throw new Error(res.message || 'Failed to fetch contract');
+      }
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+  throw new Error('Failed to fetch contract');
 };
 
 const result = {

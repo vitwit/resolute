@@ -2,17 +2,24 @@ import CommonCopy from '@/components/CommonCopy';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import DialogSearchContract from './DialogSearchContract';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
-const SearchContracts = () => {
-  // this state stores the selected contact address
-  const [selectedContract] = useState({
-    address: '',
-    name: '',
-  });
+const SearchContracts = ({
+  chainID,
+  handleSelectContract,
+  selectedContract,
+}: {
+  chainID: string;
+  selectedContract: { address: string; name: string };
+  handleSelectContract: (address: string, name: string) => void;
+}) => {
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   const hanldeClose = () => {
     setSearchDialogOpen(false);
   };
+
+  const { getChainInfo } = useGetChainInfo();
+  const { restURLs } = getChainInfo(chainID);
   return (
     <>
       <div
@@ -30,7 +37,13 @@ const SearchContracts = () => {
           <ContractNotSelected />
         )}
       </div>
-      <DialogSearchContract open={searchDialogOpen} onClose={hanldeClose} />
+      <DialogSearchContract
+        open={searchDialogOpen}
+        onClose={hanldeClose}
+        restURLs={restURLs}
+        chainID={chainID}
+        handleSelectContract={handleSelectContract}
+      />
     </>
   );
 };

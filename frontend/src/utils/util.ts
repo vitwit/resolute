@@ -467,3 +467,15 @@ export function formatValidatorStatsValue(
     ? '-'
     : Number(numValue.toFixed(precision)).toLocaleString();
 }
+
+export function extractContractMessages(inputString: string): string[] {
+  const pattern: RegExp = /`(\w+)`/g;
+
+  const matches: string[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(inputString)) !== null) {
+    matches.push(match[1]);
+  }
+
+  return matches;
+}

@@ -8,7 +8,7 @@
 }
 
 .search-contract-field {
-  @apply h-12 flex bg-[#FFFFFF1A] items-center px-6 py-2 rounded-lg hover:bg-[#ffffff0d] w-full;
+  @apply h-12 flex bg-[#FFFFFF1A] items-center px-6 py-2 rounded-lg hover:bg-[#ffffff0d] flex-1;
   border: 1px solid transparent;
 }
 
@@ -18,4 +18,22 @@
 
 .search-contract-input {
   @apply w-full pl-2 border-none focus:outline-none bg-transparent placeholder:text-[16px] placeholder:text-[#FFFFFFBF];
+}
+
+.styled-btn-wrapper {
+  @apply rounded-lg p-[1px] w-fit;
+  background: linear-gradient(to right, #4aa29c, #8b3da7);
+}
+
+.styled-btn-wrapper:hover {
+  background: linear-gradient(to right, #8b3da7, #4aa29c);
+}
+
+.styled-btn {
+  @apply bg-[#171429] text-[12px] font-semibold px-3 py-[10px] flex justify-center items-center rounded-lg;
+}
+
+.query-field,
+.query-output-box {
+  @apply min-w-[50%] max-w-[50%] bg-[#FFFFFF0D] rounded-2xl min-h-[380px] p-6;
 }

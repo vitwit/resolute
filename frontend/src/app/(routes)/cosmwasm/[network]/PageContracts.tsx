@@ -49,7 +49,11 @@ const PageContracts = ({ chainName }: { chainName: string }) => {
       </div>
 
       <div className="rounded-2xl bg-[#FFFFFF0D] p-10 h-full overflow-y-scroll">
-        {selectedTab === 'Contracts' ? <Contracts /> : <AllContracts />}
+        {selectedTab === 'Contracts' ? (
+          <Contracts chainID={chainID} />
+        ) : (
+          <AllContracts />
+        )}
       </div>
     </div>
   );
