@@ -1,6 +1,7 @@
 'use client';
 
-import axios, { AxiosResponse } from 'axios';
+import { OfflineDirectSigner } from '@cosmjs/proto-signing';
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 const getContractURL = (baseURL: string, address: string) =>
   `${baseURL}/cosmwasm/wasm/v1/contract/${address}`;
@@ -50,6 +51,22 @@ export const queryContract = async (
     }
   }
   throw new Error('Failed to fetch contract');
+};
+
+export const connectWithSigner = async (urls: string[], offlineSigner: any) => {
+  for (const url of urls) {
+    try {
+      const signer = await SigningCosmWasmClient.connectWithSigner(
+        url,
+        offlineSigner
+      );
+      return signer;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      console.error(`Error connecting to ${url}: ${error.message}`);
+    }
+  }
+  throw new Error('Unable to connect to any RPC URLs');
 };
 
 const result = {

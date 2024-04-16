@@ -38,7 +38,6 @@ const DialogSearchContract = ({
   const { getContractInfo, contractLoading, contractError } = useContracts();
 
   const onSearchContract = async () => {
-    // dispatch(getContract({ baseURLs: restURLs, chainID, address: searchTerm }));
     const { data } = await getContractInfo({
       address: searchTerm,
       baseURLs: restURLs,

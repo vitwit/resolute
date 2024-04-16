@@ -1,68 +1,63 @@
 import useContracts from '@/custom-hooks/useContracts';
-import { customMUITextFieldStyles } from '@/utils/commonStyles';
 import { TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-const QueryContract = ({
+const ExecuteContract = ({
   address,
   baseURLs,
   chainID,
   rpcURLs,
+  walletAddress,
 }: {
   address: string;
   baseURLs: string[];
   chainID: string;
   rpcURLs: string[];
+  walletAddress: string;
 }) => {
-  const {
-    getContractMessages,
-    messagesLoading,
-    getQueryContractOutput,
-    queryLoading,
-    queryError,
-    getExecuteMessages,
-  } = useContracts();
-  const [contractMessages, setContractMessages] = useState<string[]>([]);
-  const [queryOutput, setQueryOutput] = useState('');
-  const [queryText, setQueryText] = useState('');
+  const { getExecutionOutput } = useContracts();
+  //   const [contractMessages, setContractMessages] = useState<string[]>([]);
+  const [executionOutput, setExecutionOutput] = useState('');
+  const [executeInput, setExecuteInput] = useState('');
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      const { messages } = await getContractMessages({ address, baseURLs });
-      setContractMessages(messages);
-    };
-    fetchMessages();
-  }, [address]);
+  //   useEffect(() => {
+  //     const fetchMessages = async () => {
+  //       const { messages } = await getContractMessages({ address, baseURLs });
+  //       setContractMessages(messages);
+  //     };
+  //     fetchMessages();
+  //   }, [address]);
 
   const handleQueryChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setQueryText(e.target.value);
+    setExecuteInput(e.target.value);
   };
 
-  const handleSelectMessage = (msg: string) => {
-    setQueryText(`{\n\t"${msg}": {}\n}`);
-  };
+  //   const handleSelectMessage = (msg: string) => {
+  //     setQueryText(`{\n\t"${msg}": {}\n}`);
+  //   };
 
-  const onQuery = async () => {
-    const { data } = await getQueryContractOutput({
-      address,
-      baseURLs,
-      queryData: queryText,
-    });
-    setQueryOutput(data.data);
-    console.log('hererrererer');
-    getExecuteMessages({
+  const onExecute = async () => {
+    await getExecutionOutput({
       chainID,
       contractAddress: address,
-      rpcURLs: rpcURLs,
+      msgs: executeInput,
+      rpcURLs,
+      walletAddress,
     });
+    // setExecutionOutput(data.data);
+    // getExecuteMessages({
+    //   chainID,
+    //   contractAddress: address,
+    //   rpcURLs: rpcURLs,
+    // });
   };
 
   return (
     <div className="flex gap-10">
       <div className="query-field flex flex-col gap-4">
-        <div className="flex gap-4 flex-wrap">
+        {/* <div className="flex gap-4 flex-wrap">
           {contractMessages?.map((msg) => (
             <div
               onClick={() => handleSelectMessage(msg)}
@@ -72,11 +67,11 @@ const QueryContract = ({
               {msg}
             </div>
           ))}
-        </div>
+        </div> */}
         <div className="relative flex-1 border-[1px] rounded-2xl border-[#ffffff1e] hover:border-[#ffffff50]">
           <TextField
-            value={queryText}
-            name="queryField"
+            value={executeInput}
+            name="executeInputsField"
             onChange={handleQueryChange}
             fullWidth
             multiline
@@ -111,20 +106,20 @@ const QueryContract = ({
             }}
           />
           <button
-            onClick={onQuery}
+            onClick={onExecute}
             className="primary-gradient h-10 rounded-lg px-3 py-[6px] absolute bottom-6 right-6"
           >
-            Query
+            Execute
           </button>
         </div>
       </div>
       <div className="query-output-box">
         <div className=" border-[1px] border-[#ffffff1e] h-full rounded-2xl p-2 overflow-x-scroll overflow-y-scroll">
-          <pre>{JSON.stringify(queryOutput, undefined, 2)}</pre>
+          <pre>{JSON.stringify(executionOutput, undefined, 2)}</pre>
         </div>
       </div>
     </div>
   );
 };
 
-export default QueryContract;
+export default ExecuteContract;

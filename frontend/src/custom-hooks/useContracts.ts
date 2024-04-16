@@ -1,9 +1,13 @@
 import {
+  connectWithSigner,
   getContract,
   queryContract,
 } from '@/store/features/cosmwasm/cosmwasmService';
 import { extractContractMessages } from '@/utils/util';
 import { useState } from 'react';
+import { useDummyWallet } from './useDummyWallet';
+
+declare let window: WalletWindow;
 
 const dummyQuery = {
   '': '',
@@ -16,6 +20,8 @@ const useContracts = () => {
 
   const [messagesLoading, setMessagesLoading] = useState(false);
   const [queryLoading, setQueryLoading] = useState(false);
+
+  const { getDummyWallet } = useDummyWallet();
 
   const getContractInfo = async ({
     address,
@@ -96,6 +102,85 @@ const useContracts = () => {
     };
   };
 
+  const getExecuteMessages = async ({
+    rpcURLs,
+    chainID,
+    contractAddress,
+  }: {
+    rpcURLs: string[];
+    chainID: string;
+    contractAddress: string;
+  }) => {
+    const { dummyAddress, dummyWallet } = await getDummyWallet({ chainID });
+    const client = await connectWithSigner(rpcURLs, dummyWallet);
+    try {
+      await client.simulate(
+        dummyAddress,
+        [
+          {
+            typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+            value: {
+              sender: dummyAddress,
+              contract: contractAddress,
+              msg: Buffer.from('{"": {}}'),
+              funds: [],
+            },
+          },
+        ],
+        undefined
+      );
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
+  const getExecutionOutput = async ({
+    rpcURLs,
+    chainID,
+    contractAddress,
+    walletAddress,
+    msgs,
+  }: {
+    rpcURLs: string[];
+    chainID: string;
+    contractAddress: string;
+    walletAddress: string;
+    msgs: any;
+  }) => {
+    const offlineSigner = window.wallet.getOfflineSigner(chainID);
+    const client = await connectWithSigner(rpcURLs, offlineSigner);
+    try {
+      const response = await client.execute(
+        walletAddress,
+        contractAddress,
+        JSON.parse(msgs),
+        {
+          amount: [
+            {
+              amount: '5000',
+              denom: 'stake',
+            },
+          ],
+          gas: '900000',
+        },
+        '',
+        [
+          {
+            amount: '10000000',
+            denom: 'uosmo',
+          },
+          {
+            amount: '10',
+            denom: 'uotc',
+          },
+        ]
+      );
+      console.log(response);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
   return {
     contractLoading,
     getContractInfo,
@@ -105,6 +190,8 @@ const useContracts = () => {
     getQueryContractOutput,
     queryLoading,
     queryError,
+    getExecuteMessages,
+    getExecutionOutput,
   };
 };
 

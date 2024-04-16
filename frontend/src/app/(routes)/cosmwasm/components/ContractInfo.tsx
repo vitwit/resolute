@@ -2,6 +2,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import React, { useState } from 'react';
 import QueryContract from './QueryContract';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import ExecuteContract from './ExecuteContract';
 
 const ContractInfo = ({ chainID }: { chainID: string }) => {
   const selectedContractAddress = useAppSelector(
@@ -13,7 +14,7 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
   const tabs = ['Query Contract', 'Execute Contract'];
   const [selectedTab, setSelectedTab] = useState('Query Contract');
   const { getChainInfo } = useGetChainInfo();
-  const { restURLs } = getChainInfo(chainID);
+  const { restURLs, rpcURLs, address: walletAddress } = getChainInfo(chainID);
   return (
     <div className="space-y-20">
       <div className="space-y-6">
@@ -78,8 +79,18 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
             <QueryContract
               address={selectedContractAddress}
               baseURLs={restURLs}
+              chainID={chainID}
+              rpcURLs={rpcURLs}
             />
-          ) : null}
+          ) : (
+            <ExecuteContract
+              address={selectedContractAddress}
+              baseURLs={restURLs}
+              chainID={chainID}
+              rpcURLs={rpcURLs}
+              walletAddress={walletAddress}
+            />
+          )}
         </div>
       </div>
     </div>
