@@ -20,7 +20,6 @@ const QueryContract = ({
     getQueryContractOutput,
     queryLoading,
     queryError,
-    getExecuteMessages,
   } = useContracts();
   const [contractMessages, setContractMessages] = useState<string[]>([]);
   const [queryOutput, setQueryOutput] = useState('');
@@ -51,12 +50,6 @@ const QueryContract = ({
       queryData: queryText,
     });
     setQueryOutput(data.data);
-    console.log('hererrererer');
-    getExecuteMessages({
-      chainID,
-      contractAddress: address,
-      rpcURLs: rpcURLs,
-    });
   };
 
   return (

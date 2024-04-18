@@ -14,7 +14,12 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
   const tabs = ['Query Contract', 'Execute Contract'];
   const [selectedTab, setSelectedTab] = useState('Query Contract');
   const { getChainInfo } = useGetChainInfo();
-  const { restURLs, rpcURLs, address: walletAddress } = getChainInfo(chainID);
+  const {
+    restURLs,
+    rpcURLs,
+    address: walletAddress,
+    chainName,
+  } = getChainInfo(chainID);
   return (
     <div className="space-y-20">
       <div className="space-y-6">
@@ -89,6 +94,7 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
               chainID={chainID}
               rpcURLs={rpcURLs}
               walletAddress={walletAddress}
+              chainName={chainName}
             />
           )}
         </div>

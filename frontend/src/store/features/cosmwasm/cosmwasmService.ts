@@ -20,12 +20,20 @@ export const getContract = async (
     const uri = getContractURL(url, address);
     try {
       const response = await fetch(uri);
+      console.log(response)
       if (!response.ok) {
-        const res = await response.json();
-        throw new Error(res.message || 'Failed to fetch contract');
+        console.log("hrer.e.re.r")
+        if (response.status === 500) {
+          console.log("herere..")
+          continue;
+        } else {
+          const res = await response.json();
+          throw new Error(res.message || 'Failed to fetch contract');
+        }
       }
       return response;
     } catch (error: any) {
+      console.log(error)
       throw new Error(error.message);
     }
   }

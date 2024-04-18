@@ -35,5 +35,18 @@
 
 .query-field,
 .query-output-box {
-  @apply min-w-[50%] max-w-[50%] bg-[#FFFFFF0D] rounded-2xl min-h-[380px] p-6;
+  @apply w-[50%] bg-[#FFFFFF0D] rounded-2xl min-h-[380px] p-6;
+}
+
+.execute-field,
+.execute-output-box {
+  @apply w-[50%] max-h-[440px] p-6;
+}
+
+.execute-field {
+  @apply bg-[#ffffff0d] rounded-2xl;
+}
+
+.execute-output-box {
+  @apply flex flex-col gap-6 pt-0;
 }

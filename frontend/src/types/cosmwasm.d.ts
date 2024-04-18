@@ -15,3 +15,14 @@ interface ContractInfoResponse {
   address: string;
   contract_info: ContractInfo;
 }
+
+interface AssetInfo {
+  coinMinimalDenom: string;
+  decimals: number;
+  symbol: string;
+}
+
+interface FundInfo {
+  amount: string;
+  denom: string;
+}

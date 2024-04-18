@@ -6,12 +6,15 @@ import {
 import { extractContractMessages } from '@/utils/util';
 import { useState } from 'react';
 import { useDummyWallet } from './useDummyWallet';
+import chainDenoms from '@/utils/chainDenoms.json';
 
 declare let window: WalletWindow;
 
 const dummyQuery = {
   '': '',
 };
+
+const assetsData = chainDenoms as AssetData;
 
 const useContracts = () => {
   const [contractLoading, setContractLoading] = useState(false);
@@ -181,6 +184,23 @@ const useContracts = () => {
     }
   };
 
+  const getChainAssets = (chainName: string) => {
+    const chainAssets = assetsData?.[chainName];
+    const assetsList: {
+      coinMinimalDenom: string;
+      decimals: number;
+      symbol: string;
+    }[] = [];
+    chainAssets?.forEach((asset) => {
+      assetsList.push({
+        symbol: asset.symbol,
+        decimals: asset.decimals,
+        coinMinimalDenom: asset.origin_denom,
+      });
+    });
+    return { assetsList };
+  };
+
   return {
     contractLoading,
     getContractInfo,
@@ -192,6 +212,7 @@ const useContracts = () => {
     queryError,
     getExecuteMessages,
     getExecutionOutput,
+    getChainAssets,
   };
 };
 

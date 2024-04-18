@@ -1,6 +1,7 @@
 import useContracts from '@/custom-hooks/useContracts';
-import { TextField } from '@mui/material';
+import { SelectChangeEvent, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import AttachFunds from './AttachFunds';
 
 const ExecuteContract = ({
   address,
@@ -8,17 +9,20 @@ const ExecuteContract = ({
   chainID,
   rpcURLs,
   walletAddress,
+  chainName,
 }: {
   address: string;
   baseURLs: string[];
   chainID: string;
   rpcURLs: string[];
   walletAddress: string;
+  chainName: string;
 }) => {
-  const { getExecutionOutput } = useContracts();
+  const { getExecutionOutput, getChainAssets } = useContracts();
   //   const [contractMessages, setContractMessages] = useState<string[]>([]);
   const [executionOutput, setExecutionOutput] = useState('');
   const [executeInput, setExecuteInput] = useState('');
+  const [attachFundType, setAttachFundType] = useState('no-funds');
 
   //   useEffect(() => {
   //     const fetchMessages = async () => {
@@ -46,7 +50,7 @@ const ExecuteContract = ({
       rpcURLs,
       walletAddress,
     });
-    // setExecutionOutput(data.data);
+    // setExecutionOutput();
     // getExecuteMessages({
     //   chainID,
     //   contractAddress: address,
@@ -54,9 +58,13 @@ const ExecuteContract = ({
     // });
   };
 
+  const handleAttachFundTypeChange = (event: SelectChangeEvent<string>) => {
+    setAttachFundType(event.target.value);
+  };
+
   return (
     <div className="flex gap-10">
-      <div className="query-field flex flex-col gap-4">
+      <div className="execute-field flex flex-col gap-4">
         {/* <div className="flex gap-4 flex-wrap">
           {contractMessages?.map((msg) => (
             <div
@@ -113,9 +121,22 @@ const ExecuteContract = ({
           </button>
         </div>
       </div>
-      <div className="query-output-box">
-        <div className=" border-[1px] border-[#ffffff1e] h-full rounded-2xl p-2 overflow-x-scroll overflow-y-scroll">
-          <pre>{JSON.stringify(executionOutput, undefined, 2)}</pre>
+      <div className="execute-output-box">
+        <div className="border-b-[1px] border-[#ffffff1e] pb-4 space-y-2">
+          <div className="text-[18px] font-bold">Attach Funds</div>
+          {/* TODO: Update the dummy description */}
+          <div className="leading-[18px] text-[12px] font-extralight">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            Necessitatibus fuga consectetur reiciendis fugit suscipit ab.
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-scroll">
+          <AttachFunds
+            handleAttachFundTypeChange={handleAttachFundTypeChange}
+            attachFundType={attachFundType}
+            chainID={chainID}
+            chainName={chainName}
+          />
         </div>
       </div>
     </div>
