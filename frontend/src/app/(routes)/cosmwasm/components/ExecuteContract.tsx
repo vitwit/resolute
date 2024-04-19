@@ -2,6 +2,36 @@ import useContracts from '@/custom-hooks/useContracts';
 import { SelectChangeEvent, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AttachFunds from './AttachFunds';
+import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+
+const getFormattedFundsList = (
+  funds: FundInfo[],
+  fundsInput: string,
+  attachFundType: string
+) => {
+  if (attachFundType === 'select') {
+    const result: {
+      denom: string;
+      amount: string;
+    }[] = [];
+    funds.forEach((fund) => {
+      if (fund.amount.length) {
+        result.push({
+          denom: fund.denom,
+          amount: (Number(fund.amount) * 10 ** fund.decimals).toString(),
+        });
+      }
+    });
+    return result;
+  } else if (attachFundType === 'json') {
+    try {
+      const parsedFunds = JSON.parse(fundsInput);
+      return parsedFunds;
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+};
 
 const ExecuteContract = ({
   address,
@@ -18,19 +48,19 @@ const ExecuteContract = ({
   walletAddress: string;
   chainName: string;
 }) => {
-  const { getExecutionOutput, getChainAssets } = useContracts();
-  //   const [contractMessages, setContractMessages] = useState<string[]>([]);
-  const [executionOutput, setExecutionOutput] = useState('');
+  const { getExecutionOutput } = useContracts();
   const [executeInput, setExecuteInput] = useState('');
   const [attachFundType, setAttachFundType] = useState('no-funds');
-
-  //   useEffect(() => {
-  //     const fetchMessages = async () => {
-  //       const { messages } = await getContractMessages({ address, baseURLs });
-  //       setContractMessages(messages);
-  //     };
-  //     fetchMessages();
-  //   }, [address]);
+  const { getDenomInfo } = useGetChainInfo();
+  const { decimals, minimalDenom } = getDenomInfo(chainID);
+  const [funds, setFunds] = useState<FundInfo[]>([
+    {
+      amount: '',
+      denom: minimalDenom,
+      decimals: decimals,
+    },
+  ]);
+  const [fundsInput, setFundsInput] = useState('');
 
   const handleQueryChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -38,24 +68,31 @@ const ExecuteContract = ({
     setExecuteInput(e.target.value);
   };
 
-  //   const handleSelectMessage = (msg: string) => {
-  //     setQueryText(`{\n\t"${msg}": {}\n}`);
-  //   };
-
   const onExecute = async () => {
+    const attachedFunds = getFormattedFundsList(
+      funds,
+      fundsInput,
+      attachFundType
+    );
     await getExecutionOutput({
       chainID,
       contractAddress: address,
       msgs: executeInput,
       rpcURLs,
       walletAddress,
+      funds: attachedFunds,
     });
-    // setExecutionOutput();
-    // getExecuteMessages({
-    //   chainID,
-    //   contractAddress: address,
-    //   rpcURLs: rpcURLs,
-    // });
+  };
+
+  const formatJSON = () => {
+    try {
+      const parsed = JSON.parse(executeInput);
+      const formattedJSON = JSON.stringify(parsed, undefined, 4);
+      setExecuteInput(formattedJSON);
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      console.log(error);
+    }
   };
 
   const handleAttachFundTypeChange = (event: SelectChangeEvent<string>) => {
@@ -65,17 +102,6 @@ const ExecuteContract = ({
   return (
     <div className="flex gap-10">
       <div className="execute-field flex flex-col gap-4">
-        {/* <div className="flex gap-4 flex-wrap">
-          {contractMessages?.map((msg) => (
-            <div
-              onClick={() => handleSelectMessage(msg)}
-              key={msg}
-              className="px-4 py-2 rounded-2xl bg-[#FFFFFF14] cursor-pointer hover:bg-[#ffffff26]"
-            >
-              {msg}
-            </div>
-          ))}
-        </div> */}
         <div className="relative flex-1 border-[1px] rounded-2xl border-[#ffffff1e] hover:border-[#ffffff50]">
           <TextField
             value={executeInput}
@@ -119,6 +145,14 @@ const ExecuteContract = ({
           >
             Execute
           </button>
+          <div className="styled-btn-wrapper absolute top-6 right-6">
+            <button
+              onClick={formatJSON}
+              className="styled-btn w-[144px] !bg-[#232034]"
+            >
+              Format JSON
+            </button>
+          </div>
         </div>
       </div>
       <div className="execute-output-box">
@@ -136,6 +170,10 @@ const ExecuteContract = ({
             attachFundType={attachFundType}
             chainID={chainID}
             chainName={chainName}
+            funds={funds}
+            setFunds={setFunds}
+            fundsInputJson={fundsInput}
+            setFundsInputJson={setFundsInput}
           />
         </div>
       </div>

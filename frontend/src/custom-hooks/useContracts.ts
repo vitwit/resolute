@@ -7,6 +7,7 @@ import { extractContractMessages } from '@/utils/util';
 import { useState } from 'react';
 import { useDummyWallet } from './useDummyWallet';
 import chainDenoms from '@/utils/chainDenoms.json';
+import useGetChainInfo from './useGetChainInfo';
 
 declare let window: WalletWindow;
 
@@ -25,6 +26,7 @@ const useContracts = () => {
   const [queryLoading, setQueryLoading] = useState(false);
 
   const { getDummyWallet } = useDummyWallet();
+  const { getChainInfo } = useGetChainInfo();
 
   const getContractInfo = async ({
     address,
@@ -143,15 +145,19 @@ const useContracts = () => {
     contractAddress,
     walletAddress,
     msgs,
+    funds,
   }: {
     rpcURLs: string[];
     chainID: string;
     contractAddress: string;
     walletAddress: string;
     msgs: any;
+    funds: { amount: string; denom: string }[] | undefined;
   }) => {
     const offlineSigner = window.wallet.getOfflineSigner(chainID);
     const client = await connectWithSigner(rpcURLs, offlineSigner);
+    const { feeAmount, feeCurrencies } = getChainInfo(chainID);
+    const decimals = feeCurrencies[0].coinDecimals;
     try {
       const response = await client.execute(
         walletAddress,
@@ -160,23 +166,14 @@ const useContracts = () => {
         {
           amount: [
             {
-              amount: '5000',
-              denom: 'stake',
+              amount: (feeAmount * 10 ** decimals).toString(),
+              denom: 'ugrain',
             },
           ],
           gas: '900000',
         },
-        '',
-        [
-          {
-            amount: '10000000',
-            denom: 'uosmo',
-          },
-          {
-            amount: '10',
-            denom: 'uotc',
-          },
-        ]
+        undefined,
+        funds
       );
       console.log(response);
     } catch (error: any) {

@@ -25,4 +25,5 @@ interface AssetInfo {
 interface FundInfo {
   amount: string;
   denom: string;
+  decimals: number;
 }

@@ -26,6 +26,7 @@ const SelectFunds = ({
     onAddFund({
       amount: '',
       denom: '',
+      decimals: 1,
     });
   };
   return (
@@ -122,14 +123,15 @@ const TokensList = ({
   // const [selectedAsset, setSelectedAsset] = useState<string>(denom);
   const handleSelectAsset = (e: SelectChangeEvent<string>) => {
     const selectedValue = e.target.value;
-    // const selected = assetsList.find(
-    //   (asset) => asset.coinMinimalDenom === selectedValue
-    // );
+    const selected = assetsList.find(
+      (asset) => asset.coinMinimalDenom === selectedValue
+    );
     // if (selected) setSelectedAsset(selected.coinMinimalDenom);
 
     const newFunds = funds.map((value, key) => {
       if (index === key) {
         value.denom = selectedValue;
+        value.decimals = selected?.decimals || 1;
       }
       return value;
     });

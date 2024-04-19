@@ -17,20 +17,20 @@ const AttachFunds = ({
   attachFundType,
   chainID,
   chainName,
+  funds,
+  setFunds,
+  fundsInputJson,
+  setFundsInputJson,
 }: {
   handleAttachFundTypeChange: (event: SelectChangeEvent<string>) => void;
   attachFundType: string;
   chainID: string;
   chainName: string;
+  setFunds: (value: React.SetStateAction<FundInfo[]>) => void;
+  funds: FundInfo[];
+  fundsInputJson: string;
+  setFundsInputJson: (value: string) => void;
 }) => {
-  const { getDenomInfo } = useGetChainInfo();
-  const { decimals, displayDenom, minimalDenom } = getDenomInfo(chainID);
-  const [funds, setFunds] = useState<FundInfo[]>([
-    {
-      amount: '',
-      denom: minimalDenom,
-    },
-  ]);
   const onAddFund = (fund: FundInfo) => {
     setFunds((prev) => [...prev, fund]);
   };
@@ -77,7 +77,12 @@ const AttachFunds = ({
           setFunds={setFunds}
         />
       ) : null}
-      {attachFundType === 'json' ? <ProvideFundsJson /> : null}
+      {attachFundType === 'json' ? (
+        <ProvideFundsJson
+          fundsInput={fundsInputJson}
+          setFundsInput={setFundsInputJson}
+        />
+      ) : null}
     </div>
   );
 };

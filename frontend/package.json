@@ -11,6 +11,7 @@
   "dependencies": {
     "@0xsquid/sdk": "^1.14.15",
     "@cosmjs/amino": "^0.31.3",
+    "@cosmjs/cosmwasm-stargate": "0.32.2",
     "@cosmjs/proto-signing": "^0.32.1",
     "@cosmjs/stargate": "^0.32.1",
     "@emotion/cache": "^11.11.0",
