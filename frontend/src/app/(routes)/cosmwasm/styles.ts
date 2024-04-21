@@ -47,3 +47,25 @@ export const assetsDropDownStyle = {
   },
   borderRadius: '8px',
 };
+
+export const selectTxnStyles = {
+  '& .MuiOutlinedInput-input': {
+    color: 'white',
+  },
+  '& .MuiOutlinedInput-root': {
+    padding: '0px !important',
+    border: 'none',
+  },
+  '& .MuiSvgIcon-root': {
+    color: 'white',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none !important',
+  },
+  '& .MuiTypography-body1': {
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: 200,
+  },
+  borderRadius: '8px',
+};

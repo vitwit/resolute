@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useDummyWallet } from './useDummyWallet';
 import chainDenoms from '@/utils/chainDenoms.json';
 import useGetChainInfo from './useGetChainInfo';
+import { StdFee } from '@cosmjs/amino';
 
 declare let window: WalletWindow;
 
@@ -181,6 +182,43 @@ const useContracts = () => {
     }
   };
 
+  const uploadContract = async ({
+    chainID,
+    address,
+    messages,
+  }: {
+    chainID: string;
+    address: string;
+    messages: Msg[];
+  }) => {
+    const { feeAmount, feeCurrencies, rpcURLs } = getChainInfo(chainID);
+    const { coinDecimals, coinDenom } = feeCurrencies[0];
+    const offlineSigner = window.wallet.getOfflineSigner(chainID);
+    const client = await connectWithSigner(rpcURLs, offlineSigner);
+
+    const fee = {
+      amount: [
+        {
+          amount: (feeAmount * 10 ** coinDecimals).toString(),
+          denom: coinDenom,
+        },
+      ],
+      gas: '900000',
+    };
+    try {
+      const resposne = await client.signAndBroadcast(
+        address,
+        messages,
+        fee,
+        undefined,
+        undefined
+      );
+      console.log(resposne);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
   const getChainAssets = (chainName: string) => {
     const chainAssets = assetsData?.[chainName];
     const assetsList: {
@@ -210,6 +248,7 @@ const useContracts = () => {
     getExecuteMessages,
     getExecutionOutput,
     getChainAssets,
+    uploadContract,
   };
 };
 
