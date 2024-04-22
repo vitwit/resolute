@@ -10,13 +10,7 @@ import chainDenoms from '@/utils/chainDenoms.json';
 import useGetChainInfo from './useGetChainInfo';
 import { useAppDispatch } from './StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
-import { TxResponse } from 'cosmjs-types/cosmos/base/abci/v1beta1/abci';
 import { Event } from 'cosmjs-types/tendermint/abci/types';
-import {
-  setTxExecuteLoading,
-  setTxExecuteStatus,
-  setTxUploadStatus,
-} from '@/store/features/cosmwasm/cosmwasmSlice';
 import { TxStatus } from '@/types/enums';
 import { toUtf8 } from '@cosmjs/encoding';
 
@@ -29,7 +23,7 @@ const dummyQuery = {
 const assetsData = chainDenoms as AssetData;
 
 const getCodeIdFromEvents = (events: Event[]) => {
-  let codeId;
+  let codeId = '';
   for (let i = 0; i < events.length; i++) {
     const event = events[i];
     if (event.type === 'store_code') {
@@ -45,14 +39,9 @@ const getCodeIdFromEvents = (events: Event[]) => {
   return codeId;
 };
 
-const getCodeIdAndTxHash = (txData: any) => {
-  if (txData?.code !== 0) {
-    return;
-  }
-  const codeID = getCodeIdFromEvents(txData.events);
-  if (!codeID) return;
-  const txHash = txData?.txhash || txData?.transactionHash;
-  return { codeID, txHash };
+const getCodeId = (txData: any) => {
+  const codeID = getCodeIdFromEvents(txData?.events || []);
+  return codeID;
 };
 
 const useContracts = () => {
@@ -200,21 +189,6 @@ const useContracts = () => {
       gas: '900000',
     };
     try {
-      dispatch(
-        setTxExecuteStatus({
-          chainID,
-          error: '',
-          status: TxStatus.PENDING,
-          txHash: '',
-          txnReponse: {
-            code: 0,
-            gasUsed: 0,
-            gasWanted: 0,
-            rawLog: '',
-            transactionHash: '',
-          },
-        })
-      );
       const response = await client.signAndBroadcast(
         walletAddress,
         [
@@ -231,45 +205,9 @@ const useContracts = () => {
         fee,
         ''
       );
-      const {
-        code,
-        gasUsed,
-        gasWanted,
-        transactionHash,
-        rawLog = '',
-      } = response;
-      dispatch(
-        setTxExecuteStatus({
-          chainID,
-          error: '',
-          status: TxStatus.IDLE,
-          txHash: transactionHash,
-          txnReponse: {
-            code,
-            gasUsed: Number(gasUsed),
-            gasWanted: Number(gasWanted),
-            rawLog,
-            transactionHash,
-          },
-        })
-      );
+      return { txHash: response.transactionHash };
     } catch (error: any) {
-      console.log(error);
-      dispatch(
-        setTxExecuteStatus({
-          chainID,
-          error: error?.message || 'Failed to execute',
-          status: TxStatus.REJECTED,
-          txHash: '',
-          txnReponse: {
-            code: 0,
-            gasUsed: 0,
-            gasWanted: 0,
-            rawLog: '',
-            transactionHash: '',
-          },
-        })
-      );
+      throw new Error(error?.message || 'Failed to execute contract');
     }
   };
 
@@ -297,37 +235,17 @@ const useContracts = () => {
       gas: '1100000',
     };
     try {
-      setUploadContractLoading(true);
-      const resposne = await client.signAndBroadcast(
+      const response = await client.signAndBroadcast(
         address,
         messages,
         fee,
         undefined,
         undefined
       );
-      setUploadContractLoading(false);
-      const codeIdAndTxHash = getCodeIdAndTxHash(resposne);
-      if (codeIdAndTxHash) {
-        const { codeID = '', txHash } = codeIdAndTxHash;
-        dispatch(
-          setTxUploadStatus({
-            chainID,
-            error: '',
-            status: TxStatus.IDLE,
-            codeID,
-            txHash,
-          })
-        );
-      }
+      const codeId = getCodeId(response);
+      return { codeId, txHash: response?.transactionHash };
     } catch (error: any) {
-      dispatch(
-        setError({
-          message: error?.message || 'Failed to upload contract',
-          type: 'error',
-        })
-      );
-    } finally {
-      setUploadContractLoading(false);
+      throw new Error(error?.message || 'Failed to upload contract');
     }
   };
 
@@ -365,20 +283,52 @@ const useContracts = () => {
       gas: '900000',
     };
     try {
-      const response = await client.instantiate(
+      // const response = await client.instantiate(
+      //   senderAddress,
+      //   codeId,
+      //   msg,
+      //   label,
+      //   fee,
+      //   {
+      //     admin,
+      //     funds,
+      //   }
+      // );
+      const response = await client.signAndBroadcast(
         senderAddress,
-        codeId,
-        msg,
-        label,
+        [
+          {
+            typeUrl: '/cosmwasm.wasm.v1.MsgInstantiateContract',
+            value: {
+              sender: senderAddress,
+              codeId: codeId,
+              msg: toUtf8(msg),
+              label: label,
+              funds: funds || [],
+              admin: admin,
+            },
+          },
+        ],
         fee,
-        {
-          admin,
-          funds,
-        }
+        ''
       );
-      console.log(response);
+      const instantiateEvent = response.events.find(
+        (event) => event.type === 'instantiate'
+      );
+      const contractAddress =
+        instantiateEvent?.attributes.find(
+          (attr) => attr.key === '_contract_address'
+        )?.value || '';
+      const uploadedCodeId =
+        instantiateEvent?.attributes.find((attr) => attr.key === 'code_id')
+          ?.value || '';
+      return {
+        codeId: uploadedCodeId,
+        contractAddress,
+        txHash: response?.transactionHash,
+      };
     } catch (error: any) {
-      console.log(error);
+      throw new Error(error.message || 'Failed to instantiate');
     }
   };
 

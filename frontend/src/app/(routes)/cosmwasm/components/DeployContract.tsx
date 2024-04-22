@@ -6,7 +6,7 @@ import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 const DeployContract = ({ chainID }: { chainID: string }) => {
   const { getChainInfo } = useGetChainInfo();
-  const { address: walletAddress } = getChainInfo(chainID);
+  const { address: walletAddress, restURLs } = getChainInfo(chainID);
   const [isFileUpload, setIsFileUpload] = useState(false);
   const onSelect = (value: boolean) => {
     setIsFileUpload(value);
@@ -20,9 +20,17 @@ const DeployContract = ({ chainID }: { chainID: string }) => {
         <SelectDeploymenyType isFileUpload={isFileUpload} onSelect={onSelect} />
       </div>
       {isFileUpload ? (
-        <UploadContract chainID={chainID} walletAddress={walletAddress} />
+        <UploadContract
+          chainID={chainID}
+          walletAddress={walletAddress}
+          restURLs={restURLs}
+        />
       ) : (
-        <InstantiateContract chainID={chainID} walletAddress={walletAddress} />
+        <InstantiateContract
+          chainID={chainID}
+          walletAddress={walletAddress}
+          restURLs={restURLs}
+        />
       )}
     </div>
   );

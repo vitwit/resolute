@@ -12,7 +12,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useMemo, useState } from 'react';
 
-const DialogTxContractStatus = ({ chainID }: { chainID: string }) => {
+const DialogTxInstantiateStatus = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { explorerTxHashEndpoint } = getChainInfo(chainID);
@@ -30,14 +30,14 @@ const DialogTxContractStatus = ({ chainID }: { chainID: string }) => {
     [minimalDenom, decimals, displayDenom]
   );
   const [open, setOpen] = useState(false);
-  const txUploadStatus = useAppSelector(
-    (state) => state.cosmwasm.chains?.[chainID]?.txUpload?.status
+  const txInstantiateStatus = useAppSelector(
+    (state) => state.cosmwasm.chains?.[chainID]?.txInstantiate?.status
   );
-  const txUploadHash = useAppSelector(
-    (state) => state.cosmwasm.chains?.[chainID]?.txUpload?.txHash
+  const txHash = useAppSelector(
+    (state) => state.cosmwasm.chains?.[chainID]?.txInstantiate?.txHash
   );
   const txResponse = useAppSelector(
-    (state) => state.cosmwasm.chains?.[chainID]?.txUpload?.txResponse
+    (state) => state.cosmwasm.chains?.[chainID]?.txInstantiate?.txResponse
   );
 
   const handleClose = () => {
@@ -45,8 +45,8 @@ const DialogTxContractStatus = ({ chainID }: { chainID: string }) => {
   };
 
   useEffect(() => {
-    if (txUploadHash && txUploadStatus === TxStatus.IDLE) setOpen(true);
-  }, [txUploadHash]);
+    if (txHash && txInstantiateStatus === TxStatus.IDLE) setOpen(true);
+  }, [txHash]);
 
   return (
     <Dialog
@@ -137,14 +137,41 @@ const DialogTxContractStatus = ({ chainID }: { chainID: string }) => {
                   </div>
                 </div>
                 <div className="txn-details-item">
-                  <div className="txn-details-item-title">Transaction Hash</div>
+                  <div className="txn-details-item-title">Contract Address</div>
                   <div className="truncate">
                     <div className="w-full common-copy">
-                      <span className="truncate">{txUploadHash || '-'}</span>
+                      <span className="truncate">
+                        {txResponse?.contractAddress || '-'}
+                      </span>
                       <Image
                         className="cursor-pointer"
                         onClick={(e) => {
-                          copyToClipboard(txUploadHash || '-');
+                          copyToClipboard(txResponse?.contractAddress || '-');
+                          dispatch(
+                            setError({
+                              type: 'success',
+                              message: 'Copied',
+                            })
+                          );
+                          e.stopPropagation();
+                        }}
+                        src="/copy-icon-plain.svg"
+                        width={24}
+                        height={24}
+                        alt="copy"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="txn-details-item">
+                  <div className="txn-details-item-title">Transaction Hash</div>
+                  <div className="truncate">
+                    <div className="w-full common-copy">
+                      <span className="truncate">{txHash || '-'}</span>
+                      <Image
+                        className="cursor-pointer"
+                        onClick={(e) => {
+                          copyToClipboard(txHash || '-');
                           dispatch(
                             setError({
                               type: 'success',
@@ -194,7 +221,7 @@ const DialogTxContractStatus = ({ chainID }: { chainID: string }) => {
                   className="txn-receipt-btn"
                   onClick={() => {
                     copyToClipboard(
-                      getTxnURL(explorerTxHashEndpoint, txUploadHash || '')
+                      getTxnURL(explorerTxHashEndpoint, txHash || '')
                     );
                     dispatch(setError({ type: 'success', message: 'Copied' }));
                   }}
@@ -203,7 +230,7 @@ const DialogTxContractStatus = ({ chainID }: { chainID: string }) => {
                 </button>
                 <Link
                   className="txn-receipt-btn"
-                  href={getTxnURL(explorerTxHashEndpoint, txUploadHash || '')}
+                  href={getTxnURL(explorerTxHashEndpoint, txHash || '')}
                   target="_blank"
                 >
                   View
@@ -217,4 +244,4 @@ const DialogTxContractStatus = ({ chainID }: { chainID: string }) => {
   );
 };
 
-export default DialogTxContractStatus;
+export default DialogTxInstantiateStatus;

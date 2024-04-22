@@ -28,10 +28,18 @@ interface FundInfo {
   decimals: number;
 }
 
-interface ParsedExecuteTxnReponse {
+interface ParsedExecuteTxnResponse {
   code: number;
-  gasUsed: number;
-  gasWanted: number;
+  fee: Coin[];
   transactionHash: string;
   rawLog: string;
+  memo: string;
+}
+
+interface ParsedUploadTxnResponse extends ParsedExecuteTxnResponse {
+  codeId: string;
+}
+
+interface ParsedInstatiateTxnResponse extends ParsedUploadTxnResponse {
+  contractAddress: string;
 }

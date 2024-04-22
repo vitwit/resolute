@@ -6,6 +6,7 @@ import Contracts from '../components/Contracts';
 import AllContracts from '../components/AllContracts';
 import DialogTxContractStatus from '../components/DialogTxContractStatus';
 import DialogTxExecuteStatus from '../components/DialogTxExecuteStatus';
+import DialogTxInstantiateStatus from '../components/DialogTxInstantiateStatus';
 
 const PageContracts = ({ chainName }: { chainName: string }) => {
   const nameToChainIDs: Record<string, string> = useAppSelector(
@@ -59,6 +60,7 @@ const PageContracts = ({ chainName }: { chainName: string }) => {
       </div>
       <DialogTxContractStatus chainID={chainID} />
       <DialogTxExecuteStatus chainID={chainID} />
+      <DialogTxInstantiateStatus chainID={chainID} />
     </div>
   );
 };

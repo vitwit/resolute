@@ -12,6 +12,8 @@ import { AccessType } from 'cosmjs-types/cosmwasm/wasm/v1/types';
 import SelectPermissionType from './SelectPermissionType';
 import useContracts from '@/custom-hooks/useContracts';
 import { gzip } from 'node-gzip';
+import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { uploadCode } from '@/store/features/cosmwasm/cosmwasmSlice';
 
 interface UploadContractInput {
   wasmFile?: File;
@@ -22,10 +24,13 @@ interface UploadContractInput {
 const UploadContract = ({
   chainID,
   walletAddress,
+  restURLs,
 }: {
   chainID: string;
   walletAddress: string;
+  restURLs: string[];
 }) => {
+  const dispatch = useAppDispatch();
   const { uploadContract, uploadContractLoading } = useContracts();
 
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
@@ -66,7 +71,15 @@ const UploadContract = ({
           },
         },
       };
-      uploadContract({ chainID, address: walletAddress, messages: [msg] });
+      dispatch(
+        uploadCode({
+          chainID,
+          address: walletAddress,
+          messages: [msg],
+          baseURLs: restURLs,
+          uploadContract,
+        })
+      );
     }
   };
 

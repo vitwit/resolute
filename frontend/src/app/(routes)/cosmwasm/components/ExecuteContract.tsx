@@ -3,8 +3,9 @@ import { CircularProgress, SelectChangeEvent, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AttachFunds from './AttachFunds';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
-import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { TxStatus } from '@/types/enums';
+import { executeContract } from '@/store/features/cosmwasm/cosmwasmSlice';
 
 const getFormattedFundsList = (
   funds: FundInfo[],
@@ -50,6 +51,7 @@ const ExecuteContract = ({
   walletAddress: string;
   chainName: string;
 }) => {
+  const dispatch = useAppDispatch();
   const { getExecutionOutput } = useContracts();
   const [executeInput, setExecuteInput] = useState('');
   const [attachFundType, setAttachFundType] = useState('no-funds');
@@ -79,14 +81,26 @@ const ExecuteContract = ({
       fundsInput,
       attachFundType
     );
-    await getExecutionOutput({
-      chainID,
-      contractAddress: address,
-      msgs: executeInput,
-      rpcURLs,
-      walletAddress,
-      funds: attachedFunds,
-    });
+    // await getExecutionOutput({
+    //   chainID,
+    //   contractAddress: address,
+    //   msgs: executeInput,
+    //   rpcURLs,
+    //   walletAddress,
+    //   funds: attachedFunds,
+    // });
+    dispatch(
+      executeContract({
+        chainID,
+        contractAddress: address,
+        msgs: executeInput,
+        rpcURLs,
+        walletAddress,
+        funds: attachedFunds,
+        baseURLs,
+        getExecutionOutput,
+      })
+    );
   };
 
   const formatJSON = () => {

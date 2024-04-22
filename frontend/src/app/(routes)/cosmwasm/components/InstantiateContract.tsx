@@ -1,4 +1,4 @@
-import { SelectChangeEvent, TextField } from '@mui/material';
+import { CircularProgress, SelectChangeEvent, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import { Control, Controller, useForm } from 'react-hook-form';
 import { customTextFieldStyles } from '../styles';
@@ -6,6 +6,9 @@ import useContracts from '@/custom-hooks/useContracts';
 import AttachFunds from './AttachFunds';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { getFormattedFundsList } from '@/utils/util';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { txInstantiateContract } from '@/store/features/cosmwasm/cosmwasmSlice';
+import { TxStatus } from '@/types/enums';
 
 interface InstatiateContractInputs {
   codeId: string;
@@ -17,11 +20,19 @@ interface InstatiateContractInputs {
 const InstantiateContract = ({
   chainID,
   walletAddress,
+  restURLs,
 }: {
   chainID: string;
   walletAddress: string;
+  restURLs: string[];
 }) => {
+  const dispatch = useAppDispatch();
   const { instantiateContract } = useContracts();
+
+  const txInstantiateStatus = useAppSelector(
+    (state) => state.cosmwasm.chains?.[chainID]?.txInstantiate?.status
+  );
+
   const { handleSubmit, control, setValue, getValues } =
     useForm<InstatiateContractInputs>({
       defaultValues: {
@@ -55,14 +66,19 @@ const InstantiateContract = ({
       fundsInput,
       attachFundType
     );
-    instantiateContract({
-      chainID,
-      codeId: Number(data.codeId),
-      admin: data.adminAddress ? data.adminAddress : undefined,
-      funds: attachedFunds,
-      label: data.label,
-      msg: JSON.parse(data.message),
-    });
+
+    dispatch(
+      txInstantiateContract({
+        chainID,
+        codeId: Number(data.codeId),
+        instantiateContract,
+        label: data.label,
+        msg: data.message,
+        baseURLs: restURLs,
+        admin: data.adminAddress ? data.adminAddress : undefined,
+        funds: attachedFunds,
+      })
+    );
   };
 
   const formatJSON = () => {
@@ -193,7 +209,7 @@ const InstantiateContract = ({
             </div>
           </div>
         </div>
-        <InstatiateButton />
+        <InstatiateButton loading={txInstantiateStatus === TxStatus.PENDING} />
       </div>
     </form>
   );
@@ -233,13 +249,17 @@ const CustomTextField = ({
   );
 };
 
-const InstatiateButton = () => {
+const InstatiateButton = ({ loading }: { loading: boolean }) => {
   return (
     <button
       type="submit"
       className="primary-gradient text-[12px] font-medium px-3 py-[6px] rounded-lg h-10 w-full"
     >
-      Instantiate
+      {loading ? (
+        <CircularProgress size={18} sx={{ color: 'white' }} />
+      ) : (
+        'Instantiate'
+      )}
     </button>
   );
 };
