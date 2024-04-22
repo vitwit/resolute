@@ -1,28 +1,31 @@
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import useContracts from '@/custom-hooks/useContracts';
-import { customMUITextFieldStyles } from '@/utils/commonStyles';
-import { TextField } from '@mui/material';
+import { queryContractInfo } from '@/store/features/cosmwasm/cosmwasmSlice';
+import { TxStatus } from '@/types/enums';
+import { CircularProgress, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { queryInputStyles } from '../styles';
 
 const QueryContract = ({
   address,
   baseURLs,
   chainID,
-  rpcURLs,
 }: {
   address: string;
   baseURLs: string[];
   chainID: string;
-  rpcURLs: string[];
 }) => {
-  const {
-    getContractMessages,
-    messagesLoading,
-    getQueryContractOutput,
-    queryLoading,
-    queryError,
-  } = useContracts();
+  const dispatch = useAppDispatch();
+  const { getContractMessages, messagesLoading, getQueryContractOutput } =
+    useContracts();
   const [contractMessages, setContractMessages] = useState<string[]>([]);
-  const [queryOutput, setQueryOutput] = useState('');
+  const queryOutput = useAppSelector(
+    (state) => state.cosmwasm.chains?.[chainID]?.query.queryOutput
+  );
+  const queryLoading = useAppSelector(
+    (state) => state.cosmwasm.chains?.[chainID]?.query.status
+  );
+
   const [queryText, setQueryText] = useState('');
 
   useEffect(() => {
@@ -43,13 +46,16 @@ const QueryContract = ({
     setQueryText(`{\n\t"${msg}": {}\n}`);
   };
 
-  const onQuery = async () => {
-    const { data } = await getQueryContractOutput({
-      address,
-      baseURLs,
-      queryData: queryText,
-    });
-    setQueryOutput(data.data);
+  const onQuery = () => {
+    dispatch(
+      queryContractInfo({
+        address,
+        baseURLs,
+        queryData: queryText,
+        chainID,
+        getQueryContractOutput,
+      })
+    );
   };
 
   return (
@@ -83,31 +89,18 @@ const QueryContract = ({
                 },
               },
             }}
-            sx={{
-              '& .MuiTypography-body1': {
-                color: 'white',
-                fontSize: '12px',
-                fontWeight: 200,
-              },
-              '& .MuiOutlinedInput-notchedOutline': {
-                border: 'none',
-              },
-              '& .MuiOutlinedInput-root': {
-                border: 'none',
-                borderRadius: '16px',
-                color: 'white',
-              },
-              '& .Mui-focused': {
-                border: 'none',
-                borderRadius: '16px',
-              },
-            }}
+            sx={queryInputStyles}
           />
           <button
             onClick={onQuery}
-            className="primary-gradient h-10 rounded-lg px-3 py-[6px] absolute bottom-6 right-6"
+            disabled={queryLoading === TxStatus.PENDING}
+            className="primary-gradient h-10 rounded-lg px-3 py-[6px] absolute bottom-6 right-6 min-w-[85px]"
           >
-            Query
+            {queryLoading === TxStatus.PENDING ? (
+              <CircularProgress size={18} sx={{ color: 'white' }} />
+            ) : (
+              'Query'
+            )}
           </button>
         </div>
       </div>

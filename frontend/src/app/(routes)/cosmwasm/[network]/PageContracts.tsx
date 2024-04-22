@@ -5,6 +5,7 @@ import { useAppSelector } from '@/custom-hooks/StateHooks';
 import Contracts from '../components/Contracts';
 import AllContracts from '../components/AllContracts';
 import DialogTxContractStatus from '../components/DialogTxContractStatus';
+import DialogTxExecuteStatus from '../components/DialogTxExecuteStatus';
 
 const PageContracts = ({ chainName }: { chainName: string }) => {
   const nameToChainIDs: Record<string, string> = useAppSelector(
@@ -57,6 +58,7 @@ const PageContracts = ({ chainName }: { chainName: string }) => {
         )}
       </div>
       <DialogTxContractStatus chainID={chainID} />
+      <DialogTxExecuteStatus chainID={chainID} />
     </div>
   );
 };

@@ -16,10 +16,10 @@ const DialogTxExecuteStatus = ({ chainID }: { chainID: string }) => {
   const { explorerTxHashEndpoint } = getChainInfo(chainID);
   const [open, setOpen] = useState(false);
   const txExecuteError = useAppSelector(
-    (state) => state.cosmwasm.chains?.[chainID].txExecute.error
+    (state) => state.cosmwasm.chains?.[chainID]?.txExecute?.error
   );
   const txExecuteHash = useAppSelector(
-    (state) => state.cosmwasm.chains?.[chainID].txExecute.txHash
+    (state) => state.cosmwasm.chains?.[chainID]?.txExecute?.txHash
   );
 
   const handleClose = () => {

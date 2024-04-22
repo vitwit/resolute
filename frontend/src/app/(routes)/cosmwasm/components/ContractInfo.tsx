@@ -85,7 +85,6 @@ const ContractInfo = ({ chainID }: { chainID: string }) => {
               address={selectedContractAddress}
               baseURLs={restURLs}
               chainID={chainID}
-              rpcURLs={rpcURLs}
             />
           ) : (
             <ExecuteContract

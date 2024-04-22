@@ -69,3 +69,23 @@ export const selectTxnStyles = {
   },
   borderRadius: '8px',
 };
+
+export const queryInputStyles = {
+  '& .MuiTypography-body1': {
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: 200,
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
+  '& .MuiOutlinedInput-root': {
+    border: 'none',
+    borderRadius: '16px',
+    color: 'white',
+  },
+  '& .Mui-focused': {
+    border: 'none',
+    borderRadius: '16px',
+  },
+};

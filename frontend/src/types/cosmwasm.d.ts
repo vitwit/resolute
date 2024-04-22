@@ -27,3 +27,11 @@ interface FundInfo {
   denom: string;
   decimals: number;
 }
+
+interface ParsedExecuteTxnReponse {
+  code: number;
+  gasUsed: number;
+  gasWanted: number;
+  transactionHash: string;
+  rawLog: string;
+}

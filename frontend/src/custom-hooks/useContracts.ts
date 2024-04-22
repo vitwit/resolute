@@ -12,8 +12,13 @@ import { useAppDispatch } from './StateHooks';
 import { setError } from '@/store/features/common/commonSlice';
 import { TxResponse } from 'cosmjs-types/cosmos/base/abci/v1beta1/abci';
 import { Event } from 'cosmjs-types/tendermint/abci/types';
-import { setTxUploadStatus } from '@/store/features/cosmwasm/cosmwasmSlice';
+import {
+  setTxExecuteLoading,
+  setTxExecuteStatus,
+  setTxUploadStatus,
+} from '@/store/features/cosmwasm/cosmwasmSlice';
 import { TxStatus } from '@/types/enums';
+import { toUtf8 } from '@cosmjs/encoding';
 
 declare let window: WalletWindow;
 
@@ -54,10 +59,8 @@ const useContracts = () => {
   const dispatch = useAppDispatch();
   const [contractLoading, setContractLoading] = useState(false);
   const [contractError, setContractError] = useState('');
-  const [queryError, setQueryError] = useState('');
 
   const [messagesLoading, setMessagesLoading] = useState(false);
-  const [queryLoading, setQueryLoading] = useState(false);
 
   const [uploadContractLoading, setUploadContractLoading] = useState(false);
 
@@ -126,21 +129,14 @@ const useContracts = () => {
     queryData: string;
   }) => {
     try {
-      setQueryLoading(true);
-      setQueryError('');
       const respose = await queryContract(baseURLs, address, btoa(queryData));
       return {
         data: await respose.json(),
       };
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      setQueryError(error.message);
-    } finally {
-      setQueryLoading(false);
+      throw new Error(error.message);
     }
-    return {
-      data: {},
-    };
   };
 
   const getExecuteMessages = async ({
@@ -204,17 +200,76 @@ const useContracts = () => {
       gas: '900000',
     };
     try {
-      const response = await client.execute(
-        walletAddress,
-        contractAddress,
-        JSON.parse(msgs),
-        fee,
-        undefined,
-        funds
+      dispatch(
+        setTxExecuteStatus({
+          chainID,
+          error: '',
+          status: TxStatus.PENDING,
+          txHash: '',
+          txnReponse: {
+            code: 0,
+            gasUsed: 0,
+            gasWanted: 0,
+            rawLog: '',
+            transactionHash: '',
+          },
+        })
       );
-      console.log(response);
+      const response = await client.signAndBroadcast(
+        walletAddress,
+        [
+          {
+            typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+            value: {
+              sender: walletAddress,
+              contract: contractAddress,
+              msg: toUtf8(msgs),
+              funds,
+            },
+          },
+        ],
+        fee,
+        ''
+      );
+      const {
+        code,
+        gasUsed,
+        gasWanted,
+        transactionHash,
+        rawLog = '',
+      } = response;
+      dispatch(
+        setTxExecuteStatus({
+          chainID,
+          error: '',
+          status: TxStatus.IDLE,
+          txHash: transactionHash,
+          txnReponse: {
+            code,
+            gasUsed: Number(gasUsed),
+            gasWanted: Number(gasWanted),
+            rawLog,
+            transactionHash,
+          },
+        })
+      );
     } catch (error: any) {
       console.log(error);
+      dispatch(
+        setTxExecuteStatus({
+          chainID,
+          error: error?.message || 'Failed to execute',
+          status: TxStatus.REJECTED,
+          txHash: '',
+          txnReponse: {
+            code: 0,
+            gasUsed: 0,
+            gasWanted: 0,
+            rawLog: '',
+            transactionHash: '',
+          },
+        })
+      );
     }
   };
 
@@ -250,10 +305,8 @@ const useContracts = () => {
         undefined,
         undefined
       );
-      console.log(resposne);
       setUploadContractLoading(false);
       const codeIdAndTxHash = getCodeIdAndTxHash(resposne);
-      console.log(codeIdAndTxHash);
       if (codeIdAndTxHash) {
         const { codeID = '', txHash } = codeIdAndTxHash;
         dispatch(
@@ -353,8 +406,6 @@ const useContracts = () => {
     getContractMessages,
     messagesLoading,
     getQueryContractOutput,
-    queryLoading,
-    queryError,
     getExecuteMessages,
     getExecutionOutput,
     getChainAssets,

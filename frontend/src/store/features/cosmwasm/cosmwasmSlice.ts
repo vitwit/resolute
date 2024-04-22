@@ -1,8 +1,12 @@
 'use client';
 
+import useContracts from '@/custom-hooks/useContracts';
 import { TxStatus } from '@/types/enums';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ERR_UNKNOWN } from '@/utils/errors';
+import { DeliverTxResponse } from '@cosmjs/cosmwasm-stargate';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { cloneDeep } from 'lodash';
+import { setError } from '../common/commonSlice';
 
 export const contractInfoEmptyState = {
   admin: '',
@@ -34,10 +38,12 @@ interface Chain {
     status: TxStatus;
     error: string;
     txHash: string;
+    txResponse: ParsedExecuteTxnReponse;
   };
   query: {
     status: TxStatus;
     error: string;
+    queryOutput: string;
   };
 }
 
@@ -69,13 +75,63 @@ const initialState: CosmwasmState = {
       status: TxStatus.INIT,
       error: '',
       txHash: '',
+      txResponse: {
+        code: 0,
+        gasUsed: 0,
+        gasWanted: 0,
+        transactionHash: '',
+        rawLog: '',
+      },
     },
     query: {
+      queryOutput: '',
       status: TxStatus.INIT,
       error: '',
     },
   },
 };
+
+export const queryContractInfo = createAsyncThunk(
+  'cosmwasm/query-contract',
+  async (
+    data: {
+      address: string;
+      baseURLs: string[];
+      queryData: string;
+      chainID: string;
+      getQueryContractOutput: ({
+        address,
+        baseURLs,
+        queryData,
+      }: {
+        address: string;
+        baseURLs: string[];
+        queryData: string;
+      }) => Promise<{
+        data: any;
+      }>;
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    // const { getQueryContractOutput } = useContracts();
+    try {
+      const response = await data.getQueryContractOutput(data);
+      return {
+        data: response.data,
+        chainID: data.chainID,
+      };
+    } catch (error: any) {
+      const errMsg = error?.message || 'Failed to query contract';
+      dispatch(
+        setError({
+          message: errMsg,
+          type: 'error',
+        })
+      );
+      return rejectWithValue(errMsg);
+    }
+  }
+);
 
 export const cosmwasmSlice = createSlice({
   name: 'cosmwasm',
@@ -137,6 +193,7 @@ export const cosmwasmSlice = createSlice({
         error: string;
         chainID: string;
         txHash: string;
+        txnReponse: ParsedExecuteTxnReponse;
       }>
     ) => {
       const chainID = action.payload.chainID;
@@ -146,31 +203,50 @@ export const cosmwasmSlice = createSlice({
       state.chains[chainID].txExecute.status = action.payload.status;
       state.chains[chainID].txExecute.error = action.payload.error;
       state.chains[chainID].txExecute.txHash = action.payload.txHash;
+      state.chains[chainID].txExecute.txResponse = action.payload.txnReponse;
     },
-    setQueryStatus: (
+    setTxExecuteLoading: (
       state,
-      action: PayloadAction<{
-        status: TxStatus;
-        error: string;
-        chainID: string;
-      }>
+      action: PayloadAction<{ chainID: string; status: TxStatus }>
     ) => {
       const chainID = action.payload.chainID;
       if (!state.chains[chainID]) {
         state.chains[chainID] = cloneDeep(initialState.defaultState);
       }
-      state.chains[chainID].query.status = action.payload.status;
-      state.chains[chainID].query.error = action.payload.error;
+      state.chains[chainID].txExecute.status = action.payload.status;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(queryContractInfo.pending, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        if (!state.chains[chainID]) {
+          state.chains[chainID] = cloneDeep(initialState.defaultState);
+        }
+        state.chains[chainID].query.status = TxStatus.PENDING;
+        state.chains[chainID].query.error = '';
+      })
+      .addCase(queryContractInfo.fulfilled, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        state.chains[chainID].query.status = TxStatus.IDLE;
+        state.chains[chainID].query.error = '';
+        state.chains[chainID].query.queryOutput = action.payload.data;
+      })
+      .addCase(queryContractInfo.rejected, (state, action) => {
+        const chainID = action.meta.arg.chainID;
+        state.chains[chainID].query.status = TxStatus.REJECTED;
+        state.chains[chainID].query.error = action.error.message || ERR_UNKNOWN;
+        state.chains[chainID].query.queryOutput = '{}';
+      });
   },
 });
 
 export const {
   setContract,
-  setQueryStatus,
   setTxExecuteStatus,
   setTxInstantiateStatus,
   setTxUploadStatus,
+  setTxExecuteLoading,
 } = cosmwasmSlice.actions;
 
 export default cosmwasmSlice.reducer;

@@ -1,8 +1,10 @@
 import useContracts from '@/custom-hooks/useContracts';
-import { SelectChangeEvent, TextField } from '@mui/material';
+import { CircularProgress, SelectChangeEvent, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AttachFunds from './AttachFunds';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
+import { TxStatus } from '@/types/enums';
 
 const getFormattedFundsList = (
   funds: FundInfo[],
@@ -53,6 +55,9 @@ const ExecuteContract = ({
   const [attachFundType, setAttachFundType] = useState('no-funds');
   const { getDenomInfo } = useGetChainInfo();
   const { decimals, minimalDenom } = getDenomInfo(chainID);
+  const txExecuteLoading = useAppSelector(
+    (state) => state.cosmwasm.chains?.[chainID].txExecute.status
+  );
   const [funds, setFunds] = useState<FundInfo[]>([
     {
       amount: '',
@@ -141,9 +146,13 @@ const ExecuteContract = ({
           />
           <button
             onClick={onExecute}
-            className="primary-gradient h-10 rounded-lg px-3 py-[6px] absolute bottom-6 right-6"
+            className="primary-gradient h-10 rounded-lg px-3 py-[6px] absolute bottom-6 right-6 min-w-[85px]"
           >
-            Execute
+            {txExecuteLoading === TxStatus.PENDING ? (
+              <CircularProgress size={18} sx={{ color: 'white' }} />
+            ) : (
+              'Execute'
+            )}
           </button>
           <div className="styled-btn-wrapper absolute top-6 right-6">
             <button
