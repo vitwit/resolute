@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import Contracts from '../components/Contracts';
 import AllContracts from '../components/AllContracts';
+import DialogTxContractStatus from '../components/DialogTxContractStatus';
 
 const PageContracts = ({ chainName }: { chainName: string }) => {
   const nameToChainIDs: Record<string, string> = useAppSelector(
@@ -55,6 +56,7 @@ const PageContracts = ({ chainName }: { chainName: string }) => {
           <AllContracts />
         )}
       </div>
+      <DialogTxContractStatus chainID={chainID} />
     </div>
   );
 };

@@ -479,3 +479,32 @@ export function extractContractMessages(inputString: string): string[] {
 
   return matches;
 }
+
+export const getFormattedFundsList = (
+  funds: FundInfo[],
+  fundsInput: string,
+  attachFundType: string
+) => {
+  if (attachFundType === 'select') {
+    const result: {
+      denom: string;
+      amount: string;
+    }[] = [];
+    funds.forEach((fund) => {
+      if (fund.amount.length) {
+        result.push({
+          denom: fund.denom,
+          amount: (Number(fund.amount) * 10 ** fund.decimals).toString(),
+        });
+      }
+    });
+    return result;
+  } else if (attachFundType === 'json') {
+    try {
+      const parsedFunds = JSON.parse(fundsInput);
+      return parsedFunds;
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+};

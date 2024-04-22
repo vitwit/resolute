@@ -8,7 +8,12 @@ import { useState } from 'react';
 import { useDummyWallet } from './useDummyWallet';
 import chainDenoms from '@/utils/chainDenoms.json';
 import useGetChainInfo from './useGetChainInfo';
-import { StdFee } from '@cosmjs/amino';
+import { useAppDispatch } from './StateHooks';
+import { setError } from '@/store/features/common/commonSlice';
+import { TxResponse } from 'cosmjs-types/cosmos/base/abci/v1beta1/abci';
+import { Event } from 'cosmjs-types/tendermint/abci/types';
+import { setTxUploadStatus } from '@/store/features/cosmwasm/cosmwasmSlice';
+import { TxStatus } from '@/types/enums';
 
 declare let window: WalletWindow;
 
@@ -18,13 +23,43 @@ const dummyQuery = {
 
 const assetsData = chainDenoms as AssetData;
 
+const getCodeIdFromEvents = (events: Event[]) => {
+  let codeId;
+  for (let i = 0; i < events.length; i++) {
+    const event = events[i];
+    if (event.type === 'store_code') {
+      for (let j = 0; j < event.attributes.length; j++) {
+        const attribute = event.attributes[j];
+        if (attribute.key === 'code_id') {
+          codeId = attribute.value;
+          break;
+        }
+      }
+    }
+  }
+  return codeId;
+};
+
+const getCodeIdAndTxHash = (txData: any) => {
+  if (txData?.code !== 0) {
+    return;
+  }
+  const codeID = getCodeIdFromEvents(txData.events);
+  if (!codeID) return;
+  const txHash = txData?.txhash || txData?.transactionHash;
+  return { codeID, txHash };
+};
+
 const useContracts = () => {
+  const dispatch = useAppDispatch();
   const [contractLoading, setContractLoading] = useState(false);
   const [contractError, setContractError] = useState('');
   const [queryError, setQueryError] = useState('');
 
   const [messagesLoading, setMessagesLoading] = useState(false);
   const [queryLoading, setQueryLoading] = useState(false);
+
+  const [uploadContractLoading, setUploadContractLoading] = useState(false);
 
   const { getDummyWallet } = useDummyWallet();
   const { getChainInfo } = useGetChainInfo();
@@ -158,21 +193,22 @@ const useContracts = () => {
     const offlineSigner = window.wallet.getOfflineSigner(chainID);
     const client = await connectWithSigner(rpcURLs, offlineSigner);
     const { feeAmount, feeCurrencies } = getChainInfo(chainID);
-    const decimals = feeCurrencies[0].coinDecimals;
+    const { coinDecimals, coinDenom } = feeCurrencies[0];
+    const fee = {
+      amount: [
+        {
+          amount: (feeAmount * 10 ** coinDecimals).toString(),
+          denom: coinDenom,
+        },
+      ],
+      gas: '900000',
+    };
     try {
       const response = await client.execute(
         walletAddress,
         contractAddress,
         JSON.parse(msgs),
-        {
-          amount: [
-            {
-              amount: (feeAmount * 10 ** decimals).toString(),
-              denom: 'ugrain',
-            },
-          ],
-          gas: '900000',
-        },
+        fee,
         undefined,
         funds
       );
@@ -203,9 +239,10 @@ const useContracts = () => {
           denom: coinDenom,
         },
       ],
-      gas: '900000',
+      gas: '1100000',
     };
     try {
+      setUploadContractLoading(true);
       const resposne = await client.signAndBroadcast(
         address,
         messages,
@@ -214,6 +251,79 @@ const useContracts = () => {
         undefined
       );
       console.log(resposne);
+      setUploadContractLoading(false);
+      const codeIdAndTxHash = getCodeIdAndTxHash(resposne);
+      console.log(codeIdAndTxHash);
+      if (codeIdAndTxHash) {
+        const { codeID = '', txHash } = codeIdAndTxHash;
+        dispatch(
+          setTxUploadStatus({
+            chainID,
+            error: '',
+            status: TxStatus.IDLE,
+            codeID,
+            txHash,
+          })
+        );
+      }
+    } catch (error: any) {
+      dispatch(
+        setError({
+          message: error?.message || 'Failed to upload contract',
+          type: 'error',
+        })
+      );
+    } finally {
+      setUploadContractLoading(false);
+    }
+  };
+
+  const instantiateContract = async ({
+    chainID,
+    codeId,
+    msg,
+    label,
+    admin,
+    funds,
+  }: {
+    chainID: string;
+    codeId: number;
+    msg: any;
+    label: string;
+    admin?: string;
+    funds?: Coin[];
+  }) => {
+    const {
+      feeAmount,
+      feeCurrencies,
+      rpcURLs,
+      address: senderAddress,
+    } = getChainInfo(chainID);
+    const { coinDecimals, coinDenom } = feeCurrencies[0];
+    const offlineSigner = window.wallet.getOfflineSigner(chainID);
+    const client = await connectWithSigner(rpcURLs, offlineSigner);
+    const fee = {
+      amount: [
+        {
+          amount: (feeAmount * 10 ** coinDecimals).toString(),
+          denom: coinDenom,
+        },
+      ],
+      gas: '900000',
+    };
+    try {
+      const response = await client.instantiate(
+        senderAddress,
+        codeId,
+        msg,
+        label,
+        fee,
+        {
+          admin,
+          funds,
+        }
+      );
+      console.log(response);
     } catch (error: any) {
       console.log(error);
     }
@@ -249,6 +359,8 @@ const useContracts = () => {
     getExecutionOutput,
     getChainAssets,
     uploadContract,
+    uploadContractLoading,
+    instantiateContract,
   };
 };
 

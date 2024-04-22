@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { IconButton, SelectChangeEvent, Tooltip } from '@mui/material';
+import {
+  CircularProgress,
+  IconButton,
+  SelectChangeEvent,
+  Tooltip,
+} from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
@@ -21,7 +26,7 @@ const UploadContract = ({
   chainID: string;
   walletAddress: string;
 }) => {
-  const { uploadContract } = useContracts();
+  const { uploadContract, uploadContractLoading } = useContracts();
 
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
   const [accessType, setAccessType] = useState<AccessType>(3);
@@ -47,7 +52,6 @@ const UploadContract = ({
   };
 
   const onUpload = async (data: UploadContractInput) => {
-    console.log("data,,,,", data)
     const wasmcode = getValues('wasmFile')?.arrayBuffer();
     if (wasmcode) {
       const msg: Msg = {
@@ -73,7 +77,7 @@ const UploadContract = ({
     >
       <div className="flex gap-6 h-full">
         <div
-          className="file-upload-box !w-1/2 !h-full"
+          className="file-upload-box !w-1/2 !h-full !bg-[#FFFFFF0D]"
           onClick={() => {
             document.getElementById('wasm-file-upload')!.click();
           }}
@@ -145,8 +149,15 @@ const UploadContract = ({
           <div className="flex-1 overflow-y-scroll"></div>
         </div>
       </div>
-      <button className="primary-gradient rounded-lg py-[6px] flex-1 w-full">
-        Upload Contract
+      <button
+        disabled={uploadContractLoading}
+        className="primary-gradient rounded-lg py-[6px] flex-1 w-full"
+      >
+        {uploadContractLoading ? (
+          <CircularProgress size={16} sx={{ color: 'white' }} />
+        ) : (
+          <>Upload Contract</>
+        )}
       </button>
     </form>
   );

@@ -22,7 +22,7 @@ const DeployContract = ({ chainID }: { chainID: string }) => {
       {isFileUpload ? (
         <UploadContract chainID={chainID} walletAddress={walletAddress} />
       ) : (
-        <InstantiateContract />
+        <InstantiateContract chainID={chainID} walletAddress={walletAddress} />
       )}
     </div>
   );

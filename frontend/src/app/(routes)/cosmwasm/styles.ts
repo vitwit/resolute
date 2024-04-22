@@ -1,4 +1,4 @@
-export const assetAmountTextFieldStyles = {
+export const customTextFieldStyles = {
   '& .MuiTypography-body1': {
     color: 'white',
     fontSize: '12px',

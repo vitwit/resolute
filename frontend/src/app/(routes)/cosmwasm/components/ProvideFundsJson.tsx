@@ -8,7 +8,6 @@ const ProvideFundsJson = ({
   fundsInput: string;
   setFundsInput: (value: string) => void;
 }) => {
-  // const [fundsInput, setFundsInput] = useState('');
   const handleFundsChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -26,11 +25,10 @@ const ProvideFundsJson = ({
   };
 
   return (
-    <div className="bg-[#FFFFFF0D] p-6 rounded-2xl">
+    <div className="bg-[#FFFFFF0D] p-4 rounded-2xl">
       <div className=" border-[1px] border-[#ffffff1e] hover:border-[#ffffff50] rounded-2xl relative">
         <TextField
           value={fundsInput}
-          name="queryField"
           onChange={handleFundsChange}
           fullWidth
           multiline
@@ -64,14 +62,13 @@ const ProvideFundsJson = ({
             },
           }}
         />
-        <div className="styled-btn-wrapper absolute top-2 right-2 ">
-          <button
-            onClick={formatJSON}
-            className="styled-btn w-[144px] !bg-[#232034]"
-          >
-            Format JSON
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={formatJSON}
+          className="border-[1px] border-[#FFFFFF33] rounded-full p-2 text-[12px] font-extralight top-4 right-4 absolute"
+        >
+          Format JSON
+        </button>
       </div>
     </div>
   );

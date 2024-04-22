@@ -6,7 +6,7 @@ import {
   TextField,
 } from '@mui/material';
 import React, { useState } from 'react';
-import { assetAmountTextFieldStyles, assetsDropDownStyle } from '../styles';
+import { customTextFieldStyles, assetsDropDownStyle } from '../styles';
 import Image from 'next/image';
 
 const SelectFunds = ({
@@ -179,7 +179,7 @@ const AmountInputField = ({
       size="small"
       autoFocus={true}
       placeholder="Enter Amount"
-      sx={assetAmountTextFieldStyles}
+      sx={customTextFieldStyles}
       value={amount}
       InputProps={{
         sx: {
