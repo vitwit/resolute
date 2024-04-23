@@ -176,6 +176,14 @@ export const SIDENAV_MENU_ITEMS = [
     authzSupported: false,
     isMetaMaskSupports: false,
   },
+  {
+    name: 'Multiops',
+    icon: '/multiops-icon.svg',
+    activeIcon: '/multiops-icon-active.svg',
+    link: '/multiops',
+    authzSupported: false,
+    isMetaMaskSupports: false,
+  },
 ];
 export const ALL_NETWORKS_ICON = '/all-networks-icon.png';
 export const CHANGE_NETWORK_ICON = '/switch-icon.svg';
@@ -270,17 +278,46 @@ export const COIN_GECKO_IDS: Record<string, string> = {
   umars: 'Mars Protocol',
   ucmdx: 'cmdx',
 };
+
 export const voteOptionNumber: VoteOptionNumber = {
   yes: 1,
   no: 3,
   abstain: 2,
   veto: 4,
 };
+
 export const voteOptions: Record<string, string> = {
   VOTE_OPTION_YES: 'yes',
   VOTE_OPTION_ABSTAIN: 'abstain',
   VOTE_OPTION_NO: 'no',
   VOTE_OPTION_NO_WITH_VETO: 'veto',
   VOTE_OPTION_UNSPECIFIED: '',
+};
+
+export const MULTIOPS_MSG_TYPES = {
+  send: 'Send',
+  delegate: 'Delegate',
+  undelegate: 'Undelegate',
+  redelegate: 'Redelegate',
+  vote: 'Vote',
+  deposit: 'Deposit',
+};
+
+export const MULTIOPS_NOTE = `Note: Please ensure to allocate additional gas if the
+transaction involves multiple messages, and be sure to
+select the appropriate fee option in the signing
+wallet.`;
+
+export const MULTIOPS_SAMPLE_FILES = {
+  delegate:
+    'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/delegate.csv',
+  deposit:
+    'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/deposit.csv',
+  redelegate:
+    'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/redelegate.csv',
+  send: 'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/send.csv',
+  undelegate:
+    'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/undelegate.csv',
+  vote: 'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/vote.csv',
 };
 export const SWAP_ROUTE_ERROR = 'Failed to fetch routes.';
