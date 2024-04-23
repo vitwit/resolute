@@ -59,8 +59,13 @@ type Tx struct {
 	Signatures []string `json:"signatures"`
 }
 
+type Pagination struct {
+	Next_key string `json:"next_key"`
+	Total    string `json:"total"`
+}
+
 type TransactionResponses struct {
-	Pagination  interface{}  `json:"pagination"`
+	Pagination  Pagination   `json:"pagination"`
 	Total       string       `json:"total"`
 	TxResponses []TxResponse `json:"tx_responses"`
 	Txs         []Tx         `json:"txs"`

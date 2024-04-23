@@ -13,17 +13,7 @@ import { TxStatus } from '@/types/enums';
 import useAuthzExecHelper from '@/custom-hooks/useAuthzExecHelper';
 import useGetFeegranter from '@/custom-hooks/useGetFeegranter';
 import { MAP_TXN_MSG_TYPES } from '@/utils/feegrant';
-
-interface VoteOptionNumber {
-  [key: string]: number;
-}
-
-const voteOptionNumber: VoteOptionNumber = {
-  yes: 1,
-  no: 3,
-  abstain: 2,
-  veto: 4,
-};
+import { voteOptionNumber } from '@/utils/constants';
 
 const VotePopup = ({
   votingEndsInDays,
