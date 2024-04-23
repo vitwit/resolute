@@ -121,7 +121,10 @@ func getTransactions(chainId string, address string, limit string, offset string
 		req, _ := http.NewRequest("GET", requestURI, nil)
 		req.Header.Add("Authorization", authorization)
 		client := &http.Client{}
-		resp, _ := client.Do(req)
+		resp, err := client.Do(req)
+		if err != nil {
+			return nil, err
+		}
 		defer resp.Body.Close()
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {

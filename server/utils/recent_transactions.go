@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 )
@@ -63,5 +64,5 @@ func CreateRequestURI(api string, module string, address string) string {
 }
 
 func CreateAllTxnsRequestURI(api string, address string, limit string, offset string) string {
-	return api + "/cosmos/tx/v1beta1/txs" + "?events=message.sender=%27" + address + "%27" + "&order_by=2&pagination.limit=" + limit + "&pagination.offset=" + offset
+	return fmt.Sprintf("%s/cosmos/tx/v1beta1/txs?events=message.sender='%s'&order_by=2&pagination.limit=%s&pagination.offset=%s", api, url.QueryEscape(address), url.QueryEscape(limit), url.QueryEscape(offset))
 }
