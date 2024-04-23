@@ -27,26 +27,36 @@ const SelectFunds = (props: SelectFundsI) => {
     });
   };
   return (
-    <div className="space-y-6">
-      {funds.map((fund, index) => (
-        <Fund
-          key={index}
-          assetsList={assetsList}
-          fund={fund}
-          onDelete={() => onDelete(index)}
-          index={index}
-          funds={funds}
-          setFunds={setFunds}
-        />
-      ))}
-      <div className="flex justify-end">
-        <button
-          className="primary-gradient rounded-lg px-3 py-[6px] font-medium leading-[20px] text-[12px]"
-          onClick={handleAddFund}
-        >
-          Add More
-        </button>
-      </div>
+    <div>
+      {assetsList?.length ? (
+        <div className="space-y-6">
+          {funds.map((fund, index) => (
+            <Fund
+              key={index}
+              assetsList={assetsList}
+              fund={fund}
+              onDelete={() => onDelete(index)}
+              index={index}
+              funds={funds}
+              setFunds={setFunds}
+            />
+          ))}
+          <div className="flex justify-end">
+            <button
+              className="primary-gradient rounded-lg px-3 py-[6px] font-medium leading-[20px] text-[12px]"
+              onClick={handleAddFund}
+            >
+              Add More
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="text-center pt-6">
+          - Assets not found, Please select:{' '}
+          <span className="font-medium bg-[#ffffff0d] p-1 rounded-lg">Provide Assets List</span> option to
+          enter manually -
+        </div>
+      )}
     </div>
   );
 };
