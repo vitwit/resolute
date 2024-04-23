@@ -13,7 +13,7 @@ import {
 import { GAS_FEE, IBC_SEND_TYPE_URL } from '@/utils/constants';
 import { trackTx } from '../ibc/ibcSlice';
 import { NewTransaction } from '@/utils/transaction';
-import { setTxAndHash } from '../common/commonSlice';
+import { setError, setTxAndHash } from '../common/commonSlice';
 import { signAndBroadcast } from '@/utils/signing';
 
 interface RecentTransactionsState {
@@ -23,6 +23,10 @@ interface RecentTransactionsState {
     error: string;
     total: number;
   };
+  txnRepeat: {
+    status: TxStatus;
+    error: string;
+  };
 }
 
 const initialState: RecentTransactionsState = {
@@ -31,6 +35,10 @@ const initialState: RecentTransactionsState = {
     total: 0,
     error: '',
     status: TxStatus.INIT,
+  },
+  txnRepeat: {
+    status: TxStatus.INIT,
+    error: '',
   },
 };
 
@@ -192,8 +200,16 @@ export const txRepeatTransaction = createAsyncThunk(
       } else {
         return rejectWithValue(result?.rawLog);
       }
-    } catch (error) {
-      if (error instanceof AxiosError) return rejectWithValue(error.response);
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      const errMsg = error?.message || 'Failed to execute contract';
+      dispatch(
+        setError({
+          message: errMsg,
+          type: 'error',
+        })
+      );
+      return rejectWithValue(errMsg);
     }
   }
 );
@@ -206,6 +222,7 @@ export const recentTransactionsSlice = createSlice({
       state.txns.data = [];
       state.txns.error = '';
       state.txns.status = TxStatus.INIT;
+      state.txns.total = 0;
     },
     addIBCTransaction: (state, action: PayloadAction<ParsedTransaction>) => {
       const transaction = action.payload;
@@ -261,6 +278,19 @@ export const recentTransactionsSlice = createSlice({
         state.txns.data = [];
         const payload = action.payload as { message: string };
         state.txns.error = payload.message || '';
+      });
+    builder
+      .addCase(txRepeatTransaction.pending, (state) => {
+        state.txnRepeat.status = TxStatus.PENDING;
+        state.txnRepeat.error = '';
+      })
+      .addCase(txRepeatTransaction.fulfilled, (state) => {
+        state.txnRepeat.status = TxStatus.IDLE;
+        state.txnRepeat.error = '';
+      })
+      .addCase(txRepeatTransaction.rejected, (state, action) => {
+        state.txnRepeat.status = TxStatus.REJECTED;
+        state.txnRepeat.error = action.error.message || 'Transaction failed';
       });
   },
 });

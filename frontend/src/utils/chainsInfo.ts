@@ -285,14 +285,12 @@ export const networks: Network[] = [
       rpc: 'https://rpc.mainnet.desmos.network',
       restURIs: [
         'https://api.mainnet.desmos.network',
-        'https://rpc.mainnet.desmos.network',
-        'https://desmos-rpc.lavenderfive.com',
+        'https://desmos-api.lavenderfive.com',
         'https://api.resolute.vitwit.com/desmos_api',
       ],
       rpcURIs: [
         'https://rpc.mainnet.desmos.network',
-        'https://api.mainnet.desmos.network',
-        'https://desmos-api.lavenderfive.com',
+        'https://desmos-rpc.lavenderfive.com',
         'https://api.resolute.vitwit.com/desmos_rpc',
       ],
       currencies: [
