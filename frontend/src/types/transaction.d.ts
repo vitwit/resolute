@@ -43,3 +43,9 @@ interface ParsedTransaction {
   isIBCTxn: boolean;
   isIBCPending: boolean;
 }
+
+interface RepeatTransactionInputs {
+  basicChainInfo: BasicChainInfo;
+  messages: Msg[];
+  feegranter: string;
+}

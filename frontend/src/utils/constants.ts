@@ -1,3 +1,5 @@
+import { VoteOptionNumber } from '@/types/gov';
+
 export const SUPPORTED_WALLETS = [
   {
     name: 'Keplr',
@@ -275,6 +277,21 @@ export const COIN_GECKO_IDS: Record<string, string> = {
   ubld: 'BLD',
   umars: 'Mars Protocol',
   ucmdx: 'cmdx',
+};
+
+export const voteOptionNumber: VoteOptionNumber = {
+  yes: 1,
+  no: 3,
+  abstain: 2,
+  veto: 4,
+};
+
+export const voteOptions: Record<string, string> = {
+  VOTE_OPTION_YES: 'yes',
+  VOTE_OPTION_ABSTAIN: 'abstain',
+  VOTE_OPTION_NO: 'no',
+  VOTE_OPTION_NO_WITH_VETO: 'veto',
+  VOTE_OPTION_UNSPECIFIED: '',
 };
 
 export const MULTIOPS_MSG_TYPES = {

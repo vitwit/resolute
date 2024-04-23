@@ -285,14 +285,12 @@ export const networks: Network[] = [
       rpc: 'https://rpc.mainnet.desmos.network',
       restURIs: [
         'https://api.mainnet.desmos.network',
-        'https://rpc.mainnet.desmos.network',
-        'https://desmos-rpc.lavenderfive.com',
+        'https://desmos-api.lavenderfive.com',
         'https://api.resolute.vitwit.com/desmos_api',
       ],
       rpcURIs: [
         'https://rpc.mainnet.desmos.network',
-        'https://api.mainnet.desmos.network',
-        'https://desmos-api.lavenderfive.com',
+        'https://desmos-rpc.lavenderfive.com',
         'https://api.resolute.vitwit.com/desmos_rpc',
       ],
       currencies: [
@@ -692,17 +690,17 @@ export const networks: Network[] = [
     config: {
       chainId: 'passage-2',
       chainName: 'Passage',
-      rest: 'https://rest-passage.ecostake.com',
-      rpc: 'https://rpc-passage.ecostake.com',
+      rest: 'https://api.passage.vitwit.com',
+      rpc: 'https://rpc.passage.vitwit.com',
       restURIs: [
-        'https://rest-passage.ecostake.com',
         'https://api.passage.vitwit.com',
+        'https://rest-passage.ecostake.com',
         'https://passage-api.polkachu.com',
         'https://api-passage-ia.cosmosia.notional.ventures',
       ],
       rpcURIs: [
-        'https://rpc-passage.ecostake.com',
         'https://rpc.passage.vitwit.com',
+        'https://rpc-passage.ecostake.com',
         'https://passage-rpc.polkachu.com',
         'https://rpc-passage-ia.cosmosia.notional.ventures',
       ],
@@ -1200,13 +1198,13 @@ export const networks: Network[] = [
         'https://umee-lcd.quantnode.tech',
         'https://api-umee-ia.cosmosia.notional.ventures',
         'https://umee-api.polkachu.com',
-        'https://api.resolute.vitwit.com/umee_api'
+        'https://api.resolute.vitwit.com/umee_api',
       ],
       rpcURIs: [
         'https://umee-rpc.quantnode.tech',
         'https://rpc-umee-ia.cosmosia.notional.ventures',
         'https://umee-rpc.polkachu.com',
-        'https://api.resolute.vitwit.com/umee_rpc'
+        'https://api.resolute.vitwit.com/umee_rpc',
       ],
       currencies: [
         {
