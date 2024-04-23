@@ -128,6 +128,9 @@ func getTransactions(chainId string, address string, limit string, offset string
 	if err == nil {
 		requestURI := utils.CreateAllTxnsRequestURI(networkURIs[0], address, limit, offset)
 		req, _ := http.NewRequest("GET", requestURI, nil)
+		if err != nil {
+			return nil, err
+		}
 		req.Header.Add("Authorization", authorization)
 		client := &http.Client{}
 		resp, err := client.Do(req)
