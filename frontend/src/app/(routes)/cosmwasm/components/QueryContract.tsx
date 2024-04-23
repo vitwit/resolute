@@ -6,18 +6,16 @@ import { CircularProgress, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { queryInputStyles } from '../styles';
 
-const QueryContract = ({
-  address,
-  baseURLs,
-  chainID,
-}: {
+interface QueryContractI {
   address: string;
   baseURLs: string[];
   chainID: string;
-}) => {
+}
+
+const QueryContract = (props: QueryContractI) => {
+  const { address, baseURLs, chainID } = props;
   const dispatch = useAppDispatch();
-  const { getContractMessages, getQueryContractOutput } =
-    useContracts();
+  const { getContractMessages, getQueryContractOutput } = useContracts();
   const [contractMessages, setContractMessages] = useState<string[]>([]);
   const queryOutput = useAppSelector(
     (state) => state.cosmwasm.chains?.[chainID]?.query.queryOutput

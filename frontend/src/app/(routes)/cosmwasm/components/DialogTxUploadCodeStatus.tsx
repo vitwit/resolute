@@ -12,7 +12,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useMemo, useState } from 'react';
 
-const DialogTxContractStatus = ({ chainID }: { chainID: string }) => {
+const DialogTxUploadCodeStatus = ({ chainID }: { chainID: string }) => {
   const dispatch = useAppDispatch();
   const { getChainInfo, getDenomInfo } = useGetChainInfo();
   const { explorerTxHashEndpoint } = getChainInfo(chainID);
@@ -217,4 +217,4 @@ const DialogTxContractStatus = ({ chainID }: { chainID: string }) => {
   );
 };
 
-export default DialogTxContractStatus;
+export default DialogTxUploadCodeStatus;

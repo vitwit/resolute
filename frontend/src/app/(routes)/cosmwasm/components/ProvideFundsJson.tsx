@@ -1,13 +1,13 @@
 import { TextField } from '@mui/material';
 import React from 'react';
 
-const ProvideFundsJson = ({
-  fundsInput,
-  setFundsInput,
-}: {
+interface ProvideFundsJsonI {
   fundsInput: string;
   setFundsInput: (value: string) => void;
-}) => {
+}
+
+const ProvideFundsJson = (props: ProvideFundsJsonI) => {
+  const { fundsInput, setFundsInput } = props;
   const handleFundsChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useAppSelector } from '@/custom-hooks/StateHooks';
 import Contracts from '../components/Contracts';
 import AllContracts from '../components/AllContracts';
-import DialogTxContractStatus from '../components/DialogTxContractStatus';
+import DialogTxContractStatus from '../components/DialogTxUploadCodeStatus';
 import DialogTxExecuteStatus from '../components/DialogTxExecuteStatus';
 import DialogTxInstantiateStatus from '../components/DialogTxInstantiateStatus';
 

@@ -9,19 +9,16 @@ import React from 'react';
 import { customTextFieldStyles, assetsDropDownStyle } from '../styles';
 import Image from 'next/image';
 
-const SelectFunds = ({
-  onAddFund,
-  funds,
-  assetsList,
-  onDelete,
-  setFunds,
-}: {
+interface SelectFundsI {
   onAddFund: (fund: FundInfo) => void;
   funds: FundInfo[];
   assetsList: AssetInfo[];
   onDelete: (index: number) => void;
   setFunds: (value: React.SetStateAction<FundInfo[]>) => void;
-}) => {
+}
+
+const SelectFunds = (props: SelectFundsI) => {
+  const { onAddFund, funds, assetsList, onDelete, setFunds } = props;
   const handleAddFund = () => {
     onAddFund({
       amount: '',

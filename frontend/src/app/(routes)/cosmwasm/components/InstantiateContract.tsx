@@ -10,6 +10,11 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { txInstantiateContract } from '@/store/features/cosmwasm/cosmwasmSlice';
 import { TxStatus } from '@/types/enums';
 
+interface InstantiateContractI {
+  chainID: string;
+  walletAddress: string;
+  restURLs: string[];
+}
 interface InstatiateContractInputs {
   codeId: string;
   label: string;
@@ -17,15 +22,8 @@ interface InstatiateContractInputs {
   message: string;
 }
 
-const InstantiateContract = ({
-  chainID,
-  walletAddress,
-  restURLs,
-}: {
-  chainID: string;
-  walletAddress: string;
-  restURLs: string[];
-}) => {
+const InstantiateContract = (props: InstantiateContractI) => {
+  const { chainID, walletAddress, restURLs } = props;
   const dispatch = useAppDispatch();
   const { instantiateContract } = useContracts();
 

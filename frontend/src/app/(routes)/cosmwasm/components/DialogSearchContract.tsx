@@ -10,19 +10,16 @@ import { useAppDispatch } from '@/custom-hooks/StateHooks';
 import { setContract } from '@/store/features/cosmwasm/cosmwasmSlice';
 import useContracts from '@/custom-hooks/useContracts';
 
-const DialogSearchContract = ({
-  onClose,
-  open,
-  chainID,
-  restURLs,
-  handleSelectContract,
-}: {
+interface DialogSearchContractI {
   open: boolean;
   onClose: () => void;
   chainID: string;
   restURLs: string[];
   handleSelectContract: (address: string, name: string) => void;
-}) => {
+}
+
+const DialogSearchContract = (props: DialogSearchContractI) => {
+  const { onClose, open, chainID, restURLs, handleSelectContract } = props;
   const dispatch = useAppDispatch();
   const handleClose = () => {
     onClose();

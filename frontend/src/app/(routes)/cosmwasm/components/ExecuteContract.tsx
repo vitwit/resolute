@@ -7,6 +7,15 @@ import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { TxStatus } from '@/types/enums';
 import { executeContract } from '@/store/features/cosmwasm/cosmwasmSlice';
 
+interface ExecuteContractI {
+  address: string;
+  baseURLs: string[];
+  chainID: string;
+  rpcURLs: string[];
+  walletAddress: string;
+  chainName: string;
+}
+
 const getFormattedFundsList = (
   funds: FundInfo[],
   fundsInput: string,
@@ -37,21 +46,9 @@ const getFormattedFundsList = (
   }
 };
 
-const ExecuteContract = ({
-  address,
-  baseURLs,
-  chainID,
-  rpcURLs,
-  walletAddress,
-  chainName,
-}: {
-  address: string;
-  baseURLs: string[];
-  chainID: string;
-  rpcURLs: string[];
-  walletAddress: string;
-  chainName: string;
-}) => {
+const ExecuteContract = (props: ExecuteContractI) => {
+  const { address, baseURLs, chainID, rpcURLs, walletAddress, chainName } =
+    props;
   const dispatch = useAppDispatch();
   const { getExecutionOutput } = useContracts();
   const [executeInput, setExecuteInput] = useState('');

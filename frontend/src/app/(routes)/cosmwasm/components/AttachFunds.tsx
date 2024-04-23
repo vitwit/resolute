@@ -11,15 +11,7 @@ import ProvideFundsJson from './ProvideFundsJson';
 import { assetsDropDownStyle } from '../styles';
 import useContracts from '@/custom-hooks/useContracts';
 
-const AttachFunds = ({
-  handleAttachFundTypeChange,
-  attachFundType,
-  chainName,
-  funds,
-  setFunds,
-  fundsInputJson,
-  setFundsInputJson,
-}: {
+interface AttachFundsI {
   handleAttachFundTypeChange: (event: SelectChangeEvent<string>) => void;
   attachFundType: string;
   chainName: string;
@@ -27,7 +19,18 @@ const AttachFunds = ({
   funds: FundInfo[];
   fundsInputJson: string;
   setFundsInputJson: (value: string) => void;
-}) => {
+}
+
+const AttachFunds = (props: AttachFundsI) => {
+  const {
+    handleAttachFundTypeChange,
+    attachFundType,
+    chainName,
+    funds,
+    setFunds,
+    fundsInputJson,
+    setFundsInputJson,
+  } = props;
   const onAddFund = (fund: FundInfo) => {
     setFunds((prev) => [...prev, fund]);
   };

@@ -367,21 +367,6 @@ export const cosmwasmSlice = createSlice({
       state.chains[chainID].contractInfo = action.payload.contractInfo;
       state.chains[chainID].contractAddress = action.payload.contractAddress;
     },
-    setTxInstantiateStatus: (
-      state,
-      action: PayloadAction<{
-        status: TxStatus;
-        error: string;
-        chainID: string;
-      }>
-    ) => {
-      const chainID = action.payload.chainID;
-      if (!state.chains[chainID]) {
-        state.chains[chainID] = cloneDeep(initialState.defaultState);
-      }
-      state.chains[chainID].txInstantiate.status = action.payload.status;
-      state.chains[chainID].txInstantiate.error = action.payload.error;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -477,6 +462,6 @@ export const cosmwasmSlice = createSlice({
   },
 });
 
-export const { setContract, setTxInstantiateStatus } = cosmwasmSlice.actions;
+export const { setContract } = cosmwasmSlice.actions;
 
 export default cosmwasmSlice.reducer;

@@ -8,13 +8,13 @@ import React from 'react';
 import { selectTxnStyles } from '../styles';
 import { AccessType } from 'cosmjs-types/cosmwasm/wasm/v1/types';
 
-const SelectPermissionType = ({
-  handleAccessTypeChange,
-  accessType,
-}: {
+interface SelectPermissionTypeI {
   handleAccessTypeChange: (event: SelectChangeEvent<AccessType>) => void;
   accessType: AccessType;
-}) => {
+}
+
+const SelectPermissionType = (props: SelectPermissionTypeI) => {
+  const { handleAccessTypeChange, accessType } = props;
   return (
     <div className="space-y-2 w-full">
       <FormControl

@@ -4,15 +4,14 @@ import React, { useState } from 'react';
 import DialogSearchContract from './DialogSearchContract';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
-const SearchContracts = ({
-  chainID,
-  handleSelectContract,
-  selectedContract,
-}: {
+interface SearchContractsI {
   chainID: string;
   selectedContract: { address: string; name: string };
   handleSelectContract: (address: string, name: string) => void;
-}) => {
+}
+
+const SearchContracts = (props: SearchContractsI) => {
+  const { chainID, handleSelectContract, selectedContract } = props;
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   const hanldeClose = () => {
     setSearchDialogOpen(false);

@@ -17,21 +17,19 @@ import { uploadCode } from '@/store/features/cosmwasm/cosmwasmSlice';
 import { TxStatus } from '@/types/enums';
 import { setError } from '@/store/features/common/commonSlice';
 
+interface UploadContractI {
+  chainID: string;
+  walletAddress: string;
+  restURLs: string[];
+}
 interface UploadContractInput {
   wasmFile?: File;
   permission: AccessType;
   allowedAddresses: Record<'address', string>[];
 }
 
-const UploadContract = ({
-  chainID,
-  walletAddress,
-  restURLs,
-}: {
-  chainID: string;
-  walletAddress: string;
-  restURLs: string[];
-}) => {
+const UploadContract = (props: UploadContractI) => {
+  const { chainID, walletAddress, restURLs } = props;
   const dispatch = useAppDispatch();
   const { uploadContract } = useContracts();
 
