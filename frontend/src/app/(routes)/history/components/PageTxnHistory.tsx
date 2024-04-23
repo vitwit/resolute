@@ -2,7 +2,7 @@ import TopNav from '@/components/TopNav';
 import React, { useState } from 'react';
 import Transaction from './Transaction';
 import useGetTransactions from '@/custom-hooks/useGetTransactions';
-import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
+import { useAppSelector } from '@/custom-hooks/StateHooks';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { Pagination } from '@mui/material';
 import { paginationComponentStyles } from '../../staking/styles';
