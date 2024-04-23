@@ -91,12 +91,21 @@ func (h *Handler) GetAllTransactions(c echo.Context) error {
 	}
 	result := []txn_types.ParsedTxn{}
 	res, err := getTransactions(chainId, address, limit, offset)
-	if err == nil {
-		parsedTxns, err := GetParsedTransactions(*res, chainId)
-		if err == nil {
-			result = append(result, parsedTxns...)
-		}
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to fetch transactions",
+		})
 	}
+	parsedTxns, err := GetParsedTransactions(*res, chainId)
+	if err != nil {
+		log.Printf("Error parsing transactions: %v", err)
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to parse transactions",
+		})
+	}
+	result = append(result, parsedTxns...)
 
 	responseData := TxnsData{
 		Data:  result,
