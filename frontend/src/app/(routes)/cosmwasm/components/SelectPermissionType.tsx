@@ -40,9 +40,10 @@ const SelectPermissionType = ({
           <MenuItem value={AccessType.ACCESS_TYPE_NOBODY}>
             Instantiate through governance only (Nobody)
           </MenuItem>
-          <MenuItem value={AccessType.ACCESS_TYPE_ANY_OF_ADDRESSES}>
+          {/* TODO: Allow user to enter specific addresses  */}
+          {/* <MenuItem value={AccessType.ACCESS_TYPE_ANY_OF_ADDRESSES}>
             Only a set of addresses (Any of Addresses)
-          </MenuItem>
+          </MenuItem> */}
         </Select>
       </FormControl>
     </div>

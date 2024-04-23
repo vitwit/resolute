@@ -15,6 +15,7 @@ import { gzip } from 'node-gzip';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { uploadCode } from '@/store/features/cosmwasm/cosmwasmSlice';
 import { TxStatus } from '@/types/enums';
+import { setError } from '@/store/features/common/commonSlice';
 
 interface UploadContractInput {
   wasmFile?: File;
@@ -60,6 +61,7 @@ const UploadContract = ({
 
   const handleAccessTypeChange = (event: SelectChangeEvent<AccessType>) => {
     setAccessType(event.target.value as AccessType);
+    setValue('permission', event.target.value as AccessType);
   };
 
   const onUpload = async (data: UploadContractInput) => {
@@ -71,7 +73,7 @@ const UploadContract = ({
           sender: walletAddress,
           wasmByteCode: await gzip(new Uint8Array(await wasmcode)),
           instantiatePermission: {
-            permission: accessType,
+            permission: data.permission,
             addresses: [],
             address: '',
           },
@@ -84,6 +86,13 @@ const UploadContract = ({
           messages: [msg],
           baseURLs: restURLs,
           uploadContract,
+        })
+      );
+    } else {
+      dispatch(
+        setError({
+          type: 'error',
+          message: 'Please upload the wasm file',
         })
       );
     }
@@ -130,7 +139,7 @@ const UploadContract = ({
                   alt="Upload file"
                   draggable={false}
                 />
-                <div className="mt-2">Upload file here</div>
+                <div className="mt-2">Upload (.wasm) file here</div>
               </>
             )}
           </div>
