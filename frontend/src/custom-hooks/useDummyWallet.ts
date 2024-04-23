@@ -1,5 +1,5 @@
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useGetChainInfo from './useGetChainInfo';
 import { DUMMY_WALLET_MNEMONIC } from '@/utils/constants';
 

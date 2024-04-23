@@ -9,6 +9,7 @@ import axios from 'axios';
 import { cleanURL } from '@/utils/util';
 import { parseTxResult } from '@/utils/signing';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const contractInfoEmptyState = {
   admin: '',
   label: '',

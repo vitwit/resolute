@@ -12,8 +12,9 @@ import { AccessType } from 'cosmjs-types/cosmwasm/wasm/v1/types';
 import SelectPermissionType from './SelectPermissionType';
 import useContracts from '@/custom-hooks/useContracts';
 import { gzip } from 'node-gzip';
-import { useAppDispatch } from '@/custom-hooks/StateHooks';
+import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
 import { uploadCode } from '@/store/features/cosmwasm/cosmwasmSlice';
+import { TxStatus } from '@/types/enums';
 
 interface UploadContractInput {
   wasmFile?: File;
@@ -31,7 +32,12 @@ const UploadContract = ({
   restURLs: string[];
 }) => {
   const dispatch = useAppDispatch();
-  const { uploadContract, uploadContractLoading } = useContracts();
+  const { uploadContract } = useContracts();
+
+  const uploadContractStatus = useAppSelector(
+    (state) => state.cosmwasm.chains?.[chainID]?.txUpload.status
+  );
+  const uploadContractLoading = uploadContractStatus === TxStatus.PENDING;
 
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
   const [accessType, setAccessType] = useState<AccessType>(3);

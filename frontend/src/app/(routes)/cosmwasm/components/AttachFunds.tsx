@@ -5,17 +5,15 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import SelectFunds from './SelectFunds';
 import ProvideFundsJson from './ProvideFundsJson';
 import { assetsDropDownStyle } from '../styles';
 import useContracts from '@/custom-hooks/useContracts';
-import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 
 const AttachFunds = ({
   handleAttachFundTypeChange,
   attachFundType,
-  chainID,
   chainName,
   funds,
   setFunds,
@@ -24,7 +22,6 @@ const AttachFunds = ({
 }: {
   handleAttachFundTypeChange: (event: SelectChangeEvent<string>) => void;
   attachFundType: string;
-  chainID: string;
   chainName: string;
   setFunds: (value: React.SetStateAction<FundInfo[]>) => void;
   funds: FundInfo[];

@@ -143,7 +143,6 @@ const InstantiateContract = ({
             <AttachFunds
               handleAttachFundTypeChange={handleAttachFundTypeChange}
               attachFundType={attachFundType}
-              chainID={chainID}
               chainName={chainName}
               funds={funds}
               setFunds={setFunds}

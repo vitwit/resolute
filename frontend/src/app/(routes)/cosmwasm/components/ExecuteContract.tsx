@@ -1,6 +1,6 @@
 import useContracts from '@/custom-hooks/useContracts';
 import { CircularProgress, SelectChangeEvent, TextField } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import AttachFunds from './AttachFunds';
 import useGetChainInfo from '@/custom-hooks/useGetChainInfo';
 import { useAppDispatch, useAppSelector } from '@/custom-hooks/StateHooks';
@@ -191,7 +191,6 @@ const ExecuteContract = ({
           <AttachFunds
             handleAttachFundTypeChange={handleAttachFundTypeChange}
             attachFundType={attachFundType}
-            chainID={chainID}
             chainName={chainName}
             funds={funds}
             setFunds={setFunds}

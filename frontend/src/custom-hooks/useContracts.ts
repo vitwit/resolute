@@ -8,10 +8,7 @@ import { useState } from 'react';
 import { useDummyWallet } from './useDummyWallet';
 import chainDenoms from '@/utils/chainDenoms.json';
 import useGetChainInfo from './useGetChainInfo';
-import { useAppDispatch } from './StateHooks';
-import { setError } from '@/store/features/common/commonSlice';
 import { Event } from 'cosmjs-types/tendermint/abci/types';
-import { TxStatus } from '@/types/enums';
 import { toUtf8 } from '@cosmjs/encoding';
 
 declare let window: WalletWindow;
@@ -39,19 +36,17 @@ const getCodeIdFromEvents = (events: Event[]) => {
   return codeId;
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const getCodeId = (txData: any) => {
   const codeID = getCodeIdFromEvents(txData?.events || []);
   return codeID;
 };
 
 const useContracts = () => {
-  const dispatch = useAppDispatch();
   const [contractLoading, setContractLoading] = useState(false);
   const [contractError, setContractError] = useState('');
 
   const [messagesLoading, setMessagesLoading] = useState(false);
-
-  const [uploadContractLoading, setUploadContractLoading] = useState(false);
 
   const { getDummyWallet } = useDummyWallet();
   const { getChainInfo } = useGetChainInfo();
@@ -360,7 +355,6 @@ const useContracts = () => {
     getExecutionOutput,
     getChainAssets,
     uploadContract,
-    uploadContractLoading,
     instantiateContract,
   };
 };

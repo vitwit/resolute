@@ -1,6 +1,5 @@
 'use client';
 
-import { OfflineDirectSigner } from '@cosmjs/proto-signing';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 const getContractURL = (baseURL: string, address: string) =>
@@ -20,11 +19,11 @@ export const getContract = async (
     const uri = getContractURL(url, address);
     try {
       const response = await fetch(uri);
-      console.log(response)
+      console.log(response);
       if (!response.ok) {
-        console.log("hrer.e.re.r")
+        console.log('hrer.e.re.r');
         if (response.status === 500) {
-          console.log("herere..")
+          console.log('herere..');
           continue;
         } else {
           const res = await response.json();
@@ -32,8 +31,9 @@ export const getContract = async (
         }
       }
       return response;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      console.log(error)
+      console.log(error);
       throw new Error(error.message);
     }
   }
@@ -54,6 +54,7 @@ export const queryContract = async (
         throw new Error(res.message || 'Failed to fetch contract');
       }
       return response;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       throw new Error(error.message);
     }
@@ -61,6 +62,7 @@ export const queryContract = async (
   throw new Error('Failed to fetch contract');
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const connectWithSigner = async (urls: string[], offlineSigner: any) => {
   for (const url of urls) {
     try {
