@@ -279,6 +279,8 @@ export const COIN_GECKO_IDS: Record<string, string> = {
   ucmdx: 'cmdx',
 };
 
+export const MULTISEND_PLACEHOLDER = `Enter here\n\nExample:\ncosmos1hzq8fmhmd52fdhjprj2uj8ht3q0wxxc29th0l6, 35uatom\ncosmos1h0t3funxenm54ke2z9tfdtgrctex575ufpz3kw, 2506uatom`;
+
 export const voteOptionNumber: VoteOptionNumber = {
   yes: 1,
   no: 3,
@@ -302,12 +304,10 @@ export const MULTIOPS_MSG_TYPES = {
   vote: 'Vote',
   deposit: 'Deposit',
 };
-
 export const MULTIOPS_NOTE = `Note: Please ensure to allocate additional gas if the
 transaction involves multiple messages, and be sure to
 select the appropriate fee option in the signing
 wallet.`;
-
 export const MULTIOPS_SAMPLE_FILES = {
   delegate:
     'https://raw.githubusercontent.com/vitwit/resolute/a6a02cc1b74ee34604e6df35cfce7a46c39980ea/frontend/src/example-files/delegate.csv',
